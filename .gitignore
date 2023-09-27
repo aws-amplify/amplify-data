@@ -1,0 +1,13 @@
+coverage
+docs
+lib
+node_modules
+temp
+tsconfig.tsbuildinfo
+
+.idea
+.eslintcache
+.nvmrc
+.DS_Store
+verdaccio-cache
+verdaccio-logs.txt

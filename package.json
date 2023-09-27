@@ -1,0 +1,27 @@
+{
+  "name": "@aws-amplify/amplify-api-next-alpha",
+  "version": "0.0.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/aws-amplify/amplify-api-next.git"
+  },
+  "main": "./index.ts",
+  "types": "./index.ts",
+  "license": "Apache-2.0",
+  "scripts": {
+    "test": "jest __tests__",
+    "lint": "eslint \"**/*.ts*\""
+  },
+  "dependencies": {
+    "@aws-amplify/types-package-alpha": "api-v6-models",
+    "@aws-amplify/graphql-construct-alpha": "latest"
+  },
+  "devDependencies": {
+    "@tsd/typescript": "^5.1.6",
+    "@types/jest": "29.5.4",
+    "jest": "^29.7.0",
+    "jest-tsd": "^0.2.2",
+    "ts-jest": "^29.1.1",
+    "typescript": "^5.1.6"
+  }
+}
