@@ -2,7 +2,6 @@ coverage
 docs
 lib
 node_modules
-temp
 tsconfig.tsbuildinfo
 
 .idea

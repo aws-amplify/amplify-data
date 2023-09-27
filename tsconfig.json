@@ -1,16 +1,20 @@
 {
   "compilerOptions": {
-    "lib": ["esnext"],
-    "allowJs": true,
+    "rootDir": "src",
+    "outDir": "lib",
+    "target": "ES2022",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "lib": ["ES2022"],
+    "allowJs": false,
     "skipLibCheck": true,
     "strict": true,
     "forceConsistentCasingInFileNames": true,
-    "noEmit": true,
     "incremental": true,
     "esModuleInterop": true,
-    "module": "esnext",
-    "moduleResolution": "node",
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
+    "declaration": true
   },
-  "include": ["src/**/*", "__tests__/**/*"]
+  "include": ["src/**/*.ts"],
+  "exclude": ["node_modules", "__tests__/**/*", "playgrounds/**/*"]
 }
