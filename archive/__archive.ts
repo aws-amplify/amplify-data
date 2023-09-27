@@ -6,9 +6,9 @@ import type {
   UnionToIntersection,
   ExcludeEmpty,
   ObjectIsNonEmpty,
-} from './util';
+} from '../src/util';
 
-import type { ModelRelationalFieldParamShape } from './ModelRelationalField';
+import type { ModelRelationalFieldParamShape } from '../src/ModelRelationalField';
 
 /* 
 The following 3 types allow us to dynamically generate foreign keys for relational 

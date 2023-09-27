@@ -121,7 +121,7 @@ function calculateAuth(authorization: Authorization<any, any>[]) {
 
   for (const entry of authorization) {
     const rule = entry[__data];
-    const ruleParts = [];
+    const ruleParts: Array<string | string[]> = [];
 
     if (rule.strategy) {
       ruleParts.push([`allow: ${rule.strategy}`]);

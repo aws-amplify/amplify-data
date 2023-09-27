@@ -1,0 +1,26 @@
+name: PR Validation
+
+concurrency:
+  group: pr-${{ github.event.pull_request.number }}-${{ github.event.sender.login }} # This is to make the group name unique for a PR.
+  cancel-in-progress: true
+
+on: pull_request
+
+permissions: read-all
+
+jobs:
+  prebuild:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@24cb9080177205b6e8c946b17badbe402adc938f # v3.4.0 https://github.com/actions/checkout/commit/24cb9080177205b6e8c946b17badbe402adc938f
+        with:
+          path: amplify-api-next
+      - name: Setup node and build the repository
+        uses: ./amplify-api-next/.github/actions/node-and-build
+        with:
+          is-prebuild: true
+  unit-tests:
+    needs:
+      - prebuild
+    uses: ./.github/workflows/callable-unit-tests.yml
