@@ -32,24 +32,9 @@ jobs:
           git config --global user.email $GITHUB_EMAIL
           git config --global user.name $GITHUB_USER
 
-      # - name: Update roll-back infrastructure
+      # - name: Commit version and changelog
       #   working-directory: ./amplify-api-next
       #   run: |
-      #     git pull origin release
-      #     PUBLISH_COMMIT_HASH=$(git log -n 1 --pretty=format:"%H")
-      #     RELEASE_COMMIT_MESSAGE=$(git log -n 1 --skip 1 --pretty=oneline)
-      #     if [[ $RELEASE_COMMIT_MESSAGE = *release\(required\)* ]]; then git tag -f required-release $PUBLISH_COMMIT_HASH; fi
-
-      - name: Update API documentation
-        working-directory: ./amplify-api-next
-        run: |
-          git add .
-          git commit -m "release: publish [ci skip]"
-          git push origin main
-
-      # - name: Push post release changes
-      #   working-directory: ./amplify-api-next
-      #   run: |
-      #     git push origin release
-      #     git push -f origin required-release
-      #     git push --force-with-lease origin release:main
+      #     git add .
+      #     git commit -m "release: publish [ci skip]"
+      #     git push origin main
