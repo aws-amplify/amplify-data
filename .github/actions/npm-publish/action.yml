@@ -40,12 +40,9 @@ runs:
         # TARGET: ${{ inputs.target }}
         PREID_PREFIX: ${{ inputs.preid || '' }}
       run: |
-        ls -alF
-        ls lib-esm
-      # run: |
-      #   echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" >> ~/.npmrc
-      #   export PREID_HASH_SUFFIX=$(echo $GH_SHA | cut -c -7 | sed 's/^/\./')
-      #   git status
-      #   git --no-pager diff
-      #   npm run version
-      #   npm run publish
+        echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" >> ~/.npmrc
+        export PREID_HASH_SUFFIX=$(echo $GH_SHA | cut -c -7 | sed 's/^/\./')
+        git status
+        git --no-pager diff
+        npm run version
+        npm run publish

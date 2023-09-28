@@ -15,7 +15,8 @@
     "lint": "eslint \"**/*.ts*\"",
     "changeset": "changeset",
     "version": "changeset version",
-    "publish": "changeset publish"
+    "publish": "changeset publish",
+    "publish:local": "npm_config_registry=http://localhost:4873/ changeset publish"
   },
   "dependencies": {
     "@aws-amplify/graphql-construct-alpha": "0.8.0",
@@ -30,5 +31,13 @@
     "rimraf": "^5.0.5",
     "ts-jest": "^29.1.1",
     "typescript": "^5.1.6"
-  }
+  },
+  "files": [
+    "lib-esm/**",
+    "package.json",
+    "README.md",
+    "CHANGELOG",
+    "LICENSE",
+    "NOTICE"
+  ]
 }

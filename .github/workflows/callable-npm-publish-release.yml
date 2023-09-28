@@ -32,9 +32,9 @@ jobs:
           git config --global user.email $GITHUB_EMAIL
           git config --global user.name $GITHUB_USER
 
-      # - name: Commit version and changelog
-      #   working-directory: ./amplify-api-next
-      #   run: |
-      #     git add .
-      #     git commit -m "release: publish [ci skip]"
-      #     git push origin main
+      - name: Commit version and changelog
+        working-directory: ./amplify-api-next
+        run: |
+          git add .
+          git commit -m "release: publish [ci skip]"
+          git push origin main
