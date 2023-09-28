@@ -1,4 +1,4 @@
-import { default as a, ClientSchema, defineData } from "../index";
+import { default as a, ClientSchema, defineData } from '../src/index';
 
 const schema = a.schema({
   Post: a
@@ -8,7 +8,7 @@ const schema = a.schema({
       // comments: a.hasMany("Comment").optional(),
     })
     //,
-    .identifier(["postId"]),
+    .identifier(['postId']),
   Comment: a.model({
     id: a.id(),
   }),

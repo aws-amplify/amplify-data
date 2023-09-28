@@ -1,11 +1,11 @@
 import type { ClientSchema } from './ClientSchema';
-import { schema, defineData } from './ModelSchema';
+import { schema } from './ModelSchema';
 import { model } from './ModelType';
 import { fields } from './ModelField';
 import { ref } from './ModelRef';
 import { hasOne, hasMany, belongsTo, manyToMany } from './ModelRelationalField';
 import { allow } from './Authorization';
-import { schemaPreprocessor } from './SchemaProcessor';
+import { defineData } from './SchemaProcessor';
 
 const a = {
   schema,
@@ -21,6 +21,6 @@ const a = {
 
 export default a;
 
-export { defineData, schemaPreprocessor };
+export { defineData };
 
 export type { ClientSchema };

@@ -1,4 +1,4 @@
-import { default as a, defineData } from '../index';
+import { default as a, defineData } from '../src/index';
 
 import type { ModelSchema } from '../src/ModelSchema';
 import { type ModelType } from '../src/ModelType';

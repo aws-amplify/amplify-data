@@ -1,6 +1,5 @@
 import { expectTypeTestsToPassAsync } from 'jest-tsd';
 import a, { defineData, ClientSchema } from '../src/index';
-import { schemaPreprocessor } from '../src/SchemaProcessor';
 import {
   PublicProviders,
   PrivateProviders,
@@ -27,7 +26,7 @@ describe('model auth rules', () => {
         .authorization([a.allow.public()]),
     });
 
-    const graphql = schemaPreprocessor(schema).processedSchema;
+    const graphql = defineData({ schema }).schema;
     expect(graphql).toMatchSnapshot();
   });
 
@@ -53,7 +52,7 @@ describe('model auth rules', () => {
         .authorization([a.allow.private()]),
     });
 
-    const graphql = schemaPreprocessor(schema).processedSchema;
+    const graphql = defineData({ schema }).schema;
     expect(graphql).toMatchSnapshot();
   });
 
@@ -66,7 +65,7 @@ describe('model auth rules', () => {
         .authorization([a.allow.owner()]),
     });
 
-    const graphql = schemaPreprocessor(schema).processedSchema;
+    const graphql = defineData({ schema }).schema;
     expect(graphql).toMatchSnapshot();
   });
 
@@ -79,7 +78,7 @@ describe('model auth rules', () => {
         .authorization([a.allow.owner().inField('title')]),
     });
 
-    const graphql = schemaPreprocessor(schema).processedSchema;
+    const graphql = defineData({ schema }).schema;
     expect(graphql).toMatchSnapshot();
   });
 
@@ -92,7 +91,7 @@ describe('model auth rules', () => {
         .authorization([a.allow.public().to(['create', 'read'])]),
     });
 
-    const graphql = schemaPreprocessor(schema).processedSchema;
+    const graphql = defineData({ schema }).schema;
     expect(graphql).toMatchSnapshot();
   });
 
@@ -105,7 +104,7 @@ describe('model auth rules', () => {
         .authorization([a.allow.owner().identityClaim('user_id')]),
     });
 
-    const graphql = schemaPreprocessor(schema).processedSchema;
+    const graphql = defineData({ schema }).schema;
     expect(graphql).toMatchSnapshot();
   });
 
@@ -119,7 +118,7 @@ describe('model auth rules', () => {
         .authorization([a.allow.multipleOwners().inField('authors')]),
     });
 
-    const graphql = schemaPreprocessor(schema).processedSchema;
+    const graphql = defineData({ schema }).schema;
     expect(graphql).toMatchSnapshot();
   });
 
@@ -145,7 +144,7 @@ describe('model auth rules', () => {
     // I SHOULD be able to assign a `string[]`;
     authors = ['username1', 'username2'];
 
-    const graphql = schemaPreprocessor(schema).processedSchema;
+    const graphql = defineData({ schema }).schema;
     expect(graphql).toMatchSnapshot();
   });
 
@@ -174,7 +173,7 @@ describe('model auth rules', () => {
         .authorization([a.allow.specificGroup('Admins')]),
     });
 
-    const graphql = schemaPreprocessor(schema).processedSchema;
+    const graphql = defineData({ schema }).schema;
     expect(graphql).toMatchSnapshot();
   });
 
@@ -187,7 +186,7 @@ describe('model auth rules', () => {
         .authorization([a.allow.specificGroups(['Admins', 'Moderators'])]),
     });
 
-    const graphql = schemaPreprocessor(schema).processedSchema;
+    const graphql = defineData({ schema }).schema;
     expect(graphql).toMatchSnapshot();
   });
 
@@ -200,7 +199,7 @@ describe('model auth rules', () => {
         .authorization([a.allow.groupDefinedIn('businessUnitOwner')]),
     });
 
-    const graphql = schemaPreprocessor(schema).processedSchema;
+    const graphql = defineData({ schema }).schema;
     expect(graphql).toMatchSnapshot();
   });
 
@@ -215,7 +214,7 @@ describe('model auth rules', () => {
         ]),
     });
 
-    const graphql = schemaPreprocessor(schema).processedSchema;
+    const graphql = defineData({ schema }).schema;
     expect(graphql).toMatchSnapshot();
   });
 
@@ -230,7 +229,7 @@ describe('model auth rules', () => {
         ]),
     });
 
-    const graphql = schemaPreprocessor(schema).processedSchema;
+    const graphql = defineData({ schema }).schema;
     expect(graphql).toMatchSnapshot();
   });
 
@@ -248,7 +247,7 @@ describe('model auth rules', () => {
         ]),
     });
 
-    const graphql = schemaPreprocessor(schema).processedSchema;
+    const graphql = defineData({ schema }).schema;
     expect(graphql).toMatchSnapshot();
   });
 
@@ -274,7 +273,7 @@ describe('model auth rules', () => {
     // @ts-expect-error
     customOwner = ['multiple', 'owners'];
 
-    const graphql = schemaPreprocessor(schema).processedSchema;
+    const graphql = defineData({ schema }).schema;
     expect(graphql).toMatchSnapshot();
   });
 
@@ -300,7 +299,7 @@ describe('model auth rules', () => {
     // @ts-expect-error
     customOwner = ['multiple', 'owners'];
 
-    const graphql = schemaPreprocessor(schema).processedSchema;
+    const graphql = defineData({ schema }).schema;
     expect(graphql).toMatchSnapshot();
   });
 
@@ -314,7 +313,7 @@ describe('model auth rules', () => {
           .authorization([a.allow.public(provider)]),
       });
 
-      const graphql = schemaPreprocessor(schema).processedSchema;
+      const graphql = defineData({ schema }).schema;
       expect(graphql).toMatchSnapshot();
     });
 
@@ -340,7 +339,7 @@ describe('model auth rules', () => {
             ]),
         });
 
-        const graphql = schemaPreprocessor(schema).processedSchema;
+        const graphql = defineData({ schema }).schema;
         expect(graphql).toMatchSnapshot();
       });
     }
@@ -356,7 +355,7 @@ describe('model auth rules', () => {
           .authorization([a.allow.private(provider)]),
       });
 
-      const graphql = schemaPreprocessor(schema).processedSchema;
+      const graphql = defineData({ schema }).schema;
       expect(graphql).toMatchSnapshot();
     });
 
@@ -379,7 +378,7 @@ describe('model auth rules', () => {
             .authorization([a.allow.private(provider).to(operations)]),
         });
 
-        const graphql = schemaPreprocessor(schema).processedSchema;
+        const graphql = defineData({ schema }).schema;
         expect(graphql).toMatchSnapshot();
       });
     }

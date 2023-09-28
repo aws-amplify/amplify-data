@@ -44,7 +44,3 @@ export function schema<Models extends ModelSchemaModels>(
 ): ModelSchema<{ models: Models }> {
   return _schema(models);
 }
-
-export function defineData(arg: { schema: ModelSchema<any> }) {
-  return arg.schema as InternalSchema;
-}

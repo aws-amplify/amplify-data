@@ -19,7 +19,6 @@
     "publish:local": "npm_config_registry=http://localhost:4873/ changeset publish"
   },
   "dependencies": {
-    "@aws-amplify/graphql-construct-alpha": "0.8.0",
     "@aws-amplify/types-package-alpha": "api-v6-models"
   },
   "devDependencies": {
