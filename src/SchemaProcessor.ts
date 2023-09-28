@@ -1,10 +1,14 @@
-import type { AmplifyApiSchemaPreprocessorOutput } from '@aws-amplify/graphql-construct-alpha';
-import type { ModelSchema, ModelSchemaParamShape } from './ModelSchema';
+import type {
+  ModelSchema,
+  InternalSchema,
+  ModelSchemaParamShape,
+} from './ModelSchema';
 import type { ModelField, InternalField } from './ModelField';
 import type { InternalRelationalField } from './ModelRelationalField';
 import type { ModelType, InternalModel } from './ModelType';
 import { fields } from './ModelField';
 import { Authorization, __data } from './Authorization';
+import { DerivedApiDefinition } from './types';
 
 type ScalarFieldDef = Exclude<InternalField['data'], { fieldType: 'model' }>;
 type ModelFieldDef = Extract<
@@ -187,9 +191,9 @@ function calculateAuth(authorization: Authorization<any, any>[]) {
   return { authString, authFields };
 }
 
-export const schemaPreprocessor = <T extends ModelSchemaParamShape>(
+const schemaPreprocessor = <T extends ModelSchemaParamShape>(
   schema: ModelSchema<T>
-) => {
+): string => {
   const gqlModels: string[] = [];
 
   for (const [modelName, modelDef] of Object.entries(schema.data.models)) {
@@ -259,5 +263,13 @@ export const schemaPreprocessor = <T extends ModelSchemaParamShape>(
 
   const processedSchema = gqlModels.join('\n\n');
 
-  return { processedSchema } as AmplifyApiSchemaPreprocessorOutput;
+  return processedSchema;
 };
+
+export function defineData(arg: {
+  schema: ModelSchema<any>;
+}): DerivedApiDefinition {
+  const internalSchema = arg.schema as InternalSchema;
+
+  return { schema: schemaPreprocessor(internalSchema), functionSlots: [] };
+}
