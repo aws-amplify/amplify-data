@@ -1,5 +1,11 @@
 # @aws-amplify/amplify-api-next-alpha
 
+## 0.1.0
+
+### Minor Changes
+
+- 852f09e: defineData default export conforms to IAmplifyGraphqlDefinition
+
 ## 0.0.3
 
 ### Patch Changes
