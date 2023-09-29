@@ -1,8 +1,10 @@
 import type {
   ModelSchema,
+  ModelSchemaType,
   InternalSchema,
   ModelSchemaParamShape,
 } from './ModelSchema';
+import { isModelSchema } from './ModelSchema';
 import type { ModelField, InternalField } from './ModelField';
 import type { InternalRelationalField } from './ModelRelationalField';
 import type { ModelType, InternalModel } from './ModelType';
@@ -266,10 +268,25 @@ const schemaPreprocessor = <T extends ModelSchemaParamShape>(
   return processedSchema;
 };
 
+/**
+ * Normalizes schema: transofrms TypeScript ModelSchema into GraphQL schema string or returns string schema as-is
+ * @param schema - Model schema or string
+ * @returns stringified GraphQL schema
+ */
+export function stringifyModelSchema(schema: string | ModelSchemaType): string {
+  if (isModelSchema(schema)) {
+    const internalSchema = schema as InternalSchema;
+
+    return schemaPreprocessor(internalSchema);
+  }
+
+  return schema;
+}
+
 export function defineData(arg: {
   schema: ModelSchema<any>;
 }): DerivedApiDefinition {
-  const internalSchema = arg.schema as InternalSchema;
+  const schema = stringifyModelSchema(arg.schema);
 
-  return { schema: schemaPreprocessor(internalSchema), functionSlots: [] };
+  return { schema, functionSlots: [] };
 }
