@@ -1,5 +1,5 @@
 import { expectTypeTestsToPassAsync } from 'jest-tsd';
-import a, { defineData, ClientSchema } from '../src/index';
+import { a, defineData, ClientSchema } from '../src/index';
 import {
   PublicProviders,
   PrivateProviders,

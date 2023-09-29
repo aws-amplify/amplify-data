@@ -1,4 +1,4 @@
-import { default as a, ClientSchema, defineData } from '../src/index';
+import { a, ClientSchema, defineData } from '../src/index';
 
 const schema = a.schema({
   Post: a
@@ -16,6 +16,6 @@ const schema = a.schema({
 
 export type Schema = ClientSchema<typeof schema>;
 
-export default defineData({
+export const data = defineData({
   schema,
 });
