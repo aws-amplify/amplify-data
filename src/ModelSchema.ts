@@ -33,6 +33,22 @@ export type ModelSchema<T extends ModelSchemaParamShape> = {
   data: T;
 };
 
+/**
+ * Amplify API Next Model Schema shape
+ */
+export type ModelSchemaType = ModelSchema<ModelSchemaParamShape>;
+
+/**
+ * Model Schema type guard
+ * @param schema - api-next ModelSchema or string
+ * @returns true if the given value is a ModelSchema
+ */
+export const isModelSchema = (
+  schema: string | ModelSchemaType
+): schema is ModelSchemaType => {
+  return typeof schema === 'object' && schema.data !== undefined;
+};
+
 function _schema<T extends ModelSchemaParamShape>(models: T['models']) {
   const data: ModelSchemaData = { models };
 

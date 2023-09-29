@@ -1,5 +1,5 @@
 import type { ClientSchema } from './ClientSchema';
-import { schema } from './ModelSchema';
+import { schema, type ModelSchemaType } from './ModelSchema';
 import { model } from './ModelType';
 import { fields } from './ModelField';
 import { ref } from './ModelRef';
@@ -23,4 +23,4 @@ export default a;
 
 export { defineData };
 
-export type { ClientSchema };
+export type { ClientSchema, ModelSchemaType };
