@@ -1,5 +1,11 @@
 # @aws-amplify/amplify-api-next-alpha
 
+## 0.2.0
+
+### Minor Changes
+
+- fe93dc2: export ModelSchema type and updated defineData util for Samsara
+
 ## 0.1.0
 
 ### Minor Changes
