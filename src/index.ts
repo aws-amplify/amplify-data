@@ -19,8 +19,6 @@ const a = {
   ...fields,
 };
 
-export default a;
-
-export { defineData };
+export { a, defineData };
 
 export type { ClientSchema, ModelSchemaType };
