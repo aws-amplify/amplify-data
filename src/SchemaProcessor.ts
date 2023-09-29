@@ -273,7 +273,7 @@ const schemaPreprocessor = <T extends ModelSchemaParamShape>(
  * @param schema - Model schema or string
  * @returns stringified GraphQL schema
  */
-export function stringifyModelSchema(schema: string | ModelSchemaType): string {
+function normalizeSchema(schema: string | ModelSchemaType): string {
   if (isModelSchema(schema)) {
     const internalSchema = schema as InternalSchema;
 
@@ -283,10 +283,15 @@ export function stringifyModelSchema(schema: string | ModelSchemaType): string {
   return schema;
 }
 
+/**
+ * Returns API definition from ModelSchema or string schema
+ * @param arg - { schema }
+ * @returns DerivedApiDefinition that conforms to IAmplifyGraphqlDefinition
+ */
 export function defineData(arg: {
-  schema: ModelSchema<any>;
+  schema: string | ModelSchemaType;
 }): DerivedApiDefinition {
-  const schema = stringifyModelSchema(arg.schema);
+  const schema = normalizeSchema(arg.schema);
 
   return { schema, functionSlots: [] };
 }

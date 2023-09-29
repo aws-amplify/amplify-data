@@ -5,7 +5,7 @@ import { fields } from './ModelField';
 import { ref } from './ModelRef';
 import { hasOne, hasMany, belongsTo, manyToMany } from './ModelRelationalField';
 import { allow } from './Authorization';
-import { defineData, stringifyModelSchema } from './SchemaProcessor';
+import { defineData } from './SchemaProcessor';
 
 const a = {
   schema,
@@ -21,6 +21,6 @@ const a = {
 
 export default a;
 
-export { defineData, stringifyModelSchema };
+export { defineData };
 
 export type { ClientSchema, ModelSchemaType };
