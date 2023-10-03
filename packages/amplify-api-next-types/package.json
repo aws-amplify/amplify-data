@@ -2,8 +2,8 @@
   "name": "@aws-amplify/amplify-api-next-types-alpha",
   "version": "0.0.2",
   "license": "Apache-2.0",
-  "main": "./src/index.ts",
-  "types": "./src/index.ts",
+  "main": "./lib-esm/index.ts",
+  "types": "./lib-esm/index.d.ts",
   "typesVersions": {
     "<5": {
       "lib-esm/index.d.ts": [
@@ -23,7 +23,7 @@
     "typescript": "^5.1.6"
   },
   "files": [
-    "src/**",
+    "lib-esm/**",
     "package.json"
   ]
 }
