@@ -9,7 +9,7 @@ import type {
   ModelRelationalTypeArgFactory,
 } from '../src/ModelRelationalField';
 import type { Prettify, UnionToIntersection, ExcludeEmpty } from '../src/util';
-import { __modelMeta__ } from '@aws-amplify/types-package-alpha';
+import { __modelMeta__ } from '@aws-amplify/amplify-api-next-types-alpha';
 import type { ImpliedAuthFields } from '../src/Authorization';
 
 const schema = a.schema({

@@ -9,13 +9,15 @@
   "main": "./lib-esm/index.js",
   "types": "./lib-esm/index.d.ts",
   "scripts": {
-    "build": "tsc -p ../../tsconfig.json",
-    "clean": "rimraf lib-esm",
+    "build": "npm run clean && tsc -p ./tsconfig.json",
+    "clean": "rimraf lib-esm tsconfig.tsbuildinfo",
     "test": "jest __tests__",
     "lint": "eslint \"**/*.ts*\""
   },
+  "dependencies": {
+    "@aws-amplify/amplify-api-next-types-alpha": "*"
+  },
   "devDependencies": {
-    "@aws-amplify/amplify-api-next-types-alpha": "*",
     "@changesets/cli": "^2.26.2",
     "@tsd/typescript": "^5.1.6",
     "@types/jest": "29.5.4",

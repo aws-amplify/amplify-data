@@ -3,7 +3,12 @@ module.exports = {
     es2021: true,
     node: true,
   },
-  extends: 'standard-with-typescript',
+  extends: [
+    'eslint:recommended',
+    'plugin:@typescript-eslint/recommended',
+    'plugin:jsdoc/recommended-typescript-error',
+    'prettier',
+  ],
   overrides: [
     {
       env: {
@@ -15,10 +20,16 @@ module.exports = {
       },
     },
   ],
+  parser: '@typescript-eslint/parser',
   parserOptions: {
     ecmaVersion: 'latest',
     sourceType: 'module',
-    project: './tsconfig.json',
+    project: ['tsconfig.base.json'],
   },
-  rules: {},
+  plugins: ['@typescript-eslint', 'jsdoc', 'import'],
+  rules: {
+    'no-duplicate-imports': 'error',
+    'no-tabs': 'error',
+    'import/no-extraneous-dependencies': 'error',
+  },
 };

@@ -12,13 +12,17 @@
   },
   "scripts": {
     "lint": "eslint \"**/*.ts*\"",
-    "build:esm": "rimraf lib-esm && tsc -p ../../tsconfig.json --outDir lib-esm",
-    "build:esm:watch": "rimraf lib-esm && tsc -p ../../tsconfig.json --outDir lib-esm --watch",
-    "build": "npm run clean && npm run build:esm",
+    "build": "npm run build:esm",
+    "build:esm": "npm run clean && tsc -p ./tsconfig.json",
+    "build:esm:watch": "npm run build:esm --watch",
     "test": "echo \"No tests\"",
-    "clean": "rimraf lib-esm"
+    "clean": "rimraf lib-esm tsconfig.tsbuildinfo"
   },
   "devDependencies": {
     "typescript": "^5.1.6"
-  }
+  },
+  "files": [
+    "lib-esm/**",
+    "package.json"
+  ]
 }

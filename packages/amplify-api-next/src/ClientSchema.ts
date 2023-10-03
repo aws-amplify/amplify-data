@@ -8,7 +8,7 @@ import type {
 } from './ModelRelationalField';
 import type { ModelType, ModelTypeParamShape } from './ModelType';
 import type { ModelSchema } from './ModelSchema';
-import { __modelMeta__ } from '@aws-amplify/types-package-alpha';
+import { __modelMeta__ } from '@aws-amplify/amplify-api-next-types-alpha';
 
 /**
  * Types for unwrapping generic type args into client-consumable types

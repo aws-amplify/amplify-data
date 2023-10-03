@@ -1,0 +1,6 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": { "rootDir": "src", "outDir": "lib-esm" },
+  "exclude": ["__tests__", "archive", "playgrounds"],
+  "references": [{ "path": "../amplify-api-next-types" }]
+}
