@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "rootDir": "src",
+    "rootDir": "packages/amplify-api-next/src",
     "outDir": "lib-esm",
     "target": "ES2022",
     "module": "NodeNext",
@@ -15,6 +15,10 @@
     "resolveJsonModule": true,
     "declaration": true
   },
-  "include": ["src/**/*.ts"],
-  "exclude": ["node_modules", "__tests__/**/*", "playgrounds/**/*"]
+  "include": ["packages/amplify-api-next/src/**/*.ts"],
+  "exclude": [
+    "node_modules",
+    "packages/amplify-apackages/amplify-api-next/playgrounds/**/*_/**/*",
+    "playgrounds/**/*"
+  ]
 }

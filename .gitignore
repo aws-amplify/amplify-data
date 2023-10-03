@@ -5,6 +5,7 @@ lib-esm
 node_modules
 tsconfig.tsbuildinfo
 
+.turbo
 .idea
 .eslintcache
 .nvmrc
