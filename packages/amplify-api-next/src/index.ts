@@ -1,11 +1,11 @@
-import type { ClientSchema } from './ClientSchema';
-import { schema, type ModelSchemaType } from './ModelSchema';
+import { schema } from './ModelSchema';
 import { model } from './ModelType';
 import { fields } from './ModelField';
 import { ref } from './ModelRef';
 import { hasOne, hasMany, belongsTo, manyToMany } from './ModelRelationalField';
 import { allow } from './Authorization';
 import { defineData } from './SchemaProcessor';
+import { ClientSchema } from '@aws-amplify/amplify-api-next-types-alpha';
 
 const a = {
   schema,
@@ -21,4 +21,4 @@ const a = {
 
 export { a, defineData };
 
-export type { ClientSchema, ModelSchemaType };
+export type { ClientSchema };

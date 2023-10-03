@@ -1,6 +1,19 @@
 {
-  "extends": "../../tsconfig.base.json",
-  "compilerOptions": { "rootDir": "src", "outDir": "lib-esm" },
-  "exclude": ["__tests__", "archive", "playgrounds"],
-  "references": [{ "path": "../amplify-api-next-types" }]
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "lib": ["ES2022"],
+    "allowJs": false,
+    "skipLibCheck": false,
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
+    "incremental": true,
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
+    "rootDir": "src", 
+    "outDir": "lib-esm", 
+    "declaration": true
+  },
+  "exclude": ["**/node_modules", "**/lib-esm", "archive", "playgrounds", "__tests__"],
 }

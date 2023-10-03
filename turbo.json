@@ -4,6 +4,8 @@
     "build": {
       "outputs": ["lib-esm/**"]
     },
-    "lint": {}
+    "lint": {},
+    "test": {},
+    "clean": {}
   }
 }

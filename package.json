@@ -14,6 +14,7 @@
     "build:clean": "turbo run clean && rimraf node_modules",
     "test": "turbo run test",
     "lint": "turbo run lint",
+    "clean": "turbo run clean",
     "turbo": "turbo",
     "publish-packages": "changeset version && changeset publish",
     "publish-packages:local": "npm_config_registry=http://localhost:4873/ npm run publish-packages"

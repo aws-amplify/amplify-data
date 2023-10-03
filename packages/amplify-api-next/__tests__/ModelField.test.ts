@@ -1,11 +1,6 @@
 import { expectTypeTestsToPassAsync } from 'jest-tsd';
 import { a } from '../src/index';
-import { ModelField, InternalField, __auth } from '../src/ModelField';
-import {
-  ModelRelationalField,
-  InternalRelationalField,
-} from '../src/ModelRelationalField';
-import { Authorization, ImpliedAuthFields, __data } from '../src/Authorization';
+import {ModelField, InternalField, ModelRelationalField,InternalRelationalField, Authorization, ImpliedAuthFields, __data} from '@aws-amplify/amplify-api-next-types-alpha'
 
 // evaluates type defs in corresponding test-d.ts file
 it('should not produce static type errors', async () => {
