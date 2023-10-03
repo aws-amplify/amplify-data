@@ -1,5 +1,13 @@
 # @aws-amplify/amplify-api-next-alpha
 
+## 0.3.1
+
+### Patch Changes
+
+- c2db4ec: migrate types to separate types-only package
+- Updated dependencies [c2db4ec]
+  - @aws-amplify/amplify-api-next-types-alpha@0.0.1
+
 ## 0.3.0
 
 ### Minor Changes
