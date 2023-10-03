@@ -23,7 +23,7 @@
     "typescript": "^5.1.6"
   },
   "files": [
-    "lib-esm/**",
+    "src/**",
     "package.json"
   ]
 }
