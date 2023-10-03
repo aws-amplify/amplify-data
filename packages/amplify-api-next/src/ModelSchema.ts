@@ -1,4 +1,5 @@
-import type {Prettify, ModelSchemaType, ModelSchemaParamShape, ModelSchema, InternalSchema} from '@aws-amplify/amplify-api-next-types-alpha';
+import type {ModelSchemaType, ModelSchemaParamShape, ModelSchema, InternalSchema, DerivedApiDefinition} from '@aws-amplify/amplify-api-next-types-alpha';
+import { defineData } from './SchemaProcessor';
 
 /*
  * Notes:
@@ -21,7 +22,13 @@ export const isModelSchema = (
 function _schema<T extends ModelSchemaParamShape>(models: T['models']) {
   const data: ModelSchemaParamShape["models"] = { models };
 
-  return { data } as Prettify<InternalSchema> as ModelSchema<T>;
+  const transform = (): DerivedApiDefinition => {
+    const internalSchema: InternalSchema = {data} as InternalSchema;
+
+    return defineData({schema: internalSchema})
+  }
+
+  return { data, transform } as ModelSchema<T>;
 }
 
 export function schema<Models extends ModelSchemaParamShape["models"]>(

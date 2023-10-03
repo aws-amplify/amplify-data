@@ -1,4 +1,5 @@
-import {ModelSchema,
+import {
+  ModelSchema,
   ModelSchemaType,
   InternalSchema,
   ModelSchemaParamShape,
@@ -8,7 +9,6 @@ import {ModelSchema,
   Authorization, DerivedApiDefinition, __data
 } from '@aws-amplify/amplify-api-next-types-alpha';
 
-import { isModelSchema } from './ModelSchema';
 import { fields } from './ModelField';
 
 type ScalarFieldDef = Exclude<InternalField['data'], { fieldType: 'model' }>;
@@ -192,8 +192,8 @@ function calculateAuth(authorization: Authorization<any, any>[]) {
   return { authString, authFields };
 }
 
-const schemaPreprocessor = <T extends ModelSchemaParamShape>(
-  schema: ModelSchema<T>
+const schemaPreprocessor =(
+  schema: InternalSchema
 ): string => {
   const gqlModels: string[] = [];
 
@@ -268,29 +268,14 @@ const schemaPreprocessor = <T extends ModelSchemaParamShape>(
 };
 
 /**
- * Normalizes schema: transofrms TypeScript ModelSchema into GraphQL schema string or returns string schema as-is
- * @param schema - Model schema or string
- * @returns stringified GraphQL schema
- */
-function normalizeSchema(schema: string | ModelSchemaType): string {
-  if (isModelSchema(schema)) {
-    const internalSchema = schema as InternalSchema;
-
-    return schemaPreprocessor(internalSchema);
-  }
-
-  return schema;
-}
-
-/**
  * Returns API definition from ModelSchema or string schema
  * @param arg - { schema }
  * @returns DerivedApiDefinition that conforms to IAmplifyGraphqlDefinition
  */
 export function defineData(arg: {
-  schema: string | ModelSchemaType;
+  schema: InternalSchema;
 }): DerivedApiDefinition {
-  const schema = normalizeSchema(arg.schema);
+  const schema = schemaPreprocessor(arg.schema)
 
   return { schema, functionSlots: [] };
 }

@@ -3,7 +3,8 @@ import type {
   ModelTypeParamShape,
   InternalModel,
 } from './ModelType';
-export { __auth } from './ModelField';
+import {DerivedApiDefinition} from './types';
+
 
 /*
  * Notes:
@@ -26,6 +27,7 @@ export type InternalSchema = {
 
 export type ModelSchema<T extends ModelSchemaParamShape> = {
   data: T;
+  transform: () => DerivedApiDefinition
 };
 
 /**
