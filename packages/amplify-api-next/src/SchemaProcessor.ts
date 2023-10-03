@@ -5,12 +5,11 @@ import {ModelSchema,
   ModelField, InternalField,
   InternalRelationalField,
   ModelType, InternalModel,
-  Authorization, __data
+  Authorization, DerivedApiDefinition, __data
 } from '@aws-amplify/amplify-api-next-types-alpha';
 
 import { isModelSchema } from './ModelSchema';
 import { fields } from './ModelField';
-import { DerivedApiDefinition } from './types';
 
 type ScalarFieldDef = Exclude<InternalField['data'], { fieldType: 'model' }>;
 type ModelFieldDef = Extract<

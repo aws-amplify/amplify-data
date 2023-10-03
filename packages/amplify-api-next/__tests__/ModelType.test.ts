@@ -251,7 +251,7 @@ describe('model auth rules', () => {
     expect(graphql).toMatchSnapshot();
   });
 
-  /*  
+  
   it(`includes auth from fields`, () => {
     const schema = a.schema({
       widget: a.model({
@@ -261,10 +261,13 @@ describe('model auth rules', () => {
           .authorization([
             a.allow.owner().inField('customOwner').to(['create', 'read']),
           ]),
-      }),
+      }).authorization([
+        a.allow.owner().inField('customOwner').to(['create', 'read']),
+      ]),
     });
 
     type Schema = ClientSchema<typeof schema>;
+    type Widget = Schema['widget'];
     type CustomOwnerType = Schema['widget']['customOwner'];
 
     // single owner should be allowed
@@ -384,5 +387,5 @@ describe('model auth rules', () => {
       });
     }
   }
-  */
+  
 });
