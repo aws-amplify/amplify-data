@@ -73,11 +73,6 @@ export const Operations = [
 ] as const;
 export type Operation = (typeof Operations)[number];
 
-// type ImpliedFields<Fields extends string> = Record<
-//   Fields,
-//   any
-// >;
-
 export type Authorization<
   AuthField extends string | undefined,
   AuthFieldPlurality extends boolean
