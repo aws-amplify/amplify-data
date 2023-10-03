@@ -44,5 +44,4 @@ runs:
         export PREID_HASH_SUFFIX=$(echo $GH_SHA | cut -c -7 | sed 's/^/\./')
         git status
         git --no-pager diff
-        npm run version
-        npm run publish
+        npm run publish-packages
