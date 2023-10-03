@@ -1,0 +1,29 @@
+{
+  "name": "@aws-amplify/amplify-api-next-types-alpha",
+  "version": "0.0.0",
+  "license": "Apache-2.0",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "typesVersions": {
+    "<5": {
+      "lib-esm/index.d.ts": [
+        "index.v3.ts"
+      ]
+    }
+  },
+  "scripts": {
+    "lint": "eslint \"**/*.ts*\"",
+    "build": "npm run build:esm",
+    "build:esm": "npm run clean && tsc -p ./tsconfig.json",
+    "build:esm:watch": "npm run build:esm --watch",
+    "test": "echo \"No tests\"",
+    "clean": "rimraf lib-esm tsconfig.tsbuildinfo"
+  },
+  "devDependencies": {
+    "typescript": "^5.1.6"
+  },
+  "files": [
+    "lib-esm/**",
+    "package.json"
+  ]
+}

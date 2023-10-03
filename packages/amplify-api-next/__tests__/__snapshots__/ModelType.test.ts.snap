@@ -1,0 +1,105 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`model auth rules can chain off of inField rules 1`] = `
+"type widget @model @auth(rules: [{allow: owner, operations: [create, read], ownerField: "customOwnerField"}])
+{
+  customOwnerField: String
+  title: String!
+}"
+`;
+
+exports[`model auth rules can chain off of multi-owner inField rules 1`] = `
+"type widget @model @auth(rules: [{allow: owner, operations: [create, read], ownerField: "customOwnerField"}])
+{
+  customOwnerField: [String!]
+  title: String!
+}"
+`;
+
+exports[`model auth rules can create a "multiple owners" rule an on implied (auto-created) field 1`] = `
+"type widget @model @auth(rules: [{allow: owner, ownerField: "authors"}])
+{
+  authors: [String!]
+  title: String!
+}"
+`;
+
+exports[`model auth rules can create a "multiple owners" rule on an existing field 1`] = `
+"type widget @model @auth(rules: [{allow: owner, ownerField: "authors"}])
+{
+  authors: [String!]!
+  title: String!
+}"
+`;
+
+exports[`model auth rules can create a dynamic multi groups rule 1`] = `
+"type widget @model @auth(rules: [{allow: groups, operations: [read], groupsField: "sharedWithGroups"}])
+{
+  sharedWithGroups: [String!]
+  title: String!
+}"
+`;
+
+exports[`model auth rules can create a dynamic singular groups rule 1`] = `
+"type widget @model @auth(rules: [{allow: groups, groupsField: "businessUnitOwner"}])
+{
+  businessUnitOwner: String
+  title: String!
+}"
+`;
+
+exports[`model auth rules can create a static [Admins, Moderators] groups rule 1`] = `
+"type widget @model @auth(rules: [{allow: groups, groups: ["Admins", "Moderators"]}])
+{
+  title: String!
+}"
+`;
+
+exports[`model auth rules can create a static Admins group rule 1`] = `
+"type widget @model @auth(rules: [{allow: groups, groups: ["Admins"]}])
+{
+  title: String!
+}"
+`;
+
+exports[`model auth rules can define owner auth with no provider 1`] = `
+"type widget @model @auth(rules: [{allow: owner}])
+{
+  title: String!
+}"
+`;
+
+exports[`model auth rules can define owner auth with owner field spec 1`] = `
+"type widget @model @auth(rules: [{allow: owner, ownerField: "title"}])
+{
+  title: String!
+}"
+`;
+
+exports[`model auth rules can define private auth with no provider 1`] = `
+"type widget @model @auth(rules: [{allow: private}])
+{
+  title: String!
+}"
+`;
+
+exports[`model auth rules can define public auth with no provider 1`] = `
+"type widget @model @auth(rules: [{allow: public}])
+{
+  title: String!
+}"
+`;
+
+exports[`model auth rules can specify an owner identityClaim 1`] = `
+"type widget @model @auth(rules: [{allow: owner, identityClaim: "user_id"}])
+{
+  title: String!
+}"
+`;
+
+exports[`model auth rules can specify operations  1`] = `
+"type widget @model @auth(rules: [{allow: public, operations: [create, read]}])
+{
+  title: String!
+}"
+`;

@@ -5,3 +5,5 @@ bin
 lib
 docs
 tsconfig.tsbuildinfo
+**/*.js
+**/*.json

@@ -1,42 +1,43 @@
 {
-  "name": "@aws-amplify/amplify-api-next-alpha",
-  "version": "0.3.0",
+  "name": "amplify-api-next-monorepo",
+  "license": "Apache-2.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/aws-amplify/amplify-api-next.git"
   },
-  "main": "./lib-esm/index.js",
-  "types": "./lib-esm/index.d.ts",
-  "license": "Apache-2.0",
+  "private": true,
+  "workspaces": [
+    "packages/*"
+  ],
   "scripts": {
-    "build": "tsc",
-    "build:clean": "rimraf lib-esm",
-    "test": "jest __tests__",
-    "lint": "eslint \"**/*.ts*\"",
-    "changeset": "changeset",
-    "version": "changeset version",
-    "publish": "changeset publish",
-    "publish:local": "npm_config_registry=http://localhost:4873/ changeset publish"
-  },
-  "dependencies": {
-    "@aws-amplify/types-package-alpha": "api-v6-models"
+    "build": "turbo run build",
+    "build:clean": "turbo run clean && rimraf node_modules",
+    "test": "turbo run test",
+    "lint": "turbo run lint",
+    "clean": "turbo run clean",
+    "turbo": "turbo",
+    "publish-packages": "changeset version && changeset publish",
+    "publish-packages:local": "npm_config_registry=http://localhost:4873/ npm run publish-packages"
   },
   "devDependencies": {
     "@changesets/cli": "^2.26.2",
     "@tsd/typescript": "^5.1.6",
     "@types/jest": "29.5.4",
+    "@types/prettier": "^3.0.0",
+    "@typescript-eslint/eslint-plugin": "^6.7.4",
+    "@typescript-eslint/parser": "^6.7.4",
+    "eslint": "^8.50.0",
+    "eslint-config-prettier": "^9.0.0",
+    "eslint-plugin-import": "^2.28.1",
+    "eslint-plugin-jsdoc": "^46.8.2",
+    "eslint-plugin-n": "^16.1.0",
+    "eslint-plugin-promise": "^6.1.1",
     "jest": "^29.7.0",
     "jest-tsd": "^0.2.2",
+    "prettier": "^3.0.3",
     "rimraf": "^5.0.5",
     "ts-jest": "^29.1.1",
-    "typescript": "^5.1.6"
-  },
-  "files": [
-    "lib-esm/**",
-    "package.json",
-    "README.md",
-    "CHANGELOG",
-    "LICENSE",
-    "NOTICE"
-  ]
+    "turbo": "^1.10.14",
+    "typescript": "^5.2.2"
+  }
 }
