@@ -1,5 +1,11 @@
 # @aws-amplify/amplify-api-next-types-alpha
 
+## 0.0.4
+
+### Patch Changes
+
+- 1ef5c01: fix typesVersion in types package for backwards-compat with DS
+
 ## 0.0.3
 
 ### Patch Changes
