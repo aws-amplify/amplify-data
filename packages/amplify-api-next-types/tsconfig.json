@@ -13,7 +13,8 @@
     "incremental": true,
     "esModuleInterop": true,
     "resolveJsonModule": true,
-    "declaration": true
+    "declaration": true,
+    "emitDeclarationOnly": true,
   },
   "exclude": ["**/node_modules", "**/lib-esm"]
 }

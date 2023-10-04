@@ -5,7 +5,7 @@ import { ref } from './ModelRef';
 import { hasOne, hasMany, belongsTo, manyToMany } from './ModelRelationalField';
 import { allow } from './Authorization';
 import { defineData } from './SchemaProcessor';
-import { ClientSchema } from '@aws-amplify/amplify-api-next-types-alpha';
+import { ClientSchema } from './ClientSchema';
 
 const a = {
   schema,
