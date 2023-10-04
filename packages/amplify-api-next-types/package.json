@@ -7,7 +7,7 @@
   "typesVersions": {
     "<5": {
       "lib-esm/index.d.ts": [
-        "index.v3.ts"
+        "lib-esm/index.v3.d.ts"
       ]
     }
   },
