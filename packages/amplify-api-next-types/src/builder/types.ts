@@ -18,3 +18,10 @@ export interface DerivedApiDefinition {
    */
   readonly functionSlots: any[];
 }
+
+export type DerivedModelSchema = {
+  data: {
+    models: object
+  };
+  transform: () => DerivedApiDefinition
+};
