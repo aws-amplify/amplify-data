@@ -1,5 +1,14 @@
 # @aws-amplify/amplify-api-next-alpha
 
+## 0.3.2
+
+### Patch Changes
+
+- fe1dd56: restructure types
+- Updated dependencies [fe1dd56]
+- Updated dependencies [fe1dd56]
+  - @aws-amplify/amplify-api-next-types-alpha@0.0.3
+
 ## 0.3.1
 
 ### Patch Changes
