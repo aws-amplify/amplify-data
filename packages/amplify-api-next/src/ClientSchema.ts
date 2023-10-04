@@ -8,7 +8,7 @@ import type {
 } from './ModelRelationalField';
 import type { ModelType, ModelTypeParamShape } from './ModelType';
 import type { ModelSchema } from './ModelSchema';
-import { __modelMeta__ } from '../client';
+import { __modelMeta__ } from '@aws-amplify/amplify-api-next-types-alpha';
 
 /**
  * Types for unwrapping generic type args into client-consumable types
@@ -100,7 +100,7 @@ type ExtractRelationalMetadata<
 
 type SchemaTypes<T> = T extends ModelSchema<infer R> ? R['models'] : never;
 
-type ModelTypes<Schema> = {
+export type ModelTypes<Schema> = {
   [Property in keyof Schema]: Schema[Property] extends ModelType<infer R, any>
     ? R['fields']
     : never;
@@ -122,7 +122,7 @@ type ModelImpliedAuthFields<Schema extends ModelSchema<any>> = {
   >
     ? ImpliedAuthFields<Model['authorization'][number]> &
         ImpliedAuthFieldsFromFields<Model>
-    : object;
+    : {};
 };
 
 type ImpliedAuthFieldsFromFields<T> = UnionToIntersection<
@@ -132,9 +132,9 @@ type ImpliedAuthFieldsFromFields<T> = UnionToIntersection<
         | ModelRelationalField<any, any, any, infer Auth>
       ? Auth extends Authorization<any, any>
         ? ImpliedAuthFields<Auth>
-        : object
-      : object
-    : object
+        : {}
+      : {}
+    : {}
 >;
 
 /**

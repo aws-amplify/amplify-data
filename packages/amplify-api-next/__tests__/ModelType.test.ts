@@ -1,11 +1,11 @@
 import { expectTypeTestsToPassAsync } from 'jest-tsd';
-import { a, ClientSchema } from '../src/index';
-// import {
-//   PublicProviders,
-//   PrivateProviders,
-//   Operations,
-//   Operation,
-// } from '@aws-amplify/amplify-api-next-types-alpha';
+import { a, defineData, ClientSchema } from '../index';
+import {
+  PublicProviders,
+  PrivateProviders,
+  Operations,
+  Operation,
+} from '../src/Authorization';
 
 // evaluates type defs in corresponding test-d.ts file
 it('should not produce static type errors', async () => {
@@ -13,6 +13,10 @@ it('should not produce static type errors', async () => {
 });
 
 describe('model auth rules', () => {
+  // it('rejects items that are not auth rules', () => {
+
+  // });
+
   it('can define public auth with no provider', () => {
     const schema = a.schema({
       widget: a
@@ -22,7 +26,7 @@ describe('model auth rules', () => {
         .authorization([a.allow.public()]),
     });
 
-    const graphql = schema.transform().schema;;
+    const graphql = schema.transform().schema
     expect(graphql).toMatchSnapshot();
   });
 
@@ -48,7 +52,7 @@ describe('model auth rules', () => {
         .authorization([a.allow.private()]),
     });
 
-    const graphql = schema.transform().schema;;
+    const graphql = schema.transform().schema
     expect(graphql).toMatchSnapshot();
   });
 
@@ -61,7 +65,7 @@ describe('model auth rules', () => {
         .authorization([a.allow.owner()]),
     });
 
-    const graphql = schema.transform().schema;;
+    const graphql = schema.transform().schema
     expect(graphql).toMatchSnapshot();
   });
 
@@ -74,7 +78,7 @@ describe('model auth rules', () => {
         .authorization([a.allow.owner().inField('title')]),
     });
 
-    const graphql = schema.transform().schema;;
+    const graphql = schema.transform().schema
     expect(graphql).toMatchSnapshot();
   });
 
@@ -87,7 +91,7 @@ describe('model auth rules', () => {
         .authorization([a.allow.public().to(['create', 'read'])]),
     });
 
-    const graphql = schema.transform().schema;;
+    const graphql = schema.transform().schema
     expect(graphql).toMatchSnapshot();
   });
 
@@ -100,7 +104,7 @@ describe('model auth rules', () => {
         .authorization([a.allow.owner().identityClaim('user_id')]),
     });
 
-    const graphql = schema.transform().schema;;
+    const graphql = schema.transform().schema
     expect(graphql).toMatchSnapshot();
   });
 
@@ -114,7 +118,7 @@ describe('model auth rules', () => {
         .authorization([a.allow.multipleOwners().inField('authors')]),
     });
 
-    const graphql = schema.transform().schema;;
+    const graphql = schema.transform().schema
     expect(graphql).toMatchSnapshot();
   });
 
@@ -140,7 +144,7 @@ describe('model auth rules', () => {
     // I SHOULD be able to assign a `string[]`;
     authors = ['username1', 'username2'];
 
-    const graphql = schema.transform().schema;;
+    const graphql = schema.transform().schema
     expect(graphql).toMatchSnapshot();
   });
 
@@ -169,7 +173,7 @@ describe('model auth rules', () => {
         .authorization([a.allow.specificGroup('Admins')]),
     });
 
-    const graphql = schema.transform().schema;;
+    const graphql = schema.transform().schema
     expect(graphql).toMatchSnapshot();
   });
 
@@ -182,7 +186,7 @@ describe('model auth rules', () => {
         .authorization([a.allow.specificGroups(['Admins', 'Moderators'])]),
     });
 
-    const graphql = schema.transform().schema;;
+    const graphql = schema.transform().schema
     expect(graphql).toMatchSnapshot();
   });
 
@@ -195,7 +199,7 @@ describe('model auth rules', () => {
         .authorization([a.allow.groupDefinedIn('businessUnitOwner')]),
     });
 
-    const graphql = schema.transform().schema;;
+    const graphql = schema.transform().schema
     expect(graphql).toMatchSnapshot();
   });
 
@@ -210,7 +214,7 @@ describe('model auth rules', () => {
         ]),
     });
 
-    const graphql = schema.transform().schema;;
+    const graphql = schema.transform().schema
     expect(graphql).toMatchSnapshot();
   });
 
@@ -225,7 +229,7 @@ describe('model auth rules', () => {
         ]),
     });
 
-    const graphql = schema.transform().schema;;
+    const graphql = schema.transform().schema
     expect(graphql).toMatchSnapshot();
   });
 
@@ -243,11 +247,10 @@ describe('model auth rules', () => {
         ]),
     });
 
-    const graphql = schema.transform().schema;;
+    const graphql = schema.transform().schema
     expect(graphql).toMatchSnapshot();
   });
 
-/*   
   it(`includes auth from fields`, () => {
     const schema = a.schema({
       widget: a.model({
@@ -257,13 +260,10 @@ describe('model auth rules', () => {
           .authorization([
             a.allow.owner().inField('customOwner').to(['create', 'read']),
           ]),
-      }).authorization([
-        a.allow.owner().inField('customOwner').to(['create', 'read']),
-      ]),
+      }),
     });
 
     type Schema = ClientSchema<typeof schema>;
-    type Widget = Schema['widget'];
     type CustomOwnerType = Schema['widget']['customOwner'];
 
     // single owner should be allowed
@@ -273,7 +273,7 @@ describe('model auth rules', () => {
     // @ts-expect-error
     customOwner = ['multiple', 'owners'];
 
-    const graphql = defineData({ schema }).schema;
+    const graphql = schema.transform().schema
     expect(graphql).toMatchSnapshot();
   });
 
@@ -299,7 +299,7 @@ describe('model auth rules', () => {
     // @ts-expect-error
     customOwner = ['multiple', 'owners'];
 
-    const graphql = defineData({ schema }).schema;
+    const graphql = schema.transform().schema
     expect(graphql).toMatchSnapshot();
   });
 
@@ -313,7 +313,7 @@ describe('model auth rules', () => {
           .authorization([a.allow.public(provider)]),
       });
 
-      const graphql = defineData({ schema }).schema;
+      const graphql = schema.transform().schema
       expect(graphql).toMatchSnapshot();
     });
 
@@ -339,7 +339,7 @@ describe('model auth rules', () => {
             ]),
         });
 
-        const graphql = defineData({ schema }).schema;
+        const graphql = schema.transform().schema
         expect(graphql).toMatchSnapshot();
       });
     }
@@ -355,7 +355,7 @@ describe('model auth rules', () => {
           .authorization([a.allow.private(provider)]),
       });
 
-      const graphql = defineData({ schema }).schema;
+      const graphql = schema.transform().schema
       expect(graphql).toMatchSnapshot();
     });
 
@@ -378,10 +378,9 @@ describe('model auth rules', () => {
             .authorization([a.allow.private(provider).to(operations)]),
         });
 
-        const graphql = defineData({ schema }).schema;
+        const graphql = schema.transform().schema
         expect(graphql).toMatchSnapshot();
       });
     }
   }
- */  
 });

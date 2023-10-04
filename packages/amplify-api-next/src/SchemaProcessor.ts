@@ -1,15 +1,15 @@
-import {
+import type {
   ModelSchema,
   ModelSchemaType,
   InternalSchema,
   ModelSchemaParamShape,
-  ModelField, InternalField,
-  InternalRelationalField,
-  ModelType, InternalModel,
-  Authorization, DerivedApiDefinition, __data
-} from '@aws-amplify/amplify-api-next-types-alpha';
-
+} from './ModelSchema';
+import type { ModelField, InternalField } from './ModelField';
+import type { InternalRelationalField } from './ModelRelationalField';
+import type { ModelType, InternalModel } from './ModelType';
 import { fields } from './ModelField';
+import { Authorization, __data } from './Authorization';
+import { DerivedApiDefinition } from './types';
 
 type ScalarFieldDef = Exclude<InternalField['data'], { fieldType: 'model' }>;
 type ModelFieldDef = Extract<
@@ -89,8 +89,8 @@ function modelFieldToGql(fieldDef: ModelFieldDef) {
     type,
     relatedModel,
     array,
-    // valueOptional,
-    // arrayOptional,
+    valueOptional,
+    arrayOptional,
     connectionName,
   } = fieldDef;
 
@@ -192,7 +192,7 @@ function calculateAuth(authorization: Authorization<any, any>[]) {
   return { authString, authFields };
 }
 
-const schemaPreprocessor =(
+const schemaPreprocessor = (
   schema: InternalSchema
 ): string => {
   const gqlModels: string[] = [];

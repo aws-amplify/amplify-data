@@ -1,4 +1,10 @@
-import type {ModelSchemaType, ModelSchemaParamShape, ModelSchema, InternalSchema, DerivedApiDefinition} from '@aws-amplify/amplify-api-next-types-alpha';
+import type {DerivedApiDefinition} from '@aws-amplify/amplify-api-next-types-alpha';
+import type {
+  ModelType,
+  ModelTypeParamShape,
+  InternalModel,
+} from './ModelType';
+export { __auth } from './ModelField';
 import { defineData } from './SchemaProcessor';
 
 /*
@@ -7,6 +13,32 @@ import { defineData } from './SchemaProcessor';
  * TSC output diagnostics to benchmark
  */
 
+type ModelSchemaModels = Record<string, ModelType<ModelTypeParamShape, any>>;
+type InternalSchemaModels = Record<string, InternalModel>;
+
+export type ModelSchemaParamShape = {
+  models: ModelSchemaModels;
+};
+
+type ModelSchemaData = {
+  models: ModelSchemaModels;
+};
+
+export type InternalSchema = {
+  data: {
+    models: InternalSchemaModels;
+  };
+};
+
+export type ModelSchema<T extends ModelSchemaParamShape> = {
+  data: T;
+  transform: () => DerivedApiDefinition
+};
+
+/**
+ * Amplify API Next Model Schema shape
+ */
+export type ModelSchemaType = ModelSchema<ModelSchemaParamShape>;
 
 /**
  * Model Schema type guard
@@ -20,7 +52,7 @@ export const isModelSchema = (
 };
 
 function _schema<T extends ModelSchemaParamShape>(models: T['models']) {
-  const data: ModelSchemaParamShape["models"] = { models };
+  const data: ModelSchemaData = { models };
 
   const transform = (): DerivedApiDefinition => {
     const internalSchema: InternalSchema = {data} as InternalSchema;
@@ -31,7 +63,7 @@ function _schema<T extends ModelSchemaParamShape>(models: T['models']) {
   return { data, transform } as ModelSchema<T>;
 }
 
-export function schema<Models extends ModelSchemaParamShape["models"]>(
+export function schema<Models extends ModelSchemaModels>(
   models: Models
 ): ModelSchema<{ models: Models }> {
   return _schema(models);
