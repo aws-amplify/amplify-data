@@ -1,9 +1,9 @@
-import { ModelField, InternalField, fields } from './ModelField';
+import { ModelField, InternalField } from './ModelField';
 import type {
   ModelRelationalField,
   InternalRelationalField,
 } from './ModelRelationalField';
-import { Authorization, ImpliedAuthFields } from './Authorization';
+import { Authorization } from './Authorization';
 import type { SetTypeSubArg } from './util';
 
 type ModelFields = Record<

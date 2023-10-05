@@ -4,7 +4,7 @@ on: workflow_call
 
 jobs:
   unit_test:
-    name: Unit Tests
+    name: Lint & Unit Tests
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -15,4 +15,4 @@ jobs:
         uses: ./amplify-api-next/.github/actions/node-and-build
       - name: Run tests
         working-directory: ./amplify-api-next
-        run: npm run test
+        run: npm run lint && npm run test

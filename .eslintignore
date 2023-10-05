@@ -1,2 +1,4 @@
-.eslintrc.js
 **/*.json
+**/lib-esm/**
+tsconfig.json
+tsconfig.base.json

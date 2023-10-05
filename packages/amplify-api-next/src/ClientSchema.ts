@@ -122,7 +122,7 @@ type ModelImpliedAuthFields<Schema extends ModelSchema<any>> = {
   >
     ? ImpliedAuthFields<Model['authorization'][number]> &
         ImpliedAuthFieldsFromFields<Model>
-    : {};
+    : object;
 };
 
 type ImpliedAuthFieldsFromFields<T> = UnionToIntersection<
@@ -132,9 +132,9 @@ type ImpliedAuthFieldsFromFields<T> = UnionToIntersection<
         | ModelRelationalField<any, any, any, infer Auth>
       ? Auth extends Authorization<any, any>
         ? ImpliedAuthFields<Auth>
-        : {}
-      : {}
-    : {}
+        : object
+      : object
+    : object
 >;
 
 /**

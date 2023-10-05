@@ -7,6 +7,6 @@ export type ExtractModelMeta<T extends Record<any, any>> =
   T[typeof __modelMeta__];
 
 export type ModelTypes<
-  T extends Record<any, any> = never,
-  ModelMeta extends Record<any, any> = any,
+  _T extends Record<any, any> = never,
+  _ModelMeta extends Record<any, any> = any,
 > = any;
