@@ -21,7 +21,7 @@
     // "jsdoc",
     "import"
   ],
-  "ignorePatterns": ["**/lib-esm/**/*.js"],
+  "ignorePatterns": ["**/lib-esm/**/*.js", "**/*.d.ts"],
   "rules": {
     "no-duplicate-imports": "error",
     "no-tabs": "error",
