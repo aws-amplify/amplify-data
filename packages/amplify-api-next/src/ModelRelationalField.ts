@@ -43,7 +43,7 @@ export type ModelRelationalField<
   // RM adds structural separation with ModelField; easier to identify it when mapping to ClientTypes
   RM extends string | symbol,
   K extends keyof ModelRelationalField<T, RM> = never,
-  Auth = undefined
+  Auth = undefined,
 > = Omit<
   {
     valueOptional(): ModelRelationalField<
@@ -55,7 +55,7 @@ export type ModelRelationalField<
       K | 'arrayOptional'
     >;
     authorization<AuthRuleType extends Authorization<any, any>>(
-      rules: AuthRuleType[]
+      rules: AuthRuleType[],
     ): ModelRelationalField<T, K | 'authorization', K, AuthRuleType>;
   },
   K
@@ -79,7 +79,7 @@ export type InternalRelationalField = ModelRelationalField<
 function _modelRelationalField<
   T extends ModelRelationalFieldParamShape,
   RelatedModel extends string,
-  RT extends ModelRelationshipTypes
+  RT extends ModelRelationshipTypes,
 >(type: RT, relatedModel: RelatedModel, connectionName?: string) {
   const data: ModelRelationalFieldData = {
     relatedModel,
@@ -124,7 +124,7 @@ export type ModelRelationalTypeArgFactory<
   RM extends string,
   RT extends RelationshipTypes,
   IsArray extends boolean,
-  ConnectionName extends string | undefined = undefined
+  ConnectionName extends string | undefined = undefined,
 > = {
   type: 'model';
   relatedModel: RM;
@@ -161,7 +161,7 @@ export function belongsTo<RM extends string>(relatedModel: RM) {
 
 export function manyToMany<RM extends string, CN extends string>(
   relatedModel: RM,
-  opts: { connectionName: CN }
+  opts: { connectionName: CN },
 ) {
   return _modelRelationalField<
     ModelRelationalTypeArgFactory<

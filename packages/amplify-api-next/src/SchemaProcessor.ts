@@ -33,13 +33,13 @@ function isScalarFieldDef(data: any): data is ScalarFieldDef {
 }
 
 function isModelField(
-  field: ModelField<any, any>
+  field: ModelField<any, any>,
 ): field is { data: ModelFieldDef } {
   return isModelFieldDef((field as any).data);
 }
 
 function isScalarField(
-  field: ModelField<any, any>
+  field: ModelField<any, any>,
 ): field is { data: ScalarFieldDef } {
   return isScalarFieldDef((field as any).data);
 }
@@ -167,7 +167,7 @@ function calculateAuth(authorization: Authorization<any, any>[]) {
     if (rule.groups) {
       // does `group` need to be escaped?
       ruleParts.push(
-        `groups: [${rule.groups.map((group) => `"${group}"`).join(', ')}]`
+        `groups: [${rule.groups.map((group) => `"${group}"`).join(', ')}]`,
       );
     }
 
@@ -192,9 +192,7 @@ function calculateAuth(authorization: Authorization<any, any>[]) {
   return { authString, authFields };
 }
 
-const schemaPreprocessor = (
-  schema: InternalSchema
-): string => {
+const schemaPreprocessor = (schema: InternalSchema): string => {
   const gqlModels: string[] = [];
 
   for (const [modelName, modelDef] of Object.entries(schema.data.models)) {
@@ -207,7 +205,7 @@ const schemaPreprocessor = (
     const [partitionKey] = identifier;
 
     const { authString, authFields } = calculateAuth(
-      modelDef.data.authorization
+      modelDef.data.authorization,
     );
 
     const fieldLevelAuthRules: {
@@ -216,7 +214,7 @@ const schemaPreprocessor = (
 
     for (const [fieldName, fieldDef] of Object.entries(fields)) {
       const { authString, authFields: fieldAuthField } = calculateAuth(
-        fieldDef.data.authorization
+        fieldDef.data.authorization,
       );
 
       if (authString) fieldLevelAuthRules[fieldName] = authString;
@@ -236,19 +234,19 @@ const schemaPreprocessor = (
 
       if (isModelField(fieldDef)) {
         gqlFields.push(
-          `${fieldName}: ${modelFieldToGql(fieldDef.data)}${fieldAuth}`
+          `${fieldName}: ${modelFieldToGql(fieldDef.data)}${fieldAuth}`,
         );
       } else if (isScalarField(fieldDef)) {
         if (fieldName === partitionKey) {
           gqlFields.push(
             `${fieldName}: ${scalarFieldToGql(
               fieldDef.data,
-              identifier
-            )}${fieldAuth}`
+              identifier,
+            )}${fieldAuth}`,
           );
         } else {
           gqlFields.push(
-            `${fieldName}: ${scalarFieldToGql(fieldDef.data)}${fieldAuth}`
+            `${fieldName}: ${scalarFieldToGql(fieldDef.data)}${fieldAuth}`,
           );
         }
       } else {
@@ -275,7 +273,7 @@ const schemaPreprocessor = (
 export function defineData(arg: {
   schema: InternalSchema;
 }): DerivedApiDefinition {
-  const schema = schemaPreprocessor(arg.schema)
+  const schema = schemaPreprocessor(arg.schema);
 
   return { schema, functionSlots: [] };
 }

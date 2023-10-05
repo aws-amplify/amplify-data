@@ -7,18 +7,18 @@ import {
   default as a,
   type ClientSchema,
   defineData,
-} from "@aws-amplify/amplify-api-next-alpha";
+} from '@aws-amplify/amplify-api-next-alpha';
 
 const schema = a.schema({
   Post: a.model({
     id: a.id(),
     title: a.string(),
-    comments: a.hasMany("Comment"),
+    comments: a.hasMany('Comment'),
   }),
   Comment: a.model({
     id: a.id(),
     content: a.string(),
-    post: a.belongsTo("Post"),
+    post: a.belongsTo('Post'),
   }),
 });
 

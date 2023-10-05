@@ -44,7 +44,7 @@ export type ClientSchema<
   IdentifierMeta = ModelMeta<SchemaTypes<Schema>>,
   RelationshipMeta = ExtractRelationalMetadata<Fields, ResolvedFields>,
   Meta = IdentifierMeta &
-    RelationshipMeta & { FlatSchema: FlatFieldsWithRelationships }
+    RelationshipMeta & { FlatSchema: FlatFieldsWithRelationships },
 > = Prettify<
   ResolvedFields & {
     [__modelMeta__]: Meta;
@@ -53,7 +53,7 @@ export type ClientSchema<
 
 type ExtractRelationalMetadata<
   FlattenedSchema,
-  ResolvedFields extends Record<string, unknown>
+  ResolvedFields extends Record<string, unknown>,
 > = UnionToIntersection<
   ExcludeEmpty<
     {
@@ -180,14 +180,14 @@ type GetRelationshipRef<
     ? TypeArg['arrayOptional'] extends true
       ? Array<Model> | null | undefined
       : Array<Model>
-    : Model
+    : Model,
   // future: we can add an arg here for pagination and other options
 > = Flat extends true ? Value : () => Promise<Prettify<Value>>;
 
 type ResolveRelationalFieldsForModel<
   Schema,
   ModelName extends keyof Schema,
-  Flat extends boolean
+  Flat extends boolean,
 > = {
   [FieldName in keyof Schema[ModelName]]: Schema[ModelName][FieldName] extends ModelRelationalFieldParamShape
     ? Schema[ModelName][FieldName]['relatedModel'] extends keyof Schema

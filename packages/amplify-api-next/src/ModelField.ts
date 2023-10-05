@@ -63,7 +63,7 @@ export type ModelField<
   T extends ModelFieldTypeParamOuter,
   // rename K
   K extends keyof ModelField<T> = never,
-  Auth = undefined
+  Auth = undefined,
 > = Omit<
   {
     optional(): ModelField<T | null, K | 'optional'>;
@@ -72,7 +72,7 @@ export type ModelField<
     // TODO: should be T, but .array breaks this constraint. Fix later
     default(val: ModelFieldTypeParamOuter): ModelField<T, K | 'default'>;
     authorization<AuthRuleType extends Authorization<any, any>>(
-      rules: AuthRuleType[]
+      rules: AuthRuleType[],
     ): ModelField<T, K | 'authorization', AuthRuleType>;
   },
   K
