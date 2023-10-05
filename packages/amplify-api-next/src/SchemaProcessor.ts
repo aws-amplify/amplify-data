@@ -1,13 +1,7 @@
-import type {
-  ModelSchema,
-  ModelSchemaType,
-  InternalSchema,
-  ModelSchemaParamShape,
-} from './ModelSchema';
-import type { ModelField, InternalField } from './ModelField';
+import type { InternalSchema } from './ModelSchema';
+import { type ModelField, type InternalField, fields } from './ModelField';
 import type { InternalRelationalField } from './ModelRelationalField';
 import type { ModelType, InternalModel } from './ModelType';
-import { fields } from './ModelField';
 import { Authorization, __data } from './Authorization';
 import { DerivedApiDefinition } from './types';
 
@@ -85,14 +79,7 @@ function scalarFieldToGql(fieldDef: ScalarFieldDef, identifier?: string[]) {
 }
 
 function modelFieldToGql(fieldDef: ModelFieldDef) {
-  const {
-    type,
-    relatedModel,
-    array,
-    valueOptional,
-    arrayOptional,
-    connectionName,
-  } = fieldDef;
+  const { type, relatedModel, array, connectionName } = fieldDef;
 
   let field = relatedModel;
 

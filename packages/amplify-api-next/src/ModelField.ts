@@ -1,4 +1,4 @@
-import { Authorization, __data } from './Authorization';
+import { Authorization } from './Authorization';
 
 /**
  * Used to "attach" auth types to ModelField without exposing them on the builder.

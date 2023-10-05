@@ -13,7 +13,7 @@ export type SetTypeSubArg<T, SetKey extends keyof T, Val> = {
   [Property in keyof T]: SetKey extends Property ? Val : T[Property];
 };
 
-export type Prettify<T> = T extends () => {}
+export type Prettify<T> = T extends () => any
   ? () => ReturnType<T>
   : T extends object
   ? { [P in keyof T]: Prettify<T[P]> }
@@ -44,7 +44,11 @@ export type UnionToIntersection<U> = (
  * @example
  * ExcludeEmpty<{a: 1} | {} | {b: 2}> => {a: 1} | {b: 2}
  */
-export type ExcludeEmpty<U> = U extends U ? ({} extends U ? never : U) : never;
+export type ExcludeEmpty<U> = U extends U
+  ? object extends U
+    ? never
+    : U
+  : never;
 
 export type Expect<T extends true> = T;
 export type ExpectTrue<T extends true> = T;
@@ -63,6 +67,6 @@ export type NotAny<T> = true extends IsAny<T> ? false : true;
 
 export type Debug<T> = { [K in keyof T]: T[K] };
 
-export type ObjectIsNonEmpty<T extends {}> = keyof T extends never
+export type ObjectIsNonEmpty<T extends object> = keyof T extends never
   ? false
   : true;

@@ -73,13 +73,6 @@ export const Operations = [
 ] as const;
 export type Operation = (typeof Operations)[number];
 
-// type ImpliedFields<Fields extends string> = Record<
-//   Fields,
-//   any
-// >;
-
-type Shape = Record<string, any>;
-
 export type Authorization<
   AuthField extends string | undefined,
   AuthFieldPlurality extends boolean,
@@ -96,9 +89,9 @@ export type Authorization<
   };
 };
 
-export type OwnerField = {};
+export type OwnerField = object;
 
-type BuilderMethods<T extends {}> = {
+type BuilderMethods<T extends object> = {
   [K in keyof T as T[K] extends (...args: any) => any ? K : never]: T[K];
 };
 
@@ -109,7 +102,7 @@ type BuilderMethods<T extends {}> = {
  * @param without The field to prune.
  * @returns The pruned object.
  */
-function omit<T extends {}, O extends string>(
+function omit<T extends object, O extends string>(
   original: T,
   without: O,
 ): Omit<T, O> {
@@ -173,7 +166,7 @@ function validateProvider(
 function authData<
   Field extends string | undefined = 'owner',
   isMulti extends boolean = false,
-  Builders extends {} = {},
+  Builders extends object = object,
 >(
   defaults: Partial<Authorization<Field, isMulti>[typeof __data]>,
   builderMethods: Builders,
@@ -345,8 +338,8 @@ export type ImpliedAuthField<T extends Authorization<any, any>> =
       ? isMulti extends true
         ? { [K in Field]?: string[] }
         : { [K in Field]?: string }
-      : {}
-    : {};
+      : object
+    : object;
 
 /**
  * Turns the type from a list of `Authorization` rules like this:

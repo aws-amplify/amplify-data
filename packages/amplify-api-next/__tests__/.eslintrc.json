@@ -1,0 +1,8 @@
+{
+  "rules": {
+    // needed for testing
+    "@typescript-eslint/no-unused-vars": "off",
+    // needed for @ts-expect-error
+    "@typescript-eslint/ban-ts-comment": "off"
+  }
+}

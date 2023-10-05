@@ -6,7 +6,7 @@ export declare const __modelMeta__: unique symbol;
 export type ExtractModelMeta<T extends Record<any, any>> =
   T[typeof __modelMeta__];
 
-type Prettify<T> = T extends () => {}
+type Prettify<T> = T extends () => any
   ? () => ReturnType<T>
   : T extends object
   ? { [P in keyof T]: Prettify<T[P]> }
@@ -50,7 +50,7 @@ type MutationInput<
   ModelMeta extends Record<any, any>,
   Relationships = ModelMeta['relationships'],
 > = {
-  [Prop in keyof Fields as Fields[Prop] extends () => {}
+  [Prop in keyof Fields as Fields[Prop] extends () => any
     ? never
     : Prop]: Fields[Prop];
 } & {
@@ -60,7 +60,7 @@ type MutationInput<
 type ArrElementOrElement<ArrType> =
   ArrType extends readonly (infer ElementType)[] ? ElementType : ArrType;
 
-type FlatSchema<T, FlattenArray = true> = T extends () => {}
+type FlatSchema<T, FlattenArray = true> = T extends () => any
   ? FlattenArray extends true
     ? ArrElementOrElement<Awaited<ReturnType<T>>>
     : Awaited<ReturnType<T>>
@@ -69,7 +69,7 @@ type FlatSchema<T, FlattenArray = true> = T extends () => {}
   : T;
 
 type FlattenKeys<
-  T extends Record<string, unknown> = {},
+  T extends Record<string, unknown> = Record<string, unknown>,
   Key = keyof T,
 > = Key extends string
   ? T[Key] extends Record<string, unknown>
@@ -101,7 +101,7 @@ export type ModelTypes<
           ): Promise<T[K]>;
           list<SS extends FlattenKeys<Flat[K]>[] = never[]>(options?: {
             // TODO: strongly type filter
-            filter?: {};
+            filter?: object;
             selectionSet?: SS;
           }): Promise<Array<Joined<T[K], SS>>>;
 

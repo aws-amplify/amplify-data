@@ -12,12 +12,12 @@
     }
   },
   "scripts": {
-    "lint": "eslint \"**/*.ts*\"",
     "build": "npm run build:esm",
     "build:esm": "npm run clean && tsc -p ./tsconfig.json",
     "build:esm:watch": "npm run build:esm --watch",
+    "clean": "rimraf lib-esm tsconfig.tsbuildinfo",
     "test": "echo \"No tests\"",
-    "clean": "rimraf lib-esm tsconfig.tsbuildinfo"
+    "lint": "eslint ."
   },
   "devDependencies": {
     "typescript": "^5.1.6"
