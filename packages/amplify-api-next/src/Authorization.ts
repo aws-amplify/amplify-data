@@ -82,7 +82,7 @@ type Shape = Record<string, any>;
 
 export type Authorization<
   AuthField extends string | undefined,
-  AuthFieldPlurality extends boolean
+  AuthFieldPlurality extends boolean,
 > = {
   [__data]: {
     strategy?: Strategy;
@@ -111,7 +111,7 @@ type BuilderMethods<T extends {}> = {
  */
 function omit<T extends {}, O extends string>(
   original: T,
-  without: O
+  without: O,
 ): Omit<T, O> {
   const pruned = { ...original };
   delete (pruned as any)[without];
@@ -120,7 +120,7 @@ function omit<T extends {}, O extends string>(
 
 function to<SELF extends Authorization<any, any>>(
   this: SELF,
-  operations: Operation[]
+  operations: Operation[],
 ) {
   (this as any)[__data].operations = operations;
   return omit(this, 'to');
@@ -128,7 +128,7 @@ function to<SELF extends Authorization<any, any>>(
 
 function inField<SELF extends Authorization<any, any>, Field extends string>(
   this: SELF,
-  field: Field
+  field: Field,
 ) {
   this[__data].groupOrOwnerField = field;
   const built = omit(this, 'inField');
@@ -147,7 +147,7 @@ function inField<SELF extends Authorization<any, any>, Field extends string>(
  */
 function identityClaim<SELF extends Authorization<any, any>>(
   this: SELF,
-  property: string
+  property: string,
 ) {
   this[__data].identityClaim = property;
   return omit(this, 'identityClaim');
@@ -155,7 +155,7 @@ function identityClaim<SELF extends Authorization<any, any>>(
 
 function withClaimIn<SELF extends Authorization<any, any>>(
   this: SELF,
-  property: string
+  property: string,
 ) {
   this[__data].groupClaim = property;
   return omit(this, 'withClaimIn');
@@ -163,7 +163,7 @@ function withClaimIn<SELF extends Authorization<any, any>>(
 
 function validateProvider(
   needle: Provider | undefined,
-  haystack: readonly Provider[]
+  haystack: readonly Provider[],
 ) {
   if (needle && !haystack.includes(needle)) {
     throw new Error(`Invalid provider (${needle}) given!`);
@@ -173,10 +173,10 @@ function validateProvider(
 function authData<
   Field extends string | undefined = 'owner',
   isMulti extends boolean = false,
-  Builders extends {} = {}
+  Builders extends {} = {},
 >(
   defaults: Partial<Authorization<Field, isMulti>[typeof __data]>,
-  builderMethods: Builders
+  builderMethods: Builders,
 ): Authorization<Field, isMulti> & Builders {
   return {
     [__data]: {
@@ -208,7 +208,7 @@ export const allow = {
       },
       {
         to,
-      }
+      },
     );
   },
 
@@ -221,7 +221,7 @@ export const allow = {
       },
       {
         to,
-      }
+      },
     );
   },
 
@@ -236,7 +236,7 @@ export const allow = {
         to,
         inField,
         identityClaim,
-      }
+      },
     );
   },
 
@@ -256,7 +256,7 @@ export const allow = {
         to,
         inField,
         identityClaim,
-      }
+      },
     );
   },
 
@@ -270,7 +270,7 @@ export const allow = {
       {
         to,
         withClaimIn,
-      }
+      },
     );
   },
 
@@ -284,7 +284,7 @@ export const allow = {
       {
         to,
         withClaimIn,
-      }
+      },
     );
   },
 
@@ -297,7 +297,7 @@ export const allow = {
       },
       {
         to,
-      }
+      },
     );
   },
 
@@ -311,7 +311,7 @@ export const allow = {
       },
       {
         to,
-      }
+      },
     );
   },
 } as const;

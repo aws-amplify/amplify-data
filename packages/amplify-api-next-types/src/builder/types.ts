@@ -21,7 +21,7 @@ export interface DerivedApiDefinition {
 
 export type DerivedModelSchema = {
   data: {
-    models: object
+    models: object;
   };
-  transform: () => DerivedApiDefinition
+  transform: () => DerivedApiDefinition;
 };

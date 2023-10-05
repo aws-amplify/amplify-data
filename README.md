@@ -3,21 +3,18 @@
 TypeScript-first AWS AppSync Schema Builder
 
 ```ts
-import {
-  a,
-  type ClientSchema,
-} from "@aws-amplify/amplify-api-next-alpha";
+import { a, type ClientSchema } from '@aws-amplify/amplify-api-next-alpha';
 
 const schema = a.schema({
   Post: a.model({
     id: a.id(),
     title: a.string(),
-    comments: a.hasMany("Comment"),
+    comments: a.hasMany('Comment'),
   }),
   Comment: a.model({
     id: a.id(),
     content: a.string(),
-    post: a.belongsTo("Post"),
+    post: a.belongsTo('Post'),
   }),
 });
 

@@ -1,4 +1,4 @@
-import type {DerivedApiDefinition} from '@aws-amplify/amplify-api-next-types-alpha';
+import type { DerivedApiDefinition } from '@aws-amplify/amplify-api-next-types-alpha';
 import type {
   ModelType,
   ModelTypeParamShape,
@@ -32,7 +32,7 @@ export type InternalSchema = {
 
 export type ModelSchema<T extends ModelSchemaParamShape> = {
   data: T;
-  transform: () => DerivedApiDefinition
+  transform: () => DerivedApiDefinition;
 };
 
 /**
@@ -46,7 +46,7 @@ export type ModelSchemaType = ModelSchema<ModelSchemaParamShape>;
  * @returns true if the given value is a ModelSchema
  */
 export const isModelSchema = (
-  schema: string | ModelSchemaType
+  schema: string | ModelSchemaType,
 ): schema is ModelSchemaType => {
   return typeof schema === 'object' && schema.data !== undefined;
 };
@@ -55,16 +55,16 @@ function _schema<T extends ModelSchemaParamShape>(models: T['models']) {
   const data: ModelSchemaData = { models };
 
   const transform = (): DerivedApiDefinition => {
-    const internalSchema: InternalSchema = {data} as InternalSchema;
+    const internalSchema: InternalSchema = { data } as InternalSchema;
 
-    return defineData({schema: internalSchema})
-  }
+    return defineData({ schema: internalSchema });
+  };
 
   return { data, transform } as ModelSchema<T>;
 }
 
 export function schema<Models extends ModelSchemaModels>(
-  models: Models
+  models: Models,
 ): ModelSchema<{ models: Models }> {
   return _schema(models);
 }

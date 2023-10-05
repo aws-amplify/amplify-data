@@ -61,7 +61,7 @@ type IdentifierFields<T extends ModelTypeParamShape> = keyof IdentifierMap<T> &
 
 type IdentifierType<
   T extends ModelTypeParamShape,
-  Fields extends string = IdentifierFields<T>
+  Fields extends string = IdentifierFields<T>,
 > = Array<Fields>;
 
 /**
@@ -127,14 +127,14 @@ type ConflictingAuthRules<T extends ModelTypeParamShape> =
 
 export type ModelType<
   T extends ModelTypeParamShape,
-  K extends keyof ModelType<T> = never
+  K extends keyof ModelType<T> = never,
 > = Omit<
   {
     identifier<ID extends IdentifierType<T> = []>(
-      identifier: ID
+      identifier: ID,
     ): ModelType<SetTypeSubArg<T, 'identifier', ID>, K | 'identifier'>;
     authorization<AuthRuleType extends Authorization<any, any>>(
-      rules: Exclude<AuthRuleType, ConflictingAuthRules<T>>[]
+      rules: Exclude<AuthRuleType, ConflictingAuthRules<T>>[],
     ): ModelType<
       SetTypeSubArg<T, 'authorization', AuthRuleType[]>,
       K | 'authorization'
@@ -175,7 +175,7 @@ function _model<T extends ModelTypeParamShape>(fields: T['fields']) {
 }
 
 export function model<T extends ModelFields>(
-  fields: T
+  fields: T,
 ): ModelType<{ fields: T; identifier: Array<'id'>; authorization: [] }> {
   return _model(fields);
 }

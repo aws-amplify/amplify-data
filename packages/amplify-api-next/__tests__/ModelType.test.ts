@@ -26,7 +26,7 @@ describe('model auth rules', () => {
         .authorization([a.allow.public()]),
     });
 
-    const graphql = schema.transform().schema
+    const graphql = schema.transform().schema;
     expect(graphql).toMatchSnapshot();
   });
 
@@ -52,7 +52,7 @@ describe('model auth rules', () => {
         .authorization([a.allow.private()]),
     });
 
-    const graphql = schema.transform().schema
+    const graphql = schema.transform().schema;
     expect(graphql).toMatchSnapshot();
   });
 
@@ -65,7 +65,7 @@ describe('model auth rules', () => {
         .authorization([a.allow.owner()]),
     });
 
-    const graphql = schema.transform().schema
+    const graphql = schema.transform().schema;
     expect(graphql).toMatchSnapshot();
   });
 
@@ -78,7 +78,7 @@ describe('model auth rules', () => {
         .authorization([a.allow.owner().inField('title')]),
     });
 
-    const graphql = schema.transform().schema
+    const graphql = schema.transform().schema;
     expect(graphql).toMatchSnapshot();
   });
 
@@ -91,7 +91,7 @@ describe('model auth rules', () => {
         .authorization([a.allow.public().to(['create', 'read'])]),
     });
 
-    const graphql = schema.transform().schema
+    const graphql = schema.transform().schema;
     expect(graphql).toMatchSnapshot();
   });
 
@@ -104,7 +104,7 @@ describe('model auth rules', () => {
         .authorization([a.allow.owner().identityClaim('user_id')]),
     });
 
-    const graphql = schema.transform().schema
+    const graphql = schema.transform().schema;
     expect(graphql).toMatchSnapshot();
   });
 
@@ -118,7 +118,7 @@ describe('model auth rules', () => {
         .authorization([a.allow.multipleOwners().inField('authors')]),
     });
 
-    const graphql = schema.transform().schema
+    const graphql = schema.transform().schema;
     expect(graphql).toMatchSnapshot();
   });
 
@@ -144,7 +144,7 @@ describe('model auth rules', () => {
     // I SHOULD be able to assign a `string[]`;
     authors = ['username1', 'username2'];
 
-    const graphql = schema.transform().schema
+    const graphql = schema.transform().schema;
     expect(graphql).toMatchSnapshot();
   });
 
@@ -173,7 +173,7 @@ describe('model auth rules', () => {
         .authorization([a.allow.specificGroup('Admins')]),
     });
 
-    const graphql = schema.transform().schema
+    const graphql = schema.transform().schema;
     expect(graphql).toMatchSnapshot();
   });
 
@@ -186,7 +186,7 @@ describe('model auth rules', () => {
         .authorization([a.allow.specificGroups(['Admins', 'Moderators'])]),
     });
 
-    const graphql = schema.transform().schema
+    const graphql = schema.transform().schema;
     expect(graphql).toMatchSnapshot();
   });
 
@@ -199,7 +199,7 @@ describe('model auth rules', () => {
         .authorization([a.allow.groupDefinedIn('businessUnitOwner')]),
     });
 
-    const graphql = schema.transform().schema
+    const graphql = schema.transform().schema;
     expect(graphql).toMatchSnapshot();
   });
 
@@ -214,7 +214,7 @@ describe('model auth rules', () => {
         ]),
     });
 
-    const graphql = schema.transform().schema
+    const graphql = schema.transform().schema;
     expect(graphql).toMatchSnapshot();
   });
 
@@ -229,7 +229,7 @@ describe('model auth rules', () => {
         ]),
     });
 
-    const graphql = schema.transform().schema
+    const graphql = schema.transform().schema;
     expect(graphql).toMatchSnapshot();
   });
 
@@ -247,7 +247,7 @@ describe('model auth rules', () => {
         ]),
     });
 
-    const graphql = schema.transform().schema
+    const graphql = schema.transform().schema;
     expect(graphql).toMatchSnapshot();
   });
 
@@ -273,7 +273,7 @@ describe('model auth rules', () => {
     // @ts-expect-error
     customOwner = ['multiple', 'owners'];
 
-    const graphql = schema.transform().schema
+    const graphql = schema.transform().schema;
     expect(graphql).toMatchSnapshot();
   });
 
@@ -299,7 +299,7 @@ describe('model auth rules', () => {
     // @ts-expect-error
     customOwner = ['multiple', 'owners'];
 
-    const graphql = schema.transform().schema
+    const graphql = schema.transform().schema;
     expect(graphql).toMatchSnapshot();
   });
 
@@ -313,7 +313,7 @@ describe('model auth rules', () => {
           .authorization([a.allow.public(provider)]),
       });
 
-      const graphql = schema.transform().schema
+      const graphql = schema.transform().schema;
       expect(graphql).toMatchSnapshot();
     });
 
@@ -339,7 +339,7 @@ describe('model auth rules', () => {
             ]),
         });
 
-        const graphql = schema.transform().schema
+        const graphql = schema.transform().schema;
         expect(graphql).toMatchSnapshot();
       });
     }
@@ -355,7 +355,7 @@ describe('model auth rules', () => {
           .authorization([a.allow.private(provider)]),
       });
 
-      const graphql = schema.transform().schema
+      const graphql = schema.transform().schema;
       expect(graphql).toMatchSnapshot();
     });
 
@@ -378,7 +378,7 @@ describe('model auth rules', () => {
             .authorization([a.allow.private(provider).to(operations)]),
         });
 
-        const graphql = schema.transform().schema
+        const graphql = schema.transform().schema;
         expect(graphql).toMatchSnapshot();
       });
     }

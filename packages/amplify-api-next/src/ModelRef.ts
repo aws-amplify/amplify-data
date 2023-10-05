@@ -1,4 +1,4 @@
-type RelationalMethods = "hasOne" | "hasMany" | "belongsTo" | "manyToMany";
+type RelationalMethods = 'hasOne' | 'hasMany' | 'belongsTo' | 'manyToMany';
 
 type ModelRefTypeParamShape = {
   model: string;
@@ -14,23 +14,23 @@ type ModelRefData = {
 
 export type ModelRef<
   T extends ModelRefTypeParamShape,
-  K extends keyof ModelRef<T> = never
+  K extends keyof ModelRef<T> = never,
 > = Omit<
   {
     hasOne(): ModelRef<
-      T & { relationshipType: "hasOne" },
+      T & { relationshipType: 'hasOne' },
       K | RelationalMethods
     >;
     hasMany(): ModelRef<
-      T & { relationshipType: "hasMany" },
+      T & { relationshipType: 'hasMany' },
       K | RelationalMethods
     >;
     belongsTo(): ModelRef<
-      T & { relationshipType: "belongsTo" },
+      T & { relationshipType: 'belongsTo' },
       K | RelationalMethods
     >;
     manyToMany(): ModelRef<
-      T & { relationshipType: "manyToMany" },
+      T & { relationshipType: 'manyToMany' },
       K | RelationalMethods
     >;
   },
@@ -41,7 +41,7 @@ export type InternalModelRef = ModelRef<any> & {
   data: ModelRefData;
 };
 
-function _ref<T extends ModelRefTypeParamShape>(model: T["model"]) {
+function _ref<T extends ModelRefTypeParamShape>(model: T['model']) {
   const data: ModelRefData = {
     model,
     optional: false,
@@ -50,22 +50,22 @@ function _ref<T extends ModelRefTypeParamShape>(model: T["model"]) {
 
   const builder: ModelRef<T> = {
     hasOne() {
-      data.relationshipType = "hasOne";
+      data.relationshipType = 'hasOne';
 
       return this;
     },
     hasMany() {
-      data.relationshipType = "hasMany";
+      data.relationshipType = 'hasMany';
 
       return this;
     },
     belongsTo() {
-      data.relationshipType = "belongsTo";
+      data.relationshipType = 'belongsTo';
 
       return this;
     },
     manyToMany() {
-      data.relationshipType = "manyToMany";
+      data.relationshipType = 'manyToMany';
 
       return this;
     },
