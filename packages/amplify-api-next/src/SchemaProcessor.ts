@@ -41,9 +41,9 @@ function isScalarField(
 function scalarFieldToGql(fieldDef: ScalarFieldDef, identifier?: string[]) {
   const {
     fieldType,
-    optional,
+    required,
     array,
-    arrayOptional,
+    arrayRequired,
     default: _default,
   } = fieldDef;
   let field: string = fieldType;
@@ -59,14 +59,14 @@ function scalarFieldToGql(fieldDef: ScalarFieldDef, identifier?: string[]) {
     return field;
   }
 
-  if (optional === false) {
+  if (required === true) {
     field += '!';
   }
 
   if (array) {
     field = `[${field}]`;
 
-    if (arrayOptional === false) {
+    if (arrayRequired === true) {
       field += '!';
     }
   }
@@ -79,23 +79,30 @@ function scalarFieldToGql(fieldDef: ScalarFieldDef, identifier?: string[]) {
 }
 
 function modelFieldToGql(fieldDef: ModelFieldDef) {
-  const { type, relatedModel, array, connectionName } = fieldDef;
+  const {
+    type,
+    relatedModel,
+    array,
+    connectionName,
+    valueRequired,
+    arrayRequired,
+  } = fieldDef;
 
   let field = relatedModel;
 
   // TODO: once we flip default to nullable, uncomment
-  // if (valueOptional === false) {
-  //   field += "!";
-  // }
+  if (valueRequired === true) {
+    field += '!';
+  }
 
   if (array) {
     field = `[${field}]`;
   }
 
   // TODO: once we flip default to nullable, uncomment
-  // if (arrayOptional === false) {
-  //   field += "!";
-  // }
+  if (arrayRequired === true) {
+    field += '!';
+  }
 
   field += ` @${type}`;
 
@@ -145,9 +152,9 @@ function calculateAuth(authorization: Authorization<any, any>[]) {
       // model field dep, type of which depends on whether multiple owner/group
       // is required.
       if (rule.multiOwner) {
-        authFields[rule.groupOrOwnerField] = fields.string().array().optional();
+        authFields[rule.groupOrOwnerField] = fields.string().array();
       } else {
-        authFields[rule.groupOrOwnerField] = fields.string().optional();
+        authFields[rule.groupOrOwnerField] = fields.string();
       }
     }
 

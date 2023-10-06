@@ -29,8 +29,8 @@ describe('InternalModel casting', () => {
 
   test('ModelType with options can be cast to InternalModel', () => {
     const m = model({
-      title: string(),
-      description: string().optional(),
+      title: string().required(),
+      description: string(),
     }).identifier(['title']);
 
     // @ts-expect-error
@@ -44,7 +44,7 @@ describe('InternalModel casting', () => {
 describe('identifiers', () => {
   test('model() with fields and default id produces expected type args', () => {
     const m = model({
-      title: string().optional(),
+      title: string(),
     });
 
     type MT = GetModelTypeArg<typeof m>;
@@ -52,7 +52,7 @@ describe('identifiers', () => {
     type ExpectedType = {
       fields: {
         // id: ModelField<string>;
-        title: ModelField<string | null, 'optional'>;
+        title: ModelField<string | null>;
       };
       identifier: Array<'id'>;
       authorization: [];
@@ -63,14 +63,14 @@ describe('identifiers', () => {
 
   test('model() with fields and custom id produces expected type args', () => {
     const m = model({
-      customId: id(),
+      customId: id().required(),
     }).identifier(['customId']);
 
     type MT = GetModelTypeArg<typeof m>;
 
     type ExpectedType = {
       fields: {
-        customId: ModelField<string>;
+        customId: ModelField<string, 'required'>;
       };
       identifier: Array<'customId'>;
       authorization: [];
@@ -79,8 +79,8 @@ describe('identifiers', () => {
     type test = Expect<Equal<MT, ExpectedType>>;
 
     const m2 = model({
-      customId: id(),
-      title: string().optional(),
+      customId: id().required(),
+      title: string(),
     });
 
     // optional fields can't be used as identifier

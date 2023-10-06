@@ -11,7 +11,7 @@
   "scripts": {
     "build": "npm run clean && tsc -p ./tsconfig.json",
     "clean": "rimraf lib-esm tsconfig.tsbuildinfo",
-    "test": "jest __tests__",
+    "test": "jest",
     "lint": "eslint ."
   },
   "dependencies": {
