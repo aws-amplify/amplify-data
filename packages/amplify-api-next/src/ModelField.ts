@@ -36,9 +36,9 @@ type FieldMeta = {
 
 type FieldData = {
   fieldType: ModelFieldType;
-  optional: boolean;
+  required: boolean;
   array: boolean;
-  arrayOptional: boolean;
+  arrayRequired: boolean;
   default: undefined | ModelFieldTypeParamOuter;
   authorization: Authorization<any, any>[];
 };
@@ -50,7 +50,14 @@ type ModelFieldTypeParamOuter =
   | Array<ModelFieldTypeParamInner>
   | null;
 
-type ToArray<T> = [T] extends [ModelFieldTypeParamInner] ? Array<T> : never;
+/**
+ * Field type arg mutators
+ */
+type ToOptional<T> = T | null;
+type ToRequired<T> = Exclude<T, null>;
+type ToArray<T> = [T] extends [ModelFieldTypeParamInner]
+  ? Array<T> | null // optional by default
+  : never;
 
 /**
  * Public API for the chainable builder methods exposed by Model Field.
@@ -66,9 +73,9 @@ export type ModelField<
   Auth = undefined,
 > = Omit<
   {
-    optional(): ModelField<T | null, K | 'optional'>;
+    required(): ModelField<ToRequired<T>, K | 'required'>;
     // Exclude `optional` after calling array, because both the value and the array itself can be optional
-    array(): ModelField<ToArray<T>, Exclude<K, 'optional'> | 'array'>;
+    array(): ModelField<ToArray<T>, Exclude<K, 'required'> | 'array'>;
     // TODO: should be T, but .array breaks this constraint. Fix later
     default(val: ModelFieldTypeParamOuter): ModelField<T, K | 'default'>;
     authorization<AuthRuleType extends Authorization<any, any>>(
@@ -94,10 +101,10 @@ export type InternalField = ModelField<ModelFieldTypeParamOuter, never> & {
  *
  * @typeParam T - holds the JS data type of the field; invoking the public methods changes this type accordingly
  * @example
- * string() => T = string
- * string().array() => T = string[]
- * string().array().optional() => T = string[] | null
- * string().optional().array().optional() => T = (string | null)[] | null
+ * string() => T = string | null
+ * string().array() => T = Array<string | null> | null
+ * string().array().required() => T = Array<string | null>
+ * string().required().array().required() => T = Array<string>
  *
  * @param fieldType - stores the GraphQL data type of the field
  */
@@ -108,22 +115,22 @@ function _field<T extends ModelFieldTypeParamOuter>(fieldType: ModelFieldType) {
 
   const data: FieldData = {
     fieldType,
-    optional: false,
+    required: false,
     array: false,
-    arrayOptional: false,
+    arrayRequired: false,
     default: undefined,
     authorization: [],
   };
 
   const builder: ModelField<T> = {
-    optional() {
+    required() {
       if (_meta.lastInvokedMethod === 'array') {
-        data.arrayOptional = true;
+        data.arrayRequired = true;
       } else {
-        data.optional = true;
+        data.required = true;
       }
 
-      _meta.lastInvokedMethod = 'optional';
+      _meta.lastInvokedMethod = 'required';
 
       return this;
     },
@@ -152,59 +159,59 @@ function _field<T extends ModelFieldTypeParamOuter>(fieldType: ModelFieldType) {
   return { ...builder, data } as InternalField as ModelField<T>;
 }
 
-function id(): ModelField<string> {
+function id(): ModelField<ToOptional<string>> {
   return _field(ModelFieldType.Id);
 }
 
-function string(): ModelField<string> {
+function string(): ModelField<ToOptional<string>> {
   return _field(ModelFieldType.String);
 }
 
-function integer(): ModelField<number> {
+function integer(): ModelField<ToOptional<number>> {
   return _field(ModelFieldType.Integer);
 }
 
-function float(): ModelField<number> {
+function float(): ModelField<ToOptional<number>> {
   return _field(ModelFieldType.Float);
 }
 
-function boolean(): ModelField<boolean> {
+function boolean(): ModelField<ToOptional<boolean>> {
   return _field(ModelFieldType.Boolean);
 }
 
-function date(): ModelField<Date> {
+function date(): ModelField<ToOptional<Date>> {
   return _field(ModelFieldType.Date);
 }
 
-function time(): ModelField<Date> {
+function time(): ModelField<ToOptional<Date>> {
   return _field(ModelFieldType.Time);
 }
 
-function datetime(): ModelField<Date> {
+function datetime(): ModelField<ToOptional<Date>> {
   return _field(ModelFieldType.DateTime);
 }
 
-function timestamp(): ModelField<number> {
+function timestamp(): ModelField<ToOptional<number>> {
   return _field(ModelFieldType.Timestamp);
 }
 
-function email(): ModelField<string> {
+function email(): ModelField<ToOptional<string>> {
   return _field(ModelFieldType.Email);
 }
 
-function json(): ModelField<any> {
+function json(): ModelField<ToOptional<any>> {
   return _field(ModelFieldType.JSON);
 }
 
-function phone(): ModelField<string> {
+function phone(): ModelField<ToOptional<string>> {
   return _field(ModelFieldType.Phone);
 }
 
-function url(): ModelField<string> {
+function url(): ModelField<ToOptional<string>> {
   return _field(ModelFieldType.Url);
 }
 
-function ipAddress(): ModelField<string> {
+function ipAddress(): ModelField<ToOptional<string>> {
   return _field(ModelFieldType.IPAddress);
 }
 

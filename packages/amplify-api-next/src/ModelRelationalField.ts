@@ -22,8 +22,8 @@ type ModelRelationalFieldData = {
   type: ModelRelationshipTypes;
   relatedModel: string;
   array: boolean;
-  valueOptional: boolean;
-  arrayOptional: boolean;
+  valueRequired: boolean;
+  arrayRequired: boolean;
   connectionName?: string;
   authorization: Authorization<any, any>[];
 };
@@ -32,9 +32,9 @@ export type ModelRelationalFieldParamShape = {
   type: 'model';
   relationshipType: string;
   relatedModel: string;
-  valueOptional: boolean;
   array: boolean;
-  arrayOptional: boolean;
+  valueRequired: boolean;
+  arrayRequired: boolean;
   connectionName?: string;
 };
 
@@ -46,13 +46,13 @@ export type ModelRelationalField<
   Auth = undefined,
 > = Omit<
   {
-    valueOptional(): ModelRelationalField<
-      SetTypeSubArg<T, 'valueOptional', true>,
-      K | 'valueOptional'
+    valueRequired(): ModelRelationalField<
+      SetTypeSubArg<T, 'valueRequired', true>,
+      K | 'valueRequired'
     >;
-    arrayOptional(): ModelRelationalField<
-      SetTypeSubArg<T, 'arrayOptional', true>,
-      K | 'arrayOptional'
+    arrayRequired(): ModelRelationalField<
+      SetTypeSubArg<T, 'arrayRequired', true>,
+      K | 'arrayRequired'
     >;
     authorization<AuthRuleType extends Authorization<any, any>>(
       rules: AuthRuleType[],
@@ -86,8 +86,8 @@ function _modelRelationalField<
     type,
     fieldType: 'model',
     array: false,
-    valueOptional: false,
-    arrayOptional: false,
+    valueRequired: false,
+    arrayRequired: false,
     connectionName,
     authorization: [],
   };
@@ -97,13 +97,13 @@ function _modelRelationalField<
   }
 
   const builder: ModelRelationalField<T, RelatedModel> = {
-    valueOptional() {
-      data.valueOptional = true;
+    valueRequired() {
+      data.valueRequired = true;
 
       return this;
     },
-    arrayOptional() {
-      data.arrayOptional = true;
+    arrayRequired() {
+      data.arrayRequired = true;
 
       return this;
     },
@@ -130,8 +130,8 @@ export type ModelRelationalTypeArgFactory<
   relatedModel: RM;
   relationshipType: RT;
   array: IsArray;
-  valueOptional: false;
-  arrayOptional: false;
+  valueRequired: false;
+  arrayRequired: false;
   connectionName: ConnectionName;
 };
 

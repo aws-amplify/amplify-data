@@ -173,13 +173,13 @@ type GetRelationshipRef<
   TypeArg extends ModelRelationalFieldParamShape,
   Flat extends boolean,
   ResolvedModel = ResolveRelationalFieldsForModel<T, RM, Flat>,
-  Model = TypeArg['valueOptional'] extends true
-    ? ResolvedModel | null | undefined
-    : ResolvedModel,
+  Model = TypeArg['valueRequired'] extends true
+    ? ResolvedModel
+    : ResolvedModel | null | undefined,
   Value = TypeArg['array'] extends true
-    ? TypeArg['arrayOptional'] extends true
-      ? Array<Model> | null | undefined
-      : Array<Model>
+    ? TypeArg['arrayRequired'] extends true
+      ? Array<Model>
+      : Array<Model> | null | undefined
     : Model,
   // future: we can add an arg here for pagination and other options
 > = Flat extends true ? Value : () => Promise<Prettify<Value>>;

@@ -14,14 +14,14 @@
   "parserOptions": {
     "ecmaVersion": "latest",
     "sourceType": "module",
-    "project": ["./packages/*/tsconfig.json"]
+    "project": ["**/*/tsconfig.json"]
   },
   "plugins": [
     "@typescript-eslint",
     // "jsdoc",
     "import"
   ],
-  "ignorePatterns": ["**/lib-esm/**/*.js", "**/*.d.ts"],
+  "ignorePatterns": ["**/*.js", "**/*.d.ts"],
   "rules": {
     "no-duplicate-imports": "error",
     "no-tabs": "error",

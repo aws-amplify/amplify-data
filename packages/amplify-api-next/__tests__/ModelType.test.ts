@@ -1,5 +1,5 @@
 import { expectTypeTestsToPassAsync } from 'jest-tsd';
-import { a, defineData, ClientSchema } from '../index';
+import { a, ClientSchema } from '../index';
 import {
   PublicProviders,
   PrivateProviders,
@@ -21,7 +21,7 @@ describe('model auth rules', () => {
     const schema = a.schema({
       widget: a
         .model({
-          title: a.string(),
+          title: a.string().required(),
         })
         .authorization([a.allow.public()]),
     });
@@ -35,7 +35,7 @@ describe('model auth rules', () => {
       a.schema({
         widget: a
           .model({
-            title: a.string(),
+            title: a.string().required(),
           })
           // @ts-expect-error
           .authorization([a.allow.public('bad-provider')]),
@@ -47,7 +47,7 @@ describe('model auth rules', () => {
     const schema = a.schema({
       widget: a
         .model({
-          title: a.string(),
+          title: a.string().required(),
         })
         .authorization([a.allow.private()]),
     });
@@ -60,7 +60,7 @@ describe('model auth rules', () => {
     const schema = a.schema({
       widget: a
         .model({
-          title: a.string(),
+          title: a.string().required(),
         })
         .authorization([a.allow.owner()]),
     });
@@ -73,7 +73,7 @@ describe('model auth rules', () => {
     const schema = a.schema({
       widget: a
         .model({
-          title: a.string(),
+          title: a.string().required(),
         })
         .authorization([a.allow.owner().inField('title')]),
     });
@@ -86,7 +86,7 @@ describe('model auth rules', () => {
     const schema = a.schema({
       widget: a
         .model({
-          title: a.string(),
+          title: a.string().required(),
         })
         .authorization([a.allow.public().to(['create', 'read'])]),
     });
@@ -99,7 +99,7 @@ describe('model auth rules', () => {
     const schema = a.schema({
       widget: a
         .model({
-          title: a.string(),
+          title: a.string().required(),
         })
         .authorization([a.allow.owner().identityClaim('user_id')]),
     });
@@ -112,8 +112,8 @@ describe('model auth rules', () => {
     const schema = a.schema({
       widget: a
         .model({
-          title: a.string(),
-          authors: a.string().array(),
+          title: a.string().required(),
+          authors: a.string().required().array().required(),
         })
         .authorization([a.allow.multipleOwners().inField('authors')]),
     });
@@ -122,11 +122,11 @@ describe('model auth rules', () => {
     expect(graphql).toMatchSnapshot();
   });
 
-  it(`can create a "multiple owners" rule an on implied (auto-created) field`, () => {
+  it(`can create a "multiple owners" rule on an implied (auto-created) field`, () => {
     const schema = a.schema({
       widget: a
         .model({
-          title: a.string(),
+          title: a.string().required(),
         })
         .authorization([a.allow.multipleOwners().inField('authors')]),
     });
@@ -152,10 +152,10 @@ describe('model auth rules', () => {
     const schema = a.schema({
       widget: a
         .model({
-          title: a.string(),
+          title: a.string().required(),
 
           // pluralized `author` fields
-          author: a.string().array(),
+          author: a.string().required().array().required(),
         })
 
         // authorization expects `author` to be singular `string`
@@ -168,7 +168,7 @@ describe('model auth rules', () => {
     const schema = a.schema({
       widget: a
         .model({
-          title: a.string(),
+          title: a.string().required(),
         })
         .authorization([a.allow.specificGroup('Admins')]),
     });
@@ -181,7 +181,7 @@ describe('model auth rules', () => {
     const schema = a.schema({
       widget: a
         .model({
-          title: a.string(),
+          title: a.string().required(),
         })
         .authorization([a.allow.specificGroups(['Admins', 'Moderators'])]),
     });
@@ -194,7 +194,7 @@ describe('model auth rules', () => {
     const schema = a.schema({
       widget: a
         .model({
-          title: a.string(),
+          title: a.string().required(),
         })
         .authorization([a.allow.groupDefinedIn('businessUnitOwner')]),
     });
@@ -207,7 +207,7 @@ describe('model auth rules', () => {
     const schema = a.schema({
       widget: a
         .model({
-          title: a.string(),
+          title: a.string().required(),
         })
         .authorization([
           a.allow.groupsDefinedIn('sharedWithGroups').to(['read']),
@@ -222,7 +222,7 @@ describe('model auth rules', () => {
     const schema = a.schema({
       widget: a
         .model({
-          title: a.string(),
+          title: a.string().required(),
         })
         .authorization([
           a.allow.owner().inField('customOwnerField').to(['create', 'read']),
@@ -237,7 +237,7 @@ describe('model auth rules', () => {
     const schema = a.schema({
       widget: a
         .model({
-          title: a.string(),
+          title: a.string().required(),
         })
         .authorization([
           a.allow
@@ -254,9 +254,10 @@ describe('model auth rules', () => {
   it(`includes auth from fields`, () => {
     const schema = a.schema({
       widget: a.model({
-        id: a.id(),
+        id: a.id().required(),
         title: a
           .string()
+          .required()
           .authorization([
             a.allow.owner().inField('customOwner').to(['create', 'read']),
           ]),
@@ -280,7 +281,7 @@ describe('model auth rules', () => {
   it(`includes auth from related model fields`, () => {
     const schema = a.schema({
       widget: a.model({
-        id: a.id(),
+        id: a.id().required(),
         parent: a
           .belongsTo('widget')
           .authorization([
@@ -308,7 +309,7 @@ describe('model auth rules', () => {
       const schema = a.schema({
         widget: a
           .model({
-            title: a.string(),
+            title: a.string().required(),
           })
           .authorization([a.allow.public(provider)]),
       });
@@ -331,7 +332,7 @@ describe('model auth rules', () => {
         const schema = a.schema({
           widget: a
             .model({
-              title: a.string(),
+              title: a.string().required(),
             })
             .authorization([
               a.allow.public(provider).to(operations),
@@ -350,7 +351,7 @@ describe('model auth rules', () => {
       const schema = a.schema({
         widget: a
           .model({
-            title: a.string(),
+            title: a.string().required(),
           })
           .authorization([a.allow.private(provider)]),
       });
@@ -373,7 +374,7 @@ describe('model auth rules', () => {
         const schema = a.schema({
           widget: a
             .model({
-              title: a.string(),
+              title: a.string().required(),
             })
             .authorization([a.allow.private(provider).to(operations)]),
         });

@@ -11,15 +11,7 @@ exports[`model auth rules can chain off of inField rules 1`] = `
 exports[`model auth rules can chain off of multi-owner inField rules 1`] = `
 "type widget @model @auth(rules: [{allow: owner, operations: [create, read], ownerField: "customOwnerField"}])
 {
-  customOwnerField: [String!]
-  title: String!
-}"
-`;
-
-exports[`model auth rules can create a "multiple owners" rule an on implied (auto-created) field 1`] = `
-"type widget @model @auth(rules: [{allow: owner, ownerField: "authors"}])
-{
-  authors: [String!]
+  customOwnerField: [String]
   title: String!
 }"
 `;
@@ -32,10 +24,18 @@ exports[`model auth rules can create a "multiple owners" rule on an existing fie
 }"
 `;
 
+exports[`model auth rules can create a "multiple owners" rule on an implied (auto-created) field 1`] = `
+"type widget @model @auth(rules: [{allow: owner, ownerField: "authors"}])
+{
+  authors: [String]
+  title: String!
+}"
+`;
+
 exports[`model auth rules can create a dynamic multi groups rule 1`] = `
 "type widget @model @auth(rules: [{allow: groups, operations: [read], groupsField: "sharedWithGroups"}])
 {
-  sharedWithGroups: [String!]
+  sharedWithGroups: [String]
   title: String!
 }"
 `;
