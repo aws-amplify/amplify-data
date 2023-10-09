@@ -1,5 +1,11 @@
 # @aws-amplify/amplify-api-next-alpha
 
+## 0.4.0
+
+### Minor Changes
+
+- fb3944a: make model fields optional by default
+
 ## 0.3.2
 
 ### Patch Changes
