@@ -69,9 +69,9 @@ test('all basic scalar fields produce expected type args', () => {
     integer: number;
     float: number;
     boolean: boolean;
-    date: Date;
-    time: Date;
-    datetime: Date;
+    date: string;
+    time: string;
+    datetime: string;
     timestamp: number;
     email: string;
     json: any;

@@ -44,15 +44,31 @@ type ModelIdentifier<Model extends Record<any, any>> = Prettify<
   Record<Model['identifier'] & string, string>
 >;
 
-// All required fields and relational fields
+type IfEquals<X, Y, A = X, B = never> = (<T>() => T extends X ? 1 : 2) extends <
+  T,
+>() => T extends Y ? 1 : 2
+  ? A
+  : B;
+
+// Excludes readonly fields from Record type
+type WritableKeys<T> = {
+  [P in keyof T]-?: IfEquals<
+    { [Q in P]: T[P] },
+    { -readonly [Q in P]: T[P] },
+    P
+  >;
+}[keyof T];
+
+// All required fields and relational fields, exclude readonly fields
 type MutationInput<
   Fields,
   ModelMeta extends Record<any, any>,
   Relationships = ModelMeta['relationships'],
+  WritableFields = Pick<Fields, WritableKeys<Fields>>,
 > = {
-  [Prop in keyof Fields as Fields[Prop] extends () => any
+  [Prop in keyof WritableFields as WritableFields[Prop] extends () => any
     ? never
-    : Prop]: Fields[Prop];
+    : Prop]: WritableFields[Prop];
 } & {
   [RelatedModel in keyof Relationships]: Relationships[RelatedModel];
 };

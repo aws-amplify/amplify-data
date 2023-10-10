@@ -7,16 +7,24 @@ import {
   Operation,
 } from '../src/Authorization';
 
-// evaluates type defs in corresponding test-d.ts file
-it('should not produce static type errors', async () => {
-  await expectTypeTestsToPassAsync(__filename);
+describe('type definition tests', () => {
+  // evaluates type defs in corresponding test-d.ts file
+  it('should not produce static type errors', async () => {
+    await expectTypeTestsToPassAsync(__filename);
+  });
+});
+
+describe('implicit fields', () => {
+  it("generates an `id` field when a custom identifier isn't defined", () => {
+    const schema = a.schema({
+      widget: a.model({
+        title: a.string().required(),
+      }),
+    });
+  });
 });
 
 describe('model auth rules', () => {
-  // it('rejects items that are not auth rules', () => {
-
-  // });
-
   it('can define public auth with no provider', () => {
     const schema = a.schema({
       widget: a

@@ -53,9 +53,9 @@ type ModelFieldTypeParamOuter =
 /**
  * Field type arg mutators
  */
-type ToOptional<T> = T | null;
-type ToRequired<T> = Exclude<T, null>;
-type ToArray<T> = [T] extends [ModelFieldTypeParamInner]
+type Nullable<T> = T | null;
+type Required<T> = Exclude<T, null>;
+type ArrayField<T> = [T] extends [ModelFieldTypeParamInner]
   ? Array<T> | null // optional by default
   : never;
 
@@ -73,9 +73,9 @@ export type ModelField<
   Auth = undefined,
 > = Omit<
   {
-    required(): ModelField<ToRequired<T>, K | 'required'>;
+    required(): ModelField<Required<T>, K | 'required'>;
     // Exclude `optional` after calling array, because both the value and the array itself can be optional
-    array(): ModelField<ToArray<T>, Exclude<K, 'required'> | 'array'>;
+    array(): ModelField<ArrayField<T>, Exclude<K, 'required'> | 'array'>;
     // TODO: should be T, but .array breaks this constraint. Fix later
     default(val: ModelFieldTypeParamOuter): ModelField<T, K | 'default'>;
     authorization<AuthRuleType extends Authorization<any, any>>(
@@ -134,7 +134,7 @@ function _field<T extends ModelFieldTypeParamOuter>(fieldType: ModelFieldType) {
 
       return this;
     },
-    array(): ModelField<ToArray<T>> {
+    array(): ModelField<ArrayField<T>> {
       data.array = true;
       _meta.lastInvokedMethod = 'array';
 
@@ -159,59 +159,59 @@ function _field<T extends ModelFieldTypeParamOuter>(fieldType: ModelFieldType) {
   return { ...builder, data } as InternalField as ModelField<T>;
 }
 
-function id(): ModelField<ToOptional<string>> {
+function id(): ModelField<Nullable<string>> {
   return _field(ModelFieldType.Id);
 }
 
-function string(): ModelField<ToOptional<string>> {
+function string(): ModelField<Nullable<string>> {
   return _field(ModelFieldType.String);
 }
 
-function integer(): ModelField<ToOptional<number>> {
+function integer(): ModelField<Nullable<number>> {
   return _field(ModelFieldType.Integer);
 }
 
-function float(): ModelField<ToOptional<number>> {
+function float(): ModelField<Nullable<number>> {
   return _field(ModelFieldType.Float);
 }
 
-function boolean(): ModelField<ToOptional<boolean>> {
+function boolean(): ModelField<Nullable<boolean>> {
   return _field(ModelFieldType.Boolean);
 }
 
-function date(): ModelField<ToOptional<Date>> {
+function date(): ModelField<Nullable<string>> {
   return _field(ModelFieldType.Date);
 }
 
-function time(): ModelField<ToOptional<Date>> {
+function time(): ModelField<Nullable<string>> {
   return _field(ModelFieldType.Time);
 }
 
-function datetime(): ModelField<ToOptional<Date>> {
+function datetime(): ModelField<Nullable<string>> {
   return _field(ModelFieldType.DateTime);
 }
 
-function timestamp(): ModelField<ToOptional<number>> {
+function timestamp(): ModelField<Nullable<number>> {
   return _field(ModelFieldType.Timestamp);
 }
 
-function email(): ModelField<ToOptional<string>> {
+function email(): ModelField<Nullable<string>> {
   return _field(ModelFieldType.Email);
 }
 
-function json(): ModelField<ToOptional<any>> {
+function json(): ModelField<Nullable<any>> {
   return _field(ModelFieldType.JSON);
 }
 
-function phone(): ModelField<ToOptional<string>> {
+function phone(): ModelField<Nullable<string>> {
   return _field(ModelFieldType.Phone);
 }
 
-function url(): ModelField<ToOptional<string>> {
+function url(): ModelField<Nullable<string>> {
   return _field(ModelFieldType.Url);
 }
 
-function ipAddress(): ModelField<ToOptional<string>> {
+function ipAddress(): ModelField<Nullable<string>> {
   return _field(ModelFieldType.IPAddress);
 }
 

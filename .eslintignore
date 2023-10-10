@@ -2,3 +2,4 @@
 **/lib-esm/**
 tsconfig.json
 tsconfig.base.json
+examples/**/*
