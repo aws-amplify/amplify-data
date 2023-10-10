@@ -1,5 +1,11 @@
 # @aws-amplify/amplify-api-next-types-alpha
 
+## 0.0.5
+
+### Patch Changes
+
+- 623991f: add type-level support for implicit fields
+
 ## 0.0.4
 
 ### Patch Changes
