@@ -10,6 +10,10 @@ import type { ModelType, ModelTypeParamShape } from './ModelType';
 import type { ModelSchema } from './ModelSchema';
 import { __modelMeta__ } from '@aws-amplify/amplify-api-next-types-alpha';
 
+// MappedTypes
+// TODO: extract all top-level mapped types used by ClientSchema according to this pattern (e.g., InjectImplicitModels, ResolveRelationships, etc.)
+import type { InjectImplicitModelFields } from './MappedTypes/ImplicitFieldInjector';
+
 /**
  * Types for unwrapping generic type args into client-consumable types
  *
@@ -18,7 +22,7 @@ import { __modelMeta__ } from '@aws-amplify/amplify-api-next-types-alpha';
  * The following params are used solely as variables in order to simplify mapped type usage.
  * They should not receive external type args.
  *
- * @typeParam Fields - flattened Schema/Models/Fields structure with field type params extracted
+ * @typeParam FlattenedSchema - flattened Schema/Models/Fields structure with field type params extracted
  * @typeParam FieldsWithRelationships - Fields + resolved relational fields
  * @typeParam ResolvedFields - optionality enforced on nullable types (+?); These are the client-facing types used for CRUDL response shapes
  *
@@ -28,23 +32,21 @@ import { __modelMeta__ } from '@aws-amplify/amplify-api-next-types-alpha';
  */
 export type ClientSchema<
   Schema extends ModelSchema<any>,
-  // Todo: rename Fields to FlattenedSchema
-  Fields = FieldTypes<ModelTypes<SchemaTypes<Schema>>>,
-  FieldsWithInjectedModels = InjectImplicitModels<Fields>,
-  FieldsWithRelationships = ResolveRelationships<FieldsWithInjectedModels>,
-  FlatFieldsWithRelationships = ResolveRelationships<
+  FlattenedSchema = FieldTypes<ModelTypes<SchemaTypes<Schema>>>,
+  IdentifierMeta = ModelMeta<SchemaTypes<Schema>>,
+  FieldsWithInjectedModels = InjectImplicitModels<FlattenedSchema>,
+  FieldsWithInjectedImplicitFields = InjectImplicitModelFields<
     FieldsWithInjectedModels,
-    true
+    IdentifierMeta
   >,
+  FieldsWithRelationships = ResolveRelationships<FieldsWithInjectedImplicitFields>,
   ResolvedFields extends Record<string, unknown> = Intersection<
     FilterFieldTypes<RequiredFieldTypes<FieldsWithRelationships>>,
     FilterFieldTypes<OptionalFieldTypes<FieldsWithRelationships>>,
     FilterFieldTypes<ModelImpliedAuthFields<Schema>>
   >,
-  IdentifierMeta = ModelMeta<SchemaTypes<Schema>>,
-  RelationshipMeta = ExtractRelationalMetadata<Fields, ResolvedFields>,
-  Meta = IdentifierMeta &
-    RelationshipMeta & { FlatSchema: FlatFieldsWithRelationships },
+  RelationshipMeta = ExtractRelationalMetadata<FlattenedSchema, ResolvedFields>,
+  Meta = IdentifierMeta & RelationshipMeta,
 > = Prettify<
   ResolvedFields & {
     [__modelMeta__]: Meta;

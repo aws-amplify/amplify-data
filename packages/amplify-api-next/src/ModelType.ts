@@ -25,8 +25,7 @@ type ModelData = {
 type InternalModelData = ModelData & {
   fields: InternalModelFields;
   identifier: string[];
-  // TODO: change back to `Authorization<any, any>[]` after defineData change.
-  authorization: any;
+  authorization: Authorization<any, any>[];
 };
 
 export type ModelTypeParamShape = {

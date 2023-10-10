@@ -1,0 +1,16 @@
+{
+  "name": "client-types-example",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "exit 0"
+  },
+  "dependencies": {
+    "@aws-amplify/amplify-api-next-alpha": "*",
+    "aws-amplify": "api-v6-models"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
