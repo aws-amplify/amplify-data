@@ -4,7 +4,7 @@ import type {
   InternalRelationalField,
 } from './ModelRelationalField';
 import { Authorization } from './Authorization';
-import type { SetTypeSubArg } from './util';
+import type { SetTypeSubArg } from '@aws-amplify/amplify-api-next-types-alpha';
 
 type ModelFields = Record<
   string,

@@ -1,11 +1,16 @@
 import { a, ClientSchema } from '@aws-amplify/amplify-api-next-alpha';
+import { ExtractModelMeta } from '@aws-amplify/amplify-api-next-types-alpha';
 
 const schema = a.schema({
-  Todo: a.model({
+  Post: a.model({
     title: a.string().required(),
     description: a.string(),
+    comments: a.hasMany('Comment'),
   }),
-  // .identifier(['title']),
+  Comment: a.model({
+    content: a.string().required(),
+    post: a.belongsTo('Post'),
+  }),
 });
 
 export type Schema = ClientSchema<typeof schema>;

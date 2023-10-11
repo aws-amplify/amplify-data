@@ -6,7 +6,9 @@
       "outputs": ["lib-esm/**"]
     },
     "lint": {},
-    "test": {},
+    "test": {
+      "dependsOn": ["^test"]
+    },
     "clean": {}
   }
 }

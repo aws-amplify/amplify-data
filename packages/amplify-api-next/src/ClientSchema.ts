@@ -1,5 +1,10 @@
 import type { Authorization, ImpliedAuthFields } from './Authorization';
-import type { Prettify, UnionToIntersection, ExcludeEmpty } from './util';
+import {
+  type Prettify,
+  type UnionToIntersection,
+  type ExcludeEmpty,
+  __modelMeta__,
+} from '@aws-amplify/amplify-api-next-types-alpha';
 import type { ModelField } from './ModelField';
 import type {
   ModelRelationalField,
@@ -8,7 +13,6 @@ import type {
 } from './ModelRelationalField';
 import type { ModelType, ModelTypeParamShape } from './ModelType';
 import type { ModelSchema } from './ModelSchema';
-import { __modelMeta__ } from '@aws-amplify/amplify-api-next-types-alpha';
 
 // MappedTypes
 // TODO: extract all top-level mapped types used by ClientSchema according to this pattern (e.g., InjectImplicitModels, ResolveRelationships, etc.)
@@ -22,7 +26,7 @@ import type { InjectImplicitModelFields } from './MappedTypes/ImplicitFieldInjec
  * The following params are used solely as variables in order to simplify mapped type usage.
  * They should not receive external type args.
  *
- * @typeParam FlattenedSchema - flattened Schema/Models/Fields structure with field type params extracted
+ * @internal @typeParam FlattenedSchema - flattened Schema/Models/Fields structure with field type params extracted
  * @typeParam FieldsWithRelationships - Fields + resolved relational fields
  * @typeParam ResolvedFields - optionality enforced on nullable types (+?); These are the client-facing types used for CRUDL response shapes
  *
@@ -40,13 +44,20 @@ export type ClientSchema<
     IdentifierMeta
   >,
   FieldsWithRelationships = ResolveRelationships<FieldsWithInjectedImplicitFields>,
+  // used for custom selection set. Rename to something more descriptive
+  // TODO: exclude null | undefined from relational types. We only care about the sel set shape
+  FlatFieldsWithRelationships = ResolveRelationships<
+    FieldsWithInjectedImplicitFields,
+    true
+  >,
   ResolvedFields extends Record<string, unknown> = Intersection<
     FilterFieldTypes<RequiredFieldTypes<FieldsWithRelationships>>,
     FilterFieldTypes<OptionalFieldTypes<FieldsWithRelationships>>,
     FilterFieldTypes<ModelImpliedAuthFields<Schema>>
   >,
   RelationshipMeta = ExtractRelationalMetadata<FlattenedSchema, ResolvedFields>,
-  Meta = IdentifierMeta & RelationshipMeta,
+  Meta = IdentifierMeta &
+    RelationshipMeta & { FlatSchema: FlatFieldsWithRelationships },
 > = Prettify<
   ResolvedFields & {
     [__modelMeta__]: Meta;
@@ -155,7 +166,7 @@ type ExtractImplicitModelNames<Schema> = UnionToIntersection<
             : never
           : never]: { id?: string } & Record<
           `${Lowercase<ModelProp & string>}`,
-          ModelRelationalTypeArgFactory<ModelProp & string, 'hasMany', true>
+          ModelRelationalTypeArgFactory<ModelProp & string, 'hasMany', false>
         >; // implicit model will always have id: string as the PK
       };
     }[keyof Schema]
@@ -175,11 +186,15 @@ type GetRelationshipRef<
   TypeArg extends ModelRelationalFieldParamShape,
   Flat extends boolean,
   ResolvedModel = ResolveRelationalFieldsForModel<T, RM, Flat>,
-  Model = TypeArg['valueRequired'] extends true
+  Model = Flat extends true
+    ? ResolvedModel
+    : TypeArg['valueRequired'] extends true
     ? ResolvedModel
     : ResolvedModel | null | undefined,
   Value = TypeArg['array'] extends true
-    ? TypeArg['arrayRequired'] extends true
+    ? Flat extends true
+      ? Array<Model>
+      : TypeArg['arrayRequired'] extends true
       ? Array<Model>
       : Array<Model> | null | undefined
     : Model,
@@ -202,49 +217,6 @@ type ResolveRelationalFieldsForModel<
       : never
     : Schema[ModelName][FieldName];
 };
-
-// pre-M:N resolve mapper
-// type ResolveRelationships<Schema> = {
-//   [ModelProp in keyof Schema]: {
-//     [FieldProp in keyof Schema[ModelProp]]: Schema[ModelProp][FieldProp] extends ModelRelationalFieldParamShape
-//       ? Schema[ModelProp][FieldProp]['relatedModel'] extends keyof Schema
-//         ? GetRelationshipRef<
-//             Schema,
-//             Schema[ModelProp][FieldProp]['relatedModel'],
-//             Schema[ModelProp][FieldProp]
-//           >
-//         : never // if the field value extends ModelRelationalFieldShape "relatedModel" should always point to a Model (keyof Schema)
-//       : Schema[ModelProp][FieldProp];
-//   };
-// };
-
-// resolves fieldName to connectionName, e.g. post.postTags instead of post.tags
-// type ResolveRelationships<Schema> = {
-//   [ModelProp in keyof Schema]: {
-//     [FieldProp in keyof Schema[ModelProp] as Schema[ModelProp][FieldProp] extends ModelRelationalFieldParamShape
-//       ? Schema[ModelProp][FieldProp]['connectionName'] extends string &
-//           keyof Schema
-//         ? `${Uncapitalize<Schema[ModelProp][FieldProp]['connectionName']>}`
-//         : FieldProp
-//       : FieldProp]: Schema[ModelProp][FieldProp] extends ModelRelationalFieldParamShape
-//       ? Schema[ModelProp][FieldProp]['relatedModel'] extends keyof Schema
-//         ? Schema[ModelProp][FieldProp]['relationshipType'] extends 'manyToMany'
-//           ? Schema[ModelProp][FieldProp]['connectionName'] extends keyof Schema
-//             ? GetRelationshipRef<
-//                 Schema,
-//                 Schema[ModelProp][FieldProp]['connectionName'],
-//                 Schema[ModelProp][FieldProp]
-//               >
-//             : never
-//           : GetRelationshipRef<
-//               Schema,
-//               Schema[ModelProp][FieldProp]['relatedModel'],
-//               Schema[ModelProp][FieldProp]
-//             >
-//         : never // if the field value extends ModelRelationalFieldShape "relatedModel" should always point to a Model (keyof Schema)
-//       : Schema[ModelProp][FieldProp];
-//   };
-// };
 
 type ResolveRelationships<Schema, Flat extends boolean = false> = {
   [ModelProp in keyof Schema]: {

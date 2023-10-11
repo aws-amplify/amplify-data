@@ -70,3 +70,14 @@ export type Debug<T> = { [K in keyof T]: T[K] };
 export type ObjectIsNonEmpty<T extends object> = keyof T extends never
   ? false
   : true;
+
+/**
+ * @returns element type for arrays; otherwise returns passed-in type as is
+ */
+export type UnwrapArray<T> = T extends any[] ? T[number] : T;
+
+export type DeepReadOnlyObject<T> = T extends Array<infer U>
+  ? DeepReadOnlyObject<U>[]
+  : T extends Record<any, any>
+  ? { readonly [k in keyof T]: DeepReadOnlyObject<T[k]> }
+  : T;

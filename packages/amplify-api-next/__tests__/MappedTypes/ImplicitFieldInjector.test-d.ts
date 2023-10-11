@@ -1,5 +1,5 @@
+import type { Equal, Expect } from '@aws-amplify/amplify-api-next-types-alpha';
 import { a, ClientSchema } from '../../index';
-import { Equal, Expect } from '../../src/util';
 
 // TODO: once the top-level mapped types used by ClientSchema are extracted into separate files (src/MappedTypes/*.ts)
 // change these tests to use `InjectImplicitModelFields` directly instead of via ClientSchema

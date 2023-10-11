@@ -44,7 +44,7 @@ type ImplicitFields<
 };
 
 /**
- * @returns union of explicit and implicit model fields
+ * @returns intersection of explicit and implicit model fields
  */
 type InjectDefaultFieldsForModel<FlatModel, ModelIdentifier> = FlatModel &
   ImplicitFields<
