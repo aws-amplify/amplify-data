@@ -44,12 +44,12 @@ type ReturnValue<
  *
  */
 type RestoreArrays<Result, FlatModel> = {
-  [k in keyof Result]: k extends keyof FlatModel
-    ? FlatModel[k] extends Array<any>
-      ? Array<RestoreArrays<Result[k], UnwrapArray<FlatModel[k]>>>
-      : FlatModel[k] extends Record<string, any>
-      ? RestoreArrays<Result[k], FlatModel[k]>
-      : Result[k]
+  [K in keyof Result]: K extends keyof FlatModel
+    ? FlatModel[K] extends Array<any>
+      ? Array<RestoreArrays<Result[K], UnwrapArray<FlatModel[K]>>>
+      : FlatModel[K] extends Record<string, any>
+      ? RestoreArrays<Result[K], FlatModel[K]>
+      : Result[K]
     : never;
 };
 
@@ -224,7 +224,7 @@ export type ModelPath<
  * 
  * ```
  */
-type FlattenModel<
+type ResolvedModel<
   Model extends Record<string, unknown>,
   Depth extends number = 7,
   RecursionLoop extends number[] = [-1, 0, 1, 2, 3, 4, 5, 6],
@@ -233,11 +233,11 @@ type FlattenModel<
   recur: {
     [Field in keyof Model]: Model[Field] extends () => Promise<unknown>
       ? Awaited<ReturnType<Model[Field]>> extends Array<unknown>
-        ? FlattenModel<
+        ? ResolvedModel<
             NonNullable<UnwrapArray<Awaited<ReturnType<Model[Field]>>>>,
             RecursionLoop[Depth]
           >[]
-        : FlattenModel<
+        : ResolvedModel<
             NonNullable<UnwrapArray<Awaited<ReturnType<Model[Field]>>>>,
             RecursionLoop[Depth]
           >
@@ -248,7 +248,7 @@ type FlattenModel<
 export type SelectionSet<
   Model extends Record<string, unknown>,
   Path extends ModelPath<FlatModel>[],
-  FlatModel extends Record<string, unknown> = FlattenModel<Model>,
+  FlatModel extends Record<string, unknown> = ResolvedModel<Model>,
 > = CustomSelectionSetReturnValue<FlatModel, Path[number]>;
 // #endregion
 
@@ -308,14 +308,14 @@ export type ModelTypes<
           ) => Promise<T[K]>;
           delete: (identifier: ModelIdentifier<ModelMeta[K]>) => Promise<T[K]>;
           get<
-            FlatModel extends Record<string, unknown> = FlattenModel<T[K]>,
+            FlatModel extends Record<string, unknown> = ResolvedModel<T[K]>,
             SelectionSet extends ModelPath<FlatModel>[] = never[],
           >(
             identifier: ModelIdentifier<ModelMeta[K]>,
             options?: { selectionSet?: SelectionSet },
           ): Promise<ReturnValue<T[K], FlatModel, SelectionSet>>;
           list<
-            FlatModel extends Record<string, unknown> = FlattenModel<T[K]>,
+            FlatModel extends Record<string, unknown> = ResolvedModel<T[K]>,
             SelectionSet extends ModelPath<FlatModel>[] = never[],
           >(options?: {
             // TODO: strongly type filter
