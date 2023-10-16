@@ -10,3 +10,5 @@ export type ModelTypes<
   _T extends Record<any, any> = never,
   _ModelMeta extends Record<any, any> = any,
 > = any;
+
+export type SelectionSet<_Model, _Path> = any;
