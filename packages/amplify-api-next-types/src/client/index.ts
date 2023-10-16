@@ -293,7 +293,6 @@ type MutationInput<
 export type ModelTypes<
   T extends Record<any, any>,
   ModelMeta extends Record<any, any> = ExtractModelMeta<T>,
-  // FlatSchema extends Record<any, any> = ModelMeta['FlatSchema'],
 > = {
   [K in keyof T]: K extends string
     ? T[K] extends Record<string, unknown>
