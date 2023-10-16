@@ -1,5 +1,11 @@
 # @aws-amplify/amplify-api-next-types-alpha
 
+## 0.1.2
+
+### Patch Changes
+
+- 68bf9b8: backwards compatibility type fix
+
 ## 0.1.1
 
 ### Patch Changes
