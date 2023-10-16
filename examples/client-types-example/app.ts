@@ -1,12 +1,23 @@
 import { API } from 'aws-amplify';
 import type { Schema } from './resource';
+import type {
+  ExtractModelMeta,
+  Prettify,
+  UnwrapArray,
+  SelectionSet,
+} from '@aws-amplify/amplify-api-next-types-alpha';
 
 const client = API.generateClient<Schema>();
 
-async function test() {
-  const todos = await client.models.Todo.list();
+type Post = Schema['Post'];
 
-  const newTodo = await client.models.Todo.create({
-    title: 'Test',
+type CustomSelSet = SelectionSet<
+  Post,
+  ['title', 'comments.content', 'comments.updatedAt']
+>;
+
+async function test() {
+  const [post] = await client.models.Post.list({
+    selectionSet: ['title', 'comments.content', 'comments.updatedAt'],
   });
 }

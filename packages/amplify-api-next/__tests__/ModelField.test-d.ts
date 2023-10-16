@@ -1,4 +1,4 @@
-import { Equal, Expect } from '../src/util';
+import type { Equal, Expect } from '@aws-amplify/amplify-api-next-types-alpha';
 import { type ModelField, type InternalField, fields } from '../src/ModelField';
 
 /**
