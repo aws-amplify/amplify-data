@@ -25,5 +25,8 @@
   "files": [
     "lib-esm/**",
     "package.json"
-  ]
+  ],
+  "dependencies": {
+    "graphql": "^16.8.1"
+  }
 }

@@ -6,6 +6,7 @@ import {
   UnionToIntersection,
   Prettify,
 } from '../util';
+import { GraphQLError } from 'graphql';
 
 export declare const __modelMeta__: unique symbol;
 
@@ -290,6 +291,23 @@ type MutationInput<
 
 // #endregion
 
+export type SingularReturnValue<T> = Promise<{
+  data: T;
+  errors?: GraphQLError[];
+  extensions?: {
+    [key: string]: any;
+  };
+}>;
+
+export type ListReturnValue<T> = Promise<{
+  data: Array<T>;
+  nextToken?: string | null;
+  errors?: GraphQLError[];
+  extensions?: {
+    [key: string]: any;
+  };
+}>;
+
 export type ModelTypes<
   T extends Record<any, any>,
   ModelMeta extends Record<any, any> = ExtractModelMeta<T>,
@@ -299,21 +317,23 @@ export type ModelTypes<
       ? {
           create: (
             model: Prettify<MutationInput<T[K], ModelMeta[K]>>,
-          ) => Promise<T[K]>;
+          ) => SingularReturnValue<T[K]>;
           update: (
             model: Prettify<
               ModelIdentifier<ModelMeta[K]> &
                 Partial<MutationInput<T[K], ModelMeta[K]>>
             >,
-          ) => Promise<T[K]>;
-          delete: (identifier: ModelIdentifier<ModelMeta[K]>) => Promise<T[K]>;
+          ) => SingularReturnValue<T[K]>;
+          delete: (
+            identifier: ModelIdentifier<ModelMeta[K]>,
+          ) => SingularReturnValue<T[K]>;
           get<
             FlatModel extends Record<string, unknown> = ResolvedModel<T[K]>,
             SelectionSet extends ModelPath<FlatModel>[] = never[],
           >(
             identifier: ModelIdentifier<ModelMeta[K]>,
             options?: { selectionSet?: SelectionSet },
-          ): Promise<ReturnValue<T[K], FlatModel, SelectionSet>>;
+          ): SingularReturnValue<ReturnValue<T[K], FlatModel, SelectionSet>>;
           list<
             FlatModel extends Record<string, unknown> = ResolvedModel<T[K]>,
             SelectionSet extends ModelPath<FlatModel>[] = never[],
@@ -321,7 +341,9 @@ export type ModelTypes<
             // TODO: strongly type filter
             filter?: object;
             selectionSet?: SelectionSet;
-          }): Promise<Array<ReturnValue<T[K], FlatModel, SelectionSet>>>;
+          }): ListReturnValue<ReturnValue<T[K], FlatModel, SelectionSet>>;
+          // using this to debug types (surfacing them to the app code for inspection) - not callable at runtime
+          _debug(): Prettify<MutationInput<T[K], ModelMeta[K]>>;
         }
       : never
     : never;
