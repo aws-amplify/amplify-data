@@ -1,5 +1,11 @@
 # @aws-amplify/amplify-api-next-types-alpha
 
+## 0.1.0
+
+### Minor Changes
+
+- 227fa88: custom selection set rework
+
 ## 0.0.5
 
 ### Patch Changes
