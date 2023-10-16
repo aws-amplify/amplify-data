@@ -1,5 +1,11 @@
 # @aws-amplify/amplify-api-next-types-alpha
 
+## 0.1.1
+
+### Patch Changes
+
+- 5f2c289: add missing file
+
 ## 0.1.0
 
 ### Minor Changes
