@@ -1,5 +1,9 @@
 import { a, ClientSchema } from '@aws-amplify/amplify-api-next-alpha';
-import { Expect, Equal } from '@aws-amplify/amplify-api-next-types-alpha';
+import {
+  Expect,
+  Equal,
+  SelectionSet,
+} from '@aws-amplify/amplify-api-next-types-alpha';
 import { API } from 'aws-amplify';
 
 describe('Custom Selection Set', () => {
@@ -23,7 +27,7 @@ describe('Custom Selection Set', () => {
       type ExpectedType = {
         readonly id: string;
         readonly title: string;
-        readonly description: string | null;
+        readonly description: string | null | undefined;
         readonly createdAt: string;
         readonly updatedAt: string;
       }[];
@@ -41,6 +45,19 @@ describe('Custom Selection Set', () => {
         readonly id: string;
         readonly title: string;
       }[];
+
+      type test = Expect<Equal<typeof posts, ExpectedType>>;
+    });
+
+    test('SelectionSet util return type matches actual', async () => {
+      const client = API.generateClient<Schema>();
+      const posts = await client.models.Post.list({
+        selectionSet: ['id', 'title'],
+      });
+
+      type Post = Schema['Post'];
+
+      type ExpectedType = SelectionSet<Post, ['id', 'title']>[];
 
       type test = Expect<Equal<typeof posts, ExpectedType>>;
     });
@@ -111,7 +128,7 @@ describe('Custom Selection Set', () => {
       type ExpectedType = {
         readonly id: string;
         readonly title: string;
-        readonly description: string | null;
+        readonly description: string | null | undefined;
         readonly createdAt: string;
         readonly updatedAt: string;
         readonly author: {
@@ -121,6 +138,30 @@ describe('Custom Selection Set', () => {
           readonly updatedAt: string;
         };
       }[];
+
+      type test = Expect<Equal<typeof posts, ExpectedType>>;
+    });
+
+    test('SelectionSet util return type matches actual', async () => {
+      const client = API.generateClient<Schema>();
+
+      const posts = await client.models.Post.list({
+        selectionSet: [
+          'id',
+          'title',
+          'description',
+          'createdAt',
+          'updatedAt',
+          'author.*',
+        ],
+      });
+
+      type Post = Schema['Post'];
+
+      type ExpectedType = SelectionSet<
+        Post,
+        ['id', 'title', 'description', 'createdAt', 'updatedAt', 'author.*']
+      >[];
 
       type test = Expect<Equal<typeof posts, ExpectedType>>;
     });
@@ -172,7 +213,7 @@ describe('Custom Selection Set', () => {
         ],
       });
 
-      type ExpectedType = {
+      type ExpectedType2 = {
         readonly id: string;
         readonly comments: {
           readonly post: {
@@ -193,6 +234,24 @@ describe('Custom Selection Set', () => {
           };
         }[];
       }[];
+
+      type test = Expect<Equal<typeof posts, ExpectedType2>>;
+    });
+
+    test('SelectionSet util return type matches actual', async () => {
+      const client = API.generateClient<Schema>();
+
+      const posts = await client.models.Post.list({
+        selectionSet: [
+          'id',
+          'comments.post.comments.post.comments.post.comments.*',
+        ],
+      });
+
+      type ExpectedType = SelectionSet<
+        Schema['Post'],
+        ['id', 'comments.post.comments.post.comments.post.*']
+      >[];
 
       type test = Expect<Equal<typeof posts, ExpectedType>>;
     });
@@ -306,6 +365,43 @@ describe('Custom Selection Set', () => {
           }[];
         }[];
       }[];
+
+      type test = Expect<Equal<typeof blogs, ExpectedType>>;
+    });
+
+    test('a mix of everything', async () => {
+      const client = API.generateClient<Schema>();
+
+      const blogs = await client.models.Blog.list({
+        selectionSet: [
+          'id',
+          'updatedAt',
+          'posts.id',
+          'posts.updatedAt',
+          'posts.meta',
+          'posts.comments.content',
+          'posts.comments.createdAt',
+          'posts.comments2.content',
+          'posts.comments.meta.*',
+          'posts.comments2.meta.*',
+        ],
+      });
+
+      type ExpectedType = SelectionSet<
+        Schema['Blog'],
+        [
+          'id',
+          'updatedAt',
+          'posts.id',
+          'posts.updatedAt',
+          'posts.meta',
+          'posts.comments.content',
+          'posts.comments.createdAt',
+          'posts.comments2.content',
+          'posts.comments.meta.*',
+          'posts.comments2.meta.*',
+        ]
+      >[];
 
       type test = Expect<Equal<typeof blogs, ExpectedType>>;
     });

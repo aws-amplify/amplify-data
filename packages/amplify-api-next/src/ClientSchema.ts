@@ -44,20 +44,13 @@ export type ClientSchema<
     IdentifierMeta
   >,
   FieldsWithRelationships = ResolveRelationships<FieldsWithInjectedImplicitFields>,
-  // used for custom selection set. Rename to something more descriptive
-  // TODO: exclude null | undefined from relational types. We only care about the sel set shape
-  FlatFieldsWithRelationships = ResolveRelationships<
-    FieldsWithInjectedImplicitFields,
-    true
-  >,
   ResolvedFields extends Record<string, unknown> = Intersection<
     FilterFieldTypes<RequiredFieldTypes<FieldsWithRelationships>>,
     FilterFieldTypes<OptionalFieldTypes<FieldsWithRelationships>>,
     FilterFieldTypes<ModelImpliedAuthFields<Schema>>
   >,
   RelationshipMeta = ExtractRelationalMetadata<FlattenedSchema, ResolvedFields>,
-  Meta = IdentifierMeta &
-    RelationshipMeta & { FlatSchema: FlatFieldsWithRelationships },
+  Meta = IdentifierMeta & RelationshipMeta,
 > = Prettify<
   ResolvedFields & {
     [__modelMeta__]: Meta;
@@ -177,29 +170,18 @@ type InjectImplicitModels<Schema> = Prettify<
   Schema & ExtractImplicitModelNames<Schema>
 >;
 
-/* 
-  Flat === true => custom sel set output
-*/
 type GetRelationshipRef<
   T,
   RM extends keyof T,
   TypeArg extends ModelRelationalFieldParamShape,
   Flat extends boolean,
   ResolvedModel = ResolveRelationalFieldsForModel<T, RM, Flat>,
-  Model = Flat extends true
-    ? ResolvedModel
-    : TypeArg['valueRequired'] extends true
+  Model = TypeArg['valueRequired'] extends true
     ? ResolvedModel
     : ResolvedModel | null | undefined,
-  Value = TypeArg['array'] extends true
-    ? Flat extends true
-      ? Array<Model>
-      : TypeArg['arrayRequired'] extends true
-      ? Array<Model>
-      : Array<Model> | null | undefined
-    : Model,
+  Value = TypeArg['array'] extends true ? Array<Model> : Model,
   // future: we can add an arg here for pagination and other options
-> = Flat extends true ? Value : () => Promise<Prettify<Value>>;
+> = () => Promise<Prettify<Value>>;
 
 type ResolveRelationalFieldsForModel<
   Schema,

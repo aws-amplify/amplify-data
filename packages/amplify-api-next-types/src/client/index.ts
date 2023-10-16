@@ -1,17 +1,16 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
-import { DeepReadOnlyObject, UnwrapArray, UnionToIntersection } from '../util';
+import {
+  DeepReadOnlyObject,
+  UnwrapArray,
+  UnionToIntersection,
+  Prettify,
+} from '../util';
 
 export declare const __modelMeta__: unique symbol;
 
 export type ExtractModelMeta<T extends Record<any, any>> =
   T[typeof __modelMeta__];
-
-type Prettify<T> = T extends () => any
-  ? () => ReturnType<T>
-  : T extends object
-  ? { [P in keyof T]: Prettify<T[P]> }
-  : T;
 
 type Model = Record<string, any>;
 
@@ -34,7 +33,7 @@ type NonRelationalFields<M extends Model> = {
 type ReturnValue<
   M extends Model,
   FlatModel extends Model,
-  Paths extends Array<FlatKeys<FlatModel>>,
+  Paths extends Array<ModelPath<FlatModel>>,
 > = Paths extends never[]
   ? M
   : CustomSelectionSetReturnValue<FlatModel, Paths[number]>;
@@ -162,22 +161,21 @@ type DeepPickFromPath<
  * and especially for bi-directional relationships which are infinitely recursable by their nature
  *
  */
-export type FlatKeys<
-  // TODO: change `any` to `unknown`
+export type ModelPath<
   FlatModel extends Record<string, unknown>,
   // actual recursive Depth is 6, since we decrement down to 0
   Depth extends number = 5, // think of this as the initialization expr. in a for loop (e.g. `let depth = 5`)
+  RecursionLoop extends number[] = [-1, 0, 1, 2, 3, 4],
   Field = keyof FlatModel,
 > = {
   done: Field extends string ? `${Field}.*` : never;
   recur: Field extends string
-    ? // TODO: change `any` to `unknown`
-      UnwrapArray<FlatModel[Field]> extends Record<string, unknown>
+    ? UnwrapArray<FlatModel[Field]> extends Record<string, unknown>
       ?
-          | `${Field}.${FlatKeys<
+          | `${Field}.${ModelPath<
               UnwrapArray<FlatModel[Field]>,
               // this decrements `Depth` by 1 in each recursive call; it's equivalent to the update expr. afterthought in a for loop (e.g. `depth -= 1`)
-              [-1, 0, 1, 2, 3, 4][Depth]
+              RecursionLoop[Depth]
             >}`
           | `${Field}.*`
       : `${Field}`
@@ -185,6 +183,73 @@ export type FlatKeys<
   // this is equivalent to the condition expr. in a for loop (e.g. `depth !== -1`)
 }[Depth extends -1 ? 'done' : 'recur'];
 
+/**
+ * Flattens model instance type and unwraps async functions into resolved GraphQL shape
+ * 
+ * This type is used for generating the base shape for custom selection set input and its return value
+ * Uses same pattern as above to limit recursion depth to maximum usable for selection set. 
+ *
+ * @example
+ * ### Given
+ * ```ts
+ * Model = {
+    title: string;
+    comments: () => Promise<({
+        content: string;
+        readonly id: string;
+        readonly createdAt: string;
+        readonly updatedAt: string;
+    } | null | undefined)[]>;
+    readonly id: string;
+    readonly createdAt: string;
+    readonly updatedAt: string;
+    description?: string | ... 1 more ... | undefined;
+  }
+ * ```
+ * ### Returns
+ * ```ts
+ * {
+    title: string;
+    comments: {
+        content: string;
+        readonly id: string;
+        readonly createdAt: string;
+        readonly updatedAt: string;
+    }[];
+    readonly id: string;
+    readonly createdAt: string;
+    readonly updatedAt: string;
+    description: string | null | undefined;
+  }
+ * 
+ * ```
+ */
+type FlattenModel<
+  Model extends Record<string, unknown>,
+  Depth extends number = 7,
+  RecursionLoop extends number[] = [-1, 0, 1, 2, 3, 4, 5, 6],
+> = {
+  done: NonRelationalFields<Model>;
+  recur: {
+    [Field in keyof Model]: Model[Field] extends () => Promise<unknown>
+      ? Awaited<ReturnType<Model[Field]>> extends Array<unknown>
+        ? FlattenModel<
+            NonNullable<UnwrapArray<Awaited<ReturnType<Model[Field]>>>>,
+            RecursionLoop[Depth]
+          >[]
+        : FlattenModel<
+            NonNullable<UnwrapArray<Awaited<ReturnType<Model[Field]>>>>,
+            RecursionLoop[Depth]
+          >
+      : Model[Field];
+  };
+}[Depth extends -1 ? 'done' : 'recur'];
+
+export type SelectionSet<
+  Model extends Record<string, unknown>,
+  Path extends ModelPath<FlatModel>[],
+  FlatModel extends Record<string, unknown> = FlattenModel<Model>,
+> = CustomSelectionSetReturnValue<FlatModel, Path[number]>;
 // #endregion
 
 // #region Input mapped types
@@ -207,7 +272,9 @@ type WritableKeys<T> = {
   >;
 }[keyof T];
 
-// All required fields and relational fields, exclude readonly fields
+/**
+ * All required fields and relational fields, exclude readonly fields
+ */
 type MutationInput<
   Fields,
   ModelMeta extends Record<any, any>,
@@ -226,7 +293,7 @@ type MutationInput<
 export type ModelTypes<
   T extends Record<any, any>,
   ModelMeta extends Record<any, any> = ExtractModelMeta<T>,
-  FlatSchema extends Record<any, any> = ModelMeta['FlatSchema'],
+  // FlatSchema extends Record<any, any> = ModelMeta['FlatSchema'],
 > = {
   [K in keyof T]: K extends string
     ? T[K] extends Record<string, unknown>
@@ -241,17 +308,21 @@ export type ModelTypes<
             >,
           ) => Promise<T[K]>;
           delete: (identifier: ModelIdentifier<ModelMeta[K]>) => Promise<T[K]>;
-          get<SelectionSet extends FlatKeys<FlatSchema[K]>[] = never[]>(
+          get<
+            FlatModel extends Record<string, unknown> = FlattenModel<T[K]>,
+            SelectionSet extends ModelPath<FlatModel>[] = never[],
+          >(
             identifier: ModelIdentifier<ModelMeta[K]>,
             options?: { selectionSet?: SelectionSet },
-          ): Promise<ReturnValue<T[K], FlatSchema[K], SelectionSet>>;
+          ): Promise<ReturnValue<T[K], FlatModel, SelectionSet>>;
           list<
-            SelectionSet extends FlatKeys<FlatSchema[K]>[] = never[],
+            FlatModel extends Record<string, unknown> = FlattenModel<T[K]>,
+            SelectionSet extends ModelPath<FlatModel>[] = never[],
           >(options?: {
             // TODO: strongly type filter
             filter?: object;
             selectionSet?: SelectionSet;
-          }): Promise<Array<ReturnValue<T[K], FlatSchema[K], SelectionSet>>>;
+          }): Promise<Array<ReturnValue<T[K], FlatModel, SelectionSet>>>;
         }
       : never
     : never;

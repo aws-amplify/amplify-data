@@ -1,5 +1,4 @@
 import { a, ClientSchema } from '@aws-amplify/amplify-api-next-alpha';
-import { ExtractModelMeta } from '@aws-amplify/amplify-api-next-types-alpha';
 
 const schema = a.schema({
   Post: a.model({
