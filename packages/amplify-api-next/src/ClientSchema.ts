@@ -182,9 +182,9 @@ type GetRelationshipRef<
     ? ResolvedModel
     : ResolvedModel | null | undefined,
   Value = TypeArg['array'] extends true ? Array<Model> : Model,
-> = Value extends Array<any>
-  ? ListReturnValue<Prettify<Value>>
-  : SingularReturnValue<Prettify<Value>>;
+> = () => Value extends Array<any>
+  ? ListReturnValue<Prettify<Model>>
+  : SingularReturnValue<Prettify<Model>>;
 
 type ResolveRelationalFieldsForModel<
   Schema,
