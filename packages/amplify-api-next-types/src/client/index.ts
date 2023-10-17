@@ -6,7 +6,6 @@ import {
   UnionToIntersection,
   Prettify,
 } from '../util';
-import { GraphQLError } from 'graphql';
 
 export declare const __modelMeta__: unique symbol;
 
@@ -285,9 +284,51 @@ type MutationInput<
 
 // #endregion
 
+// #region Interfaces copied from `graphql` package
+// From https://github.com/graphql/graphql-js/blob/main/src/error/GraphQLError.ts
+
+/**
+ * See: https://spec.graphql.org/draft/#sec-Errors
+ */
+export interface GraphQLFormattedError {
+  /**
+   * A short, human-readable summary of the problem that **SHOULD NOT** change
+   * from occurrence to occurrence of the problem, except for purposes of
+   * localization.
+   */
+  readonly message: string;
+  /**
+   * If an error can be associated to a particular point in the requested
+   * GraphQL document, it should contain a list of locations.
+   */
+  readonly locations?: ReadonlyArray<SourceLocation>;
+  /**
+   * If an error can be associated to a particular field in the GraphQL result,
+   * it _must_ contain an entry with the key `path` that details the path of
+   * the response field which experienced the error. This allows clients to
+   * identify whether a null result is intentional or caused by a runtime error.
+   */
+  readonly path?: ReadonlyArray<string | number>;
+  /**
+   * Reserved for implementors to extend the protocol however they see fit,
+   * and hence there are no additional restrictions on its contents.
+   */
+  readonly extensions?: { [key: string]: unknown };
+}
+
+/**
+ * Represents a location in a Source.
+ */
+export interface SourceLocation {
+  readonly line: number;
+  readonly column: number;
+}
+
+// #endregion
+
 export type SingularReturnValue<T> = Promise<{
   data: T;
-  errors?: GraphQLError[];
+  errors?: GraphQLFormattedError[];
   extensions?: {
     [key: string]: any;
   };
@@ -296,7 +337,7 @@ export type SingularReturnValue<T> = Promise<{
 export type ListReturnValue<T> = Promise<{
   data: Array<T>;
   nextToken?: string | null;
-  errors?: GraphQLError[];
+  errors?: GraphQLFormattedError[];
   extensions?: {
     [key: string]: any;
   };
