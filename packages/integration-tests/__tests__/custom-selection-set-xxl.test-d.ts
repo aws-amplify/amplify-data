@@ -1051,7 +1051,7 @@ describe('Custom Selection Set XXL', () => {
         }[];
       }[];
 
-      type test = Expect<Equal<typeof blogs, ExpectedType>>;
+      type test = Expect<Equal<typeof blogs.data, ExpectedType>>;
     });
   });
 });

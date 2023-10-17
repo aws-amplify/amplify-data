@@ -4,6 +4,8 @@ import {
   type UnionToIntersection,
   type ExcludeEmpty,
   __modelMeta__,
+  ListReturnValue,
+  SingularReturnValue,
 } from '@aws-amplify/amplify-api-next-types-alpha';
 import type { ModelField } from './ModelField';
 import type {
@@ -180,8 +182,9 @@ type GetRelationshipRef<
     ? ResolvedModel
     : ResolvedModel | null | undefined,
   Value = TypeArg['array'] extends true ? Array<Model> : Model,
-  // future: we can add an arg here for pagination and other options
-> = () => Promise<Prettify<Value>>;
+> = () => Value extends Array<any>
+  ? ListReturnValue<Prettify<Model>>
+  : SingularReturnValue<Prettify<Model>>;
 
 type ResolveRelationalFieldsForModel<
   Schema,

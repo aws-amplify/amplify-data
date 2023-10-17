@@ -194,7 +194,7 @@ export type ModelPath<
  * ```ts
  * Model = {
     title: string;
-    comments: () => Promise<({
+    comments: () => ListReturnValue<({
         content: string;
         readonly id: string;
         readonly createdAt: string;
@@ -231,16 +231,10 @@ type ResolvedModel<
 > = {
   done: NonRelationalFields<Model>;
   recur: {
-    [Field in keyof Model]: Model[Field] extends () => Promise<unknown>
-      ? Awaited<ReturnType<Model[Field]>> extends Array<unknown>
-        ? ResolvedModel<
-            NonNullable<UnwrapArray<Awaited<ReturnType<Model[Field]>>>>,
-            RecursionLoop[Depth]
-          >[]
-        : ResolvedModel<
-            NonNullable<UnwrapArray<Awaited<ReturnType<Model[Field]>>>>,
-            RecursionLoop[Depth]
-          >
+    [Field in keyof Model]: Model[Field] extends () => ListReturnValue<infer M>
+      ? ResolvedModel<NonNullable<M>, RecursionLoop[Depth]>[]
+      : Model[Field] extends () => SingularReturnValue<infer M>
+      ? ResolvedModel<NonNullable<M>, RecursionLoop[Depth]>
       : Model[Field];
   };
 }[Depth extends -1 ? 'done' : 'recur'];
@@ -290,6 +284,65 @@ type MutationInput<
 
 // #endregion
 
+// #region Interfaces copied from `graphql` package
+// From https://github.com/graphql/graphql-js/blob/main/src/error/GraphQLError.ts
+
+/**
+ * See: https://spec.graphql.org/draft/#sec-Errors
+ */
+export interface GraphQLFormattedError {
+  /**
+   * A short, human-readable summary of the problem that **SHOULD NOT** change
+   * from occurrence to occurrence of the problem, except for purposes of
+   * localization.
+   */
+  readonly message: string;
+  /**
+   * If an error can be associated to a particular point in the requested
+   * GraphQL document, it should contain a list of locations.
+   */
+  readonly locations?: ReadonlyArray<SourceLocation>;
+  /**
+   * If an error can be associated to a particular field in the GraphQL result,
+   * it _must_ contain an entry with the key `path` that details the path of
+   * the response field which experienced the error. This allows clients to
+   * identify whether a null result is intentional or caused by a runtime error.
+   */
+  readonly path?: ReadonlyArray<string | number>;
+  /**
+   * Reserved for implementors to extend the protocol however they see fit,
+   * and hence there are no additional restrictions on its contents.
+   */
+  readonly extensions?: { [key: string]: unknown };
+}
+
+/**
+ * Represents a location in a Source.
+ */
+export interface SourceLocation {
+  readonly line: number;
+  readonly column: number;
+}
+
+// #endregion
+
+export type SingularReturnValue<T> = Promise<{
+  data: T;
+  errors?: GraphQLFormattedError[];
+  extensions?: {
+    [key: string]: any;
+  };
+}>;
+
+export type ListReturnValue<T> = Promise<{
+  data: Array<T>;
+  nextToken?: string | null;
+  errors?: GraphQLFormattedError[];
+  extensions?: {
+    [key: string]: any;
+  };
+}>;
+
 export type ModelTypes<
   T extends Record<any, any>,
   ModelMeta extends Record<any, any> = ExtractModelMeta<T>,
@@ -299,21 +352,23 @@ export type ModelTypes<
       ? {
           create: (
             model: Prettify<MutationInput<T[K], ModelMeta[K]>>,
-          ) => Promise<T[K]>;
+          ) => SingularReturnValue<T[K]>;
           update: (
             model: Prettify<
               ModelIdentifier<ModelMeta[K]> &
                 Partial<MutationInput<T[K], ModelMeta[K]>>
             >,
-          ) => Promise<T[K]>;
-          delete: (identifier: ModelIdentifier<ModelMeta[K]>) => Promise<T[K]>;
+          ) => SingularReturnValue<T[K]>;
+          delete: (
+            identifier: ModelIdentifier<ModelMeta[K]>,
+          ) => SingularReturnValue<T[K]>;
           get<
             FlatModel extends Record<string, unknown> = ResolvedModel<T[K]>,
             SelectionSet extends ModelPath<FlatModel>[] = never[],
           >(
             identifier: ModelIdentifier<ModelMeta[K]>,
             options?: { selectionSet?: SelectionSet },
-          ): Promise<ReturnValue<T[K], FlatModel, SelectionSet>>;
+          ): SingularReturnValue<ReturnValue<T[K], FlatModel, SelectionSet>>;
           list<
             FlatModel extends Record<string, unknown> = ResolvedModel<T[K]>,
             SelectionSet extends ModelPath<FlatModel>[] = never[],
@@ -321,7 +376,7 @@ export type ModelTypes<
             // TODO: strongly type filter
             filter?: object;
             selectionSet?: SelectionSet;
-          }): Promise<Array<ReturnValue<T[K], FlatModel, SelectionSet>>>;
+          }): ListReturnValue<ReturnValue<T[K], FlatModel, SelectionSet>>;
         }
       : never
     : never;

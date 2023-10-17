@@ -25,5 +25,7 @@
   "files": [
     "lib-esm/**",
     "package.json"
-  ]
+  ],
+  "dependencies": {
+  }
 }
