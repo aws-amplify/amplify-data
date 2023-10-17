@@ -32,7 +32,7 @@ describe('Custom Selection Set', () => {
         readonly updatedAt: string;
       }[];
 
-      type test = Expect<Equal<typeof posts, ExpectedType>>;
+      type test = Expect<Equal<typeof posts.data, ExpectedType>>;
     });
 
     test('can specify custom selection set for a subset of fields', async () => {
@@ -46,7 +46,7 @@ describe('Custom Selection Set', () => {
         readonly title: string;
       }[];
 
-      type test = Expect<Equal<typeof posts, ExpectedType>>;
+      type test = Expect<Equal<typeof posts.data, ExpectedType>>;
     });
 
     test('SelectionSet util return type matches actual', async () => {
@@ -59,7 +59,7 @@ describe('Custom Selection Set', () => {
 
       type ExpectedType = SelectionSet<Post, ['id', 'title']>[];
 
-      type test = Expect<Equal<typeof posts, ExpectedType>>;
+      type test = Expect<Equal<typeof posts.data, ExpectedType>>;
     });
 
     test('error when specifying a non-existent field', () => {
@@ -108,7 +108,7 @@ describe('Custom Selection Set', () => {
         };
       }[];
 
-      type test = Expect<Equal<typeof posts, ExpectedType>>;
+      type test = Expect<Equal<typeof posts.data, ExpectedType>>;
     });
 
     test('can specify custom selection set for all fields on related model with wildcard `.*`', async () => {
@@ -139,7 +139,7 @@ describe('Custom Selection Set', () => {
         };
       }[];
 
-      type test = Expect<Equal<typeof posts, ExpectedType>>;
+      type test = Expect<Equal<typeof posts.data, ExpectedType>>;
     });
 
     test('SelectionSet util return type matches actual', async () => {
@@ -163,7 +163,7 @@ describe('Custom Selection Set', () => {
         ['id', 'title', 'description', 'createdAt', 'updatedAt', 'author.*']
       >[];
 
-      type test = Expect<Equal<typeof posts, ExpectedType>>;
+      type test = Expect<Equal<typeof posts.data, ExpectedType>>;
     });
   });
 
@@ -200,7 +200,7 @@ describe('Custom Selection Set', () => {
         }[];
       }[];
 
-      type test = Expect<Equal<typeof posts, ExpectedType>>;
+      type test = Expect<Equal<typeof posts.data, ExpectedType>>;
     });
 
     test('custom selection set path can go up to 6 levels deep', async () => {
@@ -235,7 +235,7 @@ describe('Custom Selection Set', () => {
         }[];
       }[];
 
-      type test = Expect<Equal<typeof posts, ExpectedType2>>;
+      type test = Expect<Equal<typeof posts.data, ExpectedType2>>;
     });
 
     test('SelectionSet util return type matches actual', async () => {
@@ -253,7 +253,7 @@ describe('Custom Selection Set', () => {
         ['id', 'comments.post.comments.post.comments.post.*']
       >[];
 
-      type test = Expect<Equal<typeof posts, ExpectedType>>;
+      type test = Expect<Equal<typeof posts.data, ExpectedType>>;
     });
   });
 
@@ -291,7 +291,7 @@ describe('Custom Selection Set', () => {
         }[];
       }[];
 
-      type test = Expect<Equal<typeof posts, ExpectedType>>;
+      type test = Expect<Equal<typeof posts.data, ExpectedType>>;
     });
   });
 
@@ -366,7 +366,7 @@ describe('Custom Selection Set', () => {
         }[];
       }[];
 
-      type test = Expect<Equal<typeof blogs, ExpectedType>>;
+      type test = Expect<Equal<typeof blogs.data, ExpectedType>>;
     });
 
     test('a mix of everything', async () => {
@@ -403,7 +403,7 @@ describe('Custom Selection Set', () => {
         ]
       >[];
 
-      type test = Expect<Equal<typeof blogs, ExpectedType>>;
+      type test = Expect<Equal<typeof blogs.data, ExpectedType>>;
     });
   });
 });

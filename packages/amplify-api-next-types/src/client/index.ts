@@ -195,7 +195,7 @@ export type ModelPath<
  * ```ts
  * Model = {
     title: string;
-    comments: () => Promise<({
+    comments: () => ListReturnValue<({
         content: string;
         readonly id: string;
         readonly createdAt: string;
@@ -232,16 +232,10 @@ type ResolvedModel<
 > = {
   done: NonRelationalFields<Model>;
   recur: {
-    [Field in keyof Model]: Model[Field] extends () => Promise<unknown>
-      ? Awaited<ReturnType<Model[Field]>> extends Array<unknown>
-        ? ResolvedModel<
-            NonNullable<UnwrapArray<Awaited<ReturnType<Model[Field]>>>>,
-            RecursionLoop[Depth]
-          >[]
-        : ResolvedModel<
-            NonNullable<UnwrapArray<Awaited<ReturnType<Model[Field]>>>>,
-            RecursionLoop[Depth]
-          >
+    [Field in keyof Model]: Model[Field] extends () => ListReturnValue<infer M>
+      ? ResolvedModel<NonNullable<M>, RecursionLoop[Depth]>[]
+      : Model[Field] extends () => SingularReturnValue<infer M>
+      ? ResolvedModel<NonNullable<M>, RecursionLoop[Depth]>
       : Model[Field];
   };
 }[Depth extends -1 ? 'done' : 'recur'];
