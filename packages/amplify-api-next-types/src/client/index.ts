@@ -342,8 +342,6 @@ export type ModelTypes<
             filter?: object;
             selectionSet?: SelectionSet;
           }): ListReturnValue<ReturnValue<T[K], FlatModel, SelectionSet>>;
-          // using this to debug types (surfacing them to the app code for inspection) - not callable at runtime
-          _debug(): Prettify<MutationInput<T[K], ModelMeta[K]>>;
         }
       : never
     : never;
