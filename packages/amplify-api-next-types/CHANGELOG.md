@@ -1,5 +1,11 @@
 # @aws-amplify/amplify-api-next-types-alpha
 
+## 0.2.0
+
+### Minor Changes
+
+- bf2b31b: update graphql return types to be `{data, nextToken, errors, extensions}`
+
 ## 0.1.2
 
 ### Patch Changes
