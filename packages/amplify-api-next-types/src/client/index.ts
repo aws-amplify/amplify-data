@@ -6,6 +6,7 @@ import {
   UnionToIntersection,
   Prettify,
 } from '../util';
+import type { Observable } from 'rxjs';
 
 export declare const __modelMeta__: unique symbol;
 
@@ -343,6 +344,8 @@ export type ListReturnValue<T> = Promise<{
   };
 }>;
 
+export type ObservedReturnValue<T> = Observable<T>;
+
 export type ModelTypes<
   T extends Record<any, any>,
   ModelMeta extends Record<any, any> = ExtractModelMeta<T>,
@@ -377,6 +380,30 @@ export type ModelTypes<
             filter?: object;
             selectionSet?: SelectionSet;
           }): ListReturnValue<ReturnValue<T[K], FlatModel, SelectionSet>>;
+          onCreate<
+            FlatModel extends Record<string, unknown> = ResolvedModel<T[K]>,
+            SelectionSet extends ModelPath<FlatModel>[] = never[],
+          >(options?: {
+            // TODO: strongly type filter
+            filter?: object;
+            selectionSet?: SelectionSet;
+          }): ObservedReturnValue<ReturnValue<T[K], FlatModel, SelectionSet>>;
+          onUpdate<
+            FlatModel extends Record<string, unknown> = ResolvedModel<T[K]>,
+            SelectionSet extends ModelPath<FlatModel>[] = never[],
+          >(options?: {
+            // TODO: strongly type filter
+            filter?: object;
+            selectionSet?: SelectionSet;
+          }): ObservedReturnValue<ReturnValue<T[K], FlatModel, SelectionSet>>;
+          onDelete<
+            FlatModel extends Record<string, unknown> = ResolvedModel<T[K]>,
+            SelectionSet extends ModelPath<FlatModel>[] = never[],
+          >(options?: {
+            // TODO: strongly type filter
+            filter?: object;
+            selectionSet?: SelectionSet;
+          }): ObservedReturnValue<ReturnValue<T[K], FlatModel, SelectionSet>>;
         }
       : never
     : never;
