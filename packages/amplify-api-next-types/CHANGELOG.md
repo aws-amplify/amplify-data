@@ -1,5 +1,11 @@
 # @aws-amplify/amplify-api-next-types-alpha
 
+## 0.2.1
+
+### Patch Changes
+
+- e85cca9: added onCreate, onUpdate, onDelete model method definitions
+
 ## 0.2.0
 
 ### Minor Changes
