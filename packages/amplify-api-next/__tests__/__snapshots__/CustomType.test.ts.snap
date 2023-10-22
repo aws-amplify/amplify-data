@@ -1,0 +1,27 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`CustomType transform Explicit CustomType 1`] = `
+"type Post @model 
+{
+  location: Location
+}
+
+type Location 
+{
+  lat: Float
+  long: Float
+}"
+`;
+
+exports[`CustomType transform Implicit CustomType 1`] = `
+"type Post @model 
+{
+  location: Location
+}
+
+type Location 
+{
+  lat: Float
+  long: Float
+}"
+`;

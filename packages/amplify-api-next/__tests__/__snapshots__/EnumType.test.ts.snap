@@ -1,0 +1,27 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`EnumType transform Explicit Enum 1`] = `
+"type File @model 
+{
+  accessLevel: AccessLevel
+}
+
+enum AccessLevel {
+public
+protected
+private
+}"
+`;
+
+exports[`EnumType transform Implicit Enum 1`] = `
+"type File @model 
+{
+  accessLevel: AccessLevel
+}
+
+enum AccessLevel {
+public
+protected
+private
+}"
+`;

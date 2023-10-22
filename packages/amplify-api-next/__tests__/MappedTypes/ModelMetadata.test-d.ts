@@ -10,6 +10,7 @@ import {
 } from '../../src/MappedTypes/ResolveSchema';
 
 import type { ResolveFieldProperties } from '../../src/MappedTypes/ResolveFieldProperties';
+import type { NonModelTypesShape } from '../../src/MappedTypes/ExtractNonModelTypes';
 
 import {
   ModelIdentifier,
@@ -80,7 +81,7 @@ describe('RelationalMetadata', () => {
 
     type Resolved = RelationalMetadata<
       ResolveSchema<Schema>,
-      ResolveFieldProperties<Schema>,
+      ResolveFieldProperties<Schema, NonModelTypesShape>,
       ModelIdentifier<SchemaTypes<Schema>>
     >;
 
@@ -102,7 +103,7 @@ describe('RelationalMetadata', () => {
 
     type Schema = typeof s;
 
-    type ResolvedFields = ResolveFieldProperties<Schema>;
+    type ResolvedFields = ResolveFieldProperties<Schema, NonModelTypesShape>;
     type Resolved = Prettify<
       RelationalMetadata<
         ResolveSchema<Schema>,
@@ -144,7 +145,7 @@ describe('RelationalMetadata', () => {
 
     type Schema = typeof s;
 
-    type ResolvedFields = ResolveFieldProperties<Schema>;
+    type ResolvedFields = ResolveFieldProperties<Schema, NonModelTypesShape>;
     type Resolved = Prettify<
       RelationalMetadata<
         ResolveSchema<Schema>,
@@ -189,7 +190,7 @@ describe('RelationalMetadata', () => {
 
     type Schema = typeof s;
 
-    type ResolvedFields = ResolveFieldProperties<Schema>;
+    type ResolvedFields = ResolveFieldProperties<Schema, NonModelTypesShape>;
     type Resolved = Prettify<
       RelationalMetadata<
         ResolveSchema<Schema>,
@@ -234,7 +235,7 @@ describe('RelationalMetadata', () => {
 
     type Schema = typeof s;
 
-    type ResolvedFields = ResolveFieldProperties<Schema>;
+    type ResolvedFields = ResolveFieldProperties<Schema, NonModelTypesShape>;
     type Resolved = Prettify<
       RelationalMetadata<
         ResolveSchema<Schema>,
@@ -278,7 +279,7 @@ describe('RelationalMetadata', () => {
     type Resolved = Prettify<
       RelationalMetadata<
         ResolveSchema<Schema>,
-        ResolveFieldProperties<Schema>,
+        ResolveFieldProperties<Schema, NonModelTypesShape>,
         ModelIdentifier<SchemaTypes<Schema>>
       >
     >;
@@ -317,7 +318,7 @@ describe('RelationalMetadata', () => {
     type Resolved = Prettify<
       RelationalMetadata<
         ResolveSchema<Schema>,
-        ResolveFieldProperties<Schema>,
+        ResolveFieldProperties<Schema, NonModelTypesShape>,
         ModelIdentifier<SchemaTypes<Schema>>
       >
     >;
@@ -354,7 +355,7 @@ describe('RelationalMetadata', () => {
 
     type Schema = typeof s;
 
-    type ResolvedFields = ResolveFieldProperties<Schema>;
+    type ResolvedFields = ResolveFieldProperties<Schema, NonModelTypesShape>;
     type Resolved = Prettify<
       RelationalMetadata<
         ResolveSchema<Schema>,

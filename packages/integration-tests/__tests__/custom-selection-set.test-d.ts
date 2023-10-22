@@ -4,7 +4,7 @@ import {
   Equal,
   SelectionSet,
 } from '@aws-amplify/amplify-api-next-types-alpha';
-import { API } from 'aws-amplify';
+import { generateClient } from 'aws-amplify/api';
 
 describe('Custom Selection Set', () => {
   describe('Basic, single model', () => {
@@ -18,7 +18,7 @@ describe('Custom Selection Set', () => {
     type Schema = ClientSchema<typeof schema>;
 
     test('can specify custom selection set for all fields', async () => {
-      const client = API.generateClient<Schema>();
+      const client = generateClient<Schema>();
 
       const posts = await client.models.Post.list({
         selectionSet: ['id', 'title', 'description', 'createdAt', 'updatedAt'],
@@ -36,7 +36,7 @@ describe('Custom Selection Set', () => {
     });
 
     test('can specify custom selection set for a subset of fields', async () => {
-      const client = API.generateClient<Schema>();
+      const client = generateClient<Schema>();
       const posts = await client.models.Post.list({
         selectionSet: ['id', 'title'],
       });
@@ -50,7 +50,7 @@ describe('Custom Selection Set', () => {
     });
 
     test('can specify custom selection set through variable', async () => {
-      const client = API.generateClient<Schema>();
+      const client = generateClient<Schema>();
 
       const selSet = ['id', 'title'] as const;
 
@@ -71,7 +71,7 @@ describe('Custom Selection Set', () => {
     });
 
     test('SelectionSet util return type matches actual', async () => {
-      const client = API.generateClient<Schema>();
+      const client = generateClient<Schema>();
       const posts = await client.models.Post.list({
         selectionSet: ['id', 'title'],
       });
@@ -84,7 +84,7 @@ describe('Custom Selection Set', () => {
     });
 
     test('error when specifying a non-existent field', () => {
-      const client = API.generateClient<Schema>();
+      const client = generateClient<Schema>();
       client.models.Post.list({
         // @ts-expect-error
         selectionSet: ['id', 'does-not-exist'],
@@ -107,7 +107,7 @@ describe('Custom Selection Set', () => {
     type Schema = ClientSchema<typeof schema>;
 
     test('can specify custom selection set for all fields on related model explicitly', async () => {
-      const client = API.generateClient<Schema>();
+      const client = generateClient<Schema>();
 
       const posts = await client.models.Post.list({
         selectionSet: [
@@ -133,7 +133,7 @@ describe('Custom Selection Set', () => {
     });
 
     test('can specify custom selection set for all fields on related model with wildcard `.*`', async () => {
-      const client = API.generateClient<Schema>();
+      const client = generateClient<Schema>();
 
       const posts = await client.models.Post.list({
         selectionSet: [
@@ -164,7 +164,7 @@ describe('Custom Selection Set', () => {
     });
 
     test('SelectionSet util return type matches actual', async () => {
-      const client = API.generateClient<Schema>();
+      const client = generateClient<Schema>();
 
       const posts = await client.models.Post.list({
         selectionSet: [
@@ -204,7 +204,7 @@ describe('Custom Selection Set', () => {
     type Schema = ClientSchema<typeof schema>;
 
     test('specifying wildcard selection set on relationship returns only non-relational fields', async () => {
-      const client = API.generateClient<Schema>();
+      const client = generateClient<Schema>();
 
       const posts = await client.models.Post.list({
         selectionSet: ['id', 'comments.*'],
@@ -225,7 +225,7 @@ describe('Custom Selection Set', () => {
     });
 
     test('custom selection set path can go up to 6 levels deep', async () => {
-      const client = API.generateClient<Schema>();
+      const client = generateClient<Schema>();
 
       const posts = await client.models.Post.list({
         selectionSet: [
@@ -260,7 +260,7 @@ describe('Custom Selection Set', () => {
     });
 
     test('SelectionSet util return type matches actual', async () => {
-      const client = API.generateClient<Schema>();
+      const client = generateClient<Schema>();
 
       const posts = await client.models.Post.list({
         selectionSet: [
@@ -294,7 +294,7 @@ describe('Custom Selection Set', () => {
     type Schema = ClientSchema<typeof schema>;
 
     test('wildcard on the target model', async () => {
-      const client = API.generateClient<Schema>();
+      const client = generateClient<Schema>();
 
       const posts = await client.models.Post.list({
         selectionSet: ['id', 'postTags.tag.*'],
@@ -341,7 +341,7 @@ describe('Custom Selection Set', () => {
     type Schema = ClientSchema<typeof schema>;
 
     test('a mix of everything', async () => {
-      const client = API.generateClient<Schema>();
+      const client = generateClient<Schema>();
 
       const blogs = await client.models.Blog.list({
         selectionSet: [
@@ -391,7 +391,7 @@ describe('Custom Selection Set', () => {
     });
 
     test('a mix of everything', async () => {
-      const client = API.generateClient<Schema>();
+      const client = generateClient<Schema>();
 
       const blogs = await client.models.Blog.list({
         selectionSet: [
