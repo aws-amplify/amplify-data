@@ -11,13 +11,14 @@ const client = API.generateClient<Schema>();
 
 type Post = Schema['Post'];
 
-type CustomSelSet = SelectionSet<
-  Post,
-  ['title', 'comments.content', 'comments.updatedAt']
->;
+const selSet = ['title', 'comments.content', 'comments.updatedAt'] as const;
+
+type CustomSelSet = SelectionSet<Post, typeof selSet>;
 
 async function test() {
-  const [post] = await client.models.Post.list({
-    selectionSet: ['title', 'comments.content', 'comments.updatedAt'],
+  const {
+    data: [post],
+  } = await client.models.Post.list({
+    selectionSet: selSet,
   });
 }

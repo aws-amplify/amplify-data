@@ -49,6 +49,27 @@ describe('Custom Selection Set', () => {
       type test = Expect<Equal<typeof posts.data, ExpectedType>>;
     });
 
+    test('can specify custom selection set through variable', async () => {
+      const client = API.generateClient<Schema>();
+
+      const selSet = ['id', 'title'] as const;
+
+      const posts = await client.models.Post.list({
+        selectionSet: selSet,
+      });
+
+      type ExpectedType = {
+        readonly id: string;
+        readonly title: string;
+      }[];
+
+      type test = Expect<Equal<typeof posts.data, ExpectedType>>;
+
+      type WithUtil = SelectionSet<Schema['Post'], typeof selSet>[];
+
+      type test2 = Expect<Equal<WithUtil, ExpectedType>>;
+    });
+
     test('SelectionSet util return type matches actual', async () => {
       const client = API.generateClient<Schema>();
       const posts = await client.models.Post.list({
