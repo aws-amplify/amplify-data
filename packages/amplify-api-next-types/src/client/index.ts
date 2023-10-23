@@ -346,6 +346,11 @@ export type ListReturnValue<T> = Promise<{
 
 export type ObservedReturnValue<T> = Observable<T>;
 
+export type ObserveQueryReturnValue<T> = Observable<{
+  items: T[];
+  isSynced: boolean;
+}>;
+
 export type ModelTypes<
   T extends Record<any, any>,
   ModelMeta extends Record<any, any> = ExtractModelMeta<T>,
@@ -404,6 +409,16 @@ export type ModelTypes<
             filter?: object;
             selectionSet?: SelectionSet;
           }): ObservedReturnValue<ReturnValue<T[K], FlatModel, SelectionSet>>;
+          observeQuery<
+            FlatModel extends Record<string, unknown> = ResolvedModel<T[K]>,
+            SelectionSet extends ModelPath<FlatModel>[] = never[],
+          >(options?: {
+            // TODO: strongly type filter
+            filter?: object;
+            selectionSet?: SelectionSet;
+          }): ObserveQueryReturnValue<
+            ReturnValue<T[K], FlatModel, SelectionSet>
+          >;
         }
       : never
     : never;
