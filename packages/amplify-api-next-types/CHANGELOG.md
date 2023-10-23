@@ -1,5 +1,11 @@
 # @aws-amplify/amplify-api-next-types-alpha
 
+## 0.2.2
+
+### Patch Changes
+
+- cf5fddd: allow array literals in selectionSet option parm
+
 ## 0.2.1
 
 ### Patch Changes
