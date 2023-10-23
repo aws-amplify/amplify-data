@@ -34,7 +34,7 @@ type NonRelationalFields<M extends Model> = {
 type ReturnValue<
   M extends Model,
   FlatModel extends Model,
-  Paths extends Array<ModelPath<FlatModel>>,
+  Paths extends ReadonlyArray<ModelPath<FlatModel>>,
 > = Paths extends never[]
   ? M
   : CustomSelectionSetReturnValue<FlatModel, Paths[number]>;
@@ -242,7 +242,7 @@ type ResolvedModel<
 
 export type SelectionSet<
   Model extends Record<string, unknown>,
-  Path extends ModelPath<FlatModel>[],
+  Path extends ReadonlyArray<ModelPath<FlatModel>>,
   FlatModel extends Record<string, unknown> = ResolvedModel<Model>,
 > = CustomSelectionSetReturnValue<FlatModel, Path[number]>;
 // #endregion
@@ -372,14 +372,14 @@ export type ModelTypes<
           ) => SingularReturnValue<T[K]>;
           get<
             FlatModel extends Record<string, unknown> = ResolvedModel<T[K]>,
-            SelectionSet extends ModelPath<FlatModel>[] = never[],
+            SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[],
           >(
             identifier: ModelIdentifier<ModelMeta[K]>,
             options?: { selectionSet?: SelectionSet },
           ): SingularReturnValue<ReturnValue<T[K], FlatModel, SelectionSet>>;
           list<
             FlatModel extends Record<string, unknown> = ResolvedModel<T[K]>,
-            SelectionSet extends ModelPath<FlatModel>[] = never[],
+            SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[],
           >(options?: {
             // TODO: strongly type filter
             filter?: object;
@@ -387,7 +387,7 @@ export type ModelTypes<
           }): ListReturnValue<ReturnValue<T[K], FlatModel, SelectionSet>>;
           onCreate<
             FlatModel extends Record<string, unknown> = ResolvedModel<T[K]>,
-            SelectionSet extends ModelPath<FlatModel>[] = never[],
+            SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[],
           >(options?: {
             // TODO: strongly type filter
             filter?: object;
@@ -395,7 +395,7 @@ export type ModelTypes<
           }): ObservedReturnValue<ReturnValue<T[K], FlatModel, SelectionSet>>;
           onUpdate<
             FlatModel extends Record<string, unknown> = ResolvedModel<T[K]>,
-            SelectionSet extends ModelPath<FlatModel>[] = never[],
+            SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[],
           >(options?: {
             // TODO: strongly type filter
             filter?: object;
@@ -403,7 +403,7 @@ export type ModelTypes<
           }): ObservedReturnValue<ReturnValue<T[K], FlatModel, SelectionSet>>;
           onDelete<
             FlatModel extends Record<string, unknown> = ResolvedModel<T[K]>,
-            SelectionSet extends ModelPath<FlatModel>[] = never[],
+            SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[],
           >(options?: {
             // TODO: strongly type filter
             filter?: object;
