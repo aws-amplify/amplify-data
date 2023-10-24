@@ -1,5 +1,11 @@
 # @aws-amplify/amplify-api-next-types-alpha
 
+## 0.2.3
+
+### Patch Changes
+
+- 2bde78c: added observeQuery to model method definitions
+
 ## 0.2.2
 
 ### Patch Changes
