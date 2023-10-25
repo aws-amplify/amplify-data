@@ -3,9 +3,8 @@ import {
   type Prettify,
   type UnionToIntersection,
   type ExcludeEmpty,
+  type LazyLoader,
   __modelMeta__,
-  ListReturnValue,
-  SingularReturnValue,
 } from '@aws-amplify/amplify-api-next-types-alpha';
 import type { ModelField } from './ModelField';
 import type {
@@ -181,10 +180,7 @@ type GetRelationshipRef<
   Model = TypeArg['valueRequired'] extends true
     ? ResolvedModel
     : ResolvedModel | null | undefined,
-  Value = TypeArg['array'] extends true ? Array<Model> : Model,
-> = () => Value extends Array<any>
-  ? ListReturnValue<Prettify<Model>>
-  : SingularReturnValue<Prettify<Model>>;
+> = LazyLoader<Model, TypeArg['array']>;
 
 type ResolveRelationalFieldsForModel<
   Schema,
