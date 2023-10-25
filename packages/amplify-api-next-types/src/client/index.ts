@@ -355,7 +355,7 @@ export type ObserveQueryReturnValue<T> = Observable<{
   isSynced: boolean;
 }>;
 
-export type LazyLoader<Model, IsArray extends Boolean> = (options?: {
+export type LazyLoader<Model, IsArray extends boolean> = (options?: {
   authMode?: AuthMode;
   authToken?: string;
 }) => IsArray extends true
