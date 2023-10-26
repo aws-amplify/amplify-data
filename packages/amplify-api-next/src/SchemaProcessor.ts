@@ -72,7 +72,7 @@ function scalarFieldToGql(fieldDef: ScalarFieldDef, identifier?: string[]) {
   }
 
   if (_default !== undefined) {
-    field += ` @default(value: ${_default})`;
+    field += ` @default(value: "${_default?.toString()}")`;
   }
 
   return field;
@@ -83,7 +83,7 @@ function modelFieldToGql(fieldDef: ModelFieldDef) {
     type,
     relatedModel,
     array,
-    connectionName,
+    relationName,
     valueRequired,
     arrayRequired,
   } = fieldDef;
@@ -108,7 +108,7 @@ function modelFieldToGql(fieldDef: ModelFieldDef) {
 
   // TODO: accept other relationship options e.g. `fields`
   if (type === 'manyToMany') {
-    field += `(relationName: "${connectionName}")`;
+    field += `(relationName: "${relationName}")`;
   }
 
   return field;
