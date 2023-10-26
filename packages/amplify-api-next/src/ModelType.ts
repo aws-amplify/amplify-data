@@ -173,6 +173,13 @@ function _model<T extends ModelTypeParamShape>(fields: T['fields']) {
   return { ...builder, data } as InternalModel as ModelType<T>;
 }
 
+/**
+ * A data model that creates a matching Amazon DynamoDB table and provides create, read (list and get), update,
+ * delete, and subscription APIs.
+ * 
+ * @param fields database table fields. Supports scalar types and relationship types. 
+ * @returns a data model definition
+ */
 export function model<T extends ModelFields>(
   fields: T,
 ): ModelType<{ fields: T; identifier: Array<'id'>; authorization: [] }> {

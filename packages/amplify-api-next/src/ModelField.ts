@@ -178,7 +178,7 @@ function _field<T extends ModelFieldTypeParamOuter>(fieldType: ModelFieldType) {
  * If not specified on create operations, a ULID will be auto-generated service-side.
  * @returns ID field definition
  */
-function id(): ModelField<Nullable<string>> {
+export function id(): ModelField<Nullable<string>> {
   return _field(ModelFieldType.Id);
 }
 
@@ -186,7 +186,7 @@ function id(): ModelField<Nullable<string>> {
  * A string scalar type that is represented server-side as a UTF-8 character sequence.
  * @returns string field definition
  */
-function string(): ModelField<Nullable<string>> {
+export function string(): ModelField<Nullable<string>> {
   return _field(ModelFieldType.String);
 }
 
@@ -194,7 +194,7 @@ function string(): ModelField<Nullable<string>> {
  * An integer scalar type with a supported value range between -(2^31) and 2^31-1.
  * @returns integer field definition
  */
-function integer(): ModelField<Nullable<number>> {
+export function integer(): ModelField<Nullable<number>> {
   return _field(ModelFieldType.Integer);
 }
 
@@ -202,7 +202,7 @@ function integer(): ModelField<Nullable<number>> {
  * A float scalar type following represented server-side as an IEEE 754 floating point value.
  * @returns float field definition
  */
-function float(): ModelField<Nullable<number>> {
+export function float(): ModelField<Nullable<number>> {
   return _field(ModelFieldType.Float);
 }
 
@@ -210,7 +210,7 @@ function float(): ModelField<Nullable<number>> {
  * A boolean scalar type that can be either true or false. 
  * @returns boolean field definition
  */
-function boolean(): ModelField<Nullable<boolean>> {
+export function boolean(): ModelField<Nullable<boolean>> {
   return _field(ModelFieldType.Boolean);
 }
 
@@ -218,7 +218,7 @@ function boolean(): ModelField<Nullable<boolean>> {
  * A date scalar type that is represented server-side as an extended ISO 8601 date string in the format `YYYY-MM-DD`.
  * @returns date field definition
  */
-function date(): ModelField<Nullable<string>> {
+export function date(): ModelField<Nullable<string>> {
   return _field(ModelFieldType.Date);
 }
 
@@ -226,7 +226,7 @@ function date(): ModelField<Nullable<string>> {
  * A time scalar type that is represented server-side as an extended ISO 8601 time string in the format `hh:mm:ss.sss`.
  * @returns time field definition
  */
-function time(): ModelField<Nullable<string>> {
+export function time(): ModelField<Nullable<string>> {
   return _field(ModelFieldType.Time);
 }
 
@@ -234,7 +234,7 @@ function time(): ModelField<Nullable<string>> {
  * A date time scalar type that is represented server-side as an extended ISO 8601 date and time string in the format `YYYY-MM-DDThh:mm:ss.sssZ`.
  * @returns datetime field definition
  */
-function datetime(): ModelField<Nullable<string>> {
+export function datetime(): ModelField<Nullable<string>> {
   return _field(ModelFieldType.DateTime);
 }
 
@@ -242,7 +242,7 @@ function datetime(): ModelField<Nullable<string>> {
  * A timestamp scalar type that is represented by an integer value of the number of seconds before or after `1970-01-01-T00:00Z`.
  * @returns timestamp field definition
  */
-function timestamp(): ModelField<Nullable<number>> {
+export function timestamp(): ModelField<Nullable<number>> {
   return _field(ModelFieldType.Timestamp);
 }
 
@@ -250,7 +250,7 @@ function timestamp(): ModelField<Nullable<number>> {
  * An email scalar type that is represented server-side in the format `local-part@domain-part` as defined by RFC 822. 
  * @returns email field definition
  */
-function email(): ModelField<Nullable<string>> {
+export function email(): ModelField<Nullable<string>> {
   return _field(ModelFieldType.Email);
 }
 
@@ -259,7 +259,7 @@ function email(): ModelField<Nullable<string>> {
  * rather than as the literal input strings.
  * @returns JSON field definition
  */
-function json(): ModelField<Nullable<any>> {
+export function json(): ModelField<Nullable<any>> {
   return _field(ModelFieldType.JSON);
 }
 
@@ -269,7 +269,7 @@ function json(): ModelField<Nullable<any>> {
  * to the North American Numbering Plan.
  * @returns phone number field definition
  */
-function phone(): ModelField<Nullable<string>> {
+export function phone(): ModelField<Nullable<string>> {
   return _field(ModelFieldType.Phone);
 }
 
@@ -278,7 +278,7 @@ function phone(): ModelField<Nullable<string>> {
  * URLs must contain a schema (http, mailto) and can't contain two forward slashes (//) in the path part.
  * @returns URL field definition
  */
-function url(): ModelField<Nullable<string>> {
+export function url(): ModelField<Nullable<string>> {
   return _field(ModelFieldType.Url);
 }
 
@@ -288,23 +288,6 @@ function url(): ModelField<Nullable<string>> {
  * to indicate subnet mask.
  * @returns IP address field definition
  */
-function ipAddress(): ModelField<Nullable<string>> {
+export function ipAddress(): ModelField<Nullable<string>> {
   return _field(ModelFieldType.IPAddress);
 }
-
-export const fields = {
-  id,
-  string,
-  integer,
-  float,
-  boolean,
-  date,
-  time,
-  datetime,
-  timestamp,
-  email,
-  json,
-  phone,
-  url,
-  ipAddress,
-};
