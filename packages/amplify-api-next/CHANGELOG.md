@@ -1,5 +1,11 @@
 # @aws-amplify/amplify-api-next-alpha
 
+## 0.6.2
+
+### Patch Changes
+
+- 0b72dac: adds docstring
+
 ## 0.6.1
 
 ### Patch Changes
