@@ -77,8 +77,8 @@ type ExtractRelationalMetadata<
               // E.g. if Post hasOne Author, we need to add a postAuthorId field to the Post model
               ModelName
             : FlattenedSchema[ModelName][Field]['relationshipType'] extends 'manyToMany'
-            ? FlattenedSchema[ModelName][Field]['connectionName'] extends string
-              ? FlattenedSchema[ModelName][Field]['connectionName']
+            ? FlattenedSchema[ModelName][Field]['relationName'] extends string
+              ? FlattenedSchema[ModelName][Field]['relationName']
               : never
             : never
           : never]: FlattenedSchema[ModelName][Field] extends ModelRelationalFieldParamShape
@@ -153,10 +153,10 @@ type ExtractImplicitModelNames<Schema> = UnionToIntersection<
     {
       [ModelProp in keyof Schema]: {
         [FieldProp in keyof Schema[ModelProp] as Schema[ModelProp][FieldProp] extends ModelRelationalFieldParamShape
-          ? Schema[ModelProp][FieldProp]['connectionName'] extends string
-            ? Schema[ModelProp][FieldProp]['connectionName'] extends keyof Schema
+          ? Schema[ModelProp][FieldProp]['relationName'] extends string
+            ? Schema[ModelProp][FieldProp]['relationName'] extends keyof Schema
               ? never
-              : Schema[ModelProp][FieldProp]['connectionName']
+              : Schema[ModelProp][FieldProp]['relationName']
             : never
           : never]: { id?: string } & Record<
           `${Lowercase<ModelProp & string>}`,
@@ -204,10 +204,10 @@ type ResolveRelationships<Schema, Flat extends boolean = false> = {
     [FieldProp in keyof Schema[ModelProp]]: Schema[ModelProp][FieldProp] extends ModelRelationalFieldParamShape
       ? Schema[ModelProp][FieldProp]['relatedModel'] extends keyof Schema
         ? Schema[ModelProp][FieldProp]['relationshipType'] extends 'manyToMany'
-          ? Schema[ModelProp][FieldProp]['connectionName'] extends keyof Schema
+          ? Schema[ModelProp][FieldProp]['relationName'] extends keyof Schema
             ? GetRelationshipRef<
                 Schema,
-                Schema[ModelProp][FieldProp]['connectionName'],
+                Schema[ModelProp][FieldProp]['relationName'],
                 Schema[ModelProp][FieldProp],
                 Flat
               >

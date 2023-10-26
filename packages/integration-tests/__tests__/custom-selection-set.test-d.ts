@@ -283,11 +283,11 @@ describe('Custom Selection Set', () => {
       Post: a.model({
         title: a.string().required(),
         description: a.string(),
-        postTags: a.manyToMany('Tag', { connectionName: 'PostTags' }),
+        postTags: a.manyToMany('Tag', { relationName: 'PostTags' }),
       }),
       Tag: a.model({
         label: a.string().required(),
-        post: a.manyToMany('Post', { connectionName: 'PostTags' }),
+        post: a.manyToMany('Post', { relationName: 'PostTags' }),
       }),
     });
 

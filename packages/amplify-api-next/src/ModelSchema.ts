@@ -63,6 +63,13 @@ function _schema<T extends ModelSchemaParamShape>(models: T['models']) {
   return { data, transform } as ModelSchema<T>;
 }
 
+/**
+ * The API and data model definition for Amplify Data. Pass in `{ <NAME>: a.model(...) }` to create a database table
+ * and exposes CRUDL operations via an API.
+ * @param models The API and data model definition
+ * @returns An API and data model definition to be deployed with Amplify (Gen 2) experience (`defineData(...)`)
+ * or with the Amplify Data CDK construct (`@aws-amplify/data-construct`)
+ */
 export function schema<Models extends ModelSchemaModels>(
   models: Models,
 ): ModelSchema<{ models: Models }> {

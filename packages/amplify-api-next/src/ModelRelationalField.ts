@@ -24,7 +24,7 @@ type ModelRelationalFieldData = {
   array: boolean;
   valueRequired: boolean;
   arrayRequired: boolean;
-  connectionName?: string;
+  relationName?: string;
   authorization: Authorization<any, any>[];
 };
 
@@ -35,7 +35,7 @@ export type ModelRelationalFieldParamShape = {
   array: boolean;
   valueRequired: boolean;
   arrayRequired: boolean;
-  connectionName?: string;
+  relationName?: string;
 };
 
 export type ModelRelationalField<
@@ -46,14 +46,24 @@ export type ModelRelationalField<
   Auth = undefined,
 > = Omit<
   {
+    /**
+     * When set, it requires the value of the relationship type to be required.
+     */
     valueRequired(): ModelRelationalField<
       SetTypeSubArg<T, 'valueRequired', true>,
       K | 'valueRequired'
     >;
+    /**
+     * When set, it requires the relationship to always return an array value
+     */
     arrayRequired(): ModelRelationalField<
       SetTypeSubArg<T, 'arrayRequired', true>,
       K | 'arrayRequired'
     >;
+    /**
+     * Configures field-level authorization rules. Pass in an array of authorizations `(a.allow.____)` to mix and match
+     * multiple authorization rules for this field.  
+     */
     authorization<AuthRuleType extends Authorization<any, any>>(
       rules: AuthRuleType[],
     ): ModelRelationalField<T, K | 'authorization', K, AuthRuleType>;
@@ -80,7 +90,7 @@ function _modelRelationalField<
   T extends ModelRelationalFieldParamShape,
   RelatedModel extends string,
   RT extends ModelRelationshipTypes,
->(type: RT, relatedModel: RelatedModel, connectionName?: string) {
+>(type: RT, relatedModel: RelatedModel, relationName?: string) {
   const data: ModelRelationalFieldData = {
     relatedModel,
     type,
@@ -88,7 +98,7 @@ function _modelRelationalField<
     array: false,
     valueRequired: false,
     arrayRequired: false,
-    connectionName,
+    relationName,
     authorization: [],
   };
 
@@ -124,7 +134,7 @@ export type ModelRelationalTypeArgFactory<
   RM extends string,
   RT extends RelationshipTypes,
   IsArray extends boolean,
-  ConnectionName extends string | undefined = undefined,
+  RelationName extends string | undefined = undefined,
 > = {
   type: 'model';
   relatedModel: RM;
@@ -132,9 +142,16 @@ export type ModelRelationalTypeArgFactory<
   array: IsArray;
   valueRequired: false;
   arrayRequired: false;
-  connectionName: ConnectionName;
+  relationName: RelationName;
 };
 
+/**
+ * Create a one-directional one-to-one relationship between two models using the `hasOne("MODEL_NAME")` method.
+ * A hasOne relationship always uses a reference to the related model's identifier. Typically this is the `id` field
+ * unless overwritten with the `identifier()` method.
+ * @param relatedModel the name of the related model
+ * @returns a one-to-one relationship definition
+ */
 export function hasOne<RM extends string>(relatedModel: RM) {
   return _modelRelationalField<
     ModelRelationalTypeArgFactory<RM, ModelRelationshipTypes.hasOne, false>,
@@ -143,6 +160,11 @@ export function hasOne<RM extends string>(relatedModel: RM) {
   >(ModelRelationshipTypes.hasOne, relatedModel);
 }
 
+/**
+ * Create a one-directional one-to-many relationship between two models using the `hasMany()` method.
+ * @param relatedModel the name of the related model
+ * @returns a one-to-many relationship definition
+ */
 export function hasMany<RM extends string>(relatedModel: RM) {
   return _modelRelationalField<
     ModelRelationalTypeArgFactory<RM, ModelRelationshipTypes.hasMany, true>,
@@ -151,6 +173,13 @@ export function hasMany<RM extends string>(relatedModel: RM) {
   >(ModelRelationshipTypes.hasMany, relatedModel);
 }
 
+/**
+ * Make a `hasOne()` or `hasMany()` relationship bi-directional using the `belongsTo()` method. 
+ * The belongsTo() method requires that a hasOne() or hasMany() relationship already exists from 
+ * parent to the related model.
+ * @param relatedModel name of the related `.hasOne()` or `.hasMany()` model
+ * @returns a belong-to relationship definition
+ */
 export function belongsTo<RM extends string>(relatedModel: RM) {
   return _modelRelationalField<
     ModelRelationalTypeArgFactory<RM, ModelRelationshipTypes.belongsTo, false>,
@@ -159,18 +188,28 @@ export function belongsTo<RM extends string>(relatedModel: RM) {
   >(ModelRelationshipTypes.belongsTo, relatedModel);
 }
 
-export function manyToMany<RM extends string, CN extends string>(
+/**
+ * Create a many-to-many relationship between two models with the manyToMany() method.
+ * Provide a common relationName on both models to join them into a many-to-many relationship.
+ * Under the hood a many-to-many relationship is modeled with a "join table" with corresponding
+ * `hasMany()` relationships between the two related models. You must set the same `manyToMany()`
+ * field on both models of the relationship.
+ * @param relatedModel name of the related model 
+ * @param opts pass in the `relationName` that will serve as the join table name for this many-to-many relationship 
+ * @returns a many-to-many relationship definition
+ */
+export function manyToMany<RM extends string, RN extends string>(
   relatedModel: RM,
-  opts: { connectionName: CN },
+  opts: { relationName: RN },
 ) {
   return _modelRelationalField<
     ModelRelationalTypeArgFactory<
       RM,
       ModelRelationshipTypes.manyToMany,
       true,
-      CN
+      RN
     >,
     RM,
     ModelRelationshipTypes.manyToMany
-  >(ModelRelationshipTypes.manyToMany, relatedModel, opts.connectionName);
+  >(ModelRelationshipTypes.manyToMany, relatedModel, opts.relationName);
 }

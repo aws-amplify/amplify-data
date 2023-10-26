@@ -1,5 +1,5 @@
 import type { InternalSchema } from './ModelSchema';
-import { type ModelField, type InternalField, fields } from './ModelField';
+import { type ModelField, type InternalField, string } from './ModelField';
 import type { InternalRelationalField } from './ModelRelationalField';
 import type { ModelType, InternalModel } from './ModelType';
 import { Authorization, __data } from './Authorization';
@@ -72,7 +72,7 @@ function scalarFieldToGql(fieldDef: ScalarFieldDef, identifier?: string[]) {
   }
 
   if (_default !== undefined) {
-    field += ` @default(value: ${_default})`;
+    field += ` @default(value: "${_default?.toString()}")`;
   }
 
   return field;
@@ -83,7 +83,7 @@ function modelFieldToGql(fieldDef: ModelFieldDef) {
     type,
     relatedModel,
     array,
-    connectionName,
+    relationName,
     valueRequired,
     arrayRequired,
   } = fieldDef;
@@ -108,7 +108,7 @@ function modelFieldToGql(fieldDef: ModelFieldDef) {
 
   // TODO: accept other relationship options e.g. `fields`
   if (type === 'manyToMany') {
-    field += `(relationName: "${connectionName}")`;
+    field += `(relationName: "${relationName}")`;
   }
 
   return field;
@@ -152,9 +152,9 @@ function calculateAuth(authorization: Authorization<any, any>[]) {
       // model field dep, type of which depends on whether multiple owner/group
       // is required.
       if (rule.multiOwner) {
-        authFields[rule.groupOrOwnerField] = fields.string().array();
+        authFields[rule.groupOrOwnerField] = string().array();
       } else {
-        authFields[rule.groupOrOwnerField] = fields.string();
+        authFields[rule.groupOrOwnerField] = string();
       }
     }
 

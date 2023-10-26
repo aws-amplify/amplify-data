@@ -73,11 +73,25 @@ export type ModelField<
   Auth = undefined,
 > = Omit<
   {
+    /**
+     * Marks a field as required.
+     */
     required(): ModelField<Required<T>, K | 'required'>;
     // Exclude `optional` after calling array, because both the value and the array itself can be optional
+    /**
+     * Converts a field type definition to an array of the field type.
+     */
     array(): ModelField<ArrayField<T>, Exclude<K, 'required'> | 'array'>;
     // TODO: should be T, but .array breaks this constraint. Fix later
-    default(val: ModelFieldTypeParamOuter): ModelField<T, K | 'default'>;
+    /**
+     * Sets a default value for the scalar type.
+     * @param value the default value
+     */
+    default(value: ModelFieldTypeParamOuter): ModelField<T, K | 'default'>;
+    /**
+     * Configures field-level authorization rules. Pass in an array of authorizations `(a.allow.____)` to mix and match
+     * multiple authorization rules for this field.  
+     */
     authorization<AuthRuleType extends Authorization<any, any>>(
       rules: AuthRuleType[],
     ): ModelField<T, K | 'authorization', AuthRuleType>;
@@ -159,75 +173,121 @@ function _field<T extends ModelFieldTypeParamOuter>(fieldType: ModelFieldType) {
   return { ...builder, data } as InternalField as ModelField<T>;
 }
 
-function id(): ModelField<Nullable<string>> {
+/**
+ * A unique identifier scalar type. This scalar is serialized like a String but isn't meant to be human-readable.
+ * If not specified on create operations, a ULID will be auto-generated service-side.
+ * @returns ID field definition
+ */
+export function id(): ModelField<Nullable<string>> {
   return _field(ModelFieldType.Id);
 }
 
-function string(): ModelField<Nullable<string>> {
+/**
+ * A string scalar type that is represented server-side as a UTF-8 character sequence.
+ * @returns string field definition
+ */
+export function string(): ModelField<Nullable<string>> {
   return _field(ModelFieldType.String);
 }
 
-function integer(): ModelField<Nullable<number>> {
+/**
+ * An integer scalar type with a supported value range between -(2^31) and 2^31-1.
+ * @returns integer field definition
+ */
+export function integer(): ModelField<Nullable<number>> {
   return _field(ModelFieldType.Integer);
 }
 
-function float(): ModelField<Nullable<number>> {
+/**
+ * A float scalar type following represented server-side as an IEEE 754 floating point value.
+ * @returns float field definition
+ */
+export function float(): ModelField<Nullable<number>> {
   return _field(ModelFieldType.Float);
 }
 
-function boolean(): ModelField<Nullable<boolean>> {
+/**
+ * A boolean scalar type that can be either true or false. 
+ * @returns boolean field definition
+ */
+export function boolean(): ModelField<Nullable<boolean>> {
   return _field(ModelFieldType.Boolean);
 }
 
-function date(): ModelField<Nullable<string>> {
+/**
+ * A date scalar type that is represented server-side as an extended ISO 8601 date string in the format `YYYY-MM-DD`.
+ * @returns date field definition
+ */
+export function date(): ModelField<Nullable<string>> {
   return _field(ModelFieldType.Date);
 }
 
-function time(): ModelField<Nullable<string>> {
+/**
+ * A time scalar type that is represented server-side as an extended ISO 8601 time string in the format `hh:mm:ss.sss`.
+ * @returns time field definition
+ */
+export function time(): ModelField<Nullable<string>> {
   return _field(ModelFieldType.Time);
 }
 
-function datetime(): ModelField<Nullable<string>> {
+/**
+ * A date time scalar type that is represented server-side as an extended ISO 8601 date and time string in the format `YYYY-MM-DDThh:mm:ss.sssZ`.
+ * @returns datetime field definition
+ */
+export function datetime(): ModelField<Nullable<string>> {
   return _field(ModelFieldType.DateTime);
 }
 
-function timestamp(): ModelField<Nullable<number>> {
+/**
+ * A timestamp scalar type that is represented by an integer value of the number of seconds before or after `1970-01-01-T00:00Z`.
+ * @returns timestamp field definition
+ */
+export function timestamp(): ModelField<Nullable<number>> {
   return _field(ModelFieldType.Timestamp);
 }
 
-function email(): ModelField<Nullable<string>> {
+/**
+ * An email scalar type that is represented server-side in the format `local-part@domain-part` as defined by RFC 822. 
+ * @returns email field definition
+ */
+export function email(): ModelField<Nullable<string>> {
   return _field(ModelFieldType.Email);
 }
 
-function json(): ModelField<Nullable<any>> {
+/**
+ * A JSON scalar type that is automatically parsed and loaded server-side as maps, lists, or scalar values
+ * rather than as the literal input strings.
+ * @returns JSON field definition
+ */
+export function json(): ModelField<Nullable<any>> {
   return _field(ModelFieldType.JSON);
 }
 
-function phone(): ModelField<Nullable<string>> {
+/**
+ * A phone number scalar type thas is stored as a string server-side. Phone numbers can contain either spaces
+ * or hyphens to separate digit groups. Phone numbers without a country code are assumed to be US/North American numbers adhering
+ * to the North American Numbering Plan.
+ * @returns phone number field definition
+ */
+export function phone(): ModelField<Nullable<string>> {
   return _field(ModelFieldType.Phone);
 }
 
-function url(): ModelField<Nullable<string>> {
+/**
+ * A URL scalar type as defined by RFC 1738. For example, https://www.amazon.com/dp/B000NZW3KC/ or mailto:example@example.com.
+ * URLs must contain a schema (http, mailto) and can't contain two forward slashes (//) in the path part.
+ * @returns URL field definition
+ */
+export function url(): ModelField<Nullable<string>> {
   return _field(ModelFieldType.Url);
 }
 
-function ipAddress(): ModelField<Nullable<string>> {
+/**
+ * A valid IPv4 or IPv6 address scalar type. IPv4 addresses are expected in quad-dotted notation (123.12.34.56). IPv6 addresses
+ * are expected in non-bracketed, colon-separated format (1a2b:3c4b:🔢4567). You can include an optional CIDR suffix (123.45.67.89/16)
+ * to indicate subnet mask.
+ * @returns IP address field definition
+ */
+export function ipAddress(): ModelField<Nullable<string>> {
   return _field(ModelFieldType.IPAddress);
 }
-
-export const fields = {
-  id,
-  string,
-  integer,
-  float,
-  boolean,
-  date,
-  time,
-  datetime,
-  timestamp,
-  email,
-  json,
-  phone,
-  url,
-  ipAddress,
-};

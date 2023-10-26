@@ -1,10 +1,8 @@
 import type { Equal, Expect } from '@aws-amplify/amplify-api-next-types-alpha';
 import { type ModelType, type InternalModel, model } from '../src/ModelType';
-import { type ModelField, type InternalField, fields } from '../src/ModelField';
+import { type ModelField, type InternalField, string, id } from '../src/ModelField';
 
 type GetModelTypeArg<T> = T extends ModelType<infer R, any> ? R : never;
-
-const { string, id } = fields;
 
 /**
  * Test todos:

@@ -1,12 +1,5 @@
 import type { Equal, Expect } from '@aws-amplify/amplify-api-next-types-alpha';
-import { type ModelField, type InternalField, fields } from '../src/ModelField';
-
-/**
- * Extracts first type arg from ModelField
- */
-type GetFieldTypeArg<T> = T extends ModelField<infer R, any> ? R : never;
-
-const {
+import { type ModelField, type InternalField,
   string,
   id,
   integer,
@@ -21,7 +14,12 @@ const {
   phone,
   url,
   ipAddress,
-} = fields;
+} from '../src/ModelField';
+
+/**
+ * Extracts first type arg from ModelField
+ */
+type GetFieldTypeArg<T> = T extends ModelField<infer R, any> ? R : never;
 
 test('string() produces expected type args', () => {
   const field = string();
