@@ -1,5 +1,11 @@
 # @aws-amplify/amplify-api-next-types-alpha
 
+## 0.2.4
+
+### Patch Changes
+
+- 193ffd1: adds authMode, authToken params to model methods and lazy loaders
+
 ## 0.2.3
 
 ### Patch Changes
