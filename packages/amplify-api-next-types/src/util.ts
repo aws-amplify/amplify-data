@@ -13,8 +13,8 @@ export type SetTypeSubArg<T, SetKey extends keyof T, Val> = {
   [Property in keyof T]: SetKey extends Property ? Val : T[Property];
 };
 
-export type Prettify<T> = T extends () => any
-  ? () => ReturnType<T>
+export type Prettify<T> = T extends (...args: infer ArgsType) => any
+  ? (...args: ArgsType) => ReturnType<T>
   : T extends object
   ? { [P in keyof T]: Prettify<T[P]> }
   : T;

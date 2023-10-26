@@ -232,9 +232,11 @@ type ResolvedModel<
 > = {
   done: NonRelationalFields<Model>;
   recur: {
-    [Field in keyof Model]: Model[Field] extends () => ListReturnValue<infer M>
+    [Field in keyof Model]: Model[Field] extends (
+      ...args: any
+    ) => ListReturnValue<infer M>
       ? ResolvedModel<NonNullable<M>, RecursionLoop[Depth]>[]
-      : Model[Field] extends () => SingularReturnValue<infer M>
+      : Model[Field] extends (...args: any) => SingularReturnValue<infer M>
       ? ResolvedModel<NonNullable<M>, RecursionLoop[Depth]>
       : Model[Field];
   };
@@ -276,7 +278,9 @@ type MutationInput<
   Relationships = ModelMeta['relationships'],
   WritableFields = Pick<Fields, WritableKeys<Fields>>,
 > = {
-  [Prop in keyof WritableFields as WritableFields[Prop] extends () => any
+  [Prop in keyof WritableFields as WritableFields[Prop] extends (
+    ...args: any
+  ) => any
     ? never
     : Prop]: WritableFields[Prop];
 } & {
@@ -351,6 +355,21 @@ export type ObserveQueryReturnValue<T> = Observable<{
   isSynced: boolean;
 }>;
 
+export type LazyLoader<Model, IsArray extends boolean> = (options?: {
+  authMode?: AuthMode;
+  authToken?: string;
+}) => IsArray extends true
+  ? ListReturnValue<Prettify<Model>>
+  : SingularReturnValue<Prettify<Model>>;
+
+export type AuthMode =
+  | 'apiKey'
+  | 'iam'
+  | 'oidc'
+  | 'userPool'
+  | 'lambda'
+  | 'none';
+
 export type ModelTypes<
   T extends Record<any, any>,
   ModelMeta extends Record<any, any> = ExtractModelMeta<T>,
@@ -360,22 +379,29 @@ export type ModelTypes<
       ? {
           create: (
             model: Prettify<MutationInput<T[K], ModelMeta[K]>>,
+            options?: { authMode?: AuthMode; authToken?: string },
           ) => SingularReturnValue<T[K]>;
           update: (
             model: Prettify<
               ModelIdentifier<ModelMeta[K]> &
                 Partial<MutationInput<T[K], ModelMeta[K]>>
             >,
+            options?: { authMode?: AuthMode; authToken?: string },
           ) => SingularReturnValue<T[K]>;
           delete: (
             identifier: ModelIdentifier<ModelMeta[K]>,
+            options?: { authMode?: AuthMode; authToken?: string },
           ) => SingularReturnValue<T[K]>;
           get<
             FlatModel extends Record<string, unknown> = ResolvedModel<T[K]>,
             SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[],
           >(
             identifier: ModelIdentifier<ModelMeta[K]>,
-            options?: { selectionSet?: SelectionSet },
+            options?: {
+              selectionSet?: SelectionSet;
+              authMode?: AuthMode;
+              authToken?: string;
+            },
           ): SingularReturnValue<ReturnValue<T[K], FlatModel, SelectionSet>>;
           list<
             FlatModel extends Record<string, unknown> = ResolvedModel<T[K]>,
@@ -384,6 +410,8 @@ export type ModelTypes<
             // TODO: strongly type filter
             filter?: object;
             selectionSet?: SelectionSet;
+            authMode?: AuthMode;
+            authToken?: string;
           }): ListReturnValue<ReturnValue<T[K], FlatModel, SelectionSet>>;
           onCreate<
             FlatModel extends Record<string, unknown> = ResolvedModel<T[K]>,
@@ -392,6 +420,8 @@ export type ModelTypes<
             // TODO: strongly type filter
             filter?: object;
             selectionSet?: SelectionSet;
+            authMode?: AuthMode;
+            authToken?: string;
           }): ObservedReturnValue<ReturnValue<T[K], FlatModel, SelectionSet>>;
           onUpdate<
             FlatModel extends Record<string, unknown> = ResolvedModel<T[K]>,
@@ -400,6 +430,8 @@ export type ModelTypes<
             // TODO: strongly type filter
             filter?: object;
             selectionSet?: SelectionSet;
+            authMode?: AuthMode;
+            authToken?: string;
           }): ObservedReturnValue<ReturnValue<T[K], FlatModel, SelectionSet>>;
           onDelete<
             FlatModel extends Record<string, unknown> = ResolvedModel<T[K]>,
@@ -408,6 +440,8 @@ export type ModelTypes<
             // TODO: strongly type filter
             filter?: object;
             selectionSet?: SelectionSet;
+            authMode?: AuthMode;
+            authToken?: string;
           }): ObservedReturnValue<ReturnValue<T[K], FlatModel, SelectionSet>>;
           observeQuery<
             FlatModel extends Record<string, unknown> = ResolvedModel<T[K]>,
@@ -416,6 +450,8 @@ export type ModelTypes<
             // TODO: strongly type filter
             filter?: object;
             selectionSet?: SelectionSet;
+            authMode?: AuthMode;
+            authToken?: string;
           }): ObserveQueryReturnValue<
             ReturnValue<T[K], FlatModel, SelectionSet>
           >;
