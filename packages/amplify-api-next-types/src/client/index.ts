@@ -370,92 +370,191 @@ export type AuthMode =
   | 'lambda'
   | 'none';
 
-export type ModelTypes<
-  T extends Record<any, any>,
-  ModelMeta extends Record<any, any> = ExtractModelMeta<T>,
+type ModelTypesClient<
+  Model extends Record<string, unknown>,
+  ModelMeta extends Record<string, unknown>,
 > = {
-  [K in keyof T]: K extends string
-    ? T[K] extends Record<string, unknown>
-      ? {
-          create: (
-            model: Prettify<MutationInput<T[K], ModelMeta[K]>>,
-            options?: { authMode?: AuthMode; authToken?: string },
-          ) => SingularReturnValue<T[K]>;
-          update: (
-            model: Prettify<
-              ModelIdentifier<ModelMeta[K]> &
-                Partial<MutationInput<T[K], ModelMeta[K]>>
-            >,
-            options?: { authMode?: AuthMode; authToken?: string },
-          ) => SingularReturnValue<T[K]>;
-          delete: (
-            identifier: ModelIdentifier<ModelMeta[K]>,
-            options?: { authMode?: AuthMode; authToken?: string },
-          ) => SingularReturnValue<T[K]>;
-          get<
-            FlatModel extends Record<string, unknown> = ResolvedModel<T[K]>,
-            SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[],
-          >(
-            identifier: ModelIdentifier<ModelMeta[K]>,
-            options?: {
-              selectionSet?: SelectionSet;
-              authMode?: AuthMode;
-              authToken?: string;
-            },
-          ): SingularReturnValue<ReturnValue<T[K], FlatModel, SelectionSet>>;
-          list<
-            FlatModel extends Record<string, unknown> = ResolvedModel<T[K]>,
-            SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[],
-          >(options?: {
-            // TODO: strongly type filter
-            filter?: object;
-            selectionSet?: SelectionSet;
-            authMode?: AuthMode;
-            authToken?: string;
-          }): ListReturnValue<ReturnValue<T[K], FlatModel, SelectionSet>>;
-          onCreate<
-            FlatModel extends Record<string, unknown> = ResolvedModel<T[K]>,
-            SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[],
-          >(options?: {
-            // TODO: strongly type filter
-            filter?: object;
-            selectionSet?: SelectionSet;
-            authMode?: AuthMode;
-            authToken?: string;
-          }): ObservedReturnValue<ReturnValue<T[K], FlatModel, SelectionSet>>;
-          onUpdate<
-            FlatModel extends Record<string, unknown> = ResolvedModel<T[K]>,
-            SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[],
-          >(options?: {
-            // TODO: strongly type filter
-            filter?: object;
-            selectionSet?: SelectionSet;
-            authMode?: AuthMode;
-            authToken?: string;
-          }): ObservedReturnValue<ReturnValue<T[K], FlatModel, SelectionSet>>;
-          onDelete<
-            FlatModel extends Record<string, unknown> = ResolvedModel<T[K]>,
-            SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[],
-          >(options?: {
-            // TODO: strongly type filter
-            filter?: object;
-            selectionSet?: SelectionSet;
-            authMode?: AuthMode;
-            authToken?: string;
-          }): ObservedReturnValue<ReturnValue<T[K], FlatModel, SelectionSet>>;
-          observeQuery<
-            FlatModel extends Record<string, unknown> = ResolvedModel<T[K]>,
-            SelectionSet extends ModelPath<FlatModel>[] = never[],
-          >(options?: {
-            // TODO: strongly type filter
-            filter?: object;
-            selectionSet?: SelectionSet;
-            authMode?: AuthMode;
-            authToken?: string;
-          }): ObserveQueryReturnValue<
-            ReturnValue<T[K], FlatModel, SelectionSet>
-          >;
-        }
+  create: (
+    model: Prettify<MutationInput<Model, ModelMeta>>,
+    options?: { authMode?: AuthMode; authToken?: string },
+  ) => SingularReturnValue<Model>;
+  update: (
+    model: Prettify<
+      ModelIdentifier<ModelMeta> & Partial<MutationInput<Model, ModelMeta>>
+    >,
+    options?: { authMode?: AuthMode; authToken?: string },
+  ) => SingularReturnValue<Model>;
+  delete: (
+    identifier: ModelIdentifier<ModelMeta>,
+    options?: { authMode?: AuthMode; authToken?: string },
+  ) => SingularReturnValue<Model>;
+  get<
+    FlatModel extends Record<string, unknown> = ResolvedModel<Model>,
+    SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[],
+  >(
+    identifier: ModelIdentifier<ModelMeta>,
+    options?: {
+      selectionSet?: SelectionSet;
+      authMode?: AuthMode;
+      authToken?: string;
+    },
+  ): SingularReturnValue<ReturnValue<Model, FlatModel, SelectionSet>>;
+  list<
+    FlatModel extends Record<string, unknown> = ResolvedModel<Model>,
+    SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[],
+  >(options?: {
+    // TODO: strongly type filter
+    filter?: object;
+    selectionSet?: SelectionSet;
+    authMode?: AuthMode;
+    authToken?: string;
+  }): ListReturnValue<ReturnValue<Model, FlatModel, SelectionSet>>;
+  onCreate<
+    FlatModel extends Record<string, unknown> = ResolvedModel<Model>,
+    SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[],
+  >(options?: {
+    // TODO: strongly type filter
+    filter?: object;
+    selectionSet?: SelectionSet;
+    authMode?: AuthMode;
+    authToken?: string;
+  }): ObservedReturnValue<ReturnValue<Model, FlatModel, SelectionSet>>;
+  onUpdate<
+    FlatModel extends Record<string, unknown> = ResolvedModel<Model>,
+    SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[],
+  >(options?: {
+    // TODO: strongly type filter
+    filter?: object;
+    selectionSet?: SelectionSet;
+    authMode?: AuthMode;
+  }): ObservedReturnValue<ReturnValue<Model, FlatModel, SelectionSet>>;
+  onDelete<
+    FlatModel extends Record<string, unknown> = ResolvedModel<Model>,
+    SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[],
+  >(options?: {
+    // TODO: strongly type filter
+    filter?: object;
+    selectionSet?: SelectionSet;
+    authToken?: string;
+  }): ObservedReturnValue<ReturnValue<Model, FlatModel, SelectionSet>>;
+  observeQuery<
+    FlatModel extends Record<string, unknown> = ResolvedModel<Model>,
+    SelectionSet extends ModelPath<FlatModel>[] = never[],
+  >(options?: {
+    // TODO: strongly type filter
+    filter?: object;
+    selectionSet?: SelectionSet;
+    authMode?: AuthMode;
+    authToken?: string;
+  }): ObserveQueryReturnValue<ReturnValue<Model, FlatModel, SelectionSet>>;
+};
+
+type ModelTypesSSRCookies<
+  Model extends Record<string, unknown>,
+  ModelMeta extends Record<string, unknown>,
+> = {
+  create: (
+    model: Prettify<MutationInput<Model, ModelMeta>>,
+    options?: { authMode?: AuthMode; authToken?: string },
+  ) => SingularReturnValue<Model>;
+  update: (
+    model: Prettify<
+      ModelIdentifier<ModelMeta> & Partial<MutationInput<Model, ModelMeta>>
+    >,
+    options?: { authMode?: AuthMode; authToken?: string },
+  ) => SingularReturnValue<Model>;
+  delete: (
+    identifier: ModelIdentifier<ModelMeta>,
+    options?: { authMode?: AuthMode; authToken?: string },
+  ) => SingularReturnValue<Model>;
+  get<
+    FlatModel extends Record<string, unknown> = ResolvedModel<Model>,
+    SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[],
+  >(
+    identifier: ModelIdentifier<ModelMeta>,
+    options?: {
+      selectionSet?: SelectionSet;
+      authMode?: AuthMode;
+      authToken?: string;
+    },
+  ): SingularReturnValue<ReturnValue<Model, FlatModel, SelectionSet>>;
+  list<
+    FlatModel extends Record<string, unknown> = ResolvedModel<Model>,
+    SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[],
+  >(options?: {
+    // TODO: strongly type filter
+    filter?: object;
+    selectionSet?: SelectionSet;
+    authMode?: AuthMode;
+    authToken?: string;
+  }): ListReturnValue<ReturnValue<Model, FlatModel, SelectionSet>>;
+};
+
+type ModelTypesSSRRequest<
+  Model extends Record<string, unknown>,
+  ModelMeta extends Record<string, unknown>,
+> = {
+  create: (
+    // TODO: actual type
+    contextSpec: any,
+    model: Prettify<MutationInput<Model, ModelMeta>>,
+    options?: { authMode?: AuthMode; authToken?: string },
+  ) => SingularReturnValue<Model>;
+  update: (
+    contextSpec: any,
+    model: Prettify<
+      ModelIdentifier<ModelMeta> & Partial<MutationInput<Model, ModelMeta>>
+    >,
+    options?: { authMode?: AuthMode; authToken?: string },
+  ) => SingularReturnValue<Model>;
+  delete: (
+    contextSpec: any,
+    identifier: ModelIdentifier<ModelMeta>,
+    options?: { authMode?: AuthMode; authToken?: string },
+  ) => SingularReturnValue<Model>;
+  get<
+    FlatModel extends Record<string, unknown> = ResolvedModel<Model>,
+    SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[],
+  >(
+    contextSpec: any,
+    identifier: ModelIdentifier<ModelMeta>,
+    options?: {
+      selectionSet?: SelectionSet;
+      authMode?: AuthMode;
+      authToken?: string;
+    },
+  ): SingularReturnValue<ReturnValue<Model, FlatModel, SelectionSet>>;
+  list<
+    FlatModel extends Record<string, unknown> = ResolvedModel<Model>,
+    SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[],
+  >(
+    contextSpec: any,
+    options?: {
+      // TODO: strongly type filter
+      filter?: object;
+      selectionSet?: SelectionSet;
+      authMode?: AuthMode;
+      authToken?: string;
+    },
+  ): ListReturnValue<ReturnValue<Model, FlatModel, SelectionSet>>;
+};
+
+type ContextType = 'CLIENT' | 'COOKIES' | 'REQUEST';
+
+export type ModelTypes<
+  Schema extends Record<any, any>,
+  Context extends ContextType = 'CLIENT',
+  ModelMeta extends Record<any, any> = ExtractModelMeta<Schema>,
+> = {
+  [ModelName in keyof Schema]: ModelName extends string
+    ? Schema[ModelName] extends Record<string, unknown>
+      ? Context extends 'CLIENT'
+        ? ModelTypesClient<Schema[ModelName], ModelMeta[ModelName]>
+        : Context extends 'COOKIES'
+        ? ModelTypesSSRCookies<Schema[ModelName], ModelMeta[ModelName]>
+        : Context extends 'REQUEST'
+        ? ModelTypesSSRRequest<Schema[ModelName], ModelMeta[ModelName]>
+        : never
       : never
     : never;
 };
