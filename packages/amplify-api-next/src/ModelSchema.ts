@@ -5,7 +5,7 @@ import type {
   InternalModel,
 } from './ModelType';
 export { __auth } from './ModelField';
-import { defineData } from './SchemaProcessor';
+import { processSchema } from './SchemaProcessor';
 
 /*
  * Notes:
@@ -57,7 +57,7 @@ function _schema<T extends ModelSchemaParamShape>(models: T['models']) {
   const transform = (): DerivedApiDefinition => {
     const internalSchema: InternalSchema = { data } as InternalSchema;
 
-    return defineData({ schema: internalSchema });
+    return processSchema({ schema: internalSchema });
   };
 
   return { data, transform } as ModelSchema<T>;
@@ -67,7 +67,7 @@ function _schema<T extends ModelSchemaParamShape>(models: T['models']) {
  * The API and data model definition for Amplify Data. Pass in `{ <NAME>: a.model(...) }` to create a database table
  * and exposes CRUDL operations via an API.
  * @param models The API and data model definition
- * @returns An API and data model definition to be deployed with Amplify (Gen 2) experience (`defineData(...)`)
+ * @returns An API and data model definition to be deployed with Amplify (Gen 2) experience (`processSchema(...)`)
  * or with the Amplify Data CDK construct (`@aws-amplify/data-construct`)
  */
 export function schema<Models extends ModelSchemaModels>(

@@ -4,9 +4,8 @@ TypeScript-first AWS AppSync Schema Builder
 
 ```ts
 import {
-  default as a,
+  a,
   type ClientSchema,
-  defineData,
 } from '@aws-amplify/amplify-api-next-alpha';
 
 const schema = a.schema({
@@ -23,10 +22,7 @@ const schema = a.schema({
 });
 
 export type Schema = ClientSchema<typeof schema>;
-
-export default defineData({
-  schema,
-});
+export schema
 ```
 
 ## Security
