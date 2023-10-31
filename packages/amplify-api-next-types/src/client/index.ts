@@ -370,6 +370,78 @@ export type AuthMode =
   | 'lambda'
   | 'none';
 
+type LogicalFilters<Model extends Record<any, any>> = {
+  and?: ModelFilter<Model> | ModelFilter<Model>[];
+  or?: ModelFilter<Model> | ModelFilter<Model>[];
+  not?: ModelFilter<Model>;
+};
+
+/**
+ * Filter options that can be used on fields where size checks are supported.
+ */
+type SizeFilter = {
+  between?: [number, number];
+  eq?: number;
+  ge?: number;
+  gt?: number;
+  le?: number;
+  lt?: number;
+  ne?: number;
+};
+
+/**
+ * Not actually sure if/how customer can pass this through as variables yet.
+ * Leaving it out for now:
+ *
+ * attributeType: "binary" | "binarySet" | "bool" | "list" | "map" | "number" | "numberSet" | "string" | "stringSet" | "_null"
+ */
+
+/**
+ * Filters options that can be used on string-like fields.
+ */
+type StringFilter = {
+  attributeExists?: boolean;
+  beginsWith?: string;
+  between?: [string, string];
+  contains?: string;
+  eq?: string;
+  ge?: string;
+  gt?: string;
+  le?: string;
+  lt?: string;
+  ne?: string;
+  notContains?: string;
+  size?: SizeFilter;
+};
+
+type NumericFilter = {
+  attributeExists?: boolean;
+  between?: [number, number];
+  eq?: number;
+  ge?: number;
+  gt?: number;
+  le?: number;
+  lt?: number;
+  ne?: number;
+};
+
+type BooleanFilters = {
+  attributeExists?: boolean;
+  eq?: boolean;
+  ne?: boolean;
+};
+
+type ModelFilter<
+  ModelMeta extends Record<any, any>,
+  Fields = ModelMeta['explicitScalarTypes'],
+> = LogicalFilters<ModelMeta> & {
+  [K in keyof Fields]?: Fields[K] extends boolean
+    ? BooleanFilters
+    : Fields[K] extends number
+    ? NumericFilter
+    : StringFilter;
+};
+
 type ModelTypesClient<
   Model extends Record<string, unknown>,
   ModelMeta extends Record<string, unknown>,
@@ -404,7 +476,7 @@ type ModelTypesClient<
     SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[],
   >(options?: {
     // TODO: strongly type filter
-    filter?: object;
+    filter?: ModelFilter<ModelMeta>;
     selectionSet?: SelectionSet;
     authMode?: AuthMode;
     authToken?: string;
@@ -414,7 +486,7 @@ type ModelTypesClient<
     SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[],
   >(options?: {
     // TODO: strongly type filter
-    filter?: object;
+    filter?: ModelFilter<ModelMeta>;
     selectionSet?: SelectionSet;
     authMode?: AuthMode;
     authToken?: string;
@@ -424,7 +496,7 @@ type ModelTypesClient<
     SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[],
   >(options?: {
     // TODO: strongly type filter
-    filter?: object;
+    filter?: ModelFilter<ModelMeta>;
     selectionSet?: SelectionSet;
     authMode?: AuthMode;
   }): ObservedReturnValue<ReturnValue<Model, FlatModel, SelectionSet>>;
@@ -433,7 +505,7 @@ type ModelTypesClient<
     SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[],
   >(options?: {
     // TODO: strongly type filter
-    filter?: object;
+    filter?: ModelFilter<ModelMeta>;
     selectionSet?: SelectionSet;
     authToken?: string;
   }): ObservedReturnValue<ReturnValue<Model, FlatModel, SelectionSet>>;
@@ -442,7 +514,7 @@ type ModelTypesClient<
     SelectionSet extends ModelPath<FlatModel>[] = never[],
   >(options?: {
     // TODO: strongly type filter
-    filter?: object;
+    filter?: ModelFilter<ModelMeta>;
     selectionSet?: SelectionSet;
     authMode?: AuthMode;
     authToken?: string;
@@ -483,7 +555,7 @@ type ModelTypesSSRCookies<
     SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[],
   >(options?: {
     // TODO: strongly type filter
-    filter?: object;
+    filter?: ModelFilter<ModelMeta>;
     selectionSet?: SelectionSet;
     authMode?: AuthMode;
     authToken?: string;
@@ -531,7 +603,7 @@ type ModelTypesSSRRequest<
     contextSpec: any,
     options?: {
       // TODO: strongly type filter
-      filter?: object;
+      filter?: ModelFilter<ModelMeta>;
       selectionSet?: SelectionSet;
       authMode?: AuthMode;
       authToken?: string;
