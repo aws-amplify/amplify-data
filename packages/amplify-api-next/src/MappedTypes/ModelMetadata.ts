@@ -52,7 +52,7 @@ export type RelationalMetadata<
               ? {
                   relationalInputFields: Partial<
                     Record<
-                      // For M:N and 1:M result we add a parent model field to the child
+                      // For M:N and 1:M we add a parent model field to the child
                       `${Uncapitalize<ModelName & string>}`,
                       ResolvedFields[ModelName & string]
                     >
