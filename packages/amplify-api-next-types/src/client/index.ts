@@ -475,7 +475,6 @@ type ModelTypesClient<
     FlatModel extends Record<string, unknown> = ResolvedModel<Model>,
     SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[],
   >(options?: {
-    // TODO: strongly type filter
     filter?: ModelFilter<ModelMeta>;
     selectionSet?: SelectionSet;
     authMode?: AuthMode;
@@ -485,7 +484,6 @@ type ModelTypesClient<
     FlatModel extends Record<string, unknown> = ResolvedModel<Model>,
     SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[],
   >(options?: {
-    // TODO: strongly type filter
     filter?: ModelFilter<ModelMeta>;
     selectionSet?: SelectionSet;
     authMode?: AuthMode;
@@ -495,7 +493,6 @@ type ModelTypesClient<
     FlatModel extends Record<string, unknown> = ResolvedModel<Model>,
     SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[],
   >(options?: {
-    // TODO: strongly type filter
     filter?: ModelFilter<ModelMeta>;
     selectionSet?: SelectionSet;
     authMode?: AuthMode;
@@ -504,7 +501,6 @@ type ModelTypesClient<
     FlatModel extends Record<string, unknown> = ResolvedModel<Model>,
     SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[],
   >(options?: {
-    // TODO: strongly type filter
     filter?: ModelFilter<ModelMeta>;
     selectionSet?: SelectionSet;
     authToken?: string;
@@ -513,7 +509,6 @@ type ModelTypesClient<
     FlatModel extends Record<string, unknown> = ResolvedModel<Model>,
     SelectionSet extends ModelPath<FlatModel>[] = never[],
   >(options?: {
-    // TODO: strongly type filter
     filter?: ModelFilter<ModelMeta>;
     selectionSet?: SelectionSet;
     authMode?: AuthMode;
@@ -554,7 +549,6 @@ type ModelTypesSSRCookies<
     FlatModel extends Record<string, unknown> = ResolvedModel<Model>,
     SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[],
   >(options?: {
-    // TODO: strongly type filter
     filter?: ModelFilter<ModelMeta>;
     selectionSet?: SelectionSet;
     authMode?: AuthMode;
@@ -602,7 +596,6 @@ type ModelTypesSSRRequest<
   >(
     contextSpec: any,
     options?: {
-      // TODO: strongly type filter
       filter?: ModelFilter<ModelMeta>;
       selectionSet?: SelectionSet;
       authMode?: AuthMode;
