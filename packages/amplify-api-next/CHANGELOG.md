@@ -1,5 +1,11 @@
 # @aws-amplify/amplify-api-next-alpha
 
+## 0.7.0
+
+### Minor Changes
+
+- ada0afd: rename defineData; remove from public exports
+
 ## 0.6.2
 
 ### Patch Changes

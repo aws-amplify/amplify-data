@@ -264,7 +264,7 @@ const schemaPreprocessor = (schema: InternalSchema): string => {
  * @param arg - { schema }
  * @returns DerivedApiDefinition that conforms to IAmplifyGraphqlDefinition
  */
-export function defineData(arg: {
+export function processSchema(arg: {
   schema: InternalSchema;
 }): DerivedApiDefinition {
   const schema = schemaPreprocessor(arg.schema);
