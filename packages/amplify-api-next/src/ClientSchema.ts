@@ -50,7 +50,11 @@ export type ClientSchema<
     FilterFieldTypes<OptionalFieldTypes<FieldsWithRelationships>>,
     FilterFieldTypes<ModelImpliedAuthFields<Schema>>
   >,
-  RelationshipMeta = ExtractRelationalMetadata<FlattenedSchema, ResolvedFields>,
+  RelationshipMeta = ExtractRelationalMetadata<
+    FlattenedSchema,
+    ResolvedFields,
+    IdentifierMeta
+  >,
   Meta = IdentifierMeta & RelationshipMeta,
 > = Prettify<
   ResolvedFields & {
@@ -61,6 +65,7 @@ export type ClientSchema<
 type ExtractRelationalMetadata<
   FlattenedSchema,
   ResolvedFields extends Record<string, unknown>,
+  IdentifierMeta,
 > = UnionToIntersection<
   ExcludeEmpty<
     {
@@ -87,14 +92,20 @@ type ExtractRelationalMetadata<
               ? {
                   relationships: Record<
                     `${Lowercase<ModelName & string>}`,
-                    ResolvedFields[ModelName & string]
+                    ResolvedFields[ModelName & string] &
+                      (ModelName extends keyof IdentifierMeta
+                        ? IdentifierMeta[ModelName]
+                        : undefined)
                   >;
                 }
               : {
                   relationships: Partial<
                     Record<
                       Field,
-                      ResolvedFields[FlattenedSchema[ModelName][Field]['relatedModel']]
+                      ResolvedFields[FlattenedSchema[ModelName][Field]['relatedModel']] &
+                        (ModelName extends keyof IdentifierMeta
+                          ? IdentifierMeta[ModelName]
+                          : undefined)
                     >
                   >;
                 }
