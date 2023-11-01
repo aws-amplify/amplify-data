@@ -275,7 +275,7 @@ type WritableKeys<T> = {
 type MutationInput<
   Fields,
   ModelMeta extends Record<any, any>,
-  Relationships = ModelMeta['relationships'],
+  RelationalFields = ModelMeta['relationalInputFields'],
   WritableFields = Pick<Fields, WritableKeys<Fields>>,
 > = {
   [Prop in keyof WritableFields as WritableFields[Prop] extends (
@@ -283,9 +283,7 @@ type MutationInput<
   ) => any
     ? never
     : Prop]: WritableFields[Prop];
-} & {
-  [RelatedModel in keyof Relationships]: Relationships[RelatedModel];
-};
+} & RelationalFields;
 
 // #endregion
 

@@ -1,5 +1,11 @@
 # @aws-amplify/amplify-api-next-types-alpha
 
+## 0.2.7
+
+### Patch Changes
+
+- 2549750: fix relational input field in ModelMeta
+
 ## 0.2.6
 
 ### Patch Changes
