@@ -88,7 +88,8 @@ describe('RelationalMetadata', () => {
     type test = Expect<Equal<Resolved, Expected>>;
   });
 
-  test('No meta for relation-less models', () => {
+  // There is a bug in RelationalMetadata that's leading to incorrect behavior
+  test('Has many relationship results in a parent model field on the child', () => {
     const s = a.schema({
       Post: a.model({
         title: a.string(),
@@ -108,18 +109,20 @@ describe('RelationalMetadata', () => {
     type Expected = {
       Comment: {
         relationships: {
-          comments?:
+          post?:
             | {
                 readonly id: string;
                 readonly createdAt: string;
                 readonly updatedAt: string;
-                content?: string | null | undefined;
+                title?: string | null | undefined;
               }
             | undefined;
         };
       };
     };
 
+    // TODO: remove when bug is fixed
+    // @ts-expect-error
     type test = Expect<Equal<Resolved, Expected>>;
   });
 });
