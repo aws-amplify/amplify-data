@@ -38,6 +38,7 @@ import type { InjectImplicitModelFields } from './MappedTypes/ImplicitFieldInjec
 export type ClientSchema<
   Schema extends ModelSchema<any>,
   FlattenedSchema = FieldTypes<ModelTypes<SchemaTypes<Schema>>>,
+  ExplicitScalarFields = ExtractExplicitScalarFields<Schema>,
   IdentifierMeta = ModelMeta<SchemaTypes<Schema>>,
   FieldsWithInjectedModels = InjectImplicitModels<FlattenedSchema>,
   FieldsWithInjectedImplicitFields = InjectImplicitModelFields<
@@ -51,12 +52,21 @@ export type ClientSchema<
     FilterFieldTypes<ModelImpliedAuthFields<Schema>>
   >,
   RelationshipMeta = ExtractRelationalMetadata<FlattenedSchema, ResolvedFields>,
-  Meta = IdentifierMeta & RelationshipMeta,
+  Meta = IdentifierMeta & RelationshipMeta & ExplicitScalarFields,
 > = Prettify<
   ResolvedFields & {
     [__modelMeta__]: Meta;
   }
 >;
+
+type ExtractExplicitScalarFields<
+  Schema extends ModelSchema<any>,
+  Scalars = ScalarFieldTypes<ModelTypes<SchemaTypes<Schema>>>,
+> = {
+  [ModelName in keyof Scalars]: {
+    explicitScalarTypes: Scalars[ModelName];
+  };
+};
 
 type ExtractRelationalMetadata<
   FlattenedSchema,
@@ -233,6 +243,23 @@ type FieldTypes<T> = {
     >
       ? R
       : T[ModelProp][FieldProp] extends ModelField<infer R, any, any>
+      ? R
+      : never;
+  };
+};
+
+type ScalarFieldTypes<T> = {
+  [ModelProp in keyof T]: {
+    [FieldProp in keyof T[ModelProp] as T[ModelProp][FieldProp] extends ModelRelationalField<
+      any,
+      any
+    >
+      ? never
+      : FieldProp]: T[ModelProp][FieldProp] extends ModelField<
+      infer R,
+      any,
+      any
+    >
       ? R
       : never;
   };
