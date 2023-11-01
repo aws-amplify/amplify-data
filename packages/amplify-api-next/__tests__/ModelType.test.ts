@@ -4,7 +4,8 @@ import {
   PublicProviders,
   PrivateProviders,
   Operations,
-  Operation,
+  authorizationBaseOperations,
+  authorizationGranularReadOperations,
 } from '../src/Authorization';
 
 describe('type definition tests', () => {
@@ -326,13 +327,15 @@ describe('model auth rules', () => {
       expect(graphql).toMatchSnapshot();
     });
 
-    const TestOperations: Operation[][] = [
+    const TestOperations: Operations[] = [
       // each individual operation
-      ...Operations.map((op) => [op]),
+      ...authorizationBaseOperations.map(op => [op]),
+      ['read'],
+      ...authorizationGranularReadOperations.map(op => [op]),
 
-      // a couple sanity checks to support a combinations
+      // // a couple sanity checks to support a combinations
       ['create', 'read', 'update', 'delete'],
-      ['create', 'read', 'listen'],
+      ['create', 'get', 'delete'],
     ];
 
     for (const operations of TestOperations) {
@@ -368,13 +371,15 @@ describe('model auth rules', () => {
       expect(graphql).toMatchSnapshot();
     });
 
-    const TestOperations: Operation[][] = [
+    const TestOperations: Operations[] = [
       // each individual operation
-      ...Operations.map((op) => [op]),
+      ...authorizationBaseOperations.map(op => [op]),
+      ['read'],
+      ...authorizationGranularReadOperations.map(op => [op]),
 
-      // a couple sanity checks to support a combinations
+      // // a couple sanity checks to support a combinations
       ['create', 'read', 'update', 'delete'],
-      ['create', 'read', 'listen'],
+      ['create', 'get', 'delete'],
     ];
 
     for (const operations of TestOperations) {

@@ -60,18 +60,17 @@ export type Strategy = (typeof Strategies)[number];
 /**
  * The operations that can be performed against an API.
  */
-export const Operations = [
-  'create',
-  'update',
-  'delete',
-  'read',
-  'get',
-  'list',
-  'sync',
-  'listen',
-  'search',
-] as const;
-export type Operation = (typeof Operations)[number];
+export const authorizationGranularReadOperations = ["get", "list", "listen", "search", "sync"] as const
+type AuthorizationGranularReadOperation = typeof authorizationGranularReadOperations[number]
+
+type AuthorizationCoarseReadOperation = "read"
+
+export const authorizationBaseOperations = ["create", "update", "delete"] as const
+type AuthorizationBaseOperation = typeof authorizationBaseOperations[number]
+
+export type Operations
+  = Array<AuthorizationBaseOperation | AuthorizationCoarseReadOperation> 
+  | Array<AuthorizationBaseOperation | AuthorizationGranularReadOperation>;
 
 export type Authorization<
   AuthField extends string | undefined,
@@ -80,7 +79,7 @@ export type Authorization<
   [__data]: {
     strategy?: Strategy;
     provider?: Provider;
-    operations?: Operation[];
+    operations?: Operations;
     groupOrOwnerField?: AuthField;
     groups?: string[];
     multiOwner: AuthFieldPlurality;
@@ -113,7 +112,7 @@ function omit<T extends object, O extends string>(
 
 function to<SELF extends Authorization<any, any>>(
   this: SELF,
-  operations: Operation[],
+  operations: Operations,
 ) {
   (this as any)[__data].operations = operations;
   return omit(this, 'to');
