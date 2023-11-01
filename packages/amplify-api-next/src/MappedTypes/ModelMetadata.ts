@@ -46,16 +46,22 @@ export type RelationalMetadata<
             : never
           : never]: ResolvedSchema[ModelName][Field] extends ModelRelationalFieldParamShape
           ? ResolvedSchema[ModelName][Field] extends ModelRelationalFieldParamShape
-            ? ResolvedSchema[ModelName][Field]['relationshipType'] extends 'manyToMany'
+            ? ResolvedSchema[ModelName][Field]['relationshipType'] extends
+                | 'manyToMany'
+                | 'hasMany'
               ? {
-                  relationships: Record<
-                    `${Lowercase<ModelName & string>}`,
-                    ResolvedFields[ModelName & string]
+                  relationalInputFields: Partial<
+                    Record<
+                      // For M:N and 1:M we add a parent model field to the child
+                      `${Uncapitalize<ModelName & string>}`,
+                      ResolvedFields[ModelName & string]
+                    >
                   >;
                 }
               : {
-                  relationships: Partial<
+                  relationalInputFields: Partial<
                     Record<
+                      // For 1:1 and Belongs To we add a child model field to the parent
                       Field,
                       ResolvedFields[ResolvedSchema[ModelName][Field]['relatedModel']]
                     >
