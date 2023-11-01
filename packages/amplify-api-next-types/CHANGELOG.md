@@ -1,5 +1,11 @@
 # @aws-amplify/amplify-api-next-types-alpha
 
+## 0.2.6
+
+### Patch Changes
+
+- 2d6d480: added filter types for explicit scalar filter fields
+
 ## 0.2.5
 
 ### Patch Changes
