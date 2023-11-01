@@ -204,6 +204,47 @@ describe('RelationalMetadata', () => {
     type test = Expect<Equal<Resolved, Expected>>;
   });
 
+  test('HasMany bi-directional with composite custom identifier', () => {
+    const s = a.schema({
+      Post: a
+        .model({
+          customPk: a.id().required(),
+          title: a.string().required(),
+          comments: a.hasMany('Comment'),
+        })
+        .identifier(['customPk', 'title']),
+      Comment: a.model({
+        content: a.string(),
+        post: a.belongsTo('Post'),
+      }),
+    });
+
+    type Schema = typeof s;
+
+    type ResolvedFields = ResolveFieldProperties<Schema>;
+    type Resolved = Prettify<
+      RelationalMetadata<ResolveSchema<Schema>, ResolvedFields>
+    >;
+
+    type Expected = {
+      Comment: {
+        relationalInputFields: {
+          post?:
+            | {
+                customPk: string;
+                title: string;
+                readonly createdAt: string;
+                readonly updatedAt: string;
+                comments: ResolvedFields['Post']['comments'];
+              }
+            | undefined;
+        };
+      };
+    };
+
+    type test = Expect<Equal<Resolved, Expected>>;
+  });
+
   test('BelongsTo', () => {
     const s = a.schema({
       Post: a.model({
