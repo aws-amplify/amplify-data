@@ -1,5 +1,11 @@
 # @aws-amplify/amplify-api-next-types-alpha
 
+## 0.2.8
+
+### Patch Changes
+
+- fb0c94c: adds nextToken, limit to list op and related-model loaders
+
 ## 0.2.7
 
 ### Patch Changes
