@@ -24,6 +24,7 @@ export type ModelIdentifier<T> = {
 export type RelationalMetadata<
   ResolvedSchema,
   ResolvedFields extends Record<string, unknown>,
+  IdentifierMeta,
 > = UnionToIntersection<
   ExcludeEmpty<
     {
@@ -54,7 +55,9 @@ export type RelationalMetadata<
                     Record<
                       // For M:N and 1:M we add a parent model field to the child
                       `${Uncapitalize<ModelName & string>}`,
-                      ResolvedFields[ModelName & string]
+                      {
+                        fields: ResolvedFields[ModelName & string];
+                      } & ExtractModelIdentifier<ModelName, IdentifierMeta>
                     >
                   >;
                 }
@@ -63,7 +66,12 @@ export type RelationalMetadata<
                     Record<
                       // For 1:1 and Belongs To we add a child model field to the parent
                       Field,
-                      ResolvedFields[ResolvedSchema[ModelName][Field]['relatedModel']]
+                      {
+                        fields: ResolvedFields[ResolvedSchema[ModelName][Field]['relatedModel']];
+                      } & ExtractModelIdentifier<
+                        `${Capitalize<Field & string>}`,
+                        IdentifierMeta
+                      >
                     >
                   >;
                 }
@@ -73,6 +81,8 @@ export type RelationalMetadata<
     }[keyof ResolvedSchema]
   >
 >;
+type ExtractModelIdentifier<ModelName, IdentifierMeta> =
+  ModelName extends keyof IdentifierMeta ? IdentifierMeta[ModelName] : never;
 
 export type ExtractExplicitScalarFields<
   Schema extends ModelSchema<any>,

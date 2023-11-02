@@ -41,7 +41,11 @@ type InternalClientSchema<
     string,
     unknown
   > = ResolveFieldProperties<Schema>,
-  RelationshipMeta = RelationalMetadata<ResolvedSchema, ResolvedFields>,
+  RelationshipMeta = RelationalMetadata<
+    ResolvedSchema,
+    ResolvedFields,
+    IdentifierMeta
+  >,
   Meta = IdentifierMeta & RelationshipMeta & ExplicitScalarFields,
 > = Prettify<
   ResolvedFields & {

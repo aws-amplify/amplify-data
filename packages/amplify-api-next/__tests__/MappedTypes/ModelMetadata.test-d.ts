@@ -80,7 +80,8 @@ describe('RelationalMetadata', () => {
 
     type Resolved = RelationalMetadata<
       ResolveSchema<Schema>,
-      ResolveFieldProperties<Schema>
+      ResolveFieldProperties<Schema>,
+      ModelIdentifier<SchemaTypes<Schema>>
     >;
 
     type Expected = unknown;
@@ -103,7 +104,11 @@ describe('RelationalMetadata', () => {
 
     type ResolvedFields = ResolveFieldProperties<Schema>;
     type Resolved = Prettify<
-      RelationalMetadata<ResolveSchema<Schema>, ResolvedFields>
+      RelationalMetadata<
+        ResolveSchema<Schema>,
+        ResolvedFields,
+        ModelIdentifier<SchemaTypes<Schema>>
+      >
     >;
 
     type Expected = {
@@ -111,11 +116,14 @@ describe('RelationalMetadata', () => {
         relationalInputFields: {
           post?:
             | {
-                readonly id: string;
-                readonly createdAt: string;
-                readonly updatedAt: string;
-                title?: string | null | undefined;
-                comments: ResolvedFields['Post']['comments'];
+                identifier: 'id';
+                fields: {
+                  readonly id: string;
+                  readonly createdAt: string;
+                  readonly updatedAt: string;
+                  title?: string | null | undefined;
+                  comments: ResolvedFields['Post']['comments'];
+                };
               }
             | undefined;
         };
@@ -141,7 +149,11 @@ describe('RelationalMetadata', () => {
 
     type ResolvedFields = ResolveFieldProperties<Schema>;
     type Resolved = Prettify<
-      RelationalMetadata<ResolveSchema<Schema>, ResolvedFields>
+      RelationalMetadata<
+        ResolveSchema<Schema>,
+        ResolvedFields,
+        ModelIdentifier<SchemaTypes<Schema>>
+      >
     >;
 
     type Expected = {
@@ -149,11 +161,14 @@ describe('RelationalMetadata', () => {
         relationalInputFields: {
           post?:
             | {
-                readonly id: string;
-                readonly createdAt: string;
-                readonly updatedAt: string;
-                title?: string | null | undefined;
-                comments: ResolvedFields['Post']['comments'];
+                identifier: 'id';
+                fields: {
+                  readonly id: string;
+                  readonly createdAt: string;
+                  readonly updatedAt: string;
+                  title?: string | null | undefined;
+                  comments: ResolvedFields['Post']['comments'];
+                };
               }
             | undefined;
         };
@@ -179,10 +194,16 @@ describe('RelationalMetadata', () => {
     });
 
     type Schema = typeof s;
+    // ModelName extends keyof IdentifierMeta
+    type X = keyof ModelIdentifier<SchemaTypes<Schema>>;
 
     type ResolvedFields = ResolveFieldProperties<Schema>;
     type Resolved = Prettify<
-      RelationalMetadata<ResolveSchema<Schema>, ResolvedFields>
+      RelationalMetadata<
+        ResolveSchema<Schema>,
+        ResolvedFields,
+        ModelIdentifier<SchemaTypes<Schema>>
+      >
     >;
 
     type Expected = {
@@ -190,11 +211,14 @@ describe('RelationalMetadata', () => {
         relationalInputFields: {
           post?:
             | {
-                customPk: string;
-                readonly createdAt: string;
-                readonly updatedAt: string;
-                title?: string | null | undefined;
-                comments: ResolvedFields['Post']['comments'];
+                identifier: 'customPk';
+                fields: {
+                  customPk: string;
+                  readonly createdAt: string;
+                  readonly updatedAt: string;
+                  title?: string | null | undefined;
+                  comments: ResolvedFields['Post']['comments'];
+                };
               }
             | undefined;
         };
@@ -223,7 +247,11 @@ describe('RelationalMetadata', () => {
 
     type ResolvedFields = ResolveFieldProperties<Schema>;
     type Resolved = Prettify<
-      RelationalMetadata<ResolveSchema<Schema>, ResolvedFields>
+      RelationalMetadata<
+        ResolveSchema<Schema>,
+        ResolvedFields,
+        ModelIdentifier<SchemaTypes<Schema>>
+      >
     >;
 
     type Expected = {
@@ -231,11 +259,14 @@ describe('RelationalMetadata', () => {
         relationalInputFields: {
           post?:
             | {
-                customPk: string;
-                title: string;
-                readonly createdAt: string;
-                readonly updatedAt: string;
-                comments: ResolvedFields['Post']['comments'];
+                identifier: 'title' | 'customPk';
+                fields: {
+                  customPk: string;
+                  title: string;
+                  readonly createdAt: string;
+                  readonly updatedAt: string;
+                  comments: ResolvedFields['Post']['comments'];
+                };
               }
             | undefined;
         };
@@ -259,7 +290,11 @@ describe('RelationalMetadata', () => {
     type Schema = typeof s;
 
     type Resolved = Prettify<
-      RelationalMetadata<ResolveSchema<Schema>, ResolveFieldProperties<Schema>>
+      RelationalMetadata<
+        ResolveSchema<Schema>,
+        ResolveFieldProperties<Schema>,
+        ModelIdentifier<SchemaTypes<Schema>>
+      >
     >;
 
     type Expected = {
@@ -267,10 +302,13 @@ describe('RelationalMetadata', () => {
         relationalInputFields: {
           post?:
             | {
-                readonly id: string;
-                readonly createdAt: string;
-                readonly updatedAt: string;
-                title?: string | null | undefined;
+                identifier: 'id';
+                fields: {
+                  readonly id: string;
+                  readonly createdAt: string;
+                  readonly updatedAt: string;
+                  title?: string | null | undefined;
+                };
               }
             | undefined;
         };
@@ -294,7 +332,11 @@ describe('RelationalMetadata', () => {
     type Schema = typeof s;
 
     type Resolved = Prettify<
-      RelationalMetadata<ResolveSchema<Schema>, ResolveFieldProperties<Schema>>
+      RelationalMetadata<
+        ResolveSchema<Schema>,
+        ResolveFieldProperties<Schema>,
+        ModelIdentifier<SchemaTypes<Schema>>
+      >
     >;
 
     type Expected = {
@@ -302,10 +344,13 @@ describe('RelationalMetadata', () => {
         relationalInputFields: {
           author?:
             | {
-                readonly id: string;
-                readonly createdAt: string;
-                readonly updatedAt: string;
-                name?: string | null | undefined;
+                identifier: 'id';
+                fields: {
+                  readonly id: string;
+                  readonly createdAt: string;
+                  readonly updatedAt: string;
+                  name?: string | null | undefined;
+                };
               }
             | undefined;
         };
@@ -331,14 +376,20 @@ describe('RelationalMetadata', () => {
 
     type ResolvedFields = ResolveFieldProperties<Schema>;
     type Resolved = Prettify<
-      RelationalMetadata<ResolveSchema<Schema>, ResolvedFields>
+      RelationalMetadata<
+        ResolveSchema<Schema>,
+        ResolvedFields,
+        ModelIdentifier<SchemaTypes<Schema>>
+      >
     >;
 
     type Expected = Prettify<{
       PostTag: {
         relationalInputFields: {
-          post?: ResolvedFields['Post'] | undefined;
-          tag?: ResolvedFields['Tag'] | undefined;
+          post?:
+            | { identifier: 'id'; fields: ResolvedFields['Post'] }
+            | undefined;
+          tag?: { identifier: 'id'; fields: ResolvedFields['Tag'] } | undefined;
         };
       };
     }>;
