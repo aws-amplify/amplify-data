@@ -24,7 +24,7 @@ export type ModelIdentifier<T> = {
 export type RelationalMetadata<
   ResolvedSchema,
   ResolvedFields extends Record<string, unknown>,
-  IdentifierMeta,
+  IdentifierMeta extends Record<string, any>,
 > = UnionToIntersection<
   ExcludeEmpty<
     {
@@ -55,9 +55,10 @@ export type RelationalMetadata<
                     Record<
                       // For M:N and 1:M we add a parent model field to the child
                       `${Uncapitalize<ModelName & string>}`,
-                      {
-                        fields: ResolvedFields[ModelName & string];
-                      } & ExtractModelIdentifier<ModelName, IdentifierMeta>
+                      NormalizeInputFields<
+                        ResolvedFields[ModelName & string],
+                        ExtractModelIdentifier<ModelName, IdentifierMeta>
+                      >
                     >
                   >;
                 }
@@ -66,11 +67,12 @@ export type RelationalMetadata<
                     Record<
                       // For 1:1 and Belongs To we add a child model field to the parent
                       Field,
-                      {
-                        fields: ResolvedFields[ResolvedSchema[ModelName][Field]['relatedModel']];
-                      } & ExtractModelIdentifier<
-                        `${Capitalize<Field & string>}`,
-                        IdentifierMeta
+                      NormalizeInputFields<
+                        ResolvedFields[ResolvedSchema[ModelName][Field]['relatedModel']],
+                        ExtractModelIdentifier<
+                          `${Capitalize<Field & string>}`,
+                          IdentifierMeta
+                        >
                       >
                     >
                   >;
@@ -81,8 +83,6 @@ export type RelationalMetadata<
     }[keyof ResolvedSchema]
   >
 >;
-type ExtractModelIdentifier<ModelName, IdentifierMeta> =
-  ModelName extends keyof IdentifierMeta ? IdentifierMeta[ModelName] : never;
 
 export type ExtractExplicitScalarFields<
   Schema extends ModelSchema<any>,
@@ -92,6 +92,15 @@ export type ExtractExplicitScalarFields<
     explicitScalarTypes: Scalars[ModelName];
   };
 };
+
+type ExtractModelIdentifier<ModelName, IdentifierMeta> =
+  ModelName extends keyof IdentifierMeta ? IdentifierMeta[ModelName] : never;
+
+type NormalizeInputFields<
+  ModelFields,
+  IdentifierMeta extends Record<string, any>,
+> = Partial<Omit<ModelFields, IdentifierMeta['identifier']>> &
+  Required<Pick<ModelFields, IdentifierMeta['identifier']>>;
 
 type ScalarFieldTypes<T> = {
   [ModelProp in keyof T]: {

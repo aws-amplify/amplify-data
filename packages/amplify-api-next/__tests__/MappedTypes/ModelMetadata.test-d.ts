@@ -116,14 +116,11 @@ describe('RelationalMetadata', () => {
         relationalInputFields: {
           post?:
             | {
-                identifier: 'id';
-                fields: {
-                  readonly id: string;
-                  readonly createdAt: string;
-                  readonly updatedAt: string;
-                  title?: string | null | undefined;
-                  comments: ResolvedFields['Post']['comments'];
-                };
+                readonly id: string;
+                readonly createdAt?: string;
+                readonly updatedAt?: string;
+                title?: string | null | undefined;
+                comments?: ResolvedFields['Post']['comments'];
               }
             | undefined;
         };
@@ -161,14 +158,11 @@ describe('RelationalMetadata', () => {
         relationalInputFields: {
           post?:
             | {
-                identifier: 'id';
-                fields: {
-                  readonly id: string;
-                  readonly createdAt: string;
-                  readonly updatedAt: string;
-                  title?: string | null | undefined;
-                  comments: ResolvedFields['Post']['comments'];
-                };
+                readonly id: string;
+                readonly createdAt?: string;
+                readonly updatedAt?: string;
+                title?: string | null | undefined;
+                comments?: ResolvedFields['Post']['comments'];
               }
             | undefined;
         };
@@ -194,8 +188,6 @@ describe('RelationalMetadata', () => {
     });
 
     type Schema = typeof s;
-    // ModelName extends keyof IdentifierMeta
-    type X = keyof ModelIdentifier<SchemaTypes<Schema>>;
 
     type ResolvedFields = ResolveFieldProperties<Schema>;
     type Resolved = Prettify<
@@ -211,14 +203,11 @@ describe('RelationalMetadata', () => {
         relationalInputFields: {
           post?:
             | {
-                identifier: 'customPk';
-                fields: {
-                  customPk: string;
-                  readonly createdAt: string;
-                  readonly updatedAt: string;
-                  title?: string | null | undefined;
-                  comments: ResolvedFields['Post']['comments'];
-                };
+                customPk: string;
+                readonly createdAt?: string;
+                readonly updatedAt?: string;
+                title?: string | null | undefined;
+                comments?: ResolvedFields['Post']['comments'];
               }
             | undefined;
         };
@@ -259,14 +248,11 @@ describe('RelationalMetadata', () => {
         relationalInputFields: {
           post?:
             | {
-                identifier: 'title' | 'customPk';
-                fields: {
-                  customPk: string;
-                  title: string;
-                  readonly createdAt: string;
-                  readonly updatedAt: string;
-                  comments: ResolvedFields['Post']['comments'];
-                };
+                customPk: string;
+                title: string;
+                readonly createdAt?: string;
+                readonly updatedAt?: string;
+                comments?: ResolvedFields['Post']['comments'];
               }
             | undefined;
         };
@@ -302,13 +288,10 @@ describe('RelationalMetadata', () => {
         relationalInputFields: {
           post?:
             | {
-                identifier: 'id';
-                fields: {
-                  readonly id: string;
-                  readonly createdAt: string;
-                  readonly updatedAt: string;
-                  title?: string | null | undefined;
-                };
+                readonly id: string;
+                readonly createdAt?: string;
+                readonly updatedAt?: string;
+                title?: string | null | undefined;
               }
             | undefined;
         };
@@ -344,13 +327,10 @@ describe('RelationalMetadata', () => {
         relationalInputFields: {
           author?:
             | {
-                identifier: 'id';
-                fields: {
-                  readonly id: string;
-                  readonly createdAt: string;
-                  readonly updatedAt: string;
-                  name?: string | null | undefined;
-                };
+                readonly id: string;
+                readonly createdAt?: string;
+                readonly updatedAt?: string;
+                name?: string | null | undefined;
               }
             | undefined;
         };
@@ -386,10 +366,20 @@ describe('RelationalMetadata', () => {
     type Expected = Prettify<{
       PostTag: {
         relationalInputFields: {
-          post?:
-            | { identifier: 'id'; fields: ResolvedFields['Post'] }
-            | undefined;
-          tag?: { identifier: 'id'; fields: ResolvedFields['Tag'] } | undefined;
+          post?: {
+            readonly id: string;
+            readonly createdAt?: string;
+            readonly updatedAt?: string;
+            title?: string | null | undefined;
+            postTags?: ResolvedFields['Post']['postTags'];
+          };
+          tag?: {
+            readonly id: string;
+            readonly createdAt?: string;
+            readonly updatedAt?: string;
+            name?: string | null | undefined;
+            postTags?: ResolvedFields['Post']['postTags'];
+          };
         };
       };
     }>;

@@ -35,7 +35,9 @@ export type ClientSchema<Schema extends ModelSchema<any>> =
 type InternalClientSchema<
   Schema extends ModelSchema<any>,
   ResolvedSchema = ResolveSchema<Schema>,
-  IdentifierMeta = ModelIdentifier<SchemaTypes<Schema>>,
+  IdentifierMeta extends Record<string, any> = ModelIdentifier<
+    SchemaTypes<Schema>
+  >,
   ExplicitScalarFields = ExtractExplicitScalarFields<Schema>,
   ResolvedFields extends Record<
     string,
