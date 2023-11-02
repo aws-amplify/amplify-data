@@ -1,5 +1,11 @@
 # @aws-amplify/amplify-api-next-alpha
 
+## 0.7.4
+
+### Patch Changes
+
+- cba8bc9: fix: Mutation inputs should allow incomplete related objects
+
 ## 0.7.3
 
 ### Patch Changes
