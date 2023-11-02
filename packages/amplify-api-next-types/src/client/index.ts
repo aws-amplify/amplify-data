@@ -353,10 +353,19 @@ export type ObserveQueryReturnValue<T> = Observable<{
   isSynced: boolean;
 }>;
 
-export type LazyLoader<Model, IsArray extends boolean> = (options?: {
-  authMode?: AuthMode;
-  authToken?: string;
-}) => IsArray extends true
+export type LazyLoader<Model, IsArray extends boolean> = (
+  options?: IsArray extends true
+    ? {
+        authMode?: AuthMode;
+        authToken?: string;
+        limit?: number;
+        nextToken?: string | null;
+      }
+    : {
+        authMode?: AuthMode;
+        authToken?: string;
+      },
+) => IsArray extends true
   ? ListReturnValue<Prettify<Model>>
   : SingularReturnValue<Prettify<Model>>;
 
@@ -474,6 +483,8 @@ type ModelTypesClient<
     SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[],
   >(options?: {
     filter?: ModelFilter<ModelMeta>;
+    limit?: number;
+    nextToken?: string | null;
     selectionSet?: SelectionSet;
     authMode?: AuthMode;
     authToken?: string;
@@ -548,6 +559,8 @@ type ModelTypesSSRCookies<
     SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[],
   >(options?: {
     filter?: ModelFilter<ModelMeta>;
+    limit?: number;
+    nextToken?: string | null;
     selectionSet?: SelectionSet;
     authMode?: AuthMode;
     authToken?: string;
@@ -595,6 +608,8 @@ type ModelTypesSSRRequest<
     contextSpec: any,
     options?: {
       filter?: ModelFilter<ModelMeta>;
+      limit?: number;
+      nextToken?: string | null;
       selectionSet?: SelectionSet;
       authMode?: AuthMode;
       authToken?: string;
