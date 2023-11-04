@@ -119,6 +119,7 @@ type RelatedModelFields<
   ? {
       relatedModel: ModelField['relatedModel'];
       relationshipType: ModelField['relationshipType'];
+      relationName: ModelField['relationName'];
       relatedModelIdentifier: IdentifierFields<
         Identifiers,
         ModelField['relatedModel']
@@ -127,31 +128,15 @@ type RelatedModelFields<
   : {
       relatedModel: undefined;
       relationshipType: undefined;
+      relationName: undefined;
       relatedModelIdentifier: never;
     };
 
-// type RelatedModelFields<
-//   ModelField,
-//   Identifiers extends Record<string, { identifier: string }>,
-// > = ModelField extends ModelRelationalTypeArgFactory<
-//   infer RelatedModel,
-//   infer RelationshipType,
-//   any
-// >
-//   ? {
-//       relatedModel: RelatedModel;
-//       relationshipType: RelationshipType;
-//       relatedModelIdentifier: IdentifierFields<Identifiers, RelatedModel>;
-//     }
-//   : {
-//       relatedModel: undefined;
-//       relationshipType: undefined;
-//       relatedModelIdentifier: never;
-//     };
-
 type ImpliedFKs<
   UserSchema extends Record<any, any>,
-  ModelName extends keyof Schema,
+  ModelName extends
+    | Denormalized<UserSchema>['model']
+    | Denormalized<UserSchema>['relationName'], // keyof Schema,
   Schema extends Record<any, any> = ResolveSchema<UserSchema>,
   DenormalizedSchema = Denormalized<UserSchema>,
   HasMany_Model = Extract<
@@ -179,11 +164,10 @@ type ImpliedFKs<
   >,
   ManyToManys = Extract<
     DenormalizedSchema,
-    | { model: ModelName; relationshipType: ModelRelationshipTypes.manyToMany }
-    | {
-        relatedModel: ModelName;
-        relationshipType: ModelRelationshipTypes.manyToMany;
-      }
+    {
+      relationName: ModelName; // i.e., the join table name
+      relationshipType: ModelRelationshipTypes.manyToMany;
+    }
   >,
   InferredFields =
     | HasMany_Model_Keys<Schema, HasMany_Model>
@@ -200,21 +184,31 @@ type FieldWithRelationship<
   Field extends string,
   RelatedModel extends string,
   RelatedModelIdentifier extends string,
+  RelationName extends string | undefined,
 > = {
   model: Model;
   identifier: Identifier;
   field: Field;
   relatedModel: RelatedModel;
   relatedModelIdentifier: RelatedModelIdentifier;
+  relationName: RelationName;
 };
 
+/**
+ * I.e., creates a "matcher" to identify the belongsTo entries that
+ * correspond with the given hasMany relationship.
+ *
+ * Useful, because the `belongsTo` in these relationships do not actually
+ *
+ */
 type ImpliedHasManyBelongsTos<Relationship> =
   Relationship extends FieldWithRelationship<
     infer Model,
     infer Identifier,
     infer Field,
     infer RelatedModel,
-    infer RelatedModelIdentifier
+    infer RelatedModelIdentifier,
+    infer RelationName
   >
     ? {
         model: RelatedModel;
@@ -235,7 +229,8 @@ type HasMany_Model_Keys<
   infer Identifier,
   infer Field,
   infer RelatedModel,
-  infer RelatedModelIdentifier
+  infer RelatedModelIdentifier,
+  infer RelationName
 >
   ? {
       [K in Identifier as FKName<
@@ -254,7 +249,8 @@ type HasOne_Model_Keys<
   infer Identifier,
   infer Field,
   infer RelatedModel,
-  infer RelatedModelIdentifier
+  infer RelatedModelIdentifier,
+  infer RelationName
 >
   ? {
       [K in RelatedModelIdentifier as FKName<
@@ -275,7 +271,8 @@ type Model_BelongsTo_Keys<
   infer Identifier,
   infer Field,
   infer RelatedModel,
-  infer RelatedModelIdentifier
+  infer RelatedModelIdentifier,
+  infer RelationName
 >
   ? {
       [K in RelatedModelIdentifier as FKName<
@@ -294,15 +291,12 @@ type ManyToManyKeys<
   infer Identifier,
   infer Field,
   infer RelatedModel,
-  infer RelatedModelIdentifier
+  infer RelatedModelIdentifier,
+  infer RelationName
 >
   ? {
-      [K in RelatedModelIdentifier as FKName<
-        Model,
-        Field,
-        K
-      >]: K extends keyof Schema[RelatedModel]
-        ? Schema[RelatedModel][K]
+      [K in Identifier as FKName<Model, '', K>]: K extends keyof Schema[Model]
+        ? Schema[Model][K]
         : string;
     }
   : never;
@@ -370,6 +364,7 @@ describe('Denormalized mapped type', () => {
           relatedModel: undefined;
           relationshipType: undefined;
           relatedModelIdentifier: never;
+          relationName: undefined;
         }
       | {
           model: 'TheParent';
@@ -379,6 +374,7 @@ describe('Denormalized mapped type', () => {
           relatedModel: 'TheChild';
           relationshipType: ModelRelationshipTypes.hasOne;
           relatedModelIdentifier: 'customPkA' | 'customPkB';
+          relationName: undefined;
         }
       | {
           model: 'TheChild';
@@ -388,6 +384,7 @@ describe('Denormalized mapped type', () => {
           relatedModel: undefined;
           relationshipType: undefined;
           relatedModelIdentifier: never;
+          relationName: undefined;
         }
       | {
           model: 'TheChild';
@@ -397,6 +394,7 @@ describe('Denormalized mapped type', () => {
           relatedModel: undefined;
           relationshipType: undefined;
           relatedModelIdentifier: never;
+          relationName: undefined;
         }
       | {
           model: 'TheChild';
@@ -406,6 +404,7 @@ describe('Denormalized mapped type', () => {
           relatedModel: undefined;
           relationshipType: undefined;
           relatedModelIdentifier: never;
+          relationName: undefined;
         };
 
     type test = Expect<Equal<Actual, Expected>>;
@@ -424,6 +423,7 @@ describe('Denormalized mapped type', () => {
       relatedModel: undefined;
       relationshipType: undefined;
       relatedModelIdentifier: never;
+      relationName: undefined;
     };
 
     type test = Expect<Equal<Actual, Expected>>;
@@ -450,6 +450,7 @@ describe('Denormalized mapped type', () => {
       relatedModel: 'BoringChild';
       relationshipType: ModelRelationshipTypes.hasOne;
       relatedModelIdentifier: 'id';
+      relationName: undefined;
     };
 
     type test = Expect<Equal<Actual, Expected>>;
@@ -498,6 +499,7 @@ describe('Denormalized mapped type', () => {
           relatedModel: 'MultiChild';
           relationshipType: ModelRelationshipTypes.hasMany;
           relatedModelIdentifier: 'id';
+          relationName: undefined;
         }
       | {
           model: 'MultiParentB';
@@ -515,6 +517,7 @@ describe('Denormalized mapped type', () => {
           relatedModel: 'MultiChild';
           relationshipType: ModelRelationshipTypes.hasMany;
           relatedModelIdentifier: 'id';
+          relationName: undefined;
         }
       | {
           model: 'MultiParentC';
@@ -532,6 +535,7 @@ describe('Denormalized mapped type', () => {
           relatedModel: 'MultiChild';
           relationshipType: ModelRelationshipTypes.hasMany;
           relatedModelIdentifier: 'id';
+          relationName: undefined;
         };
 
     type test = Expect<Equal<Actual, Expected>>;
@@ -713,11 +717,11 @@ describe('ImpliedFK mapped type', () => {
   test('manyToMany', () => {
     const schema = a.schema({
       ManyToManyLeft: a.model({
-        ManyToManyLeftId: a.id(),
+        value: a.string(),
         right: a.manyToMany('ManyToManyRight', { relationName: 'ChuckNorris' }),
       }),
       ManyToManyRight: a.model({
-        ManyToManyRightId: a.id(),
+        value: a.string(),
         left: a.manyToMany('ManyToManyLeft', { relationName: 'ChuckNorris' }),
       }),
     });
@@ -734,6 +738,44 @@ describe('ImpliedFK mapped type', () => {
     type JoinTableExected = {
       manyToManyLeftId: string;
       manyToManyRightId: string;
+    };
+    type testJoin = Expect<Equal<JoinTableActual, JoinTableExected>>;
+  });
+
+  test('manyToMany CPK', () => {
+    const schema = a.schema({
+      ManyToManyLeft: a
+        .model({
+          leftIdA: a.id().required(),
+          leftIdB: a.integer().required(),
+          right: a.manyToMany('ManyToManyRight', {
+            relationName: 'Wolverine',
+          }),
+        })
+        .identifier(['leftIdA', 'leftIdB']),
+      ManyToManyRight: a
+        .model({
+          rightIdA: a.id().required(),
+          rightIdB: a.integer().required(),
+          left: a.manyToMany('ManyToManyLeft', { relationName: 'Wolverine' }),
+        })
+        .identifier(['rightIdA', 'rightIdB']),
+    });
+
+    type LeftActual = ImpliedFKs<typeof schema, 'ManyToManyLeft'>;
+    type LeftExpected = never;
+    type testLeft = Expect<Equal<LeftActual, LeftExpected>>;
+
+    type RightActual = ImpliedFKs<typeof schema, 'ManyToManyRight'>;
+    type RightExpected = never;
+    type testRight = Expect<Equal<RightActual, RightExpected>>;
+
+    type JoinTableActual = ImpliedFKs<typeof schema, 'Wolverine'>;
+    type JoinTableExected = {
+      manyToManyLeftLeftIdA: string;
+      manyToManyLeftLeftIdB: number;
+      manyToManyRightRightIdA: string;
+      manyToManyRightRightIdB: number;
     };
     type testJoin = Expect<Equal<JoinTableActual, JoinTableExected>>;
   });
