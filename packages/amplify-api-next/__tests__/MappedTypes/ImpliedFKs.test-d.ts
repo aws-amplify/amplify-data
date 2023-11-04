@@ -1,10 +1,15 @@
-import type { Equal, Expect } from '@aws-amplify/amplify-api-next-types-alpha';
+import type {
+  Equal,
+  Expect,
+  UnionToIntersection,
+} from '@aws-amplify/amplify-api-next-types-alpha';
 import { a, ClientSchema } from '../../index';
 import { Prettify } from '@aws-amplify/amplify-api-next-types-alpha';
 import { ResolveSchema } from '../../src/MappedTypes/ResolveSchema';
 import {
   ModelRelationalTypeArgFactory,
   ModelRelationshipTypes,
+  ModelRelationalFieldParamShape,
 } from '../../src/ModelRelationalField';
 import { ModelIdentifier } from '../../src/MappedTypes/ModelMetadata';
 
@@ -72,16 +77,6 @@ const schema = a.schema({
       'CPKReciprocalHasManyChildIdFieldA',
       'CPKReciprocalHasManyChildIdFieldB',
     ]),
-  MultiParentA: a.model({
-    childFromParentA: a.hasMany('MultiChild'),
-  }),
-  MultiParentB: a.model({
-    childFromParentB: a.hasMany('MultiChild'),
-  }),
-  MultiChild: a.model({
-    parentA: a.belongsTo('MultiParentA'),
-    parentB: a.belongsTo('MultiParentB'),
-  }),
 });
 
 // type ImpliedFKs<Schema extends Record<any, any>> = {};
@@ -120,15 +115,14 @@ type Denormalized<
 type RelatedModelFields<
   ModelField,
   Identifiers extends Record<string, { identifier: string }>,
-> = ModelField extends ModelRelationalTypeArgFactory<
-  infer RelatedModel,
-  infer RelationshipType,
-  any
->
+> = ModelField extends ModelRelationalFieldParamShape
   ? {
-      relatedModel: RelatedModel;
-      relationshipType: RelationshipType;
-      relatedModelIdentifier: IdentifierFields<Identifiers, RelatedModel>;
+      relatedModel: ModelField['relatedModel'];
+      relationshipType: ModelField['relationshipType'];
+      relatedModelIdentifier: IdentifierFields<
+        Identifiers,
+        ModelField['relatedModel']
+      >;
     }
   : {
       relatedModel: undefined;
@@ -136,23 +130,42 @@ type RelatedModelFields<
       relatedModelIdentifier: never;
     };
 
+// type RelatedModelFields<
+//   ModelField,
+//   Identifiers extends Record<string, { identifier: string }>,
+// > = ModelField extends ModelRelationalTypeArgFactory<
+//   infer RelatedModel,
+//   infer RelationshipType,
+//   any
+// >
+//   ? {
+//       relatedModel: RelatedModel;
+//       relationshipType: RelationshipType;
+//       relatedModelIdentifier: IdentifierFields<Identifiers, RelatedModel>;
+//     }
+//   : {
+//       relatedModel: undefined;
+//       relationshipType: undefined;
+//       relatedModelIdentifier: never;
+//     };
+
 type ImpliedFKs<
   UserSchema extends Record<any, any>,
   ModelName extends keyof Schema,
   Schema extends Record<any, any> = ResolveSchema<UserSchema>,
   DenormalizedSchema = Denormalized<UserSchema>,
-  HasManys = Extract<
+  HasMany_Model = Extract<
     DenormalizedSchema,
     {
       relatedModel: ModelName;
       relationshipType: ModelRelationshipTypes.hasMany;
     }
   >,
-  HasOnes = Extract<
+  HasOne_Model = Extract<
     DenormalizedSchema,
     { model: ModelName; relationshipType: ModelRelationshipTypes.hasOne }
   >,
-  BelongsTos = Exclude<
+  Model_BelongsTo = Exclude<
     Extract<
       DenormalizedSchema,
       {
@@ -160,7 +173,9 @@ type ImpliedFKs<
         relationshipType: ModelRelationshipTypes.belongsTo;
       }
     >,
-    ImpliedHasManyBelongsTos<HasManys>
+    // omit belongsTo's that simply reciprocate hasMany's, since the FK
+    // is inferred from that hasMany side.
+    ImpliedHasManyBelongsTos<HasMany_Model>
   >,
   ManyToManys = Extract<
     DenormalizedSchema,
@@ -170,11 +185,14 @@ type ImpliedFKs<
         relationshipType: ModelRelationshipTypes.manyToMany;
       }
   >,
-> =
-  | HasManyKeys<Schema, HasManys>
-  | HasOneKeys<Schema, HasOnes>
-  | BelongsToKeys<Schema, BelongsTos>
-  | ManyToManyKeys<Schema, ManyToManys>;
+  InferredFields =
+    | HasMany_Model_Keys<Schema, HasMany_Model>
+    | HasOne_Model_Keys<Schema, HasOne_Model>
+    | Model_BelongsTo_Keys<Schema, Model_BelongsTo>
+    | ManyToManyKeys<Schema, ManyToManys>,
+> = unknown extends UnionToIntersection<InferredFields>
+  ? never
+  : Prettify<UnionToIntersection<InferredFields>>;
 
 type FieldWithRelationship<
   Model extends string,
@@ -209,7 +227,7 @@ type FKName<
   Identifier extends string,
 > = `${Uncapitalize<Model>}${Capitalize<Field>}${Capitalize<Identifier>}`;
 
-type HasManyKeys<
+type HasMany_Model_Keys<
   Schema extends Record<any, any>,
   T,
 > = T extends FieldWithRelationship<
@@ -226,9 +244,9 @@ type HasManyKeys<
         K
       >]: K extends keyof Schema[Model] ? Schema[Model][K] : string;
     }
-  : object;
+  : never;
 
-type HasOneKeys<
+type HasOne_Model_Keys<
   Schema extends Record<any, any>,
   T,
 > = T extends FieldWithRelationship<
@@ -247,9 +265,9 @@ type HasOneKeys<
         ? Schema[RelatedModel][K]
         : string;
     }
-  : object;
+  : never;
 
-type BelongsToKeys<
+type Model_BelongsTo_Keys<
   Schema extends Record<any, any>,
   T,
 > = T extends FieldWithRelationship<
@@ -260,13 +278,13 @@ type BelongsToKeys<
   infer RelatedModelIdentifier
 >
   ? {
-      [K in Identifier as FKName<
+      [K in RelatedModelIdentifier as FKName<
         Model,
         Field,
         K
       >]: K extends keyof Schema[Model] ? Schema[Model][K] : string;
     }
-  : object;
+  : never;
 
 type ManyToManyKeys<
   Schema extends Record<any, any>,
@@ -287,8 +305,11 @@ type ManyToManyKeys<
         ? Schema[RelatedModel][K]
         : string;
     }
-  : object;
+  : never;
 
+//
+// sampling from the transformed schema, for reference
+//
 // type BoringChild {
 //  id: ID!
 //  // hasMany child without belongsTo has no FK
@@ -318,17 +339,7 @@ type ManyToManyKeys<
 //  boringParent         ChildHasManyReciprocal  Id: ID
 //  ^ parent model name  ^ parent mode field     ^ child PK
 // }
-
-type D = Denormalized<typeof schema>;
-type T = Extract<D, { relatedModel: 'ReciprocalHasManyChild' }>;
-
-type BoringChild = ImpliedFKs<typeof schema, 'BoringChild'>;
-type BoringReciprocalChild = ImpliedFKs<typeof schema, 'BoringReciprocalChild'>;
-type BoringHasManyChild = ImpliedFKs<typeof schema, 'BoringHasManyChild'>;
-type ReciprocalHasManyChild = ImpliedFKs<
-  typeof schema,
-  'ReciprocalHasManyChild'
->;
+//
 
 describe('Denormalized mapped type', () => {
   test('can map a small sample schema', () => {
@@ -445,6 +456,27 @@ describe('Denormalized mapped type', () => {
   });
 
   test('can extract multiple fields that relate to a model', () => {
+    const schema = a.schema({
+      MultiParentA: a.model({
+        childFromParentA: a.hasMany('MultiChild'),
+      }),
+      MultiParentB: a
+        .model({
+          cpkA: a.string().required(),
+          cpkB: a.integer().required(),
+          childFromParentB: a.hasMany('MultiChild'),
+        })
+        .identifier(['cpkA', 'cpkB']),
+      MultiParentC: a.model({
+        childFromParentC: a.hasMany('MultiChild'),
+      }),
+      MultiChild: a.model({
+        parentA: a.belongsTo('MultiParentA'),
+        parentB: a.belongsTo('MultiParentB'),
+        // intentionally no parentC
+      }),
+    });
+
     type D = Denormalized<typeof schema>;
 
     type Actual = Extract<D, { relatedModel: 'MultiChild' }>;
@@ -469,8 +501,25 @@ describe('Denormalized mapped type', () => {
         }
       | {
           model: 'MultiParentB';
-          identifier: 'id';
+          identifier: 'cpkA' | 'cpkB';
           field: 'childFromParentB';
+          type: {
+            type: 'model';
+            relatedModel: 'MultiChild';
+            relationshipType: ModelRelationshipTypes.hasMany;
+            array: true;
+            valueRequired: false;
+            arrayRequired: false;
+            relationName: undefined;
+          };
+          relatedModel: 'MultiChild';
+          relationshipType: ModelRelationshipTypes.hasMany;
+          relatedModelIdentifier: 'id';
+        }
+      | {
+          model: 'MultiParentC';
+          identifier: 'id';
+          field: 'childFromParentC';
           type: {
             type: 'model';
             relatedModel: 'MultiChild';
@@ -490,25 +539,202 @@ describe('Denormalized mapped type', () => {
 });
 
 describe('ImpliedFK mapped type', () => {
-  test('hasOne(implicitPK)', () => {
+  test('parent with implied hasOne keys', () => {
+    type Actual = ImpliedFKs<typeof schema, 'BoringParent'>;
+    type Expected = {
+      boringParentChildNormalId: string;
+      boringParentChildReciprocalId: string;
+    };
+    type test = Expect<Equal<Actual, Expected>>;
+  });
+
+  test('child with no implied keys', () => {
+    type Actual = ImpliedFKs<typeof schema, 'BoringChild'>;
+    type Expected = never;
+    type test = Expect<Equal<Actual, Expected>>;
+  });
+
+  test('child with hasOne:belongsTo key', () => {
+    type Actual = ImpliedFKs<typeof schema, 'BoringReciprocalChild'>;
+    type Expected = {
+      boringReciprocalChildParentId: string;
+    };
+    type test = Expect<Equal<Actual, Expected>>;
+  });
+
+  test('child with implied FK from hasMany', () => {
+    type Actual = ImpliedFKs<typeof schema, 'BoringHasManyChild'>;
+    type Expected = {
+      boringParentChildHasManyNormalId: string;
+    };
+    type test = Expect<Equal<Actual, Expected>>;
+  });
+
+  test('child with implied FK from hasMany, with reciprocal belongsTo', () => {
+    type Actual = ImpliedFKs<typeof schema, 'ReciprocalHasManyChild'>;
+    type Expected = {
+      boringParentChildHasManyReciprocalId: string;
+    };
+    type test = Expect<Equal<Actual, Expected>>;
+  });
+
+  test('CPK hasOne', () => {
     const schema = a.schema({
-      TheParent: a.model({
-        child: a.hasOne('TheChild'),
+      CPKParent: a
+        .model({
+          CPKParentIdFieldA: a.id().required(),
+          CPKParentIdFieldB: a.id().required(),
+          childNormal: a.hasOne('CPKChild'),
+        })
+        .identifier(['CPKParentIdFieldA', 'CPKParentIdFieldB']),
+      CPKChild: a
+        .model({
+          CPKChildIdFieldA: a.id().required(),
+          CPKChildIdFieldB: a.id().required(),
+          value: a.string(),
+        })
+        .identifier(['CPKChildIdFieldA', 'CPKChildIdFieldB']),
+    });
+
+    type ParentActual = ImpliedFKs<typeof schema, 'CPKParent'>;
+    type ParentExpected = {
+      cPKParentChildNormalCPKChildIdFieldA: string;
+      cPKParentChildNormalCPKChildIdFieldB: string;
+    };
+    type testParent = Expect<Equal<ParentActual, ParentExpected>>;
+
+    type ChildActual = ImpliedFKs<typeof schema, 'CPKChild'>;
+    type ChildExpected = never;
+    type testChild = Expect<Equal<ParentActual, ParentExpected>>;
+  });
+
+  test('cpk hasOne:belongsTo', () => {
+    const schema = a.schema({
+      CPKParent: a
+        .model({
+          CPKParentIdFieldA: a.id().required(),
+          CPKParentIdFieldB: a.id().required(),
+          childReciprocal: a.hasOne('CPKReciprocalChild'),
+        })
+        .identifier(['CPKParentIdFieldA', 'CPKParentIdFieldB']),
+      CPKReciprocalChild: a
+        .model({
+          CPKReciprocalChildIdFieldA: a.id().required(),
+          CPKReciprocalChildIdFieldB: a.id().required(),
+          parent: a.belongsTo('CPKParent'),
+          value: a.string(),
+        })
+        .identifier([
+          'CPKReciprocalChildIdFieldA',
+          'CPKReciprocalChildIdFieldB',
+        ]),
+    });
+
+    type ParentActual = ImpliedFKs<typeof schema, 'CPKParent'>;
+    type ParentExpected = {
+      cPKParentChildReciprocalCPKReciprocalChildIdFieldA: string;
+      cPKParentChildReciprocalCPKReciprocalChildIdFieldB: string;
+    };
+    type testParent = Expect<Equal<ParentActual, ParentExpected>>;
+
+    type ChildActual = ImpliedFKs<typeof schema, 'CPKReciprocalChild'>;
+    type ChildExpected = {
+      // cPKReciprocalChildParentCPKReciprocalChildIdFieldA;
+      cPKReciprocalChildParentCPKParentIdFieldA: string;
+      cPKReciprocalChildParentCPKParentIdFieldB: string;
+    };
+    type testChild = Expect<Equal<ChildActual, ChildExpected>>;
+  });
+
+  test('cpk hasMany', () => {
+    const schema = a.schema({
+      CPKParent: a
+        .model({
+          CPKParentIdFieldA: a.id().required(),
+          CPKParentIdFieldB: a.id().required(),
+          childNormal: a.hasOne('CPKChild'),
+          childReciprocal: a.hasOne('CPKReciprocalChild'),
+          childHasManyNormal: a.hasMany('CPKHasManyChild'),
+          childHasManyReciprocal: a.hasMany('CPKReciprocalHasManyChild'),
+        })
+        .identifier(['CPKParentIdFieldA', 'CPKParentIdFieldB']),
+      CPKChild: a
+        .model({
+          CPKChildIdFieldA: a.id().required(),
+          CPKChildIdFieldB: a.id().required(),
+          value: a.string(),
+        })
+        .identifier(['CPKChildIdFieldA', 'CPKChildIdFieldB']),
+      CPKReciprocalChild: a
+        .model({
+          CPKReciprocalChildIdFieldA: a.id().required(),
+          CPKReciprocalChildIdFieldB: a.id().required(),
+          parent: a.belongsTo('CPKParent'),
+          value: a.string(),
+        })
+        .identifier([
+          'CPKReciprocalChildIdFieldA',
+          'CPKReciprocalChildIdFieldB',
+        ]),
+    });
+  });
+
+  test('child with implied FKs multiple parents, mixed reciprocality and types', () => {
+    const schema = a.schema({
+      MultiParentA: a.model({
+        childFromParentA: a.hasMany('MultiChild'),
       }),
-      TheChild: a.model({
-        someField: a.string(),
+      MultiParentB: a
+        .model({
+          cpkA: a.string().required(),
+          cpkB: a.integer().required(),
+          childFromParentB: a.hasMany('MultiChild'),
+        })
+        .identifier(['cpkA', 'cpkB']),
+      MultiParentC: a.model({
+        childFromParentC: a.hasMany('MultiChild'),
+      }),
+      MultiChild: a.model({
+        parentA: a.belongsTo('MultiParentA'),
+        parentB: a.belongsTo('MultiParentB'),
+        // intentionally no parentC
+      }),
+    });
+    type Actual = ImpliedFKs<typeof schema, 'MultiChild'>;
+    type Expected = {
+      multiParentAChildFromParentAId: string;
+      multiParentBChildFromParentBCpkA: string;
+      multiParentBChildFromParentBCpkB: number;
+      multiParentCChildFromParentCId: string;
+    };
+    type test = Expect<Equal<Actual, Expected>>;
+  });
+
+  test('manyToMany', () => {
+    const schema = a.schema({
+      ManyToManyLeft: a.model({
+        ManyToManyLeftId: a.id(),
+        right: a.manyToMany('ManyToManyRight', { relationName: 'ChuckNorris' }),
+      }),
+      ManyToManyRight: a.model({
+        ManyToManyRightId: a.id(),
+        left: a.manyToMany('ManyToManyLeft', { relationName: 'ChuckNorris' }),
       }),
     });
 
-    type Actual = ImpliedFKs<typeof schema>;
+    type LeftActual = ImpliedFKs<typeof schema, 'ManyToManyLeft'>;
+    type LeftExpected = never;
+    type testLeft = Expect<Equal<LeftActual, LeftExpected>>;
 
-    type Expected = {
-      TheParent: {
-        theParentChildId: string;
-      };
-      TheChild: {};
+    type RightActual = ImpliedFKs<typeof schema, 'ManyToManyRight'>;
+    type RightExpected = never;
+    type testRight = Expect<Equal<RightActual, RightExpected>>;
+
+    type JoinTableActual = ImpliedFKs<typeof schema, 'ChuckNorris'>;
+    type JoinTableExected = {
+      manyToManyLeftId: string;
+      manyToManyRightId: string;
     };
-
-    type test = Expect<Equal<Actual, Expected>>;
+    type testJoin = Expect<Equal<JoinTableActual, JoinTableExected>>;
   });
 });
