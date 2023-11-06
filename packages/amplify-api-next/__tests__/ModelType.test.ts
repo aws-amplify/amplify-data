@@ -7,6 +7,8 @@ import {
   Operation,
 } from '../src/Authorization';
 
+import { ModelImpliedAuthFields } from '../src/MappedTypes/ResolveFieldProperties';
+
 describe('type definition tests', () => {
   // evaluates type defs in corresponding test-d.ts file
   it('should not produce static type errors', async () => {
@@ -141,6 +143,8 @@ describe('model auth rules', () => {
 
     // what customers export
     type Schema = ClientSchema<typeof schema>;
+
+    type ImpliedAuthFields = ModelImpliedAuthFields<typeof schema>;
 
     // If the types are correct, this field should exist
     type AuthorsType = Schema['widget']['authors'];

@@ -27,7 +27,11 @@ export type RefType<
      */
     authorization<AuthRuleType extends Authorization<any, any>>(
       rules: AuthRuleType[],
-    ): RefType<T, K | 'authorization', AuthRuleType>;
+    ): RefType<
+      SetTypeSubArg<T, 'authorization', []>,
+      K | 'authorization',
+      AuthRuleType
+    >;
     // structural difference to separate type from ModelField TODO: find cleaner way to achieve this
     [__ref]: typeof __ref;
   },

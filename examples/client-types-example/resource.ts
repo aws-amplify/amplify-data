@@ -5,13 +5,13 @@ const schema = a.schema({
   Post: a.model({
     title: a.string().required(),
     description: a.string(),
-    location: a.customType({
-      lat: a.float(),
-      long: a.float(),
-    }),
+    location: a.ref('Location').required(),
   }),
-  // Location:
+
+  Location: a.customType({
+    lat: a.float(),
+    long: a.float(),
+  }),
 });
 
 export type Schema = ClientSchema<typeof schema>;
-type T = Schema[typeof __modelMeta__]['customTypes'];

@@ -167,12 +167,12 @@ type Intersection<A, B, C> = A & B & C extends infer U
 
 // TODO: this should probably happen in InjectImplicitModelFields instead. Keeping here for now to reduce refactor
 // blast radius
-type ModelImpliedAuthFields<Schema extends ModelSchema<any>> = {
-  [ModelKey in keyof Schema['data']['models'] as Schema['data']['models'][ModelKey] extends EnumType<EnumTypeParamShape>
+export type ModelImpliedAuthFields<Schema extends ModelSchema<any>> = {
+  [ModelKey in keyof Schema['data']['types'] as Schema['data']['types'][ModelKey] extends EnumType<EnumTypeParamShape>
     ? never
-    : Schema['data']['models'][ModelKey] extends CustomType<CustomTypeParamShape>
+    : Schema['data']['types'][ModelKey] extends CustomType<CustomTypeParamShape>
     ? never
-    : ModelKey]: Schema['data']['models'][ModelKey] extends ModelType<
+    : ModelKey]: Schema['data']['types'][ModelKey] extends ModelType<
     infer Model,
     any
   >
