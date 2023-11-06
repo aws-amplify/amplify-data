@@ -13,6 +13,19 @@ type Location
 }"
 `;
 
+exports[`CustomType transform Explicit CustomType - with auth 1`] = `
+"type Post @model 
+{
+  location: Location @auth(rules: [{allow: owner}])
+}
+
+type Location 
+{
+  lat: Float
+  long: Float
+}"
+`;
+
 exports[`CustomType transform Explicit CustomType 1`] = `
 "type Post @model 
 {

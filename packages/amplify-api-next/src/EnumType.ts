@@ -1,40 +1,21 @@
-import {
-  Brand,
-  // SetTypeSubArg,
-} from '@aws-amplify/amplify-api-next-types-alpha';
-// import { Authorization } from './Authorization';
+import { Brand } from '@aws-amplify/amplify-api-next-types-alpha';
 
 type EnumTypeData = {
   type: 'enum';
   values: readonly string[];
-  // required: boolean;
-  // authorization: Authorization<any, any>[];
 };
 
 export type EnumTypeParamShape = {
   type: 'enum';
   values: readonly string[];
-  // required: boolean;
-  // authorization: Authorization<any, any>[];
 };
 
-export type EnumType<
-  T extends EnumTypeParamShape,
-  // K extends keyof EnumType<T> = never
-> = Brand<
-  T,
-  // Omit<{
-  //   required(): EnumType<SetTypeSubArg<T, 'required', true>>;
-  // }, K>,
-  'enum'
->;
+export type EnumType<T extends EnumTypeParamShape> = Brand<T, 'enum'>;
 
 function _enum<T extends EnumTypeParamShape>(values: T['values']) {
   const data: EnumTypeData = {
     type: 'enum',
     values,
-    // required: false,
-    // authorization: [],
   };
 
   return data as EnumType<T>;
@@ -43,8 +24,6 @@ function _enum<T extends EnumTypeParamShape>(values: T['values']) {
 type EnumTypeArgFactory<Values extends readonly string[]> = {
   type: 'enum';
   values: Values;
-  // required: false;
-  // authorization: [];
 };
 
 /**
@@ -55,10 +34,3 @@ export function enumType<Value extends string, T extends readonly Value[]>(
 ) {
   return _enum<EnumTypeArgFactory<T>>(values);
 }
-
-/* testing zone */
-const _e = enumType(['Hello', 'Is', 'This', 'Me']);
-//     ^?
-
-type _Test = typeof _e extends EnumType<infer R> ? R['values'] : false;
-//    ^?

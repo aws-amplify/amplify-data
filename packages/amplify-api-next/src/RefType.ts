@@ -1,5 +1,8 @@
 import { SetTypeSubArg } from '@aws-amplify/amplify-api-next-types-alpha';
 import { Authorization } from './Authorization';
+import { __auth } from './ModelField';
+
+export const __ref = Symbol('__ref');
 
 export type RefTypeParamShape = {
   type: 'ref';
@@ -10,14 +13,29 @@ export type RefTypeParamShape = {
 
 export type RefType<
   T extends RefTypeParamShape,
-  _Ref = 'ref',
   K extends keyof RefType<T> = never,
+  Auth = undefined,
 > = Omit<
   {
+    /**
+     * Marks a field as required.
+     */
     required(): RefType<SetTypeSubArg<T, 'required', true>, K | 'required'>;
+    /**
+     * Configures field-level authorization rules. Pass in an array of authorizations `(a.allow.____)` to mix and match
+     * multiple authorization rules for this field.
+     */
+    authorization<AuthRuleType extends Authorization<any, any>>(
+      rules: AuthRuleType[],
+    ): RefType<T, K | 'authorization', AuthRuleType>;
+    // structural difference to separate type from ModelField TODO: find cleaner way to achieve this
+    [__ref]: typeof __ref;
   },
   K
->;
+> & {
+  // This is a lie. This property is never set at runtime. It's just used to smuggle auth types through.
+  [__auth]?: Auth;
+};
 
 type RefTypeData = {
   type: 'ref';
@@ -48,6 +66,12 @@ function _ref<T extends RefTypeParamShape>(link: T['link']) {
 
       return this;
     },
+    authorization(rules) {
+      data.authorization = rules;
+
+      return this;
+    },
+    [__ref]: __ref,
   };
 
   return { ...builder, data } as InternalRef as RefType<T>;
@@ -64,11 +88,3 @@ type RefTypeArgFactory<Link extends string> = {
 export function ref<Value extends string, T extends Value>(link: T) {
   return _ref<RefTypeArgFactory<T>>(link);
 }
-
-/* testing zone */
-const tr = ref('Post').required();
-type _T = typeof tr;
-
-type _Test = _T extends RefType<infer T extends RefTypeParamShape, any>
-  ? T
-  : never;

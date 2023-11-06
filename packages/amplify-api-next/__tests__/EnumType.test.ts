@@ -33,6 +33,19 @@ describe('EnumType transform', () => {
     expect(result).toMatchSnapshot();
   });
 
+  test('Explicit Enum - auth', () => {
+    const s = a.schema({
+      File: a.model({
+        accessLevel: a.ref('AccessLevel').authorization([a.allow.owner()]),
+      }),
+      AccessLevel: a.enum(['public', 'protected', 'private']),
+    });
+
+    const result = s.transform().schema;
+
+    expect(result).toMatchSnapshot();
+  });
+
   test('Implicit Enum', () => {
     const s = a.schema({
       File: a.model({

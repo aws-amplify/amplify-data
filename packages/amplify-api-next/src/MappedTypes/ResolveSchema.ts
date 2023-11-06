@@ -39,7 +39,7 @@ export type FieldTypes<T> = {
   [ModelProp in keyof T]: {
     [FieldProp in keyof T[ModelProp]]: T[ModelProp][FieldProp] extends RefType<
       infer R extends RefTypeParamShape,
-      'ref'
+      never | 'required'
     >
       ? // leave Ref as-is. We'll resolve it to the linked entity downstream in ResolveFieldProperties
         R['required'] extends true

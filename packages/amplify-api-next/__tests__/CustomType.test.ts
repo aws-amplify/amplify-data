@@ -39,6 +39,22 @@ describe('CustomType transform', () => {
     expect(result).toMatchSnapshot();
   });
 
+  test('Explicit CustomType - with auth', () => {
+    const s = a.schema({
+      Post: a.model({
+        location: a.ref('Location').authorization([a.allow.owner()]),
+      }),
+      Location: a.customType({
+        lat: a.float(),
+        long: a.float(),
+      }),
+    });
+
+    const result = s.transform().schema;
+
+    expect(result).toMatchSnapshot();
+  });
+
   test('Implicit CustomType', () => {
     const s = a.schema({
       Post: a.model({

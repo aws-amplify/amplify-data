@@ -112,7 +112,7 @@ type ResolveRelationships<
   [ModelProp in keyof Schema]: {
     [FieldProp in keyof Schema[ModelProp]]: Schema[ModelProp][FieldProp] extends RefType<
       infer R extends RefTypeParamShape,
-      'ref'
+      never | 'required' // > | null
     > | null
       ? ResolveRef<NonModelTypes, R>
       : Schema[ModelProp][FieldProp] extends ModelRelationalFieldParamShape
