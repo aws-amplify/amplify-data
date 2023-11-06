@@ -97,11 +97,12 @@ type ResolveRef<
   NonModelTypes extends NonModelTypesShape,
   Ref extends RefTypeParamShape,
   Link extends string = Ref['link'],
-> = Link extends keyof NonModelTypes['enums']
-  ? NonModelTypes['enums'][Link]
-  : Link extends keyof NonModelTypes['customTypes']
-  ? NonModelTypes['customTypes'][Link]
-  : never;
+  Value = Link extends keyof NonModelTypes['enums']
+    ? NonModelTypes['enums'][Link]
+    : Link extends keyof NonModelTypes['customTypes']
+    ? NonModelTypes['customTypes'][Link]
+    : never,
+> = Ref['required'] extends true ? Value : Value | null;
 
 type ResolveRelationships<
   Schema,
@@ -112,7 +113,7 @@ type ResolveRelationships<
     [FieldProp in keyof Schema[ModelProp]]: Schema[ModelProp][FieldProp] extends RefType<
       infer R extends RefTypeParamShape,
       'ref'
-    >
+    > | null
       ? ResolveRef<NonModelTypes, R>
       : Schema[ModelProp][FieldProp] extends ModelRelationalFieldParamShape
       ? Schema[ModelProp][FieldProp]['relatedModel'] extends keyof Schema

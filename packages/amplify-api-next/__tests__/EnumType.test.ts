@@ -20,6 +20,19 @@ describe('EnumType transform', () => {
     expect(result).toMatchSnapshot();
   });
 
+  test('Explicit Enum - required', () => {
+    const s = a.schema({
+      File: a.model({
+        accessLevel: a.ref('AccessLevel').required(),
+      }),
+      AccessLevel: a.enum(['public', 'protected', 'private']),
+    });
+
+    const result = s.transform().schema;
+
+    expect(result).toMatchSnapshot();
+  });
+
   test('Implicit Enum', () => {
     const s = a.schema({
       File: a.model({

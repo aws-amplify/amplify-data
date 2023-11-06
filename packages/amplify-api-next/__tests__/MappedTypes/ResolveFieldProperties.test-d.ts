@@ -60,6 +60,46 @@ describe('ResolveFieldProperties Mapped Type', () => {
       readonly createdAt: string;
       readonly updatedAt: string;
       title: string;
+      location?:
+        | {
+            lat: number | null;
+            long: number | null;
+          }
+        | null
+        | undefined;
+    };
+
+    type test = Expect<Equal<Resolved, Expected>>;
+  });
+
+  test('Basic schema with explicit required Custom Type', () => {
+    const s = a.schema({
+      Post: a.model({
+        title: a.string().required(),
+        location: a.ref('Location').required(),
+      }),
+      Comment: a.model({
+        content: a.string(),
+      }),
+      Location: a.customType({
+        lat: a.float(),
+        long: a.float(),
+      }),
+    });
+
+    type Schema = typeof s;
+
+    type CS = ClientSchema<Schema>;
+
+    type Resolved = Prettify<
+      ResolveFieldProperties<Schema, ExtractNonModelTypes<Schema>>['Post']
+    >;
+
+    type Expected = {
+      readonly id: string;
+      readonly createdAt: string;
+      readonly updatedAt: string;
+      title: string;
       location: {
         lat: number | null;
         long: number | null;

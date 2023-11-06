@@ -50,7 +50,7 @@ describe('ResolveSchema Mapped Type', () => {
           type: 'ref';
           required: false;
           authorization: [];
-        }>;
+        }> | null;
       };
     };
 
@@ -79,7 +79,7 @@ describe('ResolveSchema Mapped Type', () => {
           type: 'ref';
           required: false;
           authorization: [];
-        }>;
+        }> | null;
       };
     };
 
@@ -105,7 +105,7 @@ describe('ResolveSchema Mapped Type', () => {
           type: 'ref';
           required: false;
           authorization: [];
-        }>;
+        }> | null;
       };
     };
 
@@ -130,7 +130,7 @@ describe('ResolveSchema Mapped Type', () => {
           type: 'ref';
           required: false;
           authorization: [];
-        }>;
+        }> | null;
       };
     };
 

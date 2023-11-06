@@ -16,7 +16,7 @@ export type SchemaTypes<T> = T extends ModelSchema<infer R>
 /**
  * Resolves model types
  *
- * Removes CustomTypes and Enums from resolved schema .
+ * Removes CustomTypes and Enums from resolved schema.
  * They are extracted separately in ExtractNonModelTypes.ts and
  * added to ModelMeta in ClientSchema.ts
  */
@@ -38,26 +38,23 @@ export type ModelTypes<Schema> = {
 export type FieldTypes<T> = {
   [ModelProp in keyof T]: {
     [FieldProp in keyof T[ModelProp]]: T[ModelProp][FieldProp] extends RefType<
-      RefTypeParamShape,
+      infer R extends RefTypeParamShape,
       'ref'
     >
-      ? // leave Ref as-is. We'll resolve it to the referenced entity downstream in ResolveFieldProperties
-        T[ModelProp][FieldProp]
+      ? // leave Ref as-is. We'll resolve it to the linked entity downstream in ResolveFieldProperties
+        R['required'] extends true
+        ? T[ModelProp][FieldProp]
+        : T[ModelProp][FieldProp] | null
       : // replace non-model types with Ref
-      T[ModelProp][FieldProp] extends EnumType<EnumTypeParamShape>
+      T[ModelProp][FieldProp] extends
+          | EnumType<EnumTypeParamShape>
+          | CustomType<CustomTypeParamShape>
       ? RefType<{
           link: Capitalize<FieldProp & string>;
           type: 'ref';
           required: false;
           authorization: [];
-        }>
-      : T[ModelProp][FieldProp] extends CustomType<CustomTypeParamShape>
-      ? RefType<{
-          link: Capitalize<FieldProp & string>;
-          type: 'ref';
-          required: false;
-          authorization: [];
-        }>
+        }> | null
       : // resolve relational and model fields to the their first type arg
       T[ModelProp][FieldProp] extends ModelRelationalField<
           infer R,
