@@ -5,6 +5,7 @@ import type { ModelField } from '../ModelField';
 import type { CustomType, CustomTypeParamShape } from '../CustomType';
 import type { EnumType, EnumTypeParamShape } from '../EnumType';
 import type { RefType, RefTypeParamShape } from '../RefType';
+import { Authorization } from '../Authorization';
 
 export type ResolveSchema<Schema> = FieldTypes<ModelTypes<SchemaTypes<Schema>>>;
 
@@ -39,7 +40,8 @@ export type FieldTypes<T> = {
   [ModelProp in keyof T]: {
     [FieldProp in keyof T[ModelProp]]: T[ModelProp][FieldProp] extends RefType<
       infer R extends RefTypeParamShape,
-      never | 'required'
+      never | 'required' | 'authorization',
+      never | Authorization<any, any>
     >
       ? // leave Ref as-is. We'll resolve it to the linked entity downstream in ResolveFieldProperties
         R['required'] extends true

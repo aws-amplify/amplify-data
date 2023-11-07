@@ -6,6 +6,8 @@ import type {
 import { a } from '../../index';
 import { ResolveSchema } from '../../src/MappedTypes/ResolveSchema';
 import type { RefType, RefTypeParamShape } from '../../src/RefType';
+import { Authorization } from '../../src/Authorization';
+import { __auth } from '../../src/ModelField';
 
 describe('ResolveSchema Mapped Type', () => {
   test('Basic schema', () => {
@@ -51,6 +53,40 @@ describe('ResolveSchema Mapped Type', () => {
           required: false;
           authorization: [];
         }> | null;
+      };
+    };
+
+    type test = Expect<Equal<Resolved, Expected>>;
+  });
+
+  test('Basic schema with explicit Custom Type - required', () => {
+    const s = a.schema({
+      Post: a.model({
+        title: a.string(),
+        location: a.ref('Location').required(),
+      }),
+      Location: a.customType({
+        lat: a.float(),
+        long: a.float(),
+      }),
+    });
+
+    type Resolved = ResolveSchema<typeof s>;
+
+    // Non-model type is removed from schema;
+    // Field Ref remains
+    type Expected = {
+      Post: {
+        title: string | null;
+        location: RefType<
+          {
+            link: 'Location';
+            type: 'ref';
+            required: true;
+            authorization: [];
+          },
+          'required'
+        >;
       };
     };
 
