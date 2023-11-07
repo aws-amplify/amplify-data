@@ -1,14 +1,16 @@
 import { a, ClientSchema } from '@aws-amplify/amplify-api-next-alpha';
+import { __modelMeta__ } from '@aws-amplify/amplify-api-next-types-alpha';
 
 const schema = a.schema({
   Post: a.model({
     title: a.string().required(),
     description: a.string(),
-    comments: a.hasMany('Comment'),
+    location: a.ref('Location').required(),
   }),
-  Comment: a.model({
-    content: a.string().required(),
-    post: a.belongsTo('Post'),
+
+  Location: a.customType({
+    lat: a.float(),
+    long: a.float(),
   }),
 });
 

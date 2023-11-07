@@ -1,14 +1,17 @@
+import type { SetTypeSubArg } from '@aws-amplify/amplify-api-next-types-alpha';
 import { ModelField, InternalField } from './ModelField';
 import type {
   ModelRelationalField,
   InternalRelationalField,
 } from './ModelRelationalField';
 import { Authorization } from './Authorization';
-import type { SetTypeSubArg } from '@aws-amplify/amplify-api-next-types-alpha';
+import { RefType } from './RefType';
 
 type ModelFields = Record<
   string,
-  ModelField<any, any> | ModelRelationalField<any, string, any>
+  | ModelField<any, any>
+  | ModelRelationalField<any, string, any>
+  | RefType<any, any>
 >;
 
 type InternalModelFields = Record<
@@ -176,8 +179,8 @@ function _model<T extends ModelTypeParamShape>(fields: T['fields']) {
 /**
  * A data model that creates a matching Amazon DynamoDB table and provides create, read (list and get), update,
  * delete, and subscription APIs.
- * 
- * @param fields database table fields. Supports scalar types and relationship types. 
+ *
+ * @param fields database table fields. Supports scalar types and relationship types.
  * @returns a data model definition
  */
 export function model<T extends ModelFields>(
