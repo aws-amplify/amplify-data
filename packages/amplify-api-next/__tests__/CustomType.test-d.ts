@@ -22,7 +22,4 @@ describe('CustomType', () => {
 
     type test = Expect<Equal<Result, Expected>>;
   });
-
-  // test('Error on invalid values', () => {
-  // });
 });

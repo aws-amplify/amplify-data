@@ -6,6 +6,25 @@ it('should not produce static type errors', async () => {
   await expectTypeTestsToPassAsync(__filename);
 });
 
+describe('EnumType unsupported modifiers', () => {
+  test('Runtime error when calling unsupported modifiers', () => {
+    expect(() => {
+      // @ts-expect-error
+      a.enumType(['public', 'protected', 'private']).required();
+    }).toThrowError();
+
+    expect(() => {
+      // @ts-expect-error
+      a.enumType(['public', 'protected', 'private']).default();
+    }).toThrowError();
+
+    expect(() => {
+      // @ts-expect-error
+      a.enumType(['public', 'protected', 'private']).array();
+    }).toThrowError();
+  });
+});
+
 describe('EnumType transform', () => {
   test('Explicit Enum', () => {
     const s = a.schema({

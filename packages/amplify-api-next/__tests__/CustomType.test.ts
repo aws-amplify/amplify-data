@@ -6,6 +6,34 @@ it('should not produce static type errors', async () => {
   await expectTypeTestsToPassAsync(__filename);
 });
 
+describe('CustomType unsupported modifiers', () => {
+  test('Runtime error when calling unsupported modifiers', () => {
+    expect(() => {
+      a.customType({
+        lat: a.float(),
+        long: a.float(),
+        // @ts-expect-error
+      }).required();
+    }).toThrowError();
+
+    expect(() => {
+      a.customType({
+        lat: a.float(),
+        long: a.float(),
+        // @ts-expect-error
+      }).default();
+    }).toThrowError();
+
+    expect(() => {
+      a.customType({
+        lat: a.float(),
+        long: a.float(),
+        // @ts-expect-error
+      }).array();
+    }).toThrowError();
+  });
+});
+
 describe('CustomType transform', () => {
   test('Explicit CustomType', () => {
     const s = a.schema({
