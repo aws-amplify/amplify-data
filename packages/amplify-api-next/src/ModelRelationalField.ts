@@ -111,16 +111,17 @@ const relationModifierMap: Record<
   manyToMany: ['arrayRequired', 'valueRequired', 'authorization'],
 };
 
-export type RequiredFunctionOmit<Type extends ModelRelationshipTypes> =
-  Type extends ModelRelationshipTypes.belongsTo
-    ? 'required' | 'arrayRequired' | 'valueRequired'
-    : Type extends ModelRelationshipTypes.hasMany
-    ? 'required'
-    : Type extends ModelRelationshipTypes.hasOne
-    ? 'arrayRequired' | 'valueRequired'
-    : Type extends ModelRelationshipTypes.manyToMany
-    ? 'required'
-    : never;
+export type RelationTypeFunctionOmitMapping<
+  Type extends ModelRelationshipTypes,
+> = Type extends ModelRelationshipTypes.belongsTo
+  ? 'required' | 'arrayRequired' | 'valueRequired'
+  : Type extends ModelRelationshipTypes.hasMany
+  ? 'required'
+  : Type extends ModelRelationshipTypes.hasOne
+  ? 'arrayRequired' | 'valueRequired'
+  : Type extends ModelRelationshipTypes.manyToMany
+  ? 'required'
+  : never;
 
 function _modelRelationalField<
   T extends ModelRelationalFieldParamShape,
@@ -178,7 +179,7 @@ function _modelRelationalField<
   } as InternalRelationalField as ModelRelationalField<
     T,
     RelatedModel,
-    RequiredFunctionOmit<typeof type>
+    RelationTypeFunctionOmitMapping<typeof type>
   >;
 }
 
