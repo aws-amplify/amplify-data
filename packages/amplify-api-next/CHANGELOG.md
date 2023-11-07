@@ -1,5 +1,11 @@
 # @aws-amplify/amplify-api-next-alpha
 
+## 0.8.0
+
+### Minor Changes
+
+- e7d75b0: custom types and enums support
+
 ## 0.7.4
 
 ### Patch Changes
