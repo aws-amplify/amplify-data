@@ -1,5 +1,11 @@
 # @aws-amplify/amplify-api-next-types-alpha
 
+## 0.3.0
+
+### Minor Changes
+
+- 1740872: update DerivedModelSchema type
+
 ## 0.2.8
 
 ### Patch Changes
