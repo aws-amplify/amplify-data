@@ -1,6 +1,9 @@
 import type { ModelType } from '../ModelType';
 import type { ModelSchema } from '../ModelSchema';
-import type { ModelRelationalField } from '../ModelRelationalField';
+import type {
+  ModelRelationalField,
+  RequiredFunctionOmit,
+} from '../ModelRelationalField';
 import type { ModelField } from '../ModelField';
 import type { CustomType, CustomTypeParamShape } from '../CustomType';
 import type { EnumType, EnumTypeParamShape } from '../EnumType';
@@ -61,7 +64,7 @@ export type FieldTypes<T> = {
       T[ModelProp][FieldProp] extends ModelRelationalField<
           infer R,
           string,
-          never,
+          RequiredFunctionOmit<infer _>,
           any
         >
       ? R

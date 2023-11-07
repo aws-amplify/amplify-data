@@ -54,6 +54,14 @@ export type ModelRelationalField<
       K | 'valueRequired'
     >;
     /**
+     * When set, it requires the relationship to always return a value
+     */
+    required(): ModelRelationalField<
+      // The RM generic cannot be "required" since no such field exists
+      SetTypeSubArg<T, 'arrayRequired', true>,
+      K | 'required'
+    >;
+    /**
      * When set, it requires the relationship to always return an array value
      */
     arrayRequired(): ModelRelationalField<
@@ -62,7 +70,7 @@ export type ModelRelationalField<
     >;
     /**
      * Configures field-level authorization rules. Pass in an array of authorizations `(a.allow.____)` to mix and match
-     * multiple authorization rules for this field.  
+     * multiple authorization rules for this field.
      */
     authorization<AuthRuleType extends Authorization<any, any>>(
       rules: AuthRuleType[],
@@ -86,6 +94,34 @@ export type InternalRelationalField = ModelRelationalField<
   data: ModelRelationalFieldData;
 };
 
+const relationalModifiers = [
+  'required',
+  'arrayRequired',
+  'valueRequired',
+  'authorization',
+] as const;
+
+const relationModifierMap: Record<
+  `${ModelRelationshipTypes}`,
+  (typeof relationalModifiers)[number][]
+> = {
+  belongsTo: ['authorization'],
+  hasMany: ['arrayRequired', 'valueRequired', 'authorization'],
+  hasOne: ['required', 'authorization'],
+  manyToMany: ['arrayRequired', 'valueRequired', 'authorization'],
+};
+
+export type RequiredFunctionOmit<Type extends ModelRelationshipTypes> =
+  Type extends ModelRelationshipTypes.belongsTo
+    ? 'required' | 'arrayRequired' | 'valueRequired'
+    : Type extends ModelRelationshipTypes.hasMany
+    ? 'required'
+    : Type extends ModelRelationshipTypes.hasOne
+    ? 'arrayRequired' | 'valueRequired'
+    : Type extends ModelRelationshipTypes.manyToMany
+    ? 'required'
+    : never;
+
 function _modelRelationalField<
   T extends ModelRelationalFieldParamShape,
   RelatedModel extends string,
@@ -106,14 +142,19 @@ function _modelRelationalField<
     data.array = true;
   }
 
-  const builder: ModelRelationalField<T, RelatedModel> = {
-    valueRequired() {
-      data.valueRequired = true;
+  const relationshipBuilderFunctions: ModelRelationalField<T, RelatedModel> = {
+    required() {
+      data.arrayRequired = true;
 
       return this;
     },
     arrayRequired() {
       data.arrayRequired = true;
+
+      return this;
+    },
+    valueRequired() {
+      data.valueRequired = true;
 
       return this;
     },
@@ -124,10 +165,21 @@ function _modelRelationalField<
     },
   };
 
+  const builder = Object.fromEntries(
+    relationModifierMap[type].map((key) => [
+      key,
+      relationshipBuilderFunctions[key],
+    ]),
+  );
+
   return {
     ...builder,
     data,
-  } as InternalRelationalField as ModelRelationalField<T, RelatedModel>;
+  } as InternalRelationalField as ModelRelationalField<
+    T,
+    RelatedModel,
+    RequiredFunctionOmit<typeof type>
+  >;
 }
 
 export type ModelRelationalTypeArgFactory<
@@ -174,8 +226,8 @@ export function hasMany<RM extends string>(relatedModel: RM) {
 }
 
 /**
- * Make a `hasOne()` or `hasMany()` relationship bi-directional using the `belongsTo()` method. 
- * The belongsTo() method requires that a hasOne() or hasMany() relationship already exists from 
+ * Make a `hasOne()` or `hasMany()` relationship bi-directional using the `belongsTo()` method.
+ * The belongsTo() method requires that a hasOne() or hasMany() relationship already exists from
  * parent to the related model.
  * @param relatedModel name of the related `.hasOne()` or `.hasMany()` model
  * @returns a belong-to relationship definition
@@ -194,8 +246,8 @@ export function belongsTo<RM extends string>(relatedModel: RM) {
  * Under the hood a many-to-many relationship is modeled with a "join table" with corresponding
  * `hasMany()` relationships between the two related models. You must set the same `manyToMany()`
  * field on both models of the relationship.
- * @param relatedModel name of the related model 
- * @param opts pass in the `relationName` that will serve as the join table name for this many-to-many relationship 
+ * @param relatedModel name of the related model
+ * @param opts pass in the `relationName` that will serve as the join table name for this many-to-many relationship
  * @returns a many-to-many relationship definition
  */
 export function manyToMany<RM extends string, RN extends string>(
