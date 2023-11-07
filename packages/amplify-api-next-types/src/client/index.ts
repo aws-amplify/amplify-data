@@ -522,6 +522,7 @@ type ModelTypesClient<
     selectionSet?: SelectionSet;
     authMode?: AuthMode;
     authToken?: string;
+    initialValues?: ReturnValue<Model, FlatModel, SelectionSet>[];
   }): ObserveQueryReturnValue<ReturnValue<Model, FlatModel, SelectionSet>>;
 };
 
