@@ -1,6 +1,15 @@
 import type { InternalSchema } from './ModelSchema';
-import { type ModelField, type InternalField, string } from './ModelField';
-import type { InternalRelationalField } from './ModelRelationalField';
+import {
+  type ModelField,
+  ModelFieldType,
+  type InternalField,
+  id,
+  string,
+} from './ModelField';
+import {
+  type InternalRelationalField,
+  ModelRelationshipTypes,
+} from './ModelRelationalField';
 import type { ModelType, InternalModel } from './ModelType';
 import { Authorization, __data } from './Authorization';
 import { DerivedApiDefinition } from './types';
@@ -186,15 +195,155 @@ function calculateAuth(authorization: Authorization<any, any>[]) {
   return { authString, authFields };
 }
 
+function capitalize<T extends string>(s: T): Capitalize<T> {
+  return `${s[0].toUpperCase()}${s.slice(1)}` as any;
+}
+
+function uncapitalize<T extends string>(s: T): Uncapitalize<T> {
+  return `${s[0].toLowerCase()}${s.slice(1)}` as any;
+}
+
+function fkName(model: string, field: string, identifier: string): string {
+  return `${uncapitalize(model)}${capitalize(field)}${capitalize(identifier)}`;
+}
+
+/**
+ * Returns all explicitly defined and implied fields from a model.
+ *
+ * @param schema The schema the model is part of. Necessary to derive implied FK's.
+ * @param model The model to extract fields from and derive fields for.
+ * @returns
+ */
+const allImpliedFKs = (schema: InternalSchema) => {
+  const fks = {} as Record<string, Record<string, any>>;
+
+  function addFk({
+    onModel,
+    asField,
+    fieldDef,
+  }: {
+    onModel: string;
+    asField: string;
+    fieldDef: any;
+  }) {
+    fks[onModel] = fks[onModel] || {};
+    fks[onModel][asField] = fieldDef;
+  }
+
+  // implied FK's
+  for (const [modelName, modelDef] of Object.entries(schema.data.models)) {
+    if (!isInternalModel(modelDef)) continue;
+    for (const [fieldName, fieldDef] of Object.entries(modelDef.data.fields)) {
+      if (!isModelField(fieldDef)) continue;
+      const relatedModel = schema.data.models[fieldDef.data.relatedModel];
+      switch (fieldDef.data.type) {
+        case ModelRelationshipTypes.hasOne:
+          for (const idField of relatedModel.data.identifier) {
+            addFk({
+              onModel: modelName,
+              asField: fkName(modelName, fieldName, idField),
+              fieldDef: {
+                data: {
+                  ...fieldDef.data,
+                  fieldType:
+                    relatedModel.data.fields[idField]?.data.fieldType ||
+                    ModelFieldType.Id,
+                },
+              },
+            });
+          }
+          break;
+        case ModelRelationshipTypes.hasMany:
+          let authorization: Authorization<any, any>[] = [];
+          let required = false;
+          const [belongsToName, belongsToDef] =
+            Object.entries(relatedModel.data.fields).find(([name, def]) => {
+              return (
+                isModelField(def) &&
+                def.data.type === ModelRelationshipTypes.belongsTo &&
+                def.data.relatedModel === fieldName
+              );
+            }) || [];
+          if (belongsToDef && isModelField(belongsToDef)) {
+            authorization = belongsToDef.data.authorization;
+            required = belongsToDef.data.valueRequired;
+          }
+
+          for (const idField of modelDef.data.identifier) {
+            addFk({
+              onModel: fieldDef.data.relatedModel,
+              asField: fkName(modelName, fieldName, idField),
+              fieldDef: {
+                data: {
+                  ...(modelDef.data.fields[idField]?.data ||
+                    (id() as any).data),
+                  authorization,
+                  required,
+                },
+              },
+            });
+          }
+          break;
+        case ModelRelationshipTypes.belongsTo:
+          // only create if corresponds to hasOne
+          const [hasOneName, hasOneDef] =
+            Object.entries(relatedModel.data.fields).find(([name, def]) => {
+              return (
+                isModelField(def) &&
+                def.data.type === ModelRelationshipTypes.hasOne &&
+                def.data.relatedModel === modelName
+              );
+            }) || [];
+          if (hasOneDef && isModelField(hasOneDef)) {
+            for (const idField of relatedModel.data.identifier) {
+              addFk({
+                onModel: modelName,
+                asField: fkName(modelName, fieldName, idField),
+                fieldDef: {
+                  data: {
+                    ...modelDef.data,
+                    fieldType:
+                      relatedModel.data.fields[idField]?.data.fieldType ||
+                      ModelFieldType.Id,
+                  },
+                },
+              });
+            }
+          }
+          break;
+        case ModelRelationshipTypes.manyToMany:
+          // pretty sure there's nothing to do here.
+          // the implicit join table already has everything, AFAIK.
+          break;
+        default:
+        // nothing to do.
+      }
+    }
+  }
+
+  return fks;
+};
+
 const schemaPreprocessor = (schema: InternalSchema): string => {
   const gqlModels: string[] = [];
+
+  const fkFields = allImpliedFKs(schema);
 
   for (const [modelName, modelDef] of Object.entries(schema.data.models)) {
     const gqlFields: string[] = [];
 
     if (!isInternalModel(modelDef)) continue;
 
-    const fields = modelDef.data.fields;
+    // TODO: this is where we are ... replaced default `fields` generation.
+    // need to re-replace with original, maybe, and merge with AllImpliedFK's.
+    // const fields = allModelFields(schema, modelName);
+    const fields = {
+      ...modelDef.data.fields,
+      ...fkFields[modelName],
+    };
+
+    // ... and then test. and fix ... probably everything.
+
     const identifier = modelDef.data.identifier;
     const [partitionKey] = identifier;
 

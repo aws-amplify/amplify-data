@@ -13,6 +13,7 @@ import type {
   ModelRelationalFieldParamShape,
   ModelRelationalTypeArgFactory,
 } from '../ModelRelationalField';
+import type { AllImpliedFKs } from './ForeignKeys';
 
 import type { ResolveSchema, SchemaTypes } from './ResolveSchema';
 import type { InjectImplicitModelFields } from './ImplicitFieldInjector';
@@ -21,7 +22,10 @@ import type { ModelIdentifier } from './ModelMetadata';
 export type ResolveFieldProperties<
   Schema extends ModelSchema<any>,
   ResolvedSchema = ResolveSchema<Schema>,
-  IdentifierMeta = ModelIdentifier<SchemaTypes<Schema>>,
+  IdentifierMeta extends Record<
+    string,
+    { identifier: string }
+  > = ModelIdentifier<SchemaTypes<Schema>>,
   FieldsWithInjectedModels = InjectImplicitModels<ResolvedSchema>,
   FieldsWithInjectedImplicitFields = InjectImplicitModelFields<
     FieldsWithInjectedModels,
@@ -32,7 +36,8 @@ export type ResolveFieldProperties<
   FilterFieldTypes<RequiredFieldTypes<FieldsWithRelationships>>,
   FilterFieldTypes<OptionalFieldTypes<FieldsWithRelationships>>,
   FilterFieldTypes<ModelImpliedAuthFields<Schema>>
->;
+> &
+  AllImpliedFKs<ResolvedSchema, IdentifierMeta>;
 
 type ExtractImplicitModelNames<Schema> = UnionToIntersection<
   ExcludeEmpty<
