@@ -1,5 +1,11 @@
 # @aws-amplify/amplify-api-next-alpha
 
+## 0.9.0
+
+### Minor Changes
+
+- df573ad: Added support for "a.allow.custom()" auth rule
+
 ## 0.8.0
 
 ### Minor Changes
