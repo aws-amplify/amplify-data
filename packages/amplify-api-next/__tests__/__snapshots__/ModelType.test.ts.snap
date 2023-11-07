@@ -62,6 +62,90 @@ exports[`model auth rules can create a static Admins group rule 1`] = `
 }"
 `;
 
+exports[`model auth rules can define a custom authorization rule 1`] = `
+"type Widget @model @auth(rules: [{allow: custom}])
+{
+  title: String!
+}"
+`;
+
+exports[`model auth rules can define custom auth rule for operations create 1`] = `
+"type widget @model @auth(rules: [{allow: custom, operations: [create]}])
+{
+  title: String!
+}"
+`;
+
+exports[`model auth rules can define custom auth rule for operations create,read,listen 1`] = `
+"type widget @model @auth(rules: [{allow: custom, operations: [create, read, listen]}])
+{
+  title: String!
+}"
+`;
+
+exports[`model auth rules can define custom auth rule for operations create,read,update,delete 1`] = `
+"type widget @model @auth(rules: [{allow: custom, operations: [create, read, update, delete]}])
+{
+  title: String!
+}"
+`;
+
+exports[`model auth rules can define custom auth rule for operations delete 1`] = `
+"type widget @model @auth(rules: [{allow: custom, operations: [delete]}])
+{
+  title: String!
+}"
+`;
+
+exports[`model auth rules can define custom auth rule for operations get 1`] = `
+"type widget @model @auth(rules: [{allow: custom, operations: [get]}])
+{
+  title: String!
+}"
+`;
+
+exports[`model auth rules can define custom auth rule for operations list 1`] = `
+"type widget @model @auth(rules: [{allow: custom, operations: [list]}])
+{
+  title: String!
+}"
+`;
+
+exports[`model auth rules can define custom auth rule for operations listen 1`] = `
+"type widget @model @auth(rules: [{allow: custom, operations: [listen]}])
+{
+  title: String!
+}"
+`;
+
+exports[`model auth rules can define custom auth rule for operations read 1`] = `
+"type widget @model @auth(rules: [{allow: custom, operations: [read]}])
+{
+  title: String!
+}"
+`;
+
+exports[`model auth rules can define custom auth rule for operations search 1`] = `
+"type widget @model @auth(rules: [{allow: custom, operations: [search]}])
+{
+  title: String!
+}"
+`;
+
+exports[`model auth rules can define custom auth rule for operations sync 1`] = `
+"type widget @model @auth(rules: [{allow: custom, operations: [sync]}])
+{
+  title: String!
+}"
+`;
+
+exports[`model auth rules can define custom auth rule for operations update 1`] = `
+"type widget @model @auth(rules: [{allow: custom, operations: [update]}])
+{
+  title: String!
+}"
+`;
+
 exports[`model auth rules can define owner auth with no provider 1`] = `
 "type widget @model @auth(rules: [{allow: owner}])
 {
