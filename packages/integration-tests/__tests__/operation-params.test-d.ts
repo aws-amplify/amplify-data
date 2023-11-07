@@ -4,7 +4,7 @@ import {
   Equal,
   SelectionSet,
 } from '@aws-amplify/amplify-api-next-types-alpha';
-import { API } from 'aws-amplify';
+import { generateClient } from 'aws-amplify/api';
 
 const authModes = [
   'apiKey',
@@ -37,7 +37,7 @@ describe('Basic operations', () => {
   describe('authMode at the call site', () => {
     for (const authMode of authModes) {
       test(`can specify ${authMode} for list()`, async () => {
-        const client = API.generateClient<Schema>();
+        const client = generateClient<Schema>();
 
         // expect no type errors
         await client.models.Post.list({
@@ -46,7 +46,7 @@ describe('Basic operations', () => {
       });
 
       test(`can specify ${authMode} for list()`, async () => {
-        const client = API.generateClient<Schema>();
+        const client = generateClient<Schema>();
 
         // expect no type errors
         await client.models.Post.get(
@@ -58,7 +58,7 @@ describe('Basic operations', () => {
       });
 
       test(`can specify ${authMode} for update()`, async () => {
-        const client = API.generateClient<Schema>();
+        const client = generateClient<Schema>();
 
         // expect no type errors
         await client.models.Post.update(
@@ -70,7 +70,7 @@ describe('Basic operations', () => {
       });
 
       test(`can specify ${authMode} for delete()`, async () => {
-        const client = API.generateClient<Schema>();
+        const client = generateClient<Schema>();
 
         // expect no type errors
         await client.models.Post.delete(
@@ -82,7 +82,7 @@ describe('Basic operations', () => {
       });
 
       test(`can specify ${authMode} on lazy loaded hasMany`, async () => {
-        const client = API.generateClient<Schema>();
+        const client = generateClient<Schema>();
 
         // expect no type errors
         const { data } = await client.models.Post.get({ id: 'something' });
@@ -90,7 +90,7 @@ describe('Basic operations', () => {
       });
 
       test(`can specify ${authMode} on lazy loaded hasOne`, async () => {
-        const client = API.generateClient<Schema>();
+        const client = generateClient<Schema>();
 
         // expect no type errors
         const { data } = await client.models.Post.get({ id: 'something' });
@@ -98,7 +98,7 @@ describe('Basic operations', () => {
       });
 
       test(`can specify ${authMode} on lazy loaded belongsTo`, async () => {
-        const client = API.generateClient<Schema>();
+        const client = generateClient<Schema>();
 
         // expect no type errors
         const { data } = await client.models.Comment.get({ id: 'something' });
@@ -107,7 +107,7 @@ describe('Basic operations', () => {
     }
 
     test('cannot specify unknown auth mode', async () => {
-      const client = API.generateClient<Schema>();
+      const client = generateClient<Schema>();
 
       await client.models.Post.list({
         // I mean, we should definitly support this, but we don't: https://noauth.lol/
@@ -117,7 +117,7 @@ describe('Basic operations', () => {
     });
 
     test('can specify authToken', async () => {
-      const client = API.generateClient<Schema>();
+      const client = generateClient<Schema>();
 
       // expect no type errors
       await client.models.Post.list({
@@ -127,7 +127,7 @@ describe('Basic operations', () => {
     });
 
     test('can specify authToken on hasMany', async () => {
-      const client = API.generateClient<Schema>();
+      const client = generateClient<Schema>();
 
       // expect no type errors
       const { data } = await client.models.Post.get({ id: 'something' });
@@ -135,7 +135,7 @@ describe('Basic operations', () => {
     });
 
     test('can specify authToken on hasOne', async () => {
-      const client = API.generateClient<Schema>();
+      const client = generateClient<Schema>();
 
       // expect no type errors
       const { data } = await client.models.Post.get({ id: 'something' });
@@ -143,7 +143,7 @@ describe('Basic operations', () => {
     });
 
     test('can specify authToken on belongsTo', async () => {
-      const client = API.generateClient<Schema>();
+      const client = generateClient<Schema>();
 
       // expect no type errors
       const { data } = await client.models.Comment.get({ id: 'something' });

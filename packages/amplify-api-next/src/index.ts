@@ -14,16 +14,13 @@ import {
   json,
   phone,
   url,
-  ipAddress
- } from './ModelField';
-import { ref } from './ModelRef';
-import {
-  hasOne,
-  hasMany,
-  belongsTo,
-  manyToMany,
-} from './ModelRelationalField';
+  ipAddress,
+} from './ModelField';
+import { ref } from './RefType';
+import { hasOne, hasMany, belongsTo, manyToMany } from './ModelRelationalField';
 import { allow } from './Authorization';
+import { customType } from './CustomType';
+import { enumType } from './EnumType';
 
 // We are re-exporting with this pattern to make the JSDoc happy.
 // Otherwise the JSDoc wouldn't consistently show up as a customer types
@@ -32,6 +29,8 @@ export {
   schema,
   model,
   ref,
+  customType,
+  enumType as enum,
   hasOne,
   hasMany,
   belongsTo,
@@ -50,5 +49,5 @@ export {
   json,
   phone,
   url,
-  ipAddress
+  ipAddress,
 };

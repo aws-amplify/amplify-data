@@ -1,24 +1,23 @@
-import { API } from 'aws-amplify';
+import { generateClient } from 'aws-amplify/api';
 import type { Schema } from './resource';
-import type {
-  ExtractModelMeta,
-  Prettify,
-  UnwrapArray,
-  SelectionSet,
-} from '@aws-amplify/amplify-api-next-types-alpha';
 
-const client = API.generateClient<Schema>();
+const client = generateClient<Schema>();
 
-type Post = Schema['Post'];
-
-const selSet = ['title', 'comments.content', 'comments.updatedAt'] as const;
-
-type CustomSelSet = SelectionSet<Post, typeof selSet>;
+async function createPost() {
+  await client.models.Post.create({
+    title: 'Hello world',
+    location: {
+      lat: 123,
+      long: 123,
+    },
+  });
+}
 
 async function test() {
   const {
     data: [post],
-  } = await client.models.Post.list({
-    selectionSet: selSet,
-  });
+  } = await client.models.Post.list();
+
+  type TPost = typeof post;
+  //    ^?
 }
