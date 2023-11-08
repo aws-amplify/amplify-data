@@ -83,35 +83,32 @@ const schema = a.schema({
 });
 
 // sampling from the transformed schema, for reference
-
+//
 // type BoringChild {
 //  id: ID!
 //  // hasMany child without belongsTo has no FK
 // }
-
+//
 // type BoringReciprocalChild {
 // 	parent: BoringParent
 // 	id: ID!
 // 	boringReciprocalChild  Parent        Id: ID
 //  ^ this model           ^ this field  ^ parent PK
 // }
-
+//
 // type BoringHasManyChild {
 //  id: ID!
-
 //  // this field comes from parent's has-many
-//  boringParent         ChildHasManyNormal   Id: ID
-//  ^ parent model name  ^ parent mode field  ^ parent PK
-
+//  boringParent         ChildHasManyNormal    Id: ID
+//  ^ parent model name  ^ parent model field  ^ parent PK
 // }
-
+//
 // type ReciprocalHasManyChild {
 //  parent: BoringParent
 //  id: ID!
-
 //  // this field comes from parent's has-many
 //  boringParent         ChildHasManyReciprocal  Id: ID
-//  ^ parent model name  ^ parent mode field     ^ parent PK
+//  ^ parent model name  ^ parent model field    ^ parent PK
 // }
 
 describe('Denormalized mapped type', () => {

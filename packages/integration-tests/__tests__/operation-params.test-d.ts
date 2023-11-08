@@ -182,4 +182,7 @@ describe('Basic operations', () => {
       await data.post({ authMode: 'lambda', authToken: 'any string' });
     });
   });
+
+  // TODO
+  // describe('can filter on implied fields', () => {});
 });
