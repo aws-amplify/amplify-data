@@ -5,6 +5,7 @@ import {
   type InternalField,
   id,
   string,
+  datetime,
 } from './ModelField';
 import {
   type InternalRelationalField,
@@ -374,6 +375,23 @@ const allImpliedFKs = (schema: InternalSchema) => {
   return fks;
 };
 
+/**
+ * Determines if implicit date fields are in effect for a given model. If they are,
+ * returns those implicit fields.
+ *
+ * NOTE: For now, we *only* support the default implicit fields.
+ *
+ * @param _model Model to find date fields for.
+ */
+const implicitTimestampFields = (
+  _model: InternalModel,
+): Record<string, ModelField<any, any>> => {
+  return {
+    createdAt: datetime().required(),
+    updatedAt: datetime().required(),
+  };
+};
+
 function processFieldLevelAuthRules(
   fields: Record<string, InternalModel>,
   authFields: Record<string, ModelField<any, any>>,
@@ -398,7 +416,6 @@ function processFieldLevelAuthRules(
 
 function processFields(
   fields: Record<string, ModelField<any, any>>,
-  authFields: Record<string, ModelField<any, any>>,
   fieldLevelAuthRules: Record<string, string | null>,
   identifier?: string[],
   partitionKey?: string,
@@ -406,10 +423,7 @@ function processFields(
   const gqlFields: string[] = [];
   const models: [string, any][] = [];
 
-  for (const [fieldName, fieldDef] of Object.entries({
-    ...authFields,
-    ...fields,
-  })) {
+  for (const [fieldName, fieldDef] of Object.entries(fields)) {
     const fieldAuth = fieldLevelAuthRules[fieldName]
       ? ` ${fieldLevelAuthRules[fieldName]}`
       : '';
@@ -482,7 +496,6 @@ const schemaPreprocessor = (schema: InternalSchema): string => {
 
         const { gqlFields, models } = processFields(
           fields,
-          {},
           fieldLevelAuthRules,
         );
 
@@ -497,6 +510,7 @@ const schemaPreprocessor = (schema: InternalSchema): string => {
       const fields = {
         ...typeDef.data.fields,
         ...fkFields[typeName],
+        ...implicitTimestampFields(typeDef),
       };
       const identifier = typeDef.data.identifier;
       const [partitionKey] = identifier;
@@ -512,7 +526,6 @@ const schemaPreprocessor = (schema: InternalSchema): string => {
 
       const { gqlFields, models } = processFields(
         fields,
-        authFields,
         fieldLevelAuthRules,
         identifier,
         partitionKey,

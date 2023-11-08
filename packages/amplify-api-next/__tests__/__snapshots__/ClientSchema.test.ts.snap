@@ -9,11 +9,15 @@ exports[`schema generation with relationships 1`] = `
   childHasManyReciprocal: [ReciprocalHasManyChild] @hasMany
   boringParentChildNormalId: ID
   boringParentChildReciprocalId: ID
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
 }
 
 type BoringChild @model 
 {
   value: String
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
 }
 
 type BoringReciprocalChild @model 
@@ -21,12 +25,16 @@ type BoringReciprocalChild @model
   parent: BoringParent @belongsTo
   value: String
   boringReciprocalChildParentId: ID
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
 }
 
 type BoringHasManyChild @model 
 {
   value: String
   boringParentChildHasManyNormalId: ID
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
 }
 
 type ReciprocalHasManyChild @model 
@@ -34,6 +42,8 @@ type ReciprocalHasManyChild @model
   value: String
   parent: BoringParent @belongsTo
   boringParentChildHasManyReciprocalId: ID
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
 }
 
 type CPKParent @model 
@@ -48,6 +58,8 @@ type CPKParent @model
   cPKParentChildNormalCPKChildIdFieldB: ID
   cPKParentChildReciprocalCPKReciprocalChildIdFieldA: ID
   cPKParentChildReciprocalCPKReciprocalChildIdFieldB: ID
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
 }
 
 type CPKChild @model 
@@ -55,6 +67,8 @@ type CPKChild @model
   CPKChildIdFieldA: ID! @primaryKey(sortKeyFields: ["CPKChildIdFieldB"])
   CPKChildIdFieldB: ID!
   value: String
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
 }
 
 type CPKReciprocalChild @model 
@@ -65,6 +79,8 @@ type CPKReciprocalChild @model
   value: String
   cPKReciprocalChildParentCPKParentIdFieldA: ID
   cPKReciprocalChildParentCPKParentIdFieldB: ID
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
 }
 
 type CPKHasManyChild @model 
@@ -74,6 +90,8 @@ type CPKHasManyChild @model
   value: String
   cPKParentChildHasManyNormalCPKParentIdFieldA: ID
   cPKParentChildHasManyNormalCPKParentIdFieldB: ID
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
 }
 
 type CPKReciprocalHasManyChild @model 
@@ -84,5 +102,7 @@ type CPKReciprocalHasManyChild @model
   parent: CPKParent @belongsTo
   cPKParentChildHasManyReciprocalCPKParentIdFieldA: ID
   cPKParentChildHasManyReciprocalCPKParentIdFieldB: ID
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
 }"
 `;

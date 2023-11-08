@@ -67,6 +67,7 @@ describe('implied fields', () => {
       >;
     });
   });
+
   describe('CPK model keys', () => {
     const schema = a.schema({
       CPKParent: a
@@ -187,6 +188,7 @@ describe('implied fields', () => {
       >;
     });
   });
+
   describe('schemas with owner/group auth models surface ownership fields', () => {
     const schema = a.schema({
       DefaultOwnerField: a
@@ -236,6 +238,27 @@ describe('implied fields', () => {
     test('groups', () => {
       type test = Expect<
         Equal<Schema['GroupsIn']['myGroupsField'], string[] | undefined>
+      >;
+    });
+  });
+
+  describe('implicit date fields are surfaced', () => {
+    const schema = a.schema({
+      // date field customization not yet supported, AFIAK.
+      // so, just one model to confirm types on.
+      SimpleModel: a.model({
+        somefield: a.string(),
+      }),
+    });
+
+    type Schema = ClientSchema<typeof schema>;
+
+    test('default fields', () => {
+      type testCreatedAt = Expect<
+        Equal<Schema['SimpleModel']['createdAt'], string>
+      >;
+      type testUpdatedAt = Expect<
+        Equal<Schema['SimpleModel']['updatedAt'], string>
       >;
     });
   });
