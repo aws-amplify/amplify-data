@@ -54,9 +54,6 @@ type InjectDefaultFieldsForModel<FlatModel, ModelIdentifier> = FlatModel &
       : never
   >;
 
-// TODO: inject FK stuff here, but need to figure out what to extract FK names from.
-// what is `FlatModel` in this context?
-
 /**
  * Mapped type that injects default implicit fields for a model
  * 1. Add "id" field to models with neither an explicit field named "id" nor a custom identifier (`.identifier(['some-field'])`)
@@ -64,10 +61,7 @@ type InjectDefaultFieldsForModel<FlatModel, ModelIdentifier> = FlatModel &
  *
  * @typeParam FlattenedSchema - resolved schema type (TODO: add detail/example/link to type)
  */
-export type InjectImplicitModelFields<
-  FlattenedSchema,
-  IdentifierMeta extends Record<string, { identifier: string }>,
-> = {
+export type InjectImplicitModelFields<FlattenedSchema, IdentifierMeta> = {
   [ModelName in keyof FlattenedSchema]: InjectDefaultFieldsForModel<
     FlattenedSchema[ModelName],
     ModelName extends keyof IdentifierMeta ? IdentifierMeta[ModelName] : object

@@ -1035,9 +1035,6 @@ describe('Custom Selection Set XXL', () => {
         ],
       });
 
-      // const post = await client.models.Comment.get({id: "something"})
-      // post.data.
-
       type ExpectedType = {
         readonly id: string;
         readonly posts: {
