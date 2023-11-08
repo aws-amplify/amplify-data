@@ -1,5 +1,11 @@
 # integration-tests
 
+## 0.0.3
+
+### Patch Changes
+
+- 72dd4ed: added tests
+
 ## 0.0.2
 
 ### Patch Changes
