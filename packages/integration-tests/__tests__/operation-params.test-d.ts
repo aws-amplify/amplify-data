@@ -34,11 +34,65 @@ describe('Basic operations', () => {
 
   type Schema = ClientSchema<typeof schema>;
 
+  const client = generateClient<Schema>();
+
+  describe('basic typed params', () => {
+    describe('get', () => {
+      test('parameter can contain PK', async () => {
+        await client.models.Post.get({ id: 'some-id' });
+      });
+
+      test('requires a parameter', async () => {
+        // @ts-expect-error
+        await client.models.Post.get();
+      });
+
+      test('parameter must contain PK', async () => {
+        // @ts-expect-error
+        await client.models.Post.get({});
+      });
+
+      test('parameter must not contain extra fields', async () => {
+        // @ts-expect-error
+        await client.models.Post.get({ id: 'some-id', title: 'whatever' });
+      });
+    });
+
+    describe('list', () => {
+      test('allows zero params', async () => {
+        await client.models.Post.list();
+      });
+
+      test('allows filter param', async () => {
+        await client.models.Post.list({
+          filter: { description: { eq: 'something' } },
+        });
+      });
+
+      test('allows filter param with logical OR operator', async () => {
+        await client.models.Post.list({
+          filter: {
+            or: [{ description: { eq: 'a' } }, { description: { eq: 'b' } }],
+          },
+        });
+      });
+
+      test('allows filter param with logical AND operator', async () => {
+        await client.models.Post.list({
+          filter: {
+            and: [
+              { description: { contains: 'a' } },
+              { description: { notContains: 'b' } },
+            ],
+          },
+        });
+      });
+    });
+  });
+
   describe('authMode at the call site', () => {
     for (const authMode of authModes) {
       test(`can specify ${authMode} for list()`, async () => {
-        const client = generateClient<Schema>();
-
         // expect no type errors
         await client.models.Post.list({
           authMode,
@@ -46,8 +100,6 @@ describe('Basic operations', () => {
       });
 
       test(`can specify ${authMode} for list()`, async () => {
-        const client = generateClient<Schema>();
-
         // expect no type errors
         await client.models.Post.get(
           { id: 'something' },
@@ -58,8 +110,6 @@ describe('Basic operations', () => {
       });
 
       test(`can specify ${authMode} for update()`, async () => {
-        const client = generateClient<Schema>();
-
         // expect no type errors
         await client.models.Post.update(
           { id: 'something' },
@@ -70,8 +120,6 @@ describe('Basic operations', () => {
       });
 
       test(`can specify ${authMode} for delete()`, async () => {
-        const client = generateClient<Schema>();
-
         // expect no type errors
         await client.models.Post.delete(
           { id: 'something' },
@@ -82,24 +130,18 @@ describe('Basic operations', () => {
       });
 
       test(`can specify ${authMode} on lazy loaded hasMany`, async () => {
-        const client = generateClient<Schema>();
-
         // expect no type errors
         const { data } = await client.models.Post.get({ id: 'something' });
         await data.comments({ authMode });
       });
 
       test(`can specify ${authMode} on lazy loaded hasOne`, async () => {
-        const client = generateClient<Schema>();
-
         // expect no type errors
         const { data } = await client.models.Post.get({ id: 'something' });
         await data.meta({ authMode });
       });
 
       test(`can specify ${authMode} on lazy loaded belongsTo`, async () => {
-        const client = generateClient<Schema>();
-
         // expect no type errors
         const { data } = await client.models.Comment.get({ id: 'something' });
         await data.post({ authMode });
@@ -107,8 +149,6 @@ describe('Basic operations', () => {
     }
 
     test('cannot specify unknown auth mode', async () => {
-      const client = generateClient<Schema>();
-
       await client.models.Post.list({
         // I mean, we should definitly support this, but we don't: https://noauth.lol/
         // @ts-expect-error
@@ -117,8 +157,6 @@ describe('Basic operations', () => {
     });
 
     test('can specify authToken', async () => {
-      const client = generateClient<Schema>();
-
       // expect no type errors
       await client.models.Post.list({
         authMode: 'lambda',
@@ -127,24 +165,18 @@ describe('Basic operations', () => {
     });
 
     test('can specify authToken on hasMany', async () => {
-      const client = generateClient<Schema>();
-
       // expect no type errors
       const { data } = await client.models.Post.get({ id: 'something' });
       await data.comments({ authMode: 'lambda', authToken: 'any string' });
     });
 
     test('can specify authToken on hasOne', async () => {
-      const client = generateClient<Schema>();
-
       // expect no type errors
       const { data } = await client.models.Post.get({ id: 'something' });
       await data.meta({ authMode: 'lambda', authToken: 'any string' });
     });
 
     test('can specify authToken on belongsTo', async () => {
-      const client = generateClient<Schema>();
-
       // expect no type errors
       const { data } = await client.models.Comment.get({ id: 'something' });
       await data.post({ authMode: 'lambda', authToken: 'any string' });
