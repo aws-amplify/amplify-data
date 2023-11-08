@@ -1,5 +1,53 @@
 # @aws-amplify/amplify-api-next-alpha
 
+## 0.9.1
+
+### Patch Changes
+
+- 7d0d857: fix: Offer different required modifiers per relationship type
+
+## 0.9.0
+
+### Minor Changes
+
+- df573ad: Added support for "a.allow.custom()" auth rule
+
+## 0.8.0
+
+### Minor Changes
+
+- e7d75b0: custom types and enums support
+
+## 0.7.4
+
+### Patch Changes
+
+- cba8bc9: fix: Mutation inputs should allow incomplete related objects
+
+## 0.7.3
+
+### Patch Changes
+
+- fb0c94c: adds nextToken, limit to list op and related-model loaders
+- Updated dependencies [fb0c94c]
+  - @aws-amplify/amplify-api-next-types-alpha@0.2.8
+
+## 0.7.2
+
+### Patch Changes
+
+- 2549750: fix relational input field in ModelMeta
+- Updated dependencies [2549750]
+  - @aws-amplify/amplify-api-next-types-alpha@0.2.7
+
+## 0.7.1
+
+### Patch Changes
+
+- 2d6d480: added filter types for explicit scalar filter fields
+- Updated dependencies [2d6d480]
+  - @aws-amplify/amplify-api-next-types-alpha@0.2.6
+
 ## 0.7.0
 
 ### Minor Changes

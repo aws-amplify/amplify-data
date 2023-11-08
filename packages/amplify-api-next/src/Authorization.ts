@@ -397,6 +397,18 @@ export const allow = {
       },
     );
   },
+
+  custom(provider?: CustomProvider) {
+    return authData(
+      {
+        strategy: 'custom',
+        provider,
+      },
+      {
+        to
+      }
+    )
+  }
 } as const;
 
 /**

@@ -1,5 +1,29 @@
 # @aws-amplify/amplify-api-next-types-alpha
 
+## 0.3.0
+
+### Minor Changes
+
+- 1740872: update DerivedModelSchema type
+
+## 0.2.8
+
+### Patch Changes
+
+- fb0c94c: adds nextToken, limit to list op and related-model loaders
+
+## 0.2.7
+
+### Patch Changes
+
+- 2549750: fix relational input field in ModelMeta
+
+## 0.2.6
+
+### Patch Changes
+
+- 2d6d480: added filter types for explicit scalar filter fields
+
 ## 0.2.5
 
 ### Patch Changes

@@ -4,6 +4,8 @@ import type {
   ModelTypeParamShape,
   InternalModel,
 } from './ModelType';
+import type { EnumType } from './EnumType';
+import type { CustomType } from './CustomType';
 export { __auth } from './ModelField';
 import { processSchema } from './SchemaProcessor';
 
@@ -14,19 +16,22 @@ import { processSchema } from './SchemaProcessor';
  */
 
 type ModelSchemaModels = Record<string, ModelType<ModelTypeParamShape, any>>;
-type InternalSchemaModels = Record<string, InternalModel>;
+type InternalSchemaModels = Record<
+  string,
+  InternalModel | EnumType<any> | CustomType<any>
+>;
 
 export type ModelSchemaParamShape = {
-  models: ModelSchemaModels;
+  types: ModelSchemaModels;
 };
 
 type ModelSchemaData = {
-  models: ModelSchemaModels;
+  types: ModelSchemaModels;
 };
 
 export type InternalSchema = {
   data: {
-    models: InternalSchemaModels;
+    types: InternalSchemaModels;
   };
 };
 
@@ -51,8 +56,8 @@ export const isModelSchema = (
   return typeof schema === 'object' && schema.data !== undefined;
 };
 
-function _schema<T extends ModelSchemaParamShape>(models: T['models']) {
-  const data: ModelSchemaData = { models };
+function _schema<T extends ModelSchemaParamShape>(types: T['types']) {
+  const data: ModelSchemaData = { types };
 
   const transform = (): DerivedApiDefinition => {
     const internalSchema: InternalSchema = { data } as InternalSchema;
@@ -66,12 +71,12 @@ function _schema<T extends ModelSchemaParamShape>(models: T['models']) {
 /**
  * The API and data model definition for Amplify Data. Pass in `{ <NAME>: a.model(...) }` to create a database table
  * and exposes CRUDL operations via an API.
- * @param models The API and data model definition
+ * @param types The API and data model definition
  * @returns An API and data model definition to be deployed with Amplify (Gen 2) experience (`processSchema(...)`)
  * or with the Amplify Data CDK construct (`@aws-amplify/data-construct`)
  */
-export function schema<Models extends ModelSchemaModels>(
-  models: Models,
-): ModelSchema<{ models: Models }> {
-  return _schema(models);
+export function schema<Types extends ModelSchemaModels>(
+  types: Types,
+): ModelSchema<{ types: Types }> {
+  return _schema(types);
 }

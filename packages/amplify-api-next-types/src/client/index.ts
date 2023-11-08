@@ -275,7 +275,7 @@ type WritableKeys<T> = {
 type MutationInput<
   Fields,
   ModelMeta extends Record<any, any>,
-  Relationships = ModelMeta['relationships'],
+  RelationalFields = ModelMeta['relationalInputFields'],
   WritableFields = Pick<Fields, WritableKeys<Fields>>,
 > = {
   [Prop in keyof WritableFields as WritableFields[Prop] extends (
@@ -283,9 +283,7 @@ type MutationInput<
   ) => any
     ? never
     : Prop]: WritableFields[Prop];
-} & {
-  [RelatedModel in keyof Relationships]: Relationships[RelatedModel];
-};
+} & RelationalFields;
 
 // #endregion
 
@@ -355,10 +353,19 @@ export type ObserveQueryReturnValue<T> = Observable<{
   isSynced: boolean;
 }>;
 
-export type LazyLoader<Model, IsArray extends boolean> = (options?: {
-  authMode?: AuthMode;
-  authToken?: string;
-}) => IsArray extends true
+export type LazyLoader<Model, IsArray extends boolean> = (
+  options?: IsArray extends true
+    ? {
+        authMode?: AuthMode;
+        authToken?: string;
+        limit?: number;
+        nextToken?: string | null;
+      }
+    : {
+        authMode?: AuthMode;
+        authToken?: string;
+      },
+) => IsArray extends true
   ? ListReturnValue<Prettify<Model>>
   : SingularReturnValue<Prettify<Model>>;
 
@@ -369,6 +376,78 @@ export type AuthMode =
   | 'userPool'
   | 'lambda'
   | 'none';
+
+type LogicalFilters<Model extends Record<any, any>> = {
+  and?: ModelFilter<Model> | ModelFilter<Model>[];
+  or?: ModelFilter<Model> | ModelFilter<Model>[];
+  not?: ModelFilter<Model>;
+};
+
+/**
+ * Filter options that can be used on fields where size checks are supported.
+ */
+type SizeFilter = {
+  between?: [number, number];
+  eq?: number;
+  ge?: number;
+  gt?: number;
+  le?: number;
+  lt?: number;
+  ne?: number;
+};
+
+/**
+ * Not actually sure if/how customer can pass this through as variables yet.
+ * Leaving it out for now:
+ *
+ * attributeType: "binary" | "binarySet" | "bool" | "list" | "map" | "number" | "numberSet" | "string" | "stringSet" | "_null"
+ */
+
+/**
+ * Filters options that can be used on string-like fields.
+ */
+type StringFilter = {
+  attributeExists?: boolean;
+  beginsWith?: string;
+  between?: [string, string];
+  contains?: string;
+  eq?: string;
+  ge?: string;
+  gt?: string;
+  le?: string;
+  lt?: string;
+  ne?: string;
+  notContains?: string;
+  size?: SizeFilter;
+};
+
+type NumericFilter = {
+  attributeExists?: boolean;
+  between?: [number, number];
+  eq?: number;
+  ge?: number;
+  gt?: number;
+  le?: number;
+  lt?: number;
+  ne?: number;
+};
+
+type BooleanFilters = {
+  attributeExists?: boolean;
+  eq?: boolean;
+  ne?: boolean;
+};
+
+type ModelFilter<
+  ModelMeta extends Record<any, any>,
+  Fields = ModelMeta['explicitScalarTypes'],
+> = LogicalFilters<ModelMeta> & {
+  [K in keyof Fields]?: Fields[K] extends boolean
+    ? BooleanFilters
+    : Fields[K] extends number
+    ? NumericFilter
+    : StringFilter;
+};
 
 type ModelTypesClient<
   Model extends Record<string, unknown>,
@@ -403,8 +482,9 @@ type ModelTypesClient<
     FlatModel extends Record<string, unknown> = ResolvedModel<Model>,
     SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[],
   >(options?: {
-    // TODO: strongly type filter
-    filter?: object;
+    filter?: ModelFilter<ModelMeta>;
+    limit?: number;
+    nextToken?: string | null;
     selectionSet?: SelectionSet;
     authMode?: AuthMode;
     authToken?: string;
@@ -413,8 +493,7 @@ type ModelTypesClient<
     FlatModel extends Record<string, unknown> = ResolvedModel<Model>,
     SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[],
   >(options?: {
-    // TODO: strongly type filter
-    filter?: object;
+    filter?: ModelFilter<ModelMeta>;
     selectionSet?: SelectionSet;
     authMode?: AuthMode;
     authToken?: string;
@@ -423,8 +502,7 @@ type ModelTypesClient<
     FlatModel extends Record<string, unknown> = ResolvedModel<Model>,
     SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[],
   >(options?: {
-    // TODO: strongly type filter
-    filter?: object;
+    filter?: ModelFilter<ModelMeta>;
     selectionSet?: SelectionSet;
     authMode?: AuthMode;
   }): ObservedReturnValue<ReturnValue<Model, FlatModel, SelectionSet>>;
@@ -432,8 +510,7 @@ type ModelTypesClient<
     FlatModel extends Record<string, unknown> = ResolvedModel<Model>,
     SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[],
   >(options?: {
-    // TODO: strongly type filter
-    filter?: object;
+    filter?: ModelFilter<ModelMeta>;
     selectionSet?: SelectionSet;
     authToken?: string;
   }): ObservedReturnValue<ReturnValue<Model, FlatModel, SelectionSet>>;
@@ -441,8 +518,7 @@ type ModelTypesClient<
     FlatModel extends Record<string, unknown> = ResolvedModel<Model>,
     SelectionSet extends ModelPath<FlatModel>[] = never[],
   >(options?: {
-    // TODO: strongly type filter
-    filter?: object;
+    filter?: ModelFilter<ModelMeta>;
     selectionSet?: SelectionSet;
     authMode?: AuthMode;
     authToken?: string;
@@ -482,8 +558,9 @@ type ModelTypesSSRCookies<
     FlatModel extends Record<string, unknown> = ResolvedModel<Model>,
     SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[],
   >(options?: {
-    // TODO: strongly type filter
-    filter?: object;
+    filter?: ModelFilter<ModelMeta>;
+    limit?: number;
+    nextToken?: string | null;
     selectionSet?: SelectionSet;
     authMode?: AuthMode;
     authToken?: string;
@@ -530,8 +607,9 @@ type ModelTypesSSRRequest<
   >(
     contextSpec: any,
     options?: {
-      // TODO: strongly type filter
-      filter?: object;
+      filter?: ModelFilter<ModelMeta>;
+      limit?: number;
+      nextToken?: string | null;
       selectionSet?: SelectionSet;
       authMode?: AuthMode;
       authToken?: string;
