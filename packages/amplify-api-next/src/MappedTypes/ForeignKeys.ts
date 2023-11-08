@@ -33,17 +33,16 @@ export type AllImpliedFKs<
 export type Denormalized<
   Schema extends Record<any, any>,
   Identifiers extends Record<string, { identifier: string }>,
-  // Identifiers extends Record<string, { identifier: string }> = ModelIdentifier<
-  //   UserSchema['data']['models']
-  // >,
 > = {
   [ModelName in keyof Schema]: {
-    [FieldName in keyof Schema[ModelName]]: {
-      model: ModelName;
-      identifier: IdentifierFields<Identifiers, ModelName>;
-      field: FieldName;
-      type: Schema[ModelName][FieldName];
-    } & RelatedModelFields<Schema[ModelName][FieldName], Identifiers>;
+    [FieldName in keyof Schema[ModelName]]: Prettify<
+      {
+        model: ModelName;
+        identifier: IdentifierFields<Identifiers, ModelName>;
+        field: FieldName;
+        type: Schema[ModelName][FieldName];
+      } & RelatedModelFields<Schema[ModelName][FieldName], Identifiers>
+    >;
   }[keyof Schema[ModelName]];
 }[keyof Schema];
 
@@ -93,7 +92,6 @@ export type ImpliedFKs<
 > = unknown extends UnionToIntersection<InferredFields>
   ? never
   : Prettify<UnionToIntersection<InferredFields>>;
-// : Prettify<UnionToIntersection<InferredFields>>;
 
 type IdentifierFields<
   Identifiers extends Record<string, { identifier: string }>,
@@ -122,40 +120,26 @@ type RelatedModelFields<
       relatedModelIdentifier: never;
     };
 
-type FieldWithRelationship<
-  Model extends string,
-  Identifier extends string,
-  Field extends string,
-  RelatedModel extends string,
-  RelatedModelIdentifier extends string,
-  RelationName extends string | undefined,
-> = {
-  model: Model;
-  identifier: Identifier;
-  field: Field;
-  relatedModel: RelatedModel;
-  relatedModelIdentifier: RelatedModelIdentifier;
-  relationName: RelationName;
+type FieldWithRelationship = {
+  model: string;
+  identifier: string;
+  field: string;
+  relatedModel: string;
+  relatedModelIdentifier: string;
+  relationName: string | undefined;
 };
 
 /**
- * I.e., creates a "matcher" to identify the belongsTo entries that
- * correspond with the given hasMany relationship.
+ * I.e., creates a "matcher" to identify the belongsTo entries that correspond with
+ * the given hasMany relationship.
  *
- * Useful, because the `belongsTo` in these relationships do not actually
- *
+ * The `belongsTo` side of these relationships can be ignored. The FK comes from the
+ * `hasMany` side of the relationship.
  */
 type ImpliedHasManyBelongsTos<Relationship> =
-  Relationship extends FieldWithRelationship<
-    infer Model,
-    infer Identifier,
-    infer Field,
-    infer RelatedModel,
-    infer RelatedModelIdentifier,
-    infer RelationName
-  >
+  Relationship extends FieldWithRelationship
     ? {
-        model: RelatedModel;
+        model: Relationship['relatedModel'];
       }
     : never;
 
@@ -167,80 +151,60 @@ type FKName<
 
 type HasMany_Model_Keys<
   Schema extends Record<any, any>,
-  T,
-> = T extends FieldWithRelationship<
-  infer Model,
-  infer Identifier,
-  infer Field,
-  infer RelatedModel,
-  infer RelatedModelIdentifier,
-  infer RelationName
->
+  RelDef,
+> = RelDef extends FieldWithRelationship
   ? {
-      [K in Identifier as FKName<
-        Model,
-        Field,
-        K
-      >]: K extends keyof Schema[Model] ? Schema[Model][K] : string;
+      [IDField in RelDef['identifier'] as FKName<
+        RelDef['model'],
+        RelDef['field'],
+        IDField
+      >]?: IDField extends keyof Schema[RelDef['model']]
+        ? Schema[RelDef['model']][IDField]
+        : string;
     }
   : never;
 
 type HasOne_Model_Keys<
   Schema extends Record<any, any>,
-  T,
-> = T extends FieldWithRelationship<
-  infer Model,
-  infer Identifier,
-  infer Field,
-  infer RelatedModel,
-  infer RelatedModelIdentifier,
-  infer RelationName
->
+  RelDef,
+> = RelDef extends FieldWithRelationship
   ? {
-      [K in RelatedModelIdentifier as FKName<
-        Model,
-        Field,
-        K
-      >]: K extends keyof Schema[RelatedModel]
-        ? Schema[RelatedModel][K]
+      [IDField in RelDef['relatedModelIdentifier'] as FKName<
+        RelDef['model'],
+        RelDef['field'],
+        IDField
+      >]?: IDField extends keyof Schema[RelDef['relatedModel']]
+        ? Schema[RelDef['relatedModel']][IDField]
         : string;
     }
   : never;
 
 type Model_BelongsTo_Keys<
   Schema extends Record<any, any>,
-  T,
-> = T extends FieldWithRelationship<
-  infer Model,
-  infer Identifier,
-  infer Field,
-  infer RelatedModel,
-  infer RelatedModelIdentifier,
-  infer RelationName
->
+  RelDef,
+> = RelDef extends FieldWithRelationship
   ? {
-      [K in RelatedModelIdentifier as FKName<
-        Model,
-        Field,
-        K
-      >]: K extends keyof Schema[Model] ? Schema[Model][K] : string;
+      [IDField in RelDef['relatedModelIdentifier'] as FKName<
+        RelDef['model'],
+        RelDef['field'],
+        IDField
+      >]?: IDField extends keyof Schema[RelDef['model']]
+        ? Schema[RelDef['model']][IDField]
+        : string;
     }
   : never;
 
 type ManyToManyKeys<
   Schema extends Record<any, any>,
-  T,
-> = T extends FieldWithRelationship<
-  infer Model,
-  infer Identifier,
-  infer Field,
-  infer RelatedModel,
-  infer RelatedModelIdentifier,
-  infer RelationName
->
+  RelDef,
+> = RelDef extends FieldWithRelationship
   ? {
-      [K in Identifier as FKName<Model, '', K>]: K extends keyof Schema[Model]
-        ? Schema[Model][K]
+      [IDField in RelDef['identifier'] as FKName<
+        RelDef['model'],
+        '',
+        IDField
+      >]?: IDField extends keyof Schema[RelDef['model']]
+        ? Schema[RelDef['model']][IDField]
         : string;
     }
   : never;
