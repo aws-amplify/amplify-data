@@ -90,9 +90,9 @@ const schema = a.schema({
 // }
 //
 // type BoringReciprocalChild {
-// 	parent: BoringParent
-// 	id: ID!
-// 	boringReciprocalChild  Parent        Id: ID
+//  parent: BoringParent
+//  id: ID!
+//  boringReciprocalChild  Parent        Id: ID
 //  ^ this model           ^ this field  ^ parent PK
 // }
 //

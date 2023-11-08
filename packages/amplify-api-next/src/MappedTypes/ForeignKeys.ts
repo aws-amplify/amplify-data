@@ -1,5 +1,4 @@
-import { ResolveSchema, SchemaTypes } from './ResolveSchema';
-import { ModelIdentifier } from './ModelMetadata';
+import { ResolveSchema } from './ResolveSchema';
 import {
   Prettify,
   UnionToIntersection,
@@ -14,7 +13,7 @@ export type AllImpliedFKs<
   Identifiers extends Record<string, { identifier: string }>,
   Schema extends Record<any, any> = ResolvedSchema extends ResolveSchema<any>
     ? ResolvedSchema
-    : {},
+    : object,
   DenormalizedSchema extends Denormalized<Schema, Identifiers> = Denormalized<
     Schema,
     Identifiers
@@ -52,7 +51,7 @@ export type ImpliedFKs<
   ModelName,
   Schema extends Record<any, any> = ResolvedSchema extends ResolveSchema<any>
     ? ResolvedSchema
-    : {},
+    : object,
   DenormalizedSchema = Denormalized<Schema, Identifiers>,
   HasMany_Model = Extract<
     DenormalizedSchema,

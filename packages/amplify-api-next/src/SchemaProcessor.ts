@@ -300,59 +300,64 @@ const allImpliedFKs = (schema: InternalSchema) => {
           }
           break;
         case ModelRelationshipTypes.hasMany:
-          let authorization: Authorization<any, any>[] = [];
-          let required = false;
-          const [belongsToName, belongsToDef] =
-            Object.entries(relatedModel.data.fields).find(([name, def]) => {
-              return (
-                isModelField(def) &&
-                def.data.type === ModelRelationshipTypes.belongsTo &&
-                def.data.relatedModel === fieldName
-              );
-            }) || [];
-          if (belongsToDef && isModelField(belongsToDef)) {
-            authorization = belongsToDef.data.authorization;
-            required = belongsToDef.data.valueRequired;
-          }
+          {
+            let authorization: Authorization<any, any>[] = [];
+            let required = false;
+            const [_belongsToName, belongsToDef] =
+              Object.entries(relatedModel.data.fields).find(([_name, def]) => {
+                return (
+                  isModelField(def) &&
+                  def.data.type === ModelRelationshipTypes.belongsTo &&
+                  def.data.relatedModel === fieldName
+                );
+              }) || [];
+            if (belongsToDef && isModelField(belongsToDef)) {
+              authorization = belongsToDef.data.authorization;
+              required = belongsToDef.data.valueRequired;
+            }
 
-          for (const idField of typeDef.data.identifier) {
-            addFk({
-              onModel: fieldDef.data.relatedModel,
-              asField: fkName(modelName, fieldName, idField),
-              fieldDef: {
-                data: {
-                  ...(typeDef.data.fields[idField]?.data || (id() as any).data),
-                  authorization,
-                  required,
-                },
-              },
-            });
-          }
-          break;
-        case ModelRelationshipTypes.belongsTo:
-          // only create if corresponds to hasOne
-          const [hasOneName, hasOneDef] =
-            Object.entries(relatedModel.data.fields).find(([name, def]) => {
-              return (
-                isModelField(def) &&
-                def.data.type === ModelRelationshipTypes.hasOne &&
-                def.data.relatedModel === modelName
-              );
-            }) || [];
-          if (hasOneDef && isModelField(hasOneDef)) {
-            for (const idField of relatedModel.data.identifier) {
+            for (const idField of typeDef.data.identifier) {
               addFk({
-                onModel: modelName,
+                onModel: fieldDef.data.relatedModel,
                 asField: fkName(modelName, fieldName, idField),
                 fieldDef: {
                   data: {
-                    ...typeDef.data,
-                    fieldType:
-                      relatedModel.data.fields[idField]?.data.fieldType ||
-                      ModelFieldType.Id,
+                    ...(typeDef.data.fields[idField]?.data ||
+                      (id() as any).data),
+                    authorization,
+                    required,
                   },
                 },
               });
+            }
+          }
+          break;
+        case ModelRelationshipTypes.belongsTo:
+          {
+            // only create if corresponds to hasOne
+            const [_hasOneName, hasOneDef] =
+              Object.entries(relatedModel.data.fields).find(([_name, def]) => {
+                return (
+                  isModelField(def) &&
+                  def.data.type === ModelRelationshipTypes.hasOne &&
+                  def.data.relatedModel === modelName
+                );
+              }) || [];
+            if (hasOneDef && isModelField(hasOneDef)) {
+              for (const idField of relatedModel.data.identifier) {
+                addFk({
+                  onModel: modelName,
+                  asField: fkName(modelName, fieldName, idField),
+                  fieldDef: {
+                    data: {
+                      ...typeDef.data,
+                      fieldType:
+                        relatedModel.data.fields[idField]?.data.fieldType ||
+                        ModelFieldType.Id,
+                    },
+                  },
+                });
+              }
             }
           }
           break;
