@@ -3,6 +3,7 @@
 exports[`schema generation with relationships 1`] = `
 "type BoringParent @model 
 {
+  id: ID! @primaryKey
   childNormal: BoringChild @hasOne
   childReciprocal: BoringReciprocalChild @hasOne
   childHasManyNormal: [BoringHasManyChild] @hasMany
@@ -15,6 +16,7 @@ exports[`schema generation with relationships 1`] = `
 
 type BoringChild @model 
 {
+  id: ID! @primaryKey
   value: String
   createdAt: AWSDateTime!
   updatedAt: AWSDateTime!
@@ -22,6 +24,7 @@ type BoringChild @model
 
 type BoringReciprocalChild @model 
 {
+  id: ID! @primaryKey
   parent: BoringParent @belongsTo
   value: String
   boringReciprocalChildParentId: ID
@@ -31,6 +34,7 @@ type BoringReciprocalChild @model
 
 type BoringHasManyChild @model 
 {
+  id: ID! @primaryKey
   value: String
   boringParentChildHasManyNormalId: ID
   createdAt: AWSDateTime!
@@ -39,6 +43,7 @@ type BoringHasManyChild @model
 
 type ReciprocalHasManyChild @model 
 {
+  id: ID! @primaryKey
   value: String
   parent: BoringParent @belongsTo
   boringParentChildHasManyReciprocalId: ID
