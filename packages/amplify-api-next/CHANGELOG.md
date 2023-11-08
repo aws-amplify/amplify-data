@@ -1,5 +1,11 @@
 # @aws-amplify/amplify-api-next-alpha
 
+## 0.9.1
+
+### Patch Changes
+
+- 7d0d857: fix: Offer different required modifiers per relationship type
+
 ## 0.9.0
 
 ### Minor Changes
