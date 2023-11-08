@@ -1,6 +1,6 @@
 import { a, ClientSchema } from '@aws-amplify/amplify-api-next-alpha';
 import { Expect, Equal } from '@aws-amplify/amplify-api-next-types-alpha';
-import { API } from 'aws-amplify';
+import { generateClient } from 'aws-amplify/api';
 
 describe('Custom Selection Set XXL', () => {
   describe('Basic, single model', () => {
@@ -1025,7 +1025,7 @@ describe('Custom Selection Set XXL', () => {
     type Schema = ClientSchema<typeof schema>;
 
     test('can specify custom selection set for a subset of fields', async () => {
-      const client = API.generateClient<Schema>();
+      const client = generateClient<Schema>();
 
       const blogs = await client.models.Blog.list({
         selectionSet: [

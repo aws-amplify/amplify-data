@@ -1,5 +1,23 @@
 # @aws-amplify/amplify-api-next-alpha
 
+## 0.9.0
+
+### Minor Changes
+
+- df573ad: Added support for "a.allow.custom()" auth rule
+
+## 0.8.0
+
+### Minor Changes
+
+- e7d75b0: custom types and enums support
+
+## 0.7.4
+
+### Patch Changes
+
+- cba8bc9: fix: Mutation inputs should allow incomplete related objects
+
 ## 0.7.3
 
 ### Patch Changes

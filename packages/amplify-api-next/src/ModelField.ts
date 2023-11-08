@@ -45,7 +45,7 @@ type FieldData = {
 
 type ModelFieldTypeParamInner = string | number | boolean | Date | null;
 
-type ModelFieldTypeParamOuter =
+export type ModelFieldTypeParamOuter =
   | ModelFieldTypeParamInner
   | Array<ModelFieldTypeParamInner>
   | null;
@@ -53,9 +53,9 @@ type ModelFieldTypeParamOuter =
 /**
  * Field type arg mutators
  */
-type Nullable<T> = T | null;
-type Required<T> = Exclude<T, null>;
-type ArrayField<T> = [T] extends [ModelFieldTypeParamInner]
+export type Nullable<T> = T | null;
+export type Required<T> = Exclude<T, null>;
+export type ArrayField<T> = [T] extends [ModelFieldTypeParamInner]
   ? Array<T> | null // optional by default
   : never;
 
@@ -90,7 +90,7 @@ export type ModelField<
     default(value: ModelFieldTypeParamOuter): ModelField<T, K | 'default'>;
     /**
      * Configures field-level authorization rules. Pass in an array of authorizations `(a.allow.____)` to mix and match
-     * multiple authorization rules for this field.  
+     * multiple authorization rules for this field.
      */
     authorization<AuthRuleType extends Authorization<any, any>>(
       rules: AuthRuleType[],
@@ -207,7 +207,7 @@ export function float(): ModelField<Nullable<number>> {
 }
 
 /**
- * A boolean scalar type that can be either true or false. 
+ * A boolean scalar type that can be either true or false.
  * @returns boolean field definition
  */
 export function boolean(): ModelField<Nullable<boolean>> {
@@ -247,7 +247,7 @@ export function timestamp(): ModelField<Nullable<number>> {
 }
 
 /**
- * An email scalar type that is represented server-side in the format `local-part@domain-part` as defined by RFC 822. 
+ * An email scalar type that is represented server-side in the format `local-part@domain-part` as defined by RFC 822.
  * @returns email field definition
  */
 export function email(): ModelField<Nullable<string>> {

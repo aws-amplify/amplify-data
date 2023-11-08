@@ -2,7 +2,6 @@ import type {
   UnionToIntersection,
   LazyLoader,
   ExcludeEmpty,
-  Prettify,
 } from '@aws-amplify/amplify-api-next-types-alpha';
 import type { Authorization, ImpliedAuthFields } from '../Authorization';
 import type { ModelField } from '../ModelField';
@@ -18,9 +17,16 @@ import type { AllImpliedFKs } from './ForeignKeys';
 import type { ResolveSchema, SchemaTypes } from './ResolveSchema';
 import type { InjectImplicitModelFields } from './ImplicitFieldInjector';
 import type { ModelIdentifier } from './ModelMetadata';
+import type { RefType, RefTypeParamShape } from '../RefType';
+
+import type { NonModelTypesShape } from './ExtractNonModelTypes';
+
+import type { CustomType, CustomTypeParamShape } from '../CustomType';
+import type { EnumType, EnumTypeParamShape } from '../EnumType';
 
 export type ResolveFieldProperties<
   Schema extends ModelSchema<any>,
+  NonModelTypes extends NonModelTypesShape,
   ResolvedSchema = ResolveSchema<Schema>,
   IdentifierMeta extends Record<
     string,
@@ -31,7 +37,10 @@ export type ResolveFieldProperties<
     FieldsWithInjectedModels,
     IdentifierMeta
   >,
-  FieldsWithRelationships = ResolveRelationships<FieldsWithInjectedImplicitFields>,
+  FieldsWithRelationships = ResolveRelationships<
+    FieldsWithInjectedImplicitFields,
+    NonModelTypes
+  >,
 > = Intersection<
   FilterFieldTypes<RequiredFieldTypes<FieldsWithRelationships>>,
   FilterFieldTypes<OptionalFieldTypes<FieldsWithRelationships>>,
@@ -58,9 +67,7 @@ type ExtractImplicitModelNames<Schema> = UnionToIntersection<
   >
 >;
 
-type InjectImplicitModels<Schema> = Prettify<
-  Schema & ExtractImplicitModelNames<Schema>
->;
+type InjectImplicitModels<Schema> = Schema & ExtractImplicitModelNames<Schema>;
 
 type GetRelationshipRef<
   T,
@@ -90,9 +97,31 @@ type ResolveRelationalFieldsForModel<
     : Schema[ModelName][FieldName];
 };
 
-type ResolveRelationships<Schema, Flat extends boolean = false> = {
+// Ref can point to a customType, enum, or custom operation
+type ResolveRef<
+  NonModelTypes extends NonModelTypesShape,
+  Ref extends RefTypeParamShape,
+  Link extends string = Ref['link'],
+  Value = Link extends keyof NonModelTypes['enums']
+    ? NonModelTypes['enums'][Link]
+    : Link extends keyof NonModelTypes['customTypes']
+    ? NonModelTypes['customTypes'][Link]
+    : never,
+> = Ref['required'] extends true ? Value : Value | null;
+
+type ResolveRelationships<
+  Schema,
+  NonModelTypes extends NonModelTypesShape,
+  Flat extends boolean = false,
+> = {
   [ModelProp in keyof Schema]: {
-    [FieldProp in keyof Schema[ModelProp]]: Schema[ModelProp][FieldProp] extends ModelRelationalFieldParamShape
+    [FieldProp in keyof Schema[ModelProp]]: Schema[ModelProp][FieldProp] extends RefType<
+      infer R extends RefTypeParamShape,
+      never | 'required' | 'authorization',
+      never | Authorization<any, any>
+    > | null
+      ? ResolveRef<NonModelTypes, R>
+      : Schema[ModelProp][FieldProp] extends ModelRelationalFieldParamShape
       ? Schema[ModelProp][FieldProp]['relatedModel'] extends keyof Schema
         ? Schema[ModelProp][FieldProp]['relationshipType'] extends 'manyToMany'
           ? Schema[ModelProp][FieldProp]['relationName'] extends keyof Schema
@@ -144,8 +173,12 @@ type Intersection<A, B, C> = A & B & C extends infer U
 
 // TODO: this should probably happen in InjectImplicitModelFields instead. Keeping here for now to reduce refactor
 // blast radius
-type ModelImpliedAuthFields<Schema extends ModelSchema<any>> = {
-  [ModelKey in keyof Schema['data']['models']]: Schema['data']['models'][ModelKey] extends ModelType<
+export type ModelImpliedAuthFields<Schema extends ModelSchema<any>> = {
+  [ModelKey in keyof Schema['data']['types'] as Schema['data']['types'][ModelKey] extends EnumType<EnumTypeParamShape>
+    ? never
+    : Schema['data']['types'][ModelKey] extends CustomType<CustomTypeParamShape>
+    ? never
+    : ModelKey]: Schema['data']['types'][ModelKey] extends ModelType<
     infer Model,
     any
   >
@@ -159,6 +192,7 @@ type ImpliedAuthFieldsFromFields<T> = UnionToIntersection<
     ? T['fields'][keyof T['fields']] extends
         | ModelField<any, any, infer Auth>
         | ModelRelationalField<any, any, any, infer Auth>
+        | RefType<any, any, infer Auth>
       ? Auth extends Authorization<any, any>
         ? ImpliedAuthFields<Auth>
         : object

@@ -1,0 +1,53 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`EnumType transform Explicit Enum - auth 1`] = `
+"type File @model 
+{
+  accessLevel: AccessLevel @auth(rules: [{allow: owner}])
+}
+
+enum AccessLevel {
+public
+protected
+private
+}"
+`;
+
+exports[`EnumType transform Explicit Enum - required 1`] = `
+"type File @model 
+{
+  accessLevel: AccessLevel!
+}
+
+enum AccessLevel {
+public
+protected
+private
+}"
+`;
+
+exports[`EnumType transform Explicit Enum 1`] = `
+"type File @model 
+{
+  accessLevel: AccessLevel
+}
+
+enum AccessLevel {
+public
+protected
+private
+}"
+`;
+
+exports[`EnumType transform Implicit Enum 1`] = `
+"type File @model 
+{
+  accessLevel: AccessLevel
+}
+
+enum AccessLevel {
+public
+protected
+private
+}"
+`;

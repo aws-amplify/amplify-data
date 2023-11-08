@@ -13,15 +13,35 @@ import {
 import type { ModelType, InternalModel } from './ModelType';
 import { Authorization, __data } from './Authorization';
 import { DerivedApiDefinition } from './types';
+import type { InternalRef } from './RefType';
+import type { EnumType } from './EnumType';
+import type { CustomType } from './CustomType';
 
 type ScalarFieldDef = Exclude<InternalField['data'], { fieldType: 'model' }>;
 type ModelFieldDef = Extract<
   InternalRelationalField['data'],
   { fieldType: 'model' }
 >;
+type RefFieldDef = InternalRef['data'];
 
 function isInternalModel(model: ModelType<any, any>): model is InternalModel {
-  if ((model as any).data) {
+  if ((model as any).data && (model as any).data?.type !== 'customType') {
+    return true;
+  }
+  return false;
+}
+
+function isEnumType(
+  data: any,
+): data is EnumType<{ type: 'enum'; values: string[] }> {
+  if (data?.type === 'enum') {
+    return true;
+  }
+  return false;
+}
+
+function isCustomType(data: any): data is CustomType<any> {
+  if (data?.data?.type === 'customType') {
     return true;
   }
   return false;
@@ -35,9 +55,11 @@ function isScalarFieldDef(data: any): data is ScalarFieldDef {
   return data?.fieldType !== 'model';
 }
 
-function isModelField(
-  field: ModelField<any, any>,
-): field is { data: ModelFieldDef } {
+function isRefFieldDef(data: any): data is RefFieldDef {
+  return data?.type === 'ref';
+}
+
+function isModelField(field: any): field is { data: ModelFieldDef } {
   return isModelFieldDef((field as any).data);
 }
 
@@ -45,6 +67,12 @@ function isScalarField(
   field: ModelField<any, any>,
 ): field is { data: ScalarFieldDef } {
   return isScalarFieldDef((field as any).data);
+}
+
+function isRefField(
+  field: ModelField<any, any>,
+): field is { data: RefFieldDef } {
+  return isRefFieldDef((field as any).data);
 }
 
 function scalarFieldToGql(fieldDef: ScalarFieldDef, identifier?: string[]) {
@@ -99,7 +127,6 @@ function modelFieldToGql(fieldDef: ModelFieldDef) {
 
   let field = relatedModel;
 
-  // TODO: once we flip default to nullable, uncomment
   if (valueRequired === true) {
     field += '!';
   }
@@ -108,7 +135,6 @@ function modelFieldToGql(fieldDef: ModelFieldDef) {
     field = `[${field}]`;
   }
 
-  // TODO: once we flip default to nullable, uncomment
   if (arrayRequired === true) {
     field += '!';
   }
@@ -119,6 +145,26 @@ function modelFieldToGql(fieldDef: ModelFieldDef) {
   if (type === 'manyToMany') {
     field += `(relationName: "${relationName}")`;
   }
+
+  return field;
+}
+
+function refFieldToGql(fieldDef: RefFieldDef) {
+  const { link, required } = fieldDef;
+
+  let field = link;
+
+  if (required === true) {
+    field += '!';
+  }
+
+  // if (array) {
+  //   field = `[${field}]`;
+  // }
+
+  // if (arrayRequired === true) {
+  //   field += '!';
+  // }
 
   return field;
 }
@@ -231,11 +277,11 @@ const allImpliedFKs = (schema: InternalSchema) => {
   }
 
   // implied FK's
-  for (const [modelName, modelDef] of Object.entries(schema.data.models)) {
-    if (!isInternalModel(modelDef)) continue;
-    for (const [fieldName, fieldDef] of Object.entries(modelDef.data.fields)) {
+  for (const [modelName, typeDef] of Object.entries(schema.data.types)) {
+    if (!isInternalModel(typeDef)) continue;
+    for (const [fieldName, fieldDef] of Object.entries(typeDef.data.fields)) {
       if (!isModelField(fieldDef)) continue;
-      const relatedModel = schema.data.models[fieldDef.data.relatedModel];
+      const relatedModel = schema.data.types[fieldDef.data.relatedModel];
       switch (fieldDef.data.type) {
         case ModelRelationshipTypes.hasOne:
           for (const idField of relatedModel.data.identifier) {
@@ -269,14 +315,13 @@ const allImpliedFKs = (schema: InternalSchema) => {
             required = belongsToDef.data.valueRequired;
           }
 
-          for (const idField of modelDef.data.identifier) {
+          for (const idField of typeDef.data.identifier) {
             addFk({
               onModel: fieldDef.data.relatedModel,
               asField: fkName(modelName, fieldName, idField),
               fieldDef: {
                 data: {
-                  ...(modelDef.data.fields[idField]?.data ||
-                    (id() as any).data),
+                  ...(typeDef.data.fields[idField]?.data || (id() as any).data),
                   authorization,
                   required,
                 },
@@ -301,7 +346,7 @@ const allImpliedFKs = (schema: InternalSchema) => {
                 asField: fkName(modelName, fieldName, idField),
                 fieldDef: {
                   data: {
-                    ...modelDef.data,
+                    ...typeDef.data,
                     fieldType:
                       relatedModel.data.fields[idField]?.data.fieldType ||
                       ModelFieldType.Id,
@@ -324,83 +369,156 @@ const allImpliedFKs = (schema: InternalSchema) => {
   return fks;
 };
 
+function processFieldLevelAuthRules(
+  fields: Record<string, InternalModel>,
+  authFields: Record<string, ModelField<any, any>>,
+) {
+  const fieldLevelAuthRules: {
+    [k in keyof typeof fields]: string | null;
+  } = {};
+
+  for (const [fieldName, fieldDef] of Object.entries(fields)) {
+    const { authString, authFields: fieldAuthField } = calculateAuth(
+      fieldDef?.data?.authorization || [],
+    );
+
+    if (authString) fieldLevelAuthRules[fieldName] = authString;
+    if (fieldAuthField) {
+      Object.assign(authFields, fieldAuthField);
+    }
+  }
+
+  return fieldLevelAuthRules;
+}
+
+function processFields(
+  fields: Record<string, ModelField<any, any>>,
+  authFields: Record<string, ModelField<any, any>>,
+  fieldLevelAuthRules: Record<string, string | null>,
+  identifier?: string[],
+  partitionKey?: string,
+) {
+  const gqlFields: string[] = [];
+  const models: [string, any][] = [];
+
+  for (const [fieldName, fieldDef] of Object.entries({
+    ...authFields,
+    ...fields,
+  })) {
+    const fieldAuth = fieldLevelAuthRules[fieldName]
+      ? ` ${fieldLevelAuthRules[fieldName]}`
+      : '';
+
+    if (isModelField(fieldDef)) {
+      gqlFields.push(
+        `${fieldName}: ${modelFieldToGql(fieldDef.data)}${fieldAuth}`,
+      );
+    } else if (isScalarField(fieldDef)) {
+      if (fieldName === partitionKey) {
+        gqlFields.push(
+          `${fieldName}: ${scalarFieldToGql(
+            fieldDef.data,
+            identifier,
+          )}${fieldAuth}`,
+        );
+      } else if (isRefField(fieldDef)) {
+        gqlFields.push(
+          `${fieldName}: ${refFieldToGql(fieldDef.data)}${fieldAuth}`,
+        );
+      } else if (isEnumType(fieldDef)) {
+        const enumName = capitalize(fieldName);
+
+        models.push([enumName, fieldDef]);
+
+        gqlFields.push(`${fieldName}: ${enumName}`);
+      } else if (isCustomType(fieldDef)) {
+        const customTypeName = capitalize(fieldName);
+
+        models.push([customTypeName, fieldDef]);
+
+        gqlFields.push(`${fieldName}: ${customTypeName}`);
+      } else {
+        gqlFields.push(
+          `${fieldName}: ${scalarFieldToGql(
+            (fieldDef as any).data,
+          )}${fieldAuth}`,
+        );
+      }
+    } else {
+      throw new Error(`Unexpected field definition: ${fieldDef}`);
+    }
+  }
+
+  return { gqlFields, models };
+}
+
 const schemaPreprocessor = (schema: InternalSchema): string => {
   const gqlModels: string[] = [];
 
   const fkFields = allImpliedFKs(schema);
 
-  for (const [modelName, modelDef] of Object.entries(schema.data.models)) {
-    const gqlFields: string[] = [];
+  const topLevelTypes = Object.entries(schema.data.types);
 
-    if (!isInternalModel(modelDef)) continue;
+  for (const [typeName, typeDef] of topLevelTypes) {
+    if (!isInternalModel(typeDef)) {
+      if (isEnumType(typeDef)) {
+        const enumType = `enum ${typeName} {\n${typeDef.values.join('\n')}\n}`;
+        gqlModels.push(enumType);
+      } else if (isCustomType(typeDef)) {
+        const fields = typeDef.data.fields;
 
-    // TODO: this is where we are ... replaced default `fields` generation.
-    // need to re-replace with original, maybe, and merge with AllImpliedFK's.
-    // const fields = allModelFields(schema, modelName);
-    const fields = {
-      ...modelDef.data.fields,
-      ...fkFields[modelName],
-    };
+        const authString = '';
+        const authFields = {};
 
-    // ... and then test. and fix ... probably everything.
+        const fieldLevelAuthRules = processFieldLevelAuthRules(
+          fields,
+          authFields,
+        );
 
-    const identifier = modelDef.data.identifier;
-    const [partitionKey] = identifier;
+        const { gqlFields, models } = processFields(
+          fields,
+          {},
+          fieldLevelAuthRules,
+        );
 
-    const { authString, authFields } = calculateAuth(
-      modelDef.data.authorization,
-    );
+        topLevelTypes.push(...models);
 
-    const fieldLevelAuthRules: {
-      [k in keyof typeof fields]: string | null;
-    } = {};
+        const joined = gqlFields.join('\n  ');
 
-    for (const [fieldName, fieldDef] of Object.entries(fields)) {
-      const { authString, authFields: fieldAuthField } = calculateAuth(
-        fieldDef.data.authorization,
+        const model = `type ${typeName} ${authString}\n{\n  ${joined}\n}`;
+        gqlModels.push(model);
+      }
+    } else {
+      const fields = {
+        ...typeDef.data.fields,
+        ...fkFields[typeName],
+      };
+      const identifier = typeDef.data.identifier;
+      const [partitionKey] = identifier;
+
+      const { authString, authFields } = calculateAuth(
+        typeDef.data.authorization,
       );
 
-      if (authString) fieldLevelAuthRules[fieldName] = authString;
-      if (fieldAuthField) {
-        Object.assign(authFields, fieldAuthField);
-      }
+      const fieldLevelAuthRules = processFieldLevelAuthRules(
+        fields,
+        authFields,
+      );
+
+      const { gqlFields, models } = processFields(
+        fields,
+        authFields,
+        fieldLevelAuthRules,
+        identifier,
+        partitionKey,
+      );
+      topLevelTypes.push(...models);
+
+      const joined = gqlFields.join('\n  ');
+
+      const model = `type ${typeName} @model ${authString}\n{\n  ${joined}\n}`;
+      gqlModels.push(model);
     }
-
-    // process model and fields
-    for (const [fieldName, fieldDef] of Object.entries({
-      ...authFields,
-      ...fields,
-    })) {
-      const fieldAuth = fieldLevelAuthRules[fieldName]
-        ? ` ${fieldLevelAuthRules[fieldName]}`
-        : '';
-
-      if (isModelField(fieldDef)) {
-        gqlFields.push(
-          `${fieldName}: ${modelFieldToGql(fieldDef.data)}${fieldAuth}`,
-        );
-      } else if (isScalarField(fieldDef)) {
-        if (fieldName === partitionKey) {
-          gqlFields.push(
-            `${fieldName}: ${scalarFieldToGql(
-              fieldDef.data,
-              identifier,
-            )}${fieldAuth}`,
-          );
-        } else {
-          gqlFields.push(
-            `${fieldName}: ${scalarFieldToGql(fieldDef.data)}${fieldAuth}`,
-          );
-        }
-      } else {
-        throw new Error(`Unexpected field definition: ${fieldDef}`);
-      }
-    }
-
-    const joined = gqlFields.join('\n  ');
-
-    const model = `type ${modelName} @model ${authString}\n{\n  ${joined}\n}`;
-    gqlModels.push(model);
   }
 
   const processedSchema = gqlModels.join('\n\n');
