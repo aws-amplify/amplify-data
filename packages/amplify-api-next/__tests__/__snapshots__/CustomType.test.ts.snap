@@ -19,6 +19,7 @@ exports[`CustomType transform Explicit CustomType - with auth 1`] = `
 "type Post @model 
 {
   location: Location @auth(rules: [{allow: owner, ownerField: "owner"}])
+  owner: String
   createdAt: AWSDateTime!
   updatedAt: AWSDateTime!
 }

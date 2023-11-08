@@ -4,6 +4,7 @@ exports[`EnumType transform Explicit Enum - auth 1`] = `
 "type File @model 
 {
   accessLevel: AccessLevel @auth(rules: [{allow: owner, ownerField: "owner"}])
+  owner: String
   createdAt: AWSDateTime!
   updatedAt: AWSDateTime!
 }

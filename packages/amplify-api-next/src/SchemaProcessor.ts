@@ -510,7 +510,6 @@ const schemaPreprocessor = (schema: InternalSchema): string => {
       const fields = {
         ...typeDef.data.fields,
         ...fkFields[typeName],
-        ...implicitTimestampFields(typeDef),
       };
       const identifier = typeDef.data.identifier;
       const [partitionKey] = identifier;
@@ -525,7 +524,11 @@ const schemaPreprocessor = (schema: InternalSchema): string => {
       );
 
       const { gqlFields, models } = processFields(
-        fields,
+        {
+          ...fields,
+          ...authFields,
+          ...implicitTimestampFields(typeDef),
+        },
         fieldLevelAuthRules,
         identifier,
         partitionKey,

@@ -4,6 +4,7 @@ exports[`model auth rules can chain off of inField rules 1`] = `
 "type widget @model @auth(rules: [{allow: owner, operations: [create, read], ownerField: "customOwnerField"}])
 {
   title: String!
+  customOwnerField: String
   createdAt: AWSDateTime!
   updatedAt: AWSDateTime!
 }"
@@ -13,6 +14,7 @@ exports[`model auth rules can chain off of multi-owner inField rules 1`] = `
 "type widget @model @auth(rules: [{allow: owner, operations: [create, read], ownerField: "customOwnerField"}])
 {
   title: String!
+  customOwnerField: [String]
   createdAt: AWSDateTime!
   updatedAt: AWSDateTime!
 }"
@@ -22,7 +24,7 @@ exports[`model auth rules can create a "multiple owners" rule on an existing fie
 "type widget @model @auth(rules: [{allow: owner, ownerField: "authors"}])
 {
   title: String!
-  authors: [String!]!
+  authors: [String]
   createdAt: AWSDateTime!
   updatedAt: AWSDateTime!
 }"
@@ -32,6 +34,7 @@ exports[`model auth rules can create a "multiple owners" rule on an implied (aut
 "type widget @model @auth(rules: [{allow: owner, ownerField: "authors"}])
 {
   title: String!
+  authors: [String]
   createdAt: AWSDateTime!
   updatedAt: AWSDateTime!
 }"
@@ -41,6 +44,7 @@ exports[`model auth rules can create a dynamic multi groups rule 1`] = `
 "type widget @model @auth(rules: [{allow: groups, operations: [read], groupsField: "sharedWithGroups"}])
 {
   title: String!
+  sharedWithGroups: [String]
   createdAt: AWSDateTime!
   updatedAt: AWSDateTime!
 }"
@@ -50,6 +54,7 @@ exports[`model auth rules can create a dynamic singular groups rule 1`] = `
 "type widget @model @auth(rules: [{allow: groups, groupsField: "businessUnitOwner"}])
 {
   title: String!
+  businessUnitOwner: String
   createdAt: AWSDateTime!
   updatedAt: AWSDateTime!
 }"
@@ -185,6 +190,7 @@ exports[`model auth rules can define owner auth with no provider 1`] = `
 "type widget @model @auth(rules: [{allow: owner, ownerField: "owner"}])
 {
   title: String!
+  owner: String
   createdAt: AWSDateTime!
   updatedAt: AWSDateTime!
 }"
@@ -193,7 +199,7 @@ exports[`model auth rules can define owner auth with no provider 1`] = `
 exports[`model auth rules can define owner auth with owner field spec 1`] = `
 "type widget @model @auth(rules: [{allow: owner, ownerField: "title"}])
 {
-  title: String!
+  title: String
   createdAt: AWSDateTime!
   updatedAt: AWSDateTime!
 }"
@@ -761,6 +767,7 @@ exports[`model auth rules can specify an owner identityClaim 1`] = `
 "type widget @model @auth(rules: [{allow: owner, ownerField: "owner", identityClaim: "user_id"}])
 {
   title: String!
+  owner: String
   createdAt: AWSDateTime!
   updatedAt: AWSDateTime!
 }"
@@ -780,6 +787,7 @@ exports[`model auth rules includes auth from fields 1`] = `
 {
   id: ID! @primaryKey
   title: String! @auth(rules: [{allow: owner, operations: [create, read], ownerField: "customOwner"}])
+  customOwner: String
   createdAt: AWSDateTime!
   updatedAt: AWSDateTime!
 }"
@@ -790,6 +798,7 @@ exports[`model auth rules includes auth from related model fields 1`] = `
 {
   id: ID! @primaryKey
   parent: widget @belongsTo @auth(rules: [{allow: owner, operations: [create, read], ownerField: "customOwner"}])
+  customOwner: String
   createdAt: AWSDateTime!
   updatedAt: AWSDateTime!
 }"
