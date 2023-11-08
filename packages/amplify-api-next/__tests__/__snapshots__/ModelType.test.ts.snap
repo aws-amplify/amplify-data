@@ -147,8 +147,9 @@ exports[`model auth rules can define custom auth rule for operations update 1`] 
 `;
 
 exports[`model auth rules can define owner auth with no provider 1`] = `
-"type widget @model @auth(rules: [{allow: owner}])
+"type widget @model @auth(rules: [{allow: owner, ownerField: "owner"}])
 {
+  owner: String
   title: String!
 }"
 `;
@@ -595,8 +596,9 @@ exports[`model auth rules can define public with with provider iam for operation
 `;
 
 exports[`model auth rules can specify an owner identityClaim 1`] = `
-"type widget @model @auth(rules: [{allow: owner, identityClaim: "user_id"}])
+"type widget @model @auth(rules: [{allow: owner, ownerField: "owner", identityClaim: "user_id"}])
 {
+  owner: String
   title: String!
 }"
 `;

@@ -3,7 +3,8 @@
 exports[`EnumType transform Explicit Enum - auth 1`] = `
 "type File @model 
 {
-  accessLevel: AccessLevel @auth(rules: [{allow: owner}])
+  owner: String
+  accessLevel: AccessLevel @auth(rules: [{allow: owner, ownerField: "owner"}])
 }
 
 enum AccessLevel {

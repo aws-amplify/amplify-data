@@ -187,4 +187,56 @@ describe('implied fields', () => {
       >;
     });
   });
+  describe('schemas with owner/group auth models surface ownership fields', () => {
+    const schema = a.schema({
+      DefaultOwnerField: a
+        .model({
+          somefield: a.string(),
+        })
+        .authorization([a.allow.owner()]),
+      CustomOwnerField: a
+        .model({
+          somefield: a.string(),
+        })
+        .authorization([a.allow.owner().inField('customOwnerField')]),
+      GroupIn: a
+        .model({
+          somefield: a.string(),
+        })
+        .authorization([a.allow.groupDefinedIn('myGroupField')]),
+      GroupsIn: a
+        .model({
+          somefield: a.string(),
+        })
+        .authorization([a.allow.groupsDefinedIn('myGroupsField')]),
+    });
+    type Schema = ClientSchema<typeof schema>;
+
+    test('default owner', () => {
+      type test = Expect<
+        Equal<Schema['DefaultOwnerField']['owner'], string | undefined>
+      >;
+    });
+
+    test('custom owner', () => {
+      type test = Expect<
+        Equal<
+          Schema['CustomOwnerField']['customOwnerField'],
+          string | undefined
+        >
+      >;
+    });
+
+    test('group', () => {
+      type test = Expect<
+        Equal<Schema['GroupIn']['myGroupField'], string | undefined>
+      >;
+    });
+
+    test('groups', () => {
+      type test = Expect<
+        Equal<Schema['GroupsIn']['myGroupsField'], string[] | undefined>
+      >;
+    });
+  });
 });
