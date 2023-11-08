@@ -44,9 +44,9 @@ export type ResolveFieldProperties<
 > = Intersection<
   FilterFieldTypes<RequiredFieldTypes<FieldsWithRelationships>>,
   FilterFieldTypes<OptionalFieldTypes<FieldsWithRelationships>>,
-  FilterFieldTypes<ModelImpliedAuthFields<Schema>>
-> &
-  AllImpliedFKs<ResolvedSchema, IdentifierMeta>;
+  FilterFieldTypes<ModelImpliedAuthFields<Schema>>,
+  AllImpliedFKs<ResolvedSchema, IdentifierMeta>
+>;
 
 type ExtractImplicitModelNames<Schema> = UnionToIntersection<
   ExcludeEmpty<
@@ -167,7 +167,7 @@ type RequiredFieldTypes<Schema> = {
   };
 };
 
-type Intersection<A, B, C> = A & B & C extends infer U
+type Intersection<A, B, C, D> = A & B & C & D extends infer U
   ? { [P in keyof U]: U[P] }
   : never;
 
