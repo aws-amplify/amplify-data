@@ -2,6 +2,7 @@ import type { ModelType } from '../ModelType';
 import type { ModelSchema } from '../ModelSchema';
 import type {
   ModelRelationalField,
+  ModelRelationshipTypes,
   RelationTypeFunctionOmitMapping,
 } from '../ModelRelationalField';
 import type { ModelField } from '../ModelField';
@@ -64,7 +65,7 @@ export type FieldTypes<T> = {
       T[ModelProp][FieldProp] extends ModelRelationalField<
           infer R,
           string,
-          RelationTypeFunctionOmitMapping<infer _>,
+          RelationTypeFunctionOmitMapping<ModelRelationshipTypes>,
           any
         >
       ? R

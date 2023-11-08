@@ -6,21 +6,21 @@ describe('relational field required modifier', () => {
   describe('belongsTo', () => {
     it("doesn't offer a required modifier", () => {
       expect(() => {
-        // @ts-ignore
+        // @ts-expect-error
         const field = a.belongsTo('Test').required();
       }).toThrow();
     });
 
     it("doesn't offer an arrayRequired modifier", () => {
       expect(() => {
-        // @ts-ignore
+        // @ts-expect-error
         const field = a.belongsTo('Test').arrayRequired();
       }).toThrow();
     });
 
     it("doesn't offer an valueRequired modifier", () => {
       expect(() => {
-        // @ts-ignore
+        // @ts-expect-error
         const field = a.belongsTo('Test').valueRequired();
       }).toThrow();
     });
@@ -41,14 +41,14 @@ describe('relational field required modifier', () => {
 
     it("doesn't offer an arrayRequired modifier", () => {
       expect(() => {
-        // @ts-ignore
+        // @ts-expect-error
         const field = a.hasOne('Test').arrayRequired();
       }).toThrow();
     });
 
     it("doesn't offer an valueRequired modifier", () => {
       expect(() => {
-        // @ts-ignore
+        // @ts-expect-error
         const field = a.hasOne('Test').valueRequired();
       }).toThrow();
     });
@@ -60,7 +60,6 @@ describe('relational field required modifier', () => {
     });
 
     it('required sets arrayRequired to true', () => {
-      // @ts-ignore
       const field = a.hasOne('Test').required() as InternalRelationalField;
       expect(field.data.arrayRequired).toBe(true);
     });
@@ -69,7 +68,7 @@ describe('relational field required modifier', () => {
   describe('hasMany', () => {
     it("doesn't offer a required modifier", () => {
       expect(() => {
-        // @ts-ignore
+        // @ts-expect-error
         const field = a.hasMany('Test').required();
       }).toThrow();
     });
