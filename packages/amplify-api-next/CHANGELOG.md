@@ -1,5 +1,11 @@
 # @aws-amplify/amplify-api-next-alpha
 
+## 0.10.3
+
+### Patch Changes
+
+- c779b83: fix: Remove \_\_date from Authorization export
+
 ## 0.10.2
 
 ### Patch Changes
