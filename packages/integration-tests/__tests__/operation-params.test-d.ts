@@ -28,7 +28,7 @@ describe('Basic operations', () => {
       post: a.belongsTo('Post'),
     }),
     Meta: a.model({
-      body: a.json(),
+      body: a.string(),
     }),
   });
 
@@ -183,8 +183,8 @@ describe('Basic operations', () => {
     });
   });
 
-  describe('can filter on implied fields', () => {
-    test('can filter basic fields', async () => {
+  describe('can filter on', () => {
+    test('basic fields', async () => {
       await client.models.Post.list({
         filter: {
           title: { eq: 'whatever ' },
@@ -192,7 +192,7 @@ describe('Basic operations', () => {
       });
     });
 
-    test('can filter implicit ID', async () => {
+    test('implicit ID', async () => {
       await client.models.Post.list({
         filter: {
           id: { eq: 'whatever ' },
@@ -200,7 +200,7 @@ describe('Basic operations', () => {
       });
     });
 
-    test('can filter implicit createdAt', async () => {
+    test('implicit createdAt', async () => {
       await client.models.Post.list({
         filter: {
           createdAt: { eq: 'whatever ' },
@@ -208,7 +208,7 @@ describe('Basic operations', () => {
       });
     });
 
-    test('can filter implicit updatedAt', async () => {
+    test('implicit updatedAt', async () => {
       await client.models.Post.list({
         filter: {
           updatedAt: { eq: 'whatever ' },
@@ -216,14 +216,23 @@ describe('Basic operations', () => {
       });
     });
 
-    // type T = Schema['Post']['']
+    test('implicit FK', async () => {
+      await client.models.Comment.list({
+        filter: {
+          postCommentsId: { eq: 'whatever' },
+        },
+      });
+    });
+  });
 
-    // test('can filter implicit FK', async () => {
-    //   await client.models.Comment.list({
-    //     filter: {
-    //       : { eq: "something"}
-    //     },
-    //   });
-    // });
+  describe('can not filter on', () => {
+    test('non-existent fields', async () => {
+      await client.models.Post.list({
+        filter: {
+          // @ts-expect-error
+          badField: { eq: 'something naughty' },
+        },
+      });
+    });
   });
 });
