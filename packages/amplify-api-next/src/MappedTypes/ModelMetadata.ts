@@ -2,7 +2,7 @@ import {
   type UnionToIntersection,
   type ExcludeEmpty,
   __modelMeta__,
-} from '@aws-amplify/amplify-api-next-types-alpha';
+} from '@aws-amplify/amplify-data-next-types';
 import type { ModelType } from '../ModelType';
 import type { ModelRelationalFieldParamShape } from '../ModelRelationalField';
 

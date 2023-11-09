@@ -2,7 +2,7 @@ import { ResolveSchema } from './ResolveSchema';
 import {
   Prettify,
   UnionToIntersection,
-} from '@aws-amplify/amplify-api-next-types-alpha';
+} from '@aws-amplify/amplify-data-next-types';
 import {
   ModelRelationalFieldParamShape,
   ModelRelationshipTypes,

@@ -2,7 +2,7 @@ import type {
   Prettify,
   Equal,
   Expect,
-} from '@aws-amplify/amplify-api-next-types-alpha';
+} from '@aws-amplify/amplify-data-next-types';
 import { a } from '../../index';
 import { ResolveSchema } from '../../src/MappedTypes/ResolveSchema';
 import type { RefType, RefTypeParamShape } from '../../src/RefType';

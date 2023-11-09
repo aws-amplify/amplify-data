@@ -1,4 +1,4 @@
-import type { SetTypeSubArg } from '@aws-amplify/amplify-api-next-types-alpha';
+import type { SetTypeSubArg } from '@aws-amplify/amplify-data-next-types';
 import { ModelField, InternalField } from './ModelField';
 import type {
   ModelRelationalField,

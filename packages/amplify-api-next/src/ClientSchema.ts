@@ -1,7 +1,7 @@
 import {
   type Prettify,
   __modelMeta__,
-} from '@aws-amplify/amplify-api-next-types-alpha';
+} from '@aws-amplify/amplify-data-next-types';
 import type { ModelSchema } from './ModelSchema';
 
 // MappedTypes

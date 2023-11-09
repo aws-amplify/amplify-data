@@ -1,5 +1,7 @@
-import type { Equal, Expect } from '@aws-amplify/amplify-api-next-types-alpha';
-import { type ModelField, type InternalField,
+import type { Equal, Expect } from '@aws-amplify/amplify-data-next-types';
+import {
+  type ModelField,
+  type InternalField,
   string,
   id,
   integer,

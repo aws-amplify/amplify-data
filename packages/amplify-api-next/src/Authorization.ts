@@ -1,4 +1,4 @@
-import type { UnionToIntersection } from '@aws-amplify/amplify-api-next-types-alpha';
+import type { UnionToIntersection } from '@aws-amplify/amplify-data-next-types';
 
 const __data = Symbol('data');
 

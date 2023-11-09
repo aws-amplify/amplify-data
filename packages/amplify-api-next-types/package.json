@@ -1,5 +1,5 @@
 {
-  "name": "@aws-amplify/amplify-api-next-types-alpha",
+  "name": "@aws-amplify/amplify-data-next-types",
   "version": "0.3.1",
   "license": "Apache-2.0",
   "main": "./lib-esm/index.d.ts",

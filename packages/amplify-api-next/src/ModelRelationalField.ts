@@ -1,4 +1,4 @@
-import { SetTypeSubArg } from '@aws-amplify/amplify-api-next-types-alpha';
+import { SetTypeSubArg } from '@aws-amplify/amplify-data-next-types';
 import { Authorization } from './Authorization';
 
 /**

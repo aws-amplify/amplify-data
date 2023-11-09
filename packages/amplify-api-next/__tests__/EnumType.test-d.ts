@@ -1,4 +1,4 @@
-import type { Equal, Expect } from '@aws-amplify/amplify-api-next-types-alpha';
+import type { Equal, Expect } from '@aws-amplify/amplify-data-next-types';
 import { type EnumType, enumType } from '../src/EnumType';
 
 describe('EnumType', () => {
