@@ -6,4 +6,4 @@
 
 - ada0afd: rename defineData; remove from public exports
 - Updated dependencies [ada0afd]
-  - @aws-amplify/amplify-data-next@0.7.0
+  - @aws-amplify/amplify-api-next-alpha@0.7.0
