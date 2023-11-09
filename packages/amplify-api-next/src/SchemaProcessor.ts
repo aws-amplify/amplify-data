@@ -12,7 +12,7 @@ import {
   ModelRelationshipTypes,
 } from './ModelRelationalField';
 import type { ModelType, InternalModel } from './ModelType';
-import { Authorization, __data } from './Authorization';
+import { Authorization, accessData } from './Authorization';
 import { DerivedApiDefinition } from './types';
 import type { InternalRef } from './RefType';
 import type { EnumType } from './EnumType';
@@ -175,7 +175,7 @@ function calculateAuth(authorization: Authorization<any, any>[]) {
   const rules: string[] = [];
 
   for (const entry of authorization) {
-    const rule = entry[__data];
+    const rule = accessData(entry);
     const ruleParts: Array<string | string[]> = [];
 
     if (rule.strategy) {
