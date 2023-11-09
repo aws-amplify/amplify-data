@@ -5,6 +5,7 @@ import {
   type InternalField,
   id,
   string,
+  datetime,
 } from './ModelField';
 import {
   type InternalRelationalField,
@@ -374,6 +375,41 @@ const allImpliedFKs = (schema: InternalSchema) => {
   return fks;
 };
 
+/**
+ * Determines if implicit date fields are in effect for a given model. If they are,
+ * returns those implicit fields.
+ *
+ * NOTE: For now, we *only* support the default implicit fields.
+ *
+ * @param _model Model to find date fields for.
+ */
+const implicitTimestampFields = (
+  _model: InternalModel,
+): Record<string, ModelField<any, any>> => {
+  return {
+    createdAt: datetime().required(),
+    updatedAt: datetime().required(),
+  };
+};
+
+/**
+ * Generates default Pk fields for a model, based on identifier designation.
+ *
+ * The fields from this function are just default values. They should be overridden
+ * by ID field definitions that are explicit in the model.
+ *
+ * @param _model Model to find PK fields for.
+ */
+const idFields = (
+  model: InternalModel,
+): Record<string, ModelField<any, any>> => {
+  const fields: Record<string, ModelField<any, any>> = {};
+  for (const fieldName of model.data.identifier) {
+    fields[fieldName] = id().required();
+  }
+  return fields;
+};
+
 function processFieldLevelAuthRules(
   fields: Record<string, InternalModel>,
   authFields: Record<string, ModelField<any, any>>,
@@ -398,7 +434,6 @@ function processFieldLevelAuthRules(
 
 function processFields(
   fields: Record<string, ModelField<any, any>>,
-  authFields: Record<string, ModelField<any, any>>,
   fieldLevelAuthRules: Record<string, string | null>,
   identifier?: string[],
   partitionKey?: string,
@@ -406,10 +441,7 @@ function processFields(
   const gqlFields: string[] = [];
   const models: [string, any][] = [];
 
-  for (const [fieldName, fieldDef] of Object.entries({
-    ...authFields,
-    ...fields,
-  })) {
+  for (const [fieldName, fieldDef] of Object.entries(fields)) {
     const fieldAuth = fieldLevelAuthRules[fieldName]
       ? ` ${fieldLevelAuthRules[fieldName]}`
       : '';
@@ -482,7 +514,6 @@ const schemaPreprocessor = (schema: InternalSchema): string => {
 
         const { gqlFields, models } = processFields(
           fields,
-          {},
           fieldLevelAuthRules,
         );
 
@@ -511,8 +542,13 @@ const schemaPreprocessor = (schema: InternalSchema): string => {
       );
 
       const { gqlFields, models } = processFields(
-        fields,
-        authFields,
+        {
+          // idFields first, so they can be overridden by customer definitions when present.
+          ...idFields(typeDef),
+          ...fields,
+          ...authFields,
+          ...implicitTimestampFields(typeDef),
+        },
         fieldLevelAuthRules,
         identifier,
         partitionKey,

@@ -3,625 +3,889 @@
 exports[`model auth rules can chain off of inField rules 1`] = `
 "type widget @model @auth(rules: [{allow: owner, operations: [create, read], ownerField: "customOwnerField"}])
 {
-  customOwnerField: String
+  id: ID! @primaryKey
   title: String!
+  customOwnerField: String
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
 }"
 `;
 
 exports[`model auth rules can chain off of multi-owner inField rules 1`] = `
 "type widget @model @auth(rules: [{allow: owner, operations: [create, read], ownerField: "customOwnerField"}])
 {
-  customOwnerField: [String]
+  id: ID! @primaryKey
   title: String!
+  customOwnerField: [String]
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
 }"
 `;
 
 exports[`model auth rules can create a "multiple owners" rule on an existing field 1`] = `
 "type widget @model @auth(rules: [{allow: owner, ownerField: "authors"}])
 {
-  authors: [String!]!
+  id: ID! @primaryKey
   title: String!
+  authors: [String]
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
 }"
 `;
 
 exports[`model auth rules can create a "multiple owners" rule on an implied (auto-created) field 1`] = `
 "type widget @model @auth(rules: [{allow: owner, ownerField: "authors"}])
 {
-  authors: [String]
+  id: ID! @primaryKey
   title: String!
+  authors: [String]
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
 }"
 `;
 
 exports[`model auth rules can create a dynamic multi groups rule 1`] = `
 "type widget @model @auth(rules: [{allow: groups, operations: [read], groupsField: "sharedWithGroups"}])
 {
-  sharedWithGroups: [String]
+  id: ID! @primaryKey
   title: String!
+  sharedWithGroups: [String]
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
 }"
 `;
 
 exports[`model auth rules can create a dynamic singular groups rule 1`] = `
 "type widget @model @auth(rules: [{allow: groups, groupsField: "businessUnitOwner"}])
 {
-  businessUnitOwner: String
+  id: ID! @primaryKey
   title: String!
+  businessUnitOwner: String
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
 }"
 `;
 
 exports[`model auth rules can create a static [Admins, Moderators] groups rule 1`] = `
 "type widget @model @auth(rules: [{allow: groups, groups: ["Admins", "Moderators"]}])
 {
+  id: ID! @primaryKey
   title: String!
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
 }"
 `;
 
 exports[`model auth rules can create a static Admins group rule 1`] = `
 "type widget @model @auth(rules: [{allow: groups, groups: ["Admins"]}])
 {
+  id: ID! @primaryKey
   title: String!
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
 }"
 `;
 
 exports[`model auth rules can define a custom authorization rule 1`] = `
 "type Widget @model @auth(rules: [{allow: custom}])
 {
+  id: ID! @primaryKey
   title: String!
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
 }"
 `;
 
 exports[`model auth rules can define custom auth rule for operations create 1`] = `
 "type widget @model @auth(rules: [{allow: custom, operations: [create]}])
 {
+  id: ID! @primaryKey
   title: String!
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
 }"
 `;
 
 exports[`model auth rules can define custom auth rule for operations create,read,listen 1`] = `
 "type widget @model @auth(rules: [{allow: custom, operations: [create, read, listen]}])
 {
+  id: ID! @primaryKey
   title: String!
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
 }"
 `;
 
 exports[`model auth rules can define custom auth rule for operations create,read,update,delete 1`] = `
 "type widget @model @auth(rules: [{allow: custom, operations: [create, read, update, delete]}])
 {
+  id: ID! @primaryKey
   title: String!
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
 }"
 `;
 
 exports[`model auth rules can define custom auth rule for operations delete 1`] = `
 "type widget @model @auth(rules: [{allow: custom, operations: [delete]}])
 {
+  id: ID! @primaryKey
   title: String!
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
 }"
 `;
 
 exports[`model auth rules can define custom auth rule for operations get 1`] = `
 "type widget @model @auth(rules: [{allow: custom, operations: [get]}])
 {
+  id: ID! @primaryKey
   title: String!
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
 }"
 `;
 
 exports[`model auth rules can define custom auth rule for operations list 1`] = `
 "type widget @model @auth(rules: [{allow: custom, operations: [list]}])
 {
+  id: ID! @primaryKey
   title: String!
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
 }"
 `;
 
 exports[`model auth rules can define custom auth rule for operations listen 1`] = `
 "type widget @model @auth(rules: [{allow: custom, operations: [listen]}])
 {
+  id: ID! @primaryKey
   title: String!
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
 }"
 `;
 
 exports[`model auth rules can define custom auth rule for operations read 1`] = `
 "type widget @model @auth(rules: [{allow: custom, operations: [read]}])
 {
+  id: ID! @primaryKey
   title: String!
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
 }"
 `;
 
 exports[`model auth rules can define custom auth rule for operations search 1`] = `
 "type widget @model @auth(rules: [{allow: custom, operations: [search]}])
 {
+  id: ID! @primaryKey
   title: String!
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
 }"
 `;
 
 exports[`model auth rules can define custom auth rule for operations sync 1`] = `
 "type widget @model @auth(rules: [{allow: custom, operations: [sync]}])
 {
+  id: ID! @primaryKey
   title: String!
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
 }"
 `;
 
 exports[`model auth rules can define custom auth rule for operations update 1`] = `
 "type widget @model @auth(rules: [{allow: custom, operations: [update]}])
 {
+  id: ID! @primaryKey
   title: String!
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
 }"
 `;
 
 exports[`model auth rules can define owner auth with no provider 1`] = `
-"type widget @model @auth(rules: [{allow: owner}])
+"type widget @model @auth(rules: [{allow: owner, ownerField: "owner"}])
 {
+  id: ID! @primaryKey
   title: String!
+  owner: String
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
 }"
 `;
 
 exports[`model auth rules can define owner auth with owner field spec 1`] = `
 "type widget @model @auth(rules: [{allow: owner, ownerField: "title"}])
 {
-  title: String!
+  id: ID! @primaryKey
+  title: String
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
 }"
 `;
 
 exports[`model auth rules can define private auth with no provider 1`] = `
 "type widget @model @auth(rules: [{allow: private}])
 {
+  id: ID! @primaryKey
   title: String!
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
 }"
 `;
 
 exports[`model auth rules can define private with with provider iam 1`] = `
 "type widget @model @auth(rules: [{allow: private, provider: iam}])
 {
+  id: ID! @primaryKey
   title: String!
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
 }"
 `;
 
 exports[`model auth rules can define private with with provider iam for operations create 1`] = `
 "type widget @model @auth(rules: [{allow: private, provider: iam, operations: [create]}])
 {
+  id: ID! @primaryKey
   title: String!
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
 }"
 `;
 
 exports[`model auth rules can define private with with provider iam for operations create,read,listen 1`] = `
 "type widget @model @auth(rules: [{allow: private, provider: iam, operations: [create, read, listen]}])
 {
+  id: ID! @primaryKey
   title: String!
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
 }"
 `;
 
 exports[`model auth rules can define private with with provider iam for operations create,read,update,delete 1`] = `
 "type widget @model @auth(rules: [{allow: private, provider: iam, operations: [create, read, update, delete]}])
 {
+  id: ID! @primaryKey
   title: String!
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
 }"
 `;
 
 exports[`model auth rules can define private with with provider iam for operations delete 1`] = `
 "type widget @model @auth(rules: [{allow: private, provider: iam, operations: [delete]}])
 {
+  id: ID! @primaryKey
   title: String!
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
 }"
 `;
 
 exports[`model auth rules can define private with with provider iam for operations get 1`] = `
 "type widget @model @auth(rules: [{allow: private, provider: iam, operations: [get]}])
 {
+  id: ID! @primaryKey
   title: String!
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
 }"
 `;
 
 exports[`model auth rules can define private with with provider iam for operations list 1`] = `
 "type widget @model @auth(rules: [{allow: private, provider: iam, operations: [list]}])
 {
+  id: ID! @primaryKey
   title: String!
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
 }"
 `;
 
 exports[`model auth rules can define private with with provider iam for operations listen 1`] = `
 "type widget @model @auth(rules: [{allow: private, provider: iam, operations: [listen]}])
 {
+  id: ID! @primaryKey
   title: String!
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
 }"
 `;
 
 exports[`model auth rules can define private with with provider iam for operations read 1`] = `
 "type widget @model @auth(rules: [{allow: private, provider: iam, operations: [read]}])
 {
+  id: ID! @primaryKey
   title: String!
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
 }"
 `;
 
 exports[`model auth rules can define private with with provider iam for operations search 1`] = `
 "type widget @model @auth(rules: [{allow: private, provider: iam, operations: [search]}])
 {
+  id: ID! @primaryKey
   title: String!
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
 }"
 `;
 
 exports[`model auth rules can define private with with provider iam for operations sync 1`] = `
 "type widget @model @auth(rules: [{allow: private, provider: iam, operations: [sync]}])
 {
+  id: ID! @primaryKey
   title: String!
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
 }"
 `;
 
 exports[`model auth rules can define private with with provider iam for operations update 1`] = `
 "type widget @model @auth(rules: [{allow: private, provider: iam, operations: [update]}])
 {
+  id: ID! @primaryKey
   title: String!
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
 }"
 `;
 
 exports[`model auth rules can define private with with provider oidc 1`] = `
 "type widget @model @auth(rules: [{allow: private, provider: oidc}])
 {
+  id: ID! @primaryKey
   title: String!
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
 }"
 `;
 
 exports[`model auth rules can define private with with provider oidc for operations create 1`] = `
 "type widget @model @auth(rules: [{allow: private, provider: oidc, operations: [create]}])
 {
+  id: ID! @primaryKey
   title: String!
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
 }"
 `;
 
 exports[`model auth rules can define private with with provider oidc for operations create,read,listen 1`] = `
 "type widget @model @auth(rules: [{allow: private, provider: oidc, operations: [create, read, listen]}])
 {
+  id: ID! @primaryKey
   title: String!
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
 }"
 `;
 
 exports[`model auth rules can define private with with provider oidc for operations create,read,update,delete 1`] = `
 "type widget @model @auth(rules: [{allow: private, provider: oidc, operations: [create, read, update, delete]}])
 {
+  id: ID! @primaryKey
   title: String!
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
 }"
 `;
 
 exports[`model auth rules can define private with with provider oidc for operations delete 1`] = `
 "type widget @model @auth(rules: [{allow: private, provider: oidc, operations: [delete]}])
 {
+  id: ID! @primaryKey
   title: String!
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
 }"
 `;
 
 exports[`model auth rules can define private with with provider oidc for operations get 1`] = `
 "type widget @model @auth(rules: [{allow: private, provider: oidc, operations: [get]}])
 {
+  id: ID! @primaryKey
   title: String!
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
 }"
 `;
 
 exports[`model auth rules can define private with with provider oidc for operations list 1`] = `
 "type widget @model @auth(rules: [{allow: private, provider: oidc, operations: [list]}])
 {
+  id: ID! @primaryKey
   title: String!
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
 }"
 `;
 
 exports[`model auth rules can define private with with provider oidc for operations listen 1`] = `
 "type widget @model @auth(rules: [{allow: private, provider: oidc, operations: [listen]}])
 {
+  id: ID! @primaryKey
   title: String!
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
 }"
 `;
 
 exports[`model auth rules can define private with with provider oidc for operations read 1`] = `
 "type widget @model @auth(rules: [{allow: private, provider: oidc, operations: [read]}])
 {
+  id: ID! @primaryKey
   title: String!
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
 }"
 `;
 
 exports[`model auth rules can define private with with provider oidc for operations search 1`] = `
 "type widget @model @auth(rules: [{allow: private, provider: oidc, operations: [search]}])
 {
+  id: ID! @primaryKey
   title: String!
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
 }"
 `;
 
 exports[`model auth rules can define private with with provider oidc for operations sync 1`] = `
 "type widget @model @auth(rules: [{allow: private, provider: oidc, operations: [sync]}])
 {
+  id: ID! @primaryKey
   title: String!
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
 }"
 `;
 
 exports[`model auth rules can define private with with provider oidc for operations update 1`] = `
 "type widget @model @auth(rules: [{allow: private, provider: oidc, operations: [update]}])
 {
+  id: ID! @primaryKey
   title: String!
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
 }"
 `;
 
 exports[`model auth rules can define private with with provider userPools 1`] = `
 "type widget @model @auth(rules: [{allow: private, provider: userPools}])
 {
+  id: ID! @primaryKey
   title: String!
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
 }"
 `;
 
 exports[`model auth rules can define private with with provider userPools for operations create 1`] = `
 "type widget @model @auth(rules: [{allow: private, provider: userPools, operations: [create]}])
 {
+  id: ID! @primaryKey
   title: String!
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
 }"
 `;
 
 exports[`model auth rules can define private with with provider userPools for operations create,read,listen 1`] = `
 "type widget @model @auth(rules: [{allow: private, provider: userPools, operations: [create, read, listen]}])
 {
+  id: ID! @primaryKey
   title: String!
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
 }"
 `;
 
 exports[`model auth rules can define private with with provider userPools for operations create,read,update,delete 1`] = `
 "type widget @model @auth(rules: [{allow: private, provider: userPools, operations: [create, read, update, delete]}])
 {
+  id: ID! @primaryKey
   title: String!
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
 }"
 `;
 
 exports[`model auth rules can define private with with provider userPools for operations delete 1`] = `
 "type widget @model @auth(rules: [{allow: private, provider: userPools, operations: [delete]}])
 {
+  id: ID! @primaryKey
   title: String!
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
 }"
 `;
 
 exports[`model auth rules can define private with with provider userPools for operations get 1`] = `
 "type widget @model @auth(rules: [{allow: private, provider: userPools, operations: [get]}])
 {
+  id: ID! @primaryKey
   title: String!
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
 }"
 `;
 
 exports[`model auth rules can define private with with provider userPools for operations list 1`] = `
 "type widget @model @auth(rules: [{allow: private, provider: userPools, operations: [list]}])
 {
+  id: ID! @primaryKey
   title: String!
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
 }"
 `;
 
 exports[`model auth rules can define private with with provider userPools for operations listen 1`] = `
 "type widget @model @auth(rules: [{allow: private, provider: userPools, operations: [listen]}])
 {
+  id: ID! @primaryKey
   title: String!
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
 }"
 `;
 
 exports[`model auth rules can define private with with provider userPools for operations read 1`] = `
 "type widget @model @auth(rules: [{allow: private, provider: userPools, operations: [read]}])
 {
+  id: ID! @primaryKey
   title: String!
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
 }"
 `;
 
 exports[`model auth rules can define private with with provider userPools for operations search 1`] = `
 "type widget @model @auth(rules: [{allow: private, provider: userPools, operations: [search]}])
 {
+  id: ID! @primaryKey
   title: String!
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
 }"
 `;
 
 exports[`model auth rules can define private with with provider userPools for operations sync 1`] = `
 "type widget @model @auth(rules: [{allow: private, provider: userPools, operations: [sync]}])
 {
+  id: ID! @primaryKey
   title: String!
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
 }"
 `;
 
 exports[`model auth rules can define private with with provider userPools for operations update 1`] = `
 "type widget @model @auth(rules: [{allow: private, provider: userPools, operations: [update]}])
 {
+  id: ID! @primaryKey
   title: String!
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
 }"
 `;
 
 exports[`model auth rules can define public auth with no provider 1`] = `
 "type widget @model @auth(rules: [{allow: public}])
 {
+  id: ID! @primaryKey
   title: String!
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
 }"
 `;
 
 exports[`model auth rules can define public with with provider apiKey 1`] = `
 "type widget @model @auth(rules: [{allow: public, provider: apiKey}])
 {
+  id: ID! @primaryKey
   title: String!
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
 }"
 `;
 
 exports[`model auth rules can define public with with provider apiKey for operations create 1`] = `
 "type widget @model @auth(rules: [{allow: public, provider: apiKey, operations: [create]}])
 {
+  id: ID! @primaryKey
   title: String!
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
 }"
 `;
 
 exports[`model auth rules can define public with with provider apiKey for operations create,read,listen 1`] = `
 "type widget @model @auth(rules: [{allow: public, provider: apiKey, operations: [create, read, listen]}])
 {
+  id: ID! @primaryKey
   title: String!
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
 }"
 `;
 
 exports[`model auth rules can define public with with provider apiKey for operations create,read,update,delete 1`] = `
 "type widget @model @auth(rules: [{allow: public, provider: apiKey, operations: [create, read, update, delete]}])
 {
+  id: ID! @primaryKey
   title: String!
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
 }"
 `;
 
 exports[`model auth rules can define public with with provider apiKey for operations delete 1`] = `
 "type widget @model @auth(rules: [{allow: public, provider: apiKey, operations: [delete]}])
 {
+  id: ID! @primaryKey
   title: String!
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
 }"
 `;
 
 exports[`model auth rules can define public with with provider apiKey for operations get 1`] = `
 "type widget @model @auth(rules: [{allow: public, provider: apiKey, operations: [get]}])
 {
+  id: ID! @primaryKey
   title: String!
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
 }"
 `;
 
 exports[`model auth rules can define public with with provider apiKey for operations list 1`] = `
 "type widget @model @auth(rules: [{allow: public, provider: apiKey, operations: [list]}])
 {
+  id: ID! @primaryKey
   title: String!
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
 }"
 `;
 
 exports[`model auth rules can define public with with provider apiKey for operations listen 1`] = `
 "type widget @model @auth(rules: [{allow: public, provider: apiKey, operations: [listen]}])
 {
+  id: ID! @primaryKey
   title: String!
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
 }"
 `;
 
 exports[`model auth rules can define public with with provider apiKey for operations read 1`] = `
 "type widget @model @auth(rules: [{allow: public, provider: apiKey, operations: [read]}])
 {
+  id: ID! @primaryKey
   title: String!
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
 }"
 `;
 
 exports[`model auth rules can define public with with provider apiKey for operations search 1`] = `
 "type widget @model @auth(rules: [{allow: public, provider: apiKey, operations: [search]}])
 {
+  id: ID! @primaryKey
   title: String!
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
 }"
 `;
 
 exports[`model auth rules can define public with with provider apiKey for operations sync 1`] = `
 "type widget @model @auth(rules: [{allow: public, provider: apiKey, operations: [sync]}])
 {
+  id: ID! @primaryKey
   title: String!
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
 }"
 `;
 
 exports[`model auth rules can define public with with provider apiKey for operations update 1`] = `
 "type widget @model @auth(rules: [{allow: public, provider: apiKey, operations: [update]}])
 {
+  id: ID! @primaryKey
   title: String!
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
 }"
 `;
 
 exports[`model auth rules can define public with with provider iam 1`] = `
 "type widget @model @auth(rules: [{allow: public, provider: iam}])
 {
+  id: ID! @primaryKey
   title: String!
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
 }"
 `;
 
 exports[`model auth rules can define public with with provider iam for operations create 1`] = `
 "type widget @model @auth(rules: [{allow: public, provider: iam, operations: [create]}])
 {
+  id: ID! @primaryKey
   title: String!
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
 }"
 `;
 
 exports[`model auth rules can define public with with provider iam for operations create,read,listen 1`] = `
 "type widget @model @auth(rules: [{allow: public, provider: iam, operations: [create, read, listen]}])
 {
+  id: ID! @primaryKey
   title: String!
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
 }"
 `;
 
 exports[`model auth rules can define public with with provider iam for operations create,read,update,delete 1`] = `
 "type widget @model @auth(rules: [{allow: public, provider: iam, operations: [create, read, update, delete]}])
 {
+  id: ID! @primaryKey
   title: String!
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
 }"
 `;
 
 exports[`model auth rules can define public with with provider iam for operations delete 1`] = `
 "type widget @model @auth(rules: [{allow: public, provider: iam, operations: [delete]}])
 {
+  id: ID! @primaryKey
   title: String!
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
 }"
 `;
 
 exports[`model auth rules can define public with with provider iam for operations get 1`] = `
 "type widget @model @auth(rules: [{allow: public, provider: iam, operations: [get]}])
 {
+  id: ID! @primaryKey
   title: String!
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
 }"
 `;
 
 exports[`model auth rules can define public with with provider iam for operations list 1`] = `
 "type widget @model @auth(rules: [{allow: public, provider: iam, operations: [list]}])
 {
+  id: ID! @primaryKey
   title: String!
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
 }"
 `;
 
 exports[`model auth rules can define public with with provider iam for operations listen 1`] = `
 "type widget @model @auth(rules: [{allow: public, provider: iam, operations: [listen]}])
 {
+  id: ID! @primaryKey
   title: String!
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
 }"
 `;
 
 exports[`model auth rules can define public with with provider iam for operations read 1`] = `
 "type widget @model @auth(rules: [{allow: public, provider: iam, operations: [read]}])
 {
+  id: ID! @primaryKey
   title: String!
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
 }"
 `;
 
 exports[`model auth rules can define public with with provider iam for operations search 1`] = `
 "type widget @model @auth(rules: [{allow: public, provider: iam, operations: [search]}])
 {
+  id: ID! @primaryKey
   title: String!
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
 }"
 `;
 
 exports[`model auth rules can define public with with provider iam for operations sync 1`] = `
 "type widget @model @auth(rules: [{allow: public, provider: iam, operations: [sync]}])
 {
+  id: ID! @primaryKey
   title: String!
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
 }"
 `;
 
 exports[`model auth rules can define public with with provider iam for operations update 1`] = `
 "type widget @model @auth(rules: [{allow: public, provider: iam, operations: [update]}])
 {
+  id: ID! @primaryKey
   title: String!
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
 }"
 `;
 
 exports[`model auth rules can specify an owner identityClaim 1`] = `
-"type widget @model @auth(rules: [{allow: owner, identityClaim: "user_id"}])
+"type widget @model @auth(rules: [{allow: owner, ownerField: "owner", identityClaim: "user_id"}])
 {
+  id: ID! @primaryKey
   title: String!
+  owner: String
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
 }"
 `;
 
 exports[`model auth rules can specify operations  1`] = `
 "type widget @model @auth(rules: [{allow: public, operations: [create, read]}])
 {
+  id: ID! @primaryKey
   title: String!
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
 }"
 `;
 
 exports[`model auth rules includes auth from fields 1`] = `
 "type widget @model 
 {
-  customOwner: String
   id: ID! @primaryKey
   title: String! @auth(rules: [{allow: owner, operations: [create, read], ownerField: "customOwner"}])
+  customOwner: String
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
 }"
 `;
 
 exports[`model auth rules includes auth from related model fields 1`] = `
 "type widget @model 
 {
-  customOwner: String
   id: ID! @primaryKey
   parent: widget @belongsTo @auth(rules: [{allow: owner, operations: [create, read], ownerField: "customOwner"}])
+  customOwner: String
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
 }"
 `;
