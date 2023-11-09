@@ -1,4 +1,4 @@
-import { SetTypeSubArg } from '@aws-amplify/amplify-data-next-types';
+import { SetTypeSubArg } from '@aws-amplify/data-schema-types';
 import { Authorization } from './Authorization';
 
 /**

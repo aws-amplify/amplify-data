@@ -1,4 +1,4 @@
-import type { SetTypeSubArg } from '@aws-amplify/amplify-data-next-types';
+import type { SetTypeSubArg } from '@aws-amplify/data-schema-types';
 import { ModelField, InternalField } from './ModelField';
 import type {
   ModelRelationalField,

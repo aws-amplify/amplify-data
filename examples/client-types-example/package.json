@@ -8,7 +8,7 @@
     "test": "exit 0"
   },
   "dependencies": {
-    "@aws-amplify/amplify-data-next": "*",
+    "@aws-amplify/data-schema": "*",
     "aws-amplify": "api-v6-models"
   },
   "keywords": [],

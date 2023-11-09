@@ -1,4 +1,4 @@
-import type { Equal, Expect } from '@aws-amplify/amplify-data-next-types';
+import type { Equal, Expect } from '@aws-amplify/data-schema-types';
 import { type CustomType, customType } from '../src/CustomType';
 import { type ModelField, Nullable } from '../src/ModelField';
 

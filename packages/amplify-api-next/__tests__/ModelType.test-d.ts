@@ -1,4 +1,4 @@
-import type { Equal, Expect } from '@aws-amplify/amplify-data-next-types';
+import type { Equal, Expect } from '@aws-amplify/data-schema-types';
 import { type ModelType, type InternalModel, model } from '../src/ModelType';
 import {
   type ModelField,

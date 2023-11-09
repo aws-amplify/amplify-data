@@ -1,5 +1,5 @@
 {
-  "name": "@aws-amplify/amplify-data-next",
+  "name": "@aws-amplify/data-schema",
   "version": "0.10.3",
   "license": "Apache-2.0",
   "repository": {
@@ -15,7 +15,7 @@
     "lint": "eslint ."
   },
   "dependencies": {
-    "@aws-amplify/amplify-data-next-types": "*"
+    "@aws-amplify/data-schema-types": "*"
   },
   "devDependencies": {
     "@changesets/cli": "^2.26.2",

@@ -1,4 +1,4 @@
-import type { Equal, Expect } from '@aws-amplify/amplify-data-next-types';
+import type { Equal, Expect } from '@aws-amplify/data-schema-types';
 import { a } from '../../index';
 import type { ExtractNonModelTypes } from '../../src/MappedTypes/ExtractNonModelTypes';
 

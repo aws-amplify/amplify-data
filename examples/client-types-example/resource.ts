@@ -1,5 +1,5 @@
-import { a, ClientSchema } from '@aws-amplify/amplify-data-next';
-import { __modelMeta__ } from '@aws-amplify/amplify-data-next-types';
+import { a, ClientSchema } from '@aws-amplify/data-schema';
+import { __modelMeta__ } from '@aws-amplify/data-schema-types';
 
 const schema = a.schema({
   Post: a.model({

@@ -1,4 +1,4 @@
-import type { DerivedApiDefinition } from '@aws-amplify/amplify-data-next-types';
+import type { DerivedApiDefinition } from '@aws-amplify/data-schema-types';
 import type {
   ModelType,
   ModelTypeParamShape,

@@ -1,8 +1,4 @@
-import type {
-  Prettify,
-  Equal,
-  Expect,
-} from '@aws-amplify/amplify-data-next-types';
+import type { Prettify, Equal, Expect } from '@aws-amplify/data-schema-types';
 import { a } from '../../index';
 import { ResolveSchema } from '../../src/MappedTypes/ResolveSchema';
 import type { RefType, RefTypeParamShape } from '../../src/RefType';

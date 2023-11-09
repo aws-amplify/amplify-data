@@ -2,7 +2,7 @@ import type {
   UnionToIntersection,
   LazyLoader,
   ExcludeEmpty,
-} from '@aws-amplify/amplify-data-next-types';
+} from '@aws-amplify/data-schema-types';
 import type { Authorization, ImpliedAuthFields } from '../Authorization';
 import type { ModelField } from '../ModelField';
 import type { ModelType, ModelTypeParamShape } from '../ModelType';

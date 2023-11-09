@@ -1,4 +1,4 @@
-import { Brand } from '@aws-amplify/amplify-data-next-types';
+import { Brand } from '@aws-amplify/data-schema-types';
 import {
   ModelField,
   InternalField,
