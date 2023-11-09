@@ -8,6 +8,7 @@ export type ExtractModelMeta<T extends Record<any, any>> =
 
 export type ModelTypes<
   _T extends Record<any, any> = never,
+  _Context extends string = 'CLIENT',
   _ModelMeta extends Record<any, any> = any,
 > = any;
 
