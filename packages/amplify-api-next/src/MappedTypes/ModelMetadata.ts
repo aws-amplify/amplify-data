@@ -3,14 +3,8 @@ import {
   type ExcludeEmpty,
   __modelMeta__,
 } from '@aws-amplify/amplify-api-next-types-alpha';
-import type { ModelSchema } from '../ModelSchema';
 import type { ModelType } from '../ModelType';
-import type {
-  ModelRelationalField,
-  ModelRelationalFieldParamShape,
-} from '../ModelRelationalField';
-import type { SchemaTypes, ModelTypes } from './ResolveSchema';
-import type { ModelField } from '../ModelField';
+import type { ModelRelationalFieldParamShape } from '../ModelRelationalField';
 
 export type ModelIdentifier<T> = {
   [Property in keyof T]: T[Property] extends ModelType<infer R, any>
@@ -84,15 +78,6 @@ export type RelationalMetadata<
   >
 >;
 
-export type ExtractExplicitScalarFields<
-  Schema extends ModelSchema<any>,
-  Scalars = ScalarFieldTypes<ModelTypes<SchemaTypes<Schema>>>,
-> = {
-  [ModelName in keyof Scalars]: {
-    explicitScalarTypes: Scalars[ModelName];
-  };
-};
-
 type ExtractModelIdentifier<ModelName, IdentifierMeta> =
   ModelName extends keyof IdentifierMeta ? IdentifierMeta[ModelName] : never;
 
@@ -101,20 +86,3 @@ type NormalizeInputFields<
   IdentifierMeta extends Record<string, any>,
 > = Partial<Omit<ModelFields, IdentifierMeta['identifier']>> &
   Required<Pick<ModelFields, IdentifierMeta['identifier']>>;
-
-type ScalarFieldTypes<T> = {
-  [ModelProp in keyof T]: {
-    [FieldProp in keyof T[ModelProp] as T[ModelProp][FieldProp] extends ModelRelationalField<
-      any,
-      any
-    >
-      ? never
-      : FieldProp]: T[ModelProp][FieldProp] extends ModelField<
-      infer R,
-      any,
-      any
-    >
-      ? R
-      : never;
-  };
-};
