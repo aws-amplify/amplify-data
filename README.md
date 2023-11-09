@@ -1,4 +1,4 @@
-## amplify-api-next
+## Amplify Data Schema Builder
 
 TypeScript-first AWS AppSync Schema Builder
 

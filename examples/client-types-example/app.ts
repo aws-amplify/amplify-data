@@ -18,6 +18,8 @@ async function test() {
     data: [post],
   } = await client.models.Post.list();
 
+  const { data } = await client.models.Post.get({});
+
   type TPost = typeof post;
   //    ^?
 }
