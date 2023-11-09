@@ -1,5 +1,5 @@
 import { a, ClientSchema } from '..';
-import { Expect, Equal } from '@aws-amplify/amplify-api-next-types-alpha';
+import { Expect, Equal } from '@aws-amplify/data-schema-types';
 
 describe('implied fields', () => {
   describe('boring model keys', () => {

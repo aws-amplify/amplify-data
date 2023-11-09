@@ -1,9 +1,5 @@
-import { a, ClientSchema } from '@aws-amplify/amplify-api-next-alpha';
-import {
-  Expect,
-  Equal,
-  SelectionSet,
-} from '@aws-amplify/amplify-api-next-types-alpha';
+import { a, ClientSchema } from '@aws-amplify/data-schema';
+import { Expect, Equal, SelectionSet } from '@aws-amplify/data-schema-types';
 import { generateClient } from 'aws-amplify/api';
 
 describe('Custom Selection Set', () => {

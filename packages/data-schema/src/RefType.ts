@@ -1,4 +1,4 @@
-import { SetTypeSubArg } from '@aws-amplify/amplify-api-next-types-alpha';
+import { SetTypeSubArg } from '@aws-amplify/data-schema-types';
 import { Authorization } from './Authorization';
 import { __auth } from './ModelField';
 

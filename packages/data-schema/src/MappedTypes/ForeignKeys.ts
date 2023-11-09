@@ -1,8 +1,5 @@
 import { ResolveSchema } from './ResolveSchema';
-import {
-  Prettify,
-  UnionToIntersection,
-} from '@aws-amplify/amplify-api-next-types-alpha';
+import { Prettify, UnionToIntersection } from '@aws-amplify/data-schema-types';
 import {
   ModelRelationalFieldParamShape,
   ModelRelationshipTypes,

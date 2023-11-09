@@ -1,4 +1,4 @@
-import type { Equal, Expect } from '@aws-amplify/amplify-api-next-types-alpha';
+import type { Equal, Expect } from '@aws-amplify/data-schema-types';
 import { a, ClientSchema } from '../../index';
 
 // TODO: once the top-level mapped types used by ClientSchema are extracted into separate files (src/MappedTypes/*.ts)

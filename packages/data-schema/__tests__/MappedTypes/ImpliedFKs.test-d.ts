@@ -2,7 +2,7 @@ import type {
   Equal,
   Expect,
   UnionToIntersection,
-} from '@aws-amplify/amplify-api-next-types-alpha';
+} from '@aws-amplify/data-schema-types';
 import { a, ClientSchema } from '../../index';
 import {
   ResolveSchema,

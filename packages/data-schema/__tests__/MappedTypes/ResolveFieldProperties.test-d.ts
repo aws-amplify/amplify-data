@@ -1,8 +1,4 @@
-import type {
-  Prettify,
-  Equal,
-  Expect,
-} from '@aws-amplify/amplify-api-next-types-alpha';
+import type { Prettify, Equal, Expect } from '@aws-amplify/data-schema-types';
 import { a, ClientSchema } from '../../index';
 import { ResolveFieldProperties } from '../../src/MappedTypes/ResolveFieldProperties';
 import type { ExtractNonModelTypes } from '../../src/MappedTypes/ExtractNonModelTypes';
