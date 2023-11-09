@@ -1,5 +1,13 @@
 # integration-tests
 
+## 0.0.5
+
+### Patch Changes
+
+- 6884086: made createdAt, updatedAt fields explicit in generated graphql
+- a3e087f: makes owner, group fields explicit in generated graphql models
+- 82ce901: made implicit PK field explicit in generated graphql
+
 ## 0.0.4
 
 ### Patch Changes
