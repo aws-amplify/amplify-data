@@ -1,0 +1,88 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`schema generation with relationships 1`] = `
+"type BoringParent @model 
+{
+  childNormal: BoringChild @hasOne
+  childReciprocal: BoringReciprocalChild @hasOne
+  childHasManyNormal: [BoringHasManyChild] @hasMany
+  childHasManyReciprocal: [ReciprocalHasManyChild] @hasMany
+  boringParentChildNormalId: ID
+  boringParentChildReciprocalId: ID
+}
+
+type BoringChild @model 
+{
+  value: String
+}
+
+type BoringReciprocalChild @model 
+{
+  parent: BoringParent @belongsTo
+  value: String
+  boringReciprocalChildParentId: ID
+}
+
+type BoringHasManyChild @model 
+{
+  value: String
+  boringParentChildHasManyNormalId: ID
+}
+
+type ReciprocalHasManyChild @model 
+{
+  value: String
+  parent: BoringParent @belongsTo
+  boringParentChildHasManyReciprocalId: ID
+}
+
+type CPKParent @model 
+{
+  CPKParentIdFieldA: ID! @primaryKey(sortKeyFields: ["CPKParentIdFieldB"])
+  CPKParentIdFieldB: ID!
+  childNormal: CPKChild @hasOne
+  childReciprocal: CPKReciprocalChild @hasOne
+  childHasManyNormal: [CPKHasManyChild] @hasMany
+  childHasManyReciprocal: [CPKReciprocalHasManyChild] @hasMany
+  cPKParentChildNormalCPKChildIdFieldA: ID
+  cPKParentChildNormalCPKChildIdFieldB: ID
+  cPKParentChildReciprocalCPKReciprocalChildIdFieldA: ID
+  cPKParentChildReciprocalCPKReciprocalChildIdFieldB: ID
+}
+
+type CPKChild @model 
+{
+  CPKChildIdFieldA: ID! @primaryKey(sortKeyFields: ["CPKChildIdFieldB"])
+  CPKChildIdFieldB: ID!
+  value: String
+}
+
+type CPKReciprocalChild @model 
+{
+  CPKReciprocalChildIdFieldA: ID! @primaryKey(sortKeyFields: ["CPKReciprocalChildIdFieldB"])
+  CPKReciprocalChildIdFieldB: ID!
+  parent: CPKParent @belongsTo
+  value: String
+  cPKReciprocalChildParentCPKParentIdFieldA: ID
+  cPKReciprocalChildParentCPKParentIdFieldB: ID
+}
+
+type CPKHasManyChild @model 
+{
+  CPKHasManyChildIdFieldA: ID! @primaryKey(sortKeyFields: ["CPKHasManyChildIdFieldB"])
+  CPKHasManyChildIdFieldB: ID!
+  value: String
+  cPKParentChildHasManyNormalCPKParentIdFieldA: ID
+  cPKParentChildHasManyNormalCPKParentIdFieldB: ID
+}
+
+type CPKReciprocalHasManyChild @model 
+{
+  CPKReciprocalHasManyChildIdFieldA: ID! @primaryKey(sortKeyFields: ["CPKReciprocalHasManyChildIdFieldB"])
+  CPKReciprocalHasManyChildIdFieldB: ID!
+  value: String
+  parent: CPKParent @belongsTo
+  cPKParentChildHasManyReciprocalCPKParentIdFieldA: ID
+  cPKParentChildHasManyReciprocalCPKParentIdFieldB: ID
+}"
+`;

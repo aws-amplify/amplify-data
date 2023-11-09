@@ -12,6 +12,7 @@ import type {
   ModelRelationalFieldParamShape,
   ModelRelationalTypeArgFactory,
 } from '../ModelRelationalField';
+import type { AllImpliedFKs } from './ForeignKeys';
 
 import type { ResolveSchema, SchemaTypes } from './ResolveSchema';
 import type { InjectImplicitModelFields } from './ImplicitFieldInjector';
@@ -27,7 +28,10 @@ export type ResolveFieldProperties<
   Schema extends ModelSchema<any>,
   NonModelTypes extends NonModelTypesShape,
   ResolvedSchema = ResolveSchema<Schema>,
-  IdentifierMeta = ModelIdentifier<SchemaTypes<Schema>>,
+  IdentifierMeta extends Record<
+    string,
+    { identifier: string }
+  > = ModelIdentifier<SchemaTypes<Schema>>,
   FieldsWithInjectedModels = InjectImplicitModels<ResolvedSchema>,
   FieldsWithInjectedImplicitFields = InjectImplicitModelFields<
     FieldsWithInjectedModels,
@@ -40,7 +44,8 @@ export type ResolveFieldProperties<
 > = Intersection<
   FilterFieldTypes<RequiredFieldTypes<FieldsWithRelationships>>,
   FilterFieldTypes<OptionalFieldTypes<FieldsWithRelationships>>,
-  FilterFieldTypes<ModelImpliedAuthFields<Schema>>
+  FilterFieldTypes<ModelImpliedAuthFields<Schema>>,
+  AllImpliedFKs<ResolvedSchema, IdentifierMeta>
 >;
 
 type ExtractImplicitModelNames<Schema> = UnionToIntersection<
@@ -162,7 +167,7 @@ type RequiredFieldTypes<Schema> = {
   };
 };
 
-type Intersection<A, B, C> = A & B & C extends infer U
+type Intersection<A, B, C, D> = A & B & C & D extends infer U
   ? { [P in keyof U]: U[P] }
   : never;
 
