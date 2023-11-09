@@ -1,5 +1,19 @@
 # @aws-amplify/amplify-api-next-alpha
 
+## 0.10.1
+
+### Patch Changes
+
+- 6884086: made createdAt, updatedAt fields explicit in generated graphql
+- a3e087f: makes owner, group fields explicit in generated graphql models
+- 82ce901: made implicit PK field explicit in generated graphql
+
+## 0.10.0
+
+### Minor Changes
+
+- 1f6bfcc: surface relationship FK fields explicitly in model types and generated graphql models
+
 ## 0.9.1
 
 ### Patch Changes
