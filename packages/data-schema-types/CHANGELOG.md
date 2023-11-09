@@ -1,5 +1,11 @@
 # @aws-amplify/amplify-api-next-types-alpha
 
+## 0.4.0
+
+### Minor Changes
+
+- bcdb110: use approved naming
+
 ## 0.3.1
 
 ### Patch Changes
