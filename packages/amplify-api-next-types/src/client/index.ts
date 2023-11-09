@@ -438,13 +438,12 @@ type BooleanFilters = {
   ne?: boolean;
 };
 
-type ModelFilter<
-  ModelMeta extends Record<any, any>,
-  Fields = ModelMeta['explicitScalarTypes'],
-> = LogicalFilters<ModelMeta> & {
-  [K in keyof Fields]?: Fields[K] extends boolean
+type ModelFilter<Model extends Record<any, any>> = LogicalFilters<Model> & {
+  [K in keyof Model as Model[K] extends LazyLoader<any, any>
+    ? never
+    : K]?: Model[K] extends boolean
     ? BooleanFilters
-    : Fields[K] extends number
+    : Model[K] extends number
     ? NumericFilter
     : StringFilter;
 };
@@ -482,7 +481,7 @@ type ModelTypesClient<
     FlatModel extends Record<string, unknown> = ResolvedModel<Model>,
     SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[],
   >(options?: {
-    filter?: ModelFilter<ModelMeta>;
+    filter?: ModelFilter<Model>;
     limit?: number;
     nextToken?: string | null;
     selectionSet?: SelectionSet;
@@ -493,7 +492,7 @@ type ModelTypesClient<
     FlatModel extends Record<string, unknown> = ResolvedModel<Model>,
     SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[],
   >(options?: {
-    filter?: ModelFilter<ModelMeta>;
+    filter?: ModelFilter<Model>;
     selectionSet?: SelectionSet;
     authMode?: AuthMode;
     authToken?: string;
@@ -502,7 +501,7 @@ type ModelTypesClient<
     FlatModel extends Record<string, unknown> = ResolvedModel<Model>,
     SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[],
   >(options?: {
-    filter?: ModelFilter<ModelMeta>;
+    filter?: ModelFilter<Model>;
     selectionSet?: SelectionSet;
     authMode?: AuthMode;
   }): ObservedReturnValue<ReturnValue<Model, FlatModel, SelectionSet>>;
@@ -510,7 +509,7 @@ type ModelTypesClient<
     FlatModel extends Record<string, unknown> = ResolvedModel<Model>,
     SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[],
   >(options?: {
-    filter?: ModelFilter<ModelMeta>;
+    filter?: ModelFilter<Model>;
     selectionSet?: SelectionSet;
     authToken?: string;
   }): ObservedReturnValue<ReturnValue<Model, FlatModel, SelectionSet>>;
@@ -518,7 +517,7 @@ type ModelTypesClient<
     FlatModel extends Record<string, unknown> = ResolvedModel<Model>,
     SelectionSet extends ModelPath<FlatModel>[] = never[],
   >(options?: {
-    filter?: ModelFilter<ModelMeta>;
+    filter?: ModelFilter<Model>;
     selectionSet?: SelectionSet;
     authMode?: AuthMode;
     authToken?: string;
@@ -558,7 +557,7 @@ type ModelTypesSSRCookies<
     FlatModel extends Record<string, unknown> = ResolvedModel<Model>,
     SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[],
   >(options?: {
-    filter?: ModelFilter<ModelMeta>;
+    filter?: ModelFilter<Model>;
     limit?: number;
     nextToken?: string | null;
     selectionSet?: SelectionSet;
@@ -607,7 +606,7 @@ type ModelTypesSSRRequest<
   >(
     contextSpec: any,
     options?: {
-      filter?: ModelFilter<ModelMeta>;
+      filter?: ModelFilter<Model>;
       limit?: number;
       nextToken?: string | null;
       selectionSet?: SelectionSet;

@@ -28,7 +28,7 @@ describe('Basic operations', () => {
       post: a.belongsTo('Post'),
     }),
     Meta: a.model({
-      body: a.json(),
+      body: a.string(),
     }),
   });
 
@@ -183,6 +183,56 @@ describe('Basic operations', () => {
     });
   });
 
-  // TODO
-  // describe('can filter on implied fields', () => {});
+  describe('can filter on', () => {
+    test('basic fields', async () => {
+      await client.models.Post.list({
+        filter: {
+          title: { eq: 'whatever ' },
+        },
+      });
+    });
+
+    test('implicit ID', async () => {
+      await client.models.Post.list({
+        filter: {
+          id: { eq: 'whatever ' },
+        },
+      });
+    });
+
+    test('implicit createdAt', async () => {
+      await client.models.Post.list({
+        filter: {
+          createdAt: { eq: 'whatever ' },
+        },
+      });
+    });
+
+    test('implicit updatedAt', async () => {
+      await client.models.Post.list({
+        filter: {
+          updatedAt: { eq: 'whatever ' },
+        },
+      });
+    });
+
+    test('implicit FK', async () => {
+      await client.models.Comment.list({
+        filter: {
+          postCommentsId: { eq: 'whatever' },
+        },
+      });
+    });
+  });
+
+  describe('can not filter on', () => {
+    test('non-existent fields', async () => {
+      await client.models.Post.list({
+        filter: {
+          // @ts-expect-error
+          badField: { eq: 'something naughty' },
+        },
+      });
+    });
+  });
 });

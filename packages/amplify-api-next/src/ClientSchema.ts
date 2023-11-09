@@ -10,7 +10,6 @@ import type { ResolveFieldProperties } from './MappedTypes/ResolveFieldPropertie
 import type {
   ModelIdentifier,
   RelationalMetadata,
-  ExtractExplicitScalarFields,
 } from './MappedTypes/ModelMetadata';
 import type {
   ExtractNonModelTypes,
@@ -43,7 +42,6 @@ type InternalClientSchema<
   IdentifierMeta extends Record<string, any> = ModelIdentifier<
     SchemaTypes<Schema>
   >,
-  ExplicitScalarFields = ExtractExplicitScalarFields<Schema>,
   ResolvedFields extends Record<string, unknown> = ResolveFieldProperties<
     Schema,
     NonModelTypes
@@ -53,10 +51,7 @@ type InternalClientSchema<
     ResolvedFields,
     IdentifierMeta
   >,
-  Meta = IdentifierMeta &
-    RelationshipMeta &
-    ExplicitScalarFields &
-    NonModelTypes,
+  Meta = IdentifierMeta & RelationshipMeta & NonModelTypes,
 > = Prettify<
   ResolvedFields & {
     [__modelMeta__]: Meta;
