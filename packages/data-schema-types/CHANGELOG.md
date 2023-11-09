@@ -1,5 +1,11 @@
 # @aws-amplify/amplify-api-next-types-alpha
 
+## 0.4.1
+
+### Patch Changes
+
+- 96f61c6: fix v3 type
+
 ## 0.4.0
 
 ### Minor Changes
