@@ -1,5 +1,11 @@
 # integration-tests
 
+## 0.0.6
+
+### Patch Changes
+
+- e01c167: updates filter types to include all model fields
+
 ## 0.0.5
 
 ### Patch Changes

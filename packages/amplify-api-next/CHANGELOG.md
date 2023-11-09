@@ -1,5 +1,13 @@
 # @aws-amplify/amplify-api-next-alpha
 
+## 0.10.2
+
+### Patch Changes
+
+- e01c167: updates filter types to include all model fields
+- Updated dependencies [e01c167]
+  - @aws-amplify/amplify-api-next-types-alpha@0.3.1
+
 ## 0.10.1
 
 ### Patch Changes
