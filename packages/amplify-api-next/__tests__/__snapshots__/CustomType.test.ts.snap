@@ -3,7 +3,10 @@
 exports[`CustomType transform Explicit CustomType - required 1`] = `
 "type Post @model 
 {
+  id: ID! @primaryKey
   location: Location!
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
 }
 
 type Location 
@@ -16,7 +19,11 @@ type Location
 exports[`CustomType transform Explicit CustomType - with auth 1`] = `
 "type Post @model 
 {
-  location: Location @auth(rules: [{allow: owner}])
+  id: ID! @primaryKey
+  location: Location @auth(rules: [{allow: owner, ownerField: "owner"}])
+  owner: String
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
 }
 
 type Location 
@@ -29,7 +36,10 @@ type Location
 exports[`CustomType transform Explicit CustomType 1`] = `
 "type Post @model 
 {
+  id: ID! @primaryKey
   location: Location
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
 }
 
 type Location 
@@ -42,7 +52,10 @@ type Location
 exports[`CustomType transform Implicit CustomType 1`] = `
 "type Post @model 
 {
+  id: ID! @primaryKey
   location: Location
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
 }
 
 type Location 

@@ -67,6 +67,7 @@ describe('implied fields', () => {
       >;
     });
   });
+
   describe('CPK model keys', () => {
     const schema = a.schema({
       CPKParent: a
@@ -184,6 +185,80 @@ describe('implied fields', () => {
           Schema['CPKReciprocalHasManyChild']['cPKParentChildHasManyReciprocalCPKParentIdFieldB'],
           string | undefined
         >
+      >;
+    });
+  });
+
+  describe('schemas with owner/group auth models surface ownership fields', () => {
+    const schema = a.schema({
+      DefaultOwnerField: a
+        .model({
+          somefield: a.string(),
+        })
+        .authorization([a.allow.owner()]),
+      CustomOwnerField: a
+        .model({
+          somefield: a.string(),
+        })
+        .authorization([a.allow.owner().inField('customOwnerField')]),
+      GroupIn: a
+        .model({
+          somefield: a.string(),
+        })
+        .authorization([a.allow.groupDefinedIn('myGroupField')]),
+      GroupsIn: a
+        .model({
+          somefield: a.string(),
+        })
+        .authorization([a.allow.groupsDefinedIn('myGroupsField')]),
+    });
+    type Schema = ClientSchema<typeof schema>;
+
+    test('default owner', () => {
+      type test = Expect<
+        Equal<Schema['DefaultOwnerField']['owner'], string | undefined>
+      >;
+    });
+
+    test('custom owner', () => {
+      type test = Expect<
+        Equal<
+          Schema['CustomOwnerField']['customOwnerField'],
+          string | undefined
+        >
+      >;
+    });
+
+    test('group', () => {
+      type test = Expect<
+        Equal<Schema['GroupIn']['myGroupField'], string | undefined>
+      >;
+    });
+
+    test('groups', () => {
+      type test = Expect<
+        Equal<Schema['GroupsIn']['myGroupsField'], string[] | undefined>
+      >;
+    });
+  });
+
+  describe('implicit date fields are surfaced', () => {
+    const schema = a.schema({
+      // date field customization not yet supported, AFIAK.
+      // so, just one model to confirm types on.
+      SimpleModel: a.model({
+        somefield: a.string(),
+      }),
+    });
+
+    type Schema = ClientSchema<typeof schema>;
+
+    test('default fields', () => {
+      type testCreatedAt = Expect<
+        Equal<Schema['SimpleModel']['createdAt'], string>
+      >;
+      type testUpdatedAt = Expect<
+        Equal<Schema['SimpleModel']['updatedAt'], string>
       >;
     });
   });
