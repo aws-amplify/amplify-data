@@ -183,6 +183,47 @@ describe('Basic operations', () => {
     });
   });
 
-  // TODO
-  // describe('can filter on implied fields', () => {});
+  describe('can filter on implied fields', () => {
+    test('can filter basic fields', async () => {
+      await client.models.Post.list({
+        filter: {
+          title: { eq: 'whatever ' },
+        },
+      });
+    });
+
+    test('can filter implicit ID', async () => {
+      await client.models.Post.list({
+        filter: {
+          id: { eq: 'whatever ' },
+        },
+      });
+    });
+
+    test('can filter implicit createdAt', async () => {
+      await client.models.Post.list({
+        filter: {
+          createdAt: { eq: 'whatever ' },
+        },
+      });
+    });
+
+    test('can filter implicit updatedAt', async () => {
+      await client.models.Post.list({
+        filter: {
+          updatedAt: { eq: 'whatever ' },
+        },
+      });
+    });
+
+    // type T = Schema['Post']['']
+
+    // test('can filter implicit FK', async () => {
+    //   await client.models.Comment.list({
+    //     filter: {
+    //       : { eq: "something"}
+    //     },
+    //   });
+    // });
+  });
 });
