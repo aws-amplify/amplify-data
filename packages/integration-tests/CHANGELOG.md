@@ -1,5 +1,11 @@
 # integration-tests
 
+## 0.0.4
+
+### Patch Changes
+
+- 1f6bfcc: surface relationship FK fields explicitly in model types and generated graphql models
+
 ## 0.0.3
 
 ### Patch Changes

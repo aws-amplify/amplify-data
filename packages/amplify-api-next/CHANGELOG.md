@@ -1,5 +1,11 @@
 # @aws-amplify/amplify-api-next-alpha
 
+## 0.10.0
+
+### Minor Changes
+
+- 1f6bfcc: surface relationship FK fields explicitly in model types and generated graphql models
+
 ## 0.9.1
 
 ### Patch Changes
