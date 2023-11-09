@@ -3,6 +3,7 @@
 exports[`EnumType transform Explicit Enum - auth 1`] = `
 "type File @model 
 {
+  id: ID! @primaryKey
   accessLevel: AccessLevel @auth(rules: [{allow: owner, ownerField: "owner"}])
   owner: String
   createdAt: AWSDateTime!
@@ -19,6 +20,7 @@ private
 exports[`EnumType transform Explicit Enum - required 1`] = `
 "type File @model 
 {
+  id: ID! @primaryKey
   accessLevel: AccessLevel!
   createdAt: AWSDateTime!
   updatedAt: AWSDateTime!
@@ -34,6 +36,7 @@ private
 exports[`EnumType transform Explicit Enum 1`] = `
 "type File @model 
 {
+  id: ID! @primaryKey
   accessLevel: AccessLevel
   createdAt: AWSDateTime!
   updatedAt: AWSDateTime!
@@ -49,6 +52,7 @@ private
 exports[`EnumType transform Implicit Enum 1`] = `
 "type File @model 
 {
+  id: ID! @primaryKey
   accessLevel: AccessLevel
   createdAt: AWSDateTime!
   updatedAt: AWSDateTime!
