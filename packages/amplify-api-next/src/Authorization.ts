@@ -1,6 +1,6 @@
 import type { UnionToIntersection } from '@aws-amplify/amplify-api-next-types-alpha';
 
-export const __data = Symbol('data');
+const __data = Symbol('data');
 
 /**
  * All possible providers.
@@ -469,3 +469,7 @@ export type ImpliedAuthField<T extends Authorization<any, any>> =
  */
 export type ImpliedAuthFields<T extends Authorization<any, any>> =
   UnionToIntersection<ImpliedAuthField<T>>;
+
+export const accessData = <T extends Authorization<any, any>>(
+  authorization: T,
+) => authorization[__data];
