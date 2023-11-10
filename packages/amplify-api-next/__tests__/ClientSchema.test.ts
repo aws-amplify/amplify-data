@@ -78,4 +78,30 @@ describe('schema generation', () => {
     });
     expect(schema.transform().schema).toMatchSnapshot();
   });
+
+  test('global public auth', () => {
+    const schema = a
+      .schema({
+        A: a.model({
+          field: a.string(),
+        }),
+        B: a.model({
+          field: a.json(),
+        }),
+        C: a.model({
+          d: a.hasOne('D'),
+        }),
+        D: a.model({
+          can: a.integer(),
+          you: a.boolean(),
+          tell: a.float(),
+          i: a.date(),
+          am: a.ipAddress(),
+          getting: a.url(),
+          tired: a.enum(['?']),
+        }),
+      })
+      .authorization([a.allow.public()]);
+    expect(schema.transform()).toMatchSnapshot();
+  });
 });

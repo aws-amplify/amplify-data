@@ -263,3 +263,103 @@ describe('implied fields', () => {
     });
   });
 });
+
+describe('global public auth types', () => {
+  test('allows public', () => {
+    a.schema({
+      A: a.model({
+        field: a.string(),
+      }),
+    }).authorization([a.allow.public()]);
+  });
+
+  test('disallows multiple entries', () => {
+    a.schema({
+      A: a.model({
+        field: a.string(),
+      }),
+      // @ts-expect-error
+    }).authorization([a.allow.public(), a.allow.public()]);
+  });
+
+  test('disallows zero entries', () => {
+    a.schema({
+      A: a.model({
+        field: a.string(),
+      }),
+      // @ts-expect-error
+    }).authorization([]);
+  });
+
+  test('disallows private', () => {
+    a.schema({
+      A: a.model({
+        field: a.string(),
+      }),
+      // @ts-expect-error
+    }).authorization([a.allow.private()]);
+  });
+
+  test('disallows owner', () => {
+    a.schema({
+      A: a.model({
+        field: a.string(),
+      }),
+      // @ts-expect-error
+    }).authorization([a.allow.owner()]);
+  });
+
+  test('disallows multipleOwners', () => {
+    a.schema({
+      A: a.model({
+        field: a.string(),
+      }),
+      // @ts-expect-error
+    }).authorization([a.allow.multipleOwners()]);
+  });
+
+  test('disallows custom', () => {
+    a.schema({
+      A: a.model({
+        field: a.string(),
+      }),
+      // @ts-expect-error
+    }).authorization([a.allow.custom()]);
+  });
+
+  test('disallows groupDefinedIn', () => {
+    a.schema({
+      A: a.model({
+        field: a.string(),
+      }),
+      // @ts-expect-error
+    }).authorization([a.allow.groupDefinedIn()]);
+  });
+
+  test('disallows groupsDefinedIn', () => {
+    a.schema({
+      A: a.model({
+        field: a.string(),
+      }),
+      // @ts-expect-error
+    }).authorization([a.allow.groupsDefinedIn()]);
+  });
+
+  test('disallows specificGroup', () => {
+    a.schema({
+      A: a.model({
+        field: a.string(),
+      }),
+      // @ts-expect-error
+    }).authorization([a.allow.specificGroup('group')]);
+  });
+
+  test('disallows multipleOwners', () => {
+    a.schema({
+      A: a.model({
+        field: a.string(),
+      }),
+      // @ts-expect-error
+    }).authorization([a.allow.specificGroups(['a', 'b'])]);
+  });
+});

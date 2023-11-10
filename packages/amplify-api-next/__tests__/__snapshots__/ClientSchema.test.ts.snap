@@ -1,5 +1,55 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`schema generation global public auth 1`] = `
+{
+  "functionSlots": [],
+  "schema": "input AMPLIFY { globalAuthRule: AuthRule = { allow: public } }
+
+type A @model 
+{
+  id: ID! @primaryKey
+  field: String
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
+}
+
+type B @model 
+{
+  id: ID! @primaryKey
+  field: AWSJSON
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
+}
+
+type C @model 
+{
+  id: ID! @primaryKey
+  d: D @hasOne
+  cDId: ID
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
+}
+
+type D @model 
+{
+  id: ID! @primaryKey
+  can: Int
+  you: Boolean
+  tell: Float
+  i: AWSDate
+  am: AWSIPAddress
+  getting: AWSURL
+  tired: Tired
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
+}
+
+enum Tired {
+?
+}",
+}
+`;
+
 exports[`schema generation with relationships 1`] = `
 "type BoringParent @model 
 {

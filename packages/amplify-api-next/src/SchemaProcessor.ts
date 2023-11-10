@@ -490,8 +490,13 @@ function processFields(
 }
 
 function calculateGlobalAuth(schema: InternalSchema): string {
-  // if (schema.data.auth[0])
-  return '';
+  const rule =
+    schema.data.auth.length === 1 ? accessData(schema.data.auth[0]) : null;
+  if (rule && rule.strategy === 'public') {
+    return 'input AMPLIFY { globalAuthRule: AuthRule = { allow: public } }';
+  } else {
+    return '';
+  }
 }
 
 const schemaPreprocessor = (schema: InternalSchema): string => {
