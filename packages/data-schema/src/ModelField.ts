@@ -43,7 +43,9 @@ type FieldData = {
   authorization: Authorization<any, any>[];
 };
 
-type ModelFieldTypeParamInner = string | number | boolean | Date | null;
+type ModelFieldTypeParamInner = string | number | boolean | Date | Json | null;
+
+export type Json = null | string | number | boolean | object | any[];
 
 export type ModelFieldTypeParamOuter =
   | ModelFieldTypeParamInner
@@ -259,7 +261,7 @@ export function email(): ModelField<Nullable<string>> {
  * rather than as the literal input strings.
  * @returns JSON field definition
  */
-export function json(): ModelField<Nullable<any>> {
+export function json(): ModelField<Nullable<Json>> {
   return _field(ModelFieldType.JSON);
 }
 

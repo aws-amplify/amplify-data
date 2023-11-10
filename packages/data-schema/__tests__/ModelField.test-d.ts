@@ -16,6 +16,7 @@ import {
   phone,
   url,
   ipAddress,
+  Json,
 } from '../src/ModelField';
 
 /**
@@ -74,7 +75,7 @@ test('all basic scalar fields produce expected type args', () => {
     datetime: string;
     timestamp: number;
     email: string;
-    json: any;
+    json: Json;
     phone: string;
     url: string;
     ipAddress: string;

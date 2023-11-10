@@ -2,6 +2,8 @@ import { a, ClientSchema } from '@aws-amplify/data-schema';
 import { Expect, Equal, SelectionSet } from '@aws-amplify/data-schema-types';
 import { generateClient } from 'aws-amplify/api';
 
+type Json = null | string | number | boolean | object | any[];
+
 describe('Custom Selection Set', () => {
   describe('Basic, single model', () => {
     const schema = a.schema({
@@ -368,7 +370,7 @@ describe('Custom Selection Set', () => {
               readonly id: string;
               readonly createdAt: string;
               readonly updatedAt: string;
-              readonly metaData: any;
+              readonly metaData: Json;
             }[];
           }[];
           readonly comments2: {
@@ -377,7 +379,7 @@ describe('Custom Selection Set', () => {
               readonly id: string;
               readonly createdAt: string;
               readonly updatedAt: string;
-              readonly metaData: any;
+              readonly metaData: Json;
             }[];
           }[];
         }[];

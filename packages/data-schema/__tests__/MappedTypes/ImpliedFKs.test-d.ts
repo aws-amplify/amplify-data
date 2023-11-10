@@ -15,6 +15,7 @@ import {
   AllImpliedFKs,
 } from '../../src/MappedTypes/ForeignKeys';
 import { ModelIdentifier } from '../../src/MappedTypes/ModelMetadata';
+import { Json } from '../../src/ModelField';
 
 const schema = a.schema({
   BoringParent: a.model({
@@ -25,13 +26,17 @@ const schema = a.schema({
   }),
   BoringChild: a.model({
     value: a.string(),
+    // TODO clear add of json for reasons
+    json: a.json(),
   }),
   BoringReciprocalChild: a.model({
     parent: a.belongsTo('BoringParent'),
     value: a.string(),
+    json: a.json(),
   }),
   BoringHasManyChild: a.model({
     value: a.string(),
+    json: a.json(),
   }),
   ReciprocalHasManyChild: a.model({
     value: a.string(),
@@ -67,6 +72,7 @@ const schema = a.schema({
       CPKHasManyChildIdFieldA: a.id().required(),
       CPKHasManyChildIdFieldB: a.id().required(),
       value: a.string(),
+      json: a.json(),
     })
     .identifier(['CPKHasManyChildIdFieldA', 'CPKHasManyChildIdFieldB']),
   CPKReciprocalHasManyChild: a
@@ -196,16 +202,27 @@ describe('Denormalized mapped type', () => {
 
     type Actual = Extract<D, { model: 'BoringChild' }>;
 
-    type Expected = {
-      model: 'BoringChild';
-      identifier: 'id';
-      field: 'value';
-      type: string | null;
-      relatedModel: undefined;
-      relationshipType: undefined;
-      relatedModelIdentifier: never;
-      relationName: undefined;
-    };
+    type Expected =
+      | {
+          model: 'BoringChild';
+          identifier: 'id';
+          field: 'value';
+          type: string | null;
+          relatedModel: undefined;
+          relationshipType: undefined;
+          relatedModelIdentifier: never;
+          relationName: undefined;
+        }
+      | {
+          model: 'BoringChild';
+          identifier: 'id';
+          field: 'json';
+          type: Json | null;
+          relatedModel: undefined;
+          relationshipType: undefined;
+          relationName: undefined;
+          relatedModelIdentifier: never;
+        };
 
     type test = Expect<Equal<Actual, Expected>>;
   });
