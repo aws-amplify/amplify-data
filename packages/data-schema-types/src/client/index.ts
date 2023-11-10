@@ -360,12 +360,12 @@ export type LazyLoader<Model, IsArray extends boolean> = (
         authToken?: string;
         limit?: number;
         nextToken?: string | null;
-        headers?: any;
+        headers?: CustomHeaders;
       }
     : {
         authMode?: AuthMode;
         authToken?: string;
-        headers?: any;
+        headers?: CustomHeaders;
       },
 ) => IsArray extends true
   ? ListReturnValue<Prettify<Model>>
@@ -456,17 +456,29 @@ type ModelTypesClient<
 > = {
   create: (
     model: Prettify<MutationInput<Model, ModelMeta>>,
-    options?: { authMode?: AuthMode; authToken?: string; headers?: any },
+    options?: {
+      authMode?: AuthMode;
+      authToken?: string;
+      headers?: CustomHeaders;
+    },
   ) => SingularReturnValue<Model>;
   update: (
     model: Prettify<
       ModelIdentifier<ModelMeta> & Partial<MutationInput<Model, ModelMeta>>
     >,
-    options?: { authMode?: AuthMode; authToken?: string; headers?: any },
+    options?: {
+      authMode?: AuthMode;
+      authToken?: string;
+      headers?: CustomHeaders;
+    },
   ) => SingularReturnValue<Model>;
   delete: (
     identifier: ModelIdentifier<ModelMeta>,
-    options?: { authMode?: AuthMode; authToken?: string; headers?: any },
+    options?: {
+      authMode?: AuthMode;
+      authToken?: string;
+      headers?: CustomHeaders;
+    },
   ) => SingularReturnValue<Model>;
   get<
     FlatModel extends Record<string, unknown> = ResolvedModel<Model>,
@@ -477,7 +489,7 @@ type ModelTypesClient<
       selectionSet?: SelectionSet;
       authMode?: AuthMode;
       authToken?: string;
-      headers?: any;
+      headers?: CustomHeaders;
     },
   ): SingularReturnValue<ReturnValue<Model, FlatModel, SelectionSet>>;
   list<
@@ -490,7 +502,7 @@ type ModelTypesClient<
     selectionSet?: SelectionSet;
     authMode?: AuthMode;
     authToken?: string;
-    headers?: any;
+    headers?: CustomHeaders;
   }): ListReturnValue<ReturnValue<Model, FlatModel, SelectionSet>>;
   onCreate<
     FlatModel extends Record<string, unknown> = ResolvedModel<Model>,
@@ -534,17 +546,29 @@ type ModelTypesSSRCookies<
 > = {
   create: (
     model: Prettify<MutationInput<Model, ModelMeta>>,
-    options?: { authMode?: AuthMode; authToken?: string; headers?: any },
+    options?: {
+      authMode?: AuthMode;
+      authToken?: string;
+      headers?: CustomHeaders;
+    },
   ) => SingularReturnValue<Model>;
   update: (
     model: Prettify<
       ModelIdentifier<ModelMeta> & Partial<MutationInput<Model, ModelMeta>>
     >,
-    options?: { authMode?: AuthMode; authToken?: string; headers?: any },
+    options?: {
+      authMode?: AuthMode;
+      authToken?: string;
+      headers?: CustomHeaders;
+    },
   ) => SingularReturnValue<Model>;
   delete: (
     identifier: ModelIdentifier<ModelMeta>,
-    options?: { authMode?: AuthMode; authToken?: string; headers?: any },
+    options?: {
+      authMode?: AuthMode;
+      authToken?: string;
+      headers?: CustomHeaders;
+    },
   ) => SingularReturnValue<Model>;
   get<
     FlatModel extends Record<string, unknown> = ResolvedModel<Model>,
@@ -555,7 +579,7 @@ type ModelTypesSSRCookies<
       selectionSet?: SelectionSet;
       authMode?: AuthMode;
       authToken?: string;
-      headers?: any;
+      headers?: CustomHeaders;
     },
   ): SingularReturnValue<ReturnValue<Model, FlatModel, SelectionSet>>;
   list<
@@ -568,7 +592,7 @@ type ModelTypesSSRCookies<
     selectionSet?: SelectionSet;
     authMode?: AuthMode;
     authToken?: string;
-    headers?: any;
+    headers?: CustomHeaders;
   }): ListReturnValue<ReturnValue<Model, FlatModel, SelectionSet>>;
 };
 
@@ -580,19 +604,31 @@ type ModelTypesSSRRequest<
     // TODO: actual type
     contextSpec: any,
     model: Prettify<MutationInput<Model, ModelMeta>>,
-    options?: { authMode?: AuthMode; authToken?: string; headers?: any },
+    options?: {
+      authMode?: AuthMode;
+      authToken?: string;
+      headers?: CustomHeaders;
+    },
   ) => SingularReturnValue<Model>;
   update: (
     contextSpec: any,
     model: Prettify<
       ModelIdentifier<ModelMeta> & Partial<MutationInput<Model, ModelMeta>>
     >,
-    options?: { authMode?: AuthMode; authToken?: string; headers?: any },
+    options?: {
+      authMode?: AuthMode;
+      authToken?: string;
+      headers?: CustomHeaders;
+    },
   ) => SingularReturnValue<Model>;
   delete: (
     contextSpec: any,
     identifier: ModelIdentifier<ModelMeta>,
-    options?: { authMode?: AuthMode; authToken?: string; headers?: any },
+    options?: {
+      authMode?: AuthMode;
+      authToken?: string;
+      headers?: CustomHeaders;
+    },
   ) => SingularReturnValue<Model>;
   get<
     FlatModel extends Record<string, unknown> = ResolvedModel<Model>,
@@ -604,7 +640,7 @@ type ModelTypesSSRRequest<
       selectionSet?: SelectionSet;
       authMode?: AuthMode;
       authToken?: string;
-      headers?: any;
+      headers?: CustomHeaders;
     },
   ): SingularReturnValue<ReturnValue<Model, FlatModel, SelectionSet>>;
   list<
@@ -619,7 +655,7 @@ type ModelTypesSSRRequest<
       selectionSet?: SelectionSet;
       authMode?: AuthMode;
       authToken?: string;
-      headers?: any;
+      headers?: CustomHeaders;
     },
   ): ListReturnValue<ReturnValue<Model, FlatModel, SelectionSet>>;
 };
@@ -643,3 +679,9 @@ export type ModelTypes<
       : never
     : never;
 };
+
+/**
+ * Custom headers that can be passed either to the client or to individual
+ * calls, either as a static object or a function that returns a promise.
+ */
+export type CustomHeaders = Record<string, string> | (() => Promise<Headers>);
