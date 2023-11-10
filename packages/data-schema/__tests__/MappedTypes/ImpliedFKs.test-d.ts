@@ -24,9 +24,13 @@ const schema = a.schema({
     childHasManyNormal: a.hasMany('BoringHasManyChild'),
     childHasManyReciprocal: a.hasMany('ReciprocalHasManyChild'),
   }),
+
+  // Including json fields to these relationship tests since this more
+  //   complicated primative type can cause type issues. Think of this as
+  //   a different type of value field that gives us added coverage confidence
+
   BoringChild: a.model({
     value: a.string(),
-    // TODO clear add of json for reasons
     json: a.json(),
   }),
   BoringReciprocalChild: a.model({
