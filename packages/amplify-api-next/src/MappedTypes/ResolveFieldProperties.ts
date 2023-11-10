@@ -118,7 +118,7 @@ type ResolveRelationships<
     [FieldProp in keyof Schema[ModelProp]]: Schema[ModelProp][FieldProp] extends RefType<
       infer R extends RefTypeParamShape,
       never | 'required' | 'authorization',
-      never | Authorization<any, any>
+      never | Authorization<any, any, any>
     > | null
       ? ResolveRef<NonModelTypes, R>
       : Schema[ModelProp][FieldProp] extends ModelRelationalFieldParamShape
@@ -193,7 +193,7 @@ type ImpliedAuthFieldsFromFields<T> = UnionToIntersection<
         | ModelField<any, any, infer Auth>
         | ModelRelationalField<any, any, any, infer Auth>
         | RefType<any, any, infer Auth>
-      ? Auth extends Authorization<any, any>
+      ? Auth extends Authorization<any, any, any>
         ? ImpliedAuthFields<Auth>
         : object
       : object

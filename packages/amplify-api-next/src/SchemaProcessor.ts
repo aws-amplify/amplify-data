@@ -170,7 +170,7 @@ function refFieldToGql(fieldDef: RefFieldDef) {
   return field;
 }
 
-function calculateAuth(authorization: Authorization<any, any>[]) {
+function calculateAuth(authorization: Authorization<any, any, any>[]) {
   const authFields: Record<string, ModelField<any, any>> = {};
   const rules: string[] = [];
 
@@ -302,7 +302,7 @@ const allImpliedFKs = (schema: InternalSchema) => {
           break;
         case ModelRelationshipTypes.hasMany:
           {
-            let authorization: Authorization<any, any>[] = [];
+            let authorization: Authorization<any, any, any>[] = [];
             let required = false;
             const [_belongsToName, belongsToDef] =
               Object.entries(relatedModel.data.fields).find(([_name, def]) => {
@@ -489,6 +489,11 @@ function processFields(
   return { gqlFields, models };
 }
 
+function calculateGlobalAuth(schema: InternalSchema): string {
+  // if (schema.data.auth[0])
+  return '';
+}
+
 const schemaPreprocessor = (schema: InternalSchema): string => {
   const gqlModels: string[] = [];
 
@@ -562,7 +567,11 @@ const schemaPreprocessor = (schema: InternalSchema): string => {
     }
   }
 
-  const processedSchema = gqlModels.join('\n\n');
+  const globalAuth = calculateGlobalAuth(schema);
+
+  const processedSchema = [globalAuth, gqlModels.join('\n\n')]
+    .filter((x) => x)
+    .join('\n\n');
 
   return processedSchema;
 };

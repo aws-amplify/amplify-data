@@ -40,7 +40,7 @@ type FieldData = {
   array: boolean;
   arrayRequired: boolean;
   default: undefined | ModelFieldTypeParamOuter;
-  authorization: Authorization<any, any>[];
+  authorization: Authorization<any, any, any>[];
 };
 
 type ModelFieldTypeParamInner = string | number | boolean | Date | null;
@@ -92,7 +92,7 @@ export type ModelField<
      * Configures field-level authorization rules. Pass in an array of authorizations `(a.allow.____)` to mix and match
      * multiple authorization rules for this field.
      */
-    authorization<AuthRuleType extends Authorization<any, any>>(
+    authorization<AuthRuleType extends Authorization<any, any, any>>(
       rules: AuthRuleType[],
     ): ModelField<T, K | 'authorization', AuthRuleType>;
   },

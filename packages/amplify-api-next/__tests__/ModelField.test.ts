@@ -31,7 +31,7 @@ describe('field level auth', () => {
       any,
       infer Auth
     >
-      ? Auth extends Authorization<any, any>
+      ? Auth extends Authorization<any, any, any>
         ? ImpliedAuthFields<Auth>
         : never
       : never;
@@ -70,7 +70,7 @@ describe('field level auth', () => {
       any,
       infer Auth
     >
-      ? Auth extends Authorization<any, any>
+      ? Auth extends Authorization<any, any, any>
         ? ImpliedAuthFields<Auth>
         : never
       : never;

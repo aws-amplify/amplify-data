@@ -22,19 +22,19 @@ type InternalModelFields = Record<
 type ModelData = {
   fields: ModelFields;
   identifier: string[];
-  authorization: Authorization<any, any>[];
+  authorization: Authorization<any, any, any>[];
 };
 
 type InternalModelData = ModelData & {
   fields: InternalModelFields;
   identifier: string[];
-  authorization: Authorization<any, any>[];
+  authorization: Authorization<any, any, any>[];
 };
 
 export type ModelTypeParamShape = {
   fields: ModelFields;
   identifier: string[];
-  authorization: Authorization<any, any>[];
+  authorization: Authorization<any, any, any>[];
 };
 
 type ExtractType<T extends ModelTypeParamShape> = {
@@ -93,10 +93,10 @@ type IdentifierType<
 type ConflictingAuthRulesMap<T extends ModelTypeParamShape> = {
   [K in keyof ExtractType<T>]: K extends string
     ? string extends ExtractType<T>[K]
-      ? Authorization<K, true>
+      ? Authorization<any, K, true>
       : string[] extends ExtractType<T>[K]
-      ? Authorization<K, false>
-      : Authorization<K, true> | Authorization<K, false>
+      ? Authorization<any, K, false>
+      : Authorization<any, K, true> | Authorization<any, K, false>
     : never;
 };
 
@@ -135,7 +135,7 @@ export type ModelType<
     identifier<ID extends IdentifierType<T> = []>(
       identifier: ID,
     ): ModelType<SetTypeSubArg<T, 'identifier', ID>, K | 'identifier'>;
-    authorization<AuthRuleType extends Authorization<any, any>>(
+    authorization<AuthRuleType extends Authorization<any, any, any>>(
       rules: Exclude<AuthRuleType, ConflictingAuthRules<T>>[],
     ): ModelType<
       SetTypeSubArg<T, 'authorization', AuthRuleType[]>,

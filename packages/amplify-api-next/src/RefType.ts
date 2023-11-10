@@ -8,7 +8,7 @@ export type RefTypeParamShape = {
   type: 'ref';
   link: string;
   required: boolean;
-  authorization: Authorization<any, any>[];
+  authorization: Authorization<any, any, any>[];
 };
 
 export type RefType<
@@ -25,7 +25,7 @@ export type RefType<
      * Configures field-level authorization rules. Pass in an array of authorizations `(a.allow.____)` to mix and match
      * multiple authorization rules for this field.
      */
-    authorization<AuthRuleType extends Authorization<any, any>>(
+    authorization<AuthRuleType extends Authorization<any, any, any>>(
       rules: AuthRuleType[],
     ): RefType<T, K | 'authorization', AuthRuleType>;
     // structural difference to separate type from ModelField TODO: find cleaner way to achieve this
@@ -41,7 +41,7 @@ type RefTypeData = {
   type: 'ref';
   link: string;
   required: boolean;
-  authorization: Authorization<any, any>[];
+  authorization: Authorization<any, any, any>[];
 };
 
 /**

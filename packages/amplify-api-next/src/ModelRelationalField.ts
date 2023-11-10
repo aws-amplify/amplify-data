@@ -25,7 +25,7 @@ type ModelRelationalFieldData = {
   valueRequired: boolean;
   arrayRequired: boolean;
   relationName?: string;
-  authorization: Authorization<any, any>[];
+  authorization: Authorization<any, any, any>[];
 };
 
 export type ModelRelationalFieldParamShape = {
@@ -72,7 +72,7 @@ export type ModelRelationalField<
      * Configures field-level authorization rules. Pass in an array of authorizations `(a.allow.____)` to mix and match
      * multiple authorization rules for this field.
      */
-    authorization<AuthRuleType extends Authorization<any, any>>(
+    authorization<AuthRuleType extends Authorization<any, any, any>>(
       rules: AuthRuleType[],
     ): ModelRelationalField<T, K | 'authorization', K, AuthRuleType>;
   },
