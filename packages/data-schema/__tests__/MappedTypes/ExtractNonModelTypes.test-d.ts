@@ -26,6 +26,7 @@ describe('ExtractNonModelTypes Mapped Type', () => {
       Post: a.model({
         title: a.string(),
         location: a.ref('Location'),
+        metadata: a.json(),
       }),
       Location: a.customType({
         lat: a.float(),
@@ -52,6 +53,7 @@ describe('ExtractNonModelTypes Mapped Type', () => {
     const s = a.schema({
       Post: a.model({
         title: a.string(),
+        metadata: a.json(),
         location: a.customType({
           lat: a.float(),
           long: a.float(),

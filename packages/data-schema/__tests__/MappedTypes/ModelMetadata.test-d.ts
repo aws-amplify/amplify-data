@@ -12,12 +12,14 @@ import {
   ModelIdentifier,
   RelationalMetadata,
 } from '../../src/MappedTypes/ModelMetadata';
+import { Json } from '../../src/ModelField';
 
 describe('ModelIdentifier', () => {
   test('Default identifier', () => {
     const s = a.schema({
       Post: a.model({
         title: a.string(),
+        metadata: a.json(),
       }),
     });
 
@@ -34,6 +36,7 @@ describe('ModelIdentifier', () => {
       Post: a
         .model({
           title: a.string().required(),
+          metadata: a.json(),
         })
         .identifier(['title']),
     });
@@ -52,6 +55,7 @@ describe('ModelIdentifier', () => {
         .model({
           title: a.string().required(),
           createdAt: a.string().required(),
+          metadata: a.json(),
         })
         .identifier(['title', 'createdAt']),
     });
@@ -70,6 +74,7 @@ describe('RelationalMetadata', () => {
     const s = a.schema({
       Post: a.model({
         title: a.string(),
+        metadata: a.json(),
       }),
     });
 
@@ -90,6 +95,7 @@ describe('RelationalMetadata', () => {
     const s = a.schema({
       Post: a.model({
         title: a.string(),
+        metadata: a.json(),
         comments: a.hasMany('Comment'),
       }),
       Comment: a.model({
@@ -117,6 +123,7 @@ describe('RelationalMetadata', () => {
                 readonly createdAt?: string;
                 readonly updatedAt?: string;
                 title?: string | null | undefined;
+                metadata?: Json | null | undefined;
                 comments?: ResolvedFields['Post']['comments'];
               }
             | undefined;
@@ -341,6 +348,7 @@ describe('RelationalMetadata', () => {
     const s = a.schema({
       Post: a.model({
         title: a.string(),
+        metadata: a.json().required(),
         postTags: a.manyToMany('Tag', { relationName: 'PostTag' }),
       }),
       Tag: a.model({
@@ -368,6 +376,7 @@ describe('RelationalMetadata', () => {
             readonly createdAt?: string;
             readonly updatedAt?: string;
             title?: string | null | undefined;
+            metadata?: Json | null | undefined;
             postTags?: ResolvedFields['Post']['postTags'];
           };
           tag?: {

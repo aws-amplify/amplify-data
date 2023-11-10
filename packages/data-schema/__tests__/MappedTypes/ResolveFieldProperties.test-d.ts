@@ -2,12 +2,14 @@ import type { Prettify, Equal, Expect } from '@aws-amplify/data-schema-types';
 import { a, ClientSchema } from '../../index';
 import { ResolveFieldProperties } from '../../src/MappedTypes/ResolveFieldProperties';
 import type { ExtractNonModelTypes } from '../../src/MappedTypes/ExtractNonModelTypes';
+import { Json } from '../../src/ModelField';
 
 describe('ResolveFieldProperties Mapped Type', () => {
   test('Basic schema', () => {
     const s = a.schema({
       Post: a.model({
         title: a.string(),
+        metadata: a.json(),
       }),
     });
 
@@ -21,6 +23,7 @@ describe('ResolveFieldProperties Mapped Type', () => {
         readonly id: string;
         readonly createdAt: string;
         readonly updatedAt: string;
+        metadata?: Json;
         title?: string | null | undefined;
       };
     };
@@ -32,6 +35,7 @@ describe('ResolveFieldProperties Mapped Type', () => {
     const s = a.schema({
       Post: a.model({
         title: a.string().required(),
+        metadata: a.json(),
         location: a.ref('Location'),
       }),
       Comment: a.model({
@@ -56,6 +60,7 @@ describe('ResolveFieldProperties Mapped Type', () => {
       readonly createdAt: string;
       readonly updatedAt: string;
       title: string;
+      metadata?: Json;
       location?:
         | {
             lat: number | null;
@@ -109,6 +114,7 @@ describe('ResolveFieldProperties Mapped Type', () => {
     const s = a.schema({
       Post: a.model({
         title: a.string().required(),
+        metadata: a.json(),
         location: a.ref('Location').required().authorization([a.allow.owner()]),
       }),
       Comment: a.model({
@@ -133,6 +139,7 @@ describe('ResolveFieldProperties Mapped Type', () => {
       readonly createdAt: string;
       readonly updatedAt: string;
       title: string;
+      metadata?: Json;
       location: {
         lat: number | null;
         long: number | null;

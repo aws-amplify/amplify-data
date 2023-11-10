@@ -3,13 +3,14 @@ import { a } from '../../index';
 import { ResolveSchema } from '../../src/MappedTypes/ResolveSchema';
 import type { RefType, RefTypeParamShape } from '../../src/RefType';
 import { Authorization } from '../../src/Authorization';
-import { __auth } from '../../src/ModelField';
+import { Json, __auth } from '../../src/ModelField';
 
 describe('ResolveSchema Mapped Type', () => {
   test('Basic schema', () => {
     const s = a.schema({
       Post: a.model({
         title: a.string(),
+        metadata: a.json(),
       }),
     });
 
@@ -18,6 +19,7 @@ describe('ResolveSchema Mapped Type', () => {
     type Expected = {
       Post: {
         title: string | null;
+        metadata: Json;
       };
     };
 
@@ -28,6 +30,7 @@ describe('ResolveSchema Mapped Type', () => {
     const s = a.schema({
       Post: a.model({
         title: a.string(),
+        metadata: a.json(),
         location: a.ref('Location'),
       }),
       Location: a.customType({
@@ -43,6 +46,7 @@ describe('ResolveSchema Mapped Type', () => {
     type Expected = {
       Post: {
         title: string | null;
+        metadata: Json;
         location: RefType<{
           link: 'Location';
           type: 'ref';
@@ -59,6 +63,7 @@ describe('ResolveSchema Mapped Type', () => {
     const s = a.schema({
       Post: a.model({
         title: a.string(),
+        metadata: a.json(),
         location: a.ref('Location').required(),
       }),
       Location: a.customType({
@@ -74,6 +79,7 @@ describe('ResolveSchema Mapped Type', () => {
     type Expected = {
       Post: {
         title: string | null;
+        metadata: Json;
         location: RefType<
           {
             link: 'Location';
@@ -93,6 +99,7 @@ describe('ResolveSchema Mapped Type', () => {
     const s = a.schema({
       Post: a.model({
         title: a.string(),
+        metadata: a.json(),
         location: a.customType({
           lat: a.float(),
           long: a.float(),
@@ -106,6 +113,7 @@ describe('ResolveSchema Mapped Type', () => {
     type Expected = {
       Post: {
         title: string | null;
+        metadata: Json;
         location: RefType<{
           link: 'Location';
           type: 'ref';
@@ -122,6 +130,7 @@ describe('ResolveSchema Mapped Type', () => {
     const s = a.schema({
       Post: a.model({
         title: a.string(),
+        metadata: a.json(),
         privacy: a.ref('PrivacySetting'),
       }),
       PrivacySetting: a.enum(['PRIVATE', 'FRIENDS_ONLY', 'PUBLIC']),
@@ -132,6 +141,7 @@ describe('ResolveSchema Mapped Type', () => {
     type Expected = {
       Post: {
         title: string | null;
+        metadata: Json;
         privacy: RefType<{
           link: 'PrivacySetting';
           type: 'ref';
@@ -148,6 +158,7 @@ describe('ResolveSchema Mapped Type', () => {
     const s = a.schema({
       Post: a.model({
         title: a.string(),
+        metadata: a.json(),
         privacy: a.enum(['PRIVATE', 'FRIENDS_ONLY', 'PUBLIC']),
       }),
     });
@@ -157,6 +168,7 @@ describe('ResolveSchema Mapped Type', () => {
     type Expected = {
       Post: {
         title: string | null;
+        metadata: Json;
         privacy: RefType<{
           link: 'PrivacySetting';
           type: 'ref';

@@ -12,16 +12,20 @@ describe('implied fields', () => {
       }),
       BoringChild: a.model({
         value: a.string(),
+        json: a.json(),
       }),
       BoringReciprocalChild: a.model({
         parent: a.belongsTo('BoringParent'),
         value: a.string(),
+        json: a.json(),
       }),
       BoringHasManyChild: a.model({
         value: a.string(),
+        json: a.json(),
       }),
       ReciprocalHasManyChild: a.model({
         value: a.string(),
+        json: a.json(),
         parent: a.belongsTo('BoringParent'),
       }),
     });
@@ -194,21 +198,25 @@ describe('implied fields', () => {
       DefaultOwnerField: a
         .model({
           somefield: a.string(),
+          jsonfield: a.json(),
         })
         .authorization([a.allow.owner()]),
       CustomOwnerField: a
         .model({
           somefield: a.string(),
+          jsonfield: a.json(),
         })
         .authorization([a.allow.owner().inField('customOwnerField')]),
       GroupIn: a
         .model({
           somefield: a.string(),
+          jsonfield: a.json(),
         })
         .authorization([a.allow.groupDefinedIn('myGroupField')]),
       GroupsIn: a
         .model({
           somefield: a.string(),
+          jsonfield: a.json(),
         })
         .authorization([a.allow.groupsDefinedIn('myGroupsField')]),
     });
