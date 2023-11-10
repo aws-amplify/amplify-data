@@ -1,5 +1,11 @@
 # @aws-amplify/amplify-api-next-types-alpha
 
+## 0.4.2
+
+### Patch Changes
+
+- 943fb32: include TS src for RN
+
 ## 0.4.1
 
 ### Patch Changes
