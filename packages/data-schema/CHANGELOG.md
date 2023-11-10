@@ -1,5 +1,11 @@
 # @aws-amplify/amplify-api-next-alpha
 
+## 0.11.1
+
+### Patch Changes
+
+- 38c3691: fix: JSON modeling schema issues
+
 ## 0.11.0
 
 ### Minor Changes
