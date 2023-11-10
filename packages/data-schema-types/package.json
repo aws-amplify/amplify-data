@@ -4,6 +4,7 @@
   "license": "Apache-2.0",
   "main": "./lib-esm/index.d.ts",
   "types": "./lib-esm/index.d.ts",
+  "react-native": "./src/index.ts",
   "typesVersions": {
     "<5": {
       "lib-esm/index.d.ts": [
@@ -23,6 +24,7 @@
     "typescript": "^5.1.6"
   },
   "files": [
+    "src",
     "lib-esm/**",
     "package.json"
   ],
