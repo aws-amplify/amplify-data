@@ -489,16 +489,6 @@ function processFields(
   return { gqlFields, models };
 }
 
-function calculateGlobalAuth(schema: InternalSchema): string {
-  const rule =
-    schema.data.auth.length === 1 ? accessData(schema.data.auth[0]) : null;
-  if (rule && rule.strategy === 'public') {
-    return 'input AMPLIFY { globalAuthRule: AuthRule = { allow: public } }';
-  } else {
-    return '';
-  }
-}
-
 const schemaPreprocessor = (schema: InternalSchema): string => {
   const gqlModels: string[] = [];
 
@@ -542,9 +532,12 @@ const schemaPreprocessor = (schema: InternalSchema): string => {
       const identifier = typeDef.data.identifier;
       const [partitionKey] = identifier;
 
-      const { authString, authFields } = calculateAuth(
-        typeDef.data.authorization,
-      );
+      const mostRelevantAuthRules =
+        typeDef.data.authorization.length > 0
+          ? typeDef.data.authorization
+          : schema.data.authorization;
+
+      const { authString, authFields } = calculateAuth(mostRelevantAuthRules);
 
       const fieldLevelAuthRules = processFieldLevelAuthRules(
         fields,
@@ -572,11 +565,7 @@ const schemaPreprocessor = (schema: InternalSchema): string => {
     }
   }
 
-  const globalAuth = calculateGlobalAuth(schema);
-
-  const processedSchema = [globalAuth, gqlModels.join('\n\n')]
-    .filter((x) => x)
-    .join('\n\n');
+  const processedSchema = gqlModels.join('\n\n');
 
   return processedSchema;
 };

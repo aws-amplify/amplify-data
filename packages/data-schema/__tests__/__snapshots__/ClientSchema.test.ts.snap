@@ -1,11 +1,19 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`schema generation global public auth 1`] = `
+exports[`schema auth rules can define public auth with no provider 1`] = `
+"type widget @model @auth(rules: [{allow: public}])
+{
+  id: ID! @primaryKey
+  title: String!
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
+}"
+`;
+
+exports[`schema auth rules global public auth 1`] = `
 {
   "functionSlots": [],
-  "schema": "input AMPLIFY { globalAuthRule: AuthRule = { allow: public } }
-
-type A @model 
+  "schema": "type A @model @auth(rules: [{allow: public}])
 {
   id: ID! @primaryKey
   field: String
@@ -13,7 +21,7 @@ type A @model
   updatedAt: AWSDateTime!
 }
 
-type B @model 
+type B @model @auth(rules: [{allow: public}])
 {
   id: ID! @primaryKey
   field: AWSJSON
@@ -21,7 +29,7 @@ type B @model
   updatedAt: AWSDateTime!
 }
 
-type C @model 
+type C @model @auth(rules: [{allow: public}])
 {
   id: ID! @primaryKey
   d: D @hasOne
@@ -30,7 +38,7 @@ type C @model
   updatedAt: AWSDateTime!
 }
 
-type D @model 
+type D @model @auth(rules: [{allow: public}])
 {
   id: ID! @primaryKey
   can: Int

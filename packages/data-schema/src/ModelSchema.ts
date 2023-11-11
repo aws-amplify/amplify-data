@@ -9,6 +9,8 @@ import type { CustomType } from './CustomType';
 export { __auth } from './ModelField';
 import { processSchema } from './SchemaProcessor';
 import { Authorization } from './Authorization';
+import { SetTypeSubArg } from '@aws-amplify/data-schema-types';
+import { Prettify } from '@aws-amplify/data-schema-types';
 
 /*
  * Notes:
@@ -24,18 +26,18 @@ type InternalSchemaModels = Record<
 
 export type ModelSchemaParamShape = {
   types: ModelSchemaModels;
-  auth: Authorization<any, any, any>[];
+  authorization: Authorization<any, any, any>[];
 };
 
 type ModelSchemaData = {
   types: ModelSchemaModels;
-  auth: Authorization<any, any, any>[];
+  authorization: Authorization<any, any, any>[];
 };
 
 export type InternalSchema = {
   data: {
     types: InternalSchemaModels;
-    auth: Authorization<any, any, any>[];
+    authorization: Authorization<any, any, any>[];
   };
 };
 
@@ -44,14 +46,21 @@ export type ModelSchema<
   UsedMethods extends 'authorization' = never,
 > = Omit<
   {
-    data: T;
-    transform: () => DerivedApiDefinition;
-    authorization: (
-      auth: [Authorization<'public', any, any>],
-    ) => ModelSchema<T, UsedMethods | 'authorization'>;
+    authorization: <AuthRules extends Authorization<any, any, any>>(
+      auth: AuthRules[],
+    ) => ModelSchema<
+      SetTypeSubArg<T, 'authorization', AuthRules[]>,
+      // T,
+      // { types: T['types']; authorization: AuthRules[] },
+      // UsedMethods | 'authorization'
+      UsedMethods | 'authorization'
+    >;
   },
   UsedMethods
->;
+> & {
+  data: T;
+  transform: () => DerivedApiDefinition;
+};
 
 /**
  * Amplify API Next Model Schema shape
@@ -70,7 +79,7 @@ export const isModelSchema = (
 };
 
 function _schema<T extends ModelSchemaParamShape>(types: T['types']) {
-  const data: ModelSchemaData = { types, auth: [] };
+  const data: ModelSchemaData = { types, authorization: [] };
 
   const transform = (): DerivedApiDefinition => {
     const internalSchema: InternalSchema = { data } as InternalSchema;
@@ -78,11 +87,9 @@ function _schema<T extends ModelSchemaParamShape>(types: T['types']) {
     return processSchema({ schema: internalSchema });
   };
 
-  const authorization = (
-    auth: [Authorization<'public', any, any>],
-  ): ModelSchema<T, 'authorization'> => {
-    data.auth = auth;
-    return { data, transform } as ModelSchema<T, 'authorization'>;
+  const authorization = (rules: any): any => {
+    data.authorization = rules;
+    return { data, transform } as any;
   };
 
   return { data, transform, authorization } as ModelSchema<T>;
@@ -97,6 +104,6 @@ function _schema<T extends ModelSchemaParamShape>(types: T['types']) {
  */
 export function schema<Types extends ModelSchemaModels>(
   types: Types,
-): ModelSchema<{ types: Types; auth: [] }> {
+): ModelSchema<{ types: Types; authorization: [] }> {
   return _schema(types);
 }

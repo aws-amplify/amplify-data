@@ -11,11 +11,38 @@ import type { EnumType, EnumTypeParamShape } from '../EnumType';
 import type { RefType, RefTypeParamShape } from '../RefType';
 import { Authorization } from '../Authorization';
 
+import { a } from '../..';
+
+const schema = a
+  .schema({
+    A: a.model({
+      field: a.string(),
+    }),
+  })
+  .authorization([a.allow.public()]);
+
+type S = typeof schema;
+type STypes = S['data']['types'];
+
+type T0 = S extends ModelSchema<infer T, any> ? T : 'no';
+type T0_1 = S extends ModelSchema<any, any> ? 'yeah' : 'no';
+
+type T = SchemaTypes<S>;
+
+type WORKS = ModelSchema<
+  {
+    types: { x: { y: 'string' } };
+    authorization: Authorization<'public', 'something', false>[];
+  },
+  never | 'authorization'
+>;
+type WORKS_Types = SchemaTypes<WORKS>;
+
 export type ResolveSchema<Schema> = FieldTypes<ModelTypes<SchemaTypes<Schema>>>;
 
 // TODO: find better name
-export type SchemaTypes<T> = T extends ModelSchema<infer R>
-  ? R['types']
+export type SchemaTypes<T> = T extends ModelSchema<any, any>
+  ? T['data']['types']
   : never;
 
 /**

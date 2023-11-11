@@ -25,7 +25,7 @@ import type { CustomType, CustomTypeParamShape } from '../CustomType';
 import type { EnumType, EnumTypeParamShape } from '../EnumType';
 
 export type ResolveFieldProperties<
-  Schema extends ModelSchema<any>,
+  Schema extends ModelSchema<any, any>,
   NonModelTypes extends NonModelTypesShape,
   ResolvedSchema = ResolveSchema<Schema>,
   IdentifierMeta extends Record<
@@ -173,7 +173,7 @@ type Intersection<A, B, C, D> = A & B & C & D extends infer U
 
 // TODO: this should probably happen in InjectImplicitModelFields instead. Keeping here for now to reduce refactor
 // blast radius
-export type ModelImpliedAuthFields<Schema extends ModelSchema<any>> = {
+export type ModelImpliedAuthFields<Schema extends ModelSchema<any, any>> = {
   [ModelKey in keyof Schema['data']['types'] as Schema['data']['types'][ModelKey] extends EnumType<EnumTypeParamShape>
     ? never
     : Schema['data']['types'][ModelKey] extends CustomType<CustomTypeParamShape>
@@ -182,10 +182,17 @@ export type ModelImpliedAuthFields<Schema extends ModelSchema<any>> = {
     infer Model,
     any
   >
-    ? ImpliedAuthFields<Model['authorization'][number]> &
-        ImpliedAuthFieldsFromFields<Model>
+    ? AllAuthFieldsForModel<Schema, Model>
     : object;
 };
+
+type AllAuthFieldsForModel<
+  Schema extends ModelSchema<any, any>,
+  Model extends Schema['data']['types'][keyof Schema['data']['types']],
+> = (Model['authorization'][number] extends Authorization<any, any, any>
+  ? ImpliedAuthFields<Model['authorization'][number]>
+  : ImpliedAuthFields<Schema['data']['authorization'][number]>) &
+  ImpliedAuthFieldsFromFields<Model>;
 
 type ImpliedAuthFieldsFromFields<T> = UnionToIntersection<
   T extends ModelTypeParamShape

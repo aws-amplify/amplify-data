@@ -78,7 +78,9 @@ describe('schema generation', () => {
     });
     expect(schema.transform().schema).toMatchSnapshot();
   });
+});
 
+describe('schema auth rules', () => {
   test('global public auth', () => {
     const schema = a
       .schema({
@@ -103,5 +105,18 @@ describe('schema generation', () => {
       })
       .authorization([a.allow.public()]);
     expect(schema.transform()).toMatchSnapshot();
+  });
+
+  test('can define public auth with no provider', () => {
+    const schema = a.schema({
+      widget: a
+        .model({
+          title: a.string().required(),
+        })
+        .authorization([a.allow.public()]),
+    });
+
+    const graphql = schema.transform().schema;
+    expect(graphql).toMatchSnapshot();
   });
 });
