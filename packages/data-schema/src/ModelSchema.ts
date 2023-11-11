@@ -6,6 +6,7 @@ import type {
 } from './ModelType';
 import type { EnumType } from './EnumType';
 import type { CustomType } from './CustomType';
+import type { InternalCustom } from './CustomOperation';
 export { __auth } from './ModelField';
 import { processSchema } from './SchemaProcessor';
 
@@ -18,7 +19,7 @@ import { processSchema } from './SchemaProcessor';
 type ModelSchemaModels = Record<string, ModelType<ModelTypeParamShape, any>>;
 type InternalSchemaModels = Record<
   string,
-  InternalModel | EnumType<any> | CustomType<any>
+  InternalModel | EnumType<any> | CustomType<any> | InternalCustom
 >;
 
 export type ModelSchemaParamShape = {

@@ -9,14 +9,6 @@ import {
 
 type GetModelTypeArg<T> = T extends ModelType<infer R, any> ? R : never;
 
-/**
- * Test todos:
- *
- * relationships
- * auth
- *
- */
-
 describe('InternalModel casting', () => {
   test('basic ModelType can be cast to InternalModel', () => {
     const m = model({

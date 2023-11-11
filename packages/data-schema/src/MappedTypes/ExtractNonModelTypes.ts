@@ -2,10 +2,15 @@ import type { CustomType, CustomTypeParamShape } from '../CustomType';
 import type { EnumType, EnumTypeParamShape } from '../EnumType';
 import type { SchemaTypes, ModelTypes } from './ResolveSchema';
 import type { ModelField } from '../ModelField';
+import type {
+  CustomOperation,
+  CustomOperationParamShape,
+} from '../CustomOperation';
 
 export type NonModelTypesShape = {
   enums: Record<string, EnumType<any>>;
   customTypes: Record<string, any>;
+  customOperations: Record<string, any>;
 };
 
 export type ExtractNonModelTypes<Schema> = ResolveNonModelFields<
@@ -20,9 +25,9 @@ type ExtractImplicitNonModelTypes<
   ResolvedModels = ModelTypes<SchemaTypes<Schema>>,
   ResolvedModelKeys extends keyof ResolvedModels = keyof ResolvedModels,
 > = {
-  [Field in keyof ResolvedModels[ResolvedModelKeys] as ResolvedModels[ResolvedModelKeys][Field] extends EnumType<EnumTypeParamShape>
-    ? `${Capitalize<Field & string>}`
-    : ResolvedModels[ResolvedModelKeys][Field] extends CustomType<CustomTypeParamShape>
+  [Field in keyof ResolvedModels[ResolvedModelKeys] as ResolvedModels[ResolvedModelKeys][Field] extends
+    | EnumType<EnumTypeParamShape>
+    | CustomType<CustomTypeParamShape>
     ? `${Capitalize<Field & string>}`
     : never]: ResolvedModels[ResolvedModelKeys][Field];
 };
@@ -50,12 +55,22 @@ type ResolveNonModelTypes<
       ? R['fields']
       : never;
   };
+  customOperations: {
+    [Model in keyof ResolvedSchema as ResolvedSchema[Model] extends CustomOperation<CustomOperationParamShape>
+      ? Model
+      : never]: ResolvedSchema[Model] extends CustomOperation<
+      infer R extends CustomOperationParamShape
+    >
+      ? R
+      : never;
+  };
 };
 
 type ResolveNonModelFields<
   T extends NonModelTypesShape,
   CustomTypes = T['customTypes'],
 > = {
+  customOperations: T['customOperations'];
   enums: T['enums'];
   customTypes: {
     [CustomType in keyof CustomTypes]: {
