@@ -10,7 +10,7 @@
       "type": "node",
       "request": "launch",
       // The debugger will only run tests for the package specified here:
-      "cwd": "${workspaceFolder}/packages/amplify-api-next",
+      "cwd": "${workspaceFolder}/packages/data-schema",
       "runtimeArgs": [
         "--inspect-brk",
         "${workspaceRoot}/node_modules/.bin/jest",

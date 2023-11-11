@@ -8,8 +8,8 @@
     "test": "exit 0"
   },
   "dependencies": {
-    "@aws-amplify/amplify-api-next-alpha": "*",
-    "aws-amplify": "api-v6-models"
+    "@aws-amplify/data-schema": "*",
+    "aws-amplify": "6.0.1-api-v6-models.13c9b49.0"
   },
   "keywords": [],
   "author": "",

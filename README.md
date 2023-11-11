@@ -1,9 +1,9 @@
-## amplify-api-next
+## Amplify Data Schema Builder
 
 TypeScript-first AWS AppSync Schema Builder
 
 ```ts
-import { a, type ClientSchema } from '@aws-amplify/amplify-api-next-alpha';
+import { a, type ClientSchema } from '@aws-amplify/data-schema';
 
 const schema = a.schema({
   Post: a.model({
