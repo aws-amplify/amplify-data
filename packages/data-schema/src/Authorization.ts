@@ -90,8 +90,6 @@ export type Authorization<
   };
 };
 
-type PublicAuth = ReturnType<typeof allow.public>[typeof __data]['strategy'];
-
 export type OwnerField = object;
 
 type BuilderMethods<T extends object> = {

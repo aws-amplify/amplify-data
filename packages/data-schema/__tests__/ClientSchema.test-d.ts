@@ -1,6 +1,7 @@
-import { a, ClientSchema } from '..';
+import { a, ClientSchema } from '../index';
 import { Expect, Equal } from '@aws-amplify/data-schema-types';
 import { ModelSchema } from '../src/ModelSchema';
+import { Authorization } from '../src/Authorization';
 
 describe('implied fields', () => {
   describe('boring model keys', () => {
@@ -337,12 +338,9 @@ describe('global public auth types', () => {
           field: a.string(),
         }),
       })
-      .authorization([a.allow.groupDefinedIn('somefield')]);
+      .authorization([a.allow.owner()]);
 
-    type T = (typeof schema)['data']['authorization'];
-    type TT = (typeof schema)['data']['types']['A']['authorization'];
-
-    type Schema = ClientSchema<typeof schema>['A'];
+    type ModelA = ClientSchema<typeof schema>['A'];
   });
 
   // test('disallows groupsDefinedIn', () => {

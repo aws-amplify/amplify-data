@@ -189,10 +189,11 @@ export type ModelImpliedAuthFields<Schema extends ModelSchema<any, any>> = {
 type AllAuthFieldsForModel<
   Schema extends ModelSchema<any, any>,
   Model extends Schema['data']['types'][keyof Schema['data']['types']],
-> = (Model['authorization'][number] extends Authorization<any, any, any>
-  ? ImpliedAuthFields<Model['authorization'][number]>
-  : ImpliedAuthFields<Schema['data']['authorization'][number]>) &
-  ImpliedAuthFieldsFromFields<Model>;
+> = Model['authorization'][number] extends never
+  ? Schema['data']['authorization'][number] extends never
+    ? object
+    : ImpliedAuthFields<Schema['data']['authorization'][number]>
+  : ImpliedAuthFields<Model['authorization'][number]>;
 
 type ImpliedAuthFieldsFromFields<T> = UnionToIntersection<
   T extends ModelTypeParamShape
