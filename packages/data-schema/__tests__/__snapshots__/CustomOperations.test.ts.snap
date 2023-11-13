@@ -2,7 +2,7 @@
 
 exports[`CustomOperation transform Custom Mutation w Auth rules 1`] = `
 "type Mutation {
-  likePost(postId: String): Post @auth(rules: [{allow: owner, ownerField: "owner"}])
+  likePost(postId: String): Post @auth(rules: [{allow: private}])
 }"
 `;
 

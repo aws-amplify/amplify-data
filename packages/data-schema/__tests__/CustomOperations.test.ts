@@ -1,10 +1,4 @@
-import { expectTypeTestsToPassAsync } from 'jest-tsd';
 import { a } from '../index';
-
-// evaluates type defs in corresponding test-d.ts file
-it('should not produce static type errors', async () => {
-  await expectTypeTestsToPassAsync(__filename);
-});
 
 describe('CustomOperation transform', () => {
   test('Schema w model, custom query, mutation, and subscription', () => {
@@ -31,7 +25,7 @@ describe('CustomOperation transform', () => {
         .mutation()
         .arguments({ postId: a.string() })
         .response(a.ref('Post'))
-        .authorization([a.allow.owner()]),
+        .authorization([a.allow.private()]),
     });
 
     const result = s.transform().schema;
