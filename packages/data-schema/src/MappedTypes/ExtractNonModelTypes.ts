@@ -69,12 +69,23 @@ type ResolveNonModelTypes<
 type ResolveNonModelFields<
   T extends NonModelTypesShape,
   CustomTypes = T['customTypes'],
+  CustomOps = T['customOperations'],
 > = {
-  customOperations: T['customOperations'];
   enums: T['enums'];
   customTypes: {
     [CustomType in keyof CustomTypes]: {
       [FieldProp in keyof CustomTypes[CustomType]]: CustomTypes[CustomType][FieldProp] extends ModelField<
+        infer R,
+        any,
+        any
+      >
+        ? R
+        : never;
+    };
+  };
+  customOperations: {
+    [Op in keyof CustomOps]: {
+      [FieldProp in keyof CustomOps[Op]]: CustomOps[Op][FieldProp] extends ModelField<
         infer R,
         any,
         any

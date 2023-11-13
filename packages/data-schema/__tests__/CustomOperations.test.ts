@@ -9,9 +9,9 @@ describe('CustomOperation transform', () => {
       likePost: a
         .mutation()
         .arguments({ postId: a.string() })
-        .response(a.ref('Post')),
-      getLikedPost: a.query().response(a.ref('Post')),
-      onLikePost: a.subscription().response(a.ref('Post')),
+        .returns(a.ref('Post')),
+      getLikedPost: a.query().returns(a.ref('Post')),
+      onLikePost: a.subscription().returns(a.ref('Post')),
     });
 
     const result = s.transform().schema;
@@ -24,7 +24,7 @@ describe('CustomOperation transform', () => {
       likePost: a
         .mutation()
         .arguments({ postId: a.string() })
-        .response(a.ref('Post'))
+        .returns(a.ref('Post'))
         .authorization([a.allow.private()]),
     });
 
@@ -41,7 +41,7 @@ describe('CustomOperation transform', () => {
           postId: a.string().required(),
           reactionType: a.enum([':shipit:', ':risitas:']),
         })
-        .response(a.ref('Post')),
+        .returns(a.ref('Post')),
     });
 
     const result = s.transform().schema;

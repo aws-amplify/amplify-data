@@ -5,11 +5,11 @@ import { RefType, InternalRef } from './RefType';
 
 type CustomArguments = Record<string, ModelField<any, any>>;
 
-type CustomResponse = RefType<any>;
+type CustomReturnType = RefType<any>;
 
 type InternalCustomFields = Record<string, InternalField>;
 type InternalCustomArguments = Record<string, InternalField>;
-type InternalCustomResponse = InternalRef;
+type InternalCustomReturnType = InternalRef;
 
 export const CustomOperationNames = [
   'Query',
@@ -20,7 +20,7 @@ type CustomOperationName = (typeof CustomOperationNames)[number];
 
 type CustomData = {
   arguments: CustomArguments;
-  response: CustomResponse | null;
+  returnType: CustomReturnType | null;
   authorization: Authorization<any, any>[];
   typeName: CustomOperationName;
 };
@@ -28,13 +28,13 @@ type CustomData = {
 type InternalCustomData = CustomData & {
   fields: InternalCustomFields;
   arguments: InternalCustomArguments;
-  response: InternalCustomResponse;
+  returnType: InternalCustomReturnType;
   authorization: Authorization<any, any>[];
 };
 
 export type CustomOperationParamShape = {
   arguments: CustomArguments;
-  response: CustomResponse | null;
+  returnType: CustomReturnType | null;
   authorization: Authorization<any, any>[];
   typeName: CustomOperationName;
 };
@@ -53,11 +53,11 @@ export type CustomOperation<
         SetTypeSubArg<T, 'arguments', Arguments>,
         K | 'arguments'
       >;
-      response<Response extends CustomResponse>(
-        response: Response,
+      returns<ReturnType extends CustomReturnType>(
+        returnType: ReturnType,
       ): CustomOperation<
-        SetTypeSubArg<T, 'response', Response>,
-        K | 'response'
+        SetTypeSubArg<T, 'returnType', ReturnType>,
+        K | 'returns'
       >;
       authorization<AuthRuleType extends Authorization<any, any>>(
         rules: AuthRuleType[],
@@ -90,7 +90,7 @@ function _custom<T extends CustomOperationParamShape>(
 ) {
   const data: CustomData = {
     arguments: {},
-    response: null,
+    returnType: null,
     authorization: [],
     typeName: typeName,
   };
@@ -101,8 +101,8 @@ function _custom<T extends CustomOperationParamShape>(
 
       return this;
     },
-    response(response: CustomResponse) {
-      data.response = response;
+    returns(returnType: CustomReturnType) {
+      data.returnType = returnType;
 
       return this;
     },
@@ -118,7 +118,7 @@ function _custom<T extends CustomOperationParamShape>(
 
 export function query(): CustomOperation<{
   arguments: CustomArguments;
-  response: null;
+  returnType: null;
   authorization: [];
   typeName: 'Query';
 }> {
@@ -127,7 +127,7 @@ export function query(): CustomOperation<{
 
 export function mutation(): CustomOperation<{
   arguments: CustomArguments;
-  response: null;
+  returnType: null;
   authorization: [];
   typeName: 'Mutation';
 }> {
@@ -136,7 +136,7 @@ export function mutation(): CustomOperation<{
 
 export function subscription(): CustomOperation<{
   arguments: CustomArguments;
-  response: null;
+  returnType: null;
   authorization: [];
   typeName: 'Subscription';
 }> {

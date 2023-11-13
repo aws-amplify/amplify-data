@@ -186,11 +186,11 @@ function customOperationToGql(
   typeName: string,
   typeDef: InternalCustom,
 ): { gqlField: string; models: [string, any][] } {
-  const { arguments: fieldArgs, response, authorization } = typeDef.data;
+  const { arguments: fieldArgs, returnType, authorization } = typeDef.data;
 
   const { authString } = calculateAuth(authorization);
 
-  const resolvedArg = refFieldToGql(response.data);
+  const resolvedArg = refFieldToGql(returnType.data);
 
   let sig: string = typeName;
   let implicitModels: [string, any][] = [];

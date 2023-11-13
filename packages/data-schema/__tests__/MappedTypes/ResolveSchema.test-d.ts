@@ -190,7 +190,7 @@ describe('ResolveSchema Mapped Type', () => {
       likePost: a
         .mutation()
         .arguments({ postId: a.string() })
-        .response(a.ref('Post')),
+        .returns(a.ref('Post')),
     });
 
     type Resolved = ResolveSchema<typeof s>;
@@ -212,7 +212,7 @@ describe('ResolveSchema Mapped Type', () => {
         title: a.string(),
       }),
 
-      getLikedPost: a.query().response(a.ref('Post')),
+      getLikedPost: a.query().returns(a.ref('Post')),
     });
 
     type Resolved = ResolveSchema<typeof s>;
@@ -232,7 +232,7 @@ describe('ResolveSchema Mapped Type', () => {
         title: a.string(),
       }),
 
-      onLikePost: a.subscription().response(a.ref('Post')),
+      onLikePost: a.subscription().returns(a.ref('Post')),
     });
 
     type Resolved = ResolveSchema<typeof s>;
