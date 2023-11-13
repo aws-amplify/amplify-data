@@ -24,13 +24,9 @@ export type RelationalMetadata<
     {
       [ModelName in keyof ResolvedSchema]: {
         [Field in keyof ResolvedSchema[ModelName] as ResolvedSchema[ModelName][Field] extends ModelRelationalFieldParamShape
-          ? ResolvedSchema[ModelName][Field]['relationshipType'] extends 'hasMany'
-            ? // For hasMany we're adding metadata to the related model
-              // E.g. if Post hasMany Comments, we need to add a postCommentsId field to the Comment model
-              ResolvedSchema[ModelName][Field]['relatedModel']
-            : ResolvedSchema[ModelName][Field]['relationshipType'] extends
-                | 'hasOne'
-                | 'belongsTo'
+          ? ResolvedSchema[ModelName][Field]['relationshipType'] extends
+              | 'hasOne'
+              | 'belongsTo'
             ? // For hasOne we're adding metadata to the model itself
               // E.g. if Post hasOne Author, we need to add a postAuthorId field to the Post model
               ModelName
