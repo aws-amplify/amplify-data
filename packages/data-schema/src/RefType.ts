@@ -1,8 +1,13 @@
-import { SetTypeSubArg } from '@aws-amplify/data-schema-types';
+import { Brand, SetTypeSubArg } from '@aws-amplify/data-schema-types';
 import { Authorization } from './Authorization';
 import { __auth } from './ModelField';
 
-export const __ref = Symbol('__ref');
+type RefTypeData = {
+  type: 'ref';
+  link: string;
+  required: boolean;
+  authorization: Authorization<any, any>[];
+};
 
 export type RefTypeParamShape = {
   type: 'ref';
@@ -15,34 +20,36 @@ export type RefType<
   T extends RefTypeParamShape,
   K extends keyof RefType<T> = never,
   Auth = undefined,
-> = Omit<
-  {
-    /**
-     * Marks a field as required.
-     */
-    required(): RefType<SetTypeSubArg<T, 'required', true>, K | 'required'>;
-    /**
-     * Configures field-level authorization rules. Pass in an array of authorizations `(a.allow.____)` to mix and match
-     * multiple authorization rules for this field.
-     */
-    authorization<AuthRuleType extends Authorization<any, any>>(
-      rules: AuthRuleType[],
-    ): RefType<T, K | 'authorization', AuthRuleType>;
-    // structural difference to separate type from ModelField TODO: find cleaner way to achieve this
-    [__ref]: typeof __ref;
+  // Branding the exported type allows us to detect it
+  // nominally in our mapped types, ignoring structural overlap with other types
+> = Brand<
+  Omit<
+    {
+      /**
+       * Marks a field as required.
+       */
+      required(): RefType<SetTypeSubArg<T, 'required', true>, K | 'required'>;
+      /**
+       * Configures field-level authorization rules. Pass in an array of authorizations `(a.allow.____)` to mix and match
+       * multiple authorization rules for this field.
+       */
+      authorization<AuthRuleType extends Authorization<any, any>>(
+        rules: AuthRuleType[],
+      ): RefType<T, K | 'authorization', AuthRuleType>;
+    },
+    K
+  > & {
+    // This is a lie. This property is never set at runtime. It's just used to smuggle auth types through.
+    [__auth]?: Auth;
   },
-  K
-> & {
-  // This is a lie. This property is never set at runtime. It's just used to smuggle auth types through.
-  [__auth]?: Auth;
-};
+  'ref'
+>;
 
-type RefTypeData = {
-  type: 'ref';
-  link: string;
-  required: boolean;
-  authorization: Authorization<any, any>[];
-};
+function brandedBuilder<T extends RefTypeParamShape>(
+  builder: Record<keyof RefType<T> & string, any>,
+): RefType<T> {
+  return builder as RefType<T>;
+}
 
 /**
  * Internal representation of Ref that exposes the `data` property.
@@ -60,19 +67,18 @@ function _ref<T extends RefTypeParamShape>(link: T['link']) {
     authorization: [],
   };
 
-  const builder: RefType<T> = {
+  const builder: RefType<T> = brandedBuilder({
     required() {
       data.required = true;
 
       return this;
     },
-    authorization(rules) {
+    authorization(rules: Authorization<any, any>[]) {
       data.authorization = rules;
 
       return this;
     },
-    [__ref]: __ref,
-  };
+  });
 
   return { ...builder, data } as InternalRef as RefType<T>;
 }

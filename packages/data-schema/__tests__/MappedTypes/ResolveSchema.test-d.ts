@@ -180,4 +180,69 @@ describe('ResolveSchema Mapped Type', () => {
 
     type test = Expect<Equal<Resolved, Expected>>;
   });
+
+  test('Schema with custom mutation', () => {
+    const s = a.schema({
+      Post: a.model({
+        title: a.string(),
+      }),
+
+      likePost: a
+        .mutation()
+        .arguments({ postId: a.string() })
+        .returns(a.ref('Post')),
+    });
+
+    type Resolved = ResolveSchema<typeof s>;
+
+    // Just like with custom types, custom ops are expected to
+    // be removed from the ResolvedSchema
+    type Expected = {
+      Post: {
+        title: string | null;
+      };
+    };
+
+    type test = Expect<Equal<Resolved, Expected>>;
+  });
+
+  test('Schema with custom query', () => {
+    const s = a.schema({
+      Post: a.model({
+        title: a.string(),
+      }),
+
+      getLikedPost: a.query().returns(a.ref('Post')),
+    });
+
+    type Resolved = ResolveSchema<typeof s>;
+
+    type Expected = {
+      Post: {
+        title: string | null;
+      };
+    };
+
+    type test = Expect<Equal<Resolved, Expected>>;
+  });
+
+  test('Schema with custom subscription', () => {
+    const s = a.schema({
+      Post: a.model({
+        title: a.string(),
+      }),
+
+      onLikePost: a.subscription().returns(a.ref('Post')),
+    });
+
+    type Resolved = ResolveSchema<typeof s>;
+
+    type Expected = {
+      Post: {
+        title: string | null;
+      };
+    };
+
+    type test = Expect<Equal<Resolved, Expected>>;
+  });
 });
