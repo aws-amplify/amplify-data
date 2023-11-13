@@ -14,9 +14,6 @@ describe('ResolveFieldProperties Mapped Type', () => {
     });
 
     type Schema = typeof s;
-
-    type CS = ClientSchema<Schema>;
-
     type Resolved = Prettify<
       ResolveFieldProperties<Schema, ExtractNonModelTypes<Schema>>
     >;
