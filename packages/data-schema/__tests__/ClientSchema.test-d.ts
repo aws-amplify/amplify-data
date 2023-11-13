@@ -492,7 +492,7 @@ describe('global public auth types', () => {
     type test = Expect<Equal<Actual_A, Expected_A>>;
   });
 
-  test('disallows multipleOwners', () => {
+  test('allows specificGroups', () => {
     const schema = a
       .schema({
         A: a.model({
