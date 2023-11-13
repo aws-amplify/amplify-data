@@ -17,6 +17,7 @@ import { DerivedApiDefinition } from './types';
 import type { InternalRef } from './RefType';
 import type { EnumType } from './EnumType';
 import type { CustomType } from './CustomType';
+import { type InternalCustom, CustomOperationNames } from './CustomOperation';
 
 type ScalarFieldDef = Exclude<InternalField['data'], { fieldType: 'model' }>;
 type ModelFieldDef = Extract<
@@ -26,7 +27,11 @@ type ModelFieldDef = Extract<
 type RefFieldDef = InternalRef['data'];
 
 function isInternalModel(model: ModelType<any, any>): model is InternalModel {
-  if ((model as any).data && (model as any).data?.type !== 'customType') {
+  if (
+    (model as any).data &&
+    !isCustomType(model) &&
+    !isCustomOperation(model)
+  ) {
     return true;
   }
   return false;
@@ -43,6 +48,13 @@ function isEnumType(
 
 function isCustomType(data: any): data is CustomType<any> {
   if (data?.data?.type === 'customType') {
+    return true;
+  }
+  return false;
+}
+
+function isCustomOperation(type: any): type is InternalCustom {
+  if (CustomOperationNames.includes(type?.data?.typeName)) {
     return true;
   }
   return false;
@@ -168,6 +180,29 @@ function refFieldToGql(fieldDef: RefFieldDef) {
   // }
 
   return field;
+}
+
+function customOperationToGql(
+  typeName: string,
+  typeDef: InternalCustom,
+): { gqlField: string; models: [string, any][] } {
+  const { arguments: fieldArgs, returnType, authorization } = typeDef.data;
+
+  const { authString } = calculateAuth(authorization);
+
+  const resolvedArg = refFieldToGql(returnType.data);
+
+  let sig: string = typeName;
+  let implicitModels: [string, any][] = [];
+
+  if (Object.keys(fieldArgs).length > 0) {
+    const { gqlFields, models } = processFields(fieldArgs, {});
+    sig += `(${gqlFields.join(', ')})`;
+    implicitModels = models;
+  }
+
+  const gqlField = `${sig}: ${resolvedArg} ${authString}`;
+  return { gqlField, models: implicitModels };
 }
 
 function calculateAuth(authorization: Authorization<any, any, any>[]) {
@@ -492,14 +527,19 @@ function processFields(
 const schemaPreprocessor = (schema: InternalSchema): string => {
   const gqlModels: string[] = [];
 
-  const fkFields = allImpliedFKs(schema);
+  const customQueries = [];
+  const customMutations = [];
+  const customSubscriptions = [];
 
+  const fkFields = allImpliedFKs(schema);
   const topLevelTypes = Object.entries(schema.data.types);
 
   for (const [typeName, typeDef] of topLevelTypes) {
     if (!isInternalModel(typeDef)) {
       if (isEnumType(typeDef)) {
-        const enumType = `enum ${typeName} {\n${typeDef.values.join('\n')}\n}`;
+        const enumType = `enum ${typeName} {\n  ${typeDef.values.join(
+          '\n  ',
+        )}\n}`;
         gqlModels.push(enumType);
       } else if (isCustomType(typeDef)) {
         const fields = typeDef.data.fields;
@@ -523,6 +563,26 @@ const schemaPreprocessor = (schema: InternalSchema): string => {
 
         const model = `type ${typeName} ${authString}\n{\n  ${joined}\n}`;
         gqlModels.push(model);
+      } else if (isCustomOperation(typeDef)) {
+        const { typeName: opType } = (typeDef as InternalCustom).data;
+
+        const { gqlField, models } = customOperationToGql(typeName, typeDef);
+
+        topLevelTypes.push(...models);
+
+        switch (opType) {
+          case 'Query':
+            customQueries.push(gqlField);
+            break;
+          case 'Mutation':
+            customMutations.push(gqlField);
+            break;
+          case 'Subscription':
+            customSubscriptions.push(gqlField);
+            break;
+          default:
+            break;
+        }
       }
     } else {
       const fields = {
@@ -565,10 +625,44 @@ const schemaPreprocessor = (schema: InternalSchema): string => {
     }
   }
 
+  const customOperations = {
+    queries: customQueries,
+    mutations: customMutations,
+    subscriptions: customSubscriptions,
+  };
+
+  gqlModels.push(...generateCustomOperationTypes(customOperations));
+
   const processedSchema = gqlModels.join('\n\n');
 
   return processedSchema;
 };
+
+type CustomOperationFields = {
+  queries: string[];
+  mutations: string[];
+  subscriptions: string[];
+};
+
+function generateCustomOperationTypes(fields: CustomOperationFields): string[] {
+  const types: string[] = [];
+
+  if (fields.mutations.length > 0) {
+    types.push(`type Mutation {\n  ${fields.mutations.join('\n  ')}\n}`);
+  }
+
+  if (fields.queries.length > 0) {
+    types.push(`type Query {\n  ${fields.queries.join('\n  ')}\n}`);
+  }
+
+  if (fields.subscriptions.length > 0) {
+    types.push(
+      `type Subscription {\n  ${fields.subscriptions.join('\n  ')}\n}`,
+    );
+  }
+
+  return types;
+}
 
 /**
  * Returns API definition from ModelSchema or string schema

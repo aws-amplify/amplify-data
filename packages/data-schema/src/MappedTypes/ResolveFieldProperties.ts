@@ -117,8 +117,8 @@ type ResolveRelationships<
   [ModelProp in keyof Schema]: {
     [FieldProp in keyof Schema[ModelProp]]: Schema[ModelProp][FieldProp] extends RefType<
       infer R extends RefTypeParamShape,
-      never | 'required' | 'authorization',
-      never | Authorization<any, any, any>
+      any,
+      any
     > | null
       ? ResolveRef<NonModelTypes, R>
       : Schema[ModelProp][FieldProp] extends ModelRelationalFieldParamShape
@@ -189,11 +189,12 @@ export type ModelImpliedAuthFields<Schema extends ModelSchema<any, any>> = {
 type AllAuthFieldsForModel<
   Schema extends ModelSchema<any, any>,
   Model extends Schema['data']['types'][keyof Schema['data']['types']],
-> = Model['authorization'][number] extends never
+> = (Model['authorization'][number] extends never
   ? Schema['data']['authorization'][number] extends never
     ? object
     : ImpliedAuthFields<Schema['data']['authorization'][number]>
-  : ImpliedAuthFields<Model['authorization'][number]>;
+  : ImpliedAuthFields<Model['authorization'][number]>) &
+  ImpliedAuthFieldsFromFields<Model>;
 
 type ImpliedAuthFieldsFromFields<T> = UnionToIntersection<
   T extends ModelTypeParamShape

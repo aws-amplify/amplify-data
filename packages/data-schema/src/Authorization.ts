@@ -440,12 +440,14 @@ export const allow = {
  */
 export type ImpliedAuthField<T extends Authorization<any, any, any>> =
   T extends Authorization<infer Strat, infer Field, infer isMulti>
-    ? Field extends string
+    ? Field extends undefined
+      ? never
+      : Field extends string
       ? isMulti extends true
         ? { [K in Field]?: string[] }
         : { [K in Field]?: string }
-      : object
-    : object;
+      : never
+    : never;
 
 /**
  * Turns the type from a list of `Authorization` rules like this:
@@ -469,7 +471,9 @@ export type ImpliedAuthField<T extends Authorization<any, any, any>> =
  * ```
  */
 export type ImpliedAuthFields<T extends Authorization<any, any, any>> =
-  UnionToIntersection<ImpliedAuthField<T>>;
+  ImpliedAuthField<T> extends never
+    ? never
+    : UnionToIntersection<ImpliedAuthField<T>>;
 
 export const accessData = <T extends Authorization<any, any, any>>(
   authorization: T,

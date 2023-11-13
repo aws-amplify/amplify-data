@@ -9,34 +9,10 @@ import type { ModelField } from '../ModelField';
 import type { CustomType, CustomTypeParamShape } from '../CustomType';
 import type { EnumType, EnumTypeParamShape } from '../EnumType';
 import type { RefType, RefTypeParamShape } from '../RefType';
-import { Authorization } from '../Authorization';
-
-import { a } from '../..';
-
-const schema = a
-  .schema({
-    A: a.model({
-      field: a.string(),
-    }),
-  })
-  .authorization([a.allow.public()]);
-
-type S = typeof schema;
-type STypes = S['data']['types'];
-
-type T0 = S extends ModelSchema<infer T, any> ? T : 'no';
-type T0_1 = S extends ModelSchema<any, any> ? 'yeah' : 'no';
-
-type T = SchemaTypes<S>;
-
-type WORKS = ModelSchema<
-  {
-    types: { x: { y: 'string' } };
-    authorization: Authorization<'public', 'something', false>[];
-  },
-  never | 'authorization'
->;
-type WORKS_Types = SchemaTypes<WORKS>;
+import type {
+  CustomOperation,
+  CustomOperationParamShape,
+} from '../CustomOperation';
 
 export type ResolveSchema<Schema> = FieldTypes<ModelTypes<SchemaTypes<Schema>>>;
 
@@ -53,9 +29,10 @@ export type SchemaTypes<T> = T extends ModelSchema<any, any>
  * added to ModelMeta in ClientSchema.ts
  */
 export type ModelTypes<Schema> = {
-  [Model in keyof Schema as Schema[Model] extends EnumType<EnumTypeParamShape>
-    ? never
-    : Schema[Model] extends CustomType<CustomTypeParamShape>
+  [Model in keyof Schema as Schema[Model] extends
+    | EnumType<EnumTypeParamShape>
+    | CustomType<CustomTypeParamShape>
+    | CustomOperation<CustomOperationParamShape, any>
     ? never
     : Model]: Schema[Model] extends ModelType<infer R, any>
     ? R['fields']
@@ -71,8 +48,8 @@ export type FieldTypes<T> = {
   [ModelProp in keyof T]: {
     [FieldProp in keyof T[ModelProp]]: T[ModelProp][FieldProp] extends RefType<
       infer R extends RefTypeParamShape,
-      never | 'required' | 'authorization',
-      never | Authorization<any, any, any>
+      any,
+      any
     >
       ? // leave Ref as-is. We'll resolve it to the linked entity downstream in ResolveFieldProperties
         R['required'] extends true

@@ -53,7 +53,7 @@ type D @model @auth(rules: [{allow: public}])
 }
 
 enum Tired {
-?
+  ?
 }",
 }
 `;

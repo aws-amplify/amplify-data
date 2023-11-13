@@ -1,5 +1,11 @@
 # @aws-amplify/amplify-api-next-types-alpha
 
+## 0.5.0
+
+### Minor Changes
+
+- ff67e28: add types for custom headers
+
 ## 0.4.2
 
 ### Patch Changes

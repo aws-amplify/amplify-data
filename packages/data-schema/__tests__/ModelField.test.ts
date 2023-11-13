@@ -26,6 +26,58 @@ describe('field level auth', () => {
           .to(['read', 'create', 'delete']),
       ]);
 
+    // const privateAuth = a.allow.private().to(['read', 'create']);
+    // type PrivateAuth = typeof privateAuth extends Authorization<
+    //   infer A,
+    //   infer B,
+    //   infer C
+    // >
+    //   ? {
+    //       a: A;
+    //       b: B;
+    //       c: C;
+    //     }
+    //   : never;
+    // type PrivateImpliedAuthFields = ImpliedAuthFields<typeof privateAuth>
+
+    // const publicAuth = a.allow.public().to(['read', 'create']);
+    // type PublicAuth = typeof publicAuth extends Authorization<
+    //   infer A,
+    //   infer B,
+    //   infer C
+    // >
+    //   ? {
+    //       a: A;
+    //       b: B;
+    //       c: C;
+    //     }
+    //   : never;
+    // type PublicImpliedAuthFields = ImpliedAuthFields<typeof publicAuth>;
+
+    // const ownersAuth = a.allow
+    //   .multipleOwners()
+    //   .inField('admin')
+    //   .to(['read', 'create', 'delete']);
+    // type OwnersAuth = typeof ownersAuth extends Authorization<
+    //   infer A,
+    //   infer B,
+    //   infer C
+    // >
+    //   ? {
+    //       a: A;
+    //       b: B;
+    //       c: C;
+    //     }
+    //   : never;
+    // type OwnersImpliedAuthFields = ImpliedAuthFields<typeof ownersAuth>;
+
+    // type Combined = ImpliedAuthFields<typeof ownersAuth | typeof privateAuth | typeof publicAuth>;
+
+    // type Auth = typeof field extends ModelField<any, any, infer A> ? A : never;
+    // type T1 = Auth extends Authorization<any, any, any>
+    //   ? ImpliedAuthFields<Auth>
+    //   : 'no';
+
     type ExpectedAuthFields = typeof field extends ModelField<
       any,
       any,
@@ -37,13 +89,7 @@ describe('field level auth', () => {
       : never;
 
     const authFields: ExpectedAuthFields = {
-      owner: 'a string',
       admin: ['array', 'of', 'string'],
-    };
-
-    const brokenAuthFieldsA: ExpectedAuthFields = {
-      // @ts-expect-error
-      owner: ['array', 'of', 'string'],
     };
 
     const brokenAuthFieldsB: ExpectedAuthFields = {
@@ -76,13 +122,7 @@ describe('field level auth', () => {
       : never;
 
     const authFields: ExpectedAuthFields = {
-      owner: 'a string',
       admin: ['array', 'of', 'string'],
-    };
-
-    const brokenAuthFieldsA: ExpectedAuthFields = {
-      // @ts-expect-error
-      owner: ['array', 'of', 'string'],
     };
 
     const brokenAuthFieldsB: ExpectedAuthFields = {
