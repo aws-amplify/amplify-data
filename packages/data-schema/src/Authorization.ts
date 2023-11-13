@@ -170,7 +170,7 @@ function validateProvider(
 
 function authData<
   Strat extends Strategy = 'public',
-  Field extends string | undefined = 'owner',
+  Field extends string | undefined = undefined,
   isMulti extends boolean = false,
   Builders extends object = object,
 >(

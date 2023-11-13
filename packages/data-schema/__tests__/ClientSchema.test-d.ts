@@ -2,6 +2,7 @@ import { a, ClientSchema } from '../index';
 import { Expect, Equal } from '@aws-amplify/data-schema-types';
 import { ModelSchema } from '../src/ModelSchema';
 import { Authorization } from '../src/Authorization';
+import { Prettify } from '@aws-amplify/data-schema-types';
 
 describe('implied fields', () => {
   describe('boring model keys', () => {
@@ -281,54 +282,144 @@ describe('global public auth types', () => {
         field: a.string(),
       }),
     }).authorization([a.allow.public()]);
+
+    // no implied field
   });
 
   test('allows multiple entries', () => {
-    a.schema({
-      A: a.model({
-        field: a.string(),
-      }),
-    }).authorization([a.allow.public(), a.allow.private()]);
+    const schema = a
+      .schema({
+        A: a.model({
+          field: a.string(),
+        }),
+      })
+      .authorization([a.allow.public(), a.allow.private()]);
+
+    type Actual_A = ClientSchema<typeof schema>['A'];
+
+    type Expected_A = {
+      readonly id: string;
+      readonly createdAt: string;
+      readonly updatedAt: string;
+      field?: string | null | undefined;
+      // no implied owner field
+    };
+
+    type test = Expect<Equal<Actual_A, Expected_A>>;
   });
 
   test('allows zero entries', () => {
-    a.schema({
-      A: a.model({
-        field: a.string(),
-      }),
-    }).authorization([]);
+    const schema = a
+      .schema({
+        A: a.model({
+          field: a.string(),
+        }),
+      })
+      .authorization([]);
+
+    type Actual_A = ClientSchema<typeof schema>['A'];
+
+    type Expected_A = {
+      readonly id: string;
+      readonly createdAt: string;
+      readonly updatedAt: string;
+      field?: string | null | undefined;
+      // no implied owner field
+    };
+
+    type test = Expect<Equal<Actual_A, Expected_A>>;
   });
 
   test('allows private', () => {
-    a.schema({
-      A: a.model({
-        field: a.string(),
-      }),
-    }).authorization([a.allow.private()]);
+    const schema = a
+      .schema({
+        A: a.model({
+          field: a.string(),
+        }),
+      })
+      .authorization([a.allow.private()]);
+
+    type Actual_A = ClientSchema<typeof schema>['A'];
+
+    type Expected_A = {
+      readonly id: string;
+      readonly createdAt: string;
+      readonly updatedAt: string;
+      field?: string | null | undefined;
+      // no implied owner field
+    };
+
+    type test = Expect<Equal<Actual_A, Expected_A>>;
   });
 
   test('allows owner', () => {
-    a.schema({
-      A: a.model({
-        field: a.string(),
-      }),
-    }).authorization([a.allow.owner()]);
+    const schema = a
+      .schema({
+        A: a.model({
+          field: a.string(),
+        }),
+      })
+      .authorization([a.allow.owner()]);
+
+    type Actual_A = ClientSchema<typeof schema>['A'];
+
+    type Expected_A = {
+      readonly id: string;
+      readonly createdAt: string;
+      readonly updatedAt: string;
+      field?: string | null | undefined;
+
+      // implied owner field
+      owner?: string | undefined;
+    };
+
+    type test = Expect<Equal<Actual_A, Expected_A>>;
   });
 
   test('allows multipleOwners', () => {
-    a.schema({
-      A: a.model({
-        field: a.string(),
-      }),
-    }).authorization([a.allow.multipleOwners()]);
+    const schema = a
+      .schema({
+        A: a.model({
+          field: a.string(),
+        }),
+      })
+      .authorization([a.allow.multipleOwners()]);
+
+    type Actual_A = ClientSchema<typeof schema>['A'];
+
+    type Expected_A = {
+      readonly id: string;
+      readonly createdAt: string;
+      readonly updatedAt: string;
+      field?: string | null | undefined;
+
+      // implied owner field
+      owner?: string[] | undefined;
+    };
+
+    type test = Expect<Equal<Actual_A, Expected_A>>;
   });
 
   test('allows custom', () => {
-    a.schema({
-      A: a.model({
-        field: a.string(),
-      }),
-    }).authorization([a.allow.custom()]);
+    const schema = a
+      .schema({
+        A: a.model({
+          field: a.string(),
+        }),
+      })
+      .authorization([a.allow.custom()]);
+
+    type Actual_A = ClientSchema<typeof schema>['A'];
+
+    type Expected_A = {
+      readonly id: string;
+      readonly createdAt: string;
+      readonly updatedAt: string;
+      field?: string | null | undefined;
+      // no implied owner field
+    };
+
+    type test = Expect<Equal<Actual_A, Expected_A>>;
   });
 
   test('allows groupDefinedIn', () => {
@@ -338,35 +429,88 @@ describe('global public auth types', () => {
           field: a.string(),
         }),
       })
-      .authorization([a.allow.owner()]);
+      .authorization([a.allow.owner().inField('someField')]);
 
-    type ModelA = ClientSchema<typeof schema>['A'];
+    type Actual_A = ClientSchema<typeof schema>['A'];
+
+    type Expected_A = {
+      readonly id: string;
+      readonly createdAt: string;
+      readonly updatedAt: string;
+      field?: string | null | undefined;
+
+      // implied owner field
+      someField?: string | undefined;
+    };
+
+    type test = Expect<Equal<Actual_A, Expected_A>>;
   });
 
-  // test('disallows groupsDefinedIn', () => {
-  //   a.schema({
-  //     A: a.model({
-  //       field: a.string(),
-  //     }),
-  //     // @ts-expect-error
-  //   }).authorization([a.allow.groupsDefinedIn()]);
-  // });
+  test('allows groupsDefinedIn', () => {
+    const schema = a
+      .schema({
+        A: a.model({
+          field: a.string(),
+        }),
+      })
+      .authorization([a.allow.groupsDefinedIn('someField')]);
 
-  // test('disallows specificGroup', () => {
-  //   a.schema({
-  //     A: a.model({
-  //       field: a.string(),
-  //     }),
-  //     // @ts-expect-error
-  //   }).authorization([a.allow.specificGroup('group')]);
-  // });
+    type Actual_A = ClientSchema<typeof schema>['A'];
 
-  // test('disallows multipleOwners', () => {
-  //   a.schema({
-  //     A: a.model({
-  //       field: a.string(),
-  //     }),
-  //     // @ts-expect-error
-  //   }).authorization([a.allow.specificGroups(['a', 'b'])]);
-  // });
+    type Expected_A = {
+      readonly id: string;
+      readonly createdAt: string;
+      readonly updatedAt: string;
+      field?: string | null | undefined;
+
+      // implied groups field
+      someField?: string[] | undefined;
+    };
+
+    type test = Expect<Equal<Actual_A, Expected_A>>;
+  });
+
+  test('disallows specificGroup', () => {
+    const schema = a
+      .schema({
+        A: a.model({
+          field: a.string(),
+        }),
+      })
+      .authorization([a.allow.specificGroup('group')]);
+
+    type Actual_A = ClientSchema<typeof schema>['A'];
+
+    type Expected_A = {
+      readonly id: string;
+      readonly createdAt: string;
+      readonly updatedAt: string;
+      field?: string | null | undefined;
+      // no implied owner field
+    };
+
+    type test = Expect<Equal<Actual_A, Expected_A>>;
+  });
+
+  test('disallows multipleOwners', () => {
+    const schema = a
+      .schema({
+        A: a.model({
+          field: a.string(),
+        }),
+      })
+      .authorization([a.allow.specificGroups(['a', 'b'])]);
+
+    type Actual_A = ClientSchema<typeof schema>['A'];
+
+    type Expected_A = {
+      readonly id: string;
+      readonly createdAt: string;
+      readonly updatedAt: string;
+      field?: string | null | undefined;
+      // no implied owner field
+    };
+
+    type test = Expect<Equal<Actual_A, Expected_A>>;
+  });
 });
