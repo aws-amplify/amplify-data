@@ -512,6 +512,7 @@ type ModelTypesClient<
     selectionSet?: SelectionSet;
     authMode?: AuthMode;
     authToken?: string;
+    headers?: CustomHeaders;
   }): ObservedReturnValue<ReturnValue<Model, FlatModel, SelectionSet>>;
   onUpdate<
     FlatModel extends Record<string, unknown> = ResolvedModel<Model>,
@@ -520,6 +521,7 @@ type ModelTypesClient<
     filter?: ModelFilter<Model>;
     selectionSet?: SelectionSet;
     authMode?: AuthMode;
+    headers?: CustomHeaders;
   }): ObservedReturnValue<ReturnValue<Model, FlatModel, SelectionSet>>;
   onDelete<
     FlatModel extends Record<string, unknown> = ResolvedModel<Model>,
@@ -528,6 +530,7 @@ type ModelTypesClient<
     filter?: ModelFilter<Model>;
     selectionSet?: SelectionSet;
     authToken?: string;
+    headers?: CustomHeaders;
   }): ObservedReturnValue<ReturnValue<Model, FlatModel, SelectionSet>>;
   observeQuery<
     FlatModel extends Record<string, unknown> = ResolvedModel<Model>,

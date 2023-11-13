@@ -1,5 +1,11 @@
 # @aws-amplify/amplify-api-next-types-alpha
 
+## 0.6.0
+
+### Minor Changes
+
+- 9ab2240: add custom header types for subscription
+
 ## 0.5.0
 
 ### Minor Changes

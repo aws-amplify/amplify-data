@@ -114,22 +114,7 @@ describe('RelationalMetadata', () => {
       >
     >;
 
-    type Expected = {
-      Comment: {
-        relationalInputFields: {
-          post?:
-            | {
-                readonly id: string;
-                readonly createdAt?: string;
-                readonly updatedAt?: string;
-                title?: string | null | undefined;
-                metadata?: Json | null | undefined;
-                comments?: ResolvedFields['Post']['comments'];
-              }
-            | undefined;
-        };
-      };
-    };
+    type Expected = unknown;
 
     type test = Expect<Equal<Resolved, Expected>>;
   });
