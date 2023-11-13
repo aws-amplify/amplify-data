@@ -1,16 +1,164 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`schema auth rules can define public auth with no provider 1`] = `
-"type widget @model @auth(rules: [{allow: public}])
+exports[`schema auth rules allows custom 1`] = `
+{
+  "functionSlots": [],
+  "schema": "type A @model @auth(rules: [{allow: custom}])
 {
   id: ID! @primaryKey
-  title: String!
+  field: String
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
+}",
+}
+`;
+
+exports[`schema auth rules allows groupDefinedIn 1`] = `
+{
+  "functionSlots": [],
+  "schema": "type A @model @auth(rules: [{allow: owner, ownerField: "someField"}])
+{
+  id: ID! @primaryKey
+  field: String
+  someField: String
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
+}",
+}
+`;
+
+exports[`schema auth rules allows groupsDefinedIn 1`] = `
+{
+  "functionSlots": [],
+  "schema": "type A @model @auth(rules: [{allow: groups, groupsField: "someField"}])
+{
+  id: ID! @primaryKey
+  field: String
+  someField: [String]
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
+}",
+}
+`;
+
+exports[`schema auth rules allows multiple entries 1`] = `
+{
+  "functionSlots": [],
+  "schema": "type A @model @auth(rules: [{allow: public},
+  {allow: private}])
+{
+  id: ID! @primaryKey
+  field: String
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
+}",
+}
+`;
+
+exports[`schema auth rules allows multipleOwners 1`] = `
+{
+  "functionSlots": [],
+  "schema": "type A @model @auth(rules: [{allow: owner, ownerField: "owner"}])
+{
+  id: ID! @primaryKey
+  field: String
+  owner: [String]
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
+}",
+}
+`;
+
+exports[`schema auth rules allows owner 1`] = `
+{
+  "functionSlots": [],
+  "schema": "type A @model @auth(rules: [{allow: owner, ownerField: "owner"}])
+{
+  id: ID! @primaryKey
+  field: String
+  owner: String
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
+}",
+}
+`;
+
+exports[`schema auth rules allows private 1`] = `
+{
+  "functionSlots": [],
+  "schema": "type A @model @auth(rules: [{allow: private}])
+{
+  id: ID! @primaryKey
+  field: String
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
+}",
+}
+`;
+
+exports[`schema auth rules allows public 1`] = `
+{
+  "functionSlots": [],
+  "schema": "type A @model @auth(rules: [{allow: public}])
+{
+  id: ID! @primaryKey
+  field: String
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
+}",
+}
+`;
+
+exports[`schema auth rules allows specificGroups 1`] = `
+{
+  "functionSlots": [],
+  "schema": "type A @model @auth(rules: [{allow: groups, groups: ["a", "b"]}])
+{
+  id: ID! @primaryKey
+  field: String
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
+}",
+}
+`;
+
+exports[`schema auth rules allows zero entries 1`] = `
+{
+  "functionSlots": [],
+  "schema": "type A @model 
+{
+  id: ID! @primaryKey
+  field: String
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
+}",
+}
+`;
+
+exports[`schema auth rules can define public auth with no provider 1`] = `
+"type A @model @auth(rules: [{allow: public}])
+{
+  id: ID! @primaryKey
+  field: String
   createdAt: AWSDateTime!
   updatedAt: AWSDateTime!
 }"
 `;
 
-exports[`schema auth rules global public auth 1`] = `
+exports[`schema auth rules disallows specificGroup 1`] = `
+{
+  "functionSlots": [],
+  "schema": "type A @model @auth(rules: [{allow: groups, groups: ["group"]}])
+{
+  id: ID! @primaryKey
+  field: String
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
+}",
+}
+`;
+
+exports[`schema auth rules global public auth - multiple models 1`] = `
 {
   "functionSlots": [],
   "schema": "type A @model @auth(rules: [{allow: public}])
@@ -54,6 +202,47 @@ type D @model @auth(rules: [{allow: public}])
 
 enum Tired {
   ?
+}",
+}
+`;
+
+exports[`schema auth rules prefers model auth over global auth owner auth on model vs owner auth on schema 1`] = `
+{
+  "functionSlots": [],
+  "schema": "type A @model @auth(rules: [{allow: owner, ownerField: "modelOwnerField"}])
+{
+  id: ID! @primaryKey
+  field: String
+  modelOwnerField: String
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
+}",
+}
+`;
+
+exports[`schema auth rules prefers model auth over global auth owner auth on model vs public auth on schema 1`] = `
+{
+  "functionSlots": [],
+  "schema": "type A @model @auth(rules: [{allow: owner, ownerField: "owner"}])
+{
+  id: ID! @primaryKey
+  field: String
+  owner: String
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
+}",
+}
+`;
+
+exports[`schema auth rules prefers model auth over global auth public auth on model vs owner auth on schema 1`] = `
+{
+  "functionSlots": [],
+  "schema": "type A @model @auth(rules: [{allow: public}])
+{
+  id: ID! @primaryKey
+  field: String
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
 }",
 }
 `;

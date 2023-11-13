@@ -1,5 +1,6 @@
 import { expectTypeTestsToPassAsync } from 'jest-tsd';
 import { a, ClientSchema } from '../index';
+import { Expect, Equal } from '@aws-amplify/data-schema-types';
 
 // evaluates type defs in corresponding test-d.ts file
 it('should not produce static type errors', async () => {
@@ -81,7 +82,56 @@ describe('schema generation', () => {
 });
 
 describe('schema auth rules', () => {
-  test('global public auth', () => {
+  test('can define public auth with no provider', () => {
+    const schema = a.schema({
+      A: a
+        .model({
+          field: a.string(),
+        })
+        .authorization([a.allow.public()]),
+    });
+
+    type Actual_A = ClientSchema<typeof schema>['A'];
+
+    type Expected_A = {
+      readonly id: string;
+      readonly createdAt: string;
+      readonly updatedAt: string;
+      field?: string | null | undefined;
+      // no implied owner field
+    };
+
+    type test = Expect<Equal<Actual_A, Expected_A>>;
+
+    const graphql = schema.transform().schema;
+    expect(graphql).toMatchSnapshot();
+  });
+
+  test('allows public', () => {
+    const schema = a
+      .schema({
+        A: a.model({
+          field: a.string(),
+        }),
+      })
+      .authorization([a.allow.public()]);
+
+    type Actual_A = ClientSchema<typeof schema>['A'];
+
+    type Expected_A = {
+      readonly id: string;
+      readonly createdAt: string;
+      readonly updatedAt: string;
+      field?: string | null | undefined;
+      // no implied owner field
+    };
+
+    type test = Expect<Equal<Actual_A, Expected_A>>;
+
+    expect(schema.transform()).toMatchSnapshot();
+  });
+
+  test('global public auth - multiple models', () => {
     const schema = a
       .schema({
         A: a.model({
@@ -107,16 +157,331 @@ describe('schema auth rules', () => {
     expect(schema.transform()).toMatchSnapshot();
   });
 
-  test('can define public auth with no provider', () => {
-    const schema = a.schema({
-      widget: a
-        .model({
-          title: a.string().required(),
+  test('allows multiple entries', () => {
+    const schema = a
+      .schema({
+        A: a.model({
+          field: a.string(),
+        }),
+      })
+      .authorization([a.allow.public(), a.allow.private()]);
+
+    type Actual_A = ClientSchema<typeof schema>['A'];
+
+    type Expected_A = {
+      readonly id: string;
+      readonly createdAt: string;
+      readonly updatedAt: string;
+      field?: string | null | undefined;
+      // no implied owner field
+    };
+
+    type test = Expect<Equal<Actual_A, Expected_A>>;
+
+    expect(schema.transform()).toMatchSnapshot();
+  });
+
+  test('allows zero entries', () => {
+    const schema = a
+      .schema({
+        A: a.model({
+          field: a.string(),
+        }),
+      })
+      .authorization([]);
+
+    type Actual_A = ClientSchema<typeof schema>['A'];
+
+    type Expected_A = {
+      readonly id: string;
+      readonly createdAt: string;
+      readonly updatedAt: string;
+      field?: string | null | undefined;
+      // no implied owner field
+    };
+
+    type test = Expect<Equal<Actual_A, Expected_A>>;
+
+    expect(schema.transform()).toMatchSnapshot();
+  });
+
+  test('allows private', () => {
+    const schema = a
+      .schema({
+        A: a.model({
+          field: a.string(),
+        }),
+      })
+      .authorization([a.allow.private()]);
+
+    type Actual_A = ClientSchema<typeof schema>['A'];
+
+    type Expected_A = {
+      readonly id: string;
+      readonly createdAt: string;
+      readonly updatedAt: string;
+      field?: string | null | undefined;
+      // no implied owner field
+    };
+
+    type test = Expect<Equal<Actual_A, Expected_A>>;
+
+    expect(schema.transform()).toMatchSnapshot();
+  });
+
+  test('allows owner', () => {
+    const schema = a
+      .schema({
+        A: a.model({
+          field: a.string(),
+        }),
+      })
+      .authorization([a.allow.owner()]);
+
+    type Actual_A = ClientSchema<typeof schema>['A'];
+
+    type Expected_A = {
+      readonly id: string;
+      readonly createdAt: string;
+      readonly updatedAt: string;
+      field?: string | null | undefined;
+
+      // implied owner field
+      owner?: string | undefined;
+    };
+
+    type test = Expect<Equal<Actual_A, Expected_A>>;
+
+    expect(schema.transform()).toMatchSnapshot();
+  });
+
+  test('allows multipleOwners', () => {
+    const schema = a
+      .schema({
+        A: a.model({
+          field: a.string(),
+        }),
+      })
+      .authorization([a.allow.multipleOwners()]);
+
+    type Actual_A = ClientSchema<typeof schema>['A'];
+
+    type Expected_A = {
+      readonly id: string;
+      readonly createdAt: string;
+      readonly updatedAt: string;
+      field?: string | null | undefined;
+
+      // implied owner field
+      owner?: string[] | undefined;
+    };
+
+    type test = Expect<Equal<Actual_A, Expected_A>>;
+
+    expect(schema.transform()).toMatchSnapshot();
+  });
+
+  test('allows custom', () => {
+    const schema = a
+      .schema({
+        A: a.model({
+          field: a.string(),
+        }),
+      })
+      .authorization([a.allow.custom()]);
+
+    type Actual_A = ClientSchema<typeof schema>['A'];
+
+    type Expected_A = {
+      readonly id: string;
+      readonly createdAt: string;
+      readonly updatedAt: string;
+      field?: string | null | undefined;
+      // no implied owner field
+    };
+
+    type test = Expect<Equal<Actual_A, Expected_A>>;
+
+    expect(schema.transform()).toMatchSnapshot();
+  });
+
+  test('allows groupDefinedIn', () => {
+    const schema = a
+      .schema({
+        A: a.model({
+          field: a.string(),
+        }),
+      })
+      .authorization([a.allow.owner().inField('someField')]);
+
+    type Actual_A = ClientSchema<typeof schema>['A'];
+
+    type Expected_A = {
+      readonly id: string;
+      readonly createdAt: string;
+      readonly updatedAt: string;
+      field?: string | null | undefined;
+
+      // implied owner field
+      someField?: string | undefined;
+    };
+
+    type test = Expect<Equal<Actual_A, Expected_A>>;
+
+    expect(schema.transform()).toMatchSnapshot();
+  });
+
+  test('allows groupsDefinedIn', () => {
+    const schema = a
+      .schema({
+        A: a.model({
+          field: a.string(),
+        }),
+      })
+      .authorization([a.allow.groupsDefinedIn('someField')]);
+
+    type Actual_A = ClientSchema<typeof schema>['A'];
+
+    type Expected_A = {
+      readonly id: string;
+      readonly createdAt: string;
+      readonly updatedAt: string;
+      field?: string | null | undefined;
+
+      // implied groups field
+      someField?: string[] | undefined;
+    };
+
+    type test = Expect<Equal<Actual_A, Expected_A>>;
+
+    expect(schema.transform()).toMatchSnapshot();
+  });
+
+  test('disallows specificGroup', () => {
+    const schema = a
+      .schema({
+        A: a.model({
+          field: a.string(),
+        }),
+      })
+      .authorization([a.allow.specificGroup('group')]);
+
+    type Actual_A = ClientSchema<typeof schema>['A'];
+
+    type Expected_A = {
+      readonly id: string;
+      readonly createdAt: string;
+      readonly updatedAt: string;
+      field?: string | null | undefined;
+      // no implied owner field
+    };
+
+    type test = Expect<Equal<Actual_A, Expected_A>>;
+
+    expect(schema.transform()).toMatchSnapshot();
+  });
+
+  test('allows specificGroups', () => {
+    const schema = a
+      .schema({
+        A: a.model({
+          field: a.string(),
+        }),
+      })
+      .authorization([a.allow.specificGroups(['a', 'b'])]);
+
+    type Actual_A = ClientSchema<typeof schema>['A'];
+
+    type Expected_A = {
+      readonly id: string;
+      readonly createdAt: string;
+      readonly updatedAt: string;
+      field?: string | null | undefined;
+      // no implied owner field
+    };
+
+    type test = Expect<Equal<Actual_A, Expected_A>>;
+
+    expect(schema.transform()).toMatchSnapshot();
+  });
+
+  describe('prefers model auth over global auth', () => {
+    test('public auth on model vs owner auth on schema', () => {
+      const schema = a
+        .schema({
+          A: a
+            .model({
+              field: a.string(),
+            })
+            .authorization([a.allow.public()]),
         })
-        .authorization([a.allow.public()]),
+        .authorization([a.allow.owner()]);
+
+      type Actual_A = ClientSchema<typeof schema>['A'];
+
+      type Expected_A = {
+        readonly id: string;
+        readonly createdAt: string;
+        readonly updatedAt: string;
+        field?: string | null | undefined;
+        // no implied owner field
+      };
+
+      type test = Expect<Equal<Actual_A, Expected_A>>;
+
+      expect(schema.transform()).toMatchSnapshot();
     });
 
-    const graphql = schema.transform().schema;
-    expect(graphql).toMatchSnapshot();
+    test('owner auth on model vs public auth on schema', () => {
+      const schema = a
+        .schema({
+          A: a
+            .model({
+              field: a.string(),
+            })
+            .authorization([a.allow.owner()]),
+        })
+        .authorization([a.allow.public()]);
+
+      type Actual_A = ClientSchema<typeof schema>['A'];
+
+      type Expected_A = {
+        readonly id: string;
+        readonly createdAt: string;
+        readonly updatedAt: string;
+        field?: string | null | undefined;
+        owner?: string | undefined;
+      };
+
+      type test = Expect<Equal<Actual_A, Expected_A>>;
+
+      expect(schema.transform()).toMatchSnapshot();
+    });
+
+    test('owner auth on model vs owner auth on schema', () => {
+      const schema = a
+        .schema({
+          A: a
+            .model({
+              field: a.string(),
+            })
+            .authorization([a.allow.owner().inField('modelOwnerField')]),
+        })
+        .authorization([a.allow.owner().inField('schemaOwnerField')]);
+
+      type Actual_A = ClientSchema<typeof schema>['A'];
+
+      type Expected_A = {
+        readonly id: string;
+        readonly createdAt: string;
+        readonly updatedAt: string;
+        field?: string | null | undefined;
+        modelOwnerField?: string | undefined;
+      };
+
+      type test = Expect<Equal<Actual_A, Expected_A>>;
+
+      expect(schema.transform()).toMatchSnapshot();
+    });
   });
 });
