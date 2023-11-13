@@ -1,5 +1,11 @@
 # @aws-amplify/amplify-api-next-alpha
 
+## 0.12.0
+
+### Minor Changes
+
+- 5df8a96: add custom operations (schema builder & transform)
+
 ## 0.11.1
 
 ### Patch Changes
