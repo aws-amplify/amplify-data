@@ -158,6 +158,32 @@ exports[`schema auth rules disallows specificGroup 1`] = `
 }
 `;
 
+exports[`schema auth rules do not pullote custom operations 1`] = `
+{
+  "functionSlots": [],
+  "schema": "type Post @model @auth(rules: [{allow: owner, ownerField: "owner"}])
+{
+  id: ID! @primaryKey
+  title: String
+  owner: String
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
+}
+
+type Mutation {
+  likePost(postId: String): Post 
+}
+
+type Query {
+  getLikedPost: Post 
+}
+
+type Subscription {
+  onLikePost: Post 
+}",
+}
+`;
+
 exports[`schema auth rules global public auth - multiple models 1`] = `
 {
   "functionSlots": [],

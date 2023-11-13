@@ -484,4 +484,22 @@ describe('schema auth rules', () => {
       expect(schema.transform()).toMatchSnapshot();
     });
   });
+
+  test('do not pullote custom operations', () => {
+    const schema = a
+      .schema({
+        Post: a.model({
+          title: a.string(),
+        }),
+        likePost: a
+          .mutation()
+          .arguments({ postId: a.string() })
+          .returns(a.ref('Post')),
+        getLikedPost: a.query().returns(a.ref('Post')),
+        onLikePost: a.subscription().returns(a.ref('Post')),
+      })
+      .authorization([a.allow.owner()]);
+
+    expect(schema.transform()).toMatchSnapshot();
+  });
 });
