@@ -1,8 +1,5 @@
 import { a, ClientSchema } from '../index';
 import { Expect, Equal } from '@aws-amplify/data-schema-types';
-import { ModelSchema } from '../src/ModelSchema';
-import { Authorization, accessData } from '../src/Authorization';
-import { Prettify } from '@aws-amplify/data-schema-types';
 
 describe('implied fields', () => {
   describe('boring model keys', () => {

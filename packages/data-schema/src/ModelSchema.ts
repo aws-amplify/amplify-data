@@ -1,4 +1,7 @@
-import type { DerivedApiDefinition } from '@aws-amplify/data-schema-types';
+import type {
+  DerivedApiDefinition,
+  SetTypeSubArg,
+} from '@aws-amplify/data-schema-types';
 import type {
   ModelType,
   ModelTypeParamShape,
@@ -10,8 +13,6 @@ import type { InternalCustom } from './CustomOperation';
 export { __auth } from './ModelField';
 import { processSchema } from './SchemaProcessor';
 import { Authorization } from './Authorization';
-import { SetTypeSubArg } from '@aws-amplify/data-schema-types';
-import { Prettify } from '@aws-amplify/data-schema-types';
 
 /*
  * Notes:
@@ -51,9 +52,6 @@ export type ModelSchema<
       auth: AuthRules[],
     ) => ModelSchema<
       SetTypeSubArg<T, 'authorization', AuthRules[]>,
-      // T,
-      // { types: T['types']; authorization: AuthRules[] },
-      // UsedMethods | 'authorization'
       UsedMethods | 'authorization'
     >;
   },

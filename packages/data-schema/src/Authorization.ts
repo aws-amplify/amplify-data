@@ -439,7 +439,7 @@ export const allow = {
  * ```
  */
 export type ImpliedAuthField<T extends Authorization<any, any, any>> =
-  T extends Authorization<infer Strat, infer Field, infer isMulti>
+  T extends Authorization<infer _Strat, infer Field, infer isMulti>
     ? Field extends undefined
       ? never
       : Field extends string
