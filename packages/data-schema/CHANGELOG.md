@@ -1,5 +1,11 @@
 # @aws-amplify/amplify-api-next-alpha
 
+## 0.12.1
+
+### Patch Changes
+
+- 87f3717: fix: Remove hasMany relational object mutation field
+
 ## 0.12.0
 
 ### Minor Changes
