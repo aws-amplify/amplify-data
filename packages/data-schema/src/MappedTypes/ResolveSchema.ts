@@ -9,7 +9,10 @@ import type { ModelField } from '../ModelField';
 import type { CustomType, CustomTypeParamShape } from '../CustomType';
 import type { EnumType, EnumTypeParamShape } from '../EnumType';
 import type { RefType, RefTypeParamShape } from '../RefType';
-import { Authorization } from '../Authorization';
+import type {
+  CustomOperation,
+  CustomOperationParamShape,
+} from '../CustomOperation';
 
 export type ResolveSchema<Schema> = FieldTypes<ModelTypes<SchemaTypes<Schema>>>;
 
@@ -26,9 +29,10 @@ export type SchemaTypes<T> = T extends ModelSchema<infer R>
  * added to ModelMeta in ClientSchema.ts
  */
 export type ModelTypes<Schema> = {
-  [Model in keyof Schema as Schema[Model] extends EnumType<EnumTypeParamShape>
-    ? never
-    : Schema[Model] extends CustomType<CustomTypeParamShape>
+  [Model in keyof Schema as Schema[Model] extends
+    | EnumType<EnumTypeParamShape>
+    | CustomType<CustomTypeParamShape>
+    | CustomOperation<CustomOperationParamShape, any>
     ? never
     : Model]: Schema[Model] extends ModelType<infer R, any>
     ? R['fields']
@@ -44,8 +48,8 @@ export type FieldTypes<T> = {
   [ModelProp in keyof T]: {
     [FieldProp in keyof T[ModelProp]]: T[ModelProp][FieldProp] extends RefType<
       infer R extends RefTypeParamShape,
-      never | 'required' | 'authorization',
-      never | Authorization<any, any>
+      any,
+      any
     >
       ? // leave Ref as-is. We'll resolve it to the linked entity downstream in ResolveFieldProperties
         R['required'] extends true

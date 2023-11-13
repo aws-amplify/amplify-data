@@ -11,9 +11,9 @@ exports[`EnumType transform Explicit Enum - auth 1`] = `
 }
 
 enum AccessLevel {
-public
-protected
-private
+  public
+  protected
+  private
 }"
 `;
 
@@ -27,9 +27,9 @@ exports[`EnumType transform Explicit Enum - required 1`] = `
 }
 
 enum AccessLevel {
-public
-protected
-private
+  public
+  protected
+  private
 }"
 `;
 
@@ -43,9 +43,9 @@ exports[`EnumType transform Explicit Enum 1`] = `
 }
 
 enum AccessLevel {
-public
-protected
-private
+  public
+  protected
+  private
 }"
 `;
 
@@ -59,8 +59,8 @@ exports[`EnumType transform Implicit Enum 1`] = `
 }
 
 enum AccessLevel {
-public
-protected
-private
+  public
+  protected
+  private
 }"
 `;
