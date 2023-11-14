@@ -1,4 +1,7 @@
-import type { DerivedApiDefinition } from '@aws-amplify/data-schema-types';
+import type {
+  DerivedApiDefinition,
+  SetTypeSubArg,
+} from '@aws-amplify/data-schema-types';
 import type {
   ModelType,
   ModelTypeParamShape,
@@ -9,6 +12,7 @@ import type { CustomType } from './CustomType';
 import type { InternalCustom } from './CustomOperation';
 export { __auth } from './ModelField';
 import { processSchema } from './SchemaProcessor';
+import { Authorization } from './Authorization';
 
 /*
  * Notes:
@@ -24,19 +28,35 @@ type InternalSchemaModels = Record<
 
 export type ModelSchemaParamShape = {
   types: ModelSchemaModels;
+  authorization: Authorization<any, any, any>[];
 };
 
 type ModelSchemaData = {
   types: ModelSchemaModels;
+  authorization: Authorization<any, any, any>[];
 };
 
 export type InternalSchema = {
   data: {
     types: InternalSchemaModels;
+    authorization: Authorization<any, any, any>[];
   };
 };
 
-export type ModelSchema<T extends ModelSchemaParamShape> = {
+export type ModelSchema<
+  T extends ModelSchemaParamShape,
+  UsedMethods extends 'authorization' = never,
+> = Omit<
+  {
+    authorization: <AuthRules extends Authorization<any, any, any>>(
+      auth: AuthRules[],
+    ) => ModelSchema<
+      SetTypeSubArg<T, 'authorization', AuthRules[]>,
+      UsedMethods | 'authorization'
+    >;
+  },
+  UsedMethods
+> & {
   data: T;
   transform: () => DerivedApiDefinition;
 };
@@ -58,7 +78,7 @@ export const isModelSchema = (
 };
 
 function _schema<T extends ModelSchemaParamShape>(types: T['types']) {
-  const data: ModelSchemaData = { types };
+  const data: ModelSchemaData = { types, authorization: [] };
 
   const transform = (): DerivedApiDefinition => {
     const internalSchema: InternalSchema = { data } as InternalSchema;
@@ -66,7 +86,12 @@ function _schema<T extends ModelSchemaParamShape>(types: T['types']) {
     return processSchema({ schema: internalSchema });
   };
 
-  return { data, transform } as ModelSchema<T>;
+  const authorization = (rules: any): any => {
+    data.authorization = rules;
+    return { data, transform } as any;
+  };
+
+  return { data, transform, authorization } as ModelSchema<T>;
 }
 
 /**
@@ -78,6 +103,6 @@ function _schema<T extends ModelSchemaParamShape>(types: T['types']) {
  */
 export function schema<Types extends ModelSchemaModels>(
   types: Types,
-): ModelSchema<{ types: Types }> {
+): ModelSchema<{ types: Types; authorization: [] }> {
   return _schema(types);
 }

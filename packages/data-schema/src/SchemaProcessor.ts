@@ -205,7 +205,7 @@ function customOperationToGql(
   return { gqlField, models: implicitModels };
 }
 
-function calculateAuth(authorization: Authorization<any, any>[]) {
+function calculateAuth(authorization: Authorization<any, any, any>[]) {
   const authFields: Record<string, ModelField<any, any>> = {};
   const rules: string[] = [];
 
@@ -337,7 +337,7 @@ const allImpliedFKs = (schema: InternalSchema) => {
           break;
         case ModelRelationshipTypes.hasMany:
           {
-            let authorization: Authorization<any, any>[] = [];
+            let authorization: Authorization<any, any, any>[] = [];
             let required = false;
             const [_belongsToName, belongsToDef] =
               Object.entries(relatedModel.data.fields).find(([_name, def]) => {
@@ -592,9 +592,12 @@ const schemaPreprocessor = (schema: InternalSchema): string => {
       const identifier = typeDef.data.identifier;
       const [partitionKey] = identifier;
 
-      const { authString, authFields } = calculateAuth(
-        typeDef.data.authorization,
-      );
+      const mostRelevantAuthRules =
+        typeDef.data.authorization.length > 0
+          ? typeDef.data.authorization
+          : schema.data.authorization;
+
+      const { authString, authFields } = calculateAuth(mostRelevantAuthRules);
 
       const fieldLevelAuthRules = processFieldLevelAuthRules(
         fields,

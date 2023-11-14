@@ -31,19 +31,13 @@ describe('field level auth', () => {
       any,
       infer Auth
     >
-      ? Auth extends Authorization<any, any>
+      ? Auth extends Authorization<any, any, any>
         ? ImpliedAuthFields<Auth>
         : never
       : never;
 
     const authFields: ExpectedAuthFields = {
-      owner: 'a string',
       admin: ['array', 'of', 'string'],
-    };
-
-    const brokenAuthFieldsA: ExpectedAuthFields = {
-      // @ts-expect-error
-      owner: ['array', 'of', 'string'],
     };
 
     const brokenAuthFieldsB: ExpectedAuthFields = {
@@ -70,19 +64,13 @@ describe('field level auth', () => {
       any,
       infer Auth
     >
-      ? Auth extends Authorization<any, any>
+      ? Auth extends Authorization<any, any, any>
         ? ImpliedAuthFields<Auth>
         : never
       : never;
 
     const authFields: ExpectedAuthFields = {
-      owner: 'a string',
       admin: ['array', 'of', 'string'],
-    };
-
-    const brokenAuthFieldsA: ExpectedAuthFields = {
-      // @ts-expect-error
-      owner: ['array', 'of', 'string'],
     };
 
     const brokenAuthFieldsB: ExpectedAuthFields = {

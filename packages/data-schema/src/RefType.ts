@@ -6,14 +6,14 @@ type RefTypeData = {
   type: 'ref';
   link: string;
   required: boolean;
-  authorization: Authorization<any, any>[];
+  authorization: Authorization<any, any, any>[];
 };
 
 export type RefTypeParamShape = {
   type: 'ref';
   link: string;
   required: boolean;
-  authorization: Authorization<any, any>[];
+  authorization: Authorization<any, any, any>[];
 };
 
 export type RefType<
@@ -33,7 +33,7 @@ export type RefType<
        * Configures field-level authorization rules. Pass in an array of authorizations `(a.allow.____)` to mix and match
        * multiple authorization rules for this field.
        */
-      authorization<AuthRuleType extends Authorization<any, any>>(
+      authorization<AuthRuleType extends Authorization<any, any, any>>(
         rules: AuthRuleType[],
       ): RefType<T, K | 'authorization', AuthRuleType>;
     },
@@ -73,7 +73,7 @@ function _ref<T extends RefTypeParamShape>(link: T['link']) {
 
       return this;
     },
-    authorization(rules: Authorization<any, any>[]) {
+    authorization(rules: Authorization<any, any, any>[]) {
       data.authorization = rules;
 
       return this;

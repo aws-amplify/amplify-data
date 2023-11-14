@@ -1,4 +1,4 @@
-import { a, ClientSchema } from '..';
+import { a, ClientSchema } from '../index';
 import { Expect, Equal } from '@aws-amplify/data-schema-types';
 
 describe('implied fields', () => {
