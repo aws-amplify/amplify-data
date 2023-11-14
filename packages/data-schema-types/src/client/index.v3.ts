@@ -16,7 +16,8 @@ export type SelectionSet<_Model, _Path> = any;
 
 /**
  * Custom headers that can be passed either to the client or to individual
- * calls, either as a static object or a function that returns a promise.
+ * model operations, either as a static object or a function that returns a
+ * promise.
  */
 export type CustomHeaders =
   | Record<string, string>

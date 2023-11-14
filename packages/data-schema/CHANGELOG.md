@@ -1,5 +1,14 @@
 # @aws-amplify/amplify-api-next-alpha
 
+## 0.12.2
+
+### Patch Changes
+
+- e16e1ca: custom op - add function by name
+- Updated dependencies [131ffdd]
+- Updated dependencies [504fb2b]
+  - @aws-amplify/data-schema-types@0.6.2
+
 ## 0.12.1
 
 ### Patch Changes

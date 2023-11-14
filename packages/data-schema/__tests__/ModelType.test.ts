@@ -247,6 +247,41 @@ describe('model auth rules', () => {
     expect(graphql).toMatchSnapshot();
   });
 
+  it(`can create a dynamic singular groups rule with withClaimIn`, () => {
+    const schema = a.schema({
+      widget: a
+        .model({
+          title: a.string().required(),
+        })
+        .authorization([
+          a.allow
+            .groupDefinedIn('businessUnitOwner')
+            .withClaimIn('someClaimsField'),
+        ]),
+    });
+
+    const graphql = schema.transform().schema;
+    expect(graphql).toMatchSnapshot();
+  });
+
+  it(`can create a dynamic multi groups rule with withClaimIn`, () => {
+    const schema = a.schema({
+      widget: a
+        .model({
+          title: a.string().required(),
+        })
+        .authorization([
+          a.allow
+            .groupsDefinedIn('sharedWithGroups')
+            .to(['read'])
+            .withClaimIn('someClaimsField'),
+        ]),
+    });
+
+    const graphql = schema.transform().schema;
+    expect(graphql).toMatchSnapshot();
+  });
+
   it(`can chain off of inField rules`, () => {
     const schema = a.schema({
       widget: a
