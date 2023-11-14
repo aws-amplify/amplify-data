@@ -6,8 +6,8 @@ import { RefType, InternalRef } from './RefType';
 type CustomArguments = Record<string, ModelField<any, any>>;
 
 type CustomReturnType = RefType<any>;
+type CustomFunctionRefType = string; // extend to include reference
 
-type InternalCustomFields = Record<string, InternalField>;
 type InternalCustomArguments = Record<string, InternalField>;
 type InternalCustomReturnType = InternalRef;
 
@@ -21,20 +21,22 @@ type CustomOperationName = (typeof CustomOperationNames)[number];
 type CustomData = {
   arguments: CustomArguments;
   returnType: CustomReturnType | null;
+  functionRef: string | null; // extend to include reference
   authorization: Authorization<any, any, any>[];
   typeName: CustomOperationName;
 };
 
 type InternalCustomData = CustomData & {
-  fields: InternalCustomFields;
   arguments: InternalCustomArguments;
   returnType: InternalCustomReturnType;
+  functionRef: string | null;
   authorization: Authorization<any, any, any>[];
 };
 
 export type CustomOperationParamShape = {
   arguments: CustomArguments;
   returnType: CustomReturnType | null;
+  functionRef: string | null;
   authorization: Authorization<any, any, any>[];
   typeName: CustomOperationName;
 };
@@ -58,6 +60,12 @@ export type CustomOperation<
       ): CustomOperation<
         SetTypeSubArg<T, 'returnType', ReturnType>,
         K | 'returns'
+      >;
+      function<FunctionRef extends CustomFunctionRefType>(
+        functionRefOrName: FunctionRef,
+      ): CustomOperation<
+        SetTypeSubArg<T, 'functionRef', FunctionRef>,
+        K | 'function'
       >;
       authorization<AuthRuleType extends Authorization<any, any, any>>(
         rules: AuthRuleType[],
@@ -91,6 +99,7 @@ function _custom<T extends CustomOperationParamShape>(
   const data: CustomData = {
     arguments: {},
     returnType: null,
+    functionRef: null,
     authorization: [],
     typeName: typeName,
   };
@@ -103,6 +112,11 @@ function _custom<T extends CustomOperationParamShape>(
     },
     returns(returnType: CustomReturnType) {
       data.returnType = returnType;
+
+      return this;
+    },
+    function(functionRefOrName: CustomFunctionRefType) {
+      data.functionRef = functionRefOrName;
 
       return this;
     },
@@ -119,6 +133,7 @@ function _custom<T extends CustomOperationParamShape>(
 export function query(): CustomOperation<{
   arguments: CustomArguments;
   returnType: null;
+  functionRef: null;
   authorization: [];
   typeName: 'Query';
 }> {
@@ -128,6 +143,7 @@ export function query(): CustomOperation<{
 export function mutation(): CustomOperation<{
   arguments: CustomArguments;
   returnType: null;
+  functionRef: null;
   authorization: [];
   typeName: 'Mutation';
 }> {
@@ -137,6 +153,7 @@ export function mutation(): CustomOperation<{
 export function subscription(): CustomOperation<{
   arguments: CustomArguments;
   returnType: null;
+  functionRef: null;
   authorization: [];
   typeName: 'Subscription';
 }> {

@@ -186,7 +186,12 @@ function customOperationToGql(
   typeName: string,
   typeDef: InternalCustom,
 ): { gqlField: string; models: [string, any][] } {
-  const { arguments: fieldArgs, returnType, authorization } = typeDef.data;
+  const {
+    arguments: fieldArgs,
+    returnType,
+    authorization,
+    functionRef,
+  } = typeDef.data;
 
   const { authString } = calculateAuth(authorization);
 
@@ -201,7 +206,9 @@ function customOperationToGql(
     implicitModels = models;
   }
 
-  const gqlField = `${sig}: ${resolvedArg} ${authString}`;
+  const fnString = functionRef ? `@function(name: "${functionRef}") ` : '';
+
+  const gqlField = `${sig}: ${resolvedArg} ${fnString}${authString}`;
   return { gqlField, models: implicitModels };
 }
 
@@ -644,21 +651,23 @@ type CustomOperationFields = {
   subscriptions: string[];
 };
 
-function generateCustomOperationTypes(fields: CustomOperationFields): string[] {
+function generateCustomOperationTypes({
+  queries,
+  mutations,
+  subscriptions,
+}: CustomOperationFields): string[] {
   const types: string[] = [];
 
-  if (fields.mutations.length > 0) {
-    types.push(`type Mutation {\n  ${fields.mutations.join('\n  ')}\n}`);
+  if (mutations.length > 0) {
+    types.push(`type Mutation {\n  ${mutations.join('\n  ')}\n}`);
   }
 
-  if (fields.queries.length > 0) {
-    types.push(`type Query {\n  ${fields.queries.join('\n  ')}\n}`);
+  if (queries.length > 0) {
+    types.push(`type Query {\n  ${queries.join('\n  ')}\n}`);
   }
 
-  if (fields.subscriptions.length > 0) {
-    types.push(
-      `type Subscription {\n  ${fields.subscriptions.join('\n  ')}\n}`,
-    );
+  if (subscriptions.length > 0) {
+    types.push(`type Subscription {\n  ${subscriptions.join('\n  ')}\n}`);
   }
 
   return types;
