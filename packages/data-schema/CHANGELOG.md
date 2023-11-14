@@ -1,5 +1,12 @@
 # @aws-amplify/amplify-api-next-alpha
 
+## 0.12.3
+
+### Patch Changes
+
+- a2f4869: docstring corrections for `a.allow` group(s) claim rules
+- eb9b549: added missing withClaimIn builder methods on groupDefinedIn, groupsDefinedIn
+
 ## 0.12.2
 
 ### Patch Changes
