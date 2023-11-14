@@ -1,5 +1,11 @@
 # @aws-amplify/amplify-api-next-types-alpha
 
+## 0.6.1
+
+### Patch Changes
+
+- 9e1fbc2: extend GraphQLFormattedError - include errorType & errorInfo
+
 ## 0.6.0
 
 ### Minor Changes
