@@ -395,15 +395,16 @@ describe('model auth rules', () => {
 
   it(`can define a custom authorization rule`, () => {
     const schema = a.schema({
-      Widget: a.model({
+      Widget: a
+        .model({
           title: a.string().required(),
         })
         .authorization([a.allow.custom()]),
     });
 
     const graphql = schema.transform().schema;
-    expect(graphql).toMatchSnapshot()
-  })
+    expect(graphql).toMatchSnapshot();
+  });
 
   const TestOperations: Operation[][] = [
     // each individual operation

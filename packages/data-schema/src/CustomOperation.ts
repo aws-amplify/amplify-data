@@ -21,7 +21,7 @@ type CustomOperationName = (typeof CustomOperationNames)[number];
 type CustomData = {
   arguments: CustomArguments;
   returnType: CustomReturnType | null;
-  authorization: Authorization<any, any>[];
+  authorization: Authorization<any, any, any>[];
   typeName: CustomOperationName;
 };
 
@@ -29,13 +29,13 @@ type InternalCustomData = CustomData & {
   fields: InternalCustomFields;
   arguments: InternalCustomArguments;
   returnType: InternalCustomReturnType;
-  authorization: Authorization<any, any>[];
+  authorization: Authorization<any, any, any>[];
 };
 
 export type CustomOperationParamShape = {
   arguments: CustomArguments;
   returnType: CustomReturnType | null;
-  authorization: Authorization<any, any>[];
+  authorization: Authorization<any, any, any>[];
   typeName: CustomOperationName;
 };
 
@@ -59,7 +59,7 @@ export type CustomOperation<
         SetTypeSubArg<T, 'returnType', ReturnType>,
         K | 'returns'
       >;
-      authorization<AuthRuleType extends Authorization<any, any>>(
+      authorization<AuthRuleType extends Authorization<any, any, any>>(
         rules: AuthRuleType[],
       ): CustomOperation<
         SetTypeSubArg<T, 'authorization', AuthRuleType[]>,
@@ -106,7 +106,7 @@ function _custom<T extends CustomOperationParamShape>(
 
       return this;
     },
-    authorization(rules: Authorization<any, any>[]) {
+    authorization(rules: Authorization<any, any, any>[]) {
       data.authorization = rules;
 
       return this;

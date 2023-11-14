@@ -74,11 +74,12 @@ export const Operations = [
 export type Operation = (typeof Operations)[number];
 
 export type Authorization<
+  AuthStrategy extends Strategy,
   AuthField extends string | undefined,
   AuthFieldPlurality extends boolean,
 > = {
   [__data]: {
-    strategy?: Strategy;
+    strategy?: AuthStrategy;
     provider?: Provider;
     operations?: Operation[];
     groupOrOwnerField?: AuthField;
@@ -111,7 +112,7 @@ function omit<T extends object, O extends string>(
   return pruned;
 }
 
-function to<SELF extends Authorization<any, any>>(
+function to<SELF extends Authorization<any, any, any>>(
   this: SELF,
   operations: Operation[],
 ) {
@@ -119,15 +120,19 @@ function to<SELF extends Authorization<any, any>>(
   return omit(this, 'to');
 }
 
-function inField<SELF extends Authorization<any, any>, Field extends string>(
-  this: SELF,
-  field: Field,
-) {
+function inField<
+  SELF extends Authorization<any, any, any>,
+  Field extends string,
+>(this: SELF, field: Field) {
   this[__data].groupOrOwnerField = field;
   const built = omit(this, 'inField');
 
   return built as unknown as BuilderMethods<typeof built> &
-    Authorization<Field, SELF[typeof __data]['multiOwner']>;
+    Authorization<
+      SELF[typeof __data]['strategy'],
+      Field,
+      SELF[typeof __data]['multiOwner']
+    >;
 }
 
 /**
@@ -138,7 +143,7 @@ function inField<SELF extends Authorization<any, any>, Field extends string>(
  * @param property A property of identity JWT.
  * @returns A copy of the Authorization object with the claim attached.
  */
-function identityClaim<SELF extends Authorization<any, any>>(
+function identityClaim<SELF extends Authorization<any, any, any>>(
   this: SELF,
   property: string,
 ) {
@@ -146,7 +151,7 @@ function identityClaim<SELF extends Authorization<any, any>>(
   return omit(this, 'identityClaim');
 }
 
-function withClaimIn<SELF extends Authorization<any, any>>(
+function withClaimIn<SELF extends Authorization<any, any, any>>(
   this: SELF,
   property: string,
 ) {
@@ -164,13 +169,14 @@ function validateProvider(
 }
 
 function authData<
-  Field extends string | undefined = 'owner',
+  Strat extends Strategy = 'public',
+  Field extends string | undefined = undefined,
   isMulti extends boolean = false,
   Builders extends object = object,
 >(
-  defaults: Partial<Authorization<Field, isMulti>[typeof __data]>,
+  defaults: Partial<Authorization<Strat, Field, isMulti>[typeof __data]>,
   builderMethods: Builders,
-): Authorization<Field, isMulti> & Builders {
+): Authorization<Strat, Field, isMulti> & Builders {
   return {
     [__data]: {
       strategy: 'public',
@@ -181,11 +187,6 @@ function authData<
       identityClaim: undefined,
       groups: undefined,
       ...defaults,
-
-      // might not even be needed ...
-      // dependencies: {
-      //   owner: {},
-      // },
     } as any,
     ...builderMethods,
   };
@@ -437,14 +438,16 @@ export const allow = {
  * }
  * ```
  */
-export type ImpliedAuthField<T extends Authorization<any, any>> =
-  T extends Authorization<infer Field, infer isMulti>
-    ? Field extends string
+export type ImpliedAuthField<T extends Authorization<any, any, any>> =
+  T extends Authorization<infer _Strat, infer Field, infer isMulti>
+    ? Field extends undefined
+      ? never
+      : Field extends string
       ? isMulti extends true
         ? { [K in Field]?: string[] }
         : { [K in Field]?: string }
-      : object
-    : object;
+      : never
+    : never;
 
 /**
  * Turns the type from a list of `Authorization` rules like this:
@@ -467,9 +470,11 @@ export type ImpliedAuthField<T extends Authorization<any, any>> =
  * }
  * ```
  */
-export type ImpliedAuthFields<T extends Authorization<any, any>> =
-  UnionToIntersection<ImpliedAuthField<T>>;
+export type ImpliedAuthFields<T extends Authorization<any, any, any>> =
+  ImpliedAuthField<T> extends never
+    ? never
+    : UnionToIntersection<ImpliedAuthField<T>>;
 
-export const accessData = <T extends Authorization<any, any>>(
+export const accessData = <T extends Authorization<any, any, any>>(
   authorization: T,
 ) => authorization[__data];

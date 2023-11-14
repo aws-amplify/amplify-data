@@ -17,8 +17,8 @@ import type {
 export type ResolveSchema<Schema> = FieldTypes<ModelTypes<SchemaTypes<Schema>>>;
 
 // TODO: find better name
-export type SchemaTypes<T> = T extends ModelSchema<infer R>
-  ? R['types']
+export type SchemaTypes<T> = T extends ModelSchema<any, any>
+  ? T['data']['types']
   : never;
 
 /**

@@ -13,7 +13,7 @@ import type {
   NonModelTypesShape,
 } from './MappedTypes/ExtractNonModelTypes';
 
-export type ClientSchema<Schema extends ModelSchema<any>> =
+export type ClientSchema<Schema extends ModelSchema<any, any>> =
   InternalClientSchema<Schema>;
 
 /**
@@ -33,7 +33,7 @@ export type ClientSchema<Schema extends ModelSchema<any>> =
  *
  */
 type InternalClientSchema<
-  Schema extends ModelSchema<any>,
+  Schema extends ModelSchema<any, any>,
   NonModelTypes extends NonModelTypesShape = ExtractNonModelTypes<Schema>,
   ResolvedSchema = ResolveSchema<Schema>,
   IdentifierMeta extends Record<string, any> = ModelIdentifier<
