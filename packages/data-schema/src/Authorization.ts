@@ -329,7 +329,7 @@ export const allow = {
    * Authorize multiple specific user groups. Provide the names of the specific user groups to have access.
    *
    * By default, `.specificGroups()` uses an Amazon Cognito user pool based authorization. You can additionally
-   * use `.specificGroups(["group-aa", "group-b"], "oidc")` to use OIDC based authentication to designate the user group.
+   * use `.specificGroups(["group-a", "group-b"], "oidc")` to use OIDC based authentication to designate the user group.
    *
    * To change the specific claim that should be used as the user group identifier, chain the
    * `.withClaimIn(...)` method.
