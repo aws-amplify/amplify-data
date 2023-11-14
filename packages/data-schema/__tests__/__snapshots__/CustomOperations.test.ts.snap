@@ -17,6 +17,18 @@ type Mutation {
 }"
 `;
 
+exports[`CustomOperation transform Custom Mutation w string function reference & auth 1`] = `
+"type Mutation {
+  likePost(postId: String!): Post @function(name: "myFunc") @auth(rules: [{allow: private}])
+}"
+`;
+
+exports[`CustomOperation transform Custom Mutation w string function reference 1`] = `
+"type Mutation {
+  likePost(postId: String!): Post @function(name: "myFunc") 
+}"
+`;
+
 exports[`CustomOperation transform Schema w model, custom query, mutation, and subscription 1`] = `
 "type Post @model 
 {
