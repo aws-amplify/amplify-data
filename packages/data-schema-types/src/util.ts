@@ -19,11 +19,6 @@ export type Prettify<T> = T extends (...args: infer ArgsType) => any
   ? { [P in keyof T]: Prettify<T[P]> }
   : T;
 
-declare const brand: unique symbol;
-export type Brand<T, TBrand extends string> = T & {
-  [brand]: TBrand;
-};
-
 /**
  * @typeParam U - Union Type
  * @returns Intersection type

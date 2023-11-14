@@ -1,4 +1,5 @@
-import { Brand, SetTypeSubArg } from '@aws-amplify/data-schema-types';
+import { SetTypeSubArg } from '@aws-amplify/data-schema-types';
+import { Brand } from './Brand';
 import { Authorization } from './Authorization';
 import { __auth } from './ModelField';
 

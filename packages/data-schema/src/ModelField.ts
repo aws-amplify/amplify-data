@@ -1,9 +1,12 @@
+import { Brand, brandTarget } from './Brand';
 import { Authorization } from './Authorization';
 
 /**
  * Used to "attach" auth types to ModelField without exposing them on the builder.
  */
 export const __auth = Symbol('__auth');
+
+const brandName = 'modelField';
 
 export enum ModelFieldType {
   Id = 'ID',
@@ -76,36 +79,39 @@ export type ModelField<
   // rename K
   K extends keyof ModelField<T> = never,
   Auth = undefined,
-> = Omit<
-  {
-    /**
-     * Marks a field as required.
-     */
-    required(): ModelField<Required<T>, K | 'required'>;
-    // Exclude `optional` after calling array, because both the value and the array itself can be optional
-    /**
-     * Converts a field type definition to an array of the field type.
-     */
-    array(): ModelField<ArrayField<T>, Exclude<K, 'required'> | 'array'>;
-    // TODO: should be T, but .array breaks this constraint. Fix later
-    /**
-     * Sets a default value for the scalar type.
-     * @param value the default value
-     */
-    default(value: ModelFieldTypeParamOuter): ModelField<T, K | 'default'>;
-    /**
-     * Configures field-level authorization rules. Pass in an array of authorizations `(a.allow.____)` to mix and match
-     * multiple authorization rules for this field.
-     */
-    authorization<AuthRuleType extends Authorization<any, any, any>>(
-      rules: AuthRuleType[],
-    ): ModelField<T, K | 'authorization', AuthRuleType>;
+> = Brand<
+  Omit<
+    {
+      /**
+       * Marks a field as required.
+       */
+      required(): ModelField<Required<T>, K | 'required'>;
+      // Exclude `optional` after calling array, because both the value and the array itself can be optional
+      /**
+       * Converts a field type definition to an array of the field type.
+       */
+      array(): ModelField<ArrayField<T>, Exclude<K, 'required'> | 'array'>;
+      // TODO: should be T, but .array breaks this constraint. Fix later
+      /**
+       * Sets a default value for the scalar type.
+       * @param value the default value
+       */
+      default(value: ModelFieldTypeParamOuter): ModelField<T, K | 'default'>;
+      /**
+       * Configures field-level authorization rules. Pass in an array of authorizations `(a.allow.____)` to mix and match
+       * multiple authorization rules for this field.
+       */
+      authorization<AuthRuleType extends Authorization<any, any, any>>(
+        rules: AuthRuleType[],
+      ): ModelField<T, K | 'authorization', AuthRuleType>;
+    },
+    K
+  > & {
+    // This is a lie. This property is never set at runtime. It's just used to smuggle auth types through.
+    [__auth]?: Auth;
   },
-  K
-> & {
-  // This is a lie. This property is never set at runtime. It's just used to smuggle auth types through.
-  [__auth]?: Auth;
-};
+  typeof brandName
+>;
 
 /**
  * Internal representation of Model Field that exposes the `data` property.
@@ -142,6 +148,7 @@ function _field<T extends ModelFieldTypeParamOuter>(fieldType: ModelFieldType) {
   };
 
   const builder: ModelField<T> = {
+    ...brandTarget({}, brandName),
     required() {
       if (_meta.lastInvokedMethod === 'array') {
         data.arrayRequired = true;

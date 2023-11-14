@@ -1,9 +1,15 @@
-import { Brand, SetTypeSubArg } from '@aws-amplify/data-schema-types';
+import { SetTypeSubArg } from '@aws-amplify/data-schema-types';
+import { Brand } from './Brand';
+
 import { ModelField, InternalField } from './ModelField';
 import { Authorization } from './Authorization';
 import { RefType, InternalRef } from './RefType';
+import { EnumType, EnumTypeParamShape } from './EnumType';
 
-type CustomArguments = Record<string, ModelField<any, any>>;
+type CustomArguments = Record<
+  string,
+  ModelField<any, any> | EnumType<EnumTypeParamShape>
+>;
 
 type CustomReturnType = RefType<any>;
 type CustomFunctionRefType = string; // extend to include reference

@@ -6,12 +6,16 @@ import type {
 } from './ModelRelationalField';
 import { Authorization } from './Authorization';
 import { RefType } from './RefType';
+import { EnumType, EnumTypeParamShape } from './EnumType';
+import { CustomType, CustomTypeParamShape } from './CustomType';
 
 type ModelFields = Record<
   string,
-  | ModelField<any, any>
-  | ModelRelationalField<any, string, any>
-  | RefType<any, any>
+  | ModelField<any, any, any>
+  | ModelRelationalField<any, string, any, any>
+  | RefType<any, any, any>
+  | EnumType<EnumTypeParamShape>
+  | CustomType<CustomTypeParamShape>
 >;
 
 type InternalModelFields = Record<
