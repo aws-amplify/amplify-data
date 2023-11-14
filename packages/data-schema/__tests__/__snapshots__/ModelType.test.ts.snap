@@ -55,8 +55,30 @@ exports[`model auth rules can create a dynamic multi groups rule 1`] = `
 }"
 `;
 
+exports[`model auth rules can create a dynamic multi groups rule with withClaimIn 1`] = `
+"type widget @model @auth(rules: [{allow: groups, operations: [read], groupsField: "sharedWithGroups", groupClaim: "someClaimsField"}])
+{
+  id: ID! @primaryKey
+  title: String!
+  sharedWithGroups: [String]
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
+}"
+`;
+
 exports[`model auth rules can create a dynamic singular groups rule 1`] = `
 "type widget @model @auth(rules: [{allow: groups, groupsField: "businessUnitOwner"}])
+{
+  id: ID! @primaryKey
+  title: String!
+  businessUnitOwner: String
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
+}"
+`;
+
+exports[`model auth rules can create a dynamic singular groups rule with withClaimIn 1`] = `
+"type widget @model @auth(rules: [{allow: groups, groupsField: "businessUnitOwner", groupClaim: "someClaimsField"}])
 {
   id: ID! @primaryKey
   title: String!

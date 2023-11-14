@@ -372,6 +372,7 @@ export const allow = {
       },
       {
         to,
+        withClaimIn,
       },
     );
   },
@@ -398,6 +399,7 @@ export const allow = {
       },
       {
         to,
+        withClaimIn,
       },
     );
   },
