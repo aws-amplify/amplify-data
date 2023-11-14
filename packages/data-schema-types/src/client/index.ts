@@ -301,6 +301,17 @@ export interface GraphQLFormattedError {
    */
   readonly message: string;
   /**
+   * The AppSync exception category. Indicates the source of the error.
+   */
+  readonly errorType: string;
+  /**
+   * Additional error metadata that can be surfaced via error handling resolver utils:
+   * * JS - https://docs.aws.amazon.com/appsync/latest/devguide/built-in-util-js.html#utility-helpers-in-error-js
+   * * VTL - https://docs.aws.amazon.com/appsync/latest/devguide/utility-helpers-in-util.html#utility-helpers-in-error
+   *
+   */
+  readonly errorInfo: null | { [key: string]: unknown };
+  /**
    * If an error can be associated to a particular point in the requested
    * GraphQL document, it should contain a list of locations.
    */
