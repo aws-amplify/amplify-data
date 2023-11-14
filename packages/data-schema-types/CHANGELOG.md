@@ -1,5 +1,12 @@
 # @aws-amplify/amplify-api-next-types-alpha
 
+## 0.6.2
+
+### Patch Changes
+
+- 131ffdd: update custom header type
+- 504fb2b: update custom header comments
+
 ## 0.6.1
 
 ### Patch Changes
