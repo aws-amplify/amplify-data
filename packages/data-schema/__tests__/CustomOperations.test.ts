@@ -48,4 +48,37 @@ describe('CustomOperation transform', () => {
 
     expect(result).toMatchSnapshot();
   });
+
+  test('Custom Mutation w string function reference', () => {
+    const s = a.schema({
+      likePost: a
+        .mutation()
+        .arguments({
+          postId: a.string().required(),
+        })
+        .returns(a.ref('Post'))
+        .function('myFunc'),
+    });
+
+    const result = s.transform().schema;
+
+    expect(result).toMatchSnapshot();
+  });
+
+  test('Custom Mutation w string function reference & auth', () => {
+    const s = a.schema({
+      likePost: a
+        .mutation()
+        .arguments({
+          postId: a.string().required(),
+        })
+        .returns(a.ref('Post'))
+        .function('myFunc')
+        .authorization([a.allow.private()]),
+    });
+
+    const result = s.transform().schema;
+
+    expect(result).toMatchSnapshot();
+  });
 });
