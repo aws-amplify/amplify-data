@@ -308,7 +308,6 @@ export interface GraphQLFormattedError {
    * Additional error metadata that can be surfaced via error handling resolver utils:
    * * JS - https://docs.aws.amazon.com/appsync/latest/devguide/built-in-util-js.html#utility-helpers-in-error-js
    * * VTL - https://docs.aws.amazon.com/appsync/latest/devguide/utility-helpers-in-util.html#utility-helpers-in-error
-   *
    */
   readonly errorInfo: null | { [key: string]: unknown };
   /**
