@@ -697,4 +697,6 @@ export type ModelTypes<
  * Custom headers that can be passed either to the client or to individual
  * calls, either as a static object or a function that returns a promise.
  */
-export type CustomHeaders = Record<string, string> | (() => Promise<Headers>);
+export type CustomHeaders =
+  | Record<string, string>
+  | (() => Promise<Record<string, string>>);
