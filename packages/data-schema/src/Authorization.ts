@@ -303,10 +303,10 @@ export const allow = {
    * Authorize a specific user group. Provide the name of the specific user group to have access.
    *
    * By default, `.specificGroup()` uses an Amazon Cognito user pool based authorization. You can additionally
-   * use `.specificGroup("oidc")` to use OIDC based authentication to designate the user group.
+   * use `.specificGroup("group-name", "oidc")` to use OIDC based authentication to designate the user group.
    *
    * To change the specific claim that should be used as the user group identifier, chain the
-   * `.groupClaim(...)` method.
+   * `.withClaimIn(...)` method.
    * @param group the name of the group to authorize
    * @param provider the authentication provider - supports "userPools" or "oidc"
    * @returns an authorization rule to grant access by a specific group
@@ -329,10 +329,10 @@ export const allow = {
    * Authorize multiple specific user groups. Provide the names of the specific user groups to have access.
    *
    * By default, `.specificGroups()` uses an Amazon Cognito user pool based authorization. You can additionally
-   * use `.specificGroups("oidc")` to use OIDC based authentication to designate the user group.
+   * use `.specificGroups(["group-a", "group-b"], "oidc")` to use OIDC based authentication to designate the user group.
    *
    * To change the specific claim that should be used as the user group identifier, chain the
-   * `.groupClaim(...)` method.
+   * `.withClaimIn(...)` method.
    * @param groups the names of the group to authorize defined as an array
    * @param provider the authentication provider - supports "userPools" or "oidc"
    * @returns an authorization rule to grant access by a specific group
@@ -355,10 +355,10 @@ export const allow = {
    * Authorize if a user is part of a group defined in a data model field.
    *
    * By default, `.groupDefinedIn()` uses an Amazon Cognito user pool based authorization. You can additionally
-   * use `.groupDefinedIn("oidc")` to use OIDC based authentication to designate the user group.
+   * use `.groupDefinedIn("field-name", "oidc")` to use OIDC based authentication to designate the user group.
    *
    * To change the specific claim that should be used as the user group identifier within the groups field, chain the
-   * `.groupClaim(...)` method.
+   * `.withClaimIn(...)` method.
    * @param groupsField the field that should store the authorized user group information
    * @param provider the authentication provider - supports "userPools" or "oidc"
    * @returns an authorization rule to grant access by a specific group
@@ -372,6 +372,7 @@ export const allow = {
       },
       {
         to,
+        withClaimIn,
       },
     );
   },
@@ -380,10 +381,10 @@ export const allow = {
    * Authorize if a user is part of a one of the groups defined in a data model field.
    *
    * By default, `.groupsDefinedIn()` uses an Amazon Cognito user pool based authorization. You can additionally
-   * use `.groupsDefinedIn("oidc")` to use OIDC based authentication to designate the user group.
+   * use `.groupsDefinedIn("field-name", "oidc")` to use OIDC based authentication to designate the user group.
    *
    * To change the specific claim that should be used as the user group identifier within the groups field, chain the
-   * `.groupClaim(...)` method.
+   * `.withClaimIn(...)` method.
    * @param groupsField the field that should store the list of authorized user groups
    * @param provider the authentication provider - supports "userPools" or "oidc"
    * @returns an authorization rule to grant access by a specific group
@@ -398,6 +399,7 @@ export const allow = {
       },
       {
         to,
+        withClaimIn,
       },
     );
   },
