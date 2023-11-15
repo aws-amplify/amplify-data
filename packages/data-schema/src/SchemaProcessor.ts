@@ -213,6 +213,26 @@ function customOperationToGql(
   return { gqlField, models: implicitModels };
 }
 
+// function mergeFieldDefinitions(fields: Record<string, any>): Record<string, any> {
+// }
+
+// function areConflicting(left: ModelFieldDef);
+
+// function addFields(
+//   fields: Record<string, ModelField<any, any>>,
+//   additions: Record<string, ModelField<any, any>>,
+// ): Record<LeftKeys | RightKeys, LeftValues | RightValues> {
+//   const o: any = { ...fields };
+//   for (const [k, addition] of Object.entries(additions)) {
+//     const existing = o[k];
+//     if (!existing) {
+//       o[k] = addition;
+//     } else if (areConflicting(existing, addition)) {
+//       throw new Error(`Field ${k} defined twice with conflicting definitions.`);
+//     }
+//   }
+// }
+
 function calculateAuth(authorization: Authorization<any, any, any>[]) {
   const authFields: Record<string, ModelField<any, any>> = {};
   const rules: string[] = [];
@@ -256,6 +276,10 @@ function calculateAuth(authorization: Authorization<any, any, any>[]) {
         authFields[rule.groupOrOwnerField] = string();
       }
     }
+
+    // for (const [name, value] of Object.entries(authFields)) {
+    //   console.log(name, (value as any).data);
+    // }
 
     if (rule.groups) {
       // does `group` need to be escaped?
