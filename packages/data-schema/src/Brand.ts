@@ -11,3 +11,8 @@ export function brandTarget<T extends object, TBrand extends string>(
 ): Brand<T, TBrand> {
   return { ...target, [brand]: brandName };
 }
+
+export type Unbrand<T extends object, B extends Brand<T, string>> = Omit<
+  B,
+  brand
+>;

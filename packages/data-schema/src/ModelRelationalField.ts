@@ -83,13 +83,10 @@ export type ModelRelationalField<
   RM extends string | symbol,
   K extends keyof ModelRelationalField<T, RM> = never,
   Auth = undefined,
-> = Brand<
-  Omit<ModelRelationalFieldFunctions<T, RM, K>, K> & {
-    // This is a lie. This property is never set at runtime. It's just used to smuggle auth types through.
-    [__auth]?: Auth;
-  },
-  typeof brandName
->;
+> = Omit<ModelRelationalFieldFunctions<T, RM, K>, K> & {
+  // This is a lie. This property is never set at runtime. It's just used to smuggle auth types through.
+  [__auth]?: Auth;
+} & Brand<object, typeof brandName>;
 
 /**
  * Internal representation of Model Field that exposes the `data` property.
