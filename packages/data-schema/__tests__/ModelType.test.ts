@@ -6,6 +6,27 @@ import {
   Operations,
   Operation,
 } from '../src/Authorization';
+import { ModelRelationalField } from '../src/ModelRelationalField';
+import { ModelField } from '../src/ModelField';
+
+describe('malformed schema', () => {
+  it('models expresses error when function provided instead of field', () => {
+    const schema = a.schema({
+      widget: a.model({
+        // @ts-expect-error
+        title: a.string,
+      }),
+    });
+  });
+  it('models expresses error when string provided instead of field', () => {
+    const schema = a.schema({
+      widget: a.model({
+        // @ts-expect-error
+        title: 'test',
+      }),
+    });
+  });
+});
 
 describe('type definition tests', () => {
   // evaluates type defs in corresponding test-d.ts file

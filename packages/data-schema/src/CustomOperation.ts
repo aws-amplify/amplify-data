@@ -1,15 +1,22 @@
-import { Brand, SetTypeSubArg } from '@aws-amplify/data-schema-types';
+import { SetTypeSubArg, Brand } from '@aws-amplify/data-schema-types';
+
 import { ModelField, InternalField } from './ModelField';
 import { Authorization } from './Authorization';
 import { RefType, InternalRef } from './RefType';
+import { EnumType, EnumTypeParamShape } from './EnumType';
 
-type CustomArguments = Record<string, ModelField<any, any>>;
+type CustomArguments = Record<
+  string,
+  ModelField<any, any> | EnumType<EnumTypeParamShape>
+>;
 
 type CustomReturnType = RefType<any>;
 type CustomFunctionRefType = string; // extend to include reference
 
 type InternalCustomArguments = Record<string, InternalField>;
 type InternalCustomReturnType = InternalRef;
+
+const brandName = 'customOperation';
 
 export const CustomOperationNames = [
   'Query',
@@ -46,38 +53,36 @@ export type CustomOperation<
   K extends keyof CustomOperation<T> = never,
   // Branding the exported type allows us to detect it
   // nominally in our mapped types, ignoring structural overlap with other types
-> = Brand<
-  Omit<
-    {
-      arguments<Arguments extends CustomArguments>(
-        args: Arguments,
-      ): CustomOperation<
-        SetTypeSubArg<T, 'arguments', Arguments>,
-        K | 'arguments'
-      >;
-      returns<ReturnType extends CustomReturnType>(
-        returnType: ReturnType,
-      ): CustomOperation<
-        SetTypeSubArg<T, 'returnType', ReturnType>,
-        K | 'returns'
-      >;
-      function<FunctionRef extends CustomFunctionRefType>(
-        functionRefOrName: FunctionRef,
-      ): CustomOperation<
-        SetTypeSubArg<T, 'functionRef', FunctionRef>,
-        K | 'function'
-      >;
-      authorization<AuthRuleType extends Authorization<any, any, any>>(
-        rules: AuthRuleType[],
-      ): CustomOperation<
-        SetTypeSubArg<T, 'authorization', AuthRuleType[]>,
-        K | 'authorization'
-      >;
-    },
-    K
-  >,
-  'customOperation'
->;
+> = Omit<
+  {
+    arguments<Arguments extends CustomArguments>(
+      args: Arguments,
+    ): CustomOperation<
+      SetTypeSubArg<T, 'arguments', Arguments>,
+      K | 'arguments'
+    >;
+    returns<ReturnType extends CustomReturnType>(
+      returnType: ReturnType,
+    ): CustomOperation<
+      SetTypeSubArg<T, 'returnType', ReturnType>,
+      K | 'returns'
+    >;
+    function<FunctionRef extends CustomFunctionRefType>(
+      functionRefOrName: FunctionRef,
+    ): CustomOperation<
+      SetTypeSubArg<T, 'functionRef', FunctionRef>,
+      K | 'function'
+    >;
+    authorization<AuthRuleType extends Authorization<any, any, any>>(
+      rules: AuthRuleType[],
+    ): CustomOperation<
+      SetTypeSubArg<T, 'authorization', AuthRuleType[]>,
+      K | 'authorization'
+    >;
+  },
+  K
+> &
+  Brand<object, typeof brandName>;
 
 function brandedBuilder<T extends CustomOperationParamShape>(
   builder: Record<keyof CustomOperation<T> & string, any>,

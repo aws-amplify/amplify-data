@@ -1,6 +1,8 @@
-import { Brand, SetTypeSubArg } from '@aws-amplify/data-schema-types';
+import { SetTypeSubArg, Brand } from '@aws-amplify/data-schema-types';
 import { Authorization } from './Authorization';
 import { __auth } from './ModelField';
+
+const brandName = 'ref';
 
 type RefTypeData = {
   type: 'ref';
@@ -22,28 +24,25 @@ export type RefType<
   Auth = undefined,
   // Branding the exported type allows us to detect it
   // nominally in our mapped types, ignoring structural overlap with other types
-> = Brand<
-  Omit<
-    {
-      /**
-       * Marks a field as required.
-       */
-      required(): RefType<SetTypeSubArg<T, 'required', true>, K | 'required'>;
-      /**
-       * Configures field-level authorization rules. Pass in an array of authorizations `(a.allow.____)` to mix and match
-       * multiple authorization rules for this field.
-       */
-      authorization<AuthRuleType extends Authorization<any, any, any>>(
-        rules: AuthRuleType[],
-      ): RefType<T, K | 'authorization', AuthRuleType>;
-    },
-    K
-  > & {
-    // This is a lie. This property is never set at runtime. It's just used to smuggle auth types through.
-    [__auth]?: Auth;
+> = Omit<
+  {
+    /**
+     * Marks a field as required.
+     */
+    required(): RefType<SetTypeSubArg<T, 'required', true>, K | 'required'>;
+    /**
+     * Configures field-level authorization rules. Pass in an array of authorizations `(a.allow.____)` to mix and match
+     * multiple authorization rules for this field.
+     */
+    authorization<AuthRuleType extends Authorization<any, any, any>>(
+      rules: AuthRuleType[],
+    ): RefType<T, K | 'authorization', AuthRuleType>;
   },
-  'ref'
->;
+  K
+> & {
+  // This is a lie. This property is never set at runtime. It's just used to smuggle auth types through.
+  [__auth]?: Auth;
+} & Brand<object, typeof brandName>;
 
 function brandedBuilder<T extends RefTypeParamShape>(
   builder: Record<keyof RefType<T> & string, any>,

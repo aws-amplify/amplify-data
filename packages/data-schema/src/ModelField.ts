@@ -1,9 +1,12 @@
+import { Brand } from '@aws-amplify/data-schema-types';
 import { Authorization } from './Authorization';
 
 /**
  * Used to "attach" auth types to ModelField without exposing them on the builder.
  */
 export const __auth = Symbol('__auth');
+
+const brandName = 'modelField';
 
 export enum ModelFieldType {
   Id = 'ID',
@@ -105,7 +108,7 @@ export type ModelField<
 > & {
   // This is a lie. This property is never set at runtime. It's just used to smuggle auth types through.
   [__auth]?: Auth;
-};
+} & Brand<object, typeof brandName>;
 
 /**
  * Internal representation of Model Field that exposes the `data` property.
@@ -141,7 +144,7 @@ function _field<T extends ModelFieldTypeParamOuter>(fieldType: ModelFieldType) {
     authorization: [],
   };
 
-  const builder: ModelField<T> = {
+  const builder = {
     required() {
       if (_meta.lastInvokedMethod === 'array') {
         data.arrayRequired = true;
@@ -171,7 +174,7 @@ function _field<T extends ModelFieldTypeParamOuter>(fieldType: ModelFieldType) {
 
       return this;
     },
-  };
+  } as ModelField<T>;
 
   // this double cast gives us a Subtyping Constraint i.e., hides `data` from the public API,
   // but makes it available internally when needed
