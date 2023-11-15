@@ -1,5 +1,11 @@
 # @aws-amplify/amplify-api-next-types-alpha
 
+## 0.6.3
+
+### Patch Changes
+
+- cfcf125: fix: Add branding to all field types to get schema errors'
+
 ## 0.6.2
 
 ### Patch Changes
