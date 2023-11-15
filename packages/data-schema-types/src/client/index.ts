@@ -378,7 +378,7 @@ export type LazyLoader<Model, IsArray extends boolean> = (
         headers?: CustomHeaders;
       },
 ) => IsArray extends true
-  ? ListReturnValue<Prettify<Model>>
+  ? ListReturnValue<Prettify<NonNullable<Model>>>
   : SingularReturnValue<Prettify<Model>>;
 
 export type AuthMode =
