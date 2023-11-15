@@ -4,7 +4,9 @@ import {
   Equal,
   SelectionSet,
   __modelMeta__,
+  Prettify,
 } from '@aws-amplify/data-schema-types';
+import { Nullable } from '@aws-amplify/data-schema/lib-esm/src/ModelField';
 import { generateClient } from 'aws-amplify/api';
 
 const authModes = [
@@ -92,6 +94,16 @@ describe('Basic operations', () => {
             ],
           },
         });
+      });
+      test('lazy loaded hasMany returns a non-nullable list of non-nullable elements', async () => {
+        const { data } = await client.models.Post.get({ id: 'something' });
+        const comments = await data.comments();
+        type Comments = (typeof comments)['data'];
+
+        type test = Expect<Equal<NonNullable<Comments>, Comments>>;
+        type test2 = Expect<
+          Equal<NonNullable<Comments[number]>, Comments[number]>
+        >;
       });
     });
   });
