@@ -18,7 +18,6 @@ import type { InternalRef } from './RefType';
 import type { EnumType } from './EnumType';
 import type { CustomType } from './CustomType';
 import { type InternalCustom, CustomOperationNames } from './CustomOperation';
-import { Brand } from '@aws-amplify/data-schema-types';
 
 type ScalarFieldDef = Exclude<InternalField['data'], { fieldType: 'model' }>;
 type ModelFieldDef = Extract<
@@ -79,13 +78,13 @@ function isModelField(field: any): field is { data: ModelFieldDef } {
 
 function isScalarField(
   field: ModelField<any, any>,
-): field is Brand<{ data: ScalarFieldDef }, 'modelField'> {
+): field is { data: ScalarFieldDef } {
   return isScalarFieldDef((field as any).data);
 }
 
 function isRefField(
   field: ModelField<any, any>,
-): field is Brand<{ data: RefFieldDef }, 'modelField'> {
+): field is { data: RefFieldDef } {
   return isRefFieldDef((field as any).data);
 }
 
