@@ -1,6 +1,6 @@
-import { SetTypeSubArg } from '@aws-amplify/data-schema-types';
+import { SetTypeSubArg, Brand } from '@aws-amplify/data-schema-types';
 import { Authorization } from './Authorization';
-import { Brand, brandTarget } from './Brand';
+
 /**
  * Used to "attach" auth types to ModelField without exposing them on the builder.
  */
@@ -148,8 +148,7 @@ function _modelRelationalField<
   if (arrayTypeRelationships.includes(type)) {
     data.array = true;
   }
-  const relationshipBuilderFunctions: ModelRelationalField<T, RelatedModel> = {
-    ...brandTarget({}, brandName),
+  const relationshipBuilderFunctions = {
     required() {
       data.arrayRequired = true;
 
@@ -170,7 +169,7 @@ function _modelRelationalField<
 
       return this;
     },
-  };
+  } as ModelRelationalField<T, RelatedModel>;
 
   const builder = Object.fromEntries(
     relationModifierMap[type].map((key) => [

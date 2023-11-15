@@ -1,4 +1,5 @@
-import { Brand } from './Brand';
+import { Brand } from '@aws-amplify/data-schema-types';
+
 type EnumTypeData = {
   type: 'enum';
   values: readonly string[];

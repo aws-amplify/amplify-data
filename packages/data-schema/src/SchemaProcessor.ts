@@ -18,7 +18,7 @@ import type { InternalRef } from './RefType';
 import type { EnumType } from './EnumType';
 import type { CustomType } from './CustomType';
 import { type InternalCustom, CustomOperationNames } from './CustomOperation';
-import { Brand } from './Brand';
+import { Brand } from '@aws-amplify/data-schema-types';
 
 type ScalarFieldDef = Exclude<InternalField['data'], { fieldType: 'model' }>;
 type ModelFieldDef = Extract<

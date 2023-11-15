@@ -1,4 +1,4 @@
-import { Brand, brandTarget } from './Brand';
+import { Brand } from '@aws-amplify/data-schema-types';
 import { Authorization } from './Authorization';
 
 /**
@@ -144,8 +144,7 @@ function _field<T extends ModelFieldTypeParamOuter>(fieldType: ModelFieldType) {
     authorization: [],
   };
 
-  const builder: ModelField<T> = {
-    ...brandTarget({}, brandName),
+  const builder = {
     required() {
       if (_meta.lastInvokedMethod === 'array') {
         data.arrayRequired = true;
@@ -175,7 +174,7 @@ function _field<T extends ModelFieldTypeParamOuter>(fieldType: ModelFieldType) {
 
       return this;
     },
-  };
+  } as ModelField<T>;
 
   // this double cast gives us a Subtyping Constraint i.e., hides `data` from the public API,
   // but makes it available internally when needed
