@@ -93,8 +93,8 @@ describe('Basic operations', () => {
         const comments = await data.comments();
         type Comments = (typeof comments)['data'];
 
-        type test = Expect<Equal<NonNullable<Comments>, Comments>>;
-        type test2 = Expect<
+        type testA = Expect<Equal<NonNullable<Comments>, Comments>>;
+        type testB = Expect<
           Equal<NonNullable<Comments[number]>, Comments[number]>
         >;
       });
