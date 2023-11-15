@@ -1,5 +1,11 @@
 # @aws-amplify/amplify-api-next-alpha
 
+## 0.12.5
+
+### Patch Changes
+
+- a74ff3a: removes over-aggressive conflict detection types for model authorization rules
+
 ## 0.12.4
 
 ### Patch Changes

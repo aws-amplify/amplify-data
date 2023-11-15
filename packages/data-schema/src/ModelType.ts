@@ -128,7 +128,7 @@ type ConflictingAuthRulesMap<T extends ModelTypeParamShape> = {
  * ;
  * ```
  */
-type ConflictingAuthRules<T extends ModelTypeParamShape> =
+type _ConflictingAuthRules<T extends ModelTypeParamShape> =
   ConflictingAuthRulesMap<T>[keyof ConflictingAuthRulesMap<T>];
 
 export type ModelType<
@@ -140,7 +140,7 @@ export type ModelType<
       identifier: ID,
     ): ModelType<SetTypeSubArg<T, 'identifier', ID>, K | 'identifier'>;
     authorization<AuthRuleType extends Authorization<any, any, any>>(
-      rules: Exclude<AuthRuleType, ConflictingAuthRules<T>>[],
+      rules: AuthRuleType[],
     ): ModelType<
       SetTypeSubArg<T, 'authorization', AuthRuleType[]>,
       K | 'authorization'
