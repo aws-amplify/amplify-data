@@ -1,12 +1,5 @@
 import { a, ClientSchema } from '@aws-amplify/data-schema';
-import {
-  Expect,
-  Equal,
-  SelectionSet,
-  __modelMeta__,
-  Prettify,
-} from '@aws-amplify/data-schema-types';
-import { Nullable } from '@aws-amplify/data-schema/lib-esm/src/ModelField';
+import { Expect, Equal, __modelMeta__ } from '@aws-amplify/data-schema-types';
 import { generateClient } from 'aws-amplify/api';
 
 const authModes = [
