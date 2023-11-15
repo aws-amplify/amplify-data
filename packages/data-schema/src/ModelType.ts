@@ -128,7 +128,7 @@ type ConflictingAuthRulesMap<T extends ModelTypeParamShape> = {
  * ;
  * ```
  */
-type ConflictingAuthRules<T extends ModelTypeParamShape> =
+type _ConflictingAuthRules<T extends ModelTypeParamShape> =
   ConflictingAuthRulesMap<T>[keyof ConflictingAuthRulesMap<T>];
 
 export type ModelType<
