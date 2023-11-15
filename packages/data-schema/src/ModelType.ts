@@ -140,7 +140,7 @@ export type ModelType<
       identifier: ID,
     ): ModelType<SetTypeSubArg<T, 'identifier', ID>, K | 'identifier'>;
     authorization<AuthRuleType extends Authorization<any, any, any>>(
-      rules: Exclude<AuthRuleType, ConflictingAuthRules<T>>[],
+      rules: AuthRuleType[],
     ): ModelType<
       SetTypeSubArg<T, 'authorization', AuthRuleType[]>,
       K | 'authorization'
