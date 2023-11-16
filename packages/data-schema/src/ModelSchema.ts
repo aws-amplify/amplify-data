@@ -7,9 +7,13 @@ import type {
   ModelTypeParamShape,
   InternalModel,
 } from './ModelType';
-import type { EnumType } from './EnumType';
-import type { CustomType } from './CustomType';
-import type { InternalCustom } from './CustomOperation';
+import type { EnumType, EnumTypeParamShape } from './EnumType';
+import type { CustomType, CustomTypeParamShape } from './CustomType';
+import type {
+  CustomOperation,
+  CustomOperationParamShape,
+  InternalCustom,
+} from './CustomOperation';
 export { __auth } from './ModelField';
 import { processSchema } from './SchemaProcessor';
 import { Authorization } from './Authorization';
@@ -20,19 +24,25 @@ import { Authorization } from './Authorization';
  * TSC output diagnostics to benchmark
  */
 
-type ModelSchemaModels = Record<string, ModelType<ModelTypeParamShape, any>>;
+type SchemaContent =
+  | ModelType<ModelTypeParamShape, any>
+  | CustomType<CustomTypeParamShape>
+  | EnumType<EnumTypeParamShape>
+  | CustomOperation<CustomOperationParamShape, any>;
+
+type ModelSchemaContents = Record<string, SchemaContent>;
 type InternalSchemaModels = Record<
   string,
   InternalModel | EnumType<any> | CustomType<any> | InternalCustom
 >;
 
 export type ModelSchemaParamShape = {
-  types: ModelSchemaModels;
+  types: ModelSchemaContents;
   authorization: Authorization<any, any, any>[];
 };
 
 type ModelSchemaData = {
-  types: ModelSchemaModels;
+  types: ModelSchemaContents;
   authorization: Authorization<any, any, any>[];
 };
 
@@ -101,7 +111,7 @@ function _schema<T extends ModelSchemaParamShape>(types: T['types']) {
  * @returns An API and data model definition to be deployed with Amplify (Gen 2) experience (`processSchema(...)`)
  * or with the Amplify Data CDK construct (`@aws-amplify/data-construct`)
  */
-export function schema<Types extends ModelSchemaModels>(
+export function schema<Types extends ModelSchemaContents>(
   types: Types,
 ): ModelSchema<{ types: Types; authorization: [] }> {
   return _schema(types);
