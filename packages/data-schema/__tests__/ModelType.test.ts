@@ -583,4 +583,66 @@ describe('model auth rules', () => {
       .authorization([a.allow.multipleOwners().inField('someOwnerField')]);
     expect(() => schema.transform().schema).toThrow();
   });
+
+  describe('duplicate field validation does not issue errors for `identifier()`', () => {
+    // because `identifier()` doesn't actually need to match on type. it only
+    // needs the field to exist. The field types specified by `identifier()` are
+    // fallback in case the field isn't defined explicitly.
+    it('explicit `id: string` field', () => {
+      const schema = a.schema({
+        widget: a
+          .model({
+            id: a.string().required(),
+          })
+          .identifier(['id']),
+      });
+      expect(schema.transform().schema).toMatchSnapshot();
+    });
+
+    it('explicit `id: ID` field', () => {
+      const schema = a.schema({
+        widget: a
+          .model({
+            id: a.id().required(),
+          })
+          .identifier(['id']),
+      });
+      expect(schema.transform().schema).toMatchSnapshot();
+    });
+
+    it('explicit `customId: string` field', () => {
+      const schema = a.schema({
+        widget: a
+          .model({
+            customId: a.string().required(),
+          })
+          .identifier(['customId']),
+      });
+      expect(schema.transform().schema).toMatchSnapshot();
+    });
+
+    it('explicit multi-field string type PK', () => {
+      const schema = a.schema({
+        widget: a
+          .model({
+            idFieldA: a.string().required(),
+            idFieldB: a.string().required(),
+          })
+          .identifier(['idFieldA', 'idFieldB']),
+      });
+      expect(schema.transform().schema).toMatchSnapshot();
+    });
+
+    it('explicit multi-field mixed types PK', () => {
+      const schema = a.schema({
+        widget: a
+          .model({
+            idFieldA: a.string().required(),
+            idFieldB: a.integer().required(),
+          })
+          .identifier(['idFieldA', 'idFieldB']),
+      });
+      expect(schema.transform().schema).toMatchSnapshot();
+    });
+  });
 });
