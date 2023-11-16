@@ -1,5 +1,11 @@
 # @aws-amplify/amplify-api-next-alpha
 
+## 0.12.8
+
+### Patch Changes
+
+- 83d27dc: fix: removed bad field conflict validation for identifiers
+
 ## 0.12.7
 
 ### Patch Changes
