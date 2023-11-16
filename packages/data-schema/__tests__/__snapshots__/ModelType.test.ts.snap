@@ -890,6 +890,53 @@ exports[`model auth rules can specify operations  1`] = `
 }"
 `;
 
+exports[`model auth rules duplicate field validation does not issue errors for \`identifier()\` explicit \`customId: string\` field 1`] = `
+"type widget @model 
+{
+  customId: String! @primaryKey
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
+}"
+`;
+
+exports[`model auth rules duplicate field validation does not issue errors for \`identifier()\` explicit \`id: ID\` field 1`] = `
+"type widget @model 
+{
+  id: ID! @primaryKey
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
+}"
+`;
+
+exports[`model auth rules duplicate field validation does not issue errors for \`identifier()\` explicit \`id: string\` field 1`] = `
+"type widget @model 
+{
+  id: String! @primaryKey
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
+}"
+`;
+
+exports[`model auth rules duplicate field validation does not issue errors for \`identifier()\` explicit multi-field mixed types PK 1`] = `
+"type widget @model 
+{
+  idFieldA: String! @primaryKey(sortKeyFields: ["idFieldB"])
+  idFieldB: Int!
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
+}"
+`;
+
+exports[`model auth rules duplicate field validation does not issue errors for \`identifier()\` explicit multi-field string type PK 1`] = `
+"type widget @model 
+{
+  idFieldA: String! @primaryKey(sortKeyFields: ["idFieldB"])
+  idFieldB: String!
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
+}"
+`;
+
 exports[`model auth rules includes auth from fields 1`] = `
 "type widget @model 
 {
