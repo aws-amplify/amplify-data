@@ -1,5 +1,11 @@
 # @aws-amplify/amplify-api-next-alpha
 
+## 0.12.6
+
+### Patch Changes
+
+- de4d219: fix: Add branding to all schema content types to get errors
+
 ## 0.12.5
 
 ### Patch Changes
