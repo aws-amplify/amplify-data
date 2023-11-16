@@ -1,5 +1,11 @@
 # @aws-amplify/amplify-api-next-alpha
 
+## 0.12.7
+
+### Patch Changes
+
+- 058b3ff: adds protection against conflicting field defs during graphql generation
+
 ## 0.12.6
 
 ### Patch Changes
