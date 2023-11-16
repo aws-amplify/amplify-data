@@ -213,6 +213,89 @@ function customOperationToGql(
   return { gqlField, models: implicitModels };
 }
 
+/**
+ * Tests whether two ModelField definitions are in conflict.
+ *
+ * This is a shallow check intended to catch conflicts between defined fields
+ * and fields implied by authorization rules. Hence, it only compares type
+ * and plurality.
+ *
+ * @param left
+ * @param right
+ * @returns
+ */
+function areConflicting(
+  left: ModelField<any, any>,
+  right: ModelField<any, any>,
+): boolean {
+  // These are the only props we care about for this comparison, because the others
+  // (required, arrayRequired, etc) are not specified on auth or FK directives.
+  const relevantProps = ['array', 'fieldType'] as const;
+  for (const prop of relevantProps) {
+    if (
+      (left as InternalField).data[prop] !== (right as InternalField).data[prop]
+    ) {
+      return true;
+    }
+  }
+
+  return false;
+}
+
+/**
+ * Merges one field defition object onto an existing one, performing
+ * validation (conflict detection) along the way.
+ *
+ * @param existing An existing field map
+ * @param additions A field map to merge in
+ */
+function addFields(
+  existing: Record<string, ModelField<any, any>>,
+  additions: Record<string, ModelField<any, any>>,
+): void {
+  for (const [k, addition] of Object.entries(additions)) {
+    if (!existing[k]) {
+      existing[k] = addition;
+    } else if (areConflicting(existing[k], addition)) {
+      throw new Error(`Field ${k} defined twice with conflicting definitions.`);
+    } else {
+      // fields are defined on both sides, but match.
+    }
+  }
+}
+
+/**
+ * Produces a new field definition object from every field definition object
+ * given as an argument. Performs validation (conflict detection) as objects
+ * are merged together.
+ *
+ * @param fieldsObjects A list of field definition objects to merge.
+ * @returns
+ */
+function mergeFieldObjects(
+  ...fieldsObjects: (Record<string, ModelField<any, any>> | undefined)[]
+): Record<string, ModelField<any, any>> {
+  const result: Record<string, ModelField<any, any>> = {};
+  for (const fields of fieldsObjects) {
+    if (fields) addFields(result, fields);
+  }
+  return result;
+}
+
+/**
+ * Given a list of authorization rules, produces a set of the implied owner and/or
+ * group fields, along with the associated graphql `@auth` string directive.
+ *
+ * This is intended to be called for each model and field to collect the implied
+ * fields and directives from that individual "item's" auth rules.
+ *
+ * The computed directives are intended to be appended to the graphql field definition.
+ *
+ * The computed fields are intended to be aggregated and injected per model.
+ *
+ * @param authorization A list of authorization rules.
+ * @returns
+ */
 function calculateAuth(authorization: Authorization<any, any, any>[]) {
   const authFields: Record<string, ModelField<any, any>> = {};
   const rules: string[] = [];
@@ -251,9 +334,9 @@ function calculateAuth(authorization: Authorization<any, any, any>[]) {
       // model field dep, type of which depends on whether multiple owner/group
       // is required.
       if (rule.multiOwner) {
-        authFields[rule.groupOrOwnerField] = string().array();
+        addFields(authFields, { [rule.groupOrOwnerField]: string().array() });
       } else {
-        authFields[rule.groupOrOwnerField] = string();
+        addFields(authFields, { [rule.groupOrOwnerField]: string() });
       }
     }
 
@@ -454,7 +537,7 @@ const idFields = (
 };
 
 function processFieldLevelAuthRules(
-  fields: Record<string, InternalModel>,
+  fields: Record<string, ModelField<any, any>>,
   authFields: Record<string, ModelField<any, any>>,
 ) {
   const fieldLevelAuthRules: {
@@ -463,12 +546,12 @@ function processFieldLevelAuthRules(
 
   for (const [fieldName, fieldDef] of Object.entries(fields)) {
     const { authString, authFields: fieldAuthField } = calculateAuth(
-      fieldDef?.data?.authorization || [],
+      (fieldDef as InternalField)?.data?.authorization || [],
     );
 
     if (authString) fieldLevelAuthRules[fieldName] = authString;
     if (fieldAuthField) {
-      Object.assign(authFields, fieldAuthField);
+      addFields(authFields, fieldAuthField);
     }
   }
 
@@ -593,10 +676,10 @@ const schemaPreprocessor = (schema: InternalSchema): string => {
         }
       }
     } else {
-      const fields = {
-        ...typeDef.data.fields,
-        ...fkFields[typeName],
-      };
+      const fields = mergeFieldObjects(
+        typeDef.data.fields as Record<string, ModelField<any, any>>,
+        fkFields[typeName],
+      );
       const identifier = typeDef.data.identifier;
       const [partitionKey] = identifier;
 
@@ -613,13 +696,12 @@ const schemaPreprocessor = (schema: InternalSchema): string => {
       );
 
       const { gqlFields, models } = processFields(
-        {
-          // idFields first, so they can be overridden by customer definitions when present.
-          ...idFields(typeDef),
-          ...fields,
-          ...authFields,
-          ...implicitTimestampFields(typeDef),
-        },
+        mergeFieldObjects(
+          idFields(typeDef),
+          fields,
+          authFields,
+          implicitTimestampFields(typeDef),
+        ),
         fieldLevelAuthRules,
         identifier,
         partitionKey,

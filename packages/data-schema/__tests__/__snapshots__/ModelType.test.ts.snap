@@ -27,7 +27,7 @@ exports[`model auth rules can create a "multiple owners" rule on an existing fie
 {
   id: ID! @primaryKey
   title: String!
-  authors: [String]
+  authors: [String!]!
   createdAt: AWSDateTime!
   updatedAt: AWSDateTime!
 }"
@@ -243,7 +243,7 @@ exports[`model auth rules can define owner auth with owner field spec 1`] = `
 "type widget @model @auth(rules: [{allow: owner, ownerField: "title"}])
 {
   id: ID! @primaryKey
-  title: String
+  title: String!
   createdAt: AWSDateTime!
   updatedAt: AWSDateTime!
 }"
