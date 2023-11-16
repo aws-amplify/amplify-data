@@ -545,4 +545,30 @@ describe('model auth rules', () => {
     });
     expect(() => schema.transform().schema).toThrow();
   });
+
+  it('gives a runtime error if field-level owner and schema-level owner conflict', () => {
+    const schema = a
+      .schema({
+        widget: a.model({
+          title: a
+            .string()
+            .required()
+            .authorization([a.allow.owner().inField('someOwnerField')]),
+        }),
+      })
+      .authorization([a.allow.multipleOwners().inField('someOwnerField')]);
+    expect(() => schema.transform().schema).toThrow();
+  });
+
+  it('gives a runtime error if model field and schema-level owner auth rule conflicts', () => {
+    const schema = a
+      .schema({
+        widget: a.model({
+          title: a.string().required(),
+          someOwnerField: a.string(),
+        }),
+      })
+      .authorization([a.allow.multipleOwners().inField('someOwnerField')]);
+    expect(() => schema.transform().schema).toThrow();
+  });
 });
