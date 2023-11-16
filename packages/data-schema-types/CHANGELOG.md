@@ -1,5 +1,11 @@
 # @aws-amplify/amplify-api-next-types-alpha
 
+## 0.6.4
+
+### Patch Changes
+
+- a496770: fix: lazy loaded hasMany should not be nullable
+
 ## 0.6.3
 
 ### Patch Changes
