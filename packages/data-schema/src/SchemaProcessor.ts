@@ -213,15 +213,23 @@ function customOperationToGql(
   return { gqlField, models: implicitModels };
 }
 
-// function mergeFieldDefinitions(fields: Record<string, any>): Record<string, any> {
-// }
-
+/**
+ * Tests whether two ModelField definitions are in conflict.
+ *
+ * This is a shallow check intended to catch conflicts between defined fields
+ * and fields implied by authorization rules. Hence, it only compares type
+ * and plurality.
+ *
+ * @param left
+ * @param right
+ * @returns
+ */
 function areConflicting(
   left: ModelField<any, any>,
   right: ModelField<any, any>,
 ): boolean {
   // These are the only props we care about for this comparison, because the others
-  // (required, arrayRequired, etc) are not even specified in implicit fields.
+  // (required, arrayRequired, etc) are not specified on auth or FK directives.
   const relevantProps = ['array', 'fieldType'] as const;
   for (const prop of relevantProps) {
     if (
@@ -234,6 +242,13 @@ function areConflicting(
   return false;
 }
 
+/**
+ * Merges one field defition object onto an existing one, performing
+ * validation (conflict detection) along the way.
+ *
+ * @param existing An existing field map
+ * @param additions A field map to merge in
+ */
 function addFields(
   existing: Record<string, ModelField<any, any>>,
   additions: Record<string, ModelField<any, any>>,
@@ -249,6 +264,14 @@ function addFields(
   }
 }
 
+/**
+ * Produces a new field definition object from every field definition object
+ * given as an argument. Performs validation (conflict detection) as objects
+ * are merged together.
+ *
+ * @param fieldsObjects A list of field definition objects to merge.
+ * @returns
+ */
 function mergeFieldObjects(
   ...fieldsObjects: Record<string, ModelField<any, any>>[]
 ): Record<string, ModelField<any, any>> {
@@ -259,6 +282,20 @@ function mergeFieldObjects(
   return result;
 }
 
+/**
+ * Given a list of authorization rules, produces a set of the implied owner and/or
+ * group fields, along with the associated graphql `@auth` string directive.
+ *
+ * This is intended to be called for each model and field to collect the implied
+ * fields and directives from that individual "item's" auth rules.
+ *
+ * The computed directives are intended to be appended to the graphql field definition.
+ *
+ * The computed fields are intended to be aggregated and injected per model.
+ *
+ * @param authorization A list of authorization rules.
+ * @returns
+ */
 function calculateAuth(authorization: Authorization<any, any, any>[]) {
   const authFields: Record<string, ModelField<any, any>> = {};
   const rules: string[] = [];
