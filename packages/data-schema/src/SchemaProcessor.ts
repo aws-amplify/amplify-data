@@ -273,11 +273,11 @@ function addFields(
  * @returns
  */
 function mergeFieldObjects(
-  ...fieldsObjects: Record<string, ModelField<any, any>>[]
+  ...fieldsObjects: (Record<string, ModelField<any, any>> | undefined)[]
 ): Record<string, ModelField<any, any>> {
   const result: Record<string, ModelField<any, any>> = {};
   for (const fields of fieldsObjects) {
-    addFields(result, fields);
+    if (fields) addFields(result, fields);
   }
   return result;
 }
@@ -334,10 +334,8 @@ function calculateAuth(authorization: Authorization<any, any, any>[]) {
       // model field dep, type of which depends on whether multiple owner/group
       // is required.
       if (rule.multiOwner) {
-        // authFields[rule.groupOrOwnerField] = string().array();
         addFields(authFields, { [rule.groupOrOwnerField]: string().array() });
       } else {
-        // authFields[rule.groupOrOwnerField] = string();
         addFields(authFields, { [rule.groupOrOwnerField]: string() });
       }
     }
@@ -539,7 +537,7 @@ const idFields = (
 };
 
 function processFieldLevelAuthRules(
-  fields: Record<string, InternalModel>,
+  fields: Record<string, ModelField<any, any>>,
   authFields: Record<string, ModelField<any, any>>,
 ) {
   const fieldLevelAuthRules: {
@@ -548,7 +546,7 @@ function processFieldLevelAuthRules(
 
   for (const [fieldName, fieldDef] of Object.entries(fields)) {
     const { authString, authFields: fieldAuthField } = calculateAuth(
-      fieldDef?.data?.authorization || [],
+      (fieldDef as InternalField)?.data?.authorization || [],
     );
 
     if (authString) fieldLevelAuthRules[fieldName] = authString;
@@ -680,7 +678,7 @@ const schemaPreprocessor = (schema: InternalSchema): string => {
     } else {
       const fields = mergeFieldObjects(
         typeDef.data.fields as Record<string, ModelField<any, any>>,
-        fkFields[typeName] ?? {},
+        fkFields[typeName],
       );
       const identifier = typeDef.data.identifier;
       const [partitionKey] = identifier;
@@ -693,16 +691,16 @@ const schemaPreprocessor = (schema: InternalSchema): string => {
       const { authString, authFields } = calculateAuth(mostRelevantAuthRules);
 
       const fieldLevelAuthRules = processFieldLevelAuthRules(
-        fields as any,
+        fields,
         authFields,
       );
 
       const { gqlFields, models } = processFields(
         mergeFieldObjects(
-          idFields(typeDef) ?? {},
-          fields ?? {},
-          authFields ?? {},
-          implicitTimestampFields(typeDef) ?? {},
+          idFields(typeDef),
+          fields,
+          authFields,
+          implicitTimestampFields(typeDef),
         ),
         fieldLevelAuthRules,
         identifier,
