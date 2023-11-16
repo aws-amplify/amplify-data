@@ -1,4 +1,4 @@
-import type { SetTypeSubArg } from '@aws-amplify/data-schema-types';
+import type { Brand, SetTypeSubArg } from '@aws-amplify/data-schema-types';
 import { ModelField, InternalField } from './ModelField';
 import type {
   ModelRelationalField,
@@ -8,6 +8,8 @@ import { Authorization } from './Authorization';
 import { RefType } from './RefType';
 import { EnumType, EnumTypeParamShape } from './EnumType';
 import { CustomType, CustomTypeParamShape } from './CustomType';
+
+const brand = 'modelType';
 
 type ModelFields = Record<
   string,
@@ -147,7 +149,8 @@ export type ModelType<
     >;
   },
   K
->;
+> &
+  Brand<object, typeof brand>;
 
 /**
  * Internal representation of Model Type that exposes the `data` property.
@@ -164,7 +167,7 @@ function _model<T extends ModelTypeParamShape>(fields: T['fields']) {
     authorization: [],
   };
 
-  const builder: ModelType<T> = {
+  const builder = {
     identifier(identifier) {
       data.identifier = identifier;
 
@@ -175,7 +178,7 @@ function _model<T extends ModelTypeParamShape>(fields: T['fields']) {
 
       return this;
     },
-  };
+  } as ModelType<T>;
 
   return { ...builder, data } as InternalModel as ModelType<T>;
 }

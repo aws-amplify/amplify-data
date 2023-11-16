@@ -12,6 +12,18 @@ import { ModelField } from '../src/ModelField';
 describe('malformed schema', () => {
   it('models expresses error when function provided instead of field', () => {
     const schema = a.schema({
+      // @ts-expect-error
+      widget: a.model,
+    });
+  });
+  it('models expresses error when string provided instead of field', () => {
+    const schema = a.schema({
+      // @ts-expect-error
+      widget: 'MyWidget!',
+    });
+  });
+  it('models expresses error when function provided instead of field', () => {
+    const schema = a.schema({
       widget: a.model({
         // @ts-expect-error
         title: a.string,
