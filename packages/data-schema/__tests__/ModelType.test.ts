@@ -507,8 +507,7 @@ describe('model auth rules', () => {
     });
   });
 
-  // TODO: Un-skip and make pass
-  it.skip('gives a runtime error if field-level owner and model-level owner conflict', () => {
+  it('gives a runtime error if field-level owner and model-level owner conflict', () => {
     const schema = a.schema({
       widget: a
         .model({
@@ -517,11 +516,33 @@ describe('model auth rules', () => {
             .required()
             .authorization([a.allow.owner().inField('someOwnerField')]),
         })
-        // conflicts because the implied field from `title` auth is `string`,
-        // whereas this rule expects `string[]`
         .authorization([a.allow.multipleOwners().inField('someOwnerField')]),
     });
+    expect(() => schema.transform().schema).toThrow();
+  });
 
+  it('gives a runtime error if model field and model-level owner auth rule conflicts', () => {
+    const schema = a.schema({
+      widget: a
+        .model({
+          title: a.string().required(),
+          someOwnerField: a.string(),
+        })
+        .authorization([a.allow.multipleOwners().inField('someOwnerField')]),
+    });
+    expect(() => schema.transform().schema).toThrow();
+  });
+
+  it('gives a runtime error if model field and field-level owner auth rule conflicts', () => {
+    const schema = a.schema({
+      widget: a.model({
+        title: a
+          .string()
+          .required()
+          .authorization([a.allow.multipleOwners().inField('someOwnerField')]),
+        someOwnerField: a.string(),
+      }),
+    });
     expect(() => schema.transform().schema).toThrow();
   });
 });

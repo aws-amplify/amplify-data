@@ -216,22 +216,48 @@ function customOperationToGql(
 // function mergeFieldDefinitions(fields: Record<string, any>): Record<string, any> {
 // }
 
-// function areConflicting(left: ModelFieldDef);
+function areConflicting(
+  left: ModelField<any, any>,
+  right: ModelField<any, any>,
+): boolean {
+  // These are the only props we care about for this comparison, because the others
+  // (required, arrayRequired, etc) are not even specified in implicit fields.
+  const relevantProps = ['array', 'fieldType'] as const;
+  for (const prop of relevantProps) {
+    if (
+      (left as InternalField).data[prop] !== (right as InternalField).data[prop]
+    ) {
+      return true;
+    }
+  }
 
-// function addFields(
-//   fields: Record<string, ModelField<any, any>>,
-//   additions: Record<string, ModelField<any, any>>,
-// ): Record<LeftKeys | RightKeys, LeftValues | RightValues> {
-//   const o: any = { ...fields };
-//   for (const [k, addition] of Object.entries(additions)) {
-//     const existing = o[k];
-//     if (!existing) {
-//       o[k] = addition;
-//     } else if (areConflicting(existing, addition)) {
-//       throw new Error(`Field ${k} defined twice with conflicting definitions.`);
-//     }
-//   }
-// }
+  return false;
+}
+
+function addFields(
+  existing: Record<string, ModelField<any, any>>,
+  additions: Record<string, ModelField<any, any>>,
+): void {
+  for (const [k, addition] of Object.entries(additions)) {
+    if (!existing[k]) {
+      existing[k] = addition;
+    } else if (areConflicting(existing[k], addition)) {
+      throw new Error(`Field ${k} defined twice with conflicting definitions.`);
+    } else {
+      // fields are defined on both sides, but match.
+    }
+  }
+}
+
+function mergeFieldObjects(
+  ...fieldsObjects: Record<string, ModelField<any, any>>[]
+): Record<string, ModelField<any, any>> {
+  const result: Record<string, ModelField<any, any>> = {};
+  for (const fields of fieldsObjects) {
+    addFields(result, fields);
+  }
+  return result;
+}
 
 function calculateAuth(authorization: Authorization<any, any, any>[]) {
   const authFields: Record<string, ModelField<any, any>> = {};
@@ -271,15 +297,13 @@ function calculateAuth(authorization: Authorization<any, any, any>[]) {
       // model field dep, type of which depends on whether multiple owner/group
       // is required.
       if (rule.multiOwner) {
-        authFields[rule.groupOrOwnerField] = string().array();
+        // authFields[rule.groupOrOwnerField] = string().array();
+        addFields(authFields, { [rule.groupOrOwnerField]: string().array() });
       } else {
-        authFields[rule.groupOrOwnerField] = string();
+        // authFields[rule.groupOrOwnerField] = string();
+        addFields(authFields, { [rule.groupOrOwnerField]: string() });
       }
     }
-
-    // for (const [name, value] of Object.entries(authFields)) {
-    //   console.log(name, (value as any).data);
-    // }
 
     if (rule.groups) {
       // does `group` need to be escaped?
@@ -492,7 +516,7 @@ function processFieldLevelAuthRules(
 
     if (authString) fieldLevelAuthRules[fieldName] = authString;
     if (fieldAuthField) {
-      Object.assign(authFields, fieldAuthField);
+      addFields(authFields, fieldAuthField);
     }
   }
 
@@ -617,10 +641,10 @@ const schemaPreprocessor = (schema: InternalSchema): string => {
         }
       }
     } else {
-      const fields = {
-        ...typeDef.data.fields,
-        ...fkFields[typeName],
-      };
+      const fields = mergeFieldObjects(
+        typeDef.data.fields as Record<string, ModelField<any, any>>,
+        fkFields[typeName] ?? {},
+      );
       const identifier = typeDef.data.identifier;
       const [partitionKey] = identifier;
 
@@ -632,18 +656,17 @@ const schemaPreprocessor = (schema: InternalSchema): string => {
       const { authString, authFields } = calculateAuth(mostRelevantAuthRules);
 
       const fieldLevelAuthRules = processFieldLevelAuthRules(
-        fields,
+        fields as any,
         authFields,
       );
 
       const { gqlFields, models } = processFields(
-        {
-          // idFields first, so they can be overridden by customer definitions when present.
-          ...idFields(typeDef),
-          ...fields,
-          ...authFields,
-          ...implicitTimestampFields(typeDef),
-        },
+        mergeFieldObjects(
+          idFields(typeDef) ?? {},
+          fields ?? {},
+          authFields ?? {},
+          implicitTimestampFields(typeDef) ?? {},
+        ),
         fieldLevelAuthRules,
         identifier,
         partitionKey,
