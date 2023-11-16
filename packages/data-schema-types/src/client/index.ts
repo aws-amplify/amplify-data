@@ -5,6 +5,7 @@ import {
   UnwrapArray,
   UnionToIntersection,
   Prettify,
+  Equal,
 } from '../util';
 import type { Observable } from 'rxjs';
 
@@ -285,6 +286,17 @@ type MutationInput<
     : Prop]: WritableFields[Prop];
 } & RelationalFields;
 
+/**
+ * All identifiers and fields used to create a model
+ */
+type CreateModelInput<
+  Model extends Record<string, unknown>,
+  ModelMeta extends Record<string, unknown>,
+> = Equal<ModelIdentifier<ModelMeta>, { id: string }> extends true
+  ? Partial<ModelIdentifier<ModelMeta>> &
+      Omit<MutationInput<Model, ModelMeta>, keyof ModelIdentifier<ModelMeta>>
+  : MutationInput<Model, ModelMeta>;
+
 // #endregion
 
 // #region Interfaces copied from `graphql` package
@@ -465,7 +477,7 @@ type ModelTypesClient<
   ModelMeta extends Record<string, unknown>,
 > = {
   create: (
-    model: Prettify<MutationInput<Model, ModelMeta>>,
+    model: Prettify<CreateModelInput<Model, ModelMeta>>,
     options?: {
       authMode?: AuthMode;
       authToken?: string;
@@ -558,7 +570,7 @@ type ModelTypesSSRCookies<
   ModelMeta extends Record<string, unknown>,
 > = {
   create: (
-    model: Prettify<MutationInput<Model, ModelMeta>>,
+    model: Prettify<CreateModelInput<Model, ModelMeta>>,
     options?: {
       authMode?: AuthMode;
       authToken?: string;
@@ -616,7 +628,7 @@ type ModelTypesSSRRequest<
   create: (
     // TODO: actual type
     contextSpec: any,
-    model: Prettify<MutationInput<Model, ModelMeta>>,
+    model: Prettify<CreateModelInput<Model, ModelMeta>>,
     options?: {
       authMode?: AuthMode;
       authToken?: string;
