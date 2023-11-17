@@ -1,5 +1,11 @@
 # @aws-amplify/amplify-api-next-alpha
 
+## 0.12.9
+
+### Patch Changes
+
+- 8fc3d78: add error on graphql generation for models without authorization rules
+
 ## 0.12.8
 
 ### Patch Changes
