@@ -236,9 +236,13 @@ type ResolvedModel<
     [Field in keyof Model]: Model[Field] extends (
       ...args: any
     ) => ListReturnValue<infer M>
-      ? ResolvedModel<NonNullable<M>, RecursionLoop[Depth]>[]
+      ? NonNullable<M> extends Record<string, any>
+        ? ResolvedModel<NonNullable<M>, RecursionLoop[Depth]>[]
+        : never
       : Model[Field] extends (...args: any) => SingularReturnValue<infer M>
-      ? ResolvedModel<NonNullable<M>, RecursionLoop[Depth]>
+      ? NonNullable<M> extends Record<string, any>
+        ? ResolvedModel<NonNullable<M>, RecursionLoop[Depth]>
+        : never
       : Model[Field];
   };
 }[Depth extends -1 ? 'done' : 'recur'];
