@@ -891,7 +891,7 @@ exports[`model auth rules can specify operations  1`] = `
 `;
 
 exports[`model auth rules duplicate field validation does not issue errors for \`identifier()\` explicit \`customId: string\` field 1`] = `
-"type widget @model 
+"type widget @model @auth(rules: [{allow: public}])
 {
   customId: String! @primaryKey
   createdAt: AWSDateTime!
@@ -900,7 +900,7 @@ exports[`model auth rules duplicate field validation does not issue errors for \
 `;
 
 exports[`model auth rules duplicate field validation does not issue errors for \`identifier()\` explicit \`id: ID\` field 1`] = `
-"type widget @model 
+"type widget @model @auth(rules: [{allow: public}])
 {
   id: ID! @primaryKey
   createdAt: AWSDateTime!
@@ -909,7 +909,7 @@ exports[`model auth rules duplicate field validation does not issue errors for \
 `;
 
 exports[`model auth rules duplicate field validation does not issue errors for \`identifier()\` explicit \`id: string\` field 1`] = `
-"type widget @model 
+"type widget @model @auth(rules: [{allow: public}])
 {
   id: String! @primaryKey
   createdAt: AWSDateTime!
@@ -918,7 +918,7 @@ exports[`model auth rules duplicate field validation does not issue errors for \
 `;
 
 exports[`model auth rules duplicate field validation does not issue errors for \`identifier()\` explicit multi-field mixed types PK 1`] = `
-"type widget @model 
+"type widget @model @auth(rules: [{allow: public}])
 {
   idFieldA: String! @primaryKey(sortKeyFields: ["idFieldB"])
   idFieldB: Int!
@@ -928,7 +928,7 @@ exports[`model auth rules duplicate field validation does not issue errors for \
 `;
 
 exports[`model auth rules duplicate field validation does not issue errors for \`identifier()\` explicit multi-field string type PK 1`] = `
-"type widget @model 
+"type widget @model @auth(rules: [{allow: public}])
 {
   idFieldA: String! @primaryKey(sortKeyFields: ["idFieldB"])
   idFieldB: String!
@@ -938,10 +938,11 @@ exports[`model auth rules duplicate field validation does not issue errors for \
 `;
 
 exports[`model auth rules includes auth from fields 1`] = `
-"type widget @model 
+"type widget @model @auth(rules: [{allow: owner, ownerField: "owner"}])
 {
   id: ID! @primaryKey
   title: String! @auth(rules: [{allow: owner, operations: [create, read], ownerField: "customOwner"}])
+  owner: String
   customOwner: String
   createdAt: AWSDateTime!
   updatedAt: AWSDateTime!
@@ -949,10 +950,11 @@ exports[`model auth rules includes auth from fields 1`] = `
 `;
 
 exports[`model auth rules includes auth from related model fields 1`] = `
-"type widget @model 
+"type widget @model @auth(rules: [{allow: owner, ownerField: "owner"}])
 {
   id: ID! @primaryKey
   parent: widget @belongsTo @auth(rules: [{allow: owner, operations: [create, read], ownerField: "customOwner"}])
+  owner: String
   customOwner: String
   createdAt: AWSDateTime!
   updatedAt: AWSDateTime!

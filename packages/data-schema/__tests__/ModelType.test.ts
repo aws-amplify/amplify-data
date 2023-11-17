@@ -329,9 +329,9 @@ describe('model auth rules', () => {
   });
 
   it(`includes auth from fields`, () => {
-    const schema = a
-      .schema({
-        widget: a.model({
+    const schema = a.schema({
+      widget: a
+        .model({
           id: a.id().required(),
           title: a
             .string()
@@ -339,9 +339,9 @@ describe('model auth rules', () => {
             .authorization([
               a.allow.owner().inField('customOwner').to(['create', 'read']),
             ]),
-        }),
-      })
-      .authorization([a.allow.public()]);
+        })
+        .authorization([a.allow.owner()]),
+    });
 
     type Schema = ClientSchema<typeof schema>;
     type CustomOwnerType = Schema['widget']['customOwner'];
@@ -358,16 +358,18 @@ describe('model auth rules', () => {
   });
 
   it(`includes auth from related model fields`, () => {
-    const schema = a.schema({
-      widget: a.model({
-        id: a.id().required(),
-        parent: a
-          .belongsTo('widget')
-          .authorization([
-            a.allow.owner().inField('customOwner').to(['create', 'read']),
-          ]),
-      }),
-    });
+    const schema = a
+      .schema({
+        widget: a.model({
+          id: a.id().required(),
+          parent: a
+            .belongsTo('widget')
+            .authorization([
+              a.allow.owner().inField('customOwner').to(['create', 'read']),
+            ]),
+        }),
+      })
+      .authorization([a.allow.owner()]);
 
     type Schema = ClientSchema<typeof schema>;
     type CustomOwnerType = Schema['widget']['customOwner'];
@@ -591,59 +593,69 @@ describe('model auth rules', () => {
     // needs the field to exist. The field types specified by `identifier()` are
     // fallback in case the field isn't defined explicitly.
     it('explicit `id: string` field', () => {
-      const schema = a.schema({
-        widget: a
-          .model({
-            id: a.string().required(),
-          })
-          .identifier(['id']),
-      });
+      const schema = a
+        .schema({
+          widget: a
+            .model({
+              id: a.string().required(),
+            })
+            .identifier(['id']),
+        })
+        .authorization([a.allow.public()]);
       expect(schema.transform().schema).toMatchSnapshot();
     });
 
     it('explicit `id: ID` field', () => {
-      const schema = a.schema({
-        widget: a
-          .model({
-            id: a.id().required(),
-          })
-          .identifier(['id']),
-      });
+      const schema = a
+        .schema({
+          widget: a
+            .model({
+              id: a.id().required(),
+            })
+            .identifier(['id']),
+        })
+        .authorization([a.allow.public()]);
       expect(schema.transform().schema).toMatchSnapshot();
     });
 
     it('explicit `customId: string` field', () => {
-      const schema = a.schema({
-        widget: a
-          .model({
-            customId: a.string().required(),
-          })
-          .identifier(['customId']),
-      });
+      const schema = a
+        .schema({
+          widget: a
+            .model({
+              customId: a.string().required(),
+            })
+            .identifier(['customId']),
+        })
+        .authorization([a.allow.public()]);
       expect(schema.transform().schema).toMatchSnapshot();
     });
 
     it('explicit multi-field string type PK', () => {
-      const schema = a.schema({
-        widget: a
-          .model({
-            idFieldA: a.string().required(),
-            idFieldB: a.string().required(),
-          })
-          .identifier(['idFieldA', 'idFieldB']),
-      });
+      const schema = a
+        .schema({
+          widget: a
+            .model({
+              idFieldA: a.string().required(),
+              idFieldB: a.string().required(),
+            })
+            .identifier(['idFieldA', 'idFieldB']),
+        })
+        .authorization([a.allow.public()]);
       expect(schema.transform().schema).toMatchSnapshot();
     });
 
     it('explicit multi-field mixed types PK', () => {
-      const schema = a.schema({
-        widget: a
-          .model({
-            idFieldA: a.string().required(),
-            idFieldB: a.integer().required(),
-          })
-          .identifier(['idFieldA', 'idFieldB']),
-      });
+      const schema = a
+        .schema({
+          widget: a
+            .model({
+              idFieldA: a.string().required(),
+              idFieldB: a.integer().required(),
+            })
+            .identifier(['idFieldA', 'idFieldB']),
+        })
+        .authorization([a.allow.public()]);
       expect(schema.transform().schema).toMatchSnapshot();
     });
   });
