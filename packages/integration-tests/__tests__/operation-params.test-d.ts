@@ -2,6 +2,8 @@ import { a, ClientSchema } from '@aws-amplify/data-schema';
 import { Expect, Equal, __modelMeta__ } from '@aws-amplify/data-schema-types';
 import { generateClient } from 'aws-amplify/api';
 
+type Json = null | string | number | boolean | object | any[];
+
 const authModes = [
   'apiKey',
   'iam',
@@ -97,6 +99,65 @@ describe('Basic operations', () => {
         type testB = Expect<
           Equal<NonNullable<Comments[number]>, Comments[number]>
         >;
+      });
+    });
+    describe('create', () => {
+      const createSchema = a.schema({
+        ImplicitId: a.model({
+          content: a.string(),
+          metadata: a.json(),
+        }),
+        RequiredId: a.model({
+          id: a.id().required(),
+          content: a.string(),
+          metadata: a.json(),
+        }),
+        CustomPk: a
+          .model({
+            custom: a.string().required(),
+            content: a.string(),
+            metadata: a.json(),
+          })
+          .identifier(['custom']),
+      });
+      type CreateSchema = ClientSchema<typeof createSchema>;
+
+      const createClient = generateClient<CreateSchema>();
+
+      test('id is optional when omitted', () => {
+        type CreateParamsActual = Parameters<
+          typeof createClient.models.ImplicitId.create
+        >[0];
+        type CreateParamsExpected = {
+          id?: string | undefined;
+          content?: string | null | undefined;
+          metadata?: Json | undefined;
+        };
+        type test = Expect<Equal<CreateParamsExpected, CreateParamsActual>>;
+      });
+
+      test('id is optional when required', () => {
+        type CreateParamsActual = Parameters<
+          typeof createClient.models.RequiredId.create
+        >[0];
+        type CreateParamsExpected = {
+          id?: string | undefined;
+          content?: string | null | undefined;
+          metadata?: Json | undefined;
+        };
+        type test = Expect<Equal<CreateParamsExpected, CreateParamsActual>>;
+      });
+
+      test('custom pk is required when custom pk is defined and required', () => {
+        type CreateParamsActual = Parameters<
+          typeof createClient.models.CustomPk.create
+        >[0];
+        type CreateParamsExpected = {
+          custom: string;
+          content?: string | null | undefined;
+          metadata?: Json | undefined;
+        };
+        type test = Expect<Equal<CreateParamsExpected, CreateParamsActual>>;
       });
     });
   });
