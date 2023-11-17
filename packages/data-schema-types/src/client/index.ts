@@ -294,7 +294,7 @@ type CreateModelInput<
   ModelMeta extends Record<string, unknown>,
 > = Equal<ModelIdentifier<ModelMeta>, { id: string }> extends true
   ? Partial<ModelIdentifier<ModelMeta>> &
-      Omit<MutationInput<Model, ModelMeta>, keyof ModelIdentifier<ModelMeta>>
+      Omit<MutationInput<Model, ModelMeta>, 'id'>
   : MutationInput<Model, ModelMeta>;
 
 // #endregion
