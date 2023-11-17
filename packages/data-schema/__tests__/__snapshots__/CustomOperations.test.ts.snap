@@ -30,7 +30,7 @@ exports[`CustomOperation transform Custom Mutation w string function reference 1
 `;
 
 exports[`CustomOperation transform Schema w model, custom query, mutation, and subscription 1`] = `
-"type Post @model 
+"type Post @model @auth(rules: [{allow: public}])
 {
   id: ID! @primaryKey
   title: String

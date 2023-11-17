@@ -690,6 +690,12 @@ const schemaPreprocessor = (schema: InternalSchema): string => {
 
       const { authString, authFields } = calculateAuth(mostRelevantAuthRules);
 
+      if (authString == '') {
+        throw new Error(
+          `Model \`${typeName}\` is missing authorization rules. Add global rules to the schema or ensure every model has its own rules.`,
+        );
+      }
+
       const fieldLevelAuthRules = processFieldLevelAuthRules(
         fields,
         authFields,

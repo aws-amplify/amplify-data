@@ -122,19 +122,6 @@ exports[`schema auth rules allows specificGroups 1`] = `
 }
 `;
 
-exports[`schema auth rules allows zero entries 1`] = `
-{
-  "functionSlots": [],
-  "schema": "type A @model 
-{
-  id: ID! @primaryKey
-  field: String
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
-}",
-}
-`;
-
 exports[`schema auth rules can define public auth with no provider 1`] = `
 "type A @model @auth(rules: [{allow: public}])
 {
@@ -274,7 +261,7 @@ exports[`schema auth rules prefers model auth over global auth public auth on mo
 `;
 
 exports[`schema generation with relationships 1`] = `
-"type BoringParent @model 
+"type BoringParent @model @auth(rules: [{allow: public}])
 {
   id: ID! @primaryKey
   childNormal: BoringChild @hasOne
@@ -287,7 +274,7 @@ exports[`schema generation with relationships 1`] = `
   updatedAt: AWSDateTime!
 }
 
-type BoringChild @model 
+type BoringChild @model @auth(rules: [{allow: public}])
 {
   id: ID! @primaryKey
   value: String
@@ -295,7 +282,7 @@ type BoringChild @model
   updatedAt: AWSDateTime!
 }
 
-type BoringReciprocalChild @model 
+type BoringReciprocalChild @model @auth(rules: [{allow: public}])
 {
   id: ID! @primaryKey
   parent: BoringParent @belongsTo
@@ -305,7 +292,7 @@ type BoringReciprocalChild @model
   updatedAt: AWSDateTime!
 }
 
-type BoringHasManyChild @model 
+type BoringHasManyChild @model @auth(rules: [{allow: public}])
 {
   id: ID! @primaryKey
   value: String
@@ -314,7 +301,7 @@ type BoringHasManyChild @model
   updatedAt: AWSDateTime!
 }
 
-type ReciprocalHasManyChild @model 
+type ReciprocalHasManyChild @model @auth(rules: [{allow: public}])
 {
   id: ID! @primaryKey
   value: String
@@ -324,7 +311,7 @@ type ReciprocalHasManyChild @model
   updatedAt: AWSDateTime!
 }
 
-type CPKParent @model 
+type CPKParent @model @auth(rules: [{allow: public}])
 {
   CPKParentIdFieldA: ID! @primaryKey(sortKeyFields: ["CPKParentIdFieldB"])
   CPKParentIdFieldB: ID!
@@ -340,7 +327,7 @@ type CPKParent @model
   updatedAt: AWSDateTime!
 }
 
-type CPKChild @model 
+type CPKChild @model @auth(rules: [{allow: public}])
 {
   CPKChildIdFieldA: ID! @primaryKey(sortKeyFields: ["CPKChildIdFieldB"])
   CPKChildIdFieldB: ID!
@@ -349,7 +336,7 @@ type CPKChild @model
   updatedAt: AWSDateTime!
 }
 
-type CPKReciprocalChild @model 
+type CPKReciprocalChild @model @auth(rules: [{allow: public}])
 {
   CPKReciprocalChildIdFieldA: ID! @primaryKey(sortKeyFields: ["CPKReciprocalChildIdFieldB"])
   CPKReciprocalChildIdFieldB: ID!
@@ -361,7 +348,7 @@ type CPKReciprocalChild @model
   updatedAt: AWSDateTime!
 }
 
-type CPKHasManyChild @model 
+type CPKHasManyChild @model @auth(rules: [{allow: public}])
 {
   CPKHasManyChildIdFieldA: ID! @primaryKey(sortKeyFields: ["CPKHasManyChildIdFieldB"])
   CPKHasManyChildIdFieldB: ID!
@@ -372,7 +359,7 @@ type CPKHasManyChild @model
   updatedAt: AWSDateTime!
 }
 
-type CPKReciprocalHasManyChild @model 
+type CPKReciprocalHasManyChild @model @auth(rules: [{allow: public}])
 {
   CPKReciprocalHasManyChildIdFieldA: ID! @primaryKey(sortKeyFields: ["CPKReciprocalHasManyChildIdFieldB"])
   CPKReciprocalHasManyChildIdFieldB: ID!

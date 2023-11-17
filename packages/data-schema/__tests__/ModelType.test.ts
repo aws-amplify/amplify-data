@@ -329,17 +329,19 @@ describe('model auth rules', () => {
   });
 
   it(`includes auth from fields`, () => {
-    const schema = a.schema({
-      widget: a.model({
-        id: a.id().required(),
-        title: a
-          .string()
-          .required()
-          .authorization([
-            a.allow.owner().inField('customOwner').to(['create', 'read']),
-          ]),
-      }),
-    });
+    const schema = a
+      .schema({
+        widget: a.model({
+          id: a.id().required(),
+          title: a
+            .string()
+            .required()
+            .authorization([
+              a.allow.owner().inField('customOwner').to(['create', 'read']),
+            ]),
+        }),
+      })
+      .authorization([a.allow.public()]);
 
     type Schema = ClientSchema<typeof schema>;
     type CustomOwnerType = Schema['widget']['customOwner'];
