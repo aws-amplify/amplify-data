@@ -1,11 +1,12 @@
 {
-  "name": "client-types-example",
-  "version": "1.0.1",
+  "name": "tsc-compliance",
+  "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "private": true,
   "scripts": {
-    "test": "exit 0"
+    "test": "npm run tsc:schema",
+    "tsc:schema": "npx tsc resource.ts --noEmit"
   },
   "dependencies": {
     "@aws-amplify/data-schema": "*",
