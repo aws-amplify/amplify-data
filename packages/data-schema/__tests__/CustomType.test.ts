@@ -36,15 +36,17 @@ describe('CustomType unsupported modifiers', () => {
 
 describe('CustomType transform', () => {
   test('Explicit CustomType', () => {
-    const s = a.schema({
-      Post: a.model({
-        location: a.ref('Location'),
-      }),
-      Location: a.customType({
-        lat: a.float(),
-        long: a.float(),
-      }),
-    });
+    const s = a
+      .schema({
+        Post: a.model({
+          location: a.ref('Location'),
+        }),
+        Location: a.customType({
+          lat: a.float(),
+          long: a.float(),
+        }),
+      })
+      .authorization([a.allow.public()]);
 
     const result = s.transform().schema;
 
@@ -52,15 +54,17 @@ describe('CustomType transform', () => {
   });
 
   test('Explicit CustomType - required', () => {
-    const s = a.schema({
-      Post: a.model({
-        location: a.ref('Location').required(),
-      }),
-      Location: a.customType({
-        lat: a.float(),
-        long: a.float(),
-      }),
-    });
+    const s = a
+      .schema({
+        Post: a.model({
+          location: a.ref('Location').required(),
+        }),
+        Location: a.customType({
+          lat: a.float(),
+          long: a.float(),
+        }),
+      })
+      .authorization([a.allow.public()]);
 
     const result = s.transform().schema;
 
@@ -68,15 +72,17 @@ describe('CustomType transform', () => {
   });
 
   test('Explicit CustomType - with auth', () => {
-    const s = a.schema({
-      Post: a.model({
-        location: a.ref('Location').authorization([a.allow.owner()]),
-      }),
-      Location: a.customType({
-        lat: a.float(),
-        long: a.float(),
-      }),
-    });
+    const s = a
+      .schema({
+        Post: a.model({
+          location: a.ref('Location').authorization([a.allow.owner()]),
+        }),
+        Location: a.customType({
+          lat: a.float(),
+          long: a.float(),
+        }),
+      })
+      .authorization([a.allow.public()]);
 
     const result = s.transform().schema;
 
@@ -84,14 +90,16 @@ describe('CustomType transform', () => {
   });
 
   test('Implicit CustomType', () => {
-    const s = a.schema({
-      Post: a.model({
-        location: a.customType({
-          lat: a.float(),
-          long: a.float(),
+    const s = a
+      .schema({
+        Post: a.model({
+          location: a.customType({
+            lat: a.float(),
+            long: a.float(),
+          }),
         }),
-      }),
-    });
+      })
+      .authorization([a.allow.public()]);
 
     const result = s.transform().schema;
 

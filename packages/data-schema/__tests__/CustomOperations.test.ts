@@ -2,17 +2,19 @@ import { a } from '../index';
 
 describe('CustomOperation transform', () => {
   test('Schema w model, custom query, mutation, and subscription', () => {
-    const s = a.schema({
-      Post: a.model({
-        title: a.string(),
-      }),
-      likePost: a
-        .mutation()
-        .arguments({ postId: a.string() })
-        .returns(a.ref('Post')),
-      getLikedPost: a.query().returns(a.ref('Post')),
-      onLikePost: a.subscription().returns(a.ref('Post')),
-    });
+    const s = a
+      .schema({
+        Post: a.model({
+          title: a.string(),
+        }),
+        likePost: a
+          .mutation()
+          .arguments({ postId: a.string() })
+          .returns(a.ref('Post')),
+        getLikedPost: a.query().returns(a.ref('Post')),
+        onLikePost: a.subscription().returns(a.ref('Post')),
+      })
+      .authorization([a.allow.public()]);
 
     const result = s.transform().schema;
 
