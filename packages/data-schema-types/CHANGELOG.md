@@ -1,5 +1,11 @@
 # @aws-amplify/amplify-api-next-types-alpha
 
+## 0.6.5
+
+### Patch Changes
+
+- b675dbb: fix: Create operation identifier type refinement
+
 ## 0.6.4
 
 ### Patch Changes
