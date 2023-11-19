@@ -547,6 +547,7 @@ type ModelTypesClient<
     filter?: ModelFilter<Model>;
     selectionSet?: SelectionSet;
     authMode?: AuthMode;
+    authToken?: string;
     headers?: CustomHeaders;
   }): ObservedReturnValue<ReturnValue<Model, FlatModel, SelectionSet>>;
   onDelete<
@@ -555,6 +556,7 @@ type ModelTypesClient<
   >(options?: {
     filter?: ModelFilter<Model>;
     selectionSet?: SelectionSet;
+    authMode?: AuthMode;
     authToken?: string;
     headers?: CustomHeaders;
   }): ObservedReturnValue<ReturnValue<Model, FlatModel, SelectionSet>>;
