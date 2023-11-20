@@ -1,0 +1,13 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`empty model auth inherits global auth 1`] = `
+"type widget @model @auth(rules: [{allow: owner, ownerField: "owner"}])
+{
+  id: ID! @primaryKey
+  title: String!
+  someOwnerField: String
+  owner: String
+  createdAt: AWSDateTime
+  updatedAt: AWSDateTime
+}"
+`;

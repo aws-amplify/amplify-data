@@ -9,74 +9,76 @@ it('should not produce static type errors', async () => {
 
 describe('schema generation', () => {
   test('with relationships', () => {
-    const schema = a.schema({
-      BoringParent: a.model({
-        childNormal: a.hasOne('BoringChild'),
-        childReciprocal: a.hasOne('BoringReciprocalChild'),
-        childHasManyNormal: a.hasMany('BoringHasManyChild'),
-        childHasManyReciprocal: a.hasMany('ReciprocalHasManyChild'),
-      }),
-      BoringChild: a.model({
-        value: a.string(),
-      }),
-      BoringReciprocalChild: a.model({
-        parent: a.belongsTo('BoringParent'),
-        value: a.string(),
-      }),
-      BoringHasManyChild: a.model({
-        value: a.string(),
-      }),
-      ReciprocalHasManyChild: a.model({
-        value: a.string(),
-        parent: a.belongsTo('BoringParent'),
-      }),
-      CPKParent: a
-        .model({
-          CPKParentIdFieldA: a.id().required(),
-          CPKParentIdFieldB: a.id().required(),
-          childNormal: a.hasOne('CPKChild'),
-          childReciprocal: a.hasOne('CPKReciprocalChild'),
-          childHasManyNormal: a.hasMany('CPKHasManyChild'),
-          childHasManyReciprocal: a.hasMany('CPKReciprocalHasManyChild'),
-        })
-        .identifier(['CPKParentIdFieldA', 'CPKParentIdFieldB']),
-      CPKChild: a
-        .model({
-          CPKChildIdFieldA: a.id().required(),
-          CPKChildIdFieldB: a.id().required(),
+    const schema = a
+      .schema({
+        BoringParent: a.model({
+          childNormal: a.hasOne('BoringChild'),
+          childReciprocal: a.hasOne('BoringReciprocalChild'),
+          childHasManyNormal: a.hasMany('BoringHasManyChild'),
+          childHasManyReciprocal: a.hasMany('ReciprocalHasManyChild'),
+        }),
+        BoringChild: a.model({
           value: a.string(),
-        })
-        .identifier(['CPKChildIdFieldA', 'CPKChildIdFieldB']),
-      CPKReciprocalChild: a
-        .model({
-          CPKReciprocalChildIdFieldA: a.id().required(),
-          CPKReciprocalChildIdFieldB: a.id().required(),
-          parent: a.belongsTo('CPKParent'),
+        }),
+        BoringReciprocalChild: a.model({
+          parent: a.belongsTo('BoringParent'),
           value: a.string(),
-        })
-        .identifier([
-          'CPKReciprocalChildIdFieldA',
-          'CPKReciprocalChildIdFieldB',
-        ]),
-      CPKHasManyChild: a
-        .model({
-          CPKHasManyChildIdFieldA: a.id().required(),
-          CPKHasManyChildIdFieldB: a.id().required(),
+        }),
+        BoringHasManyChild: a.model({
           value: a.string(),
-        })
-        .identifier(['CPKHasManyChildIdFieldA', 'CPKHasManyChildIdFieldB']),
-      CPKReciprocalHasManyChild: a
-        .model({
-          CPKReciprocalHasManyChildIdFieldA: a.id().required(),
-          CPKReciprocalHasManyChildIdFieldB: a.id().required(),
+        }),
+        ReciprocalHasManyChild: a.model({
           value: a.string(),
-          parent: a.belongsTo('CPKParent'),
-        })
-        .identifier([
-          'CPKReciprocalHasManyChildIdFieldA',
-          'CPKReciprocalHasManyChildIdFieldB',
-        ]),
-    });
+          parent: a.belongsTo('BoringParent'),
+        }),
+        CPKParent: a
+          .model({
+            CPKParentIdFieldA: a.id().required(),
+            CPKParentIdFieldB: a.id().required(),
+            childNormal: a.hasOne('CPKChild'),
+            childReciprocal: a.hasOne('CPKReciprocalChild'),
+            childHasManyNormal: a.hasMany('CPKHasManyChild'),
+            childHasManyReciprocal: a.hasMany('CPKReciprocalHasManyChild'),
+          })
+          .identifier(['CPKParentIdFieldA', 'CPKParentIdFieldB']),
+        CPKChild: a
+          .model({
+            CPKChildIdFieldA: a.id().required(),
+            CPKChildIdFieldB: a.id().required(),
+            value: a.string(),
+          })
+          .identifier(['CPKChildIdFieldA', 'CPKChildIdFieldB']),
+        CPKReciprocalChild: a
+          .model({
+            CPKReciprocalChildIdFieldA: a.id().required(),
+            CPKReciprocalChildIdFieldB: a.id().required(),
+            parent: a.belongsTo('CPKParent'),
+            value: a.string(),
+          })
+          .identifier([
+            'CPKReciprocalChildIdFieldA',
+            'CPKReciprocalChildIdFieldB',
+          ]),
+        CPKHasManyChild: a
+          .model({
+            CPKHasManyChildIdFieldA: a.id().required(),
+            CPKHasManyChildIdFieldB: a.id().required(),
+            value: a.string(),
+          })
+          .identifier(['CPKHasManyChildIdFieldA', 'CPKHasManyChildIdFieldB']),
+        CPKReciprocalHasManyChild: a
+          .model({
+            CPKReciprocalHasManyChildIdFieldA: a.id().required(),
+            CPKReciprocalHasManyChildIdFieldB: a.id().required(),
+            value: a.string(),
+            parent: a.belongsTo('CPKParent'),
+          })
+          .identifier([
+            'CPKReciprocalHasManyChildIdFieldA',
+            'CPKReciprocalHasManyChildIdFieldB',
+          ]),
+      })
+      .authorization([a.allow.public()]);
     expect(schema.transform().schema).toMatchSnapshot();
   });
 });
@@ -165,30 +167,6 @@ describe('schema auth rules', () => {
         }),
       })
       .authorization([a.allow.public(), a.allow.private()]);
-
-    type Actual_A = ClientSchema<typeof schema>['A'];
-
-    type Expected_A = {
-      readonly id: string;
-      readonly createdAt: string;
-      readonly updatedAt: string;
-      field?: string | null | undefined;
-      // no implied owner field
-    };
-
-    type test = Expect<Equal<Actual_A, Expected_A>>;
-
-    expect(schema.transform()).toMatchSnapshot();
-  });
-
-  test('allows zero entries', () => {
-    const schema = a
-      .schema({
-        A: a.model({
-          field: a.string(),
-        }),
-      })
-      .authorization([]);
 
     type Actual_A = ClientSchema<typeof schema>['A'];
 

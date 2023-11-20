@@ -1,6 +1,6 @@
 {
   "name": "@aws-amplify/data-schema-types",
-  "version": "0.6.5",
+  "version": "0.6.7",
   "license": "Apache-2.0",
   "main": "./lib-esm/index.d.ts",
   "types": "./lib-esm/index.d.ts",
@@ -15,7 +15,7 @@
   "scripts": {
     "build": "npm run build:esm",
     "build:esm": "npm run clean && tsc -p ./tsconfig.json",
-    "build:esm:watch": "npm run build:esm --watch",
+    "build:esm:watch": "npm run build:esm -- --watch",
     "clean": "rimraf lib-esm tsconfig.tsbuildinfo",
     "test": "echo \"No tests\"",
     "lint": "eslint ."

@@ -1,5 +1,17 @@
 # @aws-amplify/amplify-api-next-types-alpha
 
+## 0.6.7
+
+### Patch Changes
+
+- e482574: add missing props to subscription fn sig
+
+## 0.6.6
+
+### Patch Changes
+
+- 258121b: fix schema file tsc compliance
+
 ## 0.6.5
 
 ### Patch Changes

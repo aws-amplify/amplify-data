@@ -27,12 +27,14 @@ describe('EnumType unsupported modifiers', () => {
 
 describe('EnumType transform', () => {
   test('Explicit Enum', () => {
-    const s = a.schema({
-      File: a.model({
-        accessLevel: a.ref('AccessLevel'),
-      }),
-      AccessLevel: a.enum(['public', 'protected', 'private']),
-    });
+    const s = a
+      .schema({
+        File: a.model({
+          accessLevel: a.ref('AccessLevel'),
+        }),
+        AccessLevel: a.enum(['public', 'protected', 'private']),
+      })
+      .authorization([a.allow.public()]);
 
     const result = s.transform().schema;
 
@@ -40,12 +42,14 @@ describe('EnumType transform', () => {
   });
 
   test('Explicit Enum - required', () => {
-    const s = a.schema({
-      File: a.model({
-        accessLevel: a.ref('AccessLevel').required(),
-      }),
-      AccessLevel: a.enum(['public', 'protected', 'private']),
-    });
+    const s = a
+      .schema({
+        File: a.model({
+          accessLevel: a.ref('AccessLevel').required(),
+        }),
+        AccessLevel: a.enum(['public', 'protected', 'private']),
+      })
+      .authorization([a.allow.public()]);
 
     const result = s.transform().schema;
 
@@ -53,12 +57,14 @@ describe('EnumType transform', () => {
   });
 
   test('Explicit Enum - auth', () => {
-    const s = a.schema({
-      File: a.model({
-        accessLevel: a.ref('AccessLevel').authorization([a.allow.owner()]),
-      }),
-      AccessLevel: a.enum(['public', 'protected', 'private']),
-    });
+    const s = a
+      .schema({
+        File: a.model({
+          accessLevel: a.ref('AccessLevel').authorization([a.allow.owner()]),
+        }),
+        AccessLevel: a.enum(['public', 'protected', 'private']),
+      })
+      .authorization([a.allow.public()]);
 
     const result = s.transform().schema;
 
@@ -66,11 +72,13 @@ describe('EnumType transform', () => {
   });
 
   test('Implicit Enum', () => {
-    const s = a.schema({
-      File: a.model({
-        accessLevel: a.enum(['public', 'protected', 'private']),
-      }),
-    });
+    const s = a
+      .schema({
+        File: a.model({
+          accessLevel: a.enum(['public', 'protected', 'private']),
+        }),
+      })
+      .authorization([a.allow.public()]);
 
     const result = s.transform().schema;
 
