@@ -34,8 +34,8 @@ exports[`CustomOperation transform Schema w model, custom query, mutation, and s
 {
   id: ID! @primaryKey
   title: String
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
+  createdAt: AWSDateTime
+  updatedAt: AWSDateTime
 }
 
 type Mutation {

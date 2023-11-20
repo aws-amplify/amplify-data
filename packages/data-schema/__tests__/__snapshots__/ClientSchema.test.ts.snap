@@ -7,8 +7,8 @@ exports[`schema auth rules allows custom 1`] = `
 {
   id: ID! @primaryKey
   field: String
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
+  createdAt: AWSDateTime
+  updatedAt: AWSDateTime
 }",
 }
 `;
@@ -21,8 +21,8 @@ exports[`schema auth rules allows groupDefinedIn 1`] = `
   id: ID! @primaryKey
   field: String
   someField: String
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
+  createdAt: AWSDateTime
+  updatedAt: AWSDateTime
 }",
 }
 `;
@@ -35,8 +35,8 @@ exports[`schema auth rules allows groupsDefinedIn 1`] = `
   id: ID! @primaryKey
   field: String
   someField: [String]
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
+  createdAt: AWSDateTime
+  updatedAt: AWSDateTime
 }",
 }
 `;
@@ -49,8 +49,8 @@ exports[`schema auth rules allows multiple entries 1`] = `
 {
   id: ID! @primaryKey
   field: String
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
+  createdAt: AWSDateTime
+  updatedAt: AWSDateTime
 }",
 }
 `;
@@ -63,8 +63,8 @@ exports[`schema auth rules allows multipleOwners 1`] = `
   id: ID! @primaryKey
   field: String
   owner: [String]
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
+  createdAt: AWSDateTime
+  updatedAt: AWSDateTime
 }",
 }
 `;
@@ -77,8 +77,8 @@ exports[`schema auth rules allows owner 1`] = `
   id: ID! @primaryKey
   field: String
   owner: String
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
+  createdAt: AWSDateTime
+  updatedAt: AWSDateTime
 }",
 }
 `;
@@ -90,8 +90,8 @@ exports[`schema auth rules allows private 1`] = `
 {
   id: ID! @primaryKey
   field: String
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
+  createdAt: AWSDateTime
+  updatedAt: AWSDateTime
 }",
 }
 `;
@@ -103,8 +103,8 @@ exports[`schema auth rules allows public 1`] = `
 {
   id: ID! @primaryKey
   field: String
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
+  createdAt: AWSDateTime
+  updatedAt: AWSDateTime
 }",
 }
 `;
@@ -116,8 +116,8 @@ exports[`schema auth rules allows specificGroups 1`] = `
 {
   id: ID! @primaryKey
   field: String
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
+  createdAt: AWSDateTime
+  updatedAt: AWSDateTime
 }",
 }
 `;
@@ -129,8 +129,8 @@ exports[`schema auth rules allows zero entries 1`] = `
 {
   id: ID! @primaryKey
   field: String
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
+  createdAt: AWSDateTime
+  updatedAt: AWSDateTime
 }",
 }
 `;
@@ -140,8 +140,8 @@ exports[`schema auth rules can define public auth with no provider 1`] = `
 {
   id: ID! @primaryKey
   field: String
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
+  createdAt: AWSDateTime
+  updatedAt: AWSDateTime
 }"
 `;
 
@@ -152,8 +152,8 @@ exports[`schema auth rules disallows specificGroup 1`] = `
 {
   id: ID! @primaryKey
   field: String
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
+  createdAt: AWSDateTime
+  updatedAt: AWSDateTime
 }",
 }
 `;
@@ -166,8 +166,8 @@ exports[`schema auth rules do not pullote custom operations 1`] = `
   id: ID! @primaryKey
   title: String
   owner: String
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
+  createdAt: AWSDateTime
+  updatedAt: AWSDateTime
 }
 
 type Mutation {
@@ -191,16 +191,16 @@ exports[`schema auth rules global public auth - multiple models 1`] = `
 {
   id: ID! @primaryKey
   field: String
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
+  createdAt: AWSDateTime
+  updatedAt: AWSDateTime
 }
 
 type B @model @auth(rules: [{allow: public}])
 {
   id: ID! @primaryKey
   field: AWSJSON
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
+  createdAt: AWSDateTime
+  updatedAt: AWSDateTime
 }
 
 type C @model @auth(rules: [{allow: public}])
@@ -208,8 +208,8 @@ type C @model @auth(rules: [{allow: public}])
   id: ID! @primaryKey
   d: D @hasOne
   cDId: ID
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
+  createdAt: AWSDateTime
+  updatedAt: AWSDateTime
 }
 
 type D @model @auth(rules: [{allow: public}])
@@ -222,8 +222,8 @@ type D @model @auth(rules: [{allow: public}])
   am: AWSIPAddress
   getting: AWSURL
   tired: Tired
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
+  createdAt: AWSDateTime
+  updatedAt: AWSDateTime
 }
 
 enum Tired {
@@ -240,8 +240,8 @@ exports[`schema auth rules prefers model auth over global auth owner auth on mod
   id: ID! @primaryKey
   field: String
   modelOwnerField: String
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
+  createdAt: AWSDateTime
+  updatedAt: AWSDateTime
 }",
 }
 `;
@@ -254,8 +254,8 @@ exports[`schema auth rules prefers model auth over global auth owner auth on mod
   id: ID! @primaryKey
   field: String
   owner: String
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
+  createdAt: AWSDateTime
+  updatedAt: AWSDateTime
 }",
 }
 `;
@@ -267,8 +267,8 @@ exports[`schema auth rules prefers model auth over global auth public auth on mo
 {
   id: ID! @primaryKey
   field: String
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
+  createdAt: AWSDateTime
+  updatedAt: AWSDateTime
 }",
 }
 `;
@@ -283,16 +283,16 @@ exports[`schema generation with relationships 1`] = `
   childHasManyReciprocal: [ReciprocalHasManyChild] @hasMany
   boringParentChildNormalId: ID
   boringParentChildReciprocalId: ID
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
+  createdAt: AWSDateTime
+  updatedAt: AWSDateTime
 }
 
 type BoringChild @model 
 {
   id: ID! @primaryKey
   value: String
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
+  createdAt: AWSDateTime
+  updatedAt: AWSDateTime
 }
 
 type BoringReciprocalChild @model 
@@ -301,8 +301,8 @@ type BoringReciprocalChild @model
   parent: BoringParent @belongsTo
   value: String
   boringReciprocalChildParentId: ID
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
+  createdAt: AWSDateTime
+  updatedAt: AWSDateTime
 }
 
 type BoringHasManyChild @model 
@@ -310,8 +310,8 @@ type BoringHasManyChild @model
   id: ID! @primaryKey
   value: String
   boringParentChildHasManyNormalId: ID
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
+  createdAt: AWSDateTime
+  updatedAt: AWSDateTime
 }
 
 type ReciprocalHasManyChild @model 
@@ -320,8 +320,8 @@ type ReciprocalHasManyChild @model
   value: String
   parent: BoringParent @belongsTo
   boringParentChildHasManyReciprocalId: ID
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
+  createdAt: AWSDateTime
+  updatedAt: AWSDateTime
 }
 
 type CPKParent @model 
@@ -336,8 +336,8 @@ type CPKParent @model
   cPKParentChildNormalCPKChildIdFieldB: ID
   cPKParentChildReciprocalCPKReciprocalChildIdFieldA: ID
   cPKParentChildReciprocalCPKReciprocalChildIdFieldB: ID
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
+  createdAt: AWSDateTime
+  updatedAt: AWSDateTime
 }
 
 type CPKChild @model 
@@ -345,8 +345,8 @@ type CPKChild @model
   CPKChildIdFieldA: ID! @primaryKey(sortKeyFields: ["CPKChildIdFieldB"])
   CPKChildIdFieldB: ID!
   value: String
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
+  createdAt: AWSDateTime
+  updatedAt: AWSDateTime
 }
 
 type CPKReciprocalChild @model 
@@ -357,8 +357,8 @@ type CPKReciprocalChild @model
   value: String
   cPKReciprocalChildParentCPKParentIdFieldA: ID
   cPKReciprocalChildParentCPKParentIdFieldB: ID
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
+  createdAt: AWSDateTime
+  updatedAt: AWSDateTime
 }
 
 type CPKHasManyChild @model 
@@ -368,8 +368,8 @@ type CPKHasManyChild @model
   value: String
   cPKParentChildHasManyNormalCPKParentIdFieldA: ID
   cPKParentChildHasManyNormalCPKParentIdFieldB: ID
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
+  createdAt: AWSDateTime
+  updatedAt: AWSDateTime
 }
 
 type CPKReciprocalHasManyChild @model 
@@ -380,7 +380,7 @@ type CPKReciprocalHasManyChild @model
   parent: CPKParent @belongsTo
   cPKParentChildHasManyReciprocalCPKParentIdFieldA: ID
   cPKParentChildHasManyReciprocalCPKParentIdFieldB: ID
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
+  createdAt: AWSDateTime
+  updatedAt: AWSDateTime
 }"
 `;

@@ -6,8 +6,8 @@ exports[`EnumType transform Explicit Enum - auth 1`] = `
   id: ID! @primaryKey
   accessLevel: AccessLevel @auth(rules: [{allow: owner, ownerField: "owner"}])
   owner: String
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
+  createdAt: AWSDateTime
+  updatedAt: AWSDateTime
 }
 
 enum AccessLevel {
@@ -22,8 +22,8 @@ exports[`EnumType transform Explicit Enum - required 1`] = `
 {
   id: ID! @primaryKey
   accessLevel: AccessLevel!
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
+  createdAt: AWSDateTime
+  updatedAt: AWSDateTime
 }
 
 enum AccessLevel {
@@ -38,8 +38,8 @@ exports[`EnumType transform Explicit Enum 1`] = `
 {
   id: ID! @primaryKey
   accessLevel: AccessLevel
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
+  createdAt: AWSDateTime
+  updatedAt: AWSDateTime
 }
 
 enum AccessLevel {
@@ -54,8 +54,8 @@ exports[`EnumType transform Implicit Enum 1`] = `
 {
   id: ID! @primaryKey
   accessLevel: AccessLevel
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
+  createdAt: AWSDateTime
+  updatedAt: AWSDateTime
 }
 
 enum AccessLevel {

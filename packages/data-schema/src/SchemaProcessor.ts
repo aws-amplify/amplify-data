@@ -513,8 +513,8 @@ const implicitTimestampFields = (
   _model: InternalModel,
 ): Record<string, ModelField<any, any>> => {
   return {
-    createdAt: datetime().required(),
-    updatedAt: datetime().required(),
+    createdAt: datetime(),
+    updatedAt: datetime(),
   };
 };
 

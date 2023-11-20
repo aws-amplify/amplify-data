@@ -6,8 +6,8 @@ exports[`model auth rules can chain off of inField rules 1`] = `
   id: ID! @primaryKey
   title: String!
   customOwnerField: String
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
+  createdAt: AWSDateTime
+  updatedAt: AWSDateTime
 }"
 `;
 
@@ -17,8 +17,8 @@ exports[`model auth rules can chain off of multi-owner inField rules 1`] = `
   id: ID! @primaryKey
   title: String!
   customOwnerField: [String]
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
+  createdAt: AWSDateTime
+  updatedAt: AWSDateTime
 }"
 `;
 
@@ -28,8 +28,8 @@ exports[`model auth rules can create a "multiple owners" rule on an existing fie
   id: ID! @primaryKey
   title: String!
   authors: [String!]!
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
+  createdAt: AWSDateTime
+  updatedAt: AWSDateTime
 }"
 `;
 
@@ -39,8 +39,8 @@ exports[`model auth rules can create a "multiple owners" rule on an implied (aut
   id: ID! @primaryKey
   title: String!
   authors: [String]
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
+  createdAt: AWSDateTime
+  updatedAt: AWSDateTime
 }"
 `;
 
@@ -50,8 +50,8 @@ exports[`model auth rules can create a dynamic multi groups rule 1`] = `
   id: ID! @primaryKey
   title: String!
   sharedWithGroups: [String]
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
+  createdAt: AWSDateTime
+  updatedAt: AWSDateTime
 }"
 `;
 
@@ -61,8 +61,8 @@ exports[`model auth rules can create a dynamic multi groups rule with withClaimI
   id: ID! @primaryKey
   title: String!
   sharedWithGroups: [String]
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
+  createdAt: AWSDateTime
+  updatedAt: AWSDateTime
 }"
 `;
 
@@ -72,8 +72,8 @@ exports[`model auth rules can create a dynamic singular groups rule 1`] = `
   id: ID! @primaryKey
   title: String!
   businessUnitOwner: String
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
+  createdAt: AWSDateTime
+  updatedAt: AWSDateTime
 }"
 `;
 
@@ -83,8 +83,8 @@ exports[`model auth rules can create a dynamic singular groups rule with withCla
   id: ID! @primaryKey
   title: String!
   businessUnitOwner: String
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
+  createdAt: AWSDateTime
+  updatedAt: AWSDateTime
 }"
 `;
 
@@ -93,8 +93,8 @@ exports[`model auth rules can create a static [Admins, Moderators] groups rule 1
 {
   id: ID! @primaryKey
   title: String!
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
+  createdAt: AWSDateTime
+  updatedAt: AWSDateTime
 }"
 `;
 
@@ -103,8 +103,8 @@ exports[`model auth rules can create a static Admins group rule 1`] = `
 {
   id: ID! @primaryKey
   title: String!
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
+  createdAt: AWSDateTime
+  updatedAt: AWSDateTime
 }"
 `;
 
@@ -113,8 +113,8 @@ exports[`model auth rules can define a custom authorization rule 1`] = `
 {
   id: ID! @primaryKey
   title: String!
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
+  createdAt: AWSDateTime
+  updatedAt: AWSDateTime
 }"
 `;
 
@@ -123,8 +123,8 @@ exports[`model auth rules can define custom auth rule for operations create 1`] 
 {
   id: ID! @primaryKey
   title: String!
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
+  createdAt: AWSDateTime
+  updatedAt: AWSDateTime
 }"
 `;
 
@@ -133,8 +133,8 @@ exports[`model auth rules can define custom auth rule for operations create,read
 {
   id: ID! @primaryKey
   title: String!
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
+  createdAt: AWSDateTime
+  updatedAt: AWSDateTime
 }"
 `;
 
@@ -143,8 +143,8 @@ exports[`model auth rules can define custom auth rule for operations create,read
 {
   id: ID! @primaryKey
   title: String!
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
+  createdAt: AWSDateTime
+  updatedAt: AWSDateTime
 }"
 `;
 
@@ -153,8 +153,8 @@ exports[`model auth rules can define custom auth rule for operations delete 1`] 
 {
   id: ID! @primaryKey
   title: String!
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
+  createdAt: AWSDateTime
+  updatedAt: AWSDateTime
 }"
 `;
 
@@ -163,8 +163,8 @@ exports[`model auth rules can define custom auth rule for operations get 1`] = `
 {
   id: ID! @primaryKey
   title: String!
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
+  createdAt: AWSDateTime
+  updatedAt: AWSDateTime
 }"
 `;
 
@@ -173,8 +173,8 @@ exports[`model auth rules can define custom auth rule for operations list 1`] = 
 {
   id: ID! @primaryKey
   title: String!
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
+  createdAt: AWSDateTime
+  updatedAt: AWSDateTime
 }"
 `;
 
@@ -183,8 +183,8 @@ exports[`model auth rules can define custom auth rule for operations listen 1`] 
 {
   id: ID! @primaryKey
   title: String!
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
+  createdAt: AWSDateTime
+  updatedAt: AWSDateTime
 }"
 `;
 
@@ -193,8 +193,8 @@ exports[`model auth rules can define custom auth rule for operations read 1`] = 
 {
   id: ID! @primaryKey
   title: String!
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
+  createdAt: AWSDateTime
+  updatedAt: AWSDateTime
 }"
 `;
 
@@ -203,8 +203,8 @@ exports[`model auth rules can define custom auth rule for operations search 1`] 
 {
   id: ID! @primaryKey
   title: String!
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
+  createdAt: AWSDateTime
+  updatedAt: AWSDateTime
 }"
 `;
 
@@ -213,8 +213,8 @@ exports[`model auth rules can define custom auth rule for operations sync 1`] = 
 {
   id: ID! @primaryKey
   title: String!
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
+  createdAt: AWSDateTime
+  updatedAt: AWSDateTime
 }"
 `;
 
@@ -223,8 +223,8 @@ exports[`model auth rules can define custom auth rule for operations update 1`] 
 {
   id: ID! @primaryKey
   title: String!
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
+  createdAt: AWSDateTime
+  updatedAt: AWSDateTime
 }"
 `;
 
@@ -234,8 +234,8 @@ exports[`model auth rules can define owner auth with no provider 1`] = `
   id: ID! @primaryKey
   title: String!
   owner: String
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
+  createdAt: AWSDateTime
+  updatedAt: AWSDateTime
 }"
 `;
 
@@ -244,8 +244,8 @@ exports[`model auth rules can define owner auth with owner field spec 1`] = `
 {
   id: ID! @primaryKey
   title: String!
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
+  createdAt: AWSDateTime
+  updatedAt: AWSDateTime
 }"
 `;
 
@@ -254,8 +254,8 @@ exports[`model auth rules can define private auth with no provider 1`] = `
 {
   id: ID! @primaryKey
   title: String!
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
+  createdAt: AWSDateTime
+  updatedAt: AWSDateTime
 }"
 `;
 
@@ -264,8 +264,8 @@ exports[`model auth rules can define private with with provider iam 1`] = `
 {
   id: ID! @primaryKey
   title: String!
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
+  createdAt: AWSDateTime
+  updatedAt: AWSDateTime
 }"
 `;
 
@@ -274,8 +274,8 @@ exports[`model auth rules can define private with with provider iam for operatio
 {
   id: ID! @primaryKey
   title: String!
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
+  createdAt: AWSDateTime
+  updatedAt: AWSDateTime
 }"
 `;
 
@@ -284,8 +284,8 @@ exports[`model auth rules can define private with with provider iam for operatio
 {
   id: ID! @primaryKey
   title: String!
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
+  createdAt: AWSDateTime
+  updatedAt: AWSDateTime
 }"
 `;
 
@@ -294,8 +294,8 @@ exports[`model auth rules can define private with with provider iam for operatio
 {
   id: ID! @primaryKey
   title: String!
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
+  createdAt: AWSDateTime
+  updatedAt: AWSDateTime
 }"
 `;
 
@@ -304,8 +304,8 @@ exports[`model auth rules can define private with with provider iam for operatio
 {
   id: ID! @primaryKey
   title: String!
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
+  createdAt: AWSDateTime
+  updatedAt: AWSDateTime
 }"
 `;
 
@@ -314,8 +314,8 @@ exports[`model auth rules can define private with with provider iam for operatio
 {
   id: ID! @primaryKey
   title: String!
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
+  createdAt: AWSDateTime
+  updatedAt: AWSDateTime
 }"
 `;
 
@@ -324,8 +324,8 @@ exports[`model auth rules can define private with with provider iam for operatio
 {
   id: ID! @primaryKey
   title: String!
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
+  createdAt: AWSDateTime
+  updatedAt: AWSDateTime
 }"
 `;
 
@@ -334,8 +334,8 @@ exports[`model auth rules can define private with with provider iam for operatio
 {
   id: ID! @primaryKey
   title: String!
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
+  createdAt: AWSDateTime
+  updatedAt: AWSDateTime
 }"
 `;
 
@@ -344,8 +344,8 @@ exports[`model auth rules can define private with with provider iam for operatio
 {
   id: ID! @primaryKey
   title: String!
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
+  createdAt: AWSDateTime
+  updatedAt: AWSDateTime
 }"
 `;
 
@@ -354,8 +354,8 @@ exports[`model auth rules can define private with with provider iam for operatio
 {
   id: ID! @primaryKey
   title: String!
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
+  createdAt: AWSDateTime
+  updatedAt: AWSDateTime
 }"
 `;
 
@@ -364,8 +364,8 @@ exports[`model auth rules can define private with with provider iam for operatio
 {
   id: ID! @primaryKey
   title: String!
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
+  createdAt: AWSDateTime
+  updatedAt: AWSDateTime
 }"
 `;
 
@@ -374,8 +374,8 @@ exports[`model auth rules can define private with with provider iam for operatio
 {
   id: ID! @primaryKey
   title: String!
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
+  createdAt: AWSDateTime
+  updatedAt: AWSDateTime
 }"
 `;
 
@@ -384,8 +384,8 @@ exports[`model auth rules can define private with with provider oidc 1`] = `
 {
   id: ID! @primaryKey
   title: String!
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
+  createdAt: AWSDateTime
+  updatedAt: AWSDateTime
 }"
 `;
 
@@ -394,8 +394,8 @@ exports[`model auth rules can define private with with provider oidc for operati
 {
   id: ID! @primaryKey
   title: String!
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
+  createdAt: AWSDateTime
+  updatedAt: AWSDateTime
 }"
 `;
 
@@ -404,8 +404,8 @@ exports[`model auth rules can define private with with provider oidc for operati
 {
   id: ID! @primaryKey
   title: String!
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
+  createdAt: AWSDateTime
+  updatedAt: AWSDateTime
 }"
 `;
 
@@ -414,8 +414,8 @@ exports[`model auth rules can define private with with provider oidc for operati
 {
   id: ID! @primaryKey
   title: String!
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
+  createdAt: AWSDateTime
+  updatedAt: AWSDateTime
 }"
 `;
 
@@ -424,8 +424,8 @@ exports[`model auth rules can define private with with provider oidc for operati
 {
   id: ID! @primaryKey
   title: String!
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
+  createdAt: AWSDateTime
+  updatedAt: AWSDateTime
 }"
 `;
 
@@ -434,8 +434,8 @@ exports[`model auth rules can define private with with provider oidc for operati
 {
   id: ID! @primaryKey
   title: String!
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
+  createdAt: AWSDateTime
+  updatedAt: AWSDateTime
 }"
 `;
 
@@ -444,8 +444,8 @@ exports[`model auth rules can define private with with provider oidc for operati
 {
   id: ID! @primaryKey
   title: String!
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
+  createdAt: AWSDateTime
+  updatedAt: AWSDateTime
 }"
 `;
 
@@ -454,8 +454,8 @@ exports[`model auth rules can define private with with provider oidc for operati
 {
   id: ID! @primaryKey
   title: String!
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
+  createdAt: AWSDateTime
+  updatedAt: AWSDateTime
 }"
 `;
 
@@ -464,8 +464,8 @@ exports[`model auth rules can define private with with provider oidc for operati
 {
   id: ID! @primaryKey
   title: String!
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
+  createdAt: AWSDateTime
+  updatedAt: AWSDateTime
 }"
 `;
 
@@ -474,8 +474,8 @@ exports[`model auth rules can define private with with provider oidc for operati
 {
   id: ID! @primaryKey
   title: String!
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
+  createdAt: AWSDateTime
+  updatedAt: AWSDateTime
 }"
 `;
 
@@ -484,8 +484,8 @@ exports[`model auth rules can define private with with provider oidc for operati
 {
   id: ID! @primaryKey
   title: String!
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
+  createdAt: AWSDateTime
+  updatedAt: AWSDateTime
 }"
 `;
 
@@ -494,8 +494,8 @@ exports[`model auth rules can define private with with provider oidc for operati
 {
   id: ID! @primaryKey
   title: String!
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
+  createdAt: AWSDateTime
+  updatedAt: AWSDateTime
 }"
 `;
 
@@ -504,8 +504,8 @@ exports[`model auth rules can define private with with provider userPools 1`] = 
 {
   id: ID! @primaryKey
   title: String!
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
+  createdAt: AWSDateTime
+  updatedAt: AWSDateTime
 }"
 `;
 
@@ -514,8 +514,8 @@ exports[`model auth rules can define private with with provider userPools for op
 {
   id: ID! @primaryKey
   title: String!
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
+  createdAt: AWSDateTime
+  updatedAt: AWSDateTime
 }"
 `;
 
@@ -524,8 +524,8 @@ exports[`model auth rules can define private with with provider userPools for op
 {
   id: ID! @primaryKey
   title: String!
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
+  createdAt: AWSDateTime
+  updatedAt: AWSDateTime
 }"
 `;
 
@@ -534,8 +534,8 @@ exports[`model auth rules can define private with with provider userPools for op
 {
   id: ID! @primaryKey
   title: String!
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
+  createdAt: AWSDateTime
+  updatedAt: AWSDateTime
 }"
 `;
 
@@ -544,8 +544,8 @@ exports[`model auth rules can define private with with provider userPools for op
 {
   id: ID! @primaryKey
   title: String!
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
+  createdAt: AWSDateTime
+  updatedAt: AWSDateTime
 }"
 `;
 
@@ -554,8 +554,8 @@ exports[`model auth rules can define private with with provider userPools for op
 {
   id: ID! @primaryKey
   title: String!
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
+  createdAt: AWSDateTime
+  updatedAt: AWSDateTime
 }"
 `;
 
@@ -564,8 +564,8 @@ exports[`model auth rules can define private with with provider userPools for op
 {
   id: ID! @primaryKey
   title: String!
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
+  createdAt: AWSDateTime
+  updatedAt: AWSDateTime
 }"
 `;
 
@@ -574,8 +574,8 @@ exports[`model auth rules can define private with with provider userPools for op
 {
   id: ID! @primaryKey
   title: String!
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
+  createdAt: AWSDateTime
+  updatedAt: AWSDateTime
 }"
 `;
 
@@ -584,8 +584,8 @@ exports[`model auth rules can define private with with provider userPools for op
 {
   id: ID! @primaryKey
   title: String!
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
+  createdAt: AWSDateTime
+  updatedAt: AWSDateTime
 }"
 `;
 
@@ -594,8 +594,8 @@ exports[`model auth rules can define private with with provider userPools for op
 {
   id: ID! @primaryKey
   title: String!
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
+  createdAt: AWSDateTime
+  updatedAt: AWSDateTime
 }"
 `;
 
@@ -604,8 +604,8 @@ exports[`model auth rules can define private with with provider userPools for op
 {
   id: ID! @primaryKey
   title: String!
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
+  createdAt: AWSDateTime
+  updatedAt: AWSDateTime
 }"
 `;
 
@@ -614,8 +614,8 @@ exports[`model auth rules can define private with with provider userPools for op
 {
   id: ID! @primaryKey
   title: String!
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
+  createdAt: AWSDateTime
+  updatedAt: AWSDateTime
 }"
 `;
 
@@ -624,8 +624,8 @@ exports[`model auth rules can define public auth with no provider 1`] = `
 {
   id: ID! @primaryKey
   title: String!
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
+  createdAt: AWSDateTime
+  updatedAt: AWSDateTime
 }"
 `;
 
@@ -634,8 +634,8 @@ exports[`model auth rules can define public with with provider apiKey 1`] = `
 {
   id: ID! @primaryKey
   title: String!
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
+  createdAt: AWSDateTime
+  updatedAt: AWSDateTime
 }"
 `;
 
@@ -644,8 +644,8 @@ exports[`model auth rules can define public with with provider apiKey for operat
 {
   id: ID! @primaryKey
   title: String!
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
+  createdAt: AWSDateTime
+  updatedAt: AWSDateTime
 }"
 `;
 
@@ -654,8 +654,8 @@ exports[`model auth rules can define public with with provider apiKey for operat
 {
   id: ID! @primaryKey
   title: String!
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
+  createdAt: AWSDateTime
+  updatedAt: AWSDateTime
 }"
 `;
 
@@ -664,8 +664,8 @@ exports[`model auth rules can define public with with provider apiKey for operat
 {
   id: ID! @primaryKey
   title: String!
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
+  createdAt: AWSDateTime
+  updatedAt: AWSDateTime
 }"
 `;
 
@@ -674,8 +674,8 @@ exports[`model auth rules can define public with with provider apiKey for operat
 {
   id: ID! @primaryKey
   title: String!
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
+  createdAt: AWSDateTime
+  updatedAt: AWSDateTime
 }"
 `;
 
@@ -684,8 +684,8 @@ exports[`model auth rules can define public with with provider apiKey for operat
 {
   id: ID! @primaryKey
   title: String!
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
+  createdAt: AWSDateTime
+  updatedAt: AWSDateTime
 }"
 `;
 
@@ -694,8 +694,8 @@ exports[`model auth rules can define public with with provider apiKey for operat
 {
   id: ID! @primaryKey
   title: String!
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
+  createdAt: AWSDateTime
+  updatedAt: AWSDateTime
 }"
 `;
 
@@ -704,8 +704,8 @@ exports[`model auth rules can define public with with provider apiKey for operat
 {
   id: ID! @primaryKey
   title: String!
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
+  createdAt: AWSDateTime
+  updatedAt: AWSDateTime
 }"
 `;
 
@@ -714,8 +714,8 @@ exports[`model auth rules can define public with with provider apiKey for operat
 {
   id: ID! @primaryKey
   title: String!
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
+  createdAt: AWSDateTime
+  updatedAt: AWSDateTime
 }"
 `;
 
@@ -724,8 +724,8 @@ exports[`model auth rules can define public with with provider apiKey for operat
 {
   id: ID! @primaryKey
   title: String!
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
+  createdAt: AWSDateTime
+  updatedAt: AWSDateTime
 }"
 `;
 
@@ -734,8 +734,8 @@ exports[`model auth rules can define public with with provider apiKey for operat
 {
   id: ID! @primaryKey
   title: String!
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
+  createdAt: AWSDateTime
+  updatedAt: AWSDateTime
 }"
 `;
 
@@ -744,8 +744,8 @@ exports[`model auth rules can define public with with provider apiKey for operat
 {
   id: ID! @primaryKey
   title: String!
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
+  createdAt: AWSDateTime
+  updatedAt: AWSDateTime
 }"
 `;
 
@@ -754,8 +754,8 @@ exports[`model auth rules can define public with with provider iam 1`] = `
 {
   id: ID! @primaryKey
   title: String!
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
+  createdAt: AWSDateTime
+  updatedAt: AWSDateTime
 }"
 `;
 
@@ -764,8 +764,8 @@ exports[`model auth rules can define public with with provider iam for operation
 {
   id: ID! @primaryKey
   title: String!
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
+  createdAt: AWSDateTime
+  updatedAt: AWSDateTime
 }"
 `;
 
@@ -774,8 +774,8 @@ exports[`model auth rules can define public with with provider iam for operation
 {
   id: ID! @primaryKey
   title: String!
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
+  createdAt: AWSDateTime
+  updatedAt: AWSDateTime
 }"
 `;
 
@@ -784,8 +784,8 @@ exports[`model auth rules can define public with with provider iam for operation
 {
   id: ID! @primaryKey
   title: String!
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
+  createdAt: AWSDateTime
+  updatedAt: AWSDateTime
 }"
 `;
 
@@ -794,8 +794,8 @@ exports[`model auth rules can define public with with provider iam for operation
 {
   id: ID! @primaryKey
   title: String!
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
+  createdAt: AWSDateTime
+  updatedAt: AWSDateTime
 }"
 `;
 
@@ -804,8 +804,8 @@ exports[`model auth rules can define public with with provider iam for operation
 {
   id: ID! @primaryKey
   title: String!
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
+  createdAt: AWSDateTime
+  updatedAt: AWSDateTime
 }"
 `;
 
@@ -814,8 +814,8 @@ exports[`model auth rules can define public with with provider iam for operation
 {
   id: ID! @primaryKey
   title: String!
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
+  createdAt: AWSDateTime
+  updatedAt: AWSDateTime
 }"
 `;
 
@@ -824,8 +824,8 @@ exports[`model auth rules can define public with with provider iam for operation
 {
   id: ID! @primaryKey
   title: String!
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
+  createdAt: AWSDateTime
+  updatedAt: AWSDateTime
 }"
 `;
 
@@ -834,8 +834,8 @@ exports[`model auth rules can define public with with provider iam for operation
 {
   id: ID! @primaryKey
   title: String!
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
+  createdAt: AWSDateTime
+  updatedAt: AWSDateTime
 }"
 `;
 
@@ -844,8 +844,8 @@ exports[`model auth rules can define public with with provider iam for operation
 {
   id: ID! @primaryKey
   title: String!
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
+  createdAt: AWSDateTime
+  updatedAt: AWSDateTime
 }"
 `;
 
@@ -854,8 +854,8 @@ exports[`model auth rules can define public with with provider iam for operation
 {
   id: ID! @primaryKey
   title: String!
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
+  createdAt: AWSDateTime
+  updatedAt: AWSDateTime
 }"
 `;
 
@@ -864,8 +864,8 @@ exports[`model auth rules can define public with with provider iam for operation
 {
   id: ID! @primaryKey
   title: String!
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
+  createdAt: AWSDateTime
+  updatedAt: AWSDateTime
 }"
 `;
 
@@ -875,8 +875,8 @@ exports[`model auth rules can specify an owner identityClaim 1`] = `
   id: ID! @primaryKey
   title: String!
   owner: String
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
+  createdAt: AWSDateTime
+  updatedAt: AWSDateTime
 }"
 `;
 
@@ -885,8 +885,8 @@ exports[`model auth rules can specify operations  1`] = `
 {
   id: ID! @primaryKey
   title: String!
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
+  createdAt: AWSDateTime
+  updatedAt: AWSDateTime
 }"
 `;
 
@@ -894,8 +894,8 @@ exports[`model auth rules duplicate field validation does not issue errors for \
 "type widget @model 
 {
   customId: String! @primaryKey
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
+  createdAt: AWSDateTime
+  updatedAt: AWSDateTime
 }"
 `;
 
@@ -903,8 +903,8 @@ exports[`model auth rules duplicate field validation does not issue errors for \
 "type widget @model 
 {
   id: ID! @primaryKey
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
+  createdAt: AWSDateTime
+  updatedAt: AWSDateTime
 }"
 `;
 
@@ -912,8 +912,8 @@ exports[`model auth rules duplicate field validation does not issue errors for \
 "type widget @model 
 {
   id: String! @primaryKey
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
+  createdAt: AWSDateTime
+  updatedAt: AWSDateTime
 }"
 `;
 
@@ -922,8 +922,8 @@ exports[`model auth rules duplicate field validation does not issue errors for \
 {
   idFieldA: String! @primaryKey(sortKeyFields: ["idFieldB"])
   idFieldB: Int!
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
+  createdAt: AWSDateTime
+  updatedAt: AWSDateTime
 }"
 `;
 
@@ -932,8 +932,8 @@ exports[`model auth rules duplicate field validation does not issue errors for \
 {
   idFieldA: String! @primaryKey(sortKeyFields: ["idFieldB"])
   idFieldB: String!
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
+  createdAt: AWSDateTime
+  updatedAt: AWSDateTime
 }"
 `;
 
@@ -943,8 +943,8 @@ exports[`model auth rules includes auth from fields 1`] = `
   id: ID! @primaryKey
   title: String! @auth(rules: [{allow: owner, operations: [create, read], ownerField: "customOwner"}])
   customOwner: String
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
+  createdAt: AWSDateTime
+  updatedAt: AWSDateTime
 }"
 `;
 
@@ -954,7 +954,7 @@ exports[`model auth rules includes auth from related model fields 1`] = `
   id: ID! @primaryKey
   parent: widget @belongsTo @auth(rules: [{allow: owner, operations: [create, read], ownerField: "customOwner"}])
   customOwner: String
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
+  createdAt: AWSDateTime
+  updatedAt: AWSDateTime
 }"
 `;
