@@ -713,7 +713,8 @@ export type ModelTypes<
 
 /**
  * Request options that are passed to custom header functions.
- * `method` and `headers` are `undefined` for subscriptions.
+ * `method` and `headers` are not included in custom header functions passed to
+ * subscriptions.
  */
 export type RequestOptions = {
   url: string;
