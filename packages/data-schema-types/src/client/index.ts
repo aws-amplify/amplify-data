@@ -709,6 +709,17 @@ export type ModelTypes<
         : never
       : never
     : never;
+  };
+
+/**
+ * Request options that are passed to Custom Header functions.
+ * `method` and `headers` are `undefined` for subscriptions.
+ */
+export type RequestOptions = {
+  url: string;
+  queryString: string;
+  headers?: Record<string, string>;
+  method?: string;
 };
 
 /**
@@ -718,4 +729,4 @@ export type ModelTypes<
  */
 export type CustomHeaders =
   | Record<string, string>
-  | (() => Promise<Record<string, string>>);
+  | ((requestOptions?: RequestOptions) => Promise<Record<string, string>>);
