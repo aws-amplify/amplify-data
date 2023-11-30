@@ -163,7 +163,7 @@ function modelFieldToGql(fieldDef: ModelFieldDef) {
   return field;
 }
 
-function refFieldToGql(fieldDef: RefFieldDef) {
+function refFieldToGql(fieldDef: RefFieldDef): string {
   const { link, required } = fieldDef;
 
   let field = link;
@@ -183,6 +183,8 @@ function refFieldToGql(fieldDef: RefFieldDef) {
   return field;
 }
 
+// function inlineCustomTypeToGql(fieldDef: CustomType<any>): string {}
+
 function customOperationToGql(
   typeName: string,
   typeDef: InternalCustom,
@@ -194,22 +196,31 @@ function customOperationToGql(
     functionRef,
   } = typeDef.data;
 
-  const { authString } = calculateAuth(authorization);
-
-  const resolvedArg = refFieldToGql(returnType.data);
-
   let sig: string = typeName;
   let implicitModels: [string, any][] = [];
+
+  const { authString } = calculateAuth(authorization);
+
+  let returnTypeName: string;
+
+  if (isRefField(returnType)) {
+    returnTypeName = refFieldToGql(returnType.data);
+  } else if (isCustomType(returnType)) {
+    returnTypeName = `${capitalize(typeName)}ReturnType`;
+    implicitModels.push([returnTypeName, returnType]);
+  } else {
+    throw new Error(`Unrecognized return type on ${typeName}`);
+  }
 
   if (Object.keys(fieldArgs).length > 0) {
     const { gqlFields, models } = processFields(fieldArgs, {});
     sig += `(${gqlFields.join(', ')})`;
-    implicitModels = models;
+    implicitModels.push(...models);
   }
 
   const fnString = functionRef ? `@function(name: "${functionRef}") ` : '';
 
-  const gqlField = `${sig}: ${resolvedArg} ${fnString}${authString}`;
+  const gqlField = `${sig}: ${returnTypeName} ${fnString}${authString}`;
   return { gqlField, models: implicitModels };
 }
 

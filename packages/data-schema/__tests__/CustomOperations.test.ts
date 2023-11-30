@@ -83,4 +83,23 @@ describe('CustomOperation transform', () => {
 
     expect(result).toMatchSnapshot();
   });
+
+  test('Custom mutation w inline custom return type', () => {
+    const s = a.schema({
+      likePost: a
+        .mutation()
+        .arguments({
+          postId: a.string().required(),
+        })
+        .returns(
+          a.customType({
+            field: a.string(),
+          }),
+        ),
+    });
+
+    const result = s.transform().schema;
+
+    expect(result).toMatchSnapshot();
+  });
 });

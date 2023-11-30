@@ -29,6 +29,17 @@ exports[`CustomOperation transform Custom Mutation w string function reference 1
 }"
 `;
 
+exports[`CustomOperation transform Custom mutation w inline custom return type 1`] = `
+"type LikePostReturnType 
+{
+  field: String
+}
+
+type Mutation {
+  likePost(postId: String!): LikePostReturnType 
+}"
+`;
+
 exports[`CustomOperation transform Schema w model, custom query, mutation, and subscription 1`] = `
 "type Post @model @auth(rules: [{allow: public}])
 {
