@@ -93,7 +93,12 @@ describe('CustomOperation transform', () => {
         })
         .returns(
           a.customType({
-            field: a.string(),
+            stringField: a.string(),
+            intField: a.integer(),
+            floatField: a.float(),
+            boolField: a.boolean(),
+            datetimeField: a.datetime(),
+            jsonField: a.json(),
           }),
         ),
     });
@@ -112,7 +117,12 @@ describe('CustomOperation transform', () => {
         })
         .returns(
           a.customType({
-            field: a.string(),
+            stringField: a.string(),
+            intField: a.integer(),
+            floatField: a.float(),
+            boolField: a.boolean(),
+            datetimeField: a.datetime(),
+            jsonField: a.json(),
           }),
         ),
     });
@@ -121,4 +131,43 @@ describe('CustomOperation transform', () => {
 
     expect(result).toMatchSnapshot();
   });
+
+  for (const returnType of [
+    'string',
+    'integer',
+    'float',
+    'boolean',
+    'datetime',
+    'json',
+  ] as const) {
+    test(`Custom mutation w inline ${returnType} return type`, () => {
+      const s = a.schema({
+        likePost: a
+          .mutation()
+          .arguments({
+            postId: a.string().required(),
+          })
+          .returns(a[returnType]()),
+      });
+
+      const result = s.transform().schema;
+
+      expect(result).toMatchSnapshot();
+    });
+
+    test(`Custom query w inline ${returnType} return type`, () => {
+      const s = a.schema({
+        getPostDetails: a
+          .query()
+          .arguments({
+            postId: a.string().required(),
+          })
+          .returns(a[returnType]()),
+      });
+
+      const result = s.transform().schema;
+
+      expect(result).toMatchSnapshot();
+    });
+  }
 });

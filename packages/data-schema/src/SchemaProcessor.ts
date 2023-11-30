@@ -16,7 +16,7 @@ import { Authorization, accessData } from './Authorization';
 import { DerivedApiDefinition } from './types';
 import type { InternalRef } from './RefType';
 import type { EnumType } from './EnumType';
-import type { CustomType } from './CustomType';
+import type { CustomType, CustomTypeParamShape } from './CustomType';
 import { type InternalCustom, CustomOperationNames } from './CustomOperation';
 import { Brand } from '@aws-amplify/data-schema-types';
 
@@ -47,7 +47,9 @@ function isEnumType(
   return false;
 }
 
-function isCustomType(data: any): data is CustomType<any> {
+function isCustomType(
+  data: any,
+): data is { data: CustomType<CustomTypeParamShape> } {
   if (data?.data?.type === 'customType') {
     return true;
   }
@@ -208,6 +210,8 @@ function customOperationToGql(
   } else if (isCustomType(returnType)) {
     returnTypeName = `${capitalize(typeName)}ReturnType`;
     implicitModels.push([returnTypeName, returnType]);
+  } else if (isScalarField(returnType)) {
+    returnTypeName = scalarFieldToGql(returnType.data);
   } else {
     throw new Error(`Unrecognized return type on ${typeName}`);
   }
