@@ -185,8 +185,6 @@ function refFieldToGql(fieldDef: RefFieldDef): string {
   return field;
 }
 
-// function inlineCustomTypeToGql(fieldDef: CustomType<any>): string {}
-
 function customOperationToGql(
   typeName: string,
   typeDef: InternalCustom,
