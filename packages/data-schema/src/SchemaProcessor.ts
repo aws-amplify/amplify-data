@@ -196,8 +196,8 @@ function customOperationToGql(
     functionRef,
   } = typeDef.data;
 
-  let sig: string = typeName;
-  let implicitModels: [string, any][] = [];
+  let callSignature: string = typeName;
+  const implicitModels: [string, any][] = [];
 
   const { authString } = calculateAuth(authorization);
 
@@ -214,13 +214,13 @@ function customOperationToGql(
 
   if (Object.keys(fieldArgs).length > 0) {
     const { gqlFields, models } = processFields(fieldArgs, {});
-    sig += `(${gqlFields.join(', ')})`;
+    callSignature += `(${gqlFields.join(', ')})`;
     implicitModels.push(...models);
   }
 
   const fnString = functionRef ? `@function(name: "${functionRef}") ` : '';
 
-  const gqlField = `${sig}: ${returnTypeName} ${fnString}${authString}`;
+  const gqlField = `${callSignature}: ${returnTypeName} ${fnString}${authString}`;
   return { gqlField, models: implicitModels };
 }
 

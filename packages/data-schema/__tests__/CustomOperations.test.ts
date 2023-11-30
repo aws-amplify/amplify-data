@@ -102,4 +102,23 @@ describe('CustomOperation transform', () => {
 
     expect(result).toMatchSnapshot();
   });
+
+  test('Custom query w inline custom return type', () => {
+    const s = a.schema({
+      getPostDetails: a
+        .query()
+        .arguments({
+          postId: a.string().required(),
+        })
+        .returns(
+          a.customType({
+            field: a.string(),
+          }),
+        ),
+    });
+
+    const result = s.transform().schema;
+
+    expect(result).toMatchSnapshot();
+  });
 });
