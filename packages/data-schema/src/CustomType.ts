@@ -15,7 +15,7 @@ import {
 // `.default()` is not allowed on a Custom Type field
 export type CustomTypeAllowedModifiers = 'authorization' | 'array' | 'required';
 
-type ModelFields = Record<
+type CustomTypeFields = Record<
   string,
   ModelField<ModelFieldTypeParamOuter, CustomTypeAllowedModifiers, any>
 >;
@@ -23,7 +23,7 @@ type ModelFields = Record<
 type InternalModelFields = Record<string, InternalField>;
 
 type CustomTypeData = {
-  fields: ModelFields;
+  fields: CustomTypeFields;
   type: 'customType';
 };
 
@@ -32,7 +32,7 @@ type InternalCustomTypeData = CustomTypeData & {
 };
 
 export type CustomTypeParamShape = {
-  fields: ModelFields;
+  fields: CustomTypeFields;
 };
 
 export type CustomType<T extends CustomTypeParamShape> = Brand<T, 'customType'>;
@@ -54,7 +54,7 @@ function _customType<T extends CustomTypeParamShape>(fields: T['fields']) {
   return { data } as InternalCustomType as CustomType<T>;
 }
 
-export function customType<T extends ModelFields>(
+export function customType<T extends CustomTypeFields>(
   fields: T,
 ): CustomType<{ fields: T }> {
   return _customType(fields);
