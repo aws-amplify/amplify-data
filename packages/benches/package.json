@@ -1,0 +1,17 @@
+{
+  "name": "benches",
+  "version": "1.0.0",
+  "description": "",
+  "private": true,
+  "type": "module",
+  "main": "schema.bench.ts",
+  "scripts": {
+    "bench": "tsx schema.bench.ts"
+  },
+  "devDependencies": {
+    "@arktype/attest": "0.2.0",
+    "tsx": "^4.6.1",
+    "@aws-amplify/data-schema": "*"
+  },
+  "license": "Apache-2.0"
+}
