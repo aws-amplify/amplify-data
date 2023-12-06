@@ -1,5 +1,13 @@
 # @aws-amplify/amplify-api-next-alpha
 
+## 0.12.10
+
+### Patch Changes
+
+- 8370b63: inline custom return types on custom operations
+- Updated dependencies [32ea316]
+  - @aws-amplify/data-schema-types@0.6.8
+
 ## 0.12.9
 
 ### Patch Changes

@@ -1,5 +1,11 @@
 # @aws-amplify/amplify-api-next-types-alpha
 
+## 0.6.8
+
+### Patch Changes
+
+- 32ea316: Add type for request options
+
 ## 0.6.7
 
 ### Patch Changes
