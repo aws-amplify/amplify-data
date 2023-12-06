@@ -50,8 +50,8 @@ type RestoreArrays<Result, FlatModel> = {
     ? FlatModel[K] extends Array<any>
       ? Array<RestoreArrays<Result[K], UnwrapArray<FlatModel[K]>>>
       : FlatModel[K] extends Record<string, any>
-      ? RestoreArrays<Result[K], FlatModel[K]>
-      : Result[K]
+        ? RestoreArrays<Result[K], FlatModel[K]>
+        : Result[K]
     : never;
 };
 
@@ -116,18 +116,18 @@ type DeepPickFromPath<
 > = FlatModel extends undefined
   ? DeepPickFromPath<NonNullable<FlatModel>, Path> | undefined
   : FlatModel extends null
-  ? DeepPickFromPath<NonNullable<FlatModel>, Path> | null
-  : FlatModel extends any[]
-  ? DeepPickFromPath<UnwrapArray<FlatModel>, Path>
-  : Path extends `${infer Head}.${infer Tail}`
-  ? Head extends keyof FlatModel
-    ? Tail extends '*'
-      ? { [k in Head]: NonRelationalFields<UnwrapArray<FlatModel[Head]>> }
-      : { [k in Head]: DeepPickFromPath<FlatModel[Head], Tail> }
-    : never
-  : Path extends keyof FlatModel
-  ? { [K in Path]: FlatModel[Path] }
-  : never;
+    ? DeepPickFromPath<NonNullable<FlatModel>, Path> | null
+    : FlatModel extends any[]
+      ? DeepPickFromPath<UnwrapArray<FlatModel>, Path>
+      : Path extends `${infer Head}.${infer Tail}`
+        ? Head extends keyof FlatModel
+          ? Tail extends '*'
+            ? { [k in Head]: NonRelationalFields<UnwrapArray<FlatModel[Head]>> }
+            : { [k in Head]: DeepPickFromPath<FlatModel[Head], Tail> }
+          : never
+        : Path extends keyof FlatModel
+          ? { [K in Path]: FlatModel[Path] }
+          : never;
 
 /**
  * Generates custom selection set type with up to 6 levels of nested fields
@@ -240,10 +240,10 @@ type ResolvedModel<
         ? ResolvedModel<NonNullable<M>, RecursionLoop[Depth]>[]
         : never
       : Model[Field] extends (...args: any) => SingularReturnValue<infer M>
-      ? NonNullable<M> extends Record<string, any>
-        ? ResolvedModel<NonNullable<M>, RecursionLoop[Depth]>
-        : never
-      : Model[Field];
+        ? NonNullable<M> extends Record<string, any>
+          ? ResolvedModel<NonNullable<M>, RecursionLoop[Depth]>
+          : never
+        : Model[Field];
   };
 }[Depth extends -1 ? 'done' : 'recur'];
 
@@ -472,8 +472,8 @@ type ModelFilter<Model extends Record<any, any>> = LogicalFilters<Model> & {
     : K]?: Model[K] extends boolean
     ? BooleanFilters
     : Model[K] extends number
-    ? NumericFilter
-    : StringFilter;
+      ? NumericFilter
+      : StringFilter;
 };
 
 type ModelTypesClient<
@@ -703,12 +703,24 @@ export type ModelTypes<
       ? Context extends 'CLIENT'
         ? ModelTypesClient<Schema[ModelName], ModelMeta[ModelName]>
         : Context extends 'COOKIES'
-        ? ModelTypesSSRCookies<Schema[ModelName], ModelMeta[ModelName]>
-        : Context extends 'REQUEST'
-        ? ModelTypesSSRRequest<Schema[ModelName], ModelMeta[ModelName]>
-        : never
+          ? ModelTypesSSRCookies<Schema[ModelName], ModelMeta[ModelName]>
+          : Context extends 'REQUEST'
+            ? ModelTypesSSRRequest<Schema[ModelName], ModelMeta[ModelName]>
+            : never
       : never
     : never;
+};
+
+/**
+ * Request options that are passed to custom header functions.
+ * `method` and `headers` are not included in custom header functions passed to
+ * subscriptions.
+ */
+export type RequestOptions = {
+  url: string;
+  queryString: string;
+  headers?: Record<string, string>;
+  method?: string;
 };
 
 /**
@@ -718,4 +730,4 @@ export type ModelTypes<
  */
 export type CustomHeaders =
   | Record<string, string>
-  | (() => Promise<Record<string, string>>);
+  | ((requestOptions?: RequestOptions) => Promise<Record<string, string>>);

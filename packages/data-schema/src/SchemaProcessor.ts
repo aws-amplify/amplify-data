@@ -16,7 +16,7 @@ import { Authorization, accessData } from './Authorization';
 import { DerivedApiDefinition } from './types';
 import type { InternalRef } from './RefType';
 import type { EnumType } from './EnumType';
-import type { CustomType } from './CustomType';
+import type { CustomType, CustomTypeParamShape } from './CustomType';
 import { type InternalCustom, CustomOperationNames } from './CustomOperation';
 import { Brand } from '@aws-amplify/data-schema-types';
 
@@ -47,7 +47,9 @@ function isEnumType(
   return false;
 }
 
-function isCustomType(data: any): data is CustomType<any> {
+function isCustomType(
+  data: any,
+): data is { data: CustomType<CustomTypeParamShape> } {
   if (data?.data?.type === 'customType') {
     return true;
   }
@@ -163,7 +165,7 @@ function modelFieldToGql(fieldDef: ModelFieldDef) {
   return field;
 }
 
-function refFieldToGql(fieldDef: RefFieldDef) {
+function refFieldToGql(fieldDef: RefFieldDef): string {
   const { link, required } = fieldDef;
 
   let field = link;
@@ -194,22 +196,33 @@ function customOperationToGql(
     functionRef,
   } = typeDef.data;
 
+  let callSignature: string = typeName;
+  const implicitModels: [string, any][] = [];
+
   const { authString } = calculateAuth(authorization);
 
-  const resolvedArg = refFieldToGql(returnType.data);
+  let returnTypeName: string;
 
-  let sig: string = typeName;
-  let implicitModels: [string, any][] = [];
+  if (isRefField(returnType)) {
+    returnTypeName = refFieldToGql(returnType.data);
+  } else if (isCustomType(returnType)) {
+    returnTypeName = `${capitalize(typeName)}ReturnType`;
+    implicitModels.push([returnTypeName, returnType]);
+  } else if (isScalarField(returnType)) {
+    returnTypeName = scalarFieldToGql(returnType.data);
+  } else {
+    throw new Error(`Unrecognized return type on ${typeName}`);
+  }
 
   if (Object.keys(fieldArgs).length > 0) {
     const { gqlFields, models } = processFields(fieldArgs, {});
-    sig += `(${gqlFields.join(', ')})`;
-    implicitModels = models;
+    callSignature += `(${gqlFields.join(', ')})`;
+    implicitModels.push(...models);
   }
 
   const fnString = functionRef ? `@function(name: "${functionRef}") ` : '';
 
-  const gqlField = `${sig}: ${resolvedArg} ${fnString}${authString}`;
+  const gqlField = `${callSignature}: ${returnTypeName} ${fnString}${authString}`;
   return { gqlField, models: implicitModels };
 }
 

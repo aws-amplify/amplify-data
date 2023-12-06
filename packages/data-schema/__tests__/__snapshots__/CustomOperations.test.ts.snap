@@ -29,6 +29,110 @@ exports[`CustomOperation transform Custom Mutation w string function reference 1
 }"
 `;
 
+exports[`CustomOperation transform Custom mutation w inline boolean return type 1`] = `
+"type Mutation {
+  likePost(postId: String!): Boolean 
+}"
+`;
+
+exports[`CustomOperation transform Custom mutation w inline custom return type 1`] = `
+"type LikePostReturnType 
+{
+  stringField: String
+  intField: Int
+  floatField: Float
+  boolField: Boolean
+  datetimeField: AWSDateTime
+  jsonField: AWSJSON
+}
+
+type Mutation {
+  likePost(postId: String!): LikePostReturnType 
+}"
+`;
+
+exports[`CustomOperation transform Custom mutation w inline datetime return type 1`] = `
+"type Mutation {
+  likePost(postId: String!): AWSDateTime 
+}"
+`;
+
+exports[`CustomOperation transform Custom mutation w inline float return type 1`] = `
+"type Mutation {
+  likePost(postId: String!): Float 
+}"
+`;
+
+exports[`CustomOperation transform Custom mutation w inline integer return type 1`] = `
+"type Mutation {
+  likePost(postId: String!): Int 
+}"
+`;
+
+exports[`CustomOperation transform Custom mutation w inline json return type 1`] = `
+"type Mutation {
+  likePost(postId: String!): AWSJSON 
+}"
+`;
+
+exports[`CustomOperation transform Custom mutation w inline string return type 1`] = `
+"type Mutation {
+  likePost(postId: String!): String 
+}"
+`;
+
+exports[`CustomOperation transform Custom query w inline boolean return type 1`] = `
+"type Query {
+  getPostDetails(postId: String!): Boolean 
+}"
+`;
+
+exports[`CustomOperation transform Custom query w inline custom return type 1`] = `
+"type GetPostDetailsReturnType 
+{
+  stringField: String
+  intField: Int
+  floatField: Float
+  boolField: Boolean
+  datetimeField: AWSDateTime
+  jsonField: AWSJSON
+}
+
+type Query {
+  getPostDetails(postId: String!): GetPostDetailsReturnType 
+}"
+`;
+
+exports[`CustomOperation transform Custom query w inline datetime return type 1`] = `
+"type Query {
+  getPostDetails(postId: String!): AWSDateTime 
+}"
+`;
+
+exports[`CustomOperation transform Custom query w inline float return type 1`] = `
+"type Query {
+  getPostDetails(postId: String!): Float 
+}"
+`;
+
+exports[`CustomOperation transform Custom query w inline integer return type 1`] = `
+"type Query {
+  getPostDetails(postId: String!): Int 
+}"
+`;
+
+exports[`CustomOperation transform Custom query w inline json return type 1`] = `
+"type Query {
+  getPostDetails(postId: String!): AWSJSON 
+}"
+`;
+
+exports[`CustomOperation transform Custom query w inline string return type 1`] = `
+"type Query {
+  getPostDetails(postId: String!): String 
+}"
+`;
+
 exports[`CustomOperation transform Schema w model, custom query, mutation, and subscription 1`] = `
 "type Post @model @auth(rules: [{allow: public}])
 {

@@ -4,13 +4,14 @@ import { ModelField, InternalField } from './ModelField';
 import { Authorization } from './Authorization';
 import { RefType, InternalRef } from './RefType';
 import { EnumType, EnumTypeParamShape } from './EnumType';
+import { CustomType } from './CustomType';
 
 type CustomArguments = Record<
   string,
   ModelField<any, any> | EnumType<EnumTypeParamShape>
 >;
 
-type CustomReturnType = RefType<any>;
+type CustomReturnType = RefType<any> | CustomType<any>;
 type CustomFunctionRefType = string; // extend to include reference
 
 type InternalCustomArguments = Record<string, InternalField>;
