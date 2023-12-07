@@ -719,7 +719,6 @@ export type ModelTypes<
 export type RequestOptions = {
   url: string;
   queryString: string;
-  headers?: Record<string, string>;
   method?: string;
 };
 
