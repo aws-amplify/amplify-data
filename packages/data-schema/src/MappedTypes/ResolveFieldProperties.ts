@@ -23,6 +23,10 @@ import type { NonModelTypesShape } from './ExtractNonModelTypes';
 
 import type { CustomType, CustomTypeParamShape } from '../CustomType';
 import type { EnumType, EnumTypeParamShape } from '../EnumType';
+import type {
+  CustomOperation,
+  CustomOperationParamShape,
+} from '../CustomOperation';
 
 export type ResolveFieldProperties<
   Schema extends ModelSchema<any, any>,
@@ -105,8 +109,8 @@ type ResolveRef<
   Value = Link extends keyof NonModelTypes['enums']
     ? NonModelTypes['enums'][Link]
     : Link extends keyof NonModelTypes['customTypes']
-    ? NonModelTypes['customTypes'][Link]
-    : never,
+      ? NonModelTypes['customTypes'][Link]
+      : never,
 > = Ref['required'] extends true ? Value : Value | null;
 
 type ResolveRelationships<
@@ -122,24 +126,24 @@ type ResolveRelationships<
     > | null
       ? ResolveRef<NonModelTypes, R>
       : Schema[ModelProp][FieldProp] extends ModelRelationalFieldParamShape
-      ? Schema[ModelProp][FieldProp]['relatedModel'] extends keyof Schema
-        ? Schema[ModelProp][FieldProp]['relationshipType'] extends 'manyToMany'
-          ? Schema[ModelProp][FieldProp]['relationName'] extends keyof Schema
-            ? GetRelationshipRef<
+        ? Schema[ModelProp][FieldProp]['relatedModel'] extends keyof Schema
+          ? Schema[ModelProp][FieldProp]['relationshipType'] extends 'manyToMany'
+            ? Schema[ModelProp][FieldProp]['relationName'] extends keyof Schema
+              ? GetRelationshipRef<
+                  Schema,
+                  Schema[ModelProp][FieldProp]['relationName'],
+                  Schema[ModelProp][FieldProp],
+                  Flat
+                >
+              : never
+            : GetRelationshipRef<
                 Schema,
-                Schema[ModelProp][FieldProp]['relationName'],
+                Schema[ModelProp][FieldProp]['relatedModel'],
                 Schema[ModelProp][FieldProp],
                 Flat
               >
-            : never
-          : GetRelationshipRef<
-              Schema,
-              Schema[ModelProp][FieldProp]['relatedModel'],
-              Schema[ModelProp][FieldProp],
-              Flat
-            >
-        : never // if the field value extends ModelRelationalFieldShape "relatedModel" should always point to a Model (keyof Schema)
-      : Schema[ModelProp][FieldProp];
+          : never // if the field value extends ModelRelationalFieldShape "relatedModel" should always point to a Model (keyof Schema)
+        : Schema[ModelProp][FieldProp];
   };
 };
 
@@ -177,8 +181,13 @@ export type ModelImpliedAuthFields<Schema extends ModelSchema<any, any>> = {
   [ModelKey in keyof Schema['data']['types'] as Schema['data']['types'][ModelKey] extends EnumType<EnumTypeParamShape>
     ? never
     : Schema['data']['types'][ModelKey] extends CustomType<CustomTypeParamShape>
-    ? never
-    : ModelKey]: Schema['data']['types'][ModelKey] extends ModelType<
+      ? never
+      : Schema['data']['types'][ModelKey] extends CustomOperation<
+            CustomOperationParamShape,
+            any
+          >
+        ? never
+        : ModelKey]: Schema['data']['types'][ModelKey] extends ModelType<
     infer Model,
     any
   >
