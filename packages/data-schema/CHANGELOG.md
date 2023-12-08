@@ -1,5 +1,13 @@
 # @aws-amplify/amplify-api-next-alpha
 
+## 0.12.11
+
+### Patch Changes
+
+- 6181dea: Hide custom ops from top-level client types
+- Updated dependencies [6181dea]
+  - @aws-amplify/data-schema-types@0.6.9
+
 ## 0.12.10
 
 ### Patch Changes

@@ -1,5 +1,10 @@
 import { a, ClientSchema } from '../index';
-import { Expect, Equal } from '@aws-amplify/data-schema-types';
+import {
+  Expect,
+  Equal,
+  ExpectFalse,
+  HasKey,
+} from '@aws-amplify/data-schema-types';
 
 describe('implied fields', () => {
   describe('boring model keys', () => {
@@ -269,5 +274,45 @@ describe('implied fields', () => {
         Equal<Schema['SimpleModel']['updatedAt'], string>
       >;
     });
+  });
+});
+
+describe('Custom operations hidden from ClientSchema', () => {
+  test('Custom mutation', () => {
+    const schema = a.schema({
+      Post: a.model({
+        title: a.string(),
+      }),
+      likePost: a
+        .mutation()
+        .arguments({ postId: a.string() })
+        .returns(a.ref('Post'))
+        .function('fnLikePost'),
+    });
+
+    type Schema = ClientSchema<typeof schema>;
+    type Test = ExpectFalse<HasKey<Schema, 'likePost'>>;
+  });
+  test('Custom query', () => {
+    const schema = a.schema({
+      Post: a.model({
+        title: a.string(),
+      }),
+      getLiked: a.query().returns(a.ref('Post')).function('fnGetLiked'),
+    });
+
+    type Schema = ClientSchema<typeof schema>;
+    type Test = ExpectFalse<HasKey<Schema, 'getLiked'>>;
+  });
+  test('Custom subscription', () => {
+    const schema = a.schema({
+      Post: a.model({
+        title: a.string(),
+      }),
+      onLiked: a.subscription().returns(a.ref('Post')).function('fnOnLiked'),
+    });
+
+    type Schema = ClientSchema<typeof schema>;
+    type Test = ExpectFalse<HasKey<Schema, 'onLiked'>>;
   });
 });

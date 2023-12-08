@@ -16,8 +16,8 @@ export type SetTypeSubArg<T, SetKey extends keyof T, Val> = {
 export type Prettify<T> = T extends (...args: infer ArgsType) => any
   ? (...args: ArgsType) => ReturnType<T>
   : T extends object
-  ? { [P in keyof T]: Prettify<T[P]> }
-  : T;
+    ? { [P in keyof T]: Prettify<T[P]> }
+    : T;
 
 declare const brand: unique symbol;
 export type Brand<T, TBrand extends string> = T & {
@@ -55,7 +55,6 @@ export type ExpectTrue<T extends true> = T;
 export type ExpectFalse<T extends false> = T;
 export type IsTrue<T extends true> = T;
 export type IsFalse<T extends false> = T;
-
 export type Equal<X, Y> = (<T>() => T extends X ? 1 : 2) extends <
   T,
 >() => T extends Y ? 1 : 2
@@ -71,6 +70,11 @@ export type ObjectIsNonEmpty<T extends object> = keyof T extends never
   ? false
   : true;
 
+export type HasKey<
+  Obj extends Record<string, any>,
+  Key extends string,
+> = Key extends keyof Obj ? true : false;
+
 /**
  * @returns element type for arrays; otherwise returns passed-in type as is
  */
@@ -79,5 +83,5 @@ export type UnwrapArray<T> = T extends any[] ? T[number] : T;
 export type DeepReadOnlyObject<T> = T extends Array<infer U>
   ? DeepReadOnlyObject<U>[]
   : T extends Record<any, any>
-  ? { readonly [k in keyof T]: DeepReadOnlyObject<T[k]> }
-  : T;
+    ? { readonly [k in keyof T]: DeepReadOnlyObject<T[k]> }
+    : T;

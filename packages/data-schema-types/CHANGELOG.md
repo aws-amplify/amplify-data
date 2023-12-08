@@ -1,5 +1,11 @@
 # @aws-amplify/amplify-api-next-types-alpha
 
+## 0.6.9
+
+### Patch Changes
+
+- 6181dea: Add HasKey util type
+
 ## 0.6.8
 
 ### Patch Changes
