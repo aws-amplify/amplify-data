@@ -1,5 +1,10 @@
 import { a, ClientSchema } from '../index';
-import { Expect, Equal } from '@aws-amplify/data-schema-types';
+import {
+  Expect,
+  Equal,
+  ExpectFalse,
+  HasKey,
+} from '@aws-amplify/data-schema-types';
 
 describe('implied fields', () => {
   describe('boring model keys', () => {
@@ -286,10 +291,7 @@ describe('Custom operations hidden from ClientSchema', () => {
     });
 
     type Schema = ClientSchema<typeof schema>;
-
-    type Exists = 'likePost' extends keyof Schema ? true : false;
-
-    type Test = Expect<Equal<Exists, false>>;
+    type Test = ExpectFalse<HasKey<Schema, 'likePost'>>;
   });
   test('Custom query', () => {
     const schema = a.schema({
@@ -300,10 +302,7 @@ describe('Custom operations hidden from ClientSchema', () => {
     });
 
     type Schema = ClientSchema<typeof schema>;
-
-    type Exists = 'getLiked' extends keyof Schema ? true : false;
-
-    type Test = Expect<Equal<Exists, false>>;
+    type Test = ExpectFalse<HasKey<Schema, 'getLiked'>>;
   });
   test('Custom subscription', () => {
     const schema = a.schema({
@@ -314,9 +313,6 @@ describe('Custom operations hidden from ClientSchema', () => {
     });
 
     type Schema = ClientSchema<typeof schema>;
-
-    type Exists = 'onLiked' extends keyof Schema ? true : false;
-
-    type Test = Expect<Equal<Exists, false>>;
+    type Test = ExpectFalse<HasKey<Schema, 'onLiked'>>;
   });
 });
