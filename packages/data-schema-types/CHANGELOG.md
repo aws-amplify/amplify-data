@@ -1,5 +1,11 @@
 # @aws-amplify/amplify-api-next-types-alpha
 
+## 0.6.10
+
+### Patch Changes
+
+- 5143bd1: minor update to RequestOptions type
+
 ## 0.6.9
 
 ### Patch Changes
