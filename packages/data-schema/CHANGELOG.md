@@ -1,5 +1,11 @@
 # @aws-amplify/amplify-api-next-alpha
 
+## 0.12.12
+
+### Patch Changes
+
+- 7348b09: depreacte arrayRequired modifier
+
 ## 0.12.11
 
 ### Patch Changes
