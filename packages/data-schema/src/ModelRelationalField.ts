@@ -63,6 +63,8 @@ type ModelRelationalFieldFunctions<
   >;
   /**
    * When set, it requires the relationship to always return an array value
+   * @deprecated this modifier should not be used and will be removed
+   * in the next minor version of this package.
    */
   arrayRequired(): ModelRelationalField<
     SetTypeSubArg<T, 'arrayRequired', true>,
@@ -122,12 +124,12 @@ export type RelationTypeFunctionOmitMapping<
 > = Type extends ModelRelationshipTypes.belongsTo
   ? 'required' | 'arrayRequired' | 'valueRequired'
   : Type extends ModelRelationshipTypes.hasMany
-  ? 'required'
-  : Type extends ModelRelationshipTypes.hasOne
-  ? 'arrayRequired' | 'valueRequired'
-  : Type extends ModelRelationshipTypes.manyToMany
-  ? 'required'
-  : never;
+    ? 'required'
+    : Type extends ModelRelationshipTypes.hasOne
+      ? 'arrayRequired' | 'valueRequired'
+      : Type extends ModelRelationshipTypes.manyToMany
+        ? 'required'
+        : never;
 
 function _modelRelationalField<
   T extends ModelRelationalFieldParamShape,
