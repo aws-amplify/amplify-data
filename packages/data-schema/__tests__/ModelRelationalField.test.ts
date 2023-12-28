@@ -109,7 +109,7 @@ describe('relational field required modifier', () => {
   describe('manyToMany', () => {
     it("doesn't offer a required modifier", () => {
       expect(() => {
-        // @ts-ignore
+        // @ts-expect-error
         const field = a.manyToMany('Test', { relationName: 'Test' }).required();
       }).toThrow();
     });

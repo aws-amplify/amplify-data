@@ -369,5 +369,21 @@ type CPKReciprocalHasManyChild @model @auth(rules: [{allow: public}])
   cPKParentChildHasManyReciprocalCPKParentIdFieldB: ID
   createdAt: AWSDateTime!
   updatedAt: AWSDateTime!
+}
+
+type Part1MN @model @auth(rules: [{allow: public}])
+{
+  id: ID! @primaryKey
+  reciprocal: [Part2MN] @manyToMany(relationName: "Part1MNPart2MN")
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
+}
+
+type Part2MN @model @auth(rules: [{allow: public}])
+{
+  id: ID! @primaryKey
+  reciprocal: [Part1MN] @manyToMany(relationName: "Part1MNPart2MN")
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
 }"
 `;

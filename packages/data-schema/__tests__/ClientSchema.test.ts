@@ -77,8 +77,19 @@ describe('schema generation', () => {
             'CPKReciprocalHasManyChildIdFieldA',
             'CPKReciprocalHasManyChildIdFieldB',
           ]),
+        Part1MN: a.model({
+          reciprocal: a.manyToMany('Part2MN', {
+            relationName: 'Part1MNPart2MN',
+          }),
+        }),
+        Part2MN: a.model({
+          reciprocal: a.manyToMany('Part1MN', {
+            relationName: 'Part1MNPart2MN',
+          }),
+        }),
       })
       .authorization([a.allow.public()]);
+
     expect(schema.transform().schema).toMatchSnapshot();
   });
 });
