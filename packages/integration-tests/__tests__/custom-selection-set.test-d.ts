@@ -425,4 +425,90 @@ describe('Custom Selection Set', () => {
       type test = Expect<Equal<typeof blogs.data, ExpectedType>>;
     });
   });
+
+  describe('Custom Types', () => {
+    const schema = a.schema({
+      Post: a.model({
+        title: a.string().required(),
+        description: a.string(),
+        location: a.ref('Location').required(),
+      }),
+
+      Post2: a.model({
+        title: a.string().required(),
+        description: a.string(),
+        location: a.ref('Location'),
+      }),
+
+      Post3: a.model({
+        title: a.string().required(),
+        description: a.string(),
+        altLocation: a.customType({
+          lat: a.float(),
+          long: a.float(),
+        }),
+      }),
+
+      Location: a.customType({
+        lat: a.float(),
+        long: a.float(),
+      }),
+    });
+
+    type Schema = ClientSchema<typeof schema>;
+    const client = generateClient<Schema>();
+
+    type P3 = Schema['Post3'];
+
+    test('custom selection set on required custom type', async () => {
+      const { data: posts } = await client.models.Post.list({
+        selectionSet: ['title', 'location.lat'],
+      });
+
+      type ExpectedType = {
+        readonly title: string;
+        readonly location: {
+          readonly lat: number | null;
+        };
+      }[];
+
+      type test = Expect<Equal<typeof posts, ExpectedType>>;
+    });
+
+    test('custom selection set on nullable custom type', async () => {
+      const { data: posts } = await client.models.Post2.list({
+        selectionSet: ['title', 'location.lat'],
+      });
+
+      type ExpectedType = {
+        readonly title: string;
+        readonly location:
+          | {
+              readonly lat: number | null;
+            }
+          | null
+          | undefined;
+      }[];
+
+      type test = Expect<Equal<typeof posts, ExpectedType>>;
+    });
+
+    test('custom selection set on implicit nullable custom type', async () => {
+      const { data: posts } = await client.models.Post3.list({
+        selectionSet: ['title', 'altLocation.lat'],
+      });
+
+      type ExpectedType = {
+        readonly title: string;
+        readonly altLocation:
+          | {
+              readonly lat: number | null;
+            }
+          | null
+          | undefined;
+      }[];
+
+      type test = Expect<Equal<typeof posts, ExpectedType>>;
+    });
+  });
 });
