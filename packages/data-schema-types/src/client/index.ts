@@ -172,10 +172,10 @@ export type ModelPath<
 > = {
   done: Field extends string ? `${Field}.*` : never;
   recur: Field extends string
-    ? UnwrapArray<FlatModel[Field]> extends Record<string, unknown>
+    ? NonNullable<UnwrapArray<FlatModel[Field]>> extends Record<string, unknown>
       ?
           | `${Field}.${ModelPath<
-              UnwrapArray<FlatModel[Field]>,
+              NonNullable<UnwrapArray<FlatModel[Field]>>,
               // this decrements `Depth` by 1 in each recursive call; it's equivalent to the update expr. afterthought in a for loop (e.g. `depth -= 1`)
               RecursionLoop[Depth]
             >}`

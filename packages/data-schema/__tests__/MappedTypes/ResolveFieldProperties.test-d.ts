@@ -1,5 +1,5 @@
 import type { Prettify, Equal, Expect } from '@aws-amplify/data-schema-types';
-import { a, ClientSchema } from '../../index';
+import { a } from '../../index';
 import { ResolveFieldProperties } from '../../src/MappedTypes/ResolveFieldProperties';
 import type { ExtractNonModelTypes } from '../../src/MappedTypes/ExtractNonModelTypes';
 import { Json } from '../../src/ModelField';
@@ -49,8 +49,6 @@ describe('ResolveFieldProperties Mapped Type', () => {
 
     type Schema = typeof s;
 
-    type CS = ClientSchema<Schema>;
-
     type Resolved = Prettify<
       ResolveFieldProperties<Schema, ExtractNonModelTypes<Schema>>['Post']
     >;
@@ -90,8 +88,6 @@ describe('ResolveFieldProperties Mapped Type', () => {
 
     type Schema = typeof s;
 
-    type CS = ClientSchema<Schema>;
-
     type Resolved = Prettify<
       ResolveFieldProperties<Schema, ExtractNonModelTypes<Schema>>['Post']
     >;
@@ -127,8 +123,6 @@ describe('ResolveFieldProperties Mapped Type', () => {
     });
 
     type Schema = typeof s;
-
-    type CS = ClientSchema<Schema>;
 
     type Resolved = Prettify<
       ResolveFieldProperties<Schema, ExtractNonModelTypes<Schema>>['Post']
