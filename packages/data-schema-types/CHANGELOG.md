@@ -1,5 +1,11 @@
 # @aws-amplify/amplify-api-next-types-alpha
 
+## 0.6.11
+
+### Patch Changes
+
+- d5c044a: fix nullable custom type field sel. set
+
 ## 0.6.10
 
 ### Patch Changes
