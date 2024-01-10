@@ -9,6 +9,13 @@ import {
 import { ModelRelationalField } from '../src/ModelRelationalField';
 import { ModelField } from '../src/ModelField';
 
+describe('type definition tests', () => {
+  // evaluates type defs in corresponding test-d.ts file
+  it('should not produce static type errors', async () => {
+    await expectTypeTestsToPassAsync(__filename);
+  });
+});
+
 describe('malformed schema', () => {
   it('models expresses error when function provided instead of field', () => {
     const schema = a.schema({
@@ -37,13 +44,6 @@ describe('malformed schema', () => {
         title: 'test',
       }),
     });
-  });
-});
-
-describe('type definition tests', () => {
-  // evaluates type defs in corresponding test-d.ts file
-  it('should not produce static type errors', async () => {
-    await expectTypeTestsToPassAsync(__filename);
   });
 });
 
@@ -658,5 +658,113 @@ describe('model auth rules', () => {
         .authorization([a.allow.public()]);
       expect(schema.transform().schema).toMatchSnapshot();
     });
+  });
+});
+
+describe('secondary indexes', () => {
+  it('generates a secondary index annotation', () => {
+    const schema = a
+      .schema({
+        widget: a
+          .model({
+            title: a.string().required(),
+          })
+          .secondaryIndexes([a.index('title')]),
+      })
+      .authorization([a.allow.public()]);
+
+    expect(schema.transform().schema).toMatchSnapshot();
+  });
+
+  it('generates a secondary index annotation with attributes', () => {
+    const schema = a
+      .schema({
+        widget: a
+          .model({
+            title: a.string().required(),
+            description: a.string().required(),
+            timestamp: a.integer().required(),
+          })
+          .secondaryIndexes([
+            a
+              .index('title')
+              .name('myGSI')
+              .sortKeys(['description', 'timestamp'])
+              .queryField('byTitleDescTs'),
+          ]),
+      })
+      .authorization([a.allow.public()]);
+
+    expect(schema.transform().schema).toMatchSnapshot();
+  });
+
+  it('generates a primary key AND secondary index annotation with attributes', () => {
+    const schema = a
+      .schema({
+        widget: a
+          .model({
+            title: a.string().required(),
+            description: a.string().required(),
+            timestamp: a.integer().required(),
+          })
+          .identifier(['title'])
+          .secondaryIndexes([
+            a
+              .index('title')
+              .name('myGSI')
+              .sortKeys(['description', 'timestamp'])
+              .queryField('byTitleDescTs'),
+          ]),
+      })
+      .authorization([a.allow.public()]);
+
+    expect(schema.transform().schema).toMatchSnapshot();
+  });
+
+  it('generates multiple secondary index annotations on the same field', () => {
+    const schema = a
+      .schema({
+        widget: a
+          .model({
+            title: a.string().required(),
+            description: a.string().required(),
+            timestamp: a.integer().required(),
+          })
+          .secondaryIndexes([
+            a.index('title'),
+            a.index('title').sortKeys(['timestamp']),
+            a
+              .index('title')
+              .name('myGSI')
+              .sortKeys(['description', 'timestamp'])
+              .queryField('byTitleDescTs'),
+          ]),
+      })
+      .authorization([a.allow.public()]);
+
+    expect(schema.transform().schema).toMatchSnapshot();
+  });
+
+  it('generates secondary index annotations on different fields', () => {
+    const schema = a
+      .schema({
+        widget: a
+          .model({
+            title: a.string().required(),
+            description: a.string().required(),
+            timestamp: a.integer().required(),
+          })
+          .secondaryIndexes([
+            a.index('title'),
+            a.index('description').sortKeys(['timestamp']),
+            a
+              .index('timestamp')
+              .sortKeys(['description'])
+              .queryField('byTimeStampDesc'),
+          ]),
+      })
+      .authorization([a.allow.public()]);
+
+    expect(schema.transform().schema).toMatchSnapshot();
   });
 });

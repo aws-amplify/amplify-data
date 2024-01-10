@@ -1,5 +1,6 @@
 import type { Equal, Expect } from '@aws-amplify/data-schema-types';
 import { type ModelType, type InternalModel, model } from '../src/ModelType';
+import { modelIndex } from '../src/ModelIndex';
 import {
   type ModelField,
   type InternalField,
@@ -7,7 +8,11 @@ import {
   id,
 } from '../src/ModelField';
 
-type GetModelTypeArg<T> = T extends ModelType<infer R, any> ? R : never;
+const a = { model, index: modelIndex };
+
+type GetModelTypeArg<T> = T extends ModelType<infer R, any, any, any>
+  ? R
+  : never;
 
 describe('InternalModel casting', () => {
   test('basic ModelType can be cast to InternalModel', () => {
@@ -50,6 +55,7 @@ describe('identifiers', () => {
         title: ModelField<string | null>;
       };
       identifier: Array<'id'>;
+      secondaryIndexes: [];
       authorization: [];
     };
 
@@ -68,6 +74,7 @@ describe('identifiers', () => {
         customId: ModelField<string, 'required'>;
       };
       identifier: Array<'customId'>;
+      secondaryIndexes: [];
       authorization: [];
     };
 
@@ -81,5 +88,13 @@ describe('identifiers', () => {
     // optional fields can't be used as identifier
     // @ts-expect-error
     m2.identifier(['title']);
+  });
+
+  test('model with fields and secondary index', () => {
+    const m = a
+      .model({
+        title: string(),
+      })
+      .secondaryIndexes([a.index('title')]);
   });
 });

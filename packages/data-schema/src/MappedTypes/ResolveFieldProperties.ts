@@ -189,6 +189,8 @@ export type ModelImpliedAuthFields<Schema extends ModelSchema<any, any>> = {
         ? never
         : ModelKey]: Schema['data']['types'][ModelKey] extends ModelType<
     infer Model,
+    any,
+    any,
     any
   >
     ? AllAuthFieldsForModel<Schema, Model>

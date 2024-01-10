@@ -34,7 +34,7 @@ export type ModelTypes<Schema> = {
     | CustomType<CustomTypeParamShape>
     | CustomOperation<CustomOperationParamShape, any>
     ? never
-    : Model]: Schema[Model] extends ModelType<infer R, any>
+    : Model]: Schema[Model] extends ModelType<infer R, any, any, any>
     ? R['fields']
     : never;
 };
@@ -56,25 +56,25 @@ export type FieldTypes<T> = {
         ? T[ModelProp][FieldProp]
         : T[ModelProp][FieldProp] | null
       : // replace non-model types with Ref
-      T[ModelProp][FieldProp] extends
-          | EnumType<EnumTypeParamShape>
-          | CustomType<CustomTypeParamShape>
-      ? RefType<{
-          link: Capitalize<FieldProp & string>;
-          type: 'ref';
-          required: false;
-          authorization: [];
-        }> | null
-      : // resolve relational and model fields to the their first type arg
-      T[ModelProp][FieldProp] extends ModelRelationalField<
-          infer R,
-          string,
-          RelationTypeFunctionOmitMapping<ModelRelationshipTypes>,
-          any
-        >
-      ? R
-      : T[ModelProp][FieldProp] extends ModelField<infer R, any, any>
-      ? R
-      : never;
+        T[ModelProp][FieldProp] extends
+            | EnumType<EnumTypeParamShape>
+            | CustomType<CustomTypeParamShape>
+        ? RefType<{
+            link: Capitalize<FieldProp & string>;
+            type: 'ref';
+            required: false;
+            authorization: [];
+          }> | null
+        : // resolve relational and model fields to the their first type arg
+          T[ModelProp][FieldProp] extends ModelRelationalField<
+              infer R,
+              string,
+              RelationTypeFunctionOmitMapping<ModelRelationshipTypes>,
+              any
+            >
+          ? R
+          : T[ModelProp][FieldProp] extends ModelField<infer R, any, any>
+            ? R
+            : never;
   };
 };

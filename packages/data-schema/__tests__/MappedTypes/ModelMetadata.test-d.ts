@@ -11,8 +11,11 @@ import type { NonModelTypesShape } from '../../src/MappedTypes/ExtractNonModelTy
 import {
   ModelIdentifier,
   RelationalMetadata,
+  ModelSecondaryIndexes,
 } from '../../src/MappedTypes/ModelMetadata';
 import { Json } from '../../src/ModelField';
+import { ModelTypeParamShape, type ModelType } from '../../src/ModelType';
+import { type ModelIndexType } from '../../src/ModelIndex';
 
 describe('ModelIdentifier', () => {
   test('Default identifier', () => {
@@ -61,9 +64,103 @@ describe('ModelIdentifier', () => {
     });
 
     type Schema = typeof s;
-
     type Resolved = ModelIdentifier<SchemaTypes<Schema>>;
     type Expected = { Post: { identifier: 'title' | 'createdAt' } };
+
+    type test = Expect<Equal<Resolved, Expected>>;
+  });
+});
+
+describe('ModelSecondaryIndexes', () => {
+  test('Single GSI with PK', () => {
+    const s = a.schema({
+      Post: a
+        .model({
+          title: a.string().required(),
+          description: a.string().required(),
+          metadata: a.json(),
+        })
+        .secondaryIndexes([a.index('title')]),
+    });
+
+    type Resolved = ModelSecondaryIndexes<SchemaTypes<typeof s>>;
+    //    ^?
+
+    type Expected = {
+      Post: {
+        secondaryIndexes: [
+          {
+            label: 'listByTitle';
+            pk: {
+              title: string;
+            };
+            sk: never;
+          },
+        ];
+      };
+    };
+
+    type test = Expect<Equal<Resolved, Expected>>;
+  });
+
+  test('Multiple GSIs', () => {
+    const s = a.schema({
+      Post: a
+        .model({
+          title: a.string().required(),
+          description: a.string().required(),
+          optField: a.string(),
+          viewCount: a.integer(),
+        })
+        .secondaryIndexes([
+          a.index('title').sortKeys(['viewCount']),
+          a.index('description'),
+        ]),
+    });
+
+    type Resolved = Prettify<ModelSecondaryIndexes<SchemaTypes<typeof s>>>;
+    //    ^?
+
+    type ModelTypeParams<T> = {
+      [Property in keyof T]: T[Property] extends ModelType<
+        infer R,
+        any,
+        any,
+        any
+      >
+        ? // R['secondaryIndexes'] extends any[]
+          // ? { secondaryIndexes: R['secondaryIndexes'] }
+          // : never
+          R
+        : never;
+    };
+
+    type TT = ModelTypeParams<SchemaTypes<typeof s>>;
+
+    type P = SchemaTypes<typeof s>['Post'];
+
+    type Expected = {
+      Post: {
+        secondaryIndexes: [
+          {
+            label: 'listByTitleAndViewCount';
+            pk: {
+              title: string;
+            };
+            sk: {
+              viewCount: number;
+            };
+          },
+          {
+            label: 'listByDescription';
+            pk: {
+              description: string;
+            };
+            sk: never;
+          },
+        ];
+      };
+    };
 
     type test = Expect<Equal<Resolved, Expected>>;
   });
@@ -375,7 +472,6 @@ describe('RelationalMetadata', () => {
         };
       };
     }>;
-
     type test = Expect<Equal<Resolved, Expected>>;
   });
 });

@@ -1,4 +1,8 @@
-import type { Brand, SetTypeSubArg } from '@aws-amplify/data-schema-types';
+import type {
+  Brand,
+  SetTypeSubArg,
+  UnionToIntersection,
+} from '@aws-amplify/data-schema-types';
 import { ModelField, InternalField } from './ModelField';
 import type {
   ModelRelationalField,
@@ -8,6 +12,7 @@ import { Authorization } from './Authorization';
 import { RefType } from './RefType';
 import { EnumType, EnumTypeParamShape } from './EnumType';
 import { CustomType, CustomTypeParamShape } from './CustomType';
+import { ModelIndexType, InternalModelIndexType } from './ModelIndex';
 
 const brand = 'modelType';
 
@@ -28,18 +33,28 @@ type InternalModelFields = Record<
 type ModelData = {
   fields: ModelFields;
   identifier: string[];
+  secondaryIndexes: ReadonlyArray<ModelIndexType<any, any, any, any>>;
   authorization: Authorization<any, any, any>[];
 };
 
 type InternalModelData = ModelData & {
   fields: InternalModelFields;
   identifier: string[];
+  secondaryIndexes: ReadonlyArray<InternalModelIndexType>;
   authorization: Authorization<any, any, any>[];
+};
+
+type GsiIrShape = {
+  label: string;
+  pk: { [key: string]: unknown };
+  sk: { [key: string]: unknown };
 };
 
 export type ModelTypeParamShape = {
   fields: ModelFields;
   identifier: string[];
+  // secondaryIndexes: ReadonlyArray<ModelIndexType<any, any, any, any>>;
+  secondaryIndexes: ReadonlyArray<GsiIrShape>;
   authorization: Authorization<any, any, any>[];
 };
 
@@ -101,8 +116,8 @@ type ConflictingAuthRulesMap<T extends ModelTypeParamShape> = {
     ? string extends ExtractType<T>[K]
       ? Authorization<any, K, true>
       : string[] extends ExtractType<T>[K]
-      ? Authorization<any, K, false>
-      : Authorization<any, K, true> | Authorization<any, K, false>
+        ? Authorization<any, K, false>
+        : Authorization<any, K, true> | Authorization<any, K, false>
     : never;
 };
 
@@ -136,16 +151,40 @@ type _ConflictingAuthRules<T extends ModelTypeParamShape> =
 export type ModelType<
   T extends ModelTypeParamShape,
   K extends keyof ModelType<T> = never,
+  ModelFields = ExtractType<T>,
+  ModelFieldKeys extends string = keyof ModelFields & string,
 > = Omit<
   {
     identifier<ID extends IdentifierType<T> = []>(
       identifier: ID,
-    ): ModelType<SetTypeSubArg<T, 'identifier', ID>, K | 'identifier'>;
+    ): ModelType<
+      SetTypeSubArg<T, 'identifier', ID>,
+      K | 'identifier',
+      ModelFields
+    >;
+    secondaryIndexes<
+      // ModelFieldsKeys2 extends string = keyof ModelFields & string,
+      const Indexes extends readonly ModelIndexType<
+        ModelFieldKeys,
+        ModelFieldKeys,
+        // ModelFieldsKeys2,
+        unknown,
+        any
+      >[] = [],
+      IndexesIR extends readonly any[] = GsiIR<Indexes, ModelFields>,
+    >(
+      indexes: Indexes,
+    ): ModelType<
+      SetTypeSubArg<T, 'secondaryIndexes', IndexesIR>,
+      K | 'secondaryIndexes',
+      ModelFields
+    >;
     authorization<AuthRuleType extends Authorization<any, any, any>>(
       rules: AuthRuleType[],
     ): ModelType<
       SetTypeSubArg<T, 'authorization', AuthRuleType[]>,
-      K | 'authorization'
+      K | 'authorization',
+      ModelFields
     >;
   },
   K
@@ -164,12 +203,18 @@ function _model<T extends ModelTypeParamShape>(fields: T['fields']) {
   const data: ModelData = {
     fields,
     identifier: ['id'],
+    secondaryIndexes: [],
     authorization: [],
   };
 
   const builder = {
     identifier(identifier) {
       data.identifier = identifier;
+
+      return this;
+    },
+    secondaryIndexes(indexes) {
+      data.secondaryIndexes = indexes;
 
       return this;
     },
@@ -192,6 +237,86 @@ function _model<T extends ModelTypeParamShape>(fields: T['fields']) {
  */
 export function model<T extends ModelFields>(
   fields: T,
-): ModelType<{ fields: T; identifier: Array<'id'>; authorization: [] }> {
+): ModelType<{
+  fields: T;
+  identifier: Array<'id'>;
+  secondaryIndexes: [];
+  authorization: [];
+}> {
   return _model(fields);
 }
+
+type GsiIR<
+  GSI extends readonly ModelIndexType<any, any, any, any>[],
+  ModelFields,
+> = UnionToTuple<SecondaryIndexToIR<GSI, ModelFields>>;
+
+type EmptyStringOrNever<T extends string | never> = never extends T
+  ? true
+  : '' extends T
+    ? true
+    : false;
+
+type SecondaryIndexToIR<
+  Idxs extends ReadonlyArray<ModelIndexType<any, any, any, any>>,
+  ResolvedFields,
+> = Idxs extends readonly [
+  infer A extends ModelIndexType<any, any, any, any>,
+  ...infer B extends ReadonlyArray<ModelIndexType<any, any, any, any>>,
+]
+  ? A extends ModelIndexType<any, infer PK extends string, infer SK, any>
+    ? // TODO: refactor from union to intersection with & unknown
+      | {
+            // label: EmptyStringOrNever<Idx['queryField']> extends true
+            label: EmptyStringOrNever<never> extends true
+              ? `listBy${SkLabelFromTuple<SK, Capitalize<PK>>}`
+              : // : Idx['queryField'];
+                never;
+            pk: PK extends keyof ResolvedFields
+              ? {
+                  [Key in PK]: Exclude<ResolvedFields[PK], null>;
+                }
+              : never;
+            // distribute ResolvedFields over SK
+            sk: unknown extends SK
+              ? never
+              : ResolvedSortKeyFields<SK, ResolvedFields>;
+          }
+        | (B extends readonly never[]
+            ? never
+            : SecondaryIndexToIR<B, ResolvedFields>)
+    : never
+  : never;
+
+type SkLabelFromTuple<T, StrStart extends string = ''> = T extends readonly [
+  infer A extends string,
+  ...infer B extends string[],
+]
+  ? SkLabelFromTuple<B, `${StrStart}And${Capitalize<A>}`>
+  : StrStart;
+
+type ResolvedSortKeyFields<SK, ResolvedFields> = SK extends readonly [
+  infer A extends string,
+  ...infer B extends string[],
+]
+  ? A extends keyof ResolvedFields
+    ? {
+        [Key in A]: Exclude<ResolvedFields[A], null>;
+      } & (B extends readonly never[]
+        ? unknown // returning `unknown` for empty arrays because it gets absorbed in an intersection, e.g. `{a: 1} & unknown` => `{a: 1}`
+        : ResolvedSortKeyFields<B, ResolvedFields>)
+    : never
+  : never;
+
+type LastInUnion<U> = UnionToIntersection<
+  U extends unknown ? (x: U) => 0 : never
+> extends (x: infer L) => 0
+  ? L
+  : never;
+
+/**
+ * UnionToTuple<1 | 2> = [1, 2].
+ */
+type UnionToTuple<U, Last = LastInUnion<U>> = [U] extends [never]
+  ? []
+  : [...UnionToTuple<Exclude<U, Last>>, Last];
