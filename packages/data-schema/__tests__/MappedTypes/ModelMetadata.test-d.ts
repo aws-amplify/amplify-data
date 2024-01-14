@@ -84,7 +84,6 @@ describe('ModelSecondaryIndexes', () => {
     });
 
     type Resolved = ModelSecondaryIndexes<SchemaTypes<typeof s>>;
-    //    ^?
 
     type Expected = {
       Post: {
@@ -113,37 +112,18 @@ describe('ModelSecondaryIndexes', () => {
           viewCount: a.integer(),
         })
         .secondaryIndexes([
-          a.index('title').sortKeys(['viewCount']),
+          a.index('title').sortKeys(['viewCount']).queryField('myFavIdx'),
           a.index('description'),
         ]),
     });
 
-    type Resolved = Prettify<ModelSecondaryIndexes<SchemaTypes<typeof s>>>;
-    //    ^?
-
-    type ModelTypeParams<T> = {
-      [Property in keyof T]: T[Property] extends ModelType<
-        infer R,
-        any,
-        any,
-        any
-      >
-        ? // R['secondaryIndexes'] extends any[]
-          // ? { secondaryIndexes: R['secondaryIndexes'] }
-          // : never
-          R
-        : never;
-    };
-
-    type TT = ModelTypeParams<SchemaTypes<typeof s>>;
-
-    type P = SchemaTypes<typeof s>['Post'];
+    type Resolved = ModelSecondaryIndexes<SchemaTypes<typeof s>>;
 
     type Expected = {
       Post: {
         secondaryIndexes: [
           {
-            label: 'listByTitleAndViewCount';
+            label: 'myFavIdx';
             pk: {
               title: string;
             };

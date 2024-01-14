@@ -1,8 +1,4 @@
-import type {
-  Brand,
-  SetTypeSubArg,
-  UnionToIntersection,
-} from '@aws-amplify/data-schema-types';
+import type { Brand, SetTypeSubArg } from '@aws-amplify/data-schema-types';
 import { ModelField, InternalField } from './ModelField';
 import type {
   ModelRelationalField,
@@ -25,6 +21,8 @@ type ModelFields = Record<
   | CustomType<CustomTypeParamShape>
 >;
 
+type ModelIndexTypeShape = ModelIndexType<any, any, any, any, any>;
+
 type InternalModelFields = Record<
   string,
   InternalField | InternalRelationalField
@@ -33,7 +31,7 @@ type InternalModelFields = Record<
 type ModelData = {
   fields: ModelFields;
   identifier: string[];
-  secondaryIndexes: ReadonlyArray<ModelIndexType<any, any, any, any>>;
+  secondaryIndexes: ReadonlyArray<ModelIndexTypeShape>;
   authorization: Authorization<any, any, any>[];
 };
 
@@ -53,7 +51,6 @@ type GsiIrShape = {
 export type ModelTypeParamShape = {
   fields: ModelFields;
   identifier: string[];
-  // secondaryIndexes: ReadonlyArray<ModelIndexType<any, any, any, any>>;
   secondaryIndexes: ReadonlyArray<GsiIrShape>;
   authorization: Authorization<any, any, any>[];
 };
@@ -167,8 +164,8 @@ export type ModelType<
       const Indexes extends readonly ModelIndexType<
         ModelFieldKeys,
         ModelFieldKeys,
-        // ModelFieldsKeys2,
         unknown,
+        never,
         any
       >[] = [],
       IndexesIR extends readonly any[] = GsiIR<Indexes, ModelFields>,
@@ -246,46 +243,61 @@ export function model<T extends ModelFields>(
   return _model(fields);
 }
 
+// TODO: rename and extract into separate file;
+// Will breaking apart SecondaryIndexToIR optimize it?
 type GsiIR<
-  GSI extends readonly ModelIndexType<any, any, any, any>[],
+  GSI extends readonly ModelIndexTypeShape[],
   ModelFields,
-> = UnionToTuple<SecondaryIndexToIR<GSI, ModelFields>>;
+> = SecondaryIndexToIR<GSI, ModelFields>;
 
-type EmptyStringOrNever<T extends string | never> = never extends T
+type IsEmptyStringOrNever<T extends string | never> = [T] extends [never]
   ? true
-  : '' extends T
+  : [T] extends ['']
     ? true
     : false;
 
+/* 
+  Maps array of ModelIndexType to GsiIR
+*/
 type SecondaryIndexToIR<
-  Idxs extends ReadonlyArray<ModelIndexType<any, any, any, any>>,
+  Idxs extends ReadonlyArray<ModelIndexTypeShape>,
   ResolvedFields,
+  Result extends readonly any[] = readonly [],
 > = Idxs extends readonly [
-  infer A extends ModelIndexType<any, any, any, any>,
-  ...infer B extends ReadonlyArray<ModelIndexType<any, any, any, any>>,
+  infer First extends ModelIndexTypeShape,
+  ...infer Rest extends ReadonlyArray<ModelIndexTypeShape>,
 ]
-  ? A extends ModelIndexType<any, infer PK extends string, infer SK, any>
-    ? // TODO: refactor from union to intersection with & unknown
-      | {
-            // label: EmptyStringOrNever<Idx['queryField']> extends true
-            label: EmptyStringOrNever<never> extends true
-              ? `listBy${SkLabelFromTuple<SK, Capitalize<PK>>}`
-              : // : Idx['queryField'];
-                never;
-            pk: PK extends keyof ResolvedFields
-              ? {
-                  [Key in PK]: Exclude<ResolvedFields[PK], null>;
-                }
-              : never;
-            // distribute ResolvedFields over SK
-            sk: unknown extends SK
-              ? never
-              : ResolvedSortKeyFields<SK, ResolvedFields>;
+  ? SecondaryIndexToIR<
+      Rest,
+      ResolvedFields,
+      [...Result, SingleGsiIrFromType<First, ResolvedFields>]
+    >
+  : Result;
+
+type SingleGsiIrFromType<
+  Idx extends ModelIndexTypeShape,
+  ResolvedFields,
+> = Idx extends ModelIndexType<
+  any,
+  infer PK extends string,
+  infer SK,
+  infer QueryField extends string | never,
+  any
+>
+  ? {
+      label: IsEmptyStringOrNever<QueryField> extends true
+        ? `listBy${SkLabelFromTuple<SK, Capitalize<PK>>}`
+        : QueryField;
+      pk: PK extends keyof ResolvedFields
+        ? {
+            [Key in PK]: Exclude<ResolvedFields[PK], null>;
           }
-        | (B extends readonly never[]
-            ? never
-            : SecondaryIndexToIR<B, ResolvedFields>)
-    : never
+        : never;
+      // distribute ResolvedFields over SK
+      sk: unknown extends SK
+        ? never
+        : ResolvedSortKeyFields<SK, ResolvedFields>;
+    }
   : never;
 
 type SkLabelFromTuple<T, StrStart extends string = ''> = T extends readonly [
@@ -307,16 +319,3 @@ type ResolvedSortKeyFields<SK, ResolvedFields> = SK extends readonly [
         : ResolvedSortKeyFields<B, ResolvedFields>)
     : never
   : never;
-
-type LastInUnion<U> = UnionToIntersection<
-  U extends unknown ? (x: U) => 0 : never
-> extends (x: infer L) => 0
-  ? L
-  : never;
-
-/**
- * UnionToTuple<1 | 2> = [1, 2].
- */
-type UnionToTuple<U, Last = LastInUnion<U>> = [U] extends [never]
-  ? []
-  : [...UnionToTuple<Exclude<U, Last>>, Last];

@@ -11,7 +11,7 @@ export type ModelIndexData = {
   queryField: string;
 };
 
-export type InternalModelIndexType = ModelIndexType<any, any, any> & {
+export type InternalModelIndexType = ModelIndexType<any, any, any, any> & {
   data: ModelIndexData;
 };
 
@@ -31,15 +31,16 @@ const m = a
     viewCount: a.integer(),
   })
   .secondaryIndexes([
-    a.index('title'),
-    a.index('description').sortKeys(['viewCount']),
+    a.index('title').sortKeys(['viewCount']).queryField('myFavIdx'),
+    a.index('description'),
   ]);
 
 export type ModelIndexType<
   ModelFieldKeys extends string,
   PK,
   SK = readonly [],
-  K extends keyof ModelIndexType<any, any, any> = never,
+  QueryField = never,
+  K extends keyof ModelIndexType<any, any, any, any> = never,
 > = Omit<
   {
     sortKeys<
@@ -47,11 +48,13 @@ export type ModelIndexType<
       const SK extends ReadonlyArray<Exclude<MF, PK>> = readonly [],
     >(
       sortKeys: SK,
-    ): ModelIndexType<MF, PK, SK, K | 'sortKeys'>;
-    name(name: string): ModelIndexType<ModelFieldKeys, PK, SK, K | 'name'>;
-    queryField(
-      field: string,
-    ): ModelIndexType<ModelFieldKeys, PK, SK, K | 'queryField'>;
+    ): ModelIndexType<MF, PK, SK, QueryField, K | 'sortKeys'>;
+    name(
+      name: string,
+    ): ModelIndexType<ModelFieldKeys, PK, SK, QueryField, K | 'name'>;
+    queryField<QF extends string>(
+      field: QF,
+    ): ModelIndexType<ModelFieldKeys, PK, SK, QF, K | 'queryField'>;
   },
   K
 > &
@@ -61,6 +64,7 @@ function _modelIndex<
   ModelFieldKeys extends string,
   PK extends ModelFieldKeys,
   SK,
+  QueryField,
 >(partitionKeyFieldName: PK) {
   const data: ModelIndexData = {
     partitionKey: partitionKeyFieldName,
@@ -85,12 +89,13 @@ function _modelIndex<
 
       return this;
     },
-  } as ModelIndexType<ModelFieldKeys, PK, SK>;
+  } as ModelIndexType<ModelFieldKeys, PK, SK, QueryField>;
 
   return { ...builder, data } as InternalModelIndexType as ModelIndexType<
     ModelFieldKeys,
     PK,
-    SK
+    SK,
+    QueryField
   >;
 }
 
@@ -98,27 +103,29 @@ export function modelIndex<
   const ModelFieldKeys extends string,
   PK extends ModelFieldKeys,
   SK,
+  QueryField,
 >(partitionKeyFieldName: PK) {
-  return _modelIndex<ModelFieldKeys, PK, SK>(partitionKeyFieldName);
+  return _modelIndex<ModelFieldKeys, PK, SK, QueryField>(partitionKeyFieldName);
 }
-
-/* 
-  Temp. Test Area. 
-  Delete before opening PR
-*/
 
 /* 
   TODOs:
   X fix .sortKeys type
-  * add queryField type param
+  X add queryField type param
   * narrow PK to string fields only
   * narrow SK to primitives only
+  * retain PK narrowing after invoking modifier
   * add benches, then refactor SecondaryIndexToIR to construct intersection and drop UnionToTuple; compare instantiations
   * move method sig types into client types
   * add integ tests
   * sortDirection
   * refactor?
   * 
+*/
+
+/* 
+  Temp. Test Area. 
+  Delete before opening PR
 */
 
 type A = { a: 1; b: 2 };
