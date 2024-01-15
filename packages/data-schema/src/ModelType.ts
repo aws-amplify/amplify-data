@@ -1,4 +1,8 @@
-import type { Brand, SetTypeSubArg } from '@aws-amplify/data-schema-types';
+import type {
+  Brand,
+  SetTypeSubArg,
+  SecondaryIndexIrShape,
+} from '@aws-amplify/data-schema-types';
 import { ModelField, InternalField } from './ModelField';
 import type {
   ModelRelationalField,
@@ -9,6 +13,7 @@ import { RefType } from './RefType';
 import { EnumType, EnumTypeParamShape } from './EnumType';
 import { CustomType, CustomTypeParamShape } from './CustomType';
 import { ModelIndexType, InternalModelIndexType } from './ModelIndex';
+import { SecondaryIndexToIR } from './MappedTypes/MapSecondaryIndexes';
 
 const brand = 'modelType';
 
@@ -21,8 +26,6 @@ type ModelFields = Record<
   | CustomType<CustomTypeParamShape>
 >;
 
-type ModelIndexTypeShape = ModelIndexType<any, any, any, any, any>;
-
 type InternalModelFields = Record<
   string,
   InternalField | InternalRelationalField
@@ -31,7 +34,7 @@ type InternalModelFields = Record<
 type ModelData = {
   fields: ModelFields;
   identifier: string[];
-  secondaryIndexes: ReadonlyArray<ModelIndexTypeShape>;
+  secondaryIndexes: ReadonlyArray<ModelIndexType<any, any, any, any, any>>;
   authorization: Authorization<any, any, any>[];
 };
 
@@ -42,24 +45,29 @@ type InternalModelData = ModelData & {
   authorization: Authorization<any, any, any>[];
 };
 
-type GsiIrShape = {
-  label: string;
-  pk: { [key: string]: unknown };
-  sk: { [key: string]: unknown };
-};
-
 export type ModelTypeParamShape = {
   fields: ModelFields;
   identifier: string[];
-  secondaryIndexes: ReadonlyArray<GsiIrShape>;
+  secondaryIndexes: ReadonlyArray<SecondaryIndexIrShape>;
   authorization: Authorization<any, any, any>[];
 };
 
+// Extract field names that can be used to define a secondary index PK or SK
+// i.e., nullable string or nullable number fields
+type SecondaryIndexFields<T extends Record<string, unknown>> = keyof {
+  [Field in keyof T as NonNullable<T[Field]> extends string | number
+    ? Field
+    : never]: T[Field];
+} &
+  string;
+
 type ExtractType<T extends ModelTypeParamShape> = {
-  [FieldProp in keyof T['fields']]: T['fields'][FieldProp] extends ModelField<
-    infer R,
+  [FieldProp in keyof T['fields'] as T['fields'][FieldProp] extends ModelField<
+    any,
     any
   >
+    ? FieldProp
+    : never]: T['fields'][FieldProp] extends ModelField<infer R, any>
     ? R
     : never;
 };
@@ -148,8 +156,8 @@ type _ConflictingAuthRules<T extends ModelTypeParamShape> =
 export type ModelType<
   T extends ModelTypeParamShape,
   K extends keyof ModelType<T> = never,
-  ModelFields = ExtractType<T>,
-  ModelFieldKeys extends string = keyof ModelFields & string,
+  ResolvedModelFields extends Record<string, unknown> = ExtractType<T>,
+  IndexFieldKeys extends string = SecondaryIndexFields<ResolvedModelFields>,
 > = Omit<
   {
     identifier<ID extends IdentifierType<T> = []>(
@@ -157,31 +165,33 @@ export type ModelType<
     ): ModelType<
       SetTypeSubArg<T, 'identifier', ID>,
       K | 'identifier',
-      ModelFields
+      ResolvedModelFields
     >;
     secondaryIndexes<
-      // ModelFieldsKeys2 extends string = keyof ModelFields & string,
       const Indexes extends readonly ModelIndexType<
-        ModelFieldKeys,
-        ModelFieldKeys,
+        IndexFieldKeys,
+        IndexFieldKeys,
         unknown,
         never,
         any
-      >[] = [],
-      IndexesIR extends readonly any[] = GsiIR<Indexes, ModelFields>,
+      >[] = readonly [],
+      const IndexesIR extends readonly any[] = SecondaryIndexToIR<
+        Indexes,
+        ResolvedModelFields
+      >,
     >(
       indexes: Indexes,
     ): ModelType<
       SetTypeSubArg<T, 'secondaryIndexes', IndexesIR>,
       K | 'secondaryIndexes',
-      ModelFields
+      ResolvedModelFields
     >;
     authorization<AuthRuleType extends Authorization<any, any, any>>(
       rules: AuthRuleType[],
     ): ModelType<
       SetTypeSubArg<T, 'authorization', AuthRuleType[]>,
       K | 'authorization',
-      ModelFields
+      ResolvedModelFields
     >;
   },
   K
@@ -245,77 +255,3 @@ export function model<T extends ModelFields>(
 
 // TODO: rename and extract into separate file;
 // Will breaking apart SecondaryIndexToIR optimize it?
-type GsiIR<
-  GSI extends readonly ModelIndexTypeShape[],
-  ModelFields,
-> = SecondaryIndexToIR<GSI, ModelFields>;
-
-type IsEmptyStringOrNever<T extends string | never> = [T] extends [never]
-  ? true
-  : [T] extends ['']
-    ? true
-    : false;
-
-/* 
-  Maps array of ModelIndexType to GsiIR
-*/
-type SecondaryIndexToIR<
-  Idxs extends ReadonlyArray<ModelIndexTypeShape>,
-  ResolvedFields,
-  Result extends readonly any[] = readonly [],
-> = Idxs extends readonly [
-  infer First extends ModelIndexTypeShape,
-  ...infer Rest extends ReadonlyArray<ModelIndexTypeShape>,
-]
-  ? SecondaryIndexToIR<
-      Rest,
-      ResolvedFields,
-      [...Result, SingleGsiIrFromType<First, ResolvedFields>]
-    >
-  : Result;
-
-type SingleGsiIrFromType<
-  Idx extends ModelIndexTypeShape,
-  ResolvedFields,
-> = Idx extends ModelIndexType<
-  any,
-  infer PK extends string,
-  infer SK,
-  infer QueryField extends string | never,
-  any
->
-  ? {
-      label: IsEmptyStringOrNever<QueryField> extends true
-        ? `listBy${SkLabelFromTuple<SK, Capitalize<PK>>}`
-        : QueryField;
-      pk: PK extends keyof ResolvedFields
-        ? {
-            [Key in PK]: Exclude<ResolvedFields[PK], null>;
-          }
-        : never;
-      // distribute ResolvedFields over SK
-      sk: unknown extends SK
-        ? never
-        : ResolvedSortKeyFields<SK, ResolvedFields>;
-    }
-  : never;
-
-type SkLabelFromTuple<T, StrStart extends string = ''> = T extends readonly [
-  infer A extends string,
-  ...infer B extends string[],
-]
-  ? SkLabelFromTuple<B, `${StrStart}And${Capitalize<A>}`>
-  : StrStart;
-
-type ResolvedSortKeyFields<SK, ResolvedFields> = SK extends readonly [
-  infer A extends string,
-  ...infer B extends string[],
-]
-  ? A extends keyof ResolvedFields
-    ? {
-        [Key in A]: Exclude<ResolvedFields[A], null>;
-      } & (B extends readonly never[]
-        ? unknown // returning `unknown` for empty arrays because it gets absorbed in an intersection, e.g. `{a: 1} & unknown` => `{a: 1}`
-        : ResolvedSortKeyFields<B, ResolvedFields>)
-    : never
-  : never;

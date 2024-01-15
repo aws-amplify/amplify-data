@@ -10,9 +10,7 @@ import {
 
 const a = { model, index: modelIndex };
 
-type GetModelTypeArg<T> = T extends ModelType<infer R, any, any, any>
-  ? R
-  : never;
+type GetModelTypeArg<T> = T extends ModelType<infer R, any, any> ? R : never;
 
 describe('InternalModel casting', () => {
   test('basic ModelType can be cast to InternalModel', () => {

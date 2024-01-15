@@ -14,8 +14,6 @@ import {
   ModelSecondaryIndexes,
 } from '../../src/MappedTypes/ModelMetadata';
 import { Json } from '../../src/ModelField';
-import { ModelTypeParamShape, type ModelType } from '../../src/ModelType';
-import { type ModelIndexType } from '../../src/ModelIndex';
 
 describe('ModelIdentifier', () => {
   test('Default identifier', () => {

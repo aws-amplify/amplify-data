@@ -34,7 +34,7 @@ export type ModelTypes<Schema> = {
     | CustomType<CustomTypeParamShape>
     | CustomOperation<CustomOperationParamShape, any>
     ? never
-    : Model]: Schema[Model] extends ModelType<infer R, any, any, any>
+    : Model]: Schema[Model] extends ModelType<infer R, any, any>
     ? R['fields']
     : never;
 };
