@@ -112,7 +112,9 @@ function scalarFieldToGql(
     field += '!';
     if (identifier.length > 1) {
       const [_pk, ...sk] = identifier;
-      field += ` @primaryKey(sortKeyFields: ${JSON.stringify(sk)})`;
+      field += ` @primaryKey(sortKeyFields: [${sk
+        .map((sk) => `"${sk}"`)
+        .join(', ')}])`;
     } else {
       field += ' @primaryKey';
     }
@@ -140,9 +142,9 @@ function scalarFieldToGql(
     field += ` @default(value: "${_default?.toString()}")`;
   }
 
-    for (const index of secondaryIndexes) {
-      field += ` ${index}`;
-    }
+  for (const index of secondaryIndexes) {
+    field += ` ${index}`;
+  }
   return field;
 }
 
@@ -674,7 +676,9 @@ const transformedSecondaryIndexesForModel = (
     }
 
     if (sortKeys.length) {
-      attributes.push(`sortKeyFields: ${JSON.stringify(sortKeys)}`);
+      attributes.push(
+        `sortKeyFields: [${sortKeys.map((sk) => `"${sk}"`).join(', ')}]`,
+      );
     }
 
     if (queryField) {

@@ -1,13 +1,7 @@
+import { IsEmptyStringOrNever } from '@aws-amplify/data-schema-types';
 import { ModelIndexType } from '../ModelIndex';
 
 type ModelIndexTypeShape = ModelIndexType<any, any, any, any, any>;
-
-// Move to type utils
-type IsEmptyStringOrNever<T extends string | never> = [T] extends [never]
-  ? true
-  : [T] extends ['']
-    ? true
-    : false;
 
 /**
  * Maps array of ModelIndexType to SecondaryIndexIrShape
