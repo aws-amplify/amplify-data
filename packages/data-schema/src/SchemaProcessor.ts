@@ -117,8 +117,8 @@ function scalarFieldToGql(
       field += ' @primaryKey';
     }
 
-    if (secondaryIndexes.length) {
-      secondaryIndexes.forEach((index) => (field += ` ${index}`));
+    for (const index of secondaryIndexes) {
+      field += ` ${index}`;
     }
 
     return field;
