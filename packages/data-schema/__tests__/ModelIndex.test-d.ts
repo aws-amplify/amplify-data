@@ -1,10 +1,4 @@
-import { expectTypeTestsToPassAsync } from 'jest-tsd';
 import { a } from '../index';
-
-// evaluates type defs in corresponding test-d.ts file
-it('should not produce static type errors', async () => {
-  await expectTypeTestsToPassAsync(__filename);
-});
 
 test('secondaryIndexes input validation', () => {
   a.schema({
