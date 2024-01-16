@@ -140,9 +140,9 @@ function scalarFieldToGql(
     field += ` @default(value: "${_default?.toString()}")`;
   }
 
-  if (secondaryIndexes.length) {
-    secondaryIndexes.forEach((index) => (field += ` ${index}`));
-  }
+    for (const index of secondaryIndexes) {
+      field += ` ${index}`;
+    }
   return field;
 }
 
