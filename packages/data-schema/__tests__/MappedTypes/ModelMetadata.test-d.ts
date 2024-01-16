@@ -87,7 +87,7 @@ describe('ModelSecondaryIndexes', () => {
       Post: {
         secondaryIndexes: [
           {
-            label: 'listByTitle';
+            queryField: 'listByTitle';
             pk: {
               title: string;
             };
@@ -121,7 +121,7 @@ describe('ModelSecondaryIndexes', () => {
       Post: {
         secondaryIndexes: [
           {
-            label: 'myFavIdx';
+            queryField: 'myFavIdx';
             pk: {
               title: string;
             };
@@ -130,7 +130,7 @@ describe('ModelSecondaryIndexes', () => {
             };
           },
           {
-            label: 'listByDescription';
+            queryField: 'listByDescription';
             pk: {
               description: string;
             };

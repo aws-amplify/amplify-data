@@ -38,7 +38,7 @@ type SingleIndexIrFromType<
   any
 >
   ? {
-      label: IsEmptyStringOrNever<QueryField> extends true
+      queryField: IsEmptyStringOrNever<QueryField> extends true
         ? `listBy${SkLabelFromTuple<SK, Capitalize<PK>>}`
         : QueryField;
       pk: PK extends keyof ResolvedFields

@@ -484,9 +484,10 @@ type ModelMetaShape = {
 type ModelTypesClient<
   Model extends Record<string, unknown>,
   ModelMeta extends ModelMetaShape,
+  // ModelName extends string,
 > =
   // TODO: uncomment when working on data-client GSI support task
-  // IndexQueryMethodsFromIR<ModelMeta['secondaryIndexes'], Model> &
+  // IndexQueryMethodsFromIR<ModelMeta['secondaryIndexes'][ModelName], Model> &
   {
     create: (
       model: Prettify<CreateModelInput<Model, ModelMeta>>,
@@ -743,7 +744,7 @@ export type CustomHeaders =
  * SecondaryIndex index types and query methods
  */
 export type SecondaryIndexIrShape = {
-  label: string;
+  queryField: string;
   pk: { [key: string]: unknown };
   sk: { [key: string]: unknown };
 };
@@ -763,7 +764,7 @@ type IndexQueryMethodSignature<
   Idx extends SecondaryIndexIrShape,
   Model extends Record<string, unknown>,
 > = {
-  [K in Idx['label'] & string]: <
+  [K in Idx['queryField'] & string]: <
     FlatModel extends Record<string, unknown> = ResolvedModel<Model>,
     SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[],
   >(
