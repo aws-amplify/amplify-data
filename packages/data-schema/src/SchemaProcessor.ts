@@ -689,24 +689,14 @@ const transformedSecondaryIndexesForModel = (
       acc: TransformedSecondaryIndexes,
       { data: { partitionKey, sortKeys, indexName, queryField } },
     ) => {
-      if (partitionKey in acc) {
-        // multiple GSIs on 1 field
-        acc[partitionKey].push(
-          indexDirectiveWithAttributes(
-            sortKeys as readonly string[],
-            indexName,
-            queryField,
-          ),
-        );
-      } else {
-        acc[partitionKey] = [
-          indexDirectiveWithAttributes(
-            sortKeys as readonly string[],
-            indexName,
-            queryField,
-          ),
-        ];
-      }
+      acc[partitionKey] = acc[partitionKey] || [];
+      acc[partitionKey].push(
+        indexDirectiveWithAttributes(
+          sortKeys as readonly string[],
+          indexName,
+          queryField,
+        ),
+      );
 
       return acc;
     },
