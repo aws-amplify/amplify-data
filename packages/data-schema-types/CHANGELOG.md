@@ -1,5 +1,11 @@
 # @aws-amplify/amplify-api-next-types-alpha
 
+## 0.6.12
+
+### Patch Changes
+
+- 55e60b7: add secondary index support
+
 ## 0.6.11
 
 ### Patch Changes

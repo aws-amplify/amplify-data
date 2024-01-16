@@ -1,5 +1,13 @@
 # @aws-amplify/amplify-api-next-alpha
 
+## 0.12.14
+
+### Patch Changes
+
+- 55e60b7: add secondary index support
+- Updated dependencies [55e60b7]
+  - @aws-amplify/data-schema-types@0.6.12
+
 ## 0.12.13
 
 ### Patch Changes
