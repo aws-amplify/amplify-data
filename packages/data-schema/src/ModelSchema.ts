@@ -25,7 +25,7 @@ import { Authorization } from './Authorization';
  */
 
 type SchemaContent =
-  | ModelType<ModelTypeParamShape, any>
+  | ModelType<ModelTypeParamShape, any, any>
   | CustomType<CustomTypeParamShape>
   | EnumType<EnumTypeParamShape>
   | CustomOperation<CustomOperationParamShape, any>;

@@ -1,4 +1,8 @@
-import type { Brand, SetTypeSubArg } from '@aws-amplify/data-schema-types';
+import type {
+  Brand,
+  SetTypeSubArg,
+  SecondaryIndexIrShape,
+} from '@aws-amplify/data-schema-types';
 import { ModelField, InternalField } from './ModelField';
 import type {
   ModelRelationalField,
@@ -8,6 +12,8 @@ import { Authorization } from './Authorization';
 import { RefType } from './RefType';
 import { EnumType, EnumTypeParamShape } from './EnumType';
 import { CustomType, CustomTypeParamShape } from './CustomType';
+import { ModelIndexType, InternalModelIndexType } from './ModelIndex';
+import { SecondaryIndexToIR } from './MappedTypes/MapSecondaryIndexes';
 
 const brand = 'modelType';
 
@@ -28,26 +34,40 @@ type InternalModelFields = Record<
 type ModelData = {
   fields: ModelFields;
   identifier: string[];
+  secondaryIndexes: ReadonlyArray<ModelIndexType<any, any, any, any, any>>;
   authorization: Authorization<any, any, any>[];
 };
 
 type InternalModelData = ModelData & {
   fields: InternalModelFields;
   identifier: string[];
+  secondaryIndexes: ReadonlyArray<InternalModelIndexType>;
   authorization: Authorization<any, any, any>[];
 };
 
 export type ModelTypeParamShape = {
   fields: ModelFields;
   identifier: string[];
+  secondaryIndexes: ReadonlyArray<SecondaryIndexIrShape>;
   authorization: Authorization<any, any, any>[];
 };
 
+// Extract field names that can be used to define a secondary index PK or SK
+// i.e., nullable string or nullable number fields
+type SecondaryIndexFields<T extends Record<string, unknown>> = keyof {
+  [Field in keyof T as NonNullable<T[Field]> extends string | number
+    ? Field
+    : never]: T[Field];
+} &
+  string;
+
 type ExtractType<T extends ModelTypeParamShape> = {
-  [FieldProp in keyof T['fields']]: T['fields'][FieldProp] extends ModelField<
-    infer R,
+  [FieldProp in keyof T['fields'] as T['fields'][FieldProp] extends ModelField<
+    any,
     any
   >
+    ? FieldProp
+    : never]: T['fields'][FieldProp] extends ModelField<infer R, any>
     ? R
     : never;
 };
@@ -101,8 +121,8 @@ type ConflictingAuthRulesMap<T extends ModelTypeParamShape> = {
     ? string extends ExtractType<T>[K]
       ? Authorization<any, K, true>
       : string[] extends ExtractType<T>[K]
-      ? Authorization<any, K, false>
-      : Authorization<any, K, true> | Authorization<any, K, false>
+        ? Authorization<any, K, false>
+        : Authorization<any, K, true> | Authorization<any, K, false>
     : never;
 };
 
@@ -136,16 +156,42 @@ type _ConflictingAuthRules<T extends ModelTypeParamShape> =
 export type ModelType<
   T extends ModelTypeParamShape,
   K extends keyof ModelType<T> = never,
+  ResolvedModelFields extends Record<string, unknown> = ExtractType<T>,
+  IndexFieldKeys extends string = SecondaryIndexFields<ResolvedModelFields>,
 > = Omit<
   {
     identifier<ID extends IdentifierType<T> = []>(
       identifier: ID,
-    ): ModelType<SetTypeSubArg<T, 'identifier', ID>, K | 'identifier'>;
+    ): ModelType<
+      SetTypeSubArg<T, 'identifier', ID>,
+      K | 'identifier',
+      ResolvedModelFields
+    >;
+    secondaryIndexes<
+      const Indexes extends readonly ModelIndexType<
+        IndexFieldKeys,
+        IndexFieldKeys,
+        unknown,
+        never,
+        any
+      >[] = readonly [],
+      const IndexesIR extends readonly any[] = SecondaryIndexToIR<
+        Indexes,
+        ResolvedModelFields
+      >,
+    >(
+      indexes: Indexes,
+    ): ModelType<
+      SetTypeSubArg<T, 'secondaryIndexes', IndexesIR>,
+      K | 'secondaryIndexes',
+      ResolvedModelFields
+    >;
     authorization<AuthRuleType extends Authorization<any, any, any>>(
       rules: AuthRuleType[],
     ): ModelType<
       SetTypeSubArg<T, 'authorization', AuthRuleType[]>,
-      K | 'authorization'
+      K | 'authorization',
+      ResolvedModelFields
     >;
   },
   K
@@ -164,12 +210,18 @@ function _model<T extends ModelTypeParamShape>(fields: T['fields']) {
   const data: ModelData = {
     fields,
     identifier: ['id'],
+    secondaryIndexes: [],
     authorization: [],
   };
 
   const builder = {
     identifier(identifier) {
       data.identifier = identifier;
+
+      return this;
+    },
+    secondaryIndexes(indexes) {
+      data.secondaryIndexes = indexes;
 
       return this;
     },
@@ -192,6 +244,14 @@ function _model<T extends ModelTypeParamShape>(fields: T['fields']) {
  */
 export function model<T extends ModelFields>(
   fields: T,
-): ModelType<{ fields: T; identifier: Array<'id'>; authorization: [] }> {
+): ModelType<{
+  fields: T;
+  identifier: Array<'id'>;
+  secondaryIndexes: [];
+  authorization: [];
+}> {
   return _model(fields);
 }
+
+// TODO: rename and extract into separate file;
+// Will breaking apart SecondaryIndexToIR optimize it?

@@ -12,6 +12,7 @@ import {
   ModelRelationshipTypes,
 } from './ModelRelationalField';
 import type { ModelType, InternalModel } from './ModelType';
+import type { InternalModelIndexType } from './ModelIndex';
 import { Authorization, accessData } from './Authorization';
 import { DerivedApiDefinition } from './types';
 import type { InternalRef } from './RefType';
@@ -27,7 +28,9 @@ type ModelFieldDef = Extract<
 >;
 type RefFieldDef = InternalRef['data'];
 
-function isInternalModel(model: ModelType<any, any>): model is InternalModel {
+function isInternalModel(
+  model: ModelType<any, any, any>,
+): model is InternalModel {
   if (
     (model as any).data &&
     !isCustomType(model) &&
@@ -91,7 +94,11 @@ function isRefField(
   return isRefFieldDef((field as any).data);
 }
 
-function scalarFieldToGql(fieldDef: ScalarFieldDef, identifier?: string[]) {
+function scalarFieldToGql(
+  fieldDef: ScalarFieldDef,
+  identifier?: string[],
+  secondaryIndexes: string[] = [],
+) {
   const {
     fieldType,
     required,
@@ -105,10 +112,17 @@ function scalarFieldToGql(fieldDef: ScalarFieldDef, identifier?: string[]) {
     field += '!';
     if (identifier.length > 1) {
       const [_pk, ...sk] = identifier;
-      field += ` @primaryKey(sortKeyFields: ${JSON.stringify(sk)})`;
+      field += ` @primaryKey(sortKeyFields: [${sk
+        .map((sk) => `"${sk}"`)
+        .join(', ')}])`;
     } else {
       field += ' @primaryKey';
     }
+
+    for (const index of secondaryIndexes) {
+      field += ` ${index}`;
+    }
+
     return field;
   }
 
@@ -128,6 +142,9 @@ function scalarFieldToGql(fieldDef: ScalarFieldDef, identifier?: string[]) {
     field += ` @default(value: "${_default?.toString()}")`;
   }
 
+  for (const index of secondaryIndexes) {
+    field += ` ${index}`;
+  }
   return field;
 }
 
@@ -576,6 +593,7 @@ function processFields(
   fieldLevelAuthRules: Record<string, string | null>,
   identifier?: string[],
   partitionKey?: string,
+  secondaryIndexes: TransformedSecondaryIndexes = {},
 ) {
   const gqlFields: string[] = [];
   const models: [string, any][] = [];
@@ -595,6 +613,7 @@ function processFields(
           `${fieldName}: ${scalarFieldToGql(
             fieldDef.data,
             identifier,
+            secondaryIndexes[fieldName],
           )}${fieldAuth}`,
         );
       } else if (isRefField(fieldDef)) {
@@ -617,6 +636,8 @@ function processFields(
         gqlFields.push(
           `${fieldName}: ${scalarFieldToGql(
             (fieldDef as any).data,
+            undefined,
+            secondaryIndexes[fieldName],
           )}${fieldAuth}`,
         );
       }
@@ -627,6 +648,65 @@ function processFields(
 
   return { gqlFields, models };
 }
+
+type TransformedSecondaryIndexes = {
+  [fieldName: string]: string[];
+};
+
+/**
+ * Given InternalModelIndexType[] returns a map where the key is the model field to be annotated with an @index directive
+ * and the value is an array of transformed Amplify @index directives with all supplied attributes
+ */
+const transformedSecondaryIndexesForModel = (
+  secondaryIndexes: readonly InternalModelIndexType[],
+): TransformedSecondaryIndexes => {
+  const indexDirectiveWithAttributes = (
+    sortKeys: readonly string[],
+    indexName: string,
+    queryField: string,
+  ): string => {
+    if (!sortKeys.length && !indexName && !queryField) {
+      return '@index';
+    }
+
+    const attributes: string[] = [];
+
+    if (indexName) {
+      attributes.push(`name: "${indexName}"`);
+    }
+
+    if (sortKeys.length) {
+      attributes.push(
+        `sortKeyFields: [${sortKeys.map((sk) => `"${sk}"`).join(', ')}]`,
+      );
+    }
+
+    if (queryField) {
+      attributes.push(`queryField: "${queryField}"`);
+    }
+
+    return `@index(${attributes.join(', ')})`;
+  };
+
+  return secondaryIndexes.reduce(
+    (
+      acc: TransformedSecondaryIndexes,
+      { data: { partitionKey, sortKeys, indexName, queryField } },
+    ) => {
+      acc[partitionKey] = acc[partitionKey] || [];
+      acc[partitionKey].push(
+        indexDirectiveWithAttributes(
+          sortKeys as readonly string[],
+          indexName,
+          queryField,
+        ),
+      );
+
+      return acc;
+    },
+    {},
+  );
+};
 
 const schemaPreprocessor = (schema: InternalSchema): string => {
   const gqlModels: string[] = [];
@@ -696,6 +776,10 @@ const schemaPreprocessor = (schema: InternalSchema): string => {
       const identifier = typeDef.data.identifier;
       const [partitionKey] = identifier;
 
+      const transformedSecondaryIndexes = transformedSecondaryIndexesForModel(
+        typeDef.data.secondaryIndexes,
+      );
+
       const mostRelevantAuthRules =
         typeDef.data.authorization.length > 0
           ? typeDef.data.authorization
@@ -730,6 +814,7 @@ const schemaPreprocessor = (schema: InternalSchema): string => {
         fieldLevelAuthRules,
         identifier,
         partitionKey,
+        transformedSecondaryIndexes,
       );
       topLevelTypes.push(...models);
 
