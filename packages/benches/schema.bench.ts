@@ -15,6 +15,8 @@ bench('basic schema w client types', () => {
   const s = a.schema({
     Post: a.model({
       title: a.string().required(),
+      description: a.string(),
+      viewCount: a.integer(),
     }),
   });
 

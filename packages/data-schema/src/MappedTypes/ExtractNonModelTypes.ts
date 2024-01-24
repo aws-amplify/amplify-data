@@ -1,3 +1,4 @@
+import type { UnionToIntersection } from '@aws-amplify/data-schema-types';
 import type { CustomType, CustomTypeParamShape } from '../CustomType';
 import type { EnumType, EnumTypeParamShape } from '../EnumType';
 import type { SchemaTypes, ModelTypes } from './ResolveSchema';
@@ -23,14 +24,17 @@ export type ExtractNonModelTypes<Schema> = ResolveNonModelFields<
 type ExtractImplicitNonModelTypes<
   Schema,
   ResolvedModels = ModelTypes<SchemaTypes<Schema>>,
-  ResolvedModelKeys extends keyof ResolvedModels = keyof ResolvedModels,
-> = {
-  [Field in keyof ResolvedModels[ResolvedModelKeys] as ResolvedModels[ResolvedModelKeys][Field] extends
-    | EnumType<EnumTypeParamShape>
-    | CustomType<CustomTypeParamShape>
-    ? `${Capitalize<Field & string>}`
-    : never]: ResolvedModels[ResolvedModelKeys][Field];
-};
+> = UnionToIntersection<
+  {
+    [Model in keyof ResolvedModels]: {
+      [Field in keyof ResolvedModels[Model] as ResolvedModels[Model][Field] extends
+        | EnumType<EnumTypeParamShape>
+        | CustomType<CustomTypeParamShape>
+        ? `${Capitalize<Field & string>}`
+        : never]: ResolvedModels[Model][Field];
+    };
+  }[keyof ResolvedModels]
+>;
 
 type ResolveNonModelTypes<
   Schema,

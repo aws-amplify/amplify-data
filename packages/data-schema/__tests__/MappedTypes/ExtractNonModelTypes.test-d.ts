@@ -79,6 +79,91 @@ describe('ExtractNonModelTypes Mapped Type', () => {
     type test = Expect<Equal<Resolved, Expected>>;
   });
 
+  test('Schema with multiple implicit Custom Types on one model', () => {
+    const s = a.schema({
+      Post: a.model({
+        title: a.string(),
+        metadata: a.json(),
+        location: a.customType({
+          lat: a.float(),
+          long: a.float(),
+        }),
+        altLocation: a.customType({
+          lat: a.float(),
+          long: a.float(),
+        }),
+      }),
+    });
+
+    type Resolved = ExtractNonModelTypes<typeof s>;
+
+    type Expected = {
+      enums: Record<never, never>;
+      customOperations: Record<never, never>;
+      customTypes: {
+        Location: {
+          lat: number | null;
+          long: number | null;
+        };
+        AltLocation: {
+          lat: number | null;
+          long: number | null;
+        };
+      };
+    };
+
+    type test = Expect<Equal<Resolved, Expected>>;
+  });
+
+  test('Schema with implicit and explicit Custom Types on multiple models', () => {
+    const s = a.schema({
+      Post: a.model({
+        title: a.string().required(),
+        description: a.string(),
+        location: a.ref('Location').required(),
+      }),
+
+      Post2: a.model({
+        title: a.string().required(),
+        description: a.string(),
+        location: a.ref('Location'),
+      }),
+
+      Post3: a.model({
+        title: a.string().required(),
+        description: a.string(),
+        altLocation: a.customType({
+          lat: a.float(),
+          long: a.float(),
+        }),
+      }),
+
+      Location: a.customType({
+        lat: a.float(),
+        long: a.float(),
+      }),
+    });
+
+    type Resolved = ExtractNonModelTypes<typeof s>;
+
+    type Expected = {
+      enums: Record<never, never>;
+      customOperations: Record<never, never>;
+      customTypes: {
+        Location: {
+          lat: number | null;
+          long: number | null;
+        };
+        AltLocation: {
+          lat: number | null;
+          long: number | null;
+        };
+      };
+    };
+
+    type test = Expect<Equal<Resolved, Expected>>;
+  });
+
   test('Schema with explicit enum', () => {
     const s = a.schema({
       Post: a.model({

@@ -50,6 +50,12 @@ export type ExcludeEmpty<U> = U extends U
     : U
   : never;
 
+export type IsEmptyStringOrNever<T extends string | never> = [T] extends [never]
+  ? true
+  : [T] extends ['']
+    ? true
+    : false;
+
 export type Expect<T extends true> = T;
 export type ExpectTrue<T extends true> = T;
 export type ExpectFalse<T extends false> = T;

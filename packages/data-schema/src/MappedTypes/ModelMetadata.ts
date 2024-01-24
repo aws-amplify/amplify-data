@@ -7,10 +7,19 @@ import type { ModelType } from '../ModelType';
 import type { ModelRelationalFieldParamShape } from '../ModelRelationalField';
 
 export type ModelIdentifier<T> = {
-  [Property in keyof T]: T[Property] extends ModelType<infer R, any>
+  [Property in keyof T]: T[Property] extends ModelType<infer R, any, any>
     ? // reduce back to union
       R['identifier'] extends any[]
       ? { identifier: R['identifier'][number] }
+      : never
+    : never;
+};
+
+export type ModelSecondaryIndexes<T> = {
+  [Property in keyof T]: T[Property] extends ModelType<infer R, any, any>
+    ? // reduce back to union
+      R['secondaryIndexes'] extends any[]
+      ? { secondaryIndexes: R['secondaryIndexes'] }
       : never
     : never;
 };
@@ -31,10 +40,10 @@ export type RelationalMetadata<
               // E.g. if Post hasOne Author, we need to add a postAuthorId field to the Post model
               ModelName
             : ResolvedSchema[ModelName][Field]['relationshipType'] extends 'manyToMany'
-            ? ResolvedSchema[ModelName][Field]['relationName'] extends string
-              ? ResolvedSchema[ModelName][Field]['relationName']
+              ? ResolvedSchema[ModelName][Field]['relationName'] extends string
+                ? ResolvedSchema[ModelName][Field]['relationName']
+                : never
               : never
-            : never
           : never]: ResolvedSchema[ModelName][Field] extends ModelRelationalFieldParamShape
           ? ResolvedSchema[ModelName][Field] extends ModelRelationalFieldParamShape
             ? ResolvedSchema[ModelName][Field]['relationshipType'] extends

@@ -6,6 +6,7 @@ import type { ResolveSchema, SchemaTypes } from './MappedTypes/ResolveSchema';
 import type { ResolveFieldProperties } from './MappedTypes/ResolveFieldProperties';
 import type {
   ModelIdentifier,
+  ModelSecondaryIndexes,
   RelationalMetadata,
 } from './MappedTypes/ModelMetadata';
 import type {
@@ -39,6 +40,9 @@ type InternalClientSchema<
   IdentifierMeta extends Record<string, any> = ModelIdentifier<
     SchemaTypes<Schema>
   >,
+  SecondaryIndexes extends Record<string, any> = ModelSecondaryIndexes<
+    SchemaTypes<Schema>
+  >,
   ResolvedFields extends Record<string, unknown> = ResolveFieldProperties<
     Schema,
     NonModelTypes
@@ -48,7 +52,7 @@ type InternalClientSchema<
     ResolvedFields,
     IdentifierMeta
   >,
-  Meta = IdentifierMeta & RelationshipMeta & NonModelTypes,
+  Meta = IdentifierMeta & SecondaryIndexes & RelationshipMeta & NonModelTypes,
 > = Prettify<
   ResolvedFields & {
     [__modelMeta__]: Meta;

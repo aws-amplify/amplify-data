@@ -172,10 +172,10 @@ export type ModelPath<
 > = {
   done: Field extends string ? `${Field}.*` : never;
   recur: Field extends string
-    ? UnwrapArray<FlatModel[Field]> extends Record<string, unknown>
+    ? NonNullable<UnwrapArray<FlatModel[Field]>> extends Record<string, unknown>
       ?
           | `${Field}.${ModelPath<
-              UnwrapArray<FlatModel[Field]>,
+              NonNullable<UnwrapArray<FlatModel[Field]>>,
               // this decrements `Depth` by 1 in each recursive call; it's equivalent to the update expr. afterthought in a for loop (e.g. `depth -= 1`)
               RecursionLoop[Depth]
             >}`
@@ -476,100 +476,109 @@ type ModelFilter<Model extends Record<any, any>> = LogicalFilters<Model> & {
       : StringFilter;
 };
 
+type ModelMetaShape = {
+  secondaryIndexes: SecondaryIndexIrShape[];
+  identifier: string[];
+};
+
 type ModelTypesClient<
   Model extends Record<string, unknown>,
-  ModelMeta extends Record<string, unknown>,
-> = {
-  create: (
-    model: Prettify<CreateModelInput<Model, ModelMeta>>,
-    options?: {
-      authMode?: AuthMode;
-      authToken?: string;
-      headers?: CustomHeaders;
-    },
-  ) => SingularReturnValue<Model>;
-  update: (
-    model: Prettify<
-      ModelIdentifier<ModelMeta> & Partial<MutationInput<Model, ModelMeta>>
-    >,
-    options?: {
-      authMode?: AuthMode;
-      authToken?: string;
-      headers?: CustomHeaders;
-    },
-  ) => SingularReturnValue<Model>;
-  delete: (
-    identifier: ModelIdentifier<ModelMeta>,
-    options?: {
-      authMode?: AuthMode;
-      authToken?: string;
-      headers?: CustomHeaders;
-    },
-  ) => SingularReturnValue<Model>;
-  get<
-    FlatModel extends Record<string, unknown> = ResolvedModel<Model>,
-    SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[],
-  >(
-    identifier: ModelIdentifier<ModelMeta>,
-    options?: {
+  ModelMeta extends ModelMetaShape,
+  // ModelName extends string,
+> =
+  // TODO: uncomment when working on data-client GSI support task
+  // IndexQueryMethodsFromIR<ModelMeta['secondaryIndexes'][ModelName], Model> &
+  {
+    create: (
+      model: Prettify<CreateModelInput<Model, ModelMeta>>,
+      options?: {
+        authMode?: AuthMode;
+        authToken?: string;
+        headers?: CustomHeaders;
+      },
+    ) => SingularReturnValue<Model>;
+    update: (
+      model: Prettify<
+        ModelIdentifier<ModelMeta> & Partial<MutationInput<Model, ModelMeta>>
+      >,
+      options?: {
+        authMode?: AuthMode;
+        authToken?: string;
+        headers?: CustomHeaders;
+      },
+    ) => SingularReturnValue<Model>;
+    delete: (
+      identifier: ModelIdentifier<ModelMeta>,
+      options?: {
+        authMode?: AuthMode;
+        authToken?: string;
+        headers?: CustomHeaders;
+      },
+    ) => SingularReturnValue<Model>;
+    get<
+      FlatModel extends Record<string, unknown> = ResolvedModel<Model>,
+      SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[],
+    >(
+      identifier: ModelIdentifier<ModelMeta>,
+      options?: {
+        selectionSet?: SelectionSet;
+        authMode?: AuthMode;
+        authToken?: string;
+        headers?: CustomHeaders;
+      },
+    ): SingularReturnValue<ReturnValue<Model, FlatModel, SelectionSet>>;
+    list<
+      FlatModel extends Record<string, unknown> = ResolvedModel<Model>,
+      SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[],
+    >(options?: {
+      filter?: ModelFilter<Model>;
+      limit?: number;
+      nextToken?: string | null;
       selectionSet?: SelectionSet;
       authMode?: AuthMode;
       authToken?: string;
       headers?: CustomHeaders;
-    },
-  ): SingularReturnValue<ReturnValue<Model, FlatModel, SelectionSet>>;
-  list<
-    FlatModel extends Record<string, unknown> = ResolvedModel<Model>,
-    SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[],
-  >(options?: {
-    filter?: ModelFilter<Model>;
-    limit?: number;
-    nextToken?: string | null;
-    selectionSet?: SelectionSet;
-    authMode?: AuthMode;
-    authToken?: string;
-    headers?: CustomHeaders;
-  }): ListReturnValue<ReturnValue<Model, FlatModel, SelectionSet>>;
-  onCreate<
-    FlatModel extends Record<string, unknown> = ResolvedModel<Model>,
-    SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[],
-  >(options?: {
-    filter?: ModelFilter<Model>;
-    selectionSet?: SelectionSet;
-    authMode?: AuthMode;
-    authToken?: string;
-    headers?: CustomHeaders;
-  }): ObservedReturnValue<ReturnValue<Model, FlatModel, SelectionSet>>;
-  onUpdate<
-    FlatModel extends Record<string, unknown> = ResolvedModel<Model>,
-    SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[],
-  >(options?: {
-    filter?: ModelFilter<Model>;
-    selectionSet?: SelectionSet;
-    authMode?: AuthMode;
-    authToken?: string;
-    headers?: CustomHeaders;
-  }): ObservedReturnValue<ReturnValue<Model, FlatModel, SelectionSet>>;
-  onDelete<
-    FlatModel extends Record<string, unknown> = ResolvedModel<Model>,
-    SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[],
-  >(options?: {
-    filter?: ModelFilter<Model>;
-    selectionSet?: SelectionSet;
-    authMode?: AuthMode;
-    authToken?: string;
-    headers?: CustomHeaders;
-  }): ObservedReturnValue<ReturnValue<Model, FlatModel, SelectionSet>>;
-  observeQuery<
-    FlatModel extends Record<string, unknown> = ResolvedModel<Model>,
-    SelectionSet extends ModelPath<FlatModel>[] = never[],
-  >(options?: {
-    filter?: ModelFilter<Model>;
-    selectionSet?: SelectionSet;
-    authMode?: AuthMode;
-    authToken?: string;
-  }): ObserveQueryReturnValue<ReturnValue<Model, FlatModel, SelectionSet>>;
-};
+    }): ListReturnValue<ReturnValue<Model, FlatModel, SelectionSet>>;
+    onCreate<
+      FlatModel extends Record<string, unknown> = ResolvedModel<Model>,
+      SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[],
+    >(options?: {
+      filter?: ModelFilter<Model>;
+      selectionSet?: SelectionSet;
+      authMode?: AuthMode;
+      authToken?: string;
+      headers?: CustomHeaders;
+    }): ObservedReturnValue<ReturnValue<Model, FlatModel, SelectionSet>>;
+    onUpdate<
+      FlatModel extends Record<string, unknown> = ResolvedModel<Model>,
+      SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[],
+    >(options?: {
+      filter?: ModelFilter<Model>;
+      selectionSet?: SelectionSet;
+      authMode?: AuthMode;
+      authToken?: string;
+      headers?: CustomHeaders;
+    }): ObservedReturnValue<ReturnValue<Model, FlatModel, SelectionSet>>;
+    onDelete<
+      FlatModel extends Record<string, unknown> = ResolvedModel<Model>,
+      SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[],
+    >(options?: {
+      filter?: ModelFilter<Model>;
+      selectionSet?: SelectionSet;
+      authMode?: AuthMode;
+      authToken?: string;
+      headers?: CustomHeaders;
+    }): ObservedReturnValue<ReturnValue<Model, FlatModel, SelectionSet>>;
+    observeQuery<
+      FlatModel extends Record<string, unknown> = ResolvedModel<Model>,
+      SelectionSet extends ModelPath<FlatModel>[] = never[],
+    >(options?: {
+      filter?: ModelFilter<Model>;
+      selectionSet?: SelectionSet;
+      authMode?: AuthMode;
+      authToken?: string;
+    }): ObserveQueryReturnValue<ReturnValue<Model, FlatModel, SelectionSet>>;
+  };
 
 type ModelTypesSSRCookies<
   Model extends Record<string, unknown>,
@@ -730,3 +739,48 @@ export type RequestOptions = {
 export type CustomHeaders =
   | Record<string, string>
   | ((requestOptions?: RequestOptions) => Promise<Record<string, string>>);
+
+/**
+ * SecondaryIndex index types and query methods
+ */
+export type SecondaryIndexIrShape = {
+  queryField: string;
+  pk: { [key: string]: unknown };
+  sk: { [key: string]: unknown };
+};
+
+type _IndexQueryMethodsFromIR<
+  SecondaryIdxTuple extends SecondaryIndexIrShape[],
+  Model extends Record<string, unknown>,
+  Res extends Record<string, unknown> = Record<never, never>,
+> = SecondaryIdxTuple extends [
+  infer A extends SecondaryIndexIrShape,
+  ...infer B extends SecondaryIndexIrShape[],
+]
+  ? _IndexQueryMethodsFromIR<B, Res & IndexQueryMethodSignature<A, Model>>
+  : Res;
+
+type IndexQueryMethodSignature<
+  Idx extends SecondaryIndexIrShape,
+  Model extends Record<string, unknown>,
+> = {
+  [K in Idx['queryField'] & string]: <
+    FlatModel extends Record<string, unknown> = ResolvedModel<Model>,
+    SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[],
+  >(
+    input: Idx['pk'] & {
+      [SKField in keyof Idx['sk']]+?: string extends Idx['sk'][SKField]
+        ? StringFilter
+        : NumericFilter;
+    },
+    options?: {
+      filter?: ModelFilter<Model>;
+      limit?: number;
+      nextToken?: string | null;
+      selectionSet?: SelectionSet;
+      authMode?: AuthMode;
+      authToken?: string;
+      headers?: CustomHeaders;
+    },
+  ) => ListReturnValue<ReturnValue<Model, FlatModel, SelectionSet>>;
+};

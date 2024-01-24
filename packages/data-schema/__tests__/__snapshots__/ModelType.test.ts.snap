@@ -960,3 +960,60 @@ exports[`model auth rules includes auth from related model fields 1`] = `
   updatedAt: AWSDateTime!
 }"
 `;
+
+exports[`secondary indexes generates a primary key AND secondary index annotation with attributes 1`] = `
+"type widget @model @auth(rules: [{allow: public}])
+{
+  title: String! @primaryKey @index(name: "myGSI", sortKeyFields: ["description", "timestamp"], queryField: "byTitleDescTs")
+  description: String!
+  timestamp: Int!
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
+}"
+`;
+
+exports[`secondary indexes generates a secondary index annotation 1`] = `
+"type widget @model @auth(rules: [{allow: public}])
+{
+  id: ID! @primaryKey
+  title: String! @index
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
+}"
+`;
+
+exports[`secondary indexes generates a secondary index annotation with attributes 1`] = `
+"type widget @model @auth(rules: [{allow: public}])
+{
+  id: ID! @primaryKey
+  title: String! @index(name: "myGSI", sortKeyFields: ["description", "timestamp"], queryField: "byTitleDescTs")
+  description: String!
+  timestamp: Int!
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
+}"
+`;
+
+exports[`secondary indexes generates multiple secondary index annotations on the same field 1`] = `
+"type widget @model @auth(rules: [{allow: public}])
+{
+  id: ID! @primaryKey
+  title: String! @index @index(sortKeyFields: ["timestamp"]) @index(name: "myGSI", sortKeyFields: ["description", "timestamp"], queryField: "byTitleDescTs")
+  description: String!
+  timestamp: Int!
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
+}"
+`;
+
+exports[`secondary indexes generates secondary index annotations on different fields 1`] = `
+"type widget @model @auth(rules: [{allow: public}])
+{
+  id: ID! @primaryKey
+  title: String! @index
+  description: String! @index(sortKeyFields: ["timestamp"])
+  timestamp: Int! @index(sortKeyFields: ["description"], queryField: "byTimeStampDesc")
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
+}"
+`;

@@ -6,10 +6,11 @@
   "type": "module",
   "main": "schema.bench.ts",
   "scripts": {
-    "bench": "tsx schema.bench.ts"
+    "start": "tsx schema.bench.ts",
+    "bench": "tsx"
   },
   "devDependencies": {
-    "@arktype/attest": "0.2.0",
+    "@arktype/attest": "0.5.0",
     "tsx": "^4.6.1",
     "@aws-amplify/data-schema": "*"
   },
