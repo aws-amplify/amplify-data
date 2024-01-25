@@ -404,7 +404,7 @@ describe('RelationalMetadata', () => {
     type test = Expect<Equal<Resolved, Expected>>;
   });
 
-  // TODO: this text breaks with TS@5.3
+  // TODO: this test breaks with TS@5.3
   test('ManyToMany', () => {
     const s = a.schema({
       Post: a.model({
