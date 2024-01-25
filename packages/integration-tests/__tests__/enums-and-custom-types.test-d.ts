@@ -135,7 +135,6 @@ describe('Enum', () => {
       type ExpectedUpdateParams = {
         id: string;
         title?: string;
-        // status?: 'draft' | 'pending' | 'published' | null;
         status?: 'draft' | 'pending' | 'published';
       };
 
