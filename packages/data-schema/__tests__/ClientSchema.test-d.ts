@@ -336,7 +336,7 @@ describe('Enum types', () => {
       readonly createdAt: string;
       readonly updatedAt: string;
       title: string;
-      status?: 'draft' | 'pending' | 'published' | null | undefined;
+      status?: 'draft' | 'pending' | 'published' | null;
     };
 
     type test = Expect<Equal<Resolved, Expected>>;
@@ -360,7 +360,7 @@ describe('Enum types', () => {
       readonly createdAt: string;
       readonly updatedAt: string;
       title: string;
-      status?: 'draft' | 'pending' | 'published' | null | undefined;
+      status?: 'draft' | 'pending' | 'published' | null;
     };
 
     type test = Expect<Equal<Resolved, Expected>>;
@@ -420,7 +420,7 @@ describe('Enum types', () => {
         readonly createdAt: string;
         readonly updatedAt: string;
         content: string;
-        status?: 'draft' | 'pending' | 'published' | null | undefined;
+        status?: 'draft' | 'pending' | 'published' | null;
       };
     };
 
