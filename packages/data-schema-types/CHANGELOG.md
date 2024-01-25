@@ -1,4 +1,4 @@
-# @aws-amplify/amplify-api-next-types-alpha
+# @aws-amplify/data-schema-types
 
 ## 0.6.12
 

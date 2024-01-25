@@ -4,6 +4,7 @@ import {
   Equal,
   ExpectFalse,
   HasKey,
+  __modelMeta__,
 } from '@aws-amplify/data-schema-types';
 
 describe('implied fields', () => {
@@ -314,5 +315,123 @@ describe('Custom operations hidden from ClientSchema', () => {
 
     type Schema = ClientSchema<typeof schema>;
     type Test = ExpectFalse<HasKey<Schema, 'onLiked'>>;
+  });
+});
+
+describe('Enum types', () => {
+  test('Inline Enum Type', () => {
+    const s = a.schema({
+      Post: a.model({
+        title: a.string().required(),
+        status: a.enum(['draft', 'pending', 'published']),
+      }),
+    });
+
+    type Schema = typeof s;
+
+    type Resolved = ClientSchema<Schema>['Post'];
+
+    type Expected = {
+      readonly id: string;
+      readonly createdAt: string;
+      readonly updatedAt: string;
+      title: string;
+      status?: 'draft' | 'pending' | 'published' | null;
+    };
+
+    type test = Expect<Equal<Resolved, Expected>>;
+  });
+
+  test('Explicit Enum Type', () => {
+    const s = a.schema({
+      Post: a.model({
+        title: a.string().required(),
+        status: a.ref('Status'),
+      }),
+      Status: a.enum(['draft', 'pending', 'published']),
+    });
+
+    type Schema = typeof s;
+
+    type Resolved = ClientSchema<Schema>['Post'];
+
+    type Expected = {
+      readonly id: string;
+      readonly createdAt: string;
+      readonly updatedAt: string;
+      title: string;
+      status?: 'draft' | 'pending' | 'published' | null;
+    };
+
+    type test = Expect<Equal<Resolved, Expected>>;
+  });
+
+  test('Explicit Enum Type; required field', () => {
+    const s = a.schema({
+      Post: a.model({
+        title: a.string().required(),
+        status: a.ref('Status').required(),
+      }),
+      Status: a.enum(['draft', 'pending', 'published']),
+    });
+
+    type Schema = typeof s;
+
+    type Resolved = ClientSchema<Schema>['Post'];
+
+    type Expected = {
+      readonly id: string;
+      readonly createdAt: string;
+      readonly updatedAt: string;
+      title: string;
+      status: 'draft' | 'pending' | 'published';
+    };
+
+    type test = Expect<Equal<Resolved, Expected>>;
+  });
+
+  test('Explicit Enum Type; multiple models', () => {
+    const s = a.schema({
+      Post: a.model({
+        title: a.string().required(),
+        status: a.ref('Status').required(),
+      }),
+      Comment: a.model({
+        content: a.string().required(),
+        status: a.ref('Status'),
+      }),
+      Status: a.enum(['draft', 'pending', 'published']),
+    });
+
+    type Schema = typeof s;
+
+    type Resolved = Pick<ClientSchema<Schema>, 'Post' | 'Comment'>;
+
+    type Expected = {
+      Post: {
+        readonly id: string;
+        readonly createdAt: string;
+        readonly updatedAt: string;
+        title: string;
+        status: 'draft' | 'pending' | 'published';
+      };
+      Comment: {
+        readonly id: string;
+        readonly createdAt: string;
+        readonly updatedAt: string;
+        content: string;
+        status?: 'draft' | 'pending' | 'published' | null;
+      };
+    };
+
+    type test = Expect<Equal<Resolved, Expected>>;
+
+    type ResolvedEnumMeta = ClientSchema<Schema>[typeof __modelMeta__]['enums'];
+
+    type ExpectedEnumMeta = {
+      Status: 'draft' | 'pending' | 'published';
+    };
+
+    type test2 = Expect<Equal<ResolvedEnumMeta, ExpectedEnumMeta>>;
   });
 });

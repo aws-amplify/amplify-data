@@ -10,7 +10,7 @@
   "devDependencies": {
     "@aws-amplify/data-schema": "*",
     "@aws-amplify/data-schema-types": "*",
-    "aws-amplify": "^6.0.3",
+    "aws-amplify": "^6.0.13",
     "@tsd/typescript": "^5.1.6",
     "@types/jest": "29.5.4",
     "jest": "^29.7.0",

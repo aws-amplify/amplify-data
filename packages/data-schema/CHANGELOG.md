@@ -1,4 +1,4 @@
-# @aws-amplify/amplify-api-next-alpha
+# @aws-amplify/data-schema
 
 ## 0.12.14
 
