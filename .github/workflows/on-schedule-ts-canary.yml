@@ -1,0 +1,22 @@
+on:
+  # Tests scheduled at 6pm(UTC) / 11am(PDT) everyday
+  # default supported timezone is UTC
+  schedule:
+    - cron: '0 18 * * *'
+
+jobs:
+  rc-canary:
+    secrets: inherit
+    uses: ./.github/workflows/callable-ts-version-unit-test.yml
+    with:
+      tsVersion: 'rc'
+  next-canary:
+    secrets: inherit
+    uses: ./.github/workflows/callable-ts-version-unit-test.yml
+    with:
+      tsVersion: 'next'
+  latest-canary:
+    secrets: inherit
+    uses: ./.github/workflows/callable-ts-version-unit-test.yml
+    with:
+      tsVersion: 'latest'
