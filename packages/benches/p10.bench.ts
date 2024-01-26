@@ -16,7 +16,7 @@ bench('baseline', () => {}).types([0, 'instantiations']);
  * Schema.
  */
 // TODO: add w/ client types
-bench('25 simple models with 1 field each', () => {
+bench('100 simple models with 1 field each', () => {
   a.schema({
     Model1: a.model({
       field1: a.string(),
@@ -93,8 +93,233 @@ bench('25 simple models with 1 field each', () => {
     Model25: a.model({
       field1: a.string(),
     }),
+    Model26: a.model({
+      field1: a.string(),
+    }),
+    Model27: a.model({
+      field1: a.string(),
+    }),
+    Model28: a.model({
+      field1: a.string(),
+    }),
+    Model29: a.model({
+      field1: a.string(),
+    }),
+    Model30: a.model({
+      field1: a.string(),
+    }),
+    Model31: a.model({
+      field1: a.string(),
+    }),
+    Model32: a.model({
+      field1: a.string(),
+    }),
+    Model33: a.model({
+      field1: a.string(),
+    }),
+    Model34: a.model({
+      field1: a.string(),
+    }),
+    Model35: a.model({
+      field1: a.string(),
+    }),
+    Model36: a.model({
+      field1: a.string(),
+    }),
+    Model37: a.model({
+      field1: a.string(),
+    }),
+    Model38: a.model({
+      field1: a.string(),
+    }),
+    Model39: a.model({
+      field1: a.string(),
+    }),
+    Model40: a.model({
+      field1: a.string(),
+    }),
+    Model41: a.model({
+      field1: a.string(),
+    }),
+    Model42: a.model({
+      field1: a.string(),
+    }),
+    Model43: a.model({
+      field1: a.string(),
+    }),
+    Model44: a.model({
+      field1: a.string(),
+    }),
+    Model45: a.model({
+      field1: a.string(),
+    }),
+    Model46: a.model({
+      field1: a.string(),
+    }),
+    Model47: a.model({
+      field1: a.string(),
+    }),
+    Model48: a.model({
+      field1: a.string(),
+    }),
+    Model49: a.model({
+      field1: a.string(),
+    }),
+    Model50: a.model({
+      field1: a.string(),
+    }),
+    Model51: a.model({
+      field1: a.string(),
+    }),
+    Model52: a.model({
+      field1: a.string(),
+    }),
+    Model53: a.model({
+      field1: a.string(),
+    }),
+    Model54: a.model({
+      field1: a.string(),
+    }),
+    Model55: a.model({
+      field1: a.string(),
+    }),
+    Model56: a.model({
+      field1: a.string(),
+    }),
+    Model57: a.model({
+      field1: a.string(),
+    }),
+    Model58: a.model({
+      field1: a.string(),
+    }),
+    Model59: a.model({
+      field1: a.string(),
+    }),
+    Model60: a.model({
+      field1: a.string(),
+    }),
+    Model61: a.model({
+      field1: a.string(),
+    }),
+    Model62: a.model({
+      field1: a.string(),
+    }),
+    Model63: a.model({
+      field1: a.string(),
+    }),
+    Model64: a.model({
+      field1: a.string(),
+    }),
+    Model65: a.model({
+      field1: a.string(),
+    }),
+    Model66: a.model({
+      field1: a.string(),
+    }),
+    Model67: a.model({
+      field1: a.string(),
+    }),
+    Model68: a.model({
+      field1: a.string(),
+    }),
+    Model69: a.model({
+      field1: a.string(),
+    }),
+    Model70: a.model({
+      field1: a.string(),
+    }),
+    Model71: a.model({
+      field1: a.string(),
+    }),
+    Model72: a.model({
+      field1: a.string(),
+    }),
+    Model73: a.model({
+      field1: a.string(),
+    }),
+    Model74: a.model({
+      field1: a.string(),
+    }),
+    Model75: a.model({
+      field1: a.string(),
+    }),
+    Model76: a.model({
+      field1: a.string(),
+    }),
+    Model77: a.model({
+      field1: a.string(),
+    }),
+    Model78: a.model({
+      field1: a.string(),
+    }),
+    Model79: a.model({
+      field1: a.string(),
+    }),
+    Model80: a.model({
+      field1: a.string(),
+    }),
+    Model81: a.model({
+      field1: a.string(),
+    }),
+    Model82: a.model({
+      field1: a.string(),
+    }),
+    Model83: a.model({
+      field1: a.string(),
+    }),
+    Model84: a.model({
+      field1: a.string(),
+    }),
+    Model85: a.model({
+      field1: a.string(),
+    }),
+    Model86: a.model({
+      field1: a.string(),
+    }),
+    Model87: a.model({
+      field1: a.string(),
+    }),
+    Model88: a.model({
+      field1: a.string(),
+    }),
+    Model89: a.model({
+      field1: a.string(),
+    }),
+    Model90: a.model({
+      field1: a.string(),
+    }),
+    Model91: a.model({
+      field1: a.string(),
+    }),
+    Model92: a.model({
+      field1: a.string(),
+    }),
+    Model93: a.model({
+      field1: a.string(),
+    }),
+    Model94: a.model({
+      field1: a.string(),
+    }),
+    Model95: a.model({
+      field1: a.string(),
+    }),
+    Model96: a.model({
+      field1: a.string(),
+    }),
+    Model97: a.model({
+      field1: a.string(),
+    }),
+    Model98: a.model({
+      field1: a.string(),
+    }),
+    Model99: a.model({
+      field1: a.string(),
+    }),
+    Model100: a.model({
+      field1: a.string(),
+    }),
   }).authorization([a.allow.public()]);
-}).types([18015, 'instantiations']);
+}).types([63615, 'instantiations']);
 
 bench('25 complex models with one additional field each', () => {
   a.schema({
@@ -537,7 +762,7 @@ bench('25 complex models with one additional field each', () => {
   }).authorization([a.allow.public()]);
 }).types([87524, 'instantiations']);
 
-bench('3 simple models w/ 50 fields each', () => {
+bench('3 simple models w/ 100 fields each', () => {
   a.schema({
     Model1: a.model({
       field1: a.string(),
@@ -590,6 +815,56 @@ bench('3 simple models w/ 50 fields each', () => {
       field48: a.string(),
       field49: a.string(),
       field50: a.string(),
+      field51: a.string(),
+      field52: a.string(),
+      field53: a.string(),
+      field54: a.string(),
+      field55: a.string(),
+      field56: a.string(),
+      field57: a.string(),
+      field58: a.string(),
+      field59: a.string(),
+      field60: a.string(),
+      field61: a.string(),
+      field62: a.string(),
+      field63: a.string(),
+      field64: a.string(),
+      field65: a.string(),
+      field66: a.string(),
+      field67: a.string(),
+      field68: a.string(),
+      field69: a.string(),
+      field70: a.string(),
+      field71: a.string(),
+      field72: a.string(),
+      field73: a.string(),
+      field74: a.string(),
+      field75: a.string(),
+      field76: a.string(),
+      field77: a.string(),
+      field78: a.string(),
+      field79: a.string(),
+      field80: a.string(),
+      field81: a.string(),
+      field82: a.string(),
+      field83: a.string(),
+      field84: a.string(),
+      field85: a.string(),
+      field86: a.string(),
+      field87: a.string(),
+      field88: a.string(),
+      field89: a.string(),
+      field90: a.string(),
+      field91: a.string(),
+      field92: a.string(),
+      field93: a.string(),
+      field94: a.string(),
+      field95: a.string(),
+      field96: a.string(),
+      field97: a.string(),
+      field98: a.string(),
+      field99: a.string(),
+      field100: a.string(),
     }),
     Model2: a.model({
       field1: a.string(),
@@ -642,6 +917,56 @@ bench('3 simple models w/ 50 fields each', () => {
       field48: a.string(),
       field49: a.string(),
       field50: a.string(),
+      field51: a.string(),
+      field52: a.string(),
+      field53: a.string(),
+      field54: a.string(),
+      field55: a.string(),
+      field56: a.string(),
+      field57: a.string(),
+      field58: a.string(),
+      field59: a.string(),
+      field60: a.string(),
+      field61: a.string(),
+      field62: a.string(),
+      field63: a.string(),
+      field64: a.string(),
+      field65: a.string(),
+      field66: a.string(),
+      field67: a.string(),
+      field68: a.string(),
+      field69: a.string(),
+      field70: a.string(),
+      field71: a.string(),
+      field72: a.string(),
+      field73: a.string(),
+      field74: a.string(),
+      field75: a.string(),
+      field76: a.string(),
+      field77: a.string(),
+      field78: a.string(),
+      field79: a.string(),
+      field80: a.string(),
+      field81: a.string(),
+      field82: a.string(),
+      field83: a.string(),
+      field84: a.string(),
+      field85: a.string(),
+      field86: a.string(),
+      field87: a.string(),
+      field88: a.string(),
+      field89: a.string(),
+      field90: a.string(),
+      field91: a.string(),
+      field92: a.string(),
+      field93: a.string(),
+      field94: a.string(),
+      field95: a.string(),
+      field96: a.string(),
+      field97: a.string(),
+      field98: a.string(),
+      field99: a.string(),
+      field100: a.string(),
     }),
     Model3: a.model({
       field1: a.string(),
@@ -694,10 +1019,61 @@ bench('3 simple models w/ 50 fields each', () => {
       field48: a.string(),
       field49: a.string(),
       field50: a.string(),
+      field51: a.string(),
+      field52: a.string(),
+      field53: a.string(),
+      field54: a.string(),
+      field55: a.string(),
+      field56: a.string(),
+      field57: a.string(),
+      field58: a.string(),
+      field59: a.string(),
+      field60: a.string(),
+      field61: a.string(),
+      field62: a.string(),
+      field63: a.string(),
+      field64: a.string(),
+      field65: a.string(),
+      field66: a.string(),
+      field67: a.string(),
+      field68: a.string(),
+      field69: a.string(),
+      field70: a.string(),
+      field71: a.string(),
+      field72: a.string(),
+      field73: a.string(),
+      field74: a.string(),
+      field75: a.string(),
+      field76: a.string(),
+      field77: a.string(),
+      field78: a.string(),
+      field79: a.string(),
+      field80: a.string(),
+      field81: a.string(),
+      field82: a.string(),
+      field83: a.string(),
+      field84: a.string(),
+      field85: a.string(),
+      field86: a.string(),
+      field87: a.string(),
+      field88: a.string(),
+      field89: a.string(),
+      field90: a.string(),
+      field91: a.string(),
+      field92: a.string(),
+      field93: a.string(),
+      field94: a.string(),
+      field95: a.string(),
+      field96: a.string(),
+      field97: a.string(),
+      field98: a.string(),
+      field99: a.string(),
+      field100: a.string(),
     }),
   }).authorization([a.allow.public()]);
 }).types([4639, 'instantiations']);
 
+// TODO: add more fields:
 bench('3 complex models w/ 25 additional fields each', () => {
   a.schema({
     GlobalPublicAuthModel1: a.model({
