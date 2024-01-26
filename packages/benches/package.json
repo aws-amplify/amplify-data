@@ -6,7 +6,7 @@
   "type": "module",
   "main": "schema.bench.ts",
   "scripts": {
-    "start": "tsx schema.bench.ts",
+    "start": "tsx schema.bench.ts && tsx p50.bench.ts && npx ",
     "bench": "tsx"
   },
   "devDependencies": {
