@@ -1,6 +1,11 @@
 import { a } from '../index';
 import { InternalField } from '../src/ModelField';
-import { InternalRelationalField } from '../src/ModelRelationalField';
+import {
+  InternalRelationalField,
+  ModelRelationalField,
+  ModelRelationalTypeArgFactory,
+  ModelRelationshipTypes,
+} from '../src/ModelRelationalField';
 
 describe('relational field required modifier', () => {
   describe('belongsTo', () => {
@@ -29,6 +34,13 @@ describe('relational field required modifier', () => {
       expect(() => {
         const field = a.belongsTo('Test').authorization([]);
       }).not.toThrow();
+    });
+
+    it('references sets the references field value', () => {
+      const field = a
+        .belongsTo('Test')
+        .references('idFieldName') as InternalRelationalField;
+      expect(field.data.references).toBe('idFieldName');
     });
   });
 
@@ -62,6 +74,13 @@ describe('relational field required modifier', () => {
     it('required sets arrayRequired to true', () => {
       const field = a.hasOne('Test').required() as InternalRelationalField;
       expect(field.data.arrayRequired).toBe(true);
+    });
+
+    it('references sets the reference field value', () => {
+      const field = a
+        .hasOne('Test')
+        .references('idFieldName') as InternalRelationalField;
+      expect(field.data.references).toBe('idFieldName');
     });
   });
 
@@ -103,6 +122,13 @@ describe('relational field required modifier', () => {
         .hasMany('Test')
         .valueRequired() as InternalRelationalField;
       expect(field.data.valueRequired).toBe(true);
+    });
+
+    it('references sets the reference field value', () => {
+      const field = a
+        .hasMany('Test')
+        .references('idFieldName') as InternalRelationalField;
+      expect(field.data.references).toBe('idFieldName');
     });
   });
 
@@ -150,6 +176,15 @@ describe('relational field required modifier', () => {
         .manyToMany('Test', { relationName: 'Test' })
         .valueRequired() as InternalRelationalField;
       expect(field.data.valueRequired).toBe(true);
+    });
+
+    it('references is not supported by manyToMany', () => {
+      expect(() => {
+        const field = a
+          .manyToMany('Test', { relationName: 'Test' })
+          // @ts-expect-error
+          .references('idFieldName') as InternalRelationalField;
+      }).toThrow();
     });
   });
 });
