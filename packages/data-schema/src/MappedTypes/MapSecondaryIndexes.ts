@@ -47,7 +47,7 @@ type SingleIndexIrFromType<
     }
   : never;
 
-type SkLabelFromTuple<T, StrStart extends string = ''> = T extends readonly [
+type SkLabelFromTuple<SK, StrStart extends string = ''> = SK extends readonly [
   infer A extends string,
   ...infer B extends string[],
 ]
