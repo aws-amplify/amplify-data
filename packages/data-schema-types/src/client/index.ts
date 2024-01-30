@@ -434,7 +434,7 @@ type SizeFilter = {
 /**
  * Filters options that can be used on string-like fields.
  */
-type StringFilter = {
+export type StringFilter = {
   attributeExists?: boolean;
   beginsWith?: string;
   between?: [string, string];
@@ -449,7 +449,7 @@ type StringFilter = {
   size?: SizeFilter;
 };
 
-type NumericFilter = {
+export type NumericFilter = {
   attributeExists?: boolean;
   between?: [number, number];
   eq?: number;
@@ -460,7 +460,7 @@ type NumericFilter = {
   ne?: number;
 };
 
-type BooleanFilters = {
+export type BooleanFilters = {
   attributeExists?: boolean;
   eq?: boolean;
   ne?: boolean;
@@ -741,8 +741,8 @@ export type CustomHeaders =
  */
 export type SecondaryIndexIrShape = {
   queryField: string;
-  pk: { [key: string]: unknown };
-  sk: { [key: string]: unknown };
+  pk: { [key: string]: string | number };
+  sk: { [key: string]: string | number };
 };
 
 type IndexQueryMethodsFromIR<
@@ -764,11 +764,13 @@ type IndexQueryMethodSignature<
     FlatModel extends Record<string, unknown> = ResolvedModel<Model>,
     SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[],
   >(
-    input: Idx['pk'] & {
-      [SKField in keyof Idx['sk']]+?: string extends Idx['sk'][SKField]
-        ? StringFilter
-        : NumericFilter;
-    },
+    input: Prettify<
+      Idx['pk'] & {
+        [SKField in keyof Idx['sk']]+?: string extends Idx['sk'][SKField]
+          ? StringFilter
+          : NumericFilter;
+      }
+    >,
     options?: {
       filter?: ModelFilter<Model>;
       limit?: number;
