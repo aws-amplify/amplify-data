@@ -578,8 +578,8 @@ type ModelTypesClient<
 
 type ModelTypesSSRCookies<
   Model extends Record<string, unknown>,
-  ModelMeta extends Record<string, unknown>,
-> = {
+  ModelMeta extends ModelMetaShape,
+> = IndexQueryMethodsFromIR<ModelMeta['secondaryIndexes'], Model> & {
   create: (
     model: Prettify<CreateModelInput<Model, ModelMeta>>,
     options?: {
@@ -634,8 +634,8 @@ type ModelTypesSSRCookies<
 
 type ModelTypesSSRRequest<
   Model extends Record<string, unknown>,
-  ModelMeta extends Record<string, unknown>,
-> = {
+  ModelMeta extends ModelMetaShape,
+> = IndexQueryMethodsFromIR<ModelMeta['secondaryIndexes'], Model> & {
   create: (
     // TODO: actual type
     contextSpec: any,
@@ -764,13 +764,11 @@ type IndexQueryMethodSignature<
     FlatModel extends Record<string, unknown> = ResolvedModel<Model>,
     SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[],
   >(
-    input: Prettify<
-      Idx['pk'] & {
-        [SKField in keyof Idx['sk']]+?: string extends Idx['sk'][SKField]
-          ? StringFilter
-          : NumericFilter;
-      }
-    >,
+    input: Idx['pk'] & {
+      [SKField in keyof Idx['sk']]+?: string extends Idx['sk'][SKField]
+        ? StringFilter
+        : NumericFilter;
+    },
     options?: {
       filter?: ModelFilter<Model>;
       limit?: number;
