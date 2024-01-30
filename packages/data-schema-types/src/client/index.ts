@@ -434,7 +434,7 @@ type SizeFilter = {
 /**
  * Filters options that can be used on string-like fields.
  */
-export type StringFilter = {
+type StringFilter = {
   attributeExists?: boolean;
   beginsWith?: string;
   between?: [string, string];
@@ -449,7 +449,7 @@ export type StringFilter = {
   size?: SizeFilter;
 };
 
-export type NumericFilter = {
+type NumericFilter = {
   attributeExists?: boolean;
   between?: [number, number];
   eq?: number;
@@ -460,7 +460,7 @@ export type NumericFilter = {
   ne?: number;
 };
 
-export type BooleanFilters = {
+type BooleanFilters = {
   attributeExists?: boolean;
   eq?: boolean;
   ne?: boolean;

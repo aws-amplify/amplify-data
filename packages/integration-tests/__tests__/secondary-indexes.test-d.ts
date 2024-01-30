@@ -1,20 +1,6 @@
 import { a, ClientSchema } from '@aws-amplify/data-schema';
-import {
-  Expect,
-  Equal,
-  StringFilter,
-  NumericFilter,
-} from '@aws-amplify/data-schema-types';
+import { Expect, Equal } from '@aws-amplify/data-schema-types';
 import { generateClient } from 'aws-amplify/api';
-
-// This is similar to the `Parameters` built-in utility type
-// However, `Parameters` was not working as expected with the
-// dynamically-generated methods
-type FirstParameter<T extends (args: any) => any> = T extends (
-  args: infer P,
-) => any
-  ? P
-  : never;
 
 describe('secondary indexes / index queries', () => {
   const schema = a.schema({
@@ -40,21 +26,10 @@ describe('secondary indexes / index queries', () => {
 
   describe('PK only', async () => {
     test('Input type', () => {
-      /*  
-     This test succeeds locally, but fails in GHA:
-
-     type ResolvedKeyType = FirstParameter<
-        typeof client.models.Post.listByTitle
-      >;
-
-      type ExpectedKeyType = {
-        title: string;
-      };
-
-      type test = Expect<Equal<ResolvedKeyType, ExpectedKeyType>>;
-       */
-
-      // Going with an alternative approach to testing the inputs:
+      // Note: here and in the SK Input type tests I was running into issues
+      // extracting the dynamic method params via the Parameters util type
+      // and then asserting the resolved type.
+      // Doing the following input type validation as an alternative:
 
       // Valid key input
       client.models.Post.listByTitle({
@@ -67,9 +42,9 @@ describe('secondary indexes / index queries', () => {
 
       // No PK field
       // @ts-expect-error
-      client.models.Post.listByTitle();
+      client.models.Post.listByTitle({});
 
-      // No PK field
+      // No PK field empty {}
       // @ts-expect-error
       client.models.Post.listByTitle();
 
@@ -116,24 +91,6 @@ describe('secondary indexes / index queries', () => {
 
   describe('With SK', () => {
     test('Input type', () => {
-      /* 
-      This test succeeds locally, but fails in GHA:
-      
-      type ResolvedKeyType = FirstParameter<
-        typeof client.models.Post.myCustomIdx
-      >;
-
-      type ExpectedKeyType = {
-        description: string;
-        updatedAt?: StringFilter;
-        viewCount?: NumericFilter;
-      };
-
-      type test = Expect<Equal<ResolvedKeyType, ExpectedKeyType>>; 
-      */
-
-      // Going with an alternative approach to testing the inputs:
-
       // Valid key input
       client.models.Post.myCustomIdx({
         description: 'abc',
@@ -154,9 +111,9 @@ describe('secondary indexes / index queries', () => {
       // @ts-expect-error
       client.models.Post.myCustomIdx();
 
-      // No PK field
+      // No PK field empty {}
       // @ts-expect-error
-      client.models.Post.myCustomIdx();
+      client.models.Post.myCustomIdx({});
 
       // Wrong PK field name
       // @ts-expect-error
