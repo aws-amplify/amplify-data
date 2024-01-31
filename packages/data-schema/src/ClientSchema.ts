@@ -14,6 +14,30 @@ import type {
   NonModelTypesShape,
 } from './MappedTypes/ExtractNonModelTypes';
 
+// DEBUG
+import { a } from '../index';
+
+const schema = a.schema({
+  EchoResult: a.customType({
+    content: a.string(),
+  }),
+  echo: a
+    .query()
+    .arguments({ content: a.string() })
+    .returns(a.ref('EchoResult'))
+    .function('echoFunction')
+    .authorization([a.allow.public()]),
+});
+
+type Schema = ClientSchema<typeof schema>;
+type MetaData = Schema[typeof __modelMeta__];
+
+type CustomOps = MetaData['customOperations'];
+
+type EchoType = CustomOps['echo'];
+
+// END DEBUG
+
 export type ClientSchema<Schema extends ModelSchema<any, any>> =
   InternalClientSchema<Schema>;
 

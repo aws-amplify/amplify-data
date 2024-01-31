@@ -7,6 +7,8 @@ import type {
   CustomOperation,
   CustomOperationParamShape,
 } from '../CustomOperation';
+import { ResolveRef } from './ResolveFieldProperties';
+import { RefType, RefTypeParamShape } from '../RefType';
 
 export type NonModelTypesShape = {
   enums: Record<string, EnumType<any>>;
@@ -14,9 +16,29 @@ export type NonModelTypesShape = {
   customOperations: Record<string, any>;
 };
 
-export type ExtractNonModelTypes<Schema> = ResolveNonModelFields<
-  ResolveNonModelTypes<Schema, ExtractImplicitNonModelTypes<Schema>>
+export type ExtractNonModelTypes<Schema> = ResolveRefs<
+  ResolveNonModelFields<
+    ResolveNonModelTypes<Schema, ExtractImplicitNonModelTypes<Schema>>
+  >
 >;
+
+type ResolveRefs<Shape extends NonModelTypesShape> = {
+  enums: Shape['enums'];
+  customTypes: Shape['customTypes'];
+  customOperationsRaw: Shape['customOperations'];
+  customOperations: {
+    [OpName in keyof Shape['customOperations']]: Omit<
+      Shape['customOperations'][OpName],
+      'returnType'
+    > & {
+      returnType: Shape['customOperations'][OpName]['returnType'] extends RefType<
+        infer RefShape
+      >
+        ? ResolveRef<Shape, RefShape>
+        : never;
+    };
+  };
+};
 
 /**
  * Pulls out implicit, i.e. field-level non-model types from Schema
@@ -60,10 +82,14 @@ type ResolveNonModelTypes<
       : never;
   };
   customOperations: {
-    [Model in keyof ResolvedSchema as ResolvedSchema[Model] extends CustomOperation<CustomOperationParamShape>
+    [Model in keyof ResolvedSchema as ResolvedSchema[Model] extends CustomOperation<
+      CustomOperationParamShape,
+      any
+    >
       ? Model
       : never]: ResolvedSchema[Model] extends CustomOperation<
-      infer R extends CustomOperationParamShape
+      infer R extends CustomOperationParamShape,
+      any
     >
       ? R
       : never;
@@ -88,14 +114,22 @@ type ResolveNonModelFields<
     };
   };
   customOperations: {
-    [Op in keyof CustomOps]: {
-      [FieldProp in keyof CustomOps[Op]]: CustomOps[Op][FieldProp] extends ModelField<
-        infer R,
-        any,
-        any
-      >
-        ? R
-        : never;
-    };
+    [OpName in keyof CustomOps]: CustomOps[OpName] extends CustomOperationParamShape
+      ? {
+          arguments: {
+            [FieldName in keyof CustomOps[OpName]['arguments']]: CustomOps[OpName]['arguments'][FieldName] extends ModelField<
+              infer R,
+              any,
+              any
+            >
+              ? R
+              : never;
+          };
+          returnType: CustomOps[OpName]['returnType'];
+          functionRef: CustomOps[OpName]['functionRef'];
+          typeName: CustomOps[OpName]['typeName'];
+          authorization: CustomOps[OpName]['authorization'];
+        }
+      : never;
   };
 };
