@@ -654,6 +654,25 @@ type TransformedSecondaryIndexes = {
 };
 
 /**
+ *
+ * @param pk - partition key field name
+ * @param sk - (optional) array of sort key field names
+ * @returns default query field name
+ */
+const secondaryIndexDefaultQueryField = (
+  pk: string,
+  sk?: readonly string[],
+): string => {
+  const capitalize = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
+
+  const skName = sk?.length ? 'And' + sk?.map(capitalize).join('And') : '';
+
+  const queryField = `listBy${capitalize(pk)}${skName}`;
+
+  return queryField;
+};
+
+/**
  * Given InternalModelIndexType[] returns a map where the key is the model field to be annotated with an @index directive
  * and the value is an array of transformed Amplify @index directives with all supplied attributes
  */
@@ -661,12 +680,15 @@ const transformedSecondaryIndexesForModel = (
   secondaryIndexes: readonly InternalModelIndexType[],
 ): TransformedSecondaryIndexes => {
   const indexDirectiveWithAttributes = (
+    partitionKey: string,
     sortKeys: readonly string[],
     indexName: string,
     queryField: string,
   ): string => {
     if (!sortKeys.length && !indexName && !queryField) {
-      return '@index';
+      return `@index(queryField: "${secondaryIndexDefaultQueryField(
+        partitionKey,
+      )}")`;
     }
 
     const attributes: string[] = [];
@@ -683,6 +705,13 @@ const transformedSecondaryIndexesForModel = (
 
     if (queryField) {
       attributes.push(`queryField: "${queryField}"`);
+    } else {
+      attributes.push(
+        `queryField: "${secondaryIndexDefaultQueryField(
+          partitionKey,
+          sortKeys,
+        )}"`,
+      );
     }
 
     return `@index(${attributes.join(', ')})`;
@@ -696,6 +725,7 @@ const transformedSecondaryIndexesForModel = (
       acc[partitionKey] = acc[partitionKey] || [];
       acc[partitionKey].push(
         indexDirectiveWithAttributes(
+          partitionKey,
           sortKeys as readonly string[],
           indexName,
           queryField,
