@@ -1,3 +1,5 @@
+name: Typescript Canary
+
 on:
   # Tests scheduled at 6pm(UTC) / 11am(PDT) everyday
   # default supported timezone is UTC
