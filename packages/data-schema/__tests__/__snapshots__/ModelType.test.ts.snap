@@ -976,7 +976,7 @@ exports[`secondary indexes generates a secondary index annotation 1`] = `
 "type widget @model @auth(rules: [{allow: public}])
 {
   id: ID! @primaryKey
-  title: String! @index
+  title: String! @index(queryField: "listByTitle")
   createdAt: AWSDateTime!
   updatedAt: AWSDateTime!
 }"
@@ -998,7 +998,7 @@ exports[`secondary indexes generates multiple secondary index annotations on the
 "type widget @model @auth(rules: [{allow: public}])
 {
   id: ID! @primaryKey
-  title: String! @index @index(sortKeyFields: ["timestamp"]) @index(name: "myGSI", sortKeyFields: ["description", "timestamp"], queryField: "byTitleDescTs")
+  title: String! @index(queryField: "listByTitle") @index(sortKeyFields: ["timestamp"], queryField: "listByTitleAndTimestamp") @index(name: "myGSI", sortKeyFields: ["description", "timestamp"], queryField: "byTitleDescTs")
   description: String!
   timestamp: Int!
   createdAt: AWSDateTime!
@@ -1010,8 +1010,8 @@ exports[`secondary indexes generates secondary index annotations on different fi
 "type widget @model @auth(rules: [{allow: public}])
 {
   id: ID! @primaryKey
-  title: String! @index
-  description: String! @index(sortKeyFields: ["timestamp"])
+  title: String! @index(queryField: "listByTitle")
+  description: String! @index(sortKeyFields: ["timestamp"], queryField: "listByDescriptionAndTimestamp")
   timestamp: Int! @index(sortKeyFields: ["description"], queryField: "byTimeStampDesc")
   createdAt: AWSDateTime!
   updatedAt: AWSDateTime!

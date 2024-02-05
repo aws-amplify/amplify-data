@@ -30,7 +30,10 @@ export type ModelIndexType<
     name(
       name: string,
     ): ModelIndexType<ModelFieldKeys, PK, SK, QueryField, K | 'name'>;
-    queryField<QF extends string, MF extends ModelFieldKeys = ModelFieldKeys>(
+    queryField<
+      QF extends string = never,
+      MF extends ModelFieldKeys = ModelFieldKeys,
+    >(
       field: QF,
     ): ModelIndexType<MF, PK, SK, QF, K | 'queryField'>;
   },
@@ -41,8 +44,8 @@ export type ModelIndexType<
 function _modelIndex<
   ModelFieldKeys extends string,
   PK extends ModelFieldKeys,
-  SK,
-  QueryField,
+  SK = readonly [],
+  QueryField = never,
 >(partitionKeyFieldName: PK) {
   const data: ModelIndexData = {
     partitionKey: partitionKeyFieldName,
@@ -80,8 +83,8 @@ function _modelIndex<
 export function modelIndex<
   ModelFieldKeys extends string,
   PK extends ModelFieldKeys,
-  SK,
-  QueryField,
+  SK = readonly [],
+  QueryField = never,
 >(partitionKeyFieldName: PK) {
   return _modelIndex<ModelFieldKeys, PK, SK, QueryField>(partitionKeyFieldName);
 }
