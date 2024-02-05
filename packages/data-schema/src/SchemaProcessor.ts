@@ -399,7 +399,7 @@ function calculateAuth(authorization: Authorization<any, any, any>[]) {
 }
 
 function capitalize<T extends string>(s: T): Capitalize<T> {
-  return `${s[0].toUpperCase()}${s.slice(1)}` as any;
+  return `${s[0].toUpperCase()}${s.slice(1)}` as Capitalize<T>;
 }
 
 function uncapitalize<T extends string>(s: T): Uncapitalize<T> {
@@ -663,8 +663,6 @@ const secondaryIndexDefaultQueryField = (
   pk: string,
   sk?: readonly string[],
 ): string => {
-  const capitalize = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
-
   const skName = sk?.length ? 'And' + sk?.map(capitalize).join('And') : '';
 
   const queryField = `listBy${capitalize(pk)}${skName}`;
