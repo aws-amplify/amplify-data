@@ -39,8 +39,8 @@ describe('relational field required modifier', () => {
     it('references sets the references field value', () => {
       const field = a
         .belongsTo('Test')
-        .references('idFieldName') as InternalRelationalField;
-      expect(field.data.references).toBe('idFieldName');
+        .references(['idFieldName']) as InternalRelationalField;
+      expect(field.data.references).toEqual(['idFieldName']);
     });
   });
 
@@ -79,8 +79,8 @@ describe('relational field required modifier', () => {
     it('references sets the reference field value', () => {
       const field = a
         .hasOne('Test')
-        .references('idFieldName') as InternalRelationalField;
-      expect(field.data.references).toBe('idFieldName');
+        .references(['idFieldName']) as InternalRelationalField;
+      expect(field.data.references).toEqual(['idFieldName']);
     });
   });
 
@@ -127,8 +127,8 @@ describe('relational field required modifier', () => {
     it('references sets the reference field value', () => {
       const field = a
         .hasMany('Test')
-        .references('idFieldName') as InternalRelationalField;
-      expect(field.data.references).toBe('idFieldName');
+        .references(['idFieldName']) as InternalRelationalField;
+      expect(field.data.references).toEqual(['idFieldName']);
     });
   });
 
@@ -183,7 +183,7 @@ describe('relational field required modifier', () => {
         const field = a
           .manyToMany('Test', { relationName: 'Test' })
           // @ts-expect-error
-          .references('idFieldName') as InternalRelationalField;
+          .references(['idFieldName']) as InternalRelationalField;
       }).toThrow();
     });
   });

@@ -27,7 +27,7 @@ type ModelRelationalFieldData = {
   valueRequired: boolean;
   arrayRequired: boolean;
   relationName?: string;
-  references?: string;
+  references?: string[];
   authorization: Authorization<any, any, any>[];
 };
 
@@ -37,7 +37,7 @@ export type ModelRelationalFieldParamShape = {
   relatedModel: string;
   array: boolean;
   valueRequired: boolean;
-  references?: string;
+  references?: string[];
   arrayRequired: boolean;
   relationName?: string;
 };
@@ -59,9 +59,9 @@ type ModelRelationalFieldFunctions<
    * Reference sets the foreign key on which to establish the relationship
    */
   references(
-    references: string,
+    references: string[],
   ): ModelRelationalField<
-    SetTypeSubArg<T, 'references', string>,
+    SetTypeSubArg<T, 'references', string[]>,
     K | 'references'
   >;
   /**
@@ -179,7 +179,7 @@ function _modelRelationalField<
 
       return this;
     },
-    references(references: string) {
+    references(references: string[]) {
       data.references = references;
 
       return this;
@@ -221,7 +221,7 @@ export type ModelRelationalTypeArgFactory<
   valueRequired: false;
   arrayRequired: false;
   relationName: RelationName;
-  references: string;
+  references: string[];
 };
 
 /**
