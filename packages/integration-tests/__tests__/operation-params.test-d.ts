@@ -308,3 +308,25 @@ describe('Basic operations', () => {
     });
   });
 });
+
+describe('Custom operations', () => {
+  const schema = a.schema({
+    EchoResult: a.customType({
+      content: a.string(),
+    }),
+    echo: a
+      .query()
+      .arguments({ content: a.string() })
+      .returns(a.ref('EchoResult'))
+      .function('echoFunction')
+      .authorization([a.allow.public()]),
+  });
+
+  type Schema = ClientSchema<typeof schema>;
+
+  const client = generateClient<Schema>();
+
+  test('something', async () => {
+    // client.
+  });
+});

@@ -1,5 +1,27 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`custom operations custom mutation 1`] = `
+"type LikePostResult 
+{
+  likes: Int!
+}
+
+type Mutation {
+  likePost(postId: String!): LikePostResult @function(name: "likePost") @auth(rules: [{allow: public}])
+}"
+`;
+
+exports[`custom operations custom query 1`] = `
+"type EchoResult 
+{
+  resultContent: String
+}
+
+type Query {
+  echo(inputContent: String!): EchoResult @function(name: "echoFunction") @auth(rules: [{allow: public}])
+}"
+`;
+
 exports[`schema auth rules allows custom 1`] = `
 {
   "functionSlots": [],

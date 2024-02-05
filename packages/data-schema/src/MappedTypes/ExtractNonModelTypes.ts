@@ -25,7 +25,6 @@ export type ExtractNonModelTypes<Schema> = ResolveRefs<
 type ResolveRefs<Shape extends NonModelTypesShape> = {
   enums: Shape['enums'];
   customTypes: Shape['customTypes'];
-  customOperationsRaw: Shape['customOperations'];
   customOperations: {
     [OpName in keyof Shape['customOperations']]: Omit<
       Shape['customOperations'][OpName],

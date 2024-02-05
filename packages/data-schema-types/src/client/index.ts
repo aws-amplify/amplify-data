@@ -720,6 +720,92 @@ export type ModelTypes<
     : never;
 };
 
+export type CustomQueries<
+  Schema extends Record<any, any>,
+  Context extends ContextType = 'CLIENT',
+  ModelMeta extends Record<any, any> = ExtractModelMeta<Schema>,
+> = {
+  [OpName in keyof ModelMeta['customOperations']]: {
+    CLIENT: (
+      input: ModelMeta['customOperations'][OpName]['arguments'],
+      options?: {
+        // selectionSet?: SelectionSet;
+        authMode?: AuthMode;
+        authToken?: string;
+        headers?: CustomHeaders;
+      },
+    ) => SingularReturnValue<
+      ModelMeta['customOperations'][OpName]['returnType']
+    >;
+    COOKIES: (
+      input: ModelMeta['customOperations'][OpName]['arguments'],
+      options?: {
+        // selectionSet?: SelectionSet;
+        authMode?: AuthMode;
+        authToken?: string;
+        headers?: CustomHeaders;
+      },
+    ) => SingularReturnValue<
+      ModelMeta['customOperations'][OpName]['returnType']
+    >;
+    REQUEST: (
+      contextSpec: any,
+      input: ModelMeta['customOperations'][OpName]['arguments'],
+      options?: {
+        // selectionSet?: SelectionSet;
+        authMode?: AuthMode;
+        authToken?: string;
+        headers?: CustomHeaders;
+      },
+    ) => SingularReturnValue<
+      ModelMeta['customOperations'][OpName]['returnType']
+    >;
+  }[Context];
+};
+
+export type CustomMutations<
+  Schema extends Record<any, any>,
+  Context extends ContextType = 'CLIENT',
+  ModelMeta extends Record<any, any> = ExtractModelMeta<Schema>,
+> = {
+  [OpName in keyof ModelMeta['customOperations']]: {
+    CLIENT: (
+      input: ModelMeta['customOperations'][OpName]['arguments'],
+      options?: {
+        // selectionSet?: SelectionSet;
+        authMode?: AuthMode;
+        authToken?: string;
+        headers?: CustomHeaders;
+      },
+    ) => SingularReturnValue<
+      ModelMeta['customOperations'][OpName]['returnType']
+    >;
+    COOKIES: (
+      input: ModelMeta['customOperations'][OpName]['arguments'],
+      options?: {
+        // selectionSet?: SelectionSet;
+        authMode?: AuthMode;
+        authToken?: string;
+        headers?: CustomHeaders;
+      },
+    ) => SingularReturnValue<
+      ModelMeta['customOperations'][OpName]['returnType']
+    >;
+    REQUEST: (
+      contextSpec: any,
+      input: ModelMeta['customOperations'][OpName]['arguments'],
+      options?: {
+        // selectionSet?: SelectionSet;
+        authMode?: AuthMode;
+        authToken?: string;
+        headers?: CustomHeaders;
+      },
+    ) => SingularReturnValue<
+      ModelMeta['customOperations'][OpName]['returnType']
+    >;
+  }[Context];
+};
+
 /**
  * Request options that are passed to custom header functions.
  * `method` and `headers` are not included in custom header functions passed to
