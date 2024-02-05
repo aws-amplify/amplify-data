@@ -1,5 +1,11 @@
 # @aws-amplify/data-schema-types
 
+## 0.7.0
+
+### Minor Changes
+
+- fdf446c: secondary index client types
+
 ## 0.6.12
 
 ### Patch Changes
