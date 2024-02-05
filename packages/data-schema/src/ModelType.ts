@@ -38,16 +38,11 @@ type ModelData = {
   authorization: Authorization<any, any, any>[];
 };
 
-type DatabaseEngine = {
-  engine: 'mysql' | 'ddb' | 'aurora' | 'postgres';
-};
-
 type InternalModelData = ModelData & {
   fields: InternalModelFields;
   identifier: string[];
   secondaryIndexes: ReadonlyArray<InternalModelIndexType>;
   authorization: Authorization<any, any, any>[];
-  databaseEngine: DatabaseEngine;
 };
 
 export type ModelTypeParamShape = {
@@ -241,7 +236,7 @@ function _model<T extends ModelTypeParamShape>(fields: T['fields']) {
 }
 
 /**
- * A data model that creates a matching Amazon database engine (defaults to DynamoDB) table and provides create, read (list and get), update,
+ * A data model that creates a matching Amazon DynamoDB table and provides create, read (list and get), update,
  * delete, and subscription APIs.
  *
  * @param fields database table fields. Supports scalar types and relationship types.
