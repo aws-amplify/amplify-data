@@ -16,17 +16,11 @@ bench('p50', () => {
         email: a.email().authorization([a.allow.owner()]),
         phone: a.phone().authorization([a.allow.owner()]),
         website: a.url(),
-        // [Field-level authorization rule]
-        // This auth rule will be used for the "ssn" field
-        // All other fields will use the model-level auth rule
         ssn: a.string().authorization([a.allow.owner()]),
         todos: a.hasMany('Todo'),
         posts: a.hasMany('Post'),
-        // [Model-level authorization rule]
       })
       .authorization([a.allow.private().to(['read']), a.allow.owner()]),
-    // Because no model-level authorization rule is present
-    // this model will use the global authorization rule.
     Todo: a
       .model({
         todoId: a.id().required(),
@@ -36,13 +30,11 @@ bench('p50', () => {
         complete: a.boolean(),
         employee: a.belongsTo('Employee'),
       })
-      // Composite identifier
       .identifier(['todoId', 'name']),
     Post: a
       .model({
         name: a.string().default('My new Post'),
         notes: a.string().array(),
-        // Custom type
         location: a.customType({
           lat: a.float(),
           long: a.float(),
@@ -51,14 +43,7 @@ bench('p50', () => {
         lastViewedTime: a.time(),
         employee: a.belongsTo('Employee'),
       })
-      .authorization([
-        // Allow anyone auth'd with an API key to read everyone's posts.
-        a.allow.public().to(['read']),
-        // Allow signed-in user to create, read, update,
-        // and delete their __OWN__ posts.
-        a.allow.owner(),
-      ]),
-    // [Global authorization rule]
+      .authorization([a.allow.public().to(['read']), a.allow.owner()]),
   }).authorization([a.allow.public()]);
 }).types([20578, 'instantiations']);
 
@@ -71,17 +56,11 @@ bench('p50 w/ client types', () => {
           email: a.email().authorization([a.allow.owner()]),
           phone: a.phone().authorization([a.allow.owner()]),
           website: a.url(),
-          // [Field-level authorization rule]
-          // This auth rule will be used for the "ssn" field
-          // All other fields will use the model-level auth rule
           ssn: a.string().authorization([a.allow.owner()]),
           todos: a.hasMany('Todo'),
           posts: a.hasMany('Post'),
-          // [Model-level authorization rule]
         })
         .authorization([a.allow.private().to(['read']), a.allow.owner()]),
-      // Because no model-level authorization rule is present
-      // this model will use the global authorization rule.
       Todo: a
         .model({
           todoId: a.id().required(),
@@ -91,13 +70,11 @@ bench('p50 w/ client types', () => {
           complete: a.boolean(),
           employee: a.belongsTo('Employee'),
         })
-        // Composite identifier
         .identifier(['todoId', 'name']),
       Post: a
         .model({
           name: a.string().default('My new Post'),
           notes: a.string().array(),
-          // Custom type
           location: a.customType({
             lat: a.float(),
             long: a.float(),
@@ -106,14 +83,7 @@ bench('p50 w/ client types', () => {
           lastViewedTime: a.time(),
           employee: a.belongsTo('Employee'),
         })
-        .authorization([
-          // Allow anyone auth'd with an API key to read everyone's posts.
-          a.allow.public().to(['read']),
-          // Allow signed-in user to create, read, update,
-          // and delete their __OWN__ posts.
-          a.allow.owner(),
-        ]),
-      // [Global authorization rule]
+        .authorization([a.allow.public().to(['read']), a.allow.owner()]),
     })
     .authorization([a.allow.public()]);
 

@@ -9,23 +9,19 @@ bench('baseline', () => {}).types([0, 'instantiations']);
  * with 10 fields each, 80% of models contain connections, with a mix of auth
  * rules and identifiers.
  */
-bench('production-level p50', () => {
+bench('prod p50', () => {
   a.schema({
-    // Enum:
     PrivacySetting: a.enum(['PRIVATE', 'FRIENDS_ONLY', 'PUBLIC']),
     FulfillmentStatus: a.enum(['PENDING', 'SHIPPED', 'DELIVERED']),
-    // Model #1:
     Company: a
       .model({
         id: a.id().required(),
         name: a.string().required(),
-        // [Field-level authorization rule]
         phone: a
           .phone()
           .required()
           .authorization([a.allow.private().to(['read']), a.allow.owner()]),
         website: a.url(),
-        // [Field-level authorization rule]
         privateIdentifier: a
           .string()
           .required()
@@ -40,8 +36,6 @@ bench('production-level p50', () => {
           lat: a.float().required(),
           long: a.float().required(),
         }),
-        // [Model-level authorization rule]. Signed in users can read, owners
-        // can read and write.
       })
       .authorization([a.allow.private().to(['read']), a.allow.owner()]),
     // Model #2:
@@ -55,16 +49,11 @@ bench('production-level p50', () => {
           .required()
           .authorization([a.allow.private().to(['read']), a.allow.owner()]),
         website: a.url(),
-        // [Field-level authorization rule]
-        // This auth rule will be used for the "ssn" field
-        // All other fields will use the model-level auth rule
         ssn: a.string().required().authorization([a.allow.owner()]),
         company: a.belongsTo('Company'),
         todos: a.hasMany('Todo'),
         posts: a.hasMany('Post'),
         tasks: a.hasMany('Task'),
-        // Composite identifier
-        // [Model-level authorization rule]
       })
       .identifier(['employeeId', 'name'])
       .authorization([a.allow.private().to(['read']), a.allow.owner()]),
@@ -125,9 +114,7 @@ bench('production-level p50', () => {
           .phone()
           .required()
           .authorization([
-            // only admins can read phone numbers
             a.allow.specificGroup('Admin').to(['read']),
-            // only owners can read and write phone numbers
             a.allow.owner(),
           ]),
         // Customers can shop at many companies:
@@ -138,11 +125,9 @@ bench('production-level p50', () => {
         textField1: a.string(),
         textField2: a.string(),
         textField3: a.string(),
-      }) // Composite identifier
+      })
       .identifier(['customerId', 'name']),
     // Model #7:
-    // Because no model-level authorization rule is present
-    // this model will use the global authorization rule.
     Todo: a
       .model({
         todoId: a.id().required(),
@@ -156,14 +141,12 @@ bench('production-level p50', () => {
         textField3: a.string(),
         textField4: a.string(),
       })
-      // Composite identifier
       .identifier(['todoId', 'name']),
     // Model #8:
     Post: a
       .model({
         name: a.string().default('My new Post'),
         notes: a.string().array(),
-        // Custom type
         location: a.customType({
           lat: a.float().required(),
           long: a.float().required(),
@@ -176,13 +159,7 @@ bench('production-level p50', () => {
         textField2: a.string(),
         textField3: a.string(),
       })
-      .authorization([
-        // Allow anyone auth'd with an API key to read everyone's posts.
-        a.allow.public().to(['read']),
-        // Allow signed-in user to create, read, update,
-        // and delete their __OWN__ posts.
-        a.allow.owner(),
-      ]),
+      .authorization([a.allow.public().to(['read']), a.allow.owner()]),
     // Model #9:
     Task: a.model({
       name: a.string().required(),
@@ -279,13 +256,11 @@ bench('production-level p50', () => {
       .model({
         id: a.id().required(),
         name: a.string().required(),
-        // [Field-level authorization rule]
         phone: a
           .phone()
           .required()
           .authorization([a.allow.private().to(['read']), a.allow.owner()]),
         website: a.url(),
-        // [Field-level authorization rule]
         privateIdentifier: a
           .string()
           .required()
@@ -300,8 +275,6 @@ bench('production-level p50', () => {
           lat: a.float().required(),
           long: a.float().required(),
         }),
-        // [Model-level authorization rule]. Signed in users can read, owners
-        // can read and write.
       })
       .authorization([a.allow.private().to(['read']), a.allow.owner()]),
     // Model #15:
@@ -315,16 +288,11 @@ bench('production-level p50', () => {
           .required()
           .authorization([a.allow.private().to(['read']), a.allow.owner()]),
         website: a.url(),
-        // [Field-level authorization rule]
-        // This auth rule will be used for the "ssn" field
-        // All other fields will use the model-level auth rule
         ssn: a.string().required().authorization([a.allow.owner()]),
         company: a.belongsTo('Company2'),
         todos: a.hasMany('Todo2'),
         posts: a.hasMany('Post2'),
         tasks: a.hasMany('Task2'),
-        // Composite identifier
-        // [Model-level authorization rule]
       })
       .identifier(['employeeId', 'name'])
       .authorization([a.allow.private().to(['read']), a.allow.owner()]),
@@ -385,9 +353,7 @@ bench('production-level p50', () => {
           .phone()
           .required()
           .authorization([
-            // only admins can read phone numbers
             a.allow.specificGroup('Admin2').to(['read']),
-            // only owners can read and write phone numbers
             a.allow.owner(),
           ]),
         // Customers can shop at many companies:
@@ -398,11 +364,9 @@ bench('production-level p50', () => {
         textField1: a.string(),
         textField2: a.string(),
         textField3: a.string(),
-      }) // Composite identifier
+      })
       .identifier(['customerId', 'name']),
     // Model #20:
-    // Because no model-level authorization rule is present
-    // this model will use the global authorization rule.
     Todo2: a
       .model({
         todoId: a.id().required(),
@@ -416,14 +380,12 @@ bench('production-level p50', () => {
         textField3: a.string(),
         textField4: a.string(),
       })
-      // Composite identifier
       .identifier(['todoId', 'name']),
     // Model #21:
     Post2: a
       .model({
         name: a.string().default('My new Post'),
         notes: a.string().array(),
-        // Custom type
         location: a.customType({
           lat: a.float().required(),
           long: a.float().required(),
@@ -436,13 +398,7 @@ bench('production-level p50', () => {
         textField2: a.string(),
         textField3: a.string(),
       })
-      .authorization([
-        // Allow anyone auth'd with an API key to read everyone's posts.
-        a.allow.public().to(['read']),
-        // Allow signed-in user to create, read, update,
-        // and delete their __OWN__ posts.
-        a.allow.owner(),
-      ]),
+      .authorization([a.allow.public().to(['read']), a.allow.owner()]),
     // Model #22:
     Model22: a
       .model({
@@ -539,24 +495,20 @@ bench('production-level p50', () => {
   }).authorization([a.allow.public()]);
 }).types([54314, 'instantiations']);
 
-bench('production-level p50 w/ client types', () => {
+bench('prod p50 w/ client types', () => {
   const s = a
     .schema({
-      // Enum:
       PrivacySetting: a.enum(['PRIVATE', 'FRIENDS_ONLY', 'PUBLIC']),
       FulfillmentStatus: a.enum(['PENDING', 'SHIPPED', 'DELIVERED']),
-      // Model #1:
       Company: a
         .model({
           id: a.id().required(),
           name: a.string().required(),
-          // [Field-level authorization rule]
           phone: a
             .phone()
             .required()
             .authorization([a.allow.private().to(['read']), a.allow.owner()]),
           website: a.url(),
-          // [Field-level authorization rule]
           privateIdentifier: a
             .string()
             .required()
@@ -571,8 +523,6 @@ bench('production-level p50 w/ client types', () => {
             lat: a.float().required(),
             long: a.float().required(),
           }),
-          // [Model-level authorization rule]. Signed in users can read, owners
-          // can read and write.
         })
         .authorization([a.allow.private().to(['read']), a.allow.owner()]),
       // Model #2:
@@ -586,16 +536,11 @@ bench('production-level p50 w/ client types', () => {
             .required()
             .authorization([a.allow.private().to(['read']), a.allow.owner()]),
           website: a.url(),
-          // [Field-level authorization rule]
-          // This auth rule will be used for the "ssn" field
-          // All other fields will use the model-level auth rule
           ssn: a.string().required().authorization([a.allow.owner()]),
           company: a.belongsTo('Company'),
           todos: a.hasMany('Todo'),
           posts: a.hasMany('Post'),
           tasks: a.hasMany('Task'),
-          // Composite identifier
-          // [Model-level authorization rule]
         })
         .identifier(['employeeId', 'name'])
         .authorization([a.allow.private().to(['read']), a.allow.owner()]),
@@ -656,9 +601,7 @@ bench('production-level p50 w/ client types', () => {
             .phone()
             .required()
             .authorization([
-              // only admins can read phone numbers
               a.allow.specificGroup('Admin').to(['read']),
-              // only owners can read and write phone numbers
               a.allow.owner(),
             ]),
           // Customers can shop at many companies:
@@ -669,11 +612,9 @@ bench('production-level p50 w/ client types', () => {
           textField1: a.string(),
           textField2: a.string(),
           textField3: a.string(),
-        }) // Composite identifier
+        })
         .identifier(['customerId', 'name']),
       // Model #7:
-      // Because no model-level authorization rule is present
-      // this model will use the global authorization rule.
       Todo: a
         .model({
           todoId: a.id().required(),
@@ -687,14 +628,12 @@ bench('production-level p50 w/ client types', () => {
           textField3: a.string(),
           textField4: a.string(),
         })
-        // Composite identifier
         .identifier(['todoId', 'name']),
       // Model #8:
       Post: a
         .model({
           name: a.string().default('My new Post'),
           notes: a.string().array(),
-          // Custom type
           location: a.customType({
             lat: a.float().required(),
             long: a.float().required(),
@@ -707,13 +646,7 @@ bench('production-level p50 w/ client types', () => {
           textField2: a.string(),
           textField3: a.string(),
         })
-        .authorization([
-          // Allow anyone auth'd with an API key to read everyone's posts.
-          a.allow.public().to(['read']),
-          // Allow signed-in user to create, read, update,
-          // and delete their __OWN__ posts.
-          a.allow.owner(),
-        ]),
+        .authorization([a.allow.public().to(['read']), a.allow.owner()]),
       // Model #9:
       Task: a.model({
         name: a.string().required(),
@@ -810,13 +743,11 @@ bench('production-level p50 w/ client types', () => {
         .model({
           id: a.id().required(),
           name: a.string().required(),
-          // [Field-level authorization rule]
           phone: a
             .phone()
             .required()
             .authorization([a.allow.private().to(['read']), a.allow.owner()]),
           website: a.url(),
-          // [Field-level authorization rule]
           privateIdentifier: a
             .string()
             .required()
@@ -831,8 +762,6 @@ bench('production-level p50 w/ client types', () => {
             lat: a.float().required(),
             long: a.float().required(),
           }),
-          // [Model-level authorization rule]. Signed in users can read, owners
-          // can read and write.
         })
         .authorization([a.allow.private().to(['read']), a.allow.owner()]),
       // Model #15:
@@ -846,16 +775,11 @@ bench('production-level p50 w/ client types', () => {
             .required()
             .authorization([a.allow.private().to(['read']), a.allow.owner()]),
           website: a.url(),
-          // [Field-level authorization rule]
-          // This auth rule will be used for the "ssn" field
-          // All other fields will use the model-level auth rule
           ssn: a.string().required().authorization([a.allow.owner()]),
           company: a.belongsTo('Company2'),
           todos: a.hasMany('Todo2'),
           posts: a.hasMany('Post2'),
           tasks: a.hasMany('Task2'),
-          // Composite identifier
-          // [Model-level authorization rule]
         })
         .identifier(['employeeId', 'name'])
         .authorization([a.allow.private().to(['read']), a.allow.owner()]),
@@ -916,9 +840,7 @@ bench('production-level p50 w/ client types', () => {
             .phone()
             .required()
             .authorization([
-              // only admins can read phone numbers
               a.allow.specificGroup('Admin2').to(['read']),
-              // only owners can read and write phone numbers
               a.allow.owner(),
             ]),
           // Customers can shop at many companies:
@@ -929,11 +851,9 @@ bench('production-level p50 w/ client types', () => {
           textField1: a.string(),
           textField2: a.string(),
           textField3: a.string(),
-        }) // Composite identifier
+        })
         .identifier(['customerId', 'name']),
       // Model #20:
-      // Because no model-level authorization rule is present
-      // this model will use the global authorization rule.
       Todo2: a
         .model({
           todoId: a.id().required(),
@@ -947,14 +867,12 @@ bench('production-level p50 w/ client types', () => {
           textField3: a.string(),
           textField4: a.string(),
         })
-        // Composite identifier
         .identifier(['todoId', 'name']),
       // Model #21:
       Post2: a
         .model({
           name: a.string().default('My new Post'),
           notes: a.string().array(),
-          // Custom type
           location: a.customType({
             lat: a.float().required(),
             long: a.float().required(),
@@ -967,13 +885,7 @@ bench('production-level p50 w/ client types', () => {
           textField2: a.string(),
           textField3: a.string(),
         })
-        .authorization([
-          // Allow anyone auth'd with an API key to read everyone's posts.
-          a.allow.public().to(['read']),
-          // Allow signed-in user to create, read, update,
-          // and delete their __OWN__ posts.
-          a.allow.owner(),
-        ]),
+        .authorization([a.allow.public().to(['read']), a.allow.owner()]),
       // Model #22:
       Model22: a
         .model({
