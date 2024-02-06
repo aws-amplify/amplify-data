@@ -93,17 +93,27 @@ AWS Console for this stack. Caused By: ❌ Deployment failed: Error: The stack n
 The current workaround is to update the schema iteratively, and waiting for each
 deployment to succeed before updating the schema.
 
-## Benchmark values (w/ client types) 2/5/2024:
+## Benchmark values as of 2/5/2024:
 
-| Schema Benchmark                 | Instantiations |
-| -------------------------------- | -------------- |
-| p50                              | 460,912        |
-| p50 (prod)                       | 4,539,404      |
-| ---                              | ---            |
-| p99 (tall, complex)              | 8,919,415      |
-| p99 (tall, simple)               | 8,339,803      |
-| p99 (wide large)                 | 9,867,387      |
-| ---                              | ---            |
-| p99 (within limit - tall simple) | 2,573,418      |
-| p99 (within limit - wide large   | 8,152,084      |
-| P99 (within limit - wide small)  | 800,034        |
+### p50
+
+| Schema Benchmark | Instantiations | Instantiations (w/ client types) |
+| ---------------- | -------------- | -------------------------------- |
+| p50              | 20,578         | 460,912                          |
+| p50 (prod)       | 54,314         | 4,539,404                        |
+
+### p99 ("over limit")
+
+| Schema Benchmark    | Instantiations | Instantiations (w/ client types) |
+| ------------------- | -------------- | -------------------------------- |
+| p99 (tall, complex) | 467,767        | 8,919,415                        |
+| p99 (tall, simple)  | 928,191        | 8,339,803                        |
+| p99 (wide, large)   | 24,712         | 9,867,387                        |
+
+### p99 ("within limit")
+
+| Schema Benchmark   | Instantiations | Instantiations (w/ client types) |
+| ------------------ | -------------- | -------------------------------- |
+| p99 (tall, simple) | 48,415         | 2,573,418                        |
+| p99 (wide, large   | 19,231         | 8,152,084                        |
+| P99 (wide, small)  | 3,423          | 800,034                          |
