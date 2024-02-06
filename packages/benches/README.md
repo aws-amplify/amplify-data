@@ -36,7 +36,7 @@ Note: Schemas are hardcoded (i.e. not generated with loops) because loops are:
 - not representative of real-world performance (dynamically generated schema
   benchmarks do not match "hard-coded" schemas.
 
-### P50
+### p50
 
 - `p50` schemas were designed to match guidance from our Product team around
   the estimated size and complexity of typical `p50` schemas. There are two
@@ -50,9 +50,9 @@ Note: Schemas are hardcoded (i.e. not generated with loops) because loops are:
   with 10 fields each, 80% of models contain connections, with a mix of auth
   rules and identifiers.
 
-### P10
+### p99
 
-- `p10` schemas were designed to match high-level AppSync schema-size metrics
+- `p99` schemas were designed to match high-level AppSync schema-size metrics
   (i.e. real-world, production-level schema sizes).
 - There are several permutations of large, production-level schemas. Permutations
   include "tall" schemas (many models with fewer fields), and "wide" schemas
@@ -100,10 +100,10 @@ deployment to succeed before updating the schema.
 | p50                              | 460,912        |
 | p50 (prod)                       | 4,539,404      |
 | ---                              | ---            |
-| p10 (tall, complex)              | 8,919,415      |
-| p10 (tall, simple)               | 8,339,803      |
-| p10 (wide large)                 | 9,867,387      |
+| p99 (tall, complex)              | 8,919,415      |
+| p99 (tall, simple)               | 8,339,803      |
+| p99 (wide large)                 | 9,867,387      |
 | ---                              | ---            |
-| p10 (within limit - tall simple) | 2,573,418      |
-| p10 (within limit - wide large   | 8,152,084      |
-| P10 (within limit - wide small)  | 800,034        |
+| p99 (within limit - tall simple) | 2,573,418      |
+| p99 (within limit - wide large   | 8,152,084      |
+| P99 (within limit - wide small)  | 800,034        |
