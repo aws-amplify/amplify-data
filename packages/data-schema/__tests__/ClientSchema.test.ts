@@ -77,25 +77,20 @@ describe('schema generation', () => {
             'CPKReciprocalHasManyChildIdFieldA',
             'CPKReciprocalHasManyChildIdFieldB',
           ]),
-        ReferencedBoringParent: a
-          .model({
-            childNormal: a
-              .hasOne('ReferencedBoringChild')
-              .references(['bcRefId']),
-            childReciprocal: a
-              .hasOne('ReferencedBoringReciprocalChild')
-              .references(['brcRefId']),
-            childHasManyNormal: a
-              .hasMany('ReferencedBoringHasManyChild')
-              .references(['bhmRefId']),
-          })
-          .addRelationships({
-            // Including one relationship into the curried addRelationships
-            //  context as a demonstration of the behavior
-            childHasManyReciprocal: a
-              .hasMany('ReferencedReciprocalHasManyChild')
-              .references(['rrhmRefId']),
-          }),
+        ReferencedBoringParent: a.model({
+          childNormal: a
+            .hasOne('ReferencedBoringChild')
+            .references(['bcRefId']),
+          childReciprocal: a
+            .hasOne('ReferencedBoringReciprocalChild')
+            .references(['brcRefId']),
+          childHasManyNormal: a
+            .hasMany('ReferencedBoringHasManyChild')
+            .references(['bhmRefId']),
+          childHasManyReciprocal: a
+            .hasMany('ReferencedReciprocalHasManyChild')
+            .references(['rrhmRefId']),
+        }),
         ReferencedBoringChild: a.model({
           bcRefId: a.string(),
           value: a.string(),
