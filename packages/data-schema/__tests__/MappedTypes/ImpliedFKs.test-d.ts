@@ -251,6 +251,7 @@ describe('Denormalized mapped type', () => {
         valueRequired: false;
         arrayRequired: false;
         relationName: undefined;
+        references: string[];
       };
       relatedModel: 'BoringChild';
       relationshipType: ModelRelationshipTypes.hasOne;
@@ -303,6 +304,7 @@ describe('Denormalized mapped type', () => {
             valueRequired: false;
             arrayRequired: false;
             relationName: undefined;
+            references: string[];
           };
           relatedModel: 'MultiChild';
           relationshipType: ModelRelationshipTypes.hasMany;
@@ -321,6 +323,7 @@ describe('Denormalized mapped type', () => {
             valueRequired: false;
             arrayRequired: false;
             relationName: undefined;
+            references: string[];
           };
           relatedModel: 'MultiChild';
           relationshipType: ModelRelationshipTypes.hasMany;
@@ -339,6 +342,7 @@ describe('Denormalized mapped type', () => {
             valueRequired: false;
             arrayRequired: false;
             relationName: undefined;
+            references: string[];
           };
           relatedModel: 'MultiChild';
           relationshipType: ModelRelationshipTypes.hasMany;

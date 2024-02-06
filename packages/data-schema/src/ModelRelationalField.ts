@@ -27,6 +27,7 @@ type ModelRelationalFieldData = {
   valueRequired: boolean;
   arrayRequired: boolean;
   relationName?: string;
+  references?: string[];
   authorization: Authorization<any, any, any>[];
 };
 
@@ -36,6 +37,7 @@ export type ModelRelationalFieldParamShape = {
   relatedModel: string;
   array: boolean;
   valueRequired: boolean;
+  references?: string[];
   arrayRequired: boolean;
   relationName?: string;
 };
@@ -52,6 +54,15 @@ type ModelRelationalFieldFunctions<
   valueRequired(): ModelRelationalField<
     SetTypeSubArg<T, 'valueRequired', true>,
     K | 'valueRequired'
+  >;
+  /**
+   * Reference sets the foreign key on which to establish the relationship
+   */
+  references(
+    references: string[],
+  ): ModelRelationalField<
+    SetTypeSubArg<T, 'references', string[]>,
+    K | 'references'
   >;
   /**
    * When set, it requires the relationship to always return a value
@@ -106,6 +117,7 @@ const relationalModifiers = [
   'required',
   'arrayRequired',
   'valueRequired',
+  'references',
   'authorization',
 ] as const;
 
@@ -113,9 +125,9 @@ const relationModifierMap: Record<
   `${ModelRelationshipTypes}`,
   (typeof relationalModifiers)[number][]
 > = {
-  belongsTo: ['authorization'],
-  hasMany: ['arrayRequired', 'valueRequired', 'authorization'],
-  hasOne: ['required', 'authorization'],
+  belongsTo: ['authorization', 'references'],
+  hasMany: ['arrayRequired', 'valueRequired', 'authorization', 'references'],
+  hasOne: ['required', 'authorization', 'references'],
   manyToMany: ['arrayRequired', 'valueRequired', 'authorization'],
 };
 
@@ -128,7 +140,7 @@ export type RelationTypeFunctionOmitMapping<
     : Type extends ModelRelationshipTypes.hasOne
       ? 'arrayRequired' | 'valueRequired'
       : Type extends ModelRelationshipTypes.manyToMany
-        ? 'required'
+        ? 'required' | 'references'
         : never;
 
 function _modelRelationalField<
@@ -143,6 +155,7 @@ function _modelRelationalField<
     array: false,
     valueRequired: false,
     arrayRequired: false,
+    references: undefined,
     relationName,
     authorization: [],
   };
@@ -163,6 +176,11 @@ function _modelRelationalField<
     },
     valueRequired() {
       data.valueRequired = true;
+
+      return this;
+    },
+    references(references: string[]) {
+      data.references = references;
 
       return this;
     },
@@ -203,6 +221,7 @@ export type ModelRelationalTypeArgFactory<
   valueRequired: false;
   arrayRequired: false;
   relationName: RelationName;
+  references: string[];
 };
 
 /**
