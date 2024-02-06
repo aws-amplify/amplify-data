@@ -717,6 +717,32 @@ export type ModelTypes<
 };
 
 /**
+ * The utility type that is used to infer the type (interface) of the generated
+ * `client.enums` property.
+ * 
+ * @example
+ * // The schema:
+ * {
+ *   TodoStatus: a.enum(['Planned' | 'InProgress' | 'Completed']),
+ * }
+ * 
+ * // The inferred interface of the `client.enums`:
+ * {
+ *   TodoStatus: {
+ *     values: () => Array<'Planned' | 'InProgress' | 'Completed'>;
+ *   }
+ * }
+ */
+export type EnumTypes<
+  Schema extends Record<any, any>,
+  ModelMeta extends Record<any, any> = ExtractModelMeta<Schema>,
+> = {
+  [EnumName in keyof ModelMeta['enums']]: {
+    values: () => Array<ModelMeta['enums'][EnumName]>;
+  };
+};
+
+/**
  * Request options that are passed to custom header functions.
  * `method` and `headers` are not included in custom header functions passed to
  * subscriptions.
