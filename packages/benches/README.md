@@ -84,8 +84,10 @@ https://github.com/aws-amplify/amplify-category-api/issues/2189
 When working with large schemas it is common to get throttled by CloudFormation:
 
 ```bash
-The CloudFormation deployment has failed. Find more information in the CloudFormation AWS Console for this stack.
-Caused By: ❌ Deployment failed: Error: The stack named amplify-0201benchgen201-mcafd-sandbox-1066f876ad failed to deploy: UPDATE_ROLLBACK_COMPLETE: Received response status [FAILED] from custom resource. Message returned: Rate exceeded
+The CloudFormation deployment has failed. Find more information in the CloudFormation
+AWS Console for this stack. Caused By: ❌ Deployment failed: Error: The stack named
+[STACK NAME] failed to deploy: UPDATE_ROLLBACK_COMPLETE: Received response status
+[FAILED] from custom resource. Message returned: Rate exceeded
 ```
 
 The current workaround is to update the schema iteratively, and waiting for each
