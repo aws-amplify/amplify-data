@@ -133,7 +133,7 @@ describe('schema generation', () => {
       })
       .authorization([a.allow.public()]);
 
-    schema.data.types.LateReferencedBoringParent.addRelationships({
+    schema.models.LateReferencedBoringParent.addRelationships({
       childNormal: a
         .hasOne('LateReferencedBoringChild')
         .references(['bcRefId']),
@@ -148,11 +148,11 @@ describe('schema generation', () => {
         .references(['rrhmRefId']),
     });
 
-    schema.data.types.LateReferencedBoringReciprocalChild.addRelationships({
+    schema.models.LateReferencedBoringReciprocalChild.addRelationships({
       parent: a.belongsTo('ReferencedBoringParent').references(['brcRefId']),
     });
 
-    schema.data.types.LateReferencedReciprocalHasManyChild.addRelationships({
+    schema.models.LateReferencedReciprocalHasManyChild.addRelationships({
       parent: a.belongsTo('ReferencedBoringParent').references(['rrhmRefId']),
     });
 

@@ -25,6 +25,15 @@ describe('InternalModel casting', () => {
     internalModel.data;
   });
 
+  test('addRelationships invalid at model definition', () => {
+    const m = model({
+      title: string(),
+    });
+
+    // @ts-expect-error
+    const data = m.addRelationships({});
+  });
+
   test('ModelType with options can be cast to InternalModel', () => {
     const m = model({
       title: string().required(),
