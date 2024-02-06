@@ -156,6 +156,7 @@ function modelFieldToGql(fieldDef: ModelFieldDef) {
     relationName,
     valueRequired,
     arrayRequired,
+    references,
   } = fieldDef;
 
   let field = relatedModel;
@@ -172,7 +173,13 @@ function modelFieldToGql(fieldDef: ModelFieldDef) {
     field += '!';
   }
 
-  field += ` @${type}`;
+  if (references && Array.isArray(references) && references.length > 0) {
+    field += ` @${type}(references: [${references.map(
+      (s) => `"${String(s)}"`,
+    )}])`;
+  } else {
+    field += ` @${type}`;
+  }
 
   // TODO: accept other relationship options e.g. `fields`
   if (type === 'manyToMany') {

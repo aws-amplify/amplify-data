@@ -369,5 +369,59 @@ type CPKReciprocalHasManyChild @model @auth(rules: [{allow: public}])
   cPKParentChildHasManyReciprocalCPKParentIdFieldB: ID
   createdAt: AWSDateTime!
   updatedAt: AWSDateTime!
+}
+
+type ReferencedBoringParent @model @auth(rules: [{allow: public}])
+{
+  id: ID! @primaryKey
+  childNormal: ReferencedBoringChild @hasOne(references: ["bcRefId"])
+  childReciprocal: ReferencedBoringReciprocalChild @hasOne(references: ["brcRefId"])
+  childHasManyNormal: [ReferencedBoringHasManyChild] @hasMany(references: ["bhmRefId"])
+  childHasManyReciprocal: [ReferencedReciprocalHasManyChild] @hasMany(references: ["rrhmRefId"])
+  referencedBoringParentChildNormalId: ID
+  referencedBoringParentChildReciprocalId: ID
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
+}
+
+type ReferencedBoringChild @model @auth(rules: [{allow: public}])
+{
+  id: ID! @primaryKey
+  bcRefId: String
+  value: String
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
+}
+
+type ReferencedBoringReciprocalChild @model @auth(rules: [{allow: public}])
+{
+  id: ID! @primaryKey
+  brcRefId: String
+  parent: ReferencedBoringParent @belongsTo(references: ["brcRefId"])
+  value: String
+  referencedBoringReciprocalChildParentId: ID
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
+}
+
+type ReferencedBoringHasManyChild @model @auth(rules: [{allow: public}])
+{
+  id: ID! @primaryKey
+  bhmRefId: String
+  value: String
+  referencedBoringParentChildHasManyNormalId: ID
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
+}
+
+type ReferencedReciprocalHasManyChild @model @auth(rules: [{allow: public}])
+{
+  id: ID! @primaryKey
+  rrhmRefId: String
+  value: String
+  parent: ReferencedBoringParent @belongsTo(references: ["rrhmRefId"])
+  referencedBoringParentChildHasManyReciprocalId: ID
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
 }"
 `;

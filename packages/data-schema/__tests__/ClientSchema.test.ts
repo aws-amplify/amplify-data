@@ -77,6 +77,42 @@ describe('schema generation', () => {
             'CPKReciprocalHasManyChildIdFieldA',
             'CPKReciprocalHasManyChildIdFieldB',
           ]),
+        ReferencedBoringParent: a.model({
+          childNormal: a
+            .hasOne('ReferencedBoringChild')
+            .references(['bcRefId']),
+          childReciprocal: a
+            .hasOne('ReferencedBoringReciprocalChild')
+            .references(['brcRefId']),
+          childHasManyNormal: a
+            .hasMany('ReferencedBoringHasManyChild')
+            .references(['bhmRefId']),
+          childHasManyReciprocal: a
+            .hasMany('ReferencedReciprocalHasManyChild')
+            .references(['rrhmRefId']),
+        }),
+        ReferencedBoringChild: a.model({
+          bcRefId: a.string(),
+          value: a.string(),
+        }),
+        ReferencedBoringReciprocalChild: a.model({
+          brcRefId: a.string(),
+          parent: a
+            .belongsTo('ReferencedBoringParent')
+            .references(['brcRefId']),
+          value: a.string(),
+        }),
+        ReferencedBoringHasManyChild: a.model({
+          bhmRefId: a.string(),
+          value: a.string(),
+        }),
+        ReferencedReciprocalHasManyChild: a.model({
+          rrhmRefId: a.string(),
+          value: a.string(),
+          parent: a
+            .belongsTo('ReferencedBoringParent')
+            .references(['rrhmRefId']),
+        }),
       })
       .authorization([a.allow.public()]);
     expect(schema.transform().schema).toMatchSnapshot();
