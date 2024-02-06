@@ -1,5 +1,11 @@
 # @aws-amplify/data-schema
 
+## 0.13.1
+
+### Patch Changes
+
+- f2aa9f6: feat: Add model references
+
 ## 0.13.0
 
 ### Minor Changes
