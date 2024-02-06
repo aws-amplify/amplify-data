@@ -101,7 +101,11 @@ function _schema<T extends ModelSchemaParamShape>(types: T['types']) {
     return { data, transform } as any;
   };
 
-  return { data, transform, authorization } as ModelSchema<T>;
+  return {
+    data,
+    transform,
+    authorization,
+  } as ModelSchema<T>;
 }
 
 /**

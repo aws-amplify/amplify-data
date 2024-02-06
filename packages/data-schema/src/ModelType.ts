@@ -193,6 +193,12 @@ export type ModelType<
       K | 'authorization',
       ResolvedModelFields
     >;
+    addRelationships(
+      relationships: Record<
+        string,
+        ModelRelationalField<any, string, any, any>
+      >,
+    ): ModelType<T>;
   },
   K
 > &
@@ -227,6 +233,11 @@ function _model<T extends ModelTypeParamShape>(fields: T['fields']) {
     },
     authorization(rules) {
       data.authorization = rules;
+
+      return this;
+    },
+    addRelationships(relationships) {
+      data.fields = { ...data.fields, ...relationships };
 
       return this;
     },
