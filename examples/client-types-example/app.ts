@@ -1,5 +1,6 @@
 import { generateClient } from 'aws-amplify/api';
 import type { Schema } from './resource';
+
 const client = generateClient<Schema>();
 
 async function createPost() {
