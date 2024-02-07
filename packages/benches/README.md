@@ -36,6 +36,10 @@ Note: Schemas are hardcoded (i.e. not generated with loops) because loops are:
 - not representative of real-world performance (dynamically generated schema
   benchmarks do not match "hard-coded" schemas.
 
+Additionally, there is no way to re-use schema instantation (e.g. a helper function
+called by each benchmark to avoid repeating the schema in each test), as this
+changes the instantiation count output.
+
 ### p50
 
 - `p50` schemas were designed to match guidance from our Product team around
@@ -93,27 +97,37 @@ AWS Console for this stack. Caused By: ❌ Deployment failed: Error: The stack n
 The current workaround is to update the schema iteratively, and waiting for each
 deployment to succeed before updating the schema.
 
-## Benchmark values as of 2/5/2024:
+## Benchmark values as of 2/6/2024:
 
 ### p50
 
-| Schema Benchmark | Instantiations | Instantiations (w/ client types) |
-| ---------------- | -------------- | -------------------------------- |
-| p50              | 20,578         | 460,912                          |
-| p50 (prod)       | 54,314         | 4,539,404                        |
+| Schema Benchmark | Instantiations | w/ client types | w/ CRUDL  |
+| ---------------- | -------------- | --------------- | --------- |
+| p50              | 20,578         | 460,912         | 2,098,359 |
+| p50 (prod)       | 54,314         | 4,539,404       | 8,440,504 |
 
 ### p99 ("over limit")
 
-| Schema Benchmark    | Instantiations | Instantiations (w/ client types) |
-| ------------------- | -------------- | -------------------------------- |
-| p99 (tall, complex) | 467,767        | 8,919,415                        |
-| p99 (tall, simple)  | 928,191        | 8,339,803                        |
-| p99 (wide, large)   | 24,712         | 9,867,387                        |
+| Schema Benchmark    | Instantiations | w/ client types | w/ CRUDL |
+| ------------------- | -------------- | --------------- | -------- |
+| p99 (tall, complex) | 467,767        | 8,919,415       | TODO     |
+| p99 (tall, simple)  | 928,191        | 8,339,803       | TODO     |
+| p99 (wide, large)   | 24,712         | 9,867,387       | TODO     |
 
 ### p99 ("within limit")
 
-| Schema Benchmark   | Instantiations | Instantiations (w/ client types) |
-| ------------------ | -------------- | -------------------------------- |
-| p99 (tall, simple) | 48,415         | 2,573,418                        |
-| p99 (wide, large   | 19,231         | 8,152,084                        |
-| P99 (wide, small)  | 3,423          | 800,034                          |
+| Schema Benchmark   | Instantiations | w/ client types | w/ CRUDL |
+| ------------------ | -------------- | --------------- | -------- |
+| p99 (tall, simple) | 48,415         | 2,573,418       | TODO     |
+| p99 (wide, large)  | 19,231         | 8,152,084       | TODO     |
+| P99 (wide, small)  | 3,423          | 800,034         | TODO     |
+
+## Troubleshooting
+
+- Weird instantation values when running multiple operations at once when
+  working with large schemas? Perform the following:
+  1. restart the TS server,
+  2. only have one benchmark file open in the editor at a time, and
+  3. clear all the values in the `.types()` builder (**including the baseline**),
+  4. regenerate the benchmark, one operation at a time, to ensure the values are
+     accurate.
