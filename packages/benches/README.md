@@ -108,19 +108,19 @@ deployment to succeed before updating the schema.
 
 ### p99 ("over limit")
 
-| Schema Benchmark    | Instantiations | w/ client types | w/ CRUDL |
-| ------------------- | -------------- | --------------- | -------- |
-| p99 (tall, complex) | 467,767        | 8,919,415       | TODO     |
-| p99 (tall, simple)  | 928,191        | 8,339,803       | TODO     |
-| p99 (wide, large)   | 24,712         | 9,867,387       | TODO     |
+| Schema Benchmark    | Instantiations | w/ client types | w/ CRUDL      |
+| ------------------- | -------------- | --------------- | ------------- |
+| p99 (tall, complex) | 467,767        | 8,919,415       | 8,950,158 (?) |
+| p99 (tall, simple)  | 928,191        | 8,339,803       | 8,340,503 (?) |
+| p99 (wide, large)   | 24,712         | 9,867,387       | 9,868,087 (?) |
 
 ### p99 ("within limit")
 
 | Schema Benchmark   | Instantiations | w/ client types | w/ CRUDL |
 | ------------------ | -------------- | --------------- | -------- |
-| p99 (tall, simple) | 48,415         | 2,573,418       | TODO     |
-| p99 (wide, large)  | 19,231         | 8,152,084       | TODO     |
-| P99 (wide, small)  | 3,423          | 800,034         | TODO     |
+| p99 (tall, simple) | 48,415         | 2,573,418       |          |
+| p99 (wide, large)  | 19,231         | 8,152,084       | N/A      |
+| P99 (wide, small)  | 3,423          | 800,034         | N/A      |
 
 ## Troubleshooting
 

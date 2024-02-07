@@ -4581,14 +4581,13 @@ bench('1522 simple models with 1 field each CRUDL', async () => {
     })
     .authorization([a.allow.public()]);
 
+  // 8,339,803
   type Schema = ClientSchema<typeof schema>;
 
   Amplify.configure({
     API: {
       GraphQL: {
         apiKey: 'apikey',
-        customEndpoint: undefined,
-        customEndpointRegion: undefined,
         defaultAuthMode: 'apiKey',
         endpoint: 'https://0.0.0.0/graphql',
         region: 'us-east-1',
@@ -4596,24 +4595,27 @@ bench('1522 simple models with 1 field each CRUDL', async () => {
     },
   });
 
-  //@ts-expect-error - working schema
-  generateClient<Schema>().then((client) => {
-    client.models.Model1.create({
-      field1: 'New Model1',
-    });
+  // 8,340,493
+  //@ts-expect-error - ignore
+  const client = generateClient<Schema>();
+
+  // 8,340,503
+  const result = await client.models.Model1.create({
+    field1: 'Field 1',
   });
 
-  // await client.models.Model1.get({ id: result.data.id });
+  // 8,340,503 - ?
+  await client.models.Model1.get({ id: result.data.id });
 
-  // await client.models.Model1.update({
-  //   id: result.data.id,
-  //   name: 'Updated Model1',
-  // });
+  // 8,340,503 - ?
+  await client.models.Model1.update({
+    id: result.data.id,
+    field1: 'Updated Field 1',
+  });
 
-  // await client.models.Model1.delete({ id: result.data.id });
+  // 8,340,503 - ?
+  await client.models.Model1.delete({ id: result.data.id });
 
-  // await client.models.Model1.list();
+  // 8,340,503 - ?
+  await client.models.Model1.list();
 }).types([8340503, 'instantiations']);
-
-// All operations ->8340503
-// Just create ->
