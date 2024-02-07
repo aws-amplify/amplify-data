@@ -38,13 +38,22 @@ type InternalSchemaModels = Record<
   InternalModel | EnumType<any> | CustomType<any> | InternalCustom
 >;
 
+type DatabaseType = 'SQL' | 'DynamoDB';
+
+export type SchemaConfig = {
+  databaseType: DatabaseType;
+};
+
 export type ModelSchemaParamShape = {
   types: ModelSchemaContents;
   authorization: Authorization<any, any, any>[];
 };
 
-type ModelSchemaData = {
-  types: ModelSchemaContents;
+type ModelSchemaData<C extends SchemaConfig> = {
+  // Differentiate content type based on SQL vs non-SQL
+  types: C['databaseType'] extends 'SQL'
+    ? ModelSchemaContents
+    : ModelSchemaContents;
   authorization: Authorization<any, any, any>[];
 };
 
@@ -116,9 +125,11 @@ export const isModelSchema = (
   return typeof schema === 'object' && schema.data !== undefined;
 };
 
-function _schema<T extends ModelSchemaParamShape>(types: T['types']) {
-  const data: ModelSchemaData = { types, authorization: [] };
-
+function _schema<T extends ModelSchemaParamShape>(
+  types: T['types'],
+  config: SchemaConfig,
+) {
+  const data: ModelSchemaData<typeof config> = { types, authorization: [] };
   const models = filterSchemaModelTypes(data.types);
 
   const transform = (): DerivedApiDefinition => {
@@ -140,6 +151,20 @@ function _schema<T extends ModelSchemaParamShape>(types: T['types']) {
   } as ModelSchema<T>;
 }
 
+type SchemaGenerator = <Types extends ModelSchemaContents>(
+  types: Types,
+) => ModelSchema<{ types: Types; authorization: [] }>;
+
+export function schemaBuilder(
+  config: SchemaConfig = { databaseType: 'DynamoDB' },
+): SchemaGenerator {
+  return <Types extends ModelSchemaContents>(
+    types: Types,
+  ): ModelSchema<{ types: Types; authorization: [] }> => {
+    return _schema(types, config);
+  };
+}
+
 /**
  * The API and data model definition for Amplify Data. Pass in `{ <NAME>: a.model(...) }` to create a database table
  * and exposes CRUDL operations via an API.
@@ -147,8 +172,4 @@ function _schema<T extends ModelSchemaParamShape>(types: T['types']) {
  * @returns An API and data model definition to be deployed with Amplify (Gen 2) experience (`processSchema(...)`)
  * or with the Amplify Data CDK construct (`@aws-amplify/data-construct`)
  */
-export function schema<Types extends ModelSchemaContents>(
-  types: Types,
-): ModelSchema<{ types: Types; authorization: [] }> {
-  return _schema(types);
-}
+export const schema = schemaBuilder();
