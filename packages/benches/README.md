@@ -108,6 +108,9 @@ deployment to succeed before updating the schema.
 
 ### p99 ("over limit")
 
+_Note: CRUDL measurements seem to be incorrect when the schema is over the limit -
+that is, instantation count ceases to increment after `create`._
+
 | Schema Benchmark    | Instantiations | w/ client types | w/ CRUDL      |
 | ------------------- | -------------- | --------------- | ------------- |
 | p99 (tall, complex) | 467,767        | 8,919,415       | 8,950,158 (?) |
@@ -116,11 +119,11 @@ deployment to succeed before updating the schema.
 
 ### p99 ("within limit")
 
-| Schema Benchmark   | Instantiations | w/ client types | w/ CRUDL |
-| ------------------ | -------------- | --------------- | -------- |
-| p99 (tall, simple) | 48,415         | 2,573,418       |          |
-| p99 (wide, large)  | 19,231         | 8,152,084       | N/A      |
-| P99 (wide, small)  | 3,423          | 800,034         | N/A      |
+| Schema Benchmark   | Instantiations | w/ client types | w/ CRUDL  |
+| ------------------ | -------------- | --------------- | --------- |
+| p99 (tall, simple) | 48,415         | 2,573,418       | 3,326,571 |
+| p99 (wide, large)  | 19,231         | 8,152,084       | TODO      |
+| P99 (wide, small)  | 3,423          | 800,034         | TODO      |
 
 ## Troubleshooting
 
