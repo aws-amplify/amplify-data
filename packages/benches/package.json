@@ -16,6 +16,6 @@
   },
   "license": "Apache-2.0",
   "dependencies": {
-    "aws-amplify": "^6.0.15"
+    "aws-amplify": "*"
   }
 }
