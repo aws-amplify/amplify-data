@@ -79,7 +79,8 @@ These have been included so we can identify future regressions that would cause
 smaller schemas to hit this limit early.
 
 `over-limit` schemas exceed this limit in order to match real-world metrics, and
-the TypeScript error has been ignored.
+the TypeScript error has been ignored. We do not currently have benchmarks for
+CRUDL operations / selection sets for these schemas.
 
 ### CloudFormation limits
 
@@ -108,29 +109,19 @@ deployment to succeed before updating the schema.
 
 ### p99 ("over limit")
 
-_Note: CRUDL measurements seem to be incorrect when the schema is over the limit -
-that is, instantation count ceases to increment after `create`._
+_Note: We do not currently have benchmarks for CRUDL operations / selection sets
+for these schemas._
 
-| Schema Benchmark    | Instantiations | w/ client types | w/ CRUDL      |
-| ------------------- | -------------- | --------------- | ------------- |
-| p99 (tall, complex) | 467,767        | 8,919,415       | 8,950,158 (?) |
-| p99 (tall, simple)  | 928,191        | 8,339,803       | 8,340,503 (?) |
-| p99 (wide, large)   | 24,712         | 9,867,387       | 9,868,087 (?) |
+| Schema Benchmark    | Instantiations | w/ client types | w/ CRUDL           |
+| ------------------- | -------------- | --------------- | ------------------ |
+| p99 (tall, complex) | 467,767        | 8,919,415       | TODO (pending fix) |
+| p99 (tall, simple)  | 928,191        | 8,339,803       | TODO (pending fix) |
+| p99 (wide, large)   | 24,712         | 9,867,387       | TODO (pending fix) |
 
 ### p99 ("within limit")
 
 | Schema Benchmark   | Instantiations | w/ client types | w/ CRUDL  |
 | ------------------ | -------------- | --------------- | --------- |
 | p99 (tall, simple) | 48,415         | 2,573,418       | 3,326,571 |
-| p99 (wide, large)  | 19,231         | 8,152,084       | TODO      |
+| p99 (wide, large)  | 19,231         | 8,152,084       | 5,991,877 |
 | P99 (wide, small)  | 3,423          | 800,034         | TODO      |
-
-## Troubleshooting
-
-- Weird instantation values when running multiple operations at once when
-  working with large schemas? Perform the following:
-  1. restart the TS server,
-  2. only have one benchmark file open in the editor at a time, and
-  3. clear all the values in the `.types()` builder (**including the baseline**),
-  4. regenerate the benchmark, one operation at a time, to ensure the values are
-     accurate.

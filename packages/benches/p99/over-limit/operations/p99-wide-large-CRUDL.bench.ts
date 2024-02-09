@@ -1,9 +1,9 @@
 import { bench } from '@arktype/attest';
 import { a, ClientSchema } from '@aws-amplify/data-schema';
-import { Amplify } from 'aws-amplify';
-import { generateClient } from 'aws-amplify/api';
+// import { Amplify } from 'aws-amplify';
+// import { generateClient } from 'aws-amplify/api';
 
-bench('baseline', () => {}).types([0, 'instantiations']);
+bench('baseline', () => {}).types();
 
 /**
  * The following benchmarks are an extension of `p50.bench.ts`.
@@ -10119,258 +10119,40 @@ bench(
       })
       .authorization([a.allow.public()]);
 
-    // 9,867,387
-    type Schema = ClientSchema<typeof schema>;
+    //@ts-expect-error - working schema:
+    type _ = ClientSchema<typeof schema>;
 
-    Amplify.configure({
-      API: {
-        GraphQL: {
-          apiKey: 'apikey',
-          customEndpoint: undefined,
-          customEndpointRegion: undefined,
-          defaultAuthMode: 'apiKey',
-          endpoint: 'https://0.0.0.0/graphql',
-          region: 'us-east-1',
-        },
-      },
-    });
+    // TODO:
+    // Amplify.configure({
+    //   API: {
+    //     GraphQL: {
+    //       apiKey: 'apikey',
+    //       defaultAuthMode: 'apiKey',
+    //       endpoint: 'https://0.0.0.0/graphql',
+    //       region: 'us-east-1',
+    //     },
+    //   },
+    // });
 
-    // 9,868,077
-    //@ts-expect-error - ignore
-    const client = generateClient<Schema>();
+    // const client = generateClient<Schema>();
 
-    // 9,868,087
-    const result = await client.models.Model35.create({
-      field1: 'test',
-      field2: 'test',
-      field3: 'test',
-      field4: 'test',
-      field5: 'test',
-      field6: 'test',
-      field7: 'test',
-      field8: 'test',
-      field9: 'test',
-      field10: 'test',
-      field11: 'test',
-      field12: 'test',
-      field13: 'test',
-      field14: 'test',
-      field15: 'test',
-      field16: 'test',
-      field17: 'test',
-      field18: 'test',
-      field19: 'test',
-      field20: 'test',
-      field21: 'test',
-      field22: 'test',
-      field23: 'test',
-      field24: 'test',
-      field25: 'test',
-      field26: 'test',
-      field27: 'test',
-      field28: 'test',
-      field29: 'test',
-      field30: 'test',
-      field31: 'test',
-      field32: 'test',
-      field33: 'test',
-      field34: 'test',
-      field35: 'test',
-      field36: 'test',
-      field37: 'test',
-      field38: 'test',
-      field39: 'test',
-      field40: 'test',
-      field41: 'test',
-      field42: 'test',
-      field43: 'test',
-      field44: 'test',
-      field45: 'test',
-      field46: 'test',
-      field47: 'test',
-      field48: 'test',
-      field49: 'test',
-      field50: 'test',
-      field51: 'test',
-      field52: 'test',
-      field53: 'test',
-      field54: 'test',
-      field55: 'test',
-      field56: 'test',
-      field57: 'test',
-      field58: 'test',
-      field59: 'test',
-      field60: 'test',
-      field61: 'test',
-      field62: 'test',
-      field63: 'test',
-      field64: 'test',
-      field65: 'test',
-      field66: 'test',
-      field67: 'test',
-      field68: 'test',
-      field69: 'test',
-      field70: 'test',
-      field71: 'test',
-      field72: 'test',
-      field73: 'test',
-      field74: 'test',
-      field75: 'test',
-      field76: 'test',
-      field77: 'test',
-      field78: 'test',
-      field79: 'test',
-      field80: 'test',
-      field81: 'test',
-      field82: 'test',
-      field83: 'test',
-      field84: 'test',
-      field85: 'test',
-      field86: 'test',
-      field87: 'test',
-      field88: 'test',
-      field89: 'test',
-      field90: 'test',
-      field91: 'test',
-      field92: 'test',
-      field93: 'test',
-      field94: 'test',
-      field95: 'test',
-      field96: 'test',
-      field97: 'test',
-      field98: 'test',
-      field99: 'test',
-      field100: 'test',
-      field101: 'test',
-      field102: 'test',
-      field103: 'test',
-      field104: 'test',
-      field105: 'test',
-      field106: 'test',
-      field107: 'test',
-      field108: 'test',
-      field109: 'test',
-      field110: 'test',
-      field111: 'test',
-      field112: 'test',
-      field113: 'test',
-      field114: 'test',
-      field115: 'test',
-      field116: 'test',
-      field117: 'test',
-      field118: 'test',
-      field119: 'test',
-      field120: 'test',
-      field121: 'test',
-      field122: 'test',
-      field123: 'test',
-      field124: 'test',
-      field125: 'test',
-      field126: 'test',
-      field127: 'test',
-      field128: 'test',
-      field129: 'test',
-      field130: 'test',
-      field131: 'test',
-      field132: 'test',
-      field133: 'test',
-      field134: 'test',
-      field135: 'test',
-      field136: 'test',
-      field137: 'test',
-      field138: 'test',
-      field139: 'test',
-      field140: 'test',
-      field141: 'test',
-      field142: 'test',
-      field143: 'test',
-      field144: 'test',
-      field145: 'test',
-      field146: 'test',
-      field147: 'test',
-      field148: 'test',
-      field149: 'test',
-      field150: 'test',
-      field151: 'test',
-      field152: 'test',
-      field153: 'test',
-      field154: 'test',
-      field155: 'test',
-      field156: 'test',
-      field157: 'test',
-      field158: 'test',
-      field159: 'test',
-      field160: 'test',
-      field161: 'test',
-      field162: 'test',
-      field163: 'test',
-      field164: 'test',
-      field165: 'test',
-      field166: 'test',
-      field167: 'test',
-      field168: 'test',
-      field169: 'test',
-      field170: 'test',
-      field171: 'test',
-      field172: 'test',
-      field173: 'test',
-      field174: 'test',
-      field175: 'test',
-      field176: 'test',
-      field177: 'test',
-      field178: 'test',
-      field179: 'test',
-      field180: 'test',
-      field181: 'test',
-      field182: 'test',
-      field183: 'test',
-      field184: 'test',
-      field185: 'test',
-      field186: 'test',
-      field187: 'test',
-      field188: 'test',
-      field189: 'test',
-      field190: 'test',
-      field191: 'test',
-      field192: 'test',
-      field193: 'test',
-      field194: 'test',
-      field195: 'test',
-      field196: 'test',
-      field197: 'test',
-      field198: 'test',
-      field199: 'test',
-      field200: 'test',
-      field201: 'test',
-      field202: 'test',
-      field203: 'test',
-      field204: 'test',
-      field205: 'test',
-      field206: 'test',
-      field207: 'test',
-      field208: 'test',
-      field209: 'test',
-      field210: 'test',
-      field211: 'test',
-      field212: 'test',
-      field213: 'test',
-      field214: 'test',
-      field215: 'test',
-    });
+    // const result = await client.models.Model35.create({
+    //   field1: 'test',
+    //   field2: 'test',
+    //   field3: 'test',
+    //   field4: 'test',
+    //   field5: 'test',
+    // });
 
-    // 9,868,087 - ?
-    await client.models.Model35.get({ id: result.data.id });
+    // await client.models.Model35.get({ id: result.data.id });
 
-    // 9,868,087 - ?
-    await client.models.Model35.update({
-      id: result.data.id,
-      field200: 'Updated Field 200',
-    });
+    // await client.models.Model35.update({
+    //   id: result.data.id,
+    //   field200: 'Updated Field 200',
+    // });
 
-    // 9,868,087 - ?
-    await client.models.Model35.delete({ id: result.data.id });
+    // await client.models.Model35.delete({ id: result.data.id });
 
-    // 9,868,087 - ?
-    await client.models.Model35.list();
+    // await client.models.Model35.list();
   },
-).types([9868087, 'instantiations']);
+).types();

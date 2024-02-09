@@ -504,8 +504,6 @@ bench('prod p50 CRUDL', async () => {
     API: {
       GraphQL: {
         apiKey: 'apikey',
-        customEndpoint: undefined,
-        customEndpointRegion: undefined,
         defaultAuthMode: 'apiKey',
         endpoint: 'https://0.0.0.0/graphql',
         region: 'us-east-1',

@@ -3,10 +3,10 @@
 
 import { bench } from '@arktype/attest';
 import { a, ClientSchema } from '@aws-amplify/data-schema';
-import { Amplify } from 'aws-amplify';
-import { generateClient } from 'aws-amplify/api';
+// import { Amplify } from 'aws-amplify';
+// import { generateClient } from 'aws-amplify/api';
 
-bench('baseline', () => {}).types([0, 'instantiations']);
+bench('baseline', () => {}).types();
 
 /**
  * The following benchmarks are an extension of `p50.bench.ts`.
@@ -1711,42 +1711,35 @@ bench('99 complex models CRUDL', async () => {
     })
     .authorization([a.allow.public()]);
 
-  // 8,949,457
-  type Schema = ClientSchema<typeof schema>;
+  type _ = ClientSchema<typeof schema>;
 
-  Amplify.configure({
-    API: {
-      GraphQL: {
-        customEndpoint: undefined,
-        customEndpointRegion: undefined,
-        defaultAuthMode: 'userPools',
-        endpoint: 'https://0.0.0.0/graphql',
-        region: 'us-east-1',
-      },
-    },
-  });
+  // TODO:
+  // Amplify.configure({
+  //   API: {
+  //     GraphQL: {
+  //       defaultAuthMode: 'userPools',
+  //       endpoint: 'https://0.0.0.0/graphql',
+  //       region: 'us-east-1',
+  //     },
+  //   },
+  // });
 
-  // 8,950,148
-  const client = generateClient<Schema>();
+  // // 8,950,148
+  // const client = generateClient<Schema>();
 
-  // 8,950,158
-  const result = await client.models.Todo.create({
-    todoId: '123',
-    name: 'New Todo',
-  });
+  // const result = await client.models.Todo.create({
+  //   todoId: '123',
+  //   name: 'New Todo',
+  // });
 
-  // 8,950,158 - ?
-  await client.models.Todo.get({ todoId: result.data.todoId });
+  // await client.models.Todo.get({ todoId: result.data.todoId });
 
-  // 8,950,158 - ?
-  await client.models.Todo.update({
-    todoId: result.data.todoId,
-    name: 'Updated Todo',
-  });
+  // await client.models.Todo.update({
+  //   todoId: result.data.todoId,
+  //   name: 'Updated Todo',
+  // });
 
-  // 8,950,158 - ?
-  await client.models.Todo.delete({ todoId: result.data.todoId });
+  // await client.models.Todo.delete({ todoId: result.data.todoId });
 
-  // 8,950,158 - ?
-  await client.models.Todo.list();
-}).types([8950158, 'instantiations']);
+  // await client.models.Todo.list();
+}).types();
