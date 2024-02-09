@@ -36,6 +36,10 @@ Note: Schemas are hardcoded (i.e. not generated with loops) because loops are:
 - not representative of real-world performance (dynamically generated schema
   benchmarks do not match "hard-coded" schemas.
 
+Additionally, there is no way to re-use schema instantation (e.g. a helper function
+called by each benchmark to avoid repeating the schema in each test), as this
+changes the instantiation count output.
+
 ### p50
 
 - `p50` schemas were designed to match guidance from our Product team around
@@ -75,7 +79,8 @@ These have been included so we can identify future regressions that would cause
 smaller schemas to hit this limit early.
 
 `over-limit` schemas exceed this limit in order to match real-world metrics, and
-the TypeScript error has been ignored.
+the TypeScript error has been ignored. We do not currently have benchmarks for
+CRUDL operations / selection sets for these schemas.
 
 ### CloudFormation limits
 
@@ -93,17 +98,30 @@ AWS Console for this stack. Caused By: ❌ Deployment failed: Error: The stack n
 The current workaround is to update the schema iteratively, and waiting for each
 deployment to succeed before updating the schema.
 
-## Benchmark values (w/ client types) 2/5/2024:
+## Benchmark values as of 2/6/2024:
 
-| Schema Benchmark                 | Instantiations |
-| -------------------------------- | -------------- |
-| p50                              | 460,912        |
-| p50 (prod)                       | 4,539,404      |
-| ---                              | ---            |
-| p99 (tall, complex)              | 8,919,415      |
-| p99 (tall, simple)               | 8,339,803      |
-| p99 (wide large)                 | 9,867,387      |
-| ---                              | ---            |
-| p99 (within limit - tall simple) | 2,573,418      |
-| p99 (within limit - wide large   | 8,152,084      |
-| P99 (within limit - wide small)  | 800,034        |
+### p50
+
+| Schema Benchmark | Instantiations | w/ client types | w/ CRUDL  | w/ SELECTION SET |
+| ---------------- | -------------- | --------------- | --------- | ---------------- |
+| p50              | 20,578         | 460,912         | 2,098,359 | 2,283,895        |
+| p50 (prod)       | 54,314         | 4,539,404       | 8,440,504 | 8,643,960        |
+
+### p99 ("over limit")
+
+_Note: We do not currently have benchmarks for CRUDL operations / selection sets
+for these schemas._
+
+| Schema Benchmark    | Instantiations | w/ client types | w/ CRUDL           | w/ SELECTION SET   |
+| ------------------- | -------------- | --------------- | ------------------ | ------------------ |
+| p99 (tall, complex) | 467,767        | 8,919,415       | TODO (pending fix) | TODO (pending fix) |
+| p99 (tall, simple)  | 928,191        | 8,339,803       | TODO (pending fix) | TODO (pending fix) |
+| p99 (wide, large)   | 24,712         | 9,867,387       | TODO (pending fix) | TODO (pending fix) |
+
+### p99 ("within limit")
+
+| Schema Benchmark   | Instantiations | w/ client types | w/ CRUDL           | w/ SELECTION SET   |
+| ------------------ | -------------- | --------------- | ------------------ | ------------------ |
+| p99 (tall, simple) | 48,415         | 2,573,418       | 3,326,571          | 3,511,380          |
+| p99 (wide, large)  | 19,231         | 8,152,084       | TODO (pending fix) | TODO (pending fix) |
+| P99 (wide, small)  | 3,423          | 800,034         | 5,991,877          | 6,493,245          |
