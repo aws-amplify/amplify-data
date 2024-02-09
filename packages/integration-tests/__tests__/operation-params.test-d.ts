@@ -126,7 +126,7 @@ describe('Basic operations', () => {
 
       test('id is optional when omitted', () => {
         type CreateParamsActual = Parameters<
-          typeof createClient.models.ImplicitId.create
+          typeof createClient.models.ImplicitId.create<any, any>
         >[0];
         type CreateParamsExpected = {
           id?: string | undefined;
@@ -138,7 +138,7 @@ describe('Basic operations', () => {
 
       test('id is optional when required', () => {
         type CreateParamsActual = Parameters<
-          typeof createClient.models.RequiredId.create
+          typeof createClient.models.RequiredId.create<any, any>
         >[0];
         type CreateParamsExpected = {
           id?: string | undefined;
@@ -150,7 +150,7 @@ describe('Basic operations', () => {
 
       test('custom pk is required when custom pk is defined and required', () => {
         type CreateParamsActual = Parameters<
-          typeof createClient.models.CustomPk.create
+          typeof createClient.models.CustomPk.create<any, any>
         >[0];
         type CreateParamsExpected = {
           custom: string;

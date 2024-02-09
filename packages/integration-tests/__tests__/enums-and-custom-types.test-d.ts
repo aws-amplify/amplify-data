@@ -30,7 +30,7 @@ describe('Enum', () => {
 
     test('Create input type', async () => {
       type ResolvedCreateParams = Parameters<
-        typeof client.models.Post.create
+        typeof client.models.Post.create<any, any>
       >[0];
 
       type ExpectedCreateParams = {
@@ -44,7 +44,7 @@ describe('Enum', () => {
 
     test('Update input type', async () => {
       type ResolvedUpdateParams = Parameters<
-        typeof client.models.Post.update
+        typeof client.models.Post.update<any, any>
       >[0];
 
       type ExpectedUpdateParams = {
@@ -101,7 +101,7 @@ describe('Enum', () => {
 
     test('Create input type', async () => {
       type ResolvedCreateParams = Parameters<
-        typeof client.models.Post.create
+        typeof client.models.Post.create<any, any>
       >[0];
 
       type ExpectedCreateParams = {
@@ -113,7 +113,7 @@ describe('Enum', () => {
       type test = Expect<Equal<ResolvedCreateParams, ExpectedCreateParams>>;
 
       type ResolvedCreateCommentParams = Parameters<
-        typeof client.models.Comment.create
+        typeof client.models.Comment.create<any, any>
       >[0];
 
       type ExpectedCreateCommentParams = {
@@ -129,7 +129,7 @@ describe('Enum', () => {
 
     test('Update input type', async () => {
       type ResolvedUpdateParams = Parameters<
-        typeof client.models.Post.update
+        typeof client.models.Post.update<any, any>
       >[0];
 
       type ExpectedUpdateParams = {
@@ -141,7 +141,7 @@ describe('Enum', () => {
       type test = Expect<Equal<ResolvedUpdateParams, ExpectedUpdateParams>>;
 
       type ResolvedUpdateCommentParams = Parameters<
-        typeof client.models.Comment.update
+        typeof client.models.Comment.update<any, any>
       >[0];
 
       type ExpectedUpdateCommentParams = {

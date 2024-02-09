@@ -485,32 +485,44 @@ type ModelTypesClient<
   Model extends Record<string, unknown>,
   ModelMeta extends ModelMetaShape,
 > = IndexQueryMethodsFromIR<ModelMeta['secondaryIndexes'], Model> & {
-  create: (
+  create<
+    FlatModel extends Record<string, unknown> = ResolvedModel<Model>,
+    SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[],
+  >(
     model: Prettify<CreateModelInput<Model, ModelMeta>>,
     options?: {
+      selectionSet?: SelectionSet;
       authMode?: AuthMode;
       authToken?: string;
       headers?: CustomHeaders;
     },
-  ) => SingularReturnValue<Model>;
-  update: (
+  ): SingularReturnValue<Model>;
+  update<
+    FlatModel extends Record<string, unknown> = ResolvedModel<Model>,
+    SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[],
+  >(
     model: Prettify<
       ModelIdentifier<ModelMeta> & Partial<MutationInput<Model, ModelMeta>>
     >,
     options?: {
+      selectionSet?: SelectionSet;
       authMode?: AuthMode;
       authToken?: string;
       headers?: CustomHeaders;
     },
-  ) => SingularReturnValue<Model>;
-  delete: (
+  ): SingularReturnValue<Model>;
+  delete<
+    FlatModel extends Record<string, unknown> = ResolvedModel<Model>,
+    SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[],
+  >(
     identifier: ModelIdentifier<ModelMeta>,
     options?: {
+      selectionSet?: SelectionSet;
       authMode?: AuthMode;
       authToken?: string;
       headers?: CustomHeaders;
     },
-  ) => SingularReturnValue<Model>;
+  ): SingularReturnValue<Model>;
   get<
     FlatModel extends Record<string, unknown> = ResolvedModel<Model>,
     SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[],
@@ -580,32 +592,44 @@ type ModelTypesSSRCookies<
   Model extends Record<string, unknown>,
   ModelMeta extends ModelMetaShape,
 > = IndexQueryMethodsFromIR<ModelMeta['secondaryIndexes'], Model> & {
-  create: (
+  create<
+    FlatModel extends Record<string, unknown> = ResolvedModel<Model>,
+    SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[],
+  >(
     model: Prettify<CreateModelInput<Model, ModelMeta>>,
     options?: {
+      selectionSet?: SelectionSet;
       authMode?: AuthMode;
       authToken?: string;
       headers?: CustomHeaders;
     },
-  ) => SingularReturnValue<Model>;
-  update: (
+  ): SingularReturnValue<Model>;
+  update<
+    FlatModel extends Record<string, unknown> = ResolvedModel<Model>,
+    SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[],
+  >(
     model: Prettify<
       ModelIdentifier<ModelMeta> & Partial<MutationInput<Model, ModelMeta>>
     >,
     options?: {
+      selectionSet?: SelectionSet;
       authMode?: AuthMode;
       authToken?: string;
       headers?: CustomHeaders;
     },
-  ) => SingularReturnValue<Model>;
-  delete: (
+  ): SingularReturnValue<Model>;
+  delete<
+    FlatModel extends Record<string, unknown> = ResolvedModel<Model>,
+    SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[],
+  >(
     identifier: ModelIdentifier<ModelMeta>,
     options?: {
+      selectionSet?: SelectionSet;
       authMode?: AuthMode;
       authToken?: string;
       headers?: CustomHeaders;
     },
-  ) => SingularReturnValue<Model>;
+  ): SingularReturnValue<Model>;
   get<
     FlatModel extends Record<string, unknown> = ResolvedModel<Model>,
     SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[],
@@ -636,36 +660,45 @@ type ModelTypesSSRRequest<
   Model extends Record<string, unknown>,
   ModelMeta extends ModelMetaShape,
 > = IndexQueryMethodsFromIR<ModelMeta['secondaryIndexes'], Model> & {
-  create: (
-    // TODO: actual type
+  create<
+    FlatModel extends Record<string, unknown> = ResolvedModel<Model>,
+    SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[],
+  >(
     contextSpec: any,
     model: Prettify<CreateModelInput<Model, ModelMeta>>,
     options?: {
+      selectionSet?: SelectionSet;
       authMode?: AuthMode;
       authToken?: string;
       headers?: CustomHeaders;
     },
-  ) => SingularReturnValue<Model>;
-  update: (
+  ): SingularReturnValue<Model>;
+  update<
+    FlatModel extends Record<string, unknown> = ResolvedModel<Model>,
+    SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[],
+  >(
     contextSpec: any,
-    model: Prettify<
-      ModelIdentifier<ModelMeta> & Partial<MutationInput<Model, ModelMeta>>
-    >,
+    model: Prettify<CreateModelInput<Model, ModelMeta>>,
     options?: {
+      selectionSet?: SelectionSet;
       authMode?: AuthMode;
       authToken?: string;
       headers?: CustomHeaders;
     },
-  ) => SingularReturnValue<Model>;
-  delete: (
+  ): SingularReturnValue<Model>;
+  delete<
+    FlatModel extends Record<string, unknown> = ResolvedModel<Model>,
+    SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[],
+  >(
     contextSpec: any,
-    identifier: ModelIdentifier<ModelMeta>,
+    model: Prettify<CreateModelInput<Model, ModelMeta>>,
     options?: {
+      selectionSet?: SelectionSet;
       authMode?: AuthMode;
       authToken?: string;
       headers?: CustomHeaders;
     },
-  ) => SingularReturnValue<Model>;
+  ): SingularReturnValue<Model>;
   get<
     FlatModel extends Record<string, unknown> = ResolvedModel<Model>,
     SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[],
@@ -719,13 +752,13 @@ export type ModelTypes<
 /**
  * The utility type that is used to infer the type (interface) of the generated
  * `client.enums` property.
- * 
+ *
  * @example
  * // The schema:
  * {
  *   TodoStatus: a.enum(['Planned' | 'InProgress' | 'Completed']),
  * }
- * 
+ *
  * // The inferred interface of the `client.enums`:
  * {
  *   TodoStatus: {
