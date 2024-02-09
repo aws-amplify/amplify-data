@@ -1,5 +1,11 @@
 # @aws-amplify/data-schema
 
+## 0.13.2
+
+### Patch Changes
+
+- d52beff: feat: Add addRelationships function to models
+
 ## 0.13.1
 
 ### Patch Changes
