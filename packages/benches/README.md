@@ -102,26 +102,26 @@ deployment to succeed before updating the schema.
 
 ### p50
 
-| Schema Benchmark | Instantiations | w/ client types | w/ CRUDL  |
-| ---------------- | -------------- | --------------- | --------- |
-| p50              | 20,578         | 460,912         | 2,098,359 |
-| p50 (prod)       | 54,314         | 4,539,404       | 8,440,504 |
+| Schema Benchmark | Instantiations | w/ client types | w/ CRUDL  | w/ SELECTION SET |
+| ---------------- | -------------- | --------------- | --------- | ---------------- |
+| p50              | 20,578         | 460,912         | 2,098,359 | 2,283,895        |
+| p50 (prod)       | 54,314         | 4,539,404       | 8,440,504 | 8,643,960        |
 
 ### p99 ("over limit")
 
 _Note: We do not currently have benchmarks for CRUDL operations / selection sets
 for these schemas._
 
-| Schema Benchmark    | Instantiations | w/ client types | w/ CRUDL           |
-| ------------------- | -------------- | --------------- | ------------------ |
-| p99 (tall, complex) | 467,767        | 8,919,415       | TODO (pending fix) |
-| p99 (tall, simple)  | 928,191        | 8,339,803       | TODO (pending fix) |
-| p99 (wide, large)   | 24,712         | 9,867,387       | TODO (pending fix) |
+| Schema Benchmark    | Instantiations | w/ client types | w/ CRUDL           | w/ SELECTION SET   |
+| ------------------- | -------------- | --------------- | ------------------ | ------------------ |
+| p99 (tall, complex) | 467,767        | 8,919,415       | TODO (pending fix) | TODO (pending fix) |
+| p99 (tall, simple)  | 928,191        | 8,339,803       | TODO (pending fix) | TODO (pending fix) |
+| p99 (wide, large)   | 24,712         | 9,867,387       | TODO (pending fix) | TODO (pending fix) |
 
 ### p99 ("within limit")
 
-| Schema Benchmark   | Instantiations | w/ client types | w/ CRUDL  |
-| ------------------ | -------------- | --------------- | --------- |
-| p99 (tall, simple) | 48,415         | 2,573,418       | 3,326,571 |
-| p99 (wide, large)  | 19,231         | 8,152,084       | 5,991,877 |
-| P99 (wide, small)  | 3,423          | 800,034         | TODO      |
+| Schema Benchmark   | Instantiations | w/ client types | w/ CRUDL           | w/ SELECTION SET   |
+| ------------------ | -------------- | --------------- | ------------------ | ------------------ |
+| p99 (tall, simple) | 48,415         | 2,573,418       | 3,326,571          | 3,511,380          |
+| p99 (wide, large)  | 19,231         | 8,152,084       | TODO (pending fix) | TODO (pending fix) |
+| P99 (wide, small)  | 3,423          | 800,034         | 5,991,877          | 6,493,245          |
