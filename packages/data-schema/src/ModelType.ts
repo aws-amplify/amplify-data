@@ -199,10 +199,22 @@ export type ModelType<
   Brand<object, typeof brand>;
 
 /**
+ * External representation of Model Type that exposes the `addRelationships` modifier.
+ * Used on the complete schema object.
+ */
+export type SchemaModelType<
+  T extends ModelType<ModelTypeParamShape> = ModelType<ModelTypeParamShape>,
+> = T & {
+  addRelationships(
+    relationships: Record<string, ModelRelationalField<any, string, any, any>>,
+  ): void;
+};
+
+/**
  * Internal representation of Model Type that exposes the `data` property.
  * Used at buildtime.
  */
-export type InternalModel = ModelType<any> & {
+export type InternalModel = SchemaModelType & {
   data: InternalModelData;
 };
 
@@ -232,8 +244,34 @@ function _model<T extends ModelTypeParamShape>(fields: T['fields']) {
     },
   } as ModelType<T>;
 
-  return { ...builder, data } as InternalModel as ModelType<T>;
+  return {
+    ...builder,
+    data,
+    addRelationships(relationships) {
+      data.fields = { ...data.fields, ...relationships };
+    },
+  } as InternalModel as ModelType<T>;
 }
+
+/**
+ * Model Type type guard
+ * @param modelType - api-next ModelType
+ * @returns true if the given value is a ModelSchema
+ */
+export const isSchemaModelType = (
+  modelType: any | SchemaModelType,
+): modelType is SchemaModelType => {
+  const internalType = modelType as InternalModel;
+  return (
+    typeof internalType === 'object' &&
+    internalType.data !== undefined &&
+    internalType.data.fields !== undefined &&
+    internalType.data.authorization !== undefined &&
+    internalType.data.identifier !== undefined &&
+    internalType.data.secondaryIndexes !== undefined &&
+    typeof internalType.addRelationships === 'function'
+  );
+};
 
 /**
  * A data model that creates a matching Amazon DynamoDB table and provides create, read (list and get), update,

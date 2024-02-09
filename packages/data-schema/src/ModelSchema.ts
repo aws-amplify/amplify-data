@@ -2,10 +2,12 @@ import type {
   DerivedApiDefinition,
   SetTypeSubArg,
 } from '@aws-amplify/data-schema-types';
-import type {
-  ModelType,
-  ModelTypeParamShape,
-  InternalModel,
+import {
+  type ModelType,
+  type ModelTypeParamShape,
+  type InternalModel,
+  isSchemaModelType,
+  SchemaModelType,
 } from './ModelType';
 import type { EnumType, EnumTypeParamShape } from './EnumType';
 import type { CustomType, CustomTypeParamShape } from './CustomType';
@@ -68,6 +70,11 @@ export type ModelSchema<
   UsedMethods
 > & {
   data: T;
+  models: {
+    [TypeKey in keyof T['types']]: T['types'][TypeKey] extends ModelType<ModelTypeParamShape>
+      ? SchemaModelType<T['types'][TypeKey]>
+      : never;
+  };
   transform: () => DerivedApiDefinition;
 };
 
@@ -75,6 +82,28 @@ export type ModelSchema<
  * Amplify API Next Model Schema shape
  */
 export type ModelSchemaType = ModelSchema<ModelSchemaParamShape>;
+
+/**
+ * Filter the schema types down to only include the ModelTypes as SchemaModelType
+ *
+ * @param schemaContents The object containing all SchemaContent for this schema
+ * @returns Only the schemaContents that are ModelTypes, coerced to the SchemaModelType surface
+ */
+const filterSchemaModelTypes = (
+  schemaContents: ModelSchemaContents,
+): Record<string, SchemaModelType> => {
+  const modelTypes: Record<string, SchemaModelType> = {};
+
+  if (schemaContents) {
+    Object.entries(schemaContents).forEach(([key, content]) => {
+      if (isSchemaModelType(content)) {
+        modelTypes[key] = content;
+      }
+    });
+  }
+
+  return modelTypes;
+};
 
 /**
  * Model Schema type guard
@@ -90,6 +119,8 @@ export const isModelSchema = (
 function _schema<T extends ModelSchemaParamShape>(types: T['types']) {
   const data: ModelSchemaData = { types, authorization: [] };
 
+  const models = filterSchemaModelTypes(data.types);
+
   const transform = (): DerivedApiDefinition => {
     const internalSchema: InternalSchema = { data } as InternalSchema;
 
@@ -98,10 +129,15 @@ function _schema<T extends ModelSchemaParamShape>(types: T['types']) {
 
   const authorization = (rules: any): any => {
     data.authorization = rules;
-    return { data, transform } as any;
+    return { data, transform, models } as any;
   };
 
-  return { data, transform, authorization } as ModelSchema<T>;
+  return {
+    data,
+    transform,
+    authorization,
+    models,
+  } as ModelSchema<T>;
 }
 
 /**
