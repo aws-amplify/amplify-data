@@ -7,8 +7,9 @@ import type {
   CustomOperation,
   CustomOperationParamShape,
 } from '../CustomOperation';
-import { ResolveRef } from './ResolveFieldProperties';
+// import { ResolveRef } from './ResolveFieldProperties';
 import { RefType, RefTypeParamShape } from '../RefType';
+import { ModelType } from '../ModelType';
 
 export type NonModelTypesShape = {
   enums: Record<string, EnumType<any>>;
@@ -17,12 +18,35 @@ export type NonModelTypesShape = {
 };
 
 export type ExtractNonModelTypes<Schema> = ResolveRefs<
+  Schema,
   ResolveNonModelFields<
     ResolveNonModelTypes<Schema, ExtractImplicitNonModelTypes<Schema>>
   >
 >;
 
-type ResolveRefs<Shape extends NonModelTypesShape> = {
+type ResolveCustomOpRef<
+  Schema,
+  NonModelTypes extends NonModelTypesShape,
+  Ref extends RefTypeParamShape,
+  Link extends string = Ref['link'],
+  Value = Link extends keyof NonModelTypes['enums']
+    ? NonModelTypes['enums'][Link]
+    : Link extends keyof NonModelTypes['customTypes']
+      ? NonModelTypes['customTypes'][Link]
+      : Link extends keyof SchemaTypes<Schema>
+        ? // kind of getting close here ... but, seems like i'll run into trouble if i
+          // try to dig the model type out at this stage. i should probably pass the ref
+          // directly through here and dig it out ... later ... right?
+          // possibly even in the client. have the client, which has easy access to the
+          // fully "resolved" types dig it out. unless ... unless i can ask for the
+          // resolved schema/models here. maybe i can do that. this gets added as metadata.
+          // so, the "math" that lead up to this can probably be done after models are resolved. :think-face:
+          // that might actually make the most sense. but, it's monday's problem now. :beer-glasses-or-whatever:
+          SchemaTypes<Schema>[Link]
+        : never,
+> = Ref['required'] extends true ? Value : Value | null;
+
+type ResolveRefs<Schema, Shape extends NonModelTypesShape> = {
   enums: Shape['enums'];
   customTypes: Shape['customTypes'];
   customOperations: {
@@ -33,8 +57,14 @@ type ResolveRefs<Shape extends NonModelTypesShape> = {
       returnType: Shape['customOperations'][OpName]['returnType'] extends RefType<
         infer RefShape
       >
-        ? ResolveRef<Shape, RefShape>
-        : never;
+        ? ResolveCustomOpRef<Schema, Shape, RefShape>
+        : Shape['customOperations'][OpName]['returnType'] extends ModelField<
+              infer R,
+              any,
+              any
+            >
+          ? R
+          : never;
     };
   };
 };

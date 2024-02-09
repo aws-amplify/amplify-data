@@ -9,12 +9,6 @@ import {
   __modelMeta__,
 } from '@aws-amplify/data-schema-types';
 
-//
-// How an "ideal" client should behave.
-//
-// Not necessarily how the client from `generateClient()` should behave.
-//
-
 type FilteredKeys<T> = {
   [P in keyof T]: T[P] extends never ? never : P;
 }[keyof T];
@@ -23,14 +17,51 @@ type ExcludeNeverFields<O> = {
   [K in FilteredKeys<O>]: O[K];
 };
 
-type TypedClient<T extends Record<any, any> = never> = ExcludeNeverFields<{
+type PartialClient<T extends Record<any, any> = never> = ExcludeNeverFields<{
   models: ModelTypes<T>;
   queries: CustomQueries<T>;
   mutations: CustomMutations<T>;
 }>;
 
+function generateClient<T extends Record<any, any>>() {
+  return {} as PartialClient<T>;
+}
+
 describe('client', () => {
-  test('query', async () => {
+  test('query returning a primitive type', async () => {
+    const schema = a.schema({
+      echo: a
+        .query()
+        .arguments({
+          inputContent: a.string().required(),
+        })
+        .returns(a.string().required())
+        .function('echoFunction')
+        .authorization([a.allow.public()]),
+    });
+
+    type Schema = ClientSchema<typeof schema>;
+    const client = generateClient<Schema>();
+
+    const response = await client.queries.echo({
+      inputContent: 'some content',
+    });
+
+    type ResponseType = typeof response;
+    type Expected = {
+      data: string;
+      errors?: GraphQLFormattedError[] | undefined;
+      extensions?:
+        | {
+            [key: string]: any;
+          }
+        | undefined;
+    };
+
+    type test = Expect<Equal<ResponseType, Expected>>;
+  });
+
+  test('query returning a custom type', async () => {
     const schema = a.schema({
       EchoResult: a.customType({
         resultContent: a.string(),
@@ -46,7 +77,7 @@ describe('client', () => {
     });
 
     type Schema = ClientSchema<typeof schema>;
-    const client = {} as TypedClient<Schema>;
+    const client = generateClient<Schema>();
 
     const response = await client.queries.echo({
       inputContent: 'some content',
@@ -57,6 +88,42 @@ describe('client', () => {
       data: {
         resultContent: string | null;
       } | null;
+      errors?: GraphQLFormattedError[] | undefined;
+      extensions?:
+        | {
+            [key: string]: any;
+          }
+        | undefined;
+    };
+
+    type test = Expect<Equal<ResponseType, Expected>>;
+  });
+
+  test('query returning a model type', async () => {
+    const schema = a.schema({
+      DataModel: a.model({
+        resultContent: a.string(),
+      }),
+      getDataModel: a
+        .query()
+        .arguments({
+          modelId: a.string().required(),
+        })
+        .returns(a.ref('DataModel'))
+        .function('echoFunction')
+        .authorization([a.allow.public()]),
+    });
+
+    type Schema = ClientSchema<typeof schema>;
+    const client = generateClient<Schema>();
+
+    const response = await client.queries.getDataModel({
+      modelId: 'some-id',
+    });
+
+    type ResponseType = typeof response;
+    type Expected = {
+      data: Schema['DataModel'];
       errors?: GraphQLFormattedError[] | undefined;
       extensions?:
         | {
@@ -84,7 +151,7 @@ describe('client', () => {
     });
 
     type Schema = ClientSchema<typeof schema>;
-    const client = {} as TypedClient<Schema>;
+    const client = generateClient<Schema>();
 
     const response = await client.queries.likePost({
       postId: 'some-id',
