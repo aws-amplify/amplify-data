@@ -496,10 +496,8 @@ bench('prod p50 CRUDL', async () => {
     })
     .authorization([a.allow.public()]);
 
-  // 4,539,404
   type Schema = ClientSchema<typeof schema>;
 
-  //
   Amplify.configure({
     API: {
       GraphQL: {
@@ -511,27 +509,27 @@ bench('prod p50 CRUDL', async () => {
     },
   });
 
-  // 5,585,515
   const client = generateClient<Schema>();
 
-  // 7,871,828
   const result = await client.models.Todo.create({
     todoId: '123',
     name: 'New Todo',
   });
 
-  // 8,142,730
-  await client.models.Todo.get({ todoId: result.data.todoId });
+  await client.models.Todo.get({
+    todoId: result.data.todoId,
+    name: result.data.name,
+  });
 
-  // 8,418,660
   await client.models.Todo.update({
     todoId: result.data.todoId,
     name: 'Updated Todo',
   });
 
-  // 8,418,672
-  await client.models.Todo.delete({ todoId: result.data.todoId });
+  await client.models.Todo.delete({
+    todoId: result.data.todoId,
+    name: result.data.name,
+  });
 
-  // 8,440,504
   await client.models.Todo.list();
-}).types([8440504, 'instantiations']);
+}).types([17791120, 'instantiations']);

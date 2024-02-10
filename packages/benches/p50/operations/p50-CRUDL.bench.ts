@@ -63,26 +63,27 @@ bench('p50 CRUDL', async () => {
     },
   });
 
-  // 585,507
   const client = generateClient<Schema>();
 
-  // 1,801,520
   const result = await client.models.Todo.create({
     todoId: '123',
     name: 'New Todo',
   });
 
-  // 1,843,296
-  await client.models.Todo.get({ todoId: result.data.todoId });
+  await client.models.Todo.get({
+    todoId: result.data.todoId,
+    name: result.data.name,
+  });
 
-  // 2,078,435
   await client.models.Todo.update({
     todoId: result.data.todoId,
     name: 'Updated Todo',
   });
 
-  // 2,078,447
-  await client.models.Todo.delete({ todoId: result.data.todoId });
+  await client.models.Todo.delete({
+    todoId: result.data.todoId,
+    name: result.data.name,
+  });
 
   await client.models.Todo.list();
-}).types([2098359, 'instantiations']);
+}).types([3050506, 'instantiations']);
