@@ -7,7 +7,8 @@
   "main": "schema.bench.ts",
   "scripts": {
     "start": "tsx schema.bench.ts",
-    "bench": "tsx"
+    "bench": "tsx",
+    "lint": "eslint ."
   },
   "devDependencies": {
     "@arktype/attest": "0.5.0",

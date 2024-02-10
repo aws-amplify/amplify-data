@@ -68,6 +68,7 @@ bench('p50 CRUDL', async () => {
   const result = await client.models.Todo.create({
     todoId: '123',
     name: 'New Todo',
+    blah: 'blah',
   });
 
   await client.models.Todo.get({
