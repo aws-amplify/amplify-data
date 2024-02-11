@@ -5,8 +5,6 @@ import { generateClient } from 'aws-amplify/api';
 
 const selectionSet = ['field1', 'field2', 'field3', 'field4'] as const;
 
-bench('baseline', () => {}).types([0, 'instantiations']);
-
 /**
  * Target: 1 simple model w/ 1700 fields each
  * Within limit: 1 model w/ 43 fields

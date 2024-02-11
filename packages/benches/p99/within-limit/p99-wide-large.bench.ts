@@ -1,8 +1,6 @@
 import { bench } from '@arktype/attest';
 import { a, ClientSchema } from '@aws-amplify/data-schema';
 
-bench('baseline', () => {}).types([0, 'instantiations']);
-
 /**
  * This schema does not result in the `ERROR: Type instantiation is excessively
  * deep and possibly infinite` error, but is not large enough to meet our

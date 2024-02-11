@@ -522,7 +522,7 @@ type ModelTypesClient<
       authToken?: string;
       headers?: CustomHeaders;
     },
-  ): SingularReturnValue<ReturnValue<Model, FlatModel, SelectionSet>>;
+  ): SingularReturnValue<Prettify<ReturnValue<Model, FlatModel, SelectionSet>>>;
   list<
     FlatModel extends Record<string, unknown> = ResolvedModel<Model>,
     SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[],
@@ -534,7 +534,7 @@ type ModelTypesClient<
     authMode?: AuthMode;
     authToken?: string;
     headers?: CustomHeaders;
-  }): ListReturnValue<ReturnValue<Model, FlatModel, SelectionSet>>;
+  }): ListReturnValue<Prettify<ReturnValue<Model, FlatModel, SelectionSet>>>;
   onCreate<
     FlatModel extends Record<string, unknown> = ResolvedModel<Model>,
     SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[],
@@ -544,7 +544,9 @@ type ModelTypesClient<
     authMode?: AuthMode;
     authToken?: string;
     headers?: CustomHeaders;
-  }): ObservedReturnValue<ReturnValue<Model, FlatModel, SelectionSet>>;
+  }): ObservedReturnValue<
+    Prettify<ReturnValue<Model, FlatModel, SelectionSet>>
+  >;
   onUpdate<
     FlatModel extends Record<string, unknown> = ResolvedModel<Model>,
     SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[],
@@ -554,7 +556,9 @@ type ModelTypesClient<
     authMode?: AuthMode;
     authToken?: string;
     headers?: CustomHeaders;
-  }): ObservedReturnValue<ReturnValue<Model, FlatModel, SelectionSet>>;
+  }): ObservedReturnValue<
+    Prettify<ReturnValue<Model, FlatModel, SelectionSet>>
+  >;
   onDelete<
     FlatModel extends Record<string, unknown> = ResolvedModel<Model>,
     SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[],
@@ -564,7 +568,9 @@ type ModelTypesClient<
     authMode?: AuthMode;
     authToken?: string;
     headers?: CustomHeaders;
-  }): ObservedReturnValue<ReturnValue<Model, FlatModel, SelectionSet>>;
+  }): ObservedReturnValue<
+    Prettify<ReturnValue<Model, FlatModel, SelectionSet>>
+  >;
   observeQuery<
     FlatModel extends Record<string, unknown> = ResolvedModel<Model>,
     SelectionSet extends ModelPath<FlatModel>[] = never[],
@@ -573,7 +579,9 @@ type ModelTypesClient<
     selectionSet?: SelectionSet;
     authMode?: AuthMode;
     authToken?: string;
-  }): ObserveQueryReturnValue<ReturnValue<Model, FlatModel, SelectionSet>>;
+  }): ObserveQueryReturnValue<
+    Prettify<ReturnValue<Model, FlatModel, SelectionSet>>
+  >;
 };
 
 type ModelTypesSSRCookies<
@@ -617,7 +625,7 @@ type ModelTypesSSRCookies<
       authToken?: string;
       headers?: CustomHeaders;
     },
-  ): SingularReturnValue<ReturnValue<Model, FlatModel, SelectionSet>>;
+  ): SingularReturnValue<Prettify<ReturnValue<Model, FlatModel, SelectionSet>>>;
   list<
     FlatModel extends Record<string, unknown> = ResolvedModel<Model>,
     SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[],
@@ -629,7 +637,7 @@ type ModelTypesSSRCookies<
     authMode?: AuthMode;
     authToken?: string;
     headers?: CustomHeaders;
-  }): ListReturnValue<ReturnValue<Model, FlatModel, SelectionSet>>;
+  }): ListReturnValue<Prettify<ReturnValue<Model, FlatModel, SelectionSet>>>;
 };
 
 type ModelTypesSSRRequest<
@@ -678,7 +686,7 @@ type ModelTypesSSRRequest<
       authToken?: string;
       headers?: CustomHeaders;
     },
-  ): SingularReturnValue<ReturnValue<Model, FlatModel, SelectionSet>>;
+  ): SingularReturnValue<Prettify<ReturnValue<Model, FlatModel, SelectionSet>>>;
   list<
     FlatModel extends Record<string, unknown> = ResolvedModel<Model>,
     SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[],
@@ -693,7 +701,7 @@ type ModelTypesSSRRequest<
       authToken?: string;
       headers?: CustomHeaders;
     },
-  ): ListReturnValue<ReturnValue<Model, FlatModel, SelectionSet>>;
+  ): ListReturnValue<Prettify<ReturnValue<Model, FlatModel, SelectionSet>>>;
 };
 
 type ContextType = 'CLIENT' | 'COOKIES' | 'REQUEST';
@@ -719,13 +727,13 @@ export type ModelTypes<
 /**
  * The utility type that is used to infer the type (interface) of the generated
  * `client.enums` property.
- * 
+ *
  * @example
  * // The schema:
  * {
  *   TodoStatus: a.enum(['Planned' | 'InProgress' | 'Completed']),
  * }
- * 
+ *
  * // The inferred interface of the `client.enums`:
  * {
  *   TodoStatus: {
@@ -804,5 +812,5 @@ type IndexQueryMethodSignature<
       authToken?: string;
       headers?: CustomHeaders;
     },
-  ) => ListReturnValue<ReturnValue<Model, FlatModel, SelectionSet>>;
+  ) => ListReturnValue<Prettify<ReturnValue<Model, FlatModel, SelectionSet>>>;
 };

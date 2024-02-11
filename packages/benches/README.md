@@ -2,31 +2,66 @@
 
 ## Getting Started
 
-To run benches:
+#### Running an individual bench file
+
+This script will build the `data-schema` and `data-schema-types` packages, then run the specified bench file.
 
 ```
-$ npm run bench
+$ npm run bench:file file_name
 ```
 
-To create a new bench:
+#### Running groups of benches
+
+These scripts will build the packages in the library, then run all the bench files in the specified directory.
+
+```
+$ npm run bench:basic
+$ npm run bench:p50
+$ npm run bench:p99
+$ npm run bench:all
+```
+
+#### Creating a new bench
+
+Add the following block to an existing bench file or a new file (use extension `.bench.ts` in the file name)
 
 ```ts
 bench('new bench', () => {
   // do some typey stuff
+  type Generic<T> = T;
+  type _Test = Generic<string>;
 }).types();
 ```
 
-Then run `npm run bench` and the instantiation count will appear in the file inside the `.types()` builder.
+Then run `npm run bench:file file_name` and the instantiation count will appear in the file inside the `.types()` builder.
 
 ```ts
 bench('new bench', () => {
-  // do some typey stuff
-}).types([0, 'instantiations']);
+  type Generic<T> = T;
+  type _Test = Generic<string>;
+}).types([1, 'instantiations']);
 ```
 
 The value will serve as the baseline for subsequent runs.
 
-If you want to re-baseline the benches, clear the value inside the builder (`.types()`)
+#### Re-baselining existing bench
+
+If you've made changes to the library that impacted type performance and you want to create a new baseline, run:
+
+```
+$ npm run baseline file_name
+```
+
+(The `baseline` scripts also first build the packages in the library before executing)
+
+Similarly, you can do this in groups (by directory):
+
+```
+$ npm run baseline:basic
+$ npm run baseline:p50
+$ npm run baseline:p99
+$ npm run baseline:all
+```
 
 ## Overview of existing benchmarks:
 

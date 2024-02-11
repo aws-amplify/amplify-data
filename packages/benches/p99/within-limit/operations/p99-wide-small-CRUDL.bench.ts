@@ -3,8 +3,6 @@ import { a, ClientSchema } from '@aws-amplify/data-schema';
 import { Amplify } from 'aws-amplify';
 import { generateClient } from 'aws-amplify/api';
 
-bench('baseline', () => {}).types([0, 'instantiations']);
-
 /**
  * Target: 1 simple model w/ 1700 fields each
  * Within limit: 1 model w/ 43 fields
