@@ -104,8 +104,8 @@ deployment to succeed before updating the schema.
 
 | Schema Benchmark | Instantiations | w/ client types | w/ CRUDL   | w/ SELECTION SET |
 | ---------------- | -------------- | --------------- | ---------- | ---------------- |
-| p50              | 20,578         | 460,912         | 3,050,506  | 3,111,497        |
-| p50 (prod)       | 54,314         | 4,539,404       | 17,791,120 | 17,988,303       |
+| p50              | 32,110         | 233,973         | 3,185,450  | 3,111,497        |
+| p50 (prod)       | 134,175        | 4,568,413       | 17,791,120 | 17,988,303       |
 
 ### p99 ("over limit")
 
@@ -114,14 +114,14 @@ for these schemas._
 
 | Schema Benchmark    | Instantiations | w/ client types | w/ CRUDL           | w/ SELECTION SET   |
 | ------------------- | -------------- | --------------- | ------------------ | ------------------ |
-| p99 (tall, complex) | 467,767        | 8,919,415       | TODO (pending fix) | TODO (pending fix) |
-| p99 (tall, simple)  | 928,191        | 8,339,803       | TODO (pending fix) | TODO (pending fix) |
-| p99 (wide, large)   | 24,712         | 9,867,387       | TODO (pending fix) | TODO (pending fix) |
+| p99 (tall, complex) | 1,200,522      | 10,867,462      | TODO (pending fix) | TODO (pending fix) |
+| p99 (tall, simple)  | 3,212,284      | 14,274,960      | TODO (pending fix) | TODO (pending fix) |
+| p99 (wide, large)   | 1,239,660      | 11,231,864      | TODO (pending fix) | TODO (pending fix) |
 
 ### p99 ("within limit")
 
 | Schema Benchmark   | Instantiations | w/ client types | w/ CRUDL           | w/ SELECTION SET   |
 | ------------------ | -------------- | --------------- | ------------------ | ------------------ |
-| p99 (tall, simple) | 48,415         | 2,573,418       | 3,326,571          | 3,511,380          |
-| p99 (wide, large)  | 19,231         | 8,152,084       | TODO (pending fix) | TODO (pending fix) |
-| P99 (wide, small)  | 3,423          | 800,034         | 5,991,877          | 6,493,245          |
+| p99 (tall, simple) | 166,349        | 5,674,827       | 7,532,562          | 7,979,898          |
+| p99 (wide, large)  | 800,936        | 9,031,063       | TODO (pending fix) | TODO (pending fix) |
+| P99 (wide, small)  | 234,876        | 956,859         | 1,964,483          | 1,803,880          |

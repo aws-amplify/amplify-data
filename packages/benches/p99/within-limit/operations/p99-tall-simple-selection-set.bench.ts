@@ -252,26 +252,20 @@ bench('100 simple models with 1 field each w/ client types', async () => {
     },
   });
 
-  // 2,619,311
   const client = generateClient<Schema>();
 
-  // 3,108,482
   const result = await client.models.Model1.create({
     field1: 'Field 1',
   });
 
-  // 3,138,263
   await client.models.Model1.get({ id: result.data.id }, { selectionSet });
 
-  // 3,306,725
   await client.models.Model1.update({
     id: result.data.id,
     field1: 'Updated Field 1',
   });
 
-  // 3,306,737
   await client.models.Model1.delete({ id: result.data.id });
 
-  // 3,326,571
   await client.models.Model1.list({ selectionSet });
 }).types([7979898, 'instantiations']);

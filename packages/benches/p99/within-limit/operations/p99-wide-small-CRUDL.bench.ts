@@ -88,7 +88,7 @@ bench('1 simple model w/ 43 fields CRUDL', async () => {
 
   await client.models.Model1.update({
     id: result.data.id,
-    field200: 'Updated Field 200',
+    field1: 'Updated Field 200',
   });
 
   await client.models.Model1.delete({ id: result.data.id });
