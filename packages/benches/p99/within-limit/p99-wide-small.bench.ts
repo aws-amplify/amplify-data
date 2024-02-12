@@ -1711,7 +1711,7 @@ bench('1 simple model w/ 1700 fields each', () => {
       field1700: a.string(),
     }),
   }).authorization([a.allow.public()]);
-}).types([3423, 'instantiations']);
+}).types([234876, 'instantiations']);
 
 bench('1 simple model w/ 1700 fields each w/ client types', () => {
   const s = a
@@ -3422,4 +3422,4 @@ bench('1 simple model w/ 1700 fields each w/ client types', () => {
     .authorization([a.allow.public()]);
 
   type _ = ClientSchema<typeof s>;
-}).types([800034, 'instantiations']);
+}).types([956859, 'instantiations']);

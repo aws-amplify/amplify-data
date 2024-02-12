@@ -6,7 +6,7 @@ import { a, ClientSchema } from '@aws-amplify/data-schema';
 // import { Amplify } from 'aws-amplify';
 // import { generateClient } from 'aws-amplify/api';
 
-bench('baseline', () => {}).types();
+bench('baseline', () => {}).types([0, 'instantiations']);
 
 /**
  * The following benchmarks are an extension of `p50.bench.ts`.
@@ -1742,4 +1742,4 @@ bench('99 complex models CRUDL', async () => {
   // await client.models.Todo.delete({ todoId: result.data.todoId });
 
   // await client.models.Todo.list();
-}).types();
+}).types([10905764, 'instantiations']);

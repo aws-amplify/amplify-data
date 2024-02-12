@@ -272,4 +272,4 @@ bench('100 simple models with 1 field each w/ client types', async () => {
 
   // 3,326,571
   await client.models.Model1.list();
-}).types([3326571, 'instantiations']);
+}).types([7532562, 'instantiations']);

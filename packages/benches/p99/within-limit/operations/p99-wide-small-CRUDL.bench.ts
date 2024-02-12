@@ -94,4 +94,4 @@ bench('1 simple model w/ 43 fields CRUDL', async () => {
   await client.models.Model1.delete({ id: result.data.id });
 
   await client.models.Model1.list();
-}).types([5991877, 'instantiations']);
+}).types([1964483, 'instantiations']);

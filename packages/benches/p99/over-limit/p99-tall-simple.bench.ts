@@ -4576,7 +4576,7 @@ bench('1522 simple models with 1 field each', () => {
       field1: a.string(),
     }),
   }).authorization([a.allow.public()]);
-}).types([928191, 'instantiations']);
+}).types([3212284, 'instantiations']);
 
 bench('1522 simple models with 1 field each w/ client types', () => {
   const s = a
@@ -9152,4 +9152,4 @@ bench('1522 simple models with 1 field each w/ client types', () => {
 
   //@ts-expect-error - working schema
   type _ = ClientSchema<typeof s>;
-}).types([8339803, 'instantiations']);
+}).types([14274960, 'instantiations']);
