@@ -77,7 +77,6 @@ bench('1 simple model w/ 43 fields CRUDL', async () => {
 
   const client = generateClient<Schema>();
 
-  // "deep / infinite" TS error is surfaced here:
   const result = await client.models.Model1.create({
     field1: 'test',
     field2: 'test',

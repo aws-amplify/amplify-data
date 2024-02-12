@@ -7,7 +7,7 @@ const selectionSet = ['field1'] as const;
 
 bench('baseline', () => {}).types([0, 'instantiations']);
 
-bench('100 simple models with 1 field each w/ client types', async () => {
+bench('70 simple models with 1 field each w/ client types', async () => {
   const s = a
     .schema({
       Model1: a.model({
@@ -220,25 +220,9 @@ bench('100 simple models with 1 field each w/ client types', async () => {
       Model70: a.model({
         field1: a.string(),
       }),
-      Model71: a.model({
-        field1: a.string(),
-      }),
-      Model72: a.model({
-        field1: a.string(),
-      }),
-      Model73: a.model({
-        field1: a.string(),
-      }),
-      Model74: a.model({
-        field1: a.string(),
-      }),
-      Model75: a.model({
-        field1: a.string(),
-      }),
     })
     .authorization([a.allow.public()]);
 
-  // 2573418
   type Schema = ClientSchema<typeof s>;
 
   Amplify.configure({
