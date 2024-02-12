@@ -25,7 +25,7 @@
 		}
   },
   "typesVersions": {
-		">=4.2": {
+		">=5.0": {
 			"internals": [
 				"./lib-esm/src/internals/index.d.ts"
 			]
