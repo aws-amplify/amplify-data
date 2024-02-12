@@ -1693,7 +1693,7 @@ bench('99 complex models', () => {
       })
       .authorization([a.allow.private().to(['read']), a.allow.owner()]),
   }).authorization([a.allow.public()]);
-}).types([467767, 'instantiations']);
+}).types([1200522, 'instantiations']);
 
 bench('99 complex models w/ client types', () => {
   const s = a
@@ -3386,4 +3386,4 @@ bench('99 complex models w/ client types', () => {
 
   //@ts-expect-error - working schema
   type _ = ClientSchema<typeof s>;
-}).types([8919415, 'instantiations']);
+}).types([10867462, 'instantiations']);

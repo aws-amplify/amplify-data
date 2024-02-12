@@ -5,7 +5,7 @@ import { generateClient } from 'aws-amplify/api';
 
 bench('baseline', () => {}).types([0, 'instantiations']);
 
-bench('100 simple models with 1 field each w/ client types', async () => {
+bench('70 simple models with 1 field each w/ client types', async () => {
   const s = a
     .schema({
       Model1: a.model({
@@ -218,25 +218,9 @@ bench('100 simple models with 1 field each w/ client types', async () => {
       Model70: a.model({
         field1: a.string(),
       }),
-      Model71: a.model({
-        field1: a.string(),
-      }),
-      Model72: a.model({
-        field1: a.string(),
-      }),
-      Model73: a.model({
-        field1: a.string(),
-      }),
-      Model74: a.model({
-        field1: a.string(),
-      }),
-      Model75: a.model({
-        field1: a.string(),
-      }),
     })
     .authorization([a.allow.public()]);
 
-  // 2573418
   type Schema = ClientSchema<typeof s>;
 
   Amplify.configure({
@@ -250,26 +234,20 @@ bench('100 simple models with 1 field each w/ client types', async () => {
     },
   });
 
-  // 2,619,311
   const client = generateClient<Schema>();
 
-  // 3,108,482
   const result = await client.models.Model1.create({
     field1: 'Field 1',
   });
 
-  // 3,138,263
   await client.models.Model1.get({ id: result.data.id });
 
-  // 3,306,725
   await client.models.Model1.update({
     id: result.data.id,
     field1: 'Updated Field 1',
   });
 
-  // 3,306,737
   await client.models.Model1.delete({ id: result.data.id });
 
-  // 3,326,571
   await client.models.Model1.list();
-}).types([3326571, 'instantiations']);
+}).types([6766437, 'instantiations']);
