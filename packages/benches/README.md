@@ -122,6 +122,6 @@ for these schemas._
 
 | Schema Benchmark   | Instantiations | w/ client types | w/ CRUDL           | w/ SELECTION SET   |
 | ------------------ | -------------- | --------------- | ------------------ | ------------------ |
-| p99 (tall, simple) | 166,349        | 5,674,827       | 7,532,562          | 7,979,898          |
+| p99 (tall, simple) | 166,349        | 5,674,827       | 6,766,437          | 7,186,893          |
 | p99 (wide, large)  | 800,936        | 9,031,063       | TODO (pending fix) | TODO (pending fix) |
 | P99 (wide, small)  | 234,876        | 956,859         | 1,670,961          | 1,803,880          |
