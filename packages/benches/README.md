@@ -102,10 +102,10 @@ deployment to succeed before updating the schema.
 
 ### p50
 
-| Schema Benchmark | Instantiations | w/ client types | w/ CRUDL  | w/ SELECTION SET |
-| ---------------- | -------------- | --------------- | --------- | ---------------- |
-| p50              | 20,578         | 460,912         | 2,098,359 | 2,283,895        |
-| p50 (prod)       | 54,314         | 4,539,404       | 8,440,504 | 8,643,960        |
+| Schema Benchmark | Instantiations | w/ client types | w/ CRUDL   | w/ SELECTION SET |
+| ---------------- | -------------- | --------------- | ---------- | ---------------- |
+| p50              | 20,578         | 460,912         | 3,050,506  | 3,111,497        |
+| p50 (prod)       | 54,314         | 4,539,404       | 17,791,120 | 17,988,303       |
 
 ### p99 ("over limit")
 
