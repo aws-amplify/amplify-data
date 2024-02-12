@@ -12,7 +12,7 @@ bench('baseline', () => {}).types([0, 'instantiations']);
  * each, and the final model (#25) has 136 fields.
  */
 bench('26 models w/ 215 fields each, 1 model with 4', () => {
-  const s = a
+  a
     .schema({
       Model1: a.model({
         field1: a.string(),

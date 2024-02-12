@@ -1,5 +1,11 @@
 # @aws-amplify/data-schema-types
 
+## 0.7.2
+
+### Patch Changes
+
+- f8ada2c: fix: add EnumTypes for ts < 5
+
 ## 0.7.1
 
 ### Patch Changes
