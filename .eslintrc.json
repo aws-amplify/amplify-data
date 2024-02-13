@@ -21,7 +21,7 @@
     // "jsdoc",
     "import"
   ],
-  "ignorePatterns": ["**/*.js", "**/*.d.ts", "**/internals/*.ts"],
+  "ignorePatterns": ["**/*.js", "**/*.d.ts", "**/src/internals/index.ts"],
   "rules": {
     "no-duplicate-imports": "error",
     "no-tabs": "error",
