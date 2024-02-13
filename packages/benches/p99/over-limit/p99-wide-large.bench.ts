@@ -1,8 +1,6 @@
 import { bench } from '@arktype/attest';
 import { a, ClientSchema } from '@aws-amplify/data-schema';
 
-bench('baseline', () => {}).types([0, 'instantiations']);
-
 /**
  * Metric: 1 model with 2288 fields, 34 models with 215 fields each (average
  * number of fields is 275).
@@ -2516,7 +2514,7 @@ bench('1 model containing 2288 fields, 34 models w/ 215 fields each', () => {
       field214: a.string(),
       field215: a.string(),
     }),
-    Model1: a.model({
+    Model1B: a.model({
       field1: a.string(),
       field2: a.string(),
       field3: a.string(),
@@ -10112,7 +10110,7 @@ bench('1 model containing 2288 fields, 34 models w/ 215 fields each', () => {
       field215: a.string(),
     }),
   }).authorization([a.allow.public()]);
-}).types([1239660, 'instantiations']);
+}).types([49009, 'instantiations']);
 
 bench(
   '1 model containing 2288 fields, 34 models w/ 215 fields each w/ client types',
@@ -12626,7 +12624,7 @@ bench(
           field214: a.string(),
           field215: a.string(),
         }),
-        Model1: a.model({
+        Model1B: a.model({
           field1: a.string(),
           field2: a.string(),
           field3: a.string(),
@@ -20224,7 +20222,6 @@ bench(
       })
       .authorization([a.allow.public()]);
 
-    //@ts-expect-error - working schema
     type _ = ClientSchema<typeof s>;
   },
-).types([11231864, 'instantiations']);
+).types([5313559, 'instantiations']);

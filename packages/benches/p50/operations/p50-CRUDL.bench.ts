@@ -3,8 +3,6 @@ import { a, ClientSchema } from '@aws-amplify/data-schema';
 import { Amplify } from 'aws-amplify';
 import { generateClient } from 'aws-amplify/api';
 
-bench('baseline', () => {}).types([0, 'instantiations']);
-
 /**
  * The following benchmarks are an extension of `p50.bench.ts`.
  * Here we perform CRUDL operations for a single model.
@@ -86,4 +84,4 @@ bench('p50 CRUDL', async () => {
   });
 
   await client.models.Todo.list();
-}).types([3050506, 'instantiations']);
+}).types([1939801, 'instantiations']);

@@ -1,5 +1,5 @@
 import { ResolveSchema } from './ResolveSchema';
-import { Prettify, UnionToIntersection } from '@aws-amplify/data-schema-types';
+import { UnionToIntersection } from '@aws-amplify/data-schema-types';
 import {
   ModelRelationalFieldParamShape,
   ModelRelationshipTypes,
@@ -31,14 +31,12 @@ export type Denormalized<
   Identifiers extends Record<string, { identifier: string }>,
 > = {
   [ModelName in keyof Schema]: {
-    [FieldName in keyof Schema[ModelName]]: Prettify<
-      {
-        model: ModelName;
-        identifier: IdentifierFields<Identifiers, ModelName>;
-        field: FieldName;
-        type: Schema[ModelName][FieldName];
-      } & RelatedModelFields<Schema[ModelName][FieldName], Identifiers>
-    >;
+    [FieldName in keyof Schema[ModelName]]: {
+      model: ModelName;
+      identifier: IdentifierFields<Identifiers, ModelName>;
+      field: FieldName;
+      type: Schema[ModelName][FieldName];
+    } & RelatedModelFields<Schema[ModelName][FieldName], Identifiers>;
   }[keyof Schema[ModelName]];
 }[keyof Schema];
 
@@ -87,7 +85,7 @@ export type ImpliedFKs<
     | ManyToManyKeys<Schema, ManyToManys>,
 > = unknown extends UnionToIntersection<InferredFields>
   ? never
-  : Prettify<UnionToIntersection<InferredFields>>;
+  : UnionToIntersection<InferredFields>;
 
 type IdentifierFields<
   Identifiers extends Record<string, { identifier: string }>,

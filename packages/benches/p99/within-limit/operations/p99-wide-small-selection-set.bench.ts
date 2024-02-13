@@ -5,8 +5,6 @@ import { generateClient } from 'aws-amplify/api';
 
 const selectionSet = ['field1', 'field2', 'field3', 'field4'] as const;
 
-bench('baseline', () => {}).types([0, 'instantiations']);
-
 /**
  * Target: 1 simple model w/ 1700 fields each
  * Within limit: 1 model w/ 43 fields
@@ -95,4 +93,4 @@ bench('1 simple model w/ 43 fields CRUDL', async () => {
   await client.models.Model1.delete({ id: result.data.id });
 
   await client.models.Model1.list({ selectionSet });
-}).types([1803880, 'instantiations']);
+}).types([1442089, 'instantiations']);
