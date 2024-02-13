@@ -122,8 +122,11 @@ describe('client', () => {
     });
 
     type ResponseType = typeof response;
+
+    type T = ResponseType['data'];
+
     type Expected = {
-      data: Schema['DataModel'];
+      data: Schema['DataModel'] | null;
       errors?: GraphQLFormattedError[] | undefined;
       extensions?:
         | {
