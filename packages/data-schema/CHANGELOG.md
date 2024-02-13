@@ -1,5 +1,13 @@
 # @aws-amplify/data-schema
 
+## 0.13.3
+
+### Patch Changes
+
+- fbcc9dd: type perf improvements
+- Updated dependencies [fbcc9dd]
+  - @aws-amplify/data-schema-types@0.7.3
+
 ## 0.13.2
 
 ### Patch Changes
