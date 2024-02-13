@@ -21,7 +21,7 @@ describe('CustomOperation transform', () => {
     expect(result).toMatchSnapshot();
   });
 
-  test('Custom Mutation w Auth rules', () => {
+  test('Custom Mutation w Auth rules and no handler should omit @auth', () => {
     const s = a.schema({
       likePost: a
         .mutation()
