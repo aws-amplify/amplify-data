@@ -35,8 +35,10 @@ describe('ModelSchema', () => {
           title: string(),
         }),
       });
-      // @ts-expect-error
-      s.setSqlStatementFolderPath('test');
+      expect(() => {
+        // @ts-expect-error
+        s.setSqlStatementFolderPath('test');
+      }).toThrowError('s.setSqlStatementFolderPath is not a function');
     });
   });
   describe('sql configured functionality', () => {

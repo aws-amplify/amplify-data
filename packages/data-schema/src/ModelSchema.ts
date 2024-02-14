@@ -8,7 +8,6 @@ import {
   type InternalModel,
   isSchemaModelType,
   SchemaModelType,
-  model,
 } from './ModelType';
 import type { EnumType, EnumTypeParamShape } from './EnumType';
 import type { CustomType, CustomTypeParamShape } from './CustomType';
@@ -45,6 +44,11 @@ export type SchemaConfig<DBT extends DatabaseType = DatabaseType> = {
 };
 
 export type ModelSchemaParamShape = {
+  types: ModelSchemaContents;
+  authorization: Authorization<any, any, any>[];
+};
+
+type ModelSchemaData = {
   types: ModelSchemaContents;
   authorization: Authorization<any, any, any>[];
 };
@@ -148,8 +152,7 @@ function _sqlSchemaExtension<T extends SQLModelSchemaParamShape>(
 }
 
 function _baseSchema<T extends ModelSchemaParamShape>(types: T['types']) {
-  const data: ModelSchemaParamShape = { types, authorization: [] };
-
+  const data: ModelSchemaData = { types, authorization: [] };
   return {
     data,
     transform(): DerivedApiDefinition {
@@ -175,16 +178,18 @@ type SchemaReturnType<
     ? ModelSchema<{ types: Types; authorization: [] }>
     : never;
 
-function bindConfigToSchema<
-  DBT extends DatabaseType,
-  Types extends ModelSchemaContents,
->(config: {
+function bindConfigToSchema<DBT extends DatabaseType>(config: {
   databaseType: DBT;
-}): (types: Types) => SchemaReturnType<DBT, Types> {
-  return (types) =>
-    (config.databaseType === 'SQL'
-      ? _sqlSchemaExtension(_baseSchema(types))
-      : _baseSchema(types)) as SchemaReturnType<DBT, Types>;
+}): <Types extends ModelSchemaContents>(
+  types: Types,
+) => SchemaReturnType<DBT, Types> {
+  return (types) => {
+    return (
+      config.databaseType === 'SQL'
+        ? _sqlSchemaExtension(_baseSchema(types))
+        : _baseSchema(types)
+    ) as SchemaReturnType<DBT, any>;
+  };
 }
 
 /**
@@ -203,7 +208,6 @@ export const schema = bindConfigToSchema({ databaseType: 'DynamoDB' });
  * @param config The SchemaConfig augments the schema with content like the database type
  * @returns
  */
-
 export function configure<DBT extends DatabaseType>(config: {
   databaseType: DBT;
 }): {

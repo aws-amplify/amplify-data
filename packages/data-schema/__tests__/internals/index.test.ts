@@ -1,4 +1,4 @@
-import { configure } from '../../internals';
+import { configure } from '../../src/internals';
 import { a } from '../../';
 
 describe('internals - configure', () => {
