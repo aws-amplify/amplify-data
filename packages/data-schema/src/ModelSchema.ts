@@ -16,7 +16,6 @@ import type {
   CustomOperationParamShape,
   InternalCustom,
 } from './CustomOperation';
-export { __auth } from './ModelField';
 import { processSchema } from './SchemaProcessor';
 import { Authorization } from './Authorization';
 
@@ -38,15 +37,16 @@ type InternalSchemaModels = Record<
   InternalModel | EnumType<any> | CustomType<any> | InternalCustom
 >;
 
-type DatabaseType = 'SQL' | 'DynamoDB';
+export type DatabaseType = 'SQL' | 'DynamoDB';
 
-export type SchemaConfig = {
-  databaseType: DatabaseType;
+export type SchemaConfig<DBT extends DatabaseType = DatabaseType> = {
+  databaseType: DBT;
 };
 
 export type ModelSchemaParamShape = {
   types: ModelSchemaContents;
   authorization: Authorization<any, any, any>[];
+  setSqlStatementFolderPath?: string;
 };
 
 type ModelSchemaData<C extends SchemaConfig> = {
@@ -55,6 +55,7 @@ type ModelSchemaData<C extends SchemaConfig> = {
     ? ModelSchemaContents
     : ModelSchemaContents;
   authorization: Authorization<any, any, any>[];
+  setSqlStatementFolderPath?: string;
 };
 
 export type InternalSchema = {
@@ -66,7 +67,7 @@ export type InternalSchema = {
 
 export type ModelSchema<
   T extends ModelSchemaParamShape,
-  UsedMethods extends 'authorization' = never,
+  UsedMethods extends 'authorization' | 'setSqlStatementFolderPath' = never,
 > = Omit<
   {
     authorization: <AuthRules extends Authorization<any, any, any>>(
@@ -86,6 +87,19 @@ export type ModelSchema<
   };
   transform: () => DerivedApiDefinition;
 };
+
+export type SqlModelSchema<
+  T extends ModelSchemaParamShape,
+  UsedMethods extends 'authorization' | 'setSqlStatementFolderPath' = never,
+> = ModelSchema<T, UsedMethods> &
+  Omit<
+    {
+      setSqlStatementFolderPath: (
+        path: string,
+      ) => ModelSchema<T, UsedMethods | 'setSqlStatementFolderPath'>;
+    },
+    UsedMethods
+  >;
 
 /**
  * Amplify API Next Model Schema shape
@@ -125,41 +139,55 @@ export const isModelSchema = (
   return typeof schema === 'object' && schema.data !== undefined;
 };
 
-function _schema<T extends ModelSchemaParamShape>(
+function _sqlSchemaExtension<T extends ModelSchemaParamShape>(
+  schema: ModelSchema<T>,
+): SqlModelSchema<T> {
+  return {
+    ...schema,
+    setSqlStatementFolderPath(path: string): any {
+      this.data.setSqlStatementFolderPath = path;
+      const { setSqlStatementFolderPath: _, ...rest } = this;
+      return rest;
+    },
+  };
+}
+
+function _baseSchema<T extends ModelSchemaParamShape>(
   types: T['types'],
   config: SchemaConfig,
 ) {
   const data: ModelSchemaData<typeof config> = { types, authorization: [] };
-  const models = filterSchemaModelTypes(data.types);
-
-  const transform = (): DerivedApiDefinition => {
-    const internalSchema: InternalSchema = { data } as InternalSchema;
-
-    return processSchema({ schema: internalSchema });
-  };
-
-  const authorization = (rules: any): any => {
-    data.authorization = rules;
-    return { data, transform, models } as any;
-  };
 
   return {
     data,
-    transform,
-    authorization,
-    models,
+    transform(): DerivedApiDefinition {
+      const internalSchema: InternalSchema = { data } as InternalSchema;
+
+      return processSchema({ schema: internalSchema });
+    },
+    authorization(rules: any): any {
+      this.data.authorization = rules;
+      const { authorization: _, ...rest } = this;
+      return rest;
+    },
+    models: filterSchemaModelTypes(data.types),
   } as ModelSchema<T>;
 }
 
-export function bindConfigToSchema(config?: Partial<SchemaConfig>) {
-  return <Types extends ModelSchemaContents>(
-    types: Types,
-  ): ModelSchema<{ types: Types; authorization: [] }> => {
-    return _schema(types, {
-      ...{ databaseType: 'DynamoDB' },
-      ...(config ?? {}),
-    });
-  };
+type SchemaReturnType<DBT extends DatabaseType> = DBT extends 'SQL'
+  ? SqlModelSchema<ModelSchemaParamShape>
+  : DBT extends 'DynamoDB'
+    ? ModelSchema<ModelSchemaParamShape>
+    : never;
+
+function bindConfigToSchema<DBT extends DatabaseType>(config: {
+  databaseType: DBT;
+}): <Types extends ModelSchemaContents>(types: Types) => SchemaReturnType<DBT> {
+  if (config.databaseType === 'SQL') {
+    return (types) =>
+      _sqlSchemaExtension(_baseSchema(types, config)) as SchemaReturnType<DBT>;
+  }
+  return (types) => _baseSchema(types, config) as SchemaReturnType<DBT>;
 }
 
 /**
@@ -169,4 +197,24 @@ export function bindConfigToSchema(config?: Partial<SchemaConfig>) {
  * @returns An API and data model definition to be deployed with Amplify (Gen 2) experience (`processSchema(...)`)
  * or with the Amplify Data CDK construct (`@aws-amplify/data-construct`)
  */
-export const schema = bindConfigToSchema();
+export const schema = bindConfigToSchema({ databaseType: 'DynamoDB' });
+
+/**
+ * Configure wraps schema definition with non-default config to allow usecases other than
+ * the default DynamoDb use-case.
+ *
+ * @param config The SchemaConfig augments the schema with content like the database type
+ * @returns
+ */
+
+export function configure<DBT extends DatabaseType>(config: {
+  databaseType: DBT;
+}): {
+  schema: <Types extends ModelSchemaContents>(
+    types: Types,
+  ) => SchemaReturnType<DBT>;
+} {
+  return {
+    schema: bindConfigToSchema(config),
+  };
+}
