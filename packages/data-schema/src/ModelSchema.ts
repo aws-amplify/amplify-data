@@ -8,6 +8,7 @@ import {
   type InternalModel,
   isSchemaModelType,
   SchemaModelType,
+  model,
 } from './ModelType';
 import type { EnumType, EnumTypeParamShape } from './EnumType';
 import type { CustomType, CustomTypeParamShape } from './CustomType';
@@ -26,7 +27,7 @@ import { Authorization } from './Authorization';
  */
 
 type SchemaContent =
-  | ModelType<ModelTypeParamShape, any, any>
+  | ModelType<ModelTypeParamShape, any>
   | CustomType<CustomTypeParamShape>
   | EnumType<EnumTypeParamShape>
   | CustomOperation<CustomOperationParamShape, any>;
@@ -165,19 +166,25 @@ function _baseSchema<T extends ModelSchemaParamShape>(types: T['types']) {
   } as ModelSchema<T>;
 }
 
-type SchemaReturnType<DBT extends DatabaseType> = DBT extends 'SQL'
-  ? SqlModelSchema<ModelSchemaParamShape>
+type SchemaReturnType<
+  DBT extends DatabaseType,
+  Types extends ModelSchemaContents,
+> = DBT extends 'SQL'
+  ? SqlModelSchema<{ types: Types; authorization: [] }>
   : DBT extends 'DynamoDB'
-    ? ModelSchema<ModelSchemaParamShape>
+    ? ModelSchema<{ types: Types; authorization: [] }>
     : never;
 
-function bindConfigToSchema<DBT extends DatabaseType>(config: {
+function bindConfigToSchema<
+  DBT extends DatabaseType,
+  Types extends ModelSchemaContents,
+>(config: {
   databaseType: DBT;
-}): <Types extends ModelSchemaContents>(types: Types) => SchemaReturnType<DBT> {
+}): (types: Types) => SchemaReturnType<DBT, Types> {
   return (types) =>
     (config.databaseType === 'SQL'
       ? _sqlSchemaExtension(_baseSchema(types))
-      : _baseSchema(types)) as SchemaReturnType<DBT>;
+      : _baseSchema(types)) as SchemaReturnType<DBT, Types>;
 }
 
 /**
@@ -202,7 +209,7 @@ export function configure<DBT extends DatabaseType>(config: {
 }): {
   schema: <Types extends ModelSchemaContents>(
     types: Types,
-  ) => SchemaReturnType<DBT>;
+  ) => SchemaReturnType<DBT, Types>;
 } {
   return {
     schema: bindConfigToSchema(config),
