@@ -1,8 +1,6 @@
 import { bench } from '@arktype/attest';
 import { a, ClientSchema } from '@aws-amplify/data-schema';
 
-bench('baseline', () => {}).types([0, 'instantiations']);
-
 /**
  * Results in ~12563 total AppSync schema types (including `type` + `input`) -
  * enum, interfaces and unions are not included.
@@ -1693,7 +1691,7 @@ bench('99 complex models', () => {
       })
       .authorization([a.allow.private().to(['read']), a.allow.owner()]),
   }).authorization([a.allow.public()]);
-}).types([1200522, 'instantiations']);
+}).types([930435, 'instantiations']);
 
 bench('99 complex models w/ client types', () => {
   const s = a
@@ -3384,6 +3382,5 @@ bench('99 complex models w/ client types', () => {
     })
     .authorization([a.allow.public()]);
 
-  //@ts-expect-error - working schema
   type _ = ClientSchema<typeof s>;
-}).types([10867462, 'instantiations']);
+}).types([4904589, 'instantiations']);

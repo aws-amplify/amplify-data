@@ -29,7 +29,7 @@ type ModelFieldDef = Extract<
 type RefFieldDef = InternalRef['data'];
 
 function isInternalModel(
-  model: ModelType<any, any, any>,
+  model: ModelType<any, any>,
 ): model is InternalModel {
   if (
     (model as any).data &&

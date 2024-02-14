@@ -1,8 +1,6 @@
 import { bench } from '@arktype/attest';
 import { a, ClientSchema } from '@aws-amplify/data-schema';
 
-bench('baseline', () => {}).types([0, 'instantiations']);
-
 bench('secondary index', () => {
   const s = a.schema({
     Post: a
@@ -19,4 +17,4 @@ bench('secondary index', () => {
   });
 
   type _ = ClientSchema<typeof s>;
-}).types([101228, 'instantiations']);
+}).types([70706, 'instantiations']);

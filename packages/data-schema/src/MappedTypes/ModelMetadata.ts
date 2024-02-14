@@ -7,7 +7,7 @@ import type { ModelType } from '../ModelType';
 import type { ModelRelationalFieldParamShape } from '../ModelRelationalField';
 
 export type ModelIdentifier<T> = {
-  [Property in keyof T]: T[Property] extends ModelType<infer R, any, any>
+  [Property in keyof T]: T[Property] extends ModelType<infer R, any>
     ? // reduce back to union
       R['identifier'] extends any[]
       ? { identifier: R['identifier'][number] }
@@ -16,7 +16,7 @@ export type ModelIdentifier<T> = {
 };
 
 export type ModelSecondaryIndexes<T> = {
-  [Property in keyof T]: T[Property] extends ModelType<infer R, any, any>
+  [Property in keyof T]: T[Property] extends ModelType<infer R, any>
     ? // reduce back to union
       R['secondaryIndexes'] extends any[]
       ? { secondaryIndexes: R['secondaryIndexes'] }
