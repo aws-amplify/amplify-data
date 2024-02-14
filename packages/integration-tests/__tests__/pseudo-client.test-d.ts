@@ -61,6 +61,40 @@ describe('client', () => {
     type test = Expect<Equal<ResponseType, Expected>>;
   });
 
+  test('query returning an enum', async () => {
+    const schema = a.schema({
+      Status: a.enum(['Active', 'Inactive', 'Unknown']),
+      getStatus: a
+        .query()
+        .arguments({
+          itemId: a.string().required(),
+        })
+        .returns(a.ref('Status').required())
+        .function('echoFunction')
+        .authorization([a.allow.public()]),
+    });
+
+    type Schema = ClientSchema<typeof schema>;
+    const client = generateClient<Schema>();
+
+    const response = await client.queries.getStatus({
+      itemId: 'some-id',
+    });
+
+    type ResponseType = typeof response;
+    type Expected = {
+      data: 'Active' | 'Inactive' | 'Unknown';
+      errors?: GraphQLFormattedError[] | undefined;
+      extensions?:
+        | {
+            [key: string]: any;
+          }
+        | undefined;
+    };
+
+    type test = Expect<Equal<ResponseType, Expected>>;
+  });
+
   test('query returning a custom type', async () => {
     const schema = a.schema({
       EchoResult: a.customType({
@@ -156,7 +190,7 @@ describe('client', () => {
     type Schema = ClientSchema<typeof schema>;
     const client = generateClient<Schema>();
 
-    const response = await client.queries.likePost({
+    const response = await client.mutations.likePost({
       postId: 'some-id',
     });
 

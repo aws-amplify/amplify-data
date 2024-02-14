@@ -28,7 +28,12 @@ export type ResolveCustomOperations<
 };
 
 type CustomOpShapes<Schema extends ModelSchema<any, any>> = {
-  [K in keyof Schema['data']['types']]: Schema['data']['types'][K] extends CustomOperation<
+  [K in keyof Schema['data']['types'] as Schema['data']['types'][K] extends CustomOperation<
+    any,
+    any
+  >
+    ? K
+    : never]: Schema['data']['types'][K] extends CustomOperation<
     infer Shape,
     any
   >
@@ -49,7 +54,7 @@ type CustomOpArguments<Shape extends CustomOperationParamShape> = {
 type CustomOpReturnType<
   Shape extends CustomOperationParamShape,
   Bag extends Record<string, unknown>,
-> = Shape['returnType'] extends RefType<infer RefShape>
+> = Shape['returnType'] extends RefType<infer RefShape, any, any>
   ? ResolveRef<RefShape, Bag>
   : Shape['returnType'] extends ModelField<infer R, any, any>
     ? R
