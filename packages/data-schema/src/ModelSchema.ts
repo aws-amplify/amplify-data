@@ -46,15 +46,9 @@ export type SchemaConfig<DBT extends DatabaseType = DatabaseType> = {
 export type ModelSchemaParamShape = {
   types: ModelSchemaContents;
   authorization: Authorization<any, any, any>[];
-  setSqlStatementFolderPath?: string;
 };
 
-type ModelSchemaData<C extends SchemaConfig> = {
-  // Differentiate content type based on SQL vs non-SQL
-  types: C['databaseType'] extends 'SQL'
-    ? ModelSchemaContents
-    : ModelSchemaContents;
-  authorization: Authorization<any, any, any>[];
+export type SQLModelSchemaParamShape = ModelSchemaParamShape & {
   setSqlStatementFolderPath?: string;
 };
 
@@ -89,7 +83,7 @@ export type ModelSchema<
 };
 
 export type SqlModelSchema<
-  T extends ModelSchemaParamShape,
+  T extends SQLModelSchemaParamShape,
   UsedMethods extends 'authorization' | 'setSqlStatementFolderPath' = never,
 > = ModelSchema<T, UsedMethods> &
   Omit<
@@ -139,7 +133,7 @@ export const isModelSchema = (
   return typeof schema === 'object' && schema.data !== undefined;
 };
 
-function _sqlSchemaExtension<T extends ModelSchemaParamShape>(
+function _sqlSchemaExtension<T extends SQLModelSchemaParamShape>(
   schema: ModelSchema<T>,
 ): SqlModelSchema<T> {
   return {
@@ -152,11 +146,8 @@ function _sqlSchemaExtension<T extends ModelSchemaParamShape>(
   };
 }
 
-function _baseSchema<T extends ModelSchemaParamShape>(
-  types: T['types'],
-  config: SchemaConfig,
-) {
-  const data: ModelSchemaData<typeof config> = { types, authorization: [] };
+function _baseSchema<T extends ModelSchemaParamShape>(types: T['types']) {
+  const data: ModelSchemaParamShape = { types, authorization: [] };
 
   return {
     data,
@@ -183,11 +174,10 @@ type SchemaReturnType<DBT extends DatabaseType> = DBT extends 'SQL'
 function bindConfigToSchema<DBT extends DatabaseType>(config: {
   databaseType: DBT;
 }): <Types extends ModelSchemaContents>(types: Types) => SchemaReturnType<DBT> {
-  if (config.databaseType === 'SQL') {
-    return (types) =>
-      _sqlSchemaExtension(_baseSchema(types, config)) as SchemaReturnType<DBT>;
-  }
-  return (types) => _baseSchema(types, config) as SchemaReturnType<DBT>;
+  return (types) =>
+    (config.databaseType === 'SQL'
+      ? _sqlSchemaExtension(_baseSchema(types))
+      : _baseSchema(types)) as SchemaReturnType<DBT>;
 }
 
 /**
@@ -201,7 +191,7 @@ export const schema = bindConfigToSchema({ databaseType: 'DynamoDB' });
 
 /**
  * Configure wraps schema definition with non-default config to allow usecases other than
- * the default DynamoDb use-case.
+ * the default DynamoDB use-case.
  *
  * @param config The SchemaConfig augments the schema with content like the database type
  * @returns
