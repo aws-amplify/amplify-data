@@ -66,7 +66,7 @@ export type InternalSchema = {
 
 export type ModelSchema<
   T extends ModelSchemaParamShape,
-  UsedMethods extends 'authorization' | 'setSqlStatementFolderPath' = never,
+  UsedMethods extends 'authorization' = never,
 > = Omit<
   {
     authorization: <AuthRules extends Authorization<any, any, any>>(
@@ -90,12 +90,12 @@ export type ModelSchema<
 export type SqlModelSchema<
   T extends SQLModelSchemaParamShape,
   UsedMethods extends 'authorization' | 'setSqlStatementFolderPath' = never,
-> = ModelSchema<T, UsedMethods> &
+> = ModelSchema<T, Exclude<UsedMethods, 'setSqlStatementFolderPath'>> &
   Omit<
     {
       setSqlStatementFolderPath: (
         path: string,
-      ) => ModelSchema<T, UsedMethods | 'setSqlStatementFolderPath'>;
+      ) => SqlModelSchema<T, UsedMethods | 'setSqlStatementFolderPath'>;
     },
     UsedMethods
   >;
