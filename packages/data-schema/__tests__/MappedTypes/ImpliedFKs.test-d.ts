@@ -1,8 +1,4 @@
-import type {
-  Equal,
-  Expect,
-  UnionToIntersection,
-} from '@aws-amplify/data-schema-types';
+import type { Equal, Expect, Prettify } from '@aws-amplify/data-schema-types';
 import { a, ClientSchema } from '../../index';
 import {
   ResolveSchema,
@@ -140,7 +136,7 @@ describe('Denormalized mapped type', () => {
     type Schema = ResolveSchema<typeof schema>;
     type Identifiers = ModelIdentifier<SchemaTypes<typeof schema>>;
 
-    type Actual = Denormalized<Schema, Identifiers>;
+    type Actual = Prettify<Denormalized<Schema, Identifiers>>;
     type T = Extract<Actual, { model: 'TheParent'; field: 'parentField' }>;
 
     type Expected =
@@ -204,7 +200,7 @@ describe('Denormalized mapped type', () => {
 
     type D = Denormalized<Schema, Identifiers>;
 
-    type Actual = Extract<D, { model: 'BoringChild' }>;
+    type Actual = Prettify<Extract<D, { model: 'BoringChild' }>>;
 
     type Expected =
       | {
@@ -237,7 +233,7 @@ describe('Denormalized mapped type', () => {
 
     type D = Denormalized<Schema, Identifiers>;
 
-    type Actual = Extract<D, { relatedModel: 'BoringChild' }>;
+    type Actual = Prettify<Extract<D, { relatedModel: 'BoringChild' }>>;
 
     type Expected = {
       model: 'BoringParent';
@@ -289,7 +285,7 @@ describe('Denormalized mapped type', () => {
 
     type D = Denormalized<Schema, Identifiers>;
 
-    type Actual = Extract<D, { relatedModel: 'MultiChild' }>;
+    type Actual = Prettify<Extract<D, { relatedModel: 'MultiChild' }>>;
 
     type Expected =
       | {
@@ -359,7 +355,7 @@ describe('ImpliedFK mapped type', () => {
     type Schema = ResolveSchema<typeof schema>;
     type Identifiers = ModelIdentifier<SchemaTypes<typeof schema>>;
 
-    type Actual = ImpliedFKs<Schema, Identifiers, 'BoringParent'>;
+    type Actual = Prettify<ImpliedFKs<Schema, Identifiers, 'BoringParent'>>;
     type Expected = {
       boringParentChildNormalId?: string;
       boringParentChildReciprocalId?: string;
@@ -518,7 +514,7 @@ describe('ImpliedFK mapped type', () => {
     type Schema = ResolveSchema<typeof schema>;
     type Identifiers = ModelIdentifier<SchemaTypes<typeof schema>>;
 
-    type ParentActual = ImpliedFKs<Schema, Identifiers, 'CPKParent'>;
+    type ParentActual = Prettify<ImpliedFKs<Schema, Identifiers, 'CPKParent'>>;
     type ParentExpected = {
       cPKParentChildNormalCPKChildIdFieldA?: string;
       cPKParentChildNormalCPKChildIdFieldB?: string;
@@ -560,7 +556,7 @@ describe('ImpliedFK mapped type', () => {
     type Schema = ResolveSchema<typeof schema>;
     type Identifiers = ModelIdentifier<SchemaTypes<typeof schema>>;
 
-    type Actual = ImpliedFKs<Schema, Identifiers, 'MultiChild'>;
+    type Actual = Prettify<ImpliedFKs<Schema, Identifiers, 'MultiChild'>>;
     type Expected = {
       multiParentAChildFromParentAId?: string;
       multiParentBChildFromParentBCpkA?: string;
@@ -593,7 +589,9 @@ describe('ImpliedFK mapped type', () => {
     type RightExpected = never;
     type testRight = Expect<Equal<RightActual, RightExpected>>;
 
-    type JoinTableActual = ImpliedFKs<Schema, Identifiers, 'ChuckNorris'>;
+    type JoinTableActual = Prettify<
+      ImpliedFKs<Schema, Identifiers, 'ChuckNorris'>
+    >;
     type JoinTableExected = {
       manyToManyLeftId?: string;
       manyToManyRightId?: string;
@@ -632,7 +630,9 @@ describe('ImpliedFK mapped type', () => {
     type RightExpected = never;
     type testRight = Expect<Equal<RightActual, RightExpected>>;
 
-    type JoinTableActual = ImpliedFKs<Schema, Identifiers, 'Wolverine'>;
+    type JoinTableActual = Prettify<
+      ImpliedFKs<Schema, Identifiers, 'Wolverine'>
+    >;
     type JoinTableExected = {
       manyToManyLeftLeftIdA?: string;
       manyToManyLeftLeftIdB?: number;

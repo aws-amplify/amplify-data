@@ -1,8 +1,6 @@
 import { bench } from '@arktype/attest';
 import { a, ClientSchema } from '@aws-amplify/data-schema';
 
-bench('baseline', () => {}).types([0, 'instantiations']);
-
 /**
  * The following benchmarks are for testing ~p50 schemas. Our assumption around
  * what is a "p50" is: 3 models, 5 fields each, all connected with
@@ -45,7 +43,7 @@ bench('p50', () => {
       })
       .authorization([a.allow.public().to(['read']), a.allow.owner()]),
   }).authorization([a.allow.public()]);
-}).types([32110, 'instantiations']);
+}).types([27610, 'instantiations']);
 
 bench('p50 w/ client types', () => {
   const s = a
@@ -88,4 +86,4 @@ bench('p50 w/ client types', () => {
     .authorization([a.allow.public()]);
 
   type _ = ClientSchema<typeof s>;
-}).types([233973, 'instantiations']);
+}).types([92440, 'instantiations']);

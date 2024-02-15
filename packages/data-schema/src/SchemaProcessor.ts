@@ -28,7 +28,9 @@ type ModelFieldDef = Extract<
 >;
 type RefFieldDef = InternalRef['data'];
 
-function isInternalModel(model: ModelType<any, any>): model is InternalModel {
+function isInternalModel(
+  model: ModelType<any, any>,
+): model is InternalModel {
   if (
     (model as any).data &&
     !isCustomType(model) &&

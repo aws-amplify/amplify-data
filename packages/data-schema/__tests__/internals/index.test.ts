@@ -1,5 +1,5 @@
 import { configure } from '../../src/internals';
-import { a } from '../../';
+import { a } from '../../index';
 
 describe('internals - configure', () => {
   test('configure can set databaseType to SQL', () => {
