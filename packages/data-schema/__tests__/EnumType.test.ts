@@ -84,4 +84,18 @@ describe('EnumType transform', () => {
 
     expect(result).toMatchSnapshot();
   });
+
+  it('throws when the enum values contain whitespace', () => {
+    const testSchema = a
+      .schema({
+        Model: a.model({
+          enumField: a.enum(['string string', 'value']),
+        }),
+      })
+      .authorization([a.allow.public()]);
+
+    expect(() => {
+      testSchema.transform();
+    }).toThrow(/not contain any whitespace/);
+  });
 });

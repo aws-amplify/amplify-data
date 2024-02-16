@@ -762,6 +762,11 @@ const schemaPreprocessor = (schema: InternalSchema): string => {
 
     if (!isInternalModel(typeDef)) {
       if (isEnumType(typeDef)) {
+        if (typeDef.values.some((value) => /\s/.test(value))) {
+          throw new Error(
+            `Values of the enum type ${typeName} should not contain any whitespace.`,
+          );
+        }
         const enumType = `enum ${typeName} {\n  ${typeDef.values.join(
           '\n  ',
         )}\n}`;
