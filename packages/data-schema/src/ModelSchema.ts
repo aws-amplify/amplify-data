@@ -37,20 +37,37 @@ type InternalSchemaModels = Record<
   InternalModel | EnumType<any> | CustomType<any> | InternalCustom
 >;
 
-export type DatabaseType = 'SQL' | 'DynamoDB';
+type BackendSecret = {
+  resolve: (scope: any, backendIdentifier: any) => any;
+  resolvePath: (backendIdentifier: any) => any;
+};
 
-export type SchemaConfig<DBT extends DatabaseType = DatabaseType> = {
-  databaseType: DBT;
+export type DatasourceEngine = 'mysql' | 'postgresql' | 'dynamodb';
+
+type DatasourceConfig<DE extends DatasourceEngine> = DE extends 'dynamodb'
+  ? { engine: DE }
+  : {
+      engine: DE;
+      hostname: BackendSecret;
+      username: BackendSecret;
+      password: BackendSecret;
+      port: BackendSecret;
+      databaseName: BackendSecret;
+      // TODO: clarify type
+      vpcConfig?: Record<string, never>;
+    };
+
+export type SchemaConfig<
+  DE extends DatasourceEngine,
+  DC extends DatasourceConfig<DE>,
+> = {
+  database: DC;
 };
 
 export type ModelSchemaParamShape = {
   types: ModelSchemaContents;
   authorization: Authorization<any, any, any>[];
-};
-
-type ModelSchemaData = {
-  types: ModelSchemaContents;
-  authorization: Authorization<any, any, any>[];
+  configuration: SchemaConfig<any, any>;
 };
 
 export type SQLModelSchemaParamShape = ModelSchemaParamShape & {
@@ -151,8 +168,15 @@ function _sqlSchemaExtension<T extends SQLModelSchemaParamShape>(
   };
 }
 
-function _baseSchema<T extends ModelSchemaParamShape>(types: T['types']) {
-  const data: ModelSchemaData = { types, authorization: [] };
+function _baseSchema<
+  T extends ModelSchemaParamShape,
+  DSC extends SchemaConfig<any, any>,
+>(types: T['types'], config: DSC) {
+  const data: ModelSchemaParamShape = {
+    types,
+    authorization: [],
+    configuration: config,
+  };
   return {
     data,
     transform(): DerivedApiDefinition {
@@ -170,25 +194,23 @@ function _baseSchema<T extends ModelSchemaParamShape>(types: T['types']) {
 }
 
 type SchemaReturnType<
-  DBT extends DatabaseType,
+  DE extends DatasourceEngine,
   Types extends ModelSchemaContents,
-> = DBT extends 'SQL'
-  ? SqlModelSchema<{ types: Types; authorization: [] }>
-  : DBT extends 'DynamoDB'
-    ? ModelSchema<{ types: Types; authorization: [] }>
-    : never;
+> = DE extends 'dynamodb'
+  ? ModelSchema<{ types: Types; authorization: []; configuration: any }>
+  : SqlModelSchema<{ types: Types; authorization: []; configuration: any }>;
 
-function bindConfigToSchema<DBT extends DatabaseType>(config: {
-  databaseType: DBT;
-}): <Types extends ModelSchemaContents>(
+function bindConfigToSchema<DE extends DatasourceEngine>(
+  config: SchemaConfig<DE, DatasourceConfig<DE>>,
+): <Types extends ModelSchemaContents>(
   types: Types,
-) => SchemaReturnType<DBT, Types> {
+) => SchemaReturnType<DE, Types> {
   return (types) => {
     return (
-      config.databaseType === 'SQL'
-        ? _sqlSchemaExtension(_baseSchema(types))
-        : _baseSchema(types)
-    ) as SchemaReturnType<DBT, any>;
+      config.database.engine === 'dynamodb'
+        ? _baseSchema(types, config)
+        : _sqlSchemaExtension(_baseSchema(types, config))
+    ) as SchemaReturnType<DE, any>;
   };
 }
 
@@ -199,7 +221,7 @@ function bindConfigToSchema<DBT extends DatabaseType>(config: {
  * @returns An API and data model definition to be deployed with Amplify (Gen 2) experience (`processSchema(...)`)
  * or with the Amplify Data CDK construct (`@aws-amplify/data-construct`)
  */
-export const schema = bindConfigToSchema({ databaseType: 'DynamoDB' });
+export const schema = bindConfigToSchema({ database: { engine: 'dynamodb' } });
 
 /**
  * Configure wraps schema definition with non-default config to allow usecases other than
@@ -208,12 +230,12 @@ export const schema = bindConfigToSchema({ databaseType: 'DynamoDB' });
  * @param config The SchemaConfig augments the schema with content like the database type
  * @returns
  */
-export function configure<DBT extends DatabaseType>(config: {
-  databaseType: DBT;
-}): {
+export function configure<DE extends DatasourceEngine>(
+  config: SchemaConfig<DE, DatasourceConfig<DE>>,
+): {
   schema: <Types extends ModelSchemaContents>(
     types: Types,
-  ) => SchemaReturnType<DBT, Types>;
+  ) => SchemaReturnType<DE, Types>;
 } {
   return {
     schema: bindConfigToSchema(config),

@@ -15,22 +15,22 @@
     "lint": "eslint ."
   },
   "exports": {
-		".": {
-			"types": "./lib-esm/index.d.ts",
-			"import": "./lib-esm/index.js"
-		},
-		"./internals": {
-			"types": "./lib-esm/src/internals/index.d.ts",
-			"import": "./lib-esm/src/internals/index.js"
-		}
+    ".": {
+      "types": "./lib-esm/index.d.ts",
+      "import": "./lib-esm/index.js"
+    },
+    "./internals": {
+      "types": "./lib-esm/src/internals/index.d.ts",
+      "import": "./lib-esm/src/internals/index.js"
+    }
   },
   "typesVersions": {
-		">=5.0": {
-			"internals": [
-				"./lib-esm/src/internals/index.d.ts"
-			]
-		}
-	},
+    ">=5.0": {
+      "internals": [
+        "./lib-esm/src/internals/index.d.ts"
+      ]
+    }
+  },
   "dependencies": {
     "@aws-amplify/data-schema-types": "*"
   },

@@ -14,6 +14,17 @@ import { configure } from '../src/internals';
 
 type GetModelTypeArg<T> = T extends ModelType<infer R, any> ? R : never;
 
+const fakeSecret = () => ({}) as any;
+
+const datasourceConfigMySQL = {
+  engine: 'mysql',
+  hostname: fakeSecret(),
+  username: fakeSecret(),
+  password: fakeSecret(),
+  port: fakeSecret(),
+  databaseName: fakeSecret(),
+} as const;
+
 describe('ModelSchema', () => {
   describe('default functionality', () => {
     it('basic ModelSchema can be cast to InternalSchema', () => {
@@ -43,7 +54,7 @@ describe('ModelSchema', () => {
   });
   describe('sql configured functionality', () => {
     it('can be configured to use sql', () => {
-      const s = configure({ databaseType: 'SQL' }).schema({
+      const s = configure({ database: datasourceConfigMySQL }).schema({
         Post: model({
           id: id(),
           title: string(),
@@ -52,7 +63,7 @@ describe('ModelSchema', () => {
     });
 
     it('supports setSqlStatementFolderPath definition', () => {
-      const s = configure({ databaseType: 'SQL' }).schema({
+      const s = configure({ database: datasourceConfigMySQL }).schema({
         Post: model({
           id: id(),
           title: string(),
