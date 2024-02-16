@@ -37,6 +37,13 @@ type InternalSchemaModels = Record<
   InternalModel | EnumType<any> | CustomType<any> | InternalCustom
 >;
 
+/**
+ * Importing the full objects from @aws-amplify/plugin-types
+ * more than doubles dev env runtime. This type replacement
+ * will contain the content for config without the negative
+ * side-effects. We may need to re-approach if customers interact
+ * with these programmatically to avoid forcing narrowing.
+ */
 type BackendSecret = {
   resolve: (scope: any, backendIdentifier: any) => any;
   resolvePath: (backendIdentifier: any) => any;
