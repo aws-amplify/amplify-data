@@ -208,12 +208,12 @@ type D @model @auth(rules: [{allow: public}])
   i: AWSDate
   am: AWSIPAddress
   getting: AWSURL
-  tired: Tired
+  tired: DTired
   createdAt: AWSDateTime!
   updatedAt: AWSDateTime!
 }
 
-enum Tired {
+enum DTired {
   ?
 }",
 }

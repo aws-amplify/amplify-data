@@ -30,7 +30,7 @@ type ExtractImplicitNonModelTypes<
       [Field in keyof ResolvedModels[Model] as ResolvedModels[Model][Field] extends
         | EnumType<EnumTypeParamShape>
         | CustomType<CustomTypeParamShape>
-        ? `${Capitalize<Field & string>}`
+        ? `${Capitalize<Model & string>}${Capitalize<Field & string>}`
         : never]: ResolvedModels[Model][Field];
     };
   }[keyof ResolvedModels]

@@ -60,7 +60,9 @@ export type FieldTypes<T> = {
             | EnumType<EnumTypeParamShape>
             | CustomType<CustomTypeParamShape>
         ? RefType<{
-            link: Capitalize<FieldProp & string>;
+            link: `${Capitalize<ModelProp & string>}${Capitalize<
+              FieldProp & string
+            >}`;
             type: 'ref';
             required: false;
             authorization: [];
