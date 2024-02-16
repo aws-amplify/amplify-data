@@ -2,13 +2,6 @@ import { a, ClientSchema } from '@aws-amplify/data-schema';
 import { __modelMeta__ } from '@aws-amplify/data-schema-types';
 import { configure } from '@aws-amplify/data-schema/internals';
 
-const sqlSchema = configure({ databaseType: 'SQL' }).schema({
-  Post: a.model({
-    title: a.string().required(),
-    description: a.string(),
-  }),
-});
-
 const schema = a.schema({
   Post: a.model({
     title: a.string().required(),
