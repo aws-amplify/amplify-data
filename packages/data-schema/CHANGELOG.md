@@ -1,5 +1,14 @@
 # @aws-amplify/data-schema
 
+## 0.13.4
+
+### Patch Changes
+
+- 78e42c0: custom operations - prevent unrecoverable stack state
+- be71ec3: feat: Add internals export to expose configure
+- 6e927d1: fix: scope inline enum and custom type names with parent type name
+  fix: disallow whitespace in enum values
+
 ## 0.13.3
 
 ### Patch Changes
