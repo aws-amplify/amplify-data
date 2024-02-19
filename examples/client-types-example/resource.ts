@@ -1,5 +1,6 @@
 import { a, ClientSchema } from '@aws-amplify/data-schema';
 import { __modelMeta__ } from '@aws-amplify/data-schema-types';
+import { configure } from '@aws-amplify/data-schema/internals';
 
 const schema = a.schema({
   Post: a.model({
