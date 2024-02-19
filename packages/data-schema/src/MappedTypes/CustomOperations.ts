@@ -7,12 +7,14 @@ import type {
 import type { ModelField } from '../ModelField';
 import { RefType, RefTypeParamShape } from '../RefType';
 
+/**
+ * Creates meta types for custom operations from a schema.
+ */
 export type ResolveCustomOperations<
   Schema extends ModelSchema<any, any>,
   FullyResolvedSchema extends Record<string, unknown>,
   NonModelTypes extends NonModelTypesShape,
 > = {
-  //   customOperationsRaw: CustomOpShapes<Schema>;
   customOperations: {
     [OpName in keyof CustomOpShapes<Schema>]: {
       arguments: CustomOpArguments<CustomOpShapes<Schema>[OpName]>;
@@ -27,6 +29,9 @@ export type ResolveCustomOperations<
   };
 };
 
+/**
+ * Filtered, mapped list of custom operations shapes from a schema.
+ */
 type CustomOpShapes<Schema extends ModelSchema<any, any>> = {
   [K in keyof Schema['data']['types'] as Schema['data']['types'][K] extends CustomOperation<
     any,
@@ -41,6 +46,9 @@ type CustomOpShapes<Schema extends ModelSchema<any, any>> = {
     : never;
 };
 
+/**
+ * Digs out custom operation arguments, mapped to the intended graphql types.
+ */
 type CustomOpArguments<Shape extends CustomOperationParamShape> = {
   [FieldName in keyof Shape['arguments']]: Shape['arguments'][FieldName] extends ModelField<
     infer R,
@@ -51,6 +59,11 @@ type CustomOpArguments<Shape extends CustomOperationParamShape> = {
     : never;
 };
 
+/**
+ * Computes the return type from the `returnType` of a custom operation shape.
+ *
+ * This entails dereferencing refs and inferring graphql types from field-type defs.
+ */
 type CustomOpReturnType<
   Shape extends CustomOperationParamShape,
   Bag extends Record<string, unknown>,
@@ -60,6 +73,10 @@ type CustomOpReturnType<
     ? R
     : never;
 
+/**
+ * `a.ref()` resolution specific to custom operations, for which `a.ref()`
+ * can refer to a model, custom type, or enum.
+ */
 type ResolveRef<
   Shape extends RefTypeParamShape,
   Bag extends Record<string, unknown>,
@@ -69,6 +86,10 @@ type ResolveRef<
     : Bag[Shape['link']] | null
   : never;
 
+/**
+ * Small utility to provided a merged view of models, custom types, and enums
+ * from a schema and nonModel-types.
+ */
 type Bag<
   FullyResolvedSchema extends Record<string, unknown>,
   NonModelTypes extends NonModelTypesShape,

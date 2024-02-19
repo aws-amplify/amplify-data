@@ -16,7 +16,6 @@ describe('ExtractNonModelTypes Mapped Type', () => {
     type Expected = {
       enums: Record<never, never>;
       customTypes: Record<never, never>;
-      customOperations: Record<never, never>;
     };
 
     type test = Expect<Equal<Resolved, Expected>>;
@@ -39,7 +38,6 @@ describe('ExtractNonModelTypes Mapped Type', () => {
 
     type Expected = {
       enums: Record<never, never>;
-      customOperations: Record<never, never>;
       customTypes: {
         Location: {
           lat: number | null;
@@ -67,7 +65,6 @@ describe('ExtractNonModelTypes Mapped Type', () => {
 
     type Expected = {
       enums: Record<never, never>;
-      customOperations: Record<never, never>;
       customTypes: {
         PostLocation: {
           lat: number | null;
@@ -99,7 +96,6 @@ describe('ExtractNonModelTypes Mapped Type', () => {
 
     type Expected = {
       enums: Record<never, never>;
-      customOperations: Record<never, never>;
       customTypes: {
         PostLocation: {
           lat: number | null;
@@ -148,7 +144,6 @@ describe('ExtractNonModelTypes Mapped Type', () => {
 
     type Expected = {
       enums: Record<never, never>;
-      customOperations: Record<never, never>;
       customTypes: {
         Location: {
           lat: number | null;
@@ -180,7 +175,6 @@ describe('ExtractNonModelTypes Mapped Type', () => {
         PrivacySetting: 'PRIVATE' | 'FRIENDS_ONLY' | 'PUBLIC';
       };
       customTypes: Record<never, never>;
-      customOperations: Record<never, never>;
     };
 
     type test = Expect<Equal<Resolved, Expected>>;
@@ -201,7 +195,6 @@ describe('ExtractNonModelTypes Mapped Type', () => {
         PostPrivacy: 'PRIVATE' | 'FRIENDS_ONLY' | 'PUBLIC';
       };
       customTypes: Record<never, never>;
-      customOperations: Record<never, never>;
     };
 
     type test = Expect<Equal<Resolved, Expected>>;
