@@ -540,7 +540,7 @@ describe('schema auth rules', () => {
     });
   });
 
-  test('do not pullote custom operations', () => {
+  test('do not pull out custom operations', () => {
     const schema = a
       .schema({
         Post: a.model({
@@ -549,9 +549,10 @@ describe('schema auth rules', () => {
         likePost: a
           .mutation()
           .arguments({ postId: a.string() })
-          .returns(a.ref('Post')),
-        getLikedPost: a.query().returns(a.ref('Post')),
-        onLikePost: a.subscription().returns(a.ref('Post')),
+          .returns(a.ref('Post'))
+          .function('myFunc'),
+        getLikedPost: a.query().returns(a.ref('Post')).function('myFunc'),
+        onLikePost: a.subscription().returns(a.ref('Post')).function('myFunc'),
       })
       .authorization([a.allow.owner()]);
 
