@@ -53,12 +53,12 @@ exports[`EnumType transform Implicit Enum 1`] = `
 "type File @model @auth(rules: [{allow: public}])
 {
   id: ID! @primaryKey
-  accessLevel: AccessLevel
+  accessLevel: FileAccessLevel
   createdAt: AWSDateTime!
   updatedAt: AWSDateTime!
 }
 
-enum AccessLevel {
+enum FileAccessLevel {
   public
   protected
   private

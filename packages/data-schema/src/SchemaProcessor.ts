@@ -233,7 +233,7 @@ function customOperationToGql(
   }
 
   if (Object.keys(fieldArgs).length > 0) {
-    const { gqlFields, models } = processFields(fieldArgs, {});
+    const { gqlFields, models } = processFields(typeName, fieldArgs, {});
     callSignature += `(${gqlFields.join(', ')})`;
     implicitModels.push(...models);
   }
@@ -590,6 +590,7 @@ function processFieldLevelAuthRules(
 }
 
 function processFields(
+  typeName: string,
   fields: Record<string, ModelField<any, any>>,
   fieldLevelAuthRules: Record<string, string | null>,
   identifier?: string[],
@@ -622,13 +623,19 @@ function processFields(
           `${fieldName}: ${refFieldToGql(fieldDef.data)}${fieldAuth}`,
         );
       } else if (isEnumType(fieldDef)) {
-        const enumName = capitalize(fieldName);
+        // The inline enum type name should be `<TypeName><FieldName>` to avoid
+        // enum type name conflicts
+        const enumName = `${capitalize(typeName)}${capitalize(fieldName)}`;
 
         models.push([enumName, fieldDef]);
 
         gqlFields.push(`${fieldName}: ${enumName}`);
       } else if (isCustomType(fieldDef)) {
-        const customTypeName = capitalize(fieldName);
+        // The inline CustomType name should be `<TypeName><FieldName>` to avoid
+        // CustomType name conflicts
+        const customTypeName = `${capitalize(typeName)}${capitalize(
+          fieldName,
+        )}`;
 
         models.push([customTypeName, fieldDef]);
 
@@ -755,6 +762,11 @@ const schemaPreprocessor = (schema: InternalSchema): string => {
 
     if (!isInternalModel(typeDef)) {
       if (isEnumType(typeDef)) {
+        if (typeDef.values.some((value) => /\s/.test(value))) {
+          throw new Error(
+            `Values of the enum type ${typeName} should not contain any whitespace.`,
+          );
+        }
         const enumType = `enum ${typeName} {\n  ${typeDef.values.join(
           '\n  ',
         )}\n}`;
@@ -771,6 +783,7 @@ const schemaPreprocessor = (schema: InternalSchema): string => {
         );
 
         const { gqlFields, models } = processFields(
+          typeName,
           fields,
           fieldLevelAuthRules,
         );
@@ -845,6 +858,7 @@ const schemaPreprocessor = (schema: InternalSchema): string => {
       );
 
       const { gqlFields, models } = processFields(
+        typeName,
         {
           // ID fields are not merged outside `mergeFieldObjects` to skip
           // validation, because the `identifer()` method doesn't specify or

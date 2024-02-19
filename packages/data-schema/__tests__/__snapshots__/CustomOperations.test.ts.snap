@@ -1,13 +1,13 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`CustomOperation transform Custom Mutation w required arg and enum 1`] = `
-"enum ReactionType {
+"enum LikePostReactionType {
   :shipit:
   :risitas:
 }
 
 type Mutation {
-  likePost(postId: String!, reactionType: ReactionType): Post 
+  likePost(postId: String!, reactionType: LikePostReactionType): Post 
 }"
 `;
 
