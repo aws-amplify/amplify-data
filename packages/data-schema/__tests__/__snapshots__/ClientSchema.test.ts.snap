@@ -145,7 +145,7 @@ exports[`schema auth rules disallows specificGroup 1`] = `
 }
 `;
 
-exports[`schema auth rules do not pullote custom operations 1`] = `
+exports[`schema auth rules do not pull out custom operations 1`] = `
 {
   "functionSlots": [],
   "schema": "type Post @model @auth(rules: [{allow: owner, ownerField: "owner"}])
@@ -158,15 +158,15 @@ exports[`schema auth rules do not pullote custom operations 1`] = `
 }
 
 type Mutation {
-  likePost(postId: String): Post 
+  likePost(postId: String): Post @function(name: "myFunc") @auth(rules: [{allow: owner, ownerField: "owner"}])
 }
 
 type Query {
-  getLikedPost: Post 
+  getLikedPost: Post @function(name: "myFunc") @auth(rules: [{allow: owner, ownerField: "owner"}])
 }
 
 type Subscription {
-  onLikePost: Post 
+  onLikePost: Post @function(name: "myFunc") @auth(rules: [{allow: owner, ownerField: "owner"}])
 }",
 }
 `;
