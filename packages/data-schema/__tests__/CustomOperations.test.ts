@@ -10,9 +10,10 @@ describe('CustomOperation transform', () => {
         likePost: a
           .mutation()
           .arguments({ postId: a.string() })
-          .returns(a.ref('Post')),
-        getLikedPost: a.query().returns(a.ref('Post')),
-        onLikePost: a.subscription().returns(a.ref('Post')),
+          .returns(a.ref('Post'))
+          .function('myFunc'),
+        getLikedPost: a.query().returns(a.ref('Post')).function('myFunc'),
+        onLikePost: a.subscription().returns(a.ref('Post')).function('myFunc'),
       })
       .authorization([a.allow.public()]);
 
@@ -21,7 +22,7 @@ describe('CustomOperation transform', () => {
     expect(result).toMatchSnapshot();
   });
 
-  test('Custom Mutation w Auth rules', () => {
+  test('Custom Mutation w Auth rules and no handler should throw', () => {
     const s = a.schema({
       likePost: a
         .mutation()
@@ -30,9 +31,23 @@ describe('CustomOperation transform', () => {
         .authorization([a.allow.private()]),
     });
 
-    const result = s.transform().schema;
+    expect(() => s.transform()).toThrow(
+      'requires both an authorization rule and a handler reference',
+    );
+  });
 
-    expect(result).toMatchSnapshot();
+  test('Custom Mutation w handler, but no auth rules should throw', () => {
+    const s = a.schema({
+      likePost: a
+        .mutation()
+        .arguments({ postId: a.string() })
+        .returns(a.ref('Post'))
+        .function('myFunc'),
+    });
+
+    expect(() => s.transform()).toThrow(
+      'requires both an authorization rule and a handler reference',
+    );
   });
 
   test('Custom Mutation w required arg and enum', () => {
@@ -59,7 +74,8 @@ describe('CustomOperation transform', () => {
           postId: a.string().required(),
         })
         .returns(a.ref('Post'))
-        .function('myFunc'),
+        .function('myFunc')
+        .authorization([a.allow.private()]),
     });
 
     const result = s.transform().schema;

@@ -19,12 +19,6 @@ import type {
 import { processSchema } from './SchemaProcessor';
 import { Authorization } from './Authorization';
 
-/*
- * Notes:
- *
- * TSC output diagnostics to benchmark
- */
-
 type SchemaContent =
   | ModelType<ModelTypeParamShape, any>
   | CustomType<CustomTypeParamShape>
