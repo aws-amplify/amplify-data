@@ -458,8 +458,6 @@ describe('Custom Selection Set', () => {
     type Schema = ClientSchema<typeof schema>;
     const client = generateClient<Schema>();
 
-    type P3 = Schema['Post3'];
-
     test('custom selection set on required custom type', async () => {
       const { data: posts } = await client.models.Post.list({
         selectionSet: ['title', 'location.lat'],
@@ -509,6 +507,54 @@ describe('Custom Selection Set', () => {
       }[];
 
       type test = Expect<Equal<typeof posts, ExpectedType>>;
+    });
+  });
+
+  describe('Enums', () => {
+    const schema = a.schema({
+      Post: a.model({
+        title: a.string().required(),
+        description: a.string(),
+        status: a.ref('Status'),
+        visibility: a.enum(['PRIVATE', 'PUBLIC']),
+      }),
+
+      Status: a.enum(['DRAFT', 'PENDING', 'PUBLISHED']),
+    });
+
+    type Schema = ClientSchema<typeof schema>;
+    const client = generateClient<Schema>();
+
+    test('custom selection set on shorthand enum field', async () => {
+      const { data: post } = await client.models.Post.get(
+        { id: 'abc' },
+        {
+          selectionSet: ['title', 'visibility'],
+        },
+      );
+
+      type ExpectedType = {
+        readonly title: string;
+        readonly visibility: 'PRIVATE' | 'PUBLIC' | null | undefined;
+      };
+
+      type test = Expect<Equal<typeof post, ExpectedType>>;
+    });
+
+    test('custom selection set on enum ref', async () => {
+      const { data: post } = await client.models.Post.get(
+        { id: 'abc' },
+        {
+          selectionSet: ['title', 'status'],
+        },
+      );
+
+      type ExpectedType = {
+        readonly title: string;
+        readonly status: 'DRAFT' | 'PENDING' | 'PUBLISHED' | null | undefined;
+      };
+
+      type test = Expect<Equal<typeof post, ExpectedType>>;
     });
   });
 });

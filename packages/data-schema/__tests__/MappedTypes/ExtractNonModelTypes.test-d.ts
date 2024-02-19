@@ -69,7 +69,7 @@ describe('ExtractNonModelTypes Mapped Type', () => {
       enums: Record<never, never>;
       customOperations: Record<never, never>;
       customTypes: {
-        Location: {
+        PostLocation: {
           lat: number | null;
           long: number | null;
         };
@@ -101,11 +101,11 @@ describe('ExtractNonModelTypes Mapped Type', () => {
       enums: Record<never, never>;
       customOperations: Record<never, never>;
       customTypes: {
-        Location: {
+        PostLocation: {
           lat: number | null;
           long: number | null;
         };
-        AltLocation: {
+        PostAltLocation: {
           lat: number | null;
           long: number | null;
         };
@@ -154,7 +154,7 @@ describe('ExtractNonModelTypes Mapped Type', () => {
           lat: number | null;
           long: number | null;
         };
-        AltLocation: {
+        Post3AltLocation: {
           lat: number | null;
           long: number | null;
         };
@@ -198,7 +198,7 @@ describe('ExtractNonModelTypes Mapped Type', () => {
 
     type Expected = {
       enums: {
-        Privacy: 'PRIVATE' | 'FRIENDS_ONLY' | 'PUBLIC';
+        PostPrivacy: 'PRIVATE' | 'FRIENDS_ONLY' | 'PUBLIC';
       };
       customTypes: Record<never, never>;
       customOperations: Record<never, never>;

@@ -167,7 +167,7 @@ exports[`schema auth rules disallows specificGroup 1`] = `
 }
 `;
 
-exports[`schema auth rules do not pullote custom operations 1`] = `
+exports[`schema auth rules do not pull out custom operations 1`] = `
 {
   "functionSlots": [],
   "schema": "type Post @model @auth(rules: [{allow: owner, ownerField: "owner"}])
@@ -180,15 +180,15 @@ exports[`schema auth rules do not pullote custom operations 1`] = `
 }
 
 type Mutation {
-  likePost(postId: String): Post 
+  likePost(postId: String): Post @function(name: "myFunc") @auth(rules: [{allow: owner, ownerField: "owner"}])
 }
 
 type Query {
-  getLikedPost: Post 
+  getLikedPost: Post @function(name: "myFunc") @auth(rules: [{allow: owner, ownerField: "owner"}])
 }
 
 type Subscription {
-  onLikePost: Post 
+  onLikePost: Post @function(name: "myFunc") @auth(rules: [{allow: owner, ownerField: "owner"}])
 }",
 }
 `;
@@ -230,12 +230,12 @@ type D @model @auth(rules: [{allow: public}])
   i: AWSDate
   am: AWSIPAddress
   getting: AWSURL
-  tired: Tired
+  tired: DTired
   createdAt: AWSDateTime!
   updatedAt: AWSDateTime!
 }
 
-enum Tired {
+enum DTired {
   ?
 }",
 }
@@ -389,6 +389,113 @@ type CPKReciprocalHasManyChild @model @auth(rules: [{allow: public}])
   parent: CPKParent @belongsTo
   cPKParentChildHasManyReciprocalCPKParentIdFieldA: ID
   cPKParentChildHasManyReciprocalCPKParentIdFieldB: ID
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
+}
+
+type ReferencedBoringParent @model @auth(rules: [{allow: public}])
+{
+  id: ID! @primaryKey
+  childNormal: ReferencedBoringChild @hasOne(references: ["bcRefId"])
+  childReciprocal: ReferencedBoringReciprocalChild @hasOne(references: ["brcRefId"])
+  childHasManyNormal: [ReferencedBoringHasManyChild] @hasMany(references: ["bhmRefId"])
+  childHasManyReciprocal: [ReferencedReciprocalHasManyChild] @hasMany(references: ["rrhmRefId"])
+  referencedBoringParentChildNormalId: ID
+  referencedBoringParentChildReciprocalId: ID
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
+}
+
+type ReferencedBoringChild @model @auth(rules: [{allow: public}])
+{
+  id: ID! @primaryKey
+  bcRefId: String
+  value: String
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
+}
+
+type ReferencedBoringReciprocalChild @model @auth(rules: [{allow: public}])
+{
+  id: ID! @primaryKey
+  brcRefId: String
+  parent: ReferencedBoringParent @belongsTo(references: ["brcRefId"])
+  value: String
+  referencedBoringReciprocalChildParentId: ID
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
+}
+
+type ReferencedBoringHasManyChild @model @auth(rules: [{allow: public}])
+{
+  id: ID! @primaryKey
+  bhmRefId: String
+  value: String
+  referencedBoringParentChildHasManyNormalId: ID
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
+}
+
+type ReferencedReciprocalHasManyChild @model @auth(rules: [{allow: public}])
+{
+  id: ID! @primaryKey
+  rrhmRefId: String
+  value: String
+  parent: ReferencedBoringParent @belongsTo(references: ["rrhmRefId"])
+  referencedBoringParentChildHasManyReciprocalId: ID
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
+}
+
+type LateReferencedBoringParent @model @auth(rules: [{allow: public}])
+{
+  id: ID! @primaryKey
+  childNormal: LateReferencedBoringChild @hasOne(references: ["bcRefId"])
+  childReciprocal: LateReferencedBoringReciprocalChild @hasOne(references: ["brcRefId"])
+  childHasManyNormal: [LateReferencedBoringHasManyChild] @hasMany(references: ["bhmRefId"])
+  childHasManyReciprocal: [LateReferencedReciprocalHasManyChild] @hasMany(references: ["rrhmRefId"])
+  lateReferencedBoringParentChildNormalId: ID
+  lateReferencedBoringParentChildReciprocalId: ID
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
+}
+
+type LateReferencedBoringChild @model @auth(rules: [{allow: public}])
+{
+  id: ID! @primaryKey
+  bcRefId: String
+  value: String
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
+}
+
+type LateReferencedBoringReciprocalChild @model @auth(rules: [{allow: public}])
+{
+  id: ID! @primaryKey
+  brcRefId: String
+  value: String
+  parent: ReferencedBoringParent @belongsTo(references: ["brcRefId"])
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
+}
+
+type LateReferencedBoringHasManyChild @model @auth(rules: [{allow: public}])
+{
+  id: ID! @primaryKey
+  bhmRefId: String
+  value: String
+  lateReferencedBoringParentChildHasManyNormalId: ID
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
+}
+
+type LateReferencedReciprocalHasManyChild @model @auth(rules: [{allow: public}])
+{
+  id: ID! @primaryKey
+  rrhmRefId: String
+  value: String
+  parent: ReferencedBoringParent @belongsTo(references: ["rrhmRefId"])
+  lateReferencedBoringParentChildHasManyReciprocalId: ID
   createdAt: AWSDateTime!
   updatedAt: AWSDateTime!
 }"

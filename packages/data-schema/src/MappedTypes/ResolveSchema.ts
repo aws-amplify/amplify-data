@@ -34,7 +34,7 @@ export type ModelTypes<Schema> = {
     | CustomType<CustomTypeParamShape>
     | CustomOperation<CustomOperationParamShape, any>
     ? never
-    : Model]: Schema[Model] extends ModelType<infer R, any, any>
+    : Model]: Schema[Model] extends ModelType<infer R, any>
     ? R['fields']
     : never;
 };
@@ -60,7 +60,9 @@ export type FieldTypes<T> = {
             | EnumType<EnumTypeParamShape>
             | CustomType<CustomTypeParamShape>
         ? RefType<{
-            link: Capitalize<FieldProp & string>;
+            link: `${Capitalize<ModelProp & string>}${Capitalize<
+              FieldProp & string
+            >}`;
             type: 'ref';
             required: false;
             authorization: [];

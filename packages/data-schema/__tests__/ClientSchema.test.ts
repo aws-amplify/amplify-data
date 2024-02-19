@@ -1,6 +1,11 @@
 import { expectTypeTestsToPassAsync } from 'jest-tsd';
 import { a, ClientSchema } from '../index';
-import { Expect, Equal, __modelMeta__ } from '@aws-amplify/data-schema-types';
+import {
+  Expect,
+  Equal,
+  Prettify,
+  __modelMeta__,
+} from '@aws-amplify/data-schema-types';
 
 // evaluates type defs in corresponding test-d.ts file
 it('should not produce static type errors', async () => {
@@ -77,8 +82,85 @@ describe('schema generation', () => {
             'CPKReciprocalHasManyChildIdFieldA',
             'CPKReciprocalHasManyChildIdFieldB',
           ]),
+        ReferencedBoringParent: a.model({
+          childNormal: a
+            .hasOne('ReferencedBoringChild')
+            .references(['bcRefId']),
+          childReciprocal: a
+            .hasOne('ReferencedBoringReciprocalChild')
+            .references(['brcRefId']),
+          childHasManyNormal: a
+            .hasMany('ReferencedBoringHasManyChild')
+            .references(['bhmRefId']),
+          childHasManyReciprocal: a
+            .hasMany('ReferencedReciprocalHasManyChild')
+            .references(['rrhmRefId']),
+        }),
+        ReferencedBoringChild: a.model({
+          bcRefId: a.string(),
+          value: a.string(),
+        }),
+        ReferencedBoringReciprocalChild: a.model({
+          brcRefId: a.string(),
+          parent: a
+            .belongsTo('ReferencedBoringParent')
+            .references(['brcRefId']),
+          value: a.string(),
+        }),
+        ReferencedBoringHasManyChild: a.model({
+          bhmRefId: a.string(),
+          value: a.string(),
+        }),
+        ReferencedReciprocalHasManyChild: a.model({
+          rrhmRefId: a.string(),
+          value: a.string(),
+          parent: a
+            .belongsTo('ReferencedBoringParent')
+            .references(['rrhmRefId']),
+        }),
+        LateReferencedBoringParent: a.model({}),
+        LateReferencedBoringChild: a.model({
+          bcRefId: a.string(),
+          value: a.string(),
+        }),
+        LateReferencedBoringReciprocalChild: a.model({
+          brcRefId: a.string(),
+          value: a.string(),
+        }),
+        LateReferencedBoringHasManyChild: a.model({
+          bhmRefId: a.string(),
+          value: a.string(),
+        }),
+        LateReferencedReciprocalHasManyChild: a.model({
+          rrhmRefId: a.string(),
+          value: a.string(),
+        }),
       })
       .authorization([a.allow.public()]);
+
+    schema.models.LateReferencedBoringParent.addRelationships({
+      childNormal: a
+        .hasOne('LateReferencedBoringChild')
+        .references(['bcRefId']),
+      childReciprocal: a
+        .hasOne('LateReferencedBoringReciprocalChild')
+        .references(['brcRefId']),
+      childHasManyNormal: a
+        .hasMany('LateReferencedBoringHasManyChild')
+        .references(['bhmRefId']),
+      childHasManyReciprocal: a
+        .hasMany('LateReferencedReciprocalHasManyChild')
+        .references(['rrhmRefId']),
+    });
+
+    schema.models.LateReferencedBoringReciprocalChild.addRelationships({
+      parent: a.belongsTo('ReferencedBoringParent').references(['brcRefId']),
+    });
+
+    schema.models.LateReferencedReciprocalHasManyChild.addRelationships({
+      parent: a.belongsTo('ReferencedBoringParent').references(['rrhmRefId']),
+    });
+
     expect(schema.transform().schema).toMatchSnapshot();
   });
 });
@@ -93,7 +175,7 @@ describe('schema auth rules', () => {
         .authorization([a.allow.public()]),
     });
 
-    type Actual_A = ClientSchema<typeof schema>['A'];
+    type Actual_A = Prettify<ClientSchema<typeof schema>['A']>;
 
     type Expected_A = {
       readonly id: string;
@@ -118,7 +200,7 @@ describe('schema auth rules', () => {
       })
       .authorization([a.allow.public()]);
 
-    type Actual_A = ClientSchema<typeof schema>['A'];
+    type Actual_A = Prettify<ClientSchema<typeof schema>['A']>;
 
     type Expected_A = {
       readonly id: string;
@@ -168,7 +250,7 @@ describe('schema auth rules', () => {
       })
       .authorization([a.allow.public(), a.allow.private()]);
 
-    type Actual_A = ClientSchema<typeof schema>['A'];
+    type Actual_A = Prettify<ClientSchema<typeof schema>['A']>;
 
     type Expected_A = {
       readonly id: string;
@@ -192,7 +274,7 @@ describe('schema auth rules', () => {
       })
       .authorization([a.allow.private()]);
 
-    type Actual_A = ClientSchema<typeof schema>['A'];
+    type Actual_A = Prettify<ClientSchema<typeof schema>['A']>;
 
     type Expected_A = {
       readonly id: string;
@@ -216,7 +298,7 @@ describe('schema auth rules', () => {
       })
       .authorization([a.allow.owner()]);
 
-    type Actual_A = ClientSchema<typeof schema>['A'];
+    type Actual_A = Prettify<ClientSchema<typeof schema>['A']>;
 
     type Expected_A = {
       readonly id: string;
@@ -242,7 +324,7 @@ describe('schema auth rules', () => {
       })
       .authorization([a.allow.multipleOwners()]);
 
-    type Actual_A = ClientSchema<typeof schema>['A'];
+    type Actual_A = Prettify<ClientSchema<typeof schema>['A']>;
 
     type Expected_A = {
       readonly id: string;
@@ -268,7 +350,7 @@ describe('schema auth rules', () => {
       })
       .authorization([a.allow.custom()]);
 
-    type Actual_A = ClientSchema<typeof schema>['A'];
+    type Actual_A = Prettify<ClientSchema<typeof schema>['A']>;
 
     type Expected_A = {
       readonly id: string;
@@ -292,7 +374,7 @@ describe('schema auth rules', () => {
       })
       .authorization([a.allow.owner().inField('someField')]);
 
-    type Actual_A = ClientSchema<typeof schema>['A'];
+    type Actual_A = Prettify<ClientSchema<typeof schema>['A']>;
 
     type Expected_A = {
       readonly id: string;
@@ -318,7 +400,7 @@ describe('schema auth rules', () => {
       })
       .authorization([a.allow.groupsDefinedIn('someField')]);
 
-    type Actual_A = ClientSchema<typeof schema>['A'];
+    type Actual_A = Prettify<ClientSchema<typeof schema>['A']>;
 
     type Expected_A = {
       readonly id: string;
@@ -344,7 +426,7 @@ describe('schema auth rules', () => {
       })
       .authorization([a.allow.specificGroup('group')]);
 
-    type Actual_A = ClientSchema<typeof schema>['A'];
+    type Actual_A = Prettify<ClientSchema<typeof schema>['A']>;
 
     type Expected_A = {
       readonly id: string;
@@ -368,7 +450,7 @@ describe('schema auth rules', () => {
       })
       .authorization([a.allow.specificGroups(['a', 'b'])]);
 
-    type Actual_A = ClientSchema<typeof schema>['A'];
+    type Actual_A = Prettify<ClientSchema<typeof schema>['A']>;
 
     type Expected_A = {
       readonly id: string;
@@ -395,7 +477,7 @@ describe('schema auth rules', () => {
         })
         .authorization([a.allow.owner()]);
 
-      type Actual_A = ClientSchema<typeof schema>['A'];
+      type Actual_A = Prettify<ClientSchema<typeof schema>['A']>;
 
       type Expected_A = {
         readonly id: string;
@@ -421,7 +503,7 @@ describe('schema auth rules', () => {
         })
         .authorization([a.allow.public()]);
 
-      type Actual_A = ClientSchema<typeof schema>['A'];
+      type Actual_A = Prettify<ClientSchema<typeof schema>['A']>;
 
       type Expected_A = {
         readonly id: string;
@@ -447,7 +529,7 @@ describe('schema auth rules', () => {
         })
         .authorization([a.allow.owner().inField('schemaOwnerField')]);
 
-      type Actual_A = ClientSchema<typeof schema>['A'];
+      type Actual_A = Prettify<ClientSchema<typeof schema>['A']>;
 
       type Expected_A = {
         readonly id: string;
@@ -463,7 +545,7 @@ describe('schema auth rules', () => {
     });
   });
 
-  test('do not pullote custom operations', () => {
+  test('do not pull out custom operations', () => {
     const schema = a
       .schema({
         Post: a.model({
@@ -472,9 +554,10 @@ describe('schema auth rules', () => {
         likePost: a
           .mutation()
           .arguments({ postId: a.string() })
-          .returns(a.ref('Post')),
-        getLikedPost: a.query().returns(a.ref('Post')),
-        onLikePost: a.subscription().returns(a.ref('Post')),
+          .returns(a.ref('Post'))
+          .function('myFunc'),
+        getLikedPost: a.query().returns(a.ref('Post')).function('myFunc'),
+        onLikePost: a.subscription().returns(a.ref('Post')).function('myFunc'),
       })
       .authorization([a.allow.owner()]);
 

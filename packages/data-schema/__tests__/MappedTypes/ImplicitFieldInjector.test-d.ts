@@ -1,4 +1,4 @@
-import type { Equal, Expect } from '@aws-amplify/data-schema-types';
+import type { Equal, Expect, Prettify } from '@aws-amplify/data-schema-types';
 import { a, ClientSchema } from '../../index';
 
 // TODO: once the top-level mapped types used by ClientSchema are extracted into separate files (src/MappedTypes/*.ts)
@@ -12,7 +12,7 @@ describe('InjectImplicitModelFields Mapped Type', () => {
       }),
     });
 
-    type Schema = ClientSchema<typeof s>;
+    type Schema = Prettify<ClientSchema<typeof s>>;
 
     type ExpectedFieldType = {
       readonly id: string;
@@ -32,7 +32,7 @@ describe('InjectImplicitModelFields Mapped Type', () => {
       }),
     });
 
-    type Schema = ClientSchema<typeof s>;
+    type Schema = Prettify<ClientSchema<typeof s>>;
 
     type ExpectedFieldType = {
       // writable/NOT readonly
@@ -54,7 +54,7 @@ describe('InjectImplicitModelFields Mapped Type', () => {
       }),
     });
 
-    type Schema = ClientSchema<typeof s>;
+    type Schema = Prettify<ClientSchema<typeof s>>;
 
     type ExpectedFieldType = {
       readonly id: string;
@@ -77,7 +77,7 @@ describe('InjectImplicitModelFields Mapped Type', () => {
         .identifier(['title']),
     });
 
-    type Schema = ClientSchema<typeof s>;
+    type Schema = Prettify<ClientSchema<typeof s>>;
 
     type ExpectedFieldType = {
       title: string;
@@ -98,7 +98,7 @@ describe('InjectImplicitModelFields Mapped Type', () => {
         .identifier(['id', 'title']),
     });
 
-    type Schema = ClientSchema<typeof s>;
+    type Schema = Prettify<ClientSchema<typeof s>>;
 
     type ExpectedFieldType = {
       id: string;

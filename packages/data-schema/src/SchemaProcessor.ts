@@ -28,9 +28,7 @@ type ModelFieldDef = Extract<
 >;
 type RefFieldDef = InternalRef['data'];
 
-function isInternalModel(
-  model: ModelType<any, any, any>,
-): model is InternalModel {
+function isInternalModel(model: ModelType<any, any>): model is InternalModel {
   if (
     (model as any).data &&
     !isCustomType(model) &&
@@ -156,6 +154,7 @@ function modelFieldToGql(fieldDef: ModelFieldDef) {
     relationName,
     valueRequired,
     arrayRequired,
+    references,
   } = fieldDef;
 
   let field = relatedModel;
@@ -172,7 +171,13 @@ function modelFieldToGql(fieldDef: ModelFieldDef) {
     field += '!';
   }
 
-  field += ` @${type}`;
+  if (references && Array.isArray(references) && references.length > 0) {
+    field += ` @${type}(references: [${references.map(
+      (s) => `"${String(s)}"`,
+    )}])`;
+  } else {
+    field += ` @${type}`;
+  }
 
   // TODO: accept other relationship options e.g. `fields`
   if (type === 'manyToMany') {
@@ -205,13 +210,9 @@ function refFieldToGql(fieldDef: RefFieldDef): string {
 function customOperationToGql(
   typeName: string,
   typeDef: InternalCustom,
+  authorization: Authorization<any, any, any>[],
 ): { gqlField: string; models: [string, any][] } {
-  const {
-    arguments: fieldArgs,
-    returnType,
-    authorization,
-    functionRef,
-  } = typeDef.data;
+  const { arguments: fieldArgs, returnType, functionRef } = typeDef.data;
 
   let callSignature: string = typeName;
   const implicitModels: [string, any][] = [];
@@ -232,7 +233,7 @@ function customOperationToGql(
   }
 
   if (Object.keys(fieldArgs).length > 0) {
-    const { gqlFields, models } = processFields(fieldArgs, {});
+    const { gqlFields, models } = processFields(typeName, fieldArgs, {});
     callSignature += `(${gqlFields.join(', ')})`;
     implicitModels.push(...models);
   }
@@ -399,11 +400,11 @@ function calculateAuth(authorization: Authorization<any, any, any>[]) {
 }
 
 function capitalize<T extends string>(s: T): Capitalize<T> {
-  return `${s[0].toUpperCase()}${s.slice(1)}` as any;
+  return `${s[0].toUpperCase()}${s.slice(1)}` as Capitalize<T>;
 }
 
 function uncapitalize<T extends string>(s: T): Uncapitalize<T> {
-  return `${s[0].toLowerCase()}${s.slice(1)}` as any;
+  return `${s[0].toLowerCase()}${s.slice(1)}` as Uncapitalize<T>;
 }
 
 function fkName(model: string, field: string, identifier: string): string {
@@ -589,6 +590,7 @@ function processFieldLevelAuthRules(
 }
 
 function processFields(
+  typeName: string,
   fields: Record<string, ModelField<any, any>>,
   fieldLevelAuthRules: Record<string, string | null>,
   identifier?: string[],
@@ -621,13 +623,19 @@ function processFields(
           `${fieldName}: ${refFieldToGql(fieldDef.data)}${fieldAuth}`,
         );
       } else if (isEnumType(fieldDef)) {
-        const enumName = capitalize(fieldName);
+        // The inline enum type name should be `<TypeName><FieldName>` to avoid
+        // enum type name conflicts
+        const enumName = `${capitalize(typeName)}${capitalize(fieldName)}`;
 
         models.push([enumName, fieldDef]);
 
         gqlFields.push(`${fieldName}: ${enumName}`);
       } else if (isCustomType(fieldDef)) {
-        const customTypeName = capitalize(fieldName);
+        // The inline CustomType name should be `<TypeName><FieldName>` to avoid
+        // CustomType name conflicts
+        const customTypeName = `${capitalize(typeName)}${capitalize(
+          fieldName,
+        )}`;
 
         models.push([customTypeName, fieldDef]);
 
@@ -654,6 +662,23 @@ type TransformedSecondaryIndexes = {
 };
 
 /**
+ *
+ * @param pk - partition key field name
+ * @param sk - (optional) array of sort key field names
+ * @returns default query field name
+ */
+const secondaryIndexDefaultQueryField = (
+  pk: string,
+  sk?: readonly string[],
+): string => {
+  const skName = sk?.length ? 'And' + sk?.map(capitalize).join('And') : '';
+
+  const queryField = `listBy${capitalize(pk)}${skName}`;
+
+  return queryField;
+};
+
+/**
  * Given InternalModelIndexType[] returns a map where the key is the model field to be annotated with an @index directive
  * and the value is an array of transformed Amplify @index directives with all supplied attributes
  */
@@ -661,12 +686,15 @@ const transformedSecondaryIndexesForModel = (
   secondaryIndexes: readonly InternalModelIndexType[],
 ): TransformedSecondaryIndexes => {
   const indexDirectiveWithAttributes = (
+    partitionKey: string,
     sortKeys: readonly string[],
     indexName: string,
     queryField: string,
   ): string => {
     if (!sortKeys.length && !indexName && !queryField) {
-      return '@index';
+      return `@index(queryField: "${secondaryIndexDefaultQueryField(
+        partitionKey,
+      )}")`;
     }
 
     const attributes: string[] = [];
@@ -683,6 +711,13 @@ const transformedSecondaryIndexesForModel = (
 
     if (queryField) {
       attributes.push(`queryField: "${queryField}"`);
+    } else {
+      attributes.push(
+        `queryField: "${secondaryIndexDefaultQueryField(
+          partitionKey,
+          sortKeys,
+        )}"`,
+      );
     }
 
     return `@index(${attributes.join(', ')})`;
@@ -696,6 +731,7 @@ const transformedSecondaryIndexesForModel = (
       acc[partitionKey] = acc[partitionKey] || [];
       acc[partitionKey].push(
         indexDirectiveWithAttributes(
+          partitionKey,
           sortKeys as readonly string[],
           indexName,
           queryField,
@@ -719,8 +755,18 @@ const schemaPreprocessor = (schema: InternalSchema): string => {
   const topLevelTypes = Object.entries(schema.data.types);
 
   for (const [typeName, typeDef] of topLevelTypes) {
+    const mostRelevantAuthRules =
+      typeDef.data?.authorization?.length > 0
+        ? typeDef.data.authorization
+        : schema.data.authorization;
+
     if (!isInternalModel(typeDef)) {
       if (isEnumType(typeDef)) {
+        if (typeDef.values.some((value) => /\s/.test(value))) {
+          throw new Error(
+            `Values of the enum type ${typeName} should not contain any whitespace.`,
+          );
+        }
         const enumType = `enum ${typeName} {\n  ${typeDef.values.join(
           '\n  ',
         )}\n}`;
@@ -737,6 +783,7 @@ const schemaPreprocessor = (schema: InternalSchema): string => {
         );
 
         const { gqlFields, models } = processFields(
+          typeName,
           fields,
           fieldLevelAuthRules,
         );
@@ -750,7 +797,24 @@ const schemaPreprocessor = (schema: InternalSchema): string => {
       } else if (isCustomOperation(typeDef)) {
         const { typeName: opType } = (typeDef as InternalCustom).data;
 
-        const { gqlField, models } = customOperationToGql(typeName, typeDef);
+        if (
+          (mostRelevantAuthRules.length > 0 && !typeDef.data.functionRef) ||
+          (typeDef.data.functionRef && mostRelevantAuthRules.length < 1)
+        ) {
+          // Deploying a custom operation with auth and no handler reference OR
+          // with a handler reference but not auth
+          // causes the CFN stack to reach an unrecoverable state. Ideally, this should be fixed
+          // in the CDK construct, but we're catching it early here as a stopgap
+          throw new Error(
+            `Custom operation ${typeName} requires both an authorization rule and a handler reference`,
+          );
+        }
+
+        const { gqlField, models } = customOperationToGql(
+          typeName,
+          typeDef,
+          mostRelevantAuthRules,
+        );
 
         topLevelTypes.push(...models);
 
@@ -780,11 +844,6 @@ const schemaPreprocessor = (schema: InternalSchema): string => {
         typeDef.data.secondaryIndexes,
       );
 
-      const mostRelevantAuthRules =
-        typeDef.data.authorization.length > 0
-          ? typeDef.data.authorization
-          : schema.data.authorization;
-
       const { authString, authFields } = calculateAuth(mostRelevantAuthRules);
 
       if (authString == '') {
@@ -799,6 +858,7 @@ const schemaPreprocessor = (schema: InternalSchema): string => {
       );
 
       const { gqlFields, models } = processFields(
+        typeName,
         {
           // ID fields are not merged outside `mergeFieldObjects` to skip
           // validation, because the `identifer()` method doesn't specify or

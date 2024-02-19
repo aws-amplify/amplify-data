@@ -25,7 +25,7 @@ type ExtractImplicitNonModelTypes<
       [Field in keyof ResolvedModels[Model] as ResolvedModels[Model][Field] extends
         | EnumType<EnumTypeParamShape>
         | CustomType<CustomTypeParamShape>
-        ? `${Capitalize<Field & string>}`
+        ? `${Capitalize<Model & string>}${Capitalize<Field & string>}`
         : never]: ResolvedModels[Model][Field];
     };
   }[keyof ResolvedModels]
@@ -56,14 +56,11 @@ type ResolveNonModelTypes<
   };
 };
 
-type ResolveNonModelFields<
-  T extends NonModelTypesShape,
-  CustomTypes = T['customTypes'],
-> = {
+type ResolveNonModelFields<T extends NonModelTypesShape> = {
   enums: T['enums'];
   customTypes: {
-    [CustomType in keyof CustomTypes]: {
-      [FieldProp in keyof CustomTypes[CustomType]]: CustomTypes[CustomType][FieldProp] extends ModelField<
+    [CustomType in keyof T['customTypes']]: {
+      [FieldProp in keyof T['customTypes'][CustomType]]: T['customTypes'][CustomType][FieldProp] extends ModelField<
         infer R,
         any,
         any

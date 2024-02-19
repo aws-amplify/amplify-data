@@ -10,7 +10,7 @@ import {
 
 const a = { model, index: modelIndex };
 
-type GetModelTypeArg<T> = T extends ModelType<infer R, any, any> ? R : never;
+type GetModelTypeArg<T> = T extends ModelType<infer R, any> ? R : never;
 
 describe('InternalModel casting', () => {
   test('basic ModelType can be cast to InternalModel', () => {
@@ -23,6 +23,15 @@ describe('InternalModel casting', () => {
 
     const internalModel = m as InternalModel;
     internalModel.data;
+  });
+
+  test('addRelationships invalid at model definition', () => {
+    const m = model({
+      title: string(),
+    });
+
+    // @ts-expect-error
+    const data = m.addRelationships({});
   });
 
   test('ModelType with options can be cast to InternalModel', () => {

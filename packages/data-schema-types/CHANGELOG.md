@@ -1,5 +1,29 @@
 # @aws-amplify/data-schema-types
 
+## 0.7.3
+
+### Patch Changes
+
+- fbcc9dd: type perf improvements
+
+## 0.7.2
+
+### Patch Changes
+
+- f8ada2c: fix: add EnumTypes for ts < 5
+
+## 0.7.1
+
+### Patch Changes
+
+- e1f9f59: feat: add EnumTypes utility type supporting client.enums property
+
+## 0.7.0
+
+### Minor Changes
+
+- fdf446c: secondary index client types
+
 ## 0.6.12
 
 ### Patch Changes

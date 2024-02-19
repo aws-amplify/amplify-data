@@ -11,6 +11,10 @@ export type ModelTypes<
   _Context extends string = 'CLIENT',
   _ModelMeta extends Record<any, any> = any,
 > = any;
+export type EnumTypes<
+  _T extends Record<any, any> = never,
+  _ModelMeta extends Record<any, any> = any,
+> = any;
 
 export type SelectionSet<_Model, _Path> = any;
 

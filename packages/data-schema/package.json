@@ -1,6 +1,6 @@
 {
   "name": "@aws-amplify/data-schema",
-  "version": "0.12.14",
+  "version": "0.13.4",
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
@@ -13,6 +13,23 @@
     "clean": "rimraf lib-esm tsconfig.tsbuildinfo",
     "test": "jest",
     "lint": "eslint ."
+  },
+  "exports": {
+    ".": {
+      "types": "./lib-esm/index.d.ts",
+      "import": "./lib-esm/index.js"
+    },
+    "./internals": {
+      "types": "./lib-esm/src/internals/index.d.ts",
+      "import": "./lib-esm/src/internals/index.js"
+    }
+  },
+  "typesVersions": {
+    ">=5.0": {
+      "internals": [
+        "./lib-esm/src/internals/index.d.ts"
+      ]
+    }
   },
   "dependencies": {
     "@aws-amplify/data-schema-types": "*"
@@ -30,6 +47,7 @@
   },
   "files": [
     "lib-esm/**",
+    "internals",
     "package.json",
     "README.md",
     "CHANGELOG",

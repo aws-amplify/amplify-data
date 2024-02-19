@@ -3,5 +3,5 @@
   "compilerOptions": {
     "noEmit": true
   },
-  "include": ["./eslintrc.json", "**/*.ts"]
+  "include": ["./eslintrc.json", "**/*.ts", "../src/internals/index.ts"]
 }

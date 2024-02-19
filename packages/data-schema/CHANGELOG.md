@@ -1,5 +1,45 @@
 # @aws-amplify/data-schema
 
+## 0.13.4
+
+### Patch Changes
+
+- 78e42c0: custom operations - prevent unrecoverable stack state
+- be71ec3: feat: Add internals export to expose configure
+- 6e927d1: fix: scope inline enum and custom type names with parent type name
+  fix: disallow whitespace in enum values
+
+## 0.13.3
+
+### Patch Changes
+
+- fbcc9dd: type perf improvements
+- Updated dependencies [fbcc9dd]
+  - @aws-amplify/data-schema-types@0.7.3
+
+## 0.13.2
+
+### Patch Changes
+
+- d52beff: feat: Add addRelationships function to models
+
+## 0.13.1
+
+### Patch Changes
+
+- f2aa9f6: feat: Add model references
+
+## 0.13.0
+
+### Minor Changes
+
+- fdf446c: secondary index client types
+
+### Patch Changes
+
+- Updated dependencies [fdf446c]
+  - @aws-amplify/data-schema-types@0.7.0
+
 ## 0.12.14
 
 ### Patch Changes

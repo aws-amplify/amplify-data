@@ -2,6 +2,7 @@ import { a, ClientSchema } from '../index';
 import {
   Expect,
   Equal,
+  Prettify,
   ExpectFalse,
   HasKey,
   __modelMeta__,
@@ -329,7 +330,7 @@ describe('Enum types', () => {
 
     type Schema = typeof s;
 
-    type Resolved = ClientSchema<Schema>['Post'];
+    type Resolved = Prettify<ClientSchema<Schema>['Post']>;
 
     type Expected = {
       readonly id: string;
@@ -353,7 +354,7 @@ describe('Enum types', () => {
 
     type Schema = typeof s;
 
-    type Resolved = ClientSchema<Schema>['Post'];
+    type Resolved = Prettify<ClientSchema<Schema>['Post']>;
 
     type Expected = {
       readonly id: string;
@@ -377,7 +378,7 @@ describe('Enum types', () => {
 
     type Schema = typeof s;
 
-    type Resolved = ClientSchema<Schema>['Post'];
+    type Resolved = Prettify<ClientSchema<Schema>['Post']>;
 
     type Expected = {
       readonly id: string;
@@ -405,7 +406,7 @@ describe('Enum types', () => {
 
     type Schema = typeof s;
 
-    type Resolved = Pick<ClientSchema<Schema>, 'Post' | 'Comment'>;
+    type Resolved = Prettify<Pick<ClientSchema<Schema>, 'Post' | 'Comment'>>;
 
     type Expected = {
       Post: {

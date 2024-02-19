@@ -156,42 +156,34 @@ type _ConflictingAuthRules<T extends ModelTypeParamShape> =
 export type ModelType<
   T extends ModelTypeParamShape,
   K extends keyof ModelType<T> = never,
-  ResolvedModelFields extends Record<string, unknown> = ExtractType<T>,
-  IndexFieldKeys extends string = SecondaryIndexFields<ResolvedModelFields>,
 > = Omit<
   {
     identifier<ID extends IdentifierType<T> = []>(
       identifier: ID,
-    ): ModelType<
-      SetTypeSubArg<T, 'identifier', ID>,
-      K | 'identifier',
-      ResolvedModelFields
-    >;
+    ): ModelType<SetTypeSubArg<T, 'identifier', ID>, K | 'identifier'>;
     secondaryIndexes<
       const Indexes extends readonly ModelIndexType<
-        IndexFieldKeys,
-        IndexFieldKeys,
+        SecondaryIndexFields<ExtractType<T>>,
+        SecondaryIndexFields<ExtractType<T>>,
         unknown,
         never,
         any
       >[] = readonly [],
       const IndexesIR extends readonly any[] = SecondaryIndexToIR<
         Indexes,
-        ResolvedModelFields
+        ExtractType<T>
       >,
     >(
       indexes: Indexes,
     ): ModelType<
       SetTypeSubArg<T, 'secondaryIndexes', IndexesIR>,
-      K | 'secondaryIndexes',
-      ResolvedModelFields
+      K | 'secondaryIndexes'
     >;
     authorization<AuthRuleType extends Authorization<any, any, any>>(
       rules: AuthRuleType[],
     ): ModelType<
       SetTypeSubArg<T, 'authorization', AuthRuleType[]>,
-      K | 'authorization',
-      ResolvedModelFields
+      K | 'authorization'
     >;
   },
   K
@@ -199,10 +191,22 @@ export type ModelType<
   Brand<object, typeof brand>;
 
 /**
+ * External representation of Model Type that exposes the `addRelationships` modifier.
+ * Used on the complete schema object.
+ */
+export type SchemaModelType<
+  T extends ModelType<ModelTypeParamShape> = ModelType<ModelTypeParamShape>,
+> = T & {
+  addRelationships(
+    relationships: Record<string, ModelRelationalField<any, string, any, any>>,
+  ): void;
+};
+
+/**
  * Internal representation of Model Type that exposes the `data` property.
  * Used at buildtime.
  */
-export type InternalModel = ModelType<any> & {
+export type InternalModel = SchemaModelType & {
   data: InternalModelData;
 };
 
@@ -232,8 +236,34 @@ function _model<T extends ModelTypeParamShape>(fields: T['fields']) {
     },
   } as ModelType<T>;
 
-  return { ...builder, data } as InternalModel as ModelType<T>;
+  return {
+    ...builder,
+    data,
+    addRelationships(relationships) {
+      data.fields = { ...data.fields, ...relationships };
+    },
+  } as InternalModel as ModelType<T>;
 }
+
+/**
+ * Model Type type guard
+ * @param modelType - api-next ModelType
+ * @returns true if the given value is a ModelSchema
+ */
+export const isSchemaModelType = (
+  modelType: any | SchemaModelType,
+): modelType is SchemaModelType => {
+  const internalType = modelType as InternalModel;
+  return (
+    typeof internalType === 'object' &&
+    internalType.data !== undefined &&
+    internalType.data.fields !== undefined &&
+    internalType.data.authorization !== undefined &&
+    internalType.data.identifier !== undefined &&
+    internalType.data.secondaryIndexes !== undefined &&
+    typeof internalType.addRelationships === 'function'
+  );
+};
 
 /**
  * A data model that creates a matching Amazon DynamoDB table and provides create, read (list and get), update,
