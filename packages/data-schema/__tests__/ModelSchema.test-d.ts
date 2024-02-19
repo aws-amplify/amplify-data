@@ -69,7 +69,6 @@ describe('ModelSchema', () => {
           title: string(),
         }),
       });
-      // @ts-check
       s.setSqlStatementFolderPath('test');
     });
   });
