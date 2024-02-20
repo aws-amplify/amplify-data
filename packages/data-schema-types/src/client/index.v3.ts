@@ -29,19 +29,12 @@ export type CustomHeaders =
 
 export type CustomQueries<
   Schema extends Record<any, any>,
-  Context extends string = 'CLIENT',
-  ModelMeta extends Record<any, any> = ExtractModelMeta<Schema>,
-> = CustomOperations<Schema, 'Query', Context, ModelMeta>;
+  _Context extends string = 'CLIENT',
+  _ModelMeta extends Record<any, any> = ExtractModelMeta<Schema>,
+> = any;
 
 export type CustomMutations<
   Schema extends Record<any, any>,
-  Context extends string = 'CLIENT',
-  ModelMeta extends Record<any, any> = ExtractModelMeta<Schema>,
-> = CustomOperations<Schema, 'Mutation', Context, ModelMeta>;
-
-export type CustomOperations<
-  Schema extends Record<any, any>,
-  OperationType extends 'Query' | 'Mutation' | 'Subscription',
-  Context extends string = 'CLIENT',
-  ModelMeta extends Record<any, any> = ExtractModelMeta<Schema>,
+  _Context extends string = 'CLIENT',
+  _ModelMeta extends Record<any, any> = ExtractModelMeta<Schema>,
 > = any;
