@@ -26,3 +26,22 @@ export type SelectionSet<_Model, _Path> = any;
 export type CustomHeaders =
   | Record<string, string>
   | (() => Promise<Record<string, string>>);
+
+export type CustomQueries<
+  Schema extends Record<any, any>,
+  Context extends string = 'CLIENT',
+  ModelMeta extends Record<any, any> = ExtractModelMeta<Schema>,
+> = CustomOperations<Schema, 'Query', Context, ModelMeta>;
+
+export type CustomMutations<
+  Schema extends Record<any, any>,
+  Context extends string = 'CLIENT',
+  ModelMeta extends Record<any, any> = ExtractModelMeta<Schema>,
+> = CustomOperations<Schema, 'Mutation', Context, ModelMeta>;
+
+export type CustomOperations<
+  Schema extends Record<any, any>,
+  OperationType extends 'Query' | 'Mutation' | 'Subscription',
+  Context extends string = 'CLIENT',
+  ModelMeta extends Record<any, any> = ExtractModelMeta<Schema>,
+> = any;
