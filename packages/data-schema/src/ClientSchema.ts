@@ -51,11 +51,10 @@ type InternalClientSchema<
     SchemaTypes<Schema>
   >,
   CustomOps = ResolveCustomOperations<Schema, ResolvedFields, NonModelTypes>,
-  Meta = IdentifierMeta &
+> = ResolvedFields & {
+  [__modelMeta__]: IdentifierMeta &
     SecondaryIndexes &
     RelationalMetadata<ResolvedSchema, ResolvedFields, IdentifierMeta> &
     NonModelTypes &
-    CustomOps,
-> = ResolvedFields & {
-  [__modelMeta__]: Meta;
+    CustomOps;
 };
