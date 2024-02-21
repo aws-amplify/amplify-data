@@ -13,6 +13,14 @@ const schema = a.schema({
     lat: a.float(),
     long: a.float(),
   }),
+  test: a
+    .query()
+    .arguments({
+      id: a.id(),
+    })
+    .returns(a.ref('Post'))
+    .handler([a.handler.inlineSql('test')]),
 });
-
+// TODO Start here
+const x = a.handler.inlineSql('test');
 export type Schema = ClientSchema<typeof schema>;

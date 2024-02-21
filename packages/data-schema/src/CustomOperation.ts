@@ -5,6 +5,7 @@ import { Authorization } from './Authorization';
 import { RefType, InternalRef } from './RefType';
 import { EnumType, EnumTypeParamShape } from './EnumType';
 import { CustomType } from './CustomType';
+import { Handler } from './Handler';
 
 type CustomArguments = Record<
   string,
@@ -32,6 +33,7 @@ type CustomData = {
   functionRef: string | null; // extend to include reference
   authorization: Authorization<any, any, any>[];
   typeName: CustomOperationName;
+  handlers: Handler<any>[] | null;
 };
 
 type InternalCustomData = CustomData & {
@@ -47,6 +49,7 @@ export type CustomOperationParamShape = {
   functionRef: string | null;
   authorization: Authorization<any, any, any>[];
   typeName: CustomOperationName;
+  handlers: Handler<any>[] | null;
 };
 
 export type CustomOperation<
@@ -80,6 +83,12 @@ export type CustomOperation<
       SetTypeSubArg<T, 'authorization', AuthRuleType[]>,
       K | 'authorization'
     >;
+    handler(
+      handlers: Handler<any>[] | Handler<any>,
+    ): CustomOperation<
+      SetTypeSubArg<T, 'handlers', Handler<any>[]>,
+      K | 'handler'
+    >;
   },
   K
 > &
@@ -95,7 +104,7 @@ function brandedBuilder<T extends CustomOperationParamShape>(
  * Internal representation of Custom Type that exposes the `data` property.
  * Used at buildtime.
  */
-export type InternalCustom = CustomOperation<any> & {
+export type InternalCustom = CustomOperation<any, any> & {
   data: InternalCustomData;
 };
 
@@ -108,6 +117,7 @@ function _custom<T extends CustomOperationParamShape>(
     functionRef: null,
     authorization: [],
     typeName: typeName,
+    handlers: null,
   };
 
   const builder = brandedBuilder<T>({
@@ -131,37 +141,54 @@ function _custom<T extends CustomOperationParamShape>(
 
       return this;
     },
+    handler(handlers: Handler<any> | Handler<any>[]) {
+      data.handlers = Array.isArray(handlers) ? handlers : [handlers];
+
+      return this;
+    },
   });
 
   return { ...builder, data } as InternalCustom as CustomOperation<T>;
 }
 
-export function query(): CustomOperation<{
-  arguments: CustomArguments;
-  returnType: null;
-  functionRef: null;
-  authorization: [];
-  typeName: 'Query';
-}> {
+export function query(): CustomOperation<
+  {
+    arguments: CustomArguments;
+    returnType: null;
+    functionRef: null;
+    authorization: [];
+    typeName: 'Query';
+    handlers: null;
+  },
+  any
+> {
   return _custom('Query');
 }
 
-export function mutation(): CustomOperation<{
-  arguments: CustomArguments;
-  returnType: null;
-  functionRef: null;
-  authorization: [];
-  typeName: 'Mutation';
-}> {
+export function mutation(): CustomOperation<
+  {
+    arguments: CustomArguments;
+    returnType: null;
+    functionRef: null;
+    authorization: [];
+    typeName: 'Mutation';
+    handlers: null;
+  },
+  any
+> {
   return _custom('Mutation');
 }
 
-export function subscription(): CustomOperation<{
-  arguments: CustomArguments;
-  returnType: null;
-  functionRef: null;
-  authorization: [];
-  typeName: 'Subscription';
-}> {
+export function subscription(): CustomOperation<
+  {
+    arguments: CustomArguments;
+    returnType: null;
+    functionRef: null;
+    authorization: [];
+    typeName: 'Subscription';
+    handlers: null;
+  },
+  any
+> {
   return _custom('Subscription');
 }
