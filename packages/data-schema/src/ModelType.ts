@@ -1,8 +1,8 @@
 import type {
-  Brand,
   SetTypeSubArg,
   SecondaryIndexIrShape,
 } from '@aws-amplify/data-schema-types';
+import { Brand, brand } from './util';
 import { ModelField, InternalField } from './ModelField';
 import type {
   ModelRelationalField,
@@ -15,7 +15,7 @@ import { CustomType, CustomTypeParamShape } from './CustomType';
 import { ModelIndexType, InternalModelIndexType } from './ModelIndex';
 import { SecondaryIndexToIR } from './MappedTypes/MapSecondaryIndexes';
 
-const brand = 'modelType';
+const brandName = 'modelType';
 
 type ModelFields = Record<
   string,
@@ -188,7 +188,7 @@ export type ModelType<
   },
   K
 > &
-  Brand<object, typeof brand>;
+  Brand<typeof brandName>;
 
 /**
  * External representation of Model Type that exposes the `addRelationships` modifier.
@@ -234,6 +234,7 @@ function _model<T extends ModelTypeParamShape>(fields: T['fields']) {
 
       return this;
     },
+    ...brand(brandName),
   } as ModelType<T>;
 
   return {

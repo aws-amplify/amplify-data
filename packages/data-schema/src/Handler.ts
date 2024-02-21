@@ -1,64 +1,40 @@
-const brandSymbol = Symbol('__BRAND');
+import { Brand, brand } from './util';
 
-type Brand<B extends string> = { [brandSymbol]: B };
+const brandName = 'Handler';
 
-function brand<B extends string>(name: B): Brand<B> {
-  return { [brandSymbol]: name };
-}
+export type Handler = Brand<typeof brandName>;
 
-const brandName = '__HANDLER';
-
-type HandlerTypes = 'sql' | 'dynamodb';
-
-export type HandlerType<T extends HandlerTypes> = {
-  type: Brand<T>;
-};
-
-function handlerType<T extends HandlerTypes>(type: T): HandlerType<T> {
-  return { type: brand(type) };
-}
-
-export type Handler<T extends HandlerTypes> = Brand<typeof brandName> &
-  HandlerType<T>;
-
-function buildHandler<T extends HandlerTypes>(type: T): Handler<T> {
-  return { ...brand(brandName), ...handlerType(type) };
+function buildHandler(): Handler {
+  return brand(brandName);
 }
 
 type InlineSqlResult = {
   sql: string;
-} & Handler<'sql'>;
+} & Handler;
 function inlineSql(sql: string): InlineSqlResult {
-  return { sql, ...buildHandler('sql') };
+  return { sql, ...buildHandler() };
 }
 
 type SqlReferenceResult = {
   sqlReference: string;
-} & Handler<'sql'>;
+} & Handler;
 function sqlReference(sqlReference: string): SqlReferenceResult {
-  return { sqlReference, ...buildHandler('sql') };
+  return { sqlReference, ...buildHandler() };
 }
 
 type CustomResult = {
-  file: string;
-} & Handler<'sql'>;
+  custom: string;
+} & Handler;
 function custom(file: string): CustomResult {
-  return { file, ...buildHandler('sql') };
+  return { custom: file, ...buildHandler() };
 }
 
 type FunctionResult = {
-  fcn: (...args: any[]) => any;
-} & Handler<'sql'>;
+  function: (...args: any[]) => any;
+} & Handler;
 function fcn(fcn: (...args: any[]) => any): FunctionResult {
-  return { fcn, ...buildHandler('sql') };
+  return { function: fcn, ...buildHandler() };
 }
-
-// type HandlerFunctions = <MS extends ModelSchema<any, any>>(
-//   schema: MS,
-//   ...args: any[]
-// ) => InlineSqlResult | SqlReferenceResult | CustomResult | FunctionResult;
-
-// type HandlerRecord<HF extends HandlerFunctions> = Record<string, HF>
 
 export const handler = {
   inlineSql,

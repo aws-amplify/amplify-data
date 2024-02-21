@@ -186,4 +186,60 @@ describe('CustomOperation transform', () => {
       expect(result).toMatchSnapshot();
     });
   }
+  describe('handlers', () => {
+    test('a.handler.custom works', () => {
+      const s = a.schema({
+        getPostDetails: a
+          .query()
+          .arguments({})
+          .handler(a.handler.custom('filename.js'))
+          .returns(a.customType({})),
+      });
+
+      const result = s.transform().schema;
+
+      expect(result).toMatchSnapshot();
+    });
+    test('a.handler.function works', () => {
+      const s = a.schema({
+        getPostDetails: a
+          .query()
+          .arguments({})
+          .handler(a.handler.function(() => {}))
+          .returns(a.customType({})),
+      });
+
+      const result = s.transform().schema;
+
+      expect(result).toMatchSnapshot();
+    });
+    test('a.handler.inlineSql works', () => {
+      // TODO: This shouldn't work on a DDB schema
+      const s = a.schema({
+        getPostDetails: a
+          .query()
+          .arguments({})
+          .handler(a.handler.inlineSql('SELECT * from TESTTABLE;'))
+          .returns(a.customType({})),
+      });
+
+      const result = s.transform().schema;
+
+      expect(result).toMatchSnapshot();
+    });
+    test('a.handler.sqlReference works', () => {
+      // TODO: This shouldn't work on a DDB schema
+      const s = a.schema({
+        getPostDetails: a
+          .query()
+          .arguments({})
+          .handler(a.handler.sqlReference('testQueryName'))
+          .returns(a.customType({})),
+      });
+
+      const result = s.transform().schema;
+
+      expect(result).toMatchSnapshot();
+    });
+  });
 });

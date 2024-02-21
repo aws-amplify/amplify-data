@@ -1,6 +1,6 @@
-import type { Brand } from '@aws-amplify/data-schema-types';
+import { Brand, brand } from './util';
 
-const brand = 'modelIndexType';
+const brandName = 'modelIndexType';
 
 export type ModelIndexData = {
   partitionKey: string;
@@ -39,7 +39,7 @@ export type ModelIndexType<
   },
   K
 > &
-  Brand<object, typeof brand>;
+  Brand<typeof brandName>;
 
 function _modelIndex<
   ModelFieldKeys extends string,
@@ -70,6 +70,7 @@ function _modelIndex<
 
       return this;
     },
+    ...brand(brandName),
   } as ModelIndexType<ModelFieldKeys, PK, SK, QueryField>;
 
   return { ...builder, data } as InternalModelIndexType as ModelIndexType<

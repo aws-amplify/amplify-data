@@ -1,4 +1,4 @@
-import { Brand } from '@aws-amplify/data-schema-types';
+import { Brand } from './util';
 
 type EnumTypeData = {
   type: 'enum';
@@ -10,7 +10,7 @@ export type EnumTypeParamShape = {
   values: readonly string[];
 };
 
-export type EnumType<T extends EnumTypeParamShape> = Brand<T, 'enum'>;
+export type EnumType<T extends EnumTypeParamShape> = T & Brand<'enum'>;
 
 function _enum<T extends EnumTypeParamShape>(values: T['values']) {
   const data: EnumTypeData = {
