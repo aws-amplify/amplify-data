@@ -17,4 +17,5 @@ export interface DerivedApiDefinition {
    * @returns generated function slots
    */
   readonly functionSlots: any[];
+  readonly jsFunctions: any[];
 }
