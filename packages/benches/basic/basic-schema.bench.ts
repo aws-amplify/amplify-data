@@ -1,22 +1,20 @@
 import { bench } from '@arktype/attest';
-import { a, ClientSchema } from '@aws-amplify/data-schema';
+import { builderTest } from '@aws-amplify/data-schema';
 
-bench('current ref builder', () => {
-  a.schema({
-    Post: a.model({
-      title: a.string().required(),
-    }),
-  });
-}).types([4243, 'instantiations']);
+bench('current internal casting ref builder', () => {
+  const ref = builderTest
+    .refInternalCasting('test')
+    .required()
+    .authorization([]);
+  (ref as builderTest.InternalRefInternalCasting).data.link;
+}).types([833, 'instantiations']);
 
-bench('basic schema w client types', () => {
-  const s = a.schema({
-    Post: a.model({
-      title: a.string().required(),
-      description: a.string(),
-      viewCount: a.integer(),
-    }),
-  });
+bench('branded data bindings', () => {
+  const ref = builderTest.refBranding('test').required().authorization([]);
+  builderTest.getDataBranding(ref);
+}).types([228, 'instantiations']);
 
-  type _ = ClientSchema<typeof s>;
-}).types([48255, 'instantiations']);
+bench('branded class data bindings', () => {
+  const ref = builderTest.refKBranding('test').required().authorization([]);
+  builderTest.getDataKBranding(ref);
+}).types([228, 'instantiations']);
