@@ -14,5 +14,5 @@ const schema = a.schema({
     long: a.float(),
   }),
 });
-// TODO Start here
+
 export type Schema = ClientSchema<typeof schema>;
