@@ -55,6 +55,18 @@ describe('Enum', () => {
 
       type test = Expect<Equal<ResolvedUpdateParams, ExpectedUpdateParams>>;
     });
+
+    test('The `.enums` property should contain expect enum type and values getter function', () => {
+      type EnumsProp = typeof client.enums;
+
+      type ExpectedEnumsPropShape = {
+        PostStatus: {
+          values(): ('draft' | 'pending' | 'published')[];
+        };
+      };
+
+      type test = Expect<Equal<EnumsProp, ExpectedEnumsPropShape>>;
+    });
   });
 
   describe('Explicit Enum Type; multiple models', () => {
@@ -153,6 +165,18 @@ describe('Enum', () => {
       type test2 = Expect<
         Equal<ResolvedUpdateCommentParams, ExpectedUpdateCommentParams>
       >;
+    });
+
+    test('The `.enums` property should contain expect enum type and values getter function', () => {
+      type EnumsProp = typeof client.enums;
+
+      type ExpectedEnumsPropShape = {
+        Status: {
+          values(): ('draft' | 'pending' | 'published')[];
+        };
+      };
+
+      type test = Expect<Equal<EnumsProp, ExpectedEnumsPropShape>>;
     });
   });
 });
