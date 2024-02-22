@@ -1,4 +1,5 @@
-import { SetTypeSubArg, Brand } from '@aws-amplify/data-schema-types';
+import { SetTypeSubArg } from '@aws-amplify/data-schema-types';
+import { Brand } from './util';
 import { Authorization } from './Authorization';
 import { __auth } from './ModelField';
 
@@ -42,7 +43,7 @@ export type RefType<
 > & {
   // This is a lie. This property is never set at runtime. It's just used to smuggle auth types through.
   [__auth]?: Auth;
-} & Brand<object, typeof brandName>;
+} & Brand<typeof brandName>;
 
 function brandedBuilder<T extends RefTypeParamShape>(
   builder: Record<keyof RefType<T> & string, any>,

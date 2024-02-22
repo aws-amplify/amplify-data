@@ -23,6 +23,7 @@ import { allow } from './Authorization';
 import { customType } from './CustomType';
 import { enumType } from './EnumType';
 import { query, mutation, subscription } from './CustomOperation';
+import { handler } from './Handler';
 
 // We are re-exporting with this pattern to make the JSDoc happy.
 // Otherwise the JSDoc wouldn't consistently show up as a customer types
@@ -56,4 +57,5 @@ export {
   phone,
   url,
   ipAddress,
+  handler,
 };
