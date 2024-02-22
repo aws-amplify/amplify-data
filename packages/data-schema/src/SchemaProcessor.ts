@@ -591,7 +591,7 @@ function processFieldLevelAuthRules(
 
 function processFields(
   typeName: string,
-  fields: Record<string, ModelField<any, any>>,
+  fields: Record<string, any>,
   fieldLevelAuthRules: Record<string, string | null>,
   identifier?: string[],
   partitionKey?: string,
@@ -773,12 +773,24 @@ const schemaPreprocessor = (schema: InternalSchema): string => {
         gqlModels.push(enumType);
       } else if (isCustomType(typeDef)) {
         const fields = typeDef.data.fields;
+        const fieldAuthApplicableFields = Object.entries(typeDef.data.fields)
+          .filter(
+            (pair: [string, any]): pair is [string, { data: ModelFieldDef }] =>
+              isModelField(pair[1]),
+          )
+          .reduce(
+            (result, [name, field]) => {
+              Object.assign(result, { [name]: field });
+              return result;
+            },
+            {} as Record<string, ModelField<any, any>>,
+          );
 
         const authString = '';
         const authFields = {};
 
         const fieldLevelAuthRules = processFieldLevelAuthRules(
-          fields,
+          fieldAuthApplicableFields,
           authFields,
         );
 

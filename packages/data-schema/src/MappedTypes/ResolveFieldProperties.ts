@@ -46,8 +46,10 @@ export type ResolveFieldProperties<
     NonModelTypes
   >,
 > = Intersection<
-  FilterFieldTypes<RequiredFieldTypes<FieldsWithRelationships>>,
-  FilterFieldTypes<OptionalFieldTypes<FieldsWithRelationships>>,
+  FilterFieldTypes<
+    MarkModelsNonNullableFieldsRequired<FieldsWithRelationships>
+  >,
+  FilterFieldTypes<MarkModelsNullableFieldsOptional<FieldsWithRelationships>>,
   FilterFieldTypes<ModelImpliedAuthFields<Schema>>,
   AllImpliedFKs<ResolvedSchema, IdentifierMeta>
 >;
@@ -109,9 +111,25 @@ export type ResolveRef<
   Value = Link extends keyof NonModelTypes['enums']
     ? NonModelTypes['enums'][Link]
     : Link extends keyof NonModelTypes['customTypes']
-      ? NonModelTypes['customTypes'][Link]
+      ? ResolveRefsOfCustomType<
+          NonModelTypes,
+          NonModelTypes['customTypes'][Link]
+        >
       : never,
 > = Ref['required'] extends true ? Value : Value | null;
+
+type ResolveRefsOfCustomType<NonModelTypes extends NonModelTypesShape, T> = {
+  [Prop in keyof T]: T[Prop] extends RefType<
+    infer R extends RefTypeParamShape,
+    any,
+    any
+  > | null
+    ? ResolveRef<NonModelTypes, R>
+    : T[Prop];
+} extends infer Resolved
+  ? ExtractNullableFieldsToOptionalFields<Resolved> &
+      ExtractNonNullableFieldsToRequiredFields<Resolved>
+  : never;
 
 type ResolveRelationships<
   Schema,
@@ -155,20 +173,28 @@ type FilterFieldTypes<Schema> = {
   };
 };
 
-type OptionalFieldTypes<Schema> = {
-  [ModelProp in keyof Schema]: Partial<{
-    [FieldProp in keyof Schema[ModelProp]]: null extends Schema[ModelProp][FieldProp]
-      ? Schema[ModelProp][FieldProp]
-      : never;
-  }>;
+type ExtractNullableFieldsToOptionalFields<Fields> = Partial<{
+  [FieldProp in keyof Fields as null extends Fields[FieldProp]
+    ? FieldProp
+    : never]: null extends Fields[FieldProp] ? Fields[FieldProp] : never;
+}>;
+
+type MarkModelsNullableFieldsOptional<Schema> = {
+  [ModelProp in keyof Schema]: ExtractNullableFieldsToOptionalFields<
+    Schema[ModelProp]
+  >;
 };
 
-type RequiredFieldTypes<Schema> = {
-  [ModelProp in keyof Schema]: {
-    [FieldProp in keyof Schema[ModelProp]]: null extends Schema[ModelProp][FieldProp]
-      ? never
-      : Schema[ModelProp][FieldProp];
-  };
+type ExtractNonNullableFieldsToRequiredFields<Fields> = {
+  [FieldProp in keyof Fields as null extends Fields[FieldProp]
+    ? never
+    : FieldProp]: null extends Fields[FieldProp] ? never : Fields[FieldProp];
+};
+
+type MarkModelsNonNullableFieldsRequired<Schema> = {
+  [ModelProp in keyof Schema]: ExtractNonNullableFieldsToRequiredFields<
+    Schema[ModelProp]
+  >;
 };
 
 type Intersection<A, B, C, D> = A & B & C & D extends infer U

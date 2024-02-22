@@ -1,9 +1,11 @@
-import { Brand } from './util';
-import {
+import type { Brand } from './util';
+import type {
   ModelField,
   InternalField,
   ModelFieldTypeParamOuter,
 } from './ModelField';
+import type { RefType } from './RefType';
+import type { EnumType, EnumTypeParamShape } from './EnumType';
 
 /**
  * Custom Types
@@ -17,7 +19,10 @@ export type CustomTypeAllowedModifiers = 'authorization' | 'array' | 'required';
 
 type CustomTypeFields = Record<
   string,
-  ModelField<ModelFieldTypeParamOuter, CustomTypeAllowedModifiers, any>
+  | ModelField<ModelFieldTypeParamOuter, CustomTypeAllowedModifiers, any>
+  | RefType<any, any, any>
+  | EnumType<EnumTypeParamShape>
+  | CustomType<CustomTypeParamShape>
 >;
 
 type InternalModelFields = Record<string, InternalField>;
