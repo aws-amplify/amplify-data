@@ -1,4 +1,4 @@
-import { Brand } from '@aws-amplify/data-schema-types';
+import { Brand } from './util';
 import {
   ModelField,
   InternalField,
@@ -35,7 +35,8 @@ export type CustomTypeParamShape = {
   fields: CustomTypeFields;
 };
 
-export type CustomType<T extends CustomTypeParamShape> = Brand<T, 'customType'>;
+export type CustomType<T extends CustomTypeParamShape> = T &
+  Brand<'customType'>;
 
 /**
  * Internal representation of CustomType that exposes the `data` property.

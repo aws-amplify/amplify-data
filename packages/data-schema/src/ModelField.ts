@@ -1,4 +1,4 @@
-import { Brand } from '@aws-amplify/data-schema-types';
+import { Brand, brand } from './util';
 import { Authorization } from './Authorization';
 
 /**
@@ -108,7 +108,7 @@ export type ModelField<
 > & {
   // This is a lie. This property is never set at runtime. It's just used to smuggle auth types through.
   [__auth]?: Auth;
-} & Brand<object, typeof brandName>;
+} & Brand<typeof brandName>;
 
 /**
  * Internal representation of Model Field that exposes the `data` property.
@@ -174,6 +174,7 @@ function _field<T extends ModelFieldTypeParamOuter>(fieldType: ModelFieldType) {
 
       return this;
     },
+    ...brand(brandName),
   } as ModelField<T>;
 
   // this double cast gives us a Subtyping Constraint i.e., hides `data` from the public API,

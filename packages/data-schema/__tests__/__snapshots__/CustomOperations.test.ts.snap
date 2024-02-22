@@ -148,3 +148,47 @@ type Subscription {
   onLikePost: Post @function(name: "myFunc") @auth(rules: [{allow: public}])
 }"
 `;
+
+exports[`CustomOperation transform handlers a.handler.custom works 1`] = `
+"type GetPostDetailsReturnType 
+{
+  
+}
+
+type Query {
+  getPostDetails: GetPostDetailsReturnType 
+}"
+`;
+
+exports[`CustomOperation transform handlers a.handler.function works 1`] = `
+"type GetPostDetailsReturnType 
+{
+  
+}
+
+type Query {
+  getPostDetails: GetPostDetailsReturnType 
+}"
+`;
+
+exports[`CustomOperation transform handlers a.handler.inlineSql works 1`] = `
+"type GetPostDetailsReturnType 
+{
+  
+}
+
+type Query {
+  getPostDetails: GetPostDetailsReturnType 
+}"
+`;
+
+exports[`CustomOperation transform handlers a.handler.sqlReference works 1`] = `
+"type GetPostDetailsReturnType 
+{
+  
+}
+
+type Query {
+  getPostDetails: GetPostDetailsReturnType 
+}"
+`;

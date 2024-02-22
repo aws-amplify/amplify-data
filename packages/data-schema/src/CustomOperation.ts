@@ -1,10 +1,12 @@
-import { SetTypeSubArg, Brand } from '@aws-amplify/data-schema-types';
+import { SetTypeSubArg } from '@aws-amplify/data-schema-types';
+import { Brand } from './util';
 
 import { ModelField, InternalField } from './ModelField';
 import { Authorization } from './Authorization';
 import { RefType, InternalRef } from './RefType';
 import { EnumType, EnumTypeParamShape } from './EnumType';
 import { CustomType } from './CustomType';
+import { Handler } from './Handler';
 
 type CustomArguments = Record<
   string,
@@ -19,6 +21,8 @@ type InternalCustomReturnType = InternalRef;
 
 const brandName = 'customOperation';
 
+type HandlerInputType = Handler | Handler[];
+
 export const CustomOperationNames = [
   'Query',
   'Mutation',
@@ -32,6 +36,7 @@ type CustomData = {
   functionRef: string | null; // extend to include reference
   authorization: Authorization<any, any, any>[];
   typeName: CustomOperationName;
+  handlers: Handler[] | null;
 };
 
 type InternalCustomData = CustomData & {
@@ -47,6 +52,7 @@ export type CustomOperationParamShape = {
   functionRef: string | null;
   authorization: Authorization<any, any, any>[];
   typeName: CustomOperationName;
+  handlers: Handler[] | null;
 };
 
 export type CustomOperation<
@@ -80,10 +86,13 @@ export type CustomOperation<
       SetTypeSubArg<T, 'authorization', AuthRuleType[]>,
       K | 'authorization'
     >;
+    handler(
+      handlers: HandlerInputType,
+    ): CustomOperation<SetTypeSubArg<T, 'handlers', Handler[]>, K | 'handler'>;
   },
   K
 > &
-  Brand<object, typeof brandName>;
+  Brand<typeof brandName>;
 
 function brandedBuilder<T extends CustomOperationParamShape>(
   builder: Record<keyof CustomOperation<T> & string, any>,
@@ -108,6 +117,7 @@ function _custom<T extends CustomOperationParamShape>(
     functionRef: null,
     authorization: [],
     typeName: typeName,
+    handlers: null,
   };
 
   const builder = brandedBuilder<T>({
@@ -131,6 +141,11 @@ function _custom<T extends CustomOperationParamShape>(
 
       return this;
     },
+    handler(handlers: HandlerInputType) {
+      data.handlers = Array.isArray(handlers) ? handlers : [handlers];
+
+      return this;
+    },
   });
 
   return { ...builder, data } as InternalCustom as CustomOperation<T>;
@@ -142,6 +157,7 @@ export function query(): CustomOperation<{
   functionRef: null;
   authorization: [];
   typeName: 'Query';
+  handlers: null;
 }> {
   return _custom('Query');
 }
@@ -152,6 +168,7 @@ export function mutation(): CustomOperation<{
   functionRef: null;
   authorization: [];
   typeName: 'Mutation';
+  handlers: null;
 }> {
   return _custom('Mutation');
 }
@@ -162,6 +179,7 @@ export function subscription(): CustomOperation<{
   functionRef: null;
   authorization: [];
   typeName: 'Subscription';
+  handlers: null;
 }> {
   return _custom('Subscription');
 }

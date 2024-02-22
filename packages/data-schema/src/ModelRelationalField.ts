@@ -1,4 +1,5 @@
-import { SetTypeSubArg, Brand } from '@aws-amplify/data-schema-types';
+import { SetTypeSubArg } from '@aws-amplify/data-schema-types';
+import { Brand } from './util';
 import { Authorization } from './Authorization';
 
 /**
@@ -99,7 +100,7 @@ export type ModelRelationalField<
 > = Omit<ModelRelationalFieldFunctions<T, RM, K>, K> & {
   // This is a lie. This property is never set at runtime. It's just used to smuggle auth types through.
   [__auth]?: Auth;
-} & Brand<object, typeof brandName>;
+} & Brand<typeof brandName>;
 
 /**
  * Internal representation of Model Field that exposes the `data` property.
