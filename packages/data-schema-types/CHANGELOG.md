@@ -1,5 +1,11 @@
 # @aws-amplify/data-schema-types
 
+## 0.7.5
+
+### Patch Changes
+
+- d1e13bc: Add meta types to support custom queries and mutations
+
 ## 0.7.4
 
 ### Patch Changes
