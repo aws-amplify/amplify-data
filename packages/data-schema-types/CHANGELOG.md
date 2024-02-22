@@ -1,5 +1,11 @@
 # @aws-amplify/data-schema-types
 
+## 0.7.4
+
+### Patch Changes
+
+- ac22ac8: feat: Add custom operation handler types
+
 ## 0.7.3
 
 ### Patch Changes
