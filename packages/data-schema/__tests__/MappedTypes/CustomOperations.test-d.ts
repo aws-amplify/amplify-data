@@ -64,7 +64,7 @@ describe('Custom Operations mapper utils', () => {
       })
       .returns(a.string());
 
-    type Actual = CustomOpReturnType<OpShape<typeof op>, {}>;
+    type Actual = CustomOpReturnType<OpShape<typeof op>, { a: 'unused' }>;
     type T = Expect<Equal<Actual, string | null>>;
   });
 
