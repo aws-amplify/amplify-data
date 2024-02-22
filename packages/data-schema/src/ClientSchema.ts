@@ -50,11 +50,10 @@ type InternalClientSchema<
   SecondaryIndexes extends Record<string, any> = ModelSecondaryIndexes<
     SchemaTypes<Schema>
   >,
-  CustomOps = ResolveCustomOperations<Schema, ResolvedFields, NonModelTypes>,
 > = ResolvedFields & {
   [__modelMeta__]: IdentifierMeta &
     SecondaryIndexes &
     RelationalMetadata<ResolvedSchema, ResolvedFields, IdentifierMeta> &
     NonModelTypes &
-    CustomOps;
+    ResolveCustomOperations<Schema, ResolvedFields, NonModelTypes>;
 };
