@@ -102,7 +102,7 @@ type ResolveRelationalFieldsForModel<
 };
 
 // Ref can point to a customType, enum, or custom operation
-type ResolveRef<
+export type ResolveRef<
   NonModelTypes extends NonModelTypesShape,
   Ref extends RefTypeParamShape,
   Link extends string = Ref['link'],

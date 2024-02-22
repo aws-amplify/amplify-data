@@ -724,6 +724,64 @@ export type ModelTypes<
     : never;
 };
 
+export type CustomQueries<
+  Schema extends Record<any, any>,
+  Context extends ContextType = 'CLIENT',
+  ModelMeta extends Record<any, any> = ExtractModelMeta<Schema>,
+> = CustomOperations<Schema, 'Query', Context, ModelMeta>;
+
+export type CustomMutations<
+  Schema extends Record<any, any>,
+  Context extends ContextType = 'CLIENT',
+  ModelMeta extends Record<any, any> = ExtractModelMeta<Schema>,
+> = CustomOperations<Schema, 'Mutation', Context, ModelMeta>;
+
+export type CustomOperations<
+  Schema extends Record<any, any>,
+  OperationType extends 'Query' | 'Mutation' | 'Subscription',
+  Context extends ContextType = 'CLIENT',
+  ModelMeta extends Record<any, any> = ExtractModelMeta<Schema>,
+> = {
+  [OpName in keyof ModelMeta['customOperations'] as ModelMeta['customOperations'][OpName]['typeName'] extends OperationType
+    ? OpName
+    : never]: {
+    CLIENT: (
+      input: ModelMeta['customOperations'][OpName]['arguments'],
+      options?: {
+        // selectionSet?: SelectionSet;
+        authMode?: AuthMode;
+        authToken?: string;
+        headers?: CustomHeaders;
+      },
+    ) => SingularReturnValue<
+      ModelMeta['customOperations'][OpName]['returnType']
+    >;
+    COOKIES: (
+      input: ModelMeta['customOperations'][OpName]['arguments'],
+      options?: {
+        // selectionSet?: SelectionSet;
+        authMode?: AuthMode;
+        authToken?: string;
+        headers?: CustomHeaders;
+      },
+    ) => SingularReturnValue<
+      ModelMeta['customOperations'][OpName]['returnType']
+    >;
+    REQUEST: (
+      contextSpec: any,
+      input: ModelMeta['customOperations'][OpName]['arguments'],
+      options?: {
+        // selectionSet?: SelectionSet;
+        authMode?: AuthMode;
+        authToken?: string;
+        headers?: CustomHeaders;
+      },
+    ) => SingularReturnValue<
+      ModelMeta['customOperations'][OpName]['returnType']
+    >;
+  }[Context];
+};
+
 /**
  * The utility type that is used to infer the type (interface) of the generated
  * `client.enums` property.

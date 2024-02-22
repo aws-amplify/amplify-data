@@ -1,6 +1,11 @@
 import { expectTypeTestsToPassAsync } from 'jest-tsd';
 import { a, ClientSchema } from '../index';
-import { Expect, Equal, Prettify } from '@aws-amplify/data-schema-types';
+import {
+  Expect,
+  Equal,
+  Prettify,
+  __modelMeta__,
+} from '@aws-amplify/data-schema-types';
 
 // evaluates type defs in corresponding test-d.ts file
 it('should not produce static type errors', async () => {
@@ -557,5 +562,82 @@ describe('schema auth rules', () => {
       .authorization([a.allow.owner()]);
 
     expect(schema.transform()).toMatchSnapshot();
+  });
+});
+
+describe('custom operations', () => {
+  test('custom query', () => {
+    const schema = a.schema({
+      EchoResult: a.customType({
+        resultContent: a.string(),
+      }),
+      echo: a
+        .query()
+        .arguments({
+          inputContent: a.string().required(),
+        })
+        .returns(a.ref('EchoResult'))
+        .function('echoFunction')
+        .authorization([a.allow.public()]),
+    });
+
+    type Schema = ClientSchema<typeof schema>;
+    type ActualEcho = Schema[typeof __modelMeta__]['customOperations']['echo'];
+
+    type Expected = {
+      arguments: {
+        inputContent: string;
+      };
+      functionRef: 'echoFunction';
+      typeName: 'Query';
+      returnType: {
+        resultContent: string | null;
+      } | null;
+    };
+
+    type ActualEchoInterface = Pick<ActualEcho, keyof Expected>;
+
+    type test = Expect<Equal<ActualEchoInterface, Expected>>;
+
+    const graphql = schema.transform().schema;
+    expect(graphql).toMatchSnapshot();
+  });
+
+  test('custom mutation', () => {
+    const schema = a.schema({
+      LikePostResult: a.customType({
+        likes: a.integer().required(),
+      }),
+      likePost: a
+        .mutation()
+        .arguments({
+          postId: a.string().required(),
+        })
+        .returns(a.ref('LikePostResult'))
+        .function('likePost')
+        .authorization([a.allow.public()]),
+    });
+
+    type Schema = ClientSchema<typeof schema>;
+    type ActualLikePost =
+      Schema[typeof __modelMeta__]['customOperations']['likePost'];
+
+    type Expected = {
+      arguments: {
+        postId: string;
+      };
+      functionRef: 'likePost';
+      typeName: 'Mutation';
+      returnType: {
+        likes: number;
+      } | null;
+    };
+
+    type ActualLikePostInterface = Pick<ActualLikePost, keyof Expected>;
+
+    type test = Expect<Equal<ActualLikePostInterface, Expected>>;
+
+    const graphql = schema.transform().schema;
+    expect(graphql).toMatchSnapshot();
   });
 });
