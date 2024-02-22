@@ -32,7 +32,7 @@ export type ResolveCustomOperations<
 /**
  * Filtered, mapped list of custom operations shapes from a schema.
  */
-type CustomOpShapes<Schema extends ModelSchema<any, any>> = {
+export type CustomOpShapes<Schema extends ModelSchema<any, any>> = {
   [K in keyof Schema['data']['types'] as Schema['data']['types'][K] extends CustomOperation<
     any,
     any
@@ -49,7 +49,7 @@ type CustomOpShapes<Schema extends ModelSchema<any, any>> = {
 /**
  * Digs out custom operation arguments, mapped to the intended graphql types.
  */
-type CustomOpArguments<Shape extends CustomOperationParamShape> = {
+export type CustomOpArguments<Shape extends CustomOperationParamShape> = {
   [FieldName in keyof Shape['arguments']]: Shape['arguments'][FieldName] extends ModelField<
     infer R,
     any,
@@ -64,7 +64,7 @@ type CustomOpArguments<Shape extends CustomOperationParamShape> = {
  *
  * This entails dereferencing refs and inferring graphql types from field-type defs.
  */
-type CustomOpReturnType<
+export type CustomOpReturnType<
   Shape extends CustomOperationParamShape,
   Bag extends Record<string, unknown>,
 > = Shape['returnType'] extends RefType<infer RefShape, any, any>
@@ -77,7 +77,7 @@ type CustomOpReturnType<
  * `a.ref()` resolution specific to custom operations, for which `a.ref()`
  * can refer to a model, custom type, or enum.
  */
-type ResolveRef<
+export type ResolveRef<
   Shape extends RefTypeParamShape,
   Bag extends Record<string, unknown>,
 > = Shape['link'] extends keyof Bag
@@ -90,7 +90,7 @@ type ResolveRef<
  * Small utility to provided a merged view of models, custom types, and enums
  * from a schema and nonModel-types.
  */
-type Bag<
+export type Bag<
   FullyResolvedSchema extends Record<string, unknown>,
   NonModelTypes extends NonModelTypesShape,
 > = FullyResolvedSchema & NonModelTypes['customTypes'] & NonModelTypes['enums'];
