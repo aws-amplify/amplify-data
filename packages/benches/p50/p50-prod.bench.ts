@@ -981,4 +981,4 @@ bench('prod p50 w/ client types', () => {
     .authorization([a.allow.public()]);
 
   type _ = ClientSchema<typeof s>;
-}).types([766044, 'instantiations']);
+}).types([764292, 'instantiations']);
