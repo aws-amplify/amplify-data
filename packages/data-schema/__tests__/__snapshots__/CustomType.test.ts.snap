@@ -64,6 +64,11 @@ type Meta
   nestedMeta: AltMeta
 }
 
+enum PostStatus {
+  unpublished
+  published
+}
+
 type AltMeta 
 {
   field1: String

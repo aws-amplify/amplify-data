@@ -138,6 +138,7 @@ describe('CustomType transform', () => {
           status: a.ref('PostStatus'),
           nestedMeta: a.ref('AltMeta'),
         }),
+        PostStatus: a.enum(['unpublished', 'published']),
         AltMeta: a.customType({
           field1: a.string(),
         }),
