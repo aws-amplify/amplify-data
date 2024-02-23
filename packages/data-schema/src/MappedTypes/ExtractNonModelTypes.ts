@@ -53,46 +53,37 @@ export type ExtractAndFlattenImplicitNonModelTypesFromFields<
   Fields,
 > = {
   // loop through the fields - omit the field that's not a non-model type
-  [FieldProp in keyof Fields as Fields[FieldProp] extends EnumType<EnumTypeParamShape>
+  [FieldProp in keyof Fields as Fields[FieldProp] extends
+    | EnumType<EnumTypeParamShape>
+    | CustomType<CustomTypeParamShape>
     ? FieldProp
-    : Fields[FieldProp] extends CustomType<CustomTypeParamShape>
-      ? FieldProp
-      : never]: (
+    : never]: (
     x: NonNullable<Fields[FieldProp]> extends infer FieldType
-      ? FieldType extends EnumType<EnumTypeParamShape>
+      ? // if the filed is a enum extract it as is
+        FieldType extends EnumType<EnumTypeParamShape>
         ? {
             [Key in `${ParentTypeName}${Capitalize<
               FieldProp & string
             >}`]: Fields[FieldProp];
           }
-        : // if field is a CustomType
+        : // if the field is a CustomType
           FieldType extends CustomType<
               infer CustomTypeShape extends CustomTypeParamShape
             >
           ? // recursively extract to the Nested CustomType
             ExtractAndFlattenImplicitNonModelTypesFromFields<
-              `${Capitalize<FieldProp & string>}`,
+              `${ParentTypeName}${Capitalize<FieldProp & string>}`,
               CustomTypeShape['fields']
             > extends infer Nested
-            ? // if the recursive extraction gets an empty mapped type
-              Record<never, never> extends Nested
-              ? // extract the current CustomType field only
-                {
-                  [Key in `${ParentTypeName}${Capitalize<
-                    FieldProp & string
-                  >}`]: Fields[FieldProp];
-                }
-              : // otherwise merge the recursively extracted mapped object with
-                // the current CustomType field
-                {
-                  [NestedKey in keyof Nested as `${ParentTypeName}${Capitalize<
-                    NestedKey & string
-                  >}`]: Nested[NestedKey];
-                } & {
-                  [Key in `${ParentTypeName}${Capitalize<
-                    FieldProp & string
-                  >}`]: Fields[FieldProp];
-                }
+            ? // Nested may be an empty mapped type if the nested type doesn't
+              // contain any non-model typed fields.
+              // Merge the current custom type and the non-model types extracted
+              // from its fields
+              Nested & {
+                [Key in `${ParentTypeName}${Capitalize<
+                  FieldProp & string
+                >}`]: Fields[FieldProp];
+              }
             : never
           : never
       : never,
