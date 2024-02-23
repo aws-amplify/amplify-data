@@ -1691,7 +1691,7 @@ bench('99 complex models', () => {
       })
       .authorization([a.allow.private().to(['read']), a.allow.owner()]),
   }).authorization([a.allow.public()]);
-}).types([930435, 'instantiations']);
+}).types([930439, 'instantiations']);
 
 bench('99 complex models w/ client types', () => {
   const s = a
@@ -3383,4 +3383,4 @@ bench('99 complex models w/ client types', () => {
     .authorization([a.allow.public()]);
 
   type _ = ClientSchema<typeof s>;
-}).types([4904590, 'instantiations']);
+}).types([5049621, 'instantiations']);
