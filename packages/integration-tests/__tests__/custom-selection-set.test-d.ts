@@ -466,7 +466,7 @@ describe('Custom Selection Set', () => {
       type ExpectedType = {
         readonly title: string;
         readonly location: {
-          readonly lat: number | null;
+          readonly lat: number | null | undefined;
         };
       }[];
 
@@ -482,7 +482,7 @@ describe('Custom Selection Set', () => {
         readonly title: string;
         readonly location:
           | {
-              readonly lat: number | null;
+              readonly lat: number | null | undefined;
             }
           | null
           | undefined;
@@ -500,7 +500,7 @@ describe('Custom Selection Set', () => {
         readonly title: string;
         readonly altLocation:
           | {
-              readonly lat: number | null;
+              readonly lat: number | null | undefined;
             }
           | null
           | undefined;

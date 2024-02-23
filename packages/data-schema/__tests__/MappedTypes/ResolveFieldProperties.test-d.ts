@@ -61,8 +61,99 @@ describe('ResolveFieldProperties Mapped Type', () => {
       metadata?: Json;
       location?:
         | {
-            lat: number | null;
-            long: number | null;
+            lat?: number | null;
+            long?: number | null;
+          }
+        | null
+        | undefined;
+    };
+
+    type test = Expect<Equal<Resolved, Expected>>;
+  });
+
+  test('Explicit Custom Type nests implicit Custom Type', () => {
+    const s = a.schema({
+      Post: a.model({
+        title: a.string().required(),
+        meta: a.ref('PostMeta'),
+      }),
+      Comment: a.model({
+        content: a.string(),
+      }),
+      PostMeta: a.customType({
+        location: a.customType({
+          lat: a.float().required(),
+          long: a.float().required(),
+        }),
+      }),
+    });
+
+    type Schema = typeof s;
+
+    type Resolved = Prettify<
+      ResolveFieldProperties<Schema, ExtractNonModelTypes<Schema>>['Post']
+    >;
+
+    type Expected = {
+      readonly id: string;
+      readonly createdAt: string;
+      readonly updatedAt: string;
+      title: string;
+      meta?:
+        | {
+            location?:
+              | {
+                  lat: number;
+                  long: number;
+                }
+              | null
+              | undefined;
+          }
+        | null
+        | undefined;
+    };
+
+    type test = Expect<Equal<Resolved, Expected>>;
+  });
+
+  test('Explicit Custom Type nests explicit Custom Type', () => {
+    const s = a.schema({
+      Post: a.model({
+        title: a.string().required(),
+        meta: a.ref('PostMeta'),
+      }),
+      Comment: a.model({
+        content: a.string(),
+      }),
+      PostMeta: a.customType({
+        location: a.ref('Location'),
+      }),
+      Location: a.customType({
+        lat: a.float().required(),
+        long: a.float().required(),
+      }),
+    });
+
+    type Schema = typeof s;
+
+    type Resolved = Prettify<
+      ResolveFieldProperties<Schema, ExtractNonModelTypes<Schema>>['Post']
+    >;
+
+    type Expected = {
+      readonly id: string;
+      readonly createdAt: string;
+      readonly updatedAt: string;
+      title: string;
+      meta?:
+        | {
+            location?:
+              | {
+                  lat: number;
+                  long: number;
+                }
+              | null
+              | undefined;
           }
         | null
         | undefined;
@@ -98,8 +189,8 @@ describe('ResolveFieldProperties Mapped Type', () => {
       readonly updatedAt: string;
       title: string;
       location: {
-        lat: number | null;
-        long: number | null;
+        lat?: number | null;
+        long?: number | null;
       };
     };
 
@@ -135,10 +226,105 @@ describe('ResolveFieldProperties Mapped Type', () => {
       title: string;
       metadata?: Json;
       location: {
-        lat: number | null;
-        long: number | null;
+        lat?: number | null;
+        long?: number | null;
       };
       owner?: string | undefined;
+    };
+
+    type test = Expect<Equal<Resolved, Expected>>;
+  });
+
+  test('Implicit Custom Type nests implicit Custom Type', () => {
+    const s = a.schema({
+      Post: a.model({
+        title: a.string().required(),
+        meta: a.customType({
+          description: a.string().required(),
+          status: a.enum(['value1', 'value2']),
+          location: a.customType({
+            lat: a.float().required(),
+            long: a.float().required(),
+          }),
+        }),
+      }),
+      Comment: a.model({
+        content: a.string(),
+      }),
+    });
+
+    type Schema = typeof s;
+
+    type Resolved = Prettify<
+      ResolveFieldProperties<Schema, ExtractNonModelTypes<Schema>>['Post']
+    >;
+
+    type Expected = {
+      readonly id: string;
+      readonly createdAt: string;
+      readonly updatedAt: string;
+      title: string;
+      meta?:
+        | {
+            status?: 'value1' | 'value2' | null | undefined;
+            description: string;
+            location?:
+              | {
+                  lat: number;
+                  long: number;
+                }
+              | null
+              | undefined;
+          }
+        | null
+        | undefined;
+    };
+
+    type test = Expect<Equal<Resolved, Expected>>;
+  });
+
+  test('Implicit Custom Type nests explicit Custom Type', () => {
+    const s = a.schema({
+      Post: a.model({
+        title: a.string().required(),
+        meta: a.customType({
+          description: a.string().required(),
+          status: a.ref('Status').required(),
+          location: a.ref('Location').required(),
+        }),
+      }),
+      Comment: a.model({
+        content: a.string(),
+      }),
+      Location: a.customType({
+        lat: a.float(),
+        long: a.float(),
+      }),
+      Status: a.enum(['value1', 'value2']),
+    });
+
+    type Schema = typeof s;
+
+    type Resolved = Prettify<
+      ResolveFieldProperties<Schema, ExtractNonModelTypes<Schema>>['Post']
+    >;
+
+    type Expected = {
+      readonly id: string;
+      readonly createdAt: string;
+      readonly updatedAt: string;
+      title: string;
+      meta?:
+        | {
+            status: 'value1' | 'value2';
+            description: string;
+            location: {
+              lat?: number | null | undefined;
+              long?: number | null | undefined;
+            };
+          }
+        | null
+        | undefined;
     };
 
     type test = Expect<Equal<Resolved, Expected>>;

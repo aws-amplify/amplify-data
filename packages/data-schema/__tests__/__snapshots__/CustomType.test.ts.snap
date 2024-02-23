@@ -49,6 +49,95 @@ type Location
 }"
 `;
 
+exports[`CustomType transform Explicit CustomType nests explicit CustomType 1`] = `
+"type Post @model @auth(rules: [{allow: public}])
+{
+  id: ID! @primaryKey
+  meta: Meta
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
+}
+
+type Meta 
+{
+  status: PostStatus
+  nestedMeta: AltMeta
+}
+
+type AltMeta 
+{
+  field1: String
+}"
+`;
+
+exports[`CustomType transform Explicit CustomType nests explicit enum 1`] = `
+"type Post @model @auth(rules: [{allow: public}])
+{
+  id: ID! @primaryKey
+  meta: Meta
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
+}
+
+type Meta 
+{
+  status: PostStatus
+  publishedDate: AWSDate
+}
+
+enum PostStatus {
+  unpublished
+  published
+}"
+`;
+
+exports[`CustomType transform Explicit CustomType nests implicit CustomType 1`] = `
+"type Post @model @auth(rules: [{allow: public}])
+{
+  id: ID! @primaryKey
+  meta: Meta
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
+}
+
+type Meta 
+{
+  status: MetaStatus
+  nestedMeta: MetaNestedMeta
+}
+
+enum MetaStatus {
+  unpublished
+  published
+}
+
+type MetaNestedMeta 
+{
+  field1: String
+}"
+`;
+
+exports[`CustomType transform Explicit CustomType nests implicit enum type 1`] = `
+"type Post @model @auth(rules: [{allow: public}])
+{
+  id: ID! @primaryKey
+  meta: Meta
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
+}
+
+type Meta 
+{
+  status: MetaStatus
+  publishedDate: AWSDate
+}
+
+enum MetaStatus {
+  unpublished
+  published
+}"
+`;
+
 exports[`CustomType transform Implicit CustomType 1`] = `
 "type Post @model @auth(rules: [{allow: public}])
 {
@@ -62,5 +151,99 @@ type PostLocation
 {
   lat: Float
   long: Float
+}"
+`;
+
+exports[`CustomType transform Implicit CustomType nests explicit CustomType 1`] = `
+"type Post @model @auth(rules: [{allow: public}])
+{
+  id: ID! @primaryKey
+  meta: PostMeta
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
+}
+
+type AltMeta 
+{
+  field1: String
+}
+
+type PostMeta 
+{
+  status: PostMetaStatus
+  nestedMeta: AltMeta
+}
+
+enum PostMetaStatus {
+  unpublished
+  published
+}"
+`;
+
+exports[`CustomType transform Implicit CustomType nests explicit enum 1`] = `
+"type Post @model @auth(rules: [{allow: public}])
+{
+  id: ID! @primaryKey
+  meta: PostMeta
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
+}
+
+enum PostStatus {
+  unpublished
+  published
+}
+
+type PostMeta 
+{
+  status: PostStatus
+  publishedDate: AWSDate
+}"
+`;
+
+exports[`CustomType transform Implicit CustomType nests implicit CustomType 1`] = `
+"type Post @model @auth(rules: [{allow: public}])
+{
+  id: ID! @primaryKey
+  meta: PostMeta
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
+}
+
+type PostMeta 
+{
+  status: PostMetaStatus
+  nestedMeta: PostMetaNestedMeta
+}
+
+enum PostMetaStatus {
+  unpublished
+  published
+}
+
+type PostMetaNestedMeta 
+{
+  field1: String
+}"
+`;
+
+exports[`CustomType transform Implicit CustomType nests implicit enum type 1`] = `
+"type Post @model @auth(rules: [{allow: public}])
+{
+  id: ID! @primaryKey
+  meta: PostMeta
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
+}
+
+type PostMeta 
+{
+  status: PostMetaStatus
+  publishedDate: AWSDate
+}
+
+enum PostMetaStatus {
+  unpublished
+  published
 }"
 `;

@@ -71,6 +71,84 @@ describe('CustomType transform', () => {
     expect(result).toMatchSnapshot();
   });
 
+  test('Explicit CustomType nests implicit enum type', () => {
+    const s = a
+      .schema({
+        Post: a.model({
+          meta: a.ref('Meta'),
+        }),
+        Meta: a.customType({
+          status: a.enum(['unpublished', 'published']),
+          publishedDate: a.date(),
+        }),
+      })
+      .authorization([a.allow.public()]);
+
+    const result = s.transform().schema;
+
+    expect(result).toMatchSnapshot();
+  });
+
+  test('Explicit CustomType nests implicit CustomType', () => {
+    const s = a
+      .schema({
+        Post: a.model({
+          meta: a.ref('Meta'),
+        }),
+        Meta: a.customType({
+          status: a.enum(['unpublished', 'published']),
+          nestedMeta: a.customType({
+            field1: a.string(),
+          }),
+        }),
+      })
+      .authorization([a.allow.public()]);
+
+    const result = s.transform().schema;
+
+    expect(result).toMatchSnapshot();
+  });
+
+  test('Explicit CustomType nests explicit enum', () => {
+    const s = a
+      .schema({
+        Post: a.model({
+          meta: a.ref('Meta'),
+        }),
+        Meta: a.customType({
+          status: a.ref('PostStatus'),
+          publishedDate: a.date(),
+        }),
+        PostStatus: a.enum(['unpublished', 'published']),
+      })
+      .authorization([a.allow.public()]);
+
+    const result = s.transform().schema;
+
+    expect(result).toMatchSnapshot();
+  });
+
+  test('Explicit CustomType nests explicit CustomType', () => {
+    const s = a
+      .schema({
+        Post: a.model({
+          meta: a.ref('Meta'),
+        }),
+        Meta: a.customType({
+          status: a.ref('PostStatus'),
+          nestedMeta: a.ref('AltMeta'),
+        }),
+        AltMeta: a.customType({
+          field1: a.string(),
+        }),
+      })
+      .authorization([a.allow.public()]);
+
+    const result = s.transform().schema;
+
+    expect(result).toMatchSnapshot();
+  });
+
   test('Explicit CustomType - with auth', () => {
     const s = a
       .schema({
@@ -97,6 +175,80 @@ describe('CustomType transform', () => {
             lat: a.float(),
             long: a.float(),
           }),
+        }),
+      })
+      .authorization([a.allow.public()]);
+
+    const result = s.transform().schema;
+
+    expect(result).toMatchSnapshot();
+  });
+
+  test('Implicit CustomType nests implicit enum type', () => {
+    const s = a
+      .schema({
+        Post: a.model({
+          meta: a.customType({
+            status: a.enum(['unpublished', 'published']),
+            publishedDate: a.date(),
+          }),
+        }),
+      })
+      .authorization([a.allow.public()]);
+
+    const result = s.transform().schema;
+
+    expect(result).toMatchSnapshot();
+  });
+
+  test('Implicit CustomType nests implicit CustomType', () => {
+    const s = a
+      .schema({
+        Post: a.model({
+          meta: a.customType({
+            status: a.enum(['unpublished', 'published']),
+            nestedMeta: a.customType({
+              field1: a.string(),
+            }),
+          }),
+        }),
+      })
+      .authorization([a.allow.public()]);
+
+    const result = s.transform().schema;
+
+    expect(result).toMatchSnapshot();
+  });
+
+  test('Implicit CustomType nests explicit enum', () => {
+    const s = a
+      .schema({
+        Post: a.model({
+          meta: a.customType({
+            status: a.ref('PostStatus'),
+            publishedDate: a.date(),
+          }),
+        }),
+        PostStatus: a.enum(['unpublished', 'published']),
+      })
+      .authorization([a.allow.public()]);
+
+    const result = s.transform().schema;
+
+    expect(result).toMatchSnapshot();
+  });
+
+  test('Implicit CustomType nests explicit CustomType', () => {
+    const s = a
+      .schema({
+        Post: a.model({
+          meta: a.customType({
+            status: a.enum(['unpublished', 'published']),
+            nestedMeta: a.ref('AltMeta'),
+          }),
+        }),
+        AltMeta: a.customType({
+          field1: a.string(),
         }),
       })
       .authorization([a.allow.public()]);
