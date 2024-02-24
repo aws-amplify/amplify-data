@@ -6,6 +6,7 @@ import {
   id,
   string,
   datetime,
+  ModelFieldTypeParamOuter,
 } from './ModelField';
 import {
   type InternalRelationalField,
@@ -17,7 +18,11 @@ import { Authorization, accessData } from './Authorization';
 import { DerivedApiDefinition } from './types';
 import type { InternalRef } from './RefType';
 import type { EnumType } from './EnumType';
-import type { CustomType, CustomTypeParamShape } from './CustomType';
+import type {
+  CustomType,
+  CustomTypeAllowedModifiers,
+  CustomTypeParamShape,
+} from './CustomType';
 import { type InternalCustom, CustomOperationNames } from './CustomOperation';
 import { Brand } from './util';
 
@@ -773,18 +778,20 @@ const schemaPreprocessor = (schema: InternalSchema): string => {
         gqlModels.push(enumType);
       } else if (isCustomType(typeDef)) {
         const fields = typeDef.data.fields;
-        const fieldAuthApplicableFields = Object.entries(typeDef.data.fields)
-          .filter(
-            (pair: [string, any]): pair is [string, { data: ModelFieldDef }] =>
-              isModelField(pair[1]),
-          )
-          .reduce(
-            (result, [name, field]) => {
-              Object.assign(result, { [name]: field });
-              return result;
-            },
-            {} as Record<string, ModelField<any, any>>,
-          );
+        const fieldAuthApplicableFields = Object.fromEntries(
+          Object.entries(fields).filter(
+            (
+              pair: [string, unknown],
+            ): pair is [
+              string,
+              ModelField<
+                ModelFieldTypeParamOuter,
+                CustomTypeAllowedModifiers,
+                any
+              >,
+            ] => isModelField(pair[1]),
+          ),
+        );
 
         const authString = '';
         const authFields = {};
