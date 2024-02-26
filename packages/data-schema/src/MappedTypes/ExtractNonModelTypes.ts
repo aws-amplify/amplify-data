@@ -70,21 +70,16 @@ export type ExtractAndFlattenImplicitNonModelTypesFromFields<
           FieldType extends CustomType<
               infer CustomTypeShape extends CustomTypeParamShape
             >
-          ? // recursively extract to the Nested CustomType
+          ? // recursively extract to the Nested CustomType, and return the
+            // merge of the current CustomType and the extracted (if any)
             ExtractAndFlattenImplicitNonModelTypesFromFields<
               `${ParentTypeName}${Capitalize<FieldProp & string>}`,
               CustomTypeShape['fields']
-            > extends infer Nested
-            ? // Nested may be an empty mapped type if the nested type doesn't
-              // contain any non-model typed fields.
-              // Merge the current custom type and the non-model types extracted
-              // from its fields
-              Nested & {
-                [Key in `${ParentTypeName}${Capitalize<
-                  FieldProp & string
-                >}`]: Fields[FieldProp];
-              }
-            : never
+            > & {
+              [Key in `${ParentTypeName}${Capitalize<
+                FieldProp & string
+              >}`]: Fields[FieldProp];
+            }
           : never
       : never,
   ) => void;
