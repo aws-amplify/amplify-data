@@ -454,12 +454,14 @@ function calculateCustomAuth(authorization: Authorization<any, any, any>[]) {
 
     if (rule.operations) {
       throw new Error(
-        'operations attribute is not supported for custom queries/mutations',
+        '.to() modifier is not supported for custom queries/mutations',
       );
     }
 
     if (rule.groupOrOwnerField) {
-      throw new Error('Dynamic auth is not supported');
+      throw new Error(
+        'Dynamic auth (owner or dynamic groups) is not supported',
+      );
     }
 
     // identityClaim
@@ -480,7 +482,9 @@ function calculateCustomAuth(authorization: Authorization<any, any, any>[]) {
 
     if (rule.groups) {
       if (rule.provider === 'oidc') {
-        throw new Error('OIDC group auth is not supported');
+        throw new Error(
+          'OIDC group auth is not supported with a.handler.custom',
+        );
       }
       // example: ( cognito_groups: ["Bloggers", "Readers"] )
       ruleParts.push(

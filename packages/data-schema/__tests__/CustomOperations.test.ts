@@ -322,6 +322,56 @@ describe('CustomOperation transform', () => {
           ],
         });
       });
+
+      test('unsupported auth modes throw', () => {
+        const s = a.schema({
+          customQuery: a
+            .query()
+            .handler([
+              a.handler.custom({
+                entry: './filename.js',
+                dataSource: 'CommentTable',
+              }),
+            ])
+            .authorization([a.allow.owner()]),
+        });
+
+        expect(() => s.transform()).toThrow(
+          'Dynamic auth (owner or dynamic groups) is not supported',
+        );
+
+        const s2 = a.schema({
+          customQuery: a
+            .query()
+            .handler([
+              a.handler.custom({
+                entry: './filename.js',
+                dataSource: 'CommentTable',
+              }),
+            ])
+            .authorization([a.allow.private().to(['read'])]),
+        });
+
+        expect(() => s2.transform()).toThrow(
+          '.to() modifier is not supported for custom queries/mutations',
+        );
+
+        const s3 = a.schema({
+          customQuery: a
+            .query()
+            .handler([
+              a.handler.custom({
+                entry: './filename.js',
+                dataSource: 'CommentTable',
+              }),
+            ])
+            .authorization([a.allow.specificGroups(['group1'], 'oidc')]),
+        });
+
+        expect(() => s3.transform()).toThrow(
+          'OIDC group auth is not supported with a.handler.custom',
+        );
+      });
     });
 
     test('a.handler.function works', () => {
