@@ -175,7 +175,7 @@ exports[`CustomOperation transform handlers a.handler.custom a.handler.custom wi
 }
 
 type Query {
-  getPostDetails: GetPostDetailsReturnType @aws_cognito_user_pools, (cognito_groups: ["groupA", "groupB"])
+  getPostDetails: GetPostDetailsReturnType @aws_cognito_user_pools(cognito_groups: ["groupA", "groupB"])
 }"
 `;
 

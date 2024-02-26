@@ -478,18 +478,18 @@ function calculateCustomAuth(authorization: Authorization<any, any, any>[]) {
 
     const stratProvider = strategyMap[strat][provider];
 
-    ruleParts.push(stratProvider);
-
     if (rule.groups) {
       if (rule.provider === 'oidc') {
         throw new Error('OIDC group auth is not supported');
       }
-      // ( cognito_groups: ["Bloggers", "Readers"] )
+      // example: ( cognito_groups: ["Bloggers", "Readers"] )
       ruleParts.push(
-        `(cognito_groups: [${rule.groups
+        `${stratProvider}(cognito_groups: [${rule.groups
           .map((group) => `"${group}"`)
           .join(', ')}])`,
       );
+    } else {
+      ruleParts.push(stratProvider);
     }
 
     rules.push(`${ruleParts.join(', ')}`);
