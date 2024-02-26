@@ -27,11 +27,15 @@ export type DerivedModelSchema = {
   transform: () => DerivedApiDefinition;
 };
 
+export type JsResolverEntry =
+  | string
+  | { relativePath: string; importLine: string };
+
 export type JsResolver = {
   typeName: 'Mutation' | 'Query' | 'Subscription';
   fieldName: string;
   handlers: {
     dataSource: string;
-    entry: string;
+    entry: JsResolverEntry;
   }[];
 };

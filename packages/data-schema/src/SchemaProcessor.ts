@@ -17,6 +17,7 @@ import { Authorization, accessData } from './Authorization';
 import {
   DerivedApiDefinition,
   JsResolver,
+  JsResolverEntry,
 } from '@aws-amplify/data-schema-types';
 import type { InternalRef, RefType } from './RefType';
 import type { EnumType } from './EnumType';
@@ -24,6 +25,7 @@ import type { CustomType, CustomTypeParamShape } from './CustomType';
 import { type InternalCustom, CustomOperationNames } from './CustomOperation';
 import { Brand } from './util';
 import { HandlerType, CustomResult } from './Handler';
+import * as os from 'os';
 import * as path from 'path';
 
 type ScalarFieldDef = Exclude<InternalField['data'], { fieldType: 'model' }>;
@@ -1055,13 +1057,36 @@ const normalizeDataSourceName = (
   return dataSource;
 };
 
-const resolveCustomHandlerEntryPath = (entry: string): string => {
-  if (path.isAbsolute(entry)) {
-    return entry;
+const resolveCustomHandlerEntryPath = (
+  data: CustomResult['data'],
+): JsResolverEntry => {
+  if (path.isAbsolute(data.entry)) {
+    return data.entry;
   }
 
+  const unresolvedImportLocationError = new Error(
+    'Could not determine import path to construct absolute code path for custom handler. Consider using an absolute path instead.',
+  );
+
+  if (!data.stack) {
+    throw unresolvedImportLocationError;
+  }
+
+  // normalize EOL to \n so that parsing is consistent across platforms
+  const stackTrace = data.stack.replaceAll(os.EOL, '\n');
+  const stacktraceLines =
+    stackTrace
+      .split('\n')
+      .map((line) => line.trim())
+      .filter((line) => line.startsWith('at')) || [];
+  if (stacktraceLines.length < 2) {
+    throw unresolvedImportLocationError;
+  }
+
+  const stackTraceImportLine = stacktraceLines[1]; // the first entry is the file where the error was initialized (our code). The second entry is where the customer called our code which is what we are interested in
+
   // if entry is relative, compute with respect to the caller directory
-  return path.join(__dirname, entry);
+  return { relativePath: data.entry, importLine: stackTraceImportLine };
 };
 
 const handleCustom = (
@@ -1072,7 +1097,7 @@ const handleCustom = (
   const transformedHandlers = handlers.map((handler) => {
     return {
       dataSource: normalizeDataSourceName(handler.data.dataSource),
-      entry: resolveCustomHandlerEntryPath(handler.data.entry),
+      entry: resolveCustomHandlerEntryPath(handler.data),
     };
   });
 

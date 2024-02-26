@@ -41,17 +41,19 @@ type CustomResultData = {
   dataSource?: string | RefType<any, any, any>;
   /**
    * The path to the file that contains the function entry point.
-   * If this is a relative path, it is computed relative to the file where this function is defined
+   * If this is a relative path, it is computed relative to the file where this handler is defined
    */
   entry: string;
 };
 
 export type CustomResult = {
   type: 'custom';
-  data: CustomResultData;
+  data: CustomResultData & { stack: string | undefined };
 } & Handler;
 function custom(data: CustomResultData): CustomResult {
-  return { type: 'custom', data, ...buildHandler() };
+  // used to determine caller directory in order to resolve relative path downstream
+  const stack = new Error().stack;
+  return { type: 'custom', data: { ...data, stack }, ...buildHandler() };
 }
 
 export type FunctionResult = {

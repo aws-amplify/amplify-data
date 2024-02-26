@@ -250,12 +250,12 @@ describe('CustomOperation transform', () => {
           getPostDetails: a
             .query()
             .arguments({})
-            .handler([
+            .handler(
               a.handler.custom({
                 entry: './filename.js',
                 dataSource: a.ref('Comment'),
               }),
-            ])
+            )
             .authorization([a.allow.specificGroups(['groupA', 'groupB'])])
             .returns(a.customType({})),
         });
@@ -273,7 +273,10 @@ describe('CustomOperation transform', () => {
           handlers: [
             {
               dataSource: 'CommentTable',
-              entry: expect.stringContaining('filename.js'),
+              entry: expect.objectContaining({
+                relativePath: './filename.js',
+                importLine: expect.stringContaining('__tests__'),
+              }),
             },
           ],
         });
@@ -311,7 +314,10 @@ describe('CustomOperation transform', () => {
           handlers: [
             {
               dataSource: 'PostTable',
-              entry: expect.stringContaining('filename.js'),
+              entry: expect.objectContaining({
+                relativePath: './filename.js',
+                importLine: expect.stringContaining('__tests__'),
+              }),
             },
           ],
         });
