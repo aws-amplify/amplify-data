@@ -465,7 +465,7 @@ function validateCustomAuthRule(rule: AuthRule) {
 }
 
 function getCustomAuthProvider(rule: AuthRule): string {
-  const strategyDict = {
+  const strategyDict: Record<string, Record<string, string>> = {
     public: {
       default: '@aws_api_key',
       apiKey: '@aws_api_key',
@@ -487,19 +487,21 @@ function getCustomAuthProvider(rule: AuthRule): string {
     },
   };
 
-  const strat: keyof typeof strategyDict = rule.strategy;
-  const stratProviders = strategyDict[strat];
+  const stratProviders = strategyDict[rule.strategy];
 
   if (stratProviders === undefined) {
-    throw new Error(`Unsupported auth strategy for custom handlers: ${strat}`);
+    throw new Error(
+      `Unsupported auth strategy for custom handlers: ${rule.strategy}`,
+    );
   }
 
-  const provider = (rule.provider || 'default') as keyof typeof stratProviders;
-
+  const provider = rule.provider || 'default';
   const stratProvider = stratProviders[provider];
 
   if (stratProvider === undefined) {
-    throw new Error(`Unsupported provider for custom handlers: ${provider}`);
+    throw new Error(
+      `Unsupported provider for custom handlers: ${rule.provider}`,
+    );
   }
 
   return stratProvider;
