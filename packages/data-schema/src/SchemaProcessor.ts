@@ -6,6 +6,7 @@ import {
   id,
   string,
   datetime,
+  ModelFieldTypeParamOuter,
 } from './ModelField';
 import {
   type InternalRelationalField,
@@ -21,7 +22,11 @@ import {
 } from '@aws-amplify/data-schema-types';
 import type { InternalRef, RefType } from './RefType';
 import type { EnumType } from './EnumType';
-import type { CustomType, CustomTypeParamShape } from './CustomType';
+import type {
+  CustomType,
+  CustomTypeAllowedModifiers,
+  CustomTypeParamShape,
+} from './CustomType';
 import { type InternalCustom, CustomOperationNames } from './CustomOperation';
 import { Brand, getBrand } from './util';
 import {
@@ -725,7 +730,7 @@ function processFieldLevelAuthRules(
 
 function processFields(
   typeName: string,
-  fields: Record<string, ModelField<any, any>>,
+  fields: Record<string, any>,
   fieldLevelAuthRules: Record<string, string | null>,
   identifier?: string[],
   partitionKey?: string,
@@ -911,12 +916,26 @@ const schemaPreprocessor = (
         gqlModels.push(enumType);
       } else if (isCustomType(typeDef)) {
         const fields = typeDef.data.fields;
+        const fieldAuthApplicableFields = Object.fromEntries(
+          Object.entries(fields).filter(
+            (
+              pair: [string, unknown],
+            ): pair is [
+              string,
+              ModelField<
+                ModelFieldTypeParamOuter,
+                CustomTypeAllowedModifiers,
+                any
+              >,
+            ] => isModelField(pair[1]),
+          ),
+        );
 
         const authString = '';
         const authFields = {};
 
         const fieldLevelAuthRules = processFieldLevelAuthRules(
-          fields,
+          fieldAuthApplicableFields,
           authFields,
         );
 

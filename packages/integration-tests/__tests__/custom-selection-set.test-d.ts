@@ -449,6 +449,29 @@ describe('Custom Selection Set', () => {
         }),
       }),
 
+      Post4: a.model({
+        title: a.string().required(),
+        description: a.string(),
+        meta: a.customType({
+          status: a.enum(['published', 'unpublished']),
+          tags: a.string().array().required(),
+          location: a.customType({
+            lat: a.float(),
+            long: a.float(),
+          }),
+        }),
+      }),
+
+      Post5: a.model({
+        title: a.string().required(),
+        description: a.string(),
+        meta: a.customType({
+          status: a.enum(['published', 'unpublished']),
+          tags: a.string().array().required(),
+          location: a.ref('Location').required(),
+        }),
+      }),
+
       Location: a.customType({
         lat: a.float(),
         long: a.float(),
@@ -466,7 +489,7 @@ describe('Custom Selection Set', () => {
       type ExpectedType = {
         readonly title: string;
         readonly location: {
-          readonly lat: number | null;
+          readonly lat: number | null | undefined;
         };
       }[];
 
@@ -482,7 +505,7 @@ describe('Custom Selection Set', () => {
         readonly title: string;
         readonly location:
           | {
-              readonly lat: number | null;
+              readonly lat: number | null | undefined;
             }
           | null
           | undefined;
@@ -500,13 +523,58 @@ describe('Custom Selection Set', () => {
         readonly title: string;
         readonly altLocation:
           | {
-              readonly lat: number | null;
+              readonly lat: number | null | undefined;
             }
           | null
           | undefined;
       }[];
 
       type test = Expect<Equal<typeof posts, ExpectedType>>;
+    });
+
+    test('custom selection set on nested nullable custom type', async () => {
+      const { data: posts } = await client.models.Post4.list({
+        selectionSet: ['title', 'meta.tags', 'meta.location.lat'],
+      });
+
+      type ExpectedType = {
+        readonly title: string;
+        readonly meta:
+          | {
+              readonly tags: (string | null)[];
+              readonly location:
+                | {
+                    readonly lat: number | null | undefined;
+                  }
+                | null
+                | undefined;
+            }
+          | null
+          | undefined;
+      }[];
+
+      type _ = Expect<Equal<typeof posts, ExpectedType>>;
+    });
+
+    test('custom selection set on nested non-nullable custom type', async () => {
+      const { data: posts } = await client.models.Post5.list({
+        selectionSet: ['title', 'meta.tags', 'meta.location.lat'],
+      });
+
+      type ExpectedType = {
+        readonly title: string;
+        readonly meta:
+          | {
+              readonly tags: (string | null)[];
+              readonly location: {
+                readonly lat: number | null | undefined;
+              };
+            }
+          | null
+          | undefined;
+      }[];
+
+      type _ = Expect<Equal<typeof posts, ExpectedType>>;
     });
   });
 

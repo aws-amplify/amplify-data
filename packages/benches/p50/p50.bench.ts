@@ -43,7 +43,7 @@ bench('p50', () => {
       })
       .authorization([a.allow.public().to(['read']), a.allow.owner()]),
   }).authorization([a.allow.public()]);
-}).types([27610, 'instantiations']);
+}).types([27801, 'instantiations']);
 
 bench('p50 w/ client types', () => {
   const s = a
@@ -86,4 +86,4 @@ bench('p50 w/ client types', () => {
     .authorization([a.allow.public()]);
 
   type _ = ClientSchema<typeof s>;
-}).types([92449, 'instantiations']);
+}).types([110104, 'instantiations']);
