@@ -432,7 +432,9 @@ function calculateAuth(authorization: Authorization<any, any, any>[]) {
   return { authString, authFields };
 }
 
-function validateCustomAuthRule(rule: ReturnType<typeof accessData>) {
+type AuthRule = ReturnType<typeof accessData>;
+
+function validateCustomAuthRule(rule: AuthRule) {
   if (rule.operations) {
     throw new Error(
       '.to() modifier is not supported for custom queries/mutations',
@@ -462,10 +464,8 @@ function validateCustomAuthRule(rule: ReturnType<typeof accessData>) {
   }
 }
 
-function calculateCustomAuth(authorization: Authorization<any, any, any>[]) {
-  const rules: string[] = [];
-
-  const strategyMap = {
+function getCustomAuthProvider(rule: AuthRule): string {
+  const strategyDict = {
     public: {
       default: '@aws_api_key',
       apiKey: '@aws_api_key',
@@ -487,26 +487,42 @@ function calculateCustomAuth(authorization: Authorization<any, any, any>[]) {
     },
   };
 
+  const strat: keyof typeof strategyDict = rule.strategy;
+  const stratProviders = strategyDict[strat];
+
+  if (stratProviders === undefined) {
+    throw new Error(`Unsupported auth strategy for custom handlers: ${strat}`);
+  }
+
+  const provider = (rule.provider || 'default') as keyof typeof stratProviders;
+
+  const stratProvider = stratProviders[provider];
+
+  if (stratProvider === undefined) {
+    throw new Error(`Unsupported provider for custom handlers: ${provider}`);
+  }
+
+  return stratProvider;
+}
+
+function calculateCustomAuth(authorization: Authorization<any, any, any>[]) {
+  const rules: string[] = [];
+
   for (const entry of authorization) {
     const rule = accessData(entry);
 
     validateCustomAuthRule(rule);
-
-    const strat = rule.strategy as keyof typeof strategyMap;
-    const provider = (rule.provider ||
-      'default') as keyof (typeof strategyMap)[typeof strat];
-
-    const stratProvider = strategyMap[strat][provider];
+    const provider = getCustomAuthProvider(rule);
 
     if (rule.groups) {
       // example: (cognito_groups: ["Bloggers", "Readers"])
       rules.push(
-        `${stratProvider}(cognito_groups: [${rule.groups
+        `${provider}(cognito_groups: [${rule.groups
           .map((group) => `"${group}"`)
           .join(', ')}])`,
       );
     } else {
-      rules.push(stratProvider);
+      rules.push(provider);
     }
   }
 
