@@ -34,3 +34,12 @@ export function brand<BrandStr extends string>(
     [brandSymbol]: brand,
   };
 }
+
+/**
+ *
+ * @param branded: Branded object
+ * @returns The string brand value
+ */
+export function getBrand(branded: Brand<string>) {
+  return branded[brandSymbol];
+}

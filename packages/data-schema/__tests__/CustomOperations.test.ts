@@ -187,25 +187,227 @@ describe('CustomOperation transform', () => {
     });
   }
   describe('handlers', () => {
-    test('a.handler.custom works', () => {
-      const s = a.schema({
-        getPostDetails: a
-          .query()
-          .arguments({})
-          .handler(a.handler.custom('filename.js'))
-          .returns(a.customType({})),
+    describe('general validation', () => {
+      test('handler with no auth throws', () => {
+        const s = a.schema({
+          getPostDetails: a
+            .query()
+            .arguments({})
+            .returns(a.customType({}))
+            .handler(
+              a.handler.custom({
+                entry: './filename.js',
+                dataSource: 'CommentTable',
+              }),
+            ),
+        });
+
+        expect(() => s.transform()).toThrow(
+          'requires both an authorization rule and a handler reference',
+        );
       });
 
-      const result = s.transform().schema;
+      test('auth with no handler throws', () => {
+        const s = a.schema({
+          getPostDetails: a
+            .query()
+            .arguments({})
+            .returns(a.customType({}))
+            .authorization([a.allow.public()]),
+        });
 
-      expect(result).toMatchSnapshot();
+        expect(() => s.transform()).toThrow(
+          'requires both an authorization rule and a handler reference',
+        );
+      });
+
+      test('mix of different handler types throws', () => {
+        const s = a.schema({
+          getPostDetails: a
+            .query()
+            .arguments({})
+            .returns(a.customType({}))
+            .authorization([a.allow.public()])
+            .handler([
+              // @ts-expect-error
+              a.handler.custom({
+                entry: './filename.js',
+                dataSource: 'CommentTable',
+              }),
+              a.handler.function(() => {}),
+            ]),
+        });
+
+        expect(() => s.transform()).toThrow(
+          'Field handlers must be of the same type',
+        );
+      });
     });
+
+    describe('a.handler.custom', () => {
+      test('a.handler.custom with auth works', () => {
+        const s = a.schema({
+          getPostDetails: a
+            .query()
+            .arguments({})
+            .handler(
+              a.handler.custom({
+                entry: './filename.js',
+                dataSource: a.ref('Comment'),
+              }),
+            )
+            .authorization([a.allow.specificGroups(['groupA', 'groupB'])])
+            .returns(a.customType({})),
+        });
+
+        const {
+          schema,
+          jsFunctions: [jsFunction],
+        } = s.transform();
+
+        expect(schema).toMatchSnapshot();
+
+        expect(jsFunction).toMatchObject({
+          typeName: 'Query',
+          fieldName: 'getPostDetails',
+          handlers: [
+            {
+              dataSource: 'CommentTable',
+              entry: expect.objectContaining({
+                relativePath: './filename.js',
+                importLine: expect.stringContaining('__tests__'),
+              }),
+            },
+          ],
+        });
+      });
+
+      test('a.handler.custom with auth and model ref works', () => {
+        const s = a
+          .schema({
+            Post: a.model({
+              title: a.string(),
+            }),
+            getPostDetails: a
+              .query()
+              .arguments({})
+              .handler([
+                a.handler.custom({
+                  entry: './filename.js',
+                  dataSource: a.ref('Post'),
+                }),
+              ])
+              .returns(a.customType({})),
+          })
+          .authorization([a.allow.public()]);
+
+        const {
+          schema,
+          jsFunctions: [jsFunction],
+        } = s.transform();
+
+        expect(schema).toMatchSnapshot();
+
+        expect(jsFunction).toMatchObject({
+          typeName: 'Query',
+          fieldName: 'getPostDetails',
+          handlers: [
+            {
+              dataSource: 'PostTable',
+              entry: expect.objectContaining({
+                relativePath: './filename.js',
+                importLine: expect.stringContaining('__tests__'),
+              }),
+            },
+          ],
+        });
+      });
+
+      test('a.handler.custom with multiple supported auth modes', () => {
+        const s = a.schema({
+          Post: a
+            .model({
+              title: a.string(),
+            })
+            .authorization([a.allow.private()]),
+          customQuery: a
+            .query()
+            .returns(a.string())
+            .handler([
+              a.handler.custom({
+                entry: './filename.js',
+                dataSource: a.ref('Post'),
+              }),
+            ])
+            .authorization([
+              a.allow.private(),
+              a.allow.specificGroups(['groupA', 'groupB']),
+            ]),
+        });
+
+        const { schema } = s.transform();
+
+        expect(schema).toMatchSnapshot();
+      });
+
+      test('unsupported auth modes throw', () => {
+        const s = a.schema({
+          customQuery: a
+            .query()
+            .handler([
+              a.handler.custom({
+                entry: './filename.js',
+                dataSource: 'CommentTable',
+              }),
+            ])
+            .authorization([a.allow.owner()]),
+        });
+
+        expect(() => s.transform()).toThrow(
+          'Dynamic auth (owner or dynamic groups) is not supported',
+        );
+
+        const s2 = a.schema({
+          customQuery: a
+            .query()
+            .handler([
+              a.handler.custom({
+                entry: './filename.js',
+                dataSource: 'CommentTable',
+              }),
+            ])
+            .authorization([a.allow.private().to(['read'])]),
+        });
+
+        expect(() => s2.transform()).toThrow(
+          '.to() modifier is not supported for custom queries/mutations',
+        );
+
+        const s3 = a.schema({
+          customQuery: a
+            .query()
+            .handler([
+              a.handler.custom({
+                entry: './filename.js',
+                dataSource: 'CommentTable',
+              }),
+            ])
+            .authorization([a.allow.specificGroups(['group1'], 'oidc')]),
+        });
+
+        expect(() => s3.transform()).toThrow(
+          'OIDC group auth is not supported with a.handler.custom',
+        );
+      });
+    });
+
     test('a.handler.function works', () => {
       const s = a.schema({
         getPostDetails: a
           .query()
           .arguments({})
           .handler(a.handler.function(() => {}))
+          .authorization([a.allow.private()])
           .returns(a.customType({})),
       });
 
@@ -220,10 +422,11 @@ describe('CustomOperation transform', () => {
           .query()
           .arguments({})
           .handler(a.handler.inlineSql('SELECT * from TESTTABLE;'))
+          .authorization([a.allow.private()])
           .returns(a.customType({})),
       });
 
-      const result = s.transform().schema;
+      const result = s.transform();
 
       expect(result).toMatchSnapshot();
     });
@@ -234,6 +437,7 @@ describe('CustomOperation transform', () => {
           .query()
           .arguments({})
           .handler(a.handler.sqlReference('testQueryName'))
+          .authorization([a.allow.private()])
           .returns(a.customType({})),
       });
 

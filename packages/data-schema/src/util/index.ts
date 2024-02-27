@@ -1,1 +1,1 @@
-export { Brand, brand } from './Brand';
+export { Brand, brand, getBrand } from './Brand';

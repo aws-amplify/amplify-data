@@ -149,14 +149,47 @@ type Subscription {
 }"
 `;
 
-exports[`CustomOperation transform handlers a.handler.custom works 1`] = `
+exports[`CustomOperation transform handlers a.handler.custom a.handler.custom with auth and model ref works 1`] = `
+"type Post @model @auth(rules: [{allow: public}])
+{
+  id: ID! @primaryKey
+  title: String
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
+}
+
+type GetPostDetailsReturnType 
+{
+  
+}
+
+type Query {
+  getPostDetails: GetPostDetailsReturnType @aws_api_key
+}"
+`;
+
+exports[`CustomOperation transform handlers a.handler.custom a.handler.custom with auth works 1`] = `
 "type GetPostDetailsReturnType 
 {
   
 }
 
 type Query {
-  getPostDetails: GetPostDetailsReturnType 
+  getPostDetails: GetPostDetailsReturnType @aws_cognito_user_pools(cognito_groups: ["groupA", "groupB"])
+}"
+`;
+
+exports[`CustomOperation transform handlers a.handler.custom a.handler.custom with multiple supported auth modes 1`] = `
+"type Post @model @auth(rules: [{allow: private}])
+{
+  id: ID! @primaryKey
+  title: String
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
+}
+
+type Query {
+  customQuery: String @aws_cognito_user_pools @aws_cognito_user_pools(cognito_groups: ["groupA", "groupB"])
 }"
 `;
 
@@ -167,19 +200,23 @@ exports[`CustomOperation transform handlers a.handler.function works 1`] = `
 }
 
 type Query {
-  getPostDetails: GetPostDetailsReturnType 
+  getPostDetails: GetPostDetailsReturnType @auth(rules: [{allow: private}])
 }"
 `;
 
 exports[`CustomOperation transform handlers a.handler.inlineSql works 1`] = `
-"type GetPostDetailsReturnType 
+{
+  "functionSlots": [],
+  "jsFunctions": [],
+  "schema": "type GetPostDetailsReturnType 
 {
   
 }
 
 type Query {
-  getPostDetails: GetPostDetailsReturnType 
-}"
+  getPostDetails: GetPostDetailsReturnType @auth(rules: [{allow: private}])
+}",
+}
 `;
 
 exports[`CustomOperation transform handlers a.handler.sqlReference works 1`] = `
@@ -189,6 +226,6 @@ exports[`CustomOperation transform handlers a.handler.sqlReference works 1`] = `
 }
 
 type Query {
-  getPostDetails: GetPostDetailsReturnType 
+  getPostDetails: GetPostDetailsReturnType @auth(rules: [{allow: private}])
 }"
 `;

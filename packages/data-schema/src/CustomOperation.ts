@@ -6,7 +6,7 @@ import { Authorization } from './Authorization';
 import { RefType, InternalRef } from './RefType';
 import { EnumType, EnumTypeParamShape } from './EnumType';
 import { CustomType } from './CustomType';
-import { Handler } from './Handler';
+import type { HandlerType as Handler } from './Handler';
 
 type CustomArguments = Record<
   string,
@@ -18,10 +18,9 @@ type CustomFunctionRefType = string; // extend to include reference
 
 type InternalCustomArguments = Record<string, InternalField>;
 type InternalCustomReturnType = InternalRef;
+type HandlerInputType = Handler | Handler[number];
 
 const brandName = 'customOperation';
-
-type HandlerInputType = Handler | Handler[];
 
 export const CustomOperationNames = [
   'Query',
@@ -36,7 +35,7 @@ type CustomData = {
   functionRef: string | null; // extend to include reference
   authorization: Authorization<any, any, any>[];
   typeName: CustomOperationName;
-  handlers: Handler[] | null;
+  handlers: Handler | null;
 };
 
 type InternalCustomData = CustomData & {
@@ -52,7 +51,6 @@ export type CustomOperationParamShape = {
   functionRef: string | null;
   authorization: Authorization<any, any, any>[];
   typeName: CustomOperationName;
-  handlers: Handler[] | null;
 };
 
 export type CustomOperation<
@@ -86,9 +84,7 @@ export type CustomOperation<
       SetTypeSubArg<T, 'authorization', AuthRuleType[]>,
       K | 'authorization'
     >;
-    handler(
-      handlers: HandlerInputType,
-    ): CustomOperation<SetTypeSubArg<T, 'handlers', Handler[]>, K | 'handler'>;
+    handler(handlers: HandlerInputType): CustomOperation<T, K | 'handler'>;
   },
   K
 > &
@@ -142,7 +138,9 @@ function _custom<T extends CustomOperationParamShape>(
       return this;
     },
     handler(handlers: HandlerInputType) {
-      data.handlers = Array.isArray(handlers) ? handlers : [handlers];
+      data.handlers = Array.isArray(handlers)
+        ? handlers
+        : ([handlers] as Handler);
 
       return this;
     },
