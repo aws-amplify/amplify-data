@@ -1,39 +1,93 @@
 import { Brand, brand } from './util';
+import { RefType } from './RefType';
 
-const brandName = 'Handler';
+export type HandlerType =
+  | InlineSqlHandler[]
+  | SqlReferenceHandler[]
+  | CustomHandler[]
+  | FunctionHandler[];
 
-export type Handler = Brand<typeof brandName>;
+const dataSymbol = Symbol('Data');
 
-function buildHandler(): Handler {
+function buildHandler<B extends string>(brandName: B): Brand<B> {
   return brand(brandName);
 }
 
-type InlineSqlResult = {
-  sql: string;
-} & Handler;
-function inlineSql(sql: string): InlineSqlResult {
-  return { sql, ...buildHandler() };
+type AllHandlers =
+  | InlineSqlHandler
+  | SqlReferenceHandler
+  | CustomHandler
+  | FunctionHandler;
+
+export function getHandlerData<H extends AllHandlers>(
+  handler: H,
+): H[typeof dataSymbol] {
+  return handler[dataSymbol];
 }
 
-type SqlReferenceResult = {
-  sqlReference: string;
-} & Handler;
-function sqlReference(sqlReference: string): SqlReferenceResult {
-  return { sqlReference, ...buildHandler() };
+const inlineSqlBrand = 'inlineSql';
+
+export type InlineSqlHandler = { [dataSymbol]: string } & Brand<
+  typeof inlineSqlBrand
+>;
+
+function inlineSql(sql: string): InlineSqlHandler {
+  return { [dataSymbol]: sql, ...buildHandler(inlineSqlBrand) };
 }
 
-type CustomResult = {
-  custom: string;
-} & Handler;
-function custom(file: string): CustomResult {
-  return { custom: file, ...buildHandler() };
+const sqlReferenceBrand = 'sqlReference';
+
+export type SqlReferenceHandler = { [dataSymbol]: string } & Brand<
+  typeof sqlReferenceBrand
+>;
+
+function sqlReference(sqlReference: string): SqlReferenceHandler {
+  return { [dataSymbol]: sqlReference, ...buildHandler(sqlReferenceBrand) };
 }
 
-type FunctionResult = {
-  function: (...args: any[]) => any;
-} & Handler;
-function fcn(fcn: (...args: any[]) => any): FunctionResult {
-  return { function: fcn, ...buildHandler() };
+type CustomHandlerInput = {
+  /**
+   * The data source used by the function.
+   * Can reference a model in the schema with a.ref('ModelName') or any string data source name configured in your API
+   *
+   * Defaults to 'NONE_DS'
+   *
+   */
+  dataSource?: string | RefType<any, any, any>;
+  /**
+   * The path to the file that contains the function entry point.
+   * If this is a relative path, it is computed relative to the file where this handler is defined
+   */
+  entry: string;
+};
+
+export type CustomHandlerData = CustomHandlerInput & {
+  stack: string | undefined;
+};
+
+const customHandlerBrand = 'customHandler';
+
+export type CustomHandler = { [dataSymbol]: CustomHandlerData } & Brand<
+  typeof customHandlerBrand
+>;
+
+function custom(customHandler: CustomHandlerInput): CustomHandler {
+  // used to determine caller directory in order to resolve relative path downstream
+  const stack = new Error().stack;
+  return {
+    [dataSymbol]: { ...customHandler, stack },
+    ...buildHandler(customHandlerBrand),
+  };
+}
+
+const functionHandlerBrand = 'functionHandler';
+
+export type FunctionHandler = {
+  [dataSymbol]: (...args: any[]) => any;
+} & Brand<typeof functionHandlerBrand>;
+
+function fcn(fn: (...args: any[]) => any): FunctionHandler {
+  return { [dataSymbol]: fn, ...buildHandler(functionHandlerBrand) };
 }
 
 export const handler = {

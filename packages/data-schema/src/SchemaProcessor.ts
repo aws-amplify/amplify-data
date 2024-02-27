@@ -14,19 +14,39 @@ import {
 import type { ModelType, InternalModel } from './ModelType';
 import type { InternalModelIndexType } from './ModelIndex';
 import { Authorization, accessData } from './Authorization';
-import { DerivedApiDefinition } from './types';
-import type { InternalRef } from './RefType';
+import {
+  DerivedApiDefinition,
+  JsResolver,
+  JsResolverEntry,
+} from '@aws-amplify/data-schema-types';
+import type { InternalRef, RefType } from './RefType';
 import type { EnumType } from './EnumType';
 import type { CustomType, CustomTypeParamShape } from './CustomType';
 import { type InternalCustom, CustomOperationNames } from './CustomOperation';
-import { Brand } from './util';
+import { Brand, getBrand } from './util';
+import {
+  getHandlerData,
+  type HandlerType,
+  type CustomHandler,
+  type CustomHandlerData,
+} from './Handler';
+import * as os from 'os';
+import * as path from 'path';
 
 type ScalarFieldDef = Exclude<InternalField['data'], { fieldType: 'model' }>;
+
 type ModelFieldDef = Extract<
   InternalRelationalField['data'],
   { fieldType: 'model' }
 >;
+
 type RefFieldDef = InternalRef['data'];
+
+type CustomOperationFields = {
+  queries: string[];
+  mutations: string[];
+  subscriptions: string[];
+};
 
 function isInternalModel(model: ModelType<any, any>): model is InternalModel {
   if (
@@ -77,19 +97,29 @@ function isRefFieldDef(data: any): data is RefFieldDef {
 }
 
 function isModelField(field: any): field is { data: ModelFieldDef } {
-  return isModelFieldDef((field as any).data);
+  return isModelFieldDef((field as any)?.data);
+}
+
+function dataSourceIsRef(
+  dataSource: string | RefType<any, any, any>,
+): dataSource is RefType<any, any, any> {
+  return (
+    typeof dataSource !== 'string' &&
+    (dataSource as InternalRef)?.data &&
+    (dataSource as InternalRef).data.type === 'ref'
+  );
 }
 
 function isScalarField(
   field: ModelField<any, any>,
 ): field is { data: ScalarFieldDef } & Brand<'modelField'> {
-  return isScalarFieldDef((field as any).data);
+  return isScalarFieldDef((field as any)?.data);
 }
 
 function isRefField(
   field: ModelField<any, any>,
 ): field is { data: RefFieldDef } & Brand<'modelField'> {
-  return isRefFieldDef((field as any).data);
+  return isRefFieldDef((field as any)?.data);
 }
 
 function scalarFieldToGql(
@@ -211,23 +241,26 @@ function customOperationToGql(
   typeName: string,
   typeDef: InternalCustom,
   authorization: Authorization<any, any, any>[],
+  isCustom = false,
 ): { gqlField: string; models: [string, any][] } {
   const { arguments: fieldArgs, returnType, functionRef } = typeDef.data;
 
   let callSignature: string = typeName;
   const implicitModels: [string, any][] = [];
 
-  const { authString } = calculateAuth(authorization);
+  const { authString } = isCustom
+    ? calculateCustomAuth(authorization)
+    : calculateAuth(authorization);
 
   let returnTypeName: string;
 
   if (isRefField(returnType)) {
-    returnTypeName = refFieldToGql(returnType.data);
+    returnTypeName = refFieldToGql(returnType?.data);
   } else if (isCustomType(returnType)) {
     returnTypeName = `${capitalize(typeName)}ReturnType`;
     implicitModels.push([returnTypeName, returnType]);
   } else if (isScalarField(returnType)) {
-    returnTypeName = scalarFieldToGql(returnType.data);
+    returnTypeName = scalarFieldToGql(returnType?.data);
   } else {
     throw new Error(`Unrecognized return type on ${typeName}`);
   }
@@ -397,6 +430,107 @@ function calculateAuth(authorization: Authorization<any, any, any>[]) {
     rules.length > 0 ? `@auth(rules: [${rules.join(',\n  ')}])` : '';
 
   return { authString, authFields };
+}
+
+type AuthRule = ReturnType<typeof accessData>;
+
+function validateCustomAuthRule(rule: AuthRule) {
+  if (rule.operations) {
+    throw new Error(
+      '.to() modifier is not supported for custom queries/mutations',
+    );
+  }
+
+  if (rule.groupOrOwnerField) {
+    throw new Error(
+      'Dynamic auth (owner or dynamic groups) is not supported for custom queries/mutations',
+    );
+  }
+
+  // identityClaim
+  if (rule.identityClaim) {
+    throw new Error(
+      'identityClaim attr is not supported with a.handler.custom',
+    );
+  }
+
+  // groupClaim
+  if (rule.groupClaim) {
+    throw new Error('groupClaim attr is not supported with a.handler.custom');
+  }
+
+  if (rule.groups && rule.provider === 'oidc') {
+    throw new Error('OIDC group auth is not supported with a.handler.custom');
+  }
+}
+
+function getCustomAuthProvider(rule: AuthRule): string {
+  const strategyDict: Record<string, Record<string, string>> = {
+    public: {
+      default: '@aws_api_key',
+      apiKey: '@aws_api_key',
+      iam: '@aws_iam',
+    },
+    private: {
+      default: '@aws_cognito_user_pools',
+      userPools: '@aws_cognito_user_pools',
+      oidc: '@aws_oidc',
+      iam: '@aws_iam',
+    },
+    groups: {
+      default: '@aws_cognito_user_pools',
+      userPools: '@aws_cognito_user_pools',
+    },
+    custom: {
+      default: '@aws_lambda',
+      function: '@aws_lambda',
+    },
+  };
+
+  const stratProviders = strategyDict[rule.strategy];
+
+  if (stratProviders === undefined) {
+    throw new Error(
+      `Unsupported auth strategy for custom handlers: ${rule.strategy}`,
+    );
+  }
+
+  const provider = rule.provider || 'default';
+  const stratProvider = stratProviders[provider];
+
+  if (stratProvider === undefined) {
+    throw new Error(
+      `Unsupported provider for custom handlers: ${rule.provider}`,
+    );
+  }
+
+  return stratProvider;
+}
+
+function calculateCustomAuth(authorization: Authorization<any, any, any>[]) {
+  const rules: string[] = [];
+
+  for (const entry of authorization) {
+    const rule = accessData(entry);
+
+    validateCustomAuthRule(rule);
+    const provider = getCustomAuthProvider(rule);
+
+    if (rule.groups) {
+      // example: (cognito_groups: ["Bloggers", "Readers"])
+      rules.push(
+        `${provider}(cognito_groups: [${rule.groups
+          .map((group) => `"${group}"`)
+          .join(', ')}])`,
+      );
+    } else {
+      rules.push(provider);
+    }
+  }
+
+  const authString = rules.join(' ');
+
+  return { authString };
 }
 
 function capitalize<T extends string>(s: T): Capitalize<T> {
@@ -744,18 +878,22 @@ const transformedSecondaryIndexesForModel = (
   );
 };
 
-const schemaPreprocessor = (schema: InternalSchema): string => {
+const schemaPreprocessor = (
+  schema: InternalSchema,
+): { schema: string; jsFunctions: any[] } => {
   const gqlModels: string[] = [];
 
   const customQueries = [];
   const customMutations = [];
   const customSubscriptions = [];
 
+  const jsFunctions: JsResolver[] = [];
+
   const fkFields = allImpliedFKs(schema);
   const topLevelTypes = Object.entries(schema.data.types);
 
   for (const [typeName, typeDef] of topLevelTypes) {
-    const mostRelevantAuthRules =
+    const mostRelevantAuthRules: Authorization<any, any, any>[] =
       typeDef.data?.authorization?.length > 0
         ? typeDef.data.authorization
         : schema.data.authorization;
@@ -795,28 +933,16 @@ const schemaPreprocessor = (schema: InternalSchema): string => {
         const model = `type ${typeName} ${authString}\n{\n  ${joined}\n}`;
         gqlModels.push(model);
       } else if (isCustomOperation(typeDef)) {
-        const { typeName: opType } = (typeDef as InternalCustom).data;
+        const { typeName: opType } = typeDef.data;
 
-        if (
-          (mostRelevantAuthRules.length > 0 && !typeDef.data.functionRef) ||
-          (typeDef.data.functionRef && mostRelevantAuthRules.length < 1)
-        ) {
-          // Deploying a custom operation with auth and no handler reference OR
-          // with a handler reference but not auth
-          // causes the CFN stack to reach an unrecoverable state. Ideally, this should be fixed
-          // in the CDK construct, but we're catching it early here as a stopgap
-          throw new Error(
-            `Custom operation ${typeName} requires both an authorization rule and a handler reference`,
-          );
-        }
-
-        const { gqlField, models } = customOperationToGql(
-          typeName,
-          typeDef,
-          mostRelevantAuthRules,
-        );
+        const { gqlField, models, jsFunctionForField } =
+          transformCustomOperations(typeDef, typeName, mostRelevantAuthRules);
 
         topLevelTypes.push(...models);
+
+        if (jsFunctionForField) {
+          jsFunctions.push(jsFunctionForField);
+        }
 
         switch (opType) {
           case 'Query':
@@ -895,14 +1021,164 @@ const schemaPreprocessor = (schema: InternalSchema): string => {
 
   const processedSchema = gqlModels.join('\n\n');
 
-  return processedSchema;
+  return { schema: processedSchema, jsFunctions };
 };
 
-type CustomOperationFields = {
-  queries: string[];
-  mutations: string[];
-  subscriptions: string[];
+function validateCustomOperations(
+  typeDef: InternalCustom,
+  typeName: string,
+  authRules: Authorization<any, any, any>[],
+) {
+  const { functionRef, handlers } = typeDef.data;
+
+  // TODO: remove `functionRef` after deprecating
+  const handlerConfigured = functionRef !== null || handlers?.length;
+  const authConfigured = authRules.length > 0;
+
+  if (
+    (authConfigured && !handlerConfigured) ||
+    (handlerConfigured && !authConfigured)
+  ) {
+    // Deploying a custom operation with auth and no handler reference OR
+    // with a handler reference but no auth
+    // causes the CFN stack to reach an unrecoverable state. Ideally, this should be fixed
+    // in the CDK construct, but we're catching it early here as a stopgap
+    throw new Error(
+      `Custom operation ${typeName} requires both an authorization rule and a handler reference`,
+    );
+  }
+
+  // Handlers must all be of the same type
+  if (handlers?.length) {
+    const configuredHandlers: Set<string> = new Set();
+
+    for (const handler of handlers) {
+      configuredHandlers.add(getBrand(handler));
+    }
+
+    if (configuredHandlers.size > 1) {
+      const configuredHandlersStr = JSON.stringify(
+        Array.from(configuredHandlers),
+      );
+      throw new Error(
+        `Field handlers must be of the same type. ${typeName} has been configured with ${configuredHandlersStr}`,
+      );
+    }
+  }
+}
+
+const isCustomHandler = (
+  handler: HandlerType | null,
+): handler is CustomHandler[] => {
+  return Array.isArray(handler) && getBrand(handler[0]) === 'customHandler';
 };
+
+const normalizeDataSourceName = (
+  dataSource: undefined | string | RefType<any, any, any>,
+): string => {
+  // default data source
+  const noneDataSourceName = 'NONE_DS';
+
+  if (dataSource === undefined) {
+    return noneDataSourceName;
+  }
+
+  if (dataSourceIsRef(dataSource)) {
+    return `${(dataSource as InternalRef).data.link}Table`;
+  }
+
+  return dataSource;
+};
+
+const sanitizeStackTrace = (stackTrace: string): string[] => {
+  // normalize EOL to \n so that parsing is consistent across platforms
+  const normalizedStackTrace = stackTrace.replaceAll(os.EOL, '\n');
+  return (
+    normalizedStackTrace
+      .split('\n')
+      .map((line) => line.trim())
+      // filters out noise not relevant to the stack trace. All stack trace lines begin with 'at'
+      .filter((line) => line.startsWith('at')) || []
+  );
+};
+
+// copied from the defineFunction path resolution impl:
+// https://github.com/aws-amplify/amplify-backend/blob/main/packages/backend-function/src/get_caller_directory.ts
+const resolveCustomHandlerEntryPath = (
+  data: CustomHandlerData,
+): JsResolverEntry => {
+  if (path.isAbsolute(data.entry)) {
+    return data.entry;
+  }
+
+  const unresolvedImportLocationError = new Error(
+    'Could not determine import path to construct absolute code path for custom handler. Consider using an absolute path instead.',
+  );
+
+  if (!data.stack) {
+    throw unresolvedImportLocationError;
+  }
+
+  const stackTraceLines = sanitizeStackTrace(data.stack);
+
+  if (stackTraceLines.length < 2) {
+    throw unresolvedImportLocationError;
+  }
+
+  const stackTraceImportLine = stackTraceLines[1]; // the first entry is the file where the error was initialized (our code). The second entry is where the customer called our code which is what we are interested in
+
+  // if entry is relative, compute with respect to the caller directory
+  return { relativePath: data.entry, importLine: stackTraceImportLine };
+};
+
+const handleCustom = (
+  handlers: CustomHandler[],
+  opType: JsResolver['typeName'],
+  typeName: string,
+) => {
+  const transformedHandlers = handlers.map((handler) => {
+    const handlerData = getHandlerData(handler);
+
+    return {
+      dataSource: normalizeDataSourceName(handlerData.dataSource),
+      entry: resolveCustomHandlerEntryPath(handlerData),
+    };
+  });
+
+  const jsFn: JsResolver = {
+    typeName: opType,
+    fieldName: typeName,
+    handlers: transformedHandlers,
+  };
+
+  return jsFn;
+};
+
+function transformCustomOperations(
+  typeDef: InternalCustom,
+  typeName: string,
+  authRules: Authorization<any, any, any>[],
+) {
+  const { typeName: opType, handlers } = typeDef.data;
+  let jsFunctionForField: JsResolver | undefined = undefined;
+
+  validateCustomOperations(typeDef, typeName, authRules);
+
+  if (isCustomHandler(handlers)) {
+    jsFunctionForField = handleCustom(handlers, opType, typeName);
+  }
+
+  const isCustom = Boolean(jsFunctionForField);
+
+  const { gqlField, models } = customOperationToGql(
+    typeName,
+    typeDef,
+    authRules,
+    isCustom,
+  );
+
+  return { gqlField, models, jsFunctionForField };
+}
 
 function generateCustomOperationTypes({
   queries,
@@ -934,7 +1210,7 @@ function generateCustomOperationTypes({
 export function processSchema(arg: {
   schema: InternalSchema;
 }): DerivedApiDefinition {
-  const schema = schemaPreprocessor(arg.schema);
+  const { schema, jsFunctions } = schemaPreprocessor(arg.schema);
 
-  return { schema, functionSlots: [] };
+  return { schema, functionSlots: [], jsFunctions };
 }

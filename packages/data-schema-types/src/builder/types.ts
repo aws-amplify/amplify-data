@@ -17,6 +17,7 @@ export interface DerivedApiDefinition {
    * @returns generated function slots
    */
   readonly functionSlots: any[];
+  readonly jsFunctions: JsResolver[];
 }
 
 export type DerivedModelSchema = {
@@ -24,4 +25,17 @@ export type DerivedModelSchema = {
     types: object;
   };
   transform: () => DerivedApiDefinition;
+};
+
+export type JsResolverEntry =
+  | string
+  | { relativePath: string; importLine: string };
+
+export type JsResolver = {
+  typeName: 'Mutation' | 'Query' | 'Subscription';
+  fieldName: string;
+  handlers: {
+    dataSource: string;
+    entry: JsResolverEntry;
+  }[];
 };
