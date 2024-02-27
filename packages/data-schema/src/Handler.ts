@@ -7,7 +7,7 @@ export type HandlerType =
   | CustomHandler[]
   | FunctionHandler[];
 
-const data = Symbol('Data');
+const dataSymbol = Symbol('Data');
 
 function buildHandler<B extends string>(brandName: B): Brand<B> {
   return brand(brandName);
@@ -21,28 +21,28 @@ type AllHandlers =
 
 export function getHandlerData<H extends AllHandlers>(
   handler: H,
-): H[typeof data] {
-  return handler[data];
+): H[typeof dataSymbol] {
+  return handler[dataSymbol];
 }
 
 const inlineSqlBrand = 'inlineSql';
 
-export type InlineSqlHandler = { [data]: string } & Brand<
+export type InlineSqlHandler = { [dataSymbol]: string } & Brand<
   typeof inlineSqlBrand
 >;
 
 function inlineSql(sql: string): InlineSqlHandler {
-  return { [data]: sql, ...buildHandler(inlineSqlBrand) };
+  return { [dataSymbol]: sql, ...buildHandler(inlineSqlBrand) };
 }
 
 const sqlReferenceBrand = 'sqlReference';
 
-export type SqlReferenceHandler = { [data]: string } & Brand<
+export type SqlReferenceHandler = { [dataSymbol]: string } & Brand<
   typeof sqlReferenceBrand
 >;
 
 function sqlReference(sqlReference: string): SqlReferenceHandler {
-  return { [data]: sqlReference, ...buildHandler(sqlReferenceBrand) };
+  return { [dataSymbol]: sqlReference, ...buildHandler(sqlReferenceBrand) };
 }
 
 type CustomHandlerInput = {
@@ -67,7 +67,7 @@ export type CustomHandlerData = CustomHandlerInput & {
 
 const customHandlerBrand = 'customHandler';
 
-export type CustomHandler = { [data]: CustomHandlerData } & Brand<
+export type CustomHandler = { [dataSymbol]: CustomHandlerData } & Brand<
   typeof customHandlerBrand
 >;
 
@@ -75,7 +75,7 @@ function custom(customHandler: CustomHandlerInput): CustomHandler {
   // used to determine caller directory in order to resolve relative path downstream
   const stack = new Error().stack;
   return {
-    [data]: { ...customHandler, stack },
+    [dataSymbol]: { ...customHandler, stack },
     ...buildHandler(customHandlerBrand),
   };
 }
@@ -83,11 +83,11 @@ function custom(customHandler: CustomHandlerInput): CustomHandler {
 const functionHandlerBrand = 'functionHandler';
 
 export type FunctionHandler = {
-  [data]: (...args: any[]) => any;
+  [dataSymbol]: (...args: any[]) => any;
 } & Brand<typeof functionHandlerBrand>;
 
 function fcn(fn: (...args: any[]) => any): FunctionHandler {
-  return { [data]: fn, ...buildHandler(functionHandlerBrand) };
+  return { [dataSymbol]: fn, ...buildHandler(functionHandlerBrand) };
 }
 
 export const handler = {
