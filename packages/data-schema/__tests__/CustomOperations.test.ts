@@ -323,6 +323,33 @@ describe('CustomOperation transform', () => {
         });
       });
 
+      test('a.handler.custom with multiple supported auth modes', () => {
+        const s = a.schema({
+          Post: a
+            .model({
+              title: a.string(),
+            })
+            .authorization([a.allow.private()]),
+          customQuery: a
+            .query()
+            .returns(a.string())
+            .handler([
+              a.handler.custom({
+                entry: './filename.js',
+                dataSource: a.ref('Post'),
+              }),
+            ])
+            .authorization([
+              a.allow.private(),
+              a.allow.specificGroups(['groupA', 'groupB']),
+            ]),
+        });
+
+        const { schema } = s.transform();
+
+        expect(schema).toMatchSnapshot();
+      });
+
       test('unsupported auth modes throw', () => {
         const s = a.schema({
           customQuery: a

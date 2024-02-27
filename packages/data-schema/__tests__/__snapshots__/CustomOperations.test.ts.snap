@@ -179,6 +179,20 @@ type Query {
 }"
 `;
 
+exports[`CustomOperation transform handlers a.handler.custom a.handler.custom with multiple supported auth modes 1`] = `
+"type Post @model @auth(rules: [{allow: private}])
+{
+  id: ID! @primaryKey
+  title: String
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
+}
+
+type Query {
+  customQuery: String @aws_cognito_user_pools @aws_cognito_user_pools(cognito_groups: ["groupA", "groupB"])
+}"
+`;
+
 exports[`CustomOperation transform handlers a.handler.function works 1`] = `
 "type GetPostDetailsReturnType 
 {

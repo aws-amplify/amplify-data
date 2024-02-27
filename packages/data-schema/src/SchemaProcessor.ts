@@ -92,25 +92,29 @@ function isRefFieldDef(data: any): data is RefFieldDef {
 }
 
 function isModelField(field: any): field is { data: ModelFieldDef } {
-  return isModelFieldDef((field as any).data);
+  return isModelFieldDef((field as any)?.data);
 }
 
 function dataSourceIsRef(
-  dataSource: any,
+  dataSource: string | RefType<any, any, any>,
 ): dataSource is RefType<any, any, any> {
-  return dataSource.data && dataSource.data.type === 'ref';
+  return (
+    typeof dataSource !== 'string' &&
+    (dataSource as InternalRef)?.data &&
+    (dataSource as InternalRef).data.type === 'ref'
+  );
 }
 
 function isScalarField(
   field: ModelField<any, any>,
 ): field is { data: ScalarFieldDef } & Brand<'modelField'> {
-  return isScalarFieldDef((field as any).data);
+  return isScalarFieldDef((field as any)?.data);
 }
 
 function isRefField(
   field: ModelField<any, any>,
 ): field is { data: RefFieldDef } & Brand<'modelField'> {
-  return isRefFieldDef((field as any).data);
+  return isRefFieldDef((field as any)?.data);
 }
 
 function scalarFieldToGql(
@@ -246,12 +250,12 @@ function customOperationToGql(
   let returnTypeName: string;
 
   if (isRefField(returnType)) {
-    returnTypeName = refFieldToGql(returnType.data);
+    returnTypeName = refFieldToGql(returnType?.data);
   } else if (isCustomType(returnType)) {
     returnTypeName = `${capitalize(typeName)}ReturnType`;
     implicitModels.push([returnTypeName, returnType]);
   } else if (isScalarField(returnType)) {
-    returnTypeName = scalarFieldToGql(returnType.data);
+    returnTypeName = scalarFieldToGql(returnType?.data);
   } else {
     throw new Error(`Unrecognized return type on ${typeName}`);
   }
@@ -423,6 +427,36 @@ function calculateAuth(authorization: Authorization<any, any, any>[]) {
   return { authString, authFields };
 }
 
+function validateCustomAuthRule(rule: ReturnType<typeof accessData>) {
+  if (rule.operations) {
+    throw new Error(
+      '.to() modifier is not supported for custom queries/mutations',
+    );
+  }
+
+  if (rule.groupOrOwnerField) {
+    throw new Error(
+      'Dynamic auth (owner or dynamic groups) is not supported for custom queries/mutations',
+    );
+  }
+
+  // identityClaim
+  if (rule.identityClaim) {
+    throw new Error(
+      'identityClaim attr is not supported with a.handler.custom',
+    );
+  }
+
+  // groupClaim
+  if (rule.groupClaim) {
+    throw new Error('groupClaim attr is not supported with a.handler.custom');
+  }
+
+  if (rule.groups && rule.provider === 'oidc') {
+    throw new Error('OIDC group auth is not supported with a.handler.custom');
+  }
+}
+
 function calculateCustomAuth(authorization: Authorization<any, any, any>[]) {
   const rules: string[] = [];
 
@@ -450,29 +484,8 @@ function calculateCustomAuth(authorization: Authorization<any, any, any>[]) {
 
   for (const entry of authorization) {
     const rule = accessData(entry);
-    const ruleParts: Array<string | string[]> = [];
 
-    if (rule.operations) {
-      throw new Error(
-        '.to() modifier is not supported for custom queries/mutations',
-      );
-    }
-
-    if (rule.groupOrOwnerField) {
-      throw new Error(
-        'Dynamic auth (owner or dynamic groups) is not supported',
-      );
-    }
-
-    // identityClaim
-    if (rule.identityClaim) {
-      throw new Error('identityClaim attr is not supported');
-    }
-
-    // groupClaim
-    if (rule.groupClaim) {
-      throw new Error('groupClaim attr is not supported');
-    }
+    validateCustomAuthRule(rule);
 
     const strat = rule.strategy as keyof typeof strategyMap;
     const provider = (rule.provider ||
@@ -481,25 +494,18 @@ function calculateCustomAuth(authorization: Authorization<any, any, any>[]) {
     const stratProvider = strategyMap[strat][provider];
 
     if (rule.groups) {
-      if (rule.provider === 'oidc') {
-        throw new Error(
-          'OIDC group auth is not supported with a.handler.custom',
-        );
-      }
-      // example: ( cognito_groups: ["Bloggers", "Readers"] )
-      ruleParts.push(
+      // example: (cognito_groups: ["Bloggers", "Readers"])
+      rules.push(
         `${stratProvider}(cognito_groups: [${rule.groups
           .map((group) => `"${group}"`)
           .join(', ')}])`,
       );
     } else {
-      ruleParts.push(stratProvider);
+      rules.push(stratProvider);
     }
-
-    rules.push(`${ruleParts.join(', ')}`);
   }
 
-  const authString = rules.join(',\n  ');
+  const authString = rules.join(' ');
 
   return { authString };
 }
@@ -1061,6 +1067,8 @@ const normalizeDataSourceName = (
   return dataSource;
 };
 
+// copied from the defineFunction path resolution impl:
+// https://github.com/aws-amplify/amplify-backend/blob/main/packages/backend-function/src/get_caller_directory.ts
 const resolveCustomHandlerEntryPath = (
   data: CustomResult['data'],
 ): JsResolverEntry => {
