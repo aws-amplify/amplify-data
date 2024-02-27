@@ -1,5 +1,11 @@
 # @aws-amplify/data-schema
 
+## 0.13.8
+
+### Patch Changes
+
+- 2a56f91: feat: enable more field types and type resolution for CustomType
+
 ## 0.13.7
 
 ### Patch Changes
