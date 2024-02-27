@@ -1,5 +1,13 @@
 # @aws-amplify/data-schema
 
+## 0.13.7
+
+### Patch Changes
+
+- 0cbbdf0: add JS resolver support for handler.custom
+- Updated dependencies [0cbbdf0]
+  - @aws-amplify/data-schema-types@0.7.6
+
 ## 0.13.6
 
 ### Patch Changes

@@ -1,5 +1,11 @@
 # @aws-amplify/data-schema-types
 
+## 0.7.6
+
+### Patch Changes
+
+- 0cbbdf0: add JS resolver support for handler.custom
+
 ## 0.7.5
 
 ### Patch Changes
