@@ -1,36 +1,51 @@
 import { Brand, brand } from './util';
 import { RefType } from './RefType';
 
-const brandName = 'Handler';
-
-export type Handler = Brand<typeof brandName>;
 export type HandlerType =
-  | InlineSqlResult[]
-  | SqlReferenceResult[]
-  | CustomResult[]
-  | FunctionResult[];
+  | InlineSqlHandler[]
+  | SqlReferenceHandler[]
+  | CustomHandler[]
+  | FunctionHandler[];
 
-function buildHandler(): Handler {
+const data = Symbol('Data');
+
+function buildHandler<B extends string>(brandName: B): Brand<B> {
   return brand(brandName);
 }
 
-export type InlineSqlResult = {
-  type: 'sql';
-  data: string;
-} & Handler;
-function inlineSql(data: string): InlineSqlResult {
-  return { type: 'sql', data, ...buildHandler() };
+type AllHandlers =
+  | InlineSqlHandler
+  | SqlReferenceHandler
+  | CustomHandler
+  | FunctionHandler;
+
+export function getHandlerData<H extends AllHandlers>(
+  handler: H,
+): H[typeof data] {
+  return handler[data];
 }
 
-export type SqlReferenceResult = {
-  type: 'sqlReference';
-  data: string;
-} & Handler;
-function sqlReference(data: string): SqlReferenceResult {
-  return { type: 'sqlReference', data, ...buildHandler() };
+const inlineSqlBrand = 'inlineSql';
+
+export type InlineSqlHandler = { [data]: string } & Brand<
+  typeof inlineSqlBrand
+>;
+
+function inlineSql(sql: string): InlineSqlHandler {
+  return { [data]: sql, ...buildHandler(inlineSqlBrand) };
 }
 
-type CustomResultData = {
+const sqlReferenceBrand = 'sqlReference';
+
+export type SqlReferenceHandler = { [data]: string } & Brand<
+  typeof sqlReferenceBrand
+>;
+
+function sqlReference(sqlReference: string): SqlReferenceHandler {
+  return { [data]: sqlReference, ...buildHandler(sqlReferenceBrand) };
+}
+
+type CustomHandlerInput = {
   /**
    * The data source used by the function.
    * Can reference a model in the schema with a.ref('ModelName') or any string data source name configured in your API
@@ -46,22 +61,33 @@ type CustomResultData = {
   entry: string;
 };
 
-export type CustomResult = {
-  type: 'custom';
-  data: CustomResultData & { stack: string | undefined };
-} & Handler;
-function custom(data: CustomResultData): CustomResult {
+export type CustomHandlerData = CustomHandlerInput & {
+  stack: string | undefined;
+};
+
+const customHandlerBrand = 'customHandler';
+
+export type CustomHandler = { [data]: CustomHandlerData } & Brand<
+  typeof customHandlerBrand
+>;
+
+function custom(customHandler: CustomHandlerInput): CustomHandler {
   // used to determine caller directory in order to resolve relative path downstream
   const stack = new Error().stack;
-  return { type: 'custom', data: { ...data, stack }, ...buildHandler() };
+  return {
+    [data]: { ...customHandler, stack },
+    ...buildHandler(customHandlerBrand),
+  };
 }
 
-export type FunctionResult = {
-  type: 'function';
-  data: (...args: any[]) => any;
-} & Handler;
-function fcn(data: (...args: any[]) => any): FunctionResult {
-  return { type: 'function', data, ...buildHandler() };
+const functionHandlerBrand = 'functionHandler';
+
+export type FunctionHandler = {
+  [data]: (...args: any[]) => any;
+} & Brand<typeof functionHandlerBrand>;
+
+function fcn(fn: (...args: any[]) => any): FunctionHandler {
+  return { [data]: fn, ...buildHandler(functionHandlerBrand) };
 }
 
 export const handler = {

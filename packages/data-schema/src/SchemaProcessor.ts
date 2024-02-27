@@ -23,8 +23,13 @@ import type { InternalRef, RefType } from './RefType';
 import type { EnumType } from './EnumType';
 import type { CustomType, CustomTypeParamShape } from './CustomType';
 import { type InternalCustom, CustomOperationNames } from './CustomOperation';
-import { Brand } from './util';
-import { HandlerType, CustomResult } from './Handler';
+import { Brand, getBrand } from './util';
+import {
+  getHandlerData,
+  type HandlerType,
+  type CustomHandler,
+  type CustomHandlerData,
+} from './Handler';
 import * as os from 'os';
 import * as path from 'path';
 
@@ -1030,7 +1035,7 @@ function validateCustomOperations(
     const configuredHandlers: Set<string> = new Set();
 
     for (const handler of handlers) {
-      configuredHandlers.add(handler.type);
+      configuredHandlers.add(getBrand(handler));
     }
 
     if (configuredHandlers.size > 1) {
@@ -1046,8 +1051,8 @@ function validateCustomOperations(
 
 const isCustomHandler = (
   handler: HandlerType | null,
-): handler is CustomResult[] => {
-  return Array.isArray(handler) && handler[0].type === 'custom';
+): handler is CustomHandler[] => {
+  return Array.isArray(handler) && getBrand(handler[0]) === 'customHandler';
 };
 
 const normalizeDataSourceName = (
@@ -1067,10 +1072,22 @@ const normalizeDataSourceName = (
   return dataSource;
 };
 
+const sanitizeStackTrace = (stackTrace: string): string[] => {
+  // normalize EOL to \n so that parsing is consistent across platforms
+  const normalizedStackTrace = stackTrace.replaceAll(os.EOL, '\n');
+  return (
+    normalizedStackTrace
+      .split('\n')
+      .map((line) => line.trim())
+      // filters out noise not relevant to the stack trace. All stack trace lines begin with 'at'
+      .filter((line) => line.startsWith('at')) || []
+  );
+};
+
 // copied from the defineFunction path resolution impl:
 // https://github.com/aws-amplify/amplify-backend/blob/main/packages/backend-function/src/get_caller_directory.ts
 const resolveCustomHandlerEntryPath = (
-  data: CustomResult['data'],
+  data: CustomHandlerData,
 ): JsResolverEntry => {
   if (path.isAbsolute(data.entry)) {
     return data.entry;
@@ -1084,32 +1101,29 @@ const resolveCustomHandlerEntryPath = (
     throw unresolvedImportLocationError;
   }
 
-  // normalize EOL to \n so that parsing is consistent across platforms
-  const stackTrace = data.stack.replaceAll(os.EOL, '\n');
-  const stacktraceLines =
-    stackTrace
-      .split('\n')
-      .map((line) => line.trim())
-      .filter((line) => line.startsWith('at')) || [];
-  if (stacktraceLines.length < 2) {
+  const stackTraceLines = sanitizeStackTrace(data.stack);
+
+  if (stackTraceLines.length < 2) {
     throw unresolvedImportLocationError;
   }
 
-  const stackTraceImportLine = stacktraceLines[1]; // the first entry is the file where the error was initialized (our code). The second entry is where the customer called our code which is what we are interested in
+  const stackTraceImportLine = stackTraceLines[1]; // the first entry is the file where the error was initialized (our code). The second entry is where the customer called our code which is what we are interested in
 
   // if entry is relative, compute with respect to the caller directory
   return { relativePath: data.entry, importLine: stackTraceImportLine };
 };
 
 const handleCustom = (
-  handlers: CustomResult[],
+  handlers: CustomHandler[],
   opType: JsResolver['typeName'],
   typeName: string,
 ) => {
   const transformedHandlers = handlers.map((handler) => {
+    const handlerData = getHandlerData(handler);
+
     return {
-      dataSource: normalizeDataSourceName(handler.data.dataSource),
-      entry: resolveCustomHandlerEntryPath(handler.data),
+      dataSource: normalizeDataSourceName(handlerData.dataSource),
+      entry: resolveCustomHandlerEntryPath(handlerData),
     };
   });
 
