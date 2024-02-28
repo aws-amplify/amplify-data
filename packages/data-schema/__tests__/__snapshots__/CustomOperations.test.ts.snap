@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`CustomOperation transform Custom Mutation w required arg and enum 1`] = `
+exports[`CustomOperation transform dynamo schema Custom Mutation w required arg and enum 1`] = `
 "enum LikePostReactionType {
   :shipit:
   :risitas:
@@ -11,25 +11,25 @@ type Mutation {
 }"
 `;
 
-exports[`CustomOperation transform Custom Mutation w string function reference & auth 1`] = `
+exports[`CustomOperation transform dynamo schema Custom Mutation w string function reference & auth 1`] = `
 "type Mutation {
   likePost(postId: String!): Post @function(name: "myFunc") @auth(rules: [{allow: private}])
 }"
 `;
 
-exports[`CustomOperation transform Custom Mutation w string function reference 1`] = `
+exports[`CustomOperation transform dynamo schema Custom Mutation w string function reference 1`] = `
 "type Mutation {
   likePost(postId: String!): Post @function(name: "myFunc") @auth(rules: [{allow: private}])
 }"
 `;
 
-exports[`CustomOperation transform Custom mutation w inline boolean return type 1`] = `
+exports[`CustomOperation transform dynamo schema Custom mutation w inline boolean return type 1`] = `
 "type Mutation {
   likePost(postId: String!): Boolean 
 }"
 `;
 
-exports[`CustomOperation transform Custom mutation w inline custom return type 1`] = `
+exports[`CustomOperation transform dynamo schema Custom mutation w inline custom return type 1`] = `
 "type LikePostReturnType 
 {
   stringField: String
@@ -45,43 +45,43 @@ type Mutation {
 }"
 `;
 
-exports[`CustomOperation transform Custom mutation w inline datetime return type 1`] = `
+exports[`CustomOperation transform dynamo schema Custom mutation w inline datetime return type 1`] = `
 "type Mutation {
   likePost(postId: String!): AWSDateTime 
 }"
 `;
 
-exports[`CustomOperation transform Custom mutation w inline float return type 1`] = `
+exports[`CustomOperation transform dynamo schema Custom mutation w inline float return type 1`] = `
 "type Mutation {
   likePost(postId: String!): Float 
 }"
 `;
 
-exports[`CustomOperation transform Custom mutation w inline integer return type 1`] = `
+exports[`CustomOperation transform dynamo schema Custom mutation w inline integer return type 1`] = `
 "type Mutation {
   likePost(postId: String!): Int 
 }"
 `;
 
-exports[`CustomOperation transform Custom mutation w inline json return type 1`] = `
+exports[`CustomOperation transform dynamo schema Custom mutation w inline json return type 1`] = `
 "type Mutation {
   likePost(postId: String!): AWSJSON 
 }"
 `;
 
-exports[`CustomOperation transform Custom mutation w inline string return type 1`] = `
+exports[`CustomOperation transform dynamo schema Custom mutation w inline string return type 1`] = `
 "type Mutation {
   likePost(postId: String!): String 
 }"
 `;
 
-exports[`CustomOperation transform Custom query w inline boolean return type 1`] = `
+exports[`CustomOperation transform dynamo schema Custom query w inline boolean return type 1`] = `
 "type Query {
   getPostDetails(postId: String!): Boolean 
 }"
 `;
 
-exports[`CustomOperation transform Custom query w inline custom return type 1`] = `
+exports[`CustomOperation transform dynamo schema Custom query w inline custom return type 1`] = `
 "type GetPostDetailsReturnType 
 {
   stringField: String
@@ -97,37 +97,37 @@ type Query {
 }"
 `;
 
-exports[`CustomOperation transform Custom query w inline datetime return type 1`] = `
+exports[`CustomOperation transform dynamo schema Custom query w inline datetime return type 1`] = `
 "type Query {
   getPostDetails(postId: String!): AWSDateTime 
 }"
 `;
 
-exports[`CustomOperation transform Custom query w inline float return type 1`] = `
+exports[`CustomOperation transform dynamo schema Custom query w inline float return type 1`] = `
 "type Query {
   getPostDetails(postId: String!): Float 
 }"
 `;
 
-exports[`CustomOperation transform Custom query w inline integer return type 1`] = `
+exports[`CustomOperation transform dynamo schema Custom query w inline integer return type 1`] = `
 "type Query {
   getPostDetails(postId: String!): Int 
 }"
 `;
 
-exports[`CustomOperation transform Custom query w inline json return type 1`] = `
+exports[`CustomOperation transform dynamo schema Custom query w inline json return type 1`] = `
 "type Query {
   getPostDetails(postId: String!): AWSJSON 
 }"
 `;
 
-exports[`CustomOperation transform Custom query w inline string return type 1`] = `
+exports[`CustomOperation transform dynamo schema Custom query w inline string return type 1`] = `
 "type Query {
   getPostDetails(postId: String!): String 
 }"
 `;
 
-exports[`CustomOperation transform Schema w model, custom query, mutation, and subscription 1`] = `
+exports[`CustomOperation transform dynamo schema Schema w model, custom query, mutation, and subscription 1`] = `
 "type Post @model @auth(rules: [{allow: public}])
 {
   id: ID! @primaryKey
@@ -149,7 +149,7 @@ type Subscription {
 }"
 `;
 
-exports[`CustomOperation transform handlers a.handler.custom a.handler.custom with auth and model ref works 1`] = `
+exports[`CustomOperation transform dynamo schema handlers a.handler.custom a.handler.custom with auth and model ref works 1`] = `
 "type Post @model @auth(rules: [{allow: public}])
 {
   id: ID! @primaryKey
@@ -168,7 +168,7 @@ type Query {
 }"
 `;
 
-exports[`CustomOperation transform handlers a.handler.custom a.handler.custom with auth works 1`] = `
+exports[`CustomOperation transform dynamo schema handlers a.handler.custom a.handler.custom with auth works 1`] = `
 "type GetPostDetailsReturnType 
 {
   
@@ -179,7 +179,7 @@ type Query {
 }"
 `;
 
-exports[`CustomOperation transform handlers a.handler.custom a.handler.custom with multiple supported auth modes 1`] = `
+exports[`CustomOperation transform dynamo schema handlers a.handler.custom a.handler.custom with multiple supported auth modes 1`] = `
 "type Post @model @auth(rules: [{allow: private}])
 {
   id: ID! @primaryKey
@@ -193,7 +193,7 @@ type Query {
 }"
 `;
 
-exports[`CustomOperation transform handlers a.handler.function works 1`] = `
+exports[`CustomOperation transform dynamo schema handlers a.handler.function works 1`] = `
 "type GetPostDetailsReturnType 
 {
   
@@ -204,7 +204,7 @@ type Query {
 }"
 `;
 
-exports[`CustomOperation transform handlers a.handler.inlineSql works 1`] = `
+exports[`CustomOperation transform dynamo schema handlers a.handler.inlineSql works 1`] = `
 {
   "functionSlots": [],
   "jsFunctions": [],
@@ -219,7 +219,7 @@ type Query {
 }
 `;
 
-exports[`CustomOperation transform handlers a.handler.sqlReference works 1`] = `
+exports[`CustomOperation transform dynamo schema handlers a.handler.sqlReference works 1`] = `
 "type GetPostDetailsReturnType 
 {
   
@@ -230,134 +230,7 @@ type Query {
 }"
 `;
 
-exports[`CustomOperation transform on a standard schema Custom Mutation w required arg and enum 1`] = `
-"enum LikePostReactionType {
-  :shipit:
-  :risitas:
-}
-
-type Mutation {
-  likePost(postId: String!, reactionType: LikePostReactionType): Post 
-}"
-`;
-
-exports[`CustomOperation transform on a standard schema Custom Mutation w string function reference & auth 1`] = `
-"type Mutation {
-  likePost(postId: String!): Post @function(name: "myFunc") @auth(rules: [{allow: private}])
-}"
-`;
-
-exports[`CustomOperation transform on a standard schema Custom Mutation w string function reference 1`] = `
-"type Mutation {
-  likePost(postId: String!): Post @function(name: "myFunc") @auth(rules: [{allow: private}])
-}"
-`;
-
-exports[`CustomOperation transform on a standard schema Custom mutation w inline boolean return type 1`] = `
-"type Mutation {
-  likePost(postId: String!): Boolean 
-}"
-`;
-
-exports[`CustomOperation transform on a standard schema Custom mutation w inline custom return type 1`] = `
-"type LikePostReturnType 
-{
-  stringField: String
-  intField: Int
-  floatField: Float
-  boolField: Boolean
-  datetimeField: AWSDateTime
-  jsonField: AWSJSON
-}
-
-type Mutation {
-  likePost(postId: String!): LikePostReturnType 
-}"
-`;
-
-exports[`CustomOperation transform on a standard schema Custom mutation w inline datetime return type 1`] = `
-"type Mutation {
-  likePost(postId: String!): AWSDateTime 
-}"
-`;
-
-exports[`CustomOperation transform on a standard schema Custom mutation w inline float return type 1`] = `
-"type Mutation {
-  likePost(postId: String!): Float 
-}"
-`;
-
-exports[`CustomOperation transform on a standard schema Custom mutation w inline integer return type 1`] = `
-"type Mutation {
-  likePost(postId: String!): Int 
-}"
-`;
-
-exports[`CustomOperation transform on a standard schema Custom mutation w inline json return type 1`] = `
-"type Mutation {
-  likePost(postId: String!): AWSJSON 
-}"
-`;
-
-exports[`CustomOperation transform on a standard schema Custom mutation w inline string return type 1`] = `
-"type Mutation {
-  likePost(postId: String!): String 
-}"
-`;
-
-exports[`CustomOperation transform on a standard schema Custom query w inline boolean return type 1`] = `
-"type Query {
-  getPostDetails(postId: String!): Boolean 
-}"
-`;
-
-exports[`CustomOperation transform on a standard schema Custom query w inline custom return type 1`] = `
-"type GetPostDetailsReturnType 
-{
-  stringField: String
-  intField: Int
-  floatField: Float
-  boolField: Boolean
-  datetimeField: AWSDateTime
-  jsonField: AWSJSON
-}
-
-type Query {
-  getPostDetails(postId: String!): GetPostDetailsReturnType 
-}"
-`;
-
-exports[`CustomOperation transform on a standard schema Custom query w inline datetime return type 1`] = `
-"type Query {
-  getPostDetails(postId: String!): AWSDateTime 
-}"
-`;
-
-exports[`CustomOperation transform on a standard schema Custom query w inline float return type 1`] = `
-"type Query {
-  getPostDetails(postId: String!): Float 
-}"
-`;
-
-exports[`CustomOperation transform on a standard schema Custom query w inline integer return type 1`] = `
-"type Query {
-  getPostDetails(postId: String!): Int 
-}"
-`;
-
-exports[`CustomOperation transform on a standard schema Custom query w inline json return type 1`] = `
-"type Query {
-  getPostDetails(postId: String!): AWSJSON 
-}"
-`;
-
-exports[`CustomOperation transform on a standard schema Custom query w inline string return type 1`] = `
-"type Query {
-  getPostDetails(postId: String!): String 
-}"
-`;
-
-exports[`CustomOperation transform on a standard schema Schema w model, custom query, mutation, and subscription 1`] = `
+exports[`CustomOperation transform sql schema Schema w model, custom query, mutation, and subscription 1`] = `
 "type Post @model @auth(rules: [{allow: public}])
 {
   id: ID! @primaryKey
@@ -379,46 +252,24 @@ type Subscription {
 }"
 `;
 
-exports[`CustomOperation transform on a standard schema handlers a.handler.custom works 1`] = `
-"type GetPostDetailsReturnType 
+exports[`CustomOperation transform sql schema schema.add* will not accept custom operations of incompatible types 1`] = `
+"type Post @model @auth(rules: [{allow: public}])
 {
-  
+  id: ID! @primaryKey
+  title: String
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
+}
+
+type Mutation {
+  likePost(postId: String): Post @function(name: "myFunc") @auth(rules: [{allow: public}])
 }
 
 type Query {
-  getPostDetails: GetPostDetailsReturnType 
-}"
-`;
-
-exports[`CustomOperation transform on a standard schema handlers a.handler.function works 1`] = `
-"type GetPostDetailsReturnType 
-{
-  
+  getLikedPost: Post @function(name: "myFunc") @auth(rules: [{allow: public}])
 }
 
-type Query {
-  getPostDetails: GetPostDetailsReturnType 
-}"
-`;
-
-exports[`CustomOperation transform on a standard schema handlers a.handler.inlineSql works 1`] = `
-"type GetPostDetailsReturnType 
-{
-  
-}
-
-type Query {
-  getPostDetails: GetPostDetailsReturnType 
-}"
-`;
-
-exports[`CustomOperation transform on a standard schema handlers a.handler.sqlReference works 1`] = `
-"type GetPostDetailsReturnType 
-{
-  
-}
-
-type Query {
-  getPostDetails: GetPostDetailsReturnType 
+type Subscription {
+  onLikePost: Post @function(name: "myFunc") @auth(rules: [{allow: public}])
 }"
 `;

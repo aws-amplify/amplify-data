@@ -952,11 +952,7 @@ const schemaPreprocessor = (
         const model = `type ${typeName} ${authString}\n{\n  ${joined}\n}`;
         gqlModels.push(model);
       } else if (isCustomOperation(typeDef)) {
-<<<<<<< HEAD
-        const { typeName: opType } = typeDef.data;
-=======
         const { typeName: opType } = (typeDef as InternalCustom<any>).data;
->>>>>>> ee33ebb (Get type specs correct to fix mismatch tests)
 
         const { gqlField, models, jsFunctionForField } =
           transformCustomOperations(typeDef, typeName, mostRelevantAuthRules);
@@ -1048,7 +1044,7 @@ const schemaPreprocessor = (
 };
 
 function validateCustomOperations(
-  typeDef: InternalCustom,
+  typeDef: InternalCustom<any>,
   typeName: string,
   authRules: Authorization<any, any, any>[],
 ) {
@@ -1178,7 +1174,7 @@ const handleCustom = (
 };
 
 function transformCustomOperations(
-  typeDef: InternalCustom,
+  typeDef: InternalCustom<any>,
   typeName: string,
   authRules: Authorization<any, any, any>[],
 ) {

@@ -29,12 +29,6 @@ type InternalCustomArguments = Record<string, InternalField>;
 type InternalCustomReturnType = InternalRef;
 type HandlerInputType = Handler | Handler[number];
 
-<<<<<<< HEAD
-const brandName = 'customOperation';
-=======
-type HandlerInputType = Handler | Handler[];
->>>>>>> ee33ebb (Get type specs correct to fix mismatch tests)
-
 export const CustomOperationNames = [
   'Query',
   'Mutation',
@@ -64,6 +58,7 @@ export type CustomOperationParamShape = {
   functionRef: string | null;
   authorization: Authorization<any, any, any>[];
   typeName: CustomOperationName;
+  handlers: Handler | null;
 };
 
 export type CustomOperation<
@@ -102,17 +97,9 @@ export type CustomOperation<
       K | 'authorization',
       B
     >;
-<<<<<<< HEAD
-    handler(handlers: HandlerInputType): CustomOperation<T, K | 'handler'>;
-=======
-    handler(
-      handlers: HandlerInputType,
-    ): CustomOperation<
-      SetTypeSubArg<T, 'handlers', Handler[]>,
-      K | 'handler',
-      B
-    >;
->>>>>>> ee33ebb (Get type specs correct to fix mismatch tests)
+    handler<H extends HandlerInputType>(
+      handlers: H,
+    ): CustomOperation<T, K | 'handler', B>;
   },
   K
 > &
@@ -173,7 +160,9 @@ function _custom<
         return this;
       },
       handler(handlers: HandlerInputType) {
-        data.handlers = Array.isArray(handlers) ? handlers : [handlers];
+        data.handlers = Array.isArray(handlers)
+          ? handlers
+          : ([handlers] as Handler);
 
         return this;
       },
@@ -181,36 +170,11 @@ function _custom<
     brand,
   );
 
-<<<<<<< HEAD
-      return this;
-    },
-    function(functionRefOrName: CustomFunctionRefType) {
-      data.functionRef = functionRefOrName;
-
-      return this;
-    },
-    authorization(rules: Authorization<any, any, any>[]) {
-      data.authorization = rules;
-
-      return this;
-    },
-    handler(handlers: HandlerInputType) {
-      data.handlers = Array.isArray(handlers)
-        ? handlers
-        : ([handlers] as Handler);
-
-      return this;
-    },
-  });
-
-  return { ...builder, data } as InternalCustom as CustomOperation<T>;
-=======
   return { ...builder, data } as InternalCustom<B> as CustomOperation<
     T,
     never,
     B
   >;
->>>>>>> ee33ebb (Get type specs correct to fix mismatch tests)
 }
 
 export type QueryCustomOperation = CustomOperation<
