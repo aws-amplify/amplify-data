@@ -178,7 +178,7 @@ function _custom<
 }
 
 export type QueryCustomOperation = CustomOperation<
-  SetTypeSubArg<CustomOperationParamShape, 'typeName', 'Query'>,
+  CustomOperationParamShape,
   any,
   typeof queryBrand
 >;
@@ -199,7 +199,7 @@ export function query(): CustomOperation<
 }
 
 export type MutationCustomOperation = CustomOperation<
-  SetTypeSubArg<CustomOperationParamShape, 'typeName', 'Mutation'>,
+  CustomOperationParamShape,
   any,
   typeof mutationBrand
 >;
@@ -220,7 +220,7 @@ export function mutation(): CustomOperation<
 }
 
 export type SubscriptionCustomOperation = CustomOperation<
-  SetTypeSubArg<CustomOperationParamShape, 'typeName', 'Subscription'>,
+  CustomOperationParamShape,
   any,
   typeof subscriptionBrand
 >;
