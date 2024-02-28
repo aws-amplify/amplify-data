@@ -105,15 +105,42 @@ export type ModelSchema<
   transform: () => DerivedApiDefinition;
 };
 
-export type SqlModelSchema<
+type QueriesType = CustomOperation<
+  SetTypeSubArg<CustomOperationParamShape, 'typeName', 'Query'>,
+  any
+>;
+type MutationsType = CustomOperation<
+  SetTypeSubArg<CustomOperationParamShape, 'typeName', 'Mutation'>,
+  any
+>;
+type SubscriptionsType = CustomOperation<
+  SetTypeSubArg<CustomOperationParamShape, 'typeName', 'Subscription'>,
+  any
+>;
+
+type SQLModelSchemaFunctions =
+  | 'setSqlStatementFolderPath'
+  | 'addQueries'
+  | 'addMutations'
+  | 'addSubscriptions';
+export type SQLModelSchema<
   T extends SQLModelSchemaParamShape,
-  UsedMethods extends 'authorization' | 'setSqlStatementFolderPath' = never,
-> = ModelSchema<T, Exclude<UsedMethods, 'setSqlStatementFolderPath'>> &
+  UsedMethods extends 'authorization' | SQLModelSchemaFunctions = never,
+> = ModelSchema<T, Exclude<UsedMethods, SQLModelSchemaFunctions>> &
   Omit<
     {
       setSqlStatementFolderPath: (
         path: string,
-      ) => SqlModelSchema<T, UsedMethods | 'setSqlStatementFolderPath'>;
+      ) => SQLModelSchema<T, UsedMethods | 'setSqlStatementFolderPath'>;
+      addQueries: (
+        types: Record<string, QueriesType>,
+      ) => SQLModelSchema<T, UsedMethods | 'addQueries'>;
+      addMutations: (
+        types: Record<string, MutationsType>,
+      ) => SQLModelSchema<T, UsedMethods | 'addMutations'>;
+      addSubscriptions: (
+        types: Record<string, SubscriptionsType>,
+      ) => SQLModelSchema<T, UsedMethods | 'addSubscriptions'>;
     },
     UsedMethods
   >;
@@ -158,12 +185,27 @@ export const isModelSchema = (
 
 function _sqlSchemaExtension<T extends SQLModelSchemaParamShape>(
   schema: ModelSchema<T>,
-): SqlModelSchema<T> {
+): SQLModelSchema<T> {
   return {
     ...schema,
     setSqlStatementFolderPath(path: string): any {
       this.data.setSqlStatementFolderPath = path;
       const { setSqlStatementFolderPath: _, ...rest } = this;
+      return rest;
+    },
+    addQueries(types: Record<string, QueriesType>): any {
+      this.data.types = { ...this.data.types, ...types };
+      const { addQueries: _, ...rest } = this;
+      return rest;
+    },
+    addMutations(types: Record<string, MutationsType>): any {
+      this.data.types = { ...this.data.types, ...types };
+      const { addMutations: _, ...rest } = this;
+      return rest;
+    },
+    addSubscriptions(types: Record<string, SubscriptionsType>): any {
+      this.data.types = { ...this.data.types, ...types };
+      const { addSubscriptions: _, ...rest } = this;
       return rest;
     },
   };
@@ -199,7 +241,7 @@ type SchemaReturnType<
   Types extends ModelSchemaContents,
 > = DE extends 'dynamodb'
   ? ModelSchema<{ types: Types; authorization: []; configuration: any }>
-  : SqlModelSchema<{ types: Types; authorization: []; configuration: any }>;
+  : SQLModelSchema<{ types: Types; authorization: []; configuration: any }>;
 
 function bindConfigToSchema<DE extends DatasourceEngine>(
   config: SchemaConfig<DE, DatasourceConfig<DE>>,
