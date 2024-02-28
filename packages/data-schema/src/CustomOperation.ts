@@ -1,5 +1,5 @@
 import { SetTypeSubArg } from '@aws-amplify/data-schema-types';
-import { Brand } from './util';
+import { Brand, brand } from './util';
 
 import { ModelField, InternalField } from './ModelField';
 import { Authorization } from './Authorization';
@@ -7,6 +7,15 @@ import { RefType, InternalRef } from './RefType';
 import { EnumType, EnumTypeParamShape } from './EnumType';
 import { CustomType } from './CustomType';
 import type { HandlerType as Handler } from './Handler';
+
+const queryBrand = 'queryCustomOperation';
+const mutationBrand = 'mutationCustomOperation';
+const subscriptionBrand = 'subscriptionCustomOperation';
+
+type CustomOperationBrand =
+  | typeof queryBrand
+  | typeof mutationBrand
+  | typeof subscriptionBrand;
 
 type CustomArguments = Record<
   string,
@@ -20,7 +29,11 @@ type InternalCustomArguments = Record<string, InternalField>;
 type InternalCustomReturnType = InternalRef;
 type HandlerInputType = Handler | Handler[number];
 
+<<<<<<< HEAD
 const brandName = 'customOperation';
+=======
+type HandlerInputType = Handler | Handler[];
+>>>>>>> ee33ebb (Get type specs correct to fix mismatch tests)
 
 export const CustomOperationNames = [
   'Query',
@@ -56,6 +69,7 @@ export type CustomOperationParamShape = {
 export type CustomOperation<
   T extends CustomOperationParamShape,
   K extends keyof CustomOperation<T> = never,
+  B extends CustomOperationBrand = CustomOperationBrand,
   // Branding the exported type allows us to detect it
   // nominally in our mapped types, ignoring structural overlap with other types
 > = Omit<
@@ -64,49 +78,69 @@ export type CustomOperation<
       args: Arguments,
     ): CustomOperation<
       SetTypeSubArg<T, 'arguments', Arguments>,
-      K | 'arguments'
+      K | 'arguments',
+      B
     >;
     returns<ReturnType extends CustomReturnType>(
       returnType: ReturnType,
     ): CustomOperation<
       SetTypeSubArg<T, 'returnType', ReturnType>,
-      K | 'returns'
+      K | 'returns',
+      B
     >;
     function<FunctionRef extends CustomFunctionRefType>(
       functionRefOrName: FunctionRef,
     ): CustomOperation<
       SetTypeSubArg<T, 'functionRef', FunctionRef>,
-      K | 'function'
+      K | 'function',
+      B
     >;
     authorization<AuthRuleType extends Authorization<any, any, any>>(
       rules: AuthRuleType[],
     ): CustomOperation<
       SetTypeSubArg<T, 'authorization', AuthRuleType[]>,
-      K | 'authorization'
+      K | 'authorization',
+      B
     >;
+<<<<<<< HEAD
     handler(handlers: HandlerInputType): CustomOperation<T, K | 'handler'>;
+=======
+    handler(
+      handlers: HandlerInputType,
+    ): CustomOperation<
+      SetTypeSubArg<T, 'handlers', Handler[]>,
+      K | 'handler',
+      B
+    >;
+>>>>>>> ee33ebb (Get type specs correct to fix mismatch tests)
   },
   K
 > &
-  Brand<typeof brandName>;
+  Brand<B>;
 
 function brandedBuilder<T extends CustomOperationParamShape>(
   builder: Record<keyof CustomOperation<T> & string, any>,
-): CustomOperation<T> {
-  return builder as CustomOperation<T>;
+  brandValue: CustomOperationBrand,
+): CustomOperation<T, never, typeof brandValue> {
+  return { ...builder, ...brand(brandValue) };
 }
 
 /**
  * Internal representation of Custom Type that exposes the `data` property.
  * Used at buildtime.
  */
-export type InternalCustom = CustomOperation<any> & {
+export type InternalCustom<B extends CustomOperationBrand> = CustomOperation<
+  any,
+  never,
+  B
+> & {
   data: InternalCustomData;
 };
 
-function _custom<T extends CustomOperationParamShape>(
-  typeName: CustomOperationName,
-) {
+function _custom<
+  T extends CustomOperationParamShape,
+  B extends CustomOperationBrand,
+>(typeName: CustomOperationName, brand: B) {
   const data: CustomData = {
     arguments: {},
     returnType: null,
@@ -116,15 +150,38 @@ function _custom<T extends CustomOperationParamShape>(
     handlers: null,
   };
 
-  const builder = brandedBuilder<T>({
-    arguments(args: CustomArguments) {
-      data.arguments = args;
+  const builder = brandedBuilder<T>(
+    {
+      arguments(args: CustomArguments) {
+        data.arguments = args;
 
-      return this;
+        return this;
+      },
+      returns(returnType: CustomReturnType) {
+        data.returnType = returnType;
+
+        return this;
+      },
+      function(functionRefOrName: CustomFunctionRefType) {
+        data.functionRef = functionRefOrName;
+
+        return this;
+      },
+      authorization(rules: Authorization<any, any, any>[]) {
+        data.authorization = rules;
+
+        return this;
+      },
+      handler(handlers: HandlerInputType) {
+        data.handlers = Array.isArray(handlers) ? handlers : [handlers];
+
+        return this;
+      },
     },
-    returns(returnType: CustomReturnType) {
-      data.returnType = returnType;
+    brand,
+  );
 
+<<<<<<< HEAD
       return this;
     },
     function(functionRefOrName: CustomFunctionRefType) {
@@ -147,37 +204,74 @@ function _custom<T extends CustomOperationParamShape>(
   });
 
   return { ...builder, data } as InternalCustom as CustomOperation<T>;
+=======
+  return { ...builder, data } as InternalCustom<B> as CustomOperation<
+    T,
+    never,
+    B
+  >;
+>>>>>>> ee33ebb (Get type specs correct to fix mismatch tests)
 }
 
-export function query(): CustomOperation<{
-  arguments: CustomArguments;
-  returnType: null;
-  functionRef: null;
-  authorization: [];
-  typeName: 'Query';
-  handlers: null;
-}> {
-  return _custom('Query');
+export type QueryCustomOperation = CustomOperation<
+  SetTypeSubArg<CustomOperationParamShape, 'typeName', 'Query'>,
+  any,
+  typeof queryBrand
+>;
+
+export function query(): CustomOperation<
+  {
+    arguments: CustomArguments;
+    returnType: null;
+    functionRef: null;
+    authorization: [];
+    typeName: 'Query';
+    handlers: null;
+  },
+  never,
+  typeof queryBrand
+> {
+  return _custom('Query', queryBrand);
 }
 
-export function mutation(): CustomOperation<{
-  arguments: CustomArguments;
-  returnType: null;
-  functionRef: null;
-  authorization: [];
-  typeName: 'Mutation';
-  handlers: null;
-}> {
-  return _custom('Mutation');
+export type MutationCustomOperation = CustomOperation<
+  SetTypeSubArg<CustomOperationParamShape, 'typeName', 'Mutation'>,
+  any,
+  typeof mutationBrand
+>;
+
+export function mutation(): CustomOperation<
+  {
+    arguments: CustomArguments;
+    returnType: null;
+    functionRef: null;
+    authorization: [];
+    typeName: 'Mutation';
+    handlers: null;
+  },
+  never,
+  typeof mutationBrand
+> {
+  return _custom('Mutation', mutationBrand);
 }
 
-export function subscription(): CustomOperation<{
-  arguments: CustomArguments;
-  returnType: null;
-  functionRef: null;
-  authorization: [];
-  typeName: 'Subscription';
-  handlers: null;
-}> {
-  return _custom('Subscription');
+export type SubscriptionCustomOperation = CustomOperation<
+  SetTypeSubArg<CustomOperationParamShape, 'typeName', 'Subscription'>,
+  any,
+  typeof subscriptionBrand
+>;
+
+export function subscription(): CustomOperation<
+  {
+    arguments: CustomArguments;
+    returnType: null;
+    functionRef: null;
+    authorization: [];
+    typeName: 'Subscription';
+    handlers: null;
+  },
+  never,
+  typeof subscriptionBrand
+> {
+  return _custom('Subscription', subscriptionBrand);
 }

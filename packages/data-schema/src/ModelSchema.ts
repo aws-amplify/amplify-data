@@ -15,6 +15,9 @@ import type {
   CustomOperation,
   CustomOperationParamShape,
   InternalCustom,
+  MutationCustomOperation,
+  QueryCustomOperation,
+  SubscriptionCustomOperation,
 } from './CustomOperation';
 import { processSchema } from './SchemaProcessor';
 import { Authorization } from './Authorization';
@@ -28,7 +31,7 @@ type SchemaContent =
 type ModelSchemaContents = Record<string, SchemaContent>;
 type InternalSchemaModels = Record<
   string,
-  InternalModel | EnumType<any> | CustomType<any> | InternalCustom
+  InternalModel | EnumType<any> | CustomType<any> | InternalCustom<any>
 >;
 
 /**
@@ -105,19 +108,6 @@ export type ModelSchema<
   transform: () => DerivedApiDefinition;
 };
 
-type QueriesType = CustomOperation<
-  SetTypeSubArg<CustomOperationParamShape, 'typeName', 'Query'>,
-  any
->;
-type MutationsType = CustomOperation<
-  SetTypeSubArg<CustomOperationParamShape, 'typeName', 'Mutation'>,
-  any
->;
-type SubscriptionsType = CustomOperation<
-  SetTypeSubArg<CustomOperationParamShape, 'typeName', 'Subscription'>,
-  any
->;
-
 type SQLModelSchemaFunctions =
   | 'setSqlStatementFolderPath'
   | 'addQueries'
@@ -133,13 +123,13 @@ export type SQLModelSchema<
         path: string,
       ) => SQLModelSchema<T, UsedMethods | 'setSqlStatementFolderPath'>;
       addQueries: (
-        types: Record<string, QueriesType>,
+        types: Record<string, QueryCustomOperation>,
       ) => SQLModelSchema<T, UsedMethods | 'addQueries'>;
       addMutations: (
-        types: Record<string, MutationsType>,
+        types: Record<string, MutationCustomOperation>,
       ) => SQLModelSchema<T, UsedMethods | 'addMutations'>;
       addSubscriptions: (
-        types: Record<string, SubscriptionsType>,
+        types: Record<string, SubscriptionCustomOperation>,
       ) => SQLModelSchema<T, UsedMethods | 'addSubscriptions'>;
     },
     UsedMethods
@@ -193,17 +183,17 @@ function _sqlSchemaExtension<T extends SQLModelSchemaParamShape>(
       const { setSqlStatementFolderPath: _, ...rest } = this;
       return rest;
     },
-    addQueries(types: Record<string, QueriesType>): any {
+    addQueries(types: Record<string, QueryCustomOperation>): any {
       this.data.types = { ...this.data.types, ...types };
       const { addQueries: _, ...rest } = this;
       return rest;
     },
-    addMutations(types: Record<string, MutationsType>): any {
+    addMutations(types: Record<string, MutationCustomOperation>): any {
       this.data.types = { ...this.data.types, ...types };
       const { addMutations: _, ...rest } = this;
       return rest;
     },
-    addSubscriptions(types: Record<string, SubscriptionsType>): any {
+    addSubscriptions(types: Record<string, SubscriptionCustomOperation>): any {
       this.data.types = { ...this.data.types, ...types };
       const { addSubscriptions: _, ...rest } = this;
       return rest;
