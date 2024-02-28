@@ -29,6 +29,7 @@
     "package.json"
   ],
   "dependencies": {
-    "rxjs": "^7.8.1"
+    "rxjs": "^7.8.1",
+    "@types/aws-lambda": "^8.10.134"
   }
 }
