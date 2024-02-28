@@ -113,6 +113,7 @@ type SQLModelSchemaFunctions =
   | 'addQueries'
   | 'addMutations'
   | 'addSubscriptions';
+
 export type SQLModelSchema<
   T extends SQLModelSchemaParamShape,
   UsedMethods extends 'authorization' | SQLModelSchemaFunctions = never,

@@ -952,7 +952,7 @@ const schemaPreprocessor = (
         const model = `type ${typeName} ${authString}\n{\n  ${joined}\n}`;
         gqlModels.push(model);
       } else if (isCustomOperation(typeDef)) {
-        const { typeName: opType } = (typeDef as InternalCustom).data;
+        const { typeName: opType } = typeDef.data;
 
         const { gqlField, models, jsFunctionForField } =
           transformCustomOperations(typeDef, typeName, mostRelevantAuthRules);
