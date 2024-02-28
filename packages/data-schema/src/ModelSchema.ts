@@ -31,7 +31,7 @@ type SchemaContent =
 type ModelSchemaContents = Record<string, SchemaContent>;
 type InternalSchemaModels = Record<
   string,
-  InternalModel | EnumType<any> | CustomType<any> | InternalCustom<any>
+  InternalModel | EnumType<any> | CustomType<any> | InternalCustom
 >;
 
 /**

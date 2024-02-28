@@ -82,7 +82,7 @@ function isCustomType(
   return false;
 }
 
-function isCustomOperation(type: any): type is InternalCustom<any> {
+function isCustomOperation(type: any): type is InternalCustom {
   if (CustomOperationNames.includes(type?.data?.typeName)) {
     return true;
   }
@@ -244,7 +244,7 @@ function refFieldToGql(fieldDef: RefFieldDef): string {
 
 function customOperationToGql(
   typeName: string,
-  typeDef: InternalCustom<any>,
+  typeDef: InternalCustom,
   authorization: Authorization<any, any, any>[],
   isCustom = false,
 ): { gqlField: string; models: [string, any][] } {
@@ -952,7 +952,7 @@ const schemaPreprocessor = (
         const model = `type ${typeName} ${authString}\n{\n  ${joined}\n}`;
         gqlModels.push(model);
       } else if (isCustomOperation(typeDef)) {
-        const { typeName: opType } = (typeDef as InternalCustom<any>).data;
+        const { typeName: opType } = (typeDef as InternalCustom).data;
 
         const { gqlField, models, jsFunctionForField } =
           transformCustomOperations(typeDef, typeName, mostRelevantAuthRules);
@@ -1044,7 +1044,7 @@ const schemaPreprocessor = (
 };
 
 function validateCustomOperations(
-  typeDef: InternalCustom<any>,
+  typeDef: InternalCustom,
   typeName: string,
   authRules: Authorization<any, any, any>[],
 ) {
@@ -1174,7 +1174,7 @@ const handleCustom = (
 };
 
 function transformCustomOperations(
-  typeDef: InternalCustom<any>,
+  typeDef: InternalCustom,
   typeName: string,
   authRules: Authorization<any, any, any>[],
 ) {

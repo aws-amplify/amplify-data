@@ -116,13 +116,10 @@ function brandedBuilder<T extends CustomOperationParamShape>(
  * Internal representation of Custom Type that exposes the `data` property.
  * Used at buildtime.
  */
-export type InternalCustom<B extends CustomOperationBrand> = CustomOperation<
-  any,
-  never,
-  B
-> & {
-  data: InternalCustomData;
-};
+export type InternalCustom<B extends CustomOperationBrand = any> =
+  CustomOperation<any, never, B> & {
+    data: InternalCustomData;
+  };
 
 function _custom<
   T extends CustomOperationParamShape,
