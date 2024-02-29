@@ -1,5 +1,11 @@
 # @aws-amplify/data-schema
 
+## 0.13.9
+
+### Patch Changes
+
+- 1cb4344: feat: Add schema sql handler experience interface
+
 ## 0.13.8
 
 ### Patch Changes
