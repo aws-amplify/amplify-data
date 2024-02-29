@@ -17,7 +17,7 @@ At the end of this exercise, because the space is never fully enumerable, we end
 
 We treat Defined Behavior Tests as the library's **behavioral contract**. They document, demonstrate, and stabilize library behaviors that are explicitly intended and expected to be used by consumers. Barring critical oversights, security issues, or other extenuating circumstances, these tests MUST NOT change or be removed within a major version. If changed or removed, a new major version (aka. "major version bump") is generally REQUIRED.
 
-Tests outside of the "Defined Behavior" boundary can be considered "Internal". These tests will be copious and treated far less stringently. They can generally be thought of as "development aids". They're produced during development to sanity check internal units. They "loosely clamp" down on _internal_ library behaviors. They can signal when you _might_ have broken something, but they are ultimately **recycleble**. Their failures DO NOT strictly indicate a broken state, and they SHOULD NOT be used to reverse engineer **defined behavior**.
+Tests outside of the "Defined Behavior" boundary can be considered "Internal". These tests will be copious and treated far less stringently. They can generally be thought of as "development aids". They're produced during development to sanity check internal units. They "loosely clamp" down on _internal_ library behaviors. They can signal when you _might_ have broken something, but they are ultimately **recycleable**. Their failures DO NOT strictly indicate a broken state, and they SHOULD NOT be used to reverse engineer **defined behavior**.
 
 ## Test Structure
 
@@ -29,7 +29,7 @@ We will accumulate all Defined Behavior Testing in the `integration-tests` packa
       1. `1-patterns` &mdash;
          Tests showing examples the core coding patterns and "best practices" we would recommend in documentation and Github issues. Mostly hand authored, with the exception of API documentation generation/extraction. Protected by PM, SDM, and SDE Admin approval. Treated like design. In general, seek _abundant_ approval for changes here. When possible, submit tests as failing, skipped tests _first_. Implementation PR's that then un-skip these tests can be less rigorous.
       2. `2-common-use` &mdash;
-         Tests showing commonly expected usage, edge cases, and error handling that doesn't fall into normal error handling "patterns". Hand-authored in general. Snippets from these tests may be used in GH issue responses or refered to directly when answering questions around defined behavioral edge cases. Protected by PM + SDE Admin approval.
+         Tests showing commonly expected usage, edge cases, and error handling that doesn't fall into normal error handling "patterns". Hand-authored in general. Snippets from these tests may be used in GH issue responses or referred to directly when answering questions around defined behavioral edge cases. Protected by PM + SDE Admin approval.
       3. `3-exhaustive` &mdash;
          The extrapolation of all defined behavioral space within reason. Could be hand authored. But, in general, these tests could and should be programmatically generated according to input dimensions and combinations thereof where cross-dimensional interactions are expected. Protected by SDE Admin.
    2. `internal` &mdash;
