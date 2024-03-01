@@ -1,8 +1,6 @@
 import { a, ClientSchema } from '@aws-amplify/data-schema';
-import { ModelTypes } from '@aws-amplify/data-schema-types';
 import { Amplify } from 'aws-amplify';
-import { generateClient as actualGenerateClient } from 'aws-amplify/api';
-import { buildAmplifyConfig } from '../../utils/build-amplify-config';
+import { buildAmplifyConfig, mockedGenerateClient } from '../../utils';
 
 // import {
 //   type Expect,
@@ -20,50 +18,6 @@ const serverManagedFields = {
   createdAt: '2024-03-01T18:05:44.536Z',
   updatedAt: '2024-03-01T19:05:44.536Z',
 };
-
-/**
- * @param value Value to be returned. Will be `awaited`, and can
- * therefore be a simple JSON value or a `Promise`.
- * @returns
- */
-function mockApiResponse<T>(client: T, value: any) {
-  return jest.spyOn(client as any, 'graphql').mockImplementation(async () => {
-    return value;
-  });
-}
-
-type GraphQLResult = {
-  data: null | Record<string, any>;
-  errors?: null | Record<string, any>;
-};
-
-function mockedGenerateClient(
-  responses: (
-    | GraphQLResult
-    | (() => GraphQLResult)
-    | (() => Promise<GraphQLResult>)
-  )[],
-) {
-  const spy = jest.fn().mockImplementation(async () => {
-    const result = responses.shift();
-    if (typeof result === 'function') {
-      return await result();
-    } else {
-      return result;
-    }
-  });
-
-  function generateClient<T extends Record<any, any>>() {
-    const client = actualGenerateClient<T>();
-    jest.spyOn(client as any, 'graphql').mockImplementation(spy);
-    return client;
-  }
-
-  return {
-    spy,
-    generateClient,
-  };
-}
 
 describe('getting started guides', () => {
   describe('Todo schema', () => {
