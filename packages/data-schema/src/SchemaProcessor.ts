@@ -223,21 +223,21 @@ function modelFieldToGql(fieldDef: ModelFieldDef) {
 }
 
 function refFieldToGql(fieldDef: RefFieldDef): string {
-  const { link, required } = fieldDef;
+  const { link, valueRequired, array, arrayRequired } = fieldDef;
 
   let field = link;
 
-  if (required === true) {
+  if (valueRequired === true) {
     field += '!';
   }
 
-  // if (array) {
-  //   field = `[${field}]`;
-  // }
+  if (array === true) {
+    field = `[${field}]`;
+  }
 
-  // if (arrayRequired === true) {
-  //   field += '!';
-  // }
+  if (arrayRequired === true) {
+    field += '!';
+  }
 
   return field;
 }

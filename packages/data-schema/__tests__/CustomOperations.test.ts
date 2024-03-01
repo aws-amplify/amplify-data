@@ -1,5 +1,12 @@
+import { expectTypeTestsToPassAsync } from 'jest-tsd';
 import { a } from '../index';
 import { configure } from '../src/internals';
+
+// evaluates type defs in corresponding test-d.ts file
+it('should not produce static type errors', async () => {
+  await expectTypeTestsToPassAsync(__filename);
+});
+
 describe('CustomOperation transform', () => {
   describe('dynamo schema', () => {
     test('Schema w model, custom query, mutation, and subscription', () => {
@@ -17,6 +24,58 @@ describe('CustomOperation transform', () => {
           onLikePost: a
             .subscription()
             .returns(a.ref('Post'))
+            .function('myFunc'),
+        })
+        .authorization([a.allow.public()]);
+
+      const result = s.transform().schema;
+
+      expect(result).toMatchSnapshot();
+    });
+
+    test('Schema w model, custom query, mutation, and subscription and ref of model with array modifier', () => {
+      const s = a
+        .schema({
+          Post: a.model({
+            title: a.string(),
+          }),
+          listPosts: a
+            .mutation()
+            .returns(a.ref('Post').array())
+            .function('myFunc'),
+          getLikedPost: a
+            .query()
+            .returns(a.ref('Post').array())
+            .function('myFunc'),
+          onLikePost: a
+            .subscription()
+            .returns(a.ref('Post'))
+            .function('myFunc'),
+        })
+        .authorization([a.allow.public()]);
+
+      const result = s.transform().schema;
+
+      expect(result).toMatchSnapshot();
+    });
+
+    test('Schema w model, custom query, mutation, and subscription and ref of custom type with array modifier', () => {
+      const s = a
+        .schema({
+          PostCustomType: a.customType({
+            title: a.string(),
+          }),
+          listPosts: a
+            .mutation()
+            .returns(a.ref('PostCustomType').array())
+            .function('myFunc'),
+          getLikedPost: a
+            .query()
+            .returns(a.ref('PostCustomType').array())
+            .function('myFunc'),
+          onLikePost: a
+            .subscription()
+            .returns(a.ref('PostCustomType'))
             .function('myFunc'),
         })
         .authorization([a.allow.public()]);
