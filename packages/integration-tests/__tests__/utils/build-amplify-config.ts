@@ -4,7 +4,7 @@ import { generateModels } from '@aws-amplify/graphql-generator';
  * @param schema Return value from `a.schema()`
  * @returns JSON Amplify config with model intro schema and dummy appsync config.
  */
-export async function buildConfig(schema: {
+export async function buildAmplifyConfig(schema: {
   transform: () => { schema: string };
 }) {
   return {
