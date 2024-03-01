@@ -1,0 +1,169 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`getting started guides Todo schema can create 1`] = `
+[
+  [
+    {
+      "authMode": undefined,
+      "authToken": undefined,
+      "query": "mutation($input: CreateTodoInput!) { createTodo(input: $input) { id content done priority owner createdAt updatedAt } }",
+      "variables": {
+        "input": {
+          "content": "basic content",
+        },
+      },
+    },
+    {},
+  ],
+]
+`;
+
+exports[`getting started guides Todo schema can create 2`] = `null`;
+
+exports[`getting started guides Todo schema produces correct graphql 1`] = `
+"type Todo @model @auth(rules: [{allow: owner, ownerField: "owner"},
+  {allow: public, operations: [read]}])
+{
+  id: ID! @primaryKey
+  content: String
+  done: Boolean
+  priority: TodoPriority
+  owner: String
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
+}
+
+enum TodoPriority {
+  low
+  medium
+  high
+}"
+`;
+
+exports[`getting started guides Todo schema produces correct model intro schema 1`] = `
+{
+  "aws_appsync_apiKey": "FAKE-KEY",
+  "aws_appsync_authenticationType": "API_KEY",
+  "aws_appsync_graphqlEndpoint": "https://localhost/graphql",
+  "aws_appsync_region": "us-west-1",
+  "aws_project_region": "us-east-2",
+  "modelIntrospection": {
+    "enums": {
+      "TodoPriority": {
+        "name": "TodoPriority",
+        "values": [
+          "low",
+          "medium",
+          "high",
+        ],
+      },
+    },
+    "models": {
+      "Todo": {
+        "attributes": [
+          {
+            "properties": {},
+            "type": "model",
+          },
+          {
+            "properties": {
+              "fields": [
+                "id",
+              ],
+            },
+            "type": "key",
+          },
+          {
+            "properties": {
+              "rules": [
+                {
+                  "allow": "owner",
+                  "identityClaim": "cognito:username",
+                  "operations": [
+                    "create",
+                    "update",
+                    "delete",
+                    "read",
+                  ],
+                  "ownerField": "owner",
+                  "provider": "userPools",
+                },
+                {
+                  "allow": "public",
+                  "operations": [
+                    "read",
+                  ],
+                },
+              ],
+            },
+            "type": "auth",
+          },
+        ],
+        "fields": {
+          "content": {
+            "attributes": [],
+            "isArray": false,
+            "isRequired": false,
+            "name": "content",
+            "type": "String",
+          },
+          "createdAt": {
+            "attributes": [],
+            "isArray": false,
+            "isRequired": true,
+            "name": "createdAt",
+            "type": "AWSDateTime",
+          },
+          "done": {
+            "attributes": [],
+            "isArray": false,
+            "isRequired": false,
+            "name": "done",
+            "type": "Boolean",
+          },
+          "id": {
+            "attributes": [],
+            "isArray": false,
+            "isRequired": true,
+            "name": "id",
+            "type": "ID",
+          },
+          "owner": {
+            "attributes": [],
+            "isArray": false,
+            "isRequired": false,
+            "name": "owner",
+            "type": "String",
+          },
+          "priority": {
+            "attributes": [],
+            "isArray": false,
+            "isRequired": false,
+            "name": "priority",
+            "type": {
+              "enum": "TodoPriority",
+            },
+          },
+          "updatedAt": {
+            "attributes": [],
+            "isArray": false,
+            "isRequired": true,
+            "name": "updatedAt",
+            "type": "AWSDateTime",
+          },
+        },
+        "name": "Todo",
+        "pluralName": "Todos",
+        "primaryKeyInfo": {
+          "isCustomPrimaryKey": false,
+          "primaryKeyFieldName": "id",
+          "sortKeyFieldNames": [],
+        },
+        "syncable": true,
+      },
+    },
+    "nonModels": {},
+    "version": 1,
+  },
+}
+`;
