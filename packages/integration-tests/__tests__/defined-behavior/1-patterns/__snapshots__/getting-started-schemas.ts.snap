@@ -18,7 +18,20 @@ exports[`getting started guides Todo schema can create 1`] = `
 ]
 `;
 
-exports[`getting started guides Todo schema can create 2`] = `null`;
+exports[`getting started guides Todo schema can create 2`] = `
+{
+  "data": {
+    "__typename": "Todo",
+    "createdAt": "2024-03-01T18:05:44.536Z",
+    "description": "something something",
+    "id": "some-id",
+    "name": "some name",
+    "owner": "wirejobviously",
+    "updatedAt": "2024-03-01T19:05:44.536Z",
+  },
+  "extensions": undefined,
+}
+`;
 
 exports[`getting started guides Todo schema produces correct graphql 1`] = `
 "type Todo @model @auth(rules: [{allow: owner, ownerField: "owner"},

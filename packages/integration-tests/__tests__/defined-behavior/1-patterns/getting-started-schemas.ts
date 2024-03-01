@@ -1,4 +1,5 @@
 import { a, ClientSchema } from '@aws-amplify/data-schema';
+import { ModelTypes } from '@aws-amplify/data-schema-types';
 import { Amplify } from 'aws-amplify';
 import { generateClient } from 'aws-amplify/api';
 import { buildConfig } from '../../utils/build-amplify-config';
@@ -13,20 +14,21 @@ import { buildConfig } from '../../utils/build-amplify-config';
 //   __modelMeta__,
 // } from '@aws-amplify/data-schema-types';
 
+const serverManagedFields = {
+  id: 'some-id',
+  owner: 'wirejobviously',
+  createdAt: '2024-03-01T18:05:44.536Z',
+  updatedAt: '2024-03-01T19:05:44.536Z',
+};
+
 /**
  * @param value Value to be returned. Will be `awaited`, and can
  * therefore be a simple JSON value or a `Promise`.
  * @returns
  */
-function mockApiResponse(client: any, value: any) {
-  return jest.spyOn(client, 'graphql').mockImplementation(async () => {
-    console.log('mocked impl');
-    const result = await value;
-    return {
-      body: {
-        json: () => result,
-      },
-    };
+function mockApiResponse<T>(client: T, value: any) {
+  return jest.spyOn(client as any, 'graphql').mockImplementation(async () => {
+    return await value;
   });
 }
 
@@ -61,17 +63,20 @@ describe('getting started guides', () => {
       const spy = mockApiResponse(client, {
         data: {
           createTodo: {
-            something: 'else',
+            __typename: 'Todo',
+            ...serverManagedFields,
+            name: 'some name',
+            description: 'something something',
           },
         },
       });
 
-      const { data } = await client.models.Todo.create({
+      const result = await client.models.Todo.create({
         content: 'basic content',
       });
 
       expect(spy.mock.calls).toMatchSnapshot();
-      expect(data).toMatchSnapshot();
+      expect(result).toMatchSnapshot();
     });
   });
 });
