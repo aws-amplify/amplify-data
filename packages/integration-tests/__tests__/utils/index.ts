@@ -1,5 +1,21 @@
 import { generateModels } from '@aws-amplify/graphql-generator';
 import { generateClient as actualGenerateClient } from 'aws-amplify/api';
+import { GraphQLAPI } from '@aws-amplify/api-graphql'; // eslint-disable-line
+
+const graphqlspy = jest.spyOn(GraphQLAPI as any, 'graphql');
+const _graphqlspy = jest.spyOn(GraphQLAPI as any, '_graphql');
+
+// jest.mock('@aws-amplify/api-graphql', () => {
+//   const apiGraphql = jest.requireActual('@aws-amplify/api-graphql/internals');
+//   console.log({ apiGraphql });
+//   // const gql = apiGraphql.InternalGraphQLAPI._graphql;
+//   // apiGraphql.InternalGraphQLAPI._originalGraphql = gql;
+//   // apiGraphql.InternalGraphQLAPI._graphql = (...args: any) => {
+//   //   console.log('InternalGraphQLAPI._graphql proxy');
+//   //   return apiGraphql.InternalGraphQLAPI._originalGraphql(...args);
+//   // };
+//   return apiGraphql;
+// });
 
 /**
  * @param value Value to be returned. Will be `awaited`, and can
@@ -60,23 +76,35 @@ export function mockedGenerateClient(
     | (() => Promise<GraphQLResult>)
   )[],
 ) {
-  const spy = jest.fn().mockImplementation(async () => {
-    const result = responses.shift();
-    if (typeof result === 'function') {
-      return await result();
-    } else {
-      return result;
-    }
-  });
-
   function generateClient<T extends Record<any, any>>() {
     const client = actualGenerateClient<T>();
-    jest.spyOn(client as any, 'graphql').mockImplementation(spy);
+    _graphqlspy.mockImplementation(async () => {
+      const result = responses.shift();
+      if (typeof result === 'function') {
+        return result();
+      } else {
+        return result;
+      }
+    });
     return client;
   }
 
   return {
-    spy,
+    spy: graphqlspy,
+    innerSpy: _graphqlspy,
     generateClient,
   };
+}
+
+/**
+ * Returns calls to a `.graphql` spy minus the Amplify context object.
+ *
+ * @param spy `spy` returned from `mockGeneratedClient`
+ * @returns
+ */
+export function optionsAndHeaders(spy: jest.SpyInstance) {
+  return spy.mock.calls.map((call: any) => {
+    const [amplify, options, additionalHeaders] = call;
+    return [options, additionalHeaders];
+  });
 }
