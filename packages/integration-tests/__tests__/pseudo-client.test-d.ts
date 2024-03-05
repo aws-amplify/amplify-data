@@ -7,6 +7,7 @@ import {
   type ModelTypes,
   type GraphQLFormattedError,
   __modelMeta__,
+  Prettify,
 } from '@aws-amplify/data-schema-types';
 
 type FilteredKeys<T> = {
@@ -120,7 +121,7 @@ describe('client', () => {
     type ResponseType = typeof response;
     type Expected = {
       data: {
-        resultContent: string | null;
+        resultContent?: string | null | undefined;
       } | null;
       errors?: GraphQLFormattedError[] | undefined;
       extensions?:
