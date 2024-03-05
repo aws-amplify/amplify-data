@@ -282,7 +282,6 @@ function customOperationToGql(
     implicitModels.push(...models);
   }
 
-  // HERE
   const handler = handlers && handlers[0];
   const brand = handler && getBrand(handler);
 
