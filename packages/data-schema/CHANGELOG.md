@@ -1,5 +1,11 @@
 # @aws-amplify/data-schema
 
+## 0.13.10
+
+### Patch Changes
+
+- bb1c1c6: feat: enable .array() modifier of RefType
+
 ## 0.13.9
 
 ### Patch Changes
