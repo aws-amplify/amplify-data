@@ -434,8 +434,7 @@ describe('CustomOperation transform', () => {
         expect(result).toMatchSnapshot();
       });
       test('a.handler.inlineSql works', () => {
-        // TODO: This shouldn't work on a DDB schema
-        const s = a.schema({
+        const s = aSql.schema({
           getPostDetails: a
             .query()
             .arguments({})
@@ -449,8 +448,7 @@ describe('CustomOperation transform', () => {
         expect(result).toMatchSnapshot();
       });
       test('a.handler.sqlReference works', () => {
-        // TODO: This shouldn't work on a DDB schema
-        const s = a.schema({
+        const s = aSql.schema({
           getPostDetails: a
             .query()
             .arguments({})
