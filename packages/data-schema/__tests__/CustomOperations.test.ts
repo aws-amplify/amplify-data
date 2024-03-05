@@ -1,5 +1,19 @@
 import { a } from '../index';
 import { configure } from '../src/internals';
+
+const fakeSecret = () => ({}) as any;
+
+const datasourceConfigMySQL = {
+  engine: 'mysql',
+  hostname: fakeSecret(),
+  username: fakeSecret(),
+  password: fakeSecret(),
+  port: fakeSecret(),
+  databaseName: fakeSecret(),
+} as const;
+
+const aSql = configure({ database: datasourceConfigMySQL });
+
 describe('CustomOperation transform', () => {
   describe('dynamo schema', () => {
     test('Schema w model, custom query, mutation, and subscription', () => {
@@ -233,11 +247,11 @@ describe('CustomOperation transform', () => {
               .returns(a.customType({}))
               .authorization([a.allow.public()])
               .handler([
-                // @ts-expect-error
                 a.handler.custom({
                   entry: './filename.js',
                   dataSource: 'CommentTable',
                 }),
+                // @ts-expect-error
                 a.handler.function(() => {}),
               ]),
           });

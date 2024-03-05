@@ -82,6 +82,7 @@ export type InternalSchema = {
   data: {
     types: InternalSchemaModels;
     authorization: Authorization<any, any, any>[];
+    configuration: SchemaConfig<any, any>;
   };
 };
 
