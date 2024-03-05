@@ -255,7 +255,7 @@ function customOperationToGql(
     functionRef,
     handlers,
   } = typeDef.data;
-  console.log('!!!!', databaseType, typeName, typeDef, authorization, isCustom);
+
   let callSignature: string = typeName;
   const implicitModels: [string, any][] = [];
 
@@ -287,7 +287,7 @@ function customOperationToGql(
   const brand = handler && getBrand(handler);
 
   let gqlHandlerContent = '';
-  console.log(handler, brand);
+
   if (functionRef) {
     gqlHandlerContent = `@function(name: "${functionRef}") `;
   } else if (databaseType === 'sql' && handler && brand === 'inlineSql') {
@@ -914,7 +914,6 @@ const schemaPreprocessor = (
 
   const jsFunctions: JsResolver[] = [];
 
-  console.log(schema.data.configuration.database.engine);
   const databaseType =
     schema.data.configuration.database.engine === 'dynamodb'
       ? 'dynamodb'
