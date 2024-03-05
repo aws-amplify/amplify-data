@@ -437,7 +437,9 @@ describe('RelationalMetadata', () => {
             readonly createdAt?: string;
             readonly updatedAt?: string;
             title?: string | null | undefined;
-            metadata?: Json | null | undefined;
+            // metadata: a.json().required() => Required<Json> removes `null` from the union
+            // see packages/data-schema/src/ModelField.ts
+            metadata?: Exclude<Json, null> | undefined;
             postTags?: ResolvedFields['Post']['postTags'];
           };
           tag?: {
