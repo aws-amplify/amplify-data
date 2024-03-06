@@ -108,3 +108,14 @@ export function optionsAndHeaders(spy: jest.SpyInstance) {
     return [options, additionalHeaders];
   });
 }
+
+/**
+ * Very shallow mock of a `useState` hook. Pretty much just deep enough to demonstrate
+ * how our modeling works with React hooks.
+ *
+ * @param init
+ * @returns
+ */
+export function useState<T>(init: T) {
+  return [init as T, (newValue: T) => {}] as const;
+}

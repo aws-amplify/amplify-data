@@ -64,6 +64,13 @@ When decomposing a defined behavior at any level, here's the checklist of input 
        6. ChromiumOS
     2. Web (FF, Safari, Chrome, Edge, etc.)
     3. Runtime (e.g., node 12, 14, 16, 18 ...)
+12. Field type
+    1. string
+    2. id
+    3. integer
+    4. float
+    5. enum
+    6. custom type
 
 For each dimension on the list, **assess what behaviors the dimension exposes.**
 

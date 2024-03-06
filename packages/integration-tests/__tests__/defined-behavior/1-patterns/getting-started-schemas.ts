@@ -3,9 +3,9 @@ import { buildAmplifyConfig } from '../../utils';
 
 describe('getting started guides', () => {
   test('Todo schema', async () => {
-    // #region docs code
-
     // https://docs.amplify.aws/gen2/start/quickstart/nextjs-app-router-client-components/
+
+    // #region docs code
     // data/resource.ts
     const schema = a.schema({
       Todo: a
