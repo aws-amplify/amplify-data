@@ -75,7 +75,7 @@ export type FieldTypes<T> = {
             any
           >
         ? // leave Ref as-is. We'll resolve it to the linked entity downstream in ResolveFieldProperties
-          R['required'] extends true
+          R['valueRequired'] extends true
           ? T[ModelProp][FieldProp]
           : T[ModelProp][FieldProp] | null
         : // replace non-model types with Ref
@@ -87,7 +87,9 @@ export type FieldTypes<T> = {
                 FieldProp & string
               >}`;
               type: 'ref';
-              required: false;
+              valueRequired: false;
+              array: false;
+              arrayRequired: false;
               authorization: [];
             }> | null
           : // resolve relational and model fields to the their first type arg
@@ -124,7 +126,7 @@ export type FieldTypesOfCustomType<T> = {
             any
           >
         ? // leave Ref as-is. We'll resolve it to the linked entity downstream in ResolveFieldProperties
-          R['required'] extends true
+          R['valueRequired'] extends true
           ? T[CustomTypeName][FieldProp]
           : T[CustomTypeName][FieldProp] | null
         : // replace non-model types with Ref
@@ -136,7 +138,9 @@ export type FieldTypesOfCustomType<T> = {
                 FieldProp & string
               >}`;
               type: 'ref';
-              required: false;
+              valueRequired: false;
+              array: false;
+              arrayRequired: false;
               authorization: [];
             }> | null
           : never;

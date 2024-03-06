@@ -108,7 +108,7 @@ export type ResolveRef<
   NonModelTypes extends NonModelTypesShape,
   Ref extends RefTypeParamShape,
   Link extends string = Ref['link'],
-  Value = Link extends keyof NonModelTypes['enums']
+  RefValue = Link extends keyof NonModelTypes['enums']
     ? NonModelTypes['enums'][Link]
     : Link extends keyof NonModelTypes['customTypes']
       ? ResolveRefsOfCustomType<
@@ -116,9 +116,26 @@ export type ResolveRef<
           NonModelTypes['customTypes'][Link]
         >
       : never,
-> = Ref['required'] extends true ? Value : Value | null;
+  Value = Ref['valueRequired'] extends true ? RefValue : RefValue | null,
+> = ResolveRefValueArrayTraits<Ref, Value>;
 
-type ResolveRefsOfCustomType<NonModelTypes extends NonModelTypesShape, T> = {
+/**
+ * Converts the resolved RefType Value type into Array<> according to the
+ * `array` and `arrayRequired` properties of the RefType
+ */
+export type ResolveRefValueArrayTraits<
+  Ref extends RefTypeParamShape,
+  Value,
+> = Ref['array'] extends false
+  ? Value
+  : Ref['arrayRequired'] extends true
+    ? Array<Value>
+    : Array<Value> | null;
+
+export type ResolveRefsOfCustomType<
+  NonModelTypes extends NonModelTypesShape,
+  T,
+> = {
   [Prop in keyof T]: T[Prop] extends RefType<
     infer R extends RefTypeParamShape,
     any,
@@ -127,8 +144,10 @@ type ResolveRefsOfCustomType<NonModelTypes extends NonModelTypesShape, T> = {
     ? ResolveRef<NonModelTypes, R>
     : T[Prop];
 } extends infer Resolved
-  ? ExtractNullableFieldsToOptionalFields<Resolved> &
+  ? Intersection<
+      ExtractNullableFieldsToOptionalFields<Resolved>,
       ExtractNonNullableFieldsToRequiredFields<Resolved>
+    >
   : never;
 
 type ResolveRelationships<
@@ -197,9 +216,12 @@ type MarkModelsNonNullableFieldsRequired<Schema> = {
   >;
 };
 
-type Intersection<A, B, C, D> = A & B & C & D extends infer U
-  ? { [P in keyof U]: U[P] }
-  : never;
+type Intersection<
+  A = Record<never, never>,
+  B = Record<never, never>,
+  C = Record<never, never>,
+  D = Record<never, never>,
+> = A & B & C & D extends infer U ? { [P in keyof U]: U[P] } : never;
 
 // TODO: this should probably happen in InjectImplicitModelFields instead. Keeping here for now to reduce refactor
 // blast radius

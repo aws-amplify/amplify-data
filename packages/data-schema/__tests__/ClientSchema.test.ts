@@ -591,7 +591,7 @@ describe('custom operations', () => {
       functionRef: 'echoFunction';
       typeName: 'Query';
       returnType: {
-        resultContent: string | null;
+        resultContent?: string | null | undefined;
       } | null;
     };
 

@@ -491,7 +491,7 @@ bench('prod p50', () => {
       .authorization([a.allow.private('iam').to(['read']), a.allow.owner()]),
     // [Global authorization rule]
   }).authorization([a.allow.public()]);
-}).types([90218, 'instantiations']);
+}).types([91587, 'instantiations']);
 
 bench('prod p50 w/ client types', () => {
   const s = a
@@ -981,4 +981,4 @@ bench('prod p50 w/ client types', () => {
     .authorization([a.allow.public()]);
 
   type _ = ClientSchema<typeof s>;
-}).types([764275, 'instantiations']);
+}).types([885312, 'instantiations']);

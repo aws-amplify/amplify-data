@@ -149,6 +149,47 @@ type Subscription {
 }"
 `;
 
+exports[`CustomOperation transform dynamo schema Schema w model, custom query, mutation, and subscription and ref of custom type with array modifier 1`] = `
+"type PostCustomType 
+{
+  title: String
+}
+
+type Mutation {
+  listPosts: [PostCustomType] @function(name: "myFunc") @auth(rules: [{allow: public}])
+}
+
+type Query {
+  getLikedPost: [PostCustomType] @function(name: "myFunc") @auth(rules: [{allow: public}])
+}
+
+type Subscription {
+  onLikePost: PostCustomType @function(name: "myFunc") @auth(rules: [{allow: public}])
+}"
+`;
+
+exports[`CustomOperation transform dynamo schema Schema w model, custom query, mutation, and subscription and ref of model with array modifier 1`] = `
+"type Post @model @auth(rules: [{allow: public}])
+{
+  id: ID! @primaryKey
+  title: String
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
+}
+
+type Mutation {
+  listPosts: [Post] @function(name: "myFunc") @auth(rules: [{allow: public}])
+}
+
+type Query {
+  getLikedPost: [Post] @function(name: "myFunc") @auth(rules: [{allow: public}])
+}
+
+type Subscription {
+  onLikePost: Post @function(name: "myFunc") @auth(rules: [{allow: public}])
+}"
+`;
+
 exports[`CustomOperation transform dynamo schema handlers a.handler.custom a.handler.custom with auth and model ref works 1`] = `
 "type Post @model @auth(rules: [{allow: public}])
 {

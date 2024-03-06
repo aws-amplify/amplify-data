@@ -50,7 +50,9 @@ describe('ResolveSchema Mapped Type', () => {
         location: RefType<{
           link: 'Location';
           type: 'ref';
-          required: false;
+          valueRequired: false;
+          array: false;
+          arrayRequired: false;
           authorization: [];
         }> | null;
       };
@@ -84,7 +86,9 @@ describe('ResolveSchema Mapped Type', () => {
           {
             link: 'Location';
             type: 'ref';
-            required: true;
+            valueRequired: true;
+            array: false;
+            arrayRequired: false;
             authorization: [];
           },
           'required'
@@ -117,7 +121,9 @@ describe('ResolveSchema Mapped Type', () => {
         location: RefType<{
           link: 'Location';
           type: 'ref';
-          required: false;
+          valueRequired: false;
+          array: false;
+          arrayRequired: false;
           authorization: [];
         }> | null;
       };
@@ -145,7 +151,9 @@ describe('ResolveSchema Mapped Type', () => {
         privacy: RefType<{
           link: 'PrivacySetting';
           type: 'ref';
-          required: false;
+          valueRequired: false;
+          array: false;
+          arrayRequired: false;
           authorization: [];
         }> | null;
       };
@@ -172,7 +180,9 @@ describe('ResolveSchema Mapped Type', () => {
         privacy: RefType<{
           link: 'PrivacySetting';
           type: 'ref';
-          required: false;
+          valueRequired: false;
+          array: false;
+          arrayRequired: false;
           authorization: [];
         }> | null;
       };

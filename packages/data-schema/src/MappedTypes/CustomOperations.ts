@@ -5,7 +5,11 @@ import type {
   CustomOperationParamShape,
 } from '../CustomOperation';
 import type { ModelField } from '../ModelField';
-import { RefType, RefTypeParamShape } from '../RefType';
+import type { RefType, RefTypeParamShape } from '../RefType';
+import type {
+  ResolveRefsOfCustomType,
+  ResolveRefValueArrayTraits,
+} from './ResolveFieldProperties';
 
 /**
  * Creates meta types for custom operations from a schema.
@@ -20,7 +24,8 @@ export type ResolveCustomOperations<
       arguments: CustomOpArguments<CustomOpShapes<Schema>[OpName]>;
       returnType: CustomOpReturnType<
         CustomOpShapes<Schema>[OpName],
-        Bag<FullyResolvedSchema, NonModelTypes>
+        FullyResolvedSchema,
+        NonModelTypes
       >;
       functionRef: CustomOpShapes<Schema>[OpName]['functionRef'];
       typeName: CustomOpShapes<Schema>[OpName]['typeName'];
@@ -66,9 +71,10 @@ export type CustomOpArguments<Shape extends CustomOperationParamShape> = {
  */
 export type CustomOpReturnType<
   Shape extends CustomOperationParamShape,
-  Bag extends Record<string, unknown>,
+  FullyResolvedSchema extends Record<string, unknown>,
+  NonModelTypes extends NonModelTypesShape,
 > = Shape['returnType'] extends RefType<infer RefShape, any, any>
-  ? ResolveRef<RefShape, Bag>
+  ? ResolveRef<RefShape, FullyResolvedSchema, NonModelTypes>
   : Shape['returnType'] extends ModelField<infer R, any, any>
     ? R
     : never;
@@ -76,21 +82,24 @@ export type CustomOpReturnType<
 /**
  * `a.ref()` resolution specific to custom operations, for which `a.ref()`
  * can refer to a model, custom type, or enum.
+ *
+ * This utility is a duplication of ResolveRef (src/MappedTypes/ResolveFieldProperties.ts)
+ * with the addition that allows .ref() a model with custom operations.
  */
 export type ResolveRef<
   Shape extends RefTypeParamShape,
-  Bag extends Record<string, unknown>,
-> = Shape['link'] extends keyof Bag
-  ? Shape['required'] extends true
-    ? Bag[Shape['link']]
-    : Bag[Shape['link']] | null
-  : never;
-
-/**
- * Small utility to provided a merged view of models, custom types, and enums
- * from a schema and nonModel-types.
- */
-export type Bag<
   FullyResolvedSchema extends Record<string, unknown>,
   NonModelTypes extends NonModelTypesShape,
-> = FullyResolvedSchema & NonModelTypes['customTypes'] & NonModelTypes['enums'];
+  Link = Shape['link'],
+  RefValue = Link extends keyof FullyResolvedSchema
+    ? FullyResolvedSchema[Link]
+    : Link extends keyof NonModelTypes['enums']
+      ? NonModelTypes['enums'][Link]
+      : Link extends keyof NonModelTypes['customTypes']
+        ? ResolveRefsOfCustomType<
+            NonModelTypes,
+            NonModelTypes['customTypes'][Link]
+          >
+        : never,
+  Value = Shape['valueRequired'] extends true ? RefValue : RefValue | null,
+> = ResolveRefValueArrayTraits<Shape, Value>;
