@@ -290,13 +290,24 @@ function customOperationToGql(
   if (functionRef) {
     gqlHandlerContent = `@function(name: "${functionRef}") `;
   } else if (databaseType === 'sql' && handler && brand === 'inlineSql') {
-    gqlHandlerContent = `@sql(statement: "${getHandlerData(handler)}") `;
+    gqlHandlerContent = `@sql(statement: "${escapeGraphQlString(
+      String(getHandlerData(handler)),
+    )}") `;
   } else if (databaseType === 'sql' && handler && brand === 'sqlReference') {
     gqlHandlerContent = `@sql(reference: "${getHandlerData(handler)}") `;
   }
   const gqlField = `${callSignature}: ${returnTypeName} ${gqlHandlerContent}${authString}`;
 
   return { gqlField, models: implicitModels };
+}
+
+/**
+ * Escape a string that will be used inside of a graphql string.
+ * @param str The input string to be escaped
+ * @returns The string with special charactars escaped
+ */
+function escapeGraphQlString(str: string) {
+  return str.replace(/"/g, '\\"');
 }
 
 /**

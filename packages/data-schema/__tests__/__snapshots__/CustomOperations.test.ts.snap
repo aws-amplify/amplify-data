@@ -204,6 +204,17 @@ type Query {
 }"
 `;
 
+exports[`CustomOperation transform dynamo schema handlers a.handler.inlineSql escapes quotes 1`] = `
+"type GetPostDetailsReturnType 
+{
+  
+}
+
+type Query {
+  getPostDetails: GetPostDetailsReturnType @sql(statement: "SELECT * from TESTTABLE status = \\"active\\";") @auth(rules: [{allow: private}])
+}"
+`;
+
 exports[`CustomOperation transform dynamo schema handlers a.handler.inlineSql works 1`] = `
 {
   "functionSlots": [],

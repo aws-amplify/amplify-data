@@ -447,6 +447,24 @@ describe('CustomOperation transform', () => {
 
         expect(result).toMatchSnapshot();
       });
+
+      test('a.handler.inlineSql escapes quotes', () => {
+        const s = aSql.schema({
+          getPostDetails: a
+            .query()
+            .arguments({})
+            .handler(
+              a.handler.inlineSql('SELECT * from TESTTABLE status = "active";'),
+            )
+            .authorization([a.allow.private()])
+            .returns(a.customType({})),
+        });
+
+        const result = s.transform().schema;
+
+        expect(result).toMatchSnapshot();
+      });
+
       test('a.handler.sqlReference works', () => {
         const s = aSql.schema({
           getPostDetails: a
