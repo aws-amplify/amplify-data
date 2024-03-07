@@ -914,6 +914,11 @@ const ruleIsResourceAuth = (
   return data.strategy === 'resource';
 };
 
+/**
+ * Separates out lambda resource auth rules from remaining schema rules.
+ *
+ * @param authRules schema auth rules
+ */
 const extractFunctionSchemaAccess = (
   authRules: SchemaAuthorization<any, any, any>[],
 ): {
