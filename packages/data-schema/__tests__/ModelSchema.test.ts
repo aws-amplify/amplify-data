@@ -1,4 +1,5 @@
 import { expectTypeTestsToPassAsync } from 'jest-tsd';
+import type { FunctionSchemaAccess } from '@aws-amplify/data-schema-types';
 import { a } from '../index';
 
 // evaluates type defs in corresponding test-d.ts file
@@ -62,4 +63,118 @@ it('empty model auth inherits global auth', () => {
     .authorization([a.allow.owner()]);
 
   expect(schema.transform().schema).toMatchSnapshot();
+});
+
+type DefineFunction = FunctionSchemaAccess['resourceProvider'];
+
+describe('Lambda resource access', () => {
+  const defineFunctionStub = (config: any) =>
+    ({
+      provides: undefined,
+      getInstance: () => {},
+    }) as unknown as DefineFunction;
+
+  it('schema lambda access', () => {
+    const fn1 = defineFunctionStub({});
+
+    const schema = a
+      .schema({
+        Todo: a
+          .model({
+            content: a.string(),
+          })
+          .authorization([a.allow.public()]),
+      })
+      .authorization([a.allow.resource(fn1)]);
+
+    const { functionSchemaAccess } = schema.transform();
+    expect(functionSchemaAccess).toEqual([
+      {
+        resourceProvider: fn1,
+        actions: ['query', 'mutate', 'listen'],
+      },
+    ]);
+  });
+
+  it('schema lambda access single action', () => {
+    const fn1 = defineFunctionStub({});
+
+    const schema = a
+      .schema({
+        Todo: a
+          .model({
+            content: a.string(),
+          })
+          .authorization([a.allow.public()]),
+      })
+      .authorization([a.allow.resource(fn1).to(['query'])]);
+
+    const { functionSchemaAccess } = schema.transform();
+    expect(functionSchemaAccess).toEqual([
+      {
+        resourceProvider: fn1,
+        actions: ['query'],
+      },
+    ]);
+  });
+
+  it('schema lambda access - multiple fns', () => {
+    const fn1 = defineFunctionStub({});
+    const fn2 = defineFunctionStub({});
+    const fn3 = defineFunctionStub({});
+
+    const schema = a
+      .schema({
+        Todo: a
+          .model({
+            content: a.string(),
+          })
+          .authorization([a.allow.public()]),
+      })
+      .authorization([
+        a.allow.resource(fn1).to(['query']),
+        a.allow.resource(fn2).to(['mutate']),
+        a.allow.resource(fn3).to(['listen']),
+      ]);
+
+    const { functionSchemaAccess } = schema.transform();
+    expect(functionSchemaAccess).toEqual([
+      {
+        resourceProvider: fn1,
+        actions: ['query'],
+      },
+      {
+        resourceProvider: fn2,
+        actions: ['mutate'],
+      },
+      {
+        resourceProvider: fn3,
+        actions: ['listen'],
+      },
+    ]);
+  });
+
+  it('lambda access not valid on model or field', () => {
+    const fn1 = defineFunctionStub({});
+
+    const schema = a
+      .schema({
+        Todo: a
+          .model({
+            content: a.string().authorization([
+              // @ts-expect-error
+              a.allow.resource(fn1).to(['query']),
+            ]),
+          })
+          .authorization([
+            // @ts-expect-error
+            a.allow.resource(fn1).to(['query']),
+          ]),
+      })
+      .authorization([a.allow.public()]);
+
+    expect(() => schema.transform()).toThrow(
+      'Lambda resource authorization is only confiugrable at the schema level',
+    );
+  });
 });
