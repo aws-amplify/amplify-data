@@ -365,8 +365,7 @@ function mergeFieldObjects(
  */
 function validateAuth(authorization: Authorization<any, any, any>[] = []) {
   for (const entry of authorization) {
-    const rule: any = accessData(entry);
-    if (rule.strategy === 'resource') {
+    if (ruleIsResourceAuth(entry)) {
       throw new Error(
         'Lambda resource authorization is only confiugrable at the schema level',
       );
