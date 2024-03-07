@@ -66,7 +66,6 @@ it('empty model auth inherits global auth', () => {
 
 describe('Lambda resource access', () => {
   it('schema lambda access', () => {
-    // const myFunc = defineFuntion({});
     const myFunc = () => {};
 
     const schema = a
@@ -77,7 +76,9 @@ describe('Lambda resource access', () => {
           })
           .authorization([a.allow.public()]),
       })
-      .authorization([a.allow.resource(myFunc)]);
+      // asserting `any` here and below, so that we don't have to take a dep
+      // on @aws-amplify/backend just to run this test.
+      .authorization([a.allow.resource(myFunc as any)]);
 
     const { functionSchemaAccess } = schema.transform();
     expect(functionSchemaAccess).toEqual([
@@ -89,7 +90,6 @@ describe('Lambda resource access', () => {
   });
 
   it('schema lambda access single action', () => {
-    // const myFunc = defineFuntion({});
     const myFunc = () => {};
 
     const schema = a
@@ -100,7 +100,7 @@ describe('Lambda resource access', () => {
           })
           .authorization([a.allow.public()]),
       })
-      .authorization([a.allow.resource(myFunc).to(['query'])]);
+      .authorization([a.allow.resource(myFunc as any).to(['query'])]);
 
     const { functionSchemaAccess } = schema.transform();
     expect(functionSchemaAccess).toEqual([
@@ -112,7 +112,6 @@ describe('Lambda resource access', () => {
   });
 
   it('lambda access not valid on model or field', () => {
-    // const myFunc = defineFuntion({});
     const myFunc = () => {};
 
     const schema = a
@@ -122,10 +121,10 @@ describe('Lambda resource access', () => {
             content: a
               .string()
               // @ts-expect-error
-              .authorization([a.allow.resource(myFunc).to(['query'])]),
+              .authorization([a.allow.resource(myFunc as any).to(['query'])]),
           })
           // @ts-expect-error
-          .authorization([a.allow.resource(myFunc).to(['query'])]),
+          .authorization([a.allow.resource(myFunc as any).to(['query'])]),
       })
       .authorization([a.allow.public()]);
 

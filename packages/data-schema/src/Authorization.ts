@@ -1,4 +1,7 @@
-import type { UnionToIntersection } from '@aws-amplify/data-schema-types';
+import type {
+  UnionToIntersection,
+  FunctionSchemaAccess,
+} from '@aws-amplify/data-schema-types';
 
 const __data = Symbol('data');
 
@@ -93,6 +96,8 @@ export type SchemaAuthorization<
 export type ResourceAuthorization = {
   [__data]: ResourceAuthorizationData;
 };
+
+type DefineFunction = FunctionSchemaAccess['resourceProvider'];
 
 export type ResourceAuthorizationData = {
   strategy: 'resource';
@@ -449,8 +454,6 @@ export const allow = {
     });
   },
 } as const;
-
-type DefineFunction = () => unknown;
 
 function resourceTo<SELF extends ResourceAuthorization>(
   this: SELF,
