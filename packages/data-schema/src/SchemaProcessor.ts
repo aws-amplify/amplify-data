@@ -14,11 +14,18 @@ import {
 } from './ModelRelationalField';
 import type { ModelType, InternalModel } from './ModelType';
 import type { InternalModelIndexType } from './ModelIndex';
-import { Authorization, accessData } from './Authorization';
+import {
+  type Authorization,
+  type ResourceAuthorization,
+  type SchemaAuthorization,
+  accessData,
+  accessSchemaData,
+} from './Authorization';
 import {
   DerivedApiDefinition,
   JsResolver,
   JsResolverEntry,
+  FunctionSchemaAccess,
 } from '@aws-amplify/data-schema-types';
 import type { InternalRef, RefType } from './RefType';
 import type { EnumType } from './EnumType';
@@ -349,6 +356,22 @@ function mergeFieldObjects(
     if (fields) addFields(result, fields);
   }
   return result;
+}
+
+/**
+ * Throws if resource/lambda auth is configured at the model or field level
+ *
+ * @param authorization A list of authorization rules.
+ */
+function validateAuth(authorization: Authorization<any, any, any>[] = []) {
+  for (const entry of authorization) {
+    const rule: any = accessData(entry);
+    if (rule.strategy === 'resource') {
+      throw new Error(
+        'Lambda resource authorization is only confiugrable at the schema level',
+      );
+    }
+  }
 }
 
 /**
@@ -715,9 +738,10 @@ function processFieldLevelAuthRules(
   } = {};
 
   for (const [fieldName, fieldDef] of Object.entries(fields)) {
-    const { authString, authFields: fieldAuthField } = calculateAuth(
-      (fieldDef as InternalField)?.data?.authorization || [],
-    );
+    const fieldAuth = (fieldDef as InternalField)?.data?.authorization || [];
+
+    validateAuth(fieldAuth);
+    const { authString, authFields: fieldAuthField } = calculateAuth(fieldAuth);
 
     if (authString) fieldLevelAuthRules[fieldName] = authString;
     if (fieldAuthField) {
@@ -883,9 +907,47 @@ const transformedSecondaryIndexesForModel = (
   );
 };
 
+const ruleIsResourceAuth = (
+  authRule: SchemaAuthorization<any, any, any>,
+): authRule is ResourceAuthorization => {
+  const data = accessSchemaData(authRule);
+  return data.strategy === 'resource';
+};
+
+const extractFunctionSchemaAccess = (
+  authRules: SchemaAuthorization<any, any, any>[],
+): {
+  schemaAuth: Authorization<any, any, any>[];
+  functionSchemaAccess: FunctionSchemaAccess[];
+} => {
+  const schemaAuth: Authorization<any, any, any>[] = [];
+  const functionSchemaAccess: FunctionSchemaAccess[] = [];
+  const defaultActions: ['query', 'mutate', 'listen'] = [
+    'query',
+    'mutate',
+    'listen',
+  ];
+
+  for (const rule of authRules) {
+    if (ruleIsResourceAuth(rule)) {
+      const ruleData = accessSchemaData(rule);
+
+      const fnAccess = {
+        resourceProvider: ruleData.resource,
+        actions: ruleData.operations || defaultActions,
+      };
+      functionSchemaAccess.push(fnAccess);
+    } else {
+      schemaAuth.push(rule);
+    }
+  }
+
+  return { schemaAuth, functionSchemaAccess };
+};
+
 const schemaPreprocessor = (
   schema: InternalSchema,
-): { schema: string; jsFunctions: any[] } => {
+): { schema: string; jsFunctions: any[]; functionSchemaAccess: any[] } => {
   const gqlModels: string[] = [];
 
   const customQueries = [];
@@ -897,11 +959,16 @@ const schemaPreprocessor = (
   const fkFields = allImpliedFKs(schema);
   const topLevelTypes = Object.entries(schema.data.types);
 
+  const { schemaAuth, functionSchemaAccess } = extractFunctionSchemaAccess(
+    schema.data.authorization,
+  );
+
   for (const [typeName, typeDef] of topLevelTypes) {
+    validateAuth(typeDef.data?.authorization);
     const mostRelevantAuthRules: Authorization<any, any, any>[] =
       typeDef.data?.authorization?.length > 0
         ? typeDef.data.authorization
-        : schema.data.authorization;
+        : schemaAuth;
 
     if (!isInternalModel(typeDef)) {
       if (isEnumType(typeDef)) {
@@ -1040,7 +1107,7 @@ const schemaPreprocessor = (
 
   const processedSchema = gqlModels.join('\n\n');
 
-  return { schema: processedSchema, jsFunctions };
+  return { schema: processedSchema, jsFunctions, functionSchemaAccess };
 };
 
 function validateCustomOperations(
@@ -1229,7 +1296,9 @@ function generateCustomOperationTypes({
 export function processSchema(arg: {
   schema: InternalSchema;
 }): DerivedApiDefinition {
-  const { schema, jsFunctions } = schemaPreprocessor(arg.schema);
+  const { schema, jsFunctions, functionSchemaAccess } = schemaPreprocessor(
+    arg.schema,
+  );
 
-  return { schema, functionSlots: [], jsFunctions };
+  return { schema, functionSlots: [], jsFunctions, functionSchemaAccess };
 }

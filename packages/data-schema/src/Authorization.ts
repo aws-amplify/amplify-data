@@ -73,6 +73,33 @@ export const Operations = [
 ] as const;
 export type Operation = (typeof Operations)[number];
 
+/**
+ * The operations that can be performed against an API by a Lambda function.
+ */
+export const ResourceOperations = ['query', 'mutate', 'listen'] as const;
+export type ResourceOperation = (typeof ResourceOperations)[number];
+
+/**
+ * Super-set of regular auth type; includes schema-level resource access configuration
+ */
+export type SchemaAuthorization<
+  AuthStrategy extends Strategy,
+  AuthField extends string | undefined,
+  AuthFieldPlurality extends boolean,
+> =
+  | Authorization<AuthStrategy, AuthField, AuthFieldPlurality>
+  | ResourceAuthorization;
+
+export type ResourceAuthorization = {
+  [__data]: ResourceAuthorizationData;
+};
+
+export type ResourceAuthorizationData = {
+  strategy: 'resource';
+  resource: DefineFunction;
+  operations?: ResourceOperation[];
+};
+
 export type Authorization<
   AuthStrategy extends Strategy,
   AuthField extends string | undefined,
@@ -415,7 +442,36 @@ export const allow = {
       },
     );
   },
+
+  resource(fn: DefineFunction) {
+    return resourceAuthData(fn, {
+      to: resourceTo,
+    });
+  },
 } as const;
+
+type DefineFunction = () => unknown;
+
+function resourceTo<SELF extends ResourceAuthorization>(
+  this: SELF,
+  operations: ResourceOperation[],
+) {
+  (this as any)[__data].operations = operations;
+  return omit(this, 'to');
+}
+
+function resourceAuthData<Builders extends object = object>(
+  resource: DefineFunction,
+  builderMethods: Builders,
+): ResourceAuthorization & Builders {
+  return {
+    [__data]: {
+      strategy: 'resource',
+      resource,
+    } as any,
+    ...builderMethods,
+  };
+}
 
 /**
  * Turns the type from a list of `Authorization` rules like this:
@@ -445,10 +501,10 @@ export type ImpliedAuthField<T extends Authorization<any, any, any>> =
     ? Field extends undefined
       ? never
       : Field extends string
-      ? isMulti extends true
-        ? { [K in Field]?: string[] }
-        : { [K in Field]?: string }
-      : never
+        ? isMulti extends true
+          ? { [K in Field]?: string[] }
+          : { [K in Field]?: string }
+        : never
     : never;
 
 /**
@@ -480,3 +536,8 @@ export type ImpliedAuthFields<T extends Authorization<any, any, any>> =
 export const accessData = <T extends Authorization<any, any, any>>(
   authorization: T,
 ) => authorization[__data];
+
+// TODO: delete when we make resource auth available at each level in the schema (model, field)
+export const accessSchemaData = <T extends SchemaAuthorization<any, any, any>>(
+  authorization: T,
+): T[typeof __data] => authorization[__data];

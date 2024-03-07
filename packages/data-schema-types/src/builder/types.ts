@@ -18,6 +18,7 @@ export interface DerivedApiDefinition {
    */
   readonly functionSlots: any[];
   readonly jsFunctions: JsResolver[];
+  readonly functionSchemaAccess: FunctionSchemaAccess[];
 }
 
 export type DerivedModelSchema = {
@@ -38,4 +39,9 @@ export type JsResolver = {
     dataSource: string;
     entry: JsResolverEntry;
   }[];
+};
+
+export type FunctionSchemaAccess = {
+  resourceProvider: () => unknown;
+  actions: ('query' | 'mutate' | 'listen')[];
 };

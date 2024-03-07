@@ -63,3 +63,74 @@ it('empty model auth inherits global auth', () => {
 
   expect(schema.transform().schema).toMatchSnapshot();
 });
+
+describe('Lambda resource access', () => {
+  it('schema lambda access', () => {
+    // const myFunc = defineFuntion({});
+    const myFunc = () => {};
+
+    const schema = a
+      .schema({
+        Todo: a
+          .model({
+            content: a.string(),
+          })
+          .authorization([a.allow.public()]),
+      })
+      .authorization([a.allow.resource(myFunc)]);
+
+    const { functionSchemaAccess } = schema.transform();
+    expect(functionSchemaAccess).toEqual([
+      {
+        resourceProvider: myFunc,
+        actions: ['query', 'mutate', 'listen'],
+      },
+    ]);
+  });
+
+  it('schema lambda access single action', () => {
+    // const myFunc = defineFuntion({});
+    const myFunc = () => {};
+
+    const schema = a
+      .schema({
+        Todo: a
+          .model({
+            content: a.string(),
+          })
+          .authorization([a.allow.public()]),
+      })
+      .authorization([a.allow.resource(myFunc).to(['query'])]);
+
+    const { functionSchemaAccess } = schema.transform();
+    expect(functionSchemaAccess).toEqual([
+      {
+        resourceProvider: myFunc,
+        actions: ['query'],
+      },
+    ]);
+  });
+
+  it('lambda access not valid on model or field', () => {
+    // const myFunc = defineFuntion({});
+    const myFunc = () => {};
+
+    const schema = a
+      .schema({
+        Todo: a
+          .model({
+            content: a
+              .string()
+              // @ts-expect-error
+              .authorization([a.allow.resource(myFunc).to(['query'])]),
+          })
+          // @ts-expect-error
+          .authorization([a.allow.resource(myFunc).to(['query'])]),
+      })
+      .authorization([a.allow.public()]);
+
+    expect(() => schema.transform()).toThrow(
+      'Lambda resource authorization is only confiugrable at the schema level',
+    );
+  });
+});
