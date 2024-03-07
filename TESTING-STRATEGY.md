@@ -28,8 +28,8 @@ We will accumulate all Defined Behavior Testing in the `integration-tests` packa
       Everything in this folder falls into the "Defined Behavior" category. Changing or removing tests in this folder generally requires a major version bump and must be approved by a PM or admin.
       1. `1-patterns` &mdash;
          Tests showing examples the core coding patterns and "best practices" we would recommend in documentation and Github issues. Mostly hand authored, with the exception of API documentation generation/extraction. Protected by PM, SDM, and SDE Admin approval. Treated like design. Tests look as much like customer app code as possible. In general, seek _abundant_ approval for changes here. When possible, submit tests as failing, skipped tests _first_. Implementation PR's that then un-skip these tests can be less rigorous.
-      2. `2-common-use` &mdash;
-         Tests showing commonly expected usage, edge cases, and error handling that doesn't fall into normal error handling "patterns". Hand-authored in general. Should ideally look like customer app code. Snippets from these tests may be used in GH issue responses or referred to directly when answering questions around defined behavioral edge cases. Protected by PM + SDE Admin approval.
+      2. `2-expected-use` &mdash;
+         Tests showing expected usage variations, edge cases, and error handling that doesn't fall into normal error handling "patterns". Hand-authored in general. Should ideally look like customer app code. Snippets from these tests may be used in GH issue responses or referred to directly when answering questions around defined behavioral edge cases. Protected by PM + SDE Admin approval.
       3. `3-exhaustive` &mdash;
          The extrapolation of all defined behavioral space within reason. Could be hand authored. But, in general, these tests could and should be programmatically generated according to input dimensions and combinations thereof where cross-dimensional interactions are expected. Protected by SDE Admin.
    2. `internal` &mdash;
