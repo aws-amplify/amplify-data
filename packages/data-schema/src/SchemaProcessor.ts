@@ -952,7 +952,11 @@ const extractFunctionSchemaAccess = (
 
 const schemaPreprocessor = (
   schema: InternalSchema,
-): { schema: string; jsFunctions: any[]; functionSchemaAccess: any[] } => {
+): {
+  schema: string;
+  jsFunctions: JsResolver[];
+  functionSchemaAccess: FunctionSchemaAccess[];
+} => {
   const gqlModels: string[] = [];
 
   const customQueries = [];
