@@ -1,8 +1,12 @@
 import type { Prettify, Equal, Expect } from '@aws-amplify/data-schema-types';
 import { a } from '../../index';
-import { ResolveFieldProperties } from '../../src/MappedTypes/ResolveFieldProperties';
+import type {
+  CreateImplicitModelsFromRelations,
+  ResolveFieldProperties,
+} from '../../src/MappedTypes/ResolveFieldProperties';
 import type { ExtractNonModelTypes } from '../../src/MappedTypes/ExtractNonModelTypes';
-import { Json } from '../../src/ModelField';
+import type { Json } from '../../src/ModelField';
+import type { ResolveSchema } from '../../src/MappedTypes/ResolveSchema';
 
 describe('ResolveFieldProperties Mapped Type', () => {
   test('Basic schema', () => {
@@ -15,7 +19,11 @@ describe('ResolveFieldProperties Mapped Type', () => {
 
     type Schema = typeof s;
     type Resolved = Prettify<
-      ResolveFieldProperties<Schema, ExtractNonModelTypes<Schema>>
+      ResolveFieldProperties<
+        Schema,
+        ExtractNonModelTypes<Schema>,
+        CreateImplicitModelsFromRelations<ResolveSchema<Schema>>
+      >
     >;
 
     type Expected = {
@@ -50,7 +58,11 @@ describe('ResolveFieldProperties Mapped Type', () => {
     type Schema = typeof s;
 
     type Resolved = Prettify<
-      ResolveFieldProperties<Schema, ExtractNonModelTypes<Schema>>['Post']
+      ResolveFieldProperties<
+        Schema,
+        ExtractNonModelTypes<Schema>,
+        CreateImplicitModelsFromRelations<ResolveSchema<Schema>>
+      >['Post']
     >;
 
     type Expected = {
@@ -91,7 +103,11 @@ describe('ResolveFieldProperties Mapped Type', () => {
     type Schema = typeof s;
 
     type Resolved = Prettify<
-      ResolveFieldProperties<Schema, ExtractNonModelTypes<Schema>>['Post']
+      ResolveFieldProperties<
+        Schema,
+        ExtractNonModelTypes<Schema>,
+        CreateImplicitModelsFromRelations<ResolveSchema<Schema>>
+      >['Post']
     >;
 
     type Expected = {
@@ -137,7 +153,11 @@ describe('ResolveFieldProperties Mapped Type', () => {
     type Schema = typeof s;
 
     type Resolved = Prettify<
-      ResolveFieldProperties<Schema, ExtractNonModelTypes<Schema>>['Post']
+      ResolveFieldProperties<
+        Schema,
+        ExtractNonModelTypes<Schema>,
+        CreateImplicitModelsFromRelations<ResolveSchema<Schema>>
+      >['Post']
     >;
 
     type Expected = {
@@ -180,7 +200,11 @@ describe('ResolveFieldProperties Mapped Type', () => {
     type Schema = typeof s;
 
     type Resolved = Prettify<
-      ResolveFieldProperties<Schema, ExtractNonModelTypes<Schema>>['Post']
+      ResolveFieldProperties<
+        Schema,
+        ExtractNonModelTypes<Schema>,
+        CreateImplicitModelsFromRelations<ResolveSchema<Schema>>
+      >['Post']
     >;
 
     type Expected = {
@@ -216,7 +240,11 @@ describe('ResolveFieldProperties Mapped Type', () => {
     type Schema = typeof s;
 
     type Resolved = Prettify<
-      ResolveFieldProperties<Schema, ExtractNonModelTypes<Schema>>['Post']
+      ResolveFieldProperties<
+        Schema,
+        ExtractNonModelTypes<Schema>,
+        CreateImplicitModelsFromRelations<ResolveSchema<Schema>>
+      >['Post']
     >;
 
     type Expected = {
@@ -256,7 +284,11 @@ describe('ResolveFieldProperties Mapped Type', () => {
     type Schema = typeof s;
 
     type Resolved = Prettify<
-      ResolveFieldProperties<Schema, ExtractNonModelTypes<Schema>>['Post']
+      ResolveFieldProperties<
+        Schema,
+        ExtractNonModelTypes<Schema>,
+        CreateImplicitModelsFromRelations<ResolveSchema<Schema>>
+      >['Post']
     >;
 
     type Expected = {
@@ -306,7 +338,11 @@ describe('ResolveFieldProperties Mapped Type', () => {
     type Schema = typeof s;
 
     type Resolved = Prettify<
-      ResolveFieldProperties<Schema, ExtractNonModelTypes<Schema>>['Post']
+      ResolveFieldProperties<
+        Schema,
+        ExtractNonModelTypes<Schema>,
+        CreateImplicitModelsFromRelations<ResolveSchema<Schema>>
+      >['Post']
     >;
 
     type Expected = {
