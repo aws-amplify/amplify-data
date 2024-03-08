@@ -15,9 +15,12 @@ import type {
   CustomOperation,
   CustomOperationParamShape,
   InternalCustom,
+  MutationCustomOperation,
+  QueryCustomOperation,
+  SubscriptionCustomOperation,
 } from './CustomOperation';
 import { processSchema } from './SchemaProcessor';
-import { Authorization } from './Authorization';
+import { SchemaAuthorization } from './Authorization';
 
 type SchemaContent =
   | ModelType<ModelTypeParamShape, any>
@@ -67,7 +70,7 @@ export type SchemaConfig<
 
 export type ModelSchemaParamShape = {
   types: ModelSchemaContents;
-  authorization: Authorization<any, any, any>[];
+  authorization: SchemaAuthorization<any, any, any>[];
   configuration: SchemaConfig<any, any>;
 };
 
@@ -78,7 +81,7 @@ export type SQLModelSchemaParamShape = ModelSchemaParamShape & {
 export type InternalSchema = {
   data: {
     types: InternalSchemaModels;
-    authorization: Authorization<any, any, any>[];
+    authorization: SchemaAuthorization<any, any, any>[];
   };
 };
 
@@ -87,7 +90,7 @@ export type ModelSchema<
   UsedMethods extends 'authorization' = never,
 > = Omit<
   {
-    authorization: <AuthRules extends Authorization<any, any, any>>(
+    authorization: <AuthRules extends SchemaAuthorization<any, any, any>>(
       auth: AuthRules[],
     ) => ModelSchema<
       SetTypeSubArg<T, 'authorization', AuthRules[]>,
@@ -105,15 +108,30 @@ export type ModelSchema<
   transform: () => DerivedApiDefinition;
 };
 
-export type SqlModelSchema<
+type SQLModelSchemaFunctions =
+  | 'setSqlStatementFolderPath'
+  | 'addQueries'
+  | 'addMutations'
+  | 'addSubscriptions';
+
+export type SQLModelSchema<
   T extends SQLModelSchemaParamShape,
-  UsedMethods extends 'authorization' | 'setSqlStatementFolderPath' = never,
-> = ModelSchema<T, Exclude<UsedMethods, 'setSqlStatementFolderPath'>> &
+  UsedMethods extends 'authorization' | SQLModelSchemaFunctions = never,
+> = ModelSchema<T, Exclude<UsedMethods, SQLModelSchemaFunctions>> &
   Omit<
     {
       setSqlStatementFolderPath: (
         path: string,
-      ) => SqlModelSchema<T, UsedMethods | 'setSqlStatementFolderPath'>;
+      ) => SQLModelSchema<T, UsedMethods | 'setSqlStatementFolderPath'>;
+      addQueries: (
+        types: Record<string, QueryCustomOperation>,
+      ) => SQLModelSchema<T, UsedMethods | 'addQueries'>;
+      addMutations: (
+        types: Record<string, MutationCustomOperation>,
+      ) => SQLModelSchema<T, UsedMethods | 'addMutations'>;
+      addSubscriptions: (
+        types: Record<string, SubscriptionCustomOperation>,
+      ) => SQLModelSchema<T, UsedMethods | 'addSubscriptions'>;
     },
     UsedMethods
   >;
@@ -158,12 +176,27 @@ export const isModelSchema = (
 
 function _sqlSchemaExtension<T extends SQLModelSchemaParamShape>(
   schema: ModelSchema<T>,
-): SqlModelSchema<T> {
+): SQLModelSchema<T> {
   return {
     ...schema,
     setSqlStatementFolderPath(path: string): any {
       this.data.setSqlStatementFolderPath = path;
       const { setSqlStatementFolderPath: _, ...rest } = this;
+      return rest;
+    },
+    addQueries(types: Record<string, QueryCustomOperation>): any {
+      this.data.types = { ...this.data.types, ...types };
+      const { addQueries: _, ...rest } = this;
+      return rest;
+    },
+    addMutations(types: Record<string, MutationCustomOperation>): any {
+      this.data.types = { ...this.data.types, ...types };
+      const { addMutations: _, ...rest } = this;
+      return rest;
+    },
+    addSubscriptions(types: Record<string, SubscriptionCustomOperation>): any {
+      this.data.types = { ...this.data.types, ...types };
+      const { addSubscriptions: _, ...rest } = this;
       return rest;
     },
   };
@@ -199,7 +232,7 @@ type SchemaReturnType<
   Types extends ModelSchemaContents,
 > = DE extends 'dynamodb'
   ? ModelSchema<{ types: Types; authorization: []; configuration: any }>
-  : SqlModelSchema<{ types: Types; authorization: []; configuration: any }>;
+  : SQLModelSchema<{ types: Types; authorization: []; configuration: any }>;
 
 function bindConfigToSchema<DE extends DatasourceEngine>(
   config: SchemaConfig<DE, DatasourceConfig<DE>>,

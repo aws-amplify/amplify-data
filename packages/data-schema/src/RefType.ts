@@ -8,14 +8,18 @@ const brandName = 'ref';
 type RefTypeData = {
   type: 'ref';
   link: string;
-  required: boolean;
+  valueRequired: boolean;
+  array: boolean;
+  arrayRequired: boolean;
   authorization: Authorization<any, any, any>[];
 };
 
 export type RefTypeParamShape = {
   type: 'ref';
   link: string;
-  required: boolean;
+  valueRequired: boolean;
+  array: boolean;
+  arrayRequired: boolean;
   authorization: Authorization<any, any, any>[];
 };
 
@@ -30,7 +34,21 @@ export type RefType<
     /**
      * Marks a field as required.
      */
-    required(): RefType<SetTypeSubArg<T, 'required', true>, K | 'required'>;
+    required(): RefType<
+      SetTypeSubArg<
+        T,
+        T['array'] extends true ? 'arrayRequired' : 'valueRequired',
+        true
+      >,
+      K | 'required'
+    >;
+    /**
+     * Marks a field as an array of the specified ref type.
+     */
+    array(): RefType<
+      SetTypeSubArg<T, 'array', true>,
+      Exclude<K, 'required'> | 'array'
+    >;
     /**
      * Configures field-level authorization rules. Pass in an array of authorizations `(a.allow.____)` to mix and match
      * multiple authorization rules for this field.
@@ -63,13 +81,24 @@ function _ref<T extends RefTypeParamShape>(link: T['link']) {
   const data: RefTypeData = {
     type: 'ref',
     link,
-    required: false,
+    valueRequired: false,
+    array: false,
+    arrayRequired: false,
     authorization: [],
   };
 
   const builder: RefType<T> = brandedBuilder({
     required() {
-      data.required = true;
+      if (data.array) {
+        data.arrayRequired = true;
+      } else {
+        data.valueRequired = true;
+      }
+
+      return this;
+    },
+    array() {
+      data.array = true;
 
       return this;
     },
@@ -86,7 +115,9 @@ function _ref<T extends RefTypeParamShape>(link: T['link']) {
 type RefTypeArgFactory<Link extends string> = {
   type: 'ref';
   link: Link;
-  required: false;
+  valueRequired: false;
+  array: false;
+  arrayRequired: false;
   authorization: [];
 };
 
