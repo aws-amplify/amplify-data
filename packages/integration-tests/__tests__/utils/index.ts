@@ -1,21 +1,12 @@
+import { print } from 'graphql';
 import { generateModels } from '@aws-amplify/graphql-generator';
 import { generateClient as actualGenerateClient } from 'aws-amplify/api';
 import { GraphQLAPI } from '@aws-amplify/api-graphql'; // eslint-disable-line
+import { Observable, Subscriber } from 'rxjs'; // eslint-disable-line
 
 const graphqlspy = jest.spyOn(GraphQLAPI as any, 'graphql');
 const _graphqlspy = jest.spyOn(GraphQLAPI as any, '_graphql');
-
-// jest.mock('@aws-amplify/api-graphql', () => {
-//   const apiGraphql = jest.requireActual('@aws-amplify/api-graphql/internals');
-//   console.log({ apiGraphql });
-//   // const gql = apiGraphql.InternalGraphQLAPI._graphql;
-//   // apiGraphql.InternalGraphQLAPI._originalGraphql = gql;
-//   // apiGraphql.InternalGraphQLAPI._graphql = (...args: any) => {
-//   //   console.log('InternalGraphQLAPI._graphql proxy');
-//   //   return apiGraphql.InternalGraphQLAPI._originalGraphql(...args);
-//   // };
-//   return apiGraphql;
-// });
+const _graphqlsubspy = jest.spyOn(GraphQLAPI as any, '_graphqlSubscribe');
 
 /**
  * @param value Value to be returned. Will be `awaited`, and can
@@ -76,6 +67,8 @@ export function mockedGenerateClient(
     | (() => Promise<GraphQLResult>)
   )[],
 ) {
+  const subs = [] as Subscriber<any>[];
+
   function generateClient<T extends Record<any, any>>() {
     const client = actualGenerateClient<T>();
     _graphqlspy.mockImplementation(async () => {
@@ -86,12 +79,19 @@ export function mockedGenerateClient(
         return result;
       }
     });
+    _graphqlsubspy.mockImplementation(() => {
+      return new Observable((subscriber) => {
+        subs.push(subscriber);
+      });
+    });
     return client;
   }
 
   return {
     spy: graphqlspy,
     innerSpy: _graphqlspy,
+    subSpy: _graphqlsubspy,
+    subs,
     generateClient,
   };
 }
@@ -110,6 +110,20 @@ export function optionsAndHeaders(spy: jest.SpyInstance) {
 }
 
 /**
+ * Returns calls to a `.graphql` spy minus the Amplify context object.
+ *
+ * @param spy `spy` returned from `mockGeneratedClient`
+ * @returns
+ */
+export function subOptionsAndHeaders(spy: jest.SpyInstance) {
+  return spy.mock.calls.map((call: any) => {
+    const [amplify, options, additionalHeaders] = call;
+    options.query = print(options.query);
+    return [options, additionalHeaders];
+  });
+}
+
+/**
  * Very shallow mock of a `useState` hook. Pretty much just deep enough to demonstrate
  * how our modeling works with React hooks.
  *
@@ -117,5 +131,10 @@ export function optionsAndHeaders(spy: jest.SpyInstance) {
  * @returns
  */
 export function useState<T>(init: T) {
-  return [init as T, (newValue: T) => {}] as const;
+  const setter = jest.fn<any, [T]>();
+  return [init as T, setter] as const;
+}
+
+export async function pause(ms: number) {
+  return new Promise((unsleep) => setTimeout(unsleep, ms));
 }

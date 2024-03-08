@@ -1,53 +1,11 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`auth rules basic owner 1`] = `
-"type Model @model @auth(rules: [{allow: owner, ownerField: "owner"}])
-{
-  id: ID! @primaryKey
-  field: String
-  owner: String
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
-}"
-`;
-
-exports[`auth rules owner in field 1`] = `
-"type Model @model @auth(rules: [{allow: owner, ownerField: "field"}])
-{
-  id: ID! @primaryKey
-  field: String
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
-}"
-`;
-
-exports[`auth rules owner in field with actions and userpool 1`] = `
-"type Model @model @auth(rules: [{allow: owner, provider: userPools, operations: [create, list], ownerField: "owner"}])
-{
-  id: ID! @primaryKey
-  field: String
-  owner: String
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
-}"
-`;
-
 exports[`auth rules owner() 1`] = `
 "type Model @model @auth(rules: [{allow: owner, ownerField: "owner"}])
 {
   id: ID! @primaryKey
   field: String
   owner: String
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
-}"
-`;
-
-exports[`auth rules owner().inField 1`] = `
-"type Model @model @auth(rules: [{allow: owner, ownerField: "field"}])
-{
-  id: ID! @primaryKey
-  field: String
   createdAt: AWSDateTime!
   updatedAt: AWSDateTime!
 }"
