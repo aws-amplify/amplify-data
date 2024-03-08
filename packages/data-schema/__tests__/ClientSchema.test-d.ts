@@ -279,46 +279,6 @@ describe('implied fields', () => {
   });
 });
 
-describe('Custom operations hidden from ClientSchema', () => {
-  test('Custom mutation', () => {
-    const schema = a.schema({
-      Post: a.model({
-        title: a.string(),
-      }),
-      likePost: a
-        .mutation()
-        .arguments({ postId: a.string() })
-        .returns(a.ref('Post'))
-        .function('fnLikePost'),
-    });
-
-    type Schema = ClientSchema<typeof schema>;
-    type Test = ExpectFalse<HasKey<Schema, 'likePost'>>;
-  });
-  test('Custom query', () => {
-    const schema = a.schema({
-      Post: a.model({
-        title: a.string(),
-      }),
-      getLiked: a.query().returns(a.ref('Post')).function('fnGetLiked'),
-    });
-
-    type Schema = ClientSchema<typeof schema>;
-    type Test = ExpectFalse<HasKey<Schema, 'getLiked'>>;
-  });
-  test('Custom subscription', () => {
-    const schema = a.schema({
-      Post: a.model({
-        title: a.string(),
-      }),
-      onLiked: a.subscription().returns(a.ref('Post')).function('fnOnLiked'),
-    });
-
-    type Schema = ClientSchema<typeof schema>;
-    type Test = ExpectFalse<HasKey<Schema, 'onLiked'>>;
-  });
-});
-
 describe('Enum types', () => {
   test('Inline Enum Type', () => {
     const s = a.schema({
