@@ -57,8 +57,7 @@ exports[`Subscribe to real-time events set up a real-time list query 2`] = `
     createdAt
     updatedAt
   }
-}
-",
+}",
       "variables": {},
     },
     {},
@@ -77,8 +76,7 @@ exports[`Subscribe to real-time events set up a real-time list query 2`] = `
     createdAt
     updatedAt
   }
-}
-",
+}",
       "variables": {},
     },
     {},
@@ -97,8 +95,7 @@ exports[`Subscribe to real-time events set up a real-time list query 2`] = `
     createdAt
     updatedAt
   }
-}
-",
+}",
       "variables": {},
     },
     {},

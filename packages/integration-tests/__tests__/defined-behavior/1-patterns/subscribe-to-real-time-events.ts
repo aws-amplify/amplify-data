@@ -78,7 +78,7 @@ describe('Subscribe to real-time events', () => {
 
     // #region assertions
     // console.log('subs', subs);
-    subs[0].next({
+    subs.onCreateTodo.next({
       data: {
         onCreateTodo: {
           ...sampleTodo,
@@ -89,7 +89,7 @@ describe('Subscribe to real-time events', () => {
 
     await pause(1);
 
-    subs[1].next({
+    subs.onUpdateTodo.next({
       data: {
         onUpdateTodo: {
           ...sampleTodo,
@@ -100,7 +100,7 @@ describe('Subscribe to real-time events', () => {
 
     await pause(1);
 
-    subs[2].next({
+    subs.onDeleteTodo.next({
       data: {
         onDeleteTodo: {
           ...sampleTodo,

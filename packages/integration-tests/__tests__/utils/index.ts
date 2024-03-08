@@ -67,7 +67,7 @@ export function mockedGenerateClient(
     | (() => Promise<GraphQLResult>)
   )[],
 ) {
-  const subs = [] as Subscriber<any>[];
+  const subs = {} as Record<string, Subscriber<any>>;
 
   function generateClient<T extends Record<any, any>>() {
     const client = actualGenerateClient<T>();
@@ -79,9 +79,12 @@ export function mockedGenerateClient(
         return result;
       }
     });
-    _graphqlsubspy.mockImplementation(() => {
+    _graphqlsubspy.mockImplementation((amplify: any, options: any) => {
+      const graphql = print(options.query);
+      const operationMatch = graphql.match(/\s+(on(Create|Update|Delete)\w+)/);
+      const operation = operationMatch?.[1];
       return new Observable((subscriber) => {
-        subs.push(subscriber);
+        operation && (subs[operation] = subscriber);
       });
     });
     return client;
