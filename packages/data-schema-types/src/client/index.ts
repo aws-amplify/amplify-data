@@ -8,7 +8,6 @@ import {
   Equal,
 } from '../util';
 import type { Observable } from 'rxjs';
-import type { AppSyncResolverHandler } from 'aws-lambda';
 
 export declare const __modelMeta__: unique symbol;
 
@@ -782,115 +781,6 @@ export type CustomOperations<
     >;
   }[Context];
 };
-
-/**
- * Derives the function signature for a lambda handler for a particular
- * custom Query or Mutation from a Schema.
- *
- * Usage:
- *
- * ```typescript
- * import type { LambdaHandler } from '@aws-amplify/data-schema-types';
- * import type { Schema } from './resource';
- *
- * export const handler: LambdaHandler<
- *  Schema,
- *  'myOperation'
- * > = async (event, context) => {
- *  // event.arguments will be fully typed
- *  return {
- *    // Return type is enforced.
- *    // In VS Code, press ctrl+space in this block for auto-suggestions.
- *  }
- * }
- * ```
- */
-export type LambdaHandler<
-  Schema extends Record<string, any>,
-  OpName extends keyof CustomOperations<Schema, 'Query' | 'Mutation'>,
-> = AppSyncResolverHandler<
-  CustomOperationArgumentsType<Schema, OpName>,
-  CustomOperationReturnType<Schema, OpName>
->;
-
-/**
- * Derives the function arguments type for a lambda handler for a particular
- * custom Query or Mutation from a Schema.
- *
- * Usage:
- *
- * ```typescript
- * import type {
- *  LambdaHandler,
- *  CustomOperationArgumentsType
- * } from '@aws-amplify/data-schema-types';
- * import type { Schema } from './resource';
- *
- * export const handler: LambdaHandler<
- *  Schema,
- *  'myOperation'
- * > = async (event, context) => {
- *  // event.arguments will be property typed
- *  // Return type will be enforced
- *  return {
- *    // etc.
- *  }
- * }
- * ```
- */
-export type CustomOperationArgumentsType<
-  Schema extends Record<string, any>,
-  OpName extends keyof CustomOperations<Schema, 'Query' | 'Mutation'>,
-> = Parameters<CustomOperations<Schema, 'Query' | 'Mutation'>[OpName]>[0];
-
-/**
- * Derives the return type needed for a lambda handler for a particular
- * custom Query or Mutation from a Schema.
- *
- * Usage:
- *
- * ```typescript
- * import type {
- *  LambdaHandler,
- *  CustomOperationReturnType
- * } from '@aws-amplify/data-schema-types';
- * import type { Schema } from './resource';
- *
- * export const handler: LambdaHandler<
- *  Schema,
- *  'myOperation'
- * > = async (event, context) => {
- *  let result: CustomOperationReturnType<Schema, 'myOperation'>;
- *  result = generateResult();
- *  return result;
- * }
- * ```
- */
-export type CustomOperationReturnType<
-  Schema extends Record<string, any>,
-  OpName extends keyof CustomOperations<Schema, 'Query' | 'Mutation'>,
-> = LambdaReturnType<
-  Awaited<
-    ReturnType<CustomOperations<Schema, 'Query' | 'Mutation'>[OpName]>
-  >['data']
->;
-
-/**
- * Helper util that takes an field's awaited return type (from the 'data' field)
- * and strips out lazy-loaded related models (which appear as functions in the
- * return type of the awaited operation result).
- */
-type LambdaReturnType<T> =
-  | {
-      [K in keyof Exclude<T, null | undefined> as Exclude<
-        T,
-        null | undefined
-      >[K] extends (...args: any) => any
-        ? never
-        : K]: Exclude<T, null | undefined>[K];
-    }
-  | (null extends T ? null : never)
-  | (undefined extends T ? undefined : never);
 
 /**
  * The utility type that is used to infer the type (interface) of the generated

@@ -13,7 +13,10 @@ import type {
   ExtractNonModelTypes,
   NonModelTypesShape,
 } from './MappedTypes/ExtractNonModelTypes';
-import { ResolveCustomOperations } from './MappedTypes/CustomOperations';
+import {
+  ResolveCustomOperations,
+  CustomOperationHandlerTypes,
+} from './MappedTypes/CustomOperations';
 
 export type ClientSchema<Schema extends ModelSchema<any, any>> =
   InternalClientSchema<Schema>;
@@ -50,10 +53,17 @@ type InternalClientSchema<
   SecondaryIndexes extends Record<string, any> = ModelSecondaryIndexes<
     SchemaTypes<Schema>
   >,
-> = ResolvedFields & {
-  [__modelMeta__]: IdentifierMeta &
-    SecondaryIndexes &
-    RelationalMetadata<ResolvedSchema, ResolvedFields, IdentifierMeta> &
-    NonModelTypes &
-    ResolveCustomOperations<Schema, ResolvedFields, NonModelTypes>;
-};
+> = ResolvedFields &
+  CustomOperationHandlerTypes<
+    ResolveCustomOperations<
+      Schema,
+      ResolvedFields,
+      NonModelTypes
+    >['customOperations']
+  > & {
+    [__modelMeta__]: IdentifierMeta &
+      SecondaryIndexes &
+      RelationalMetadata<ResolvedSchema, ResolvedFields, IdentifierMeta> &
+      NonModelTypes &
+      ResolveCustomOperations<Schema, ResolvedFields, NonModelTypes>;
+  };
