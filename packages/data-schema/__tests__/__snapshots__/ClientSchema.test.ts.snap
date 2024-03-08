@@ -24,6 +24,7 @@ type Query {
 
 exports[`schema auth rules allows custom 1`] = `
 {
+  "functionSchemaAccess": [],
   "functionSlots": [],
   "jsFunctions": [],
   "schema": "type A @model @auth(rules: [{allow: custom}])
@@ -38,6 +39,7 @@ exports[`schema auth rules allows custom 1`] = `
 
 exports[`schema auth rules allows groupDefinedIn 1`] = `
 {
+  "functionSchemaAccess": [],
   "functionSlots": [],
   "jsFunctions": [],
   "schema": "type A @model @auth(rules: [{allow: owner, ownerField: "someField"}])
@@ -53,6 +55,7 @@ exports[`schema auth rules allows groupDefinedIn 1`] = `
 
 exports[`schema auth rules allows groupsDefinedIn 1`] = `
 {
+  "functionSchemaAccess": [],
   "functionSlots": [],
   "jsFunctions": [],
   "schema": "type A @model @auth(rules: [{allow: groups, groupsField: "someField"}])
@@ -68,6 +71,7 @@ exports[`schema auth rules allows groupsDefinedIn 1`] = `
 
 exports[`schema auth rules allows multiple entries 1`] = `
 {
+  "functionSchemaAccess": [],
   "functionSlots": [],
   "jsFunctions": [],
   "schema": "type A @model @auth(rules: [{allow: public},
@@ -83,6 +87,7 @@ exports[`schema auth rules allows multiple entries 1`] = `
 
 exports[`schema auth rules allows multipleOwners 1`] = `
 {
+  "functionSchemaAccess": [],
   "functionSlots": [],
   "jsFunctions": [],
   "schema": "type A @model @auth(rules: [{allow: owner, ownerField: "owner"}])
@@ -98,6 +103,7 @@ exports[`schema auth rules allows multipleOwners 1`] = `
 
 exports[`schema auth rules allows owner 1`] = `
 {
+  "functionSchemaAccess": [],
   "functionSlots": [],
   "jsFunctions": [],
   "schema": "type A @model @auth(rules: [{allow: owner, ownerField: "owner"}])
@@ -113,6 +119,7 @@ exports[`schema auth rules allows owner 1`] = `
 
 exports[`schema auth rules allows private 1`] = `
 {
+  "functionSchemaAccess": [],
   "functionSlots": [],
   "jsFunctions": [],
   "schema": "type A @model @auth(rules: [{allow: private}])
@@ -127,6 +134,7 @@ exports[`schema auth rules allows private 1`] = `
 
 exports[`schema auth rules allows public 1`] = `
 {
+  "functionSchemaAccess": [],
   "functionSlots": [],
   "jsFunctions": [],
   "schema": "type A @model @auth(rules: [{allow: public}])
@@ -141,6 +149,7 @@ exports[`schema auth rules allows public 1`] = `
 
 exports[`schema auth rules allows specificGroups 1`] = `
 {
+  "functionSchemaAccess": [],
   "functionSlots": [],
   "jsFunctions": [],
   "schema": "type A @model @auth(rules: [{allow: groups, groups: ["a", "b"]}])
@@ -165,6 +174,7 @@ exports[`schema auth rules can define public auth with no provider 1`] = `
 
 exports[`schema auth rules disallows specificGroup 1`] = `
 {
+  "functionSchemaAccess": [],
   "functionSlots": [],
   "jsFunctions": [],
   "schema": "type A @model @auth(rules: [{allow: groups, groups: ["group"]}])
@@ -179,6 +189,7 @@ exports[`schema auth rules disallows specificGroup 1`] = `
 
 exports[`schema auth rules do not pull out custom operations 1`] = `
 {
+  "functionSchemaAccess": [],
   "functionSlots": [],
   "jsFunctions": [],
   "schema": "type Post @model @auth(rules: [{allow: owner, ownerField: "owner"}])
@@ -206,6 +217,7 @@ type Subscription {
 
 exports[`schema auth rules global public auth - multiple models 1`] = `
 {
+  "functionSchemaAccess": [],
   "functionSlots": [],
   "jsFunctions": [],
   "schema": "type A @model @auth(rules: [{allow: public}])
@@ -255,6 +267,7 @@ enum DTired {
 
 exports[`schema auth rules prefers model auth over global auth owner auth on model vs owner auth on schema 1`] = `
 {
+  "functionSchemaAccess": [],
   "functionSlots": [],
   "jsFunctions": [],
   "schema": "type A @model @auth(rules: [{allow: owner, ownerField: "modelOwnerField"}])
@@ -270,6 +283,7 @@ exports[`schema auth rules prefers model auth over global auth owner auth on mod
 
 exports[`schema auth rules prefers model auth over global auth owner auth on model vs public auth on schema 1`] = `
 {
+  "functionSchemaAccess": [],
   "functionSlots": [],
   "jsFunctions": [],
   "schema": "type A @model @auth(rules: [{allow: owner, ownerField: "owner"}])
@@ -285,6 +299,7 @@ exports[`schema auth rules prefers model auth over global auth owner auth on mod
 
 exports[`schema auth rules prefers model auth over global auth public auth on model vs owner auth on schema 1`] = `
 {
+  "functionSchemaAccess": [],
   "functionSlots": [],
   "jsFunctions": [],
   "schema": "type A @model @auth(rules: [{allow: public}])
