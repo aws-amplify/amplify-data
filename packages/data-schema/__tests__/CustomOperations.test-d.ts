@@ -16,7 +16,7 @@ describe('custom operations return types', () => {
         }),
         aQuery: a
           .query()
-          .function('someHandler')
+          .handler(a.handler.function('someHandler'))
           .returns(a.ref('MyType').required()),
       });
 
@@ -52,7 +52,7 @@ describe('custom operations return types', () => {
         }),
         aQuery: a
           .query()
-          .function('someHandler')
+          .handler(a.handler.function('someHandler'))
           .returns(a.ref('MyType').required()),
       });
 
@@ -93,7 +93,7 @@ describe('custom operations return types', () => {
         }),
         aQuery: a
           .query()
-          .function('someHandler')
+          .handler(a.handler.function('someHandler'))
           .returns(a.ref('MyModel').required()),
       });
 
@@ -132,7 +132,7 @@ describe('custom operations return types', () => {
         }),
         aQuery: a
           .query()
-          .function('someHandler')
+          .handler(a.handler.function('someHandler'))
           .returns(a.ref('MyModel').required()),
       });
 
@@ -173,7 +173,7 @@ describe('custom operations return types', () => {
         Value: a.enum(['succeeded', 'failed']),
         aQuery: a
           .query()
-          .function('someHandler')
+          .handler(a.handler.function('someHandler'))
           .returns(a.ref('Value').required()),
       });
 

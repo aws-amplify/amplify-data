@@ -29,7 +29,7 @@ describe('Custom Operations mapper utils', () => {
       .arguments({ x: a.string() })
       .returns(a.string())
       .authorization([a.allow.public()])
-      .function('asdf');
+      .handler(a.handler.function('asdf'));
 
     type Actual = CustomOpArguments<OpShape<typeof aMutation>>;
     type Expected = {
@@ -45,14 +45,14 @@ describe('Custom Operations mapper utils', () => {
       .arguments({ x: a.string() })
       .returns(a.string())
       .authorization([a.allow.public()])
-      .function('asdf');
+      .handler(a.handler.function('asdf'));
 
     const aMutation = a
       .mutation()
       .arguments({ x: a.string() })
       .returns(a.string())
       .authorization([a.allow.public()])
-      .function('asdf');
+      .handler(a.handler.function('asdf'));
 
     const schema = a.schema({
       Model: a.model({

@@ -20,12 +20,15 @@ describe('CustomOperation transform', () => {
             .mutation()
             .arguments({ postId: a.string() })
             .returns(a.ref('Post'))
-            .function('myFunc'),
-          getLikedPost: a.query().returns(a.ref('Post')).function('myFunc'),
+            .handler(a.handler.function('myFunc')),
+          getLikedPost: a
+            .query()
+            .returns(a.ref('Post'))
+            .handler(a.handler.function('myFunc')),
           onLikePost: a
             .subscription()
             .returns(a.ref('Post'))
-            .function('myFunc'),
+            .handler(a.handler.function('myFunc')),
         })
         .authorization([a.allow.public()]);
 
@@ -43,15 +46,15 @@ describe('CustomOperation transform', () => {
           listPosts: a
             .mutation()
             .returns(a.ref('Post').array())
-            .function('myFunc'),
+            .handler(a.handler.function('myFunc')),
           getLikedPost: a
             .query()
             .returns(a.ref('Post').array())
-            .function('myFunc'),
+            .handler(a.handler.function('myFunc')),
           onLikePost: a
             .subscription()
             .returns(a.ref('Post'))
-            .function('myFunc'),
+            .handler(a.handler.function('myFunc')),
         })
         .authorization([a.allow.public()]);
 
@@ -69,15 +72,15 @@ describe('CustomOperation transform', () => {
           listPosts: a
             .mutation()
             .returns(a.ref('PostCustomType').array())
-            .function('myFunc'),
+            .handler(a.handler.function('myFunc')),
           getLikedPost: a
             .query()
             .returns(a.ref('PostCustomType').array())
-            .function('myFunc'),
+            .handler(a.handler.function('myFunc')),
           onLikePost: a
             .subscription()
             .returns(a.ref('PostCustomType'))
-            .function('myFunc'),
+            .handler(a.handler.function('myFunc')),
         })
         .authorization([a.allow.public()]);
 
@@ -106,7 +109,7 @@ describe('CustomOperation transform', () => {
           .mutation()
           .arguments({ postId: a.string() })
           .returns(a.ref('Post'))
-          .function('myFunc'),
+          .handler(a.handler.function('myFunc')),
       });
 
       expect(() => s.transform()).toThrow(
@@ -138,7 +141,7 @@ describe('CustomOperation transform', () => {
             postId: a.string().required(),
           })
           .returns(a.ref('Post'))
-          .function('myFunc')
+          .handler(a.handler.function('myFunc'))
           .authorization([a.allow.private()]),
       });
 
@@ -155,7 +158,7 @@ describe('CustomOperation transform', () => {
             postId: a.string().required(),
           })
           .returns(a.ref('Post'))
-          .function('myFunc')
+          .handler(a.handler.function('myFunc'))
           .authorization([a.allow.private()]),
       });
 
@@ -537,13 +540,19 @@ describe('CustomOperation transform', () => {
           .mutation()
           .arguments({ postId: a.string() })
           .returns(a.ref('Post'))
-          .function('myFunc'),
+          .handler(a.handler.function('myFunc')),
       });
       s.addQueries({
-        getLikedPost: a.query().returns(a.ref('Post')).function('myFunc'),
+        getLikedPost: a
+          .query()
+          .returns(a.ref('Post'))
+          .handler(a.handler.function('myFunc')),
       });
       s.addSubscriptions({
-        onLikePost: a.subscription().returns(a.ref('Post')).function('myFunc'),
+        onLikePost: a
+          .subscription()
+          .returns(a.ref('Post'))
+          .handler(a.handler.function('myFunc')),
       });
       s.authorization([a.allow.public()]);
 
@@ -560,9 +569,15 @@ describe('CustomOperation transform', () => {
       });
       s.addMutations({
         // @ts-expect-error
-        getLikedPost: a.query().returns(a.ref('Post')).function('myFunc'),
+        getLikedPost: a
+          .query()
+          .returns(a.ref('Post'))
+          .handler(a.handler.function('myFunc')),
         // @ts-expect-error
-        onLikePost: a.subscription().returns(a.ref('Post')).function('myFunc'),
+        onLikePost: a
+          .subscription()
+          .returns(a.ref('Post'))
+          .handler(a.handler.function('myFunc')),
       });
       s.addQueries({
         // @ts-expect-error
@@ -570,9 +585,12 @@ describe('CustomOperation transform', () => {
           .mutation()
           .arguments({ postId: a.string() })
           .returns(a.ref('Post'))
-          .function('myFunc'),
+          .handler(a.handler.function('myFunc')),
         // @ts-expect-error
-        onLikePost: a.subscription().returns(a.ref('Post')).function('myFunc'),
+        onLikePost: a
+          .subscription()
+          .returns(a.ref('Post'))
+          .handler(a.handler.function('myFunc')),
       });
       s.addSubscriptions({
         // @ts-expect-error
@@ -580,9 +598,12 @@ describe('CustomOperation transform', () => {
           .mutation()
           .arguments({ postId: a.string() })
           .returns(a.ref('Post'))
-          .function('myFunc'),
+          .handler(a.handler.function('myFunc')),
         // @ts-expect-error
-        getLikedPost: a.query().returns(a.ref('Post')).function('myFunc'),
+        getLikedPost: a
+          .query()
+          .returns(a.ref('Post'))
+          .handler(a.handler.function('myFunc')),
       });
       s.authorization([a.allow.public()]);
 

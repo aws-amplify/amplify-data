@@ -289,7 +289,7 @@ describe('Custom operations hidden from ClientSchema', () => {
         .mutation()
         .arguments({ postId: a.string() })
         .returns(a.ref('Post'))
-        .function('fnLikePost'),
+        .handler(a.handler.function('fnLikePost')),
     });
 
     type Schema = ClientSchema<typeof schema>;
@@ -300,7 +300,10 @@ describe('Custom operations hidden from ClientSchema', () => {
       Post: a.model({
         title: a.string(),
       }),
-      getLiked: a.query().returns(a.ref('Post')).function('fnGetLiked'),
+      getLiked: a
+        .query()
+        .returns(a.ref('Post'))
+        .handler(a.handler.function('fnGetLiked')),
     });
 
     type Schema = ClientSchema<typeof schema>;
@@ -311,7 +314,10 @@ describe('Custom operations hidden from ClientSchema', () => {
       Post: a.model({
         title: a.string(),
       }),
-      onLiked: a.subscription().returns(a.ref('Post')).function('fnOnLiked'),
+      onLiked: a
+        .subscription()
+        .returns(a.ref('Post'))
+        .handler(a.handler.function('fnOnLiked')),
     });
 
     type Schema = ClientSchema<typeof schema>;
