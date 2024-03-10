@@ -1,6 +1,7 @@
 import { expectTypeTestsToPassAsync } from 'jest-tsd';
 import { a } from '../index';
 import { configure } from '../src/internals';
+import { defineFunctionStub } from './utils';
 
 // evaluates type defs in corresponding test-d.ts file
 it('should not produce static type errors', async () => {
@@ -297,7 +298,7 @@ describe('CustomOperation transform', () => {
                   entry: './filename.js',
                   dataSource: 'CommentTable',
                 }),
-                a.handler.function(() => {}),
+                a.handler.function('myFn'),
               ]),
           });
 
@@ -465,11 +466,13 @@ describe('CustomOperation transform', () => {
       });
 
       test('a.handler.function works', () => {
+        const fn1 = defineFunctionStub({});
+
         const s = a.schema({
           getPostDetails: a
             .query()
             .arguments({})
-            .handler(a.handler.function(() => {}))
+            .handler(a.handler.function(fn1))
             .authorization([a.allow.private()])
             .returns(a.customType({})),
         });

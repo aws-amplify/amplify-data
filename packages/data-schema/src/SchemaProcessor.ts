@@ -41,6 +41,7 @@ import {
   type HandlerType,
   type CustomHandler,
   type CustomHandlerData,
+  type FunctionHandlerData,
 } from './Handler';
 import * as os from 'os';
 import * as path from 'path';
@@ -255,7 +256,12 @@ function customOperationToGql(
   authorization: Authorization<any, any, any>[],
   isCustom = false,
 ): { gqlField: string; models: [string, any][] } {
-  const { arguments: fieldArgs, returnType, functionRef } = typeDef.data;
+  const {
+    arguments: fieldArgs,
+    returnType,
+    functionRef,
+    handlers,
+  } = typeDef.data;
 
   let callSignature: string = typeName;
   const implicitModels: [string, any][] = [];
@@ -283,9 +289,30 @@ function customOperationToGql(
     implicitModels.push(...models);
   }
 
-  const fnString = functionRef ? `@function(name: "${functionRef}") ` : '';
+  const handler = handlers && handlers[0];
+  const brand = handler && getBrand(handler);
 
-  const gqlField = `${callSignature}: ${returnTypeName} ${fnString}${authString}`;
+  let gqlHandlerContent = '';
+
+  // use type guard
+  if (handler && brand === 'functionHandler') {
+    const handlerData = getHandlerData(handler) as FunctionHandlerData;
+
+    if (typeof handlerData === 'string') {
+      gqlHandlerContent = `@function(name: "${handlerData}") `;
+    } else if (typeof handlerData.getInstance === 'function') {
+      // TODO: Add to functionSlots or equivalent instead of annotating with directive
+      gqlHandlerContent = `@function(name: "defFunction") `;
+    } else {
+      throw new Error(
+        `Invalid value specified for ${callSignature} handler.function(). Expected: defineFunction or string.`,
+      );
+    }
+  } else if (functionRef) {
+    gqlHandlerContent = `@function(name: "${functionRef}") `;
+  }
+
+  const gqlField = `${callSignature}: ${returnTypeName} ${gqlHandlerContent}${authString}`;
   return { gqlField, models: implicitModels };
 }
 

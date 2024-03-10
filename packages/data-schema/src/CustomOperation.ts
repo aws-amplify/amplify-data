@@ -83,6 +83,14 @@ export type CustomOperation<
       K | 'returns',
       B
     >;
+    /**
+     *
+     * @deprecated
+     * `.function` should no longer be used and will be removed
+     * in the next minor version of this package.
+     *
+     * Use `.handler(a.handler.function())` instead
+     */
     function<FunctionRef extends CustomFunctionRefType>(
       functionRefOrName: FunctionRef,
     ): CustomOperation<

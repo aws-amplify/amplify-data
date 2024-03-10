@@ -241,7 +241,7 @@ exports[`CustomOperation transform dynamo schema handlers a.handler.function wor
 }
 
 type Query {
-  getPostDetails: GetPostDetailsReturnType @auth(rules: [{allow: private}])
+  getPostDetails: GetPostDetailsReturnType @function(name: "defFunction") @auth(rules: [{allow: private}])
 }"
 `;
 

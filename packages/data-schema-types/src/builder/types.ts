@@ -49,8 +49,10 @@ export type JsResolver = {
 };
 
 export type FunctionSchemaAccess = {
-  resourceProvider: ConstructFactory<
-    ResourceProvider<FunctionResources> & ResourceAccessAcceptorFactory
-  >;
+  resourceProvider: DefineFunction;
   actions: ('query' | 'mutate' | 'listen')[];
 };
+
+export type DefineFunction = ConstructFactory<
+  ResourceProvider<FunctionResources> & ResourceAccessAcceptorFactory
+>;
