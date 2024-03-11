@@ -26,7 +26,6 @@ import {
   JsResolver,
   JsResolverEntry,
   FunctionSchemaAccess,
-  DefineFunction,
   LambdaFunctionDefinition,
 } from '@aws-amplify/data-schema-types';
 import type { InternalRef, RefType } from './RefType';
@@ -43,7 +42,6 @@ import {
   type HandlerType,
   type CustomHandler,
   type CustomHandlerData,
-  type FunctionHandlerData,
   FunctionHandler,
 } from './Handler';
 import * as os from 'os';
