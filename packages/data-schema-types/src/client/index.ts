@@ -8,6 +8,8 @@ import {
   Equal,
 } from '../util';
 import type { Observable } from 'rxjs';
+import type { AppSyncResolverHandler } from 'aws-lambda';
+export type { AppSyncResolverHandler } from 'aws-lambda';
 
 export declare const __modelMeta__: unique symbol;
 
@@ -711,7 +713,7 @@ export type ModelTypes<
   Context extends ContextType = 'CLIENT',
   ModelMeta extends Record<any, any> = ExtractModelMeta<Schema>,
 > = {
-  [ModelName in keyof Schema]: ModelName extends string
+  [ModelName in keyof NonCustomOps<Schema>]: ModelName extends string
     ? Schema[ModelName] extends Record<string, unknown>
       ? Context extends 'CLIENT'
         ? ModelTypesClient<Schema[ModelName], ModelMeta[ModelName]>
@@ -722,6 +724,14 @@ export type ModelTypes<
             : never
       : never
     : never;
+};
+
+type NonCustomOps<Schema extends Record<any, any>> = {
+  [K in keyof Schema as Schema[K] extends {
+    functionHandler: AppSyncResolverHandler<any, any>;
+  }
+    ? never
+    : K]: Schema[K];
 };
 
 export type CustomQueries<

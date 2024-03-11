@@ -398,6 +398,25 @@ describe('custom operations return types', () => {
           .arguments({ input: a.string() })
           .returns(a.ref('Value').required()),
       });
+
+      type Schema = ClientSchema<typeof schema>;
+
+      type ActualArgs = Prettify<Schema['aQuery']['functionHandlerArguments']>;
+      type ActualResult = Prettify<Schema['aQuery']['functionHandlerResult']>;
+      type ActualHandler = Schema['aQuery']['functionHandler'];
+
+      type ExpectedArgs = {
+        input: string | null;
+      };
+      type ExpectedResult = 'succeeded' | 'failed';
+      type ExpectedFunctionHandler = AppSyncResolverHandler<
+        ActualArgs,
+        ActualResult
+      >;
+
+      type _T1 = Expect<Equal<ActualArgs, ExpectedArgs>>;
+      type _T2 = Expect<Equal<ActualResult, ExpectedResult>>;
+      type _T3 = Expect<Equal<ActualHandler, ExpectedFunctionHandler>>;
     });
   });
 });

@@ -10,7 +10,7 @@ import type {
   ResolveRefsOfCustomType,
   ResolveRefValueArrayTraits,
 } from './ResolveFieldProperties';
-import type { AppSyncResolverHandler } from 'aws-lambda';
+import type { AppSyncResolverHandler } from '@aws-amplify/data-schema-types';
 
 /**
  * Creates meta types for custom operations from a schema.

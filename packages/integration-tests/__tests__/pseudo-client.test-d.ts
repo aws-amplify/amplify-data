@@ -1,7 +1,9 @@
 import { a, ClientSchema } from '@aws-amplify/data-schema';
 import {
   type Expect,
+  type ExpectFalse,
   type Equal,
+  type HasKey,
   type CustomQueries,
   type CustomMutations,
   type ModelTypes,
@@ -209,5 +211,33 @@ describe('client', () => {
     };
 
     type test = Expect<Equal<ResponseType, Expected>>;
+  });
+
+  test('custom ops are absent from models property', async () => {
+    const schema = a
+      .schema({
+        MyModel: a.model({
+          content: a.string(),
+        }),
+        myQuery: a.query().arguments({ input: a.string() }).returns(a.string()),
+        myMutation: a
+          .mutation()
+          .arguments({ input: a.string() })
+          .returns(a.string()),
+        mySubscription: a
+          .subscription()
+          .arguments({ input: a.string() })
+          .returns(a.string()),
+      })
+      .authorization([a.allow.public()]);
+
+    type Schema = ClientSchema<typeof schema>;
+    const client = generateClient<Schema>();
+
+    type ClientModels = typeof client.models;
+
+    type _T1 = ExpectFalse<HasKey<ClientModels, 'myQuery'>>;
+    type _T2 = ExpectFalse<HasKey<ClientModels, 'myMutation'>>;
+    type _T3 = ExpectFalse<HasKey<ClientModels, 'mySubscription'>>;
   });
 });

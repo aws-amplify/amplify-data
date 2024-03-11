@@ -32,8 +32,7 @@
     }
   },
   "dependencies": {
-    "@aws-amplify/data-schema-types": "*",
-    "@types/aws-lambda": "^8.10.134"
+    "@aws-amplify/data-schema-types": "*"
   },
   "devDependencies": {
     "@changesets/cli": "^2.26.2",
