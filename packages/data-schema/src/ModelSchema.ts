@@ -20,7 +20,7 @@ import type {
   SubscriptionCustomOperation,
 } from './CustomOperation';
 import { processSchema } from './SchemaProcessor';
-import { Authorization } from './Authorization';
+import { Authorization, SchemaAuthorization } from './Authorization';
 
 type SchemaContent =
   | ModelType<ModelTypeParamShape, any>
@@ -70,7 +70,7 @@ export type SchemaConfig<
 
 export type ModelSchemaParamShape = {
   types: ModelSchemaContents;
-  authorization: Authorization<any, any, any>[];
+  authorization: SchemaAuthorization<any, any, any>[];
   configuration: SchemaConfig<any, any>;
 };
 
@@ -91,7 +91,7 @@ export type ModelSchema<
   UsedMethods extends 'authorization' = never,
 > = Omit<
   {
-    authorization: <AuthRules extends Authorization<any, any, any>>(
+    authorization: <AuthRules extends SchemaAuthorization<any, any, any>>(
       auth: AuthRules[],
     ) => ModelSchema<
       SetTypeSubArg<T, 'authorization', AuthRules[]>,
