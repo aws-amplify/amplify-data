@@ -1,13 +1,5 @@
 # @aws-amplify/data-schema
 
-## 0.13.11
-
-### Patch Changes
-
-- 14bc3f4: add schema-level lambda access auth rule
-- Updated dependencies [14bc3f4]
-  - @aws-amplify/data-schema-types@0.7.7
-
 ## 0.13.10
 
 ### Patch Changes
