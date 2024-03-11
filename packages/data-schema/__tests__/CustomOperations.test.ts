@@ -468,22 +468,89 @@ describe('CustomOperation transform', () => {
         });
       });
 
-      test('a.handler.function works', () => {
-        const fn1 = defineFunctionStub({});
+      describe('a.handler.function', () => {
+        test('string', () => {
+          const s = a.schema({
+            getPostDetails: a
+              .query()
+              .arguments({})
+              .handler(a.handler.function('myFunc'))
+              .authorization([a.allow.private()])
+              .returns(a.customType({})),
+          });
 
-        const s = a.schema({
-          getPostDetails: a
-            .query()
-            .arguments({})
-            .handler(a.handler.function(fn1))
-            .authorization([a.allow.private()])
-            .returns(a.customType({})),
+          const { schema, lambdaFunctions } = s.transform();
+
+          expect(schema).toMatchSnapshot();
+          expect(lambdaFunctions).toMatchObject({});
         });
 
-        const result = s.transform().schema;
+        test('defineFunction', () => {
+          const fn1 = defineFunctionStub({});
 
-        expect(result).toMatchSnapshot();
+          const s = a.schema({
+            getPostDetails: a
+              .query()
+              .arguments({})
+              .handler(a.handler.function(fn1))
+              .authorization([a.allow.private()])
+              .returns(a.customType({})),
+          });
+
+          const { schema, lambdaFunctions } = s.transform();
+
+          expect(schema).toMatchSnapshot();
+          expect(lambdaFunctions).toMatchObject({
+            Fn_getPostDetails: fn1,
+          });
+        });
+
+        test('pipeline / mix', () => {
+          const fn1 = defineFunctionStub({});
+          const fn2 = defineFunctionStub({});
+
+          const s = a.schema({
+            getPostDetails: a
+              .query()
+              .arguments({})
+              .handler([
+                a.handler.function('myFunc'),
+                a.handler.function(fn1),
+                a.handler.function(fn2),
+                a.handler.function('myFunc2'),
+              ])
+              .authorization([a.allow.private()])
+              .returns(a.customType({})),
+          });
+
+          const { schema, lambdaFunctions } = s.transform();
+
+          expect(schema).toMatchSnapshot();
+          expect(lambdaFunctions).toMatchObject({
+            Fn_getPostDetails_2: fn1,
+            Fn_getPostDetails_3: fn2,
+          });
+        });
+
+        test('invalid', () => {
+          const invalidFnDef = {};
+
+          const s = a.schema({
+            getPostDetails: a
+              .query()
+              .arguments({})
+              // @ts-expect-error
+              .handler([a.handler.function(invalidFnDef)])
+              .authorization([a.allow.private()])
+              .returns(a.customType({})),
+          });
+
+          expect(() => s.transform()).toThrow(
+            'Invalid value specified for getPostDetails handler.function()',
+          );
+        });
       });
+
       test('a.handler.inlineSql works', () => {
         // TODO: This shouldn't work on a DDB schema
         const s = a.schema({

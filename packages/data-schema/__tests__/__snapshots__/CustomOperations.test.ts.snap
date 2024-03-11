@@ -234,14 +234,36 @@ type Query {
 }"
 `;
 
-exports[`CustomOperation transform dynamo schema handlers a.handler.function works 1`] = `
+exports[`CustomOperation transform dynamo schema handlers a.handler.function defineFunction 1`] = `
 "type GetPostDetailsReturnType 
 {
   
 }
 
 type Query {
-  getPostDetails: GetPostDetailsReturnType @function(name: "defFunction") @auth(rules: [{allow: private}])
+  getPostDetails: GetPostDetailsReturnType @function(name: "Fn_getPostDetails") @auth(rules: [{allow: private}])
+}"
+`;
+
+exports[`CustomOperation transform dynamo schema handlers a.handler.function pipeline / mix 1`] = `
+"type GetPostDetailsReturnType 
+{
+  
+}
+
+type Query {
+  getPostDetails: GetPostDetailsReturnType @function(name: "myFunc") @function(name: "Fn_getPostDetails_2") @function(name: "Fn_getPostDetails_3") @function(name: "myFunc2") @auth(rules: [{allow: private}])
+}"
+`;
+
+exports[`CustomOperation transform dynamo schema handlers a.handler.function string 1`] = `
+"type GetPostDetailsReturnType 
+{
+  
+}
+
+type Query {
+  getPostDetails: GetPostDetailsReturnType @function(name: "myFunc") @auth(rules: [{allow: private}])
 }"
 `;
 
@@ -250,6 +272,7 @@ exports[`CustomOperation transform dynamo schema handlers a.handler.inlineSql wo
   "functionSchemaAccess": [],
   "functionSlots": [],
   "jsFunctions": [],
+  "lambdaFunctions": {},
   "schema": "type GetPostDetailsReturnType 
 {
   

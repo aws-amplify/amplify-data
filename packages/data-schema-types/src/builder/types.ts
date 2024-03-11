@@ -25,6 +25,7 @@ export interface DerivedApiDefinition {
    */
   readonly functionSlots: any[];
   readonly jsFunctions: JsResolver[];
+  readonly lambdaFunctions: LambdaFunctionDefinition;
   readonly functionSchemaAccess: FunctionSchemaAccess[];
 }
 
@@ -47,6 +48,8 @@ export type JsResolver = {
     entry: JsResolverEntry;
   }[];
 };
+
+export type LambdaFunctionDefinition = Record<string, DefineFunction>;
 
 export type FunctionSchemaAccess = {
   resourceProvider: DefineFunction;

@@ -27,6 +27,7 @@ exports[`schema auth rules allows custom 1`] = `
   "functionSchemaAccess": [],
   "functionSlots": [],
   "jsFunctions": [],
+  "lambdaFunctions": {},
   "schema": "type A @model @auth(rules: [{allow: custom}])
 {
   id: ID! @primaryKey
@@ -42,6 +43,7 @@ exports[`schema auth rules allows groupDefinedIn 1`] = `
   "functionSchemaAccess": [],
   "functionSlots": [],
   "jsFunctions": [],
+  "lambdaFunctions": {},
   "schema": "type A @model @auth(rules: [{allow: owner, ownerField: "someField"}])
 {
   id: ID! @primaryKey
@@ -58,6 +60,7 @@ exports[`schema auth rules allows groupsDefinedIn 1`] = `
   "functionSchemaAccess": [],
   "functionSlots": [],
   "jsFunctions": [],
+  "lambdaFunctions": {},
   "schema": "type A @model @auth(rules: [{allow: groups, groupsField: "someField"}])
 {
   id: ID! @primaryKey
@@ -74,6 +77,7 @@ exports[`schema auth rules allows multiple entries 1`] = `
   "functionSchemaAccess": [],
   "functionSlots": [],
   "jsFunctions": [],
+  "lambdaFunctions": {},
   "schema": "type A @model @auth(rules: [{allow: public},
   {allow: private}])
 {
@@ -90,6 +94,7 @@ exports[`schema auth rules allows multipleOwners 1`] = `
   "functionSchemaAccess": [],
   "functionSlots": [],
   "jsFunctions": [],
+  "lambdaFunctions": {},
   "schema": "type A @model @auth(rules: [{allow: owner, ownerField: "owner"}])
 {
   id: ID! @primaryKey
@@ -106,6 +111,7 @@ exports[`schema auth rules allows owner 1`] = `
   "functionSchemaAccess": [],
   "functionSlots": [],
   "jsFunctions": [],
+  "lambdaFunctions": {},
   "schema": "type A @model @auth(rules: [{allow: owner, ownerField: "owner"}])
 {
   id: ID! @primaryKey
@@ -122,6 +128,7 @@ exports[`schema auth rules allows private 1`] = `
   "functionSchemaAccess": [],
   "functionSlots": [],
   "jsFunctions": [],
+  "lambdaFunctions": {},
   "schema": "type A @model @auth(rules: [{allow: private}])
 {
   id: ID! @primaryKey
@@ -137,6 +144,7 @@ exports[`schema auth rules allows public 1`] = `
   "functionSchemaAccess": [],
   "functionSlots": [],
   "jsFunctions": [],
+  "lambdaFunctions": {},
   "schema": "type A @model @auth(rules: [{allow: public}])
 {
   id: ID! @primaryKey
@@ -152,6 +160,7 @@ exports[`schema auth rules allows specificGroups 1`] = `
   "functionSchemaAccess": [],
   "functionSlots": [],
   "jsFunctions": [],
+  "lambdaFunctions": {},
   "schema": "type A @model @auth(rules: [{allow: groups, groups: ["a", "b"]}])
 {
   id: ID! @primaryKey
@@ -177,6 +186,7 @@ exports[`schema auth rules disallows specificGroup 1`] = `
   "functionSchemaAccess": [],
   "functionSlots": [],
   "jsFunctions": [],
+  "lambdaFunctions": {},
   "schema": "type A @model @auth(rules: [{allow: groups, groups: ["group"]}])
 {
   id: ID! @primaryKey
@@ -192,6 +202,7 @@ exports[`schema auth rules do not pull out custom operations 1`] = `
   "functionSchemaAccess": [],
   "functionSlots": [],
   "jsFunctions": [],
+  "lambdaFunctions": {},
   "schema": "type Post @model @auth(rules: [{allow: owner, ownerField: "owner"}])
 {
   id: ID! @primaryKey
@@ -220,6 +231,7 @@ exports[`schema auth rules global public auth - multiple models 1`] = `
   "functionSchemaAccess": [],
   "functionSlots": [],
   "jsFunctions": [],
+  "lambdaFunctions": {},
   "schema": "type A @model @auth(rules: [{allow: public}])
 {
   id: ID! @primaryKey
@@ -270,6 +282,7 @@ exports[`schema auth rules prefers model auth over global auth owner auth on mod
   "functionSchemaAccess": [],
   "functionSlots": [],
   "jsFunctions": [],
+  "lambdaFunctions": {},
   "schema": "type A @model @auth(rules: [{allow: owner, ownerField: "modelOwnerField"}])
 {
   id: ID! @primaryKey
@@ -286,6 +299,7 @@ exports[`schema auth rules prefers model auth over global auth owner auth on mod
   "functionSchemaAccess": [],
   "functionSlots": [],
   "jsFunctions": [],
+  "lambdaFunctions": {},
   "schema": "type A @model @auth(rules: [{allow: owner, ownerField: "owner"}])
 {
   id: ID! @primaryKey
@@ -302,6 +316,7 @@ exports[`schema auth rules prefers model auth over global auth public auth on mo
   "functionSchemaAccess": [],
   "functionSlots": [],
   "jsFunctions": [],
+  "lambdaFunctions": {},
   "schema": "type A @model @auth(rules: [{allow: public}])
 {
   id: ID! @primaryKey
