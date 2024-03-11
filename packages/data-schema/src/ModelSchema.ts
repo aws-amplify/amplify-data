@@ -81,7 +81,7 @@ export type SQLModelSchemaParamShape = ModelSchemaParamShape & {
 export type InternalSchema = {
   data: {
     types: InternalSchemaModels;
-    authorization: Authorization<any, any, any>[];
+    authorization: SchemaAuthorization<any, any, any>[];
     configuration: SchemaConfig<any, any>;
   };
 };
