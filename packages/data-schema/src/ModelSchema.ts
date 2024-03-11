@@ -20,7 +20,7 @@ import type {
   SubscriptionCustomOperation,
 } from './CustomOperation';
 import { processSchema } from './SchemaProcessor';
-import { Authorization, SchemaAuthorization } from './Authorization';
+import { SchemaAuthorization } from './Authorization';
 
 type SchemaContent =
   | ModelType<ModelTypeParamShape, any>
