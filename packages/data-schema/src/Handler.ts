@@ -1,3 +1,4 @@
+import type { DefineFunction } from '@aws-amplify/data-schema-types';
 import { Brand, brand } from './util';
 import { RefType } from './RefType';
 
@@ -25,6 +26,8 @@ export function getHandlerData<H extends AllHandlers>(
   return handler[dataSymbol];
 }
 
+//#region handler.inlineSql
+
 const inlineSqlBrand = 'inlineSql';
 
 export type InlineSqlHandler = { [dataSymbol]: string } & Brand<
@@ -35,6 +38,10 @@ function inlineSql(sql: string): InlineSqlHandler {
   return { [dataSymbol]: sql, ...buildHandler(inlineSqlBrand) };
 }
 
+//#endregion
+
+//#region handler.sqlReference
+
 const sqlReferenceBrand = 'sqlReference';
 
 export type SqlReferenceHandler = { [dataSymbol]: string } & Brand<
@@ -44,6 +51,10 @@ export type SqlReferenceHandler = { [dataSymbol]: string } & Brand<
 function sqlReference(sqlReference: string): SqlReferenceHandler {
   return { [dataSymbol]: sqlReference, ...buildHandler(sqlReferenceBrand) };
 }
+
+//#endregion
+
+//#region handler.custom
 
 type CustomHandlerInput = {
   /**
@@ -80,15 +91,23 @@ function custom(customHandler: CustomHandlerInput): CustomHandler {
   };
 }
 
+//#endregion
+
+//#region handler.function
+
+export type FunctionHandlerData = DefineFunction | string;
+
 const functionHandlerBrand = 'functionHandler';
 
 export type FunctionHandler = {
-  [dataSymbol]: (...args: any[]) => any;
+  [dataSymbol]: FunctionHandlerData;
 } & Brand<typeof functionHandlerBrand>;
 
-function fcn(fn: (...args: any[]) => any): FunctionHandler {
+function fcn(fn: FunctionHandlerData): FunctionHandler {
   return { [dataSymbol]: fn, ...buildHandler(functionHandlerBrand) };
 }
+
+//#endregion
 
 export const handler = {
   inlineSql,

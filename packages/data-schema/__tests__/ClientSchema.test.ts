@@ -555,9 +555,15 @@ describe('schema auth rules', () => {
           .mutation()
           .arguments({ postId: a.string() })
           .returns(a.ref('Post'))
-          .function('myFunc'),
-        getLikedPost: a.query().returns(a.ref('Post')).function('myFunc'),
-        onLikePost: a.subscription().returns(a.ref('Post')).function('myFunc'),
+          .handler(a.handler.function('myFunc')),
+        getLikedPost: a
+          .query()
+          .returns(a.ref('Post'))
+          .handler(a.handler.function('myFunc')),
+        onLikePost: a
+          .subscription()
+          .returns(a.ref('Post'))
+          .handler(a.handler.function('myFunc')),
       })
       .authorization([a.allow.owner()]);
 
@@ -577,7 +583,7 @@ describe('custom operations', () => {
           inputContent: a.string().required(),
         })
         .returns(a.ref('EchoResult'))
-        .function('echoFunction')
+        .handler(a.handler.function('echoFunction'))
         .authorization([a.allow.public()]),
     });
 
@@ -588,7 +594,6 @@ describe('custom operations', () => {
       arguments: {
         inputContent: string;
       };
-      functionRef: 'echoFunction';
       typeName: 'Query';
       returnType: {
         resultContent?: string | null | undefined;
@@ -614,7 +619,7 @@ describe('custom operations', () => {
           postId: a.string().required(),
         })
         .returns(a.ref('LikePostResult'))
-        .function('likePost')
+        .handler(a.handler.function('likePost'))
         .authorization([a.allow.public()]),
     });
 
@@ -626,7 +631,6 @@ describe('custom operations', () => {
       arguments: {
         postId: string;
       };
-      functionRef: 'likePost';
       typeName: 'Mutation';
       returnType: {
         likes: number;
