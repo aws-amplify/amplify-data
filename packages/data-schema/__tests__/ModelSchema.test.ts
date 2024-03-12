@@ -1,6 +1,6 @@
 import { expectTypeTestsToPassAsync } from 'jest-tsd';
-import type { FunctionSchemaAccess } from '@aws-amplify/data-schema-types';
 import { a } from '../index';
+import { defineFunctionStub } from './utils';
 
 // evaluates type defs in corresponding test-d.ts file
 it('should not produce static type errors', async () => {
@@ -65,15 +65,7 @@ it('empty model auth inherits global auth', () => {
   expect(schema.transform().schema).toMatchSnapshot();
 });
 
-type DefineFunction = FunctionSchemaAccess['resourceProvider'];
-
 describe('Lambda resource access', () => {
-  const defineFunctionStub = (config: any) =>
-    ({
-      provides: undefined,
-      getInstance: () => {},
-    }) as unknown as DefineFunction;
-
   it('schema lambda access', () => {
     const fn1 = defineFunctionStub({});
 

@@ -39,7 +39,7 @@ describe('client', () => {
           inputContent: a.string().required(),
         })
         .returns(a.string().required())
-        .function('echoFunction')
+        .handler(a.handler.function('echoFunction'))
         .authorization([a.allow.public()]),
     });
 
@@ -73,7 +73,7 @@ describe('client', () => {
           itemId: a.string().required(),
         })
         .returns(a.ref('Status').required())
-        .function('echoFunction')
+        .handler(a.handler.function('echoFunction'))
         .authorization([a.allow.public()]),
     });
 
@@ -109,7 +109,7 @@ describe('client', () => {
           inputContent: a.string().required(),
         })
         .returns(a.ref('EchoResult'))
-        .function('echoFunction')
+        .handler(a.handler.function('echoFunction'))
         .authorization([a.allow.public()]),
     });
 
@@ -147,7 +147,7 @@ describe('client', () => {
           modelId: a.string().required(),
         })
         .returns(a.ref('DataModel'))
-        .function('echoFunction')
+        .handler(a.handler.function('echoFunction'))
         .authorization([a.allow.public()]),
     });
 
@@ -186,7 +186,7 @@ describe('client', () => {
           postId: a.string().required(),
         })
         .returns(a.ref('LikeResult'))
-        .function('likePost')
+        .handler(a.handler.function('likePost'))
         .authorization([a.allow.public()]),
     });
 
