@@ -3383,4 +3383,4 @@ bench('99 complex models w/ client types', () => {
     .authorization([a.allow.public()]);
 
   type _ = ClientSchema<typeof s>;
-}).types([5009457, 'instantiations']);
+}).types([5008339, 'instantiations']);

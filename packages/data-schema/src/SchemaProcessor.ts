@@ -26,6 +26,7 @@ import {
   JsResolver,
   JsResolverEntry,
   FunctionSchemaAccess,
+  LambdaFunctionDefinition,
 } from '@aws-amplify/data-schema-types';
 import type { InternalRef, RefType } from './RefType';
 import type { EnumType } from './EnumType';
@@ -41,6 +42,7 @@ import {
   type HandlerType,
   type CustomHandler,
   type CustomHandlerData,
+  FunctionHandler,
 } from './Handler';
 import * as os from 'os';
 import * as path from 'path';
@@ -249,13 +251,49 @@ function refFieldToGql(fieldDef: RefFieldDef): string {
   return field;
 }
 
+function transformFunctionHandler(
+  handlers: FunctionHandler[],
+  callSignature: string,
+): {
+  gqlHandlerContent: string;
+  lambdaFunctionDefinition: LambdaFunctionDefinition;
+} {
+  let gqlHandlerContent = '';
+  const lambdaFunctionDefinition: LambdaFunctionDefinition = {};
+
+  handlers.forEach((handler, idx) => {
+    const handlerData = getHandlerData(handler);
+
+    if (typeof handlerData === 'string') {
+      gqlHandlerContent += `@function(name: "${handlerData}") `;
+    } else if (typeof handlerData.getInstance === 'function') {
+      const fnBaseName = `Fn${capitalize(callSignature)}`;
+      const fnNameSuffix = idx === 0 ? '' : `${idx + 1}`;
+      const fnName = fnBaseName + fnNameSuffix;
+
+      lambdaFunctionDefinition[fnName] = handlerData;
+      gqlHandlerContent += `@function(name: "${fnName}") `;
+    } else {
+      throw new Error(
+        `Invalid value specified for ${callSignature} handler.function(). Expected: defineFunction or string.`,
+      );
+    }
+  });
+
+  return { gqlHandlerContent, lambdaFunctionDefinition };
+}
+
 function customOperationToGql(
   typeName: string,
   typeDef: InternalCustom,
   authorization: Authorization<any, any, any>[],
   isCustom = false,
   databaseType: DatabaseType,
-): { gqlField: string; models: [string, any][] } {
+): {
+  gqlField: string;
+  models: [string, any][];
+  lambdaFunctionDefinition: LambdaFunctionDefinition;
+} {
   const {
     arguments: fieldArgs,
     returnType,
@@ -293,8 +331,14 @@ function customOperationToGql(
   const brand = handler && getBrand(handler);
 
   let gqlHandlerContent = '';
+  let lambdaFunctionDefinition: LambdaFunctionDefinition = {};
 
-  if (functionRef) {
+  if (isFunctionHandler(handlers)) {
+    ({ gqlHandlerContent, lambdaFunctionDefinition } = transformFunctionHandler(
+      handlers,
+      callSignature,
+    ));
+  } else if (functionRef) {
     gqlHandlerContent = `@function(name: "${functionRef}") `;
   } else if (databaseType === 'sql' && handler && brand === 'inlineSql') {
     gqlHandlerContent = `@sql(statement: ${escapeGraphQlString(
@@ -303,9 +347,9 @@ function customOperationToGql(
   } else if (databaseType === 'sql' && handler && brand === 'sqlReference') {
     gqlHandlerContent = `@sql(reference: "${getHandlerData(handler)}") `;
   }
-  const gqlField = `${callSignature}: ${returnTypeName} ${gqlHandlerContent}${authString}`;
 
-  return { gqlField, models: implicitModels };
+  const gqlField = `${callSignature}: ${returnTypeName} ${gqlHandlerContent}${authString}`;
+  return { gqlField, models: implicitModels, lambdaFunctionDefinition };
 }
 
 /**
@@ -985,6 +1029,7 @@ const schemaPreprocessor = (
   schema: string;
   jsFunctions: JsResolver[];
   functionSchemaAccess: FunctionSchemaAccess[];
+  lambdaFunctions: LambdaFunctionDefinition;
 } => {
   const gqlModels: string[] = [];
 
@@ -993,6 +1038,7 @@ const schemaPreprocessor = (
   const customSubscriptions = [];
 
   const jsFunctions: JsResolver[] = [];
+  let lambdaFunctions: LambdaFunctionDefinition = {};
 
   const databaseType =
     schema.data.configuration.database.engine === 'dynamodb'
@@ -1064,13 +1110,19 @@ const schemaPreprocessor = (
       } else if (isCustomOperation(typeDef)) {
         const { typeName: opType } = typeDef.data;
 
-        const { gqlField, models, jsFunctionForField } =
-          transformCustomOperations(
-            typeDef,
-            typeName,
-            mostRelevantAuthRules,
-            databaseType,
-          );
+        const {
+          gqlField,
+          models,
+          jsFunctionForField,
+          lambdaFunctionDefinition,
+        } = transformCustomOperations(
+          typeDef,
+          typeName,
+          mostRelevantAuthRules,
+          databaseType,
+        );
+
+        lambdaFunctions = lambdaFunctionDefinition;
 
         topLevelTypes.push(...models);
 
@@ -1155,7 +1207,12 @@ const schemaPreprocessor = (
 
   const processedSchema = gqlModels.join('\n\n');
 
-  return { schema: processedSchema, jsFunctions, functionSchemaAccess };
+  return {
+    schema: processedSchema,
+    jsFunctions,
+    functionSchemaAccess,
+    lambdaFunctions,
+  };
 };
 
 function validateCustomOperations(
@@ -1205,6 +1262,12 @@ const isCustomHandler = (
   handler: HandlerType[] | null,
 ): handler is CustomHandler[] => {
   return Array.isArray(handler) && getBrand(handler[0]) === 'customHandler';
+};
+
+const isFunctionHandler = (
+  handler: HandlerType[] | null,
+): handler is FunctionHandler[] => {
+  return Array.isArray(handler) && getBrand(handler[0]) === 'functionHandler';
 };
 
 const normalizeDataSourceName = (
@@ -1305,7 +1368,7 @@ function transformCustomOperations(
 
   const isCustom = Boolean(jsFunctionForField);
 
-  const { gqlField, models } = customOperationToGql(
+  const { gqlField, models, lambdaFunctionDefinition } = customOperationToGql(
     typeName,
     typeDef,
     authRules,
@@ -1313,7 +1376,7 @@ function transformCustomOperations(
     databaseType,
   );
 
-  return { gqlField, models, jsFunctionForField };
+  return { gqlField, models, jsFunctionForField, lambdaFunctionDefinition };
 }
 
 function generateCustomOperationTypes({
@@ -1346,9 +1409,14 @@ function generateCustomOperationTypes({
 export function processSchema(arg: {
   schema: InternalSchema;
 }): DerivedApiDefinition {
-  const { schema, jsFunctions, functionSchemaAccess } = schemaPreprocessor(
-    arg.schema,
-  );
+  const { schema, jsFunctions, functionSchemaAccess, lambdaFunctions } =
+    schemaPreprocessor(arg.schema);
 
-  return { schema, functionSlots: [], jsFunctions, functionSchemaAccess };
+  return {
+    schema,
+    functionSlots: [],
+    jsFunctions,
+    functionSchemaAccess,
+    lambdaFunctions,
+  };
 }
