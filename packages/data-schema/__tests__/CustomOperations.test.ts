@@ -708,4 +708,146 @@ describe('CustomOperation transform', () => {
       expect(result).toMatchSnapshot();
     });
   });
+
+  // Ensure deprecated .function functionality is intact
+  // TODO: delete after removing the .function modifier (by GA)
+  describe('deprecated .function', () => {
+    test('Schema w model, custom query, mutation, and subscription', () => {
+      const s = a
+        .schema({
+          Post: a.model({
+            title: a.string(),
+          }),
+          likePost: a
+            .mutation()
+            .arguments({ postId: a.string() })
+            .returns(a.ref('Post'))
+            .function('myFunc'),
+          getLikedPost: a.query().returns(a.ref('Post')).function('myFunc'),
+          onLikePost: a
+            .subscription()
+            .returns(a.ref('Post'))
+            .function('myFunc'),
+        })
+        .authorization([a.allow.public()]);
+
+      const result = s.transform().schema;
+
+      expect(result).toMatchSnapshot();
+    });
+
+    test('Schema w model, custom query, mutation, and subscription and ref of model with array modifier', () => {
+      const s = a
+        .schema({
+          Post: a.model({
+            title: a.string(),
+          }),
+          listPosts: a
+            .mutation()
+            .returns(a.ref('Post').array())
+            .function('myFunc'),
+          getLikedPost: a
+            .query()
+            .returns(a.ref('Post').array())
+            .function('myFunc'),
+          onLikePost: a
+            .subscription()
+            .returns(a.ref('Post'))
+            .function('myFunc'),
+        })
+        .authorization([a.allow.public()]);
+
+      const result = s.transform().schema;
+
+      expect(result).toMatchSnapshot();
+    });
+
+    test('Schema w model, custom query, mutation, and subscription and ref of custom type with array modifier', () => {
+      const s = a
+        .schema({
+          PostCustomType: a.customType({
+            title: a.string(),
+          }),
+          listPosts: a
+            .mutation()
+            .returns(a.ref('PostCustomType').array())
+            .function('myFunc'),
+          getLikedPost: a
+            .query()
+            .returns(a.ref('PostCustomType').array())
+            .function('myFunc'),
+          onLikePost: a
+            .subscription()
+            .returns(a.ref('PostCustomType'))
+            .function('myFunc'),
+        })
+        .authorization([a.allow.public()]);
+
+      const result = s.transform().schema;
+
+      expect(result).toMatchSnapshot();
+    });
+
+    test('Custom Mutation w Auth rules and no handler should throw', () => {
+      const s = a.schema({
+        likePost: a
+          .mutation()
+          .arguments({ postId: a.string() })
+          .returns(a.ref('Post'))
+          .authorization([a.allow.private()]),
+      });
+
+      expect(() => s.transform()).toThrow(
+        'requires both an authorization rule and a handler reference',
+      );
+    });
+
+    test('Custom Mutation w handler, but no auth rules should throw', () => {
+      const s = a.schema({
+        likePost: a
+          .mutation()
+          .arguments({ postId: a.string() })
+          .returns(a.ref('Post'))
+          .function('myFunc'),
+      });
+
+      expect(() => s.transform()).toThrow(
+        'requires both an authorization rule and a handler reference',
+      );
+    });
+
+    test('Custom Mutation w string function reference', () => {
+      const s = a.schema({
+        likePost: a
+          .mutation()
+          .arguments({
+            postId: a.string().required(),
+          })
+          .returns(a.ref('Post'))
+          .function('myFunc')
+          .authorization([a.allow.private()]),
+      });
+
+      const result = s.transform().schema;
+
+      expect(result).toMatchSnapshot();
+    });
+
+    test('Custom Mutation w string function reference & auth', () => {
+      const s = a.schema({
+        likePost: a
+          .mutation()
+          .arguments({
+            postId: a.string().required(),
+          })
+          .returns(a.ref('Post'))
+          .function('myFunc')
+          .authorization([a.allow.private()]),
+      });
+
+      const result = s.transform().schema;
+
+      expect(result).toMatchSnapshot();
+    });
+  });
 });
