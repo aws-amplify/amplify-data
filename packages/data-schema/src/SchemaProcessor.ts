@@ -288,6 +288,7 @@ function customOperationToGql(
   typeDef: InternalCustom,
   authorization: Authorization<any, any, any>[],
   isCustom = false,
+  databaseType: DatabaseType,
 ): {
   gqlField: string;
   models: [string, any][];
@@ -326,6 +327,9 @@ function customOperationToGql(
     implicitModels.push(...models);
   }
 
+  const handler = handlers && handlers[0];
+  const brand = handler && getBrand(handler);
+
   let gqlHandlerContent = '';
   let lambdaFunctionDefinition: LambdaFunctionDefinition = {};
 
@@ -336,10 +340,25 @@ function customOperationToGql(
     ));
   } else if (functionRef) {
     gqlHandlerContent = `@function(name: "${functionRef}") `;
+  } else if (databaseType === 'sql' && handler && brand === 'inlineSql') {
+    gqlHandlerContent = `@sql(statement: ${escapeGraphQlString(
+      String(getHandlerData(handler)),
+    )}) `;
+  } else if (databaseType === 'sql' && handler && brand === 'sqlReference') {
+    gqlHandlerContent = `@sql(reference: "${getHandlerData(handler)}") `;
   }
 
   const gqlField = `${callSignature}: ${returnTypeName} ${gqlHandlerContent}${authString}`;
   return { gqlField, models: implicitModels, lambdaFunctionDefinition };
+}
+
+/**
+ * Escape a string that will be used inside of a graphql string.
+ * @param str The input string to be escaped
+ * @returns The string with special charactars escaped
+ */
+function escapeGraphQlString(str: string) {
+  return JSON.stringify(str);
 }
 
 /**
@@ -959,6 +978,8 @@ const transformedSecondaryIndexesForModel = (
   );
 };
 
+type DatabaseType = 'dynamodb' | 'sql';
+
 const ruleIsResourceAuth = (
   authRule: SchemaAuthorization<any, any, any>,
 ): authRule is ResourceAuthorization => {
@@ -1018,6 +1039,11 @@ const schemaPreprocessor = (
 
   const jsFunctions: JsResolver[] = [];
   let lambdaFunctions: LambdaFunctionDefinition = {};
+
+  const databaseType =
+    schema.data.configuration.database.engine === 'dynamodb'
+      ? 'dynamodb'
+      : 'sql';
 
   const fkFields = allImpliedFKs(schema);
   const topLevelTypes = Object.entries(schema.data.types);
@@ -1089,7 +1115,12 @@ const schemaPreprocessor = (
           models,
           jsFunctionForField,
           lambdaFunctionDefinition,
-        } = transformCustomOperations(typeDef, typeName, mostRelevantAuthRules);
+        } = transformCustomOperations(
+          typeDef,
+          typeName,
+          mostRelevantAuthRules,
+          databaseType,
+        );
 
         lambdaFunctions = lambdaFunctionDefinition;
 
@@ -1228,13 +1259,13 @@ function validateCustomOperations(
 }
 
 const isCustomHandler = (
-  handler: HandlerType | null,
+  handler: HandlerType[] | null,
 ): handler is CustomHandler[] => {
   return Array.isArray(handler) && getBrand(handler[0]) === 'customHandler';
 };
 
 const isFunctionHandler = (
-  handler: HandlerType | null,
+  handler: HandlerType[] | null,
 ): handler is FunctionHandler[] => {
   return Array.isArray(handler) && getBrand(handler[0]) === 'functionHandler';
 };
@@ -1324,6 +1355,7 @@ function transformCustomOperations(
   typeDef: InternalCustom,
   typeName: string,
   authRules: Authorization<any, any, any>[],
+  databaseType: DatabaseType,
 ) {
   const { typeName: opType, handlers } = typeDef.data;
   let jsFunctionForField: JsResolver | undefined = undefined;
@@ -1341,6 +1373,7 @@ function transformCustomOperations(
     typeDef,
     authRules,
     isCustom,
+    databaseType,
   );
 
   return { gqlField, models, jsFunctionForField, lambdaFunctionDefinition };

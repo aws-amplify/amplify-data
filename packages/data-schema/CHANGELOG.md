@@ -1,5 +1,11 @@
 # @aws-amplify/data-schema
 
+## 0.13.12
+
+### Patch Changes
+
+- ab4bc27: feat: Schema transform logic for inlineSql and sqlReference handlers
+
 ## 0.13.11
 
 ### Patch Changes
