@@ -6,7 +6,11 @@ import { Authorization } from './Authorization';
 import { RefType, InternalRef } from './RefType';
 import { EnumType, EnumTypeParamShape } from './EnumType';
 import { CustomType } from './CustomType';
-import type { HandlerType as Handler } from './Handler';
+import type {
+  CustomHandler,
+  FunctionHandler,
+  HandlerType as Handler,
+} from './Handler';
 
 const queryBrand = 'queryCustomOperation';
 const mutationBrand = 'mutationCustomOperation';
@@ -27,7 +31,7 @@ type CustomFunctionRefType = string; // extend to include reference
 
 type InternalCustomArguments = Record<string, InternalField>;
 type InternalCustomReturnType = InternalRef;
-type HandlerInputType = Handler | Handler[number];
+type HandlerInputType = FunctionHandler[] | CustomHandler[] | Handler;
 
 export const CustomOperationNames = [
   'Query',
@@ -42,7 +46,7 @@ type CustomData = {
   functionRef: string | null; // extend to include reference
   authorization: Authorization<any, any, any>[];
   typeName: CustomOperationName;
-  handlers: Handler | null;
+  handlers: Handler[] | null;
 };
 
 type InternalCustomData = CustomData & {
@@ -159,7 +163,7 @@ function _custom<
       handler(handlers: HandlerInputType) {
         data.handlers = Array.isArray(handlers)
           ? handlers
-          : ([handlers] as Handler);
+          : ([handlers] as Handler[]);
 
         return this;
       },

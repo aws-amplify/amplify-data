@@ -1,5 +1,17 @@
 # @aws-amplify/data-schema
 
+## 0.13.13
+
+### Patch Changes
+
+- 0e36d74: fix: delete operation of m:m created implicit model not having correct param
+
+## 0.13.12
+
+### Patch Changes
+
+- ab4bc27: feat: Schema transform logic for inlineSql and sqlReference handlers
+
 ## 0.13.11
 
 ### Patch Changes

@@ -3,7 +3,10 @@ import type { ModelSchema } from './ModelSchema';
 
 // MappedTypes
 import type { ResolveSchema, SchemaTypes } from './MappedTypes/ResolveSchema';
-import type { ResolveFieldProperties } from './MappedTypes/ResolveFieldProperties';
+import type {
+  CreateImplicitModelsFromRelations,
+  ResolveFieldProperties,
+} from './MappedTypes/ResolveFieldProperties';
 import type {
   ModelIdentifier,
   ModelSecondaryIndexes,
@@ -43,9 +46,16 @@ type InternalClientSchema<
   Schema extends ModelSchema<any, any>,
   NonModelTypes extends NonModelTypesShape = ExtractNonModelTypes<Schema>,
   ResolvedSchema = ResolveSchema<Schema>,
+  ImplicitModels = CreateImplicitModelsFromRelations<ResolvedSchema>,
+  ImplicitModelsIdentifierMeta = {
+    [ImplicitModel in keyof ImplicitModels]: {
+      identifier: 'id';
+    };
+  },
   ResolvedFields extends Record<string, unknown> = ResolveFieldProperties<
     Schema,
-    NonModelTypes
+    NonModelTypes,
+    ImplicitModels
   >,
   IdentifierMeta extends Record<string, any> = ModelIdentifier<
     SchemaTypes<Schema>
@@ -60,8 +70,10 @@ type InternalClientSchema<
       ResolvedFields,
       NonModelTypes
     >['customOperations']
-  > & {
+  > &
+  ResolvedFields & {
     [__modelMeta__]: IdentifierMeta &
+      ImplicitModelsIdentifierMeta &
       SecondaryIndexes &
       RelationalMetadata<ResolvedSchema, ResolvedFields, IdentifierMeta> &
       NonModelTypes &

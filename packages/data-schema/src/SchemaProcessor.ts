@@ -254,8 +254,14 @@ function customOperationToGql(
   typeDef: InternalCustom,
   authorization: Authorization<any, any, any>[],
   isCustom = false,
+  databaseType: DatabaseType,
 ): { gqlField: string; models: [string, any][] } {
-  const { arguments: fieldArgs, returnType, functionRef } = typeDef.data;
+  const {
+    arguments: fieldArgs,
+    returnType,
+    functionRef,
+    handlers,
+  } = typeDef.data;
 
   let callSignature: string = typeName;
   const implicitModels: [string, any][] = [];
@@ -283,10 +289,32 @@ function customOperationToGql(
     implicitModels.push(...models);
   }
 
-  const fnString = functionRef ? `@function(name: "${functionRef}") ` : '';
+  const handler = handlers && handlers[0];
+  const brand = handler && getBrand(handler);
 
-  const gqlField = `${callSignature}: ${returnTypeName} ${fnString}${authString}`;
+  let gqlHandlerContent = '';
+
+  if (functionRef) {
+    gqlHandlerContent = `@function(name: "${functionRef}") `;
+  } else if (databaseType === 'sql' && handler && brand === 'inlineSql') {
+    gqlHandlerContent = `@sql(statement: ${escapeGraphQlString(
+      String(getHandlerData(handler)),
+    )}) `;
+  } else if (databaseType === 'sql' && handler && brand === 'sqlReference') {
+    gqlHandlerContent = `@sql(reference: "${getHandlerData(handler)}") `;
+  }
+  const gqlField = `${callSignature}: ${returnTypeName} ${gqlHandlerContent}${authString}`;
+
   return { gqlField, models: implicitModels };
+}
+
+/**
+ * Escape a string that will be used inside of a graphql string.
+ * @param str The input string to be escaped
+ * @returns The string with special charactars escaped
+ */
+function escapeGraphQlString(str: string) {
+  return JSON.stringify(str);
 }
 
 /**
@@ -906,6 +934,8 @@ const transformedSecondaryIndexesForModel = (
   );
 };
 
+type DatabaseType = 'dynamodb' | 'sql';
+
 const ruleIsResourceAuth = (
   authRule: SchemaAuthorization<any, any, any>,
 ): authRule is ResourceAuthorization => {
@@ -963,6 +993,11 @@ const schemaPreprocessor = (
   const customSubscriptions = [];
 
   const jsFunctions: JsResolver[] = [];
+
+  const databaseType =
+    schema.data.configuration.database.engine === 'dynamodb'
+      ? 'dynamodb'
+      : 'sql';
 
   const fkFields = allImpliedFKs(schema);
   const topLevelTypes = Object.entries(schema.data.types);
@@ -1030,7 +1065,12 @@ const schemaPreprocessor = (
         const { typeName: opType } = typeDef.data;
 
         const { gqlField, models, jsFunctionForField } =
-          transformCustomOperations(typeDef, typeName, mostRelevantAuthRules);
+          transformCustomOperations(
+            typeDef,
+            typeName,
+            mostRelevantAuthRules,
+            databaseType,
+          );
 
         topLevelTypes.push(...models);
 
@@ -1162,7 +1202,7 @@ function validateCustomOperations(
 }
 
 const isCustomHandler = (
-  handler: HandlerType | null,
+  handler: HandlerType[] | null,
 ): handler is CustomHandler[] => {
   return Array.isArray(handler) && getBrand(handler[0]) === 'customHandler';
 };
@@ -1252,6 +1292,7 @@ function transformCustomOperations(
   typeDef: InternalCustom,
   typeName: string,
   authRules: Authorization<any, any, any>[],
+  databaseType: DatabaseType,
 ) {
   const { typeName: opType, handlers } = typeDef.data;
   let jsFunctionForField: JsResolver | undefined = undefined;
@@ -1269,6 +1310,7 @@ function transformCustomOperations(
     typeDef,
     authRules,
     isCustom,
+    databaseType,
   );
 
   return { gqlField, models, jsFunctionForField };

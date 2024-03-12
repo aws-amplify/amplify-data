@@ -2,10 +2,10 @@ import { Brand, brand } from './util';
 import { RefType } from './RefType';
 
 export type HandlerType =
-  | InlineSqlHandler[]
-  | SqlReferenceHandler[]
-  | CustomHandler[]
-  | FunctionHandler[];
+  | InlineSqlHandler
+  | SqlReferenceHandler
+  | CustomHandler
+  | FunctionHandler;
 
 const dataSymbol = Symbol('Data');
 
