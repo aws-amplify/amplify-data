@@ -1,5 +1,11 @@
 # @aws-amplify/data-schema-types
 
+## 0.7.8
+
+### Patch Changes
+
+- 0171ad5: handler.function supprts string | defineFunction
+
 ## 0.7.7
 
 ### Patch Changes
