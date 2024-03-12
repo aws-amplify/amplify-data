@@ -267,8 +267,8 @@ function transformFunctionHandler(
     if (typeof handlerData === 'string') {
       gqlHandlerContent += `@function(name: "${handlerData}") `;
     } else if (typeof handlerData.getInstance === 'function') {
-      const fnBaseName = `Fn_${callSignature}`;
-      const fnNameSuffix = idx === 0 ? '' : `_${idx + 1}`;
+      const fnBaseName = `Fn${callSignature}`;
+      const fnNameSuffix = idx === 0 ? '' : `${idx + 1}`;
       const fnName = fnBaseName + fnNameSuffix;
 
       lambdaFunctionDefinition[fnName] = handlerData;
