@@ -1,5 +1,11 @@
 # @aws-amplify/data-schema
 
+## 0.13.15
+
+### Patch Changes
+
+- f33a8e6: remove underscores from generated fn names
+
 ## 0.13.14
 
 ### Patch Changes
