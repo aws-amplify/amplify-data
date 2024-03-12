@@ -316,7 +316,7 @@ exports[`CustomOperation transform dynamo schema handlers a.handler.function def
 }
 
 type Query {
-  getPostDetails: GetPostDetailsReturnType @function(name: "FngetPostDetails") @auth(rules: [{allow: private}])
+  getPostDetails: GetPostDetailsReturnType @function(name: "FnGetPostDetails") @auth(rules: [{allow: private}])
 }"
 `;
 
@@ -327,7 +327,7 @@ exports[`CustomOperation transform dynamo schema handlers a.handler.function pip
 }
 
 type Query {
-  getPostDetails: GetPostDetailsReturnType @function(name: "myFunc") @function(name: "FngetPostDetails2") @function(name: "FngetPostDetails3") @function(name: "myFunc2") @auth(rules: [{allow: private}])
+  getPostDetails: GetPostDetailsReturnType @function(name: "myFunc") @function(name: "FnGetPostDetails2") @function(name: "FnGetPostDetails3") @function(name: "myFunc2") @auth(rules: [{allow: private}])
 }"
 `;
 
