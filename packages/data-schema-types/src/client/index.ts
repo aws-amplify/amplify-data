@@ -713,7 +713,15 @@ export type ModelTypes<
   Context extends ContextType = 'CLIENT',
   ModelMeta extends Record<any, any> = ExtractModelMeta<Schema>,
 > = {
-  [ModelName in keyof NonCustomOps<Schema>]: ModelName extends string
+  [ModelName in Exclude<
+    keyof Schema,
+    keyof CustomOperations<
+      Schema,
+      'Mutation' | 'Query' | 'Subscription',
+      Context,
+      ModelMeta
+    >
+  >]: ModelName extends string
     ? Schema[ModelName] extends Record<string, unknown>
       ? Context extends 'CLIENT'
         ? ModelTypesClient<Schema[ModelName], ModelMeta[ModelName]>
@@ -724,14 +732,6 @@ export type ModelTypes<
             : never
       : never
     : never;
-};
-
-type NonCustomOps<Schema extends Record<any, any>> = {
-  [K in keyof Schema as Schema[K] extends {
-    functionHandler: AppSyncResolverHandler<any, any>;
-  }
-    ? never
-    : K]: Schema[K];
 };
 
 export type CustomQueries<

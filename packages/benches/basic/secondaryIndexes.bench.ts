@@ -17,4 +17,4 @@ bench('secondary index', () => {
   });
 
   type _ = ClientSchema<typeof s>;
-}).types([72346, 'instantiations']);
+}).types([79390, 'instantiations']);
