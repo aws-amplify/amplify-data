@@ -2,6 +2,19 @@ import { expectTypeTestsToPassAsync } from 'jest-tsd';
 import { a } from '../index';
 import { configure } from '../src/internals';
 
+const fakeSecret = () => ({}) as any;
+
+const datasourceConfigMySQL = {
+  engine: 'mysql',
+  hostname: fakeSecret(),
+  username: fakeSecret(),
+  password: fakeSecret(),
+  port: fakeSecret(),
+  databaseName: fakeSecret(),
+} as const;
+
+const aSql = configure({ database: datasourceConfigMySQL });
+
 // evaluates type defs in corresponding test-d.ts file
 it('should not produce static type errors', async () => {
   await expectTypeTestsToPassAsync(__filename);
@@ -292,11 +305,11 @@ describe('CustomOperation transform', () => {
               .returns(a.customType({}))
               .authorization([a.allow.public()])
               .handler([
-                // @ts-expect-error
                 a.handler.custom({
                   entry: './filename.js',
                   dataSource: 'CommentTable',
                 }),
+                // @ts-expect-error
                 a.handler.function(() => {}),
               ]),
           });
@@ -479,8 +492,7 @@ describe('CustomOperation transform', () => {
         expect(result).toMatchSnapshot();
       });
       test('a.handler.inlineSql works', () => {
-        // TODO: This shouldn't work on a DDB schema
-        const s = a.schema({
+        const s = aSql.schema({
           getPostDetails: a
             .query()
             .arguments({})
@@ -493,9 +505,26 @@ describe('CustomOperation transform', () => {
 
         expect(result).toMatchSnapshot();
       });
+
+      test('a.handler.inlineSql escapes quotes', () => {
+        const s = aSql.schema({
+          getPostDetails: a
+            .query()
+            .arguments({})
+            .handler(
+              a.handler.inlineSql('SELECT * from TESTTABLE status = "active";'),
+            )
+            .authorization([a.allow.private()])
+            .returns(a.customType({})),
+        });
+
+        const result = s.transform().schema;
+
+        expect(result).toMatchSnapshot();
+      });
+
       test('a.handler.sqlReference works', () => {
-        // TODO: This shouldn't work on a DDB schema
-        const s = a.schema({
+        const s = aSql.schema({
           getPostDetails: a
             .query()
             .arguments({})
