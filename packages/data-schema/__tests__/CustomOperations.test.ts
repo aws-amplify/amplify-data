@@ -514,7 +514,7 @@ describe('CustomOperation transform', () => {
 
           expect(schema).toMatchSnapshot();
           expect(lambdaFunctions).toMatchObject({
-            Fn_getPostDetails: fn1,
+            FnGetPostDetails: fn1,
           });
         });
 
@@ -540,8 +540,8 @@ describe('CustomOperation transform', () => {
 
           expect(schema).toMatchSnapshot();
           expect(lambdaFunctions).toMatchObject({
-            Fn_getPostDetails_2: fn1,
-            Fn_getPostDetails_3: fn2,
+            FnGetPostDetails2: fn1,
+            FnGetPostDetails3: fn2,
           });
         });
 
