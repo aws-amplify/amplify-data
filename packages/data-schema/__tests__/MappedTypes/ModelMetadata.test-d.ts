@@ -5,7 +5,10 @@ import {
   SchemaTypes,
 } from '../../src/MappedTypes/ResolveSchema';
 
-import type { ResolveFieldProperties } from '../../src/MappedTypes/ResolveFieldProperties';
+import type {
+  CreateImplicitModelsFromRelations,
+  ResolveFieldProperties,
+} from '../../src/MappedTypes/ResolveFieldProperties';
 import type { NonModelTypesShape } from '../../src/MappedTypes/ExtractNonModelTypes';
 
 import {
@@ -157,7 +160,11 @@ describe('RelationalMetadata', () => {
 
     type Resolved = RelationalMetadata<
       ResolveSchema<Schema>,
-      ResolveFieldProperties<Schema, NonModelTypesShape>,
+      ResolveFieldProperties<
+        Schema,
+        NonModelTypesShape,
+        CreateImplicitModelsFromRelations<ResolveSchema<Schema>>
+      >,
       ModelIdentifier<SchemaTypes<Schema>>
     >;
 
@@ -180,7 +187,11 @@ describe('RelationalMetadata', () => {
 
     type Schema = typeof s;
 
-    type ResolvedFields = ResolveFieldProperties<Schema, NonModelTypesShape>;
+    type ResolvedFields = ResolveFieldProperties<
+      Schema,
+      NonModelTypesShape,
+      CreateImplicitModelsFromRelations<ResolveSchema<Schema>>
+    >;
     type Resolved = Prettify<
       RelationalMetadata<
         ResolveSchema<Schema>,
@@ -208,7 +219,11 @@ describe('RelationalMetadata', () => {
 
     type Schema = typeof s;
 
-    type ResolvedFields = ResolveFieldProperties<Schema, NonModelTypesShape>;
+    type ResolvedFields = ResolveFieldProperties<
+      Schema,
+      NonModelTypesShape,
+      CreateImplicitModelsFromRelations<ResolveSchema<Schema>>
+    >;
     type Resolved = Prettify<
       RelationalMetadata<
         ResolveSchema<Schema>,
@@ -253,7 +268,11 @@ describe('RelationalMetadata', () => {
 
     type Schema = typeof s;
 
-    type ResolvedFields = ResolveFieldProperties<Schema, NonModelTypesShape>;
+    type ResolvedFields = ResolveFieldProperties<
+      Schema,
+      NonModelTypesShape,
+      CreateImplicitModelsFromRelations<ResolveSchema<Schema>>
+    >;
     type Resolved = Prettify<
       RelationalMetadata<
         ResolveSchema<Schema>,
@@ -298,7 +317,11 @@ describe('RelationalMetadata', () => {
 
     type Schema = typeof s;
 
-    type ResolvedFields = ResolveFieldProperties<Schema, NonModelTypesShape>;
+    type ResolvedFields = ResolveFieldProperties<
+      Schema,
+      NonModelTypesShape,
+      CreateImplicitModelsFromRelations<ResolveSchema<Schema>>
+    >;
     type Resolved = Prettify<
       RelationalMetadata<
         ResolveSchema<Schema>,
@@ -342,7 +365,11 @@ describe('RelationalMetadata', () => {
     type Resolved = Prettify<
       RelationalMetadata<
         ResolveSchema<Schema>,
-        ResolveFieldProperties<Schema, NonModelTypesShape>,
+        ResolveFieldProperties<
+          Schema,
+          NonModelTypesShape,
+          CreateImplicitModelsFromRelations<ResolveSchema<Schema>>
+        >,
         ModelIdentifier<SchemaTypes<Schema>>
       >
     >;
@@ -381,7 +408,11 @@ describe('RelationalMetadata', () => {
     type Resolved = Prettify<
       RelationalMetadata<
         ResolveSchema<Schema>,
-        ResolveFieldProperties<Schema, NonModelTypesShape>,
+        ResolveFieldProperties<
+          Schema,
+          NonModelTypesShape,
+          CreateImplicitModelsFromRelations<ResolveSchema<Schema>>
+        >,
         ModelIdentifier<SchemaTypes<Schema>>
       >
     >;
@@ -420,7 +451,11 @@ describe('RelationalMetadata', () => {
 
     type Schema = typeof s;
 
-    type ResolvedFields = ResolveFieldProperties<Schema, NonModelTypesShape>;
+    type ResolvedFields = ResolveFieldProperties<
+      Schema,
+      NonModelTypesShape,
+      CreateImplicitModelsFromRelations<ResolveSchema<Schema>>
+    >;
     type Resolved = Prettify<
       RelationalMetadata<
         ResolveSchema<Schema>,
@@ -447,7 +482,7 @@ describe('RelationalMetadata', () => {
             readonly createdAt?: string;
             readonly updatedAt?: string;
             name?: string | null | undefined;
-            postTags?: ResolvedFields['Post']['postTags'];
+            postTags?: ResolvedFields['Tag']['postTags'];
           };
         };
       };
