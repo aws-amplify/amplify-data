@@ -8,8 +8,6 @@ import {
   Equal,
 } from '../util';
 import type { Observable } from 'rxjs';
-import type { AppSyncResolverHandler } from 'aws-lambda';
-export type { AppSyncResolverHandler } from 'aws-lambda';
 
 export declare const __modelMeta__: unique symbol;
 
