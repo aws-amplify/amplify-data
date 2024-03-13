@@ -1,5 +1,80 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`CustomOperation transform deprecated .function Custom Mutation w string function reference & auth 1`] = `
+"type Mutation {
+  likePost(postId: String!): Post @function(name: "myFunc") @auth(rules: [{allow: private}])
+}"
+`;
+
+exports[`CustomOperation transform deprecated .function Custom Mutation w string function reference 1`] = `
+"type Mutation {
+  likePost(postId: String!): Post @function(name: "myFunc") @auth(rules: [{allow: private}])
+}"
+`;
+
+exports[`CustomOperation transform deprecated .function Schema w model, custom query, mutation, and subscription 1`] = `
+"type Post @model @auth(rules: [{allow: public}])
+{
+  id: ID! @primaryKey
+  title: String
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
+}
+
+type Mutation {
+  likePost(postId: String): Post @function(name: "myFunc") @auth(rules: [{allow: public}])
+}
+
+type Query {
+  getLikedPost: Post @function(name: "myFunc") @auth(rules: [{allow: public}])
+}
+
+type Subscription {
+  onLikePost: Post @function(name: "myFunc") @auth(rules: [{allow: public}])
+}"
+`;
+
+exports[`CustomOperation transform deprecated .function Schema w model, custom query, mutation, and subscription and ref of custom type with array modifier 1`] = `
+"type PostCustomType 
+{
+  title: String
+}
+
+type Mutation {
+  listPosts: [PostCustomType] @function(name: "myFunc") @auth(rules: [{allow: public}])
+}
+
+type Query {
+  getLikedPost: [PostCustomType] @function(name: "myFunc") @auth(rules: [{allow: public}])
+}
+
+type Subscription {
+  onLikePost: PostCustomType @function(name: "myFunc") @auth(rules: [{allow: public}])
+}"
+`;
+
+exports[`CustomOperation transform deprecated .function Schema w model, custom query, mutation, and subscription and ref of model with array modifier 1`] = `
+"type Post @model @auth(rules: [{allow: public}])
+{
+  id: ID! @primaryKey
+  title: String
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
+}
+
+type Mutation {
+  listPosts: [Post] @function(name: "myFunc") @auth(rules: [{allow: public}])
+}
+
+type Query {
+  getLikedPost: [Post] @function(name: "myFunc") @auth(rules: [{allow: public}])
+}
+
+type Subscription {
+  onLikePost: Post @function(name: "myFunc") @auth(rules: [{allow: public}])
+}"
+`;
+
 exports[`CustomOperation transform dynamo schema Custom Mutation w required arg and enum 1`] = `
 "enum LikePostReactionType {
   :shipit:
@@ -234,14 +309,47 @@ type Query {
 }"
 `;
 
-exports[`CustomOperation transform dynamo schema handlers a.handler.function works 1`] = `
+exports[`CustomOperation transform dynamo schema handlers a.handler.function defineFunction 1`] = `
 "type GetPostDetailsReturnType 
 {
   
 }
 
 type Query {
-  getPostDetails: GetPostDetailsReturnType @auth(rules: [{allow: private}])
+  getPostDetails: GetPostDetailsReturnType @function(name: "FnGetPostDetails") @auth(rules: [{allow: private}])
+}"
+`;
+
+exports[`CustomOperation transform dynamo schema handlers a.handler.function pipeline / mix 1`] = `
+"type GetPostDetailsReturnType 
+{
+  
+}
+
+type Query {
+  getPostDetails: GetPostDetailsReturnType @function(name: "myFunc") @function(name: "FnGetPostDetails2") @function(name: "FnGetPostDetails3") @function(name: "myFunc2") @auth(rules: [{allow: private}])
+}"
+`;
+
+exports[`CustomOperation transform dynamo schema handlers a.handler.function string 1`] = `
+"type GetPostDetailsReturnType 
+{
+  
+}
+
+type Query {
+  getPostDetails: GetPostDetailsReturnType @function(name: "myFunc") @auth(rules: [{allow: private}])
+}"
+`;
+
+exports[`CustomOperation transform dynamo schema handlers a.handler.inlineSql escapes quotes 1`] = `
+"type GetPostDetailsReturnType 
+{
+  
+}
+
+type Query {
+  getPostDetails: GetPostDetailsReturnType @sql(statement: "SELECT * from TESTTABLE status = \\"active\\";") @auth(rules: [{allow: private}])
 }"
 `;
 
@@ -250,13 +358,14 @@ exports[`CustomOperation transform dynamo schema handlers a.handler.inlineSql wo
   "functionSchemaAccess": [],
   "functionSlots": [],
   "jsFunctions": [],
+  "lambdaFunctions": {},
   "schema": "type GetPostDetailsReturnType 
 {
   
 }
 
 type Query {
-  getPostDetails: GetPostDetailsReturnType @auth(rules: [{allow: private}])
+  getPostDetails: GetPostDetailsReturnType @sql(statement: "SELECT * from TESTTABLE;") @auth(rules: [{allow: private}])
 }",
 }
 `;
@@ -268,7 +377,7 @@ exports[`CustomOperation transform dynamo schema handlers a.handler.sqlReference
 }
 
 type Query {
-  getPostDetails: GetPostDetailsReturnType @auth(rules: [{allow: private}])
+  getPostDetails: GetPostDetailsReturnType @sql(reference: "testQueryName") @auth(rules: [{allow: private}])
 }"
 `;
 

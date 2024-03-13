@@ -1,6 +1,20 @@
 import { expectTypeTestsToPassAsync } from 'jest-tsd';
 import { a } from '../index';
 import { configure } from '../src/internals';
+import { defineFunctionStub } from './utils';
+
+const fakeSecret = () => ({}) as any;
+
+const datasourceConfigMySQL = {
+  engine: 'mysql',
+  hostname: fakeSecret(),
+  username: fakeSecret(),
+  password: fakeSecret(),
+  port: fakeSecret(),
+  databaseName: fakeSecret(),
+} as const;
+
+const aSql = configure({ database: datasourceConfigMySQL });
 
 // evaluates type defs in corresponding test-d.ts file
 it('should not produce static type errors', async () => {
@@ -19,12 +33,15 @@ describe('CustomOperation transform', () => {
             .mutation()
             .arguments({ postId: a.string() })
             .returns(a.ref('Post'))
-            .function('myFunc'),
-          getLikedPost: a.query().returns(a.ref('Post')).function('myFunc'),
+            .handler(a.handler.function('myFunc')),
+          getLikedPost: a
+            .query()
+            .returns(a.ref('Post'))
+            .handler(a.handler.function('myFunc')),
           onLikePost: a
             .subscription()
             .returns(a.ref('Post'))
-            .function('myFunc'),
+            .handler(a.handler.function('myFunc')),
         })
         .authorization([a.allow.public()]);
 
@@ -42,15 +59,15 @@ describe('CustomOperation transform', () => {
           listPosts: a
             .mutation()
             .returns(a.ref('Post').array())
-            .function('myFunc'),
+            .handler(a.handler.function('myFunc')),
           getLikedPost: a
             .query()
             .returns(a.ref('Post').array())
-            .function('myFunc'),
+            .handler(a.handler.function('myFunc')),
           onLikePost: a
             .subscription()
             .returns(a.ref('Post'))
-            .function('myFunc'),
+            .handler(a.handler.function('myFunc')),
         })
         .authorization([a.allow.public()]);
 
@@ -68,15 +85,15 @@ describe('CustomOperation transform', () => {
           listPosts: a
             .mutation()
             .returns(a.ref('PostCustomType').array())
-            .function('myFunc'),
+            .handler(a.handler.function('myFunc')),
           getLikedPost: a
             .query()
             .returns(a.ref('PostCustomType').array())
-            .function('myFunc'),
+            .handler(a.handler.function('myFunc')),
           onLikePost: a
             .subscription()
             .returns(a.ref('PostCustomType'))
-            .function('myFunc'),
+            .handler(a.handler.function('myFunc')),
         })
         .authorization([a.allow.public()]);
 
@@ -105,7 +122,7 @@ describe('CustomOperation transform', () => {
           .mutation()
           .arguments({ postId: a.string() })
           .returns(a.ref('Post'))
-          .function('myFunc'),
+          .handler(a.handler.function('myFunc')),
       });
 
       expect(() => s.transform()).toThrow(
@@ -137,7 +154,7 @@ describe('CustomOperation transform', () => {
             postId: a.string().required(),
           })
           .returns(a.ref('Post'))
-          .function('myFunc')
+          .handler(a.handler.function('myFunc'))
           .authorization([a.allow.private()]),
       });
 
@@ -154,7 +171,7 @@ describe('CustomOperation transform', () => {
             postId: a.string().required(),
           })
           .returns(a.ref('Post'))
-          .function('myFunc')
+          .handler(a.handler.function('myFunc'))
           .authorization([a.allow.private()]),
       });
 
@@ -292,12 +309,12 @@ describe('CustomOperation transform', () => {
               .returns(a.customType({}))
               .authorization([a.allow.public()])
               .handler([
-                // @ts-expect-error
                 a.handler.custom({
                   entry: './filename.js',
                   dataSource: 'CommentTable',
                 }),
-                a.handler.function(() => {}),
+                // @ts-expect-error
+                a.handler.function('myFn'),
               ]),
           });
 
@@ -464,23 +481,91 @@ describe('CustomOperation transform', () => {
         });
       });
 
-      test('a.handler.function works', () => {
-        const s = a.schema({
-          getPostDetails: a
-            .query()
-            .arguments({})
-            .handler(a.handler.function(() => {}))
-            .authorization([a.allow.private()])
-            .returns(a.customType({})),
+      describe('a.handler.function', () => {
+        test('string', () => {
+          const s = a.schema({
+            getPostDetails: a
+              .query()
+              .arguments({})
+              .handler(a.handler.function('myFunc'))
+              .authorization([a.allow.private()])
+              .returns(a.customType({})),
+          });
+
+          const { schema, lambdaFunctions } = s.transform();
+
+          expect(schema).toMatchSnapshot();
+          expect(lambdaFunctions).toMatchObject({});
         });
 
-        const result = s.transform().schema;
+        test('defineFunction', () => {
+          const fn1 = defineFunctionStub({});
 
-        expect(result).toMatchSnapshot();
+          const s = a.schema({
+            getPostDetails: a
+              .query()
+              .arguments({})
+              .handler(a.handler.function(fn1))
+              .authorization([a.allow.private()])
+              .returns(a.customType({})),
+          });
+
+          const { schema, lambdaFunctions } = s.transform();
+
+          expect(schema).toMatchSnapshot();
+          expect(lambdaFunctions).toMatchObject({
+            FnGetPostDetails: fn1,
+          });
+        });
+
+        test('pipeline / mix', () => {
+          const fn1 = defineFunctionStub({});
+          const fn2 = defineFunctionStub({});
+
+          const s = a.schema({
+            getPostDetails: a
+              .query()
+              .arguments({})
+              .handler([
+                a.handler.function('myFunc'),
+                a.handler.function(fn1),
+                a.handler.function(fn2),
+                a.handler.function('myFunc2'),
+              ])
+              .authorization([a.allow.private()])
+              .returns(a.customType({})),
+          });
+
+          const { schema, lambdaFunctions } = s.transform();
+
+          expect(schema).toMatchSnapshot();
+          expect(lambdaFunctions).toMatchObject({
+            FnGetPostDetails2: fn1,
+            FnGetPostDetails3: fn2,
+          });
+        });
+
+        test('invalid', () => {
+          const invalidFnDef = {};
+
+          const s = a.schema({
+            getPostDetails: a
+              .query()
+              .arguments({})
+              // @ts-expect-error
+              .handler([a.handler.function(invalidFnDef)])
+              .authorization([a.allow.private()])
+              .returns(a.customType({})),
+          });
+
+          expect(() => s.transform()).toThrow(
+            'Invalid value specified for getPostDetails handler.function()',
+          );
+        });
       });
+
       test('a.handler.inlineSql works', () => {
-        // TODO: This shouldn't work on a DDB schema
-        const s = a.schema({
+        const s = aSql.schema({
           getPostDetails: a
             .query()
             .arguments({})
@@ -493,9 +578,26 @@ describe('CustomOperation transform', () => {
 
         expect(result).toMatchSnapshot();
       });
+
+      test('a.handler.inlineSql escapes quotes', () => {
+        const s = aSql.schema({
+          getPostDetails: a
+            .query()
+            .arguments({})
+            .handler(
+              a.handler.inlineSql('SELECT * from TESTTABLE status = "active";'),
+            )
+            .authorization([a.allow.private()])
+            .returns(a.customType({})),
+        });
+
+        const result = s.transform().schema;
+
+        expect(result).toMatchSnapshot();
+      });
+
       test('a.handler.sqlReference works', () => {
-        // TODO: This shouldn't work on a DDB schema
-        const s = a.schema({
+        const s = aSql.schema({
           getPostDetails: a
             .query()
             .arguments({})
@@ -534,13 +636,19 @@ describe('CustomOperation transform', () => {
           .mutation()
           .arguments({ postId: a.string() })
           .returns(a.ref('Post'))
-          .function('myFunc'),
+          .handler(a.handler.function('myFunc')),
       });
       s.addQueries({
-        getLikedPost: a.query().returns(a.ref('Post')).function('myFunc'),
+        getLikedPost: a
+          .query()
+          .returns(a.ref('Post'))
+          .handler(a.handler.function('myFunc')),
       });
       s.addSubscriptions({
-        onLikePost: a.subscription().returns(a.ref('Post')).function('myFunc'),
+        onLikePost: a
+          .subscription()
+          .returns(a.ref('Post'))
+          .handler(a.handler.function('myFunc')),
       });
       s.authorization([a.allow.public()]);
 
@@ -557,9 +665,15 @@ describe('CustomOperation transform', () => {
       });
       s.addMutations({
         // @ts-expect-error
-        getLikedPost: a.query().returns(a.ref('Post')).function('myFunc'),
+        getLikedPost: a
+          .query()
+          .returns(a.ref('Post'))
+          .handler(a.handler.function('myFunc')),
         // @ts-expect-error
-        onLikePost: a.subscription().returns(a.ref('Post')).function('myFunc'),
+        onLikePost: a
+          .subscription()
+          .returns(a.ref('Post'))
+          .handler(a.handler.function('myFunc')),
       });
       s.addQueries({
         // @ts-expect-error
@@ -567,9 +681,12 @@ describe('CustomOperation transform', () => {
           .mutation()
           .arguments({ postId: a.string() })
           .returns(a.ref('Post'))
-          .function('myFunc'),
+          .handler(a.handler.function('myFunc')),
         // @ts-expect-error
-        onLikePost: a.subscription().returns(a.ref('Post')).function('myFunc'),
+        onLikePost: a
+          .subscription()
+          .returns(a.ref('Post'))
+          .handler(a.handler.function('myFunc')),
       });
       s.addSubscriptions({
         // @ts-expect-error
@@ -577,11 +694,156 @@ describe('CustomOperation transform', () => {
           .mutation()
           .arguments({ postId: a.string() })
           .returns(a.ref('Post'))
-          .function('myFunc'),
+          .handler(a.handler.function('myFunc')),
         // @ts-expect-error
-        getLikedPost: a.query().returns(a.ref('Post')).function('myFunc'),
+        getLikedPost: a
+          .query()
+          .returns(a.ref('Post'))
+          .handler(a.handler.function('myFunc')),
       });
       s.authorization([a.allow.public()]);
+
+      const result = s.transform().schema;
+
+      expect(result).toMatchSnapshot();
+    });
+  });
+
+  // Ensure deprecated .function functionality is intact
+  // TODO: delete after removing the .function modifier (by GA)
+  describe('deprecated .function', () => {
+    test('Schema w model, custom query, mutation, and subscription', () => {
+      const s = a
+        .schema({
+          Post: a.model({
+            title: a.string(),
+          }),
+          likePost: a
+            .mutation()
+            .arguments({ postId: a.string() })
+            .returns(a.ref('Post'))
+            .function('myFunc'),
+          getLikedPost: a.query().returns(a.ref('Post')).function('myFunc'),
+          onLikePost: a
+            .subscription()
+            .returns(a.ref('Post'))
+            .function('myFunc'),
+        })
+        .authorization([a.allow.public()]);
+
+      const result = s.transform().schema;
+
+      expect(result).toMatchSnapshot();
+    });
+
+    test('Schema w model, custom query, mutation, and subscription and ref of model with array modifier', () => {
+      const s = a
+        .schema({
+          Post: a.model({
+            title: a.string(),
+          }),
+          listPosts: a
+            .mutation()
+            .returns(a.ref('Post').array())
+            .function('myFunc'),
+          getLikedPost: a
+            .query()
+            .returns(a.ref('Post').array())
+            .function('myFunc'),
+          onLikePost: a
+            .subscription()
+            .returns(a.ref('Post'))
+            .function('myFunc'),
+        })
+        .authorization([a.allow.public()]);
+
+      const result = s.transform().schema;
+
+      expect(result).toMatchSnapshot();
+    });
+
+    test('Schema w model, custom query, mutation, and subscription and ref of custom type with array modifier', () => {
+      const s = a
+        .schema({
+          PostCustomType: a.customType({
+            title: a.string(),
+          }),
+          listPosts: a
+            .mutation()
+            .returns(a.ref('PostCustomType').array())
+            .function('myFunc'),
+          getLikedPost: a
+            .query()
+            .returns(a.ref('PostCustomType').array())
+            .function('myFunc'),
+          onLikePost: a
+            .subscription()
+            .returns(a.ref('PostCustomType'))
+            .function('myFunc'),
+        })
+        .authorization([a.allow.public()]);
+
+      const result = s.transform().schema;
+
+      expect(result).toMatchSnapshot();
+    });
+
+    test('Custom Mutation w Auth rules and no handler should throw', () => {
+      const s = a.schema({
+        likePost: a
+          .mutation()
+          .arguments({ postId: a.string() })
+          .returns(a.ref('Post'))
+          .authorization([a.allow.private()]),
+      });
+
+      expect(() => s.transform()).toThrow(
+        'requires both an authorization rule and a handler reference',
+      );
+    });
+
+    test('Custom Mutation w handler, but no auth rules should throw', () => {
+      const s = a.schema({
+        likePost: a
+          .mutation()
+          .arguments({ postId: a.string() })
+          .returns(a.ref('Post'))
+          .function('myFunc'),
+      });
+
+      expect(() => s.transform()).toThrow(
+        'requires both an authorization rule and a handler reference',
+      );
+    });
+
+    test('Custom Mutation w string function reference', () => {
+      const s = a.schema({
+        likePost: a
+          .mutation()
+          .arguments({
+            postId: a.string().required(),
+          })
+          .returns(a.ref('Post'))
+          .function('myFunc')
+          .authorization([a.allow.private()]),
+      });
+
+      const result = s.transform().schema;
+
+      expect(result).toMatchSnapshot();
+    });
+
+    test('Custom Mutation w string function reference & auth', () => {
+      const s = a.schema({
+        likePost: a
+          .mutation()
+          .arguments({
+            postId: a.string().required(),
+          })
+          .returns(a.ref('Post'))
+          .function('myFunc')
+          .authorization([a.allow.private()]),
+      });
 
       const result = s.transform().schema;
 

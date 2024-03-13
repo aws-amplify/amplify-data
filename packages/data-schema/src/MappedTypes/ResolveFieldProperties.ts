@@ -11,6 +11,7 @@ import type {
   ModelRelationalField,
   ModelRelationalFieldParamShape,
   ModelRelationalTypeArgFactory,
+  ModelRelationshipTypes,
 } from '../ModelRelationalField';
 import type { AllImpliedFKs } from './ForeignKeys';
 
@@ -31,14 +32,14 @@ import type {
 export type ResolveFieldProperties<
   Schema extends ModelSchema<any, any>,
   NonModelTypes extends NonModelTypesShape,
+  ImplicitModelsSchema,
   ResolvedSchema = ResolveSchema<Schema>,
   IdentifierMeta extends Record<
     string,
     { identifier: string }
   > = ModelIdentifier<SchemaTypes<Schema>>,
-  FieldsWithInjectedModels = InjectImplicitModels<ResolvedSchema>,
   FieldsWithInjectedImplicitFields = InjectImplicitModelFields<
-    FieldsWithInjectedModels,
+    ResolvedSchema & ImplicitModelsSchema,
     IdentifierMeta
   >,
   FieldsWithRelationships = ResolveRelationships<
@@ -54,7 +55,7 @@ export type ResolveFieldProperties<
   AllImpliedFKs<ResolvedSchema, IdentifierMeta>
 >;
 
-type ExtractImplicitModelNames<Schema> = UnionToIntersection<
+export type CreateImplicitModelsFromRelations<Schema> = UnionToIntersection<
   ExcludeEmpty<
     {
       [ModelProp in keyof Schema]: {
@@ -64,16 +65,19 @@ type ExtractImplicitModelNames<Schema> = UnionToIntersection<
               ? never
               : Schema[ModelProp][FieldProp]['relationName']
             : never
-          : never]: { id?: string } & Record<
+          : never]: Record<
+          // The id field of this implicit model gets inserted by `InjectImplicitModelFields` above
           `${Lowercase<ModelProp & string>}`,
-          ModelRelationalTypeArgFactory<ModelProp & string, 'hasMany', false>
-        >; // implicit model will always have id: string as the PK
+          ModelRelationalTypeArgFactory<
+            ModelProp & string,
+            ModelRelationshipTypes.hasMany,
+            false
+          >
+        >;
       };
     }[keyof Schema]
   >
 >;
-
-type InjectImplicitModels<Schema> = Schema & ExtractImplicitModelNames<Schema>;
 
 type GetRelationshipRef<
   T,

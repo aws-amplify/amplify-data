@@ -33,7 +33,7 @@ bench('custom op returning primitive types; schema only', () => {
         inputContent: a.string().required(),
       })
       .returns(a.string().required())
-      .function('echoFunction')
+      .handler(a.handler.function('echoFunction'))
       .authorization([a.allow.public()]),
   });
 }).types([17419, 'instantiations']);
@@ -46,7 +46,7 @@ bench('custom op returning primitive types; schema + ClientSchema', () => {
         inputContent: a.string().required(),
       })
       .returns(a.string().required())
-      .function('echoFunction')
+      .handler(a.handler.function('echoFunction'))
       .authorization([a.allow.public()]),
   });
 
@@ -63,7 +63,7 @@ bench(
           inputContent: a.string().required(),
         })
         .returns(a.string().required())
-        .function('echoFunction')
+        .handler(a.handler.function('echoFunction'))
         .authorization([a.allow.public()]),
     });
 
@@ -81,7 +81,7 @@ bench('custom op returning an enum; schema only', () => {
         itemId: a.string().required(),
       })
       .returns(a.ref('Status').required())
-      .function('echoFunction')
+      .handler(a.handler.function('echoFunction'))
       .authorization([a.allow.public()]),
   });
 }).types([17560, 'instantiations']);
@@ -95,7 +95,7 @@ bench('custom op returning an enum; schema + ClientSchema', () => {
         itemId: a.string().required(),
       })
       .returns(a.ref('Status').required())
-      .function('echoFunction')
+      .handler(a.handler.function('echoFunction'))
       .authorization([a.allow.public()]),
   });
 
@@ -113,7 +113,7 @@ bench(
           itemId: a.string().required(),
         })
         .returns(a.ref('Status').required())
-        .function('echoFunction')
+        .handler(a.handler.function('echoFunction'))
         .authorization([a.allow.public()]),
     });
 
@@ -133,7 +133,7 @@ bench('custom op returning custom type; schema only', () => {
         inputContent: a.string().required(),
       })
       .returns(a.ref('EchoResult'))
-      .function('echoFunction')
+      .handler(a.handler.function('echoFunction'))
       .authorization([a.allow.public()]),
   });
 }).types([18876, 'instantiations']);
@@ -149,7 +149,7 @@ bench('custom op returning custom type; schema + ClientSchema', () => {
         inputContent: a.string().required(),
       })
       .returns(a.ref('EchoResult'))
-      .function('echoFunction')
+      .handler(a.handler.function('echoFunction'))
       .authorization([a.allow.public()]),
   });
   type _Schema = ClientSchema<typeof schema>;
@@ -168,7 +168,7 @@ bench(
           inputContent: a.string().required(),
         })
         .returns(a.ref('EchoResult'))
-        .function('echoFunction')
+        .handler(a.handler.function('echoFunction'))
         .authorization([a.allow.public()]),
     });
     type Schema = ClientSchema<typeof schema>;
@@ -187,7 +187,7 @@ bench('custom op returning model; schema only', () => {
         modelId: a.string().required(),
       })
       .returns(a.ref('DataModel'))
-      .function('echoFunction')
+      .handler(a.handler.function('echoFunction'))
       .authorization([a.allow.public()]),
   });
 }).types([20043, 'instantiations']);
@@ -203,7 +203,7 @@ bench('custom op returning model; schema + ClientSchema', () => {
         modelId: a.string().required(),
       })
       .returns(a.ref('DataModel'))
-      .function('echoFunction')
+      .handler(a.handler.function('echoFunction'))
       .authorization([a.allow.public()]),
   });
   type _Schema = ClientSchema<typeof schema>;
@@ -220,7 +220,7 @@ bench('custom op returning model; schema + ClientSchema + client types', () => {
         modelId: a.string().required(),
       })
       .returns(a.ref('DataModel'))
-      .function('echoFunction')
+      .handler(a.handler.function('echoFunction'))
       .authorization([a.allow.public()]),
   });
   type Schema = ClientSchema<typeof schema>;

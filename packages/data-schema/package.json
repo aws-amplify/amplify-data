@@ -1,6 +1,6 @@
 {
   "name": "@aws-amplify/data-schema",
-  "version": "0.13.11",
+  "version": "0.13.15",
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
@@ -17,7 +17,8 @@
   "exports": {
     ".": {
       "types": "./lib-esm/index.d.ts",
-      "import": "./lib-esm/index.js"
+      "import": "./lib-esm/index.js",
+      "node": "./index.ts"
     },
     "./internals": {
       "types": "./lib-esm/src/internals/index.d.ts",
