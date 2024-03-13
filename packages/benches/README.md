@@ -15,6 +15,7 @@ $ npm run bench:file file_name
 These scripts will build the packages in the library, then run all the bench files in the specified directory.
 
 ```
+$ npm run bench:patterns
 $ npm run bench:basic
 $ npm run bench:p50
 $ npm run bench:p99
@@ -57,6 +58,7 @@ $ npm run baseline file_name
 Similarly, you can do this in groups (by directory):
 
 ```
+$ npm run baseline:patterns
 $ npm run baseline:basic
 $ npm run baseline:p50
 $ npm run baseline:p99
@@ -74,6 +76,16 @@ Note: Schemas are hardcoded (i.e. not generated with loops) because loops are:
 Additionally, there is no way to re-use schema instantation (e.g. a helper function
 called by each benchmark to avoid repeating the schema in each test), as this
 changes the instantiation count output.
+
+### patterns
+
+This folder demonstrates the baseline performance various typing patterns like maps,
+merging, conditional types, inferred types, and other combinations of patterns we
+use in this repository.
+
+When trying new patterns or approaching refactors, it's a good idea to create a new
+pattern here to demonstrate how it works and what hows its performance compares to
+other patterns.
 
 ### p50
 

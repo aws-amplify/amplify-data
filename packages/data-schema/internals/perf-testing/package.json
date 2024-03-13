@@ -1,0 +1,6 @@
+{
+	"name": "@aws-amplify/data-schema/internals/perf-testing",
+	"types": "../lib-esm/src/internals/perf-testing/index.d.ts",
+	"main": "../lib-esm/src/internals/perf-testing/index.js",
+	"sideEffects": false
+}

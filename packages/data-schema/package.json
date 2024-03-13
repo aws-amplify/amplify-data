@@ -23,6 +23,10 @@
     "./internals": {
       "types": "./lib-esm/src/internals/index.d.ts",
       "import": "./lib-esm/src/internals/index.js"
+    },
+    "./internals/perf-testing": {
+      "types": "./lib-esm/src/internals/perf-testing/index.d.ts",
+      "import": "./lib-esm/src/internals/perf-testing/index.js"
     }
   },
   "typesVersions": {
