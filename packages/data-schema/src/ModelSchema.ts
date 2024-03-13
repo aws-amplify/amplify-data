@@ -82,6 +82,7 @@ export type InternalSchema = {
   data: {
     types: InternalSchemaModels;
     authorization: SchemaAuthorization<any, any, any>[];
+    configuration: SchemaConfig<any, any>;
   };
 };
 
@@ -214,7 +215,7 @@ function _baseSchema<
   return {
     data,
     transform(): DerivedApiDefinition {
-      const internalSchema: InternalSchema = { data } as InternalSchema;
+      const internalSchema = { data };
 
       return processSchema({ schema: internalSchema });
     },

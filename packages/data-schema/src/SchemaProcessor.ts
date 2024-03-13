@@ -341,6 +341,30 @@ function addFields(
 }
 
 /**
+ * Validate that no implicit fields are used by the model definition
+ *
+ * @param existing An existing field map
+ * @param additions A field map to merge in
+ *
+ * @throws An error when an undefined field is used or when a field is used in a way that conflicts with its generated definition
+ */
+function validateStaticFields(
+  existing: Record<string, ModelField<any, any>>,
+  additions: Record<string, ModelField<any, any>> | undefined,
+) {
+  if (additions === undefined) {
+    return;
+  }
+  for (const [k, addition] of Object.entries(additions)) {
+    if (!existing[k]) {
+      throw new Error(`Field ${k} isn't defined.`);
+    } else if (areConflicting(existing[k], addition)) {
+      throw new Error(`Field ${k} defined twice with conflicting definitions.`);
+    }
+  }
+}
+
+/**
  * Produces a new field definition object from every field definition object
  * given as an argument. Performs validation (conflict detection) as objects
  * are merged together.
@@ -964,6 +988,9 @@ const schemaPreprocessor = (
 
   const jsFunctions: JsResolver[] = [];
 
+  const staticSchema =
+    schema.data.configuration.database.engine === 'dynamodb' ? false : true;
+
   const fkFields = allImpliedFKs(schema);
   const topLevelTypes = Object.entries(schema.data.types);
 
@@ -1052,6 +1079,43 @@ const schemaPreprocessor = (
             break;
         }
       }
+    } else if (staticSchema) {
+      const fields = { ...typeDef.data.fields } as Record<
+        string,
+        ModelField<any, any>
+      >;
+      const identifier = typeDef.data.identifier;
+      const [partitionKey] = identifier;
+
+      validateStaticFields(fields, fkFields[typeName]);
+
+      const { authString, authFields } = calculateAuth(mostRelevantAuthRules);
+      if (authString == '') {
+        throw new Error(
+          `Model \`${typeName}\` is missing authorization rules. Add global rules to the schema or ensure every model has its own rules.`,
+        );
+      }
+      const fieldLevelAuthRules = processFieldLevelAuthRules(
+        fields,
+        authFields,
+      );
+
+      validateStaticFields(fields, authFields);
+
+      const { gqlFields, models } = processFields(
+        typeName,
+        fields,
+        fieldLevelAuthRules,
+        identifier,
+        partitionKey,
+      );
+
+      topLevelTypes.push(...models);
+
+      const joined = gqlFields.join('\n  ');
+
+      const model = `type ${typeName} @model ${authString}\n{\n  ${joined}\n}`;
+      gqlModels.push(model);
     } else {
       const fields = mergeFieldObjects(
         typeDef.data.fields as Record<string, ModelField<any, any>>,
