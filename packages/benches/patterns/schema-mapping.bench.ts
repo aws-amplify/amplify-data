@@ -1,4 +1,5 @@
 import { a, ClientSchema } from '@aws-amplify/data-schema';
+import { ModelMeta } from 'aws-amplify/datastore';
 import {
   ExtractNonModelTypes,
   ResolveSchema,
@@ -7,6 +8,7 @@ import {
   SchemaTypes,
   ModelIdentifier,
   ModelSecondaryIndexes,
+  RelationalMetadata,
 } from '@aws-amplify/data-schema/internals/perf-testing';
 import { bench } from '@arktype/attest';
 
@@ -67,9 +69,13 @@ const schema = a.schema({
 
 type Schema = typeof schema;
 
-bench('baseline, top-level ClientSchema', () => {
+bench('ClientSchema', () => {
   type _T = ClientSchema<Schema>;
 }).types([57791, 'instantiations']);
+
+bench('ModelMeta<ClientSchema>', () => {
+  type _T = ModelMeta<ClientSchema<Schema>>;
+}).types([57811, 'instantiations']);
 
 bench('ClientSchema -> ExtractNonModelTypes<Schema>', () => {
   type _T = ExtractNonModelTypes<Schema>;
@@ -137,3 +143,32 @@ bench('ClientSchema -> ModelIdentifier<Schema>', () => {
 bench('ClientSchema -> ModelSecondaryIndexes<Schema>', () => {
   type _T = ModelSecondaryIndexes<SchemaTypes<Schema>>;
 }).types([871, 'instantiations']);
+
+/**
+ * Actual count should be ...
+ *
+ * ```
+ * + count(this)
+ * - count(ResolveSchema<Schema>)
+ * - count(ExtractNonModelTypes<Schema>)
+ * - count(CreateImplicitModelsFromRelations<Schema>)
+ * - count(ResolveFieldProperties<...>)
+ * - count(ModelIdentifier<...>)
+ * ```
+ *
+ * But, we're getting a count GREATER THAN `ModelMeta<Schema>`, which is somewhat
+ * unexpected. But, this is possibly because resolving `ClientSchema` and `ModelMeta<*>`
+ * doesn't actually require relational metadata to be resolved.
+ */
+bench('ClientSchema -> __modelMeta__ -> RelationalMetadata<>', () => {
+  type ResolvedSchema = ResolveSchema<Schema>;
+  type NonModelTypes = ExtractNonModelTypes<Schema>;
+  type ImplicitModels = CreateImplicitModelsFromRelations<Schema>;
+  type ResolvedFields = ResolveFieldProperties<
+    Schema,
+    NonModelTypes,
+    ImplicitModels
+  >;
+  type IdentifierMeta = ModelIdentifier<SchemaTypes<Schema>>;
+  type _T = RelationalMetadata<ResolvedSchema, ResolvedFields, IdentifierMeta>;
+}).types([79018, 'instantiations']);
