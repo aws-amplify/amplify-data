@@ -7,14 +7,21 @@
   "scripts": {
     "test": "jest"
   },
+  "dependencies": {
+    "@aws-amplify/graphql-generator": "^0.2.4",
+    "rxjs": "^7.8.1"
+  },
   "devDependencies": {
     "@aws-amplify/data-schema": "*",
     "@aws-amplify/data-schema-types": "*",
-    "aws-amplify": "^6.0.17",
     "@tsd/typescript": "^5.1.6",
     "@types/jest": "29.5.4",
+    "aws-amplify": "^6.0.18",
     "jest": "^29.7.0",
     "jest-tsd": "^0.2.2",
     "ts-jest": "^29.1.1"
+  },
+  "peerDependencies": {
+    "graphql": "*"
   }
 }
