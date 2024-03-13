@@ -21,7 +21,7 @@ Tests outside of the "Defined Behavior" boundary can be considered "Internal". T
 
 ## Test Structure
 
-We will accumulate all Defined Behavior Testing in the `integration-tests` package. Testing directories within `integration-tests` will be structured and treated with a level of rigor commensurate to consumer proximity.
+We will accumulate all Defined Behavior Testing in the `integration-tests` package. Testing directories within `integration-tests` will be structured and treated with a level of rigor commensurate to consumer proximity. (Normal unit testing can still occur locally in each package.)
 
 1. `__tests__`
    1. `defined-behavior` &mdash;
