@@ -1,0 +1,123 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Read application data Compound filters 1`] = `
+[
+  [
+    {
+      "authMode": undefined,
+      "authToken": undefined,
+      "query": "query($filter: ModelTodoFilterInput,$limit: Int,$nextToken: String) { listTodos(filter: $filter,limit: $limit,nextToken: $nextToken) { items { id content description done priority owner createdAt updatedAt } nextToken __typename } }",
+      "variables": {
+        "filter": {
+          "or": [
+            {
+              "priority": {
+                "eq": 1,
+              },
+            },
+            {
+              "priority": {
+                "eq": 2,
+              },
+            },
+          ],
+        },
+      },
+    },
+    {},
+  ],
+]
+`;
+
+exports[`Read application data Fetch only the data you need with custom selection set 1`] = `
+[
+  [
+    {
+      "authMode": undefined,
+      "authToken": undefined,
+      "query": "query($id: ID!) { getBlog(id: $id) { author { email } publication { company { location { city } } } content { items { id title description blogContentId createdAt updatedAt } } } }",
+      "variables": {
+        "id": "<MY_BLOG_ID>",
+      },
+    },
+    {},
+  ],
+]
+`;
+
+exports[`Read application data Filter list queries 1`] = `
+[
+  [
+    {
+      "authMode": undefined,
+      "authToken": undefined,
+      "query": "query($filter: ModelTodoFilterInput,$limit: Int,$nextToken: String) { listTodos(filter: $filter,limit: $limit,nextToken: $nextToken) { items { id content description done priority owner createdAt updatedAt } nextToken __typename } }",
+      "variables": {
+        "filter": {
+          "content": {
+            "beginsWith": "hello",
+          },
+        },
+      },
+    },
+    {},
+  ],
+]
+`;
+
+exports[`Read application data List and get your data 1`] = `
+[
+  [
+    {
+      "authMode": undefined,
+      "authToken": undefined,
+      "query": "query($filter: ModelTodoFilterInput,$limit: Int,$nextToken: String) { listTodos(filter: $filter,limit: $limit,nextToken: $nextToken) { items { id content description done priority owner createdAt updatedAt } nextToken __typename } }",
+      "variables": {},
+    },
+    {},
+  ],
+  [
+    {
+      "authMode": undefined,
+      "authToken": undefined,
+      "query": "query($productId: ID!,$warehouseId: ID!) { getInventory(productId: $productId,warehouseId: $warehouseId) { productId warehouseId description owner createdAt updatedAt } }",
+      "variables": {
+        "productId": "...",
+        "warehouseId": "...",
+      },
+    },
+    {},
+  ],
+]
+`;
+
+exports[`Read application data Paginate list queries 1`] = `
+[
+  [
+    {
+      "authMode": undefined,
+      "authToken": undefined,
+      "query": "query($filter: ModelTodoFilterInput,$limit: Int,$nextToken: String) { listTodos(filter: $filter,limit: $limit,nextToken: $nextToken) { items { id content description done priority owner createdAt updatedAt } nextToken __typename } }",
+      "variables": {
+        "limit": 100,
+        "nextToken": "eyJ2ZXJzaW9uejE1a2...",
+      },
+    },
+    {},
+  ],
+]
+`;
+
+exports[`Read application data TypeScript type helpers for Amplify Data part 2 1`] = `
+[
+  [
+    {
+      "authMode": undefined,
+      "authToken": undefined,
+      "query": "query($filter: ModelPostFilterInput,$limit: Int,$nextToken: String) { listPosts(filter: $filter,limit: $limit,nextToken: $nextToken) { items { content author comments { items { id content author postCommentsId createdAt updatedAt } } } nextToken __typename } }",
+      "variables": {},
+    },
+    {},
+  ],
+]
+`;

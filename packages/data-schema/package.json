@@ -17,7 +17,8 @@
   "exports": {
     ".": {
       "types": "./lib-esm/index.d.ts",
-      "import": "./lib-esm/index.js"
+      "import": "./lib-esm/index.js",
+      "node": "./index.ts"
     },
     "./internals": {
       "types": "./lib-esm/src/internals/index.d.ts",

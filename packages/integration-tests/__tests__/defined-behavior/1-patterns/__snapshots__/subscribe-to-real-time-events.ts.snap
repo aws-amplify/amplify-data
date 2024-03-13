@@ -1,0 +1,188 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Subscribe to real-time events set up a real-time list query 1`] = `
+[
+  [
+    {
+      "authMode": undefined,
+      "authToken": undefined,
+      "query": "subscription($filter: ModelSubscriptionTodoFilterInput) { onCreateTodo(filter: $filter) { id content description done priority owner createdAt updatedAt } }",
+      "variables": {},
+    },
+    {},
+  ],
+  [
+    {
+      "authMode": undefined,
+      "authToken": undefined,
+      "query": "subscription($filter: ModelSubscriptionTodoFilterInput) { onUpdateTodo(filter: $filter) { id content description done priority owner createdAt updatedAt } }",
+      "variables": {},
+    },
+    {},
+  ],
+  [
+    {
+      "authMode": undefined,
+      "authToken": undefined,
+      "query": "subscription($filter: ModelSubscriptionTodoFilterInput) { onDeleteTodo(filter: $filter) { id content description done priority owner createdAt updatedAt } }",
+      "variables": {},
+    },
+    {},
+  ],
+  [
+    {
+      "authMode": undefined,
+      "authToken": undefined,
+      "query": "query($filter: ModelTodoFilterInput,$limit: Int,$nextToken: String) { listTodos(filter: $filter,limit: $limit,nextToken: $nextToken) { items { id content description done priority owner createdAt updatedAt } nextToken __typename } }",
+      "variables": {},
+    },
+    {},
+  ],
+]
+`;
+
+exports[`Subscribe to real-time events set up a real-time list query 2`] = `
+[
+  [
+    {
+      "authMode": undefined,
+      "query": "subscription ($filter: ModelSubscriptionTodoFilterInput) {
+  onCreateTodo(filter: $filter) {
+    id
+    content
+    description
+    done
+    priority
+    owner
+    createdAt
+    updatedAt
+  }
+}
+",
+      "variables": {},
+    },
+    {},
+  ],
+  [
+    {
+      "authMode": undefined,
+      "query": "subscription ($filter: ModelSubscriptionTodoFilterInput) {
+  onUpdateTodo(filter: $filter) {
+    id
+    content
+    description
+    done
+    priority
+    owner
+    createdAt
+    updatedAt
+  }
+}
+",
+      "variables": {},
+    },
+    {},
+  ],
+  [
+    {
+      "authMode": undefined,
+      "query": "subscription ($filter: ModelSubscriptionTodoFilterInput) {
+  onDeleteTodo(filter: $filter) {
+    id
+    content
+    description
+    done
+    priority
+    owner
+    createdAt
+    updatedAt
+  }
+}
+",
+      "variables": {},
+    },
+    {},
+  ],
+]
+`;
+
+exports[`Subscribe to real-time events set up a real-time list query 3`] = `
+[
+  [
+    [
+      {
+        "__typename": "Todo",
+        "content": "some content",
+        "createdAt": "2024-03-01T18:05:44.536Z",
+        "description": "something something",
+        "done": false,
+        "id": "some-id",
+        "owner": "some-body",
+        "updatedAt": "2024-03-01T19:05:44.536Z",
+      },
+    ],
+  ],
+  [
+    [
+      {
+        "__typename": "Todo",
+        "content": "some content",
+        "createdAt": "2024-03-01T18:05:44.536Z",
+        "description": "something something",
+        "done": false,
+        "id": "some-id",
+        "owner": "some-body",
+        "updatedAt": "2024-03-01T19:05:44.536Z",
+      },
+      {
+        "__typename": "Todo",
+        "content": "some content",
+        "createdAt": "2024-03-01T18:05:44.536Z",
+        "description": "something something",
+        "done": false,
+        "id": "some-id-2",
+        "owner": "some-body",
+        "updatedAt": "2024-03-01T19:05:44.536Z",
+      },
+    ],
+  ],
+  [
+    [
+      {
+        "__typename": "Todo",
+        "content": "updated content",
+        "createdAt": "2024-03-01T18:05:44.536Z",
+        "description": "something something",
+        "done": false,
+        "id": "some-id",
+        "owner": "some-body",
+        "updatedAt": "2024-03-01T19:05:44.536Z",
+      },
+      {
+        "__typename": "Todo",
+        "content": "some content",
+        "createdAt": "2024-03-01T18:05:44.536Z",
+        "description": "something something",
+        "done": false,
+        "id": "some-id-2",
+        "owner": "some-body",
+        "updatedAt": "2024-03-01T19:05:44.536Z",
+      },
+    ],
+  ],
+  [
+    [
+      {
+        "__typename": "Todo",
+        "content": "some content",
+        "createdAt": "2024-03-01T18:05:44.536Z",
+        "description": "something something",
+        "done": false,
+        "id": "some-id-2",
+        "owner": "some-body",
+        "updatedAt": "2024-03-01T19:05:44.536Z",
+      },
+    ],
+  ],
+]
+`;
