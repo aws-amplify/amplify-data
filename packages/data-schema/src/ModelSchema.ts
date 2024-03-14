@@ -215,7 +215,7 @@ function _baseSchema<
   return {
     data,
     transform(): DerivedApiDefinition {
-      const internalSchema: InternalSchema = { data } as InternalSchema;
+      const internalSchema = { data };
 
       return processSchema({ schema: internalSchema });
     },

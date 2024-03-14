@@ -384,10 +384,7 @@ type Query {
 exports[`CustomOperation transform sql schema Schema w model, custom query, mutation, and subscription 1`] = `
 "type Post @model @auth(rules: [{allow: public}])
 {
-  id: ID! @primaryKey
   title: String
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
 }
 
 type Mutation {
@@ -406,10 +403,7 @@ type Subscription {
 exports[`CustomOperation transform sql schema schema.add* will not accept custom operations of incompatible types 1`] = `
 "type Post @model @auth(rules: [{allow: public}])
 {
-  id: ID! @primaryKey
   title: String
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
 }
 
 type Mutation {
