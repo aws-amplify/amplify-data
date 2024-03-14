@@ -1,5 +1,11 @@
 # @aws-amplify/data-schema
 
+## 0.13.16
+
+### Patch Changes
+
+- 1804a21: feat: Remove implicit fields for static schema model transformations
+
 ## 0.13.15
 
 ### Patch Changes
