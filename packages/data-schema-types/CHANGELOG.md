@@ -1,5 +1,11 @@
 # @aws-amplify/data-schema-types
 
+## 0.7.9
+
+### Patch Changes
+
+- b4cd82a: Adds function handler types to help author lambda handlers for custom operations
+
 ## 0.7.8
 
 ### Patch Changes
