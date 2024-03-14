@@ -711,7 +711,15 @@ export type ModelTypes<
   Context extends ContextType = 'CLIENT',
   ModelMeta extends Record<any, any> = ExtractModelMeta<Schema>,
 > = {
-  [ModelName in keyof Schema]: ModelName extends string
+  [ModelName in Exclude<
+    keyof Schema,
+    keyof CustomOperations<
+      Schema,
+      'Mutation' | 'Query' | 'Subscription',
+      Context,
+      ModelMeta
+    >
+  >]: ModelName extends string
     ? Schema[ModelName] extends Record<string, unknown>
       ? Context extends 'CLIENT'
         ? ModelTypesClient<Schema[ModelName], ModelMeta[ModelName]>

@@ -10,6 +10,7 @@ import type {
   ResolveRefsOfCustomType,
   ResolveRefValueArrayTraits,
 } from './ResolveFieldProperties';
+import type { AppSyncResolverHandler } from 'aws-lambda';
 
 /**
  * Creates meta types for custom operations from a schema.
@@ -103,3 +104,109 @@ export type ResolveRef<
         : never,
   Value = Shape['valueRequired'] extends true ? RefValue : RefValue | null,
 > = ResolveRefValueArrayTraits<Shape, Value>;
+
+//
+// To support exposing custom handler types.
+//
+
+/**
+ * The kind of shape we need to map to custom handler (e.g., lambda) function
+ * signatures.
+ */
+type CustomOperationsMap = Record<string, CustomOperationMinimalDef>;
+
+/**
+ * The minimal amount of structure needed to extract types for a custom handler.
+ */
+type CustomOperationMinimalDef = {
+  arguments: any;
+  returnType: any;
+};
+
+/**
+ * Derives the signature and types for a lambda handler for a particular
+ * custom Query or Mutation from a Schema.
+ */
+type IndvidualCustomHandlerTypes<Op extends CustomOperationMinimalDef> = {
+  /**
+   * Handler type for lambda function implementations. E.g.,
+   *
+   * ```typescript
+   * import type { Schema } from './resource';
+   *
+   * export const handler: Schema['echo']['functionHandler'] = async (event, context) => {
+   *  // event and context will be fully typed inside here.
+   * }
+   * ```
+   */
+  functionHandler: AppSyncResolverHandler<
+    Op['arguments'],
+    LambdaReturnType<Op['returnType']>
+  >;
+
+  /**
+   * The `context.arguments` type for lambda function implementations.
+   *
+   * ```typescript
+   * import type { Schema } from './resource';
+   *
+   * export const handler: Schema['echo']['functionHandler'] = async (event, context) => {
+   *  // Provides this type, if needed:
+   *  const args: Schema['echo']['functionHandlerArguments'] = event.arguments;
+   * }
+   * ```
+   */
+  functionHandlerArguments: Op['arguments'];
+
+  /**
+   * The return type expected by a lambda function handler.
+   *
+   * ```typescript
+   * import type { Schema } from './resource';
+   *
+   * export const handler: Schema['echo']['functionHandler'] = async (event, context) => {
+   *  // Result type enforced here:
+   *  const result: Schema['echo']['functionHandlerResult'] = buildResult(...);
+   *
+   *  // `Result` type matches expected function return type here:
+   *  return result;
+   * }
+   * ```
+   */
+  functionHandlerResult: LambdaReturnType<Op['returnType']>;
+};
+
+/**
+ * Derives the function signatures for a lambda handlers for all the provided
+ * custom queries and mutations.
+ */
+export type CustomOperationHandlerTypes<
+  CustomOperations extends CustomOperationsMap,
+> = {
+  [K in keyof CustomOperations]: IndvidualCustomHandlerTypes<
+    CustomOperations[K]
+  >;
+};
+
+/**
+ * Returns a return type with lazy loaders removed.
+ *
+ * (Custom handlers should not return lazy loaded fields -- they're *lazy loaded*.)
+ */
+type LambdaReturnType<T> = T extends Record<string, any>
+  ? {
+      // Return type can include `null | undefined`, which we can't meaningfully
+      // map over.
+      [K in keyof Exclude<T, null | undefined> as Exclude<
+        T,
+        null | undefined
+      >[K] extends (...args: any) => any
+        ? never
+        : K]: Exclude<T, null | undefined>[K];
+    }
+  :
+      | T
+      // If the original return type allowed null | undefined, mix them back into
+      // the final return type
+      | (null extends T ? null : never)
+      | (undefined extends T ? undefined : never);
