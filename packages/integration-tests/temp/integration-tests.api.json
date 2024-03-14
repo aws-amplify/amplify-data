@@ -1,0 +1,5556 @@
+{
+  "metadata": {
+    "toolPackage": "@microsoft/api-extractor",
+    "toolVersion": "7.42.3",
+    "schemaVersion": 1011,
+    "oldestForwardsCompatibleVersion": 1001,
+    "tsdocConfig": {
+      "$schema": "https://developer.microsoft.com/json-schemas/tsdoc/v0/tsdoc.schema.json",
+      "noStandardTags": true,
+      "tagDefinitions": [
+        {
+          "tagName": "@alpha",
+          "syntaxKind": "modifier"
+        },
+        {
+          "tagName": "@beta",
+          "syntaxKind": "modifier"
+        },
+        {
+          "tagName": "@defaultValue",
+          "syntaxKind": "block"
+        },
+        {
+          "tagName": "@decorator",
+          "syntaxKind": "block",
+          "allowMultiple": true
+        },
+        {
+          "tagName": "@deprecated",
+          "syntaxKind": "block"
+        },
+        {
+          "tagName": "@eventProperty",
+          "syntaxKind": "modifier"
+        },
+        {
+          "tagName": "@example",
+          "syntaxKind": "block",
+          "allowMultiple": true
+        },
+        {
+          "tagName": "@experimental",
+          "syntaxKind": "modifier"
+        },
+        {
+          "tagName": "@inheritDoc",
+          "syntaxKind": "inline"
+        },
+        {
+          "tagName": "@internal",
+          "syntaxKind": "modifier"
+        },
+        {
+          "tagName": "@label",
+          "syntaxKind": "inline"
+        },
+        {
+          "tagName": "@link",
+          "syntaxKind": "inline",
+          "allowMultiple": true
+        },
+        {
+          "tagName": "@override",
+          "syntaxKind": "modifier"
+        },
+        {
+          "tagName": "@packageDocumentation",
+          "syntaxKind": "modifier"
+        },
+        {
+          "tagName": "@param",
+          "syntaxKind": "block",
+          "allowMultiple": true
+        },
+        {
+          "tagName": "@privateRemarks",
+          "syntaxKind": "block"
+        },
+        {
+          "tagName": "@public",
+          "syntaxKind": "modifier"
+        },
+        {
+          "tagName": "@readonly",
+          "syntaxKind": "modifier"
+        },
+        {
+          "tagName": "@remarks",
+          "syntaxKind": "block"
+        },
+        {
+          "tagName": "@returns",
+          "syntaxKind": "block"
+        },
+        {
+          "tagName": "@sealed",
+          "syntaxKind": "modifier"
+        },
+        {
+          "tagName": "@see",
+          "syntaxKind": "block"
+        },
+        {
+          "tagName": "@throws",
+          "syntaxKind": "block",
+          "allowMultiple": true
+        },
+        {
+          "tagName": "@typeParam",
+          "syntaxKind": "block",
+          "allowMultiple": true
+        },
+        {
+          "tagName": "@virtual",
+          "syntaxKind": "modifier"
+        },
+        {
+          "tagName": "@betaDocumentation",
+          "syntaxKind": "modifier"
+        },
+        {
+          "tagName": "@internalRemarks",
+          "syntaxKind": "block"
+        },
+        {
+          "tagName": "@preapproved",
+          "syntaxKind": "modifier"
+        }
+      ],
+      "supportForTags": {
+        "@alpha": true,
+        "@beta": true,
+        "@defaultValue": true,
+        "@decorator": true,
+        "@deprecated": true,
+        "@eventProperty": true,
+        "@example": true,
+        "@experimental": true,
+        "@inheritDoc": true,
+        "@internal": true,
+        "@label": true,
+        "@link": true,
+        "@override": true,
+        "@packageDocumentation": true,
+        "@param": true,
+        "@privateRemarks": true,
+        "@public": true,
+        "@readonly": true,
+        "@remarks": true,
+        "@returns": true,
+        "@sealed": true,
+        "@see": true,
+        "@throws": true,
+        "@typeParam": true,
+        "@virtual": true,
+        "@betaDocumentation": true,
+        "@internalRemarks": true,
+        "@preapproved": true
+      },
+      "reportUnsupportedHtmlElements": false
+    }
+  },
+  "kind": "Package",
+  "canonicalReference": "integration-tests!",
+  "docComment": "",
+  "name": "integration-tests",
+  "preserveMemberOrder": false,
+  "members": [
+    {
+      "kind": "EntryPoint",
+      "canonicalReference": "integration-tests!",
+      "name": "",
+      "preserveMemberOrder": false,
+      "members": [
+        {
+          "kind": "Variable",
+          "canonicalReference": "integration-tests!__modelMeta__:var",
+          "docComment": "",
+          "excerptTokens": [
+            {
+              "kind": "Content",
+              "text": "__modelMeta__: "
+            },
+            {
+              "kind": "Content",
+              "text": "unique symbol"
+            }
+          ],
+          "fileUrlPath": "../data-schema-types/lib-esm/client/index.d.ts",
+          "isReadonly": true,
+          "releaseTag": "Public",
+          "name": "__modelMeta__",
+          "variableTypeTokenRange": {
+            "startIndex": 1,
+            "endIndex": 2
+          }
+        },
+        {
+          "kind": "Namespace",
+          "canonicalReference": "integration-tests!a:namespace",
+          "docComment": "",
+          "excerptTokens": [],
+          "fileUrlPath": "../data-schema/lib-esm/index.d.ts",
+          "releaseTag": "None",
+          "name": "a",
+          "preserveMemberOrder": false,
+          "members": [
+            {
+              "kind": "Variable",
+              "canonicalReference": "integration-tests!a.allow:var",
+              "docComment": "/**\n * Defines an authorization rule for your data models and fields. First choose an authorization strategy (`public`, `private`, `owner`, `group`, or `custom`), then choose an auth provider (`apiKey`, `iam`, `userPools`, `oidc`, or `function`) and optionally use `.to(...)` to specify the operations that can be performed against your data models and fields.\n */\n",
+              "excerptTokens": [
+                {
+                  "kind": "Content",
+                  "text": "allow: "
+                },
+                {
+                  "kind": "Content",
+                  "text": "{\n    readonly public: (provider?: "
+                },
+                {
+                  "kind": "Reference",
+                  "text": "PublicProvider",
+                  "canonicalReference": "integration-tests!PublicProvider:type"
+                },
+                {
+                  "kind": "Content",
+                  "text": ") => "
+                },
+                {
+                  "kind": "Reference",
+                  "text": "Authorization",
+                  "canonicalReference": "integration-tests!Authorization:type"
+                },
+                {
+                  "kind": "Content",
+                  "text": "<\"public\", undefined, false> & {\n        to: typeof "
+                },
+                {
+                  "kind": "Reference",
+                  "text": "to",
+                  "canonicalReference": "integration-tests!to:function"
+                },
+                {
+                  "kind": "Content",
+                  "text": ";\n    };\n    readonly private: (provider?: "
+                },
+                {
+                  "kind": "Reference",
+                  "text": "PrivateProvider",
+                  "canonicalReference": "integration-tests!PrivateProvider:type"
+                },
+                {
+                  "kind": "Content",
+                  "text": ") => "
+                },
+                {
+                  "kind": "Reference",
+                  "text": "Authorization",
+                  "canonicalReference": "integration-tests!Authorization:type"
+                },
+                {
+                  "kind": "Content",
+                  "text": "<\"private\", undefined, false> & {\n        to: typeof "
+                },
+                {
+                  "kind": "Reference",
+                  "text": "to",
+                  "canonicalReference": "integration-tests!to:function"
+                },
+                {
+                  "kind": "Content",
+                  "text": ";\n    };\n    readonly owner: (provider?: "
+                },
+                {
+                  "kind": "Reference",
+                  "text": "OwnerProviders",
+                  "canonicalReference": "integration-tests!OwnerProviders:type"
+                },
+                {
+                  "kind": "Content",
+                  "text": ") => "
+                },
+                {
+                  "kind": "Reference",
+                  "text": "Authorization",
+                  "canonicalReference": "integration-tests!Authorization:type"
+                },
+                {
+                  "kind": "Content",
+                  "text": "<\"owner\", \"owner\", false> & {\n        to: typeof "
+                },
+                {
+                  "kind": "Reference",
+                  "text": "to",
+                  "canonicalReference": "integration-tests!to:function"
+                },
+                {
+                  "kind": "Content",
+                  "text": ";\n        inField: typeof "
+                },
+                {
+                  "kind": "Reference",
+                  "text": "inField",
+                  "canonicalReference": "integration-tests!inField:function"
+                },
+                {
+                  "kind": "Content",
+                  "text": ";\n        identityClaim: typeof "
+                },
+                {
+                  "kind": "Reference",
+                  "text": "identityClaim",
+                  "canonicalReference": "integration-tests!identityClaim:function"
+                },
+                {
+                  "kind": "Content",
+                  "text": ";\n    };\n    readonly multipleOwners: (provider?: "
+                },
+                {
+                  "kind": "Reference",
+                  "text": "OwnerProviders",
+                  "canonicalReference": "integration-tests!OwnerProviders:type"
+                },
+                {
+                  "kind": "Content",
+                  "text": ") => "
+                },
+                {
+                  "kind": "Reference",
+                  "text": "Authorization",
+                  "canonicalReference": "integration-tests!Authorization:type"
+                },
+                {
+                  "kind": "Content",
+                  "text": "<\"owner\", \"owner\", true> & {\n        to: typeof "
+                },
+                {
+                  "kind": "Reference",
+                  "text": "to",
+                  "canonicalReference": "integration-tests!to:function"
+                },
+                {
+                  "kind": "Content",
+                  "text": ";\n        inField: typeof "
+                },
+                {
+                  "kind": "Reference",
+                  "text": "inField",
+                  "canonicalReference": "integration-tests!inField:function"
+                },
+                {
+                  "kind": "Content",
+                  "text": ";\n        identityClaim: typeof "
+                },
+                {
+                  "kind": "Reference",
+                  "text": "identityClaim",
+                  "canonicalReference": "integration-tests!identityClaim:function"
+                },
+                {
+                  "kind": "Content",
+                  "text": ";\n    };\n    readonly specificGroup: (group: string, provider?: "
+                },
+                {
+                  "kind": "Reference",
+                  "text": "GroupProvider",
+                  "canonicalReference": "integration-tests!GroupProvider:type"
+                },
+                {
+                  "kind": "Content",
+                  "text": ") => "
+                },
+                {
+                  "kind": "Reference",
+                  "text": "Authorization",
+                  "canonicalReference": "integration-tests!Authorization:type"
+                },
+                {
+                  "kind": "Content",
+                  "text": "<\"groups\", undefined, false> & {\n        to: typeof "
+                },
+                {
+                  "kind": "Reference",
+                  "text": "to",
+                  "canonicalReference": "integration-tests!to:function"
+                },
+                {
+                  "kind": "Content",
+                  "text": ";\n        withClaimIn: typeof "
+                },
+                {
+                  "kind": "Reference",
+                  "text": "withClaimIn",
+                  "canonicalReference": "integration-tests!withClaimIn:function"
+                },
+                {
+                  "kind": "Content",
+                  "text": ";\n    };\n    readonly specificGroups: (groups: string[], provider?: "
+                },
+                {
+                  "kind": "Reference",
+                  "text": "GroupProvider",
+                  "canonicalReference": "integration-tests!GroupProvider:type"
+                },
+                {
+                  "kind": "Content",
+                  "text": ") => "
+                },
+                {
+                  "kind": "Reference",
+                  "text": "Authorization",
+                  "canonicalReference": "integration-tests!Authorization:type"
+                },
+                {
+                  "kind": "Content",
+                  "text": "<\"groups\", undefined, false> & {\n        to: typeof "
+                },
+                {
+                  "kind": "Reference",
+                  "text": "to",
+                  "canonicalReference": "integration-tests!to:function"
+                },
+                {
+                  "kind": "Content",
+                  "text": ";\n        withClaimIn: typeof "
+                },
+                {
+                  "kind": "Reference",
+                  "text": "withClaimIn",
+                  "canonicalReference": "integration-tests!withClaimIn:function"
+                },
+                {
+                  "kind": "Content",
+                  "text": ";\n    };\n    readonly groupDefinedIn: <T extends string>(groupsField: T, provider?: "
+                },
+                {
+                  "kind": "Reference",
+                  "text": "GroupProvider",
+                  "canonicalReference": "integration-tests!GroupProvider:type"
+                },
+                {
+                  "kind": "Content",
+                  "text": ") => "
+                },
+                {
+                  "kind": "Reference",
+                  "text": "Authorization",
+                  "canonicalReference": "integration-tests!Authorization:type"
+                },
+                {
+                  "kind": "Content",
+                  "text": "<\"groups\", T, false> & {\n        to: typeof "
+                },
+                {
+                  "kind": "Reference",
+                  "text": "to",
+                  "canonicalReference": "integration-tests!to:function"
+                },
+                {
+                  "kind": "Content",
+                  "text": ";\n        withClaimIn: typeof "
+                },
+                {
+                  "kind": "Reference",
+                  "text": "withClaimIn",
+                  "canonicalReference": "integration-tests!withClaimIn:function"
+                },
+                {
+                  "kind": "Content",
+                  "text": ";\n    };\n    readonly groupsDefinedIn: <T_1 extends string>(groupsField: T_1, provider?: "
+                },
+                {
+                  "kind": "Reference",
+                  "text": "GroupProvider",
+                  "canonicalReference": "integration-tests!GroupProvider:type"
+                },
+                {
+                  "kind": "Content",
+                  "text": ") => "
+                },
+                {
+                  "kind": "Reference",
+                  "text": "Authorization",
+                  "canonicalReference": "integration-tests!Authorization:type"
+                },
+                {
+                  "kind": "Content",
+                  "text": "<\"groups\", T_1, true> & {\n        to: typeof "
+                },
+                {
+                  "kind": "Reference",
+                  "text": "to",
+                  "canonicalReference": "integration-tests!to:function"
+                },
+                {
+                  "kind": "Content",
+                  "text": ";\n        withClaimIn: typeof "
+                },
+                {
+                  "kind": "Reference",
+                  "text": "withClaimIn",
+                  "canonicalReference": "integration-tests!withClaimIn:function"
+                },
+                {
+                  "kind": "Content",
+                  "text": ";\n    };\n    readonly custom: (provider?: "
+                },
+                {
+                  "kind": "Reference",
+                  "text": "CustomProvider",
+                  "canonicalReference": "integration-tests!CustomProvider:type"
+                },
+                {
+                  "kind": "Content",
+                  "text": ") => "
+                },
+                {
+                  "kind": "Reference",
+                  "text": "Authorization",
+                  "canonicalReference": "integration-tests!Authorization:type"
+                },
+                {
+                  "kind": "Content",
+                  "text": "<\"custom\", undefined, false> & {\n        to: typeof "
+                },
+                {
+                  "kind": "Reference",
+                  "text": "to",
+                  "canonicalReference": "integration-tests!to:function"
+                },
+                {
+                  "kind": "Content",
+                  "text": ";\n    };\n    readonly resource: (fn: "
+                },
+                {
+                  "kind": "Reference",
+                  "text": "DefineFunction",
+                  "canonicalReference": "integration-tests!DefineFunction:type"
+                },
+                {
+                  "kind": "Content",
+                  "text": ") => "
+                },
+                {
+                  "kind": "Reference",
+                  "text": "ResourceAuthorization",
+                  "canonicalReference": "integration-tests!ResourceAuthorization:type"
+                },
+                {
+                  "kind": "Content",
+                  "text": " & {\n        to: typeof "
+                },
+                {
+                  "kind": "Reference",
+                  "text": "resourceTo",
+                  "canonicalReference": "integration-tests!resourceTo:function"
+                },
+                {
+                  "kind": "Content",
+                  "text": ";\n    };\n}"
+                }
+              ],
+              "fileUrlPath": "../data-schema/lib-esm/src/Authorization.d.ts",
+              "isReadonly": true,
+              "releaseTag": "Public",
+              "name": "allow",
+              "variableTypeTokenRange": {
+                "startIndex": 1,
+                "endIndex": 78
+              }
+            },
+            {
+              "kind": "Function",
+              "canonicalReference": "integration-tests!a.belongsTo:function(1)",
+              "docComment": "/**\n * Make a `hasOne()` or `hasMany()` relationship bi-directional using the `belongsTo()` method. The belongsTo() method requires that a hasOne() or hasMany() relationship already exists from parent to the related model.\n *\n * @param relatedModel - name of the related `.hasOne()` or `.hasMany()` model\n *\n * @returns a belong-to relationship definition\n */\n",
+              "excerptTokens": [
+                {
+                  "kind": "Content",
+                  "text": "export declare function belongsTo<RM extends "
+                },
+                {
+                  "kind": "Content",
+                  "text": "string"
+                },
+                {
+                  "kind": "Content",
+                  "text": ">(relatedModel: "
+                },
+                {
+                  "kind": "Content",
+                  "text": "RM"
+                },
+                {
+                  "kind": "Content",
+                  "text": "): "
+                },
+                {
+                  "kind": "Reference",
+                  "text": "ModelRelationalField",
+                  "canonicalReference": "integration-tests!ModelRelationalField:type"
+                },
+                {
+                  "kind": "Content",
+                  "text": "<"
+                },
+                {
+                  "kind": "Reference",
+                  "text": "ModelRelationalTypeArgFactory",
+                  "canonicalReference": "integration-tests!ModelRelationalTypeArgFactory:type"
+                },
+                {
+                  "kind": "Content",
+                  "text": "<RM, "
+                },
+                {
+                  "kind": "Reference",
+                  "text": "ModelRelationshipTypes.belongsTo",
+                  "canonicalReference": "integration-tests!ModelRelationshipTypes.belongsTo:member"
+                },
+                {
+                  "kind": "Content",
+                  "text": ", false, undefined>, RM, \"required\" | \"valueRequired\" | \"arrayRequired\", undefined>"
+                },
+                {
+                  "kind": "Content",
+                  "text": ";"
+                }
+              ],
+              "fileUrlPath": "../data-schema/lib-esm/src/ModelRelationalField.d.ts",
+              "returnTypeTokenRange": {
+                "startIndex": 5,
+                "endIndex": 11
+              },
+              "releaseTag": "Public",
+              "overloadIndex": 1,
+              "parameters": [
+                {
+                  "parameterName": "relatedModel",
+                  "parameterTypeTokenRange": {
+                    "startIndex": 3,
+                    "endIndex": 4
+                  },
+                  "isOptional": false
+                }
+              ],
+              "typeParameters": [
+                {
+                  "typeParameterName": "RM",
+                  "constraintTokenRange": {
+                    "startIndex": 1,
+                    "endIndex": 2
+                  },
+                  "defaultTypeTokenRange": {
+                    "startIndex": 0,
+                    "endIndex": 0
+                  }
+                }
+              ],
+              "name": "belongsTo"
+            },
+            {
+              "kind": "Function",
+              "canonicalReference": "integration-tests!a.boolean:function(1)",
+              "docComment": "/**\n * A boolean scalar type that can be either true or false.\n *\n * @returns boolean field definition\n */\n",
+              "excerptTokens": [
+                {
+                  "kind": "Content",
+                  "text": "export declare function boolean(): "
+                },
+                {
+                  "kind": "Reference",
+                  "text": "ModelField",
+                  "canonicalReference": "integration-tests!ModelField:type"
+                },
+                {
+                  "kind": "Content",
+                  "text": "<"
+                },
+                {
+                  "kind": "Reference",
+                  "text": "Nullable",
+                  "canonicalReference": "integration-tests!Nullable:type"
+                },
+                {
+                  "kind": "Content",
+                  "text": "<boolean>>"
+                },
+                {
+                  "kind": "Content",
+                  "text": ";"
+                }
+              ],
+              "fileUrlPath": "../data-schema/lib-esm/src/ModelField.d.ts",
+              "returnTypeTokenRange": {
+                "startIndex": 1,
+                "endIndex": 5
+              },
+              "releaseTag": "Public",
+              "overloadIndex": 1,
+              "parameters": [],
+              "name": "boolean"
+            },
+            {
+              "kind": "Function",
+              "canonicalReference": "integration-tests!a.customType:function(1)",
+              "docComment": "",
+              "excerptTokens": [
+                {
+                  "kind": "Content",
+                  "text": "export declare function customType<T extends "
+                },
+                {
+                  "kind": "Reference",
+                  "text": "CustomTypeFields",
+                  "canonicalReference": "integration-tests!CustomTypeFields:type"
+                },
+                {
+                  "kind": "Content",
+                  "text": ">(fields: "
+                },
+                {
+                  "kind": "Content",
+                  "text": "T"
+                },
+                {
+                  "kind": "Content",
+                  "text": "): "
+                },
+                {
+                  "kind": "Reference",
+                  "text": "CustomType",
+                  "canonicalReference": "integration-tests!CustomType:type"
+                },
+                {
+                  "kind": "Content",
+                  "text": "<{\n    fields: T;\n}>"
+                },
+                {
+                  "kind": "Content",
+                  "text": ";"
+                }
+              ],
+              "fileUrlPath": "../data-schema/lib-esm/src/CustomType.d.ts",
+              "returnTypeTokenRange": {
+                "startIndex": 5,
+                "endIndex": 7
+              },
+              "releaseTag": "Public",
+              "overloadIndex": 1,
+              "parameters": [
+                {
+                  "parameterName": "fields",
+                  "parameterTypeTokenRange": {
+                    "startIndex": 3,
+                    "endIndex": 4
+                  },
+                  "isOptional": false
+                }
+              ],
+              "typeParameters": [
+                {
+                  "typeParameterName": "T",
+                  "constraintTokenRange": {
+                    "startIndex": 1,
+                    "endIndex": 2
+                  },
+                  "defaultTypeTokenRange": {
+                    "startIndex": 0,
+                    "endIndex": 0
+                  }
+                }
+              ],
+              "name": "customType"
+            },
+            {
+              "kind": "Function",
+              "canonicalReference": "integration-tests!a.date:function(1)",
+              "docComment": "/**\n * A date scalar type that is represented server-side as an extended ISO 8601 date string in the format `YYYY-MM-DD`.\n *\n * @returns date field definition\n */\n",
+              "excerptTokens": [
+                {
+                  "kind": "Content",
+                  "text": "export declare function date(): "
+                },
+                {
+                  "kind": "Reference",
+                  "text": "ModelField",
+                  "canonicalReference": "integration-tests!ModelField:type"
+                },
+                {
+                  "kind": "Content",
+                  "text": "<"
+                },
+                {
+                  "kind": "Reference",
+                  "text": "Nullable",
+                  "canonicalReference": "integration-tests!Nullable:type"
+                },
+                {
+                  "kind": "Content",
+                  "text": "<string>>"
+                },
+                {
+                  "kind": "Content",
+                  "text": ";"
+                }
+              ],
+              "fileUrlPath": "../data-schema/lib-esm/src/ModelField.d.ts",
+              "returnTypeTokenRange": {
+                "startIndex": 1,
+                "endIndex": 5
+              },
+              "releaseTag": "Public",
+              "overloadIndex": 1,
+              "parameters": [],
+              "name": "date"
+            },
+            {
+              "kind": "Function",
+              "canonicalReference": "integration-tests!a.datetime:function(1)",
+              "docComment": "/**\n * A date time scalar type that is represented server-side as an extended ISO 8601 date and time string in the format `YYYY-MM-DDThh:mm:ss.sssZ`.\n *\n * @returns datetime field definition\n */\n",
+              "excerptTokens": [
+                {
+                  "kind": "Content",
+                  "text": "export declare function datetime(): "
+                },
+                {
+                  "kind": "Reference",
+                  "text": "ModelField",
+                  "canonicalReference": "integration-tests!ModelField:type"
+                },
+                {
+                  "kind": "Content",
+                  "text": "<"
+                },
+                {
+                  "kind": "Reference",
+                  "text": "Nullable",
+                  "canonicalReference": "integration-tests!Nullable:type"
+                },
+                {
+                  "kind": "Content",
+                  "text": "<string>>"
+                },
+                {
+                  "kind": "Content",
+                  "text": ";"
+                }
+              ],
+              "fileUrlPath": "../data-schema/lib-esm/src/ModelField.d.ts",
+              "returnTypeTokenRange": {
+                "startIndex": 1,
+                "endIndex": 5
+              },
+              "releaseTag": "Public",
+              "overloadIndex": 1,
+              "parameters": [],
+              "name": "datetime"
+            },
+            {
+              "kind": "Function",
+              "canonicalReference": "integration-tests!a.email:function(1)",
+              "docComment": "/**\n * An email scalar type that is represented server-side in the format `local-part@domain-part` as defined by RFC 822.\n *\n * @returns email field definition\n */\n",
+              "excerptTokens": [
+                {
+                  "kind": "Content",
+                  "text": "export declare function email(): "
+                },
+                {
+                  "kind": "Reference",
+                  "text": "ModelField",
+                  "canonicalReference": "integration-tests!ModelField:type"
+                },
+                {
+                  "kind": "Content",
+                  "text": "<"
+                },
+                {
+                  "kind": "Reference",
+                  "text": "Nullable",
+                  "canonicalReference": "integration-tests!Nullable:type"
+                },
+                {
+                  "kind": "Content",
+                  "text": "<string>>"
+                },
+                {
+                  "kind": "Content",
+                  "text": ";"
+                }
+              ],
+              "fileUrlPath": "../data-schema/lib-esm/src/ModelField.d.ts",
+              "returnTypeTokenRange": {
+                "startIndex": 1,
+                "endIndex": 5
+              },
+              "releaseTag": "Public",
+              "overloadIndex": 1,
+              "parameters": [],
+              "name": "email"
+            },
+            {
+              "kind": "Function",
+              "canonicalReference": "integration-tests!a.enum:function(1)",
+              "docComment": "/**\n * this type param pattern allows us to infer literal type values from the array without using the `as const` suffix\n */\n",
+              "excerptTokens": [
+                {
+                  "kind": "Content",
+                  "text": "export declare function enumType<Value extends "
+                },
+                {
+                  "kind": "Content",
+                  "text": "string"
+                },
+                {
+                  "kind": "Content",
+                  "text": ", T extends "
+                },
+                {
+                  "kind": "Content",
+                  "text": "readonly Value[]"
+                },
+                {
+                  "kind": "Content",
+                  "text": ">(values: "
+                },
+                {
+                  "kind": "Content",
+                  "text": "T"
+                },
+                {
+                  "kind": "Content",
+                  "text": "): "
+                },
+                {
+                  "kind": "Reference",
+                  "text": "EnumType",
+                  "canonicalReference": "integration-tests!EnumType:type"
+                },
+                {
+                  "kind": "Content",
+                  "text": "<"
+                },
+                {
+                  "kind": "Reference",
+                  "text": "EnumTypeArgFactory",
+                  "canonicalReference": "integration-tests!EnumTypeArgFactory:type"
+                },
+                {
+                  "kind": "Content",
+                  "text": "<T>>"
+                },
+                {
+                  "kind": "Content",
+                  "text": ";"
+                }
+              ],
+              "fileUrlPath": "../data-schema/lib-esm/src/EnumType.d.ts",
+              "returnTypeTokenRange": {
+                "startIndex": 7,
+                "endIndex": 11
+              },
+              "releaseTag": "Public",
+              "overloadIndex": 1,
+              "parameters": [
+                {
+                  "parameterName": "values",
+                  "parameterTypeTokenRange": {
+                    "startIndex": 5,
+                    "endIndex": 6
+                  },
+                  "isOptional": false
+                }
+              ],
+              "typeParameters": [
+                {
+                  "typeParameterName": "Value",
+                  "constraintTokenRange": {
+                    "startIndex": 1,
+                    "endIndex": 2
+                  },
+                  "defaultTypeTokenRange": {
+                    "startIndex": 0,
+                    "endIndex": 0
+                  }
+                },
+                {
+                  "typeParameterName": "T",
+                  "constraintTokenRange": {
+                    "startIndex": 3,
+                    "endIndex": 4
+                  },
+                  "defaultTypeTokenRange": {
+                    "startIndex": 0,
+                    "endIndex": 0
+                  }
+                }
+              ],
+              "name": "enum"
+            },
+            {
+              "kind": "Function",
+              "canonicalReference": "integration-tests!a.float:function(1)",
+              "docComment": "/**\n * A float scalar type following represented server-side as an IEEE 754 floating point value.\n *\n * @returns float field definition\n */\n",
+              "excerptTokens": [
+                {
+                  "kind": "Content",
+                  "text": "export declare function float(): "
+                },
+                {
+                  "kind": "Reference",
+                  "text": "ModelField",
+                  "canonicalReference": "integration-tests!ModelField:type"
+                },
+                {
+                  "kind": "Content",
+                  "text": "<"
+                },
+                {
+                  "kind": "Reference",
+                  "text": "Nullable",
+                  "canonicalReference": "integration-tests!Nullable:type"
+                },
+                {
+                  "kind": "Content",
+                  "text": "<number>>"
+                },
+                {
+                  "kind": "Content",
+                  "text": ";"
+                }
+              ],
+              "fileUrlPath": "../data-schema/lib-esm/src/ModelField.d.ts",
+              "returnTypeTokenRange": {
+                "startIndex": 1,
+                "endIndex": 5
+              },
+              "releaseTag": "Public",
+              "overloadIndex": 1,
+              "parameters": [],
+              "name": "float"
+            },
+            {
+              "kind": "Variable",
+              "canonicalReference": "integration-tests!a.handler:var",
+              "docComment": "",
+              "excerptTokens": [
+                {
+                  "kind": "Content",
+                  "text": "handler: "
+                },
+                {
+                  "kind": "Content",
+                  "text": "{\n    inlineSql: typeof "
+                },
+                {
+                  "kind": "Reference",
+                  "text": "inlineSql",
+                  "canonicalReference": "integration-tests!inlineSql:function"
+                },
+                {
+                  "kind": "Content",
+                  "text": ";\n    sqlReference: typeof "
+                },
+                {
+                  "kind": "Reference",
+                  "text": "sqlReference",
+                  "canonicalReference": "integration-tests!sqlReference:function"
+                },
+                {
+                  "kind": "Content",
+                  "text": ";\n    custom: typeof "
+                },
+                {
+                  "kind": "Reference",
+                  "text": "custom",
+                  "canonicalReference": "integration-tests!custom:function"
+                },
+                {
+                  "kind": "Content",
+                  "text": ";\n    function: typeof "
+                },
+                {
+                  "kind": "Reference",
+                  "text": "fcn",
+                  "canonicalReference": "integration-tests!fcn:function"
+                },
+                {
+                  "kind": "Content",
+                  "text": ";\n}"
+                }
+              ],
+              "fileUrlPath": "../data-schema/lib-esm/src/Handler.d.ts",
+              "isReadonly": true,
+              "releaseTag": "Public",
+              "name": "handler",
+              "variableTypeTokenRange": {
+                "startIndex": 1,
+                "endIndex": 10
+              }
+            },
+            {
+              "kind": "Function",
+              "canonicalReference": "integration-tests!a.hasMany:function(1)",
+              "docComment": "/**\n * Create a one-directional one-to-many relationship between two models using the `hasMany()` method.\n *\n * @param relatedModel - the name of the related model\n *\n * @returns a one-to-many relationship definition\n */\n",
+              "excerptTokens": [
+                {
+                  "kind": "Content",
+                  "text": "export declare function hasMany<RM extends "
+                },
+                {
+                  "kind": "Content",
+                  "text": "string"
+                },
+                {
+                  "kind": "Content",
+                  "text": ">(relatedModel: "
+                },
+                {
+                  "kind": "Content",
+                  "text": "RM"
+                },
+                {
+                  "kind": "Content",
+                  "text": "): "
+                },
+                {
+                  "kind": "Reference",
+                  "text": "ModelRelationalField",
+                  "canonicalReference": "integration-tests!ModelRelationalField:type"
+                },
+                {
+                  "kind": "Content",
+                  "text": "<"
+                },
+                {
+                  "kind": "Reference",
+                  "text": "ModelRelationalTypeArgFactory",
+                  "canonicalReference": "integration-tests!ModelRelationalTypeArgFactory:type"
+                },
+                {
+                  "kind": "Content",
+                  "text": "<RM, "
+                },
+                {
+                  "kind": "Reference",
+                  "text": "ModelRelationshipTypes.hasMany",
+                  "canonicalReference": "integration-tests!ModelRelationshipTypes.hasMany:member"
+                },
+                {
+                  "kind": "Content",
+                  "text": ", true, undefined>, RM, \"required\", undefined>"
+                },
+                {
+                  "kind": "Content",
+                  "text": ";"
+                }
+              ],
+              "fileUrlPath": "../data-schema/lib-esm/src/ModelRelationalField.d.ts",
+              "returnTypeTokenRange": {
+                "startIndex": 5,
+                "endIndex": 11
+              },
+              "releaseTag": "Public",
+              "overloadIndex": 1,
+              "parameters": [
+                {
+                  "parameterName": "relatedModel",
+                  "parameterTypeTokenRange": {
+                    "startIndex": 3,
+                    "endIndex": 4
+                  },
+                  "isOptional": false
+                }
+              ],
+              "typeParameters": [
+                {
+                  "typeParameterName": "RM",
+                  "constraintTokenRange": {
+                    "startIndex": 1,
+                    "endIndex": 2
+                  },
+                  "defaultTypeTokenRange": {
+                    "startIndex": 0,
+                    "endIndex": 0
+                  }
+                }
+              ],
+              "name": "hasMany"
+            },
+            {
+              "kind": "Function",
+              "canonicalReference": "integration-tests!a.hasOne:function(1)",
+              "docComment": "/**\n * Create a one-directional one-to-one relationship between two models using the `hasOne(\"MODEL_NAME\")` method. A hasOne relationship always uses a reference to the related model's identifier. Typically this is the `id` field unless overwritten with the `identifier()` method.\n *\n * @param relatedModel - the name of the related model\n *\n * @returns a one-to-one relationship definition\n */\n",
+              "excerptTokens": [
+                {
+                  "kind": "Content",
+                  "text": "export declare function hasOne<RM extends "
+                },
+                {
+                  "kind": "Content",
+                  "text": "string"
+                },
+                {
+                  "kind": "Content",
+                  "text": ">(relatedModel: "
+                },
+                {
+                  "kind": "Content",
+                  "text": "RM"
+                },
+                {
+                  "kind": "Content",
+                  "text": "): "
+                },
+                {
+                  "kind": "Reference",
+                  "text": "ModelRelationalField",
+                  "canonicalReference": "integration-tests!ModelRelationalField:type"
+                },
+                {
+                  "kind": "Content",
+                  "text": "<"
+                },
+                {
+                  "kind": "Reference",
+                  "text": "ModelRelationalTypeArgFactory",
+                  "canonicalReference": "integration-tests!ModelRelationalTypeArgFactory:type"
+                },
+                {
+                  "kind": "Content",
+                  "text": "<RM, "
+                },
+                {
+                  "kind": "Reference",
+                  "text": "ModelRelationshipTypes.hasOne",
+                  "canonicalReference": "integration-tests!ModelRelationshipTypes.hasOne:member"
+                },
+                {
+                  "kind": "Content",
+                  "text": ", false, undefined>, RM, \"valueRequired\" | \"arrayRequired\", undefined>"
+                },
+                {
+                  "kind": "Content",
+                  "text": ";"
+                }
+              ],
+              "fileUrlPath": "../data-schema/lib-esm/src/ModelRelationalField.d.ts",
+              "returnTypeTokenRange": {
+                "startIndex": 5,
+                "endIndex": 11
+              },
+              "releaseTag": "Public",
+              "overloadIndex": 1,
+              "parameters": [
+                {
+                  "parameterName": "relatedModel",
+                  "parameterTypeTokenRange": {
+                    "startIndex": 3,
+                    "endIndex": 4
+                  },
+                  "isOptional": false
+                }
+              ],
+              "typeParameters": [
+                {
+                  "typeParameterName": "RM",
+                  "constraintTokenRange": {
+                    "startIndex": 1,
+                    "endIndex": 2
+                  },
+                  "defaultTypeTokenRange": {
+                    "startIndex": 0,
+                    "endIndex": 0
+                  }
+                }
+              ],
+              "name": "hasOne"
+            },
+            {
+              "kind": "Function",
+              "canonicalReference": "integration-tests!a.id:function(1)",
+              "docComment": "/**\n * A unique identifier scalar type. This scalar is serialized like a String but isn't meant to be human-readable. If not specified on create operations, a ULID will be auto-generated service-side.\n *\n * @returns ID field definition\n */\n",
+              "excerptTokens": [
+                {
+                  "kind": "Content",
+                  "text": "export declare function id(): "
+                },
+                {
+                  "kind": "Reference",
+                  "text": "ModelField",
+                  "canonicalReference": "integration-tests!ModelField:type"
+                },
+                {
+                  "kind": "Content",
+                  "text": "<"
+                },
+                {
+                  "kind": "Reference",
+                  "text": "Nullable",
+                  "canonicalReference": "integration-tests!Nullable:type"
+                },
+                {
+                  "kind": "Content",
+                  "text": "<string>>"
+                },
+                {
+                  "kind": "Content",
+                  "text": ";"
+                }
+              ],
+              "fileUrlPath": "../data-schema/lib-esm/src/ModelField.d.ts",
+              "returnTypeTokenRange": {
+                "startIndex": 1,
+                "endIndex": 5
+              },
+              "releaseTag": "Public",
+              "overloadIndex": 1,
+              "parameters": [],
+              "name": "id"
+            },
+            {
+              "kind": "Function",
+              "canonicalReference": "integration-tests!a.index:function(1)",
+              "docComment": "",
+              "excerptTokens": [
+                {
+                  "kind": "Content",
+                  "text": "export declare function modelIndex<ModelFieldKeys extends "
+                },
+                {
+                  "kind": "Content",
+                  "text": "string"
+                },
+                {
+                  "kind": "Content",
+                  "text": ", PK extends "
+                },
+                {
+                  "kind": "Content",
+                  "text": "ModelFieldKeys"
+                },
+                {
+                  "kind": "Content",
+                  "text": ", SK = "
+                },
+                {
+                  "kind": "Content",
+                  "text": "readonly []"
+                },
+                {
+                  "kind": "Content",
+                  "text": ", QueryField = "
+                },
+                {
+                  "kind": "Content",
+                  "text": "never"
+                },
+                {
+                  "kind": "Content",
+                  "text": ">(partitionKeyFieldName: "
+                },
+                {
+                  "kind": "Content",
+                  "text": "PK"
+                },
+                {
+                  "kind": "Content",
+                  "text": "): "
+                },
+                {
+                  "kind": "Reference",
+                  "text": "ModelIndexType",
+                  "canonicalReference": "integration-tests!ModelIndexType:type"
+                },
+                {
+                  "kind": "Content",
+                  "text": "<ModelFieldKeys, PK, SK, QueryField, never>"
+                },
+                {
+                  "kind": "Content",
+                  "text": ";"
+                }
+              ],
+              "fileUrlPath": "../data-schema/lib-esm/src/ModelIndex.d.ts",
+              "returnTypeTokenRange": {
+                "startIndex": 11,
+                "endIndex": 13
+              },
+              "releaseTag": "Public",
+              "overloadIndex": 1,
+              "parameters": [
+                {
+                  "parameterName": "partitionKeyFieldName",
+                  "parameterTypeTokenRange": {
+                    "startIndex": 9,
+                    "endIndex": 10
+                  },
+                  "isOptional": false
+                }
+              ],
+              "typeParameters": [
+                {
+                  "typeParameterName": "ModelFieldKeys",
+                  "constraintTokenRange": {
+                    "startIndex": 1,
+                    "endIndex": 2
+                  },
+                  "defaultTypeTokenRange": {
+                    "startIndex": 0,
+                    "endIndex": 0
+                  }
+                },
+                {
+                  "typeParameterName": "PK",
+                  "constraintTokenRange": {
+                    "startIndex": 3,
+                    "endIndex": 4
+                  },
+                  "defaultTypeTokenRange": {
+                    "startIndex": 0,
+                    "endIndex": 0
+                  }
+                },
+                {
+                  "typeParameterName": "SK",
+                  "constraintTokenRange": {
+                    "startIndex": 0,
+                    "endIndex": 0
+                  },
+                  "defaultTypeTokenRange": {
+                    "startIndex": 5,
+                    "endIndex": 6
+                  }
+                },
+                {
+                  "typeParameterName": "QueryField",
+                  "constraintTokenRange": {
+                    "startIndex": 0,
+                    "endIndex": 0
+                  },
+                  "defaultTypeTokenRange": {
+                    "startIndex": 7,
+                    "endIndex": 8
+                  }
+                }
+              ],
+              "name": "index"
+            },
+            {
+              "kind": "Function",
+              "canonicalReference": "integration-tests!a.integer:function(1)",
+              "docComment": "/**\n * An integer scalar type with a supported value range between -(2^31) and 2^31-1.\n *\n * @returns integer field definition\n */\n",
+              "excerptTokens": [
+                {
+                  "kind": "Content",
+                  "text": "export declare function integer(): "
+                },
+                {
+                  "kind": "Reference",
+                  "text": "ModelField",
+                  "canonicalReference": "integration-tests!ModelField:type"
+                },
+                {
+                  "kind": "Content",
+                  "text": "<"
+                },
+                {
+                  "kind": "Reference",
+                  "text": "Nullable",
+                  "canonicalReference": "integration-tests!Nullable:type"
+                },
+                {
+                  "kind": "Content",
+                  "text": "<number>>"
+                },
+                {
+                  "kind": "Content",
+                  "text": ";"
+                }
+              ],
+              "fileUrlPath": "../data-schema/lib-esm/src/ModelField.d.ts",
+              "returnTypeTokenRange": {
+                "startIndex": 1,
+                "endIndex": 5
+              },
+              "releaseTag": "Public",
+              "overloadIndex": 1,
+              "parameters": [],
+              "name": "integer"
+            },
+            {
+              "kind": "Function",
+              "canonicalReference": "integration-tests!a.ipAddress:function(1)",
+              "docComment": "/**\n * A valid IPv4 or IPv6 address scalar type. IPv4 addresses are expected in quad-dotted notation (123.12.34.56). IPv6 addresses are expected in non-bracketed, colon-separated format (1a2b:3c4b:🔢4567). You can include an optional CIDR suffix (123.45.67.89/16) to indicate subnet mask.\n *\n * @returns IP address field definition\n */\n",
+              "excerptTokens": [
+                {
+                  "kind": "Content",
+                  "text": "export declare function ipAddress(): "
+                },
+                {
+                  "kind": "Reference",
+                  "text": "ModelField",
+                  "canonicalReference": "integration-tests!ModelField:type"
+                },
+                {
+                  "kind": "Content",
+                  "text": "<"
+                },
+                {
+                  "kind": "Reference",
+                  "text": "Nullable",
+                  "canonicalReference": "integration-tests!Nullable:type"
+                },
+                {
+                  "kind": "Content",
+                  "text": "<string>>"
+                },
+                {
+                  "kind": "Content",
+                  "text": ";"
+                }
+              ],
+              "fileUrlPath": "../data-schema/lib-esm/src/ModelField.d.ts",
+              "returnTypeTokenRange": {
+                "startIndex": 1,
+                "endIndex": 5
+              },
+              "releaseTag": "Public",
+              "overloadIndex": 1,
+              "parameters": [],
+              "name": "ipAddress"
+            },
+            {
+              "kind": "Function",
+              "canonicalReference": "integration-tests!a.json:function(1)",
+              "docComment": "/**\n * A JSON scalar type that is automatically parsed and loaded server-side as maps, lists, or scalar values rather than as the literal input strings.\n *\n * @returns JSON field definition\n */\n",
+              "excerptTokens": [
+                {
+                  "kind": "Content",
+                  "text": "export declare function json(): "
+                },
+                {
+                  "kind": "Reference",
+                  "text": "ModelField",
+                  "canonicalReference": "integration-tests!ModelField:type"
+                },
+                {
+                  "kind": "Content",
+                  "text": "<"
+                },
+                {
+                  "kind": "Reference",
+                  "text": "Nullable",
+                  "canonicalReference": "integration-tests!Nullable:type"
+                },
+                {
+                  "kind": "Content",
+                  "text": "<"
+                },
+                {
+                  "kind": "Reference",
+                  "text": "Json",
+                  "canonicalReference": "integration-tests!Json:type"
+                },
+                {
+                  "kind": "Content",
+                  "text": ">>"
+                },
+                {
+                  "kind": "Content",
+                  "text": ";"
+                }
+              ],
+              "fileUrlPath": "../data-schema/lib-esm/src/ModelField.d.ts",
+              "returnTypeTokenRange": {
+                "startIndex": 1,
+                "endIndex": 7
+              },
+              "releaseTag": "Public",
+              "overloadIndex": 1,
+              "parameters": [],
+              "name": "json"
+            },
+            {
+              "kind": "Function",
+              "canonicalReference": "integration-tests!a.manyToMany:function(1)",
+              "docComment": "/**\n * Create a many-to-many relationship between two models with the manyToMany() method. Provide a common relationName on both models to join them into a many-to-many relationship. Under the hood a many-to-many relationship is modeled with a \"join table\" with corresponding `hasMany()` relationships between the two related models. You must set the same `manyToMany()` field on both models of the relationship.\n *\n * @param relatedModel - name of the related model\n *\n * @param opts - pass in the `relationName` that will serve as the join table name for this many-to-many relationship\n *\n * @returns a many-to-many relationship definition\n */\n",
+              "excerptTokens": [
+                {
+                  "kind": "Content",
+                  "text": "export declare function manyToMany<RM extends "
+                },
+                {
+                  "kind": "Content",
+                  "text": "string"
+                },
+                {
+                  "kind": "Content",
+                  "text": ", RN extends "
+                },
+                {
+                  "kind": "Content",
+                  "text": "string"
+                },
+                {
+                  "kind": "Content",
+                  "text": ">(relatedModel: "
+                },
+                {
+                  "kind": "Content",
+                  "text": "RM"
+                },
+                {
+                  "kind": "Content",
+                  "text": ", opts: "
+                },
+                {
+                  "kind": "Content",
+                  "text": "{\n    relationName: RN;\n}"
+                },
+                {
+                  "kind": "Content",
+                  "text": "): "
+                },
+                {
+                  "kind": "Reference",
+                  "text": "ModelRelationalField",
+                  "canonicalReference": "integration-tests!ModelRelationalField:type"
+                },
+                {
+                  "kind": "Content",
+                  "text": "<"
+                },
+                {
+                  "kind": "Reference",
+                  "text": "ModelRelationalTypeArgFactory",
+                  "canonicalReference": "integration-tests!ModelRelationalTypeArgFactory:type"
+                },
+                {
+                  "kind": "Content",
+                  "text": "<RM, "
+                },
+                {
+                  "kind": "Reference",
+                  "text": "ModelRelationshipTypes.manyToMany",
+                  "canonicalReference": "integration-tests!ModelRelationshipTypes.manyToMany:member"
+                },
+                {
+                  "kind": "Content",
+                  "text": ", true, RN>, RM, \"required\" | \"references\", undefined>"
+                },
+                {
+                  "kind": "Content",
+                  "text": ";"
+                }
+              ],
+              "fileUrlPath": "../data-schema/lib-esm/src/ModelRelationalField.d.ts",
+              "returnTypeTokenRange": {
+                "startIndex": 9,
+                "endIndex": 15
+              },
+              "releaseTag": "Public",
+              "overloadIndex": 1,
+              "parameters": [
+                {
+                  "parameterName": "relatedModel",
+                  "parameterTypeTokenRange": {
+                    "startIndex": 5,
+                    "endIndex": 6
+                  },
+                  "isOptional": false
+                },
+                {
+                  "parameterName": "opts",
+                  "parameterTypeTokenRange": {
+                    "startIndex": 7,
+                    "endIndex": 8
+                  },
+                  "isOptional": false
+                }
+              ],
+              "typeParameters": [
+                {
+                  "typeParameterName": "RM",
+                  "constraintTokenRange": {
+                    "startIndex": 1,
+                    "endIndex": 2
+                  },
+                  "defaultTypeTokenRange": {
+                    "startIndex": 0,
+                    "endIndex": 0
+                  }
+                },
+                {
+                  "typeParameterName": "RN",
+                  "constraintTokenRange": {
+                    "startIndex": 3,
+                    "endIndex": 4
+                  },
+                  "defaultTypeTokenRange": {
+                    "startIndex": 0,
+                    "endIndex": 0
+                  }
+                }
+              ],
+              "name": "manyToMany"
+            },
+            {
+              "kind": "Function",
+              "canonicalReference": "integration-tests!a.model:function(1)",
+              "docComment": "/**\n * A data model that creates a matching Amazon DynamoDB table and provides create, read (list and get), update, delete, and subscription APIs.\n *\n * @param fields - database table fields. Supports scalar types and relationship types.\n *\n * @returns a data model definition\n */\n",
+              "excerptTokens": [
+                {
+                  "kind": "Content",
+                  "text": "export declare function model<T extends "
+                },
+                {
+                  "kind": "Reference",
+                  "text": "ModelFields",
+                  "canonicalReference": "integration-tests!ModelFields:type"
+                },
+                {
+                  "kind": "Content",
+                  "text": ">(fields: "
+                },
+                {
+                  "kind": "Content",
+                  "text": "T"
+                },
+                {
+                  "kind": "Content",
+                  "text": "): "
+                },
+                {
+                  "kind": "Reference",
+                  "text": "ModelType",
+                  "canonicalReference": "integration-tests!ModelType:type"
+                },
+                {
+                  "kind": "Content",
+                  "text": "<{\n    fields: T;\n    identifier: "
+                },
+                {
+                  "kind": "Reference",
+                  "text": "Array",
+                  "canonicalReference": "!Array:interface"
+                },
+                {
+                  "kind": "Content",
+                  "text": "<'id'>;\n    secondaryIndexes: [];\n    authorization: [];\n}>"
+                },
+                {
+                  "kind": "Content",
+                  "text": ";"
+                }
+              ],
+              "fileUrlPath": "../data-schema/lib-esm/src/ModelType.d.ts",
+              "returnTypeTokenRange": {
+                "startIndex": 5,
+                "endIndex": 9
+              },
+              "releaseTag": "Public",
+              "overloadIndex": 1,
+              "parameters": [
+                {
+                  "parameterName": "fields",
+                  "parameterTypeTokenRange": {
+                    "startIndex": 3,
+                    "endIndex": 4
+                  },
+                  "isOptional": false
+                }
+              ],
+              "typeParameters": [
+                {
+                  "typeParameterName": "T",
+                  "constraintTokenRange": {
+                    "startIndex": 1,
+                    "endIndex": 2
+                  },
+                  "defaultTypeTokenRange": {
+                    "startIndex": 0,
+                    "endIndex": 0
+                  }
+                }
+              ],
+              "name": "model"
+            },
+            {
+              "kind": "Function",
+              "canonicalReference": "integration-tests!a.mutation:function(1)",
+              "docComment": "",
+              "excerptTokens": [
+                {
+                  "kind": "Content",
+                  "text": "export declare function mutation(): "
+                },
+                {
+                  "kind": "Reference",
+                  "text": "CustomOperation",
+                  "canonicalReference": "integration-tests!CustomOperation:type"
+                },
+                {
+                  "kind": "Content",
+                  "text": "<{\n    arguments: "
+                },
+                {
+                  "kind": "Reference",
+                  "text": "CustomArguments",
+                  "canonicalReference": "integration-tests!CustomArguments:type"
+                },
+                {
+                  "kind": "Content",
+                  "text": ";\n    returnType: null;\n    functionRef: null;\n    authorization: [];\n    typeName: 'Mutation';\n    handlers: null;\n}, never, typeof "
+                },
+                {
+                  "kind": "Reference",
+                  "text": "mutationBrand",
+                  "canonicalReference": "integration-tests!mutationBrand:var"
+                },
+                {
+                  "kind": "Content",
+                  "text": ">"
+                },
+                {
+                  "kind": "Content",
+                  "text": ";"
+                }
+              ],
+              "fileUrlPath": "../data-schema/lib-esm/src/CustomOperation.d.ts",
+              "returnTypeTokenRange": {
+                "startIndex": 1,
+                "endIndex": 7
+              },
+              "releaseTag": "Public",
+              "overloadIndex": 1,
+              "parameters": [],
+              "name": "mutation"
+            },
+            {
+              "kind": "Function",
+              "canonicalReference": "integration-tests!a.phone:function(1)",
+              "docComment": "/**\n * A phone number scalar type thas is stored as a string server-side. Phone numbers can contain either spaces or hyphens to separate digit groups. Phone numbers without a country code are assumed to be US/North American numbers adhering to the North American Numbering Plan.\n *\n * @returns phone number field definition\n */\n",
+              "excerptTokens": [
+                {
+                  "kind": "Content",
+                  "text": "export declare function phone(): "
+                },
+                {
+                  "kind": "Reference",
+                  "text": "ModelField",
+                  "canonicalReference": "integration-tests!ModelField:type"
+                },
+                {
+                  "kind": "Content",
+                  "text": "<"
+                },
+                {
+                  "kind": "Reference",
+                  "text": "Nullable",
+                  "canonicalReference": "integration-tests!Nullable:type"
+                },
+                {
+                  "kind": "Content",
+                  "text": "<string>>"
+                },
+                {
+                  "kind": "Content",
+                  "text": ";"
+                }
+              ],
+              "fileUrlPath": "../data-schema/lib-esm/src/ModelField.d.ts",
+              "returnTypeTokenRange": {
+                "startIndex": 1,
+                "endIndex": 5
+              },
+              "releaseTag": "Public",
+              "overloadIndex": 1,
+              "parameters": [],
+              "name": "phone"
+            },
+            {
+              "kind": "Function",
+              "canonicalReference": "integration-tests!a.query:function(1)",
+              "docComment": "",
+              "excerptTokens": [
+                {
+                  "kind": "Content",
+                  "text": "export declare function query(): "
+                },
+                {
+                  "kind": "Reference",
+                  "text": "CustomOperation",
+                  "canonicalReference": "integration-tests!CustomOperation:type"
+                },
+                {
+                  "kind": "Content",
+                  "text": "<{\n    arguments: "
+                },
+                {
+                  "kind": "Reference",
+                  "text": "CustomArguments",
+                  "canonicalReference": "integration-tests!CustomArguments:type"
+                },
+                {
+                  "kind": "Content",
+                  "text": ";\n    returnType: null;\n    functionRef: null;\n    authorization: [];\n    typeName: 'Query';\n    handlers: null;\n}, never, typeof "
+                },
+                {
+                  "kind": "Reference",
+                  "text": "queryBrand",
+                  "canonicalReference": "integration-tests!queryBrand:var"
+                },
+                {
+                  "kind": "Content",
+                  "text": ">"
+                },
+                {
+                  "kind": "Content",
+                  "text": ";"
+                }
+              ],
+              "fileUrlPath": "../data-schema/lib-esm/src/CustomOperation.d.ts",
+              "returnTypeTokenRange": {
+                "startIndex": 1,
+                "endIndex": 7
+              },
+              "releaseTag": "Public",
+              "overloadIndex": 1,
+              "parameters": [],
+              "name": "query"
+            },
+            {
+              "kind": "Function",
+              "canonicalReference": "integration-tests!a.ref:function(1)",
+              "docComment": "",
+              "excerptTokens": [
+                {
+                  "kind": "Content",
+                  "text": "export declare function ref<Value extends "
+                },
+                {
+                  "kind": "Content",
+                  "text": "string"
+                },
+                {
+                  "kind": "Content",
+                  "text": ", T extends "
+                },
+                {
+                  "kind": "Content",
+                  "text": "Value"
+                },
+                {
+                  "kind": "Content",
+                  "text": ">(link: "
+                },
+                {
+                  "kind": "Content",
+                  "text": "T"
+                },
+                {
+                  "kind": "Content",
+                  "text": "): "
+                },
+                {
+                  "kind": "Reference",
+                  "text": "RefType",
+                  "canonicalReference": "integration-tests!RefType:type"
+                },
+                {
+                  "kind": "Content",
+                  "text": "<"
+                },
+                {
+                  "kind": "Reference",
+                  "text": "RefTypeArgFactory",
+                  "canonicalReference": "integration-tests!RefTypeArgFactory:type"
+                },
+                {
+                  "kind": "Content",
+                  "text": "<T>, never, undefined>"
+                },
+                {
+                  "kind": "Content",
+                  "text": ";"
+                }
+              ],
+              "fileUrlPath": "../data-schema/lib-esm/src/RefType.d.ts",
+              "returnTypeTokenRange": {
+                "startIndex": 7,
+                "endIndex": 11
+              },
+              "releaseTag": "Public",
+              "overloadIndex": 1,
+              "parameters": [
+                {
+                  "parameterName": "link",
+                  "parameterTypeTokenRange": {
+                    "startIndex": 5,
+                    "endIndex": 6
+                  },
+                  "isOptional": false
+                }
+              ],
+              "typeParameters": [
+                {
+                  "typeParameterName": "Value",
+                  "constraintTokenRange": {
+                    "startIndex": 1,
+                    "endIndex": 2
+                  },
+                  "defaultTypeTokenRange": {
+                    "startIndex": 0,
+                    "endIndex": 0
+                  }
+                },
+                {
+                  "typeParameterName": "T",
+                  "constraintTokenRange": {
+                    "startIndex": 3,
+                    "endIndex": 4
+                  },
+                  "defaultTypeTokenRange": {
+                    "startIndex": 0,
+                    "endIndex": 0
+                  }
+                }
+              ],
+              "name": "ref"
+            },
+            {
+              "kind": "Function",
+              "canonicalReference": "integration-tests!a.schema:function(1)",
+              "docComment": "/**\n * The API and data model definition for Amplify Data. Pass in `{ <NAME>: a.model(...) }` to create a database table and exposes CRUDL operations via an API.\n *\n * @param types - The API and data model definition\n *\n * @returns An API and data model definition to be deployed with Amplify (Gen 2) experience (`processSchema(...)`) or with the Amplify Data CDK construct (`@aws-amplify/data-construct`)\n */\n",
+              "excerptTokens": [
+                {
+                  "kind": "Content",
+                  "text": "schema: <Types extends "
+                },
+                {
+                  "kind": "Reference",
+                  "text": "ModelSchemaContents",
+                  "canonicalReference": "integration-tests!ModelSchemaContents:type"
+                },
+                {
+                  "kind": "Content",
+                  "text": ">(types: "
+                },
+                {
+                  "kind": "Content",
+                  "text": "Types"
+                },
+                {
+                  "kind": "Content",
+                  "text": ") => "
+                },
+                {
+                  "kind": "Reference",
+                  "text": "ModelSchema",
+                  "canonicalReference": "integration-tests!ModelSchema:type"
+                },
+                {
+                  "kind": "Content",
+                  "text": "<{\n    types: Types;\n    authorization: [];\n    configuration: any;\n}, never>"
+                }
+              ],
+              "fileUrlPath": "../data-schema/lib-esm/src/ModelSchema.d.ts",
+              "returnTypeTokenRange": {
+                "startIndex": 5,
+                "endIndex": 7
+              },
+              "releaseTag": "Public",
+              "overloadIndex": 1,
+              "parameters": [
+                {
+                  "parameterName": "types",
+                  "parameterTypeTokenRange": {
+                    "startIndex": 3,
+                    "endIndex": 4
+                  },
+                  "isOptional": false
+                }
+              ],
+              "typeParameters": [
+                {
+                  "typeParameterName": "Types",
+                  "constraintTokenRange": {
+                    "startIndex": 1,
+                    "endIndex": 2
+                  },
+                  "defaultTypeTokenRange": {
+                    "startIndex": 0,
+                    "endIndex": 0
+                  }
+                }
+              ],
+              "name": "schema"
+            },
+            {
+              "kind": "Function",
+              "canonicalReference": "integration-tests!a.string:function(1)",
+              "docComment": "/**\n * A string scalar type that is represented server-side as a UTF-8 character sequence.\n *\n * @returns string field definition\n */\n",
+              "excerptTokens": [
+                {
+                  "kind": "Content",
+                  "text": "export declare function string(): "
+                },
+                {
+                  "kind": "Reference",
+                  "text": "ModelField",
+                  "canonicalReference": "integration-tests!ModelField:type"
+                },
+                {
+                  "kind": "Content",
+                  "text": "<"
+                },
+                {
+                  "kind": "Reference",
+                  "text": "Nullable",
+                  "canonicalReference": "integration-tests!Nullable:type"
+                },
+                {
+                  "kind": "Content",
+                  "text": "<string>>"
+                },
+                {
+                  "kind": "Content",
+                  "text": ";"
+                }
+              ],
+              "fileUrlPath": "../data-schema/lib-esm/src/ModelField.d.ts",
+              "returnTypeTokenRange": {
+                "startIndex": 1,
+                "endIndex": 5
+              },
+              "releaseTag": "Public",
+              "overloadIndex": 1,
+              "parameters": [],
+              "name": "string"
+            },
+            {
+              "kind": "Function",
+              "canonicalReference": "integration-tests!a.subscription:function(1)",
+              "docComment": "",
+              "excerptTokens": [
+                {
+                  "kind": "Content",
+                  "text": "export declare function subscription(): "
+                },
+                {
+                  "kind": "Reference",
+                  "text": "CustomOperation",
+                  "canonicalReference": "integration-tests!CustomOperation:type"
+                },
+                {
+                  "kind": "Content",
+                  "text": "<{\n    arguments: "
+                },
+                {
+                  "kind": "Reference",
+                  "text": "CustomArguments",
+                  "canonicalReference": "integration-tests!CustomArguments:type"
+                },
+                {
+                  "kind": "Content",
+                  "text": ";\n    returnType: null;\n    functionRef: null;\n    authorization: [];\n    typeName: 'Subscription';\n    handlers: null;\n}, never, typeof "
+                },
+                {
+                  "kind": "Reference",
+                  "text": "subscriptionBrand",
+                  "canonicalReference": "integration-tests!subscriptionBrand:var"
+                },
+                {
+                  "kind": "Content",
+                  "text": ">"
+                },
+                {
+                  "kind": "Content",
+                  "text": ";"
+                }
+              ],
+              "fileUrlPath": "../data-schema/lib-esm/src/CustomOperation.d.ts",
+              "returnTypeTokenRange": {
+                "startIndex": 1,
+                "endIndex": 7
+              },
+              "releaseTag": "Public",
+              "overloadIndex": 1,
+              "parameters": [],
+              "name": "subscription"
+            },
+            {
+              "kind": "Function",
+              "canonicalReference": "integration-tests!a.time:function(1)",
+              "docComment": "/**\n * A time scalar type that is represented server-side as an extended ISO 8601 time string in the format `hh:mm:ss.sss`.\n *\n * @returns time field definition\n */\n",
+              "excerptTokens": [
+                {
+                  "kind": "Content",
+                  "text": "export declare function time(): "
+                },
+                {
+                  "kind": "Reference",
+                  "text": "ModelField",
+                  "canonicalReference": "integration-tests!ModelField:type"
+                },
+                {
+                  "kind": "Content",
+                  "text": "<"
+                },
+                {
+                  "kind": "Reference",
+                  "text": "Nullable",
+                  "canonicalReference": "integration-tests!Nullable:type"
+                },
+                {
+                  "kind": "Content",
+                  "text": "<string>>"
+                },
+                {
+                  "kind": "Content",
+                  "text": ";"
+                }
+              ],
+              "fileUrlPath": "../data-schema/lib-esm/src/ModelField.d.ts",
+              "returnTypeTokenRange": {
+                "startIndex": 1,
+                "endIndex": 5
+              },
+              "releaseTag": "Public",
+              "overloadIndex": 1,
+              "parameters": [],
+              "name": "time"
+            },
+            {
+              "kind": "Function",
+              "canonicalReference": "integration-tests!a.timestamp:function(1)",
+              "docComment": "/**\n * A timestamp scalar type that is represented by an integer value of the number of seconds before or after `1970-01-01-T00:00Z`.\n *\n * @returns timestamp field definition\n */\n",
+              "excerptTokens": [
+                {
+                  "kind": "Content",
+                  "text": "export declare function timestamp(): "
+                },
+                {
+                  "kind": "Reference",
+                  "text": "ModelField",
+                  "canonicalReference": "integration-tests!ModelField:type"
+                },
+                {
+                  "kind": "Content",
+                  "text": "<"
+                },
+                {
+                  "kind": "Reference",
+                  "text": "Nullable",
+                  "canonicalReference": "integration-tests!Nullable:type"
+                },
+                {
+                  "kind": "Content",
+                  "text": "<number>>"
+                },
+                {
+                  "kind": "Content",
+                  "text": ";"
+                }
+              ],
+              "fileUrlPath": "../data-schema/lib-esm/src/ModelField.d.ts",
+              "returnTypeTokenRange": {
+                "startIndex": 1,
+                "endIndex": 5
+              },
+              "releaseTag": "Public",
+              "overloadIndex": 1,
+              "parameters": [],
+              "name": "timestamp"
+            },
+            {
+              "kind": "Function",
+              "canonicalReference": "integration-tests!a.url:function(1)",
+              "docComment": "/**\n * A URL scalar type as defined by RFC 1738. For example, https://www.amazon.com/dp/B000NZW3KC/ or mailto:example@example.com. URLs must contain a schema (http, mailto) and can't contain two forward slashes (//) in the path part.\n *\n * @returns URL field definition\n */\n",
+              "excerptTokens": [
+                {
+                  "kind": "Content",
+                  "text": "export declare function url(): "
+                },
+                {
+                  "kind": "Reference",
+                  "text": "ModelField",
+                  "canonicalReference": "integration-tests!ModelField:type"
+                },
+                {
+                  "kind": "Content",
+                  "text": "<"
+                },
+                {
+                  "kind": "Reference",
+                  "text": "Nullable",
+                  "canonicalReference": "integration-tests!Nullable:type"
+                },
+                {
+                  "kind": "Content",
+                  "text": "<string>>"
+                },
+                {
+                  "kind": "Content",
+                  "text": ";"
+                }
+              ],
+              "fileUrlPath": "../data-schema/lib-esm/src/ModelField.d.ts",
+              "returnTypeTokenRange": {
+                "startIndex": 1,
+                "endIndex": 5
+              },
+              "releaseTag": "Public",
+              "overloadIndex": 1,
+              "parameters": [],
+              "name": "url"
+            }
+          ]
+        },
+        {
+          "kind": "TypeAlias",
+          "canonicalReference": "integration-tests!AuthMode:type",
+          "docComment": "",
+          "excerptTokens": [
+            {
+              "kind": "Content",
+              "text": "export type AuthMode = "
+            },
+            {
+              "kind": "Content",
+              "text": "'apiKey' | 'iam' | 'oidc' | 'userPool' | 'lambda' | 'none'"
+            },
+            {
+              "kind": "Content",
+              "text": ";"
+            }
+          ],
+          "fileUrlPath": "../data-schema-types/lib-esm/client/index.d.ts",
+          "releaseTag": "Public",
+          "name": "AuthMode",
+          "typeTokenRange": {
+            "startIndex": 1,
+            "endIndex": 2
+          }
+        },
+        {
+          "kind": "TypeAlias",
+          "canonicalReference": "integration-tests!ClientSchema:type",
+          "docComment": "",
+          "excerptTokens": [
+            {
+              "kind": "Content",
+              "text": "export type ClientSchema<Schema extends "
+            },
+            {
+              "kind": "Reference",
+              "text": "ModelSchema",
+              "canonicalReference": "integration-tests!ModelSchema:type"
+            },
+            {
+              "kind": "Content",
+              "text": "<any, any>"
+            },
+            {
+              "kind": "Content",
+              "text": "> = "
+            },
+            {
+              "kind": "Reference",
+              "text": "InternalClientSchema",
+              "canonicalReference": "integration-tests!InternalClientSchema:type"
+            },
+            {
+              "kind": "Content",
+              "text": "<Schema>"
+            },
+            {
+              "kind": "Content",
+              "text": ";"
+            }
+          ],
+          "fileUrlPath": "../data-schema/lib-esm/src/ClientSchema.d.ts",
+          "releaseTag": "Public",
+          "name": "ClientSchema",
+          "typeParameters": [
+            {
+              "typeParameterName": "Schema",
+              "constraintTokenRange": {
+                "startIndex": 1,
+                "endIndex": 3
+              },
+              "defaultTypeTokenRange": {
+                "startIndex": 0,
+                "endIndex": 0
+              }
+            }
+          ],
+          "typeTokenRange": {
+            "startIndex": 4,
+            "endIndex": 6
+          }
+        },
+        {
+          "kind": "TypeAlias",
+          "canonicalReference": "integration-tests!CustomHeaders:type",
+          "docComment": "/**\n * Custom headers that can be passed either to the client or to individual model operations, either as a static object or a function that returns a promise.\n */\n",
+          "excerptTokens": [
+            {
+              "kind": "Content",
+              "text": "export type CustomHeaders = "
+            },
+            {
+              "kind": "Reference",
+              "text": "Record",
+              "canonicalReference": "!Record:type"
+            },
+            {
+              "kind": "Content",
+              "text": "<string, string> | ((requestOptions?: "
+            },
+            {
+              "kind": "Reference",
+              "text": "RequestOptions",
+              "canonicalReference": "integration-tests!RequestOptions:type"
+            },
+            {
+              "kind": "Content",
+              "text": ") => "
+            },
+            {
+              "kind": "Reference",
+              "text": "Promise",
+              "canonicalReference": "!Promise:interface"
+            },
+            {
+              "kind": "Content",
+              "text": "<"
+            },
+            {
+              "kind": "Reference",
+              "text": "Record",
+              "canonicalReference": "!Record:type"
+            },
+            {
+              "kind": "Content",
+              "text": "<string, string>>)"
+            },
+            {
+              "kind": "Content",
+              "text": ";"
+            }
+          ],
+          "fileUrlPath": "../data-schema-types/lib-esm/client/index.d.ts",
+          "releaseTag": "Public",
+          "name": "CustomHeaders",
+          "typeTokenRange": {
+            "startIndex": 1,
+            "endIndex": 9
+          }
+        },
+        {
+          "kind": "TypeAlias",
+          "canonicalReference": "integration-tests!CustomMutations:type",
+          "docComment": "",
+          "excerptTokens": [
+            {
+              "kind": "Content",
+              "text": "export type CustomMutations<Schema extends "
+            },
+            {
+              "kind": "Reference",
+              "text": "Record",
+              "canonicalReference": "!Record:type"
+            },
+            {
+              "kind": "Content",
+              "text": "<any, any>"
+            },
+            {
+              "kind": "Content",
+              "text": ", Context extends "
+            },
+            {
+              "kind": "Reference",
+              "text": "ContextType",
+              "canonicalReference": "integration-tests!ContextType:type"
+            },
+            {
+              "kind": "Content",
+              "text": " = "
+            },
+            {
+              "kind": "Content",
+              "text": "'CLIENT'"
+            },
+            {
+              "kind": "Content",
+              "text": ", ModelMeta extends "
+            },
+            {
+              "kind": "Reference",
+              "text": "Record",
+              "canonicalReference": "!Record:type"
+            },
+            {
+              "kind": "Content",
+              "text": "<any, any>"
+            },
+            {
+              "kind": "Content",
+              "text": " = "
+            },
+            {
+              "kind": "Reference",
+              "text": "ExtractModelMeta",
+              "canonicalReference": "integration-tests!ExtractModelMeta:type"
+            },
+            {
+              "kind": "Content",
+              "text": "<Schema>"
+            },
+            {
+              "kind": "Content",
+              "text": "> = "
+            },
+            {
+              "kind": "Reference",
+              "text": "CustomOperations",
+              "canonicalReference": "integration-tests!CustomOperations:type"
+            },
+            {
+              "kind": "Content",
+              "text": "<Schema, 'Mutation', Context, ModelMeta>"
+            },
+            {
+              "kind": "Content",
+              "text": ";"
+            }
+          ],
+          "fileUrlPath": "../data-schema-types/lib-esm/client/index.d.ts",
+          "releaseTag": "Public",
+          "name": "CustomMutations",
+          "typeParameters": [
+            {
+              "typeParameterName": "Schema",
+              "constraintTokenRange": {
+                "startIndex": 1,
+                "endIndex": 3
+              },
+              "defaultTypeTokenRange": {
+                "startIndex": 0,
+                "endIndex": 0
+              }
+            },
+            {
+              "typeParameterName": "Context",
+              "constraintTokenRange": {
+                "startIndex": 4,
+                "endIndex": 5
+              },
+              "defaultTypeTokenRange": {
+                "startIndex": 6,
+                "endIndex": 7
+              }
+            },
+            {
+              "typeParameterName": "ModelMeta",
+              "constraintTokenRange": {
+                "startIndex": 8,
+                "endIndex": 10
+              },
+              "defaultTypeTokenRange": {
+                "startIndex": 11,
+                "endIndex": 13
+              }
+            }
+          ],
+          "typeTokenRange": {
+            "startIndex": 14,
+            "endIndex": 16
+          }
+        },
+        {
+          "kind": "TypeAlias",
+          "canonicalReference": "integration-tests!CustomOperations:type",
+          "docComment": "",
+          "excerptTokens": [
+            {
+              "kind": "Content",
+              "text": "export type CustomOperations<Schema extends "
+            },
+            {
+              "kind": "Reference",
+              "text": "Record",
+              "canonicalReference": "!Record:type"
+            },
+            {
+              "kind": "Content",
+              "text": "<any, any>"
+            },
+            {
+              "kind": "Content",
+              "text": ", OperationType extends "
+            },
+            {
+              "kind": "Content",
+              "text": "'Query' | 'Mutation' | 'Subscription'"
+            },
+            {
+              "kind": "Content",
+              "text": ", Context extends "
+            },
+            {
+              "kind": "Reference",
+              "text": "ContextType",
+              "canonicalReference": "integration-tests!ContextType:type"
+            },
+            {
+              "kind": "Content",
+              "text": " = "
+            },
+            {
+              "kind": "Content",
+              "text": "'CLIENT'"
+            },
+            {
+              "kind": "Content",
+              "text": ", ModelMeta extends "
+            },
+            {
+              "kind": "Reference",
+              "text": "Record",
+              "canonicalReference": "!Record:type"
+            },
+            {
+              "kind": "Content",
+              "text": "<any, any>"
+            },
+            {
+              "kind": "Content",
+              "text": " = "
+            },
+            {
+              "kind": "Reference",
+              "text": "ExtractModelMeta",
+              "canonicalReference": "integration-tests!ExtractModelMeta:type"
+            },
+            {
+              "kind": "Content",
+              "text": "<Schema>"
+            },
+            {
+              "kind": "Content",
+              "text": "> = "
+            },
+            {
+              "kind": "Content",
+              "text": "{\n    [OpName in keyof ModelMeta['customOperations'] as ModelMeta['customOperations'][OpName]['typeName'] extends OperationType ? OpName : never]: {\n        CLIENT: (input: ModelMeta['customOperations'][OpName]['arguments'], options?: {\n            authMode?: "
+            },
+            {
+              "kind": "Reference",
+              "text": "AuthMode",
+              "canonicalReference": "integration-tests!AuthMode:type"
+            },
+            {
+              "kind": "Content",
+              "text": ";\n            authToken?: string;\n            headers?: "
+            },
+            {
+              "kind": "Reference",
+              "text": "CustomHeaders",
+              "canonicalReference": "integration-tests!CustomHeaders:type"
+            },
+            {
+              "kind": "Content",
+              "text": ";\n        }) => "
+            },
+            {
+              "kind": "Reference",
+              "text": "SingularReturnValue",
+              "canonicalReference": "integration-tests!SingularReturnValue:type"
+            },
+            {
+              "kind": "Content",
+              "text": "<ModelMeta['customOperations'][OpName]['returnType']>;\n        COOKIES: (input: ModelMeta['customOperations'][OpName]['arguments'], options?: {\n            authMode?: "
+            },
+            {
+              "kind": "Reference",
+              "text": "AuthMode",
+              "canonicalReference": "integration-tests!AuthMode:type"
+            },
+            {
+              "kind": "Content",
+              "text": ";\n            authToken?: string;\n            headers?: "
+            },
+            {
+              "kind": "Reference",
+              "text": "CustomHeaders",
+              "canonicalReference": "integration-tests!CustomHeaders:type"
+            },
+            {
+              "kind": "Content",
+              "text": ";\n        }) => "
+            },
+            {
+              "kind": "Reference",
+              "text": "SingularReturnValue",
+              "canonicalReference": "integration-tests!SingularReturnValue:type"
+            },
+            {
+              "kind": "Content",
+              "text": "<ModelMeta['customOperations'][OpName]['returnType']>;\n        REQUEST: (contextSpec: any, input: ModelMeta['customOperations'][OpName]['arguments'], options?: {\n            authMode?: "
+            },
+            {
+              "kind": "Reference",
+              "text": "AuthMode",
+              "canonicalReference": "integration-tests!AuthMode:type"
+            },
+            {
+              "kind": "Content",
+              "text": ";\n            authToken?: string;\n            headers?: "
+            },
+            {
+              "kind": "Reference",
+              "text": "CustomHeaders",
+              "canonicalReference": "integration-tests!CustomHeaders:type"
+            },
+            {
+              "kind": "Content",
+              "text": ";\n        }) => "
+            },
+            {
+              "kind": "Reference",
+              "text": "SingularReturnValue",
+              "canonicalReference": "integration-tests!SingularReturnValue:type"
+            },
+            {
+              "kind": "Content",
+              "text": "<ModelMeta['customOperations'][OpName]['returnType']>;\n    }[Context];\n}"
+            },
+            {
+              "kind": "Content",
+              "text": ";"
+            }
+          ],
+          "fileUrlPath": "../data-schema-types/lib-esm/client/index.d.ts",
+          "releaseTag": "Public",
+          "name": "CustomOperations",
+          "typeParameters": [
+            {
+              "typeParameterName": "Schema",
+              "constraintTokenRange": {
+                "startIndex": 1,
+                "endIndex": 3
+              },
+              "defaultTypeTokenRange": {
+                "startIndex": 0,
+                "endIndex": 0
+              }
+            },
+            {
+              "typeParameterName": "OperationType",
+              "constraintTokenRange": {
+                "startIndex": 4,
+                "endIndex": 5
+              },
+              "defaultTypeTokenRange": {
+                "startIndex": 0,
+                "endIndex": 0
+              }
+            },
+            {
+              "typeParameterName": "Context",
+              "constraintTokenRange": {
+                "startIndex": 6,
+                "endIndex": 7
+              },
+              "defaultTypeTokenRange": {
+                "startIndex": 8,
+                "endIndex": 9
+              }
+            },
+            {
+              "typeParameterName": "ModelMeta",
+              "constraintTokenRange": {
+                "startIndex": 10,
+                "endIndex": 12
+              },
+              "defaultTypeTokenRange": {
+                "startIndex": 13,
+                "endIndex": 15
+              }
+            }
+          ],
+          "typeTokenRange": {
+            "startIndex": 16,
+            "endIndex": 35
+          }
+        },
+        {
+          "kind": "TypeAlias",
+          "canonicalReference": "integration-tests!CustomQueries:type",
+          "docComment": "",
+          "excerptTokens": [
+            {
+              "kind": "Content",
+              "text": "export type CustomQueries<Schema extends "
+            },
+            {
+              "kind": "Reference",
+              "text": "Record",
+              "canonicalReference": "!Record:type"
+            },
+            {
+              "kind": "Content",
+              "text": "<any, any>"
+            },
+            {
+              "kind": "Content",
+              "text": ", Context extends "
+            },
+            {
+              "kind": "Reference",
+              "text": "ContextType",
+              "canonicalReference": "integration-tests!ContextType:type"
+            },
+            {
+              "kind": "Content",
+              "text": " = "
+            },
+            {
+              "kind": "Content",
+              "text": "'CLIENT'"
+            },
+            {
+              "kind": "Content",
+              "text": ", ModelMeta extends "
+            },
+            {
+              "kind": "Reference",
+              "text": "Record",
+              "canonicalReference": "!Record:type"
+            },
+            {
+              "kind": "Content",
+              "text": "<any, any>"
+            },
+            {
+              "kind": "Content",
+              "text": " = "
+            },
+            {
+              "kind": "Reference",
+              "text": "ExtractModelMeta",
+              "canonicalReference": "integration-tests!ExtractModelMeta:type"
+            },
+            {
+              "kind": "Content",
+              "text": "<Schema>"
+            },
+            {
+              "kind": "Content",
+              "text": "> = "
+            },
+            {
+              "kind": "Reference",
+              "text": "CustomOperations",
+              "canonicalReference": "integration-tests!CustomOperations:type"
+            },
+            {
+              "kind": "Content",
+              "text": "<Schema, 'Query', Context, ModelMeta>"
+            },
+            {
+              "kind": "Content",
+              "text": ";"
+            }
+          ],
+          "fileUrlPath": "../data-schema-types/lib-esm/client/index.d.ts",
+          "releaseTag": "Public",
+          "name": "CustomQueries",
+          "typeParameters": [
+            {
+              "typeParameterName": "Schema",
+              "constraintTokenRange": {
+                "startIndex": 1,
+                "endIndex": 3
+              },
+              "defaultTypeTokenRange": {
+                "startIndex": 0,
+                "endIndex": 0
+              }
+            },
+            {
+              "typeParameterName": "Context",
+              "constraintTokenRange": {
+                "startIndex": 4,
+                "endIndex": 5
+              },
+              "defaultTypeTokenRange": {
+                "startIndex": 6,
+                "endIndex": 7
+              }
+            },
+            {
+              "typeParameterName": "ModelMeta",
+              "constraintTokenRange": {
+                "startIndex": 8,
+                "endIndex": 10
+              },
+              "defaultTypeTokenRange": {
+                "startIndex": 11,
+                "endIndex": 13
+              }
+            }
+          ],
+          "typeTokenRange": {
+            "startIndex": 14,
+            "endIndex": 16
+          }
+        },
+        {
+          "kind": "TypeAlias",
+          "canonicalReference": "integration-tests!Debug:type",
+          "docComment": "",
+          "excerptTokens": [
+            {
+              "kind": "Content",
+              "text": "export type Debug<T> = "
+            },
+            {
+              "kind": "Content",
+              "text": "{\n    [K in keyof T]: T[K];\n}"
+            },
+            {
+              "kind": "Content",
+              "text": ";"
+            }
+          ],
+          "fileUrlPath": "../data-schema-types/lib-esm/util.d.ts",
+          "releaseTag": "Public",
+          "name": "Debug",
+          "typeParameters": [
+            {
+              "typeParameterName": "T",
+              "constraintTokenRange": {
+                "startIndex": 0,
+                "endIndex": 0
+              },
+              "defaultTypeTokenRange": {
+                "startIndex": 0,
+                "endIndex": 0
+              }
+            }
+          ],
+          "typeTokenRange": {
+            "startIndex": 1,
+            "endIndex": 2
+          }
+        },
+        {
+          "kind": "TypeAlias",
+          "canonicalReference": "integration-tests!DeepReadOnlyObject:type",
+          "docComment": "",
+          "excerptTokens": [
+            {
+              "kind": "Content",
+              "text": "export type DeepReadOnlyObject<T> = "
+            },
+            {
+              "kind": "Content",
+              "text": "T extends "
+            },
+            {
+              "kind": "Reference",
+              "text": "Array",
+              "canonicalReference": "!Array:interface"
+            },
+            {
+              "kind": "Content",
+              "text": "<infer U> ? "
+            },
+            {
+              "kind": "Reference",
+              "text": "DeepReadOnlyObject",
+              "canonicalReference": "integration-tests!DeepReadOnlyObject:type"
+            },
+            {
+              "kind": "Content",
+              "text": "<U>[] : T extends "
+            },
+            {
+              "kind": "Reference",
+              "text": "Record",
+              "canonicalReference": "!Record:type"
+            },
+            {
+              "kind": "Content",
+              "text": "<any, any> ? {\n    readonly [k in keyof T]: "
+            },
+            {
+              "kind": "Reference",
+              "text": "DeepReadOnlyObject",
+              "canonicalReference": "integration-tests!DeepReadOnlyObject:type"
+            },
+            {
+              "kind": "Content",
+              "text": "<T[k]>;\n} : T"
+            },
+            {
+              "kind": "Content",
+              "text": ";"
+            }
+          ],
+          "fileUrlPath": "../data-schema-types/lib-esm/util.d.ts",
+          "releaseTag": "Public",
+          "name": "DeepReadOnlyObject",
+          "typeParameters": [
+            {
+              "typeParameterName": "T",
+              "constraintTokenRange": {
+                "startIndex": 0,
+                "endIndex": 0
+              },
+              "defaultTypeTokenRange": {
+                "startIndex": 0,
+                "endIndex": 0
+              }
+            }
+          ],
+          "typeTokenRange": {
+            "startIndex": 1,
+            "endIndex": 10
+          }
+        },
+        {
+          "kind": "TypeAlias",
+          "canonicalReference": "integration-tests!DefineFunction:type",
+          "docComment": "",
+          "excerptTokens": [
+            {
+              "kind": "Content",
+              "text": "export type DefineFunction = "
+            },
+            {
+              "kind": "Reference",
+              "text": "ConstructFactory",
+              "canonicalReference": "@aws-amplify/plugin-types!ConstructFactory:type"
+            },
+            {
+              "kind": "Content",
+              "text": "<"
+            },
+            {
+              "kind": "Reference",
+              "text": "ResourceProvider",
+              "canonicalReference": "@aws-amplify/plugin-types!ResourceProvider:type"
+            },
+            {
+              "kind": "Content",
+              "text": "<"
+            },
+            {
+              "kind": "Reference",
+              "text": "FunctionResources",
+              "canonicalReference": "@aws-amplify/plugin-types!FunctionResources:type"
+            },
+            {
+              "kind": "Content",
+              "text": "> & "
+            },
+            {
+              "kind": "Reference",
+              "text": "ResourceAccessAcceptorFactory",
+              "canonicalReference": "@aws-amplify/plugin-types!ResourceAccessAcceptorFactory:type"
+            },
+            {
+              "kind": "Content",
+              "text": ">"
+            },
+            {
+              "kind": "Content",
+              "text": ";"
+            }
+          ],
+          "fileUrlPath": "../data-schema-types/lib-esm/builder/types.d.ts",
+          "releaseTag": "Public",
+          "name": "DefineFunction",
+          "typeTokenRange": {
+            "startIndex": 1,
+            "endIndex": 9
+          }
+        },
+        {
+          "kind": "Interface",
+          "canonicalReference": "integration-tests!DerivedApiDefinition:interface",
+          "docComment": "/**\n * references IAmplifyGraphqlDefinition from: https://github.com/aws-amplify/amplify-category-api/blob/4c0ea253a0bae51f775383929ba4748593185bc1/packages/amplify-graphql-api-construct/src/types.ts#L491-L503\n *\n * function slots is any'd for now. Will add actual type when we add support for this feature\n */\n",
+          "excerptTokens": [
+            {
+              "kind": "Content",
+              "text": "export interface DerivedApiDefinition "
+            }
+          ],
+          "fileUrlPath": "../data-schema-types/lib-esm/builder/types.d.ts",
+          "releaseTag": "Public",
+          "name": "DerivedApiDefinition",
+          "preserveMemberOrder": false,
+          "members": [
+            {
+              "kind": "PropertySignature",
+              "canonicalReference": "integration-tests!DerivedApiDefinition#functionSchemaAccess:member",
+              "docComment": "",
+              "excerptTokens": [
+                {
+                  "kind": "Content",
+                  "text": "readonly functionSchemaAccess: "
+                },
+                {
+                  "kind": "Reference",
+                  "text": "FunctionSchemaAccess",
+                  "canonicalReference": "integration-tests!FunctionSchemaAccess:type"
+                },
+                {
+                  "kind": "Content",
+                  "text": "[]"
+                },
+                {
+                  "kind": "Content",
+                  "text": ";"
+                }
+              ],
+              "isReadonly": true,
+              "isOptional": false,
+              "releaseTag": "Public",
+              "name": "functionSchemaAccess",
+              "propertyTypeTokenRange": {
+                "startIndex": 1,
+                "endIndex": 3
+              }
+            },
+            {
+              "kind": "PropertySignature",
+              "canonicalReference": "integration-tests!DerivedApiDefinition#functionSlots:member",
+              "docComment": "/**\n * Retrieve any function slots defined explicitly in the Api definition.\n *\n * @returns generated function slots\n */\n",
+              "excerptTokens": [
+                {
+                  "kind": "Content",
+                  "text": "readonly functionSlots: "
+                },
+                {
+                  "kind": "Content",
+                  "text": "any[]"
+                },
+                {
+                  "kind": "Content",
+                  "text": ";"
+                }
+              ],
+              "isReadonly": true,
+              "isOptional": false,
+              "releaseTag": "Public",
+              "name": "functionSlots",
+              "propertyTypeTokenRange": {
+                "startIndex": 1,
+                "endIndex": 2
+              }
+            },
+            {
+              "kind": "PropertySignature",
+              "canonicalReference": "integration-tests!DerivedApiDefinition#jsFunctions:member",
+              "docComment": "",
+              "excerptTokens": [
+                {
+                  "kind": "Content",
+                  "text": "readonly jsFunctions: "
+                },
+                {
+                  "kind": "Reference",
+                  "text": "JsResolver",
+                  "canonicalReference": "integration-tests!JsResolver:type"
+                },
+                {
+                  "kind": "Content",
+                  "text": "[]"
+                },
+                {
+                  "kind": "Content",
+                  "text": ";"
+                }
+              ],
+              "isReadonly": true,
+              "isOptional": false,
+              "releaseTag": "Public",
+              "name": "jsFunctions",
+              "propertyTypeTokenRange": {
+                "startIndex": 1,
+                "endIndex": 3
+              }
+            },
+            {
+              "kind": "PropertySignature",
+              "canonicalReference": "integration-tests!DerivedApiDefinition#lambdaFunctions:member",
+              "docComment": "",
+              "excerptTokens": [
+                {
+                  "kind": "Content",
+                  "text": "readonly lambdaFunctions: "
+                },
+                {
+                  "kind": "Reference",
+                  "text": "LambdaFunctionDefinition",
+                  "canonicalReference": "integration-tests!LambdaFunctionDefinition:type"
+                },
+                {
+                  "kind": "Content",
+                  "text": ";"
+                }
+              ],
+              "isReadonly": true,
+              "isOptional": false,
+              "releaseTag": "Public",
+              "name": "lambdaFunctions",
+              "propertyTypeTokenRange": {
+                "startIndex": 1,
+                "endIndex": 2
+              }
+            },
+            {
+              "kind": "PropertySignature",
+              "canonicalReference": "integration-tests!DerivedApiDefinition#schema:member",
+              "docComment": "/**\n * Return the schema definition as a graphql string, with amplify directives allowed.\n *\n * @returns the rendered schema.\n */\n",
+              "excerptTokens": [
+                {
+                  "kind": "Content",
+                  "text": "readonly schema: "
+                },
+                {
+                  "kind": "Content",
+                  "text": "string"
+                },
+                {
+                  "kind": "Content",
+                  "text": ";"
+                }
+              ],
+              "isReadonly": true,
+              "isOptional": false,
+              "releaseTag": "Public",
+              "name": "schema",
+              "propertyTypeTokenRange": {
+                "startIndex": 1,
+                "endIndex": 2
+              }
+            }
+          ],
+          "extendsTokenRanges": []
+        },
+        {
+          "kind": "TypeAlias",
+          "canonicalReference": "integration-tests!DerivedModelSchema:type",
+          "docComment": "",
+          "excerptTokens": [
+            {
+              "kind": "Content",
+              "text": "export type DerivedModelSchema = "
+            },
+            {
+              "kind": "Content",
+              "text": "{\n    data: {\n        types: object;\n    };\n    transform: () => "
+            },
+            {
+              "kind": "Reference",
+              "text": "DerivedApiDefinition",
+              "canonicalReference": "integration-tests!DerivedApiDefinition:interface"
+            },
+            {
+              "kind": "Content",
+              "text": ";\n}"
+            },
+            {
+              "kind": "Content",
+              "text": ";"
+            }
+          ],
+          "fileUrlPath": "../data-schema-types/lib-esm/builder/types.d.ts",
+          "releaseTag": "Public",
+          "name": "DerivedModelSchema",
+          "typeTokenRange": {
+            "startIndex": 1,
+            "endIndex": 4
+          }
+        },
+        {
+          "kind": "TypeAlias",
+          "canonicalReference": "integration-tests!EnumTypes:type",
+          "docComment": "/**\n * The utility type that is used to infer the type (interface) of the generated `client.enums` property.\n *\n * @example\n *\n * // The schema: { TodoStatus: a.enum(['Planned' | 'InProgress' | 'Completed']), }\n *\n * // The inferred interface of the `client.enums`: { TodoStatus: { values: () => Array<'Planned' | 'InProgress' | 'Completed'>; } }\n */\n",
+          "excerptTokens": [
+            {
+              "kind": "Content",
+              "text": "export type EnumTypes<Schema extends "
+            },
+            {
+              "kind": "Reference",
+              "text": "Record",
+              "canonicalReference": "!Record:type"
+            },
+            {
+              "kind": "Content",
+              "text": "<any, any>"
+            },
+            {
+              "kind": "Content",
+              "text": ", ModelMeta extends "
+            },
+            {
+              "kind": "Reference",
+              "text": "Record",
+              "canonicalReference": "!Record:type"
+            },
+            {
+              "kind": "Content",
+              "text": "<any, any>"
+            },
+            {
+              "kind": "Content",
+              "text": " = "
+            },
+            {
+              "kind": "Reference",
+              "text": "ExtractModelMeta",
+              "canonicalReference": "integration-tests!ExtractModelMeta:type"
+            },
+            {
+              "kind": "Content",
+              "text": "<Schema>"
+            },
+            {
+              "kind": "Content",
+              "text": "> = "
+            },
+            {
+              "kind": "Content",
+              "text": "{\n    [EnumName in keyof ModelMeta['enums']]: {\n        values: () => "
+            },
+            {
+              "kind": "Reference",
+              "text": "Array",
+              "canonicalReference": "!Array:interface"
+            },
+            {
+              "kind": "Content",
+              "text": "<ModelMeta['enums'][EnumName]>;\n    };\n}"
+            },
+            {
+              "kind": "Content",
+              "text": ";"
+            }
+          ],
+          "fileUrlPath": "../data-schema-types/lib-esm/client/index.d.ts",
+          "releaseTag": "Public",
+          "name": "EnumTypes",
+          "typeParameters": [
+            {
+              "typeParameterName": "Schema",
+              "constraintTokenRange": {
+                "startIndex": 1,
+                "endIndex": 3
+              },
+              "defaultTypeTokenRange": {
+                "startIndex": 0,
+                "endIndex": 0
+              }
+            },
+            {
+              "typeParameterName": "ModelMeta",
+              "constraintTokenRange": {
+                "startIndex": 4,
+                "endIndex": 6
+              },
+              "defaultTypeTokenRange": {
+                "startIndex": 7,
+                "endIndex": 9
+              }
+            }
+          ],
+          "typeTokenRange": {
+            "startIndex": 10,
+            "endIndex": 13
+          }
+        },
+        {
+          "kind": "TypeAlias",
+          "canonicalReference": "integration-tests!Equal:type",
+          "docComment": "",
+          "excerptTokens": [
+            {
+              "kind": "Content",
+              "text": "export type Equal<X, Y> = "
+            },
+            {
+              "kind": "Content",
+              "text": "(<T>() => T extends X ? 1 : 2) extends <T>() => T extends Y ? 1 : 2 ? true : false"
+            },
+            {
+              "kind": "Content",
+              "text": ";"
+            }
+          ],
+          "fileUrlPath": "../data-schema-types/lib-esm/util.d.ts",
+          "releaseTag": "Public",
+          "name": "Equal",
+          "typeParameters": [
+            {
+              "typeParameterName": "X",
+              "constraintTokenRange": {
+                "startIndex": 0,
+                "endIndex": 0
+              },
+              "defaultTypeTokenRange": {
+                "startIndex": 0,
+                "endIndex": 0
+              }
+            },
+            {
+              "typeParameterName": "Y",
+              "constraintTokenRange": {
+                "startIndex": 0,
+                "endIndex": 0
+              },
+              "defaultTypeTokenRange": {
+                "startIndex": 0,
+                "endIndex": 0
+              }
+            }
+          ],
+          "typeTokenRange": {
+            "startIndex": 1,
+            "endIndex": 2
+          }
+        },
+        {
+          "kind": "TypeAlias",
+          "canonicalReference": "integration-tests!ExcludeEmpty:type",
+          "docComment": "/**\n * @typeParam U - Union Type\n *\n * @returns Union of non-empty types\n *\n * @example\n *\n * ExcludeEmpty<{a: 1} | {} | {b: 2}> => {a: 1} | {b: 2}\n */\n",
+          "excerptTokens": [
+            {
+              "kind": "Content",
+              "text": "export type ExcludeEmpty<U> = "
+            },
+            {
+              "kind": "Content",
+              "text": "U extends U ? object extends U ? never : U : never"
+            },
+            {
+              "kind": "Content",
+              "text": ";"
+            }
+          ],
+          "fileUrlPath": "../data-schema-types/lib-esm/util.d.ts",
+          "releaseTag": "Public",
+          "name": "ExcludeEmpty",
+          "typeParameters": [
+            {
+              "typeParameterName": "U",
+              "constraintTokenRange": {
+                "startIndex": 0,
+                "endIndex": 0
+              },
+              "defaultTypeTokenRange": {
+                "startIndex": 0,
+                "endIndex": 0
+              }
+            }
+          ],
+          "typeTokenRange": {
+            "startIndex": 1,
+            "endIndex": 2
+          }
+        },
+        {
+          "kind": "TypeAlias",
+          "canonicalReference": "integration-tests!Expect:type",
+          "docComment": "",
+          "excerptTokens": [
+            {
+              "kind": "Content",
+              "text": "export type Expect<T extends "
+            },
+            {
+              "kind": "Content",
+              "text": "true"
+            },
+            {
+              "kind": "Content",
+              "text": "> = "
+            },
+            {
+              "kind": "Content",
+              "text": "T"
+            },
+            {
+              "kind": "Content",
+              "text": ";"
+            }
+          ],
+          "fileUrlPath": "../data-schema-types/lib-esm/util.d.ts",
+          "releaseTag": "Public",
+          "name": "Expect",
+          "typeParameters": [
+            {
+              "typeParameterName": "T",
+              "constraintTokenRange": {
+                "startIndex": 1,
+                "endIndex": 2
+              },
+              "defaultTypeTokenRange": {
+                "startIndex": 0,
+                "endIndex": 0
+              }
+            }
+          ],
+          "typeTokenRange": {
+            "startIndex": 3,
+            "endIndex": 4
+          }
+        },
+        {
+          "kind": "TypeAlias",
+          "canonicalReference": "integration-tests!ExpectFalse:type",
+          "docComment": "",
+          "excerptTokens": [
+            {
+              "kind": "Content",
+              "text": "export type ExpectFalse<T extends "
+            },
+            {
+              "kind": "Content",
+              "text": "false"
+            },
+            {
+              "kind": "Content",
+              "text": "> = "
+            },
+            {
+              "kind": "Content",
+              "text": "T"
+            },
+            {
+              "kind": "Content",
+              "text": ";"
+            }
+          ],
+          "fileUrlPath": "../data-schema-types/lib-esm/util.d.ts",
+          "releaseTag": "Public",
+          "name": "ExpectFalse",
+          "typeParameters": [
+            {
+              "typeParameterName": "T",
+              "constraintTokenRange": {
+                "startIndex": 1,
+                "endIndex": 2
+              },
+              "defaultTypeTokenRange": {
+                "startIndex": 0,
+                "endIndex": 0
+              }
+            }
+          ],
+          "typeTokenRange": {
+            "startIndex": 3,
+            "endIndex": 4
+          }
+        },
+        {
+          "kind": "TypeAlias",
+          "canonicalReference": "integration-tests!ExpectTrue:type",
+          "docComment": "",
+          "excerptTokens": [
+            {
+              "kind": "Content",
+              "text": "export type ExpectTrue<T extends "
+            },
+            {
+              "kind": "Content",
+              "text": "true"
+            },
+            {
+              "kind": "Content",
+              "text": "> = "
+            },
+            {
+              "kind": "Content",
+              "text": "T"
+            },
+            {
+              "kind": "Content",
+              "text": ";"
+            }
+          ],
+          "fileUrlPath": "../data-schema-types/lib-esm/util.d.ts",
+          "releaseTag": "Public",
+          "name": "ExpectTrue",
+          "typeParameters": [
+            {
+              "typeParameterName": "T",
+              "constraintTokenRange": {
+                "startIndex": 1,
+                "endIndex": 2
+              },
+              "defaultTypeTokenRange": {
+                "startIndex": 0,
+                "endIndex": 0
+              }
+            }
+          ],
+          "typeTokenRange": {
+            "startIndex": 3,
+            "endIndex": 4
+          }
+        },
+        {
+          "kind": "TypeAlias",
+          "canonicalReference": "integration-tests!ExtractModelMeta:type",
+          "docComment": "",
+          "excerptTokens": [
+            {
+              "kind": "Content",
+              "text": "export type ExtractModelMeta<T extends "
+            },
+            {
+              "kind": "Reference",
+              "text": "Record",
+              "canonicalReference": "!Record:type"
+            },
+            {
+              "kind": "Content",
+              "text": "<any, any>"
+            },
+            {
+              "kind": "Content",
+              "text": "> = "
+            },
+            {
+              "kind": "Content",
+              "text": "T[typeof "
+            },
+            {
+              "kind": "Reference",
+              "text": "__modelMeta__",
+              "canonicalReference": "integration-tests!__modelMeta__:var"
+            },
+            {
+              "kind": "Content",
+              "text": "]"
+            },
+            {
+              "kind": "Content",
+              "text": ";"
+            }
+          ],
+          "fileUrlPath": "../data-schema-types/lib-esm/client/index.d.ts",
+          "releaseTag": "Public",
+          "name": "ExtractModelMeta",
+          "typeParameters": [
+            {
+              "typeParameterName": "T",
+              "constraintTokenRange": {
+                "startIndex": 1,
+                "endIndex": 3
+              },
+              "defaultTypeTokenRange": {
+                "startIndex": 0,
+                "endIndex": 0
+              }
+            }
+          ],
+          "typeTokenRange": {
+            "startIndex": 4,
+            "endIndex": 7
+          }
+        },
+        {
+          "kind": "TypeAlias",
+          "canonicalReference": "integration-tests!FunctionSchemaAccess:type",
+          "docComment": "",
+          "excerptTokens": [
+            {
+              "kind": "Content",
+              "text": "export type FunctionSchemaAccess = "
+            },
+            {
+              "kind": "Content",
+              "text": "{\n    resourceProvider: "
+            },
+            {
+              "kind": "Reference",
+              "text": "DefineFunction",
+              "canonicalReference": "integration-tests!DefineFunction:type"
+            },
+            {
+              "kind": "Content",
+              "text": ";\n    actions: ('query' | 'mutate' | 'listen')[];\n}"
+            },
+            {
+              "kind": "Content",
+              "text": ";"
+            }
+          ],
+          "fileUrlPath": "../data-schema-types/lib-esm/builder/types.d.ts",
+          "releaseTag": "Public",
+          "name": "FunctionSchemaAccess",
+          "typeTokenRange": {
+            "startIndex": 1,
+            "endIndex": 4
+          }
+        },
+        {
+          "kind": "Interface",
+          "canonicalReference": "integration-tests!GraphQLFormattedError:interface",
+          "docComment": "/**\n * See: https://spec.graphql.org/draft/#sec-Errors\n */\n",
+          "excerptTokens": [
+            {
+              "kind": "Content",
+              "text": "export interface GraphQLFormattedError "
+            }
+          ],
+          "fileUrlPath": "../data-schema-types/lib-esm/client/index.d.ts",
+          "releaseTag": "Public",
+          "name": "GraphQLFormattedError",
+          "preserveMemberOrder": false,
+          "members": [
+            {
+              "kind": "PropertySignature",
+              "canonicalReference": "integration-tests!GraphQLFormattedError#errorInfo:member",
+              "docComment": "/**\n * Additional error metadata that can be surfaced via error handling resolver utils: * JS - https://docs.aws.amazon.com/appsync/latest/devguide/built-in-util-js.html#utility-helpers-in-error-js * VTL - https://docs.aws.amazon.com/appsync/latest/devguide/utility-helpers-in-util.html#utility-helpers-in-error\n */\n",
+              "excerptTokens": [
+                {
+                  "kind": "Content",
+                  "text": "readonly errorInfo: "
+                },
+                {
+                  "kind": "Content",
+                  "text": "null | {\n        [key: string]: unknown;\n    }"
+                },
+                {
+                  "kind": "Content",
+                  "text": ";"
+                }
+              ],
+              "isReadonly": true,
+              "isOptional": false,
+              "releaseTag": "Public",
+              "name": "errorInfo",
+              "propertyTypeTokenRange": {
+                "startIndex": 1,
+                "endIndex": 2
+              }
+            },
+            {
+              "kind": "PropertySignature",
+              "canonicalReference": "integration-tests!GraphQLFormattedError#errorType:member",
+              "docComment": "/**\n * The AppSync exception category. Indicates the source of the error.\n */\n",
+              "excerptTokens": [
+                {
+                  "kind": "Content",
+                  "text": "readonly errorType: "
+                },
+                {
+                  "kind": "Content",
+                  "text": "string"
+                },
+                {
+                  "kind": "Content",
+                  "text": ";"
+                }
+              ],
+              "isReadonly": true,
+              "isOptional": false,
+              "releaseTag": "Public",
+              "name": "errorType",
+              "propertyTypeTokenRange": {
+                "startIndex": 1,
+                "endIndex": 2
+              }
+            },
+            {
+              "kind": "PropertySignature",
+              "canonicalReference": "integration-tests!GraphQLFormattedError#extensions:member",
+              "docComment": "/**\n * Reserved for implementors to extend the protocol however they see fit, and hence there are no additional restrictions on its contents.\n */\n",
+              "excerptTokens": [
+                {
+                  "kind": "Content",
+                  "text": "readonly extensions?: "
+                },
+                {
+                  "kind": "Content",
+                  "text": "{\n        [key: string]: unknown;\n    }"
+                },
+                {
+                  "kind": "Content",
+                  "text": ";"
+                }
+              ],
+              "isReadonly": true,
+              "isOptional": true,
+              "releaseTag": "Public",
+              "name": "extensions",
+              "propertyTypeTokenRange": {
+                "startIndex": 1,
+                "endIndex": 2
+              }
+            },
+            {
+              "kind": "PropertySignature",
+              "canonicalReference": "integration-tests!GraphQLFormattedError#locations:member",
+              "docComment": "/**\n * If an error can be associated to a particular point in the requested GraphQL document, it should contain a list of locations.\n */\n",
+              "excerptTokens": [
+                {
+                  "kind": "Content",
+                  "text": "readonly locations?: "
+                },
+                {
+                  "kind": "Reference",
+                  "text": "ReadonlyArray",
+                  "canonicalReference": "!ReadonlyArray:interface"
+                },
+                {
+                  "kind": "Content",
+                  "text": "<"
+                },
+                {
+                  "kind": "Reference",
+                  "text": "SourceLocation",
+                  "canonicalReference": "integration-tests!SourceLocation:interface"
+                },
+                {
+                  "kind": "Content",
+                  "text": ">"
+                },
+                {
+                  "kind": "Content",
+                  "text": ";"
+                }
+              ],
+              "isReadonly": true,
+              "isOptional": true,
+              "releaseTag": "Public",
+              "name": "locations",
+              "propertyTypeTokenRange": {
+                "startIndex": 1,
+                "endIndex": 5
+              }
+            },
+            {
+              "kind": "PropertySignature",
+              "canonicalReference": "integration-tests!GraphQLFormattedError#message:member",
+              "docComment": "/**\n * A short, human-readable summary of the problem that **SHOULD NOT** change from occurrence to occurrence of the problem, except for purposes of localization.\n */\n",
+              "excerptTokens": [
+                {
+                  "kind": "Content",
+                  "text": "readonly message: "
+                },
+                {
+                  "kind": "Content",
+                  "text": "string"
+                },
+                {
+                  "kind": "Content",
+                  "text": ";"
+                }
+              ],
+              "isReadonly": true,
+              "isOptional": false,
+              "releaseTag": "Public",
+              "name": "message",
+              "propertyTypeTokenRange": {
+                "startIndex": 1,
+                "endIndex": 2
+              }
+            },
+            {
+              "kind": "PropertySignature",
+              "canonicalReference": "integration-tests!GraphQLFormattedError#path:member",
+              "docComment": "/**\n * If an error can be associated to a particular field in the GraphQL result, it _must_ contain an entry with the key `path` that details the path of the response field which experienced the error. This allows clients to identify whether a null result is intentional or caused by a runtime error.\n */\n",
+              "excerptTokens": [
+                {
+                  "kind": "Content",
+                  "text": "readonly path?: "
+                },
+                {
+                  "kind": "Reference",
+                  "text": "ReadonlyArray",
+                  "canonicalReference": "!ReadonlyArray:interface"
+                },
+                {
+                  "kind": "Content",
+                  "text": "<string | number>"
+                },
+                {
+                  "kind": "Content",
+                  "text": ";"
+                }
+              ],
+              "isReadonly": true,
+              "isOptional": true,
+              "releaseTag": "Public",
+              "name": "path",
+              "propertyTypeTokenRange": {
+                "startIndex": 1,
+                "endIndex": 3
+              }
+            }
+          ],
+          "extendsTokenRanges": []
+        },
+        {
+          "kind": "TypeAlias",
+          "canonicalReference": "integration-tests!HasKey:type",
+          "docComment": "",
+          "excerptTokens": [
+            {
+              "kind": "Content",
+              "text": "export type HasKey<Obj extends "
+            },
+            {
+              "kind": "Reference",
+              "text": "Record",
+              "canonicalReference": "!Record:type"
+            },
+            {
+              "kind": "Content",
+              "text": "<string, any>"
+            },
+            {
+              "kind": "Content",
+              "text": ", Key extends "
+            },
+            {
+              "kind": "Content",
+              "text": "string"
+            },
+            {
+              "kind": "Content",
+              "text": "> = "
+            },
+            {
+              "kind": "Content",
+              "text": "Key extends keyof Obj ? true : false"
+            },
+            {
+              "kind": "Content",
+              "text": ";"
+            }
+          ],
+          "fileUrlPath": "../data-schema-types/lib-esm/util.d.ts",
+          "releaseTag": "Public",
+          "name": "HasKey",
+          "typeParameters": [
+            {
+              "typeParameterName": "Obj",
+              "constraintTokenRange": {
+                "startIndex": 1,
+                "endIndex": 3
+              },
+              "defaultTypeTokenRange": {
+                "startIndex": 0,
+                "endIndex": 0
+              }
+            },
+            {
+              "typeParameterName": "Key",
+              "constraintTokenRange": {
+                "startIndex": 4,
+                "endIndex": 5
+              },
+              "defaultTypeTokenRange": {
+                "startIndex": 0,
+                "endIndex": 0
+              }
+            }
+          ],
+          "typeTokenRange": {
+            "startIndex": 6,
+            "endIndex": 7
+          }
+        },
+        {
+          "kind": "TypeAlias",
+          "canonicalReference": "integration-tests!IsAny:type",
+          "docComment": "",
+          "excerptTokens": [
+            {
+              "kind": "Content",
+              "text": "export type IsAny<T> = "
+            },
+            {
+              "kind": "Content",
+              "text": "0 extends 1 & T ? true : false"
+            },
+            {
+              "kind": "Content",
+              "text": ";"
+            }
+          ],
+          "fileUrlPath": "../data-schema-types/lib-esm/util.d.ts",
+          "releaseTag": "Public",
+          "name": "IsAny",
+          "typeParameters": [
+            {
+              "typeParameterName": "T",
+              "constraintTokenRange": {
+                "startIndex": 0,
+                "endIndex": 0
+              },
+              "defaultTypeTokenRange": {
+                "startIndex": 0,
+                "endIndex": 0
+              }
+            }
+          ],
+          "typeTokenRange": {
+            "startIndex": 1,
+            "endIndex": 2
+          }
+        },
+        {
+          "kind": "TypeAlias",
+          "canonicalReference": "integration-tests!IsEmptyStringOrNever:type",
+          "docComment": "",
+          "excerptTokens": [
+            {
+              "kind": "Content",
+              "text": "export type IsEmptyStringOrNever<T extends "
+            },
+            {
+              "kind": "Content",
+              "text": "string | never"
+            },
+            {
+              "kind": "Content",
+              "text": "> = "
+            },
+            {
+              "kind": "Content",
+              "text": "[T] extends [never] ? true : [T] extends [''] ? true : false"
+            },
+            {
+              "kind": "Content",
+              "text": ";"
+            }
+          ],
+          "fileUrlPath": "../data-schema-types/lib-esm/util.d.ts",
+          "releaseTag": "Public",
+          "name": "IsEmptyStringOrNever",
+          "typeParameters": [
+            {
+              "typeParameterName": "T",
+              "constraintTokenRange": {
+                "startIndex": 1,
+                "endIndex": 2
+              },
+              "defaultTypeTokenRange": {
+                "startIndex": 0,
+                "endIndex": 0
+              }
+            }
+          ],
+          "typeTokenRange": {
+            "startIndex": 3,
+            "endIndex": 4
+          }
+        },
+        {
+          "kind": "TypeAlias",
+          "canonicalReference": "integration-tests!IsFalse:type",
+          "docComment": "",
+          "excerptTokens": [
+            {
+              "kind": "Content",
+              "text": "export type IsFalse<T extends "
+            },
+            {
+              "kind": "Content",
+              "text": "false"
+            },
+            {
+              "kind": "Content",
+              "text": "> = "
+            },
+            {
+              "kind": "Content",
+              "text": "T"
+            },
+            {
+              "kind": "Content",
+              "text": ";"
+            }
+          ],
+          "fileUrlPath": "../data-schema-types/lib-esm/util.d.ts",
+          "releaseTag": "Public",
+          "name": "IsFalse",
+          "typeParameters": [
+            {
+              "typeParameterName": "T",
+              "constraintTokenRange": {
+                "startIndex": 1,
+                "endIndex": 2
+              },
+              "defaultTypeTokenRange": {
+                "startIndex": 0,
+                "endIndex": 0
+              }
+            }
+          ],
+          "typeTokenRange": {
+            "startIndex": 3,
+            "endIndex": 4
+          }
+        },
+        {
+          "kind": "TypeAlias",
+          "canonicalReference": "integration-tests!IsTrue:type",
+          "docComment": "",
+          "excerptTokens": [
+            {
+              "kind": "Content",
+              "text": "export type IsTrue<T extends "
+            },
+            {
+              "kind": "Content",
+              "text": "true"
+            },
+            {
+              "kind": "Content",
+              "text": "> = "
+            },
+            {
+              "kind": "Content",
+              "text": "T"
+            },
+            {
+              "kind": "Content",
+              "text": ";"
+            }
+          ],
+          "fileUrlPath": "../data-schema-types/lib-esm/util.d.ts",
+          "releaseTag": "Public",
+          "name": "IsTrue",
+          "typeParameters": [
+            {
+              "typeParameterName": "T",
+              "constraintTokenRange": {
+                "startIndex": 1,
+                "endIndex": 2
+              },
+              "defaultTypeTokenRange": {
+                "startIndex": 0,
+                "endIndex": 0
+              }
+            }
+          ],
+          "typeTokenRange": {
+            "startIndex": 3,
+            "endIndex": 4
+          }
+        },
+        {
+          "kind": "TypeAlias",
+          "canonicalReference": "integration-tests!JsResolver:type",
+          "docComment": "",
+          "excerptTokens": [
+            {
+              "kind": "Content",
+              "text": "export type JsResolver = "
+            },
+            {
+              "kind": "Content",
+              "text": "{\n    typeName: 'Mutation' | 'Query' | 'Subscription';\n    fieldName: string;\n    handlers: {\n        dataSource: string;\n        entry: "
+            },
+            {
+              "kind": "Reference",
+              "text": "JsResolverEntry",
+              "canonicalReference": "integration-tests!JsResolverEntry:type"
+            },
+            {
+              "kind": "Content",
+              "text": ";\n    }[];\n}"
+            },
+            {
+              "kind": "Content",
+              "text": ";"
+            }
+          ],
+          "fileUrlPath": "../data-schema-types/lib-esm/builder/types.d.ts",
+          "releaseTag": "Public",
+          "name": "JsResolver",
+          "typeTokenRange": {
+            "startIndex": 1,
+            "endIndex": 4
+          }
+        },
+        {
+          "kind": "TypeAlias",
+          "canonicalReference": "integration-tests!JsResolverEntry:type",
+          "docComment": "",
+          "excerptTokens": [
+            {
+              "kind": "Content",
+              "text": "export type JsResolverEntry = "
+            },
+            {
+              "kind": "Content",
+              "text": "string | {\n    relativePath: string;\n    importLine: string;\n}"
+            },
+            {
+              "kind": "Content",
+              "text": ";"
+            }
+          ],
+          "fileUrlPath": "../data-schema-types/lib-esm/builder/types.d.ts",
+          "releaseTag": "Public",
+          "name": "JsResolverEntry",
+          "typeTokenRange": {
+            "startIndex": 1,
+            "endIndex": 2
+          }
+        },
+        {
+          "kind": "TypeAlias",
+          "canonicalReference": "integration-tests!LambdaFunctionDefinition:type",
+          "docComment": "",
+          "excerptTokens": [
+            {
+              "kind": "Content",
+              "text": "export type LambdaFunctionDefinition = "
+            },
+            {
+              "kind": "Reference",
+              "text": "Record",
+              "canonicalReference": "!Record:type"
+            },
+            {
+              "kind": "Content",
+              "text": "<string, "
+            },
+            {
+              "kind": "Reference",
+              "text": "DefineFunction",
+              "canonicalReference": "integration-tests!DefineFunction:type"
+            },
+            {
+              "kind": "Content",
+              "text": ">"
+            },
+            {
+              "kind": "Content",
+              "text": ";"
+            }
+          ],
+          "fileUrlPath": "../data-schema-types/lib-esm/builder/types.d.ts",
+          "releaseTag": "Public",
+          "name": "LambdaFunctionDefinition",
+          "typeTokenRange": {
+            "startIndex": 1,
+            "endIndex": 5
+          }
+        },
+        {
+          "kind": "TypeAlias",
+          "canonicalReference": "integration-tests!LazyLoader:type",
+          "docComment": "",
+          "excerptTokens": [
+            {
+              "kind": "Content",
+              "text": "export type LazyLoader<Model, IsArray extends "
+            },
+            {
+              "kind": "Content",
+              "text": "boolean"
+            },
+            {
+              "kind": "Content",
+              "text": "> = "
+            },
+            {
+              "kind": "Content",
+              "text": "(options?: IsArray extends true ? {\n    authMode?: "
+            },
+            {
+              "kind": "Reference",
+              "text": "AuthMode",
+              "canonicalReference": "integration-tests!AuthMode:type"
+            },
+            {
+              "kind": "Content",
+              "text": ";\n    authToken?: string;\n    limit?: number;\n    nextToken?: string | null;\n    headers?: "
+            },
+            {
+              "kind": "Reference",
+              "text": "CustomHeaders",
+              "canonicalReference": "integration-tests!CustomHeaders:type"
+            },
+            {
+              "kind": "Content",
+              "text": ";\n} : {\n    authMode?: "
+            },
+            {
+              "kind": "Reference",
+              "text": "AuthMode",
+              "canonicalReference": "integration-tests!AuthMode:type"
+            },
+            {
+              "kind": "Content",
+              "text": ";\n    authToken?: string;\n    headers?: "
+            },
+            {
+              "kind": "Reference",
+              "text": "CustomHeaders",
+              "canonicalReference": "integration-tests!CustomHeaders:type"
+            },
+            {
+              "kind": "Content",
+              "text": ";\n}) => IsArray extends true ? "
+            },
+            {
+              "kind": "Reference",
+              "text": "ListReturnValue",
+              "canonicalReference": "integration-tests!ListReturnValue:type"
+            },
+            {
+              "kind": "Content",
+              "text": "<"
+            },
+            {
+              "kind": "Reference",
+              "text": "Prettify",
+              "canonicalReference": "integration-tests!Prettify:type"
+            },
+            {
+              "kind": "Content",
+              "text": "<"
+            },
+            {
+              "kind": "Reference",
+              "text": "NonNullable",
+              "canonicalReference": "!NonNullable:type"
+            },
+            {
+              "kind": "Content",
+              "text": "<Model>>> : "
+            },
+            {
+              "kind": "Reference",
+              "text": "SingularReturnValue",
+              "canonicalReference": "integration-tests!SingularReturnValue:type"
+            },
+            {
+              "kind": "Content",
+              "text": "<"
+            },
+            {
+              "kind": "Reference",
+              "text": "Prettify",
+              "canonicalReference": "integration-tests!Prettify:type"
+            },
+            {
+              "kind": "Content",
+              "text": "<Model>>"
+            },
+            {
+              "kind": "Content",
+              "text": ";"
+            }
+          ],
+          "fileUrlPath": "../data-schema-types/lib-esm/client/index.d.ts",
+          "releaseTag": "Public",
+          "name": "LazyLoader",
+          "typeParameters": [
+            {
+              "typeParameterName": "Model",
+              "constraintTokenRange": {
+                "startIndex": 0,
+                "endIndex": 0
+              },
+              "defaultTypeTokenRange": {
+                "startIndex": 0,
+                "endIndex": 0
+              }
+            },
+            {
+              "typeParameterName": "IsArray",
+              "constraintTokenRange": {
+                "startIndex": 1,
+                "endIndex": 2
+              },
+              "defaultTypeTokenRange": {
+                "startIndex": 0,
+                "endIndex": 0
+              }
+            }
+          ],
+          "typeTokenRange": {
+            "startIndex": 3,
+            "endIndex": 22
+          }
+        },
+        {
+          "kind": "TypeAlias",
+          "canonicalReference": "integration-tests!ListReturnValue:type",
+          "docComment": "",
+          "excerptTokens": [
+            {
+              "kind": "Content",
+              "text": "export type ListReturnValue<T> = "
+            },
+            {
+              "kind": "Reference",
+              "text": "Promise",
+              "canonicalReference": "!Promise:interface"
+            },
+            {
+              "kind": "Content",
+              "text": "<{\n    data: "
+            },
+            {
+              "kind": "Reference",
+              "text": "Array",
+              "canonicalReference": "!Array:interface"
+            },
+            {
+              "kind": "Content",
+              "text": "<T>;\n    nextToken?: string | null;\n    errors?: "
+            },
+            {
+              "kind": "Reference",
+              "text": "GraphQLFormattedError",
+              "canonicalReference": "integration-tests!GraphQLFormattedError:interface"
+            },
+            {
+              "kind": "Content",
+              "text": "[];\n    extensions?: {\n        [key: string]: any;\n    };\n}>"
+            },
+            {
+              "kind": "Content",
+              "text": ";"
+            }
+          ],
+          "fileUrlPath": "../data-schema-types/lib-esm/client/index.d.ts",
+          "releaseTag": "Public",
+          "name": "ListReturnValue",
+          "typeParameters": [
+            {
+              "typeParameterName": "T",
+              "constraintTokenRange": {
+                "startIndex": 0,
+                "endIndex": 0
+              },
+              "defaultTypeTokenRange": {
+                "startIndex": 0,
+                "endIndex": 0
+              }
+            }
+          ],
+          "typeTokenRange": {
+            "startIndex": 1,
+            "endIndex": 7
+          }
+        },
+        {
+          "kind": "TypeAlias",
+          "canonicalReference": "integration-tests!ModelPath:type",
+          "docComment": "/**\n * Generates custom selection set type with up to 6 levels of nested fields\n *\n * @returns string[] where each string is a field in the model recurses over nested objects - such as relationships and custom types - generating a `field.*` type value to select all fields in that nested type, as well as a dot-delimited set of fields for fine-grained selection of particular fields in the nested type (see example below)\n *\n * @example\n * ```ts\n * FlatModel = {\n *   id: string\n *   title: string\n *   comments: {\n *     id:: string\n *     content: string\n *   }[]\n * }\n * ```\n *\n * ### Result\n * ```\n * 'id' | 'title' | 'comments.*' | 'comments.id' | 'comments.content'\n * ```\n *\n */\n",
+          "excerptTokens": [
+            {
+              "kind": "Content",
+              "text": "export type ModelPath<FlatModel extends "
+            },
+            {
+              "kind": "Reference",
+              "text": "Record",
+              "canonicalReference": "!Record:type"
+            },
+            {
+              "kind": "Content",
+              "text": "<string, unknown>"
+            },
+            {
+              "kind": "Content",
+              "text": ", Depth extends "
+            },
+            {
+              "kind": "Content",
+              "text": "number"
+            },
+            {
+              "kind": "Content",
+              "text": " = "
+            },
+            {
+              "kind": "Content",
+              "text": "5"
+            },
+            {
+              "kind": "Content",
+              "text": ", // think of this as the initialization expr. in a for loop (e.g. `let depth = 5`)\nRecursionLoop extends "
+            },
+            {
+              "kind": "Content",
+              "text": "number[]"
+            },
+            {
+              "kind": "Content",
+              "text": " = "
+            },
+            {
+              "kind": "Content",
+              "text": "[-1, 0, 1, 2, 3, 4]"
+            },
+            {
+              "kind": "Content",
+              "text": ", Field = "
+            },
+            {
+              "kind": "Content",
+              "text": "keyof FlatModel"
+            },
+            {
+              "kind": "Content",
+              "text": "> = "
+            },
+            {
+              "kind": "Content",
+              "text": "{\n    done: Field extends string ? `${Field}.*` : never;\n    recur: Field extends string ? "
+            },
+            {
+              "kind": "Reference",
+              "text": "NonNullable",
+              "canonicalReference": "!NonNullable:type"
+            },
+            {
+              "kind": "Content",
+              "text": "<"
+            },
+            {
+              "kind": "Reference",
+              "text": "UnwrapArray",
+              "canonicalReference": "integration-tests!UnwrapArray:type"
+            },
+            {
+              "kind": "Content",
+              "text": "<FlatModel[Field]>> extends "
+            },
+            {
+              "kind": "Reference",
+              "text": "Record",
+              "canonicalReference": "!Record:type"
+            },
+            {
+              "kind": "Content",
+              "text": "<string, unknown> ? `${Field}.${"
+            },
+            {
+              "kind": "Reference",
+              "text": "ModelPath",
+              "canonicalReference": "integration-tests!ModelPath:type"
+            },
+            {
+              "kind": "Content",
+              "text": "<"
+            },
+            {
+              "kind": "Reference",
+              "text": "NonNullable",
+              "canonicalReference": "!NonNullable:type"
+            },
+            {
+              "kind": "Content",
+              "text": "<"
+            },
+            {
+              "kind": "Reference",
+              "text": "UnwrapArray",
+              "canonicalReference": "integration-tests!UnwrapArray:type"
+            },
+            {
+              "kind": "Content",
+              "text": "<FlatModel[Field]>>, RecursionLoop[Depth]>}` | `${Field}.*` : `${Field}` : never;\n}[Depth extends -1 ? 'done' : 'recur']"
+            },
+            {
+              "kind": "Content",
+              "text": ";"
+            }
+          ],
+          "fileUrlPath": "../data-schema-types/lib-esm/client/index.d.ts",
+          "releaseTag": "Public",
+          "name": "ModelPath",
+          "typeParameters": [
+            {
+              "typeParameterName": "FlatModel",
+              "constraintTokenRange": {
+                "startIndex": 1,
+                "endIndex": 3
+              },
+              "defaultTypeTokenRange": {
+                "startIndex": 0,
+                "endIndex": 0
+              }
+            },
+            {
+              "typeParameterName": "Depth",
+              "constraintTokenRange": {
+                "startIndex": 4,
+                "endIndex": 5
+              },
+              "defaultTypeTokenRange": {
+                "startIndex": 6,
+                "endIndex": 7
+              }
+            },
+            {
+              "typeParameterName": "RecursionLoop",
+              "constraintTokenRange": {
+                "startIndex": 8,
+                "endIndex": 9
+              },
+              "defaultTypeTokenRange": {
+                "startIndex": 10,
+                "endIndex": 11
+              }
+            },
+            {
+              "typeParameterName": "Field",
+              "constraintTokenRange": {
+                "startIndex": 0,
+                "endIndex": 0
+              },
+              "defaultTypeTokenRange": {
+                "startIndex": 12,
+                "endIndex": 13
+              }
+            }
+          ],
+          "typeTokenRange": {
+            "startIndex": 14,
+            "endIndex": 27
+          }
+        },
+        {
+          "kind": "TypeAlias",
+          "canonicalReference": "integration-tests!ModelTypes:type",
+          "docComment": "",
+          "excerptTokens": [
+            {
+              "kind": "Content",
+              "text": "export type ModelTypes<Schema extends "
+            },
+            {
+              "kind": "Reference",
+              "text": "Record",
+              "canonicalReference": "!Record:type"
+            },
+            {
+              "kind": "Content",
+              "text": "<any, any>"
+            },
+            {
+              "kind": "Content",
+              "text": ", Context extends "
+            },
+            {
+              "kind": "Reference",
+              "text": "ContextType",
+              "canonicalReference": "integration-tests!ContextType:type"
+            },
+            {
+              "kind": "Content",
+              "text": " = "
+            },
+            {
+              "kind": "Content",
+              "text": "'CLIENT'"
+            },
+            {
+              "kind": "Content",
+              "text": ", ModelMeta extends "
+            },
+            {
+              "kind": "Reference",
+              "text": "Record",
+              "canonicalReference": "!Record:type"
+            },
+            {
+              "kind": "Content",
+              "text": "<any, any>"
+            },
+            {
+              "kind": "Content",
+              "text": " = "
+            },
+            {
+              "kind": "Reference",
+              "text": "ExtractModelMeta",
+              "canonicalReference": "integration-tests!ExtractModelMeta:type"
+            },
+            {
+              "kind": "Content",
+              "text": "<Schema>"
+            },
+            {
+              "kind": "Content",
+              "text": "> = "
+            },
+            {
+              "kind": "Content",
+              "text": "{\n    [ModelName in keyof Schema]: ModelName extends string ? Schema[ModelName] extends "
+            },
+            {
+              "kind": "Reference",
+              "text": "Record",
+              "canonicalReference": "!Record:type"
+            },
+            {
+              "kind": "Content",
+              "text": "<string, unknown> ? Context extends 'CLIENT' ? "
+            },
+            {
+              "kind": "Reference",
+              "text": "ModelTypesClient",
+              "canonicalReference": "integration-tests!ModelTypesClient:type"
+            },
+            {
+              "kind": "Content",
+              "text": "<Schema[ModelName], ModelMeta[ModelName]> : Context extends 'COOKIES' ? "
+            },
+            {
+              "kind": "Reference",
+              "text": "ModelTypesSSRCookies",
+              "canonicalReference": "integration-tests!ModelTypesSSRCookies:type"
+            },
+            {
+              "kind": "Content",
+              "text": "<Schema[ModelName], ModelMeta[ModelName]> : Context extends 'REQUEST' ? "
+            },
+            {
+              "kind": "Reference",
+              "text": "ModelTypesSSRRequest",
+              "canonicalReference": "integration-tests!ModelTypesSSRRequest:type"
+            },
+            {
+              "kind": "Content",
+              "text": "<Schema[ModelName], ModelMeta[ModelName]> : never : never : never;\n}"
+            },
+            {
+              "kind": "Content",
+              "text": ";"
+            }
+          ],
+          "fileUrlPath": "../data-schema-types/lib-esm/client/index.d.ts",
+          "releaseTag": "Public",
+          "name": "ModelTypes",
+          "typeParameters": [
+            {
+              "typeParameterName": "Schema",
+              "constraintTokenRange": {
+                "startIndex": 1,
+                "endIndex": 3
+              },
+              "defaultTypeTokenRange": {
+                "startIndex": 0,
+                "endIndex": 0
+              }
+            },
+            {
+              "typeParameterName": "Context",
+              "constraintTokenRange": {
+                "startIndex": 4,
+                "endIndex": 5
+              },
+              "defaultTypeTokenRange": {
+                "startIndex": 6,
+                "endIndex": 7
+              }
+            },
+            {
+              "typeParameterName": "ModelMeta",
+              "constraintTokenRange": {
+                "startIndex": 8,
+                "endIndex": 10
+              },
+              "defaultTypeTokenRange": {
+                "startIndex": 11,
+                "endIndex": 13
+              }
+            }
+          ],
+          "typeTokenRange": {
+            "startIndex": 14,
+            "endIndex": 23
+          }
+        },
+        {
+          "kind": "TypeAlias",
+          "canonicalReference": "integration-tests!NotAny:type",
+          "docComment": "",
+          "excerptTokens": [
+            {
+              "kind": "Content",
+              "text": "export type NotAny<T> = "
+            },
+            {
+              "kind": "Content",
+              "text": "true extends "
+            },
+            {
+              "kind": "Reference",
+              "text": "IsAny",
+              "canonicalReference": "integration-tests!IsAny:type"
+            },
+            {
+              "kind": "Content",
+              "text": "<T> ? false : true"
+            },
+            {
+              "kind": "Content",
+              "text": ";"
+            }
+          ],
+          "fileUrlPath": "../data-schema-types/lib-esm/util.d.ts",
+          "releaseTag": "Public",
+          "name": "NotAny",
+          "typeParameters": [
+            {
+              "typeParameterName": "T",
+              "constraintTokenRange": {
+                "startIndex": 0,
+                "endIndex": 0
+              },
+              "defaultTypeTokenRange": {
+                "startIndex": 0,
+                "endIndex": 0
+              }
+            }
+          ],
+          "typeTokenRange": {
+            "startIndex": 1,
+            "endIndex": 4
+          }
+        },
+        {
+          "kind": "TypeAlias",
+          "canonicalReference": "integration-tests!NotEqual:type",
+          "docComment": "",
+          "excerptTokens": [
+            {
+              "kind": "Content",
+              "text": "export type NotEqual<X, Y> = "
+            },
+            {
+              "kind": "Content",
+              "text": "true extends "
+            },
+            {
+              "kind": "Reference",
+              "text": "Equal",
+              "canonicalReference": "integration-tests!Equal:type"
+            },
+            {
+              "kind": "Content",
+              "text": "<X, Y> ? false : true"
+            },
+            {
+              "kind": "Content",
+              "text": ";"
+            }
+          ],
+          "fileUrlPath": "../data-schema-types/lib-esm/util.d.ts",
+          "releaseTag": "Public",
+          "name": "NotEqual",
+          "typeParameters": [
+            {
+              "typeParameterName": "X",
+              "constraintTokenRange": {
+                "startIndex": 0,
+                "endIndex": 0
+              },
+              "defaultTypeTokenRange": {
+                "startIndex": 0,
+                "endIndex": 0
+              }
+            },
+            {
+              "typeParameterName": "Y",
+              "constraintTokenRange": {
+                "startIndex": 0,
+                "endIndex": 0
+              },
+              "defaultTypeTokenRange": {
+                "startIndex": 0,
+                "endIndex": 0
+              }
+            }
+          ],
+          "typeTokenRange": {
+            "startIndex": 1,
+            "endIndex": 4
+          }
+        },
+        {
+          "kind": "TypeAlias",
+          "canonicalReference": "integration-tests!ObjectIsNonEmpty:type",
+          "docComment": "",
+          "excerptTokens": [
+            {
+              "kind": "Content",
+              "text": "export type ObjectIsNonEmpty<T extends "
+            },
+            {
+              "kind": "Content",
+              "text": "object"
+            },
+            {
+              "kind": "Content",
+              "text": "> = "
+            },
+            {
+              "kind": "Content",
+              "text": "keyof T extends never ? false : true"
+            },
+            {
+              "kind": "Content",
+              "text": ";"
+            }
+          ],
+          "fileUrlPath": "../data-schema-types/lib-esm/util.d.ts",
+          "releaseTag": "Public",
+          "name": "ObjectIsNonEmpty",
+          "typeParameters": [
+            {
+              "typeParameterName": "T",
+              "constraintTokenRange": {
+                "startIndex": 1,
+                "endIndex": 2
+              },
+              "defaultTypeTokenRange": {
+                "startIndex": 0,
+                "endIndex": 0
+              }
+            }
+          ],
+          "typeTokenRange": {
+            "startIndex": 3,
+            "endIndex": 4
+          }
+        },
+        {
+          "kind": "TypeAlias",
+          "canonicalReference": "integration-tests!ObservedReturnValue:type",
+          "docComment": "",
+          "excerptTokens": [
+            {
+              "kind": "Content",
+              "text": "export type ObservedReturnValue<T> = "
+            },
+            {
+              "kind": "Reference",
+              "text": "Observable",
+              "canonicalReference": "rxjs!Observable:class"
+            },
+            {
+              "kind": "Content",
+              "text": "<T>"
+            },
+            {
+              "kind": "Content",
+              "text": ";"
+            }
+          ],
+          "fileUrlPath": "../data-schema-types/lib-esm/client/index.d.ts",
+          "releaseTag": "Public",
+          "name": "ObservedReturnValue",
+          "typeParameters": [
+            {
+              "typeParameterName": "T",
+              "constraintTokenRange": {
+                "startIndex": 0,
+                "endIndex": 0
+              },
+              "defaultTypeTokenRange": {
+                "startIndex": 0,
+                "endIndex": 0
+              }
+            }
+          ],
+          "typeTokenRange": {
+            "startIndex": 1,
+            "endIndex": 3
+          }
+        },
+        {
+          "kind": "TypeAlias",
+          "canonicalReference": "integration-tests!ObserveQueryReturnValue:type",
+          "docComment": "",
+          "excerptTokens": [
+            {
+              "kind": "Content",
+              "text": "export type ObserveQueryReturnValue<T> = "
+            },
+            {
+              "kind": "Reference",
+              "text": "Observable",
+              "canonicalReference": "rxjs!Observable:class"
+            },
+            {
+              "kind": "Content",
+              "text": "<{\n    items: T[];\n    isSynced: boolean;\n}>"
+            },
+            {
+              "kind": "Content",
+              "text": ";"
+            }
+          ],
+          "fileUrlPath": "../data-schema-types/lib-esm/client/index.d.ts",
+          "releaseTag": "Public",
+          "name": "ObserveQueryReturnValue",
+          "typeParameters": [
+            {
+              "typeParameterName": "T",
+              "constraintTokenRange": {
+                "startIndex": 0,
+                "endIndex": 0
+              },
+              "defaultTypeTokenRange": {
+                "startIndex": 0,
+                "endIndex": 0
+              }
+            }
+          ],
+          "typeTokenRange": {
+            "startIndex": 1,
+            "endIndex": 3
+          }
+        },
+        {
+          "kind": "TypeAlias",
+          "canonicalReference": "integration-tests!Prettify:type",
+          "docComment": "",
+          "excerptTokens": [
+            {
+              "kind": "Content",
+              "text": "export type Prettify<T> = "
+            },
+            {
+              "kind": "Content",
+              "text": "T extends (...args: infer ArgsType) => any ? (...args: ArgsType) => "
+            },
+            {
+              "kind": "Reference",
+              "text": "ReturnType",
+              "canonicalReference": "!ReturnType:type"
+            },
+            {
+              "kind": "Content",
+              "text": "<T> : T extends object ? {\n    [P in keyof T]: "
+            },
+            {
+              "kind": "Reference",
+              "text": "Prettify",
+              "canonicalReference": "integration-tests!Prettify:type"
+            },
+            {
+              "kind": "Content",
+              "text": "<T[P]>;\n} : T"
+            },
+            {
+              "kind": "Content",
+              "text": ";"
+            }
+          ],
+          "fileUrlPath": "../data-schema-types/lib-esm/util.d.ts",
+          "releaseTag": "Public",
+          "name": "Prettify",
+          "typeParameters": [
+            {
+              "typeParameterName": "T",
+              "constraintTokenRange": {
+                "startIndex": 0,
+                "endIndex": 0
+              },
+              "defaultTypeTokenRange": {
+                "startIndex": 0,
+                "endIndex": 0
+              }
+            }
+          ],
+          "typeTokenRange": {
+            "startIndex": 1,
+            "endIndex": 6
+          }
+        },
+        {
+          "kind": "TypeAlias",
+          "canonicalReference": "integration-tests!RequestOptions:type",
+          "docComment": "/**\n * Request options that are passed to custom header functions. `method` and `headers` are not included in custom header functions passed to subscriptions.\n */\n",
+          "excerptTokens": [
+            {
+              "kind": "Content",
+              "text": "export type RequestOptions = "
+            },
+            {
+              "kind": "Content",
+              "text": "{\n    url: string;\n    queryString: string;\n    method?: string;\n}"
+            },
+            {
+              "kind": "Content",
+              "text": ";"
+            }
+          ],
+          "fileUrlPath": "../data-schema-types/lib-esm/client/index.d.ts",
+          "releaseTag": "Public",
+          "name": "RequestOptions",
+          "typeTokenRange": {
+            "startIndex": 1,
+            "endIndex": 2
+          }
+        },
+        {
+          "kind": "TypeAlias",
+          "canonicalReference": "integration-tests!SecondaryIndexIrShape:type",
+          "docComment": "/**\n * SecondaryIndex index types and query methods\n */\n",
+          "excerptTokens": [
+            {
+              "kind": "Content",
+              "text": "export type SecondaryIndexIrShape = "
+            },
+            {
+              "kind": "Content",
+              "text": "{\n    queryField: string;\n    pk: {\n        [key: string]: string | number;\n    };\n    sk: {\n        [key: string]: string | number;\n    };\n}"
+            },
+            {
+              "kind": "Content",
+              "text": ";"
+            }
+          ],
+          "fileUrlPath": "../data-schema-types/lib-esm/client/index.d.ts",
+          "releaseTag": "Public",
+          "name": "SecondaryIndexIrShape",
+          "typeTokenRange": {
+            "startIndex": 1,
+            "endIndex": 2
+          }
+        },
+        {
+          "kind": "TypeAlias",
+          "canonicalReference": "integration-tests!SelectionSet:type",
+          "docComment": "",
+          "excerptTokens": [
+            {
+              "kind": "Content",
+              "text": "export type SelectionSet<Model extends "
+            },
+            {
+              "kind": "Reference",
+              "text": "Record",
+              "canonicalReference": "!Record:type"
+            },
+            {
+              "kind": "Content",
+              "text": "<string, unknown>"
+            },
+            {
+              "kind": "Content",
+              "text": ", Path extends "
+            },
+            {
+              "kind": "Reference",
+              "text": "ReadonlyArray",
+              "canonicalReference": "!ReadonlyArray:interface"
+            },
+            {
+              "kind": "Content",
+              "text": "<"
+            },
+            {
+              "kind": "Reference",
+              "text": "ModelPath",
+              "canonicalReference": "integration-tests!ModelPath:type"
+            },
+            {
+              "kind": "Content",
+              "text": "<FlatModel>>"
+            },
+            {
+              "kind": "Content",
+              "text": ", FlatModel extends "
+            },
+            {
+              "kind": "Reference",
+              "text": "Record",
+              "canonicalReference": "!Record:type"
+            },
+            {
+              "kind": "Content",
+              "text": "<string, unknown>"
+            },
+            {
+              "kind": "Content",
+              "text": " = "
+            },
+            {
+              "kind": "Reference",
+              "text": "ResolvedModel",
+              "canonicalReference": "integration-tests!ResolvedModel:type"
+            },
+            {
+              "kind": "Content",
+              "text": "<Model>"
+            },
+            {
+              "kind": "Content",
+              "text": "> = "
+            },
+            {
+              "kind": "Reference",
+              "text": "CustomSelectionSetReturnValue",
+              "canonicalReference": "integration-tests!CustomSelectionSetReturnValue:type"
+            },
+            {
+              "kind": "Content",
+              "text": "<FlatModel, Path[number]>"
+            },
+            {
+              "kind": "Content",
+              "text": ";"
+            }
+          ],
+          "fileUrlPath": "../data-schema-types/lib-esm/client/index.d.ts",
+          "releaseTag": "Public",
+          "name": "SelectionSet",
+          "typeParameters": [
+            {
+              "typeParameterName": "Model",
+              "constraintTokenRange": {
+                "startIndex": 1,
+                "endIndex": 3
+              },
+              "defaultTypeTokenRange": {
+                "startIndex": 0,
+                "endIndex": 0
+              }
+            },
+            {
+              "typeParameterName": "Path",
+              "constraintTokenRange": {
+                "startIndex": 4,
+                "endIndex": 8
+              },
+              "defaultTypeTokenRange": {
+                "startIndex": 0,
+                "endIndex": 0
+              }
+            },
+            {
+              "typeParameterName": "FlatModel",
+              "constraintTokenRange": {
+                "startIndex": 9,
+                "endIndex": 11
+              },
+              "defaultTypeTokenRange": {
+                "startIndex": 12,
+                "endIndex": 14
+              }
+            }
+          ],
+          "typeTokenRange": {
+            "startIndex": 15,
+            "endIndex": 17
+          }
+        },
+        {
+          "kind": "TypeAlias",
+          "canonicalReference": "integration-tests!SetTypeSubArg:type",
+          "docComment": "/**\n * Replaces the value of a key in a complex generic type param\n *\n * @typeParam T - ModelType type param\n *\n * @typeParam SetKey - name of the key whose value will be replaced\n *\n * @typeParam Val - the value to set\n *\n * @example\n *\n * T = { fields: {}, identifier: \"id\"[] } type Modified = SetTypeSubArg<T, \"identifier\", \"customId\"[]> Modified => { fields: {}, identifier: \"customId\"[] }\n */\n",
+          "excerptTokens": [
+            {
+              "kind": "Content",
+              "text": "export type SetTypeSubArg<T, SetKey extends "
+            },
+            {
+              "kind": "Content",
+              "text": "keyof T"
+            },
+            {
+              "kind": "Content",
+              "text": ", Val> = "
+            },
+            {
+              "kind": "Content",
+              "text": "{\n    [Property in keyof T]: SetKey extends Property ? Val : T[Property];\n}"
+            },
+            {
+              "kind": "Content",
+              "text": ";"
+            }
+          ],
+          "fileUrlPath": "../data-schema-types/lib-esm/util.d.ts",
+          "releaseTag": "Public",
+          "name": "SetTypeSubArg",
+          "typeParameters": [
+            {
+              "typeParameterName": "T",
+              "constraintTokenRange": {
+                "startIndex": 0,
+                "endIndex": 0
+              },
+              "defaultTypeTokenRange": {
+                "startIndex": 0,
+                "endIndex": 0
+              }
+            },
+            {
+              "typeParameterName": "SetKey",
+              "constraintTokenRange": {
+                "startIndex": 1,
+                "endIndex": 2
+              },
+              "defaultTypeTokenRange": {
+                "startIndex": 0,
+                "endIndex": 0
+              }
+            },
+            {
+              "typeParameterName": "Val",
+              "constraintTokenRange": {
+                "startIndex": 0,
+                "endIndex": 0
+              },
+              "defaultTypeTokenRange": {
+                "startIndex": 0,
+                "endIndex": 0
+              }
+            }
+          ],
+          "typeTokenRange": {
+            "startIndex": 3,
+            "endIndex": 4
+          }
+        },
+        {
+          "kind": "TypeAlias",
+          "canonicalReference": "integration-tests!SingularReturnValue:type",
+          "docComment": "",
+          "excerptTokens": [
+            {
+              "kind": "Content",
+              "text": "export type SingularReturnValue<T> = "
+            },
+            {
+              "kind": "Reference",
+              "text": "Promise",
+              "canonicalReference": "!Promise:interface"
+            },
+            {
+              "kind": "Content",
+              "text": "<{\n    data: T;\n    errors?: "
+            },
+            {
+              "kind": "Reference",
+              "text": "GraphQLFormattedError",
+              "canonicalReference": "integration-tests!GraphQLFormattedError:interface"
+            },
+            {
+              "kind": "Content",
+              "text": "[];\n    extensions?: {\n        [key: string]: any;\n    };\n}>"
+            },
+            {
+              "kind": "Content",
+              "text": ";"
+            }
+          ],
+          "fileUrlPath": "../data-schema-types/lib-esm/client/index.d.ts",
+          "releaseTag": "Public",
+          "name": "SingularReturnValue",
+          "typeParameters": [
+            {
+              "typeParameterName": "T",
+              "constraintTokenRange": {
+                "startIndex": 0,
+                "endIndex": 0
+              },
+              "defaultTypeTokenRange": {
+                "startIndex": 0,
+                "endIndex": 0
+              }
+            }
+          ],
+          "typeTokenRange": {
+            "startIndex": 1,
+            "endIndex": 5
+          }
+        },
+        {
+          "kind": "Interface",
+          "canonicalReference": "integration-tests!SourceLocation:interface",
+          "docComment": "/**\n * Represents a location in a Source.\n */\n",
+          "excerptTokens": [
+            {
+              "kind": "Content",
+              "text": "export interface SourceLocation "
+            }
+          ],
+          "fileUrlPath": "../data-schema-types/lib-esm/client/index.d.ts",
+          "releaseTag": "Public",
+          "name": "SourceLocation",
+          "preserveMemberOrder": false,
+          "members": [
+            {
+              "kind": "PropertySignature",
+              "canonicalReference": "integration-tests!SourceLocation#column:member",
+              "docComment": "",
+              "excerptTokens": [
+                {
+                  "kind": "Content",
+                  "text": "readonly column: "
+                },
+                {
+                  "kind": "Content",
+                  "text": "number"
+                },
+                {
+                  "kind": "Content",
+                  "text": ";"
+                }
+              ],
+              "isReadonly": true,
+              "isOptional": false,
+              "releaseTag": "Public",
+              "name": "column",
+              "propertyTypeTokenRange": {
+                "startIndex": 1,
+                "endIndex": 2
+              }
+            },
+            {
+              "kind": "PropertySignature",
+              "canonicalReference": "integration-tests!SourceLocation#line:member",
+              "docComment": "",
+              "excerptTokens": [
+                {
+                  "kind": "Content",
+                  "text": "readonly line: "
+                },
+                {
+                  "kind": "Content",
+                  "text": "number"
+                },
+                {
+                  "kind": "Content",
+                  "text": ";"
+                }
+              ],
+              "isReadonly": true,
+              "isOptional": false,
+              "releaseTag": "Public",
+              "name": "line",
+              "propertyTypeTokenRange": {
+                "startIndex": 1,
+                "endIndex": 2
+              }
+            }
+          ],
+          "extendsTokenRanges": []
+        },
+        {
+          "kind": "TypeAlias",
+          "canonicalReference": "integration-tests!UnionToIntersection:type",
+          "docComment": "/**\n * @typeParam U - Union Type\n *\n * @returns Intersection type\n *\n * @example\n *\n * UnionToIntersection<{a: 1} | {b: 2}> => {a: 1} & {b: 2}\n */\n",
+          "excerptTokens": [
+            {
+              "kind": "Content",
+              "text": "export type UnionToIntersection<U> = "
+            },
+            {
+              "kind": "Content",
+              "text": "(U extends any ? (k: U) => void : never) extends (k: infer I) => void ? I : never"
+            },
+            {
+              "kind": "Content",
+              "text": ";"
+            }
+          ],
+          "fileUrlPath": "../data-schema-types/lib-esm/util.d.ts",
+          "releaseTag": "Public",
+          "name": "UnionToIntersection",
+          "typeParameters": [
+            {
+              "typeParameterName": "U",
+              "constraintTokenRange": {
+                "startIndex": 0,
+                "endIndex": 0
+              },
+              "defaultTypeTokenRange": {
+                "startIndex": 0,
+                "endIndex": 0
+              }
+            }
+          ],
+          "typeTokenRange": {
+            "startIndex": 1,
+            "endIndex": 2
+          }
+        },
+        {
+          "kind": "TypeAlias",
+          "canonicalReference": "integration-tests!UnwrapArray:type",
+          "docComment": "/**\n * @returns element type for arrays; otherwise returns passed-in type as is\n */\n",
+          "excerptTokens": [
+            {
+              "kind": "Content",
+              "text": "export type UnwrapArray<T> = "
+            },
+            {
+              "kind": "Content",
+              "text": "T extends any[] ? T[number] : T"
+            },
+            {
+              "kind": "Content",
+              "text": ";"
+            }
+          ],
+          "fileUrlPath": "../data-schema-types/lib-esm/util.d.ts",
+          "releaseTag": "Public",
+          "name": "UnwrapArray",
+          "typeParameters": [
+            {
+              "typeParameterName": "T",
+              "constraintTokenRange": {
+                "startIndex": 0,
+                "endIndex": 0
+              },
+              "defaultTypeTokenRange": {
+                "startIndex": 0,
+                "endIndex": 0
+              }
+            }
+          ],
+          "typeTokenRange": {
+            "startIndex": 1,
+            "endIndex": 2
+          }
+        }
+      ]
+    }
+  ]
+}
