@@ -416,21 +416,21 @@ function addFields(
  * Validate that no implicit fields are used by the model definition
  *
  * @param existing An existing field map
- * @param additions A field map to merge in
+ * @param implicitFields A field map inferred from other schema usage
  *
  * @throws An error when an undefined field is used or when a field is used in a way that conflicts with its generated definition
  */
 function validateStaticFields(
   existing: Record<string, ModelField<any, any>>,
-  additions: Record<string, ModelField<any, any>> | undefined,
+  implicitFields: Record<string, ModelField<any, any>> | undefined,
 ) {
-  if (additions === undefined) {
+  if (implicitFields === undefined) {
     return;
   }
-  for (const [k, addition] of Object.entries(additions)) {
+  for (const [k, field] of Object.entries(implicitFields)) {
     if (!existing[k]) {
       throw new Error(`Field ${k} isn't defined.`);
-    } else if (areConflicting(existing[k], addition)) {
+    } else if (areConflicting(existing[k], field)) {
       throw new Error(`Field ${k} defined twice with conflicting definitions.`);
     }
   }
