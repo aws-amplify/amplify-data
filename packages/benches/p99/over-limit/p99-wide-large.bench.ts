@@ -20224,4 +20224,4 @@ bench(
 
     type _ = ClientSchema<typeof s>;
   },
-).types([5044843, 'instantiations']);
+).types([5044382, 'instantiations']);
