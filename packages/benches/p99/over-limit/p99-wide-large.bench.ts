@@ -10110,7 +10110,7 @@ bench('1 model containing 2288 fields, 34 models w/ 215 fields each', () => {
       field215: a.string(),
     }),
   }).authorization([a.allow.public()]);
-}).types([50110, 'instantiations']);
+}).types([50136, 'instantiations']);
 
 bench(
   '1 model containing 2288 fields, 34 models w/ 215 fields each w/ client types',
@@ -20224,4 +20224,4 @@ bench(
 
     type _ = ClientSchema<typeof s>;
   },
-).types([5079827, 'instantiations']);
+).types([5044843, 'instantiations']);

@@ -55,6 +55,27 @@ export type ResolveFieldProperties<
   AllImpliedFKs<ResolvedSchema, IdentifierMeta>
 >;
 
+export type ResolveStaticFieldProperties<
+  Schema extends ModelSchema<any, any>,
+  NonModelTypes extends NonModelTypesShape,
+  ImplicitModelsSchema,
+  ResolvedSchema = ResolveSchema<Schema>,
+  FieldsWithInjectedImplicitFields = InjectImplicitModelFields<
+    ResolvedSchema & ImplicitModelsSchema,
+    object
+  >,
+  FieldsWithRelationships = ResolveRelationships<
+    FieldsWithInjectedImplicitFields,
+    NonModelTypes
+  >,
+> = Intersection<
+  FilterFieldTypes<
+    MarkModelsNonNullableFieldsRequired<FieldsWithRelationships>
+  >,
+  FilterFieldTypes<MarkModelsNullableFieldsOptional<FieldsWithRelationships>>,
+  object
+>;
+
 export type CreateImplicitModelsFromRelations<Schema> = UnionToIntersection<
   ExcludeEmpty<
     {
