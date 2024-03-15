@@ -1,5 +1,5 @@
 import { type __modelMeta__ } from '@aws-amplify/data-schema-types';
-import { RDSModelSchema, type ModelSchema } from './ModelSchema';
+import { type GenericModelSchema, type RDSModelSchema } from './ModelSchema';
 
 // MappedTypes
 import type { ResolveSchema, SchemaTypes } from './MappedTypes/ResolveSchema';
@@ -22,13 +22,8 @@ import {
   CustomOperationHandlerTypes,
 } from './MappedTypes/CustomOperations';
 
-export type ClientSchema<Schema extends ModelSchema<any, any>> =
+export type ClientSchema<Schema extends GenericModelSchema<any>> =
   InternalClientSchema<Schema>;
-
-// export type ClientSchema<Schema extends ModelSchema<any, any>> =
-//   Schema extends RDSModelSchema<any, any>
-//     ? InternalRDSClientSchema<Schema>
-//     : InternalDDBClientSchema<Schema>;
 
 /**
  * Types for unwrapping generic type args into client-consumable types
@@ -44,10 +39,12 @@ export type ClientSchema<Schema extends ModelSchema<any, any>> =
  * @internal @typeParam SecondaryIndexes - Map of model secondary index metadata
  */
 type InternalClientSchema<
-  Schema extends ModelSchema<any, any>,
+  Schema extends GenericModelSchema<any>,
   NonModelTypes extends NonModelTypesShape = ExtractNonModelTypes<Schema>,
   ResolvedSchema = ResolveSchema<Schema>,
-  ImplicitModels = CreateImplicitModelsFromRelations<ResolvedSchema>,
+  ImplicitModels = Schema extends RDSModelSchema<any, any>
+    ? object
+    : CreateImplicitModelsFromRelations<ResolvedSchema>,
   ImplicitModelsIdentifierMeta = {
     [ImplicitModel in keyof ImplicitModels]: {
       identifier: 'id';
@@ -58,11 +55,7 @@ type InternalClientSchema<
     unknown
   > = Schema extends RDSModelSchema<any, any>
     ? ResolveStaticFieldProperties<Schema, NonModelTypes, object>
-    : ResolveFieldProperties<
-        Schema,
-        NonModelTypes,
-        Schema extends RDSModelSchema<any, any> ? object : ImplicitModels
-      >,
+    : ResolveFieldProperties<Schema, NonModelTypes, ImplicitModels>,
   IdentifierMeta extends Record<string, any> = ModelIdentifier<
     SchemaTypes<Schema>
   >,

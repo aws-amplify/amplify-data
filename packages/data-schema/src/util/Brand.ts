@@ -14,8 +14,6 @@ export type Brand<BrandStr extends string> = {
   [brandSymbol]: BrandStr;
 };
 
-export type GetBrand<O extends Brand<string>> = O[typeof brandSymbol];
-
 /**
  * Create an object of a specific type Brand
  * string branded type.

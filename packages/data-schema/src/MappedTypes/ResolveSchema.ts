@@ -1,5 +1,5 @@
 import type { ModelType } from '../ModelType';
-import type { ModelSchema } from '../ModelSchema';
+import type { GenericModelSchema } from '../ModelSchema';
 import type {
   ModelRelationalField,
   ModelRelationshipTypes,
@@ -17,7 +17,7 @@ import type {
 export type ResolveSchema<Schema> = FieldTypes<ModelTypes<SchemaTypes<Schema>>>;
 
 // TODO: find better name
-export type SchemaTypes<T> = T extends ModelSchema<any, any>
+export type SchemaTypes<T> = T extends GenericModelSchema<any>
   ? T['data']['types']
   : never;
 

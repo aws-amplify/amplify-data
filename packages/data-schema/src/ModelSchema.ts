@@ -105,19 +105,17 @@ type BaseSchema<T extends ModelSchemaParamShape> = {
   transform: () => DerivedApiDefinition;
 };
 
-export type ModelSchema<
-  T extends ModelSchemaParamShape,
-  UM extends string = never,
-> = Omit<object, UM> & BaseSchema<T> & Brand<string>;
+export type GenericModelSchema<T extends ModelSchemaParamShape> =
+  BaseSchema<T> & Brand<string>;
 
-export type DDBModelSchema<
+export type ModelSchema<
   T extends ModelSchemaParamShape,
   UsedMethods extends 'authorization' = never,
 > = Omit<
   {
     authorization: <AuthRules extends SchemaAuthorization<any, any, any>>(
       auth: AuthRules[],
-    ) => DDBModelSchema<
+    ) => ModelSchema<
       SetTypeSubArg<T, 'authorization', AuthRules[]>,
       UsedMethods | 'authorization'
     >;
@@ -270,14 +268,14 @@ function _ddbSchema<
     },
     models: filterSchemaModelTypes(data.types),
     ...ddbSchemaBrand,
-  } as DDBModelSchema<T>;
+  } as ModelSchema<T>;
 }
 
 type SchemaReturnType<
   DE extends DatasourceEngine,
   Types extends ModelSchemaContents,
 > = DE extends 'dynamodb'
-  ? DDBModelSchema<{ types: Types; authorization: []; configuration: any }>
+  ? ModelSchema<{ types: Types; authorization: []; configuration: any }>
   : RDSModelSchema<{ types: Types; authorization: []; configuration: any }>;
 
 function bindConfigToSchema<DE extends DatasourceEngine>(
