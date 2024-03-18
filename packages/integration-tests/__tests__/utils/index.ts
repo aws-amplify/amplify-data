@@ -1,4 +1,4 @@
-import { print, parse, DocumentNode } from 'graphql';
+import { print, parse, DocumentNode, TypeNode } from 'graphql';
 import { generateModels } from '@aws-amplify/graphql-generator';
 import { generateClient as actualGenerateClient } from 'aws-amplify/api';
 import { GraphQLAPI } from '@aws-amplify/api-graphql'; // eslint-disable-line
@@ -207,4 +207,103 @@ export function expectSelectionSetContains(
   const { query } = options;
   const { selectionSet } = parseQuery(query);
   expect(fields.every((f) => selectionSet.includes(f))).toBe(true);
+}
+
+export function parseGraphqlSchema(schema: string) {
+  const ast = parse(schema);
+  return ast;
+}
+
+export function expectSchemaModelContains({
+  schema,
+  model,
+  field,
+  type,
+  isRequired,
+  isArray,
+}: {
+  schema: string;
+  model: string;
+  field: string;
+  type: string;
+  isRequired: boolean;
+  isArray: boolean;
+}) {
+  const ast = parse(schema);
+  for (const def of ast.definitions) {
+    if (def.kind === 'ObjectTypeDefinition') {
+      if (def.name.value === model) {
+        for (const _field of def.fields || []) {
+          if (_field.kind === 'FieldDefinition') {
+            if (_field.name.value === field) {
+              const matches = graphqlFieldMatches({
+                def: _field.type,
+                type,
+                isRequired,
+                isArray,
+              });
+              if (matches) {
+                return true;
+              } else {
+                throw new Error(
+                  `${JSON.stringify(
+                    _field,
+                    null,
+                    2,
+                  )} does not match ${JSON.stringify({
+                    type,
+                    isArray,
+                    isRequired,
+                  })}`,
+                );
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+  throw new Error('No matching definition found in the schema.');
+}
+
+function graphqlFieldMatches({
+  def,
+  type,
+  isRequired,
+  isArray,
+}: {
+  def: TypeNode;
+  type: string;
+  isRequired: boolean;
+  isArray: boolean;
+}) {
+  if (def.kind === 'NamedType') {
+    return isArray === false && isRequired === false && def.name.value === type;
+  }
+
+  if (def.kind === 'NonNullType') {
+    // "consume" the isRequired requirement
+    if (!isRequired) return false;
+
+    return graphqlFieldMatches({
+      def: def.type,
+      type,
+      isArray,
+      isRequired: false, // already consumed
+    });
+  }
+
+  if (def.kind === 'ListType') {
+    // "consume" the isArray requirement.
+    if (!isArray) return false;
+
+    return graphqlFieldMatches({
+      def: def.type,
+      type,
+      isRequired,
+      isArray: false, // already consumed
+    });
+  }
+
+  throw new Error("Ruhoh. The `def` you gave me isn't actually a `TypeNode`!");
 }

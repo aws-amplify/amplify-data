@@ -6,6 +6,8 @@ import {
   mockedGenerateClient,
   optionsAndHeaders,
   parseQuery,
+  parseGraphqlSchema,
+  expectSchemaModelContains,
   expectSelectionSetContains,
 } from '../../utils';
 
@@ -54,7 +56,14 @@ describe('Implicit Field Handling. Given:', () => {
     });
 
     test('the generated graphql contains `id: ID!` PK', async () => {
-      expect(schema.transform().schema).toMatch('id: ID! @primaryKey');
+      expectSchemaModelContains({
+        schema: schema.transform().schema,
+        model: 'Model',
+        field: 'id',
+        type: 'ID',
+        isArray: false,
+        isRequired: true,
+      });
     });
 
     test('the generated modelIntrospection schema contains the PK field and metadata', async () => {
@@ -122,25 +131,207 @@ describe('Implicit Field Handling. Given:', () => {
       .authorization([a.allow.public()]);
     type Schema = ClientSchema<typeof schema>;
 
-    test('the client schema type has timestamp fields', () => {
-      type _createdAtIsString = Expect<
+    afterEach(() => {
+      jest.clearAllMocks();
+    });
+
+    test('the client schema type has a createdAt: string, updatedAt: string fields', () => {
+      type _createAtStringIsPresent = Expect<
         Equal<string, Schema['Model']['createdAt']>
       >;
-      type _updatedAtIsString = Expect<
+      type _updatedAtStringIsPresent = Expect<
         Equal<string, Schema['Model']['updatedAt']>
       >;
     });
+
+    test('the generated graphql schema contains `createdAt: AWSDateTime!`, `updatedAt: AWSDateTime!`', async () => {
+      const graphqlSchema = schema.transform().schema;
+      expectSchemaModelContains({
+        schema: graphqlSchema,
+        model: 'Model',
+        field: 'createdAt',
+        type: 'AWSDateTime',
+        isArray: false,
+        isRequired: true,
+      });
+      expectSchemaModelContains({
+        schema: graphqlSchema,
+        model: 'Model',
+        field: 'updatedAt',
+        type: 'AWSDateTime',
+        isArray: false,
+        isRequired: true,
+      });
+    });
+
+    test('the generated modelIntrospection schema contains the `createdAt`, `updatedAt` fields', async () => {
+      const { modelIntrospection } = await buildAmplifyConfig(schema);
+      expect(modelIntrospection.models['Model']['fields']['createdAt']).toEqual(
+        expect.objectContaining({
+          isArray: false,
+          isRequired: true,
+          name: 'createdAt',
+          type: 'AWSDateTime',
+        }),
+      );
+      expect(modelIntrospection.models['Model']['fields']['updatedAt']).toEqual(
+        expect.objectContaining({
+          isArray: false,
+          isRequired: true,
+          name: 'updatedAt',
+          type: 'AWSDateTime',
+        }),
+      );
+    });
+
+    test('the client includes `createdAt`, `updatedAt` in selection sets', async () => {
+      const config = await buildAmplifyConfig(schema);
+      Amplify.configure(config);
+      const { spy, generateClient } = mockedGenerateClient([
+        { data: { listModels: { items: [] } } },
+      ]);
+      const client = generateClient<Schema>();
+      await client.models.Model.list();
+
+      expectSelectionSetContains(spy, ['createdAt', 'updatedAt']);
+    });
   });
 
-  // TODO:
+  describe('A model with implicit owner field from owner auth', () => {
+    const schema = a
+      .schema({
+        Model: a.model({
+          content: a.string(),
+        }),
+      })
+      .authorization([a.allow.owner()]);
+    type Schema = ClientSchema<typeof schema>;
 
-  // test('default timestamp fields', async () => {
+    afterEach(() => {
+      jest.clearAllMocks();
+    });
 
-  // });
+    test('the client schema type has a owner?: string und fields', () => {
+      type _ownerStringIsPresent = Expect<
+        Equal<string | undefined, Schema['Model']['owner']>
+      >;
+    });
 
-  // test('implicit owner field', async () => {});
+    test('the generated graphql schema contains `owner: String`', async () => {
+      const graphqlSchema = schema.transform().schema;
+      expectSchemaModelContains({
+        schema: graphqlSchema,
+        model: 'Model',
+        field: 'owner',
+        type: 'String',
+        isArray: false,
+        isRequired: false,
+      });
+    });
 
-  // test('hasOne FK', async () => {});
+    test('the generated modelIntrospection schema contains `owner`', async () => {
+      const { modelIntrospection } = await buildAmplifyConfig(schema);
+      expect(modelIntrospection.models['Model']['fields']['owner']).toEqual(
+        expect.objectContaining({
+          isArray: false,
+          isRequired: false,
+          name: 'owner',
+          type: 'String',
+        }),
+      );
+    });
+
+    test('the generated modelIntrospection schema contains auth rule pointing to `owner` field', async () => {
+      const { modelIntrospection } = await buildAmplifyConfig(schema);
+      const authRules = modelIntrospection.models.Model.attributes.filter(
+        (attr: any) => attr.type === 'auth',
+      )[0].properties.rules;
+      expect(authRules[0]).toEqual(
+        expect.objectContaining({
+          provider: 'userPools',
+          ownerField: 'owner',
+          allow: 'owner',
+          identityClaim: 'cognito:username',
+          operations: ['create', 'update', 'delete', 'read'],
+        }),
+      );
+    });
+
+    test('the client includes `owner` in selection sets', async () => {
+      const config = await buildAmplifyConfig(schema);
+      Amplify.configure(config);
+      const { spy, generateClient } = mockedGenerateClient([
+        { data: { listModels: { items: [] } } },
+      ]);
+      const client = generateClient<Schema>();
+      await client.models.Model.list();
+
+      expectSelectionSetContains(spy, ['owner']);
+    });
+  });
+
+  describe('A hasOne parent with implicit FK', () => {
+    const schema = a
+      .schema({
+        Parent: a.model({
+          content: a.string(),
+          child: a.hasOne('Child'),
+        }),
+        Child: a.model({
+          content: a.string(),
+        }),
+      })
+      .authorization([a.allow.public()]);
+    type Schema = ClientSchema<typeof schema>;
+
+    afterEach(() => {
+      jest.clearAllMocks();
+    });
+
+    test('the client schema type has a owner?: string und fields', () => {
+      type _ownerStringIsPresent = Expect<
+        Equal<string | undefined, Schema['Parent']['parentChildId']>
+      >;
+    });
+
+    test('the generated graphql schema contains `owner: String`', async () => {
+      const graphqlSchema = schema.transform().schema;
+      expectSchemaModelContains({
+        schema: graphqlSchema,
+        model: 'Parent',
+        field: 'parentChildId',
+        type: 'ID',
+        isArray: false,
+        isRequired: false,
+      });
+    });
+
+    test('the generated modelIntrospection schema contains `parentChildId`', async () => {
+      const { modelIntrospection } = await buildAmplifyConfig(schema);
+      expect(
+        modelIntrospection.models['Parent']['fields']['parentChildId'],
+      ).toEqual(
+        expect.objectContaining({
+          isArray: false,
+          isRequired: false,
+          name: 'parentChildId',
+          type: 'ID',
+        }),
+      );
+    });
+
+    test('the client includes `parentChildId` in selection sets', async () => {
+      const config = await buildAmplifyConfig(schema);
+      Amplify.configure(config);
+      const { spy, generateClient } = mockedGenerateClient([
+        { data: { listModels: { items: [] } } },
+      ]);
+      const client = generateClient<Schema>();
+      await client.models.Parent.list();
+
+      expectSelectionSetContains(spy, ['parentChildId']);
+    });
+  });
 
   // test('hasOne-belongsTo FK', async () => {});
 
