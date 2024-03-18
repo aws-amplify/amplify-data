@@ -567,6 +567,7 @@ describe('schema auth rules', () => {
           .handler(a.handler.function('myFunc')),
         onLikePost: a
           .subscription()
+          .for(a.ref('likePost'))
           .returns(a.ref('Post'))
           .handler(a.handler.function('myFunc')),
       })
