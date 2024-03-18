@@ -467,6 +467,34 @@ describe('CustomOperation transform', () => {
         );
       });
 
+      test(`Custom subscription where .returns() doesn't match the 2nd mutation's return type`, () => {
+        const s = a
+          .schema({
+            Post: a.model({
+              title: a.string(),
+            }),
+
+            updatePostTitleAndReturn: a
+              .mutation()
+              .returns(a.string())
+              .handler(a.handler.function('updatePostTitleAndReturn')),
+
+            onLikePost: a
+              .subscription()
+              .for([
+                a.ref('Post').mutations(['create']), // returns Post; valid
+                a.ref('updatePostTitleAndReturn'), // returns string; invalid
+              ])
+              .returns(a.ref('Post'))
+              .handler(a.handler.function('myFunc')),
+          })
+          .authorization([a.allow.public()]);
+
+        expect(() => s.transform()).toThrow(
+          'Invalid subscription definition. Subscription return type must match the return type of the mutation triggering it',
+        );
+      });
+
       test(`Custom subscription where .returns() matches referenced custom operation's scalar return type`, () => {
         const s = a
           .schema({
