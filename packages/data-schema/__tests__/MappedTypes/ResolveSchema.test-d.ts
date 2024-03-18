@@ -242,7 +242,19 @@ describe('ResolveSchema Mapped Type', () => {
         title: a.string(),
       }),
 
-      onLikePost: a.subscription().returns(a.ref('Post')),
+      likePost: a
+        .mutation()
+        .handler(
+          a.handler.custom({
+            entry: './likePost.js',
+            dataSource: a.ref('Post'),
+          }),
+        )
+        .authorization([a.allow.private()]),
+
+      onUpdateOrLikePost: a
+        .subscription()
+        .for([a.ref('Post').mutations(['update']), a.ref('likePost')]),
     });
 
     type Resolved = ResolveSchema<typeof s>;

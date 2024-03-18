@@ -221,7 +221,7 @@ type Query {
 }
 
 type Subscription {
-  onLikePost: Post @function(name: "myFunc") @auth(rules: [{allow: owner, ownerField: "owner"}])
+  onLikePost: Post @function(name: "myFunc") @aws_subscribe(mutations: ["likePost"]) @auth(rules: [{allow: owner, ownerField: "owner"}])
 }",
 }
 `;

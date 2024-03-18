@@ -40,6 +40,7 @@ describe('CustomOperation transform', () => {
             .handler(a.handler.function('myFunc')),
           onLikePost: a
             .subscription()
+            .for(a.ref('likePost'))
             .returns(a.ref('Post'))
             .handler(a.handler.function('myFunc')),
         })
@@ -64,8 +65,9 @@ describe('CustomOperation transform', () => {
             .query()
             .returns(a.ref('Post').array())
             .handler(a.handler.function('myFunc')),
-          onLikePost: a
+          onCreatePost: a
             .subscription()
+            .for(a.ref('Post').mutations(['create']))
             .returns(a.ref('Post'))
             .handler(a.handler.function('myFunc')),
         })
@@ -90,8 +92,9 @@ describe('CustomOperation transform', () => {
             .query()
             .returns(a.ref('PostCustomType').array())
             .handler(a.handler.function('myFunc')),
-          onLikePost: a
+          onCreatePost: a
             .subscription()
+            .for(a.ref('listPosts'))
             .returns(a.ref('PostCustomType'))
             .handler(a.handler.function('myFunc')),
         })
@@ -266,6 +269,168 @@ describe('CustomOperation transform', () => {
         expect(result).toMatchSnapshot();
       });
     }
+
+    describe('custom subscriptions', () => {
+      test(`Custom subscription with model single mutation source`, () => {
+        const s = a
+          .schema({
+            Post: a.model({
+              title: a.string(),
+            }),
+
+            onCreatePost: a
+              .subscription()
+              .for(a.ref('Post').mutations(['create']))
+              .returns(a.ref('Post'))
+              .handler(a.handler.function('myFunc')),
+          })
+          .authorization([a.allow.public()]);
+
+        const result = s.transform().schema;
+
+        expect(result).toMatchSnapshot();
+      });
+
+      test(`Custom subscription with model multiple mutation sources`, () => {
+        const s = a
+          .schema({
+            Post: a.model({
+              title: a.string(),
+            }),
+
+            onAnyPostMutation: a
+              .subscription()
+              .for(a.ref('Post').mutations(['create', 'update', 'delete']))
+              .returns(a.ref('Post'))
+              .handler(a.handler.function('myFunc')),
+          })
+          .authorization([a.allow.public()]);
+
+        const result = s.transform().schema;
+
+        expect(result).toMatchSnapshot();
+      });
+
+      test(`Custom subscription with model ref, but no mutation source throws`, () => {
+        const s = a
+          .schema({
+            Post: a.model({
+              title: a.string(),
+            }),
+
+            onCreatePost: a
+              .subscription()
+              .for(a.ref('Post'))
+              .returns(a.ref('Post'))
+              .handler(a.handler.function('myFunc')),
+          })
+          .authorization([a.allow.public()]);
+
+        expect(() => s.transform()).toThrow(
+          'Invalid subscription definition. .mutations() modifier must be used with a Model ref subscription source',
+        );
+      });
+
+      test(`Custom subscription with custom mutation source`, () => {
+        const s = a
+          .schema({
+            Post: a.model({
+              title: a.string(),
+            }),
+
+            likePost: a
+              .mutation()
+              .arguments({ postId: a.string() })
+              .handler(a.handler.function('likePost'))
+              .returns(a.ref('Post')),
+
+            onLikePost: a
+              .subscription()
+              .for(a.ref('likePost'))
+              .returns(a.ref('Post'))
+              .handler(a.handler.function('myFunc')),
+          })
+          .authorization([a.allow.public()]);
+
+        const result = s.transform().schema;
+
+        expect(result).toMatchSnapshot();
+      });
+
+      test(`Custom subscription with Model source & custom mutation source`, () => {
+        const s = a
+          .schema({
+            Post: a.model({
+              title: a.string(),
+            }),
+
+            likePost: a
+              .mutation()
+              .arguments({ postId: a.string() })
+              .handler(a.handler.function('likePost'))
+              .returns(a.ref('Post')),
+
+            onLikeOrUpdatePost: a
+              .subscription()
+              .for([a.ref('likePost'), a.ref('Post').mutations(['update'])])
+              .returns(a.ref('Post'))
+              .handler(a.handler.function('myFunc')),
+          })
+          .authorization([a.allow.public()]);
+
+        const result = s.transform().schema;
+
+        expect(result).toMatchSnapshot();
+      });
+
+      test(`Custom subscription with custom query source throws`, () => {
+        const s = a
+          .schema({
+            Post: a.model({
+              title: a.string(),
+            }),
+
+            getLikedPosts: a
+              .query()
+              .handler(a.handler.function('likedPosts'))
+              .returns(a.ref('Post').array()),
+
+            onLikePost: a
+              .subscription()
+              .for(a.ref('getLikedPosts'))
+              .returns(a.ref('Post'))
+              .handler(a.handler.function('myFunc')),
+          })
+          .authorization([a.allow.public()]);
+
+        expect(() => s.transform()).toThrow(
+          'Invalid subscription definition. .for() can only reference a mutation.',
+        );
+      });
+
+      test(`Custom subscription without source throws`, () => {
+        const s = a
+          .schema({
+            Post: a.model({
+              title: a.string(),
+            }),
+
+            getLikedPosts: a
+              .query()
+              .handler(a.handler.function('likedPosts'))
+              .returns(a.ref('Post').array()),
+
+            onLikePost: a
+              .subscription()
+              .returns(a.ref('Post'))
+              .handler(a.handler.function('myFunc')),
+          })
+          .authorization([a.allow.public()]);
+
+        expect(() => s.transform()).toThrow('is missing a mutation source');
+      });
+    });
+
     describe('handlers', () => {
       describe('general validation', () => {
         test('handler with no auth throws', () => {
@@ -647,6 +812,7 @@ describe('CustomOperation transform', () => {
       s.addSubscriptions({
         onLikePost: a
           .subscription()
+          .for(a.ref('likePost'))
           .returns(a.ref('Post'))
           .handler(a.handler.function('myFunc')),
       });
@@ -670,8 +836,9 @@ describe('CustomOperation transform', () => {
           .returns(a.ref('Post'))
           .handler(a.handler.function('myFunc')),
         // @ts-expect-error
-        onLikePost: a
+        onCreatePost: a
           .subscription()
+          .for(a.ref('Post').mutations(['create']))
           .returns(a.ref('Post'))
           .handler(a.handler.function('myFunc')),
       });
@@ -685,6 +852,7 @@ describe('CustomOperation transform', () => {
         // @ts-expect-error
         onLikePost: a
           .subscription()
+          .for(a.ref('Post').mutations(['update']))
           .returns(a.ref('Post'))
           .handler(a.handler.function('myFunc')),
       });
@@ -726,6 +894,7 @@ describe('CustomOperation transform', () => {
           getLikedPost: a.query().returns(a.ref('Post')).function('myFunc'),
           onLikePost: a
             .subscription()
+            .for(a.ref('likePost'))
             .returns(a.ref('Post'))
             .function('myFunc'),
         })
@@ -752,6 +921,7 @@ describe('CustomOperation transform', () => {
             .function('myFunc'),
           onLikePost: a
             .subscription()
+            .for(a.ref('listPosts'))
             .returns(a.ref('Post'))
             .function('myFunc'),
         })
@@ -778,6 +948,7 @@ describe('CustomOperation transform', () => {
             .function('myFunc'),
           onLikePost: a
             .subscription()
+            .for(a.ref('listPosts'))
             .returns(a.ref('PostCustomType'))
             .function('myFunc'),
         })

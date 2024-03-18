@@ -289,6 +289,7 @@ function customOperationToGql(
   authorization: Authorization<any, any, any>[],
   isCustom = false,
   databaseType: DatabaseType,
+  getRefType: ReturnType<typeof getRefTypeForSchema>,
 ): {
   gqlField: string;
   models: [string, any][];
@@ -296,9 +297,11 @@ function customOperationToGql(
 } {
   const {
     arguments: fieldArgs,
+    typeName: opType,
     returnType,
     functionRef,
     handlers,
+    subscriptionSource,
   } = typeDef.data;
 
   let callSignature: string = typeName;
@@ -346,6 +349,27 @@ function customOperationToGql(
     )}) `;
   } else if (databaseType === 'sql' && handler && brand === 'sqlReference') {
     gqlHandlerContent = `@sql(reference: "${getHandlerData(handler)}") `;
+  }
+
+  if (opType === 'Subscription') {
+    const subscriptionSources = subscriptionSource
+      .flatMap((source: InternalRef) => {
+        const refTarget = source.data.link;
+        const { type } = getRefType(refTarget, typeName);
+
+        if (type === 'CustomOperation') {
+          return refTarget;
+        }
+
+        if (type === 'Model') {
+          return source.data.mutationOperations.map(
+            (op: string) => `${op}${refTarget}`,
+          );
+        }
+      })
+      .join('", "');
+
+    gqlHandlerContent += `@aws_subscribe(mutations: ["${subscriptionSources}"]) `;
   }
 
   const gqlField = `${callSignature}: ${returnTypeName} ${gqlHandlerContent}${authString}`;
@@ -1047,6 +1071,57 @@ const extractFunctionSchemaAccess = (
   return { schemaAuth, functionSchemaAccess };
 };
 
+type GetRef =
+  | {
+      type: 'Model';
+      def: InternalModel;
+    }
+  | { type: 'CustomOperation'; def: InternalCustom }
+  | {
+      type: 'CustomType';
+      def: {
+        data: CustomType<CustomTypeParamShape>;
+      };
+    }
+  | { type: 'Enum'; def: EnumType<any> };
+
+/**
+ * Returns a closure for retrieving reference type and definition from schema
+ */
+const getRefTypeForSchema = (schema: InternalSchema) => {
+  const getRefType = (source: string, target: string): GetRef => {
+    const typeDef = schema.data.types[source];
+
+    if (typeDef === undefined) {
+      throw new Error(
+        `Invalid ref. ${target} is referencing ${source} which is not defined in the schema`,
+      );
+    }
+
+    if (isInternalModel(typeDef)) {
+      return { type: 'Model', def: typeDef };
+    }
+
+    if (isCustomOperation(typeDef)) {
+      return { type: 'CustomOperation', def: typeDef };
+    }
+
+    if (isCustomType(typeDef)) {
+      return { type: 'CustomType', def: typeDef };
+    }
+
+    if (isEnumType(typeDef)) {
+      return { type: 'Enum', def: typeDef };
+    }
+
+    throw new Error(
+      `Invalid ref. ${target} is referencing ${source} which is neither a Model, Custom Operation, Custom Type, or Enum`,
+    );
+  };
+
+  return getRefType;
+};
+
 const schemaPreprocessor = (
   schema: InternalSchema,
 ): {
@@ -1078,6 +1153,8 @@ const schemaPreprocessor = (
   const { schemaAuth, functionSchemaAccess } = extractFunctionSchemaAccess(
     schema.data.authorization,
   );
+
+  const getRefType = getRefTypeForSchema(schema);
 
   for (const [typeName, typeDef] of topLevelTypes) {
     validateAuth(typeDef.data?.authorization);
@@ -1147,6 +1224,7 @@ const schemaPreprocessor = (
           typeName,
           mostRelevantAuthRules,
           databaseType,
+          getRefType,
         );
 
         lambdaFunctions = lambdaFunctionDefinition;
@@ -1283,8 +1361,14 @@ function validateCustomOperations(
   typeDef: InternalCustom,
   typeName: string,
   authRules: Authorization<any, any, any>[],
+  getRefType: ReturnType<typeof getRefTypeForSchema>,
 ) {
-  const { functionRef, handlers } = typeDef.data;
+  const {
+    functionRef,
+    handlers,
+    typeName: opType,
+    subscriptionSource,
+  } = typeDef.data;
 
   // TODO: remove `functionRef` after deprecating
   const handlerConfigured = functionRef !== null || handlers?.length;
@@ -1319,6 +1403,37 @@ function validateCustomOperations(
         `Field handlers must be of the same type. ${typeName} has been configured with ${configuredHandlersStr}`,
       );
     }
+  }
+
+  if (opType === 'Subscription') {
+    if (subscriptionSource.length < 1) {
+      throw new Error(
+        `${typeName} is missing a mutation source. Custom subscriptions must reference a mutation source via subscription().for(a.ref('ModelOrOperationName')) `,
+      );
+    }
+
+    subscriptionSource.forEach((source: InternalRef) => {
+      const sourceName = source.data.link;
+      const { type, def } = getRefType(sourceName, typeName);
+
+      if (type !== 'Model' && source.data.mutationOperations.length > 0) {
+        throw new Error(
+          `Invalid subscription definition. .mutations() modifier can only be used with a Model ref. ${typeName} is referencing ${type}`,
+        );
+      }
+
+      if (type === 'Model' && source.data.mutationOperations.length === 0) {
+        throw new Error(
+          `Invalid subscription definition. .mutations() modifier must be used with a Model ref subscription source. ${typeName} is referencing ${sourceName} without specifying a mutation`,
+        );
+      }
+
+      if (type === 'CustomOperation' && def.data.typeName !== 'Mutation') {
+        throw new Error(
+          `Invalid subscription definition. .for() can only reference a mutation. ${typeName} is referencing ${sourceName} which is a ${def.data.typeName}`,
+        );
+      }
+    });
   }
 }
 
@@ -1420,11 +1535,12 @@ function transformCustomOperations(
   typeName: string,
   authRules: Authorization<any, any, any>[],
   databaseType: DatabaseType,
+  getRefType: ReturnType<typeof getRefTypeForSchema>,
 ) {
   const { typeName: opType, handlers } = typeDef.data;
   let jsFunctionForField: JsResolver | undefined = undefined;
 
-  validateCustomOperations(typeDef, typeName, authRules);
+  validateCustomOperations(typeDef, typeName, authRules, getRefType);
 
   if (isCustomHandler(handlers)) {
     jsFunctionForField = handleCustom(handlers, opType, typeName);
@@ -1438,6 +1554,7 @@ function transformCustomOperations(
     authRules,
     isCustom,
     databaseType,
+    getRefType,
   );
 
   return { gqlField, models, jsFunctionForField, lambdaFunctionDefinition };

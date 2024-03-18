@@ -11,6 +11,7 @@ type RefTypeData = {
   valueRequired: boolean;
   array: boolean;
   arrayRequired: boolean;
+  mutationOperations: MutationOperations[];
   authorization: Authorization<any, any, any>[];
 };
 
@@ -22,6 +23,8 @@ export type RefTypeParamShape = {
   arrayRequired: boolean;
   authorization: Authorization<any, any, any>[];
 };
+
+type MutationOperations = 'create' | 'update' | 'delete';
 
 export type RefType<
   T extends RefTypeParamShape,
@@ -56,6 +59,8 @@ export type RefType<
     authorization<AuthRuleType extends Authorization<any, any, any>>(
       rules: AuthRuleType[],
     ): RefType<T, K | 'authorization', AuthRuleType>;
+
+    mutations(operations: MutationOperations[]): RefType<T, K | 'mutations'>;
   },
   K
 > & {
@@ -84,6 +89,7 @@ function _ref<T extends RefTypeParamShape>(link: T['link']) {
     valueRequired: false,
     array: false,
     arrayRequired: false,
+    mutationOperations: [],
     authorization: [],
   };
 
@@ -105,6 +111,10 @@ function _ref<T extends RefTypeParamShape>(link: T['link']) {
     authorization(rules: Authorization<any, any, any>[]) {
       data.authorization = rules;
 
+      return this;
+    },
+    mutations(operations: MutationOperations[]) {
+      data.mutationOperations = operations;
       return this;
     },
   });
