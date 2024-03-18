@@ -1,5 +1,11 @@
 # @aws-amplify/data-schema
 
+## 0.13.18
+
+### Patch Changes
+
+- df1df38: add custom subscriptions
+
 ## 0.13.17
 
 ### Patch Changes
