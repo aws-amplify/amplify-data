@@ -429,6 +429,22 @@ describe('CustomOperation transform', () => {
 
         expect(() => s.transform()).toThrow('is missing a mutation source');
       });
+
+      test(`Custom subscription referencing nonexistent type throws`, () => {
+        const s = a
+          .schema({
+            onLikePost: a
+              .subscription()
+              .for(a.ref('Post').mutations(['create']))
+              .returns(a.ref('Post'))
+              .handler(a.handler.function('myFunc')),
+          })
+          .authorization([a.allow.public()]);
+
+        expect(() => s.transform()).toThrow(
+          'Invalid ref. onLikePost is referencing Post which is not defined in the schema',
+        );
+      });
     });
 
     describe('handlers', () => {
