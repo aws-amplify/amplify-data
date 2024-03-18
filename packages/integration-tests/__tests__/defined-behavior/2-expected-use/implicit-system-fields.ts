@@ -12,14 +12,15 @@ import {
 } from '../../utils';
 
 /**
- * Defining implicit field handling end-to-end.
+ * Defining implicit FK field handling end-to-end.
  *
- * ALL implicit field handling behavior should be defined in full here:
+ * ALL implicit FK field handling behavior should be defined in full here:
  *
- * 1. PK
- * 2. Timestamps
- * 3. Foreign Keys
- * 4.
+ * 1. hasOne
+ * 2. hasOne-belongsTo
+ * 3. hasMany
+ * 4. hasMany-BelongsTo
+ * 5. manyToMany
  *
  * At this level of testing, it may be unexpected that we care how the graphql and
  * modelIntrospection schema represent these fields, but some of these intermediate artifacts
@@ -36,7 +37,7 @@ import {
  * comprehension more than it helps, we'll fall back to snapshots.
  */
 
-describe('Implicit Field Handling. Given:', () => {
+describe('Implicit System Field Handling. Given:', () => {
   describe('A model with no explicit PK', () => {
     const schema = a
       .schema({
@@ -269,73 +270,4 @@ describe('Implicit Field Handling. Given:', () => {
       expectSelectionSetContains(spy, ['owner']);
     });
   });
-
-  describe('A hasOne parent with implicit FK', () => {
-    const schema = a
-      .schema({
-        Parent: a.model({
-          content: a.string(),
-          child: a.hasOne('Child'),
-        }),
-        Child: a.model({
-          content: a.string(),
-        }),
-      })
-      .authorization([a.allow.public()]);
-    type Schema = ClientSchema<typeof schema>;
-
-    afterEach(() => {
-      jest.clearAllMocks();
-    });
-
-    test('the client schema type has a owner?: string und fields', () => {
-      type _ownerStringIsPresent = Expect<
-        Equal<string | undefined, Schema['Parent']['parentChildId']>
-      >;
-    });
-
-    test('the generated graphql schema contains `owner: String`', async () => {
-      const graphqlSchema = schema.transform().schema;
-      expectSchemaModelContains({
-        schema: graphqlSchema,
-        model: 'Parent',
-        field: 'parentChildId',
-        type: 'ID',
-        isArray: false,
-        isRequired: false,
-      });
-    });
-
-    test('the generated modelIntrospection schema contains `parentChildId`', async () => {
-      const { modelIntrospection } = await buildAmplifyConfig(schema);
-      expect(
-        modelIntrospection.models['Parent']['fields']['parentChildId'],
-      ).toEqual(
-        expect.objectContaining({
-          isArray: false,
-          isRequired: false,
-          name: 'parentChildId',
-          type: 'ID',
-        }),
-      );
-    });
-
-    test('the client includes `parentChildId` in selection sets', async () => {
-      const config = await buildAmplifyConfig(schema);
-      Amplify.configure(config);
-      const { spy, generateClient } = mockedGenerateClient([
-        { data: { listModels: { items: [] } } },
-      ]);
-      const client = generateClient<Schema>();
-      await client.models.Parent.list();
-
-      expectSelectionSetContains(spy, ['parentChildId']);
-    });
-  });
-
-  // test('hasOne-belongsTo FK', async () => {});
-
-  // test('hasMany FK', async () => {});
-
-  // test('hasMany-belongsTo FK', async () => {});
 });
