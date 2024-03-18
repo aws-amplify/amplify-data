@@ -1,7 +1,13 @@
 import { a, ClientSchema } from '@aws-amplify/data-schema';
 import { Expect, Equal } from '@aws-amplify/data-schema-types';
 import { Amplify } from 'aws-amplify';
-import { buildAmplifyConfig, mockedGenerateClient } from '../../utils';
+import {
+  buildAmplifyConfig,
+  mockedGenerateClient,
+  optionsAndHeaders,
+  parseQuery,
+  expectSelectionSetContains,
+} from '../../utils';
 
 /**
  * Defining implicit field handling end-to-end.
@@ -38,6 +44,10 @@ describe('Implicit Field Handling. Given:', () => {
       })
       .authorization([a.allow.public()]);
     type Schema = ClientSchema<typeof schema>;
+
+    afterEach(() => {
+      jest.clearAllMocks();
+    });
 
     test('the client schema type has a default `id: string`', () => {
       type _IdStringIsPresent = Expect<Equal<string, Schema['Model']['id']>>;
@@ -78,26 +88,28 @@ describe('Implicit Field Handling. Given:', () => {
 
       const client = generateClient<Schema>();
 
-      // OK
+      // Allowed
       await client.models.Model.get({ id: 'asdf' });
       await client.models.Model.delete({ id: 'asdf' });
 
-      // Not OK
-
+      // Disallowed (but notably no *runtime* exception for this currently)
       // @ts-expect-error
       await client.models.Model.get({});
-
       // @ts-expect-error
       await client.models.Model.delete({});
     });
 
-    // test('the client includes `id` in selection sets', async () => {
-    //   const config = await buildAmplifyConfig(schema);
-    //   Amplify.configure(config);
-    //   const { spy, generateClient } = mockedGenerateClient([{ data: {} }]);
-    //   const client = generateClient<Schema>();
-    //   await client.models.Model.list();
-    // });
+    test('the client includes `id` in selection sets', async () => {
+      const config = await buildAmplifyConfig(schema);
+      Amplify.configure(config);
+      const { spy, generateClient } = mockedGenerateClient([
+        { data: { listModels: { items: [] } } },
+      ]);
+      const client = generateClient<Schema>();
+      await client.models.Model.list();
+
+      expectSelectionSetContains(spy, ['id']);
+    });
   });
 
   describe('A model with no explicit timestamp fields', () => {
