@@ -95,7 +95,7 @@ describe('CustomOperation transform', () => {
           onCreatePost: a
             .subscription()
             .for(a.ref('listPosts'))
-            .returns(a.ref('PostCustomType'))
+            .returns(a.ref('PostCustomType').array())
             .handler(a.handler.function('myFunc')),
         })
         .authorization([a.allow.public()]);
@@ -444,6 +444,48 @@ describe('CustomOperation transform', () => {
         expect(() => s.transform()).toThrow(
           'Invalid ref. onLikePost is referencing Post which is not defined in the schema',
         );
+      });
+
+      // TODO: remove test after we remove .returns() from custom subscriptions
+      test(`Custom subscription where .returns() doesn't match mutation's return type`, () => {
+        const s = a
+          .schema({
+            Post: a.model({
+              title: a.string(),
+            }),
+
+            onLikePost: a
+              .subscription()
+              .for(a.ref('Post').mutations(['create']))
+              .returns(a.string())
+              .handler(a.handler.function('myFunc')),
+          })
+          .authorization([a.allow.public()]);
+
+        expect(() => s.transform()).toThrow(
+          'Invalid subscription definition. Subscription return type must match the return type of the mutation triggering it',
+        );
+      });
+
+      test(`Custom subscription where .returns() matches referenced custom operation's scalar return type`, () => {
+        const s = a
+          .schema({
+            likePost: a
+              .mutation()
+              .returns(a.string())
+              .handler(a.handler.function('likePost')),
+
+            onLikePost: a
+              .subscription()
+              .for(a.ref('likePost'))
+              .returns(a.string())
+              .handler(a.handler.function('onLikePost')),
+          })
+          .authorization([a.allow.public()]);
+
+        const result = s.transform().schema;
+
+        expect(result).toMatchSnapshot();
       });
     });
 
@@ -938,7 +980,7 @@ describe('CustomOperation transform', () => {
           onLikePost: a
             .subscription()
             .for(a.ref('listPosts'))
-            .returns(a.ref('Post'))
+            .returns(a.ref('Post').array())
             .function('myFunc'),
         })
         .authorization([a.allow.public()]);
@@ -965,7 +1007,7 @@ describe('CustomOperation transform', () => {
           onLikePost: a
             .subscription()
             .for(a.ref('listPosts'))
-            .returns(a.ref('PostCustomType'))
+            .returns(a.ref('PostCustomType').array())
             .function('myFunc'),
         })
         .authorization([a.allow.public()]);

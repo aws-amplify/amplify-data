@@ -49,7 +49,7 @@ type Query {
 }
 
 type Subscription {
-  onLikePost: PostCustomType @function(name: "myFunc") @aws_subscribe(mutations: ["listPosts"]) @auth(rules: [{allow: public}])
+  onLikePost: [PostCustomType] @function(name: "myFunc") @aws_subscribe(mutations: ["listPosts"]) @auth(rules: [{allow: public}])
 }"
 `;
 
@@ -71,7 +71,7 @@ type Query {
 }
 
 type Subscription {
-  onLikePost: Post @function(name: "myFunc") @aws_subscribe(mutations: ["listPosts"]) @auth(rules: [{allow: public}])
+  onLikePost: [Post] @function(name: "myFunc") @aws_subscribe(mutations: ["listPosts"]) @auth(rules: [{allow: public}])
 }"
 `;
 
@@ -239,7 +239,7 @@ type Query {
 }
 
 type Subscription {
-  onCreatePost: PostCustomType @function(name: "myFunc") @aws_subscribe(mutations: ["listPosts"]) @auth(rules: [{allow: public}])
+  onCreatePost: [PostCustomType] @function(name: "myFunc") @aws_subscribe(mutations: ["listPosts"]) @auth(rules: [{allow: public}])
 }"
 `;
 
@@ -262,6 +262,16 @@ type Query {
 
 type Subscription {
   onCreatePost: Post @function(name: "myFunc") @aws_subscribe(mutations: ["createPost"]) @auth(rules: [{allow: public}])
+}"
+`;
+
+exports[`CustomOperation transform dynamo schema custom subscriptions Custom subscription where .returns() matches referenced custom operation's scalar return type 1`] = `
+"type Mutation {
+  likePost: String @function(name: "likePost") @auth(rules: [{allow: public}])
+}
+
+type Subscription {
+  onLikePost: String @function(name: "onLikePost") @aws_subscribe(mutations: ["likePost"]) @auth(rules: [{allow: public}])
 }"
 `;
 

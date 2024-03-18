@@ -1368,6 +1368,7 @@ function validateCustomOperations(
     handlers,
     typeName: opType,
     subscriptionSource,
+    returnType,
   } = typeDef.data;
 
   // TODO: remove `functionRef` after deprecating
@@ -1432,6 +1433,59 @@ function validateCustomOperations(
         throw new Error(
           `Invalid subscription definition. .for() can only reference a mutation. ${typeName} is referencing ${sourceName} which is a ${def.data.typeName}`,
         );
+      }
+
+      // Ensure subscription return type matches the return type of triggering mutation(s)
+
+      // TODO: when we remove .returns() for custom subscriptions, minor changes will be needed here. Instead of comparing subscriptionSource return val
+      //  to a root returnType, we'll need to ensure that each subscriptionSource has the same return type
+      if (returnType.data.type === 'ref') {
+        const returnTypeName = returnType.data.link;
+
+        if (type === 'Model') {
+          if (
+            returnTypeName !== sourceName ||
+            returnType.data.array !== source.data.array
+          ) {
+            throw new Error(
+              `Invalid subscription definition. Subscription return type must match the return type of the mutation triggering it. ${typeName} is referencing ${sourceName} which has a different return type`,
+            );
+          }
+        }
+
+        if (type === 'CustomOperation') {
+          const customOperationReturnType = def.data.returnType.data.link;
+          const customOperationReturnTypeArray = def.data.returnType.data.array;
+
+          if (
+            returnTypeName !== customOperationReturnType ||
+            returnType.data.array !== customOperationReturnTypeArray
+          ) {
+            throw new Error(
+              `Invalid subscription definition. Subscription return type must match the return type of the mutation triggering it. ${typeName} is referencing ${sourceName} which has a different return type`,
+            );
+          }
+        }
+      } else if (returnType.data.fieldType !== undefined) {
+        if (type === 'Model') {
+          throw new Error(
+            `Invalid subscription definition. Subscription return type must match the return type of the mutation triggering it. ${typeName} is referencing ${sourceName} which has a different return type`,
+          );
+        }
+
+        if (type === 'CustomOperation') {
+          const customOperationReturnType = def.data.returnType.data.fieldType;
+          const customOperationReturnTypeArray = def.data.returnType.data.array;
+
+          if (
+            returnType.data.fieldType !== customOperationReturnType ||
+            returnType.data.array !== customOperationReturnTypeArray
+          ) {
+            throw new Error(
+              `Invalid subscription definition. Subscription return type must match the return type of the mutation triggering it. ${typeName} is referencing ${sourceName} which has a different return type`,
+            );
+          }
+        }
       }
     });
   }
