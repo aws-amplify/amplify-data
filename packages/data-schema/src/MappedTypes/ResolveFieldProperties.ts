@@ -6,7 +6,7 @@ import type {
 import type { Authorization, ImpliedAuthFields } from '../Authorization';
 import type { ModelField } from '../ModelField';
 import type { ModelType, ModelTypeParamShape } from '../ModelType';
-import type { ModelSchema } from '../ModelSchema';
+import type { GenericModelSchema } from '../ModelSchema';
 import type {
   ModelRelationalField,
   ModelRelationalFieldParamShape,
@@ -30,7 +30,7 @@ import type {
 } from '../CustomOperation';
 
 export type ResolveFieldProperties<
-  Schema extends ModelSchema<any, any>,
+  Schema extends GenericModelSchema<any>,
   NonModelTypes extends NonModelTypesShape,
   ImplicitModelsSchema,
   ResolvedSchema = ResolveSchema<Schema>,
@@ -53,6 +53,26 @@ export type ResolveFieldProperties<
   FilterFieldTypes<MarkModelsNullableFieldsOptional<FieldsWithRelationships>>,
   FilterFieldTypes<ModelImpliedAuthFields<Schema>>,
   AllImpliedFKs<ResolvedSchema, IdentifierMeta>
+>;
+
+export type ResolveStaticFieldProperties<
+  Schema extends GenericModelSchema<any>,
+  NonModelTypes extends NonModelTypesShape,
+  ImplicitModelsSchema,
+  ResolvedSchema = ResolveSchema<Schema>,
+  FieldsWithInjectedImplicitFields = InjectImplicitModelFields<
+    ResolvedSchema & ImplicitModelsSchema,
+    object
+  >,
+  FieldsWithRelationships = ResolveRelationships<
+    FieldsWithInjectedImplicitFields,
+    NonModelTypes
+  >,
+> = Intersection<
+  FilterFieldTypes<
+    MarkModelsNonNullableFieldsRequired<FieldsWithRelationships>
+  >,
+  FilterFieldTypes<MarkModelsNullableFieldsOptional<FieldsWithRelationships>>
 >;
 
 export type CreateImplicitModelsFromRelations<Schema> = UnionToIntersection<
@@ -229,7 +249,7 @@ type Intersection<
 
 // TODO: this should probably happen in InjectImplicitModelFields instead. Keeping here for now to reduce refactor
 // blast radius
-export type ModelImpliedAuthFields<Schema extends ModelSchema<any, any>> = {
+export type ModelImpliedAuthFields<Schema extends GenericModelSchema<any>> = {
   [ModelKey in keyof Schema['data']['types'] as Schema['data']['types'][ModelKey] extends EnumType<EnumTypeParamShape>
     ? never
     : Schema['data']['types'][ModelKey] extends CustomType<CustomTypeParamShape>
@@ -248,7 +268,7 @@ export type ModelImpliedAuthFields<Schema extends ModelSchema<any, any>> = {
 };
 
 type AllAuthFieldsForModel<
-  Schema extends ModelSchema<any, any>,
+  Schema extends GenericModelSchema<any>,
   Model extends Schema['data']['types'][keyof Schema['data']['types']],
 > = (Model['authorization'][number] extends never
   ? Schema['data']['authorization'][number] extends never

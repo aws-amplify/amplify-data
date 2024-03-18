@@ -21,6 +21,15 @@ import type {
 } from './CustomOperation';
 import { processSchema } from './SchemaProcessor';
 import { SchemaAuthorization } from './Authorization';
+import { Brand, brand } from './util';
+
+export const rdsSchemaBrandName = 'RDSSchema';
+export const rdsSchemaBrand = brand(rdsSchemaBrandName);
+export type RDSSchemaBrand = Brand<typeof rdsSchemaBrandName>;
+
+export const ddbSchemaBrandName = 'DDBSchema';
+const ddbSchemaBrand = brand(ddbSchemaBrandName);
+export type DDBSchemaBrand = Brand<typeof ddbSchemaBrandName>;
 
 type SchemaContent =
   | ModelType<ModelTypeParamShape, any>
@@ -74,7 +83,7 @@ export type ModelSchemaParamShape = {
   configuration: SchemaConfig<any, any>;
 };
 
-export type SQLModelSchemaParamShape = ModelSchemaParamShape & {
+export type RDSModelSchemaParamShape = ModelSchemaParamShape & {
   setSqlStatementFolderPath?: string;
 };
 
@@ -85,6 +94,19 @@ export type InternalSchema = {
     configuration: SchemaConfig<any, any>;
   };
 };
+
+type BaseSchema<T extends ModelSchemaParamShape> = {
+  data: T;
+  models: {
+    [TypeKey in keyof T['types']]: T['types'][TypeKey] extends ModelType<ModelTypeParamShape>
+      ? SchemaModelType<T['types'][TypeKey]>
+      : never;
+  };
+  transform: () => DerivedApiDefinition;
+};
+
+export type GenericModelSchema<T extends ModelSchemaParamShape> =
+  BaseSchema<T> & Brand<string>;
 
 export type ModelSchema<
   T extends ModelSchemaParamShape,
@@ -99,43 +121,46 @@ export type ModelSchema<
     >;
   },
   UsedMethods
-> & {
-  data: T;
-  models: {
-    [TypeKey in keyof T['types']]: T['types'][TypeKey] extends ModelType<ModelTypeParamShape>
-      ? SchemaModelType<T['types'][TypeKey]>
-      : never;
-  };
-  transform: () => DerivedApiDefinition;
-};
+> &
+  BaseSchema<T> &
+  DDBSchemaBrand;
 
-type SQLModelSchemaFunctions =
+type RDSModelSchemaFunctions =
   | 'setSqlStatementFolderPath'
   | 'addQueries'
   | 'addMutations'
-  | 'addSubscriptions';
+  | 'addSubscriptions'
+  | 'authorization';
 
-export type SQLModelSchema<
-  T extends SQLModelSchemaParamShape,
-  UsedMethods extends 'authorization' | SQLModelSchemaFunctions = never,
-> = ModelSchema<T, Exclude<UsedMethods, SQLModelSchemaFunctions>> &
-  Omit<
-    {
-      setSqlStatementFolderPath: (
-        path: string,
-      ) => SQLModelSchema<T, UsedMethods | 'setSqlStatementFolderPath'>;
-      addQueries: (
-        types: Record<string, QueryCustomOperation>,
-      ) => SQLModelSchema<T, UsedMethods | 'addQueries'>;
-      addMutations: (
-        types: Record<string, MutationCustomOperation>,
-      ) => SQLModelSchema<T, UsedMethods | 'addMutations'>;
-      addSubscriptions: (
-        types: Record<string, SubscriptionCustomOperation>,
-      ) => SQLModelSchema<T, UsedMethods | 'addSubscriptions'>;
-    },
-    UsedMethods
-  >;
+export type RDSModelSchema<
+  T extends RDSModelSchemaParamShape,
+  UsedMethods extends RDSModelSchemaFunctions = never,
+> = Omit<
+  {
+    setSqlStatementFolderPath: (
+      path: string,
+    ) => RDSModelSchema<T, UsedMethods | 'setSqlStatementFolderPath'>;
+    addQueries: (
+      types: Record<string, QueryCustomOperation>,
+    ) => RDSModelSchema<T, UsedMethods | 'addQueries'>;
+    addMutations: (
+      types: Record<string, MutationCustomOperation>,
+    ) => RDSModelSchema<T, UsedMethods | 'addMutations'>;
+    addSubscriptions: (
+      types: Record<string, SubscriptionCustomOperation>,
+    ) => RDSModelSchema<T, UsedMethods | 'addSubscriptions'>;
+    authorization: <AuthRules extends SchemaAuthorization<any, any, any>>(
+      auth: AuthRules[],
+    ) => RDSModelSchema<
+      SetTypeSubArg<T, 'authorization', AuthRules[]>,
+      UsedMethods | 'authorization'
+    > &
+      RDSSchemaBrand;
+  },
+  UsedMethods
+> &
+  BaseSchema<T> &
+  RDSSchemaBrand;
 
 /**
  * Amplify API Next Model Schema shape
@@ -175,11 +200,27 @@ export const isModelSchema = (
   return typeof schema === 'object' && schema.data !== undefined;
 };
 
-function _sqlSchemaExtension<T extends SQLModelSchemaParamShape>(
-  schema: ModelSchema<T>,
-): SQLModelSchema<T> {
+function _rdsSchema<
+  T extends RDSModelSchemaParamShape,
+  DSC extends SchemaConfig<any, any>,
+>(types: T['types'], config: DSC): RDSModelSchema<T> {
+  const data: RDSModelSchemaParamShape = {
+    types,
+    authorization: [],
+    configuration: config,
+  };
   return {
-    ...schema,
+    data,
+    transform(): DerivedApiDefinition {
+      const internalSchema: InternalSchema = { data } as InternalSchema;
+
+      return processSchema({ schema: internalSchema });
+    },
+    authorization(rules: any): any {
+      this.data.authorization = rules;
+      const { authorization: _, ...rest } = this;
+      return rest;
+    },
     setSqlStatementFolderPath(path: string): any {
       this.data.setSqlStatementFolderPath = path;
       const { setSqlStatementFolderPath: _, ...rest } = this;
@@ -200,10 +241,11 @@ function _sqlSchemaExtension<T extends SQLModelSchemaParamShape>(
       const { addSubscriptions: _, ...rest } = this;
       return rest;
     },
-  };
+    ...rdsSchemaBrand,
+  } as RDSModelSchema<T>;
 }
 
-function _baseSchema<
+function _ddbSchema<
   T extends ModelSchemaParamShape,
   DSC extends SchemaConfig<any, any>,
 >(types: T['types'], config: DSC) {
@@ -225,6 +267,7 @@ function _baseSchema<
       return rest;
     },
     models: filterSchemaModelTypes(data.types),
+    ...ddbSchemaBrand,
   } as ModelSchema<T>;
 }
 
@@ -233,7 +276,7 @@ type SchemaReturnType<
   Types extends ModelSchemaContents,
 > = DE extends 'dynamodb'
   ? ModelSchema<{ types: Types; authorization: []; configuration: any }>
-  : SQLModelSchema<{ types: Types; authorization: []; configuration: any }>;
+  : RDSModelSchema<{ types: Types; authorization: []; configuration: any }>;
 
 function bindConfigToSchema<DE extends DatasourceEngine>(
   config: SchemaConfig<DE, DatasourceConfig<DE>>,
@@ -243,8 +286,8 @@ function bindConfigToSchema<DE extends DatasourceEngine>(
   return (types) => {
     return (
       config.database.engine === 'dynamodb'
-        ? _baseSchema(types, config)
-        : _sqlSchemaExtension(_baseSchema(types, config))
+        ? _ddbSchema(types, config)
+        : _rdsSchema(types, config)
     ) as SchemaReturnType<DE, any>;
   };
 }
