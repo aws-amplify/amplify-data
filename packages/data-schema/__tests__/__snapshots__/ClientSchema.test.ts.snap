@@ -22,6 +22,24 @@ type Query {
 }"
 `;
 
+exports[`custom operations for an rds schema can define public auth with no provider 1`] = `
+"type A @model @auth(rules: [{allow: public}])
+{
+  field: String
+}"
+`;
+
+exports[`custom operations for an rds schema custom operations custom query 1`] = `
+"type EchoResult 
+{
+  resultContent: String
+}
+
+type Query {
+  echo(inputContent: String!): EchoResult @function(name: "echoFunction") @auth(rules: [{allow: public}])
+}"
+`;
+
 exports[`schema auth rules allows custom 1`] = `
 {
   "functionSchemaAccess": [],
@@ -221,7 +239,7 @@ type Query {
 }
 
 type Subscription {
-  onLikePost: Post @function(name: "myFunc") @auth(rules: [{allow: owner, ownerField: "owner"}])
+  onLikePost: Post @function(name: "myFunc") @aws_subscribe(mutations: ["likePost"]) @auth(rules: [{allow: owner, ownerField: "owner"}])
 }",
 }
 `;

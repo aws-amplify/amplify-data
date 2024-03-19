@@ -1,4 +1,4 @@
-import type { ModelSchema } from '../ModelSchema';
+import type { GenericModelSchema } from '../ModelSchema';
 import type { NonModelTypesShape } from './ExtractNonModelTypes';
 import type {
   CustomOperation,
@@ -16,7 +16,7 @@ import type { AppSyncResolverHandler } from 'aws-lambda';
  * Creates meta types for custom operations from a schema.
  */
 export type ResolveCustomOperations<
-  Schema extends ModelSchema<any, any>,
+  Schema extends GenericModelSchema<any>,
   FullyResolvedSchema extends Record<string, unknown>,
   NonModelTypes extends NonModelTypesShape,
 > = {
@@ -38,7 +38,7 @@ export type ResolveCustomOperations<
 /**
  * Filtered, mapped list of custom operations shapes from a schema.
  */
-export type CustomOpShapes<Schema extends ModelSchema<any, any>> = {
+export type CustomOpShapes<Schema extends GenericModelSchema<any>> = {
   [K in keyof Schema['data']['types'] as Schema['data']['types'][K] extends CustomOperation<
     any,
     any
