@@ -38,3 +38,9 @@ export type CustomMutations<
   _Context extends string = 'CLIENT',
   _ModelMeta extends Record<any, any> = ExtractModelMeta<Schema>,
 > = any;
+
+export type CustomSubscriptions<
+  Schema extends Record<any, any>,
+  _Context extends string = 'CLIENT',
+  _ModelMeta extends Record<any, any> = ExtractModelMeta<Schema>,
+> = any;
