@@ -13,15 +13,12 @@ import {
 } from '../../utils';
 
 /**
- * Defining implicit FK field handling end-to-end.
+ * Defining implicit system-level field handling end-to-end.
  *
- * ALL implicit FK field handling behavior should be defined in full here:
+ * ALL implicit field handling behavior should be defined in full here:
  *
- * 1. hasOne
- * 2. hasOne-belongsTo
- * 3. hasMany
- * 4. hasMany-BelongsTo
- * 5. manyToMany
+ * 1. PK
+ * 2. Timestamps
  *
  * At this level of testing, it may be unexpected that we care how the graphql and
  * modelIntrospection schema represent these fields, but some of these intermediate artifacts
