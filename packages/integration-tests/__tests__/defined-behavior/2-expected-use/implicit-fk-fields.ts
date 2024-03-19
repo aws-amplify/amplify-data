@@ -9,7 +9,18 @@ import {
   parseGraphqlSchema,
   expectSchemaModelContains,
   expectSelectionSetContains,
+  expectSelectionSetNotContains,
+  expectVariables,
 } from '../../utils';
+
+/**
+ * NOTE
+ *
+ * These scenarios have not been fully fleshed out, because I (wirej) discovered partway
+ * through enumeration that this DX is changing prior to GA anyway. I'm leaving the tests
+ * here for the initial rev in case they help provide a good jumping-off point for the
+ * final/GA DX.
+ */
 
 /**
  * Defining implicit system-level field handling end-to-end.
@@ -53,7 +64,7 @@ describe('Implicit System Field Handling. Given:', () => {
       jest.clearAllMocks();
     });
 
-    test('the client schema type has a owner?: string und fields', () => {
+    test('the client schema type has Parent -> Child FK field', () => {
       type _parentToChildFKStringIsPresent = Expect<
         Equal<string | undefined, Schema['Parent']['parentChildId']>
       >;
@@ -96,6 +107,29 @@ describe('Implicit System Field Handling. Given:', () => {
 
       expectSelectionSetContains(spy, ['parentChildId']);
     });
+
+    test('the client can filter on `parentChildId`', async () => {
+      const config = await buildAmplifyConfig(schema);
+      Amplify.configure(config);
+      const { spy, generateClient } = mockedGenerateClient([
+        { data: { listModels: { items: [] } } },
+      ]);
+      const client = generateClient<Schema>();
+      await client.models.Parent.list({
+        filter: {
+          parentChildId: {
+            eq: 'something',
+          },
+        },
+      });
+      expectVariables(spy, {
+        filter: {
+          parentChildId: {
+            eq: 'something',
+          },
+        },
+      });
+    });
   });
 
   describe('A hasOne parent + belongsTo child with implicit FKs', () => {
@@ -117,7 +151,7 @@ describe('Implicit System Field Handling. Given:', () => {
       jest.clearAllMocks();
     });
 
-    test('the client schema type has a owner?: string und fields', () => {
+    test('the client schema type has Parent <-> Child FK fields', () => {
       type _parentToChildFKStringIsPresent = Expect<
         Equal<string | undefined, Schema['Parent']['parentChildId']>
       >;
@@ -193,9 +227,150 @@ describe('Implicit System Field Handling. Given:', () => {
 
       expectSelectionSetContains(spy, ['childParentId']);
     });
+
+    test('the client can filter on `Parent.parentChildId`', async () => {
+      const config = await buildAmplifyConfig(schema);
+      Amplify.configure(config);
+      const { spy, generateClient } = mockedGenerateClient([
+        { data: { listModels: { items: [] } } },
+      ]);
+      const client = generateClient<Schema>();
+      await client.models.Parent.list({
+        filter: {
+          parentChildId: {
+            eq: 'something',
+          },
+        },
+      });
+      expectVariables(spy, {
+        filter: {
+          parentChildId: {
+            eq: 'something',
+          },
+        },
+      });
+    });
+
+    test('the client can filter on `Child.childParentId`', async () => {
+      const config = await buildAmplifyConfig(schema);
+      Amplify.configure(config);
+      const { spy, generateClient } = mockedGenerateClient([
+        { data: { listModels: { items: [] } } },
+      ]);
+      const client = generateClient<Schema>();
+      await client.models.Child.list({
+        filter: {
+          childParentId: {
+            eq: 'some-id',
+          },
+        },
+      });
+      expectVariables(spy, {
+        filter: {
+          childParentId: {
+            eq: 'some-id',
+          },
+        },
+      });
+    });
   });
 
-  // test('hasMany FK', async () => {});
+  describe('A hasMany parent with implicit FK', () => {
+    const schema = a
+      .schema({
+        Parent: a.model({
+          content: a.string(),
+          child: a.hasMany('Child'),
+        }),
+        Child: a.model({
+          content: a.string(),
+        }),
+      })
+      .authorization([a.allow.public()]);
+    type Schema = ClientSchema<typeof schema>;
+
+    afterEach(() => {
+      jest.clearAllMocks();
+    });
+
+    test('the client schema type has a Child -> Parent FK field', () => {
+      type _childToParentFKStringIsPresent = Expect<
+        Equal<string | undefined, Schema['Child']['parentChildId']>
+      >;
+    });
+
+    test('the generated graphql schema Child model contains `parentChildId: ID!`', async () => {
+      const graphqlSchema = schema.transform().schema;
+      expectSchemaModelContains({
+        schema: graphqlSchema,
+        model: 'Child',
+        field: 'parentChildId',
+        type: 'ID',
+        isArray: false,
+        isRequired: false,
+      });
+    });
+
+    test('the generated modelIntrospection schema contains `Parent.parentChildId`', async () => {
+      const { modelIntrospection } = await buildAmplifyConfig(schema);
+      expect(
+        modelIntrospection.models['Child']['fields']['parentChildId'],
+      ).toEqual(
+        expect.objectContaining({
+          isArray: false,
+          isRequired: false,
+          name: 'parentChildId',
+          type: 'ID',
+        }),
+      );
+    });
+
+    test('the client does not include `child` in Parent selection sets', async () => {
+      const config = await buildAmplifyConfig(schema);
+      Amplify.configure(config);
+      const { spy, generateClient } = mockedGenerateClient([
+        { data: { listModels: { items: [] } } },
+      ]);
+      const client = generateClient<Schema>();
+      await client.models.Child.list();
+
+      expectSelectionSetNotContains(spy, ['child']);
+    });
+
+    test('the client includes `parentChildId` in Child selection sets', async () => {
+      const config = await buildAmplifyConfig(schema);
+      Amplify.configure(config);
+      const { spy, generateClient } = mockedGenerateClient([
+        { data: { listModels: { items: [] } } },
+      ]);
+      const client = generateClient<Schema>();
+      await client.models.Child.list();
+
+      expectSelectionSetContains(spy, ['parentChildId']);
+    });
+
+    test('the client can filter Child on `parentChildId`', async () => {
+      const config = await buildAmplifyConfig(schema);
+      Amplify.configure(config);
+      const { spy, generateClient } = mockedGenerateClient([
+        { data: { listModels: { items: [] } } },
+      ]);
+      const client = generateClient<Schema>();
+      await client.models.Child.list({
+        filter: {
+          parentChildId: { eq: 'some-id' },
+        },
+      });
+      expectVariables(spy, {
+        filter: {
+          parentChildId: {
+            eq: 'some-id',
+          },
+        },
+      });
+    });
+  });
 
   // test('hasMany-belongsTo FK', async () => {});
+  // test('manyToMany', async () => {})
 });

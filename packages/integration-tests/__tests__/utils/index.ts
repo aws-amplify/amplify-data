@@ -209,6 +209,27 @@ export function expectSelectionSetContains(
   expect(fields.every((f) => selectionSet.includes(f))).toBe(true);
 }
 
+export function expectSelectionSetNotContains(
+  spy: jest.SpyInstance,
+  fields: string[],
+  requestIndex = 0,
+) {
+  const [options] = optionsAndHeaders(spy)[requestIndex];
+  const { query } = options;
+  const { selectionSet } = parseQuery(query);
+  expect(fields.every((f) => !selectionSet.includes(f))).toBe(true);
+}
+
+export function expectVariables(
+  spy: jest.SpyInstance,
+  expectedVariables: Record<string, any>,
+  requestIndex = 0,
+) {
+  const [options] = optionsAndHeaders(spy)[requestIndex];
+  const { variables } = options;
+  expect(variables).toEqual(expectedVariables);
+}
+
 export function parseGraphqlSchema(schema: string) {
   const ast = parse(schema);
   return ast;

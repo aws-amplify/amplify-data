@@ -9,6 +9,7 @@ import {
   parseGraphqlSchema,
   expectSchemaModelContains,
   expectSelectionSetContains,
+  expectVariables,
 } from '../../utils';
 
 /**
@@ -120,6 +121,25 @@ describe('Implicit System Field Handling. Given:', () => {
 
       expectSelectionSetContains(spy, ['id']);
     });
+
+    test('the client can filter on `id`', async () => {
+      const config = await buildAmplifyConfig(schema);
+      Amplify.configure(config);
+      const { spy, generateClient } = mockedGenerateClient([
+        { data: { listModels: { items: [] } } },
+      ]);
+      const client = generateClient<Schema>();
+      await client.models.Model.list({
+        filter: {
+          id: { eq: 'some-id' },
+        },
+      });
+      expectVariables(spy, {
+        filter: {
+          id: { eq: 'some-id' },
+        },
+      });
+    });
   });
 
   describe('A model with no explicit timestamp fields', () => {
@@ -196,6 +216,35 @@ describe('Implicit System Field Handling. Given:', () => {
 
       expectSelectionSetContains(spy, ['createdAt', 'updatedAt']);
     });
+
+    test('the client can filter on `createdAt`, `updatedAt`', async () => {
+      const config = await buildAmplifyConfig(schema);
+      Amplify.configure(config);
+      const { spy, generateClient } = mockedGenerateClient([
+        { data: { listModels: { items: [] } } },
+      ]);
+      const client = generateClient<Schema>();
+      await client.models.Model.list({
+        filter: {
+          createdAt: {
+            eq: '2022-02-02 02:02:02',
+          },
+          updatedAt: {
+            eq: '2022-02-02 02:02:02',
+          },
+        },
+      });
+      expectVariables(spy, {
+        filter: {
+          createdAt: {
+            eq: '2022-02-02 02:02:02',
+          },
+          updatedAt: {
+            eq: '2022-02-02 02:02:02',
+          },
+        },
+      });
+    });
   });
 
   describe('A model with implicit owner field from owner auth', () => {
@@ -268,6 +317,25 @@ describe('Implicit System Field Handling. Given:', () => {
       await client.models.Model.list();
 
       expectSelectionSetContains(spy, ['owner']);
+    });
+
+    test('the client can filter on `owner`', async () => {
+      const config = await buildAmplifyConfig(schema);
+      Amplify.configure(config);
+      const { spy, generateClient } = mockedGenerateClient([
+        { data: { listModels: { items: [] } } },
+      ]);
+      const client = generateClient<Schema>();
+      await client.models.Model.list({
+        filter: {
+          owner: { eq: 'some-body' },
+        },
+      });
+      expectVariables(spy, {
+        filter: {
+          owner: { eq: 'some-body' },
+        },
+      });
     });
   });
 });
