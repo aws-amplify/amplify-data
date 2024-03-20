@@ -669,7 +669,7 @@ describe('secondary indexes', () => {
           .model({
             title: a.string().required(),
           })
-          .secondaryIndexes([a.index('title')]),
+          .secondaryIndexes((index) => [index('title')]),
       })
       .authorization([a.allow.public()]);
 
@@ -685,9 +685,8 @@ describe('secondary indexes', () => {
             description: a.string().required(),
             timestamp: a.integer().required(),
           })
-          .secondaryIndexes([
-            a
-              .index('title')
+          .secondaryIndexes((index) => [
+            index('title')
               .name('myGSI')
               .sortKeys(['description', 'timestamp'])
               .queryField('byTitleDescTs'),
@@ -708,9 +707,8 @@ describe('secondary indexes', () => {
             timestamp: a.integer().required(),
           })
           .identifier(['title'])
-          .secondaryIndexes([
-            a
-              .index('title')
+          .secondaryIndexes((index) => [
+            index('title')
               .name('myGSI')
               .sortKeys(['description', 'timestamp'])
               .queryField('byTitleDescTs'),
@@ -730,11 +728,10 @@ describe('secondary indexes', () => {
             description: a.string().required(),
             timestamp: a.integer().required(),
           })
-          .secondaryIndexes([
-            a.index('title'),
-            a.index('title').sortKeys(['timestamp']),
-            a
-              .index('title')
+          .secondaryIndexes((index) => [
+            index('title'),
+            index('title').sortKeys(['timestamp']),
+            index('title')
               .name('myGSI')
               .sortKeys(['description', 'timestamp'])
               .queryField('byTitleDescTs'),
@@ -754,11 +751,10 @@ describe('secondary indexes', () => {
             description: a.string().required(),
             timestamp: a.integer().required(),
           })
-          .secondaryIndexes([
-            a.index('title'),
-            a.index('description').sortKeys(['timestamp']),
-            a
-              .index('timestamp')
+          .secondaryIndexes((index) => [
+            index('title'),
+            index('description').sortKeys(['timestamp']),
+            index('timestamp')
               .sortKeys(['description'])
               .queryField('byTimeStampDesc'),
           ]),
