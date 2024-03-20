@@ -1,5 +1,11 @@
 # @aws-amplify/data-schema
 
+## 0.14.0
+
+### Minor Changes
+
+- 2d85439: refactor!: update .secondaryIndexes builder
+
 ## 0.13.18
 
 ### Patch Changes
