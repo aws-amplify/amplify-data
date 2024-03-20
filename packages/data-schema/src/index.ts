@@ -1,6 +1,5 @@
 import { schema } from './ModelSchema';
 import { model } from './ModelType';
-import { modelIndex } from './ModelIndex';
 import {
   id,
   string,
@@ -31,7 +30,6 @@ import { handler } from './Handler';
 export {
   schema,
   model,
-  modelIndex as index,
   ref,
   customType,
   enumType as enum,
