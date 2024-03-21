@@ -1,5 +1,11 @@
 # @aws-amplify/data-schema-types
 
+## 0.7.10
+
+### Patch Changes
+
+- ffa6675: client types for custom subscriptions
+
 ## 0.7.9
 
 ### Patch Changes
