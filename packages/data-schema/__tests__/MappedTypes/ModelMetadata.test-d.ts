@@ -81,7 +81,7 @@ describe('ModelSecondaryIndexes', () => {
           description: a.string().required(),
           metadata: a.json(),
         })
-        .secondaryIndexes([a.index('title')]),
+        .secondaryIndexes((index) => [index('title')]),
     });
 
     type Resolved = ModelSecondaryIndexes<SchemaTypes<typeof s>>;
@@ -112,9 +112,9 @@ describe('ModelSecondaryIndexes', () => {
           optField: a.string(),
           viewCount: a.integer(),
         })
-        .secondaryIndexes([
-          a.index('title').sortKeys(['viewCount']).queryField('myFavIdx'),
-          a.index('description'),
+        .secondaryIndexes((index) => [
+          index('title').sortKeys(['viewCount']).queryField('myFavIdx'),
+          index('description'),
         ]),
     });
 
