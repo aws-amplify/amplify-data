@@ -9,10 +9,10 @@ bench('secondary index', () => {
         description: a.string(),
         viewCount: a.integer(),
       })
-      .secondaryIndexes([
-        a.index('title').sortKeys(['viewCount']).queryField('myFavIdx'),
-        a.index('description'),
-        a.index('viewCount'),
+      .secondaryIndexes((index) => [
+        index('title').sortKeys(['viewCount']).queryField('myFavIdx'),
+        index('description'),
+        index('viewCount'),
       ]),
   });
 

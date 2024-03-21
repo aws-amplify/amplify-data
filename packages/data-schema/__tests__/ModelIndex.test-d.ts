@@ -14,45 +14,45 @@ test('secondaryIndexes input validation', () => {
         location: a.customType({ lat: a.float(), long: a.float() }),
         status: a.ref('Status'),
       })
-      .secondaryIndexes([
+      .secondaryIndexes((index) => [
         // VALID cases
         // required string
-        a.index('title'),
+        index('title'),
         // required number
-        a.index('postNumber'),
+        index('postNumber'),
         // nullable string
-        a.index('description'),
+        index('description'),
         // nullable number
-        a.index('viewCount'),
-        a.index('title').sortKeys(['description', 'viewCount', 'postNumber']),
+        index('viewCount'),
+        index('title').sortKeys(['description', 'viewCount', 'postNumber']),
 
         // ERROR cases
         // @ts-expect-error - nonexistent
-        a.index('nonexistent-field'),
+        index('nonexistent-field'),
         // @ts-expect-error - only string | number type fields are allowed
-        a.index('metadata'),
+        index('metadata'),
         // @ts-expect-error - array field
-        a.index('tags'),
+        index('tags'),
         // @ts-expect-error - relational field
-        a.index('comments'),
+        index('comments'),
         // @ts-expect-error - custom type field
-        a.index('location'),
+        index('location'),
         // @ts-expect-error - ref type field
-        a.index('status'),
+        index('status'),
         // @ts-expect-error - nonexistent
-        a.index('title').sortKeys(['nonexistent-field']),
+        index('title').sortKeys(['nonexistent-field']),
         // @ts-expect-error
-        a.index('title').sortKeys(['metadata']),
+        index('title').sortKeys(['metadata']),
         // @ts-expect-error
-        a.index('title').sortKeys(['tags']),
+        index('title').sortKeys(['tags']),
         // @ts-expect-error
-        a.index('title').sortKeys(['comments']),
+        index('title').sortKeys(['comments']),
         // @ts-expect-error
-        a.index('title').sortKeys(['location']),
+        index('title').sortKeys(['location']),
         // @ts-expect-error
-        a.index('title').sortKeys(['status']),
+        index('title').sortKeys(['status']),
         // @ts-expect-error - SK can't use PK field
-        a.index('title').sortKeys(['title']),
+        index('title').sortKeys(['title']),
       ]),
     Comment: a.model({
       content: a.string(),

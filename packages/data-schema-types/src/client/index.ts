@@ -1,6 +1,6 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
-import {
+import type {
   DeepReadOnlyObject,
   UnwrapArray,
   UnionToIntersection,
@@ -744,6 +744,28 @@ export type CustomMutations<
   ModelMeta extends Record<any, any> = ExtractModelMeta<Schema>,
 > = CustomOperations<Schema, 'Mutation', Context, ModelMeta>;
 
+export type CustomSubscriptions<
+  Schema extends Record<any, any>,
+  Context extends ContextType = 'CLIENT',
+  ModelMeta extends Record<any, any> = ExtractModelMeta<Schema>,
+> = CustomOperations<Schema, 'Subscription', Context, ModelMeta>;
+
+type CustomOperationMethodOptions = {
+  // selectionSet?: SelectionSet;
+  authMode?: AuthMode;
+  authToken?: string;
+  headers?: CustomHeaders;
+};
+
+/**
+ * Generates Custom Operations function params based on whether .arguments() were specified in the schema builder
+ */
+type CustomOperationFnParams<Args extends Record<string, unknown> | never> = [
+  Args,
+] extends [never]
+  ? [CustomOperationMethodOptions?]
+  : [Args, CustomOperationMethodOptions?];
+
 export type CustomOperations<
   Schema extends Record<any, any>,
   OperationType extends 'Query' | 'Mutation' | 'Subscription',
@@ -754,36 +776,27 @@ export type CustomOperations<
     ? OpName
     : never]: {
     CLIENT: (
-      input: ModelMeta['customOperations'][OpName]['arguments'],
-      options?: {
-        // selectionSet?: SelectionSet;
-        authMode?: AuthMode;
-        authToken?: string;
-        headers?: CustomHeaders;
-      },
-    ) => SingularReturnValue<
-      ModelMeta['customOperations'][OpName]['returnType']
-    >;
+      ...params: CustomOperationFnParams<
+        ModelMeta['customOperations'][OpName]['arguments']
+      >
+    ) => // we only generate subscriptions on the clientside; so this isn't applied to COOKIES | REQUEST
+    ModelMeta['customOperations'][OpName]['typeName'] extends 'Subscription'
+      ? ObservedReturnValue<ModelMeta['customOperations'][OpName]['returnType']>
+      : SingularReturnValue<
+          ModelMeta['customOperations'][OpName]['returnType']
+        >;
     COOKIES: (
-      input: ModelMeta['customOperations'][OpName]['arguments'],
-      options?: {
-        // selectionSet?: SelectionSet;
-        authMode?: AuthMode;
-        authToken?: string;
-        headers?: CustomHeaders;
-      },
+      ...params: CustomOperationFnParams<
+        ModelMeta['customOperations'][OpName]['arguments']
+      >
     ) => SingularReturnValue<
       ModelMeta['customOperations'][OpName]['returnType']
     >;
     REQUEST: (
       contextSpec: any,
-      input: ModelMeta['customOperations'][OpName]['arguments'],
-      options?: {
-        // selectionSet?: SelectionSet;
-        authMode?: AuthMode;
-        authToken?: string;
-        headers?: CustomHeaders;
-      },
+      ...params: CustomOperationFnParams<
+        ModelMeta['customOperations'][OpName]['arguments']
+      >
     ) => SingularReturnValue<
       ModelMeta['customOperations'][OpName]['returnType']
     >;

@@ -11,10 +11,9 @@ describe('secondary indexes / index queries', () => {
         viewCount: a.integer(),
         updatedAt: a.string(),
       })
-      .secondaryIndexes([
-        a.index('title'),
-        a
-          .index('description')
+      .secondaryIndexes((index) => [
+        index('title'),
+        index('description')
           .queryField('myCustomIdx')
           .sortKeys(['updatedAt', 'viewCount']),
       ]),
