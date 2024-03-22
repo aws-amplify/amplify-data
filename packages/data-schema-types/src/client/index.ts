@@ -474,16 +474,19 @@ type ModelFilter<Model extends Record<any, any>> = LogicalFilters<Model> & {
       : StringFilter;
 };
 
-/**
- * todo
- */
-enum ModelSortDirection {
+enum ModelSortDirectionParams {
   ASC = 'ASC',
   DESC = 'DESC',
 }
 
+type ModelSortDirection = keyof typeof ModelSortDirectionParams;
+
 type ModelMetaShape = {
   secondaryIndexes: SecondaryIndexIrShape[];
+  identifier: string[];
+};
+
+type ModelMetaPK = {
   identifier: string[];
 };
 
@@ -533,6 +536,7 @@ type ModelTypesClient<
     FlatModel extends Record<string, unknown> = ResolvedModel<Model>,
     SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[],
   >(options?: {
+    identifier?: ModelIdentifier<ModelMetaPK>;
     filter?: ModelFilter<Model>;
     sortDirection?: ModelSortDirection;
     limit?: number;
@@ -637,6 +641,7 @@ type ModelTypesSSRCookies<
     FlatModel extends Record<string, unknown> = ResolvedModel<Model>,
     SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[],
   >(options?: {
+    identifier?: ModelIdentifier<ModelMetaPK>;
     filter?: ModelFilter<Model>;
     sortDirection?: ModelSortDirection;
     limit?: number;
@@ -701,6 +706,7 @@ type ModelTypesSSRRequest<
   >(
     contextSpec: any,
     options?: {
+      identifier?: ModelIdentifier<ModelMetaPK>;
       filter?: ModelFilter<Model>;
       sortDirection?: ModelSortDirection;
       limit?: number;

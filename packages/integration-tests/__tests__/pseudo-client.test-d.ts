@@ -240,4 +240,43 @@ describe('client', () => {
     type _T2 = ExpectFalse<HasKey<ClientModels, 'myMutation'>>;
     type _T3 = ExpectFalse<HasKey<ClientModels, 'mySubscription'>>;
   });
+
+  test('sortDirection', async () => {
+    const schema = a.schema({
+      Todo: a
+        .model({
+          todoId: a.id().required(),
+          status: a.string().required(),
+          content: a.string(),
+        })
+        .identifier(['todoId', 'status']),
+    });
+
+    type Schema = ClientSchema<typeof schema>;
+    const client = generateClient<Schema>();
+
+    await client.models.Todo.create({
+      todoId: '1',
+      content: 'some content',
+      status: 'a',
+    });
+
+    const queryResponse = await client.models.Todo.list({
+      todoId: '1',
+      sortDirection: 'DESC',
+    });
+
+    type ResponseType = typeof queryResponse;
+    type Expected = {
+      data: Schema['Todo'] | null;
+      errors?: GraphQLFormattedError[] | undefined;
+      extensions?:
+        | {
+            [key: string]: any;
+          }
+        | undefined;
+    };
+
+    type test = Expect<Equal<ResponseType, Expected>>;
+  });
 });
