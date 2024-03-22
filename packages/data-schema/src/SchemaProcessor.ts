@@ -545,9 +545,9 @@ function calculateAuth(authorization: Authorization<any, any, any>[]) {
       // model field dep, type of which depends on whether multiple owner/group
       // is required.
       if (rule.multiOwner) {
-        addFields(authFields, { [rule.groupOrOwnerField]: string().array() });
+        // addFields(authFields, { [rule.groupOrOwnerField]: string().array() });
       } else {
-        addFields(authFields, { [rule.groupOrOwnerField]: string() });
+        // addFields(authFields, { [rule.groupOrOwnerField]: string() });
       }
     }
 

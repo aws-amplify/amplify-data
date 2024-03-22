@@ -8,6 +8,7 @@ import {
   parseQuery,
   parseGraphqlSchema,
   expectSchemaModelContains,
+  expectSchemaModelExcludes,
   expectSelectionSetContains,
   expectVariables,
 } from '../../utils';
@@ -32,7 +33,7 @@ import {
  * comprehension more than it helps, we'll fall back to snapshots.
  */
 
-describe('Implicit owner Field Handling. Given:', () => {
+describe('Implicit Auth Field Handling. Given:', () => {
   describe('A model with implicit owner field from owner auth', () => {
     const schema = a
       .schema({
@@ -53,28 +54,20 @@ describe('Implicit owner Field Handling. Given:', () => {
       >;
     });
 
-    test('the generated graphql schema contains `owner: String`', async () => {
+    test('the generated graphql schema excludes `owner`', async () => {
       const graphqlSchema = schema.transform().schema;
-      expectSchemaModelContains({
+      expectSchemaModelExcludes({
         schema: graphqlSchema,
         model: 'Model',
         field: 'owner',
-        type: 'String',
-        isArray: false,
-        isRequired: false,
       });
     });
 
-    test('the generated modelIntrospection schema contains `owner`', async () => {
+    test('the generated modelIntrospection schema excludes `owner`', async () => {
       const { modelIntrospection } = await buildAmplifyConfig(schema);
-      expect(modelIntrospection.models['Model']['fields']['owner']).toEqual(
-        expect.objectContaining({
-          isArray: false,
-          isRequired: false,
-          name: 'owner',
-          type: 'String',
-        }),
-      );
+      expect(
+        modelIntrospection.models['Model']['fields']['owner'],
+      ).toBeUndefined();
     });
 
     test('the generated modelIntrospection schema contains auth rule pointing to `owner` field', async () => {
@@ -145,30 +138,20 @@ describe('Implicit owner Field Handling. Given:', () => {
       >;
     });
 
-    test('the generated graphql schema contains `customOwner: String`', async () => {
+    test('the generated graphql schema excludes `customOwner`', async () => {
       const graphqlSchema = schema.transform().schema;
-      expectSchemaModelContains({
+      expectSchemaModelExcludes({
         schema: graphqlSchema,
         model: 'Model',
         field: 'customOwner',
-        type: 'String',
-        isArray: false,
-        isRequired: false,
       });
     });
 
-    test('the generated modelIntrospection schema contains `customOwner`', async () => {
+    test('the generated modelIntrospection schema excludes `customOwner`', async () => {
       const { modelIntrospection } = await buildAmplifyConfig(schema);
       expect(
         modelIntrospection.models['Model']['fields']['customOwner'],
-      ).toEqual(
-        expect.objectContaining({
-          isArray: false,
-          isRequired: false,
-          name: 'customOwner',
-          type: 'String',
-        }),
-      );
+      ).toBeUndefined();
     });
 
     test('the generated modelIntrospection schema contains auth rule pointing to `customOwner` field', async () => {
@@ -334,28 +317,20 @@ describe('Implicit owner Field Handling. Given:', () => {
       >;
     });
 
-    test('the generated graphql schema contains `group: String`', async () => {
+    test('the generated graphql schema excludes `group`', async () => {
       const graphqlSchema = schema.transform().schema;
-      expectSchemaModelContains({
+      expectSchemaModelExcludes({
         schema: graphqlSchema,
         model: 'Model',
         field: 'group',
-        type: 'String',
-        isArray: false,
-        isRequired: false,
       });
     });
 
-    test('the generated modelIntrospection schema contains `group`', async () => {
+    test('the generated modelIntrospection schema excludes `group`', async () => {
       const { modelIntrospection } = await buildAmplifyConfig(schema);
-      expect(modelIntrospection.models['Model']['fields']['group']).toEqual(
-        expect.objectContaining({
-          isArray: false,
-          isRequired: false,
-          name: 'group',
-          type: 'String',
-        }),
-      );
+      expect(
+        modelIntrospection.models['Model']['fields']['group'],
+      ).toBeUndefined();
     });
 
     test('the generated modelIntrospection schema contains auth rule pointing to `group` field', async () => {
@@ -427,29 +402,20 @@ describe('Implicit owner Field Handling. Given:', () => {
       >;
     });
 
-    test('the generated graphql schema contains `groups: String`', async () => {
+    test('the generated graphql schema excludes `groups`', async () => {
       const graphqlSchema = schema.transform().schema;
-      expectSchemaModelContains({
+      expectSchemaModelExcludes({
         schema: graphqlSchema,
         model: 'Model',
         field: 'groups',
-        type: 'String',
-        isArray: true,
-        isRequired: false,
       });
     });
 
-    test('the generated modelIntrospection schema contains `groups`', async () => {
+    test('the generated modelIntrospection schema excludes `groups`', async () => {
       const { modelIntrospection } = await buildAmplifyConfig(schema);
-      expect(modelIntrospection.models['Model']['fields']['groups']).toEqual(
-        expect.objectContaining({
-          isArray: true,
-          isArrayNullable: true,
-          isRequired: false,
-          name: 'groups',
-          type: 'String',
-        }),
-      );
+      expect(
+        modelIntrospection.models['Model']['fields']['groups'],
+      ).toBeUndefined();
     });
 
     test('the generated modelIntrospection schema contains auth rule pointing to `groups` field', async () => {
