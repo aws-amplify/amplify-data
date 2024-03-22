@@ -478,8 +478,8 @@ type ModelFilter<Model extends Record<any, any>> = LogicalFilters<Model> & {
  * todo
  */
 enum ModelSortDirection {
-  ASC,
-  DESC,
+  ASC = 'ASC',
+  DESC = 'DESC',
 }
 
 type ModelMetaShape = {
