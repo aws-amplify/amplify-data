@@ -259,11 +259,8 @@ type ModelIdentifier<Model extends Record<any, any>> = Prettify<
   Record<Model['identifier'] & string, string>
 >;
 
-type IfEquals<X, Y, A = X, B = never> = (<T>() => T extends X ? 1 : 2) extends <
-  T,
->() => T extends Y ? 1 : 2
-  ? A
-  : B;
+type IfEquals<X, Y, A = X, B = never> =
+  (<T>() => T extends X ? 1 : 2) extends <T>() => T extends Y ? 1 : 2 ? A : B;
 
 // Excludes readonly fields from Record type
 type WritableKeys<T> = {
@@ -296,10 +293,11 @@ type MutationInput<
 type CreateModelInput<
   Model extends Record<string, unknown>,
   ModelMeta extends Record<string, unknown>,
-> = Equal<ModelIdentifier<ModelMeta>, { id: string }> extends true
-  ? Partial<ModelIdentifier<ModelMeta>> &
-      Omit<MutationInput<Model, ModelMeta>, 'id'>
-  : MutationInput<Model, ModelMeta>;
+> =
+  Equal<ModelIdentifier<ModelMeta>, { id: string }> extends true
+    ? Partial<ModelIdentifier<ModelMeta>> &
+        Omit<MutationInput<Model, ModelMeta>, 'id'>
+    : MutationInput<Model, ModelMeta>;
 
 // #endregion
 
@@ -476,6 +474,14 @@ type ModelFilter<Model extends Record<any, any>> = LogicalFilters<Model> & {
       : StringFilter;
 };
 
+/**
+ * todo
+ */
+enum ModelSortDirection {
+  ASC,
+  DESC,
+}
+
 type ModelMetaShape = {
   secondaryIndexes: SecondaryIndexIrShape[];
   identifier: string[];
@@ -528,6 +534,7 @@ type ModelTypesClient<
     SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[],
   >(options?: {
     filter?: ModelFilter<Model>;
+    sortDirection?: ModelSortDirection;
     limit?: number;
     nextToken?: string | null;
     selectionSet?: SelectionSet;
@@ -631,6 +638,7 @@ type ModelTypesSSRCookies<
     SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[],
   >(options?: {
     filter?: ModelFilter<Model>;
+    sortDirection?: ModelSortDirection;
     limit?: number;
     nextToken?: string | null;
     selectionSet?: SelectionSet;
@@ -694,6 +702,7 @@ type ModelTypesSSRRequest<
     contextSpec: any,
     options?: {
       filter?: ModelFilter<Model>;
+      sortDirection?: ModelSortDirection;
       limit?: number;
       nextToken?: string | null;
       selectionSet?: SelectionSet;

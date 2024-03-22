@@ -1,5 +1,11 @@
 # @aws-amplify/data-schema-types
 
+## 0.8.0
+
+### Minor Changes
+
+- 07a102d: GSI sort types for list
+
 ## 0.7.9
 
 ### Patch Changes
