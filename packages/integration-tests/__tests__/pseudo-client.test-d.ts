@@ -247,9 +247,9 @@ describe('client', () => {
         .model({
           todoId: a.id().required(),
           status: a.string().required(),
-          content: a.string(),
         })
-        .identifier(['todoId', 'status']),
+        .identifier(['todoId', 'status'])
+        .authorization([a.allow.public()]),
     });
 
     type Schema = ClientSchema<typeof schema>;
@@ -257,18 +257,26 @@ describe('client', () => {
 
     await client.models.Todo.create({
       todoId: '1',
-      content: 'some content',
       status: 'a',
     });
 
-    const queryResponse = await client.models.Todo.list({
+    const response = await client.models.Todo.list({
       identifier: { todoId: '1' },
       sortDirection: 'DESC',
     });
 
-    type ResponseType = typeof queryResponse;
+    type ResponseType = typeof response;
+
+    type T = ResponseType['data'];
+
     type Expected = {
-      data: Schema['Todo'] | null;
+      data: {
+        todoId: string;
+        status: string;
+        readonly createdAt: string;
+        readonly updatedAt: string;
+      }[];
+      nextToken?: string | null | undefined;
       errors?: GraphQLFormattedError[] | undefined;
       extensions?:
         | {
