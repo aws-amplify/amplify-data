@@ -261,7 +261,7 @@ describe('client', () => {
     });
 
     const response = await client.models.Todo.list({
-      identifier: { todoId: '1' },
+      todoId: '1',
       sortDirection: 'DESC',
     });
 

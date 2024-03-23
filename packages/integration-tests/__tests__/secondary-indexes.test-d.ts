@@ -31,9 +31,14 @@ describe('secondary indexes / index queries', () => {
       // Doing the following input type validation as an alternative:
 
       // Valid key input
-      client.models.Post.listByTitle({
-        title: 'abc',
-      });
+      client.models.Post.listByTitle(
+        {
+          title: 'abc',
+        },
+        {
+          sortDirection: 'ASC',
+        },
+      );
 
       // Wrong field type
       // @ts-expect-error
@@ -53,9 +58,14 @@ describe('secondary indexes / index queries', () => {
     });
 
     test('Return type', async () => {
-      const { data: posts } = await client.models.Post.listByTitle({
-        title: 'abc',
-      });
+      const { data: posts } = await client.models.Post.listByTitle(
+        {
+          title: 'abc',
+        },
+        {
+          sortDirection: 'ASC',
+        },
+      );
 
       type ResolvedReturnType = typeof posts;
       type ExpectedReturnType = {
@@ -75,9 +85,8 @@ describe('secondary indexes / index queries', () => {
         {
           title: 'abc',
         },
-        { selectionSet: ['id', 'updatedAt'] },
+        { selectionSet: ['id', 'updatedAt'], sortDirection: 'ASC' },
       );
-
       type ResolvedReturnType = typeof posts;
       type ExpectedReturnType = {
         readonly id: string;
@@ -91,16 +100,26 @@ describe('secondary indexes / index queries', () => {
   describe('With SK', () => {
     test('Input type', () => {
       // Valid key input
-      client.models.Post.myCustomIdx({
-        description: 'abc',
-      });
+      client.models.Post.myCustomIdx(
+        {
+          description: 'abc',
+        },
+        {
+          sortDirection: 'ASC',
+        },
+      );
 
       // Valid key input 2
-      client.models.Post.myCustomIdx({
-        description: 'abc',
-        viewCount: { gt: 3 },
-        updatedAt: { beginsWith: '123' },
-      });
+      client.models.Post.myCustomIdx(
+        {
+          description: 'abc',
+          viewCount: { gt: 3 },
+          updatedAt: { beginsWith: '123' },
+        },
+        {
+          sortDirection: 'ASC',
+        },
+      );
 
       // Wrong field type
       // @ts-expect-error
@@ -160,5 +179,57 @@ describe('secondary indexes / index queries', () => {
 
       type test = Expect<Equal<ResolvedReturnType, ExpectedReturnType>>;
     });
+  });
+  test('index query w/ sort direction', async () => {
+    const schema = a.schema({
+      Customer: a
+        .model({
+          name: a.string(),
+          phoneNumber: a.phone().required(),
+          accountRepresentativeId: a.id().required(),
+        })
+        .secondaryIndexes((index) => [
+          index('accountRepresentativeId').sortKeys(['name']),
+        ]),
+    });
+
+    type Schema = ClientSchema<typeof schema>;
+    const client = generateClient<Schema>();
+
+    await client.models.Customer.create({
+      name: 'John Doe',
+      phoneNumber: '+1234567890',
+      accountRepresentativeId: '1',
+    });
+
+    const response =
+      await client.models.Customer.listByAccountRepresentativeIdAndName({
+        accountRepresentativeId: '1',
+        name: { eq: 'aa' },
+      });
+
+    type ResponseType = typeof response;
+
+    type T = ResponseType['data'];
+
+    type Expected = {
+      data: {
+        phoneNumber: string;
+        accountRepresentativeId: string;
+        readonly id: string;
+        readonly createdAt: string;
+        readonly updatedAt: string;
+        name?: string | null | undefined;
+      }[];
+      nextToken?: string | null | undefined;
+      errors?: GraphQLFormattedError[] | undefined;
+      extensions?:
+        | {
+            [key: string]: any;
+          }
+        | undefined;
+    };
+
+    type test = Expect<Equal<ResponseType, Expected>>;
   });
 });

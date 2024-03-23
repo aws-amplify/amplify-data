@@ -479,7 +479,7 @@ enum ModelSortDirectionParams {
   DESC = 'DESC',
 }
 
-type ModelSortDirection = keyof typeof ModelSortDirectionParams;
+export type ModelSortDirection = keyof typeof ModelSortDirectionParams;
 
 type ModelMetaShape = {
   secondaryIndexes: SecondaryIndexIrShape[];
@@ -883,6 +883,7 @@ type IndexQueryMethodSignature<
     },
     options?: {
       filter?: ModelFilter<Model>;
+      sortDirection?: ModelSortDirection;
       limit?: number;
       nextToken?: string | null;
       selectionSet?: SelectionSet;
