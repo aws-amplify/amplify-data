@@ -486,10 +486,6 @@ type ModelMetaShape = {
   identifier: string[];
 };
 
-type ModelMetaPK = {
-  identifier: string[];
-};
-
 type ModelTypesClient<
   Model extends Record<string, unknown>,
   ModelMeta extends ModelMetaShape,
@@ -535,17 +531,18 @@ type ModelTypesClient<
   list<
     FlatModel extends Record<string, unknown> = ResolvedModel<Model>,
     SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[],
-  >(options?: {
-    identifier?: ModelIdentifier<ModelMetaPK>;
-    filter?: ModelFilter<Model>;
-    sortDirection?: ModelSortDirection;
-    limit?: number;
-    nextToken?: string | null;
-    selectionSet?: SelectionSet;
-    authMode?: AuthMode;
-    authToken?: string;
-    headers?: CustomHeaders;
-  }): ListReturnValue<Prettify<ReturnValue<Model, FlatModel, SelectionSet>>>;
+  >(
+    options?: Partial<ModelIdentifier<ModelMeta>> & {
+      filter?: ModelFilter<Model>;
+      sortDirection?: ModelSortDirection;
+      limit?: number;
+      nextToken?: string | null;
+      selectionSet?: SelectionSet;
+      authMode?: AuthMode;
+      authToken?: string;
+      headers?: CustomHeaders;
+    },
+  ): ListReturnValue<Prettify<ReturnValue<Model, FlatModel, SelectionSet>>>;
   onCreate<
     FlatModel extends Record<string, unknown> = ResolvedModel<Model>,
     SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[],
@@ -640,17 +637,18 @@ type ModelTypesSSRCookies<
   list<
     FlatModel extends Record<string, unknown> = ResolvedModel<Model>,
     SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[],
-  >(options?: {
-    identifier?: ModelIdentifier<ModelMetaPK>;
-    filter?: ModelFilter<Model>;
-    sortDirection?: ModelSortDirection;
-    limit?: number;
-    nextToken?: string | null;
-    selectionSet?: SelectionSet;
-    authMode?: AuthMode;
-    authToken?: string;
-    headers?: CustomHeaders;
-  }): ListReturnValue<Prettify<ReturnValue<Model, FlatModel, SelectionSet>>>;
+  >(
+    options?: Partial<ModelIdentifier<ModelMeta>> & {
+      filter?: ModelFilter<Model>;
+      sortDirection?: ModelSortDirection;
+      limit?: number;
+      nextToken?: string | null;
+      selectionSet?: SelectionSet;
+      authMode?: AuthMode;
+      authToken?: string;
+      headers?: CustomHeaders;
+    },
+  ): ListReturnValue<Prettify<ReturnValue<Model, FlatModel, SelectionSet>>>;
 };
 
 type ModelTypesSSRRequest<
@@ -705,8 +703,7 @@ type ModelTypesSSRRequest<
     SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[],
   >(
     contextSpec: any,
-    options?: {
-      identifier?: ModelIdentifier<ModelMetaPK>;
+    options?: Partial<ModelIdentifier<ModelMeta>> & {
       filter?: ModelFilter<Model>;
       sortDirection?: ModelSortDirection;
       limit?: number;
