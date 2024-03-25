@@ -541,14 +541,6 @@ function calculateAuth(authorization: Authorization<any, any, any>[]) {
         // does this need to be escaped?
         ruleParts.push(`ownerField: "${rule.groupOrOwnerField}"`);
       }
-
-      // model field dep, type of which depends on whether multiple owner/group
-      // is required.
-      if (rule.multiOwner) {
-        // addFields(authFields, { [rule.groupOrOwnerField]: string().array() });
-      } else {
-        // addFields(authFields, { [rule.groupOrOwnerField]: string() });
-      }
     }
 
     if (rule.groups) {
@@ -811,23 +803,6 @@ const allImpliedFKs = (schema: InternalSchema) => {
   }
 
   return fks;
-};
-
-/**
- * Determines if implicit date fields are in effect for a given model. If they are,
- * returns those implicit fields.
- *
- * NOTE: For now, we *only* support the default implicit fields.
- *
- * @param _model Model to find date fields for.
- */
-const implicitTimestampFields = (
-  _model: InternalModel,
-): Record<string, ModelField<any, any>> => {
-  return {
-    createdAt: datetime().required(),
-    updatedAt: datetime().required(),
-  };
 };
 
 /**
@@ -1318,12 +1293,8 @@ const schemaPreprocessor = (
           // validation, because the `identifer()` method doesn't specify or
           // care what the underlying field type is. We should always just defer
           // to whatever is explicitly defined if there's an overlap.
-          ...idFields(typeDef),
-          ...mergeFieldObjects(
-            fields,
-            authFields,
-            implicitTimestampFields(typeDef),
-          ),
+          // ...idFields(typeDef),
+          ...mergeFieldObjects(fields, authFields),
         },
         fieldLevelAuthRules,
         identifier,

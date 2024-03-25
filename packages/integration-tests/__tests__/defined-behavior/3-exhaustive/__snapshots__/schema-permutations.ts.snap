@@ -3,195 +3,139 @@
 exports[`auth rules owner() 1`] = `
 "type Model @model @auth(rules: [{allow: owner, ownerField: "owner"}])
 {
-  id: ID! @primaryKey
   field: String
-  owner: String
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
 }"
 `;
 
 exports[`auth rules owner().inField() 1`] = `
 "type Model @model @auth(rules: [{allow: owner, ownerField: "field"}])
 {
-  id: ID! @primaryKey
   field: String
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
 }"
 `;
 
 exports[`auth rules owner().inField().to() 1`] = `
 "type Model @model @auth(rules: [{allow: owner, operations: [create, delete], ownerField: "field"}])
 {
-  id: ID! @primaryKey
   field: String
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
 }"
 `;
 
 exports[`auth rules owner(userpool).inField().to(). 1`] = `
 "type Model @model @auth(rules: [{allow: owner, provider: userPools, operations: [create, list], ownerField: "owner"}])
 {
-  id: ID! @primaryKey
   field: String
-  owner: String
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
 }"
 `;
 
 exports[`primitive field types generate expected graphql boolean 1`] = `
 "type Model @model @auth(rules: [{allow: public}])
 {
-  id: ID! @primaryKey
   optionalField: Boolean
   requiredField: Boolean!
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
 }"
 `;
 
 exports[`primitive field types generate expected graphql date 1`] = `
 "type Model @model @auth(rules: [{allow: public}])
 {
-  id: ID! @primaryKey
   optionalField: AWSDate
   requiredField: AWSDate!
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
 }"
 `;
 
 exports[`primitive field types generate expected graphql datetime 1`] = `
 "type Model @model @auth(rules: [{allow: public}])
 {
-  id: ID! @primaryKey
   optionalField: AWSDateTime
   requiredField: AWSDateTime!
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
 }"
 `;
 
 exports[`primitive field types generate expected graphql email 1`] = `
 "type Model @model @auth(rules: [{allow: public}])
 {
-  id: ID! @primaryKey
   optionalField: AWSEmail
   requiredField: AWSEmail!
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
 }"
 `;
 
 exports[`primitive field types generate expected graphql float 1`] = `
 "type Model @model @auth(rules: [{allow: public}])
 {
-  id: ID! @primaryKey
   optionalField: Float
   requiredField: Float!
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
 }"
 `;
 
 exports[`primitive field types generate expected graphql id 1`] = `
 "type Model @model @auth(rules: [{allow: public}])
 {
-  id: ID! @primaryKey
   optionalField: ID
   requiredField: ID!
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
 }"
 `;
 
 exports[`primitive field types generate expected graphql integer 1`] = `
 "type Model @model @auth(rules: [{allow: public}])
 {
-  id: ID! @primaryKey
   optionalField: Int
   requiredField: Int!
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
 }"
 `;
 
 exports[`primitive field types generate expected graphql ipAddress 1`] = `
 "type Model @model @auth(rules: [{allow: public}])
 {
-  id: ID! @primaryKey
   optionalField: AWSIPAddress
   requiredField: AWSIPAddress!
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
 }"
 `;
 
 exports[`primitive field types generate expected graphql json 1`] = `
 "type Model @model @auth(rules: [{allow: public}])
 {
-  id: ID! @primaryKey
   optionalField: AWSJSON
   requiredField: AWSJSON!
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
 }"
 `;
 
 exports[`primitive field types generate expected graphql phone 1`] = `
 "type Model @model @auth(rules: [{allow: public}])
 {
-  id: ID! @primaryKey
   optionalField: AWSPhone
   requiredField: AWSPhone!
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
 }"
 `;
 
 exports[`primitive field types generate expected graphql string 1`] = `
 "type Model @model @auth(rules: [{allow: public}])
 {
-  id: ID! @primaryKey
   optionalField: String
   requiredField: String!
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
 }"
 `;
 
 exports[`primitive field types generate expected graphql time 1`] = `
 "type Model @model @auth(rules: [{allow: public}])
 {
-  id: ID! @primaryKey
   optionalField: AWSTime
   requiredField: AWSTime!
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
 }"
 `;
 
 exports[`primitive field types generate expected graphql timestamp 1`] = `
 "type Model @model @auth(rules: [{allow: public}])
 {
-  id: ID! @primaryKey
   optionalField: AWSTimestamp
   requiredField: AWSTimestamp!
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
 }"
 `;
 
 exports[`primitive field types generate expected graphql url 1`] = `
 "type Model @model @auth(rules: [{allow: public}])
 {
-  id: ID! @primaryKey
   optionalField: AWSURL
   requiredField: AWSURL!
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
 }"
 `;

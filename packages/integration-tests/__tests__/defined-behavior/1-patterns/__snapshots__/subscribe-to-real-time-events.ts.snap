@@ -6,7 +6,7 @@ exports[`Subscribe to real-time events set up a real-time list query 1`] = `
     {
       "authMode": undefined,
       "authToken": undefined,
-      "query": "subscription($filter: ModelSubscriptionTodoFilterInput) { onCreateTodo(filter: $filter) { id content description done priority owner createdAt updatedAt } }",
+      "query": "subscription($filter: ModelSubscriptionTodoFilterInput) { onCreateTodo(filter: $filter) { id content description done priority createdAt updatedAt owner } }",
       "variables": {},
     },
     {},
@@ -15,7 +15,7 @@ exports[`Subscribe to real-time events set up a real-time list query 1`] = `
     {
       "authMode": undefined,
       "authToken": undefined,
-      "query": "subscription($filter: ModelSubscriptionTodoFilterInput) { onUpdateTodo(filter: $filter) { id content description done priority owner createdAt updatedAt } }",
+      "query": "subscription($filter: ModelSubscriptionTodoFilterInput) { onUpdateTodo(filter: $filter) { id content description done priority createdAt updatedAt owner } }",
       "variables": {},
     },
     {},
@@ -24,7 +24,7 @@ exports[`Subscribe to real-time events set up a real-time list query 1`] = `
     {
       "authMode": undefined,
       "authToken": undefined,
-      "query": "subscription($filter: ModelSubscriptionTodoFilterInput) { onDeleteTodo(filter: $filter) { id content description done priority owner createdAt updatedAt } }",
+      "query": "subscription($filter: ModelSubscriptionTodoFilterInput) { onDeleteTodo(filter: $filter) { id content description done priority createdAt updatedAt owner } }",
       "variables": {},
     },
     {},
@@ -33,7 +33,7 @@ exports[`Subscribe to real-time events set up a real-time list query 1`] = `
     {
       "authMode": undefined,
       "authToken": undefined,
-      "query": "query($filter: ModelTodoFilterInput,$limit: Int,$nextToken: String) { listTodos(filter: $filter,limit: $limit,nextToken: $nextToken) { items { id content description done priority owner createdAt updatedAt } nextToken __typename } }",
+      "query": "query($filter: ModelTodoFilterInput,$limit: Int,$nextToken: String) { listTodos(filter: $filter,limit: $limit,nextToken: $nextToken) { items { id content description done priority createdAt updatedAt owner } nextToken __typename } }",
       "variables": {},
     },
     {},
@@ -53,9 +53,9 @@ exports[`Subscribe to real-time events set up a real-time list query 2`] = `
     description
     done
     priority
-    owner
     createdAt
     updatedAt
+    owner
   }
 }
 ",
@@ -73,9 +73,9 @@ exports[`Subscribe to real-time events set up a real-time list query 2`] = `
     description
     done
     priority
-    owner
     createdAt
     updatedAt
+    owner
   }
 }
 ",
@@ -93,9 +93,9 @@ exports[`Subscribe to real-time events set up a real-time list query 2`] = `
     description
     done
     priority
-    owner
     createdAt
     updatedAt
+    owner
   }
 }
 ",

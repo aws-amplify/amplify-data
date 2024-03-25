@@ -8,6 +8,7 @@ import {
   parseQuery,
   parseGraphqlSchema,
   expectSchemaModelContains,
+  expectSchemaModelExcludes,
   expectSelectionSetContains,
   expectVariables,
 } from '../../utils';
@@ -54,18 +55,15 @@ describe('Implicit System Field Handling. Given:', () => {
       type _IdStringIsPresent = Expect<Equal<string, Schema['Model']['id']>>;
     });
 
-    test('the generated graphql contains `id: ID!` PK', async () => {
-      expectSchemaModelContains({
+    test('the generated graphql excludes `id: ID!` PK', async () => {
+      expectSchemaModelExcludes({
         schema: schema.transform().schema,
         model: 'Model',
         field: 'id',
-        type: 'ID',
-        isArray: false,
-        isRequired: true,
       });
     });
 
-    test('the generated modelIntrospection schema contains the PK field and metadata', async () => {
+    test('the generated modelIntrospection schema includes the PK field and metadata', async () => {
       const { modelIntrospection } = await buildAmplifyConfig(schema);
       expect(modelIntrospection.models['Model'].primaryKeyInfo).toEqual(
         expect.objectContaining({
@@ -164,30 +162,27 @@ describe('Implicit System Field Handling. Given:', () => {
 
     test('the generated graphql schema contains `createdAt: AWSDateTime!`, `updatedAt: AWSDateTime!`', async () => {
       const graphqlSchema = schema.transform().schema;
-      expectSchemaModelContains({
+      expectSchemaModelExcludes({
         schema: graphqlSchema,
         model: 'Model',
         field: 'createdAt',
-        type: 'AWSDateTime',
-        isArray: false,
-        isRequired: true,
       });
-      expectSchemaModelContains({
+      expectSchemaModelExcludes({
         schema: graphqlSchema,
         model: 'Model',
         field: 'updatedAt',
-        type: 'AWSDateTime',
-        isArray: false,
-        isRequired: true,
       });
     });
 
-    test('the generated modelIntrospection schema contains the `createdAt`, `updatedAt` fields', async () => {
+    test('the generated modelIntrospection schema includes the `createdAt`, `updatedAt` fields', async () => {
       const { modelIntrospection } = await buildAmplifyConfig(schema);
       expect(modelIntrospection.models['Model']['fields']['createdAt']).toEqual(
         expect.objectContaining({
           isArray: false,
-          isRequired: true,
+          // values of these two fields are important for signaling to consumers
+          // the fields are present, but are managed by the server.
+          isRequired: false,
+          isReadOnly: true,
           name: 'createdAt',
           type: 'AWSDateTime',
         }),
@@ -195,7 +190,10 @@ describe('Implicit System Field Handling. Given:', () => {
       expect(modelIntrospection.models['Model']['fields']['updatedAt']).toEqual(
         expect.objectContaining({
           isArray: false,
-          isRequired: true,
+          // values of these two fields are important for signaling to consumers
+          // the fields are present, but are managed by the server.
+          isRequired: false,
+          isReadOnly: true,
           name: 'updatedAt',
           type: 'AWSDateTime',
         }),
