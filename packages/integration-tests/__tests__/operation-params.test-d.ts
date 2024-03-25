@@ -47,18 +47,15 @@ describe('Basic operations', () => {
         await client.models.Post.get();
       });
 
-      // TODO: broken because JS lib is using old types package name and we're not able to share the symbol correctly.
-      // Re-enable once we update the JS dep on
+      test('parameter must contain PK', async () => {
+        // @ts-expect-error
+        await client.models.Post.get({});
+      });
 
-      // test('parameter must contain PK', async () => {
-      //   // @ts-expect-error
-      //   await client.models.Post.get({});
-      // });
-
-      // test('parameter must not contain extra fields', async () => {
-      //   // @ts-expect-error
-      //   await client.models.Post.get({ id: 'some-id', title: 'whatever' });
-      // });
+      test('parameter must not contain extra fields', async () => {
+        // @ts-expect-error
+        await client.models.Post.get({ id: 'some-id', title: 'whatever' });
+      });
     });
 
     describe('list', () => {
@@ -90,6 +87,7 @@ describe('Basic operations', () => {
           },
         });
       });
+
       test('lazy loaded hasMany returns a non-nullable list of non-nullable elements', async () => {
         const { data } = await client.models.Post.get({ id: 'something' });
         const comments = await data.comments();

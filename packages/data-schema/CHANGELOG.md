@@ -1,5 +1,19 @@
 # @aws-amplify/data-schema
 
+## 0.14.1
+
+### Patch Changes
+
+- ffa6675: client types for custom subscriptions
+- Updated dependencies [ffa6675]
+  - @aws-amplify/data-schema-types@0.7.10
+
+## 0.14.0
+
+### Minor Changes
+
+- 2d85439: refactor!: update .secondaryIndexes builder
+
 ## 0.13.18
 
 ### Patch Changes

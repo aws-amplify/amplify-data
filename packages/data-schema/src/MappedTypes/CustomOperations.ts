@@ -55,15 +55,18 @@ export type CustomOpShapes<Schema extends GenericModelSchema<any>> = {
 /**
  * Digs out custom operation arguments, mapped to the intended graphql types.
  */
-export type CustomOpArguments<Shape extends CustomOperationParamShape> = {
-  [FieldName in keyof Shape['arguments']]: Shape['arguments'][FieldName] extends ModelField<
-    infer R,
-    any,
-    any
-  >
-    ? R
-    : never;
-};
+export type CustomOpArguments<Shape extends CustomOperationParamShape> =
+  Shape['arguments'] extends null
+    ? never
+    : {
+        [FieldName in keyof Shape['arguments']]: Shape['arguments'][FieldName] extends ModelField<
+          infer R,
+          any,
+          any
+        >
+          ? R
+          : never;
+      };
 
 /**
  * Computes the return type from the `returnType` of a custom operation shape.

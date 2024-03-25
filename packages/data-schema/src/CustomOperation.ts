@@ -62,7 +62,7 @@ type InternalCustomData = CustomData & {
 };
 
 export type CustomOperationParamShape = {
-  arguments: CustomArguments;
+  arguments: CustomArguments | null;
   returnType: CustomReturnType | null;
   functionRef: string | null;
   authorization: Authorization<any, any, any>[];
@@ -206,7 +206,7 @@ export type QueryCustomOperation = CustomOperation<
 
 export function query(): CustomOperation<
   {
-    arguments: CustomArguments;
+    arguments: null;
     returnType: null;
     functionRef: null;
     authorization: [];
@@ -227,7 +227,7 @@ export type MutationCustomOperation = CustomOperation<
 
 export function mutation(): CustomOperation<
   {
-    arguments: CustomArguments;
+    arguments: null;
     returnType: null;
     functionRef: null;
     authorization: [];
@@ -248,7 +248,7 @@ export type SubscriptionCustomOperation = CustomOperation<
 
 export function subscription(): CustomOperation<
   {
-    arguments: CustomArguments;
+    arguments: null;
     returnType: null;
     functionRef: null;
     authorization: [];

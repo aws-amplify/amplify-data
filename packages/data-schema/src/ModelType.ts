@@ -12,7 +12,11 @@ import { Authorization } from './Authorization';
 import { RefType } from './RefType';
 import { EnumType, EnumTypeParamShape } from './EnumType';
 import { CustomType, CustomTypeParamShape } from './CustomType';
-import { ModelIndexType, InternalModelIndexType } from './ModelIndex';
+import {
+  ModelIndexType,
+  InternalModelIndexType,
+  modelIndex,
+} from './ModelIndex';
 import { SecondaryIndexToIR } from './MappedTypes/MapSecondaryIndexes';
 
 const brandName = 'modelType';
@@ -162,11 +166,14 @@ export type ModelType<
       identifier: ID,
     ): ModelType<SetTypeSubArg<T, 'identifier', ID>, K | 'identifier'>;
     secondaryIndexes<
+      const SecondaryIndexPKPool extends string = SecondaryIndexFields<
+        ExtractType<T>
+      >,
       const Indexes extends readonly ModelIndexType<
-        SecondaryIndexFields<ExtractType<T>>,
-        SecondaryIndexFields<ExtractType<T>>,
+        string,
+        string,
         unknown,
-        never,
+        readonly [],
         any
       >[] = readonly [],
       const IndexesIR extends readonly any[] = SecondaryIndexToIR<
@@ -174,7 +181,15 @@ export type ModelType<
         ExtractType<T>
       >,
     >(
-      indexes: Indexes,
+      callback: (
+        index: <PK extends SecondaryIndexPKPool>(
+          pk: PK,
+        ) => ModelIndexType<
+          SecondaryIndexPKPool,
+          PK,
+          ReadonlyArray<Exclude<SecondaryIndexPKPool, PK>>
+        >,
+      ) => Indexes,
     ): ModelType<
       SetTypeSubArg<T, 'secondaryIndexes', IndexesIR>,
       K | 'secondaryIndexes'
@@ -224,8 +239,8 @@ function _model<T extends ModelTypeParamShape>(fields: T['fields']) {
 
       return this;
     },
-    secondaryIndexes(indexes) {
-      data.secondaryIndexes = indexes;
+    secondaryIndexes(callback) {
+      data.secondaryIndexes = callback(modelIndex);
 
       return this;
     },

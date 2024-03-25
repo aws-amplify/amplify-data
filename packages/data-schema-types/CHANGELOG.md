@@ -1,5 +1,23 @@
 # @aws-amplify/data-schema-types
 
+## 0.7.12
+
+### Patch Changes
+
+- 2661c53: types - explicit dep on plugin-types
+
+## 0.7.11
+
+### Patch Changes
+
+- 8498a3b: add builder.v3 types without plugin-types dep
+
+## 0.7.10
+
+### Patch Changes
+
+- ffa6675: client types for custom subscriptions
+
 ## 0.7.9
 
 ### Patch Changes

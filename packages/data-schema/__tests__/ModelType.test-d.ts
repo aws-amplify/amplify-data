@@ -102,6 +102,6 @@ describe('identifiers', () => {
       .model({
         title: string(),
       })
-      .secondaryIndexes([a.index('title')]);
+      .secondaryIndexes((index) => [index('title')]);
   });
 });
