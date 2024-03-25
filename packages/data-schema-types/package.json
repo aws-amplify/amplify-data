@@ -21,8 +21,7 @@
     "lint": "eslint ."
   },
   "devDependencies": {
-    "typescript": "^5.1.6",
-    "@aws-amplify/plugin-types": "^0.9.0-beta.0"
+    "typescript": "^5.1.6"
   },
   "files": [
     "src",
@@ -30,6 +29,7 @@
     "package.json"
   ],
   "dependencies": {
-    "rxjs": "^7.8.1"
+    "rxjs": "^7.8.1",
+    "@aws-amplify/plugin-types": "^0.9.0-beta.1"
   }
 }
