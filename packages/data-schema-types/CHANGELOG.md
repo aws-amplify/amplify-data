@@ -1,5 +1,11 @@
 # @aws-amplify/data-schema-types
 
+## 0.7.12
+
+### Patch Changes
+
+- 2661c53: types - explicit dep on plugin-types
+
 ## 0.7.11
 
 ### Patch Changes
