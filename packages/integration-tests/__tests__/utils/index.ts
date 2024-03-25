@@ -1,8 +1,9 @@
-import { print } from 'graphql';
+import { print, parse, DocumentNode, TypeNode } from 'graphql';
 import { generateModels } from '@aws-amplify/graphql-generator';
 import { generateClient as actualGenerateClient } from 'aws-amplify/api';
 import { GraphQLAPI } from '@aws-amplify/api-graphql'; // eslint-disable-line
 import { Observable, Subscriber } from 'rxjs'; // eslint-disable-line
+import { Amplify } from 'aws-amplify';
 
 const graphqlspy = jest.spyOn(GraphQLAPI as any, 'graphql');
 const _graphqlspy = jest.spyOn(GraphQLAPI as any, '_graphql');
@@ -140,4 +141,190 @@ export function useState<T>(init: T) {
 
 export async function pause(ms: number) {
   return new Promise((unsleep) => setTimeout(unsleep, ms));
+}
+
+/**
+ * Given the plural name of a model, find the singular name.
+ *
+ * Assumes `Amplify.configure()` has already called with a config
+ * holding a valid `modelIntrospection` schema.
+ *
+ * @param pluralName plural name of model (e.g. "Todos")
+ * @returns singular name of model (e.g. "Todo")
+ */
+export function findSingularName(pluralName: string): string {
+  const config = Amplify.getConfig();
+  const model = Object.values(
+    config.API?.GraphQL?.modelIntrospection?.models || {},
+  ).find((m) => m.pluralName === pluralName);
+  if (!model) throw new Error(`No model found for plural name ${pluralName}`);
+  return model.name;
+}
+
+export function parseQuery(query: string | DocumentNode) {
+  const q: any =
+    typeof query === 'string'
+      ? parse(query).definitions[0]
+      : parse(print(query)).definitions[0];
+
+  const operation: string = q.operation;
+  const selections = q.selectionSet.selections[0];
+  const selection: string = selections.name.value;
+  const type = selection.match(
+    /^(create|update|delete|sync|get|list|onCreate|onUpdate|onDelete)(\w+)$/,
+  )?.[1] as string;
+
+  let table: string;
+  // `selection` here could be `syncTodos` or `syncCompositePKChildren`
+  if (type === 'sync' || type === 'list') {
+    // e.g. `Models`
+    const pluralName = selection.match(
+      /^(create|sync|get|list)([A-Za-z]+)$/,
+    )?.[2] as string;
+    table = findSingularName(pluralName);
+  } else {
+    table = selection.match(
+      /^(create|update|delete|sync|get|list|onCreate|onUpdate|onDelete)(\w+)$/,
+    )?.[2] as string;
+  }
+
+  const selectionSet: string[] =
+    operation === 'query'
+      ? selections?.selectionSet?.selections[0]?.selectionSet?.selections?.map(
+          (i: any) => i.name.value,
+        )
+      : selections?.selectionSet?.selections?.map((i: any) => i.name.value);
+
+  return { operation, selection, type, table, selectionSet };
+}
+
+export function expectSelectionSetContains(
+  spy: jest.SpyInstance,
+  fields: string[],
+  requestIndex = 0,
+) {
+  const [options] = optionsAndHeaders(spy)[requestIndex];
+  const { query } = options;
+  const { selectionSet } = parseQuery(query);
+  expect(fields.every((f) => selectionSet.includes(f))).toBe(true);
+}
+
+export function expectSelectionSetNotContains(
+  spy: jest.SpyInstance,
+  fields: string[],
+  requestIndex = 0,
+) {
+  const [options] = optionsAndHeaders(spy)[requestIndex];
+  const { query } = options;
+  const { selectionSet } = parseQuery(query);
+  expect(fields.every((f) => !selectionSet.includes(f))).toBe(true);
+}
+
+export function expectVariables(
+  spy: jest.SpyInstance,
+  expectedVariables: Record<string, any>,
+  requestIndex = 0,
+) {
+  const [options] = optionsAndHeaders(spy)[requestIndex];
+  const { variables } = options;
+  expect(variables).toEqual(expectedVariables);
+}
+
+export function parseGraphqlSchema(schema: string) {
+  const ast = parse(schema);
+  return ast;
+}
+
+export function expectSchemaModelContains({
+  schema,
+  model,
+  field,
+  type,
+  isRequired,
+  isArray,
+}: {
+  schema: string;
+  model: string;
+  field: string;
+  type: string;
+  isRequired: boolean;
+  isArray: boolean;
+}) {
+  const ast = parse(schema);
+  for (const def of ast.definitions) {
+    if (def.kind === 'ObjectTypeDefinition') {
+      if (def.name.value === model) {
+        for (const _field of def.fields || []) {
+          if (_field.kind === 'FieldDefinition') {
+            if (_field.name.value === field) {
+              const matches = graphqlFieldMatches({
+                def: _field.type,
+                type,
+                isRequired,
+                isArray,
+              });
+              if (matches) {
+                return true;
+              } else {
+                throw new Error(
+                  `${JSON.stringify(
+                    _field,
+                    null,
+                    2,
+                  )} does not match ${JSON.stringify({
+                    type,
+                    isArray,
+                    isRequired,
+                  })}`,
+                );
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+  throw new Error('No matching definition found in the schema.');
+}
+
+function graphqlFieldMatches({
+  def,
+  type,
+  isRequired,
+  isArray,
+}: {
+  def: TypeNode;
+  type: string;
+  isRequired: boolean;
+  isArray: boolean;
+}) {
+  if (def.kind === 'NamedType') {
+    return isArray === false && isRequired === false && def.name.value === type;
+  }
+
+  if (def.kind === 'NonNullType') {
+    // "consume" the isRequired requirement
+    if (!isRequired) return false;
+
+    return graphqlFieldMatches({
+      def: def.type,
+      type,
+      isArray,
+      isRequired: false, // already consumed
+    });
+  }
+
+  if (def.kind === 'ListType') {
+    // "consume" the isArray requirement.
+    if (!isArray) return false;
+
+    return graphqlFieldMatches({
+      def: def.type,
+      type,
+      isRequired,
+      isArray: false, // already consumed
+    });
+  }
+
+  throw new Error("Ruhoh. The `def` you gave me isn't actually a `TypeNode`!");
 }

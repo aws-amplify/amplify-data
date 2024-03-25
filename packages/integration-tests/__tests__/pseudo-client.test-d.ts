@@ -143,12 +143,19 @@ describe('client', () => {
       DataModel: a.model({
         resultContent: a.string(),
       }),
+
       getDataModel: a
         .query()
         .arguments({
           modelId: a.string().required(),
         })
         .returns(a.ref('DataModel'))
+        .handler(a.handler.function('echoFunction'))
+        .authorization([a.allow.public()]),
+
+      getAllDataModels: a
+        .query()
+        .returns(a.ref('DataModel').array())
         .handler(a.handler.function('echoFunction'))
         .authorization([a.allow.public()]),
     });
@@ -175,6 +182,23 @@ describe('client', () => {
     };
 
     type test = Expect<Equal<ResponseType, Expected>>;
+
+    // tests custom query w/ no args
+    const response2 = await client.queries.getAllDataModels();
+
+    type Response2Type = typeof response2;
+
+    type Expected2 = {
+      data: (Schema['DataModel'] | null)[] | null;
+      errors?: GraphQLFormattedError[] | undefined;
+      extensions?:
+        | {
+            [key: string]: any;
+          }
+        | undefined;
+    };
+
+    type test2 = Expect<Equal<Response2Type, Expected2>>;
   });
 
   test('mutation', async () => {
@@ -189,6 +213,12 @@ describe('client', () => {
         })
         .returns(a.ref('LikeResult'))
         .handler(a.handler.function('likePost'))
+        .authorization([a.allow.public()]),
+
+      likeAllPosts: a
+        .mutation()
+        .returns(a.ref('LikeResult').array())
+        .handler(a.handler.function('likeAllPosts'))
         .authorization([a.allow.public()]),
     });
 
@@ -213,6 +243,26 @@ describe('client', () => {
     };
 
     type test = Expect<Equal<ResponseType, Expected>>;
+
+    // Tests custom mutation w/ no args
+    const response2 = await client.mutations.likeAllPosts();
+
+    type Response2Type = typeof response2;
+    type Expected2 = {
+      data:
+        | ({
+            likes: number;
+          } | null)[]
+        | null;
+      errors?: GraphQLFormattedError[] | undefined;
+      extensions?:
+        | {
+            [key: string]: any;
+          }
+        | undefined;
+    };
+
+    type test2 = Expect<Equal<Response2Type, Expected2>>;
   });
 
   test('subscription - no args', async () => {
