@@ -22,6 +22,75 @@ type Query {
 }"
 `;
 
+exports[`custom operations for an combine schema a ddb and sql schemas combine without issues 1`] = `
+"
+type A @model @auth(rules: [{allow: public}])
+{
+  field: String
+}
+type B @model @auth(rules: [{allow: public}])
+{
+  id: ID! @primaryKey
+  field: String
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
+}"
+`;
+
+exports[`custom operations for an combine schema combining two schemas with custom mutation results in customTypes and customOperations that intersect the separate schemas 1`] = `
+"
+type LikePostResult 
+{
+  likes: Int!
+}
+
+type A @model @auth(rules: [{allow: public}])
+{
+  id: ID! @primaryKey
+  fieldA: String
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
+}
+
+type Mutation {
+  likePost(postId: String!): LikePostResult @function(name: "likePost") @auth(rules: [{allow: public}])
+}
+type DislikePostResult 
+{
+  likes: Int!
+}
+
+type B @model @auth(rules: [{allow: public}])
+{
+  id: ID! @primaryKey
+  fieldB: String
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
+}
+
+type Mutation {
+  dislikePost(postId: String!): DislikePostResult @function(name: "dislikePost") @auth(rules: [{allow: public}])
+}"
+`;
+
+exports[`custom operations for an combine schema two schemas combine without issues 1`] = `
+"
+type A @model @auth(rules: [{allow: public}])
+{
+  id: ID! @primaryKey
+  field: String
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
+}
+type B @model @auth(rules: [{allow: public}])
+{
+  id: ID! @primaryKey
+  field: String
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
+}"
+`;
+
 exports[`custom operations for an rds schema can define public auth with no provider 1`] = `
 "type A @model @auth(rules: [{allow: public}])
 {

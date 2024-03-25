@@ -21,8 +21,9 @@ describe('ResolveFieldProperties Mapped Type', () => {
     type Resolved = Prettify<
       ResolveFieldProperties<
         Schema,
+        ResolveSchema<Schema>,
         ExtractNonModelTypes<Schema>,
-        CreateImplicitModelsFromRelations<ResolveSchema<Schema>>
+        CreateImplicitModelsFromRelations<Schema, ResolveSchema<Schema>>
       >
     >;
 
@@ -60,8 +61,9 @@ describe('ResolveFieldProperties Mapped Type', () => {
     type Resolved = Prettify<
       ResolveFieldProperties<
         Schema,
+        ResolveSchema<Schema>,
         ExtractNonModelTypes<Schema>,
-        CreateImplicitModelsFromRelations<ResolveSchema<Schema>>
+        CreateImplicitModelsFromRelations<Schema, ResolveSchema<Schema>>
       >['Post']
     >;
 
@@ -105,8 +107,9 @@ describe('ResolveFieldProperties Mapped Type', () => {
     type Resolved = Prettify<
       ResolveFieldProperties<
         Schema,
+        ResolveSchema<Schema>,
         ExtractNonModelTypes<Schema>,
-        CreateImplicitModelsFromRelations<ResolveSchema<Schema>>
+        CreateImplicitModelsFromRelations<Schema, ResolveSchema<Schema>>
       >['Post']
     >;
 
@@ -155,8 +158,9 @@ describe('ResolveFieldProperties Mapped Type', () => {
     type Resolved = Prettify<
       ResolveFieldProperties<
         Schema,
+        ResolveSchema<Schema>,
         ExtractNonModelTypes<Schema>,
-        CreateImplicitModelsFromRelations<ResolveSchema<Schema>>
+        CreateImplicitModelsFromRelations<Schema, ResolveSchema<Schema>>
       >['Post']
     >;
 
@@ -202,8 +206,9 @@ describe('ResolveFieldProperties Mapped Type', () => {
     type Resolved = Prettify<
       ResolveFieldProperties<
         Schema,
+        ResolveSchema<Schema>,
         ExtractNonModelTypes<Schema>,
-        CreateImplicitModelsFromRelations<ResolveSchema<Schema>>
+        CreateImplicitModelsFromRelations<Schema, ResolveSchema<Schema>>
       >['Post']
     >;
 
@@ -242,8 +247,9 @@ describe('ResolveFieldProperties Mapped Type', () => {
     type Resolved = Prettify<
       ResolveFieldProperties<
         Schema,
+        ResolveSchema<Schema>,
         ExtractNonModelTypes<Schema>,
-        CreateImplicitModelsFromRelations<ResolveSchema<Schema>>
+        CreateImplicitModelsFromRelations<Schema, ResolveSchema<Schema>>
       >['Post']
     >;
 
@@ -286,8 +292,9 @@ describe('ResolveFieldProperties Mapped Type', () => {
     type Resolved = Prettify<
       ResolveFieldProperties<
         Schema,
+        ResolveSchema<Schema>,
         ExtractNonModelTypes<Schema>,
-        CreateImplicitModelsFromRelations<ResolveSchema<Schema>>
+        CreateImplicitModelsFromRelations<Schema, ResolveSchema<Schema>>
       >['Post']
     >;
 
@@ -340,8 +347,9 @@ describe('ResolveFieldProperties Mapped Type', () => {
     type Resolved = Prettify<
       ResolveFieldProperties<
         Schema,
+        ResolveSchema<Schema>,
         ExtractNonModelTypes<Schema>,
-        CreateImplicitModelsFromRelations<ResolveSchema<Schema>>
+        CreateImplicitModelsFromRelations<Schema, ResolveSchema<Schema>>
       >['Post']
     >;
 

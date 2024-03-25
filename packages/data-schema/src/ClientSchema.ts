@@ -1,4 +1,7 @@
-import { type __modelMeta__ } from '@aws-amplify/data-schema-types';
+import {
+  UnionToIntersection,
+  type __modelMeta__,
+} from '@aws-amplify/data-schema-types';
 import { type GenericModelSchema, type RDSModelSchema } from './ModelSchema';
 
 // MappedTypes
@@ -21,9 +24,16 @@ import {
   ResolveCustomOperations,
   CustomOperationHandlerTypes,
 } from './MappedTypes/CustomOperations';
+import { CombinedModelSchema, CombinedSchemaIndexes } from './CombineSchema';
 
-export type ClientSchema<Schema extends GenericModelSchema<any>> =
-  InternalClientSchema<Schema>;
+export type ClientSchema<
+  Schema extends GenericModelSchema<any> | CombinedModelSchema<any>,
+> =
+  Schema extends CombinedModelSchema<any>
+    ? InternalCombinedSchema<Schema>
+    : Schema extends GenericModelSchema<any>
+      ? InternalClientSchema<Schema>
+      : never;
 
 /**
  * Types for unwrapping generic type args into client-consumable types
@@ -38,6 +48,7 @@ export type ClientSchema<Schema extends GenericModelSchema<any>> =
  * @internal @typeParam ImplicitModels - The implicit models created to represent relationships
  * @internal @typeParam ImplicitModelsIdentifierMeta - The implicite model identifiers derived from ImplicitModels
  * @internal @typeParam ResolvedFields - Resolved client-facing types used for CRUDL response shapes
+ * @internal @typeParam IdentifierMeta - Resolve the identifier fields for all models
  * @internal @typeParam SecondaryIndexes - Map of model secondary index metadata
  */
 type InternalClientSchema<
@@ -58,57 +69,6 @@ type InternalClientSchema<
   > = Schema extends RDSModelSchema<any, any>
     ? ResolveStaticFieldProperties<Schema, NonModelTypes, object>
     : ResolveFieldProperties<Schema, NonModelTypes, ImplicitModels>,
-> = InternalClientSchemaEntries<Schema, NonModelTypes, ResolvedFields> & {
-  [__modelMeta__]: InternalClientSchemaMetadata<
-    Schema,
-    NonModelTypes,
-    ResolvedSchema,
-    ImplicitModelsIdentifierMeta,
-    ResolvedFields
-  >;
-};
-
-/**
- * Types for expanding into client-consumable types
- *
- * @typeParam Schema - Data schema builder model type
- * @typeParam NonModelTypes - Custom Types, Enums, and Custom Operations
- * @typeParam ResolvedFields - Resolved client-facing types used for CRUDL response shapes
- */
-type InternalClientSchemaEntries<
-  Schema extends GenericModelSchema<any>,
-  NonModelTypes extends NonModelTypesShape,
-  ResolvedFields extends Record<string, unknown>,
-> = CustomOperationHandlerTypes<
-  ResolveCustomOperations<
-    Schema,
-    ResolvedFields,
-    NonModelTypes
-  >['customOperations']
-> &
-  ResolvedFields;
-
-/**
- * Types for expanding into client-consumable metadata types
- *
- * @typeParam Schema - Data schema builder model type
- *
- * The following params are used solely as variables in order to simplify mapped type usage.
- * They should not receive external type args.
- *
- * @internal @typeParam NonModelTypes - Custom Types, Enums, and Custom Operations
- * @internal @typeParam ResolvedSchema - Resolve the schema types used by other generics
- * @internal @typeParam ImplicitModelsIdentifierMeta - The implicite model identifiers derived from ImplicitModels
- * @internal @typeParam ResolvedFields - Resolved client-facing types used for CRUDL response shapes
- * @internal @typeParam IdentifierMeta - Resolve the identifier fields for all models
- * @internal @typeParam SecondaryIndexes - Map of model secondary index metadata
- */
-type InternalClientSchemaMetadata<
-  Schema extends GenericModelSchema<any>,
-  NonModelTypes extends NonModelTypesShape,
-  ResolvedSchema,
-  ImplicitModelsIdentifierMeta,
-  ResolvedFields extends Record<string, unknown>,
   IdentifierMeta extends Record<string, any> = ModelIdentifier<
     SchemaTypes<Schema>
   >,
@@ -118,9 +78,43 @@ type InternalClientSchemaMetadata<
   >
     ? object
     : ModelSecondaryIndexes<SchemaTypes<Schema>>,
-> = IdentifierMeta &
-  ImplicitModelsIdentifierMeta &
-  SecondaryIndexes &
-  RelationalMetadata<ResolvedSchema, ResolvedFields, IdentifierMeta> &
-  NonModelTypes &
-  ResolveCustomOperations<Schema, ResolvedFields, NonModelTypes>;
+> = CustomOperationHandlerTypes<
+  ResolveCustomOperations<
+    Schema,
+    ResolvedFields,
+    NonModelTypes
+  >['customOperations']
+> &
+  ResolvedFields & {
+    [__modelMeta__]: IdentifierMeta &
+      ImplicitModelsIdentifierMeta &
+      SecondaryIndexes &
+      RelationalMetadata<ResolvedSchema, ResolvedFields, IdentifierMeta> &
+      NonModelTypes &
+      ResolveCustomOperations<Schema, ResolvedFields, NonModelTypes>;
+  };
+
+type CombinedClientSchemas<
+  Schemas extends CombinedModelSchema<any>['schemas'],
+> = {
+  [Index in keyof Schemas]: Index extends CombinedSchemaIndexes
+    ? InternalClientSchema<Schemas[Index]>
+    : never;
+};
+
+/**
+ * Types for unwrapping and combining generic type args into client-consumable types
+ * for multiple schemas
+ *
+ * @typeParam Combined - A container of multiple schemas
+ *
+ * @internal @typeParam ClientSchemas - The tuple of client schemas to combine
+ **/
+type InternalCombinedSchema<
+  Combined extends CombinedModelSchema<any>,
+  ClientSchemas extends [...any] = CombinedClientSchemas<Combined['schemas']>,
+> = Omit<UnionToIntersection<ClientSchemas[number]>, typeof __modelMeta__> & {
+  [__modelMeta__]: UnionToIntersection<
+    ClientSchemas[number][typeof __modelMeta__]
+  >;
+};
