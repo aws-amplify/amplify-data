@@ -6,6 +6,7 @@ import {
   type HasKey,
   type CustomQueries,
   type CustomMutations,
+  type CustomSubscriptions,
   type ModelTypes,
   type GraphQLFormattedError,
   __modelMeta__,
@@ -24,6 +25,7 @@ type PartialClient<T extends Record<any, any> = never> = ExcludeNeverFields<{
   models: ModelTypes<T>;
   queries: CustomQueries<T>;
   mutations: CustomMutations<T>;
+  subscriptions: CustomSubscriptions<T>;
 }>;
 
 function generateClient<T extends Record<any, any>>() {
@@ -141,12 +143,19 @@ describe('client', () => {
       DataModel: a.model({
         resultContent: a.string(),
       }),
+
       getDataModel: a
         .query()
         .arguments({
           modelId: a.string().required(),
         })
         .returns(a.ref('DataModel'))
+        .handler(a.handler.function('echoFunction'))
+        .authorization([a.allow.public()]),
+
+      getAllDataModels: a
+        .query()
+        .returns(a.ref('DataModel').array())
         .handler(a.handler.function('echoFunction'))
         .authorization([a.allow.public()]),
     });
@@ -173,6 +182,23 @@ describe('client', () => {
     };
 
     type test = Expect<Equal<ResponseType, Expected>>;
+
+    // tests custom query w/ no args
+    const response2 = await client.queries.getAllDataModels();
+
+    type Response2Type = typeof response2;
+
+    type Expected2 = {
+      data: (Schema['DataModel'] | null)[] | null;
+      errors?: GraphQLFormattedError[] | undefined;
+      extensions?:
+        | {
+            [key: string]: any;
+          }
+        | undefined;
+    };
+
+    type test2 = Expect<Equal<Response2Type, Expected2>>;
   });
 
   test('mutation', async () => {
@@ -187,6 +213,12 @@ describe('client', () => {
         })
         .returns(a.ref('LikeResult'))
         .handler(a.handler.function('likePost'))
+        .authorization([a.allow.public()]),
+
+      likeAllPosts: a
+        .mutation()
+        .returns(a.ref('LikeResult').array())
+        .handler(a.handler.function('likeAllPosts'))
         .authorization([a.allow.public()]),
     });
 
@@ -211,6 +243,118 @@ describe('client', () => {
     };
 
     type test = Expect<Equal<ResponseType, Expected>>;
+
+    // Tests custom mutation w/ no args
+    const response2 = await client.mutations.likeAllPosts();
+
+    type Response2Type = typeof response2;
+    type Expected2 = {
+      data:
+        | ({
+            likes: number;
+          } | null)[]
+        | null;
+      errors?: GraphQLFormattedError[] | undefined;
+      extensions?:
+        | {
+            [key: string]: any;
+          }
+        | undefined;
+    };
+
+    type test2 = Expect<Equal<Response2Type, Expected2>>;
+  });
+
+  test('subscription - no args', async () => {
+    const schema = a
+      .schema({
+        Post: a.model({
+          title: a.string(),
+          liked: a.boolean(),
+        }),
+
+        onCreateOrUpdatePost: a
+          .subscription()
+          .for(a.ref('Post').mutations(['create', 'update']))
+          .returns(a.ref('Post'))
+          .handler(a.handler.function('onCreateOrUpdatePost')),
+      })
+      .authorization([a.allow.public()]);
+
+    type Schema = ClientSchema<typeof schema>;
+    const client = generateClient<Schema>();
+
+    client.subscriptions.onCreateOrUpdatePost().subscribe({
+      next: (data) => {
+        type ResponseType = Prettify<typeof data>;
+        type ExpectedType = {
+          readonly id: string;
+          readonly createdAt: string;
+          readonly updatedAt: string;
+          title?: string | null;
+          liked?: boolean | null;
+        } | null;
+        type test = Expect<Equal<ResponseType, ExpectedType>>;
+      },
+      error: (error) => {},
+    });
+
+    // Accepts options
+    client.subscriptions.onCreateOrUpdatePost({
+      authMode: 'apiKey',
+      authToken: 'abc123',
+      headers: { someHeader: 'someValue' },
+    });
+  });
+
+  test('subscription - with args', async () => {
+    const schema = a
+      .schema({
+        Post: a.model({
+          title: a.string(),
+          liked: a.boolean(),
+        }),
+
+        onCreateOrUpdatePost: a
+          .subscription()
+          .for(a.ref('Post').mutations(['create', 'update']))
+          .arguments({
+            postId: a.string().required(),
+          })
+          .returns(a.ref('Post'))
+          .handler(a.handler.function('onCreateOrUpdatePost')),
+      })
+      .authorization([a.allow.public()]);
+
+    type Schema = ClientSchema<typeof schema>;
+    const client = generateClient<Schema>();
+
+    const sub = client.subscriptions
+      .onCreateOrUpdatePost({ postId: 'abc' })
+      .subscribe({
+        next: (data) => {
+          type ResponseType = Prettify<typeof data>;
+          type ExpectedType = {
+            readonly id: string;
+            readonly createdAt: string;
+            readonly updatedAt: string;
+            title?: string | null;
+            liked?: boolean | null;
+          } | null;
+          type test = Expect<Equal<ResponseType, ExpectedType>>;
+        },
+        error: (error) => {},
+      });
+
+    // Accepts options
+    client.subscriptions.onCreateOrUpdatePost(
+      { postId: 'abc' },
+      {
+        authMode: 'apiKey',
+        authToken: 'abc123',
+        headers: { someHeader: 'someValue' },
+      },
+    );
   });
 
   test('custom ops are absent from models property', async () => {
