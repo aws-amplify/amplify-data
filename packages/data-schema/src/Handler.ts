@@ -64,7 +64,7 @@ type CustomHandlerInput = {
    * Defaults to 'NONE_DS'
    *
    */
-  dataSource?: string | RefType<any, any, any>;
+  dataSource?: string | RefType<any>;
   /**
    * The path to the file that contains the function entry point.
    * If this is a relative path, it is computed relative to the file where this handler is defined

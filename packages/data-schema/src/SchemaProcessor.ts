@@ -289,6 +289,7 @@ function customOperationToGql(
   authorization: Authorization<any, any, any>[],
   isCustom = false,
   databaseType: DatabaseType,
+  getRefType: ReturnType<typeof getRefTypeForSchema>,
 ): {
   gqlField: string;
   models: [string, any][];
@@ -296,9 +297,11 @@ function customOperationToGql(
 } {
   const {
     arguments: fieldArgs,
+    typeName: opType,
     returnType,
     functionRef,
     handlers,
+    subscriptionSource,
   } = typeDef.data;
 
   let callSignature: string = typeName;
@@ -346,6 +349,27 @@ function customOperationToGql(
     )}) `;
   } else if (databaseType === 'sql' && handler && brand === 'sqlReference') {
     gqlHandlerContent = `@sql(reference: "${getHandlerData(handler)}") `;
+  }
+
+  if (opType === 'Subscription') {
+    const subscriptionSources = subscriptionSource
+      .flatMap((source: InternalRef) => {
+        const refTarget = source.data.link;
+        const { type } = getRefType(refTarget, typeName);
+
+        if (type === 'CustomOperation') {
+          return refTarget;
+        }
+
+        if (type === 'Model') {
+          return source.data.mutationOperations.map(
+            (op: string) => `${op}${refTarget}`,
+          );
+        }
+      })
+      .join('", "');
+
+    gqlHandlerContent += `@aws_subscribe(mutations: ["${subscriptionSources}"]) `;
   }
 
   const gqlField = `${callSignature}: ${returnTypeName} ${gqlHandlerContent}${authString}`;
@@ -408,6 +432,30 @@ function addFields(
       throw new Error(`Field ${k} defined twice with conflicting definitions.`);
     } else {
       // fields are defined on both sides, but match.
+    }
+  }
+}
+
+/**
+ * Validate that no implicit fields are used by the model definition
+ *
+ * @param existing An existing field map
+ * @param implicitFields A field map inferred from other schema usage
+ *
+ * @throws An error when an undefined field is used or when a field is used in a way that conflicts with its generated definition
+ */
+function validateStaticFields(
+  existing: Record<string, ModelField<any, any>>,
+  implicitFields: Record<string, ModelField<any, any>> | undefined,
+) {
+  if (implicitFields === undefined) {
+    return;
+  }
+  for (const [k, field] of Object.entries(implicitFields)) {
+    if (!existing[k]) {
+      throw new Error(`Field ${k} isn't defined.`);
+    } else if (areConflicting(existing[k], field)) {
+      throw new Error(`Field ${k} defined twice with conflicting definitions.`);
     }
   }
 }
@@ -1023,6 +1071,57 @@ const extractFunctionSchemaAccess = (
   return { schemaAuth, functionSchemaAccess };
 };
 
+type GetRef =
+  | {
+      type: 'Model';
+      def: InternalModel;
+    }
+  | { type: 'CustomOperation'; def: InternalCustom }
+  | {
+      type: 'CustomType';
+      def: {
+        data: CustomType<CustomTypeParamShape>;
+      };
+    }
+  | { type: 'Enum'; def: EnumType<any> };
+
+/**
+ * Returns a closure for retrieving reference type and definition from schema
+ */
+const getRefTypeForSchema = (schema: InternalSchema) => {
+  const getRefType = (source: string, target: string): GetRef => {
+    const typeDef = schema.data.types[source];
+
+    if (typeDef === undefined) {
+      throw new Error(
+        `Invalid ref. ${target} is referencing ${source} which is not defined in the schema`,
+      );
+    }
+
+    if (isInternalModel(typeDef)) {
+      return { type: 'Model', def: typeDef };
+    }
+
+    if (isCustomOperation(typeDef)) {
+      return { type: 'CustomOperation', def: typeDef };
+    }
+
+    if (isCustomType(typeDef)) {
+      return { type: 'CustomType', def: typeDef };
+    }
+
+    if (isEnumType(typeDef)) {
+      return { type: 'Enum', def: typeDef };
+    }
+
+    throw new Error(
+      `Invalid ref. ${target} is referencing ${source} which is neither a Model, Custom Operation, Custom Type, or Enum`,
+    );
+  };
+
+  return getRefType;
+};
+
 const schemaPreprocessor = (
   schema: InternalSchema,
 ): {
@@ -1045,12 +1144,17 @@ const schemaPreprocessor = (
       ? 'dynamodb'
       : 'sql';
 
+  const staticSchema =
+    schema.data.configuration.database.engine === 'dynamodb' ? false : true;
+
   const fkFields = allImpliedFKs(schema);
   const topLevelTypes = Object.entries(schema.data.types);
 
   const { schemaAuth, functionSchemaAccess } = extractFunctionSchemaAccess(
     schema.data.authorization,
   );
+
+  const getRefType = getRefTypeForSchema(schema);
 
   for (const [typeName, typeDef] of topLevelTypes) {
     validateAuth(typeDef.data?.authorization);
@@ -1120,6 +1224,7 @@ const schemaPreprocessor = (
           typeName,
           mostRelevantAuthRules,
           databaseType,
+          getRefType,
         );
 
         lambdaFunctions = lambdaFunctionDefinition;
@@ -1144,6 +1249,43 @@ const schemaPreprocessor = (
             break;
         }
       }
+    } else if (staticSchema) {
+      const fields = { ...typeDef.data.fields } as Record<
+        string,
+        ModelField<any, any>
+      >;
+      const identifier = typeDef.data.identifier;
+      const [partitionKey] = identifier;
+
+      validateStaticFields(fields, fkFields[typeName]);
+
+      const { authString, authFields } = calculateAuth(mostRelevantAuthRules);
+      if (authString == '') {
+        throw new Error(
+          `Model \`${typeName}\` is missing authorization rules. Add global rules to the schema or ensure every model has its own rules.`,
+        );
+      }
+      const fieldLevelAuthRules = processFieldLevelAuthRules(
+        fields,
+        authFields,
+      );
+
+      validateStaticFields(fields, authFields);
+
+      const { gqlFields, models } = processFields(
+        typeName,
+        fields,
+        fieldLevelAuthRules,
+        identifier,
+        partitionKey,
+      );
+
+      topLevelTypes.push(...models);
+
+      const joined = gqlFields.join('\n  ');
+
+      const model = `type ${typeName} @model ${authString}\n{\n  ${joined}\n}`;
+      gqlModels.push(model);
     } else {
       const fields = mergeFieldObjects(
         typeDef.data.fields as Record<string, ModelField<any, any>>,
@@ -1219,8 +1361,15 @@ function validateCustomOperations(
   typeDef: InternalCustom,
   typeName: string,
   authRules: Authorization<any, any, any>[],
+  getRefType: ReturnType<typeof getRefTypeForSchema>,
 ) {
-  const { functionRef, handlers } = typeDef.data;
+  const {
+    functionRef,
+    handlers,
+    typeName: opType,
+    subscriptionSource,
+    returnType,
+  } = typeDef.data;
 
   // TODO: remove `functionRef` after deprecating
   const handlerConfigured = functionRef !== null || handlers?.length;
@@ -1255,6 +1404,90 @@ function validateCustomOperations(
         `Field handlers must be of the same type. ${typeName} has been configured with ${configuredHandlersStr}`,
       );
     }
+  }
+
+  if (opType === 'Subscription') {
+    if (subscriptionSource.length < 1) {
+      throw new Error(
+        `${typeName} is missing a mutation source. Custom subscriptions must reference a mutation source via subscription().for(a.ref('ModelOrOperationName')) `,
+      );
+    }
+
+    subscriptionSource.forEach((source: InternalRef) => {
+      const sourceName = source.data.link;
+      const { type, def } = getRefType(sourceName, typeName);
+
+      if (type !== 'Model' && source.data.mutationOperations.length > 0) {
+        throw new Error(
+          `Invalid subscription definition. .mutations() modifier can only be used with a Model ref. ${typeName} is referencing ${type}`,
+        );
+      }
+
+      if (type === 'Model' && source.data.mutationOperations.length === 0) {
+        throw new Error(
+          `Invalid subscription definition. .mutations() modifier must be used with a Model ref subscription source. ${typeName} is referencing ${sourceName} without specifying a mutation`,
+        );
+      }
+
+      if (type === 'CustomOperation' && def.data.typeName !== 'Mutation') {
+        throw new Error(
+          `Invalid subscription definition. .for() can only reference a mutation. ${typeName} is referencing ${sourceName} which is a ${def.data.typeName}`,
+        );
+      }
+
+      // Ensure subscription return type matches the return type of triggering mutation(s)
+
+      // TODO: when we remove .returns() for custom subscriptions, minor changes will be needed here. Instead of comparing subscriptionSource return val
+      //  to a root returnType, we'll need to ensure that each subscriptionSource has the same return type
+      if (returnType.data.type === 'ref') {
+        const returnTypeName = returnType.data.link;
+
+        if (type === 'Model') {
+          if (
+            returnTypeName !== sourceName ||
+            returnType.data.array !== source.data.array
+          ) {
+            throw new Error(
+              `Invalid subscription definition. Subscription return type must match the return type of the mutation triggering it. ${typeName} is referencing ${sourceName} which has a different return type`,
+            );
+          }
+        }
+
+        if (type === 'CustomOperation') {
+          const customOperationReturnType = def.data.returnType.data.link;
+          const customOperationReturnTypeArray = def.data.returnType.data.array;
+
+          if (
+            returnTypeName !== customOperationReturnType ||
+            returnType.data.array !== customOperationReturnTypeArray
+          ) {
+            throw new Error(
+              `Invalid subscription definition. Subscription return type must match the return type of the mutation triggering it. ${typeName} is referencing ${sourceName} which has a different return type`,
+            );
+          }
+        }
+      } else if (returnType.data.fieldType !== undefined) {
+        if (type === 'Model') {
+          throw new Error(
+            `Invalid subscription definition. Subscription return type must match the return type of the mutation triggering it. ${typeName} is referencing ${sourceName} which has a different return type`,
+          );
+        }
+
+        if (type === 'CustomOperation') {
+          const customOperationReturnType = def.data.returnType.data.fieldType;
+          const customOperationReturnTypeArray = def.data.returnType.data.array;
+
+          if (
+            returnType.data.fieldType !== customOperationReturnType ||
+            returnType.data.array !== customOperationReturnTypeArray
+          ) {
+            throw new Error(
+              `Invalid subscription definition. Subscription return type must match the return type of the mutation triggering it. ${typeName} is referencing ${sourceName} which has a different return type`,
+            );
+          }
+        }
+      }
+    });
   }
 }
 
@@ -1356,11 +1589,12 @@ function transformCustomOperations(
   typeName: string,
   authRules: Authorization<any, any, any>[],
   databaseType: DatabaseType,
+  getRefType: ReturnType<typeof getRefTypeForSchema>,
 ) {
   const { typeName: opType, handlers } = typeDef.data;
   let jsFunctionForField: JsResolver | undefined = undefined;
 
-  validateCustomOperations(typeDef, typeName, authRules);
+  validateCustomOperations(typeDef, typeName, authRules, getRefType);
 
   if (isCustomHandler(handlers)) {
     jsFunctionForField = handleCustom(handlers, opType, typeName);
@@ -1374,6 +1608,7 @@ function transformCustomOperations(
     authRules,
     isCustom,
     databaseType,
+    getRefType,
   );
 
   return { gqlField, models, jsFunctionForField, lambdaFunctionDefinition };

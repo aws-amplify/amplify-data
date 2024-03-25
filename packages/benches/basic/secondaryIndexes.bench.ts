@@ -9,12 +9,12 @@ bench('secondary index', () => {
         description: a.string(),
         viewCount: a.integer(),
       })
-      .secondaryIndexes([
-        a.index('title').sortKeys(['viewCount']).queryField('myFavIdx'),
-        a.index('description'),
-        a.index('viewCount'),
+      .secondaryIndexes((index) => [
+        index('title').sortKeys(['viewCount']).queryField('myFavIdx'),
+        index('description'),
+        index('viewCount'),
       ]),
   });
 
   type _ = ClientSchema<typeof s>;
-}).types([70636, 'instantiations']);
+}).types([64034, 'instantiations']);

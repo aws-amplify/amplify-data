@@ -26,6 +26,9 @@ type CustomArguments = Record<
   ModelField<any, any> | EnumType<EnumTypeParamShape>
 >;
 
+type SubscriptionSource = RefType<any, any>;
+type InternalSubscriptionSource = InternalRef;
+
 type CustomReturnType = RefType<any> | CustomType<any>;
 type CustomFunctionRefType = string; // extend to include reference
 
@@ -47,17 +50,19 @@ type CustomData = {
   authorization: Authorization<any, any, any>[];
   typeName: CustomOperationName;
   handlers: Handler[] | null;
+  subscriptionSource: SubscriptionSource[];
 };
 
 type InternalCustomData = CustomData & {
   arguments: InternalCustomArguments;
   returnType: InternalCustomReturnType;
   functionRef: string | null;
+  subscriptionSource: InternalSubscriptionSource[];
   authorization: Authorization<any, any, any>[];
 };
 
 export type CustomOperationParamShape = {
-  arguments: CustomArguments;
+  arguments: CustomArguments | null;
   returnType: CustomReturnType | null;
   functionRef: string | null;
   authorization: Authorization<any, any, any>[];
@@ -69,8 +74,6 @@ export type CustomOperation<
   T extends CustomOperationParamShape,
   K extends keyof CustomOperation<T> = never,
   B extends CustomOperationBrand = CustomOperationBrand,
-  // Branding the exported type allows us to detect it
-  // nominally in our mapped types, ignoring structural overlap with other types
 > = Omit<
   {
     arguments<Arguments extends CustomArguments>(
@@ -112,6 +115,9 @@ export type CustomOperation<
     handler<H extends HandlerInputType>(
       handlers: H,
     ): CustomOperation<T, K | 'handler', B>;
+    for(
+      source: SubscriptionSource | SubscriptionSource[],
+    ): CustomOperation<T, K | 'for', B>;
   },
   K
 > &
@@ -144,6 +150,7 @@ function _custom<
     authorization: [],
     typeName: typeName,
     handlers: null,
+    subscriptionSource: [],
   };
 
   const builder = brandedBuilder<T>(
@@ -175,6 +182,11 @@ function _custom<
 
         return this;
       },
+      for(source: SubscriptionSource | SubscriptionSource[]) {
+        data.subscriptionSource = Array.isArray(source) ? source : [source];
+
+        return this;
+      },
     },
     brand,
   );
@@ -194,7 +206,7 @@ export type QueryCustomOperation = CustomOperation<
 
 export function query(): CustomOperation<
   {
-    arguments: CustomArguments;
+    arguments: null;
     returnType: null;
     functionRef: null;
     authorization: [];
@@ -215,7 +227,7 @@ export type MutationCustomOperation = CustomOperation<
 
 export function mutation(): CustomOperation<
   {
-    arguments: CustomArguments;
+    arguments: null;
     returnType: null;
     functionRef: null;
     authorization: [];
@@ -236,7 +248,7 @@ export type SubscriptionCustomOperation = CustomOperation<
 
 export function subscription(): CustomOperation<
   {
-    arguments: CustomArguments;
+    arguments: null;
     returnType: null;
     functionRef: null;
     authorization: [];

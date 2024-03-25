@@ -39,6 +39,19 @@ describe('Custom Operations mapper utils', () => {
     type T = Expect<Equal<Actual, Expected>>;
   });
 
+  test('can resolve omitted arguments type from custom op', () => {
+    const aMutation = a
+      .mutation()
+      .returns(a.string())
+      .authorization([a.allow.public()])
+      .handler(a.handler.function('asdf'));
+
+    type Actual = CustomOpArguments<OpShape<typeof aMutation>>;
+    type Expected = never;
+
+    type T = Expect<Equal<Actual, Expected>>;
+  });
+
   test('can select custom op shapes from a schema', () => {
     const aQuery = a
       .query()

@@ -1,11 +1,12 @@
 import { type __modelMeta__ } from '@aws-amplify/data-schema-types';
-import type { ModelSchema } from './ModelSchema';
+import { type GenericModelSchema, type RDSModelSchema } from './ModelSchema';
 
 // MappedTypes
 import type { ResolveSchema, SchemaTypes } from './MappedTypes/ResolveSchema';
 import type {
   CreateImplicitModelsFromRelations,
   ResolveFieldProperties,
+  ResolveStaticFieldProperties,
 } from './MappedTypes/ResolveFieldProperties';
 import type {
   ModelIdentifier,
@@ -16,55 +17,66 @@ import type {
   ExtractNonModelTypes,
   NonModelTypesShape,
 } from './MappedTypes/ExtractNonModelTypes';
-import type { ResolveCustomOperations } from './MappedTypes/CustomOperations';
+import {
+  ResolveCustomOperations,
+  CustomOperationHandlerTypes,
+} from './MappedTypes/CustomOperations';
 
-export type ClientSchema<Schema extends ModelSchema<any, any>> =
+export type ClientSchema<Schema extends GenericModelSchema<any>> =
   InternalClientSchema<Schema>;
 
 /**
  * Types for unwrapping generic type args into client-consumable types
  *
- * @typeParam Schema - Type Beast schema type
+ * @typeParam Schema - Data schema builder model type
  *
  * The following params are used solely as variables in order to simplify mapped type usage.
  * They should not receive external type args.
  *
  * @internal @typeParam NonModelTypes - Custom Types, Enums, and Custom Operations
- * @internal @typeParam ResolvedSchema - Schema/Models/Fields structure with generic type args extracted
- * @internal @typeParam ResolvedFields - Resovled client-facing types used for CRUDL response shapes
- * @internal @typeParam IdentifierMeta - Map of model primary index metadata
+ * @internal @typeParam ImplicitModels - The implicit models created to represent relationships
+ * @internal @typeParam ResolvedFields - Resolved client-facing types used for CRUDL response shapes
  * @internal @typeParam SecondaryIndexes - Map of model secondary index metadata
- *
- * @internal @typeParam Meta - Stores schema metadata: identifier, relationship metadata;
- * used by `API.generateClient` to craft strongly typed mutation inputs; hidden from customer-facing types behind __modelMeta__ symbol
- *
  */
 type InternalClientSchema<
-  Schema extends ModelSchema<any, any>,
+  Schema extends GenericModelSchema<any>,
   NonModelTypes extends NonModelTypesShape = ExtractNonModelTypes<Schema>,
   ResolvedSchema = ResolveSchema<Schema>,
-  ImplicitModels = CreateImplicitModelsFromRelations<ResolvedSchema>,
+  ImplicitModels = Schema extends RDSModelSchema<any, any>
+    ? object
+    : CreateImplicitModelsFromRelations<ResolvedSchema>,
   ImplicitModelsIdentifierMeta = {
     [ImplicitModel in keyof ImplicitModels]: {
       identifier: 'id';
     };
   },
-  ResolvedFields extends Record<string, unknown> = ResolveFieldProperties<
-    Schema,
-    NonModelTypes,
-    ImplicitModels
-  >,
+  ResolvedFields extends Record<
+    string,
+    unknown
+  > = Schema extends RDSModelSchema<any, any>
+    ? ResolveStaticFieldProperties<Schema, NonModelTypes, object>
+    : ResolveFieldProperties<Schema, NonModelTypes, ImplicitModels>,
   IdentifierMeta extends Record<string, any> = ModelIdentifier<
     SchemaTypes<Schema>
   >,
-  SecondaryIndexes extends Record<string, any> = ModelSecondaryIndexes<
-    SchemaTypes<Schema>
-  >,
-> = ResolvedFields & {
-  [__modelMeta__]: IdentifierMeta &
-    ImplicitModelsIdentifierMeta &
-    SecondaryIndexes &
-    RelationalMetadata<ResolvedSchema, ResolvedFields, IdentifierMeta> &
-    NonModelTypes &
-    ResolveCustomOperations<Schema, ResolvedFields, NonModelTypes>;
-};
+  SecondaryIndexes extends Record<string, any> = Schema extends RDSModelSchema<
+    any,
+    any
+  >
+    ? object
+    : ModelSecondaryIndexes<SchemaTypes<Schema>>,
+> = CustomOperationHandlerTypes<
+  ResolveCustomOperations<
+    Schema,
+    ResolvedFields,
+    NonModelTypes
+  >['customOperations']
+> &
+  ResolvedFields & {
+    [__modelMeta__]: IdentifierMeta &
+      ImplicitModelsIdentifierMeta &
+      SecondaryIndexes &
+      RelationalMetadata<ResolvedSchema, ResolvedFields, IdentifierMeta> &
+      NonModelTypes &
+      ResolveCustomOperations<Schema, ResolvedFields, NonModelTypes>;
+  };

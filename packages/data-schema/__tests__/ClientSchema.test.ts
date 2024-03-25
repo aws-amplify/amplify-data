@@ -5,7 +5,12 @@ import {
   Equal,
   Prettify,
   __modelMeta__,
+  AuthMode,
+  CustomHeaders,
+  SingularReturnValue,
 } from '@aws-amplify/data-schema-types';
+import { configure } from '../src/internals';
+import { Nullable } from '../src/ModelField';
 
 // evaluates type defs in corresponding test-d.ts file
 it('should not produce static type errors', async () => {
@@ -562,6 +567,7 @@ describe('schema auth rules', () => {
           .handler(a.handler.function('myFunc')),
         onLikePost: a
           .subscription()
+          .for(a.ref('likePost'))
           .returns(a.ref('Post'))
           .handler(a.handler.function('myFunc')),
       })
@@ -643,5 +649,237 @@ describe('custom operations', () => {
 
     const graphql = schema.transform().schema;
     expect(graphql).toMatchSnapshot();
+  });
+
+  describe('for an rds schema', () => {
+    const fakeSecret = () => ({}) as any;
+
+    const datasourceConfigMySQL = {
+      engine: 'mysql',
+      hostname: fakeSecret(),
+      username: fakeSecret(),
+      password: fakeSecret(),
+      port: fakeSecret(),
+      databaseName: fakeSecret(),
+    } as const;
+
+    const aSql = configure({ database: datasourceConfigMySQL });
+
+    test('can define public auth with no provider', () => {
+      const schema = aSql.schema({
+        A: a
+          .model({
+            field: a.string(),
+          })
+          .authorization([a.allow.public()]),
+      });
+
+      type Actual_A = Prettify<ClientSchema<typeof schema>['A']>;
+
+      type Expected_A = {
+        field?: string | null | undefined;
+        // doesn't imply id field
+        // doesn't imply timestamp fields
+      };
+
+      type test = Expect<Equal<Actual_A, Expected_A>>;
+
+      const graphql = schema.transform().schema;
+      expect(graphql).toMatchSnapshot();
+    });
+
+    test('allows owner', () => {
+      const schema = aSql
+        .schema({
+          A: a.model({
+            field: a.string(),
+          }),
+        })
+        .authorization([a.allow.owner()]);
+
+      type Actual_A = Prettify<ClientSchema<typeof schema>['A']>;
+
+      type Expected_A = {
+        field?: string | null | undefined;
+        // doesn't imply id field
+        // doesn't imply timestamp fields
+        // doesn't imply owner field
+      };
+
+      type test = Expect<Equal<Actual_A, Expected_A>>;
+
+      expect(() => schema.transform().schema).toThrowError(
+        "Field owner isn't defined.",
+      );
+    });
+
+    test('allows id to be specified', () => {
+      const schema = aSql
+        .schema({
+          A: a
+            .model({
+              idNum: a.integer().required(),
+              field: a.string(),
+            })
+            .identifier(['idNum']),
+        })
+        .authorization([a.allow.owner()]);
+
+      type Actual_A = Prettify<ClientSchema<typeof schema>['A']>;
+
+      type Expected_A = {
+        idNum: number;
+        field?: string | null | undefined;
+        // doesn't imply timestamp fields
+        // doesn't imply owner field
+      };
+
+      type test = Expect<Equal<Actual_A, Expected_A>>;
+
+      expect(() => schema.transform().schema).toThrowError(
+        "Field owner isn't defined.",
+      );
+    });
+
+    test('related models', () => {
+      const schema = aSql
+        .schema({
+          B: a
+            .model({
+              id: a.string().required(),
+              title: a.string(),
+            })
+            .identifier(['id']),
+          A: a
+            .model({
+              idNum: a.integer().required(),
+              field: a.string(),
+              bId: a.string(),
+              b: a.belongsTo('B').references(['bId']),
+            })
+            .identifier(['idNum']),
+        })
+        .authorization([a.allow.owner()]);
+
+      type Actual_A = Prettify<ClientSchema<typeof schema>['A']>;
+
+      type Expected_A = {
+        idNum: number;
+        field?: string | null | undefined;
+        bId?: string | null | undefined;
+        b: (
+          options?:
+            | {
+                authMode?: AuthMode | undefined;
+                authToken?: string | undefined;
+                headers?: CustomHeaders | undefined;
+              }
+            | undefined,
+        ) => SingularReturnValue<
+          | {
+              id: string;
+              title: Nullable<string>;
+            }
+          | null
+          | undefined
+        >;
+        // doesn't imply id field
+        // doesn't imply timestamp fields
+        // doesn't imply owner field
+      };
+
+      type test = Expect<Equal<Actual_A, Expected_A>>;
+
+      expect(() => schema.transform().schema).toThrowError(
+        "Field owner isn't defined.",
+      );
+    });
+
+    test('related models with missing foreign keys', () => {
+      const schema = aSql
+        .schema({
+          B: a
+            .model({
+              id: a.string().required(),
+              title: a.string(),
+            })
+            .identifier(['id']),
+          A: a
+            .model({
+              idNum: a.integer().required(),
+              field: a.string(),
+              b: a.belongsTo('B').references(['bId']),
+            })
+            .identifier(['idNum']),
+        })
+        .authorization([a.allow.public()]);
+
+      type Actual_A = Prettify<ClientSchema<typeof schema>['A']>;
+
+      type Expected_A = {
+        idNum: number;
+        field?: string | null | undefined;
+        b: (
+          options?:
+            | {
+                authMode?: AuthMode | undefined;
+                authToken?: string | undefined;
+                headers?: CustomHeaders | undefined;
+              }
+            | undefined,
+        ) => SingularReturnValue<
+          | {
+              id: string;
+              title: Nullable<string>;
+            }
+          | null
+          | undefined
+        >;
+        // doesn't imply id field
+        // doesn't imply timestamp fields
+        // doesn't imply owner field
+      };
+
+      type test = Expect<Equal<Actual_A, Expected_A>>;
+    });
+
+    describe('custom operations', () => {
+      test('custom query', () => {
+        const schema = aSql.schema({
+          EchoResult: a.customType({
+            resultContent: a.string(),
+          }),
+          echo: a
+            .query()
+            .arguments({
+              inputContent: a.string().required(),
+            })
+            .returns(a.ref('EchoResult'))
+            .handler(a.handler.function('echoFunction'))
+            .authorization([a.allow.public()]),
+        });
+
+        type Schema = ClientSchema<typeof schema>;
+        type ActualEcho =
+          Schema[typeof __modelMeta__]['customOperations']['echo'];
+
+        type Expected = {
+          arguments: {
+            inputContent: string;
+          };
+          typeName: 'Query';
+          returnType: {
+            resultContent?: string | null | undefined;
+          } | null;
+        };
+
+        type ActualEchoInterface = Pick<ActualEcho, keyof Expected>;
+
+        type test = Expect<Equal<ActualEchoInterface, Expected>>;
+
+        const graphql = schema.transform().schema;
+        expect(graphql).toMatchSnapshot();
+      });
+    });
   });
 });

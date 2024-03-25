@@ -1,5 +1,37 @@
 # @aws-amplify/data-schema
 
+## 0.14.1
+
+### Patch Changes
+
+- ffa6675: client types for custom subscriptions
+- Updated dependencies [ffa6675]
+  - @aws-amplify/data-schema-types@0.7.10
+
+## 0.14.0
+
+### Minor Changes
+
+- 2d85439: refactor!: update .secondaryIndexes builder
+
+## 0.13.18
+
+### Patch Changes
+
+- df1df38: add custom subscriptions
+
+## 0.13.17
+
+### Patch Changes
+
+- 919e01e: feat: RDS ClientSchema without implicit fields / behavior
+
+## 0.13.16
+
+### Patch Changes
+
+- 1804a21: feat: Remove implicit fields for static schema model transformations
+
 ## 0.13.15
 
 ### Patch Changes

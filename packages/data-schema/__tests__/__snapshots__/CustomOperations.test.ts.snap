@@ -30,7 +30,7 @@ type Query {
 }
 
 type Subscription {
-  onLikePost: Post @function(name: "myFunc") @auth(rules: [{allow: public}])
+  onLikePost: Post @function(name: "myFunc") @aws_subscribe(mutations: ["likePost"]) @auth(rules: [{allow: public}])
 }"
 `;
 
@@ -49,7 +49,7 @@ type Query {
 }
 
 type Subscription {
-  onLikePost: PostCustomType @function(name: "myFunc") @auth(rules: [{allow: public}])
+  onLikePost: [PostCustomType] @function(name: "myFunc") @aws_subscribe(mutations: ["listPosts"]) @auth(rules: [{allow: public}])
 }"
 `;
 
@@ -71,7 +71,7 @@ type Query {
 }
 
 type Subscription {
-  onLikePost: Post @function(name: "myFunc") @auth(rules: [{allow: public}])
+  onLikePost: [Post] @function(name: "myFunc") @aws_subscribe(mutations: ["listPosts"]) @auth(rules: [{allow: public}])
 }"
 `;
 
@@ -220,7 +220,7 @@ type Query {
 }
 
 type Subscription {
-  onLikePost: Post @function(name: "myFunc") @auth(rules: [{allow: public}])
+  onLikePost: Post @function(name: "myFunc") @aws_subscribe(mutations: ["likePost"]) @auth(rules: [{allow: public}])
 }"
 `;
 
@@ -239,7 +239,7 @@ type Query {
 }
 
 type Subscription {
-  onLikePost: PostCustomType @function(name: "myFunc") @auth(rules: [{allow: public}])
+  onCreatePost: [PostCustomType] @function(name: "myFunc") @aws_subscribe(mutations: ["listPosts"]) @auth(rules: [{allow: public}])
 }"
 `;
 
@@ -261,7 +261,81 @@ type Query {
 }
 
 type Subscription {
-  onLikePost: Post @function(name: "myFunc") @auth(rules: [{allow: public}])
+  onCreatePost: Post @function(name: "myFunc") @aws_subscribe(mutations: ["createPost"]) @auth(rules: [{allow: public}])
+}"
+`;
+
+exports[`CustomOperation transform dynamo schema custom subscriptions Custom subscription where .returns() matches referenced custom operation's scalar return type 1`] = `
+"type Mutation {
+  likePost: String @function(name: "likePost") @auth(rules: [{allow: public}])
+}
+
+type Subscription {
+  onLikePost: String @function(name: "onLikePost") @aws_subscribe(mutations: ["likePost"]) @auth(rules: [{allow: public}])
+}"
+`;
+
+exports[`CustomOperation transform dynamo schema custom subscriptions Custom subscription with Model source & custom mutation source 1`] = `
+"type Post @model @auth(rules: [{allow: public}])
+{
+  id: ID! @primaryKey
+  title: String
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
+}
+
+type Mutation {
+  likePost(postId: String): Post @function(name: "likePost") @auth(rules: [{allow: public}])
+}
+
+type Subscription {
+  onLikeOrUpdatePost: Post @function(name: "myFunc") @aws_subscribe(mutations: ["likePost", "updatePost"]) @auth(rules: [{allow: public}])
+}"
+`;
+
+exports[`CustomOperation transform dynamo schema custom subscriptions Custom subscription with custom mutation source 1`] = `
+"type Post @model @auth(rules: [{allow: public}])
+{
+  id: ID! @primaryKey
+  title: String
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
+}
+
+type Mutation {
+  likePost(postId: String): Post @function(name: "likePost") @auth(rules: [{allow: public}])
+}
+
+type Subscription {
+  onLikePost: Post @function(name: "myFunc") @aws_subscribe(mutations: ["likePost"]) @auth(rules: [{allow: public}])
+}"
+`;
+
+exports[`CustomOperation transform dynamo schema custom subscriptions Custom subscription with model multiple mutation sources 1`] = `
+"type Post @model @auth(rules: [{allow: public}])
+{
+  id: ID! @primaryKey
+  title: String
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
+}
+
+type Subscription {
+  onAnyPostMutation: Post @function(name: "myFunc") @aws_subscribe(mutations: ["createPost", "updatePost", "deletePost"]) @auth(rules: [{allow: public}])
+}"
+`;
+
+exports[`CustomOperation transform dynamo schema custom subscriptions Custom subscription with model single mutation source 1`] = `
+"type Post @model @auth(rules: [{allow: public}])
+{
+  id: ID! @primaryKey
+  title: String
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
+}
+
+type Subscription {
+  onCreatePost: Post @function(name: "myFunc") @aws_subscribe(mutations: ["createPost"]) @auth(rules: [{allow: public}])
 }"
 `;
 
@@ -384,10 +458,7 @@ type Query {
 exports[`CustomOperation transform sql schema Schema w model, custom query, mutation, and subscription 1`] = `
 "type Post @model @auth(rules: [{allow: public}])
 {
-  id: ID! @primaryKey
   title: String
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
 }
 
 type Mutation {
@@ -399,17 +470,14 @@ type Query {
 }
 
 type Subscription {
-  onLikePost: Post @function(name: "myFunc") @auth(rules: [{allow: public}])
+  onLikePost: Post @function(name: "myFunc") @aws_subscribe(mutations: ["likePost"]) @auth(rules: [{allow: public}])
 }"
 `;
 
 exports[`CustomOperation transform sql schema schema.add* will not accept custom operations of incompatible types 1`] = `
 "type Post @model @auth(rules: [{allow: public}])
 {
-  id: ID! @primaryKey
   title: String
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
 }
 
 type Mutation {
@@ -421,6 +489,7 @@ type Query {
 }
 
 type Subscription {
-  onLikePost: Post @function(name: "myFunc") @auth(rules: [{allow: public}])
+  onCreatePost: Post @function(name: "myFunc") @aws_subscribe(mutations: ["createPost"]) @auth(rules: [{allow: public}])
+  onLikePost: Post @function(name: "myFunc") @aws_subscribe(mutations: ["updatePost"]) @auth(rules: [{allow: public}])
 }"
 `;
