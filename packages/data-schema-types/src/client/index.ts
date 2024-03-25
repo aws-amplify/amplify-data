@@ -474,12 +474,7 @@ type ModelFilter<Model extends Record<any, any>> = LogicalFilters<Model> & {
       : StringFilter;
 };
 
-enum ModelSortDirectionParams {
-  ASC = 'ASC',
-  DESC = 'DESC',
-}
-
-export type ModelSortDirection = keyof typeof ModelSortDirectionParams;
+export type ModelSortDirection = 'ASC' | 'DESC';
 
 type ModelMetaShape = {
   secondaryIndexes: SecondaryIndexIrShape[];
