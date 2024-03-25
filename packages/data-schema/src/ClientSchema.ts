@@ -118,11 +118,9 @@ type InternalClientSchemaMetadata<
   >
     ? object
     : ModelSecondaryIndexes<SchemaTypes<Schema>>,
-> = {
-  [__modelMeta__]: IdentifierMeta &
-    ImplicitModelsIdentifierMeta &
-    SecondaryIndexes &
-    RelationalMetadata<ResolvedSchema, ResolvedFields, IdentifierMeta> &
-    NonModelTypes &
-    ResolveCustomOperations<Schema, ResolvedFields, NonModelTypes>;
-};
+> = IdentifierMeta &
+  ImplicitModelsIdentifierMeta &
+  SecondaryIndexes &
+  RelationalMetadata<ResolvedSchema, ResolvedFields, IdentifierMeta> &
+  NonModelTypes &
+  ResolveCustomOperations<Schema, ResolvedFields, NonModelTypes>;
