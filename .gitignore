@@ -1,5 +1,4 @@
 coverage
-docs
 lib
 lib-esm
 node_modules
@@ -12,3 +11,6 @@ tsconfig.tsbuildinfo
 .DS_Store
 verdaccio-cache
 verdaccio-logs.txt
+
+packages/integration-tests/temp
+packages/integration-tests/docs-temp

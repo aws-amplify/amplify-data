@@ -5,10 +5,15 @@ const brandSymbol = Symbol('brand');
  * @returns A branded empty object type
  *
  * @example
+ * ```ts
  * Brand<'example'> => {[brandSymbol]: 'example'}
+ * ```
  *
  * Which I might use like this:
+ *
+ * ```ts
  * type MyType = {content: string} & Brand<'example'>
+ * ```
  */
 export type Brand<BrandStr extends string> = {
   [brandSymbol]: BrandStr;
@@ -22,10 +27,15 @@ export type Brand<BrandStr extends string> = {
  * @returns A branded empty object
  *
  * @example
+ *
+ * ```ts
  * brand('example') => {[brandSymbol]: 'example'}
+ * ```
  *
  * Which I might use like this:
+ * ```ts
  * const myType = {content: "default content", ...brand<'example'>}
+ * ```
  */
 export function brand<BrandStr extends string>(
   brand: BrandStr,

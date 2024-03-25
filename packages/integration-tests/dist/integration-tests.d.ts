@@ -1,3 +1,4 @@
+import type { AppSyncResolverHandler } from 'aws-lambda';
 import { ConstructFactory } from '@aws-amplify/plugin-types';
 import { FunctionResources } from '@aws-amplify/plugin-types';
 import type { Observable } from 'rxjs';
@@ -22,7 +23,6 @@ declare namespace a {
     export {
         schema,
         model,
-        modelIndex as index,
         ref,
         customType,
         enumType as enum,
@@ -53,7 +53,7 @@ declare namespace a {
 }
 export { a }
 
-declare type AllAuthFieldsForModel<Schema extends ModelSchema<any, any>, Model extends Schema['data']['types'][keyof Schema['data']['types']]> = (Model['authorization'][number] extends never ? Schema['data']['authorization'][number] extends never ? object : ImpliedAuthFields<Schema['data']['authorization'][number]> : ImpliedAuthFields<Model['authorization'][number]>) & ImpliedAuthFieldsFromFields<Model>;
+declare type AllAuthFieldsForModel<Schema extends GenericModelSchema<any>, Model extends Schema['data']['types'][keyof Schema['data']['types']]> = (Model['authorization'][number] extends never ? Schema['data']['authorization'][number] extends never ? object : ImpliedAuthFields<Schema['data']['authorization'][number]> : ImpliedAuthFields<Model['authorization'][number]>) & ImpliedAuthFieldsFromFields<Model>;
 
 declare type AllImpliedFKs<ResolvedSchema, Identifiers extends Record<string, {
     identifier: string;
@@ -226,6 +226,14 @@ declare type BackendSecret = {
     resolvePath: (backendIdentifier: any) => any;
 };
 
+declare type BaseSchema<T extends ModelSchemaParamShape> = {
+    data: T;
+    models: {
+        [TypeKey in keyof T['types']]: T['types'][TypeKey] extends ModelType<ModelTypeParamShape> ? SchemaModelType<T['types'][TypeKey]> : never;
+    };
+    transform: () => DerivedApiDefinition;
+};
+
 /**
  * Make a `hasOne()` or `hasMany()` relationship bi-directional using the `belongsTo()` method.
  * The belongsTo() method requires that a hasOne() or hasMany() relationship already exists from
@@ -277,7 +285,7 @@ declare type BuilderMethods<T extends object> = {
     [K in keyof T as T[K] extends (...args: any) => any ? K : never]: T[K];
 };
 
-export declare type ClientSchema<Schema extends ModelSchema<any, any>> = InternalClientSchema<Schema>;
+export declare type ClientSchema<Schema extends GenericModelSchema<any>> = InternalClientSchema<Schema>;
 
 declare type ContextType = 'CLIENT' | 'COOKIES' | 'REQUEST';
 
@@ -318,7 +326,7 @@ declare type CustomHandlerInput = {
      * Defaults to 'NONE_DS'
      *
      */
-    dataSource?: string | RefType<any, any, any>;
+    dataSource?: string | RefType<any>;
     /**
      * The path to the file that contains the function entry point.
      * If this is a relative path, it is computed relative to the file where this handler is defined
@@ -338,7 +346,7 @@ export declare type CustomMutations<Schema extends Record<any, any>, Context ext
 /**
  * Digs out custom operation arguments, mapped to the intended graphql types.
  */
-declare type CustomOpArguments<Shape extends CustomOperationParamShape> = {
+declare type CustomOpArguments<Shape extends CustomOperationParamShape> = Shape['arguments'] extends null ? never : {
     [FieldName in keyof Shape['arguments']]: Shape['arguments'][FieldName] extends ModelField<infer R, any, any> ? R : never;
 };
 
@@ -356,16 +364,46 @@ declare type CustomOperation<T extends CustomOperationParamShape, K extends keyo
     function<FunctionRef extends CustomFunctionRefType>(functionRefOrName: FunctionRef): CustomOperation<SetTypeSubArg<T, 'functionRef', FunctionRef>, K | 'function', B>;
     authorization<AuthRuleType extends Authorization<any, any, any>>(rules: AuthRuleType[]): CustomOperation<SetTypeSubArg<T, 'authorization', AuthRuleType[]>, K | 'authorization', B>;
     handler<H extends HandlerInputType>(handlers: H): CustomOperation<T, K | 'handler', B>;
+    for(source: SubscriptionSource | SubscriptionSource[]): CustomOperation<T, K | 'for', B>;
 }, K> & Brand<B>;
 
 declare type CustomOperationBrand = typeof queryBrand | typeof mutationBrand | typeof subscriptionBrand;
+
+/**
+ * Generates Custom Operations function params based on whether .arguments() were specified in the schema builder
+ */
+declare type CustomOperationFnParams<Args extends Record<string, unknown> | never> = [
+Args
+] extends [never] ? [CustomOperationMethodOptions?] : [Args, CustomOperationMethodOptions?];
+
+/**
+ * Derives the function signatures for a lambda handlers for all the provided
+ * custom queries and mutations.
+ */
+declare type CustomOperationHandlerTypes<CustomOperations extends CustomOperationsMap> = {
+    [K in keyof CustomOperations]: IndvidualCustomHandlerTypes<CustomOperations[K]>;
+};
+
+declare type CustomOperationMethodOptions = {
+    authMode?: AuthMode;
+    authToken?: string;
+    headers?: CustomHeaders;
+};
+
+/**
+ * The minimal amount of structure needed to extract types for a custom handler.
+ */
+declare type CustomOperationMinimalDef = {
+    arguments: any;
+    returnType: any;
+};
 
 declare type CustomOperationName = (typeof CustomOperationNames)[number];
 
 declare const CustomOperationNames: readonly ["Query", "Mutation", "Subscription"];
 
 declare type CustomOperationParamShape = {
-    arguments: CustomArguments;
+    arguments: CustomArguments | null;
     returnType: CustomReturnType | null;
     functionRef: string | null;
     authorization: Authorization<any, any, any>[];
@@ -375,23 +413,17 @@ declare type CustomOperationParamShape = {
 
 export declare type CustomOperations<Schema extends Record<any, any>, OperationType extends 'Query' | 'Mutation' | 'Subscription', Context extends ContextType = 'CLIENT', ModelMeta extends Record<any, any> = ExtractModelMeta<Schema>> = {
     [OpName in keyof ModelMeta['customOperations'] as ModelMeta['customOperations'][OpName]['typeName'] extends OperationType ? OpName : never]: {
-        CLIENT: (input: ModelMeta['customOperations'][OpName]['arguments'], options?: {
-            authMode?: AuthMode;
-            authToken?: string;
-            headers?: CustomHeaders;
-        }) => SingularReturnValue<ModelMeta['customOperations'][OpName]['returnType']>;
-        COOKIES: (input: ModelMeta['customOperations'][OpName]['arguments'], options?: {
-            authMode?: AuthMode;
-            authToken?: string;
-            headers?: CustomHeaders;
-        }) => SingularReturnValue<ModelMeta['customOperations'][OpName]['returnType']>;
-        REQUEST: (contextSpec: any, input: ModelMeta['customOperations'][OpName]['arguments'], options?: {
-            authMode?: AuthMode;
-            authToken?: string;
-            headers?: CustomHeaders;
-        }) => SingularReturnValue<ModelMeta['customOperations'][OpName]['returnType']>;
+        CLIENT: (...params: CustomOperationFnParams<ModelMeta['customOperations'][OpName]['arguments']>) => ModelMeta['customOperations'][OpName]['typeName'] extends 'Subscription' ? ObservedReturnValue<ModelMeta['customOperations'][OpName]['returnType']> : SingularReturnValue<ModelMeta['customOperations'][OpName]['returnType']>;
+        COOKIES: (...params: CustomOperationFnParams<ModelMeta['customOperations'][OpName]['arguments']>) => SingularReturnValue<ModelMeta['customOperations'][OpName]['returnType']>;
+        REQUEST: (contextSpec: any, ...params: CustomOperationFnParams<ModelMeta['customOperations'][OpName]['arguments']>) => SingularReturnValue<ModelMeta['customOperations'][OpName]['returnType']>;
     }[Context];
 };
+
+/**
+ * The kind of shape we need to map to custom handler (e.g., lambda) function
+ * signatures.
+ */
+declare type CustomOperationsMap = Record<string, CustomOperationMinimalDef>;
 
 /**
  * Computes the return type from the `returnType` of a custom operation shape.
@@ -403,7 +435,7 @@ declare type CustomOpReturnType<Shape extends CustomOperationParamShape, FullyRe
 /**
  * Filtered, mapped list of custom operations shapes from a schema.
  */
-declare type CustomOpShapes<Schema extends ModelSchema<any, any>> = {
+declare type CustomOpShapes<Schema extends GenericModelSchema<any>> = {
     [K in keyof Schema['data']['types'] as Schema['data']['types'][K] extends CustomOperation<any, any> ? K : never]: Schema['data']['types'][K] extends CustomOperation<infer Shape, any> ? Shape : never;
 };
 
@@ -422,6 +454,8 @@ declare type CustomReturnType = RefType<any> | CustomType<any>;
  * Generates flattened, readonly return type using specified custom sel. set
  */
 declare type CustomSelectionSetReturnValue<FlatModel extends Model, Paths extends string> = Prettify<DeepReadOnlyObject<RestoreArrays<UnionToIntersection<DeepPickFromPath<FlatModel, Paths>>, FlatModel>>>;
+
+export declare type CustomSubscriptions<Schema extends Record<any, any>, Context extends ContextType = 'CLIENT', ModelMeta extends Record<any, any> = ExtractModelMeta<Schema>> = CustomOperations<Schema, 'Subscription', Context, ModelMeta>;
 
 declare type CustomType<T extends CustomTypeParamShape> = T & Brand<'customType'>;
 
@@ -470,6 +504,10 @@ declare function date(): ModelField<Nullable<string>>;
  * @returns datetime field definition
  */
 declare function datetime(): ModelField<Nullable<string>>;
+
+declare type DDBSchemaBrand = Brand<typeof ddbSchemaBrandName>;
+
+declare const ddbSchemaBrandName = "DDBSchema";
 
 export declare type Debug<T> = {
     [K in keyof T]: T[K];
@@ -795,6 +833,8 @@ export declare type FunctionSchemaAccess = {
     actions: ('query' | 'mutate' | 'listen')[];
 };
 
+declare type GenericModelSchema<T extends ModelSchemaParamShape> = BaseSchema<T> & Brand<string>;
+
 /**
  * @returns union of explicitly defined field names for a model
  */
@@ -1029,6 +1069,54 @@ declare type IndexQueryMethodSignature<Idx extends SecondaryIndexIrShape, Model 
     }) => ListReturnValue<Prettify<ReturnValue<Model, FlatModel, SelectionSet>>>;
 };
 
+/**
+ * Derives the signature and types for a lambda handler for a particular
+ * custom Query or Mutation from a Schema.
+ */
+declare type IndvidualCustomHandlerTypes<Op extends CustomOperationMinimalDef> = {
+    /**
+     * Handler type for lambda function implementations. E.g.,
+     *
+     * ```typescript
+     * import type { Schema } from './resource';
+     *
+     * export const handler: Schema['echo']['functionHandler'] = async (event, context) => {
+     *  // event and context will be fully typed inside here.
+     * }
+     * ```
+     */
+    functionHandler: AppSyncResolverHandler<Op['arguments'], LambdaReturnType<Op['returnType']>>;
+    /**
+     * The `context.arguments` type for lambda function implementations.
+     *
+     * ```typescript
+     * import type { Schema } from './resource';
+     *
+     * export const handler: Schema['echo']['functionHandler'] = async (event, context) => {
+     *  // Provides this type, if needed:
+     *  const args: Schema['echo']['functionHandlerArguments'] = event.arguments;
+     * }
+     * ```
+     */
+    functionHandlerArguments: Op['arguments'];
+    /**
+     * The return type expected by a lambda function handler.
+     *
+     * ```typescript
+     * import type { Schema } from './resource';
+     *
+     * export const handler: Schema['echo']['functionHandler'] = async (event, context) => {
+     *  // Result type enforced here:
+     *  const result: Schema['echo']['functionHandlerResult'] = buildResult(...);
+     *
+     *  // `Result` type matches expected function return type here:
+     *  return result;
+     * }
+     * ```
+     */
+    functionHandlerResult: LambdaReturnType<Op['returnType']>;
+};
+
 declare function inField<SELF extends Authorization<any, any, any>, Field extends string>(this: SELF, field: Field): BuilderMethods<Omit<SELF, "inField">> & Authorization<SELF[typeof __data]["strategy"], Field, SELF[typeof __data]["multiOwner"]>;
 
 declare type InitialImplicitFields<Identifier> = Identifier extends 'id' ? DefaultIdentifierFields & DefaultTimestampFields : DefaultTimestampFields;
@@ -1066,26 +1154,21 @@ declare function integer(): ModelField<Nullable<number>>;
 /**
  * Types for unwrapping generic type args into client-consumable types
  *
- * @typeParam Schema - Type Beast schema type
+ * @typeParam Schema - Data schema builder model type
  *
  * The following params are used solely as variables in order to simplify mapped type usage.
  * They should not receive external type args.
  *
  * @internal @typeParam NonModelTypes - Custom Types, Enums, and Custom Operations
- * @internal @typeParam ResolvedSchema - Schema/Models/Fields structure with generic type args extracted
- * @internal @typeParam ResolvedFields - Resovled client-facing types used for CRUDL response shapes
- * @internal @typeParam IdentifierMeta - Map of model primary index metadata
+ * @internal @typeParam ImplicitModels - The implicit models created to represent relationships
+ * @internal @typeParam ResolvedFields - Resolved client-facing types used for CRUDL response shapes
  * @internal @typeParam SecondaryIndexes - Map of model secondary index metadata
- *
- * @internal @typeParam Meta - Stores schema metadata: identifier, relationship metadata;
- * used by `API.generateClient` to craft strongly typed mutation inputs; hidden from customer-facing types behind __modelMeta__ symbol
- *
  */
-declare type InternalClientSchema<Schema extends ModelSchema<any, any>, NonModelTypes extends NonModelTypesShape = ExtractNonModelTypes<Schema>, ResolvedSchema = ResolveSchema<Schema>, ImplicitModels = CreateImplicitModelsFromRelations<ResolvedSchema>, ImplicitModelsIdentifierMeta = {
+declare type InternalClientSchema<Schema extends GenericModelSchema<any>, NonModelTypes extends NonModelTypesShape = ExtractNonModelTypes<Schema>, ResolvedSchema = ResolveSchema<Schema>, ImplicitModels = Schema extends RDSModelSchema<any, any> ? object : CreateImplicitModelsFromRelations<ResolvedSchema>, ImplicitModelsIdentifierMeta = {
     [ImplicitModel in keyof ImplicitModels]: {
         identifier: 'id';
     };
-}, ResolvedFields extends Record<string, unknown> = ResolveFieldProperties<Schema, NonModelTypes, ImplicitModels>, IdentifierMeta extends Record<string, any> = ModelIdentifier<SchemaTypes<Schema>>, SecondaryIndexes extends Record<string, any> = ModelSecondaryIndexes<SchemaTypes<Schema>>> = ResolvedFields & {
+}, ResolvedFields extends Record<string, unknown> = Schema extends RDSModelSchema<any, any> ? ResolveStaticFieldProperties<Schema, NonModelTypes, object> : ResolveFieldProperties<Schema, NonModelTypes, ImplicitModels>, IdentifierMeta extends Record<string, any> = ModelIdentifier<SchemaTypes<Schema>>, SecondaryIndexes extends Record<string, any> = Schema extends RDSModelSchema<any, any> ? object : ModelSecondaryIndexes<SchemaTypes<Schema>>> = CustomOperationHandlerTypes<ResolveCustomOperations<Schema, ResolvedFields, NonModelTypes>['customOperations']> & ResolvedFields & {
     [__modelMeta__]: IdentifierMeta & ImplicitModelsIdentifierMeta & SecondaryIndexes & RelationalMetadata<ResolvedSchema, ResolvedFields, IdentifierMeta> & NonModelTypes & ResolveCustomOperations<Schema, ResolvedFields, NonModelTypes>;
 };
 
@@ -1133,6 +1216,15 @@ export declare type JsResolverEntry = string | {
 };
 
 export declare type LambdaFunctionDefinition = Record<string, DefineFunction>;
+
+/**
+ * Returns a return type with lazy loaders removed.
+ *
+ * (Custom handlers should not return lazy loaded fields -- they're *lazy loaded*.)
+ */
+declare type LambdaReturnType<T> = T extends Record<string, any> ? {
+    [K in keyof Exclude<T, null | undefined> as Exclude<T, null | undefined>[K] extends (...args: any) => any ? never : K]: Exclude<T, null | undefined>[K];
+} : T | (null extends T ? null : never) | (undefined extends T ? undefined : never);
 
 export declare type LazyLoader<Model, IsArray extends boolean> = (options?: IsArray extends true ? {
     authMode?: AuthMode;
@@ -1263,11 +1355,9 @@ declare type ModelIdentifier<T> = {
 
 declare type ModelIdentifier_2<Model extends Record<any, any>> = Prettify<Record<Model['identifier'] & string, string>>;
 
-declare type ModelImpliedAuthFields<Schema extends ModelSchema<any, any>> = {
+declare type ModelImpliedAuthFields<Schema extends GenericModelSchema<any>> = {
     [ModelKey in keyof Schema['data']['types'] as Schema['data']['types'][ModelKey] extends EnumType<EnumTypeParamShape> ? never : Schema['data']['types'][ModelKey] extends CustomType<CustomTypeParamShape> ? never : Schema['data']['types'][ModelKey] extends CustomOperation<CustomOperationParamShape, any> ? never : ModelKey]: Schema['data']['types'][ModelKey] extends ModelType<infer Model, any> ? AllAuthFieldsForModel<Schema, Model> : object;
 };
-
-declare function modelIndex<ModelFieldKeys extends string, PK extends ModelFieldKeys, SK = readonly [], QueryField = never>(partitionKeyFieldName: PK): ModelIndexType<ModelFieldKeys, PK, SK, QueryField, never>;
 
 declare type ModelIndexType<ModelFieldKeys extends string, PK, SK = readonly [], QueryField = never, K extends keyof ModelIndexType<any, any, any, any> = never> = Omit<{
     sortKeys<FieldKeys extends ModelFieldKeys = ModelFieldKeys, const SK extends ReadonlyArray<Exclude<FieldKeys, PK>> = readonly []>(sortKeys: SK): ModelIndexType<FieldKeys, PK, SK, QueryField, K | 'sortKeys'>;
@@ -1383,13 +1473,7 @@ declare enum ModelRelationshipTypes {
 
 declare type ModelSchema<T extends ModelSchemaParamShape, UsedMethods extends 'authorization' = never> = Omit<{
     authorization: <AuthRules extends SchemaAuthorization<any, any, any>>(auth: AuthRules[]) => ModelSchema<SetTypeSubArg<T, 'authorization', AuthRules[]>, UsedMethods | 'authorization'>;
-}, UsedMethods> & {
-    data: T;
-    models: {
-        [TypeKey in keyof T['types']]: T['types'][TypeKey] extends ModelType<ModelTypeParamShape> ? SchemaModelType<T['types'][TypeKey]> : never;
-    };
-    transform: () => DerivedApiDefinition;
-};
+}, UsedMethods> & BaseSchema<T> & DDBSchemaBrand;
 
 declare type ModelSchemaContents = Record<string, SchemaContent>;
 
@@ -1407,7 +1491,7 @@ declare type ModelSecondaryIndexes<T> = {
 
 declare type ModelType<T extends ModelTypeParamShape, K extends keyof ModelType<T> = never> = Omit<{
     identifier<ID extends IdentifierType<T> = []>(identifier: ID): ModelType<SetTypeSubArg<T, 'identifier', ID>, K | 'identifier'>;
-    secondaryIndexes<const Indexes extends readonly ModelIndexType<SecondaryIndexFields<ExtractType<T>>, SecondaryIndexFields<ExtractType<T>>, unknown, never, any>[] = readonly [], const IndexesIR extends readonly any[] = SecondaryIndexToIR<Indexes, ExtractType<T>>>(indexes: Indexes): ModelType<SetTypeSubArg<T, 'secondaryIndexes', IndexesIR>, K | 'secondaryIndexes'>;
+    secondaryIndexes<const SecondaryIndexPKPool extends string = SecondaryIndexFields<ExtractType<T>>, const Indexes extends readonly ModelIndexType<string, string, unknown, readonly [], any>[] = readonly [], const IndexesIR extends readonly any[] = SecondaryIndexToIR<Indexes, ExtractType<T>>>(callback: (index: <PK extends SecondaryIndexPKPool>(pk: PK) => ModelIndexType<SecondaryIndexPKPool, PK, ReadonlyArray<Exclude<SecondaryIndexPKPool, PK>>>) => Indexes): ModelType<SetTypeSubArg<T, 'secondaryIndexes', IndexesIR>, K | 'secondaryIndexes'>;
     authorization<AuthRuleType extends Authorization<any, any, any>>(rules: AuthRuleType[]): ModelType<SetTypeSubArg<T, 'authorization', AuthRuleType[]>, K | 'authorization'>;
 }, K> & Brand<typeof brandName_4>;
 
@@ -1419,7 +1503,7 @@ declare type ModelTypeParamShape = {
 };
 
 export declare type ModelTypes<Schema extends Record<any, any>, Context extends ContextType = 'CLIENT', ModelMeta extends Record<any, any> = ExtractModelMeta<Schema>> = {
-    [ModelName in keyof Schema]: ModelName extends string ? Schema[ModelName] extends Record<string, unknown> ? Context extends 'CLIENT' ? ModelTypesClient<Schema[ModelName], ModelMeta[ModelName]> : Context extends 'COOKIES' ? ModelTypesSSRCookies<Schema[ModelName], ModelMeta[ModelName]> : Context extends 'REQUEST' ? ModelTypesSSRRequest<Schema[ModelName], ModelMeta[ModelName]> : never : never : never;
+    [ModelName in Exclude<keyof Schema, keyof CustomOperations<Schema, 'Mutation' | 'Query' | 'Subscription', Context, ModelMeta>>]: ModelName extends string ? Schema[ModelName] extends Record<string, unknown> ? Context extends 'CLIENT' ? ModelTypesClient<Schema[ModelName], ModelMeta[ModelName]> : Context extends 'COOKIES' ? ModelTypesSSRCookies<Schema[ModelName], ModelMeta[ModelName]> : Context extends 'REQUEST' ? ModelTypesSSRRequest<Schema[ModelName], ModelMeta[ModelName]> : never : never : never;
 };
 
 /**
@@ -1560,7 +1644,7 @@ declare type ModelTypesSSRRequest<Model extends Record<string, unknown>, ModelMe
 };
 
 declare function mutation(): CustomOperation<{
-    arguments: CustomArguments;
+    arguments: null;
     returnType: null;
     functionRef: null;
     authorization: [];
@@ -1570,12 +1654,16 @@ declare function mutation(): CustomOperation<{
 
 declare const mutationBrand = "mutationCustomOperation";
 
+declare type MutationCustomOperation = CustomOperation<CustomOperationParamShape, any, typeof mutationBrand>;
+
 /**
  * All required fields and relational fields, exclude readonly fields
  */
 declare type MutationInput<Fields, ModelMeta extends Record<any, any>, RelationalFields = ModelMeta['relationalInputFields'], WritableFields = Pick<Fields, WritableKeys<Fields>>> = {
     [Prop in keyof WritableFields as WritableFields[Prop] extends (...args: any) => any ? never : Prop]: WritableFields[Prop];
 } & RelationalFields;
+
+declare type MutationOperations = 'create' | 'update' | 'delete';
 
 declare type NonModelTypesShape = {
     enums: Record<string, EnumType<any>>;
@@ -1672,7 +1760,7 @@ declare type PublicProvider = (typeof PublicProviders)[number];
 declare const PublicProviders: readonly ["apiKey", "iam"];
 
 declare function query(): CustomOperation<{
-    arguments: CustomArguments;
+    arguments: null;
     returnType: null;
     functionRef: null;
     authorization: [];
@@ -1681,6 +1769,8 @@ declare function query(): CustomOperation<{
 }, never, typeof queryBrand>;
 
 declare const queryBrand = "queryCustomOperation";
+
+declare type QueryCustomOperation = CustomOperation<CustomOperationParamShape, any, typeof queryBrand>;
 
 /**
  * @typeParam SK - tuple of SortKey field names, e.g. ['viewCount', 'createdAt']
@@ -1691,6 +1781,24 @@ declare const queryBrand = "queryCustomOperation";
  * QueryFieldLabelFromTuple<['viewCount', 'createdAt'], 'Title'> => 'TitleAndViewCountAndCreatedAt'
  */
 declare type QueryFieldLabelFromTuple<SK, StrStart extends string = ''> = SK extends readonly [infer A extends string, ...infer B extends string[]] ? QueryFieldLabelFromTuple<B, `${StrStart}And${Capitalize<A>}`> : StrStart;
+
+declare type RDSModelSchema<T extends RDSModelSchemaParamShape, UsedMethods extends RDSModelSchemaFunctions = never> = Omit<{
+    setSqlStatementFolderPath: (path: string) => RDSModelSchema<T, UsedMethods | 'setSqlStatementFolderPath'>;
+    addQueries: (types: Record<string, QueryCustomOperation>) => RDSModelSchema<T, UsedMethods | 'addQueries'>;
+    addMutations: (types: Record<string, MutationCustomOperation>) => RDSModelSchema<T, UsedMethods | 'addMutations'>;
+    addSubscriptions: (types: Record<string, SubscriptionCustomOperation>) => RDSModelSchema<T, UsedMethods | 'addSubscriptions'>;
+    authorization: <AuthRules extends SchemaAuthorization<any, any, any>>(auth: AuthRules[]) => RDSModelSchema<SetTypeSubArg<T, 'authorization', AuthRules[]>, UsedMethods | 'authorization'> & RDSSchemaBrand;
+}, UsedMethods> & BaseSchema<T> & RDSSchemaBrand;
+
+declare type RDSModelSchemaFunctions = 'setSqlStatementFolderPath' | 'addQueries' | 'addMutations' | 'addSubscriptions' | 'authorization';
+
+declare type RDSModelSchemaParamShape = ModelSchemaParamShape & {
+    setSqlStatementFolderPath?: string;
+};
+
+declare type RDSSchemaBrand = Brand<typeof rdsSchemaBrandName>;
+
+declare const rdsSchemaBrandName = "RDSSchema";
 
 declare function ref<Value extends string, T extends Value>(link: T): RefType<RefTypeArgFactory<T>, never, undefined>;
 
@@ -1708,6 +1816,7 @@ declare type RefType<T extends RefTypeParamShape, K extends keyof RefType<T> = n
      * multiple authorization rules for this field.
      */
     authorization<AuthRuleType extends Authorization<any, any, any>>(rules: AuthRuleType[]): RefType<T, K | 'authorization', AuthRuleType>;
+    mutations(operations: MutationOperations[]): RefType<T, K | 'mutations'>;
 }, K> & {
     [__auth]?: Auth;
 } & Brand<typeof brandName_3>;
@@ -1774,7 +1883,7 @@ declare type Required_2<T> = Exclude<T, null>;
 /**
  * Creates meta types for custom operations from a schema.
  */
-declare type ResolveCustomOperations<Schema extends ModelSchema<any, any>, FullyResolvedSchema extends Record<string, unknown>, NonModelTypes extends NonModelTypesShape> = {
+declare type ResolveCustomOperations<Schema extends GenericModelSchema<any>, FullyResolvedSchema extends Record<string, unknown>, NonModelTypes extends NonModelTypesShape> = {
     customOperations: {
         [OpName in keyof CustomOpShapes<Schema>]: {
             arguments: CustomOpArguments<CustomOpShapes<Schema>[OpName]>;
@@ -1852,7 +1961,7 @@ infer A extends string,
     [Key in A]: Exclude<ResolvedFields[A], null>;
 } & (B extends readonly never[] ? unknown : ResolvedSortKeyFields<B, ResolvedFields>) : never : never;
 
-declare type ResolveFieldProperties<Schema extends ModelSchema<any, any>, NonModelTypes extends NonModelTypesShape, ImplicitModelsSchema, ResolvedSchema = ResolveSchema<Schema>, IdentifierMeta extends Record<string, {
+declare type ResolveFieldProperties<Schema extends GenericModelSchema<any>, NonModelTypes extends NonModelTypesShape, ImplicitModelsSchema, ResolvedSchema = ResolveSchema<Schema>, IdentifierMeta extends Record<string, {
     identifier: string;
 }> = ModelIdentifier<SchemaTypes<Schema>>, FieldsWithInjectedImplicitFields = InjectImplicitModelFields<ResolvedSchema & ImplicitModelsSchema, IdentifierMeta>, FieldsWithRelationships = ResolveRelationships<FieldsWithInjectedImplicitFields, NonModelTypes>> = Intersection<FilterFieldTypes<MarkModelsNonNullableFieldsRequired<FieldsWithRelationships>>, FilterFieldTypes<MarkModelsNullableFieldsOptional<FieldsWithRelationships>>, FilterFieldTypes<ModelImpliedAuthFields<Schema>>, AllImpliedFKs<ResolvedSchema, IdentifierMeta>>;
 
@@ -1902,6 +2011,8 @@ declare type ResolveRelationships<Schema, NonModelTypes extends NonModelTypesSha
 };
 
 declare type ResolveSchema<Schema> = FieldTypes<ModelTypes_2<SchemaTypes<Schema>>>;
+
+declare type ResolveStaticFieldProperties<Schema extends GenericModelSchema<any>, NonModelTypes extends NonModelTypesShape, ImplicitModelsSchema, ResolvedSchema = ResolveSchema<Schema>, FieldsWithInjectedImplicitFields = InjectImplicitModelFields<ResolvedSchema & ImplicitModelsSchema, object>, FieldsWithRelationships = ResolveRelationships<FieldsWithInjectedImplicitFields, NonModelTypes>> = Intersection<FilterFieldTypes<MarkModelsNonNullableFieldsRequired<FieldsWithRelationships>>, FilterFieldTypes<MarkModelsNullableFieldsOptional<FieldsWithRelationships>>>;
 
 declare type ResourceAuthorization = {
     [__data]: ResourceAuthorizationData;
@@ -1970,7 +2081,7 @@ declare type SchemaModelType<T extends ModelType<ModelTypeParamShape> = ModelTyp
     addRelationships(relationships: Record<string, ModelRelationalField<any, string, any, any>>): void;
 };
 
-declare type SchemaTypes<T> = T extends ModelSchema<any, any> ? T['data']['types'] : never;
+declare type SchemaTypes<T> = T extends GenericModelSchema<any> ? T['data']['types'] : never;
 
 declare type SecondaryIndexFields<T extends Record<string, unknown>> = keyof {
     [Field in keyof T as NonNullable<T[Field]> extends string | number ? Field : never]: T[Field];
@@ -2110,7 +2221,7 @@ declare type StringFilter = {
 };
 
 declare function subscription(): CustomOperation<{
-    arguments: CustomArguments;
+    arguments: null;
     returnType: null;
     functionRef: null;
     authorization: [];
@@ -2119,6 +2230,10 @@ declare function subscription(): CustomOperation<{
 }, never, typeof subscriptionBrand>;
 
 declare const subscriptionBrand = "subscriptionCustomOperation";
+
+declare type SubscriptionCustomOperation = CustomOperation<CustomOperationParamShape, any, typeof subscriptionBrand>;
+
+declare type SubscriptionSource = RefType<any, any>;
 
 /**
  * A time scalar type that is represented server-side as an extended ISO 8601 time string in the format `hh:mm:ss.sss`.

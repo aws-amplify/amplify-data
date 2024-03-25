@@ -4,6 +4,7 @@
 
 ```ts
 
+import type { AppSyncResolverHandler } from 'aws-lambda';
 import { ConstructFactory } from '@aws-amplify/plugin-types';
 import { FunctionResources } from '@aws-amplify/plugin-types';
 import type { Observable } from 'rxjs';
@@ -17,7 +18,6 @@ declare namespace a {
     export {
         schema,
         model,
-        modelIndex as index,
         ref,
         customType,
         enumType as enum,
@@ -99,10 +99,11 @@ function belongsTo<RM extends string>(relatedModel: RM): ModelRelationalField<Mo
 // @public
 function boolean(): ModelField<Nullable<boolean>>;
 
+// Warning: (ae-forgotten-export) The symbol "GenericModelSchema" needs to be exported by the entry point index.d.ts
 // Warning: (ae-forgotten-export) The symbol "InternalClientSchema" needs to be exported by the entry point index.d.ts
 //
 // @public (undocumented)
-export type ClientSchema<Schema extends ModelSchema<any, any>> = InternalClientSchema<Schema>;
+export type ClientSchema<Schema extends GenericModelSchema<any>> = InternalClientSchema<Schema>;
 
 // @public
 export type CustomHeaders = Record<string, string> | ((requestOptions?: RequestOptions) => Promise<Record<string, string>>);
@@ -115,26 +116,17 @@ export type CustomMutations<Schema extends Record<any, any>, Context extends Con
 // @public (undocumented)
 export type CustomOperations<Schema extends Record<any, any>, OperationType extends 'Query' | 'Mutation' | 'Subscription', Context extends ContextType = 'CLIENT', ModelMeta extends Record<any, any> = ExtractModelMeta<Schema>> = {
     [OpName in keyof ModelMeta['customOperations'] as ModelMeta['customOperations'][OpName]['typeName'] extends OperationType ? OpName : never]: {
-        CLIENT: (input: ModelMeta['customOperations'][OpName]['arguments'], options?: {
-            authMode?: AuthMode;
-            authToken?: string;
-            headers?: CustomHeaders;
-        }) => SingularReturnValue<ModelMeta['customOperations'][OpName]['returnType']>;
-        COOKIES: (input: ModelMeta['customOperations'][OpName]['arguments'], options?: {
-            authMode?: AuthMode;
-            authToken?: string;
-            headers?: CustomHeaders;
-        }) => SingularReturnValue<ModelMeta['customOperations'][OpName]['returnType']>;
-        REQUEST: (contextSpec: any, input: ModelMeta['customOperations'][OpName]['arguments'], options?: {
-            authMode?: AuthMode;
-            authToken?: string;
-            headers?: CustomHeaders;
-        }) => SingularReturnValue<ModelMeta['customOperations'][OpName]['returnType']>;
+        CLIENT: (...params: CustomOperationFnParams<ModelMeta['customOperations'][OpName]['arguments']>) => ModelMeta['customOperations'][OpName]['typeName'] extends 'Subscription' ? ObservedReturnValue<ModelMeta['customOperations'][OpName]['returnType']> : SingularReturnValue<ModelMeta['customOperations'][OpName]['returnType']>;
+        COOKIES: (...params: CustomOperationFnParams<ModelMeta['customOperations'][OpName]['arguments']>) => SingularReturnValue<ModelMeta['customOperations'][OpName]['returnType']>;
+        REQUEST: (contextSpec: any, ...params: CustomOperationFnParams<ModelMeta['customOperations'][OpName]['arguments']>) => SingularReturnValue<ModelMeta['customOperations'][OpName]['returnType']>;
     }[Context];
 };
 
 // @public (undocumented)
 export type CustomQueries<Schema extends Record<any, any>, Context extends ContextType = 'CLIENT', ModelMeta extends Record<any, any> = ExtractModelMeta<Schema>> = CustomOperations<Schema, 'Query', Context, ModelMeta>;
+
+// @public (undocumented)
+export type CustomSubscriptions<Schema extends Record<any, any>, Context extends ContextType = 'CLIENT', ModelMeta extends Record<any, any> = ExtractModelMeta<Schema>> = CustomOperations<Schema, 'Subscription', Context, ModelMeta>;
 
 // Warning: (ae-forgotten-export) The symbol "CustomTypeFields" needs to be exported by the entry point index.d.ts
 // Warning: (ae-forgotten-export) The symbol "CustomType" needs to be exported by the entry point index.d.ts
@@ -348,11 +340,6 @@ function model<T extends ModelFields>(fields: T): ModelType<{
     authorization: [];
 }>;
 
-// Warning: (ae-forgotten-export) The symbol "ModelIndexType" needs to be exported by the entry point index.d.ts
-//
-// @public (undocumented)
-function modelIndex<ModelFieldKeys extends string, PK extends ModelFieldKeys, SK = readonly [], QueryField = never>(partitionKeyFieldName: PK): ModelIndexType<ModelFieldKeys, PK, SK, QueryField, never>;
-
 // @public
 export type ModelPath<FlatModel extends Record<string, unknown>, Depth extends number = 5, // think of this as the initialization expr. in a for loop (e.g. `let depth = 5`)
 RecursionLoop extends number[] = [-1, 0, 1, 2, 3, 4], Field = keyof FlatModel> = {
@@ -366,14 +353,14 @@ RecursionLoop extends number[] = [-1, 0, 1, 2, 3, 4], Field = keyof FlatModel> =
 //
 // @public (undocumented)
 export type ModelTypes<Schema extends Record<any, any>, Context extends ContextType = 'CLIENT', ModelMeta extends Record<any, any> = ExtractModelMeta<Schema>> = {
-    [ModelName in keyof Schema]: ModelName extends string ? Schema[ModelName] extends Record<string, unknown> ? Context extends 'CLIENT' ? ModelTypesClient<Schema[ModelName], ModelMeta[ModelName]> : Context extends 'COOKIES' ? ModelTypesSSRCookies<Schema[ModelName], ModelMeta[ModelName]> : Context extends 'REQUEST' ? ModelTypesSSRRequest<Schema[ModelName], ModelMeta[ModelName]> : never : never : never;
+    [ModelName in Exclude<keyof Schema, keyof CustomOperations<Schema, 'Mutation' | 'Query' | 'Subscription', Context, ModelMeta>>]: ModelName extends string ? Schema[ModelName] extends Record<string, unknown> ? Context extends 'CLIENT' ? ModelTypesClient<Schema[ModelName], ModelMeta[ModelName]> : Context extends 'COOKIES' ? ModelTypesSSRCookies<Schema[ModelName], ModelMeta[ModelName]> : Context extends 'REQUEST' ? ModelTypesSSRRequest<Schema[ModelName], ModelMeta[ModelName]> : never : never : never;
 };
 
 // Warning: (ae-forgotten-export) The symbol "mutationBrand" needs to be exported by the entry point index.d.ts
 //
 // @public (undocumented)
 function mutation(): CustomOperation<{
-    arguments: CustomArguments;
+    arguments: null;
     returnType: null;
     functionRef: null;
     authorization: [];
@@ -412,7 +399,7 @@ export type Prettify<T> = T extends (...args: infer ArgsType) => any ? (...args:
 //
 // @public (undocumented)
 function query(): CustomOperation<{
-    arguments: CustomArguments;
+    arguments: null;
     returnType: null;
     functionRef: null;
     authorization: [];
@@ -489,7 +476,7 @@ function string(): ModelField<Nullable<string>>;
 //
 // @public (undocumented)
 function subscription(): CustomOperation<{
-    arguments: CustomArguments;
+    arguments: null;
     returnType: null;
     functionRef: null;
     authorization: [];
@@ -514,23 +501,23 @@ function url(): ModelField<Nullable<string>>;
 
 // Warnings were encountered during analysis:
 //
-// /Users/wirej/amplify/repos/amplify-api-next/packages/data-schema/lib-esm/src/Authorization.d.ts:101:5 - (ae-forgotten-export) The symbol "PublicProvider" needs to be exported by the entry point index.d.ts
-// /Users/wirej/amplify/repos/amplify-api-next/packages/data-schema/lib-esm/src/Authorization.d.ts:101:5 - (ae-forgotten-export) The symbol "Authorization" needs to be exported by the entry point index.d.ts
-// /Users/wirej/amplify/repos/amplify-api-next/packages/data-schema/lib-esm/src/Authorization.d.ts:102:9 - (ae-forgotten-export) The symbol "to" needs to be exported by the entry point index.d.ts
-// /Users/wirej/amplify/repos/amplify-api-next/packages/data-schema/lib-esm/src/Authorization.d.ts:110:5 - (ae-forgotten-export) The symbol "PrivateProvider" needs to be exported by the entry point index.d.ts
-// /Users/wirej/amplify/repos/amplify-api-next/packages/data-schema/lib-esm/src/Authorization.d.ts:128:5 - (ae-forgotten-export) The symbol "OwnerProviders" needs to be exported by the entry point index.d.ts
-// /Users/wirej/amplify/repos/amplify-api-next/packages/data-schema/lib-esm/src/Authorization.d.ts:130:9 - (ae-forgotten-export) The symbol "inField" needs to be exported by the entry point index.d.ts
-// /Users/wirej/amplify/repos/amplify-api-next/packages/data-schema/lib-esm/src/Authorization.d.ts:131:9 - (ae-forgotten-export) The symbol "identityClaim" needs to be exported by the entry point index.d.ts
-// /Users/wirej/amplify/repos/amplify-api-next/packages/data-schema/lib-esm/src/Authorization.d.ts:165:5 - (ae-forgotten-export) The symbol "GroupProvider" needs to be exported by the entry point index.d.ts
-// /Users/wirej/amplify/repos/amplify-api-next/packages/data-schema/lib-esm/src/Authorization.d.ts:167:9 - (ae-forgotten-export) The symbol "withClaimIn" needs to be exported by the entry point index.d.ts
-// /Users/wirej/amplify/repos/amplify-api-next/packages/data-schema/lib-esm/src/Authorization.d.ts:217:5 - (ae-forgotten-export) The symbol "CustomProvider" needs to be exported by the entry point index.d.ts
-// /Users/wirej/amplify/repos/amplify-api-next/packages/data-schema/lib-esm/src/Authorization.d.ts:220:5 - (ae-forgotten-export) The symbol "ResourceAuthorization" needs to be exported by the entry point index.d.ts
-// /Users/wirej/amplify/repos/amplify-api-next/packages/data-schema/lib-esm/src/Authorization.d.ts:221:9 - (ae-forgotten-export) The symbol "resourceTo" needs to be exported by the entry point index.d.ts
-// /Users/wirej/amplify/repos/amplify-api-next/packages/data-schema/lib-esm/src/CustomOperation.d.ts:67:5 - (ae-forgotten-export) The symbol "CustomArguments" needs to be exported by the entry point index.d.ts
-// /Users/wirej/amplify/repos/amplify-api-next/packages/data-schema/lib-esm/src/Handler.d.ts:48:5 - (ae-forgotten-export) The symbol "inlineSql" needs to be exported by the entry point index.d.ts
-// /Users/wirej/amplify/repos/amplify-api-next/packages/data-schema/lib-esm/src/Handler.d.ts:49:5 - (ae-forgotten-export) The symbol "sqlReference" needs to be exported by the entry point index.d.ts
-// /Users/wirej/amplify/repos/amplify-api-next/packages/data-schema/lib-esm/src/Handler.d.ts:50:5 - (ae-forgotten-export) The symbol "custom" needs to be exported by the entry point index.d.ts
-// /Users/wirej/amplify/repos/amplify-api-next/packages/data-schema/lib-esm/src/Handler.d.ts:51:5 - (ae-forgotten-export) The symbol "fcn" needs to be exported by the entry point index.d.ts
+// /Users/wirej/amplify/repos/amplify-api-next/packages/data-schema-types/src/client/index.ts:778:5 - (ae-forgotten-export) The symbol "CustomOperationFnParams" needs to be exported by the entry point index.d.ts
+// /Users/wirej/amplify/repos/amplify-api-next/packages/data-schema/src/Authorization.ts:237:3 - (ae-forgotten-export) The symbol "PublicProvider" needs to be exported by the entry point index.d.ts
+// /Users/wirej/amplify/repos/amplify-api-next/packages/data-schema/src/Authorization.ts:237:3 - (ae-forgotten-export) The symbol "Authorization" needs to be exported by the entry point index.d.ts
+// /Users/wirej/amplify/repos/amplify-api-next/packages/data-schema/src/Authorization.ts:237:35 - (ae-forgotten-export) The symbol "to" needs to be exported by the entry point index.d.ts
+// /Users/wirej/amplify/repos/amplify-api-next/packages/data-schema/src/Authorization.ts:256:3 - (ae-forgotten-export) The symbol "PrivateProvider" needs to be exported by the entry point index.d.ts
+// /Users/wirej/amplify/repos/amplify-api-next/packages/data-schema/src/Authorization.ts:284:3 - (ae-forgotten-export) The symbol "OwnerProviders" needs to be exported by the entry point index.d.ts
+// /Users/wirej/amplify/repos/amplify-api-next/packages/data-schema/src/Authorization.ts:284:34 - (ae-forgotten-export) The symbol "inField" needs to be exported by the entry point index.d.ts
+// /Users/wirej/amplify/repos/amplify-api-next/packages/data-schema/src/Authorization.ts:284:34 - (ae-forgotten-export) The symbol "identityClaim" needs to be exported by the entry point index.d.ts
+// /Users/wirej/amplify/repos/amplify-api-next/packages/data-schema/src/Authorization.ts:344:3 - (ae-forgotten-export) The symbol "GroupProvider" needs to be exported by the entry point index.d.ts
+// /Users/wirej/amplify/repos/amplify-api-next/packages/data-schema/src/Authorization.ts:344:56 - (ae-forgotten-export) The symbol "withClaimIn" needs to be exported by the entry point index.d.ts
+// /Users/wirej/amplify/repos/amplify-api-next/packages/data-schema/src/Authorization.ts:422:77 - (ae-forgotten-export) The symbol "CustomProvider" needs to be exported by the entry point index.d.ts
+// /Users/wirej/amplify/repos/amplify-api-next/packages/data-schema/src/Authorization.ts:437:35 - (ae-forgotten-export) The symbol "ResourceAuthorization" needs to be exported by the entry point index.d.ts
+// /Users/wirej/amplify/repos/amplify-api-next/packages/data-schema/src/Authorization.ts:449:30 - (ae-forgotten-export) The symbol "resourceTo" needs to be exported by the entry point index.d.ts
+// /Users/wirej/amplify/repos/amplify-api-next/packages/data-schema/src/Handler.ts:112:21 - (ae-forgotten-export) The symbol "inlineSql" needs to be exported by the entry point index.d.ts
+// /Users/wirej/amplify/repos/amplify-api-next/packages/data-schema/src/Handler.ts:112:21 - (ae-forgotten-export) The symbol "sqlReference" needs to be exported by the entry point index.d.ts
+// /Users/wirej/amplify/repos/amplify-api-next/packages/data-schema/src/Handler.ts:112:21 - (ae-forgotten-export) The symbol "custom" needs to be exported by the entry point index.d.ts
+// /Users/wirej/amplify/repos/amplify-api-next/packages/data-schema/src/Handler.ts:112:21 - (ae-forgotten-export) The symbol "fcn" needs to be exported by the entry point index.d.ts
 
 // (No @packageDocumentation comment for this package)
 
