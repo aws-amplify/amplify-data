@@ -84,7 +84,7 @@ describe('ModelSecondaryIndexes', () => {
         .secondaryIndexes((index) => [index('title')]),
     });
 
-    type Resolved = ModelSecondaryIndexes<typeof s>;
+    type Resolved = ModelSecondaryIndexes<SchemaTypes<typeof s>>;
 
     type Expected = {
       Post: {
@@ -118,7 +118,7 @@ describe('ModelSecondaryIndexes', () => {
         ]),
     });
 
-    type Resolved = ModelSecondaryIndexes<typeof s>;
+    type Resolved = ModelSecondaryIndexes<SchemaTypes<typeof s>>;
 
     type Expected = {
       Post: {

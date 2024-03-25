@@ -29,10 +29,10 @@ import { CombinedModelSchema, CombinedSchemaIndexes } from './CombineSchema';
 export type ClientSchema<
   Schema extends GenericModelSchema<any> | CombinedModelSchema<any>,
 > =
-  Schema extends CombinedModelSchema<any>
-    ? InternalCombinedSchema<Schema>
-    : Schema extends GenericModelSchema<any>
-      ? InternalClientSchema<Schema>
+  Schema extends GenericModelSchema<any>
+    ? InternalClientSchema<Schema>
+    : Schema extends CombinedModelSchema<any>
+      ? InternalCombinedSchema<Schema>
       : never;
 
 /**
