@@ -162,9 +162,9 @@ describe('RelationalMetadata', () => {
       ResolveSchema<Schema>,
       ResolveFieldProperties<
         Schema,
-        ResolveSchema<Schema>,
         NonModelTypesShape,
-        CreateImplicitModelsFromRelations<Schema, ResolveSchema<Schema>>
+        ResolveSchema<Schema>,
+        CreateImplicitModelsFromRelations<Schema>
       >,
       ModelIdentifier<SchemaTypes<Schema>>
     >;
@@ -190,9 +190,9 @@ describe('RelationalMetadata', () => {
 
     type ResolvedFields = ResolveFieldProperties<
       Schema,
-      ResolveSchema<Schema>,
       NonModelTypesShape,
-      CreateImplicitModelsFromRelations<Schema, ResolveSchema<Schema>>
+      ResolveSchema<Schema>,
+      CreateImplicitModelsFromRelations<Schema>
     >;
     type Resolved = Prettify<
       RelationalMetadata<
@@ -223,9 +223,9 @@ describe('RelationalMetadata', () => {
 
     type ResolvedFields = ResolveFieldProperties<
       Schema,
-      ResolveSchema<Schema>,
       NonModelTypesShape,
-      CreateImplicitModelsFromRelations<Schema, ResolveSchema<Schema>>
+      ResolveSchema<Schema>,
+      CreateImplicitModelsFromRelations<Schema>
     >;
     type Resolved = Prettify<
       RelationalMetadata<
@@ -273,9 +273,9 @@ describe('RelationalMetadata', () => {
 
     type ResolvedFields = ResolveFieldProperties<
       Schema,
-      ResolveSchema<Schema>,
       NonModelTypesShape,
-      CreateImplicitModelsFromRelations<Schema, ResolveSchema<Schema>>
+      ResolveSchema<Schema>,
+      CreateImplicitModelsFromRelations<Schema>
     >;
     type Resolved = Prettify<
       RelationalMetadata<
@@ -323,9 +323,9 @@ describe('RelationalMetadata', () => {
 
     type ResolvedFields = ResolveFieldProperties<
       Schema,
-      ResolveSchema<Schema>,
       NonModelTypesShape,
-      CreateImplicitModelsFromRelations<Schema, ResolveSchema<Schema>>
+      ResolveSchema<Schema>,
+      CreateImplicitModelsFromRelations<Schema>
     >;
     type Resolved = Prettify<
       RelationalMetadata<
@@ -372,9 +372,9 @@ describe('RelationalMetadata', () => {
         ResolveSchema<Schema>,
         ResolveFieldProperties<
           Schema,
-          ResolveSchema<Schema>,
           NonModelTypesShape,
-          CreateImplicitModelsFromRelations<Schema, ResolveSchema<Schema>>
+          ResolveSchema<Schema>,
+          CreateImplicitModelsFromRelations<Schema>
         >,
         ModelIdentifier<SchemaTypes<Schema>>
       >
@@ -416,9 +416,9 @@ describe('RelationalMetadata', () => {
         ResolveSchema<Schema>,
         ResolveFieldProperties<
           Schema,
-          ResolveSchema<Schema>,
           NonModelTypesShape,
-          CreateImplicitModelsFromRelations<Schema, ResolveSchema<Schema>>
+          ResolveSchema<Schema>,
+          CreateImplicitModelsFromRelations<Schema>
         >,
         ModelIdentifier<SchemaTypes<Schema>>
       >
@@ -460,9 +460,9 @@ describe('RelationalMetadata', () => {
 
     type ResolvedFields = ResolveFieldProperties<
       Schema,
-      ResolveSchema<Schema>,
       NonModelTypesShape,
-      CreateImplicitModelsFromRelations<Schema, ResolveSchema<Schema>>
+      ResolveSchema<Schema>,
+      CreateImplicitModelsFromRelations<Schema>
     >;
     type Resolved = Prettify<
       RelationalMetadata<
