@@ -15,6 +15,12 @@ export type CombinedSchemaBrand = Brand<typeof CombinedSchemaBrandName>;
 export type CombinedModelSchema<Schemas extends GenericModelSchema<any>[]> =
   CombinedSchemaBrand & { schemas: [...Schemas] } & BaseSchema<any>;
 
+/**
+ * The interface for merging up to 50 schemas into a single API.
+ * @param schemas The schemas to combine into a single API
+ * @returns An API and data model definition to be deployed with Amplify (Gen 2) experience (`processSchema(...)`)
+ * or with the Amplify Data CDK construct (`@aws-amplify/data-construct`)
+ */
 export function combine<Schema extends GenericModelSchema<any>[]>(
   schemas: [...Schema],
 ): CombinedModelSchema<Schema> {
