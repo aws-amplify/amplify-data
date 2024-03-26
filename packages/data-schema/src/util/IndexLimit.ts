@@ -1,6 +1,6 @@
-export type IndexLimit<
+export type IndexLimitUnion<
   N extends number,
   Result extends Array<unknown> = [],
 > = Result['length'] extends N
   ? Result
-  : IndexLimit<N, [...Result, `${Result['length']}`]>;
+  : IndexLimitUnion<N, [...Result, `${Result['length']}`]>;

@@ -1,2 +1,3 @@
 export { Brand, brand, getBrand } from './Brand';
-export { IndexLimit } from './IndexLimit';
+export { IndexLimitUnion } from './IndexLimit';
+export { SpreadTuple } from './SpreadTuple';

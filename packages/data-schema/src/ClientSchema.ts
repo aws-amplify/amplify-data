@@ -1,7 +1,4 @@
-import {
-  UnionToIntersection,
-  type __modelMeta__,
-} from '@aws-amplify/data-schema-types';
+import { type __modelMeta__ } from '@aws-amplify/data-schema-types';
 import { type GenericModelSchema, type RDSModelSchema } from './ModelSchema';
 
 // MappedTypes
@@ -24,7 +21,11 @@ import {
   ResolveCustomOperations,
   CustomOperationHandlerTypes,
 } from './MappedTypes/CustomOperations';
-import { CombinedModelSchema, CombinedSchemaIndexes } from './CombineSchema';
+import {
+  CombinedModelSchema,
+  CombinedSchemaIndexesUnion,
+} from './CombineSchema';
+import { SpreadTuple } from './util';
 
 export type ClientSchema<
   Schema extends GenericModelSchema<any> | CombinedModelSchema<any>,
@@ -94,11 +95,14 @@ type InternalClientSchema<
       ResolveCustomOperations<Schema, ResolvedFields, NonModelTypes>;
   };
 
+type GetInternalClientSchema<Schema> =
+  Schema extends GenericModelSchema<any> ? InternalClientSchema<Schema> : never;
+
 type CombinedClientSchemas<
   Schemas extends CombinedModelSchema<any>['schemas'],
 > = {
-  [Index in keyof Schemas]: Index extends CombinedSchemaIndexes
-    ? InternalClientSchema<Schemas[Index]>
+  [Index in keyof Schemas]: Index extends CombinedSchemaIndexesUnion
+    ? GetInternalClientSchema<Schemas[Index]>
     : never;
 };
 
@@ -109,12 +113,18 @@ type CombinedClientSchemas<
  * @typeParam Combined - A container of multiple schemas
  *
  * @internal @typeParam ClientSchemas - The tuple of client schemas to combine
- **/
+ */
 type InternalCombinedSchema<
   Combined extends CombinedModelSchema<any>,
   ClientSchemas extends [...any] = CombinedClientSchemas<Combined['schemas']>,
-> = Omit<UnionToIntersection<ClientSchemas[number]>, typeof __modelMeta__> & {
-  [__modelMeta__]: UnionToIntersection<
-    ClientSchemas[number][typeof __modelMeta__]
-  >;
+> = SpreadTuple<{
+  [I in keyof ClientSchemas]: I extends CombinedSchemaIndexesUnion
+    ? Exclude<ClientSchemas[I], typeof __modelMeta__>
+    : never;
+}> & {
+  [__modelMeta__]: SpreadTuple<{
+    [I in keyof ClientSchemas]: I extends CombinedSchemaIndexesUnion
+      ? ClientSchemas[I][typeof __modelMeta__]
+      : never;
+  }>;
 };

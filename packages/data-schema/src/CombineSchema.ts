@@ -1,10 +1,10 @@
 import { DerivedApiDefinition } from '@aws-amplify/data-schema-types';
 import { BaseSchema, GenericModelSchema } from './ModelSchema';
-import { brand, Brand, IndexLimit } from './util';
+import { brand, Brand, IndexLimitUnion } from './util';
 
-const COMBINED_SCHEMA_LIMIT = 50;
+const COMBINED_SCHEMA_LIMIT = 5;
 
-export type CombinedSchemaIndexes = IndexLimit<
+export type CombinedSchemaIndexesUnion = IndexLimitUnion<
   typeof COMBINED_SCHEMA_LIMIT
 >[number];
 
