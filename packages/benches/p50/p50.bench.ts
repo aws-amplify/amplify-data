@@ -43,7 +43,7 @@ bench('p50', () => {
       })
       .authorization([a.allow.public().to(['read']), a.allow.owner()]),
   }).authorization([a.allow.public()]);
-}).types([28270, 'instantiations']);
+}).types([28010, 'instantiations']);
 
 bench('p50 w/ client types', () => {
   const s = a
@@ -86,4 +86,52 @@ bench('p50 w/ client types', () => {
     .authorization([a.allow.public()]);
 
   type _ = ClientSchema<typeof s>;
-}).types([112614, 'instantiations']);
+}).types([117007, 'instantiations']);
+
+bench('p50 combined schema w/ client types', () => {
+  const s1 = a
+    .schema({
+      Employee: a
+        .model({
+          name: a.string().required(),
+          email: a.email().authorization([a.allow.owner()]),
+          phone: a.phone().authorization([a.allow.owner()]),
+          website: a.url(),
+          ssn: a.string().authorization([a.allow.owner()]),
+          todos: a.hasMany('Todo'),
+          posts: a.hasMany('Post'),
+        })
+        .authorization([a.allow.private().to(['read']), a.allow.owner()]),
+
+      Post: a
+        .model({
+          name: a.string().default('My new Post'),
+          notes: a.string().array(),
+          location: a.customType({
+            lat: a.float(),
+            long: a.float(),
+          }),
+          lastViewedDate: a.date(),
+          lastViewedTime: a.time(),
+          employee: a.belongsTo('Employee'),
+        })
+        .authorization([a.allow.public().to(['read']), a.allow.owner()]),
+    })
+    .authorization([a.allow.public()]);
+
+  const s2 = a.schema({
+    Todo: a
+      .model({
+        todoId: a.id().required(),
+        name: a.string().required(),
+        privacySetting: a.enum(['PRIVATE', 'FRIENDS_ONLY', 'PUBLIC']),
+        viewCount: a.integer(),
+        complete: a.boolean(),
+        employee: a.belongsTo('Employee'),
+      })
+      .identifier(['todoId', 'name']),
+  });
+
+  const s = a.combine([s1, s2]);
+  type _ = ClientSchema<typeof s>;
+}).types([336530, 'instantiations']);

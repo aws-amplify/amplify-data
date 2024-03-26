@@ -90,7 +90,7 @@ export type InternalSchema = {
   };
 };
 
-type BaseSchema<T extends ModelSchemaParamShape> = {
+export type BaseSchema<T extends ModelSchemaParamShape> = {
   data: T;
   models: {
     [TypeKey in keyof T['types']]: T['types'][TypeKey] extends ModelType<ModelTypeParamShape>
@@ -101,7 +101,7 @@ type BaseSchema<T extends ModelSchemaParamShape> = {
 };
 
 export type GenericModelSchema<T extends ModelSchemaParamShape> =
-  BaseSchema<T> & Brand<string>;
+  BaseSchema<T> & Brand<typeof rdsSchemaBrandName | typeof ddbSchemaBrandName>;
 
 export type ModelSchema<
   T extends ModelSchemaParamShape,
