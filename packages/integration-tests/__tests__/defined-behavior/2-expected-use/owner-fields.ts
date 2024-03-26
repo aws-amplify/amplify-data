@@ -520,7 +520,6 @@ describe('Implicit Auth Field Handling. Given:', () => {
       );
     });
 
-    // TODO: will fail until new amplify-js runtime is released.
     test('the client includes `groups` in selection sets', async () => {
       const config = await buildAmplifyConfig(schema);
       Amplify.configure(config);
