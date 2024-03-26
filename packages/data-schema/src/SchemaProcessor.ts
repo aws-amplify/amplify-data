@@ -1288,14 +1288,7 @@ const schemaPreprocessor = (
 
       const { gqlFields, models } = processFields(
         typeName,
-        {
-          // ID fields are not merged outside `mergeFieldObjects` to skip
-          // validation, because the `identifer()` method doesn't specify or
-          // care what the underlying field type is. We should always just defer
-          // to whatever is explicitly defined if there's an overlap.
-          // ...idFields(typeDef),
-          ...mergeFieldObjects(fields, authFields),
-        },
+        mergeFieldObjects(fields, authFields),
         fieldLevelAuthRules,
         identifier,
         partitionKey,

@@ -350,7 +350,6 @@ describe('Implicit Auth Field Handling. Given:', () => {
       );
     });
 
-    // TODO: will fail until new amplify-js runtime is released.
     test('the client includes `group` in selection sets', async () => {
       const config = await buildAmplifyConfig(schema);
       Amplify.configure(config);
@@ -427,6 +426,91 @@ describe('Implicit Auth Field Handling. Given:', () => {
       expect(authRules[0]).toEqual(
         expect.objectContaining({
           provider: 'userPools',
+          groupField: 'groups',
+          groupsField: 'groups',
+          allow: 'groups',
+          groupClaim: 'cognito:groups',
+          operations: ['create', 'update', 'delete', 'read'],
+        }),
+      );
+    });
+
+    test('the client includes `groups` in selection sets', async () => {
+      const config = await buildAmplifyConfig(schema);
+      Amplify.configure(config);
+      const { spy, generateClient } = mockedGenerateClient([
+        { data: { listModels: { items: [] } } },
+      ]);
+      const client = generateClient<Schema>();
+      await client.models.Model.list();
+
+      expectSelectionSetContains(spy, ['groups']);
+    });
+
+    test('the client can filter on `groups`', async () => {
+      const config = await buildAmplifyConfig(schema);
+      Amplify.configure(config);
+      const { spy, generateClient } = mockedGenerateClient([
+        { data: { listModels: { items: [] } } },
+      ]);
+      const client = generateClient<Schema>();
+      await client.models.Model.list({
+        filter: {
+          groups: { eq: 'some-bodies' },
+        },
+      });
+      expectVariables(spy, {
+        filter: {
+          groups: { eq: 'some-bodies' },
+        },
+      });
+    });
+  });
+
+  describe('A model with implicit `groups` field from groupsDefinedIn OIDC auth', () => {
+    const schema = a
+      .schema({
+        Model: a.model({
+          content: a.string(),
+        }),
+      })
+      .authorization([a.allow.groupsDefinedIn('groups', 'oidc')]);
+    type Schema = ClientSchema<typeof schema>;
+
+    afterEach(() => {
+      jest.clearAllMocks();
+    });
+
+    test('the client schema type has a group?: string und fields', () => {
+      type _ownerStringIsPresent = Expect<
+        Equal<string[] | undefined, Schema['Model']['groups']>
+      >;
+    });
+
+    test('the generated graphql schema excludes `groups`', async () => {
+      const graphqlSchema = schema.transform().schema;
+      expectSchemaModelExcludes({
+        schema: graphqlSchema,
+        model: 'Model',
+        field: 'groups',
+      });
+    });
+
+    test('the generated modelIntrospection schema excludes `groups`', async () => {
+      const { modelIntrospection } = await buildAmplifyConfig(schema);
+      expect(
+        modelIntrospection.models['Model']['fields']['groups'],
+      ).toBeUndefined();
+    });
+
+    test('the generated modelIntrospection schema contains auth rule pointing to `groups` field', async () => {
+      const { modelIntrospection } = await buildAmplifyConfig(schema);
+      const authRules = modelIntrospection.models.Model.attributes.filter(
+        (attr: any) => attr.type === 'auth',
+      )[0].properties.rules;
+      expect(authRules[0]).toEqual(
+        expect.objectContaining({
+          provider: 'oidc',
           groupField: 'groups',
           groupsField: 'groups',
           allow: 'groups',

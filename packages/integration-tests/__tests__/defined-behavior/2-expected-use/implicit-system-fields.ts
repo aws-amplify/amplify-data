@@ -63,7 +63,7 @@ describe('Implicit System Field Handling. Given:', () => {
       });
     });
 
-    test('the generated modelIntrospection schema includes the PK field and metadata', async () => {
+    test('the generated modelIntrospection schema contains the PK field and metadata', async () => {
       const { modelIntrospection } = await buildAmplifyConfig(schema);
       expect(modelIntrospection.models['Model'].primaryKeyInfo).toEqual(
         expect.objectContaining({
@@ -103,6 +103,10 @@ describe('Implicit System Field Handling. Given:', () => {
       await client.models.Model.get({});
       // @ts-expect-error
       await client.models.Model.delete({});
+
+      // Disallowed by types and fails runtime validation
+      // @ts-expect-error
+      await expect(client.models.Model.get()).rejects.toThrow();
     });
 
     test('the client includes `id` in selection sets', async () => {
@@ -160,7 +164,7 @@ describe('Implicit System Field Handling. Given:', () => {
       >;
     });
 
-    test('the generated graphql schema contains `createdAt: AWSDateTime!`, `updatedAt: AWSDateTime!`', async () => {
+    test('the generated graphql schema excludes `createdAt: AWSDateTime!`, `updatedAt: AWSDateTime!`', async () => {
       const graphqlSchema = schema.transform().schema;
       expectSchemaModelExcludes({
         schema: graphqlSchema,
@@ -174,7 +178,7 @@ describe('Implicit System Field Handling. Given:', () => {
       });
     });
 
-    test('the generated modelIntrospection schema includes the `createdAt`, `updatedAt` fields', async () => {
+    test('the generated modelIntrospection schema contains the `createdAt`, `updatedAt` fields', async () => {
       const { modelIntrospection } = await buildAmplifyConfig(schema);
       expect(modelIntrospection.models['Model']['fields']['createdAt']).toEqual(
         expect.objectContaining({
