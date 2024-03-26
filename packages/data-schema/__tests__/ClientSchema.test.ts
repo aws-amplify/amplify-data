@@ -882,7 +882,7 @@ describe('custom operations', () => {
       });
     });
   });
-  describe('for an combine schema', () => {
+  describe('for a.combine schema', () => {
     test('two schemas combine without issues', () => {
       const schemaA = a.schema({
         A: a
