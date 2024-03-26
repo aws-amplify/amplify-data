@@ -61,13 +61,8 @@ type DatasourceConfig<DE extends DatasourceEngine> = DE extends 'dynamodb'
   ? { engine: DE }
   : {
       engine: DE;
-      hostname: BackendSecret;
-      username: BackendSecret;
-      password: BackendSecret;
-      port: BackendSecret;
-      databaseName: BackendSecret;
-      // TODO: clarify type
-      vpcConfig?: Record<string, never>;
+      connectionUri: BackendSecret;
+      vpcConfig?: Record<string, any>;
     };
 
 export type SchemaConfig<
