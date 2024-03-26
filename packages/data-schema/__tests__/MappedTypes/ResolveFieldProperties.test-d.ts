@@ -22,7 +22,8 @@ describe('ResolveFieldProperties Mapped Type', () => {
       ResolveFieldProperties<
         Schema,
         ExtractNonModelTypes<Schema>,
-        CreateImplicitModelsFromRelations<ResolveSchema<Schema>>
+        CreateImplicitModelsFromRelations<ResolveSchema<Schema>>,
+        ResolveSchema<Schema>
       >
     >;
 
@@ -61,7 +62,8 @@ describe('ResolveFieldProperties Mapped Type', () => {
       ResolveFieldProperties<
         Schema,
         ExtractNonModelTypes<Schema>,
-        CreateImplicitModelsFromRelations<ResolveSchema<Schema>>
+        CreateImplicitModelsFromRelations<ResolveSchema<Schema>>,
+        ResolveSchema<Schema>
       >['Post']
     >;
 
@@ -106,7 +108,8 @@ describe('ResolveFieldProperties Mapped Type', () => {
       ResolveFieldProperties<
         Schema,
         ExtractNonModelTypes<Schema>,
-        CreateImplicitModelsFromRelations<ResolveSchema<Schema>>
+        CreateImplicitModelsFromRelations<ResolveSchema<Schema>>,
+        ResolveSchema<Schema>
       >['Post']
     >;
 
@@ -156,7 +159,8 @@ describe('ResolveFieldProperties Mapped Type', () => {
       ResolveFieldProperties<
         Schema,
         ExtractNonModelTypes<Schema>,
-        CreateImplicitModelsFromRelations<ResolveSchema<Schema>>
+        CreateImplicitModelsFromRelations<ResolveSchema<Schema>>,
+        ResolveSchema<Schema>
       >['Post']
     >;
 
@@ -203,7 +207,8 @@ describe('ResolveFieldProperties Mapped Type', () => {
       ResolveFieldProperties<
         Schema,
         ExtractNonModelTypes<Schema>,
-        CreateImplicitModelsFromRelations<ResolveSchema<Schema>>
+        CreateImplicitModelsFromRelations<ResolveSchema<Schema>>,
+        ResolveSchema<Schema>
       >['Post']
     >;
 
@@ -243,7 +248,8 @@ describe('ResolveFieldProperties Mapped Type', () => {
       ResolveFieldProperties<
         Schema,
         ExtractNonModelTypes<Schema>,
-        CreateImplicitModelsFromRelations<ResolveSchema<Schema>>
+        CreateImplicitModelsFromRelations<ResolveSchema<Schema>>,
+        ResolveSchema<Schema>
       >['Post']
     >;
 
@@ -287,7 +293,8 @@ describe('ResolveFieldProperties Mapped Type', () => {
       ResolveFieldProperties<
         Schema,
         ExtractNonModelTypes<Schema>,
-        CreateImplicitModelsFromRelations<ResolveSchema<Schema>>
+        CreateImplicitModelsFromRelations<ResolveSchema<Schema>>,
+        ResolveSchema<Schema>
       >['Post']
     >;
 
@@ -341,7 +348,8 @@ describe('ResolveFieldProperties Mapped Type', () => {
       ResolveFieldProperties<
         Schema,
         ExtractNonModelTypes<Schema>,
-        CreateImplicitModelsFromRelations<ResolveSchema<Schema>>
+        CreateImplicitModelsFromRelations<ResolveSchema<Schema>>,
+        ResolveSchema<Schema>
       >['Post']
     >;
 

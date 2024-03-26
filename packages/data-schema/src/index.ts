@@ -1,4 +1,5 @@
 import { schema } from './ModelSchema';
+import { combine } from './CombineSchema';
 import { model } from './ModelType';
 import {
   id,
@@ -29,6 +30,7 @@ import { handler } from './Handler';
 // "a."
 export {
   schema,
+  combine,
   model,
   ref,
   customType,

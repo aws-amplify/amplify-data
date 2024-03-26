@@ -21,9 +21,20 @@ import {
   ResolveCustomOperations,
   CustomOperationHandlerTypes,
 } from './MappedTypes/CustomOperations';
+import {
+  CombinedModelSchema,
+  CombinedSchemaIndexesUnion,
+} from './CombineSchema';
+import { SpreadTuple } from './util';
 
-export type ClientSchema<Schema extends GenericModelSchema<any>> =
-  InternalClientSchema<Schema>;
+export type ClientSchema<
+  Schema extends GenericModelSchema<any> | CombinedModelSchema<any>,
+> =
+  Schema extends GenericModelSchema<any>
+    ? InternalClientSchema<Schema>
+    : Schema extends CombinedModelSchema<any>
+      ? InternalCombinedSchema<Schema>
+      : never;
 
 /**
  * Types for unwrapping generic type args into client-consumable types
@@ -34,8 +45,11 @@ export type ClientSchema<Schema extends GenericModelSchema<any>> =
  * They should not receive external type args.
  *
  * @internal @typeParam NonModelTypes - Custom Types, Enums, and Custom Operations
+ * @internal @typeParam ResolvedSchema - Resolve the schema types used by other generics
  * @internal @typeParam ImplicitModels - The implicit models created to represent relationships
+ * @internal @typeParam ImplicitModelsIdentifierMeta - The implicite model identifiers derived from ImplicitModels
  * @internal @typeParam ResolvedFields - Resolved client-facing types used for CRUDL response shapes
+ * @internal @typeParam IdentifierMeta - Resolve the identifier fields for all models
  * @internal @typeParam SecondaryIndexes - Map of model secondary index metadata
  */
 type InternalClientSchema<
@@ -80,3 +94,37 @@ type InternalClientSchema<
       NonModelTypes &
       ResolveCustomOperations<Schema, ResolvedFields, NonModelTypes>;
   };
+
+type GetInternalClientSchema<Schema> =
+  Schema extends GenericModelSchema<any> ? InternalClientSchema<Schema> : never;
+
+type CombinedClientSchemas<
+  Schemas extends CombinedModelSchema<any>['schemas'],
+> = {
+  [Index in keyof Schemas]: Index extends CombinedSchemaIndexesUnion
+    ? GetInternalClientSchema<Schemas[Index]>
+    : never;
+};
+
+/**
+ * Types for unwrapping and combining generic type args into client-consumable types
+ * for multiple schemas
+ *
+ * @typeParam Combined - A container of multiple schemas
+ *
+ * @internal @typeParam ClientSchemas - The tuple of client schemas to combine
+ */
+type InternalCombinedSchema<
+  Combined extends CombinedModelSchema<any>,
+  ClientSchemas extends [...any] = CombinedClientSchemas<Combined['schemas']>,
+> = SpreadTuple<{
+  [I in keyof ClientSchemas]: I extends CombinedSchemaIndexesUnion
+    ? Exclude<ClientSchemas[I], typeof __modelMeta__>
+    : never;
+}> & {
+  [__modelMeta__]: SpreadTuple<{
+    [I in keyof ClientSchemas]: I extends CombinedSchemaIndexesUnion
+      ? ClientSchemas[I][typeof __modelMeta__]
+      : never;
+  }>;
+};
