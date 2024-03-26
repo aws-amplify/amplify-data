@@ -31,9 +31,14 @@ describe('secondary indexes / index queries', () => {
       // Doing the following input type validation as an alternative:
 
       // Valid key input
-      client.models.Post.listByTitle({
-        title: 'abc',
-      });
+      client.models.Post.listByTitle(
+        {
+          title: 'abc',
+        },
+        {
+          sortDirection: 'ASC',
+        },
+      );
 
       // Wrong field type
       // @ts-expect-error
@@ -53,9 +58,14 @@ describe('secondary indexes / index queries', () => {
     });
 
     test('Return type', async () => {
-      const { data: posts } = await client.models.Post.listByTitle({
-        title: 'abc',
-      });
+      const { data: posts } = await client.models.Post.listByTitle(
+        {
+          title: 'abc',
+        },
+        {
+          sortDirection: 'ASC',
+        },
+      );
 
       type ResolvedReturnType = typeof posts;
       type ExpectedReturnType = {
@@ -75,9 +85,8 @@ describe('secondary indexes / index queries', () => {
         {
           title: 'abc',
         },
-        { selectionSet: ['id', 'updatedAt'] },
+        { selectionSet: ['id', 'updatedAt'], sortDirection: 'ASC' },
       );
-
       type ResolvedReturnType = typeof posts;
       type ExpectedReturnType = {
         readonly id: string;
@@ -91,16 +100,39 @@ describe('secondary indexes / index queries', () => {
   describe('With SK', () => {
     test('Input type', () => {
       // Valid key input
-      client.models.Post.myCustomIdx({
-        description: 'abc',
-      });
+      client.models.Post.myCustomIdx(
+        {
+          description: 'abc',
+        },
+        {
+          sortDirection: 'ASC',
+        },
+      );
 
       // Valid key input 2
-      client.models.Post.myCustomIdx({
-        description: 'abc',
-        viewCount: { gt: 3 },
-        updatedAt: { beginsWith: '123' },
-      });
+      client.models.Post.myCustomIdx(
+        {
+          description: 'abc',
+          viewCount: { gt: 3 },
+          updatedAt: { beginsWith: '123' },
+        },
+        {
+          sortDirection: 'ASC',
+        },
+      );
+
+      client.models.Post.myCustomIdx(
+        {
+          description: 'abc',
+          viewCount: { gt: 3 },
+          updatedAt: { beginsWith: '123' },
+        },
+        {
+          // Wrong `sortDirection` value
+          // @ts-expect-error
+          sortDirection: 'NOPE',
+        },
+      );
 
       // Wrong field type
       // @ts-expect-error
