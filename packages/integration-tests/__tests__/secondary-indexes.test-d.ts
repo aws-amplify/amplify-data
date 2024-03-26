@@ -121,6 +121,19 @@ describe('secondary indexes / index queries', () => {
         },
       );
 
+      client.models.Post.myCustomIdx(
+        {
+          description: 'abc',
+          viewCount: { gt: 3 },
+          updatedAt: { beginsWith: '123' },
+        },
+        {
+          // Wrong `sortDirection` value
+          // @ts-expect-error
+          sortDirection: 'NOPE',
+        },
+      );
+
       // Wrong field type
       // @ts-expect-error
       client.models.Post.myCustomIdx({ description: 123 });
