@@ -5,7 +5,6 @@ import {
   type InternalField,
   id,
   string,
-  datetime,
   ModelFieldTypeParamOuter,
 } from './ModelField';
 import {
@@ -326,7 +325,7 @@ function customOperationToGql(
   }
 
   if (Object.keys(fieldArgs).length > 0) {
-    const { gqlFields, models } = processFields(typeName, fieldArgs, {});
+    const { gqlFields, models } = processFields(typeName, fieldArgs, {}, {});
     callSignature += `(${gqlFields.join(', ')})`;
     implicitModels.push(...models);
   }
@@ -462,6 +461,30 @@ function validateStaticFields(
 }
 
 /**
+ * Validate that no implicit fields conflict with explicitly defined fields.
+ *
+ * @param existing An existing field map
+ * @param implicitFields A field map inferred from other schema usage
+ *
+ * @throws An error when an undefined field is used or when a field is used in a way that conflicts with its generated definition
+ */
+function validateImpliedFields(
+  existing: Record<string, ModelField<any, any>>,
+  implicitFields: Record<string, ModelField<any, any>> | undefined,
+) {
+  if (implicitFields === undefined) {
+    return;
+  }
+  for (const [k, field] of Object.entries(implicitFields)) {
+    if (existing[k] && areConflicting(existing[k], field)) {
+      throw new Error(
+        `Implicit field ${k} conflicts with the explicit field definition.`,
+      );
+    }
+  }
+}
+
+/**
  * Produces a new field definition object from every field definition object
  * given as an argument. Performs validation (conflict detection) as objects
  * are merged together.
@@ -503,7 +526,8 @@ function validateAuth(authorization: Authorization<any, any, any>[] = []) {
  *
  * The computed directives are intended to be appended to the graphql field definition.
  *
- * The computed fields are intended to be aggregated and injected per model.
+ * The computed fields will be used to confirm no conflicts between explicit field definitions
+ * and implicit auth fields.
  *
  * @param authorization A list of authorization rules.
  * @returns
@@ -814,41 +838,6 @@ const allImpliedFKs = (schema: InternalSchema) => {
   return fks;
 };
 
-/**
- * Determines if implicit date fields are in effect for a given model. If they are,
- * returns those implicit fields.
- *
- * NOTE: For now, we *only* support the default implicit fields.
- *
- * @param _model Model to find date fields for.
- */
-const implicitTimestampFields = (
-  _model: InternalModel,
-): Record<string, ModelField<any, any>> => {
-  return {
-    createdAt: datetime().required(),
-    updatedAt: datetime().required(),
-  };
-};
-
-/**
- * Generates default Pk fields for a model, based on identifier designation.
- *
- * The fields from this function are just default values. They should be overridden
- * by ID field definitions that are explicit in the model.
- *
- * @param _model Model to find PK fields for.
- */
-const idFields = (
-  model: InternalModel,
-): Record<string, ModelField<any, any>> => {
-  const fields: Record<string, ModelField<any, any>> = {};
-  for (const fieldName of model.data.identifier) {
-    fields[fieldName] = id().required();
-  }
-  return fields;
-};
-
 function processFieldLevelAuthRules(
   fields: Record<string, ModelField<any, any>>,
   authFields: Record<string, ModelField<any, any>>,
@@ -875,6 +864,7 @@ function processFieldLevelAuthRules(
 function processFields(
   typeName: string,
   fields: Record<string, any>,
+  impliedFields: Record<string, any>,
   fieldLevelAuthRules: Record<string, string | null>,
   identifier?: string[],
   partitionKey?: string,
@@ -882,6 +872,8 @@ function processFields(
 ) {
   const gqlFields: string[] = [];
   const models: [string, any][] = [];
+
+  validateImpliedFields(fields, impliedFields);
 
   for (const [fieldName, fieldDef] of Object.entries(fields)) {
     const fieldAuth = fieldLevelAuthRules[fieldName]
@@ -1212,6 +1204,7 @@ const schemaPreprocessor = (
         const { gqlFields, models } = processFields(
           typeName,
           fields,
+          authFields,
           fieldLevelAuthRules,
         );
 
@@ -1285,6 +1278,7 @@ const schemaPreprocessor = (
       const { gqlFields, models } = processFields(
         typeName,
         fields,
+        authFields,
         fieldLevelAuthRules,
         identifier,
         partitionKey,
@@ -1323,18 +1317,8 @@ const schemaPreprocessor = (
 
       const { gqlFields, models } = processFields(
         typeName,
-        {
-          // ID fields are not merged outside `mergeFieldObjects` to skip
-          // validation, because the `identifer()` method doesn't specify or
-          // care what the underlying field type is. We should always just defer
-          // to whatever is explicitly defined if there's an overlap.
-          ...idFields(typeDef),
-          ...mergeFieldObjects(
-            fields,
-            authFields,
-            implicitTimestampFields(typeDef),
-          ),
-        },
+        fields,
+        authFields,
         fieldLevelAuthRules,
         identifier,
         partitionKey,
