@@ -44,7 +44,7 @@ function internalCombine<
       {},
     ),
     transform(): DerivedApiDefinition {
-      validateDuplicateEntries(schemas);
+      validateDuplicateTypeNames(schemas);
 
       const baseDefinition = {
         functionSlots: [],
@@ -78,7 +78,7 @@ function internalCombine<
   };
 }
 
-function validateDuplicateEntries<Schema extends GenericModelSchema<any>[]>(
+function validateDuplicateTypeNames<Schema extends GenericModelSchema<any>[]>(
   schemas: [...Schema],
 ) {
   const allSchemaKeys = schemas.flatMap((s) => Object.keys(s.data.types));
