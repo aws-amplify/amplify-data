@@ -1,5 +1,11 @@
 # @aws-amplify/data-schema
 
+## 0.14.5
+
+### Patch Changes
+
+- 0a935ad: feat: Raise an error on transform when combined schemes have conflicting type names
+
 ## 0.14.4
 
 ### Patch Changes
