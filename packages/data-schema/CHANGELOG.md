@@ -1,5 +1,11 @@
 # @aws-amplify/data-schema
 
+## 0.14.3
+
+### Patch Changes
+
+- ec46bf2: remove implicit graphql fields from graphql schema and model intro schema
+
 ## 0.14.2
 
 ### Patch Changes

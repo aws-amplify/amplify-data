@@ -3,10 +3,7 @@
 exports[`CustomType transform Explicit CustomType - required 1`] = `
 "type Post @model @auth(rules: [{allow: public}])
 {
-  id: ID! @primaryKey
   location: Location!
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
 }
 
 type Location 
@@ -19,11 +16,7 @@ type Location
 exports[`CustomType transform Explicit CustomType - with auth 1`] = `
 "type Post @model @auth(rules: [{allow: public}])
 {
-  id: ID! @primaryKey
   location: Location @auth(rules: [{allow: owner, ownerField: "owner"}])
-  owner: String
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
 }
 
 type Location 
@@ -36,10 +29,7 @@ type Location
 exports[`CustomType transform Explicit CustomType 1`] = `
 "type Post @model @auth(rules: [{allow: public}])
 {
-  id: ID! @primaryKey
   location: Location
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
 }
 
 type Location 
@@ -52,10 +42,7 @@ type Location
 exports[`CustomType transform Explicit CustomType nests explicit CustomType 1`] = `
 "type Post @model @auth(rules: [{allow: public}])
 {
-  id: ID! @primaryKey
   meta: Meta
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
 }
 
 type Meta 
@@ -78,10 +65,7 @@ type AltMeta
 exports[`CustomType transform Explicit CustomType nests explicit enum 1`] = `
 "type Post @model @auth(rules: [{allow: public}])
 {
-  id: ID! @primaryKey
   meta: Meta
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
 }
 
 type Meta 
@@ -99,10 +83,7 @@ enum PostStatus {
 exports[`CustomType transform Explicit CustomType nests implicit CustomType 1`] = `
 "type Post @model @auth(rules: [{allow: public}])
 {
-  id: ID! @primaryKey
   meta: Meta
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
 }
 
 type Meta 
@@ -125,10 +106,7 @@ type MetaNestedMeta
 exports[`CustomType transform Explicit CustomType nests implicit enum type 1`] = `
 "type Post @model @auth(rules: [{allow: public}])
 {
-  id: ID! @primaryKey
   meta: Meta
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
 }
 
 type Meta 
@@ -146,10 +124,7 @@ enum MetaStatus {
 exports[`CustomType transform Implicit CustomType 1`] = `
 "type Post @model @auth(rules: [{allow: public}])
 {
-  id: ID! @primaryKey
   location: PostLocation
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
 }
 
 type PostLocation 
@@ -162,10 +137,7 @@ type PostLocation
 exports[`CustomType transform Implicit CustomType nests explicit CustomType 1`] = `
 "type Post @model @auth(rules: [{allow: public}])
 {
-  id: ID! @primaryKey
   meta: PostMeta
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
 }
 
 type AltMeta 
@@ -188,10 +160,7 @@ enum PostMetaStatus {
 exports[`CustomType transform Implicit CustomType nests explicit enum 1`] = `
 "type Post @model @auth(rules: [{allow: public}])
 {
-  id: ID! @primaryKey
   meta: PostMeta
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
 }
 
 enum PostStatus {
@@ -209,10 +178,7 @@ type PostMeta
 exports[`CustomType transform Implicit CustomType nests implicit CustomType 1`] = `
 "type Post @model @auth(rules: [{allow: public}])
 {
-  id: ID! @primaryKey
   meta: PostMeta
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
 }
 
 type PostMeta 
@@ -235,10 +201,7 @@ type PostMetaNestedMeta
 exports[`CustomType transform Implicit CustomType nests implicit enum type 1`] = `
 "type Post @model @auth(rules: [{allow: public}])
 {
-  id: ID! @primaryKey
   meta: PostMeta
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
 }
 
 type PostMeta 
