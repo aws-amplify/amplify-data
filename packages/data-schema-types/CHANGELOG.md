@@ -1,5 +1,17 @@
 # @aws-amplify/data-schema-types
 
+## 0.7.14
+
+### Patch Changes
+
+- a0d123f: add duplicate 'ModelSortDirection' type export to index.v3.ts
+
+## 0.7.13
+
+### Patch Changes
+
+- afc2963: add gsi sort for list and index query
+
 ## 0.7.12
 
 ### Patch Changes

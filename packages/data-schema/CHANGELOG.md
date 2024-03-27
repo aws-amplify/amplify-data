@@ -1,5 +1,11 @@
 # @aws-amplify/data-schema
 
+## 0.14.2
+
+### Patch Changes
+
+- c5fac1f: feat: ClientSchema conversion of a.combine schemas
+
 ## 0.14.1
 
 ### Patch Changes

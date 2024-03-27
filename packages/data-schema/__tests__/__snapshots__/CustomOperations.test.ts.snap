@@ -15,10 +15,7 @@ exports[`CustomOperation transform deprecated .function Custom Mutation w string
 exports[`CustomOperation transform deprecated .function Schema w model, custom query, mutation, and subscription 1`] = `
 "type Post @model @auth(rules: [{allow: public}])
 {
-  id: ID! @primaryKey
   title: String
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
 }
 
 type Mutation {
@@ -56,10 +53,7 @@ type Subscription {
 exports[`CustomOperation transform deprecated .function Schema w model, custom query, mutation, and subscription and ref of model with array modifier 1`] = `
 "type Post @model @auth(rules: [{allow: public}])
 {
-  id: ID! @primaryKey
   title: String
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
 }
 
 type Mutation {
@@ -205,10 +199,7 @@ exports[`CustomOperation transform dynamo schema Custom query w inline string re
 exports[`CustomOperation transform dynamo schema Schema w model, custom query, mutation, and subscription 1`] = `
 "type Post @model @auth(rules: [{allow: public}])
 {
-  id: ID! @primaryKey
   title: String
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
 }
 
 type Mutation {
@@ -246,10 +237,7 @@ type Subscription {
 exports[`CustomOperation transform dynamo schema Schema w model, custom query, mutation, and subscription and ref of model with array modifier 1`] = `
 "type Post @model @auth(rules: [{allow: public}])
 {
-  id: ID! @primaryKey
   title: String
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
 }
 
 type Mutation {
@@ -278,10 +266,7 @@ type Subscription {
 exports[`CustomOperation transform dynamo schema custom subscriptions Custom subscription with Model source & custom mutation source 1`] = `
 "type Post @model @auth(rules: [{allow: public}])
 {
-  id: ID! @primaryKey
   title: String
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
 }
 
 type Mutation {
@@ -296,10 +281,7 @@ type Subscription {
 exports[`CustomOperation transform dynamo schema custom subscriptions Custom subscription with custom mutation source 1`] = `
 "type Post @model @auth(rules: [{allow: public}])
 {
-  id: ID! @primaryKey
   title: String
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
 }
 
 type Mutation {
@@ -314,10 +296,7 @@ type Subscription {
 exports[`CustomOperation transform dynamo schema custom subscriptions Custom subscription with model multiple mutation sources 1`] = `
 "type Post @model @auth(rules: [{allow: public}])
 {
-  id: ID! @primaryKey
   title: String
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
 }
 
 type Subscription {
@@ -328,10 +307,7 @@ type Subscription {
 exports[`CustomOperation transform dynamo schema custom subscriptions Custom subscription with model single mutation source 1`] = `
 "type Post @model @auth(rules: [{allow: public}])
 {
-  id: ID! @primaryKey
   title: String
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
 }
 
 type Subscription {
@@ -342,10 +318,7 @@ type Subscription {
 exports[`CustomOperation transform dynamo schema handlers a.handler.custom a.handler.custom with auth and model ref works 1`] = `
 "type Post @model @auth(rules: [{allow: public}])
 {
-  id: ID! @primaryKey
   title: String
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
 }
 
 type GetPostDetailsReturnType 
@@ -372,10 +345,7 @@ type Query {
 exports[`CustomOperation transform dynamo schema handlers a.handler.custom a.handler.custom with multiple supported auth modes 1`] = `
 "type Post @model @auth(rules: [{allow: private}])
 {
-  id: ID! @primaryKey
   title: String
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
 }
 
 type Query {

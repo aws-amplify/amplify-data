@@ -12,6 +12,19 @@ import {
 import { configure } from '../src/internals';
 import { Nullable } from '../src/ModelField';
 
+const fakeSecret = () => ({}) as any;
+
+const datasourceConfigMySQL = {
+  engine: 'mysql',
+  hostname: fakeSecret(),
+  username: fakeSecret(),
+  password: fakeSecret(),
+  port: fakeSecret(),
+  databaseName: fakeSecret(),
+} as const;
+
+const aSql = configure({ database: datasourceConfigMySQL });
+
 // evaluates type defs in corresponding test-d.ts file
 it('should not produce static type errors', async () => {
   await expectTypeTestsToPassAsync(__filename);
@@ -652,19 +665,6 @@ describe('custom operations', () => {
   });
 
   describe('for an rds schema', () => {
-    const fakeSecret = () => ({}) as any;
-
-    const datasourceConfigMySQL = {
-      engine: 'mysql',
-      hostname: fakeSecret(),
-      username: fakeSecret(),
-      password: fakeSecret(),
-      port: fakeSecret(),
-      databaseName: fakeSecret(),
-    } as const;
-
-    const aSql = configure({ database: datasourceConfigMySQL });
-
     test('can define public auth with no provider', () => {
       const schema = aSql.schema({
         A: a
@@ -880,6 +880,167 @@ describe('custom operations', () => {
         const graphql = schema.transform().schema;
         expect(graphql).toMatchSnapshot();
       });
+    });
+  });
+  describe('for a.combine schema', () => {
+    test('two schemas combine without issues', () => {
+      const schemaA = a.schema({
+        A: a
+          .model({
+            field: a.string(),
+          })
+          .authorization([a.allow.public()]),
+      });
+
+      const schemaB = a.schema({
+        B: a
+          .model({
+            field: a.string(),
+          })
+          .authorization([a.allow.public()]),
+      });
+
+      const schema = a.combine([schemaA, schemaB]);
+
+      type Actual_A = Prettify<ClientSchema<typeof schema>['A']>;
+
+      type Expected_A = {
+        readonly id: string;
+        readonly createdAt: string;
+        readonly updatedAt: string;
+        field?: string | null | undefined;
+        // no implied owner field
+      };
+
+      type testA = Expect<Equal<Actual_A, Expected_A>>;
+
+      type Actual_B = Prettify<ClientSchema<typeof schema>['B']>;
+
+      type Expected_B = {
+        readonly id: string;
+        readonly createdAt: string;
+        readonly updatedAt: string;
+        field?: string | null | undefined;
+        // no implied owner field
+      };
+
+      type testB = Expect<Equal<Actual_B, Expected_B>>;
+
+      const graphql = schema.transform().schema;
+      expect(graphql).toMatchSnapshot();
+    });
+
+    test('a ddb and sql schemas combine without issues', () => {
+      const schemaA = aSql.schema({
+        A: a
+          .model({
+            field: a.string(),
+          })
+          .authorization([a.allow.public()]),
+      });
+
+      const schemaB = a.schema({
+        B: a
+          .model({
+            field: a.string(),
+          })
+          .authorization([a.allow.public()]),
+      });
+
+      const schema = a.combine([schemaA, schemaB]);
+
+      type Actual_A = Prettify<ClientSchema<typeof schema>['A']>;
+
+      type Expected_A = {
+        field?: string | null | undefined;
+        // no implied owner field
+      };
+
+      type testA = Expect<Equal<Actual_A, Expected_A>>;
+
+      type Actual_B = Prettify<ClientSchema<typeof schema>['B']>;
+
+      type Expected_B = {
+        readonly id: string;
+        readonly createdAt: string;
+        readonly updatedAt: string;
+        field?: string | null | undefined;
+        // no implied owner field
+      };
+
+      type testB = Expect<Equal<Actual_B, Expected_B>>;
+
+      const graphql = schema.transform().schema;
+      expect(graphql).toMatchSnapshot();
+    });
+
+    test('combining two schemas with custom mutation results in customTypes and customOperations that intersect the separate schemas', () => {
+      const schemaA = a.schema({
+        LikePostResult: a.customType({
+          likes: a.integer().required(),
+        }),
+        likePost: a
+          .mutation()
+          .arguments({
+            postId: a.string().required(),
+          })
+          .returns(a.ref('LikePostResult'))
+          .handler(a.handler.function('likePost'))
+          .authorization([a.allow.public()]),
+        A: a
+          .model({
+            fieldA: a.string(),
+          })
+          .authorization([a.allow.public()]),
+      });
+
+      const schemaB = a.schema({
+        DislikePostResult: a.customType({
+          likes: a.integer().required(),
+        }),
+        dislikePost: a
+          .mutation()
+          .arguments({
+            postId: a.string().required(),
+          })
+          .returns(a.ref('DislikePostResult'))
+          .handler(a.handler.function('dislikePost'))
+          .authorization([a.allow.public()]),
+        B: a
+          .model({
+            fieldB: a.string(),
+          })
+          .authorization([a.allow.public()]),
+      });
+
+      const schema = a.combine([schemaA, schemaB]);
+
+      type SchemaA = ClientSchema<typeof schemaA>;
+      type SchemaB = ClientSchema<typeof schemaB>;
+      type Schema = ClientSchema<typeof schema>;
+
+      type CustomOperationsA =
+        SchemaA[typeof __modelMeta__]['customOperations'];
+      type CustomOperationsB =
+        SchemaB[typeof __modelMeta__]['customOperations'];
+      type CustomTypesA = SchemaA[typeof __modelMeta__]['customTypes'];
+      type CustomTypesB = SchemaB[typeof __modelMeta__]['customTypes'];
+      type ExpectedCustomTypes = CustomTypesA & CustomTypesB;
+      type ExpectedCustomOperations = CustomOperationsA & CustomOperationsB;
+
+      type ActualCustomOperations =
+        Schema[typeof __modelMeta__]['customOperations'];
+      type ActualCustomTypes = Schema[typeof __modelMeta__]['customTypes'];
+
+      type testCustomTypes = Expect<
+        Equal<ExpectedCustomTypes, ActualCustomTypes>
+      >;
+      type testCustomOperations = Expect<
+        Equal<ExpectedCustomOperations, ActualCustomOperations>
+      >;
+
+      const graphql = schema.transform().schema;
+      expect(graphql).toMatchSnapshot();
     });
   });
 });

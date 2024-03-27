@@ -44,3 +44,5 @@ export type CustomSubscriptions<
   _Context extends string = 'CLIENT',
   _ModelMeta extends Record<any, any> = ExtractModelMeta<Schema>,
 > = any;
+
+export type ModelSortDirection = 'ASC' | 'DESC';
