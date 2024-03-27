@@ -18,11 +18,7 @@ const fakeSecret = () => ({}) as any;
 
 const datasourceConfigMySQL = {
   engine: 'mysql',
-  hostname: fakeSecret(),
-  username: fakeSecret(),
-  password: fakeSecret(),
-  port: fakeSecret(),
-  databaseName: fakeSecret(),
+  connectionUri: fakeSecret(),
 } as const;
 
 describe('ModelSchema', () => {

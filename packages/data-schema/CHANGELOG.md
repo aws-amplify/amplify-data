@@ -1,5 +1,23 @@
 # @aws-amplify/data-schema
 
+## 0.14.5
+
+### Patch Changes
+
+- 0a935ad: feat: Raise an error on transform when combined schemes have conflicting type names
+
+## 0.14.4
+
+### Patch Changes
+
+- 415914e: feat: Update the RDS config to match design feedback
+
+## 0.14.3
+
+### Patch Changes
+
+- ec46bf2: remove implicit graphql fields from graphql schema and model intro schema
+
 ## 0.14.2
 
 ### Patch Changes
