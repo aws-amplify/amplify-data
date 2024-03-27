@@ -30,10 +30,7 @@ type A @model @auth(rules: [{allow: public}])
 }
 type B @model @auth(rules: [{allow: public}])
 {
-  id: ID! @primaryKey
   field: String
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
 }"
 `;
 
@@ -46,10 +43,7 @@ type LikePostResult
 
 type A @model @auth(rules: [{allow: public}])
 {
-  id: ID! @primaryKey
   fieldA: String
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
 }
 
 type Mutation {
@@ -62,10 +56,7 @@ type DislikePostResult
 
 type B @model @auth(rules: [{allow: public}])
 {
-  id: ID! @primaryKey
   fieldB: String
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
 }
 
 type Mutation {
@@ -77,17 +68,11 @@ exports[`custom operations for a.combine schema two schemas combine without issu
 "
 type A @model @auth(rules: [{allow: public}])
 {
-  id: ID! @primaryKey
   field: String
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
 }
 type B @model @auth(rules: [{allow: public}])
 {
-  id: ID! @primaryKey
   field: String
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
 }"
 `;
 
@@ -117,10 +102,7 @@ exports[`schema auth rules allows custom 1`] = `
   "lambdaFunctions": {},
   "schema": "type A @model @auth(rules: [{allow: custom}])
 {
-  id: ID! @primaryKey
   field: String
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
 }",
 }
 `;
@@ -133,11 +115,7 @@ exports[`schema auth rules allows groupDefinedIn 1`] = `
   "lambdaFunctions": {},
   "schema": "type A @model @auth(rules: [{allow: owner, ownerField: "someField"}])
 {
-  id: ID! @primaryKey
   field: String
-  someField: String
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
 }",
 }
 `;
@@ -150,11 +128,7 @@ exports[`schema auth rules allows groupsDefinedIn 1`] = `
   "lambdaFunctions": {},
   "schema": "type A @model @auth(rules: [{allow: groups, groupsField: "someField"}])
 {
-  id: ID! @primaryKey
   field: String
-  someField: [String]
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
 }",
 }
 `;
@@ -168,10 +142,7 @@ exports[`schema auth rules allows multiple entries 1`] = `
   "schema": "type A @model @auth(rules: [{allow: public},
   {allow: private}])
 {
-  id: ID! @primaryKey
   field: String
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
 }",
 }
 `;
@@ -184,11 +155,7 @@ exports[`schema auth rules allows multipleOwners 1`] = `
   "lambdaFunctions": {},
   "schema": "type A @model @auth(rules: [{allow: owner, ownerField: "owner"}])
 {
-  id: ID! @primaryKey
   field: String
-  owner: [String]
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
 }",
 }
 `;
@@ -201,11 +168,7 @@ exports[`schema auth rules allows owner 1`] = `
   "lambdaFunctions": {},
   "schema": "type A @model @auth(rules: [{allow: owner, ownerField: "owner"}])
 {
-  id: ID! @primaryKey
   field: String
-  owner: String
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
 }",
 }
 `;
@@ -218,10 +181,7 @@ exports[`schema auth rules allows private 1`] = `
   "lambdaFunctions": {},
   "schema": "type A @model @auth(rules: [{allow: private}])
 {
-  id: ID! @primaryKey
   field: String
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
 }",
 }
 `;
@@ -234,10 +194,7 @@ exports[`schema auth rules allows public 1`] = `
   "lambdaFunctions": {},
   "schema": "type A @model @auth(rules: [{allow: public}])
 {
-  id: ID! @primaryKey
   field: String
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
 }",
 }
 `;
@@ -250,10 +207,7 @@ exports[`schema auth rules allows specificGroups 1`] = `
   "lambdaFunctions": {},
   "schema": "type A @model @auth(rules: [{allow: groups, groups: ["a", "b"]}])
 {
-  id: ID! @primaryKey
   field: String
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
 }",
 }
 `;
@@ -261,10 +215,7 @@ exports[`schema auth rules allows specificGroups 1`] = `
 exports[`schema auth rules can define public auth with no provider 1`] = `
 "type A @model @auth(rules: [{allow: public}])
 {
-  id: ID! @primaryKey
   field: String
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
 }"
 `;
 
@@ -276,10 +227,7 @@ exports[`schema auth rules disallows specificGroup 1`] = `
   "lambdaFunctions": {},
   "schema": "type A @model @auth(rules: [{allow: groups, groups: ["group"]}])
 {
-  id: ID! @primaryKey
   field: String
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
 }",
 }
 `;
@@ -292,11 +240,7 @@ exports[`schema auth rules do not pull out custom operations 1`] = `
   "lambdaFunctions": {},
   "schema": "type Post @model @auth(rules: [{allow: owner, ownerField: "owner"}])
 {
-  id: ID! @primaryKey
   title: String
-  owner: String
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
 }
 
 type Mutation {
@@ -321,32 +265,22 @@ exports[`schema auth rules global public auth - multiple models 1`] = `
   "lambdaFunctions": {},
   "schema": "type A @model @auth(rules: [{allow: public}])
 {
-  id: ID! @primaryKey
   field: String
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
 }
 
 type B @model @auth(rules: [{allow: public}])
 {
-  id: ID! @primaryKey
   field: AWSJSON
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
 }
 
 type C @model @auth(rules: [{allow: public}])
 {
-  id: ID! @primaryKey
   d: D @hasOne
   cDId: ID
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
 }
 
 type D @model @auth(rules: [{allow: public}])
 {
-  id: ID! @primaryKey
   can: Int
   you: Boolean
   tell: Float
@@ -354,8 +288,6 @@ type D @model @auth(rules: [{allow: public}])
   am: AWSIPAddress
   getting: AWSURL
   tired: DTired
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
 }
 
 enum DTired {
@@ -372,11 +304,7 @@ exports[`schema auth rules prefers model auth over global auth owner auth on mod
   "lambdaFunctions": {},
   "schema": "type A @model @auth(rules: [{allow: owner, ownerField: "modelOwnerField"}])
 {
-  id: ID! @primaryKey
   field: String
-  modelOwnerField: String
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
 }",
 }
 `;
@@ -389,11 +317,7 @@ exports[`schema auth rules prefers model auth over global auth owner auth on mod
   "lambdaFunctions": {},
   "schema": "type A @model @auth(rules: [{allow: owner, ownerField: "owner"}])
 {
-  id: ID! @primaryKey
   field: String
-  owner: String
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
 }",
 }
 `;
@@ -406,10 +330,7 @@ exports[`schema auth rules prefers model auth over global auth public auth on mo
   "lambdaFunctions": {},
   "schema": "type A @model @auth(rules: [{allow: public}])
 {
-  id: ID! @primaryKey
   field: String
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
 }",
 }
 `;
@@ -417,52 +338,37 @@ exports[`schema auth rules prefers model auth over global auth public auth on mo
 exports[`schema generation with relationships 1`] = `
 "type BoringParent @model @auth(rules: [{allow: public}])
 {
-  id: ID! @primaryKey
   childNormal: BoringChild @hasOne
   childReciprocal: BoringReciprocalChild @hasOne
   childHasManyNormal: [BoringHasManyChild] @hasMany
   childHasManyReciprocal: [ReciprocalHasManyChild] @hasMany
   boringParentChildNormalId: ID
   boringParentChildReciprocalId: ID
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
 }
 
 type BoringChild @model @auth(rules: [{allow: public}])
 {
-  id: ID! @primaryKey
   value: String
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
 }
 
 type BoringReciprocalChild @model @auth(rules: [{allow: public}])
 {
-  id: ID! @primaryKey
   parent: BoringParent @belongsTo
   value: String
   boringReciprocalChildParentId: ID
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
 }
 
 type BoringHasManyChild @model @auth(rules: [{allow: public}])
 {
-  id: ID! @primaryKey
   value: String
   boringParentChildHasManyNormalId: ID
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
 }
 
 type ReciprocalHasManyChild @model @auth(rules: [{allow: public}])
 {
-  id: ID! @primaryKey
   value: String
   parent: BoringParent @belongsTo
   boringParentChildHasManyReciprocalId: ID
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
 }
 
 type CPKParent @model @auth(rules: [{allow: public}])
@@ -477,8 +383,6 @@ type CPKParent @model @auth(rules: [{allow: public}])
   cPKParentChildNormalCPKChildIdFieldB: ID
   cPKParentChildReciprocalCPKReciprocalChildIdFieldA: ID
   cPKParentChildReciprocalCPKReciprocalChildIdFieldB: ID
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
 }
 
 type CPKChild @model @auth(rules: [{allow: public}])
@@ -486,8 +390,6 @@ type CPKChild @model @auth(rules: [{allow: public}])
   CPKChildIdFieldA: ID! @primaryKey(sortKeyFields: ["CPKChildIdFieldB"])
   CPKChildIdFieldB: ID!
   value: String
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
 }
 
 type CPKReciprocalChild @model @auth(rules: [{allow: public}])
@@ -498,8 +400,6 @@ type CPKReciprocalChild @model @auth(rules: [{allow: public}])
   value: String
   cPKReciprocalChildParentCPKParentIdFieldA: ID
   cPKReciprocalChildParentCPKParentIdFieldB: ID
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
 }
 
 type CPKHasManyChild @model @auth(rules: [{allow: public}])
@@ -509,8 +409,6 @@ type CPKHasManyChild @model @auth(rules: [{allow: public}])
   value: String
   cPKParentChildHasManyNormalCPKParentIdFieldA: ID
   cPKParentChildHasManyNormalCPKParentIdFieldB: ID
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
 }
 
 type CPKReciprocalHasManyChild @model @auth(rules: [{allow: public}])
@@ -521,114 +419,82 @@ type CPKReciprocalHasManyChild @model @auth(rules: [{allow: public}])
   parent: CPKParent @belongsTo
   cPKParentChildHasManyReciprocalCPKParentIdFieldA: ID
   cPKParentChildHasManyReciprocalCPKParentIdFieldB: ID
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
 }
 
 type ReferencedBoringParent @model @auth(rules: [{allow: public}])
 {
-  id: ID! @primaryKey
   childNormal: ReferencedBoringChild @hasOne(references: ["bcRefId"])
   childReciprocal: ReferencedBoringReciprocalChild @hasOne(references: ["brcRefId"])
   childHasManyNormal: [ReferencedBoringHasManyChild] @hasMany(references: ["bhmRefId"])
   childHasManyReciprocal: [ReferencedReciprocalHasManyChild] @hasMany(references: ["rrhmRefId"])
   referencedBoringParentChildNormalId: ID
   referencedBoringParentChildReciprocalId: ID
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
 }
 
 type ReferencedBoringChild @model @auth(rules: [{allow: public}])
 {
-  id: ID! @primaryKey
   bcRefId: String
   value: String
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
 }
 
 type ReferencedBoringReciprocalChild @model @auth(rules: [{allow: public}])
 {
-  id: ID! @primaryKey
   brcRefId: String
   parent: ReferencedBoringParent @belongsTo(references: ["brcRefId"])
   value: String
   referencedBoringReciprocalChildParentId: ID
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
 }
 
 type ReferencedBoringHasManyChild @model @auth(rules: [{allow: public}])
 {
-  id: ID! @primaryKey
   bhmRefId: String
   value: String
   referencedBoringParentChildHasManyNormalId: ID
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
 }
 
 type ReferencedReciprocalHasManyChild @model @auth(rules: [{allow: public}])
 {
-  id: ID! @primaryKey
   rrhmRefId: String
   value: String
   parent: ReferencedBoringParent @belongsTo(references: ["rrhmRefId"])
   referencedBoringParentChildHasManyReciprocalId: ID
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
 }
 
 type LateReferencedBoringParent @model @auth(rules: [{allow: public}])
 {
-  id: ID! @primaryKey
   childNormal: LateReferencedBoringChild @hasOne(references: ["bcRefId"])
   childReciprocal: LateReferencedBoringReciprocalChild @hasOne(references: ["brcRefId"])
   childHasManyNormal: [LateReferencedBoringHasManyChild] @hasMany(references: ["bhmRefId"])
   childHasManyReciprocal: [LateReferencedReciprocalHasManyChild] @hasMany(references: ["rrhmRefId"])
   lateReferencedBoringParentChildNormalId: ID
   lateReferencedBoringParentChildReciprocalId: ID
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
 }
 
 type LateReferencedBoringChild @model @auth(rules: [{allow: public}])
 {
-  id: ID! @primaryKey
   bcRefId: String
   value: String
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
 }
 
 type LateReferencedBoringReciprocalChild @model @auth(rules: [{allow: public}])
 {
-  id: ID! @primaryKey
   brcRefId: String
   value: String
   parent: ReferencedBoringParent @belongsTo(references: ["brcRefId"])
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
 }
 
 type LateReferencedBoringHasManyChild @model @auth(rules: [{allow: public}])
 {
-  id: ID! @primaryKey
   bhmRefId: String
   value: String
   lateReferencedBoringParentChildHasManyNormalId: ID
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
 }
 
 type LateReferencedReciprocalHasManyChild @model @auth(rules: [{allow: public}])
 {
-  id: ID! @primaryKey
   rrhmRefId: String
   value: String
   parent: ReferencedBoringParent @belongsTo(references: ["rrhmRefId"])
   lateReferencedBoringParentChildHasManyReciprocalId: ID
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
 }"
 `;

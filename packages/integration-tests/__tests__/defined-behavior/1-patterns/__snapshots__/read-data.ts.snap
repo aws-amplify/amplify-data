@@ -6,7 +6,7 @@ exports[`Read application data Compound filters 1`] = `
     {
       "authMode": undefined,
       "authToken": undefined,
-      "query": "query($filter: ModelTodoFilterInput,$limit: Int,$nextToken: String) { listTodos(filter: $filter,limit: $limit,nextToken: $nextToken) { items { id content description done priority owner createdAt updatedAt } nextToken __typename } }",
+      "query": "query($filter: ModelTodoFilterInput,$limit: Int,$nextToken: String) { listTodos(filter: $filter,limit: $limit,nextToken: $nextToken) { items { id content description done priority createdAt updatedAt owner } nextToken __typename } }",
       "variables": {
         "filter": {
           "or": [
@@ -51,7 +51,7 @@ exports[`Read application data Filter list queries 1`] = `
     {
       "authMode": undefined,
       "authToken": undefined,
-      "query": "query($filter: ModelTodoFilterInput,$limit: Int,$nextToken: String) { listTodos(filter: $filter,limit: $limit,nextToken: $nextToken) { items { id content description done priority owner createdAt updatedAt } nextToken __typename } }",
+      "query": "query($filter: ModelTodoFilterInput,$limit: Int,$nextToken: String) { listTodos(filter: $filter,limit: $limit,nextToken: $nextToken) { items { id content description done priority createdAt updatedAt owner } nextToken __typename } }",
       "variables": {
         "filter": {
           "content": {
@@ -71,7 +71,7 @@ exports[`Read application data List and get your data 1`] = `
     {
       "authMode": undefined,
       "authToken": undefined,
-      "query": "query($filter: ModelTodoFilterInput,$limit: Int,$nextToken: String) { listTodos(filter: $filter,limit: $limit,nextToken: $nextToken) { items { id content description done priority owner createdAt updatedAt } nextToken __typename } }",
+      "query": "query($filter: ModelTodoFilterInput,$limit: Int,$nextToken: String) { listTodos(filter: $filter,limit: $limit,nextToken: $nextToken) { items { id content description done priority createdAt updatedAt owner } nextToken __typename } }",
       "variables": {},
     },
     {},
@@ -80,7 +80,7 @@ exports[`Read application data List and get your data 1`] = `
     {
       "authMode": undefined,
       "authToken": undefined,
-      "query": "query($productId: ID!,$warehouseId: ID!) { getInventory(productId: $productId,warehouseId: $warehouseId) { productId warehouseId description owner createdAt updatedAt } }",
+      "query": "query($productId: ID!,$warehouseId: ID!) { getInventory(productId: $productId,warehouseId: $warehouseId) { productId warehouseId description createdAt updatedAt owner } }",
       "variables": {
         "productId": "...",
         "warehouseId": "...",
@@ -97,7 +97,7 @@ exports[`Read application data Paginate list queries 1`] = `
     {
       "authMode": undefined,
       "authToken": undefined,
-      "query": "query($filter: ModelTodoFilterInput,$limit: Int,$nextToken: String) { listTodos(filter: $filter,limit: $limit,nextToken: $nextToken) { items { id content description done priority owner createdAt updatedAt } nextToken __typename } }",
+      "query": "query($filter: ModelTodoFilterInput,$limit: Int,$nextToken: String) { listTodos(filter: $filter,limit: $limit,nextToken: $nextToken) { items { id content description done priority createdAt updatedAt owner } nextToken __typename } }",
       "variables": {
         "limit": 100,
         "nextToken": "eyJ2ZXJzaW9uejE1a2...",

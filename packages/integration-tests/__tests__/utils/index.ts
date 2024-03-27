@@ -328,3 +328,30 @@ function graphqlFieldMatches({
 
   throw new Error("Ruhoh. The `def` you gave me isn't actually a `TypeNode`!");
 }
+
+export function expectSchemaModelExcludes({
+  schema,
+  model,
+  field,
+}: {
+  schema: string;
+  model: string;
+  field: string;
+}) {
+  const ast = parse(schema);
+  for (const def of ast.definitions) {
+    if (def.kind === 'ObjectTypeDefinition') {
+      if (def.name.value === model) {
+        for (const _field of def.fields || []) {
+          if (_field.kind === 'FieldDefinition') {
+            if (_field.name.value === field) {
+              throw new Error(
+                `Field '${field}' unexpectedly exists on '${model}'`,
+              );
+            }
+          }
+        }
+      }
+    }
+  }
+}
