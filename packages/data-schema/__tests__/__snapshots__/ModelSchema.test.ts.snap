@@ -1,5 +1,26 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`RDS Schema with sql statement references schema lambda access 1`] = `
+{
+  "functionSchemaAccess": [],
+  "functionSlots": [],
+  "jsFunctions": [],
+  "lambdaFunctions": {},
+  "schema": "type widget @model @auth(rules: [{allow: public}])
+{
+  title: String!
+  someOwnerField: String
+}
+
+type Query {
+  callSql: widget @sql(reference: "testReferenceName") @auth(rules: [{allow: public}])
+}",
+  "sqlStatementFolderPaths": [
+    "/full/path/to/sql/statement/directory/",
+  ],
+}
+`;
+
 exports[`empty model auth inherits global auth 1`] = `
 "type widget @model @auth(rules: [{allow: owner, ownerField: "owner"}])
 {

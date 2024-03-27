@@ -25,6 +25,7 @@ export interface DerivedApiDefinition {
    */
   readonly functionSlots: any[];
   readonly jsFunctions: JsResolver[];
+  readonly sqlStatementFolderPaths: SqlStatementFolderPath[];
   readonly lambdaFunctions: LambdaFunctionDefinition;
   readonly functionSchemaAccess: FunctionSchemaAccess[];
 }
@@ -48,6 +49,8 @@ export type JsResolver = {
     entry: JsResolverEntry;
   }[];
 };
+
+export type SqlStatementFolderPath = string;
 
 export type LambdaFunctionDefinition = Record<string, DefineFunction>;
 

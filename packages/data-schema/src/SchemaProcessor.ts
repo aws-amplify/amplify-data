@@ -1,4 +1,4 @@
-import type { InternalSchema } from './ModelSchema';
+import { isRDSModelSchemaParamShape, type InternalSchema } from './ModelSchema';
 import {
   type ModelField,
   ModelFieldType,
@@ -27,6 +27,7 @@ import {
   JsResolverEntry,
   FunctionSchemaAccess,
   LambdaFunctionDefinition,
+  SqlStatementFolderPath,
 } from '@aws-amplify/data-schema-types';
 import type { InternalRef, RefType } from './RefType';
 import type { EnumType } from './EnumType';
@@ -1129,6 +1130,7 @@ const schemaPreprocessor = (
   jsFunctions: JsResolver[];
   functionSchemaAccess: FunctionSchemaAccess[];
   lambdaFunctions: LambdaFunctionDefinition;
+  sqlStatementFolderPaths: SqlStatementFolderPath[];
 } => {
   const gqlModels: string[] = [];
 
@@ -1153,6 +1155,14 @@ const schemaPreprocessor = (
   const { schemaAuth, functionSchemaAccess } = extractFunctionSchemaAccess(
     schema.data.authorization,
   );
+
+  const sqlStatementFolderPaths = [];
+  if (
+    isRDSModelSchemaParamShape(schema.data) &&
+    schema.data.sqlStatementFolderPath
+  ) {
+    sqlStatementFolderPaths.push(schema.data.sqlStatementFolderPath);
+  }
 
   const getRefType = getRefTypeForSchema(schema);
 
@@ -1354,6 +1364,7 @@ const schemaPreprocessor = (
     jsFunctions,
     functionSchemaAccess,
     lambdaFunctions,
+    sqlStatementFolderPaths,
   };
 };
 
@@ -1644,8 +1655,13 @@ function generateCustomOperationTypes({
 export function processSchema(arg: {
   schema: InternalSchema;
 }): DerivedApiDefinition {
-  const { schema, jsFunctions, functionSchemaAccess, lambdaFunctions } =
-    schemaPreprocessor(arg.schema);
+  const {
+    schema,
+    jsFunctions,
+    functionSchemaAccess,
+    lambdaFunctions,
+    sqlStatementFolderPaths,
+  } = schemaPreprocessor(arg.schema);
 
   return {
     schema,
@@ -1653,5 +1669,6 @@ export function processSchema(arg: {
     jsFunctions,
     functionSchemaAccess,
     lambdaFunctions,
+    sqlStatementFolderPaths,
   };
 }

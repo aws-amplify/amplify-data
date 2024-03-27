@@ -84,7 +84,7 @@ export type ModelSchemaParamShape = {
 };
 
 export type RDSModelSchemaParamShape = ModelSchemaParamShape & {
-  setSqlStatementFolderPath?: string;
+  sqlStatementFolderPath?: string;
 };
 
 export type InternalSchema = {
@@ -131,6 +131,12 @@ type RDSModelSchemaFunctions =
   | 'addMutations'
   | 'addSubscriptions'
   | 'authorization';
+
+export function isRDSModelSchemaParamShape(
+  schema: any,
+): schema is RDSModelSchemaParamShape {
+  return schema['sqlStatementFolderPath'];
+}
 
 export type RDSModelSchema<
   T extends RDSModelSchemaParamShape,
@@ -222,7 +228,7 @@ function _rdsSchema<
       return rest;
     },
     setSqlStatementFolderPath(path: string): any {
-      this.data.setSqlStatementFolderPath = path;
+      this.data.sqlStatementFolderPath = path;
       const { setSqlStatementFolderPath: _, ...rest } = this;
       return rest;
     },
