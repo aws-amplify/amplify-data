@@ -57,17 +57,23 @@ type BackendSecret = {
 
 export type DatasourceEngine = 'mysql' | 'postgresql' | 'dynamodb';
 
+type SubnetAZ = {
+  subnetId: string;
+  availabilityZone: string;
+};
+
+type VpcConfig = {
+  vpcId: string;
+  securityGroupIds: string[];
+  subnetAvailabilityZones: SubnetAZ[];
+};
+
 type DatasourceConfig<DE extends DatasourceEngine> = DE extends 'dynamodb'
   ? { engine: DE }
   : {
       engine: DE;
-      hostname: BackendSecret;
-      username: BackendSecret;
-      password: BackendSecret;
-      port: BackendSecret;
-      databaseName: BackendSecret;
-      // TODO: clarify type
-      vpcConfig?: Record<string, never>;
+      connectionUri: BackendSecret;
+      vpcConfig?: VpcConfig;
     };
 
 export type SchemaConfig<
