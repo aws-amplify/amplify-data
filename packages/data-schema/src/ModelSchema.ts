@@ -62,7 +62,7 @@ type SubnetAZ = {
   availabilityZone: string;
 };
 
-type VPCConfig = {
+type VpcConfig = {
   vpcId: string;
   securityGroupIds: string[];
   subnetAvailabilityZones: SubnetAZ[];
@@ -73,7 +73,7 @@ type DatasourceConfig<DE extends DatasourceEngine> = DE extends 'dynamodb'
   : {
       engine: DE;
       connectionUri: BackendSecret;
-      vpc?: VPCConfig;
+      vpc?: VpcConfig;
     };
 
 export type SchemaConfig<
