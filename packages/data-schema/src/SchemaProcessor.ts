@@ -460,7 +460,7 @@ function validateStaticFields(
 }
 
 /**
- * Validate that no implicit fields conflict with
+ * Validate that no implicit fields conflict with explicitly defined fields.
  *
  * @param existing An existing field map
  * @param implicitFields A field map inferred from other schema usage
