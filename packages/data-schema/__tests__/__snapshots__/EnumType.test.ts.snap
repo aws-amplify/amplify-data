@@ -3,11 +3,7 @@
 exports[`EnumType transform Explicit Enum - auth 1`] = `
 "type File @model @auth(rules: [{allow: public}])
 {
-  id: ID! @primaryKey
   accessLevel: AccessLevel @auth(rules: [{allow: owner, ownerField: "owner"}])
-  owner: String
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
 }
 
 enum AccessLevel {
@@ -20,10 +16,7 @@ enum AccessLevel {
 exports[`EnumType transform Explicit Enum - required 1`] = `
 "type File @model @auth(rules: [{allow: public}])
 {
-  id: ID! @primaryKey
   accessLevel: AccessLevel!
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
 }
 
 enum AccessLevel {
@@ -36,10 +29,7 @@ enum AccessLevel {
 exports[`EnumType transform Explicit Enum 1`] = `
 "type File @model @auth(rules: [{allow: public}])
 {
-  id: ID! @primaryKey
   accessLevel: AccessLevel
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
 }
 
 enum AccessLevel {
@@ -52,10 +42,7 @@ enum AccessLevel {
 exports[`EnumType transform Implicit Enum 1`] = `
 "type File @model @auth(rules: [{allow: public}])
 {
-  id: ID! @primaryKey
   accessLevel: FileAccessLevel
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
 }
 
 enum FileAccessLevel {

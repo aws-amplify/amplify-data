@@ -6,7 +6,7 @@ exports[`Create, update, and delete application data create an item 1`] = `
     {
       "authMode": undefined,
       "authToken": undefined,
-      "query": "mutation($input: CreateTodoInput!) { createTodo(input: $input) { id content description done priority owner createdAt updatedAt } }",
+      "query": "mutation($input: CreateTodoInput!) { createTodo(input: $input) { id content description done priority createdAt updatedAt owner } }",
       "variables": {
         "input": {
           "content": "My new todo",
@@ -25,7 +25,7 @@ exports[`Create, update, and delete application data delete an item 1`] = `
     {
       "authMode": undefined,
       "authToken": undefined,
-      "query": "mutation($input: DeleteTodoInput!) { deleteTodo(input: $input) { id content description done priority owner createdAt updatedAt } }",
+      "query": "mutation($input: DeleteTodoInput!) { deleteTodo(input: $input) { id content description done priority createdAt updatedAt owner } }",
       "variables": {
         "input": {
           "id": "123123213",
@@ -43,7 +43,7 @@ exports[`Create, update, and delete application data update an item 1`] = `
     {
       "authMode": undefined,
       "authToken": undefined,
-      "query": "mutation($input: UpdateTodoInput!) { updateTodo(input: $input) { id content description done priority owner createdAt updatedAt } }",
+      "query": "mutation($input: UpdateTodoInput!) { updateTodo(input: $input) { id content description done priority createdAt updatedAt owner } }",
       "variables": {
         "input": {
           "description": "Updated description",

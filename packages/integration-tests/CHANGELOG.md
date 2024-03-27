@@ -1,5 +1,11 @@
 # integration-tests
 
+## 0.0.7
+
+### Patch Changes
+
+- afc2963: add gsi sort for list and index query
+
 ## 0.0.6
 
 ### Patch Changes
