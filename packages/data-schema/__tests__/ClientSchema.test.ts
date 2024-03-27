@@ -8,6 +8,8 @@ import {
   AuthMode,
   CustomHeaders,
   SingularReturnValue,
+  DerivedCombinedSchema,
+  DerivedModelSchema,
 } from '@aws-amplify/data-schema-types';
 import { configure } from '../src/internals';
 import { Nullable } from '../src/ModelField';
@@ -27,6 +29,16 @@ it('should not produce static type errors', async () => {
 });
 
 describe('schema generation', () => {
+  test('matches shared backend type', () => {
+    const _schema: DerivedModelSchema = a.schema({
+      A: a
+        .model({
+          field: a.string(),
+        })
+        .authorization([a.allow.public()]),
+    });
+  });
+
   test('with relationships', () => {
     const schema = a
       .schema({
@@ -879,6 +891,25 @@ describe('custom operations', () => {
     });
   });
   describe('for a.combine schema', () => {
+    test('matches shared backend type', () => {
+      const schemaA = a.schema({
+        A: a
+          .model({
+            field: a.string(),
+          })
+          .authorization([a.allow.public()]),
+      });
+
+      const schemaB = a.schema({
+        B: a
+          .model({
+            field: a.string(),
+          })
+          .authorization([a.allow.public()]),
+      });
+
+      const _schema: DerivedCombinedSchema = a.combine([schemaA, schemaB]);
+    });
     test('two schemas combine without issues', () => {
       const schemaA = a.schema({
         A: a
@@ -922,7 +953,9 @@ describe('custom operations', () => {
 
       type testB = Expect<Equal<Actual_B, Expected_B>>;
 
-      const graphql = schema.transform().schema;
+      const graphql = schema.schemas
+        .map((schema) => schema.transform().schema)
+        .join('\n');
       expect(graphql).toMatchSnapshot();
     });
 
@@ -966,7 +999,9 @@ describe('custom operations', () => {
 
       type testB = Expect<Equal<Actual_B, Expected_B>>;
 
-      const graphql = schema.transform().schema;
+      const graphql = schema.schemas
+        .map((schema) => schema.transform().schema)
+        .join('\n');
       expect(graphql).toMatchSnapshot();
     });
 
@@ -1035,7 +1070,9 @@ describe('custom operations', () => {
         Equal<ExpectedCustomOperations, ActualCustomOperations>
       >;
 
-      const graphql = schema.transform().schema;
+      const graphql = schema.schemas
+        .map((schema) => schema.transform().schema)
+        .join('\n');
       expect(graphql).toMatchSnapshot();
     });
   });

@@ -29,6 +29,10 @@ export interface DerivedApiDefinition {
   readonly functionSchemaAccess: FunctionSchemaAccess[];
 }
 
+export type DerivedCombinedSchema = {
+  schemas: DerivedModelSchema[];
+};
+
 export type DerivedModelSchema = {
   data: {
     types: object;

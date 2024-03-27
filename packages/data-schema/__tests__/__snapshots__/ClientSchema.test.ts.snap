@@ -23,8 +23,7 @@ type Query {
 `;
 
 exports[`custom operations for a.combine schema a ddb and sql schemas combine without issues 1`] = `
-"
-type A @model @auth(rules: [{allow: public}])
+"type A @model @auth(rules: [{allow: public}])
 {
   field: String
 }
@@ -35,8 +34,7 @@ type B @model @auth(rules: [{allow: public}])
 `;
 
 exports[`custom operations for a.combine schema combining two schemas with custom mutation results in customTypes and customOperations that intersect the separate schemas 1`] = `
-"
-type LikePostResult 
+"type LikePostResult 
 {
   likes: Int!
 }
@@ -65,8 +63,7 @@ type Mutation {
 `;
 
 exports[`custom operations for a.combine schema two schemas combine without issues 1`] = `
-"
-type A @model @auth(rules: [{allow: public}])
+"type A @model @auth(rules: [{allow: public}])
 {
   field: String
 }
