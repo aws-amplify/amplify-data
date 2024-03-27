@@ -1,5 +1,11 @@
 # @aws-amplify/data-schema
 
+## 0.14.4
+
+### Patch Changes
+
+- 415914e: feat: Update the RDS config to match design feedback
+
 ## 0.14.3
 
 ### Patch Changes
