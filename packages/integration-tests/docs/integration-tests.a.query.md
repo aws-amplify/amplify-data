@@ -8,7 +8,7 @@
 
 ```typescript
 export declare function query(): CustomOperation<{
-    arguments: CustomArguments;
+    arguments: null;
     returnType: null;
     functionRef: null;
     authorization: [];
@@ -18,5 +18,5 @@ export declare function query(): CustomOperation<{
 ```
 **Returns:**
 
-CustomOperation&lt;{ arguments: CustomArguments; returnType: null; functionRef: null; authorization: \[\]; typeName: 'Query'; handlers: null; }, never, typeof queryBrand&gt;
+CustomOperation&lt;{ arguments: null; returnType: null; functionRef: null; authorization: \[\]; typeName: 'Query'; handlers: null; }, never, typeof queryBrand&gt;
 

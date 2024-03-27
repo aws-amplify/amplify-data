@@ -8,7 +8,7 @@
 
 ```typescript
 export declare function mutation(): CustomOperation<{
-    arguments: CustomArguments;
+    arguments: null;
     returnType: null;
     functionRef: null;
     authorization: [];
@@ -18,5 +18,5 @@ export declare function mutation(): CustomOperation<{
 ```
 **Returns:**
 
-CustomOperation&lt;{ arguments: CustomArguments; returnType: null; functionRef: null; authorization: \[\]; typeName: 'Mutation'; handlers: null; }, never, typeof mutationBrand&gt;
+CustomOperation&lt;{ arguments: null; returnType: null; functionRef: null; authorization: \[\]; typeName: 'Mutation'; handlers: null; }, never, typeof mutationBrand&gt;
 

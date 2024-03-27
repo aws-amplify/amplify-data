@@ -34,6 +34,7 @@
 |  [CustomMutations](./integration-tests.custommutations.md) |  |
 |  [CustomOperations](./integration-tests.customoperations.md) |  |
 |  [CustomQueries](./integration-tests.customqueries.md) |  |
+|  [CustomSubscriptions](./integration-tests.customsubscriptions.md) |  |
 |  [Debug](./integration-tests.debug.md) |  |
 |  [DeepReadOnlyObject](./integration-tests.deepreadonlyobject.md) |  |
 |  [DefineFunction](./integration-tests.definefunction.md) |  |
@@ -57,6 +58,7 @@
 |  [LazyLoader](./integration-tests.lazyloader.md) |  |
 |  [ListReturnValue](./integration-tests.listreturnvalue.md) |  |
 |  [ModelPath](./integration-tests.modelpath.md) | Generates custom selection set type with up to 6 levels of nested fields |
+|  [ModelSortDirection](./integration-tests.modelsortdirection.md) |  |
 |  [ModelTypes](./integration-tests.modeltypes.md) |  |
 |  [NotAny](./integration-tests.notany.md) |  |
 |  [NotEqual](./integration-tests.notequal.md) |  |

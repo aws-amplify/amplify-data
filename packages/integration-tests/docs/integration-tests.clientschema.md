@@ -7,5 +7,5 @@
 **Signature:**
 
 ```typescript
-export type ClientSchema<Schema extends ModelSchema<any, any>> = InternalClientSchema<Schema>;
+export type ClientSchema<Schema extends GenericModelSchema<any> | CombinedModelSchema<any>> = Schema extends GenericModelSchema<any> ? InternalClientSchema<Schema> : Schema extends CombinedModelSchema<any> ? InternalCombinedSchema<Schema> : never;
 ```

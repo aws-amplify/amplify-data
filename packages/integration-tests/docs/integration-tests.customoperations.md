@@ -9,23 +9,11 @@
 ```typescript
 export type CustomOperations<Schema extends Record<any, any>, OperationType extends 'Query' | 'Mutation' | 'Subscription', Context extends ContextType = 'CLIENT', ModelMeta extends Record<any, any> = ExtractModelMeta<Schema>> = {
     [OpName in keyof ModelMeta['customOperations'] as ModelMeta['customOperations'][OpName]['typeName'] extends OperationType ? OpName : never]: {
-        CLIENT: (input: ModelMeta['customOperations'][OpName]['arguments'], options?: {
-            authMode?: AuthMode;
-            authToken?: string;
-            headers?: CustomHeaders;
-        }) => SingularReturnValue<ModelMeta['customOperations'][OpName]['returnType']>;
-        COOKIES: (input: ModelMeta['customOperations'][OpName]['arguments'], options?: {
-            authMode?: AuthMode;
-            authToken?: string;
-            headers?: CustomHeaders;
-        }) => SingularReturnValue<ModelMeta['customOperations'][OpName]['returnType']>;
-        REQUEST: (contextSpec: any, input: ModelMeta['customOperations'][OpName]['arguments'], options?: {
-            authMode?: AuthMode;
-            authToken?: string;
-            headers?: CustomHeaders;
-        }) => SingularReturnValue<ModelMeta['customOperations'][OpName]['returnType']>;
+        CLIENT: (...params: CustomOperationFnParams<ModelMeta['customOperations'][OpName]['arguments']>) => ModelMeta['customOperations'][OpName]['typeName'] extends 'Subscription' ? ObservedReturnValue<ModelMeta['customOperations'][OpName]['returnType']> : SingularReturnValue<ModelMeta['customOperations'][OpName]['returnType']>;
+        COOKIES: (...params: CustomOperationFnParams<ModelMeta['customOperations'][OpName]['arguments']>) => SingularReturnValue<ModelMeta['customOperations'][OpName]['returnType']>;
+        REQUEST: (contextSpec: any, ...params: CustomOperationFnParams<ModelMeta['customOperations'][OpName]['arguments']>) => SingularReturnValue<ModelMeta['customOperations'][OpName]['returnType']>;
     }[Context];
 };
 ```
-**References:** [ExtractModelMeta](./integration-tests.extractmodelmeta.md)<!-- -->, [AuthMode](./integration-tests.authmode.md)<!-- -->, [CustomHeaders](./integration-tests.customheaders.md)<!-- -->, [SingularReturnValue](./integration-tests.singularreturnvalue.md)
+**References:** [ExtractModelMeta](./integration-tests.extractmodelmeta.md)<!-- -->, [ObservedReturnValue](./integration-tests.observedreturnvalue.md)<!-- -->, [SingularReturnValue](./integration-tests.singularreturnvalue.md)
 

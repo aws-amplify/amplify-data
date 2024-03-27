@@ -8,8 +8,8 @@
 
 ```typescript
 export type ModelTypes<Schema extends Record<any, any>, Context extends ContextType = 'CLIENT', ModelMeta extends Record<any, any> = ExtractModelMeta<Schema>> = {
-    [ModelName in keyof Schema]: ModelName extends string ? Schema[ModelName] extends Record<string, unknown> ? Context extends 'CLIENT' ? ModelTypesClient<Schema[ModelName], ModelMeta[ModelName]> : Context extends 'COOKIES' ? ModelTypesSSRCookies<Schema[ModelName], ModelMeta[ModelName]> : Context extends 'REQUEST' ? ModelTypesSSRRequest<Schema[ModelName], ModelMeta[ModelName]> : never : never : never;
+    [ModelName in Exclude<keyof Schema, keyof CustomOperations<Schema, 'Mutation' | 'Query' | 'Subscription', Context, ModelMeta>>]: ModelName extends string ? Schema[ModelName] extends Record<string, unknown> ? Context extends 'CLIENT' ? ModelTypesClient<Schema[ModelName], ModelMeta[ModelName]> : Context extends 'COOKIES' ? ModelTypesSSRCookies<Schema[ModelName], ModelMeta[ModelName]> : Context extends 'REQUEST' ? ModelTypesSSRRequest<Schema[ModelName], ModelMeta[ModelName]> : never : never : never;
 };
 ```
-**References:** [ExtractModelMeta](./integration-tests.extractmodelmeta.md)
+**References:** [ExtractModelMeta](./integration-tests.extractmodelmeta.md)<!-- -->, [CustomOperations](./integration-tests.customoperations.md)
 

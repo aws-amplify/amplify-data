@@ -1,0 +1,3 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Publicly exposed API and docstrings has not changed 1`] = `"95df7bdd690df3c9105695c61ef0e18c2861fbf7fe61ad526a5a224735929385"`;

@@ -8,7 +8,7 @@
 
 ```typescript
 export declare function subscription(): CustomOperation<{
-    arguments: CustomArguments;
+    arguments: null;
     returnType: null;
     functionRef: null;
     authorization: [];
@@ -18,5 +18,5 @@ export declare function subscription(): CustomOperation<{
 ```
 **Returns:**
 
-CustomOperation&lt;{ arguments: CustomArguments; returnType: null; functionRef: null; authorization: \[\]; typeName: 'Subscription'; handlers: null; }, never, typeof subscriptionBrand&gt;
+CustomOperation&lt;{ arguments: null; returnType: null; functionRef: null; authorization: \[\]; typeName: 'Subscription'; handlers: null; }, never, typeof subscriptionBrand&gt;
 

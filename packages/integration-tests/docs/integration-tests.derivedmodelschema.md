@@ -4,6 +4,7 @@
 
 ## DerivedModelSchema type
 
+
 **Signature:**
 
 ```typescript

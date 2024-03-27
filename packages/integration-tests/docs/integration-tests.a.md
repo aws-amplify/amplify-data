@@ -10,6 +10,7 @@
 |  --- | --- |
 |  [belongsTo(relatedModel)](./integration-tests.a.belongsto.md) | Make a <code>hasOne()</code> or <code>hasMany()</code> relationship bi-directional using the <code>belongsTo()</code> method. The belongsTo() method requires that a hasOne() or hasMany() relationship already exists from parent to the related model. |
 |  [boolean()](./integration-tests.a.boolean.md) | A boolean scalar type that can be either true or false. |
+|  [combine(schemas)](./integration-tests.a.combine.md) | The interface for merging up to 50 schemas into a single API. |
 |  [customType(fields)](./integration-tests.a.customtype.md) |  |
 |  [date()](./integration-tests.a.date.md) | A date scalar type that is represented server-side as an extended ISO 8601 date string in the format <code>YYYY-MM-DD</code>. |
 |  [datetime()](./integration-tests.a.datetime.md) | A date time scalar type that is represented server-side as an extended ISO 8601 date and time string in the format <code>YYYY-MM-DDThh:mm:ss.sssZ</code>. |
@@ -19,7 +20,6 @@
 |  [hasMany(relatedModel)](./integration-tests.a.hasmany.md) | Create a one-directional one-to-many relationship between two models using the <code>hasMany()</code> method. |
 |  [hasOne(relatedModel)](./integration-tests.a.hasone.md) | Create a one-directional one-to-one relationship between two models using the <code>hasOne(&quot;MODEL_NAME&quot;)</code> method. A hasOne relationship always uses a reference to the related model's identifier. Typically this is the <code>id</code> field unless overwritten with the <code>identifier()</code> method. |
 |  [id()](./integration-tests.a.id.md) | A unique identifier scalar type. This scalar is serialized like a String but isn't meant to be human-readable. If not specified on create operations, a ULID will be auto-generated service-side. |
-|  [index(partitionKeyFieldName)](./integration-tests.a.index.md) |  |
 |  [integer()](./integration-tests.a.integer.md) | An integer scalar type with a supported value range between -(2^31) and 2^31-1. |
 |  [ipAddress()](./integration-tests.a.ipaddress.md) | A valid IPv4 or IPv6 address scalar type. IPv4 addresses are expected in quad-dotted notation (123.12.34.56). IPv6 addresses are expected in non-bracketed, colon-separated format (1a2b:3c4b:🔢4567). You can include an optional CIDR suffix (123.45.67.89/16) to indicate subnet mask. |
 |  [json()](./integration-tests.a.json.md) | A JSON scalar type that is automatically parsed and loaded server-side as maps, lists, or scalar values rather than as the literal input strings. |

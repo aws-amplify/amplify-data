@@ -13,4 +13,3 @@ verdaccio-cache
 verdaccio-logs.txt
 
 packages/integration-tests/temp
-packages/integration-tests/docs-temp
