@@ -36,7 +36,9 @@ export type DerivedCombinedSchema = {
 export type DerivedModelSchema = {
   data: {
     types: object;
+    configuration: SchemaConfiguration;
   };
+
   transform: () => DerivedApiDefinition;
 };
 
@@ -63,3 +65,45 @@ export type FunctionSchemaAccess = {
 export type DefineFunction = ConstructFactory<
   ResourceProvider<FunctionResources> & ResourceAccessAcceptorFactory
 >;
+
+export type DatasourceEngine = 'mysql' | 'postgres' | 'dynamodb';
+
+type SubnetAZ = {
+  subnetId: string;
+  availabilityZone: string;
+};
+
+type VpcConfig = {
+  vpcId: string;
+  securityGroupIds: string[];
+  subnetAvailabilityZoneConfig: SubnetAZ[];
+};
+
+export type DataSourceConfiguration<
+  DE extends DatasourceEngine = DatasourceEngine,
+> = DE extends 'dynamodb'
+  ? { engine: DE }
+  : {
+      engine: DE;
+      connectionUri: BackendSecret;
+      vpcConfig?: VpcConfig;
+    };
+
+export type SchemaConfiguration<
+  DE extends DatasourceEngine = DatasourceEngine,
+  DC extends DataSourceConfiguration<DE> = DataSourceConfiguration<DE>,
+> = {
+  database: DC;
+};
+
+/**
+ * Importing the full objects from @aws-amplify/plugin-types
+ * more than doubles dev env runtime. This type replacement
+ * will contain the content for config without the negative
+ * side-effects. We may need to re-approach if customers interact
+ * with these programmatically to avoid forcing narrowing.
+ */
+type BackendSecret = {
+  resolve: (scope: any, backendIdentifier: any) => any;
+  resolvePath: (backendIdentifier: any) => any;
+};

@@ -1,6 +1,9 @@
 import type {
   DerivedApiDefinition,
   SetTypeSubArg,
+  SchemaConfiguration,
+  DataSourceConfiguration,
+  DatasourceEngine,
 } from '@aws-amplify/data-schema-types';
 import {
   type ModelType,
@@ -43,50 +46,10 @@ type InternalSchemaModels = Record<
   InternalModel | EnumType<any> | CustomType<any> | InternalCustom
 >;
 
-/**
- * Importing the full objects from @aws-amplify/plugin-types
- * more than doubles dev env runtime. This type replacement
- * will contain the content for config without the negative
- * side-effects. We may need to re-approach if customers interact
- * with these programmatically to avoid forcing narrowing.
- */
-type BackendSecret = {
-  resolve: (scope: any, backendIdentifier: any) => any;
-  resolvePath: (backendIdentifier: any) => any;
-};
-
-export type DatasourceEngine = 'mysql' | 'postgresql' | 'dynamodb';
-
-type SubnetAZ = {
-  subnetId: string;
-  availabilityZone: string;
-};
-
-type VpcConfig = {
-  vpcId: string;
-  securityGroupIds: string[];
-  subnetAvailabilityZones: SubnetAZ[];
-};
-
-type DatasourceConfig<DE extends DatasourceEngine> = DE extends 'dynamodb'
-  ? { engine: DE }
-  : {
-      engine: DE;
-      connectionUri: BackendSecret;
-      vpcConfig?: VpcConfig;
-    };
-
-export type SchemaConfig<
-  DE extends DatasourceEngine,
-  DC extends DatasourceConfig<DE>,
-> = {
-  database: DC;
-};
-
 export type ModelSchemaParamShape = {
   types: ModelSchemaContents;
   authorization: SchemaAuthorization<any, any, any>[];
-  configuration: SchemaConfig<any, any>;
+  configuration: SchemaConfiguration<any, any>;
 };
 
 export type RDSModelSchemaParamShape = ModelSchemaParamShape & {
@@ -97,7 +60,7 @@ export type InternalSchema = {
   data: {
     types: InternalSchemaModels;
     authorization: SchemaAuthorization<any, any, any>[];
-    configuration: SchemaConfig<any, any>;
+    configuration: SchemaConfiguration<any, any>;
   };
 };
 
@@ -208,7 +171,7 @@ export const isModelSchema = (
 
 function _rdsSchema<
   T extends RDSModelSchemaParamShape,
-  DSC extends SchemaConfig<any, any>,
+  DSC extends SchemaConfiguration<any, any>,
 >(types: T['types'], config: DSC): RDSModelSchema<T> {
   const data: RDSModelSchemaParamShape = {
     types,
@@ -253,7 +216,7 @@ function _rdsSchema<
 
 function _ddbSchema<
   T extends ModelSchemaParamShape,
-  DSC extends SchemaConfig<any, any>,
+  DSC extends SchemaConfiguration<any, any>,
 >(types: T['types'], config: DSC) {
   const data: ModelSchemaParamShape = {
     types,
@@ -285,7 +248,7 @@ type SchemaReturnType<
   : RDSModelSchema<{ types: Types; authorization: []; configuration: any }>;
 
 function bindConfigToSchema<DE extends DatasourceEngine>(
-  config: SchemaConfig<DE, DatasourceConfig<DE>>,
+  config: SchemaConfiguration<DE, DataSourceConfiguration<DE>>,
 ): <Types extends ModelSchemaContents>(
   types: Types,
 ) => SchemaReturnType<DE, Types> {
@@ -315,7 +278,7 @@ export const schema = bindConfigToSchema({ database: { engine: 'dynamodb' } });
  * @returns
  */
 export function configure<DE extends DatasourceEngine>(
-  config: SchemaConfig<DE, DatasourceConfig<DE>>,
+  config: SchemaConfiguration<DE, DataSourceConfiguration<DE>>,
 ): {
   schema: <Types extends ModelSchemaContents>(
     types: Types,
