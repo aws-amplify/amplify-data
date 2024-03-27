@@ -73,7 +73,7 @@ type DatasourceConfig<DE extends DatasourceEngine> = DE extends 'dynamodb'
   : {
       engine: DE;
       connectionUri: BackendSecret;
-      vpc?: VpcConfig;
+      vpcConfig?: VpcConfig;
     };
 
 export type SchemaConfig<
