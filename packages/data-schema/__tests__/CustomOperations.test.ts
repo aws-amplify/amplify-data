@@ -7,11 +7,7 @@ const fakeSecret = () => ({}) as any;
 
 const datasourceConfigMySQL = {
   engine: 'mysql',
-  hostname: fakeSecret(),
-  username: fakeSecret(),
-  password: fakeSecret(),
-  port: fakeSecret(),
-  databaseName: fakeSecret(),
+  connectionUri: fakeSecret(),
 } as const;
 
 const aSql = configure({ database: datasourceConfigMySQL });
@@ -868,11 +864,7 @@ describe('CustomOperation transform', () => {
 
   const datasourceConfigMySQL = {
     engine: 'mysql',
-    hostname: fakeSecret(),
-    username: fakeSecret(),
-    password: fakeSecret(),
-    port: fakeSecret(),
-    databaseName: fakeSecret(),
+    connectionUri: fakeSecret(),
   } as const;
 
   describe('sql schema', () => {
