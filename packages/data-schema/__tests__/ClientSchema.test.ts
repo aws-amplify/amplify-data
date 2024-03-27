@@ -1075,5 +1075,27 @@ describe('custom operations', () => {
         .join('\n');
       expect(graphql).toMatchSnapshot();
     });
+
+    test('a ddb and sql schemas raise an error on transform when they have a model name collision', () => {
+      const schemaA = aSql.schema({
+        DupTest: a
+          .model({
+            fieldB: a.string(),
+          })
+          .authorization([a.allow.public()]),
+      });
+
+      const schemaB = a.schema({
+        DupTest: a
+          .model({
+            fieldA: a.string(),
+          })
+          .authorization([a.allow.public()]),
+      });
+
+      expect(() => a.combine([schemaA, schemaB])).toThrowError(
+        'The schemas you are attempting to combine have a name collision. Please remove or rename DupTest.',
+      );
+    });
   });
 });
