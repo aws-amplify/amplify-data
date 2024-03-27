@@ -22,7 +22,7 @@ const API_DOCS_PATH = path.join(__dirname, '../../../docs');
 
 describe('Publicly exposed API and docstrings', () => {
   test(
-    'has not changed',
+    'have not changed',
     async () => {
       /**
        * This builds the API extraction JSON, which is what the documenter will
