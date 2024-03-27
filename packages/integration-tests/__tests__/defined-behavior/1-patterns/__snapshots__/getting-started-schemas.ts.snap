@@ -27,14 +27,6 @@ exports[`getting started guides Todo schema 1`] = `
           },
           {
             "properties": {
-              "fields": [
-                "id",
-              ],
-            },
-            "type": "key",
-          },
-          {
-            "properties": {
               "rules": [
                 {
                   "allow": "owner",
@@ -70,7 +62,8 @@ exports[`getting started guides Todo schema 1`] = `
           "createdAt": {
             "attributes": [],
             "isArray": false,
-            "isRequired": true,
+            "isReadOnly": true,
+            "isRequired": false,
             "name": "createdAt",
             "type": "AWSDateTime",
           },
@@ -88,13 +81,6 @@ exports[`getting started guides Todo schema 1`] = `
             "name": "id",
             "type": "ID",
           },
-          "owner": {
-            "attributes": [],
-            "isArray": false,
-            "isRequired": false,
-            "name": "owner",
-            "type": "String",
-          },
           "priority": {
             "attributes": [],
             "isArray": false,
@@ -107,7 +93,8 @@ exports[`getting started guides Todo schema 1`] = `
           "updatedAt": {
             "attributes": [],
             "isArray": false,
-            "isRequired": true,
+            "isReadOnly": true,
+            "isRequired": false,
             "name": "updatedAt",
             "type": "AWSDateTime",
           },
