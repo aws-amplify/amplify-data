@@ -50,6 +50,7 @@ function internalCombine<
         schema: '',
         functionSchemaAccess: [],
         lambdaFunctions: {},
+        sqlStatementFolderPaths: [],
       };
       return schemas.reduce<DerivedApiDefinition>((prev, schema) => {
         const transformedSchema = schema.transform();
@@ -67,6 +68,10 @@ function internalCombine<
           lambdaFunctions: {
             ...prev.lambdaFunctions,
             ...transformedSchema.lambdaFunctions,
+          },
+          sqlStatementFolderPaths: {
+            ...prev.sqlStatementFolderPaths,
+            ...transformedSchema.sqlStatementFolderPaths,
           },
         };
       }, baseDefinition);
