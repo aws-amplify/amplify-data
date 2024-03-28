@@ -356,13 +356,13 @@ export interface SourceLocation {
 export type SingularReturnValue<T> = Promise<
   | {
       data: T;
-      errors?: [];
+      errors?: never;
       extensions?: {
         [key: string]: any;
       };
     }
   | {
-      data: T | null;
+      data: null;
       errors: GraphQLFormattedError[];
       extensions?: {
         [key: string]: any;

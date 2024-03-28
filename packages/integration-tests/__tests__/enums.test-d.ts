@@ -17,13 +17,13 @@ describe('Enum', () => {
     test('Return type', async () => {
       const { data: posts } = await client.models.Post.list();
 
-      type ExpectedType = ({
+      type ExpectedType = {
         readonly id: string;
         readonly createdAt: string;
         readonly updatedAt: string;
         title: string;
         status?: 'draft' | 'pending' | 'published' | null;
-      } | null)[];
+      }[];
 
       type test = Expect<Equal<typeof posts, ExpectedType>>;
     });
@@ -88,25 +88,25 @@ describe('Enum', () => {
     test('Return types', async () => {
       const { data: posts } = await client.models.Post.list();
 
-      type ExpectedType = ({
+      type ExpectedType = {
         readonly id: string;
         readonly createdAt: string;
         readonly updatedAt: string;
         title: string;
         status: 'draft' | 'pending' | 'published';
-      } | null)[];
+      }[];
 
       type test = Expect<Equal<typeof posts, ExpectedType>>;
 
       const { data: comments } = await client.models.Comment.list();
 
-      type ExpectedCommentType = ({
+      type ExpectedCommentType = {
         readonly id: string;
         readonly createdAt: string;
         readonly updatedAt: string;
         content: string;
         status?: 'draft' | 'pending' | 'published' | null;
-      } | null)[];
+      }[];
 
       type test2 = Expect<Equal<typeof comments, ExpectedCommentType>>;
     });

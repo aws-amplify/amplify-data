@@ -201,8 +201,15 @@ describe('Basic operations', () => {
 
       test(`can specify ${authMode} on lazy loaded hasMany`, async () => {
         // expect no type errors
-        const { data } = await client.models.Post.get({ id: 'something' });
-        await data!.comments({ authMode });
+        const { data, errors } = await client.models.Post.get({
+          id: 'something',
+        });
+
+        if (errors) {
+          return;
+        }
+
+        await data.comments({ authMode });
       });
 
       test(`can specify ${authMode} on lazy loaded hasOne`, async () => {
