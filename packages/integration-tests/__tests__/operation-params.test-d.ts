@@ -90,7 +90,7 @@ describe('Basic operations', () => {
 
       test('lazy loaded hasMany returns a non-nullable list of non-nullable elements', async () => {
         const { data } = await client.models.Post.get({ id: 'something' });
-        const comments = await data!.comments();
+        const comments = await data.comments();
         type Comments = (typeof comments)['data'];
 
         type testA = Expect<Equal<NonNullable<Comments>, Comments>>;
