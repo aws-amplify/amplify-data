@@ -22,10 +22,11 @@ jobs:
           echo
           echo "Oh no!! The API Check Failed!"
           echo
-          echo "If you see a line that the the 'Run Checks' step that says 'Entries are different',"
-          echo "you have API changes that are not documented in this PR."
+          echo "You probably have API changes that are not documented in this PR."
+          echo "To resolve this, run the following from the repository root:"
           echo
-          echo "To resolve this, run this from the repository root: npm run build && npm run docs"
+          echo "npm run build && npm run docs"
           echo 
           echo "Then commit and push the changes."
           echo
+          exit 1
