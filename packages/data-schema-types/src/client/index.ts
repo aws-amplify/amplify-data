@@ -353,16 +353,25 @@ export interface SourceLocation {
 
 // #endregion
 
-export type SingularReturnValue<T> = Promise<{
-  data: T | null;
-  errors?: GraphQLFormattedError[];
-  extensions?: {
-    [key: string]: any;
-  };
-}>;
+export type SingularReturnValue<T> = Promise<
+  | {
+      data: T;
+      errors?: [];
+      extensions?: {
+        [key: string]: any;
+      };
+    }
+  | {
+      data: T | null;
+      errors: GraphQLFormattedError[];
+      extensions?: {
+        [key: string]: any;
+      };
+    }
+>;
 
 export type ListReturnValue<T> = Promise<{
-  data: Array<T | null>;
+  data: Array<T>;
   nextToken?: string | null;
   errors?: GraphQLFormattedError[];
   extensions?: {
