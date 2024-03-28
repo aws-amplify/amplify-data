@@ -16,7 +16,7 @@ jobs:
       - name: Run checks
         working-directory: ./amplify-api-next
         run: npm run check-api
-      - name: API CHECK FAILURE INSTRUCTIONS
+      - name: API Check Instructions
         if: failure()
         run: |
           echo
@@ -26,7 +26,7 @@ jobs:
           echo
           echo "To resolve this, you have two options."
           echo
-          echo "Option 1: Revert the API changes. Do this if API/docstring changes are not intended.""
+          echo "Option 1: Revert the API changes. Do this if API/docstring changes are not intended."
           echo
           echo "Option 2: Update the API docs by running the following from the repository root:"
           echo
