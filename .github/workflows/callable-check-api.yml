@@ -16,6 +16,13 @@ jobs:
       - name: Run checks
         working-directory: ./amplify-api-next
         run: npm run check-api
-      - name: Check failure resolution instructions
+      - name: API CHECK FAILURE INSTRUCTIONS
         if: failure()
-        run: echo "\n\nAPI check failed. Try running `npm run docs` and committing the newly generated `packages/*/docs` changes.\n\n"
+        run: |
+          echo
+          echo "Oh no!! The API Check Failed!"
+          echo
+          echo "If you see a line that says 'Entries are different', the check detected API changes that aren't in your PR."
+          echo
+          echo "To resolve this: run 'npm run docs' in the repository root and commit/push the changes."
+          echo
