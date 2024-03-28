@@ -1110,7 +1110,7 @@ describe('RDS Schema with sql statement references', () => {
 
   const aSql = configure({ database: datasourceConfigMySQL });
 
-  it('schema lambda access', () => {
+  it('schema with full path sql reference', () => {
     const rdsSchema = aSql
       .schema({
         widget: a.model({
@@ -1128,6 +1128,26 @@ describe('RDS Schema with sql statement references', () => {
     rdsSchema.setSqlStatementFolderPath(
       '/full/path/to/sql/statement/directory/',
     );
+
+    expect(rdsSchema.transform()).toMatchSnapshot();
+  });
+
+  it('schema with relative path sql reference', () => {
+    const rdsSchema = aSql
+      .schema({
+        widget: a.model({
+          title: a.string().required(),
+          someOwnerField: a.string(),
+        }),
+        callSql: a
+          .query()
+          .arguments({})
+          .returns(a.ref('widget'))
+          .handler(a.handler.sqlReference('testReferenceName')),
+      })
+      .authorization([a.allow.public()]);
+
+    rdsSchema.setSqlStatementFolderPath('sql_directory_name');
 
     expect(rdsSchema.transform()).toMatchSnapshot();
   });
