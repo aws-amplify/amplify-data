@@ -19,28 +19,6 @@ type Query {
 }
 `;
 
-exports[`RDS Schema with sql statement references schema with relative path sql reference 1`] = `
-{
-  "functionSchemaAccess": [],
-  "functionSlots": [],
-  "jsFunctions": [],
-  "lambdaFunctions": {},
-  "schema": "type widget @model @auth(rules: [{allow: public}])
-{
-  title: String!
-  someOwnerField: String
-}
-
-type Query {
-  callSql: widget @sql(reference: "testReferenceName") @auth(rules: [{allow: public}])
-}",
-  "sqlStatementFolderPath": {
-    "importLine": "at Object.<anonymous> (/Users/stocaaro/workspace/2024/w13/amplify-api-next/packages/data-schema/__tests__/ClientSchema.test.ts:1150:15)",
-    "relativePath": "sql_directory_name",
-  },
-}
-`;
-
 exports[`custom operations custom mutation 1`] = `
 "type LikePostResult 
 {
