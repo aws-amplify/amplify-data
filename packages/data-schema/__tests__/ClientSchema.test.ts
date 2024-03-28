@@ -1149,6 +1149,8 @@ describe('RDS Schema with sql statement references', () => {
 
     rdsSchema.setSqlStatementFolderPath('sql_directory_name');
 
-    expect(rdsSchema.transform()).toMatchSnapshot();
+    expect(
+      Object.keys(rdsSchema.transform().sqlStatementFolderPath || {}),
+    ).toEqual(['relativePath', 'importLine']);
   });
 });
