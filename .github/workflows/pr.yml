@@ -25,6 +25,7 @@ jobs:
       - prebuild
     uses: ./.github/workflows/callable-unit-tests.yml
   check-api:
+    runs-on: ubuntu-latest
     needs:
       - prebuild
     steps:
