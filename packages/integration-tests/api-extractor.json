@@ -412,13 +412,6 @@
         "addToApiReportFile": false,
         "logLevel": "none"
       }
-
-      // "ae-extra-release-tag": {
-      //   "logLevel": "warning",
-      //   "addToApiReportFile": true
-      // },
-      //
-      // . . .
     },
 
     /**
@@ -433,31 +426,6 @@
         "logLevel": "none",
         "addToApiReportFile": true
       }
-      // ,
-      // "tsdoc-link-tag-unescaped-text": {
-      //   "logLevel": "none",
-      //   "addToApiReportFile": false
-      // },
-      // "tsdoc-escape-greater-than": {
-      //   "logLevel": "none",
-      //   "addToApiReportFile": false
-      // },
-      // "tsdoc-html-tag-missing-greater-than": {
-      //   "logLevel": "none",
-      //   "addToApiReportFile": false
-      // },
-      // "tsdoc-malformed-inline-tag": {
-      //   "logLevel": "none",
-      //   "addToApiReportFile": false
-      // },
-      // "tsdoc-escape-right-brace": {
-      //   "logLevel": "none",
-      //   "addToApiReportFile": false
-      // },
-      // "tsdoc-malformed-html-name": {
-      //   "logLevel": "none",
-      //   "addToApiReportFile": false
-      // }
     }
   }
 }

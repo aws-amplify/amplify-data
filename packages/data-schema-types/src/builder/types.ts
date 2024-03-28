@@ -11,6 +11,7 @@ import {
  *
  * function slots is any'd for now. Will add actual type when we add support for this feature
  */
+
 export interface DerivedApiDefinition {
   /**
    * Return the schema definition as a graphql string, with amplify directives allowed.
@@ -28,9 +29,6 @@ export interface DerivedApiDefinition {
   readonly functionSchemaAccess: FunctionSchemaAccess[];
 }
 
-/**
- * @public
- */
 export type DerivedModelSchema = {
   data: {
     types: object;

@@ -107,7 +107,7 @@ type CustomSelectionSetReturnValue<
  * Intersections on arrays have unexpected behavior in TypeScript:
  * see: https://github.com/microsoft/TypeScript/issues/41874 and https://github.com/microsoft/TypeScript/issues/39693
  *
- * To work around this limitation, DeepPickFromPath flattens Arrays of Models (e.g. `{ comments: { id: string}[] } => { comments: { id: string} }`)
+ * To work around this limitation, DeepPickFromPath flattens Arrays of Models (e.g. { comments: { id: string}[] } => { comments: { id: string} })
  * Arrays are then restored downstream in RestoreArrays
  */
 type DeepPickFromPath<
