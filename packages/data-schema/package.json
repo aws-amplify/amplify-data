@@ -11,8 +11,8 @@
   "scripts": {
     "build": "npm run clean && tsc -p ./tsconfig.json",
     "clean": "rimraf lib-esm tsconfig.tsbuildinfo",
-    "docs": "npm run build && api-extractor run && api-documenter markdown --input-folder temp --output-folder docs",
-    "docs:temp": "npm run build && api-extractor run && api-documenter markdown --input-folder temp --output-folder temp/docs",
+    "docs": "api-extractor run && api-documenter markdown --input-folder temp --output-folder docs",
+    "docs:temp": "api-extractor run && api-documenter markdown --input-folder temp --output-folder temp/docs",
     "check-api": "rimraf temp && npm run docs:temp && dircompare docs temp/docs",
     "lint": "eslint .",
     "test": "jest"
