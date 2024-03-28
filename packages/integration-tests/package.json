@@ -15,8 +15,6 @@
   "devDependencies": {
     "@aws-amplify/data-schema": "*",
     "@aws-amplify/data-schema-types": "*",
-    "@microsoft/api-documenter": "^7.23.37",
-    "@microsoft/api-extractor": "^7.42.3",
     "@tsd/typescript": "^5.1.6",
     "@types/jest": "29.5.4",
     "aws-amplify": "^6.0.23",
