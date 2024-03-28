@@ -4,7 +4,6 @@
   "private": true,
   "description": "",
   "license": "Apache-2.0",
-  "types": "index.d.ts",
   "scripts": {
     "test": "jest"
   },
@@ -20,7 +19,6 @@
     "aws-amplify": "^6.0.23",
     "jest": "^29.7.0",
     "jest-tsd": "^0.2.2",
-    "rimraf": "^5.0.5",
     "ts-jest": "^29.1.1"
   },
   "peerDependencies": {
