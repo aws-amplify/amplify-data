@@ -30,5 +30,6 @@ jobs:
       - prebuild
     steps:
       - name: Check for API changes
+        working-directory: ./amplify-api-next
         run: |
           npm run check-api
