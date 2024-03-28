@@ -1099,3 +1099,36 @@ describe('custom operations', () => {
     });
   });
 });
+
+describe('RDS Schema with sql statement references', () => {
+  const fakeSecret = () => ({}) as any;
+
+  const datasourceConfigMySQL = {
+    engine: 'mysql',
+    connectionUri: fakeSecret(),
+  } as const;
+
+  const aSql = configure({ database: datasourceConfigMySQL });
+
+  it('schema lambda access', () => {
+    const rdsSchema = aSql
+      .schema({
+        widget: a.model({
+          title: a.string().required(),
+          someOwnerField: a.string(),
+        }),
+        callSql: a
+          .query()
+          .arguments({})
+          .returns(a.ref('widget'))
+          .handler(a.handler.sqlReference('testReferenceName')),
+      })
+      .authorization([a.allow.public()]);
+
+    rdsSchema.setSqlStatementFolderPath(
+      '/full/path/to/sql/statement/directory/',
+    );
+
+    expect(rdsSchema.transform()).toMatchSnapshot();
+  });
+});

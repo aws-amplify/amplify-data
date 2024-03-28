@@ -1,5 +1,24 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`RDS Schema with sql statement references schema lambda access 1`] = `
+{
+  "functionSchemaAccess": [],
+  "functionSlots": [],
+  "jsFunctions": [],
+  "lambdaFunctions": {},
+  "schema": "type widget @model @auth(rules: [{allow: public}])
+{
+  title: String!
+  someOwnerField: String
+}
+
+type Query {
+  callSql: widget @sql(reference: "testReferenceName") @auth(rules: [{allow: public}])
+}",
+  "sqlStatementFolderPath": "/full/path/to/sql/statement/directory/",
+}
+`;
+
 exports[`custom operations custom mutation 1`] = `
 "type LikePostResult 
 {
@@ -101,6 +120,7 @@ exports[`schema auth rules allows custom 1`] = `
 {
   field: String
 }",
+  "sqlStatementFolderPath": undefined,
 }
 `;
 
@@ -114,6 +134,7 @@ exports[`schema auth rules allows groupDefinedIn 1`] = `
 {
   field: String
 }",
+  "sqlStatementFolderPath": undefined,
 }
 `;
 
@@ -127,6 +148,7 @@ exports[`schema auth rules allows groupsDefinedIn 1`] = `
 {
   field: String
 }",
+  "sqlStatementFolderPath": undefined,
 }
 `;
 
@@ -141,6 +163,7 @@ exports[`schema auth rules allows multiple entries 1`] = `
 {
   field: String
 }",
+  "sqlStatementFolderPath": undefined,
 }
 `;
 
@@ -154,6 +177,7 @@ exports[`schema auth rules allows multipleOwners 1`] = `
 {
   field: String
 }",
+  "sqlStatementFolderPath": undefined,
 }
 `;
 
@@ -167,6 +191,7 @@ exports[`schema auth rules allows owner 1`] = `
 {
   field: String
 }",
+  "sqlStatementFolderPath": undefined,
 }
 `;
 
@@ -180,6 +205,7 @@ exports[`schema auth rules allows private 1`] = `
 {
   field: String
 }",
+  "sqlStatementFolderPath": undefined,
 }
 `;
 
@@ -193,6 +219,7 @@ exports[`schema auth rules allows public 1`] = `
 {
   field: String
 }",
+  "sqlStatementFolderPath": undefined,
 }
 `;
 
@@ -206,6 +233,7 @@ exports[`schema auth rules allows specificGroups 1`] = `
 {
   field: String
 }",
+  "sqlStatementFolderPath": undefined,
 }
 `;
 
@@ -226,6 +254,7 @@ exports[`schema auth rules disallows specificGroup 1`] = `
 {
   field: String
 }",
+  "sqlStatementFolderPath": undefined,
 }
 `;
 
@@ -251,6 +280,7 @@ type Query {
 type Subscription {
   onLikePost: Post @function(name: "myFunc") @aws_subscribe(mutations: ["likePost"]) @auth(rules: [{allow: owner, ownerField: "owner"}])
 }",
+  "sqlStatementFolderPath": undefined,
 }
 `;
 
@@ -290,6 +320,7 @@ type D @model @auth(rules: [{allow: public}])
 enum DTired {
   ?
 }",
+  "sqlStatementFolderPath": undefined,
 }
 `;
 
@@ -303,6 +334,7 @@ exports[`schema auth rules prefers model auth over global auth owner auth on mod
 {
   field: String
 }",
+  "sqlStatementFolderPath": undefined,
 }
 `;
 
@@ -316,6 +348,7 @@ exports[`schema auth rules prefers model auth over global auth owner auth on mod
 {
   field: String
 }",
+  "sqlStatementFolderPath": undefined,
 }
 `;
 
@@ -329,6 +362,7 @@ exports[`schema auth rules prefers model auth over global auth public auth on mo
 {
   field: String
 }",
+  "sqlStatementFolderPath": undefined,
 }
 `;
 

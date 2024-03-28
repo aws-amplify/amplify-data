@@ -27,6 +27,7 @@ export interface DerivedApiDefinition {
   readonly jsFunctions: JsResolver[];
   readonly lambdaFunctions: LambdaFunctionDefinition;
   readonly functionSchemaAccess: FunctionSchemaAccess[];
+  readonly sqlStatementFolderPath?: string;
 }
 
 export type DerivedCombinedSchema = {

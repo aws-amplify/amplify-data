@@ -53,7 +53,7 @@ export type ModelSchemaParamShape = {
 };
 
 export type RDSModelSchemaParamShape = ModelSchemaParamShape & {
-  setSqlStatementFolderPath?: string;
+  sqlStatementFolderPath?: string;
 };
 
 export type InternalSchema = {
@@ -191,7 +191,7 @@ function _rdsSchema<
       return rest;
     },
     setSqlStatementFolderPath(path: string): any {
-      this.data.setSqlStatementFolderPath = path;
+      this.data.sqlStatementFolderPath = path;
       const { setSqlStatementFolderPath: _, ...rest } = this;
       return rest;
     },

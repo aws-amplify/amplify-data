@@ -1121,12 +1121,15 @@ const schemaPreprocessor = (
   jsFunctions: JsResolver[];
   functionSchemaAccess: FunctionSchemaAccess[];
   lambdaFunctions: LambdaFunctionDefinition;
+  sqlStatementFolderPath?: string;
 } => {
   const gqlModels: string[] = [];
 
   const customQueries = [];
   const customMutations = [];
   const customSubscriptions = [];
+
+  let sqlStatementFolderPath: string | undefined;
 
   const jsFunctions: JsResolver[] = [];
   let lambdaFunctions: LambdaFunctionDefinition = {};
@@ -1135,6 +1138,13 @@ const schemaPreprocessor = (
     schema.data.configuration.database.engine === 'dynamodb'
       ? 'dynamodb'
       : 'sql';
+
+  if (
+    'sqlStatementFolderPath' in schema.data &&
+    typeof schema.data.sqlStatementFolderPath === 'string'
+  ) {
+    sqlStatementFolderPath = schema.data.sqlStatementFolderPath;
+  }
 
   const staticSchema =
     schema.data.configuration.database.engine === 'dynamodb' ? false : true;
@@ -1338,6 +1348,7 @@ const schemaPreprocessor = (
     jsFunctions,
     functionSchemaAccess,
     lambdaFunctions,
+    sqlStatementFolderPath,
   };
 };
 
@@ -1628,8 +1639,13 @@ function generateCustomOperationTypes({
 export function processSchema(arg: {
   schema: InternalSchema;
 }): DerivedApiDefinition {
-  const { schema, jsFunctions, functionSchemaAccess, lambdaFunctions } =
-    schemaPreprocessor(arg.schema);
+  const {
+    schema,
+    jsFunctions,
+    functionSchemaAccess,
+    lambdaFunctions,
+    sqlStatementFolderPath,
+  } = schemaPreprocessor(arg.schema);
 
   return {
     schema,
@@ -1637,5 +1653,6 @@ export function processSchema(arg: {
     jsFunctions,
     functionSchemaAccess,
     lambdaFunctions,
+    sqlStatementFolderPath,
   };
 }
