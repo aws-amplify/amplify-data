@@ -22,12 +22,9 @@ jobs:
           echo
           echo "Oh no!! The API Check Failed!"
           echo
-          echo "You probably have API changes that are not documented in this PR."
+          echo "You probably have API changes that are not documented in this PR. If this is the case, you have two options."
           echo
-          echo "To resolve this, you have two options."
-          echo
-          echo "Option 1: Revert the API changes. Do this if API/docstring changes are not intended."
-          echo
+          echo "Option 1: Revert the API changes. (If API/docstring changes were not intended.)"
           echo "Option 2: Update the API docs by running the following from the repository root:"
           echo
           echo "npm run build && npm run docs"
