@@ -21,7 +21,7 @@ describe('CustomType', () => {
       test('the `list` operation returns the expected type', async () => {
         const { data: posts } = await client.models.Post.list();
 
-        type Expected = {
+        type Expected = ({
           title: string;
           readonly id: string;
           readonly createdAt: string;
@@ -33,7 +33,7 @@ describe('CustomType', () => {
               }
             | null
             | undefined;
-        }[];
+        } | null)[];
 
         type _ = Expect<Equal<typeof posts, Expected>>;
       });
@@ -101,7 +101,7 @@ describe('CustomType', () => {
       test('the `list` operation returns the expected type', async () => {
         const { data: posts } = await client.models.Post.list();
 
-        type Expected = {
+        type Expected = ({
           title: string;
           readonly id: string;
           readonly createdAt: string;
@@ -121,7 +121,7 @@ describe('CustomType', () => {
               }
             | null
             | undefined;
-        }[];
+        } | null)[];
 
         type _ = Expect<Equal<typeof posts, Expected>>;
       });
@@ -207,7 +207,7 @@ describe('CustomType', () => {
       test('the `list` operation returns the expected type', async () => {
         const { data: posts } = await client.models.Post.list();
 
-        type Expected = {
+        type Expected = ({
           title: string;
           readonly id: string;
           readonly createdAt: string;
@@ -224,7 +224,7 @@ describe('CustomType', () => {
               }
             | null
             | undefined;
-        }[];
+        } | null)[];
 
         type _ = Expect<Equal<typeof posts, Expected>>;
       });
@@ -300,7 +300,7 @@ describe('CustomType', () => {
       test('the `list` operation returns the expected type', async () => {
         const { data: posts } = await client.models.Post.list();
 
-        type Expected = {
+        type Expected = ({
           title: string;
           readonly id: string;
           readonly createdAt: string;
@@ -312,7 +312,7 @@ describe('CustomType', () => {
               }
             | null
             | undefined;
-        }[];
+        } | null)[];
 
         type _ = Expect<Equal<typeof posts, Expected>>;
       });
@@ -381,7 +381,7 @@ describe('CustomType', () => {
       test('the `list` operation returns the expected type', async () => {
         const { data: posts } = await client.models.Post.list();
 
-        type Expected = {
+        type Expected = ({
           title: string;
           readonly id: string;
           readonly createdAt: string;
@@ -401,7 +401,7 @@ describe('CustomType', () => {
               }
             | null
             | undefined;
-        }[];
+        } | null)[];
 
         type _ = Expect<Equal<typeof posts, Expected>>;
       });
@@ -491,7 +491,7 @@ describe('CustomType', () => {
     test('the `list` operation returns the expected type', async () => {
       const { data: posts } = await client.models.Post.list();
 
-      type Expected = {
+      type Expected = ({
         title: string;
         readonly id: string;
         readonly createdAt: string;
@@ -508,7 +508,7 @@ describe('CustomType', () => {
             }
           | null
           | undefined;
-      }[];
+      } | null)[];
 
       type _ = Expect<Equal<typeof posts, Expected>>;
     });

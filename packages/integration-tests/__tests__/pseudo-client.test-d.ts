@@ -54,7 +54,7 @@ describe('client', () => {
 
     type ResponseType = typeof response;
     type Expected = {
-      data: string;
+      data: string | null;
       errors?: GraphQLFormattedError[] | undefined;
       extensions?:
         | {
@@ -88,7 +88,7 @@ describe('client', () => {
 
     type ResponseType = typeof response;
     type Expected = {
-      data: 'Active' | 'Inactive' | 'Unknown';
+      data: 'Active' | 'Inactive' | 'Unknown' | null;
       errors?: GraphQLFormattedError[] | undefined;
       extensions?:
         | {
