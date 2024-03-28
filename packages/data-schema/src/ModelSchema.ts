@@ -53,7 +53,7 @@ export type ModelSchemaParamShape = {
 };
 
 export type RDSModelSchemaParamShape = ModelSchemaParamShape & {
-  sqlStatementFolderPath?: string;
+  sqlStatementFolderPath?: CustomPathData;
 };
 
 export type InternalSchema = {
@@ -191,7 +191,8 @@ function _rdsSchema<
       return rest;
     },
     setSqlStatementFolderPath(path: string): any {
-      this.data.sqlStatementFolderPath = path;
+      const stack = new Error().stack;
+      this.data.sqlStatementFolderPath = { entry: path, stack };
       const { setSqlStatementFolderPath: _, ...rest } = this;
       return rest;
     },
@@ -288,3 +289,17 @@ export function configure<DE extends DatasourceEngine>(
     schema: bindConfigToSchema(config),
   };
 }
+
+export function isCustomPathData(obj: any): obj is CustomPathData {
+  return (
+    'stack' in obj &&
+    (typeof obj.stack === 'undefined' || typeof obj.stack === 'string') &&
+    'entry' in obj &&
+    typeof obj.entry === 'string'
+  );
+}
+
+export type CustomPathData = {
+  stack: string | undefined;
+  entry: string;
+};

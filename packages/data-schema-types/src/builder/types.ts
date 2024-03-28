@@ -27,7 +27,7 @@ export interface DerivedApiDefinition {
   readonly jsFunctions: JsResolver[];
   readonly lambdaFunctions: LambdaFunctionDefinition;
   readonly functionSchemaAccess: FunctionSchemaAccess[];
-  readonly sqlStatementFolderPath?: string;
+  readonly sqlStatementFolderPath?: SqlStatementFolderEntry;
 }
 
 export type DerivedCombinedSchema = {
@@ -43,9 +43,11 @@ export type DerivedModelSchema = {
   transform: () => DerivedApiDefinition;
 };
 
-export type JsResolverEntry =
-  | string
-  | { relativePath: string; importLine: string };
+type PathEntry = string | { relativePath: string; importLine: string };
+
+export type JsResolverEntry = PathEntry;
+
+export type SqlStatementFolderEntry = PathEntry;
 
 export type JsResolver = {
   typeName: 'Mutation' | 'Query' | 'Subscription';
