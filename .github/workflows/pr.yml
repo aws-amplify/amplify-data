@@ -27,4 +27,7 @@ jobs:
   check-api:
     needs:
       - prebuild
-    run: npm run check-api
+    steps:
+      - name: Check for API changes
+        run: |
+          npm run check-api
