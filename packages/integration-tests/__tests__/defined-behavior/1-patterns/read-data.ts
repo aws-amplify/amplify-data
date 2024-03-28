@@ -401,7 +401,7 @@ describe('Read application data', () => {
     const selectionSet = ['content', 'author', 'comments.*'] as const;
     type PostWithComments = SelectionSet<Schema['Post'], typeof selectionSet>;
 
-    const [posts, setPosts] = useState<(PostWithComments | null)[]>([]);
+    const [posts, setPosts] = useState<PostWithComments[]>([]);
 
     async function fetchPosts() {
       const { data: postsWithComments } = await client.models.Post.list({

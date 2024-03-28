@@ -89,8 +89,16 @@ describe('Basic operations', () => {
       });
 
       test('lazy loaded hasMany returns a non-nullable list of non-nullable elements', async () => {
-        const { data } = await client.models.Post.get({ id: 'something' });
+        const { data, errors } = await client.models.Post.get({
+          id: 'something',
+        });
+
+        if (errors) {
+          return;
+        }
+
         const comments = await data.comments();
+
         type Comments = (typeof comments)['data'];
 
         type testA = Expect<Equal<NonNullable<Comments>, Comments>>;
@@ -214,13 +222,27 @@ describe('Basic operations', () => {
 
       test(`can specify ${authMode} on lazy loaded hasOne`, async () => {
         // expect no type errors
-        const { data } = await client.models.Post.get({ id: 'something' });
+        const { data, errors } = await client.models.Post.get({
+          id: 'something',
+        });
+
+        if (errors) {
+          return;
+        }
+
         await data.meta({ authMode });
       });
 
       test(`can specify ${authMode} on lazy loaded belongsTo`, async () => {
         // expect no type errors
-        const { data } = await client.models.Comment.get({ id: 'something' });
+        const { data, errors } = await client.models.Comment.get({
+          id: 'something',
+        });
+
+        if (errors) {
+          return;
+        }
+
         await data.post({ authMode });
       });
     }
@@ -249,13 +271,27 @@ describe('Basic operations', () => {
 
     test('can specify authToken on hasOne', async () => {
       // expect no type errors
-      const { data } = await client.models.Post.get({ id: 'something' });
+      const { data, errors } = await client.models.Post.get({
+        id: 'something',
+      });
+
+      if (errors) {
+        return;
+      }
+
       await data.meta({ authMode: 'lambda', authToken: 'any string' });
     });
 
     test('can specify authToken on belongsTo', async () => {
       // expect no type errors
-      const { data } = await client.models.Comment.get({ id: 'something' });
+      const { data, errors } = await client.models.Comment.get({
+        id: 'something',
+      });
+
+      if (errors) {
+        return;
+      }
+
       await data.post({ authMode: 'lambda', authToken: 'any string' });
     });
   });
