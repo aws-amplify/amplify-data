@@ -25,11 +25,6 @@ jobs:
       - prebuild
     uses: ./.github/workflows/callable-unit-tests.yml
   check-api:
-    runs-on: ubuntu-latest
     needs:
       - prebuild
-    steps:
-      - name: Check for API changes
-        working-directory: ./amplify-api-next
-        run: |
-          npm run check-api
+    uses: ./.github/workflows/callable-check-api.yml
