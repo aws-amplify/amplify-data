@@ -68,14 +68,14 @@ describe('secondary indexes / index queries', () => {
       );
 
       type ResolvedReturnType = typeof posts;
-      type ExpectedReturnType = {
+      type ExpectedReturnType = ({
         title: string;
         description?: string | null;
         readonly id: string;
         readonly createdAt: string;
         viewCount?: number | null;
         updatedAt?: string | null;
-      }[];
+      } | null)[];
 
       type test = Expect<Equal<ResolvedReturnType, ExpectedReturnType>>;
     });
@@ -88,10 +88,10 @@ describe('secondary indexes / index queries', () => {
         { selectionSet: ['id', 'updatedAt'], sortDirection: 'ASC' },
       );
       type ResolvedReturnType = typeof posts;
-      type ExpectedReturnType = {
+      type ExpectedReturnType = ({
         readonly id: string;
         readonly updatedAt: string | null | undefined;
-      }[];
+      } | null)[];
 
       type test = Expect<Equal<ResolvedReturnType, ExpectedReturnType>>;
     });
@@ -164,14 +164,14 @@ describe('secondary indexes / index queries', () => {
       });
 
       type ResolvedReturnType = typeof posts;
-      type ExpectedReturnType = {
+      type ExpectedReturnType = ({
         title: string;
         description?: string | null;
         readonly id: string;
         readonly createdAt: string;
         viewCount?: number | null;
         updatedAt?: string | null;
-      }[];
+      } | null)[];
 
       type test = Expect<Equal<ResolvedReturnType, ExpectedReturnType>>;
     });
@@ -185,10 +185,10 @@ describe('secondary indexes / index queries', () => {
       );
 
       type ResolvedReturnType = typeof posts;
-      type ExpectedReturnType = {
+      type ExpectedReturnType = ({
         readonly id: string;
         readonly updatedAt: string | null | undefined;
-      }[];
+      } | null)[];
 
       type test = Expect<Equal<ResolvedReturnType, ExpectedReturnType>>;
     });
