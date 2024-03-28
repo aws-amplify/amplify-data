@@ -16,3 +16,6 @@ jobs:
       - name: Run checks
         working-directory: ./amplify-api-next
         run: npm run check-api
+      - name: Check failure resolution instructions
+        if: failure()
+        run: echo "\n\nAPI check failed. Try running `npm run docs` and committing the newly generated `packages/*/docs` changes.\n\n"
