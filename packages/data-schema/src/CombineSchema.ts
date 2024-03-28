@@ -44,6 +44,8 @@ function internalCombine<
       {},
     ),
     transform(): DerivedApiDefinition {
+      validateDuplicateTypeNames(schemas);
+
       const baseDefinition = {
         functionSlots: [],
         jsFunctions: [],
@@ -51,6 +53,7 @@ function internalCombine<
         functionSchemaAccess: [],
         lambdaFunctions: {},
       };
+
       return schemas.reduce<DerivedApiDefinition>((prev, schema) => {
         const transformedSchema = schema.transform();
         return {
@@ -73,4 +76,24 @@ function internalCombine<
     },
     ...combinedSchemaBrand,
   };
+}
+
+function validateDuplicateTypeNames<Schema extends GenericModelSchema<any>[]>(
+  schemas: [...Schema],
+) {
+  const allSchemaKeys = schemas.flatMap((s) => Object.keys(s.data.types));
+  const keySet = new Set<string>();
+  const duplicateKeySet = new Set<string>();
+  allSchemaKeys.forEach((key) => {
+    if (keySet.has(key)) {
+      duplicateKeySet.add(key);
+    } else {
+      keySet.add(key);
+    }
+  });
+  if (duplicateKeySet.size > 0) {
+    throw new Error(
+      `The schemas you are attempting to combine have a name collision. Please remove or rename ${Array.from(duplicateKeySet).join(', ')}.`,
+    );
+  }
 }
