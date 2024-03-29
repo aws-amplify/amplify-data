@@ -13,6 +13,7 @@
   "scripts": {
     "build": "turbo run build",
     "build:clean": "turbo run clean && rimraf node_modules",
+    "check": "npm run build && npm run test && npm run lint && npm run check-api",
     "check-api": "turbo run check-api",
     "docs": "turbo run docs",
     "test": "turbo run test",
