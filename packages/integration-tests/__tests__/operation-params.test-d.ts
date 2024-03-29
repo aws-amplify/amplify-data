@@ -265,7 +265,14 @@ describe('Basic operations', () => {
 
     test('can specify authToken on hasMany', async () => {
       // expect no type errors
-      const { data } = await client.models.Post.get({ id: 'something' });
+      const { data, errors } = await client.models.Post.get({
+        id: 'something',
+      });
+
+      if (errors) {
+        throw new Error('should not have errors');
+      }
+
       await data.comments({ authMode: 'lambda', authToken: 'any string' });
     });
 

@@ -594,12 +594,16 @@ describe('Custom Selection Set', () => {
     const client = generateClient<Schema>();
 
     test('custom selection set on shorthand enum field', async () => {
-      const { data: post } = await client.models.Post.get(
+      const { data: post, errors } = await client.models.Post.get(
         { id: 'abc' },
         {
           selectionSet: ['title', 'visibility'],
         },
       );
+
+      if (errors) {
+        throw new Error('should not have errors');
+      }
 
       type ExpectedType = {
         readonly title: string;
@@ -610,12 +614,16 @@ describe('Custom Selection Set', () => {
     });
 
     test('custom selection set on enum ref', async () => {
-      const { data: post } = await client.models.Post.get(
+      const { data: post, errors } = await client.models.Post.get(
         { id: 'abc' },
         {
           selectionSet: ['title', 'status'],
         },
       );
+
+      if (errors) {
+        throw new Error('should not have errors');
+      }
 
       type ExpectedType = {
         readonly title: string;
