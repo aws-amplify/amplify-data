@@ -5,6 +5,10 @@
       "dependsOn": ["^build"],
       "outputs": ["lib-esm/**"]
     },
+    "docs": {
+      "dependsOn": ["build"]
+    },
+    "check-api": {},
     "lint": {},
     "test": {
       "dependsOn": ["^test"]
