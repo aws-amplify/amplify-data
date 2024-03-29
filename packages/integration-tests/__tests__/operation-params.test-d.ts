@@ -94,7 +94,7 @@ describe('Basic operations', () => {
         });
 
         if (errors) {
-          return;
+          throw new Error('should not have errors');
         }
 
         const comments = await data.comments();
@@ -214,7 +214,7 @@ describe('Basic operations', () => {
         });
 
         if (errors) {
-          return;
+          throw new Error('should not have errors');
         }
 
         await data.comments({ authMode });
@@ -227,7 +227,7 @@ describe('Basic operations', () => {
         });
 
         if (errors) {
-          return;
+          throw new Error('should not have errors');
         }
 
         await data.meta({ authMode });
@@ -240,7 +240,7 @@ describe('Basic operations', () => {
         });
 
         if (errors) {
-          return;
+          throw new Error('should not have errors');
         }
 
         await data.post({ authMode });
@@ -283,7 +283,7 @@ describe('Basic operations', () => {
       });
 
       if (errors) {
-        return;
+        throw new Error('should not have errors');
       }
 
       await data.meta({ authMode: 'lambda', authToken: 'any string' });
@@ -296,7 +296,7 @@ describe('Basic operations', () => {
       });
 
       if (errors) {
-        return;
+        throw new Error('should not have errors');
       }
 
       await data.post({ authMode: 'lambda', authToken: 'any string' });
