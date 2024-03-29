@@ -55,7 +55,7 @@ describe('client', () => {
     type ResponseType = typeof response;
     type Expected =
       | {
-          data: null;
+          data: string | null;
           errors: GraphQLFormattedError[];
           extensions?:
             | {
@@ -99,7 +99,7 @@ describe('client', () => {
     type ResponseType = typeof response;
     type Expected =
       | {
-          data: null;
+          data: 'Active' | 'Inactive' | 'Unknown' | null;
           errors: GraphQLFormattedError[];
           extensions?:
             | {
@@ -145,7 +145,9 @@ describe('client', () => {
     type ResponseType = typeof response;
     type Expected =
       | {
-          data: null;
+          data: {
+            resultContent?: string | null | undefined;
+          } | null;
           errors: GraphQLFormattedError[];
           extensions?:
             | {
@@ -203,7 +205,7 @@ describe('client', () => {
 
     type Expected =
       | {
-          data: null;
+          data: Schema['DataModel'] | null;
           errors: GraphQLFormattedError[];
           extensions?:
             | {
@@ -230,7 +232,7 @@ describe('client', () => {
 
     type Expected2 =
       | {
-          data: null;
+          data: (Schema['DataModel'] | null)[] | null;
           errors: GraphQLFormattedError[];
           extensions?:
             | {
@@ -282,7 +284,9 @@ describe('client', () => {
     type ResponseType = typeof response;
     type Expected =
       | {
-          data: null;
+          data: {
+            likes: number;
+          } | null;
           errors: GraphQLFormattedError[];
           extensions?:
             | {
@@ -310,7 +314,11 @@ describe('client', () => {
     type Response2Type = typeof response2;
     type Expected2 =
       | {
-          data: null;
+          data:
+            | ({
+                likes: number;
+              } | null)[]
+            | null;
           errors: GraphQLFormattedError[];
           extensions?:
             | {
