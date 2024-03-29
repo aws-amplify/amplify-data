@@ -4,6 +4,7 @@
     "rootDir": "src",
     "outDir": "lib-esm",
     "declaration": true,
+    "declarationMap": true,
     "emitDeclarationOnly": true
   }
 }

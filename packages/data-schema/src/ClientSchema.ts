@@ -29,12 +29,11 @@ import { SpreadTuple } from './util';
 
 export type ClientSchema<
   Schema extends GenericModelSchema<any> | CombinedModelSchema<any>,
-> =
-  Schema extends GenericModelSchema<any>
-    ? InternalClientSchema<Schema>
-    : Schema extends CombinedModelSchema<any>
-      ? InternalCombinedSchema<Schema>
-      : never;
+> = Schema extends GenericModelSchema<any>
+  ? InternalClientSchema<Schema>
+  : Schema extends CombinedModelSchema<any>
+    ? InternalCombinedSchema<Schema>
+    : never;
 
 /**
  * Types for unwrapping generic type args into client-consumable types
@@ -95,8 +94,9 @@ type InternalClientSchema<
       ResolveCustomOperations<Schema, ResolvedFields, NonModelTypes>;
   };
 
-type GetInternalClientSchema<Schema> =
-  Schema extends GenericModelSchema<any> ? InternalClientSchema<Schema> : never;
+type GetInternalClientSchema<Schema> = Schema extends GenericModelSchema<any>
+  ? InternalClientSchema<Schema>
+  : never;
 
 type CombinedClientSchemas<
   Schemas extends CombinedModelSchema<any>['schemas'],

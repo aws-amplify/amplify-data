@@ -24,3 +24,7 @@ jobs:
     needs:
       - prebuild
     uses: ./.github/workflows/callable-unit-tests.yml
+  check-api:
+    needs:
+      - prebuild
+    uses: ./.github/workflows/callable-check-api.yml
