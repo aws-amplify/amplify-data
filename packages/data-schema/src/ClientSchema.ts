@@ -27,6 +27,9 @@ import {
 } from './CombineSchema';
 import { SpreadTuple } from './util';
 
+/**
+ * test edit
+ */
 export type ClientSchema<
   Schema extends GenericModelSchema<any> | CombinedModelSchema<any>,
 > = Schema extends GenericModelSchema<any>
