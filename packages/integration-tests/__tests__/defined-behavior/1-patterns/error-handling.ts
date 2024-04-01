@@ -5,6 +5,7 @@ import {
   mockedGenerateClient,
   optionsAndHeaders,
 } from '../../utils';
+import { GraphQLError } from 'graphql';
 
 const sampleTodo = {
   __typename: 'Todo',
@@ -40,13 +41,13 @@ describe('CRUD error handling', () => {
 
     test('create an item', async () => {
       // #region mocking
-      const { spy, generateClient } = mockedGenerateClient([
+      const { spy, innerSpy, generateClient } = mockedGenerateClient([
         {
           data: {},
           errors: [
             {
               message: 'Unauthorized',
-            },
+            } as Error,
           ],
         },
       ]);
@@ -59,7 +60,8 @@ describe('CRUD error handling', () => {
       // App.tsx
       Amplify.configure(config);
       const client = generateClient<Schema>();
-      const { errors, data: newTodo } = await client.models.Todo.create({
+
+      const { data: newTodo, errors } = await client.models.Todo.create({
         content: 'My new todo',
         done: true,
       });
@@ -80,7 +82,7 @@ describe('CRUD error handling', () => {
           errors: [
             {
               message: 'Unauthorized',
-            },
+            } as GraphQLError,
           ],
         },
       ]);
@@ -114,7 +116,7 @@ describe('CRUD error handling', () => {
           errors: [
             {
               message: 'Unauthorized',
-            },
+            } as GraphQLError,
           ],
         },
       ]);
@@ -170,13 +172,11 @@ describe('CRUD error handling', () => {
       // #region mocking
       const { spy, generateClient } = mockedGenerateClient([
         {
-          data: {
-            getTodo: sampleTodo,
-          },
+          data: sampleTodo,
           errors: [
             {
               message: 'Not Authorized to access additionalInfo on type Todo',
-            },
+            } as GraphQLError,
           ],
         },
       ]);
@@ -197,18 +197,23 @@ describe('CRUD error handling', () => {
         },
       );
 
+      // eslint-disable-next-line no-debugger
+      debugger;
+
       // #region assertions
       expect(optionsAndHeaders(spy)).toMatchSnapshot();
       expect(errors).toBeDefined();
       expect(getTodo).toEqual(sampleTodo);
       // #endregion assertions
     });
-    test('list an item', async () => {
+    test.only('list an item', async () => {
       // #region mocking
       const { spy, generateClient } = mockedGenerateClient([
         {
           data: {
-            listTodos: sampleTodo,
+            listTodos: {
+              items: [sampleTodo],
+            },
           },
           errors: [
             {
@@ -232,7 +237,7 @@ describe('CRUD error handling', () => {
       // #region assertions
       expect(optionsAndHeaders(spy)).toMatchSnapshot();
       expect(errors).toBeDefined();
-      expect(listTodos).toEqual(sampleTodo);
+      expect(listTodos).toEqual([sampleTodo]);
       // #endregion assertions
     });
   });

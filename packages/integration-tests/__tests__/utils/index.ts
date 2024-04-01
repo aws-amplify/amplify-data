@@ -1,9 +1,14 @@
-import { print, parse, DocumentNode, TypeNode } from 'graphql';
+import { GraphQLError, print, parse, DocumentNode, TypeNode } from 'graphql';
 import { generateModels } from '@aws-amplify/graphql-generator';
 import { generateClient as actualGenerateClient } from 'aws-amplify/api';
 import { GraphQLAPI } from '@aws-amplify/api-graphql'; // eslint-disable-line
 import { Observable, Subscriber } from 'rxjs'; // eslint-disable-line
 import { Amplify } from 'aws-amplify';
+// eslint-disable-next-line import/no-extraneous-dependencies
+// import {
+//   AmplifyError,
+//   AmplifyErrorParams,
+// } from '@aws-amplify/core/internals/utils';
 
 const graphqlspy = jest.spyOn(GraphQLAPI as any, 'graphql');
 const _graphqlspy = jest.spyOn(GraphQLAPI as any, '_graphql');
@@ -20,9 +25,22 @@ export function mockApiResponse<T>(client: T, value: any) {
   });
 }
 
-export type GraphQLResult = {
-  data: null | Record<string, any>;
-  errors?: null | Record<string, any>;
+export interface GraphQLResult<T = object> {
+  data: T;
+  errors?: GraphQLError[];
+  extensions?: Record<string, any>;
+}
+
+const createGraphQLResultWithError = <T>(
+  data: any,
+  error: Error,
+): GraphQLResult<T> => {
+  // eslint-disable-next-line no-debugger
+  debugger;
+  return {
+    data,
+    errors: [new GraphQLError(error.message, null, null, null, null, error)],
+  };
 };
 
 /**
@@ -50,6 +68,17 @@ export async function buildAmplifyConfig(schema: {
   };
 }
 
+// export class GraphQLApiError extends AmplifyError {
+//   constructor(params: AmplifyErrorParams) {
+//     super(params);
+
+//     // Hack for making the custom error class work when transpiled to es5
+//     // TODO: Delete the following 2 lines after we change the build target to >= es2015
+//     this.constructor = GraphQLApiError;
+//     Object.setPrototypeOf(this, GraphQLApiError.prototype);
+//   }
+// }
+
 /**
  * Produces a `generateClient` function and associated spy that is pre-configured
  * to return the given list of responses in order.
@@ -66,6 +95,7 @@ export function mockedGenerateClient(
     | GraphQLResult
     | (() => GraphQLResult)
     | (() => Promise<GraphQLResult>)
+    | any
   )[],
 ) {
   const subs = {} as Record<string, Subscriber<any>>;
@@ -77,7 +107,13 @@ export function mockedGenerateClient(
       if (typeof result === 'function') {
         return result();
       } else {
-        return result;
+        if (result.errors) {
+          throw createGraphQLResultWithError(
+            result.data,
+            new Error(result.errors[0].message),
+          );
+        }
+        return result as unknown as GraphQLResult<T>;
       }
     });
     _graphqlsubspy.mockImplementation((amplify: any, options: any) => {
