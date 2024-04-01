@@ -74,6 +74,40 @@ describe('CRUD error handling', () => {
       // #endregion assertions
     });
 
+    test('get an item', async () => {
+      // #region mocking
+      const { spy, innerSpy, generateClient } = mockedGenerateClient([
+        {
+          data: {},
+          errors: [
+            {
+              message: 'Unauthorized',
+            } as Error,
+          ],
+        },
+      ]);
+
+      // simulated amplifyconfiguration.json
+      const config = await buildAmplifyConfig(schema);
+      // #endregion mocking
+
+      // #region docs code
+      // App.tsx
+      Amplify.configure(config);
+      const client = generateClient<Schema>();
+
+      const { data: todo, errors } = await client.models.Todo.get({
+        id: 'some-id',
+      });
+      // #endregion docs code
+
+      // #region assertions
+      expect(optionsAndHeaders(spy)).toMatchSnapshot();
+      expect(errors).toBeDefined();
+      expect(todo).toEqual({});
+      // #endregion assertions
+    });
+
     test('update an item', async () => {
       // #region mocking
       const { spy, generateClient } = mockedGenerateClient([
@@ -140,6 +174,40 @@ describe('CRUD error handling', () => {
       expect(optionsAndHeaders(spy)).toMatchSnapshot();
       expect(errors).toBeDefined();
       expect(deletedTodo).toEqual({});
+      // #endregion assertions
+    });
+
+    test('list items', async () => {
+      // #region mocking
+      const { spy, generateClient } = mockedGenerateClient([
+        {
+          data: {},
+          errors: [
+            {
+              message: 'Unauthorized',
+            } as GraphQLError,
+          ],
+        },
+      ]);
+
+      // simulated amplifyconfiguration.json
+      const config = await buildAmplifyConfig(schema);
+      // #endregion mocking
+
+      // #region docs code
+      // App.tsx
+      Amplify.configure(config);
+      const client = generateClient<Schema>();
+
+      const { data: todos, errors } = await client.models.Todo.list({
+        id: 'some_id',
+      });
+      // #endregion docs code
+
+      // #region assertions
+      expect(optionsAndHeaders(spy)).toMatchSnapshot();
+      expect(errors).toBeDefined();
+      expect(todos).toEqual({});
       // #endregion assertions
     });
   });

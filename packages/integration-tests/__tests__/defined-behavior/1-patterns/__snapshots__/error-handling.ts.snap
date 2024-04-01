@@ -37,6 +37,36 @@ exports[`CRUD error handling error response with "empty" \`data\` result delete 
 ]
 `;
 
+exports[`CRUD error handling error response with "empty" \`data\` result get an item 1`] = `
+[
+  [
+    {
+      "authMode": undefined,
+      "authToken": undefined,
+      "query": "query($id: ID!) { getTodo(id: $id) { id content description done priority createdAt updatedAt owner } }",
+      "variables": {
+        "id": "some-id",
+      },
+    },
+    {},
+  ],
+]
+`;
+
+exports[`CRUD error handling error response with "empty" \`data\` result list items 1`] = `
+[
+  [
+    {
+      "authMode": undefined,
+      "authToken": undefined,
+      "query": "query($filter: ModelTodoFilterInput,$limit: Int,$nextToken: String) { listTodos(filter: $filter,limit: $limit,nextToken: $nextToken) { items { id content description done priority createdAt updatedAt owner } nextToken __typename } }",
+      "variables": {},
+    },
+    {},
+  ],
+]
+`;
+
 exports[`CRUD error handling error response with "empty" \`data\` result update an item 1`] = `
 [
   [
