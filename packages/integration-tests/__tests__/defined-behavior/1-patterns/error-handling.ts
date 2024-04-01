@@ -197,24 +197,17 @@ describe('CRUD error handling', () => {
         },
       );
 
-      // eslint-disable-next-line no-debugger
-      debugger;
-
       // #region assertions
       expect(optionsAndHeaders(spy)).toMatchSnapshot();
       expect(errors).toBeDefined();
       expect(getTodo).toEqual(sampleTodo);
       // #endregion assertions
     });
-    test.only('list an item', async () => {
+    test('list an item', async () => {
       // #region mocking
       const { spy, generateClient } = mockedGenerateClient([
         {
-          data: {
-            listTodos: {
-              items: [sampleTodo],
-            },
-          },
+          data: [sampleTodo],
           errors: [
             {
               message: 'Not Authorized to access additionalInfo on type Todo',
@@ -230,14 +223,14 @@ describe('CRUD error handling', () => {
       // App.tsx
       Amplify.configure(config);
       const client = generateClient<Schema>();
-      const { data: listTodos, errors } = await client.models.Todo.list({
+      const { data, errors } = await client.models.Todo.list({
         selectionSet: ['id', 'content', 'additionalInfo.*'],
       });
 
       // #region assertions
       expect(optionsAndHeaders(spy)).toMatchSnapshot();
       expect(errors).toBeDefined();
-      expect(listTodos).toEqual([sampleTodo]);
+      expect(data).toEqual([sampleTodo]);
       // #endregion assertions
     });
   });

@@ -4,11 +4,6 @@ import { generateClient as actualGenerateClient } from 'aws-amplify/api';
 import { GraphQLAPI } from '@aws-amplify/api-graphql'; // eslint-disable-line
 import { Observable, Subscriber } from 'rxjs'; // eslint-disable-line
 import { Amplify } from 'aws-amplify';
-// eslint-disable-next-line import/no-extraneous-dependencies
-// import {
-//   AmplifyError,
-//   AmplifyErrorParams,
-// } from '@aws-amplify/core/internals/utils';
 
 const graphqlspy = jest.spyOn(GraphQLAPI as any, 'graphql');
 const _graphqlspy = jest.spyOn(GraphQLAPI as any, '_graphql');
@@ -35,8 +30,6 @@ const createGraphQLResultWithError = <T>(
   data: any,
   error: Error,
 ): GraphQLResult<T> => {
-  // eslint-disable-next-line no-debugger
-  debugger;
   return {
     data,
     errors: [new GraphQLError(error.message, null, null, null, null, error)],
