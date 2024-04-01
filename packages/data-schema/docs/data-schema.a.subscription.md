@@ -14,9 +14,9 @@ export declare function subscription(): CustomOperation<{
     authorization: [];
     typeName: 'Subscription';
     handlers: null;
-}, never, typeof subscriptionBrand>;
+}, 'returns', typeof subscriptionBrand>;
 ```
 **Returns:**
 
-CustomOperation&lt;{ arguments: null; returnType: null; functionRef: null; authorization: \[\]; typeName: 'Subscription'; handlers: null; }, never, typeof subscriptionBrand&gt;
+CustomOperation&lt;{ arguments: null; returnType: null; functionRef: null; authorization: \[\]; typeName: 'Subscription'; handlers: null; }, 'returns', typeof subscriptionBrand&gt;
 

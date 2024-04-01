@@ -115,9 +115,22 @@ export type CustomOperation<
     handler<H extends HandlerInputType>(
       handlers: H,
     ): CustomOperation<T, K | 'handler', B>;
-    for(
-      source: SubscriptionSource | SubscriptionSource[],
-    ): CustomOperation<T, K | 'for', B>;
+    for<Source extends SubscriptionSource>(
+      source: Source | Source[],
+    ): CustomOperation<
+      T['typeName'] extends 'Subscription'
+        ? SetTypeSubArg<
+            T,
+            'returnType',
+            // the array contained types are validated in the SchemaProcessor to have the
+            // same return type, so we can safely use Source[number] here as the source
+            // to extra the return type in `packages/data-schema/src/MappedTypes/CustomOperations.ts`
+            Source extends SubscriptionSource[] ? Source[number] : Source
+          >
+        : T,
+      K | 'for',
+      B
+    >;
   },
   K
 > &
@@ -255,7 +268,7 @@ export function subscription(): CustomOperation<
     typeName: 'Subscription';
     handlers: null;
   },
-  never,
+  'returns',
   typeof subscriptionBrand
 > {
   return _custom('Subscription', subscriptionBrand);
