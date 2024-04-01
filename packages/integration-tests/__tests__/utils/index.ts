@@ -20,7 +20,7 @@ export function mockApiResponse<T>(client: T, value: any) {
   });
 }
 
-export interface GraphQLResult<T = object> {
+export interface GraphQLResult<T = object | null> {
   data: T;
   errors?: GraphQLError[];
   extensions?: Record<string, any>;
