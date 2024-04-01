@@ -1,5 +1,11 @@
 # @aws-amplify/data-schema
 
+## 0.14.6
+
+### Patch Changes
+
+- 3127247: fix: remove .returns() modifier from custom subscription
+
 ## 0.14.5
 
 ### Patch Changes
