@@ -77,7 +77,6 @@ export function mockedGenerateClient(
     | GraphQLResult
     | (() => GraphQLResult)
     | (() => Promise<GraphQLResult>)
-    | any
   )[],
 ) {
   const subs = {} as Record<string, Subscriber<any>>;
@@ -89,7 +88,7 @@ export function mockedGenerateClient(
       if (typeof result === 'function') {
         return result();
       } else {
-        if (result.errors) {
+        if (result?.errors) {
           throw createGraphQLResultWithError(
             result.data,
             new Error(result.errors[0].message),

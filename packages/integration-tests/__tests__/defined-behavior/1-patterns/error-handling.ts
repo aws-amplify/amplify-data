@@ -47,7 +47,7 @@ describe('CRUD error handling', () => {
           errors: [
             {
               message: 'Unauthorized',
-            } as Error,
+            } as GraphQLError,
           ],
         },
       ]);
@@ -82,7 +82,7 @@ describe('CRUD error handling', () => {
           errors: [
             {
               message: 'Unauthorized',
-            } as Error,
+            } as GraphQLError,
           ],
         },
       ]);
@@ -279,7 +279,7 @@ describe('CRUD error handling', () => {
           errors: [
             {
               message: 'Not Authorized to access additionalInfo on type Todo',
-            },
+            } as GraphQLError,
           ],
         },
       ]);
