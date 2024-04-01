@@ -17,6 +17,9 @@
     "build:esm": "npm run clean && tsc -p ./tsconfig.json",
     "build:esm:watch": "npm run build:esm -- --watch",
     "clean": "rimraf lib-esm tsconfig.tsbuildinfo",
+    "docs": "api-extractor run && api-documenter markdown --input-folder temp --output-folder docs",
+    "docs:temp": "api-extractor run && api-documenter markdown --input-folder temp --output-folder temp/docs",
+    "check-api": "rimraf temp && npm run docs:temp && dircompare docs temp/docs",
     "test": "echo \"No tests\"",
     "lint": "eslint ."
   },

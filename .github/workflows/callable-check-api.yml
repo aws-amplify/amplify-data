@@ -1,0 +1,34 @@
+name: API Check
+
+on: workflow_call
+
+jobs:
+  check-api:
+    name: Check for unexpected API changes
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@24cb9080177205b6e8c946b17badbe402adc938f # v3.4.0 https://github.com/actions/checkout/commit/24cb9080177205b6e8c946b17badbe402adc938f
+        with:
+          path: amplify-api-next
+      - name: Setup node and build the repository
+        uses: ./amplify-api-next/.github/actions/node-and-build
+      - name: Run checks
+        working-directory: ./amplify-api-next
+        run: npm run check-api
+      - name: API Check Instructions
+        if: failure()
+        run: |
+          echo
+          echo "Oh no!! The API Check Failed!"
+          echo
+          echo "You probably have API changes that are not documented in this PR. If this is the case, you have two options."
+          echo
+          echo "Option 1: Revert the API changes. (If API/docstring changes were not intended.)"
+          echo "Option 2: Update the API docs by running the following from the repository root:"
+          echo
+          echo "npm run build && npm run docs"
+          echo 
+          echo "Then commit and push the changes."
+          echo
+          exit 1

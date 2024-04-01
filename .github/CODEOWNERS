@@ -1,2 +1,3 @@
 * @aws-amplify/amplify-data
 **/__tests__/defined-behavior/ @aws-amplify/amplify-data-admins @aws-amplify/amplify-pms
+packages/*/docs @aws-amplify/amplify-data-admins @aws-amplify/amplify-pms

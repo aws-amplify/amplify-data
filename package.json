@@ -13,6 +13,9 @@
   "scripts": {
     "build": "turbo run build",
     "build:clean": "turbo run clean && rimraf node_modules",
+    "check": "npm run build && npm run test && npm run lint && npm run check-api",
+    "check-api": "turbo run check-api",
+    "docs": "turbo run docs",
     "test": "turbo run test",
     "lint": "turbo run lint",
     "clean": "turbo run clean",
@@ -22,11 +25,14 @@
   },
   "devDependencies": {
     "@changesets/cli": "^2.26.2",
+    "@microsoft/api-documenter": "^7.23.37",
+    "@microsoft/api-extractor": "^7.42.3",
     "@tsd/typescript": "^5.1.6",
     "@types/jest": "29.5.4",
     "@types/prettier": "^3.0.0",
     "@typescript-eslint/eslint-plugin": "^6.7.4",
     "@typescript-eslint/parser": "^6.7.4",
+    "dir-compare-cli": "^1.0.1",
     "eslint": "^8.50.0",
     "eslint-config-prettier": "^9.0.0",
     "eslint-plugin-import": "^2.28.1",
@@ -38,6 +44,7 @@
     "prettier": "^3.0.3",
     "rimraf": "^5.0.5",
     "ts-jest": "^29.1.1",
+    "tsx": "^4.7.1",
     "turbo": "^1.10.14",
     "typescript": "^5.1.6"
   }
