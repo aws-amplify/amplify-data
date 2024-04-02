@@ -1,6 +1,6 @@
 {
   "name": "@aws-amplify/data-schema",
-  "version": "0.14.5",
+  "version": "0.14.6",
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
@@ -13,7 +13,7 @@
     "clean": "rimraf lib-esm tsconfig.tsbuildinfo",
     "docs": "api-extractor run && api-documenter markdown --input-folder temp --output-folder docs",
     "docs:temp": "api-extractor run && api-documenter markdown --input-folder temp --output-folder temp/docs",
-    "check-api": "rimraf temp && npm run docs:temp && dircompare docs temp/docs",
+    "check-api": "rimraf temp && npm run docs:temp && node ../../scripts/shallow-dir-diff.js docs temp/docs",
     "lint": "eslint .",
     "test": "jest"
   },

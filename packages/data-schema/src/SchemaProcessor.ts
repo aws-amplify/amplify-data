@@ -313,17 +313,60 @@ function customOperationToGql(
     ? calculateCustomAuth(authorization)
     : calculateAuth(authorization);
 
+  /**
+   *
+   * @param returnType The return type from the `data` field of a customer operation.
+   * @param refererTypeName The type the refers {@link returnType} by `a.ref()`.
+   * @param shouldAddCustomTypeToImplicitModels A flag indicates wether it should push
+   * the return type resolved CustomType to the `implicitModels` list.
+   * @returns
+   */
+  const resolveReturnTypeNameFromReturnType = (
+    returnType: any,
+    {
+      refererTypeName,
+      shouldAddCustomTypeToImplicitModels = true,
+    }: {
+      refererTypeName: string;
+      shouldAddCustomTypeToImplicitModels?: boolean;
+    },
+  ): string => {
+    if (isRefField(returnType)) {
+      return refFieldToGql(returnType?.data);
+    } else if (isCustomType(returnType)) {
+      const returnTypeName = `${capitalize(refererTypeName)}ReturnType`;
+      if (shouldAddCustomTypeToImplicitModels) {
+        implicitModels.push([returnTypeName, returnType]);
+      }
+      return returnTypeName;
+    } else if (isScalarField(returnType)) {
+      return scalarFieldToGql(returnType?.data);
+    } else {
+      throw new Error(`Unrecognized return type on ${typeName}`);
+    }
+  };
+
   let returnTypeName: string;
 
-  if (isRefField(returnType)) {
-    returnTypeName = refFieldToGql(returnType?.data);
-  } else if (isCustomType(returnType)) {
-    returnTypeName = `${capitalize(typeName)}ReturnType`;
-    implicitModels.push([returnTypeName, returnType]);
-  } else if (isScalarField(returnType)) {
-    returnTypeName = scalarFieldToGql(returnType?.data);
+  if (opType === 'Subscription' && returnType === null) {
+    // up to this point, we've validated that each subscription resource resolves
+    // the same return type, so it's safe to use subscriptionSource[0] here.
+    const { type, def } = getRefType(subscriptionSource[0].data.link, typeName);
+    if (type === 'CustomOperation') {
+      returnTypeName = resolveReturnTypeNameFromReturnType(
+        def.data.returnType,
+        {
+          refererTypeName: subscriptionSource[0].data.link,
+          shouldAddCustomTypeToImplicitModels: false,
+        },
+      );
+    } else {
+      returnTypeName = refFieldToGql(subscriptionSource[0].data);
+    }
   } else {
-    throw new Error(`Unrecognized return type on ${typeName}`);
+    returnTypeName = resolveReturnTypeNameFromReturnType(returnType, {
+      refererTypeName: typeName,
+    });
   }
 
   if (Object.keys(fieldArgs).length > 0) {
@@ -1369,7 +1412,6 @@ function validateCustomOperations(
     handlers,
     typeName: opType,
     subscriptionSource,
-    returnType,
   } = typeDef.data;
 
   // TODO: remove `functionRef` after deprecating
@@ -1414,7 +1456,9 @@ function validateCustomOperations(
       );
     }
 
-    subscriptionSource.forEach((source: InternalRef) => {
+    let expectedReturnType: any | undefined;
+
+    for (const source of subscriptionSource) {
       const sourceName = source.data.link;
       const { type, def } = getRefType(sourceName, typeName);
 
@@ -1424,71 +1468,46 @@ function validateCustomOperations(
         );
       }
 
-      if (type === 'Model' && source.data.mutationOperations.length === 0) {
-        throw new Error(
-          `Invalid subscription definition. .mutations() modifier must be used with a Model ref subscription source. ${typeName} is referencing ${sourceName} without specifying a mutation`,
-        );
-      }
+      let resolvedReturnType: any;
 
-      if (type === 'CustomOperation' && def.data.typeName !== 'Mutation') {
-        throw new Error(
-          `Invalid subscription definition. .for() can only reference a mutation. ${typeName} is referencing ${sourceName} which is a ${def.data.typeName}`,
-        );
-      }
-
-      // Ensure subscription return type matches the return type of triggering mutation(s)
-
-      // TODO: when we remove .returns() for custom subscriptions, minor changes will be needed here. Instead of comparing subscriptionSource return val
-      //  to a root returnType, we'll need to ensure that each subscriptionSource has the same return type
-      if (returnType.data.type === 'ref') {
-        const returnTypeName = returnType.data.link;
-
-        if (type === 'Model') {
-          if (
-            returnTypeName !== sourceName ||
-            returnType.data.array !== source.data.array
-          ) {
-            throw new Error(
-              `Invalid subscription definition. Subscription return type must match the return type of the mutation triggering it. ${typeName} is referencing ${sourceName} which has a different return type`,
-            );
-          }
-        }
-
-        if (type === 'CustomOperation') {
-          const customOperationReturnType = def.data.returnType.data.link;
-          const customOperationReturnTypeArray = def.data.returnType.data.array;
-
-          if (
-            returnTypeName !== customOperationReturnType ||
-            returnType.data.array !== customOperationReturnTypeArray
-          ) {
-            throw new Error(
-              `Invalid subscription definition. Subscription return type must match the return type of the mutation triggering it. ${typeName} is referencing ${sourceName} which has a different return type`,
-            );
-          }
-        }
-      } else if (returnType.data.fieldType !== undefined) {
-        if (type === 'Model') {
+      if (type === 'Model') {
+        if (source.data.mutationOperations.length === 0) {
           throw new Error(
-            `Invalid subscription definition. Subscription return type must match the return type of the mutation triggering it. ${typeName} is referencing ${sourceName} which has a different return type`,
+            `Invalid subscription definition. .mutations() modifier must be used with a Model ref subscription source. ${typeName} is referencing ${sourceName} without specifying a mutation`,
           );
+        } else {
+          resolvedReturnType = def;
         }
+      }
 
-        if (type === 'CustomOperation') {
-          const customOperationReturnType = def.data.returnType.data.fieldType;
-          const customOperationReturnTypeArray = def.data.returnType.data.array;
-
-          if (
-            returnType.data.fieldType !== customOperationReturnType ||
-            returnType.data.array !== customOperationReturnTypeArray
-          ) {
-            throw new Error(
-              `Invalid subscription definition. Subscription return type must match the return type of the mutation triggering it. ${typeName} is referencing ${sourceName} which has a different return type`,
-            );
+      if (type === 'CustomOperation') {
+        if (def.data.typeName !== 'Mutation') {
+          throw new Error(
+            `Invalid subscription definition. .for() can only reference a mutation. ${typeName} is referencing ${sourceName} which is a ${def.data.typeName}`,
+          );
+        } else {
+          const returnType = def.data.returnType;
+          if (isRefField(returnType)) {
+            ({ def: resolvedReturnType } = getRefType(
+              returnType.data.link,
+              typeName,
+            ));
+          } else {
+            resolvedReturnType = returnType;
           }
         }
       }
-    });
+
+      expectedReturnType = expectedReturnType ?? resolvedReturnType;
+
+      // As the return types are resolved from the root `schema` object and they should
+      // not be mutated, we compare by references here.
+      if (expectedReturnType !== resolvedReturnType) {
+        throw new Error(
+          `Invalid subscription definition. .for() can only reference resources that have the same return type. ${typeName} is referencing resources that have different return types.`,
+        );
+      }
+    }
   }
 }
 

@@ -253,7 +253,22 @@ type Subscription {
 }"
 `;
 
-exports[`CustomOperation transform dynamo schema custom subscriptions Custom subscription where .returns() matches referenced custom operation's scalar return type 1`] = `
+exports[`CustomOperation transform dynamo schema custom subscriptions Custom subscription where .for() resource has a CustomType return type 1`] = `
+"type CreateCustomTypePostReturnType 
+{
+  title: String!
+}
+
+type Mutation {
+  createCustomTypePost: CreateCustomTypePostReturnType @function(name: "createCustomTypePost") @auth(rules: [{allow: public}])
+}
+
+type Subscription {
+  onLikeCustomTypePost: CreateCustomTypePostReturnType @function(name: "onCreateCustomTypePost") @aws_subscribe(mutations: ["createCustomTypePost"]) @auth(rules: [{allow: public}])
+}"
+`;
+
+exports[`CustomOperation transform dynamo schema custom subscriptions Custom subscription where .for() resource has a scalar return type 1`] = `
 "type Mutation {
   likePost: String @function(name: "likePost") @auth(rules: [{allow: public}])
 }

@@ -589,7 +589,6 @@ describe('schema auth rules', () => {
         onLikePost: a
           .subscription()
           .for(a.ref('likePost'))
-          .returns(a.ref('Post'))
           .handler(a.handler.function('myFunc')),
       })
       .authorization([a.allow.owner()]);
