@@ -2521,7 +2521,7 @@ bench(
           field214: a.string(),
           field215: a.string(),
         }),
-        Model1: a.model({
+        Model36: a.model({
           field1: a.string(),
           field2: a.string(),
           field3: a.string(),
@@ -10119,7 +10119,6 @@ bench(
       })
       .authorization([a.allow.public()]);
 
-    //@ts-expect-error - working schema:
     type _ = ClientSchema<typeof schema>;
 
     // TODO:

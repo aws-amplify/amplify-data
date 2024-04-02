@@ -509,6 +509,7 @@ bench('prod p50 CRUDL', async () => {
     },
   });
 
+  // @ts-expect-error Type instantiation is excessively deep and possibly infinite is expected for this schema
   const client = generateClient<Schema>();
 
   const result = await client.models.Todo.create({
