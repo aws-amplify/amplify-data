@@ -457,7 +457,7 @@ describe('CRUD error handling', () => {
       // #region mocking
       const { spy, generateClient } = mockedGenerateClient([
         {
-          data: sampleTodo,
+          data: { getTodo: sampleTodo },
           errors: [
             {
               message: 'Not Authorized to access additionalInfo on type Todo',
@@ -484,14 +484,14 @@ describe('CRUD error handling', () => {
 
       // #region assertions
       expect(errors).toBeDefined();
-      expect(getTodo).toEqual(sampleTodo);
+      expect(getTodo).toEqual({ getTodo: sampleTodo });
       // #endregion assertions
     });
     test('list an item', async () => {
       // #region mocking
       const { spy, generateClient } = mockedGenerateClient([
         {
-          data: [sampleTodo],
+          data: { listTodos: [sampleTodo] },
           errors: [
             {
               message: 'Not Authorized to access additionalInfo on type Todo',
@@ -513,7 +513,7 @@ describe('CRUD error handling', () => {
 
       // #region assertions
       expect(errors).toBeDefined();
-      expect(data).toEqual([sampleTodo]);
+      expect(data).toEqual({ listTodos: [sampleTodo] });
       // #endregion assertions
     });
   });
