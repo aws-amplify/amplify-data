@@ -9148,5 +9148,6 @@ bench('1522 simple models with 1 field each w/ client types', () => {
     })
     .authorization([a.allow.public()]);
 
+  // @ts-expect-error Type instantiation is excessively deep and possibly infinite is expected for this schema
   type _ = ClientSchema<typeof s>;
 }).types([9618855, 'instantiations']);
