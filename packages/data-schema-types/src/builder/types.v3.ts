@@ -67,7 +67,7 @@ export type FunctionSchemaAccess = {
 
 export type DefineFunction = any;
 
-export type DatasourceEngine = 'mysql' | 'postgres' | 'dynamodb';
+export type DatasourceEngine = 'mysql' | 'postgresql' | 'dynamodb';
 
 type SubnetAZ = {
   subnetId: string;
@@ -77,7 +77,7 @@ type SubnetAZ = {
 type VpcConfig = {
   vpcId: string;
   securityGroupIds: string[];
-  subnetAvailabilityZoneConfig: SubnetAZ[];
+  subnetAvailabilityZones: SubnetAZ[];
 };
 
 export type DataSourceConfiguration<
