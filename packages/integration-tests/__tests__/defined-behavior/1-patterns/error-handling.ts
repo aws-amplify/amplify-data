@@ -19,6 +19,10 @@ const sampleTodo = {
 };
 
 describe('CRUD error handling', () => {
+  /**
+   * The following tests demonstrate an error response with a completely empty
+   * `data` result (e.g. `data: {}`).
+   */
   describe('error response with "empty" `data` result', () => {
     // https://docs.amplify.aws/gen2/build-a-backend/data/mutate-data/
 
@@ -56,6 +60,224 @@ describe('CRUD error handling', () => {
       const config = await buildAmplifyConfig(schema);
       // #endregion mocking
 
+      // App.tsx
+      Amplify.configure(config);
+
+      /**
+       * Representing an error case where the app is not configured to use IAM,
+       * but the customer incorrectly supplies the config anyway. This results
+       * in us hitting the following util:
+       * https://github.com/aws-amplify/amplify-js/blob/main/packages/api-graphql/src/utils/errors/createGraphQLResultWithError.ts
+       */
+      const client = generateClient<Schema>({ authMode: 'iam' });
+
+      const { data: newTodo, errors } = await client.models.Todo.create({
+        content: 'My new todo',
+        done: true,
+      });
+
+      // #region assertions
+      expect(errors).toBeDefined();
+      expect(newTodo).toEqual({});
+      // #endregion assertions
+    });
+
+    test('get an item', async () => {
+      // #region mocking
+      const { spy, innerSpy, generateClient } = mockedGenerateClient([
+        {
+          data: {},
+          errors: [
+            {
+              message: 'Unauthorized',
+            } as GraphQLError,
+          ],
+        },
+      ]);
+
+      // simulated amplifyconfiguration.json
+      const config = await buildAmplifyConfig(schema);
+      // #endregion mocking
+
+      // App.tsx
+      Amplify.configure(config);
+
+      /**
+       * Representing an error case where the app is not configured to use IAM,
+       * but the customer incorrectly supplies the config anyway. This results
+       * in us hitting the following util:
+       * https://github.com/aws-amplify/amplify-js/blob/main/packages/api-graphql/src/utils/errors/createGraphQLResultWithError.ts
+       */
+      const client = generateClient<Schema>({ authMode: 'iam' });
+
+      const { data: todo, errors } = await client.models.Todo.get({
+        id: 'some-id',
+      });
+
+      // #region assertions
+      expect(errors).toBeDefined();
+      expect(todo).toEqual({});
+      // #endregion assertions
+    });
+
+    test('update an item', async () => {
+      // #region mocking
+      const { spy, generateClient } = mockedGenerateClient([
+        {
+          data: {},
+          errors: [
+            {
+              message: 'Unauthorized',
+            } as GraphQLError,
+          ],
+        },
+      ]);
+
+      // simulated amplifyconfiguration.json
+      const config = await buildAmplifyConfig(schema);
+      // #endregion mocking
+
+      // App.tsx
+      Amplify.configure(config);
+
+      /**
+       * Representing an error case where the app is not configured to use IAM,
+       * but the customer incorrectly supplies the config anyway. This results
+       * in us hitting the following util:
+       * https://github.com/aws-amplify/amplify-js/blob/main/packages/api-graphql/src/utils/errors/createGraphQLResultWithError.ts
+       */
+      const client = generateClient<Schema>({ authMode: 'iam' });
+
+      const { data: updatedTodo, errors } = await client.models.Todo.update({
+        id: 'some_id',
+        description: 'Updated description',
+      });
+
+      // #region assertions
+      expect(errors).toBeDefined();
+      expect(updatedTodo).toEqual({});
+      // #endregion assertions
+    });
+
+    test('delete an item', async () => {
+      // #region mocking
+      const { spy, generateClient } = mockedGenerateClient([
+        {
+          data: {},
+          errors: [
+            {
+              message: 'Unauthorized',
+            } as GraphQLError,
+          ],
+        },
+      ]);
+
+      // simulated amplifyconfiguration.json
+      const config = await buildAmplifyConfig(schema);
+      // #endregion mocking
+
+      // App.tsx
+      Amplify.configure(config);
+
+      /**
+       * Representing an error case where the app is not configured to use IAM,
+       * but the customer incorrectly supplies the config anyway. This results
+       * in us hitting the following util:
+       * https://github.com/aws-amplify/amplify-js/blob/main/packages/api-graphql/src/utils/errors/createGraphQLResultWithError.ts
+       */
+      const client = generateClient<Schema>({ authMode: 'iam' });
+
+      const toBeDeletedTodo = {
+        id: '123123213',
+      };
+      const { data: deletedTodo, errors } =
+        await client.models.Todo.delete(toBeDeletedTodo);
+
+      // #region assertions
+      expect(errors).toBeDefined();
+      expect(deletedTodo).toEqual({});
+      // #endregion assertions
+    });
+
+    test('list items', async () => {
+      // #region mocking
+      const { spy, generateClient } = mockedGenerateClient([
+        {
+          data: {},
+          errors: [
+            {
+              message: 'Unauthorized',
+            } as GraphQLError,
+          ],
+        },
+      ]);
+
+      // simulated amplifyconfiguration.json
+      const config = await buildAmplifyConfig(schema);
+      // #endregion mocking
+
+      // App.tsx
+      Amplify.configure(config);
+
+      /**
+       * Representing an error case where the app is not configured to use IAM,
+       * but the customer incorrectly supplies the config anyway. This results
+       * in us hitting the following util:
+       * https://github.com/aws-amplify/amplify-js/blob/main/packages/api-graphql/src/utils/errors/createGraphQLResultWithError.ts
+       */
+      const client = generateClient<Schema>({ authMode: 'iam' });
+
+      const { data: todos, errors } = await client.models.Todo.list({
+        id: 'some_id',
+      });
+
+      // #region assertions
+      expect(errors).toBeDefined();
+      expect(todos).toEqual({});
+      // #endregion assertions
+    });
+  });
+  /**
+   * The following tests demonstrate an error response with a `null` `data`
+   * result, (e.g. `data: createTodo: null`)
+   */
+  describe('error response with `null` result', () => {
+    // https://docs.amplify.aws/gen2/build-a-backend/data/mutate-data/
+
+    // data/resource.ts
+    const schema = a.schema({
+      Todo: a
+        .model({
+          content: a.string(),
+          description: a.string(),
+          done: a.boolean(),
+          priority: a.enum(['low', 'medium', 'high']),
+        })
+        .authorization([a.allow.owner()]),
+    });
+    type Schema = ClientSchema<typeof schema>;
+
+    afterEach(() => {
+      jest.clearAllMocks();
+    });
+
+    test('create an item', async () => {
+      // #region mocking
+      const { spy, innerSpy, generateClient } = mockedGenerateClient([
+        {
+          data: { createTodo: null },
+          errors: [
+            {
+              message: 'Unauthorized',
+            } as GraphQLError,
+          ],
+        },
+      ]);
+
+      // simulated amplifyconfiguration.json
+      const config = await buildAmplifyConfig(schema);
+      // #endregion mocking
+
       // #region docs code
       // App.tsx
       Amplify.configure(config);
@@ -68,9 +290,8 @@ describe('CRUD error handling', () => {
       // #endregion docs code
 
       // #region assertions
-      expect(optionsAndHeaders(spy)).toMatchSnapshot();
       expect(errors).toBeDefined();
-      expect(newTodo).toEqual({});
+      expect(newTodo).toEqual({ createTodo: null });
       // #endregion assertions
     });
 
@@ -78,7 +299,7 @@ describe('CRUD error handling', () => {
       // #region mocking
       const { spy, innerSpy, generateClient } = mockedGenerateClient([
         {
-          data: {},
+          data: { getTodo: null },
           errors: [
             {
               message: 'Unauthorized',
@@ -102,9 +323,8 @@ describe('CRUD error handling', () => {
       // #endregion docs code
 
       // #region assertions
-      expect(optionsAndHeaders(spy)).toMatchSnapshot();
       expect(errors).toBeDefined();
-      expect(todo).toEqual({});
+      expect(todo).toEqual({ getTodo: null });
       // #endregion assertions
     });
 
@@ -112,7 +332,7 @@ describe('CRUD error handling', () => {
       // #region mocking
       const { spy, generateClient } = mockedGenerateClient([
         {
-          data: {},
+          data: { updateTodo: null },
           errors: [
             {
               message: 'Unauthorized',
@@ -136,9 +356,8 @@ describe('CRUD error handling', () => {
       // #endregion docs code
 
       // #region assertions
-      expect(optionsAndHeaders(spy)).toMatchSnapshot();
       expect(errors).toBeDefined();
-      expect(updatedTodo).toEqual({});
+      expect(updatedTodo).toEqual({ updateTodo: null });
       // #endregion assertions
     });
 
@@ -146,7 +365,7 @@ describe('CRUD error handling', () => {
       // #region mocking
       const { spy, generateClient } = mockedGenerateClient([
         {
-          data: {},
+          data: { deleteTodo: null },
           errors: [
             {
               message: 'Unauthorized',
@@ -171,9 +390,8 @@ describe('CRUD error handling', () => {
       // #endregion docs code
 
       // #region assertions
-      expect(optionsAndHeaders(spy)).toMatchSnapshot();
       expect(errors).toBeDefined();
-      expect(deletedTodo).toEqual({});
+      expect(deletedTodo).toEqual({ deleteTodo: null });
       // #endregion assertions
     });
 
@@ -181,7 +399,7 @@ describe('CRUD error handling', () => {
       // #region mocking
       const { spy, generateClient } = mockedGenerateClient([
         {
-          data: {},
+          data: { listTodo: null },
           errors: [
             {
               message: 'Unauthorized',
@@ -205,9 +423,8 @@ describe('CRUD error handling', () => {
       // #endregion docs code
 
       // #region assertions
-      expect(optionsAndHeaders(spy)).toMatchSnapshot();
       expect(errors).toBeDefined();
-      expect(todos).toEqual({});
+      expect(todos).toEqual({ listTodo: null });
       // #endregion assertions
     });
   });
@@ -266,7 +483,6 @@ describe('CRUD error handling', () => {
       );
 
       // #region assertions
-      expect(optionsAndHeaders(spy)).toMatchSnapshot();
       expect(errors).toBeDefined();
       expect(getTodo).toEqual(sampleTodo);
       // #endregion assertions
@@ -296,7 +512,6 @@ describe('CRUD error handling', () => {
       });
 
       // #region assertions
-      expect(optionsAndHeaders(spy)).toMatchSnapshot();
       expect(errors).toBeDefined();
       expect(data).toEqual([sampleTodo]);
       // #endregion assertions

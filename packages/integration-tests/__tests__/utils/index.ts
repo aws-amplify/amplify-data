@@ -81,7 +81,7 @@ export function mockedGenerateClient(
 ) {
   const subs = {} as Record<string, Subscriber<any>>;
 
-  function generateClient<T extends Record<any, any>>() {
+  function generateClient<T extends Record<any, any>>(config?: any) {
     const client = actualGenerateClient<T>();
     _graphqlspy.mockImplementation(async () => {
       const result = responses.shift();
