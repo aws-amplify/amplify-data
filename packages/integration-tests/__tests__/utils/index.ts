@@ -88,7 +88,11 @@ export function mockedGenerateClient(
       if (typeof result === 'function') {
         return result();
       } else {
-        if (result?.errors) {
+        if (
+          result &&
+          Array.isArray(result.errors) &&
+          result.errors.length > 0
+        ) {
           throw createGraphQLResultWithError(
             result.data,
             new Error(result.errors[0].message),
