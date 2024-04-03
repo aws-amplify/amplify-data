@@ -24,8 +24,6 @@ describe('CRUD error handling', () => {
    * `data` result (e.g. `data: {}`).
    */
   describe('error response with "empty" `data` result', () => {
-    // https://docs.amplify.aws/gen2/build-a-backend/data/mutate-data/
-
     // data/resource.ts
     const schema = a.schema({
       Todo: a
