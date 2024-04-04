@@ -1,10 +1,6 @@
 import { a, ClientSchema } from '@aws-amplify/data-schema';
 import { Amplify } from 'aws-amplify';
-import {
-  buildAmplifyConfig,
-  mockedGenerateClient,
-  optionsAndHeaders,
-} from '../../utils';
+import { buildAmplifyConfig, mockedGenerateClient } from '../../utils';
 import { GraphQLError } from 'graphql';
 
 const sampleTodo = {
@@ -19,6 +15,14 @@ const sampleTodo = {
 };
 
 describe('CRUD error handling', () => {
+  const authError1 = {
+    message: 'Unauthorized',
+  } as GraphQLError;
+
+  const authError2 = {
+    message: 'Not Authorized to access additionalInfo on type Todo',
+  } as GraphQLError;
+
   /**
    * The following tests demonstrate an error response with an empty `data`
    * result (e.g. `data: {}`).
@@ -49,11 +53,7 @@ describe('CRUD error handling', () => {
       const { spy, innerSpy, generateClient } = mockedGenerateClient([
         {
           data: {},
-          errors: [
-            {
-              message: 'Unauthorized',
-            } as GraphQLError,
-          ],
+          errors: [authError1],
         },
       ]);
 
@@ -78,7 +78,7 @@ describe('CRUD error handling', () => {
       });
 
       // #region assertions
-      expect(errors).toBeDefined();
+      expect(errors).toEqual(expect.arrayContaining([authError1]));
       expect(newTodo).toEqual({});
       // #endregion assertions
     });
@@ -88,11 +88,7 @@ describe('CRUD error handling', () => {
       const { spy, innerSpy, generateClient } = mockedGenerateClient([
         {
           data: {},
-          errors: [
-            {
-              message: 'Unauthorized',
-            } as GraphQLError,
-          ],
+          errors: [authError1],
         },
       ]);
 
@@ -116,7 +112,7 @@ describe('CRUD error handling', () => {
       });
 
       // #region assertions
-      expect(errors).toBeDefined();
+      expect(errors).toEqual(expect.arrayContaining([authError1]));
       expect(todo).toEqual({});
       // #endregion assertions
     });
@@ -126,11 +122,7 @@ describe('CRUD error handling', () => {
       const { spy, generateClient } = mockedGenerateClient([
         {
           data: {},
-          errors: [
-            {
-              message: 'Unauthorized',
-            } as GraphQLError,
-          ],
+          errors: [authError1],
         },
       ]);
 
@@ -155,7 +147,7 @@ describe('CRUD error handling', () => {
       });
 
       // #region assertions
-      expect(errors).toBeDefined();
+      expect(errors).toEqual(expect.arrayContaining([authError1]));
       expect(updatedTodo).toEqual({});
       // #endregion assertions
     });
@@ -165,11 +157,7 @@ describe('CRUD error handling', () => {
       const { spy, generateClient } = mockedGenerateClient([
         {
           data: {},
-          errors: [
-            {
-              message: 'Unauthorized',
-            } as GraphQLError,
-          ],
+          errors: [authError1],
         },
       ]);
 
@@ -195,7 +183,7 @@ describe('CRUD error handling', () => {
         await client.models.Todo.delete(toBeDeletedTodo);
 
       // #region assertions
-      expect(errors).toBeDefined();
+      expect(errors).toEqual(expect.arrayContaining([authError1]));
       expect(deletedTodo).toEqual({});
       // #endregion assertions
     });
@@ -205,11 +193,7 @@ describe('CRUD error handling', () => {
       const { spy, generateClient } = mockedGenerateClient([
         {
           data: {},
-          errors: [
-            {
-              message: 'Unauthorized',
-            } as GraphQLError,
-          ],
+          errors: [authError1],
         },
       ]);
 
@@ -233,7 +217,7 @@ describe('CRUD error handling', () => {
       });
 
       // #region assertions
-      expect(errors).toBeDefined();
+      expect(errors).toEqual(expect.arrayContaining([authError1]));
       expect(todos).toEqual({});
       // #endregion assertions
     });
@@ -271,11 +255,7 @@ describe('CRUD error handling', () => {
       const { spy, innerSpy, generateClient } = mockedGenerateClient([
         {
           data: { createTodo: null },
-          errors: [
-            {
-              message: 'Unauthorized',
-            } as GraphQLError,
-          ],
+          errors: [authError1],
         },
       ]);
 
@@ -295,7 +275,7 @@ describe('CRUD error handling', () => {
       // #endregion docs code
 
       // #region assertions
-      expect(errors).toBeDefined();
+      expect(errors).toEqual(expect.arrayContaining([authError1]));
       expect(newTodo).toEqual({ createTodo: null });
       // #endregion assertions
     });
@@ -305,11 +285,7 @@ describe('CRUD error handling', () => {
       const { spy, innerSpy, generateClient } = mockedGenerateClient([
         {
           data: { getTodo: null },
-          errors: [
-            {
-              message: 'Unauthorized',
-            } as GraphQLError,
-          ],
+          errors: [authError1],
         },
       ]);
 
@@ -328,7 +304,7 @@ describe('CRUD error handling', () => {
       // #endregion docs code
 
       // #region assertions
-      expect(errors).toBeDefined();
+      expect(errors).toEqual(expect.arrayContaining([authError1]));
       expect(todo).toEqual({ getTodo: null });
       // #endregion assertions
     });
@@ -338,11 +314,7 @@ describe('CRUD error handling', () => {
       const { spy, generateClient } = mockedGenerateClient([
         {
           data: { updateTodo: null },
-          errors: [
-            {
-              message: 'Unauthorized',
-            } as GraphQLError,
-          ],
+          errors: [authError1],
         },
       ]);
 
@@ -361,7 +333,7 @@ describe('CRUD error handling', () => {
       // #endregion docs code
 
       // #region assertions
-      expect(errors).toBeDefined();
+      expect(errors).toEqual(expect.arrayContaining([authError1]));
       expect(updatedTodo).toEqual({ updateTodo: null });
       // #endregion assertions
     });
@@ -371,11 +343,7 @@ describe('CRUD error handling', () => {
       const { spy, generateClient } = mockedGenerateClient([
         {
           data: { deleteTodo: null },
-          errors: [
-            {
-              message: 'Unauthorized',
-            } as GraphQLError,
-          ],
+          errors: [authError1],
         },
       ]);
 
@@ -395,7 +363,7 @@ describe('CRUD error handling', () => {
       // #endregion docs code
 
       // #region assertions
-      expect(errors).toBeDefined();
+      expect(errors).toEqual(expect.arrayContaining([authError1]));
       expect(deletedTodo).toEqual({ deleteTodo: null });
       // #endregion assertions
     });
@@ -405,11 +373,7 @@ describe('CRUD error handling', () => {
       const { spy, generateClient } = mockedGenerateClient([
         {
           data: { listTodo: null },
-          errors: [
-            {
-              message: 'Unauthorized',
-            } as GraphQLError,
-          ],
+          errors: [authError1],
         },
       ]);
 
@@ -428,7 +392,7 @@ describe('CRUD error handling', () => {
       // #endregion docs code
 
       // #region assertions
-      expect(errors).toBeDefined();
+      expect(errors).toEqual(expect.arrayContaining([authError1]));
       expect(todos).toEqual({ listTodo: null });
       // #endregion assertions
     });
@@ -471,11 +435,7 @@ describe('CRUD error handling', () => {
       const { spy, generateClient } = mockedGenerateClient([
         {
           data: { getTodo: sampleTodo },
-          errors: [
-            {
-              message: 'Not Authorized to access additionalInfo on type Todo',
-            } as GraphQLError,
-          ],
+          errors: [authError2],
         },
       ]);
 
@@ -496,7 +456,7 @@ describe('CRUD error handling', () => {
       );
 
       // #region assertions
-      expect(errors).toBeDefined();
+      expect(errors).toEqual(expect.arrayContaining([authError2]));
       expect(getTodo).toEqual({ getTodo: sampleTodo });
       // #endregion assertions
     });
@@ -505,11 +465,7 @@ describe('CRUD error handling', () => {
       const { spy, generateClient } = mockedGenerateClient([
         {
           data: { listTodos: [sampleTodo] },
-          errors: [
-            {
-              message: 'Not Authorized to access additionalInfo on type Todo',
-            } as GraphQLError,
-          ],
+          errors: [authError2],
         },
       ]);
 
@@ -525,7 +481,7 @@ describe('CRUD error handling', () => {
       });
 
       // #region assertions
-      expect(errors).toBeDefined();
+      expect(errors).toEqual(expect.arrayContaining([authError2]));
       expect(data).toEqual({ listTodos: [sampleTodo] });
       // #endregion assertions
     });
