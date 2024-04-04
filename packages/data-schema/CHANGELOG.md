@@ -1,5 +1,11 @@
 # @aws-amplify/data-schema
 
+## 0.14.8
+
+### Patch Changes
+
+- 08e47d1: fix: rds custom operations are missing from resolved types
+
 ## 0.14.7
 
 ### Patch Changes
