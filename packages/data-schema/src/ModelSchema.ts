@@ -106,12 +106,9 @@ export type RDSModelSchema<
   UsedMethods extends RDSModelSchemaFunctions = never,
 > = Omit<
   {
-    setSqlStatementFolderPath: <Path extends string>(
-      path: Path,
-    ) => RDSModelSchema<
-      SetTypeSubArg<T, 'setSqlStatementFolderPath', Path>,
-      UsedMethods | 'setSqlStatementFolderPath'
-    >;
+    setSqlStatementFolderPath: (
+      path: string,
+    ) => RDSModelSchema<T, UsedMethods | 'setSqlStatementFolderPath'>;
     addQueries: <Queries extends Record<string, QueryCustomOperation>>(
       types: Queries,
     ) => RDSModelSchema<

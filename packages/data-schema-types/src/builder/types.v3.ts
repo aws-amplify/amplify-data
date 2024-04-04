@@ -28,6 +28,7 @@ export interface DerivedApiDefinition {
   readonly lambdaFunctions: LambdaFunctionDefinition;
   readonly functionSchemaAccess: FunctionSchemaAccess[];
   readonly sqlStatementFolderPath?: SqlStatementFolderEntry;
+  readonly customSqlDataSourceStrategies?: CustomSqlDataSourceStrategy[];
 }
 
 export type DerivedCombinedSchema = {
@@ -68,6 +69,11 @@ export type FunctionSchemaAccess = {
 export type DefineFunction = any;
 
 export type DatasourceEngine = 'mysql' | 'postgresql' | 'dynamodb';
+
+export type CustomSqlDataSourceStrategy = {
+  typeName: 'Query' | 'Mutation';
+  fieldName: string;
+};
 
 type SubnetAZ = {
   subnetId: string;

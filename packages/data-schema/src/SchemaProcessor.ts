@@ -30,6 +30,7 @@ import {
   JsResolverEntry,
   FunctionSchemaAccess,
   LambdaFunctionDefinition,
+  CustomSqlDataSourceStrategy,
 } from '@aws-amplify/data-schema-types';
 import type { InternalRef, RefType } from './RefType';
 import type { EnumType } from './EnumType';
@@ -296,6 +297,7 @@ function customOperationToGql(
   gqlField: string;
   models: [string, any][];
   lambdaFunctionDefinition: LambdaFunctionDefinition;
+  customSqlDataSourceStrategy: CustomSqlDataSourceStrategy | undefined;
 } {
   const {
     arguments: fieldArgs,
@@ -380,6 +382,7 @@ function customOperationToGql(
 
   let gqlHandlerContent = '';
   let lambdaFunctionDefinition: LambdaFunctionDefinition = {};
+  let customSqlDataSourceStrategy: CustomSqlDataSourceStrategy | undefined;
 
   if (isFunctionHandler(handlers)) {
     ({ gqlHandlerContent, lambdaFunctionDefinition } = transformFunctionHandler(
@@ -392,6 +395,10 @@ function customOperationToGql(
     gqlHandlerContent = `@sql(statement: ${escapeGraphQlString(
       String(getHandlerData(handler)),
     )}) `;
+    customSqlDataSourceStrategy = {
+      typeName: opType as `Query` | `Mutation`,
+      fieldName: typeName,
+    };
   } else if (databaseType === 'sql' && handler && brand === 'sqlReference') {
     gqlHandlerContent = `@sql(reference: "${getHandlerData(handler)}") `;
   }
@@ -418,7 +425,12 @@ function customOperationToGql(
   }
 
   const gqlField = `${callSignature}: ${returnTypeName} ${gqlHandlerContent}${authString}`;
-  return { gqlField, models: implicitModels, lambdaFunctionDefinition };
+  return {
+    gqlField,
+    models: implicitModels,
+    lambdaFunctionDefinition,
+    customSqlDataSourceStrategy,
+  };
 }
 
 /**
@@ -1168,6 +1180,7 @@ const schemaPreprocessor = (
   functionSchemaAccess: FunctionSchemaAccess[];
   lambdaFunctions: LambdaFunctionDefinition;
   sqlStatementFolderPath?: JsResolverEntry;
+  customSqlDataSourceStrategies?: CustomSqlDataSourceStrategy[];
 } => {
   const gqlModels: string[] = [];
 
@@ -1179,6 +1192,7 @@ const schemaPreprocessor = (
 
   const jsFunctions: JsResolver[] = [];
   let lambdaFunctions: LambdaFunctionDefinition = {};
+  const customSqlDataSourceStrategies: CustomSqlDataSourceStrategy[] = [];
 
   const databaseType =
     schema.data.configuration.database.engine === 'dynamodb'
@@ -1271,6 +1285,7 @@ const schemaPreprocessor = (
           models,
           jsFunctionForField,
           lambdaFunctionDefinition,
+          customSqlDataSourceStrategy,
         } = transformCustomOperations(
           typeDef,
           typeName,
@@ -1285,6 +1300,10 @@ const schemaPreprocessor = (
 
         if (jsFunctionForField) {
           jsFunctions.push(jsFunctionForField);
+        }
+
+        if (customSqlDataSourceStrategy) {
+          customSqlDataSourceStrategies.push(customSqlDataSourceStrategy);
         }
 
         switch (opType) {
@@ -1398,6 +1417,7 @@ const schemaPreprocessor = (
     functionSchemaAccess,
     lambdaFunctions,
     sqlStatementFolderPath,
+    customSqlDataSourceStrategies,
   };
 };
 
@@ -1622,7 +1642,12 @@ function transformCustomOperations(
 
   const isCustom = Boolean(jsFunctionForField);
 
-  const { gqlField, models, lambdaFunctionDefinition } = customOperationToGql(
+  const {
+    gqlField,
+    models,
+    lambdaFunctionDefinition,
+    customSqlDataSourceStrategy,
+  } = customOperationToGql(
     typeName,
     typeDef,
     authRules,
@@ -1631,7 +1656,13 @@ function transformCustomOperations(
     getRefType,
   );
 
-  return { gqlField, models, jsFunctionForField, lambdaFunctionDefinition };
+  return {
+    gqlField,
+    models,
+    jsFunctionForField,
+    lambdaFunctionDefinition,
+    customSqlDataSourceStrategy,
+  };
 }
 
 function generateCustomOperationTypes({
@@ -1670,6 +1701,7 @@ export function processSchema(arg: {
     functionSchemaAccess,
     lambdaFunctions,
     sqlStatementFolderPath,
+    customSqlDataSourceStrategies,
   } = schemaPreprocessor(arg.schema);
 
   return {
@@ -1679,5 +1711,6 @@ export function processSchema(arg: {
     functionSchemaAccess,
     lambdaFunctions,
     sqlStatementFolderPath,
+    customSqlDataSourceStrategies,
   };
 }
