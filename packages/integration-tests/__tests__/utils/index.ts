@@ -1,7 +1,7 @@
 import { GraphQLError, print, parse, DocumentNode, TypeNode } from 'graphql';
 import { generateModels } from '@aws-amplify/graphql-generator';
 import { generateClient as actualGenerateClient } from 'aws-amplify/api';
-import { GraphQLAPI, GraphQLResult } from '@aws-amplify/api-graphql'; // eslint-disable-line
+import { GraphQLAPI, GraphQLResult as RuntimeGraphQLResult } from '@aws-amplify/api-graphql'; // eslint-disable-line
 import { Observable, Subscriber } from 'rxjs'; // eslint-disable-line
 import { Amplify } from 'aws-amplify';
 
@@ -20,11 +20,13 @@ export function mockApiResponse<T>(client: T, value: any) {
   });
 }
 
+export interface GraphQLResult<T = object | null>
+  extends RuntimeGraphQLResult<T> {}
+
 /**
  * Represents current runtime behavior: passes through `data` as-is, but wraps
- * `error` in a `GraphQLError`. Once the runtime has been updated to handle
- * errors correctly, this function will be updated to flatten the `data`
- * response accordingly.
+ * `error` in a `GraphQLError`. `data` here is processed by the runtime
+ * in these tests.
  */
 const createMockGraphQLResultWithError = <T>(
   data: any,

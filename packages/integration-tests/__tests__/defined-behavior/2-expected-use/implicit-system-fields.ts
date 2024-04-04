@@ -86,13 +86,9 @@ describe('Implicit System Field Handling. Given:', () => {
       const config = await buildAmplifyConfig(schema);
       Amplify.configure(config);
       const { spy, generateClient } = mockedGenerateClient([
-        // @ts-expect-error
         { data: null },
-        // @ts-expect-error
         { data: null },
-        // @ts-expect-error
         { data: null },
-        // @ts-expect-error
         { data: null },
       ]);
 
