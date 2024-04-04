@@ -1,5 +1,11 @@
 # @aws-amplify/data-schema
 
+## 0.14.7
+
+### Patch Changes
+
+- 96f3ee4: fix: field with field auth cannot be used as sort key of index
+
 ## 0.14.6
 
 ### Patch Changes
