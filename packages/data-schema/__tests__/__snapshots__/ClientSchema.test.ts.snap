@@ -1,5 +1,24 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`RDS Schema with sql statement references schema with full path sql reference 1`] = `
+{
+  "functionSchemaAccess": [],
+  "functionSlots": [],
+  "jsFunctions": [],
+  "lambdaFunctions": {},
+  "schema": "type widget @model @auth(rules: [{allow: public}])
+{
+  title: String!
+  someOwnerField: String
+}
+
+type Query {
+  callSql: widget @sql(reference: "testReferenceName") @auth(rules: [{allow: public}])
+}",
+  "sqlStatementFolderPath": "/full/path/to/sql/statement/directory/",
+}
+`;
+
 exports[`custom operations custom mutation 1`] = `
 "type LikePostResult 
 {
@@ -23,8 +42,7 @@ type Query {
 `;
 
 exports[`custom operations for a.combine schema a ddb and sql schemas combine without issues 1`] = `
-"
-type A @model @auth(rules: [{allow: public}])
+"type A @model @auth(rules: [{allow: public}])
 {
   field: String
 }
@@ -35,8 +53,7 @@ type B @model @auth(rules: [{allow: public}])
 `;
 
 exports[`custom operations for a.combine schema combining two schemas with custom mutation results in customTypes and customOperations that intersect the separate schemas 1`] = `
-"
-type LikePostResult 
+"type LikePostResult 
 {
   likes: Int!
 }
@@ -65,8 +82,7 @@ type Mutation {
 `;
 
 exports[`custom operations for a.combine schema two schemas combine without issues 1`] = `
-"
-type A @model @auth(rules: [{allow: public}])
+"type A @model @auth(rules: [{allow: public}])
 {
   field: String
 }
@@ -104,6 +120,7 @@ exports[`schema auth rules allows custom 1`] = `
 {
   field: String
 }",
+  "sqlStatementFolderPath": undefined,
 }
 `;
 
@@ -117,6 +134,7 @@ exports[`schema auth rules allows groupDefinedIn 1`] = `
 {
   field: String
 }",
+  "sqlStatementFolderPath": undefined,
 }
 `;
 
@@ -130,6 +148,7 @@ exports[`schema auth rules allows groupsDefinedIn 1`] = `
 {
   field: String
 }",
+  "sqlStatementFolderPath": undefined,
 }
 `;
 
@@ -144,6 +163,7 @@ exports[`schema auth rules allows multiple entries 1`] = `
 {
   field: String
 }",
+  "sqlStatementFolderPath": undefined,
 }
 `;
 
@@ -157,6 +177,7 @@ exports[`schema auth rules allows multipleOwners 1`] = `
 {
   field: String
 }",
+  "sqlStatementFolderPath": undefined,
 }
 `;
 
@@ -170,6 +191,7 @@ exports[`schema auth rules allows owner 1`] = `
 {
   field: String
 }",
+  "sqlStatementFolderPath": undefined,
 }
 `;
 
@@ -183,6 +205,7 @@ exports[`schema auth rules allows private 1`] = `
 {
   field: String
 }",
+  "sqlStatementFolderPath": undefined,
 }
 `;
 
@@ -196,6 +219,7 @@ exports[`schema auth rules allows public 1`] = `
 {
   field: String
 }",
+  "sqlStatementFolderPath": undefined,
 }
 `;
 
@@ -209,6 +233,7 @@ exports[`schema auth rules allows specificGroups 1`] = `
 {
   field: String
 }",
+  "sqlStatementFolderPath": undefined,
 }
 `;
 
@@ -229,6 +254,7 @@ exports[`schema auth rules disallows specificGroup 1`] = `
 {
   field: String
 }",
+  "sqlStatementFolderPath": undefined,
 }
 `;
 
@@ -254,6 +280,7 @@ type Query {
 type Subscription {
   onLikePost: Post @function(name: "myFunc") @aws_subscribe(mutations: ["likePost"]) @auth(rules: [{allow: owner, ownerField: "owner"}])
 }",
+  "sqlStatementFolderPath": undefined,
 }
 `;
 
@@ -293,6 +320,7 @@ type D @model @auth(rules: [{allow: public}])
 enum DTired {
   ?
 }",
+  "sqlStatementFolderPath": undefined,
 }
 `;
 
@@ -306,6 +334,7 @@ exports[`schema auth rules prefers model auth over global auth owner auth on mod
 {
   field: String
 }",
+  "sqlStatementFolderPath": undefined,
 }
 `;
 
@@ -319,6 +348,7 @@ exports[`schema auth rules prefers model auth over global auth owner auth on mod
 {
   field: String
 }",
+  "sqlStatementFolderPath": undefined,
 }
 `;
 
@@ -332,6 +362,7 @@ exports[`schema auth rules prefers model auth over global auth public auth on mo
 {
   field: String
 }",
+  "sqlStatementFolderPath": undefined,
 }
 `;
 

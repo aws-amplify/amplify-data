@@ -426,6 +426,7 @@ exports[`CustomOperation transform dynamo schema handlers a.handler.inlineSql wo
 type Query {
   getPostDetails: GetPostDetailsReturnType @sql(statement: "SELECT * from TESTTABLE;") @auth(rules: [{allow: private}])
 }",
+  "sqlStatementFolderPath": undefined,
 }
 `;
 

@@ -1,4 +1,8 @@
-import type { InternalSchema } from './ModelSchema';
+import {
+  isCustomPathData,
+  type CustomPathData,
+  type InternalSchema,
+} from './ModelSchema';
 import {
   type ModelField,
   ModelFieldType,
@@ -40,7 +44,6 @@ import {
   getHandlerData,
   type HandlerType,
   type CustomHandler,
-  type CustomHandlerData,
   FunctionHandler,
 } from './Handler';
 import * as os from 'os';
@@ -1164,12 +1167,15 @@ const schemaPreprocessor = (
   jsFunctions: JsResolver[];
   functionSchemaAccess: FunctionSchemaAccess[];
   lambdaFunctions: LambdaFunctionDefinition;
+  sqlStatementFolderPath?: JsResolverEntry;
 } => {
   const gqlModels: string[] = [];
 
   const customQueries = [];
   const customMutations = [];
   const customSubscriptions = [];
+
+  let sqlStatementFolderPath: JsResolverEntry | undefined;
 
   const jsFunctions: JsResolver[] = [];
   let lambdaFunctions: LambdaFunctionDefinition = {};
@@ -1178,6 +1184,16 @@ const schemaPreprocessor = (
     schema.data.configuration.database.engine === 'dynamodb'
       ? 'dynamodb'
       : 'sql';
+
+  if (
+    'sqlStatementFolderPath' in schema.data &&
+    isCustomPathData(schema.data.sqlStatementFolderPath)
+  ) {
+    sqlStatementFolderPath = resolveEntryPath(
+      schema.data.sqlStatementFolderPath,
+      'Could not determine import path to construct absolute code path for sql statements folder. Consider using an absolute path instead.',
+    );
+  }
 
   const staticSchema =
     schema.data.configuration.database.engine === 'dynamodb' ? false : true;
@@ -1381,6 +1397,7 @@ const schemaPreprocessor = (
     jsFunctions,
     functionSchemaAccess,
     lambdaFunctions,
+    sqlStatementFolderPath,
   };
 };
 
@@ -1537,25 +1554,22 @@ const sanitizeStackTrace = (stackTrace: string): string[] => {
 
 // copied from the defineFunction path resolution impl:
 // https://github.com/aws-amplify/amplify-backend/blob/main/packages/backend-function/src/get_caller_directory.ts
-const resolveCustomHandlerEntryPath = (
-  data: CustomHandlerData,
+const resolveEntryPath = (
+  data: CustomPathData,
+  errorMessage: string,
 ): JsResolverEntry => {
   if (path.isAbsolute(data.entry)) {
     return data.entry;
   }
 
-  const unresolvedImportLocationError = new Error(
-    'Could not determine import path to construct absolute code path for custom handler. Consider using an absolute path instead.',
-  );
-
   if (!data.stack) {
-    throw unresolvedImportLocationError;
+    throw new Error(errorMessage);
   }
 
   const stackTraceLines = sanitizeStackTrace(data.stack);
 
   if (stackTraceLines.length < 2) {
-    throw unresolvedImportLocationError;
+    throw new Error(errorMessage);
   }
 
   const stackTraceImportLine = stackTraceLines[1]; // the first entry is the file where the error was initialized (our code). The second entry is where the customer called our code which is what we are interested in
@@ -1574,7 +1588,10 @@ const handleCustom = (
 
     return {
       dataSource: normalizeDataSourceName(handlerData.dataSource),
-      entry: resolveCustomHandlerEntryPath(handlerData),
+      entry: resolveEntryPath(
+        handlerData,
+        'Could not determine import path to construct absolute code path for custom handler. Consider using an absolute path instead.',
+      ),
     };
   });
 
@@ -1647,8 +1664,13 @@ function generateCustomOperationTypes({
 export function processSchema(arg: {
   schema: InternalSchema;
 }): DerivedApiDefinition {
-  const { schema, jsFunctions, functionSchemaAccess, lambdaFunctions } =
-    schemaPreprocessor(arg.schema);
+  const {
+    schema,
+    jsFunctions,
+    functionSchemaAccess,
+    lambdaFunctions,
+    sqlStatementFolderPath,
+  } = schemaPreprocessor(arg.schema);
 
   return {
     schema,
@@ -1656,5 +1678,6 @@ export function processSchema(arg: {
     jsFunctions,
     functionSchemaAccess,
     lambdaFunctions,
+    sqlStatementFolderPath,
   };
 }
