@@ -22,6 +22,7 @@ describe('CRUD error handling', () => {
   /**
    * The following tests demonstrate an error response with a completely empty
    * `data` result (e.g. `data: {}`).
+   * todo: configuration error, encounter 'catch' in try catch
    */
   describe('error response with "empty" `data` result', () => {
     // data/resource.ts
@@ -238,6 +239,7 @@ describe('CRUD error handling', () => {
   /**
    * The following tests demonstrate an error response with a `null` `data`
    * result, (e.g. `data: createTodo: null`)
+   * todo: auth error, no 'catch'
    */
   describe('error response with `null` result', () => {
     // https://docs.amplify.aws/gen2/build-a-backend/data/mutate-data/
@@ -426,6 +428,10 @@ describe('CRUD error handling', () => {
       // #endregion assertions
     });
   });
+  /**
+   * todo: explanation
+   * no catch
+   */
   describe('error response with populated `data` result', () => {
     // data/resource.ts
 
