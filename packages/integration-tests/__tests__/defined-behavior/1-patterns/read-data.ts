@@ -101,7 +101,7 @@ describe('Read application data', () => {
     expect(listTodoErrors).toBeUndefined();
     expect(getInventoryErrors).toBeUndefined();
     expect(todos).toEqual([sampleTodo]);
-    expect(inventory).toEqual(inventory);
+    expect(inventory).toEqual(sampleInventory);
     // #endregion assertions
   });
 

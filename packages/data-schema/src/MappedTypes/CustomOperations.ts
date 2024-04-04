@@ -7,10 +7,13 @@ import type {
 import type { ModelField } from '../ModelField';
 import type { RefType, RefTypeParamShape } from '../RefType';
 import type {
+  ResolveCustomTypeFieldsRequirements,
   ResolveRefsOfCustomType,
   ResolveRefValueArrayTraits,
 } from './ResolveFieldProperties';
 import type { AppSyncResolverHandler } from 'aws-lambda';
+import type { CustomType } from '../CustomType';
+import type { FieldTypesOfCustomType } from './ResolveSchema';
 
 /**
  * Creates meta types for custom operations from a schema.
@@ -19,18 +22,23 @@ export type ResolveCustomOperations<
   Schema extends GenericModelSchema<any>,
   FullyResolvedSchema extends Record<string, unknown>,
   NonModelTypes extends NonModelTypesShape,
+  CustomOperations extends Record<
+    string,
+    CustomOperationParamShape
+  > = CustomOpShapes<Schema>,
 > = {
   customOperations: {
-    [OpName in keyof CustomOpShapes<Schema>]: {
-      arguments: CustomOpArguments<CustomOpShapes<Schema>[OpName]>;
+    [OpName in keyof CustomOperations]: {
+      arguments: CustomOpArguments<CustomOperations[OpName]>;
       returnType: CustomOpReturnType<
-        CustomOpShapes<Schema>[OpName],
+        CustomOperations[OpName],
         FullyResolvedSchema,
-        NonModelTypes
+        NonModelTypes,
+        CustomOperations
       >;
-      functionRef: CustomOpShapes<Schema>[OpName]['functionRef'];
-      typeName: CustomOpShapes<Schema>[OpName]['typeName'];
-      authorization: CustomOpShapes<Schema>[OpName]['authorization'];
+      functionRef: CustomOperations[OpName]['functionRef'];
+      typeName: CustomOperations[OpName]['typeName'];
+      authorization: CustomOperations[OpName]['authorization'];
     };
   };
 };
@@ -77,11 +85,35 @@ export type CustomOpReturnType<
   Shape extends CustomOperationParamShape,
   FullyResolvedSchema extends Record<string, unknown>,
   NonModelTypes extends NonModelTypesShape,
-> = Shape['returnType'] extends RefType<infer RefShape, any, any>
-  ? ResolveRef<RefShape, FullyResolvedSchema, NonModelTypes>
-  : Shape['returnType'] extends ModelField<infer R, any, any>
-    ? R
-    : never;
+  CustomOperations extends Record<string, CustomOperationParamShape>,
+> =
+  Shape['returnType'] extends RefType<infer RefShape, any, any>
+    ? RefShape['link'] extends keyof CustomOperations
+      ? // The case that a custom subscription's return type is set from its resource
+        CustomOpReturnType<
+          CustomOperations[RefShape['link']],
+          FullyResolvedSchema,
+          NonModelTypes,
+          CustomOperations
+        >
+      : ResolveRef<
+          RefShape,
+          FullyResolvedSchema,
+          NonModelTypes,
+          CustomOperations
+        >
+    : Shape['returnType'] extends ModelField<infer R, any, any>
+      ? R
+      : Shape['returnType'] extends CustomType<infer R>
+        ?
+            | ResolveCustomTypeFieldsRequirements<
+                FieldTypesOfCustomType<{
+                  thisCustomType: R['fields'];
+                }>['thisCustomType']
+              > // The inline `.customType()` with a custom operation doesn't have
+              // `.required()` modifier, hence it's nullable
+            | null
+        : never;
 
 /**
  * `a.ref()` resolution specific to custom operations, for which `a.ref()`
@@ -94,6 +126,7 @@ export type ResolveRef<
   Shape extends RefTypeParamShape,
   FullyResolvedSchema extends Record<string, unknown>,
   NonModelTypes extends NonModelTypesShape,
+  CustomOperations extends Record<string, CustomOperationParamShape>,
   Link = Shape['link'],
   RefValue = Link extends keyof FullyResolvedSchema
     ? FullyResolvedSchema[Link]
@@ -104,7 +137,15 @@ export type ResolveRef<
             NonModelTypes,
             NonModelTypes['customTypes'][Link]
           >
-        : never,
+        : Link extends keyof CustomOperations
+          ? // e.g. .subscription().for(a.ref('aCustomMutation'))
+            CustomOpReturnType<
+              CustomOperations[Link],
+              FullyResolvedSchema,
+              NonModelTypes,
+              CustomOperations
+            >
+          : never,
   Value = Shape['valueRequired'] extends true ? RefValue : RefValue | null,
 > = ResolveRefValueArrayTraits<Shape, Value>;
 
@@ -130,7 +171,7 @@ type CustomOperationMinimalDef = {
  * Derives the signature and types for a lambda handler for a particular
  * custom Query or Mutation from a Schema.
  */
-type IndvidualCustomHandlerTypes<Op extends CustomOperationMinimalDef> = {
+type IndividualCustomHandlerTypes<Op extends CustomOperationMinimalDef> = {
   /**
    * Handler type for lambda function implementations. E.g.,
    *
@@ -186,7 +227,7 @@ type IndvidualCustomHandlerTypes<Op extends CustomOperationMinimalDef> = {
 export type CustomOperationHandlerTypes<
   CustomOperations extends CustomOperationsMap,
 > = {
-  [K in keyof CustomOperations]: IndvidualCustomHandlerTypes<
+  [K in keyof CustomOperations]: IndividualCustomHandlerTypes<
     CustomOperations[K]
   >;
 };

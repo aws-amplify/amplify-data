@@ -1,5 +1,23 @@
 # @aws-amplify/data-schema
 
+## 0.14.8
+
+### Patch Changes
+
+- 08e47d1: fix: rds custom operations are missing from resolved types
+
+## 0.14.7
+
+### Patch Changes
+
+- 96f3ee4: fix: field with field auth cannot be used as sort key of index
+
+## 0.14.6
+
+### Patch Changes
+
+- 3127247: fix: remove .returns() modifier from custom subscription
+
 ## 0.14.5
 
 ### Patch Changes

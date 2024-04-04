@@ -6,6 +6,7 @@ import type {
 } from '@aws-amplify/data-schema-types';
 import { ClientSchema, a } from '../index';
 import type { AppSyncResolverHandler } from 'aws-lambda';
+import { configure } from '../src/ModelSchema';
 
 describe('custom operations return types', () => {
   describe('when .ref() a basic custom type', () => {
@@ -418,5 +419,80 @@ describe('custom operations return types', () => {
       type _T2 = Expect<Equal<ActualResult, ExpectedResult>>;
       type _T3 = Expect<Equal<ActualHandler, ExpectedFunctionHandler>>;
     });
+  });
+});
+
+describe('RDS custom operations', () => {
+  const s = configure({
+    database: {
+      engine: 'mysql',
+      connectionUri: 'fake' as any,
+    },
+  })
+    .schema({
+      Post: a.model({
+        title: a.string(),
+      }),
+    })
+    .addMutations({
+      likePost: a
+        .mutation()
+        .arguments({ postId: a.string() })
+        .returns(a.ref('Post'))
+        .handler(a.handler.function('myFunc')),
+    })
+    .addQueries({
+      getLikedPost: a
+        .query()
+        .returns(a.ref('Post'))
+        .handler(a.handler.function('myFunc')),
+    })
+    .addSubscriptions({
+      onLikePost: a
+        .subscription()
+        .for(a.ref('likePost'))
+        .handler(a.handler.function('myFunc')),
+    })
+    .authorization([a.allow.public()]);
+
+  type ResolvedClientSchema = ClientSchema<typeof s>;
+
+  it('adds custom operations to ModelMeta', () => {
+    type ModelMeta = ExtractModelMeta<ResolvedClientSchema>;
+    type Resolved = Prettify<ModelMeta['customOperations']>;
+
+    type Expected = {
+      likePost: {
+        arguments: {
+          postId: string | null;
+        };
+        returnType: {
+          title?: string | null | undefined;
+        } | null;
+        functionRef: null;
+        typeName: 'Mutation';
+        authorization: [];
+      };
+      getLikedPost: {
+        arguments: never;
+        returnType: {
+          title?: string | null | undefined;
+        } | null;
+        functionRef: null;
+        typeName: 'Query';
+        authorization: [];
+      };
+      onLikePost: {
+        arguments: never;
+        returnType: {
+          title?: string | null | undefined;
+        } | null;
+        functionRef: null;
+        typeName: 'Subscription';
+        authorization: [];
+      };
+    };
+
+    type _ = Expect<Equal<Resolved, Expected>>;
   });
 });

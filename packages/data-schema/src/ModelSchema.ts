@@ -143,18 +143,32 @@ export type RDSModelSchema<
   UsedMethods extends RDSModelSchemaFunctions = never,
 > = Omit<
   {
-    setSqlStatementFolderPath: (
-      path: string,
-    ) => RDSModelSchema<T, UsedMethods | 'setSqlStatementFolderPath'>;
-    addQueries: (
-      types: Record<string, QueryCustomOperation>,
-    ) => RDSModelSchema<T, UsedMethods | 'addQueries'>;
-    addMutations: (
-      types: Record<string, MutationCustomOperation>,
-    ) => RDSModelSchema<T, UsedMethods | 'addMutations'>;
-    addSubscriptions: (
-      types: Record<string, SubscriptionCustomOperation>,
-    ) => RDSModelSchema<T, UsedMethods | 'addSubscriptions'>;
+    setSqlStatementFolderPath: <Path extends string>(
+      path: Path,
+    ) => RDSModelSchema<
+      SetTypeSubArg<T, 'setSqlStatementFolderPath', Path>,
+      UsedMethods | 'setSqlStatementFolderPath'
+    >;
+    addQueries: <Queries extends Record<string, QueryCustomOperation>>(
+      types: Queries,
+    ) => RDSModelSchema<
+      SetTypeSubArg<T, 'types', T['types'] & Queries>,
+      UsedMethods | 'addQueries'
+    >;
+    addMutations: <Mutations extends Record<string, MutationCustomOperation>>(
+      types: Mutations,
+    ) => RDSModelSchema<
+      SetTypeSubArg<T, 'types', T['types'] & Mutations>,
+      UsedMethods | 'addMutations'
+    >;
+    addSubscriptions: <
+      Subscriptions extends Record<string, SubscriptionCustomOperation>,
+    >(
+      types: Subscriptions,
+    ) => RDSModelSchema<
+      SetTypeSubArg<T, 'types', T['types'] & Subscriptions>,
+      UsedMethods | 'addSubscriptions'
+    >;
     authorization: <AuthRules extends SchemaAuthorization<any, any, any>>(
       auth: AuthRules[],
     ) => RDSModelSchema<

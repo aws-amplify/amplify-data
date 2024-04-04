@@ -68,10 +68,11 @@ type SecondaryIndexFields<T extends Record<string, unknown>> = keyof {
 type ExtractType<T extends ModelTypeParamShape> = {
   [FieldProp in keyof T['fields'] as T['fields'][FieldProp] extends ModelField<
     any,
+    any,
     any
   >
     ? FieldProp
-    : never]: T['fields'][FieldProp] extends ModelField<infer R, any>
+    : never]: T['fields'][FieldProp] extends ModelField<infer R, any, any>
     ? R
     : never;
 };
