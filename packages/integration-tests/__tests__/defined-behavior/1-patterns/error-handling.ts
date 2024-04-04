@@ -20,9 +20,11 @@ const sampleTodo = {
 
 describe('CRUD error handling', () => {
   /**
-   * The following tests demonstrate an error response with a completely empty
-   * `data` result (e.g. `data: {}`).
-   * todo: configuration error, encounter 'catch' in try catch
+   * The following tests demonstrate an error response with an empty `data`
+   * result (e.g. `data: {}`).
+   * This will occur when, for instance, a customer passes incorrect options
+   * when generating the API client.
+   * Errors here are caught by the runtime.
    */
   describe('error response with "empty" `data` result', () => {
     // data/resource.ts
@@ -237,9 +239,12 @@ describe('CRUD error handling', () => {
     });
   });
   /**
-   * The following tests demonstrate an error response with a `null` `data`
-   * result, (e.g. `data: createTodo: null`)
-   * todo: auth error, no 'catch'
+   * The following tests demonstrate an error response with a `null` unflattened
+   * `data` result, (e.g. `data: createTodo: null`).
+   * This can occur when the user attempts to perform an operation that they
+   * are not authorized to perform.
+   * The error is not caught by the runtime (expected) and `data` is passed
+   * through, but the result it not flattened (unexpected).
    */
   describe('error response with `null` result', () => {
     // https://docs.amplify.aws/gen2/build-a-backend/data/mutate-data/
@@ -429,8 +434,12 @@ describe('CRUD error handling', () => {
     });
   });
   /**
-   * todo: explanation
-   * no catch
+   * The following tests demonstrate an error response with a complete and
+   * unflattened `data` result (e.g. `data: createTodo: {id: '123', ...etc }`).
+   * This can occur when, for instance, a selection set is provided that
+   * includes fields that the user is not authorized to access.
+   * The error is not caught by the runtime (expected) and `data` is passed
+   * through, but the result it not flattened (unexpected).
    */
   describe('error response with populated `data` result', () => {
     // data/resource.ts

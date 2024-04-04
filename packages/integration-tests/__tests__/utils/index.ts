@@ -26,7 +26,13 @@ export interface GraphQLResult<T = object | null> {
   extensions?: Record<string, any>;
 }
 
-const createGraphQLResultWithError = <T>(
+/**
+ * Represents current runtime behavior: passes through `data` as-is, but wraps
+ * `error` in a `GraphQLError`. Once the runtime has been updated to handle
+ * errors correctly, this function will be updated to flatten the `data`
+ * response accordingly.
+ */
+const createMockGraphQLResultWithError = <T>(
   data: any,
   error: Error,
 ): GraphQLResult<T> => {
@@ -93,7 +99,7 @@ export function mockedGenerateClient(
           Array.isArray(result.errors) &&
           result.errors.length > 0
         ) {
-          throw createGraphQLResultWithError(
+          throw createMockGraphQLResultWithError(
             result.data,
             new Error(result.errors[0].message),
           );
