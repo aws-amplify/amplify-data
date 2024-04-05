@@ -4,6 +4,7 @@ import type {
   SchemaConfiguration,
   DataSourceConfiguration,
   DatasourceEngine,
+  UnionToIntersection,
 } from '@aws-amplify/data-schema-types';
 import {
   type ModelType,
@@ -11,6 +12,7 @@ import {
   type InternalModel,
   isSchemaModelType,
   SchemaModelType,
+  AddRelationshipFieldsToModelTypeFields,
 } from './ModelType';
 import type { EnumType, EnumTypeParamShape } from './EnumType';
 import type { CustomType, CustomTypeParamShape } from './CustomType';
@@ -25,6 +27,10 @@ import type {
 import { processSchema } from './SchemaProcessor';
 import { SchemaAuthorization } from './Authorization';
 import { Brand, brand } from './util';
+import {
+  ModelRelationalField,
+  ModelRelationalFieldParamShape,
+} from './ModelRelationalField';
 
 export const rdsSchemaBrandName = 'RDSSchema';
 export const rdsSchemaBrand = brand(rdsSchemaBrandName);
@@ -64,11 +70,14 @@ export type InternalSchema = {
   };
 };
 
-export type BaseSchema<T extends ModelSchemaParamShape> = {
+export type BaseSchema<
+  T extends ModelSchemaParamShape,
+  IsRDS extends boolean = false,
+> = {
   data: T;
   models: {
     [TypeKey in keyof T['types']]: T['types'][TypeKey] extends ModelType<ModelTypeParamShape>
-      ? SchemaModelType<T['types'][TypeKey]>
+      ? SchemaModelType<T['types'][TypeKey], TypeKey & string, IsRDS>
       : never;
   };
   transform: () => DerivedApiDefinition;
@@ -79,7 +88,7 @@ export type GenericModelSchema<T extends ModelSchemaParamShape> =
 
 export type ModelSchema<
   T extends ModelSchemaParamShape,
-  UsedMethods extends 'authorization' = never,
+  UsedMethods extends 'authorization' | 'addRelationships' = never,
 > = Omit<
   {
     authorization: <AuthRules extends SchemaAuthorization<any, any, any>>(
@@ -98,11 +107,19 @@ type RDSModelSchemaFunctions =
   | 'addQueries'
   | 'addMutations'
   | 'addSubscriptions'
-  | 'authorization';
+  | 'authorization'
+  | 'relationships';
 
 export type RDSModelSchema<
   T extends RDSModelSchemaParamShape,
   UsedMethods extends RDSModelSchemaFunctions = never,
+  RelationshipTemplate extends Record<
+    string,
+    ModelRelationalField<ModelRelationalFieldParamShape, string, any, any>
+  > = Record<
+    string,
+    ModelRelationalField<ModelRelationalFieldParamShape, string, any, any>
+  >,
 > = Omit<
   {
     addQueries: <Queries extends Record<string, QueryCustomOperation>>(
@@ -130,12 +147,36 @@ export type RDSModelSchema<
     ) => RDSModelSchema<
       SetTypeSubArg<T, 'authorization', AuthRules[]>,
       UsedMethods | 'authorization'
-    > &
-      RDSSchemaBrand;
+    >;
+    relationships: <
+      Relationships extends ReadonlyArray<
+        Partial<Record<keyof T['types'], RelationshipTemplate>>
+      >,
+    >(
+      callback: (models: BaseSchema<T, true>['models']) => Relationships,
+    ) => RDSModelSchema<
+      UnionToIntersection<Relationships[number]> extends infer RelationshipsDefs
+        ? RelationshipsDefs extends Record<string, RelationshipTemplate>
+          ? SetTypeSubArg<
+              T,
+              'types',
+              {
+                [ModelName in keyof T['types']]: ModelName extends keyof RelationshipsDefs
+                  ? AddRelationshipFieldsToModelTypeFields<
+                      T['types'][ModelName],
+                      RelationshipsDefs[ModelName]
+                    >
+                  : T['types'][ModelName];
+              }
+            >
+          : T
+        : T,
+      UsedMethods | 'relationships'
+    >;
   },
   UsedMethods
 > &
-  BaseSchema<T> &
+  BaseSchema<T, true> &
   RDSSchemaBrand;
 
 /**
@@ -185,8 +226,10 @@ function _rdsSchema<
     authorization: [],
     configuration: config,
   };
+  const models = filterSchemaModelTypes(data.types) as any;
   return {
     data,
+    models,
     transform(): DerivedApiDefinition {
       const internalSchema: InternalSchema = { data } as InternalSchema;
 
@@ -210,6 +253,15 @@ function _rdsSchema<
     addSubscriptions(types: Record<string, SubscriptionCustomOperation>): any {
       this.data.types = { ...this.data.types, ...types };
       const { addSubscriptions: _, ...rest } = this;
+      return rest;
+    },
+    relationships(callback): any {
+      const { relationships: _, ...rest } = this;
+      // The relationships are added via `models.<Model>.addRelationships`
+      // modifiers that's being called within the callback. They are modifying
+      // by references on each model, so there is not anything else to be done
+      // here.
+      callback(models);
       return rest;
     },
     ...rdsSchemaBrand,

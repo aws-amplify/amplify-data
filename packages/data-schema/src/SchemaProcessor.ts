@@ -1209,7 +1209,7 @@ const schemaPreprocessor = (
   const staticSchema =
     schema.data.configuration.database.engine === 'dynamodb' ? false : true;
 
-  const fkFields = allImpliedFKs(schema);
+  const fkFields = staticSchema ? {} : allImpliedFKs(schema);
   const topLevelTypes = Object.entries(schema.data.types);
 
   const { schemaAuth, functionSchemaAccess } = extractFunctionSchemaAccess(
