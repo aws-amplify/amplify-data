@@ -601,14 +601,14 @@ describe('Custom Selection Set', () => {
         },
       );
 
-      if (errors) {
-        throw new Error('should not have errors');
-      }
-
       type ExpectedType = {
         readonly title: string;
         readonly visibility: 'PRIVATE' | 'PUBLIC' | null | undefined;
       };
+
+      if (!post) {
+        throw new Error('no data');
+      }
 
       type test = Expect<Equal<typeof post, ExpectedType>>;
     });
@@ -621,14 +621,14 @@ describe('Custom Selection Set', () => {
         },
       );
 
-      if (errors) {
-        throw new Error('should not have errors');
-      }
-
       type ExpectedType = {
         readonly title: string;
         readonly status: 'DRAFT' | 'PENDING' | 'PUBLISHED' | null | undefined;
       };
+
+      if (!post) {
+        throw new Error('no data');
+      }
 
       type test = Expect<Equal<typeof post, ExpectedType>>;
     });

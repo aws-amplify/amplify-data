@@ -93,11 +93,11 @@ describe('Basic operations', () => {
           id: 'something',
         });
 
-        if (errors) {
-          throw new Error('should not have errors');
-        }
-
         const comments = await data.comments();
+
+        if (!data) {
+          throw new Error('no data');
+        }
 
         type Comments = (typeof comments)['data'];
 
@@ -213,8 +213,8 @@ describe('Basic operations', () => {
           id: 'something',
         });
 
-        if (errors) {
-          throw new Error('should not have errors');
+        if (!data) {
+          throw new Error('no data');
         }
 
         await data.comments({ authMode });
@@ -226,8 +226,8 @@ describe('Basic operations', () => {
           id: 'something',
         });
 
-        if (errors) {
-          throw new Error('should not have errors');
+        if (!data) {
+          throw new Error('no data');
         }
 
         await data.meta({ authMode });
@@ -239,8 +239,8 @@ describe('Basic operations', () => {
           id: 'something',
         });
 
-        if (errors) {
-          throw new Error('should not have errors');
+        if (!data) {
+          throw new Error('no data');
         }
 
         await data.post({ authMode });
@@ -269,8 +269,8 @@ describe('Basic operations', () => {
         id: 'something',
       });
 
-      if (errors) {
-        throw new Error('should not have errors');
+      if (!data) {
+        throw new Error('no data');
       }
 
       await data.comments({ authMode: 'lambda', authToken: 'any string' });
@@ -282,8 +282,8 @@ describe('Basic operations', () => {
         id: 'something',
       });
 
-      if (errors) {
-        throw new Error('should not have errors');
+      if (!data) {
+        throw new Error('no data');
       }
 
       await data.meta({ authMode: 'lambda', authToken: 'any string' });
@@ -295,8 +295,8 @@ describe('Basic operations', () => {
         id: 'something',
       });
 
-      if (errors) {
-        throw new Error('should not have errors');
+      if (!data) {
+        throw new Error('no data');
       }
 
       await data.post({ authMode: 'lambda', authToken: 'any string' });
