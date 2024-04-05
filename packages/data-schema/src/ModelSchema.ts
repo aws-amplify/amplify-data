@@ -95,7 +95,6 @@ export type ModelSchema<
   DDBSchemaBrand;
 
 type RDSModelSchemaFunctions =
-  | 'setSqlStatementFolderPath'
   | 'addQueries'
   | 'addMutations'
   | 'addSubscriptions'
@@ -106,9 +105,6 @@ export type RDSModelSchema<
   UsedMethods extends RDSModelSchemaFunctions = never,
 > = Omit<
   {
-    setSqlStatementFolderPath: (
-      path: string,
-    ) => RDSModelSchema<T, UsedMethods | 'setSqlStatementFolderPath'>;
     addQueries: <Queries extends Record<string, QueryCustomOperation>>(
       types: Queries,
     ) => RDSModelSchema<
@@ -199,12 +195,6 @@ function _rdsSchema<
     authorization(rules: any): any {
       this.data.authorization = rules;
       const { authorization: _, ...rest } = this;
-      return rest;
-    },
-    setSqlStatementFolderPath(path: string): any {
-      const stack = new Error().stack;
-      this.data.sqlStatementFolderPath = { entry: path, stack };
-      const { setSqlStatementFolderPath: _, ...rest } = this;
       return rest;
     },
     addQueries(types: Record<string, QueryCustomOperation>): any {

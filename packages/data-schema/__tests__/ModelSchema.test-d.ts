@@ -34,19 +34,6 @@ describe('ModelSchema', () => {
       // TODO: fix
       // const is = s as InternalSchema;
     });
-
-    it('doesnt support setSqlStatementFolderPath definition', () => {
-      const s = schema({
-        Post: model({
-          id: id(),
-          title: string(),
-        }),
-      });
-      expect(() => {
-        // @ts-expect-error
-        s.setSqlStatementFolderPath('test');
-      }).toThrowError('s.setSqlStatementFolderPath is not a function');
-    });
   });
   describe('sql configured functionality', () => {
     it('can be configured to use sql', () => {
@@ -56,16 +43,6 @@ describe('ModelSchema', () => {
           title: string(),
         }),
       });
-    });
-
-    it('supports setSqlStatementFolderPath definition', () => {
-      const s = configure({ database: datasourceConfigMySQL }).schema({
-        Post: model({
-          id: id(),
-          title: string(),
-        }),
-      });
-      s.setSqlStatementFolderPath('test');
     });
   });
 });

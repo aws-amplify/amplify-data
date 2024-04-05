@@ -2,6 +2,13 @@
 
 exports[`RDS Schema with sql statement references schema with full path sql reference 1`] = `
 {
+  "customSqlDataSourceStrategies": [
+    {
+      "entry": "/full/path/to/sql/statement/directory/testReferenceName",
+      "fieldName": "callSql",
+      "typeName": "Query",
+    },
+  ],
   "functionSchemaAccess": [],
   "functionSlots": [],
   "jsFunctions": [],
@@ -13,9 +20,8 @@ exports[`RDS Schema with sql statement references schema with full path sql refe
 }
 
 type Query {
-  callSql: widget @sql(reference: "testReferenceName") @auth(rules: [{allow: public}])
+  callSql: widget @sql(reference: "/full/path/to/sql/statement/directory/testReferenceName") @auth(rules: [{allow: public}])
 }",
-  "sqlStatementFolderPath": "/full/path/to/sql/statement/directory/",
 }
 `;
 
@@ -112,6 +118,7 @@ type Query {
 
 exports[`schema auth rules allows custom 1`] = `
 {
+  "customSqlDataSourceStrategies": [],
   "functionSchemaAccess": [],
   "functionSlots": [],
   "jsFunctions": [],
@@ -120,12 +127,12 @@ exports[`schema auth rules allows custom 1`] = `
 {
   field: String
 }",
-  "sqlStatementFolderPath": undefined,
 }
 `;
 
 exports[`schema auth rules allows groupDefinedIn 1`] = `
 {
+  "customSqlDataSourceStrategies": [],
   "functionSchemaAccess": [],
   "functionSlots": [],
   "jsFunctions": [],
@@ -134,12 +141,12 @@ exports[`schema auth rules allows groupDefinedIn 1`] = `
 {
   field: String
 }",
-  "sqlStatementFolderPath": undefined,
 }
 `;
 
 exports[`schema auth rules allows groupsDefinedIn 1`] = `
 {
+  "customSqlDataSourceStrategies": [],
   "functionSchemaAccess": [],
   "functionSlots": [],
   "jsFunctions": [],
@@ -148,12 +155,12 @@ exports[`schema auth rules allows groupsDefinedIn 1`] = `
 {
   field: String
 }",
-  "sqlStatementFolderPath": undefined,
 }
 `;
 
 exports[`schema auth rules allows multiple entries 1`] = `
 {
+  "customSqlDataSourceStrategies": [],
   "functionSchemaAccess": [],
   "functionSlots": [],
   "jsFunctions": [],
@@ -163,12 +170,12 @@ exports[`schema auth rules allows multiple entries 1`] = `
 {
   field: String
 }",
-  "sqlStatementFolderPath": undefined,
 }
 `;
 
 exports[`schema auth rules allows multipleOwners 1`] = `
 {
+  "customSqlDataSourceStrategies": [],
   "functionSchemaAccess": [],
   "functionSlots": [],
   "jsFunctions": [],
@@ -177,12 +184,12 @@ exports[`schema auth rules allows multipleOwners 1`] = `
 {
   field: String
 }",
-  "sqlStatementFolderPath": undefined,
 }
 `;
 
 exports[`schema auth rules allows owner 1`] = `
 {
+  "customSqlDataSourceStrategies": [],
   "functionSchemaAccess": [],
   "functionSlots": [],
   "jsFunctions": [],
@@ -191,12 +198,12 @@ exports[`schema auth rules allows owner 1`] = `
 {
   field: String
 }",
-  "sqlStatementFolderPath": undefined,
 }
 `;
 
 exports[`schema auth rules allows private 1`] = `
 {
+  "customSqlDataSourceStrategies": [],
   "functionSchemaAccess": [],
   "functionSlots": [],
   "jsFunctions": [],
@@ -205,12 +212,12 @@ exports[`schema auth rules allows private 1`] = `
 {
   field: String
 }",
-  "sqlStatementFolderPath": undefined,
 }
 `;
 
 exports[`schema auth rules allows public 1`] = `
 {
+  "customSqlDataSourceStrategies": [],
   "functionSchemaAccess": [],
   "functionSlots": [],
   "jsFunctions": [],
@@ -219,12 +226,12 @@ exports[`schema auth rules allows public 1`] = `
 {
   field: String
 }",
-  "sqlStatementFolderPath": undefined,
 }
 `;
 
 exports[`schema auth rules allows specificGroups 1`] = `
 {
+  "customSqlDataSourceStrategies": [],
   "functionSchemaAccess": [],
   "functionSlots": [],
   "jsFunctions": [],
@@ -233,7 +240,6 @@ exports[`schema auth rules allows specificGroups 1`] = `
 {
   field: String
 }",
-  "sqlStatementFolderPath": undefined,
 }
 `;
 
@@ -246,6 +252,7 @@ exports[`schema auth rules can define public auth with no provider 1`] = `
 
 exports[`schema auth rules disallows specificGroup 1`] = `
 {
+  "customSqlDataSourceStrategies": [],
   "functionSchemaAccess": [],
   "functionSlots": [],
   "jsFunctions": [],
@@ -254,12 +261,12 @@ exports[`schema auth rules disallows specificGroup 1`] = `
 {
   field: String
 }",
-  "sqlStatementFolderPath": undefined,
 }
 `;
 
 exports[`schema auth rules do not pull out custom operations 1`] = `
 {
+  "customSqlDataSourceStrategies": [],
   "functionSchemaAccess": [],
   "functionSlots": [],
   "jsFunctions": [],
@@ -280,12 +287,12 @@ type Query {
 type Subscription {
   onLikePost: Post @function(name: "myFunc") @aws_subscribe(mutations: ["likePost"]) @auth(rules: [{allow: owner, ownerField: "owner"}])
 }",
-  "sqlStatementFolderPath": undefined,
 }
 `;
 
 exports[`schema auth rules global public auth - multiple models 1`] = `
 {
+  "customSqlDataSourceStrategies": [],
   "functionSchemaAccess": [],
   "functionSlots": [],
   "jsFunctions": [],
@@ -320,12 +327,12 @@ type D @model @auth(rules: [{allow: public}])
 enum DTired {
   ?
 }",
-  "sqlStatementFolderPath": undefined,
 }
 `;
 
 exports[`schema auth rules prefers model auth over global auth owner auth on model vs owner auth on schema 1`] = `
 {
+  "customSqlDataSourceStrategies": [],
   "functionSchemaAccess": [],
   "functionSlots": [],
   "jsFunctions": [],
@@ -334,12 +341,12 @@ exports[`schema auth rules prefers model auth over global auth owner auth on mod
 {
   field: String
 }",
-  "sqlStatementFolderPath": undefined,
 }
 `;
 
 exports[`schema auth rules prefers model auth over global auth owner auth on model vs public auth on schema 1`] = `
 {
+  "customSqlDataSourceStrategies": [],
   "functionSchemaAccess": [],
   "functionSlots": [],
   "jsFunctions": [],
@@ -348,12 +355,12 @@ exports[`schema auth rules prefers model auth over global auth owner auth on mod
 {
   field: String
 }",
-  "sqlStatementFolderPath": undefined,
 }
 `;
 
 exports[`schema auth rules prefers model auth over global auth public auth on model vs owner auth on schema 1`] = `
 {
+  "customSqlDataSourceStrategies": [],
   "functionSchemaAccess": [],
   "functionSlots": [],
   "jsFunctions": [],
@@ -362,7 +369,6 @@ exports[`schema auth rules prefers model auth over global auth public auth on mo
 {
   field: String
 }",
-  "sqlStatementFolderPath": undefined,
 }
 `;
 

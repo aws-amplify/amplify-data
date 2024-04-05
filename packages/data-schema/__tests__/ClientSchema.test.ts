@@ -1120,13 +1120,13 @@ describe('RDS Schema with sql statement references', () => {
           .query()
           .arguments({})
           .returns(a.ref('widget'))
-          .handler(a.handler.sqlReference('testReferenceName')),
+          .handler(
+            a.handler.sqlReference(
+              '/full/path/to/sql/statement/directory/testReferenceName',
+            ),
+          ),
       })
       .authorization([a.allow.public()]);
-
-    rdsSchema.setSqlStatementFolderPath(
-      '/full/path/to/sql/statement/directory/',
-    );
 
     expect(rdsSchema.transform()).toMatchSnapshot();
   });
@@ -1142,14 +1142,21 @@ describe('RDS Schema with sql statement references', () => {
           .query()
           .arguments({})
           .returns(a.ref('widget'))
-          .handler(a.handler.sqlReference('testReferenceName')),
+          .handler(a.handler.sqlReference('./testReferenceName')),
       })
       .authorization([a.allow.public()]);
 
-    rdsSchema.setSqlStatementFolderPath('sql_directory_name');
+    const { customSqlDataSourceStrategies } = rdsSchema.transform();
 
-    expect(
-      Object.keys(rdsSchema.transform().sqlStatementFolderPath || {}),
-    ).toEqual(['relativePath', 'importLine']);
+    expect(customSqlDataSourceStrategies).not.toBeUndefined();
+
+    expect(customSqlDataSourceStrategies![0]).toMatchObject({
+      typeName: 'Query',
+      fieldName: 'callSql',
+      entry: {
+        relativePath: './testReferenceName',
+        importLine: expect.stringContaining('__tests__'),
+      },
+    });
   });
 });

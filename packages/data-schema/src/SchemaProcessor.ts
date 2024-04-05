@@ -1,8 +1,4 @@
-import {
-  isCustomPathData,
-  type CustomPathData,
-  type InternalSchema,
-} from './ModelSchema';
+import { type CustomPathData, type InternalSchema } from './ModelSchema';
 import {
   type ModelField,
   ModelFieldType,
@@ -45,6 +41,7 @@ import {
   getHandlerData,
   type HandlerType,
   type CustomHandler,
+  type SqlReferenceHandler,
   FunctionHandler,
 } from './Handler';
 import * as os from 'os';
@@ -399,8 +396,20 @@ function customOperationToGql(
       typeName: opType as `Query` | `Mutation`,
       fieldName: typeName,
     };
-  } else if (databaseType === 'sql' && handler && brand === 'sqlReference') {
-    gqlHandlerContent = `@sql(reference: "${getHandlerData(handler)}") `;
+  } else if (isSqlReferenceHandler(handlers)) {
+    const handlerData = getHandlerData(handlers[0]);
+    const entry = resolveEntryPath(
+      handlerData,
+      'Could not determine import path to construct absolute code path for sql reference handler. Consider using an absolute path instead.',
+    );
+    const reference = typeof entry === 'string' ? entry : entry.relativePath;
+
+    customSqlDataSourceStrategy = {
+      typeName: opType as `Query` | `Mutation`,
+      fieldName: typeName,
+      entry,
+    };
+    gqlHandlerContent = `@sql(reference: "${reference}") `;
   }
 
   if (opType === 'Subscription') {
@@ -1179,7 +1188,6 @@ const schemaPreprocessor = (
   jsFunctions: JsResolver[];
   functionSchemaAccess: FunctionSchemaAccess[];
   lambdaFunctions: LambdaFunctionDefinition;
-  sqlStatementFolderPath?: JsResolverEntry;
   customSqlDataSourceStrategies?: CustomSqlDataSourceStrategy[];
 } => {
   const gqlModels: string[] = [];
@@ -1187,8 +1195,6 @@ const schemaPreprocessor = (
   const customQueries = [];
   const customMutations = [];
   const customSubscriptions = [];
-
-  let sqlStatementFolderPath: JsResolverEntry | undefined;
 
   const jsFunctions: JsResolver[] = [];
   let lambdaFunctions: LambdaFunctionDefinition = {};
@@ -1198,16 +1204,6 @@ const schemaPreprocessor = (
     schema.data.configuration.database.engine === 'dynamodb'
       ? 'dynamodb'
       : 'sql';
-
-  if (
-    'sqlStatementFolderPath' in schema.data &&
-    isCustomPathData(schema.data.sqlStatementFolderPath)
-  ) {
-    sqlStatementFolderPath = resolveEntryPath(
-      schema.data.sqlStatementFolderPath,
-      'Could not determine import path to construct absolute code path for sql statements folder. Consider using an absolute path instead.',
-    );
-  }
 
   const staticSchema =
     schema.data.configuration.database.engine === 'dynamodb' ? false : true;
@@ -1416,7 +1412,6 @@ const schemaPreprocessor = (
     jsFunctions,
     functionSchemaAccess,
     lambdaFunctions,
-    sqlStatementFolderPath,
     customSqlDataSourceStrategies,
   };
 };
@@ -1530,6 +1525,12 @@ function validateCustomOperations(
     }
   }
 }
+
+const isSqlReferenceHandler = (
+  handler: HandlerType[] | null,
+): handler is [SqlReferenceHandler] => {
+  return Array.isArray(handler) && getBrand(handler[0]) === 'sqlReference';
+};
 
 const isCustomHandler = (
   handler: HandlerType[] | null,
@@ -1700,7 +1701,6 @@ export function processSchema(arg: {
     jsFunctions,
     functionSchemaAccess,
     lambdaFunctions,
-    sqlStatementFolderPath,
     customSqlDataSourceStrategies,
   } = schemaPreprocessor(arg.schema);
 
@@ -1710,7 +1710,6 @@ export function processSchema(arg: {
     jsFunctions,
     functionSchemaAccess,
     lambdaFunctions,
-    sqlStatementFolderPath,
     customSqlDataSourceStrategies,
   };
 }
