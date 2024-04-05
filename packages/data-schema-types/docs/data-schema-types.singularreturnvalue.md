@@ -8,14 +8,8 @@
 
 ```typescript
 export type SingularReturnValue<T> = Promise<{
-    data: T;
-    errors?: undefined;
-    extensions?: {
-        [key: string]: any;
-    };
-} | {
     data: T | null;
-    errors: GraphQLFormattedError[];
+    errors?: GraphQLFormattedError[];
     extensions?: {
         [key: string]: any;
     };
