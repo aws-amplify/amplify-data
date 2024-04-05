@@ -476,7 +476,7 @@ describe('CRUD error handling', () => {
       // App.tsx
       Amplify.configure(config);
       const client = generateClient<Schema>();
-      const { data, errors } = await client.models.Todo.list({
+      const { data } = await client.models.Todo.list({
         selectionSet: ['id', 'content', 'additionalInfo.*'],
       });
 

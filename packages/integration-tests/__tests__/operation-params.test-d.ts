@@ -89,7 +89,7 @@ describe('Basic operations', () => {
       });
 
       test('lazy loaded hasMany returns a non-nullable list of non-nullable elements', async () => {
-        const { data, errors } = await client.models.Post.get({
+        const { data } = await client.models.Post.get({
           id: 'something',
         });
 
@@ -209,7 +209,7 @@ describe('Basic operations', () => {
 
       test(`can specify ${authMode} on lazy loaded hasMany`, async () => {
         // expect no type errors
-        const { data, errors } = await client.models.Post.get({
+        const { data } = await client.models.Post.get({
           id: 'something',
         });
 
@@ -222,7 +222,7 @@ describe('Basic operations', () => {
 
       test(`can specify ${authMode} on lazy loaded hasOne`, async () => {
         // expect no type errors
-        const { data, errors } = await client.models.Post.get({
+        const { data } = await client.models.Post.get({
           id: 'something',
         });
 
@@ -235,7 +235,7 @@ describe('Basic operations', () => {
 
       test(`can specify ${authMode} on lazy loaded belongsTo`, async () => {
         // expect no type errors
-        const { data, errors } = await client.models.Comment.get({
+        const { data } = await client.models.Comment.get({
           id: 'something',
         });
 
@@ -265,7 +265,7 @@ describe('Basic operations', () => {
 
     test('can specify authToken on hasMany', async () => {
       // expect no type errors
-      const { data, errors } = await client.models.Post.get({
+      const { data } = await client.models.Post.get({
         id: 'something',
       });
 
@@ -278,7 +278,7 @@ describe('Basic operations', () => {
 
     test('can specify authToken on hasOne', async () => {
       // expect no type errors
-      const { data, errors } = await client.models.Post.get({
+      const { data } = await client.models.Post.get({
         id: 'something',
       });
 
@@ -291,7 +291,7 @@ describe('Basic operations', () => {
 
     test('can specify authToken on belongsTo', async () => {
       // expect no type errors
-      const { data, errors } = await client.models.Comment.get({
+      const { data } = await client.models.Comment.get({
         id: 'something',
       });
 
