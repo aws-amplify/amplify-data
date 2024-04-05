@@ -8,3 +8,4 @@ export {
   generateEnumsProperty,
   generateModelsProperty,
 } from './internals';
+export * from './types';
