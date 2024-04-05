@@ -10,12 +10,12 @@
       "type": "node",
       "request": "launch",
       // The debugger will only run tests for the package specified here:
-      "cwd": "${workspaceFolder}/packages/integration-tests/__tests__/defined-behavior/1-patterns",
+      "cwd": "${workspaceFolder}/packages/integration-tests/",
       "runtimeArgs": [
         "--inspect-brk",
         "${workspaceRoot}/node_modules/.bin/jest",
         // Optionally specify a single test file to run/debug:
-        "error-handling.ts",
+        "pseudo-client.test.ts",
         "--runInBand",
         "--testTimeout",
         "600000", // 10 min timeout so jest doesn't error while we're stepping through code

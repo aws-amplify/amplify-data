@@ -54,25 +54,15 @@ describe('client', () => {
     });
 
     type ResponseType = typeof response;
-    type Expected =
-      | {
-          data: string | null;
-          errors: GraphQLFormattedError[];
-          extensions?:
-            | {
-                [key: string]: any;
-              }
-            | undefined;
-        }
-      | {
-          data: string;
-          errors?: undefined;
-          extensions?:
-            | {
-                [key: string]: any;
-              }
-            | undefined;
-        };
+    type Expected = {
+      data: string | null;
+      errors?: GraphQLFormattedError[] | undefined;
+      extensions?:
+        | {
+            [key: string]: any;
+          }
+        | undefined;
+    };
 
     type test = Expect<Equal<ResponseType, Expected>>;
   });
@@ -98,25 +88,15 @@ describe('client', () => {
     });
 
     type ResponseType = typeof response;
-    type Expected =
-      | {
-          data: 'Active' | 'Inactive' | 'Unknown' | null;
-          errors: GraphQLFormattedError[];
-          extensions?:
-            | {
-                [key: string]: any;
-              }
-            | undefined;
-        }
-      | {
-          data: 'Active' | 'Inactive' | 'Unknown';
-          errors?: undefined;
-          extensions?:
-            | {
-                [key: string]: any;
-              }
-            | undefined;
-        };
+    type Expected = {
+      data: 'Active' | 'Inactive' | 'Unknown' | null;
+      errors?: GraphQLFormattedError[] | undefined;
+      extensions?:
+        | {
+            [key: string]: any;
+          }
+        | undefined;
+    };
 
     type test = Expect<Equal<ResponseType, Expected>>;
   });
@@ -144,29 +124,17 @@ describe('client', () => {
     });
 
     type ResponseType = typeof response;
-    type Expected =
-      | {
-          data: {
-            resultContent?: string | null | undefined;
-          } | null;
-          errors: GraphQLFormattedError[];
-          extensions?:
-            | {
-                [key: string]: any;
-              }
-            | undefined;
-        }
-      | {
-          data: {
-            resultContent?: string | null | undefined;
-          } | null;
-          errors?: undefined;
-          extensions?:
-            | {
-                [key: string]: any;
-              }
-            | undefined;
-        };
+    type Expected = {
+      data: {
+        resultContent?: string | null | undefined;
+      } | null;
+      errors?: GraphQLFormattedError[] | undefined;
+      extensions?:
+        | {
+            [key: string]: any;
+          }
+        | undefined;
+    };
 
     type test = Expect<Equal<ResponseType, Expected>>;
   });
@@ -204,25 +172,15 @@ describe('client', () => {
 
     type T = ResponseType['data'];
 
-    type Expected =
-      | {
-          data: Schema['DataModel'] | null;
-          errors: GraphQLFormattedError[];
-          extensions?:
-            | {
-                [key: string]: any;
-              }
-            | undefined;
-        }
-      | {
-          data: Schema['DataModel'] | null;
-          errors?: undefined;
-          extensions?:
-            | {
-                [key: string]: any;
-              }
-            | undefined;
-        };
+    type Expected = {
+      data: Schema['DataModel'] | null;
+      errors?: GraphQLFormattedError[] | undefined;
+      extensions?:
+        | {
+            [key: string]: any;
+          }
+        | undefined;
+    };
 
     type test = Expect<Equal<ResponseType, Expected>>;
 
@@ -231,25 +189,15 @@ describe('client', () => {
 
     type Response2Type = typeof response2;
 
-    type Expected2 =
-      | {
-          data: (Schema['DataModel'] | null)[] | null;
-          errors: GraphQLFormattedError[];
-          extensions?:
-            | {
-                [key: string]: any;
-              }
-            | undefined;
-        }
-      | {
-          data: (Schema['DataModel'] | null)[] | null;
-          errors?: undefined;
-          extensions?:
-            | {
-                [key: string]: any;
-              }
-            | undefined;
-        };
+    type Expected2 = {
+      data: (Schema['DataModel'] | null)[] | null;
+      errors?: GraphQLFormattedError[] | undefined;
+      extensions?:
+        | {
+            [key: string]: any;
+          }
+        | undefined;
+    };
 
     type test2 = Expect<Equal<Response2Type, Expected2>>;
   });
@@ -283,29 +231,17 @@ describe('client', () => {
     });
 
     type ResponseType = typeof response;
-    type Expected =
-      | {
-          data: {
-            likes: number;
-          } | null;
-          errors: GraphQLFormattedError[];
-          extensions?:
-            | {
-                [key: string]: any;
-              }
-            | undefined;
-        }
-      | {
-          data: {
-            likes: number;
-          } | null;
-          errors?: undefined;
-          extensions?:
-            | {
-                [key: string]: any;
-              }
-            | undefined;
-        };
+    type Expected = {
+      data: {
+        likes: number;
+      } | null;
+      errors?: GraphQLFormattedError[] | undefined;
+      extensions?:
+        | {
+            [key: string]: any;
+          }
+        | undefined;
+    };
 
     type test = Expect<Equal<ResponseType, Expected>>;
 
@@ -313,33 +249,19 @@ describe('client', () => {
     const response2 = await client.mutations.likeAllPosts();
 
     type Response2Type = typeof response2;
-    type Expected2 =
-      | {
-          data:
-            | ({
-                likes: number;
-              } | null)[]
-            | null;
-          errors: GraphQLFormattedError[];
-          extensions?:
-            | {
-                [key: string]: any;
-              }
-            | undefined;
-        }
-      | {
-          data:
-            | ({
-                likes: number;
-              } | null)[]
-            | null;
-          errors?: undefined;
-          extensions?:
-            | {
-                [key: string]: any;
-              }
-            | undefined;
-        };
+    type Expected2 = {
+      data:
+        | ({
+            likes: number;
+          } | null)[]
+        | null;
+      errors?: GraphQLFormattedError[] | undefined;
+      extensions?:
+        | {
+            [key: string]: any;
+          }
+        | undefined;
+    };
 
     type test2 = Expect<Equal<Response2Type, Expected2>>;
   });
