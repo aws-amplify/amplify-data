@@ -32,7 +32,8 @@
     "package.json"
   ],
   "dependencies": {
-    "rxjs": "^7.8.1",
-    "@aws-amplify/plugin-types": "^0.9.0-beta.1"
+    "@aws-amplify/plugin-types": "^0.9.0-beta.1",
+    "graphql": "15.8.0",
+    "rxjs": "^7.8.1"
   }
 }
