@@ -27,7 +27,6 @@ export interface DerivedApiDefinition {
   readonly jsFunctions: JsResolver[];
   readonly lambdaFunctions: LambdaFunctionDefinition;
   readonly functionSchemaAccess: FunctionSchemaAccess[];
-  readonly sqlStatementFolderPath?: SqlStatementFolderEntry;
   readonly customSqlDataSourceStrategies?: CustomSqlDataSourceStrategy[];
 }
 
@@ -44,9 +43,9 @@ export type DerivedModelSchema = {
   transform: () => DerivedApiDefinition;
 };
 
-type PathEntry = string | { relativePath: string; importLine: string };
+type PathEntry = { relativePath: string; importLine: string };
 
-export type JsResolverEntry = PathEntry;
+export type JsResolverEntry = string | PathEntry;
 
 export type SqlStatementFolderEntry = PathEntry;
 
@@ -73,6 +72,7 @@ export type DatasourceEngine = 'mysql' | 'postgresql' | 'dynamodb';
 export type CustomSqlDataSourceStrategy = {
   typeName: 'Query' | 'Mutation';
   fieldName: string;
+  entry?: JsResolverEntry;
 };
 
 type SubnetAZ = {
@@ -94,6 +94,7 @@ export type DataSourceConfiguration<
       engine: DE;
       connectionUri: BackendSecret;
       vpcConfig?: VpcConfig;
+      identifier?: string;
     };
 
 export type SchemaConfiguration<

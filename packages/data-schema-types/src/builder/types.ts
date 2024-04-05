@@ -96,6 +96,7 @@ export type DataSourceConfiguration<
       engine: DE;
       connectionUri: BackendSecret;
       vpcConfig?: VpcConfig;
+      identifier?: string;
     };
 
 export type SchemaConfiguration<
