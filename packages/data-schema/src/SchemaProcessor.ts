@@ -424,7 +424,8 @@ function customOperationToGql(
 
         if (type === 'Model') {
           return source.data.mutationOperations.map(
-            (op: string) => `${op}${refTarget}`,
+            // capitalize explicitly in case customer used lowercase model name
+            (op: string) => `${op}${capitalize(refTarget)}`,
           );
         }
       })
