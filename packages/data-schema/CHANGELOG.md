@@ -1,5 +1,13 @@
 # @aws-amplify/data-schema
 
+## 0.14.9
+
+### Patch Changes
+
+- 62a26bc: fix: Change interface to move schema combination processing and expose rds config
+- Updated dependencies [62a26bc]
+  - @aws-amplify/data-schema-types@0.7.15
+
 ## 0.14.8
 
 ### Patch Changes
