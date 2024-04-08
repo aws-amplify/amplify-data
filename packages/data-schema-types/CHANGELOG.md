@@ -1,5 +1,11 @@
 # @aws-amplify/data-schema-types
 
+## 0.7.15
+
+### Patch Changes
+
+- 62a26bc: fix: Change interface to move schema combination processing and expose rds config
+
 ## 0.7.14
 
 ### Patch Changes

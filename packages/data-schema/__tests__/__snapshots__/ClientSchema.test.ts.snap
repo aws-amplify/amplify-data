@@ -1,5 +1,30 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`RDS Schema with sql statement references schema with full path sql reference 1`] = `
+{
+  "customSqlDataSourceStrategies": [
+    {
+      "entry": "/full/path/to/sql/statement/directory/testReferenceName",
+      "fieldName": "callSql",
+      "typeName": "Query",
+    },
+  ],
+  "functionSchemaAccess": [],
+  "functionSlots": [],
+  "jsFunctions": [],
+  "lambdaFunctions": {},
+  "schema": "type widget @model @auth(rules: [{allow: public}])
+{
+  title: String!
+  someOwnerField: String
+}
+
+type Query {
+  callSql: widget @sql(reference: "/full/path/to/sql/statement/directory/testReferenceName") @auth(rules: [{allow: public}])
+}",
+}
+`;
+
 exports[`custom operations custom mutation 1`] = `
 "type LikePostResult 
 {
@@ -23,8 +48,7 @@ type Query {
 `;
 
 exports[`custom operations for a.combine schema a ddb and sql schemas combine without issues 1`] = `
-"
-type A @model @auth(rules: [{allow: public}])
+"type A @model @auth(rules: [{allow: public}])
 {
   field: String
 }
@@ -35,8 +59,7 @@ type B @model @auth(rules: [{allow: public}])
 `;
 
 exports[`custom operations for a.combine schema combining two schemas with custom mutation results in customTypes and customOperations that intersect the separate schemas 1`] = `
-"
-type LikePostResult 
+"type LikePostResult 
 {
   likes: Int!
 }
@@ -65,8 +88,7 @@ type Mutation {
 `;
 
 exports[`custom operations for a.combine schema two schemas combine without issues 1`] = `
-"
-type A @model @auth(rules: [{allow: public}])
+"type A @model @auth(rules: [{allow: public}])
 {
   field: String
 }
@@ -96,6 +118,7 @@ type Query {
 
 exports[`schema auth rules allows custom 1`] = `
 {
+  "customSqlDataSourceStrategies": [],
   "functionSchemaAccess": [],
   "functionSlots": [],
   "jsFunctions": [],
@@ -109,6 +132,7 @@ exports[`schema auth rules allows custom 1`] = `
 
 exports[`schema auth rules allows groupDefinedIn 1`] = `
 {
+  "customSqlDataSourceStrategies": [],
   "functionSchemaAccess": [],
   "functionSlots": [],
   "jsFunctions": [],
@@ -122,6 +146,7 @@ exports[`schema auth rules allows groupDefinedIn 1`] = `
 
 exports[`schema auth rules allows groupsDefinedIn 1`] = `
 {
+  "customSqlDataSourceStrategies": [],
   "functionSchemaAccess": [],
   "functionSlots": [],
   "jsFunctions": [],
@@ -135,6 +160,7 @@ exports[`schema auth rules allows groupsDefinedIn 1`] = `
 
 exports[`schema auth rules allows multiple entries 1`] = `
 {
+  "customSqlDataSourceStrategies": [],
   "functionSchemaAccess": [],
   "functionSlots": [],
   "jsFunctions": [],
@@ -149,6 +175,7 @@ exports[`schema auth rules allows multiple entries 1`] = `
 
 exports[`schema auth rules allows multipleOwners 1`] = `
 {
+  "customSqlDataSourceStrategies": [],
   "functionSchemaAccess": [],
   "functionSlots": [],
   "jsFunctions": [],
@@ -162,6 +189,7 @@ exports[`schema auth rules allows multipleOwners 1`] = `
 
 exports[`schema auth rules allows owner 1`] = `
 {
+  "customSqlDataSourceStrategies": [],
   "functionSchemaAccess": [],
   "functionSlots": [],
   "jsFunctions": [],
@@ -175,6 +203,7 @@ exports[`schema auth rules allows owner 1`] = `
 
 exports[`schema auth rules allows private 1`] = `
 {
+  "customSqlDataSourceStrategies": [],
   "functionSchemaAccess": [],
   "functionSlots": [],
   "jsFunctions": [],
@@ -188,6 +217,7 @@ exports[`schema auth rules allows private 1`] = `
 
 exports[`schema auth rules allows public 1`] = `
 {
+  "customSqlDataSourceStrategies": [],
   "functionSchemaAccess": [],
   "functionSlots": [],
   "jsFunctions": [],
@@ -201,6 +231,7 @@ exports[`schema auth rules allows public 1`] = `
 
 exports[`schema auth rules allows specificGroups 1`] = `
 {
+  "customSqlDataSourceStrategies": [],
   "functionSchemaAccess": [],
   "functionSlots": [],
   "jsFunctions": [],
@@ -221,6 +252,7 @@ exports[`schema auth rules can define public auth with no provider 1`] = `
 
 exports[`schema auth rules disallows specificGroup 1`] = `
 {
+  "customSqlDataSourceStrategies": [],
   "functionSchemaAccess": [],
   "functionSlots": [],
   "jsFunctions": [],
@@ -234,6 +266,7 @@ exports[`schema auth rules disallows specificGroup 1`] = `
 
 exports[`schema auth rules do not pull out custom operations 1`] = `
 {
+  "customSqlDataSourceStrategies": [],
   "functionSchemaAccess": [],
   "functionSlots": [],
   "jsFunctions": [],
@@ -259,6 +292,7 @@ type Subscription {
 
 exports[`schema auth rules global public auth - multiple models 1`] = `
 {
+  "customSqlDataSourceStrategies": [],
   "functionSchemaAccess": [],
   "functionSlots": [],
   "jsFunctions": [],
@@ -298,6 +332,7 @@ enum DTired {
 
 exports[`schema auth rules prefers model auth over global auth owner auth on model vs owner auth on schema 1`] = `
 {
+  "customSqlDataSourceStrategies": [],
   "functionSchemaAccess": [],
   "functionSlots": [],
   "jsFunctions": [],
@@ -311,6 +346,7 @@ exports[`schema auth rules prefers model auth over global auth owner auth on mod
 
 exports[`schema auth rules prefers model auth over global auth owner auth on model vs public auth on schema 1`] = `
 {
+  "customSqlDataSourceStrategies": [],
   "functionSchemaAccess": [],
   "functionSlots": [],
   "jsFunctions": [],
@@ -324,6 +360,7 @@ exports[`schema auth rules prefers model auth over global auth owner auth on mod
 
 exports[`schema auth rules prefers model auth over global auth public auth on model vs owner auth on schema 1`] = `
 {
+  "customSqlDataSourceStrategies": [],
   "functionSchemaAccess": [],
   "functionSlots": [],
   "jsFunctions": [],

@@ -27,10 +27,14 @@
 |  [CustomMutations](./data-schema-types.custommutations.md) |  |
 |  [CustomOperations](./data-schema-types.customoperations.md) |  |
 |  [CustomQueries](./data-schema-types.customqueries.md) |  |
+|  [CustomSqlDataSourceStrategy](./data-schema-types.customsqldatasourcestrategy.md) |  |
 |  [CustomSubscriptions](./data-schema-types.customsubscriptions.md) |  |
+|  [DataSourceConfiguration](./data-schema-types.datasourceconfiguration.md) |  |
+|  [DatasourceEngine](./data-schema-types.datasourceengine.md) |  |
 |  [Debug](./data-schema-types.debug.md) |  |
 |  [DeepReadOnlyObject](./data-schema-types.deepreadonlyobject.md) |  |
 |  [DefineFunction](./data-schema-types.definefunction.md) |  |
+|  [DerivedCombinedSchema](./data-schema-types.derivedcombinedschema.md) |  |
 |  [DerivedModelSchema](./data-schema-types.derivedmodelschema.md) |  |
 |  [EnumTypes](./data-schema-types.enumtypes.md) | The utility type that is used to infer the type (interface) of the generated <code>client.enums</code> property. |
 |  [Equal](./data-schema-types.equal.md) |  |
@@ -60,10 +64,12 @@
 |  [ObserveQueryReturnValue](./data-schema-types.observequeryreturnvalue.md) |  |
 |  [Prettify](./data-schema-types.prettify.md) |  |
 |  [RequestOptions](./data-schema-types.requestoptions.md) | Request options that are passed to custom header functions. <code>method</code> and <code>headers</code> are not included in custom header functions passed to subscriptions. |
+|  [SchemaConfiguration](./data-schema-types.schemaconfiguration.md) |  |
 |  [SecondaryIndexIrShape](./data-schema-types.secondaryindexirshape.md) | SecondaryIndex index types and query methods |
 |  [SelectionSet](./data-schema-types.selectionset.md) |  |
 |  [SetTypeSubArg](./data-schema-types.settypesubarg.md) | Replaces the value of a key in a complex generic type param |
 |  [SingularReturnValue](./data-schema-types.singularreturnvalue.md) |  |
+|  [SqlStatementFolderEntry](./data-schema-types.sqlstatementfolderentry.md) |  |
 |  [UnionToIntersection](./data-schema-types.uniontointersection.md) |  |
 |  [UnwrapArray](./data-schema-types.unwraparray.md) |  |
 

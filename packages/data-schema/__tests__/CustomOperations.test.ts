@@ -836,7 +836,7 @@ describe('CustomOperation transform', () => {
           getPostDetails: a
             .query()
             .arguments({})
-            .handler(a.handler.sqlReference('testQueryName'))
+            .handler(a.handler.sqlReference('./testQueryName'))
             .authorization([a.allow.private()])
             .returns(a.customType({})),
         });
