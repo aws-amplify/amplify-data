@@ -18,6 +18,7 @@ export interface DerivedApiDefinition
 
 |  Property | Modifiers | Type | Description |
 |  --- | --- | --- | --- |
+|  [customSqlDataSourceStrategies?](./data-schema-types.derivedapidefinition.customsqldatasourcestrategies.md) | <code>readonly</code> | [CustomSqlDataSourceStrategy](./data-schema-types.customsqldatasourcestrategy.md)<!-- -->\[\] | _(Optional)_ |
 |  [functionSchemaAccess](./data-schema-types.derivedapidefinition.functionschemaaccess.md) | <code>readonly</code> | [FunctionSchemaAccess](./data-schema-types.functionschemaaccess.md)<!-- -->\[\] |  |
 |  [functionSlots](./data-schema-types.derivedapidefinition.functionslots.md) | <code>readonly</code> | any\[\] | Retrieve any function slots defined explicitly in the Api definition. |
 |  [jsFunctions](./data-schema-types.derivedapidefinition.jsfunctions.md) | <code>readonly</code> | [JsResolver](./data-schema-types.jsresolver.md)<!-- -->\[\] |  |

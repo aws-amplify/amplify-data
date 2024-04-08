@@ -44,12 +44,22 @@ function inlineSql(sql: string): InlineSqlHandler {
 
 const sqlReferenceBrand = 'sqlReference';
 
-export type SqlReferenceHandler = { [dataSymbol]: string } & Brand<
-  typeof sqlReferenceBrand
->;
+export type SqlReferenceHandlerData = {
+  entry: string;
+  stack: string | undefined;
+};
 
-function sqlReference(sqlReference: string): SqlReferenceHandler {
-  return { [dataSymbol]: sqlReference, ...buildHandler(sqlReferenceBrand) };
+export type SqlReferenceHandler = {
+  [dataSymbol]: SqlReferenceHandlerData;
+} & Brand<typeof sqlReferenceBrand>;
+
+function sqlReference(sqlFilePath: string): SqlReferenceHandler {
+  // used to determine caller directory in order to resolve relative path downstream
+  const stack = new Error().stack;
+  return {
+    [dataSymbol]: { stack, entry: sqlFilePath },
+    ...buildHandler(sqlReferenceBrand),
+  };
 }
 
 //#endregion

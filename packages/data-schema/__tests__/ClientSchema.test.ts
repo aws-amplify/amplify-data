@@ -8,6 +8,8 @@ import {
   AuthMode,
   CustomHeaders,
   SingularReturnValue,
+  DerivedCombinedSchema,
+  DerivedModelSchema,
 } from '@aws-amplify/data-schema-types';
 import { configure } from '../src/internals';
 import { Nullable } from '../src/ModelField';
@@ -27,6 +29,16 @@ it('should not produce static type errors', async () => {
 });
 
 describe('schema generation', () => {
+  test('matches shared backend type', () => {
+    const _schema: DerivedModelSchema = a.schema({
+      A: a
+        .model({
+          field: a.string(),
+        })
+        .authorization([a.allow.public()]),
+    });
+  });
+
   test('with relationships', () => {
     const schema = a
       .schema({
@@ -878,6 +890,25 @@ describe('custom operations', () => {
     });
   });
   describe('for a.combine schema', () => {
+    test('matches shared backend type', () => {
+      const schemaA = a.schema({
+        A: a
+          .model({
+            field: a.string(),
+          })
+          .authorization([a.allow.public()]),
+      });
+
+      const schemaB = a.schema({
+        B: a
+          .model({
+            field: a.string(),
+          })
+          .authorization([a.allow.public()]),
+      });
+
+      const _schema: DerivedCombinedSchema = a.combine([schemaA, schemaB]);
+    });
     test('two schemas combine without issues', () => {
       const schemaA = a.schema({
         A: a
@@ -921,7 +952,9 @@ describe('custom operations', () => {
 
       type testB = Expect<Equal<Actual_B, Expected_B>>;
 
-      const graphql = schema.transform().schema;
+      const graphql = schema.schemas
+        .map((schema) => schema.transform().schema)
+        .join('\n');
       expect(graphql).toMatchSnapshot();
     });
 
@@ -965,7 +998,9 @@ describe('custom operations', () => {
 
       type testB = Expect<Equal<Actual_B, Expected_B>>;
 
-      const graphql = schema.transform().schema;
+      const graphql = schema.schemas
+        .map((schema) => schema.transform().schema)
+        .join('\n');
       expect(graphql).toMatchSnapshot();
     });
 
@@ -1034,7 +1069,9 @@ describe('custom operations', () => {
         Equal<ExpectedCustomOperations, ActualCustomOperations>
       >;
 
-      const graphql = schema.transform().schema;
+      const graphql = schema.schemas
+        .map((schema) => schema.transform().schema)
+        .join('\n');
       expect(graphql).toMatchSnapshot();
     });
 
@@ -1055,11 +1092,71 @@ describe('custom operations', () => {
           .authorization([a.allow.public()]),
       });
 
-      const schema = a.combine([schemaA, schemaB]);
-
-      expect(() => schema.transform()).toThrowError(
+      expect(() => a.combine([schemaA, schemaB])).toThrowError(
         'The schemas you are attempting to combine have a name collision. Please remove or rename DupTest.',
       );
+    });
+  });
+});
+
+describe('RDS Schema with sql statement references', () => {
+  const fakeSecret = () => ({}) as any;
+
+  const datasourceConfigMySQL = {
+    engine: 'mysql',
+    connectionUri: fakeSecret(),
+  } as const;
+
+  const aSql = configure({ database: datasourceConfigMySQL });
+
+  it('schema with full path sql reference', () => {
+    const rdsSchema = aSql
+      .schema({
+        widget: a.model({
+          title: a.string().required(),
+          someOwnerField: a.string(),
+        }),
+        callSql: a
+          .query()
+          .arguments({})
+          .returns(a.ref('widget'))
+          .handler(
+            a.handler.sqlReference(
+              '/full/path/to/sql/statement/directory/testReferenceName',
+            ),
+          ),
+      })
+      .authorization([a.allow.public()]);
+
+    expect(rdsSchema.transform()).toMatchSnapshot();
+  });
+
+  it('schema with relative path sql reference', () => {
+    const rdsSchema = aSql
+      .schema({
+        widget: a.model({
+          title: a.string().required(),
+          someOwnerField: a.string(),
+        }),
+        callSql: a
+          .query()
+          .arguments({})
+          .returns(a.ref('widget'))
+          .handler(a.handler.sqlReference('./testReferenceName')),
+      })
+      .authorization([a.allow.public()]);
+
+    const { customSqlDataSourceStrategies } = rdsSchema.transform();
+
+    expect(customSqlDataSourceStrategies).not.toBeUndefined();
+
+    expect(customSqlDataSourceStrategies![0]).toMatchObject({
+      typeName: 'Query',
+      fieldName: 'callSql',
+      entry: {
+        relativePath: './testReferenceName',
+        importLine: expect.stringContaining('__tests__'),
+      },
     });
   });
 });

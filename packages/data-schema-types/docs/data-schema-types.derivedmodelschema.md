@@ -10,9 +10,10 @@
 export type DerivedModelSchema = {
     data: {
         types: object;
+        configuration: SchemaConfiguration;
     };
     transform: () => DerivedApiDefinition;
 };
 ```
-**References:** [DerivedApiDefinition](./data-schema-types.derivedapidefinition.md)
+**References:** [SchemaConfiguration](./data-schema-types.schemaconfiguration.md)<!-- -->, [DerivedApiDefinition](./data-schema-types.derivedapidefinition.md)
 

@@ -7,8 +7,5 @@
 **Signature:**
 
 ```typescript
-export type JsResolverEntry = string | {
-    relativePath: string;
-    importLine: string;
-};
+export type JsResolverEntry = string | PathEntry;
 ```
