@@ -1,16 +1,12 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
+import { CustomMutations, CustomQueries, CustomSubscriptions } from '../client';
 import {
-  CustomMutations,
-  CustomQueries,
-  CustomSubscriptions,
-} from '../../client-types';
-import {
+  BaseClient,
+  ClientInternalsGetter,
   GraphQLProviderConfig,
   ModelIntrospectionSchema,
 } from '../bridge-types';
-
-import { V6Client, __amplify } from '../types';
 
 import { customOpFactory } from './operations/custom';
 
@@ -37,9 +33,10 @@ export function generateCustomOperationsProperty<
   T extends Record<any, any>,
   OpType extends OpTypes,
 >(
-  client: V6Client<Record<string, any>>,
+  client: BaseClient,
   config: GraphQLProviderConfig['GraphQL'],
   operationsType: OpType,
+  getInternals: ClientInternalsGetter,
 ): OpType extends 'queries' ? CustomQueries<T> : CustomMutations<T> {
   // some bundlers end up with `Amplify.configure` being called *after* generate client.
   // if that occurs, we need to *not error* while we wait. handling for late configuration
@@ -64,7 +61,7 @@ export function generateCustomOperationsProperty<
   }
 
   const ops = {} as CustomOpsProperty<T, OpType>;
-  const useContext = client[__amplify] === null;
+  const useContext = getInternals(client).amplify === null;
   for (const operation of Object.values(operations)) {
     (ops as any)[operation.name] = customOpFactory(
       client,
@@ -72,6 +69,7 @@ export function generateCustomOperationsProperty<
       operationTypeMap[operationsType],
       operation,
       useContext,
+      getInternals,
     );
   }
 
@@ -79,34 +77,40 @@ export function generateCustomOperationsProperty<
 }
 
 export function generateCustomMutationsProperty<T extends Record<any, any>>(
-  client: V6Client<Record<string, any>>,
+  client: BaseClient,
   config: GraphQLProviderConfig['GraphQL'],
+  getInternals: ClientInternalsGetter,
 ) {
   return generateCustomOperationsProperty<T, 'mutations'>(
     client,
     config,
     'mutations',
+    getInternals,
   );
 }
 
 export function generateCustomQueriesProperty<T extends Record<any, any>>(
-  client: V6Client<Record<string, any>>,
+  client: BaseClient,
   config: GraphQLProviderConfig['GraphQL'],
+  getInternals: ClientInternalsGetter,
 ) {
   return generateCustomOperationsProperty<T, 'queries'>(
     client,
     config,
     'queries',
+    getInternals,
   );
 }
 
 export function generateCustomSubscriptionsProperty<T extends Record<any, any>>(
-  client: V6Client<Record<string, any>>,
+  client: BaseClient,
   config: GraphQLProviderConfig['GraphQL'],
+  getInternals: ClientInternalsGetter,
 ) {
   return generateCustomOperationsProperty<T, 'subscriptions'>(
     client,
     config,
     'subscriptions',
+    getInternals,
   );
 }

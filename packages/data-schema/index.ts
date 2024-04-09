@@ -4,3 +4,5 @@ import { ClientSchema } from './src/ClientSchema';
 export { a };
 
 export type { ClientSchema };
+
+export * from './src/runtime';

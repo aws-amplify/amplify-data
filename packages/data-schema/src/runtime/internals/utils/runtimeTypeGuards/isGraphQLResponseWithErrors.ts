@@ -1,7 +1,7 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-import { GraphQLResult } from '../../../types';
+import { GraphQLResult } from '../../../bridge-types';
 
 export function isGraphQLResponseWithErrors(
   response: unknown,

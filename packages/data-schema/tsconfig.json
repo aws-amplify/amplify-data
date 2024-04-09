@@ -4,7 +4,9 @@
     "rootDir": "./",
     "outDir": "lib-esm",
     "declaration": true,
-    "declarationMap": true
+    "declarationMap": true,
+    "lib": ["dom", "es2021"],
+    "target": "es2020"
   },
   "exclude": ["**/node_modules", "**/lib-esm", "__tests__"]
 }

@@ -4,25 +4,19 @@ import {
   AmplifyServer,
   AssociationBelongsTo,
   AssociationHasOne,
+  AuthModeParams,
+  BaseClient,
   GraphQLAuthMode,
+  ClientInternalsGetter,
+  ListArgs,
   ModelFieldType,
   ModelIntrospectionSchema,
   NonModelFieldType,
+  QueryArgs,
   SchemaModel,
   SchemaNonModel,
 } from '../bridge-types';
-import { CustomHeaders } from '../../client-types/index';
-
-import {
-  AuthModeParams,
-  ClientWithModels,
-  ListArgs,
-  QueryArgs,
-  V6Client,
-  __authMode,
-  __authToken,
-  __headers,
-} from '../types';
+import { CustomHeaders } from '../client';
 import { resolveOwnerFields } from '../utils/resolveOwnerFields';
 
 import type { IndexMeta } from './operations/indexQuery';
@@ -71,7 +65,7 @@ export const flattenItems = (obj: Record<string, any>): Record<string, any> => {
 
 // TODO: this should accept single result to support CRUD methods; create helper for array/list
 export function initializeModel(
-  client: ClientWithModels,
+  client: BaseClient,
   modelName: string,
   result: any[],
   modelIntrospection: ModelIntrospectionSchema,
@@ -1006,12 +1000,14 @@ export function normalizeMutationInput(
  * @returns
  */
 export function authModeParams(
-  client: ClientWithModels,
+  client: BaseClient,
+  getInternals: ClientInternalsGetter,
   options: AuthModeParams = {},
 ): AuthModeParams {
+  const internals = getInternals(client);
   return {
-    authMode: options.authMode || client[__authMode],
-    authToken: options.authToken || client[__authToken],
+    authMode: options.authMode || internals.authMode,
+    authToken: options.authToken || internals.authToken,
   };
 }
 
@@ -1022,10 +1018,11 @@ export function authModeParams(
  * @returns custom headers as {@link CustomHeaders}
  */
 export function getCustomHeaders(
-  client: V6Client | ClientWithModels,
+  client: BaseClient,
+  getInternals: ClientInternalsGetter,
   requestHeaders?: CustomHeaders,
 ): CustomHeaders {
-  let headers: CustomHeaders = client[__headers] || {};
+  let headers: CustomHeaders = getInternals(client).headers || {};
 
   // Individual request headers will take precedence over client headers.
   // We intentionally do *not* merge client and request headers.

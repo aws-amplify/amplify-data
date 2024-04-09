@@ -2,9 +2,14 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { map } from 'rxjs';
-import { ModelIntrospectionSchema, SchemaModel } from '../../bridge-types';
+import {
+  BaseBrowserClient,
+  ClientInternalsGetter,
+  GraphqlSubscriptionResult,
+  ModelIntrospectionSchema,
+  SchemaModel,
+} from '../../bridge-types';
 
-import { GraphqlSubscriptionResult, V6Client } from '../../types';
 import {
   ModelOperation,
   authModeParams,
@@ -15,14 +20,15 @@ import {
 } from '../APIClient';
 
 export function subscriptionFactory(
-  client: any,
+  client: BaseBrowserClient,
   modelIntrospection: ModelIntrospectionSchema,
   model: SchemaModel,
   operation: ModelOperation,
+  getInternals: ClientInternalsGetter,
 ) {
   const { name } = model as any;
 
-  const subscription = (args?: any) => {
+  const subscription = (args?: Record<string, any>) => {
     const query = generateGraphQLDocument(
       modelIntrospection,
       name,
@@ -37,9 +43,9 @@ export function subscriptionFactory(
       modelIntrospection,
     );
 
-    const auth = authModeParams(client, args);
+    const auth = authModeParams(client, getInternals, args);
 
-    const headers = getCustomHeaders(client, args?.headers);
+    const headers = getCustomHeaders(client, getInternals, args?.headers);
 
     const observable = client.graphql(
       {
@@ -48,14 +54,14 @@ export function subscriptionFactory(
         variables,
       },
       headers,
-    ) as GraphqlSubscriptionResult<object>;
+    ) as GraphqlSubscriptionResult;
 
     return observable.pipe(
       map((value) => {
         const [key] = Object.keys(value.data);
         const data = (value.data as any)[key];
         const [initialized] = initializeModel(
-          client as V6Client<Record<string, any>>,
+          client,
           name,
           [data],
           modelIntrospection,

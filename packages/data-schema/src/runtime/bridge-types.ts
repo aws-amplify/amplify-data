@@ -1,4 +1,20 @@
 /* eslint-disable @typescript-eslint/no-namespace */
+
+/**
+ * Sort-of-Minimalistic types used to allow `@aws-amplify/api-graphql` to call into
+ * `@aws-amplify/data-schema` without forcing `@aws-amplify/data-schema` to become the
+ * bucket for ALL of those types.
+ *
+ * In other words, types that relate to GraphQL category operations apart from the
+ * gen2/modeled operations should continue to live in `@aws-amplify/api-graphql`. And,
+ * `@aws-amplify/data-schema` should ideally only define those types/interfaces that are
+ * necessary to safely extend a graphql client.
+ */
+
+import { Observable } from 'rxjs';
+
+import { CustomHeaders, ModelSortDirection } from './client';
+
 export declare namespace AmplifyServer {
   export interface ContextToken {
     readonly value: symbol;
@@ -10,6 +26,7 @@ export declare namespace AmplifyServer {
 
 export interface AmplifyClass {
   getConfig(): Readonly<ResourcesConfig>;
+  // truncated
 }
 
 export interface ResourcesConfig {
@@ -31,7 +48,7 @@ interface APIRestConfig {
   region?: string;
   /**
    * Optional service name string to sign the request with IAM credentials.
-   *
+   *s
    * @default 'execute-api'
    */
   service?: string;
@@ -47,7 +64,7 @@ export type APIConfig = AtLeastOne<RESTProviderConfig & GraphQLProviderConfig>;
 
 export interface GraphQLProviderConfig {
   readonly GraphQL: {
-    modelIntrospection: ModelIntrospectionSchema | undefined;
+    modelIntrospection?: ModelIntrospectionSchema;
   };
 }
 
@@ -272,3 +289,92 @@ export type HubPayload<EventData extends EventDataMap = EventDataMap> =
 export interface AmplifyHubCallbackMap<Channel extends AmplifyChannel> {
   auth: HubCallback<Channel>;
 }
+
+/**
+ * Loose/Unknown options for raw GraphQLAPICategory `graphql()`.
+ */
+export interface GraphQLOptions {
+  query: string;
+  variables?: Record<string, any>;
+  authMode?: GraphQLAuthMode;
+  authToken?: string;
+  /**
+   * @deprecated This property should not be used
+   */
+  userAgentSuffix?: string;
+}
+
+export interface GraphQLResult {
+  data: any;
+  errors?: Record<string, any>[];
+  extensions?: Record<string, any>;
+}
+
+export type GraphqlSubscriptionResult = Observable<{
+  data: Record<string, any>;
+}>;
+
+/**
+ * @private
+ *
+ * The knobs available for configuring `server/generateClient` internally.
+ */
+export interface ServerClientGenerationParams {
+  amplify:
+    | null // null expected when used with `generateServerClient`
+    // closure expected with `generateServerClientUsingCookies`
+    | ((fn: (amplify: AmplifyClass) => Promise<any>) => Promise<any>);
+  // global env-sourced config use for retrieving modelIntro
+  config: ResourcesConfig;
+}
+
+export type QueryArgs = Record<string, unknown>;
+
+export interface ListArgs extends Record<string, unknown> {
+  selectionSet?: string[];
+  filter?: Record<string, unknown>;
+  sortDirection?: ModelSortDirection;
+  headers?: CustomHeaders;
+}
+
+export interface AuthModeParams extends Record<string, unknown> {
+  authMode?: GraphQLAuthMode;
+  authToken?: string;
+}
+
+export interface GenerateServerClientParams {
+  config: ResourcesConfig;
+  authMode?: GraphQLAuthMode;
+  authToken?: string;
+}
+
+export type ClientInternalsGetter = (client: any) => {
+  amplify: AmplifyClass;
+  authMode: GraphQLAuthMode | undefined;
+  authToken: string | undefined;
+  headers: CustomHeaders | undefined;
+};
+
+export type BaseClient = BaseBrowserClient | BaseSSRClient;
+
+export type BaseBrowserClient = {
+  graphql: GraphQLMethod;
+  cancel(promise: Promise<any>, message?: string): boolean;
+  isCancelError(error: any): boolean;
+};
+export type BaseSSRClient = {
+  graphql: GraphQLMethodSSR;
+  cancel(promise: Promise<any>, message?: string): boolean;
+  isCancelError(error: any): boolean;
+};
+
+export type GraphQLMethod = (
+  options: GraphQLOptions,
+  additionalHeaders?: CustomHeaders | undefined,
+) => GraphQLResult | GraphqlSubscriptionResult;
+
+export type GraphQLMethodSSR = (
+  contextSpec: AmplifyServer.ContextSpec,
+  options: GraphQLOptions,
+  additionalHeaders?: CustomHeaders | undefined,
+) => GraphQLResult | GraphqlSubscriptionResult;

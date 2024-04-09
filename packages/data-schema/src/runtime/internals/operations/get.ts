@@ -2,8 +2,17 @@
 // SPDX-License-Identifier: Apache-2.0
 import {
   AmplifyServer,
-  SchemaModel,
+  AuthModeParams,
+  BaseClient,
+  BaseBrowserClient,
+  BaseSSRClient,
+  ClientInternalsGetter,
+  GraphQLOptions,
+  GraphQLResult,
+  ListArgs,
   ModelIntrospectionSchema,
+  SchemaModel,
+  QueryArgs,
 } from '../../bridge-types';
 
 import {
@@ -15,26 +24,17 @@ import {
   getCustomHeaders,
   initializeModel,
 } from '../APIClient';
-import {
-  AuthModeParams,
-  ClientWithModels,
-  GraphQLOptionsV6,
-  GraphQLResult,
-  ListArgs,
-  QueryArgs,
-  V6Client,
-  V6ClientSSRRequest,
-} from '../../types';
 
 export function getFactory(
-  client: ClientWithModels,
+  client: BaseClient,
   modelIntrospection: ModelIntrospectionSchema,
   model: SchemaModel,
   operation: ModelOperation,
+  getInternals: ClientInternalsGetter,
   useContext = false,
 ) {
   const getWithContext = async (
-    contextSpec: AmplifyServer.ContextSpec & GraphQLOptionsV6<unknown, string>,
+    contextSpec: AmplifyServer.ContextSpec & GraphQLOptions,
     arg?: any,
     options?: any,
   ) => {
@@ -45,24 +45,34 @@ export function getFactory(
       arg,
       options,
       operation,
+      getInternals,
       contextSpec,
     );
   };
 
   const get = async (arg?: any, options?: any) => {
-    return _get(client, modelIntrospection, model, arg, options, operation);
+    return _get(
+      client,
+      modelIntrospection,
+      model,
+      arg,
+      options,
+      operation,
+      getInternals,
+    );
   };
 
   return useContext ? getWithContext : get;
 }
 
 async function _get(
-  client: ClientWithModels,
+  client: BaseClient,
   modelIntrospection: ModelIntrospectionSchema,
   model: SchemaModel,
   arg: QueryArgs,
   options: AuthModeParams & ListArgs,
   operation: ModelOperation,
+  getInternals: ClientInternalsGetter,
   context?: AmplifyServer.ContextSpec,
 ) {
   const { name } = model;
@@ -81,12 +91,12 @@ async function _get(
   );
 
   try {
-    const auth = authModeParams(client, options);
+    const auth = authModeParams(client, getInternals, options);
 
-    const headers = getCustomHeaders(client, options?.headers);
+    const headers = getCustomHeaders(client, getInternals, options?.headers);
 
     const { data, extensions } = context
-      ? ((await (client as V6ClientSSRRequest<Record<string, any>>).graphql(
+      ? ((await (client as BaseSSRClient).graphql(
           context,
           {
             ...auth,
@@ -94,15 +104,15 @@ async function _get(
             variables,
           },
           headers,
-        )) as GraphQLResult<any>)
-      : ((await (client as V6Client<Record<string, any>>).graphql(
+        )) as GraphQLResult)
+      : ((await (client as BaseBrowserClient).graphql(
           {
             ...auth,
             query,
             variables,
           },
           headers,
-        )) as GraphQLResult<any>);
+        )) as GraphQLResult);
 
     // flatten response
     if (data) {

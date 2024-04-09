@@ -1,0 +1,48 @@
+// Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
+
+export declare const __modelMeta__: unique symbol;
+
+export type ExtractModelMeta<T extends Record<any, any>> =
+  T[typeof __modelMeta__];
+
+export type ModelTypes<
+  _T extends Record<any, any> = never,
+  _Context extends string = 'CLIENT',
+  _ModelMeta extends Record<any, any> = any,
+> = any;
+export type EnumTypes<
+  _T extends Record<any, any> = never,
+  _ModelMeta extends Record<any, any> = any,
+> = any;
+
+export type SelectionSet<_Model, _Path> = any;
+
+/**
+ * Custom headers that can be passed either to the client or to individual
+ * model operations, either as a static object or a function that returns a
+ * promise.
+ */
+export type CustomHeaders =
+  | Record<string, string>
+  | (() => Promise<Record<string, string>>);
+
+export type CustomQueries<
+  Schema extends Record<any, any>,
+  _Context extends string = 'CLIENT',
+  _ModelMeta extends Record<any, any> = ExtractModelMeta<Schema>,
+> = any;
+
+export type CustomMutations<
+  Schema extends Record<any, any>,
+  _Context extends string = 'CLIENT',
+  _ModelMeta extends Record<any, any> = ExtractModelMeta<Schema>,
+> = any;
+
+export type CustomSubscriptions<
+  Schema extends Record<any, any>,
+  _Context extends string = 'CLIENT',
+  _ModelMeta extends Record<any, any> = ExtractModelMeta<Schema>,
+> = any;
+
+export type ModelSortDirection = 'ASC' | 'DESC';

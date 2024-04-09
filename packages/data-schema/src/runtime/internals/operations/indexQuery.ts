@@ -2,8 +2,14 @@
 // SPDX-License-Identifier: Apache-2.0
 import {
   AmplifyServer,
-  SchemaModel,
+  AuthModeParams,
+  BaseClient,
+  ClientInternalsGetter,
+  GraphQLResult,
+  ListArgs,
   ModelIntrospectionSchema,
+  SchemaModel,
+  QueryArgs,
 } from '../../bridge-types';
 
 import {
@@ -14,14 +20,6 @@ import {
   getCustomHeaders,
   initializeModel,
 } from '../APIClient';
-import {
-  AuthModeParams,
-  ClientWithModels,
-  GraphQLResult,
-  ListArgs,
-  QueryArgs,
-  V6ClientSSRRequest,
-} from '../../types';
 
 export interface IndexMeta {
   queryField: string;
@@ -30,10 +28,11 @@ export interface IndexMeta {
 }
 
 export function indexQueryFactory(
-  client: ClientWithModels,
+  client: BaseClient,
   modelIntrospection: ModelIntrospectionSchema,
   model: SchemaModel,
   indexMeta: IndexMeta,
+  getInternals: ClientInternalsGetter,
   context = false,
 ) {
   const indexQueryWithContext = async (
@@ -46,6 +45,7 @@ export function indexQueryFactory(
       modelIntrospection,
       model,
       indexMeta,
+      getInternals,
       {
         ...args,
         ...options,
@@ -55,17 +55,24 @@ export function indexQueryFactory(
   };
 
   const indexQuery = async (args: QueryArgs, options?: ListArgs) => {
-    return _indexQuery(client, modelIntrospection, model, indexMeta, {
-      ...args,
-      ...options,
-    });
+    return _indexQuery(
+      client,
+      modelIntrospection,
+      model,
+      indexMeta,
+      getInternals,
+      {
+        ...args,
+        ...options,
+      },
+    );
   };
 
   return context ? indexQueryWithContext : indexQuery;
 }
 
 function processGraphQlResponse(
-  result: GraphQLResult<any>,
+  result: GraphQLResult,
   selectionSet: undefined | string[],
   modelInitializer: (flattenedResult: any[]) => any[],
 ) {
@@ -101,10 +108,11 @@ function handleGraphQlError(error: any) {
 }
 
 async function _indexQuery(
-  client: ClientWithModels,
+  client: BaseClient,
   modelIntrospection: ModelIntrospectionSchema,
   model: SchemaModel,
   indexMeta: IndexMeta,
+  getInternals: ClientInternalsGetter,
   args?: ListArgs & AuthModeParams,
   contextSpec?: AmplifyServer.ContextSpec,
 ) {
@@ -125,7 +133,7 @@ async function _indexQuery(
     indexMeta,
   );
 
-  const auth = authModeParams(client, args);
+  const auth = authModeParams(client, getInternals, args);
 
   const modelInitializer = (flattenedResult: any[]) =>
     initializeModel(
@@ -139,7 +147,7 @@ async function _indexQuery(
     );
 
   try {
-    const headers = getCustomHeaders(client, args?.headers);
+    const headers = getCustomHeaders(client, getInternals, args?.headers);
 
     const graphQlParams = {
       ...auth,
@@ -153,9 +161,9 @@ async function _indexQuery(
       requestArgs.unshift(contextSpec);
     }
 
-    const response = (await (
-      client as V6ClientSSRRequest<Record<string, any>>
-    ).graphql(...requestArgs)) as GraphQLResult<any>;
+    const response = (await (client as BaseClient).graphql(
+      ...requestArgs,
+    )) as GraphQLResult;
 
     if (response.data !== undefined) {
       return processGraphQlResponse(

@@ -5,7 +5,7 @@ import {
   GraphQLProviderConfig,
   ModelIntrospectionSchema,
 } from '../../../bridge-types';
-import { EnumTypes } from '../../../../client-types';
+import { EnumTypes } from '../../../client';
 
 export const generateEnumsProperty = <T extends Record<any, any> = never>(
   graphqlConfig: GraphQLProviderConfig['GraphQL'],
