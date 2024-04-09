@@ -7,6 +7,7 @@ import { ModelField, InternalField } from './ModelField';
 import type {
   ModelRelationalField,
   InternalRelationalField,
+  ModelRelationalFieldParamShape,
 } from './ModelRelationalField';
 import { Authorization } from './Authorization';
 import { RefType } from './RefType';
@@ -131,6 +132,27 @@ type ConflictingAuthRulesMap<T extends ModelTypeParamShape> = {
     : never;
 };
 
+export type AddRelationshipFieldsToModelTypeFields<
+  Model,
+  RelationshipFields extends Record<
+    string,
+    ModelRelationalField<ModelRelationalFieldParamShape, string, any, any>
+  >,
+> =
+  Model extends ModelType<
+    infer ModelParam extends ModelTypeParamShape,
+    infer HiddenKeys
+  >
+    ? ModelType<
+        SetTypeSubArg<
+          ModelParam,
+          'fields',
+          ModelParam['fields'] & RelationshipFields
+        >,
+        HiddenKeys
+      >
+    : never;
+
 /**
  * For a given ModelTypeParamShape, produces a union of Authorization rules
  * that would *conflict* with the given type.
@@ -212,17 +234,30 @@ export type ModelType<
  */
 export type SchemaModelType<
   T extends ModelType<ModelTypeParamShape> = ModelType<ModelTypeParamShape>,
-> = T & {
-  addRelationships(
-    relationships: Record<string, ModelRelationalField<any, string, any, any>>,
-  ): void;
-};
+  ModelName extends string = string,
+  IsRDS extends boolean = false,
+> = IsRDS extends true
+  ? T & {
+      addRelationships<
+        Param extends Record<
+          string,
+          ModelRelationalField<any, string, any, any>
+        > = Record<never, never>,
+      >(
+        relationships: Param,
+      ): Record<ModelName, Param>;
+    }
+  : T;
 
 /**
  * Internal representation of Model Type that exposes the `data` property.
  * Used at buildtime.
  */
-export type InternalModel = SchemaModelType & {
+export type InternalModel = SchemaModelType<
+  ModelType<ModelTypeParamShape>,
+  string,
+  true
+> & {
   data: InternalModelData;
 };
 

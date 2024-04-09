@@ -108,84 +108,8 @@ describe('schema generation', () => {
             'CPKReciprocalHasManyChildIdFieldA',
             'CPKReciprocalHasManyChildIdFieldB',
           ]),
-        ReferencedBoringParent: a.model({
-          childNormal: a
-            .hasOne('ReferencedBoringChild')
-            .references(['bcRefId']),
-          childReciprocal: a
-            .hasOne('ReferencedBoringReciprocalChild')
-            .references(['brcRefId']),
-          childHasManyNormal: a
-            .hasMany('ReferencedBoringHasManyChild')
-            .references(['bhmRefId']),
-          childHasManyReciprocal: a
-            .hasMany('ReferencedReciprocalHasManyChild')
-            .references(['rrhmRefId']),
-        }),
-        ReferencedBoringChild: a.model({
-          bcRefId: a.string(),
-          value: a.string(),
-        }),
-        ReferencedBoringReciprocalChild: a.model({
-          brcRefId: a.string(),
-          parent: a
-            .belongsTo('ReferencedBoringParent')
-            .references(['brcRefId']),
-          value: a.string(),
-        }),
-        ReferencedBoringHasManyChild: a.model({
-          bhmRefId: a.string(),
-          value: a.string(),
-        }),
-        ReferencedReciprocalHasManyChild: a.model({
-          rrhmRefId: a.string(),
-          value: a.string(),
-          parent: a
-            .belongsTo('ReferencedBoringParent')
-            .references(['rrhmRefId']),
-        }),
-        LateReferencedBoringParent: a.model({}),
-        LateReferencedBoringChild: a.model({
-          bcRefId: a.string(),
-          value: a.string(),
-        }),
-        LateReferencedBoringReciprocalChild: a.model({
-          brcRefId: a.string(),
-          value: a.string(),
-        }),
-        LateReferencedBoringHasManyChild: a.model({
-          bhmRefId: a.string(),
-          value: a.string(),
-        }),
-        LateReferencedReciprocalHasManyChild: a.model({
-          rrhmRefId: a.string(),
-          value: a.string(),
-        }),
       })
       .authorization([a.allow.public()]);
-
-    schema.models.LateReferencedBoringParent.addRelationships({
-      childNormal: a
-        .hasOne('LateReferencedBoringChild')
-        .references(['bcRefId']),
-      childReciprocal: a
-        .hasOne('LateReferencedBoringReciprocalChild')
-        .references(['brcRefId']),
-      childHasManyNormal: a
-        .hasMany('LateReferencedBoringHasManyChild')
-        .references(['bhmRefId']),
-      childHasManyReciprocal: a
-        .hasMany('LateReferencedReciprocalHasManyChild')
-        .references(['rrhmRefId']),
-    });
-
-    schema.models.LateReferencedBoringReciprocalChild.addRelationships({
-      parent: a.belongsTo('ReferencedBoringParent').references(['brcRefId']),
-    });
-
-    schema.models.LateReferencedReciprocalHasManyChild.addRelationships({
-      parent: a.belongsTo('ReferencedBoringParent').references(['rrhmRefId']),
-    });
 
     expect(schema.transform().schema).toMatchSnapshot();
   });
