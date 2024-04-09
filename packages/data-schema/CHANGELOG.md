@@ -1,5 +1,11 @@
 # @aws-amplify/data-schema
 
+## 0.14.10
+
+### Patch Changes
+
+- 9dfc6a9: feat: add .relationships() modifiers for RDSSchema
+
 ## 0.14.9
 
 ### Patch Changes
