@@ -692,10 +692,6 @@ describe('custom operations', () => {
       //     models.A.fields.fieldName.authorization
       //   ])
 
-      const res = schema.renameModel((models) => ({
-        A: models.A.renameTo('Z'),
-      }));
-
       type Actual_A = Prettify<ClientSchema<typeof schema>['A']>;
 
       type Expected_A = {
@@ -717,8 +713,9 @@ describe('custom operations', () => {
         }),
       });
 
-      schema.addModelAuthorization((models) => [
+      schema.setAuthorization((models, schema) => [
         models.A.authorization([a.allow.owner()]),
+        schema.authorization([a.allow.private()]),
       ]);
 
       type Actual_A = Prettify<ClientSchema<typeof schema>['A']>;

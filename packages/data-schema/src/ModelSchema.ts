@@ -101,9 +101,7 @@ type RDSModelSchemaFunctions =
   | 'addMutations'
   | 'addSubscriptions'
   | 'authorization'
-  | 'addModelAuthorization'
-  | 'renameModel'
-  | 'renameModels';
+  | 'addModelAuthorization';
 
 export type RDSModelSchema<
   T extends RDSModelSchemaParamShape,
@@ -136,39 +134,9 @@ export type RDSModelSchema<
       SetTypeSubArg<T, 'authorization', AuthRules[]>,
       UsedMethods | 'authorization'
     >;
-    addModelAuthorization: (
-      callback: (models: BaseSchema<T>['data']['types']) => void,
+    setAuthorization: (
+      callback: (models: BaseSchema<T>['data']['types'], schema: T) => void,
     ) => RDSModelSchema<T, UsedMethods | 'addModelAuthorization'>;
-    renameModel: <
-      OldName extends keyof BaseSchema<T>['models'],
-      const SelectedModel extends ModelType<ModelTypeParamShape, any>,
-    >(
-      callback: (
-        models: BaseSchema<T>['models'],
-      ) => Record<OldName, SelectedModel>,
-    ) => Record<
-      OldName,
-      SelectedModel extends ModelType<infer ModelTypeArg, any>
-        ? ModelTypeArg['renamedTo']
-        : never
-    >;
-    renameModels: <
-      OldName extends keyof BaseSchema<T>['models'],
-      const SelectedModel extends ModelType<ModelTypeParamShape, any>,
-    >(
-      callback: (
-        models: BaseSchema<T>['models'],
-      ) => Record<OldName, SelectedModel>,
-    ) => Record<
-      OldName,
-      SelectedModel extends ModelType<infer ModelTypeArg, any>
-        ? ModelTypeArg['renamedTo']
-        : never
-    >;
-    // ) => RDSModelSchema<
-    //   SetTypeSubArg<T, 'types', T['types']>,
-    //   UsedMethods | 'renameModels'
-    // >;
   },
   UsedMethods
 > &
@@ -227,8 +195,8 @@ function _rdsSchema<
       const { addSubscriptions: _, ...rest } = this;
       return rest;
     },
-    addModelAuthorization(callback) {
-      callback(data.types);
+    setAuthorization(callback) {
+      callback(data.types, this);
     },
 
     ...rdsSchemaBrand,
