@@ -2,19 +2,20 @@
   "name": "@aws-amplify/data-schema-types",
   "version": "0.7.17",
   "license": "Apache-2.0",
-  "main": "./lib-esm/index.d.ts",
-  "types": "./lib-esm/index.d.ts",
+  "main": "./dist/cjs/index.js",
+  "module": "./dist/esm/index.mjs",
+  "types": "./dist/esm/index.d.ts",
   "react-native": "./src/index.ts",
   "typesVersions": {
     "<5": {
-      "lib-esm/index.d.ts": [
-        "lib-esm/index.v3.d.ts"
+      "dist/esm/index.d.ts": [
+        "dist/esm/index.v3.d.ts"
       ]
     }
   },
   "scripts": {
-    "build": "npm run build:esm",
-    "build:esm": "npm run clean && tsc -p ./tsconfig.json",
+    "build": "npm run clean && npm run build:esm-cjs",
+    "build:esm-cjs": "rollup -c rollup.config.mjs",
     "build:esm:watch": "npm run build:esm -- --watch",
     "clean": "rimraf lib-esm tsconfig.tsbuildinfo",
     "docs": "api-extractor run && api-documenter markdown --input-folder temp --output-folder docs",
@@ -28,7 +29,7 @@
   },
   "files": [
     "src",
-    "lib-esm/**",
+    "dist/**",
     "package.json"
   ],
   "dependencies": {

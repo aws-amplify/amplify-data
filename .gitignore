@@ -1,6 +1,7 @@
 coverage
 lib
 lib-esm
+dist
 node_modules
 tsconfig.tsbuildinfo
 
@@ -13,3 +14,7 @@ verdaccio-cache
 verdaccio-logs.txt
 
 packages/*/temp
+
+# rollup
+**/.rollup.cache
+**/buildMeta

@@ -13,5 +13,5 @@
     "resolveJsonModule": true,
     "noErrorTruncation": true // prevents truncatation when hovering over type in VSCode
   },
-  "exclude": ["**/node_modules", "**/lib-esm", "__tests__"]
+  "exclude": ["**/node_modules", "**/lib-esm", "**/dist", "__tests__"]
 }
