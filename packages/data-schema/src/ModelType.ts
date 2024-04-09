@@ -7,6 +7,7 @@ import { ModelField, InternalField } from './ModelField';
 import type {
   ModelRelationalField,
   InternalRelationalField,
+  ModelRelationalFieldParamShape,
 } from './ModelRelationalField';
 import { Authorization } from './Authorization';
 import { RefType } from './RefType';
@@ -40,7 +41,6 @@ type ModelData = {
   identifier: string[];
   secondaryIndexes: ReadonlyArray<ModelIndexType<any, any, any, any, any>>;
   authorization: Authorization<any, any, any>[];
-  renamedTo: undefined | string;
 };
 
 type InternalModelData = ModelData & {
@@ -55,7 +55,6 @@ export type ModelTypeParamShape = {
   identifier: string[];
   secondaryIndexes: ReadonlyArray<SecondaryIndexIrShape>;
   authorization: Authorization<any, any, any>[];
-  renamedTo: undefined | string;
 };
 
 // Extract field names that can be used to define a secondary index PK or SK
@@ -132,6 +131,27 @@ type ConflictingAuthRulesMap<T extends ModelTypeParamShape> = {
         : Authorization<any, K, true> | Authorization<any, K, false>
     : never;
 };
+
+export type AddRelationshipFieldsToModelTypeFields<
+  Model,
+  RelationshipFields extends Record<
+    string,
+    ModelRelationalField<ModelRelationalFieldParamShape, string, any, any>
+  >,
+> =
+  Model extends ModelType<
+    infer ModelParam extends ModelTypeParamShape,
+    infer HiddenKeys
+  >
+    ? ModelType<
+        SetTypeSubArg<
+          ModelParam,
+          'fields',
+          ModelParam['fields'] & RelationshipFields
+        >,
+        HiddenKeys
+      >
+    : never;
 
 /**
  * For a given ModelTypeParamShape, produces a union of Authorization rules
@@ -213,24 +233,31 @@ export type ModelType<
  * Used on the complete schema object.
  */
 export type SchemaModelType<
-  T extends ModelType<
-    ModelTypeParamShape,
-    any
-  > = ModelType<ModelTypeParamShape>,
-> = T & {
-  addRelationships(
-    relationships: Record<string, ModelRelationalField<any, string, any, any>>,
-  ): void;
-  renameTo<RenamedModel extends string>(
-    name: RenamedModel,
-  ): SetTypeSubArg<T, 'renamedTo', RenamedModel>;
-};
+  T extends ModelType<ModelTypeParamShape> = ModelType<ModelTypeParamShape>,
+  ModelName extends string = string,
+  IsRDS extends boolean = false,
+> = IsRDS extends true
+  ? T & {
+      addRelationships<
+        Param extends Record<
+          string,
+          ModelRelationalField<any, string, any, any>
+        > = Record<never, never>,
+      >(
+        relationships: Param,
+      ): Record<ModelName, Param>;
+    }
+  : T;
 
 /**
  * Internal representation of Model Type that exposes the `data` property.
  * Used at buildtime.
  */
-export type InternalModel = SchemaModelType & {
+export type InternalModel = SchemaModelType<
+  ModelType<ModelTypeParamShape>,
+  string,
+  true
+> & {
   data: InternalModelData;
 };
 
@@ -240,7 +267,6 @@ function _model<T extends ModelTypeParamShape>(fields: T['fields']) {
     identifier: ['id'],
     secondaryIndexes: [],
     authorization: [],
-    renamedTo: undefined,
   };
 
   const builder = {
@@ -268,12 +294,28 @@ function _model<T extends ModelTypeParamShape>(fields: T['fields']) {
     addRelationships(relationships) {
       data.fields = { ...data.fields, ...relationships };
     },
-    renameTo<RenamedModel extends string>(name: RenamedModel) {
-      data.renamedTo = name;
-      return this as SetTypeSubArg<T, 'renamedTo', RenamedModel>;
-    },
   } as InternalModel as ModelType<T>;
 }
+
+/**
+ * Model Type type guard
+ * @param modelType - api-next ModelType
+ * @returns true if the given value is a ModelSchema
+ */
+export const isSchemaModelType = (
+  modelType: any | SchemaModelType,
+): modelType is SchemaModelType => {
+  const internalType = modelType as InternalModel;
+  return (
+    typeof internalType === 'object' &&
+    internalType.data !== undefined &&
+    internalType.data.fields !== undefined &&
+    internalType.data.authorization !== undefined &&
+    internalType.data.identifier !== undefined &&
+    internalType.data.secondaryIndexes !== undefined &&
+    typeof internalType.addRelationships === 'function'
+  );
+};
 
 /**
  * A data model that creates a matching Amazon DynamoDB table and provides create, read (list and get), update,
@@ -289,10 +331,6 @@ export function model<T extends ModelFields>(
   identifier: Array<'id'>;
   secondaryIndexes: [];
   authorization: [];
-  renamedTo: never;
 }> {
   return _model(fields);
 }
-
-// TODO: rename and extract into separate file;
-// Will breaking apart SecondaryIndexToIR optimize it?

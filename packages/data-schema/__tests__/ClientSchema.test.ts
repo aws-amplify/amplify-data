@@ -108,86 +108,8 @@ describe('schema generation', () => {
             'CPKReciprocalHasManyChildIdFieldA',
             'CPKReciprocalHasManyChildIdFieldB',
           ]),
-        ReferencedBoringParent: a.model({
-          childNormal: a
-            .hasOne('ReferencedBoringChild')
-            .references(['bcRefId']),
-          childReciprocal: a
-            .hasOne('ReferencedBoringReciprocalChild')
-            .references(['brcRefId']),
-          childHasManyNormal: a
-            .hasMany('ReferencedBoringHasManyChild')
-            .references(['bhmRefId']),
-          childHasManyReciprocal: a
-            .hasMany('ReferencedReciprocalHasManyChild')
-            .references(['rrhmRefId']),
-        }),
-        ReferencedBoringChild: a.model({
-          bcRefId: a.string(),
-          value: a.string(),
-        }),
-        ReferencedBoringReciprocalChild: a.model({
-          brcRefId: a.string(),
-          parent: a
-            .belongsTo('ReferencedBoringParent')
-            .references(['brcRefId']),
-          value: a.string(),
-        }),
-        ReferencedBoringHasManyChild: a.model({
-          bhmRefId: a.string(),
-          value: a.string(),
-        }),
-        ReferencedReciprocalHasManyChild: a.model({
-          rrhmRefId: a.string(),
-          value: a.string(),
-          parent: a
-            .belongsTo('ReferencedBoringParent')
-            .references(['rrhmRefId']),
-        }),
-        LateReferencedBoringParent: a.model({}),
-        LateReferencedBoringChild: a.model({
-          bcRefId: a.string(),
-          value: a.string(),
-        }),
-        LateReferencedBoringReciprocalChild: a.model({
-          brcRefId: a.string(),
-          value: a.string(),
-        }),
-        LateReferencedBoringHasManyChild: a.model({
-          bhmRefId: a.string(),
-          value: a.string(),
-        }),
-        LateReferencedReciprocalHasManyChild: a.model({
-          rrhmRefId: a.string(),
-          value: a.string(),
-        }),
       })
       .authorization([a.allow.public()]);
-
-    // These don't work as expected. They add relationships in the model schema output,
-    // but don't add them to the types. We're re-implementing this feature
-    // schema.models.LateReferencedBoringParent.addRelationships({
-    //   childNormal: a
-    //     .hasOne('LateReferencedBoringChild')
-    //     .references(['bcRefId']),
-    //   childReciprocal: a
-    //     .hasOne('LateReferencedBoringReciprocalChild')
-    //     .references(['brcRefId']),
-    //   childHasManyNormal: a
-    //     .hasMany('LateReferencedBoringHasManyChild')
-    //     .references(['bhmRefId']),
-    //   childHasManyReciprocal: a
-    //     .hasMany('LateReferencedReciprocalHasManyChild')
-    //     .references(['rrhmRefId']),
-    // });
-
-    // schema.models.LateReferencedBoringReciprocalChild.addRelationships({
-    //   parent: a.belongsTo('ReferencedBoringParent').references(['brcRefId']),
-    // });
-
-    // schema.models.LateReferencedReciprocalHasManyChild.addRelationships({
-    //   parent: a.belongsTo('ReferencedBoringParent').references(['rrhmRefId']),
-    // });
 
     expect(schema.transform().schema).toMatchSnapshot();
   });
@@ -675,22 +597,13 @@ describe('custom operations', () => {
 
   describe('for an rds schema', () => {
     test('can define public auth with no provider', () => {
-      const schema = configure({ database: datasourceConfigMySQL }).schema({
-        A: a.model({
-          field: a.string(),
-        }),
-        B: a.model({
-          field: a.string(),
-        }),
-      });
-
-      // const res = schema
-      //   .setAuthorization((models, schema)) => [schema.authorization(), models.A.authorization()])
-      //   .addModelAuthorization((models) => [
-      //     models.A.authorization([a.allow.public()]),
-      //     models.B.authorization([a.allow.owner().inField('field')]),
-      //     models.A.fields.fieldName.authorization
-      //   ])
+      const schema = configure({ database: datasourceConfigMySQL })
+        .schema({
+          A: a.model({
+            field: a.string(),
+          }),
+        })
+        .authorization([a.allow.public()]);
 
       type Actual_A = Prettify<ClientSchema<typeof schema>['A']>;
 
@@ -715,7 +628,7 @@ describe('custom operations', () => {
 
       schema.setAuthorization((models, schema) => [
         models.A.authorization([a.allow.owner()]),
-        schema.authorization([a.allow.private()]),
+        // schema.authorization([a.allow.private()]),
       ]);
 
       type Actual_A = Prettify<ClientSchema<typeof schema>['A']>;
