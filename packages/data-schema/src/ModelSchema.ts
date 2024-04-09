@@ -9,7 +9,6 @@ import {
   type ModelType,
   type ModelTypeParamShape,
   type InternalModel,
-  isSchemaModelType,
   SchemaModelType,
 } from './ModelType';
 import type { EnumType, EnumTypeParamShape } from './EnumType';
@@ -67,7 +66,10 @@ export type InternalSchema = {
 export type BaseSchema<T extends ModelSchemaParamShape> = {
   data: T;
   models: {
-    [TypeKey in keyof T['types']]: T['types'][TypeKey] extends ModelType<ModelTypeParamShape>
+    [TypeKey in keyof T['types']]: T['types'][TypeKey] extends ModelType<
+      ModelTypeParamShape,
+      any
+    >
       ? SchemaModelType<T['types'][TypeKey]>
       : never;
   };
@@ -98,7 +100,10 @@ type RDSModelSchemaFunctions =
   | 'addQueries'
   | 'addMutations'
   | 'addSubscriptions'
-  | 'authorization';
+  | 'authorization'
+  | 'addModelAuthorization'
+  | 'renameModel'
+  | 'renameModels';
 
 export type RDSModelSchema<
   T extends RDSModelSchemaParamShape,
@@ -130,8 +135,40 @@ export type RDSModelSchema<
     ) => RDSModelSchema<
       SetTypeSubArg<T, 'authorization', AuthRules[]>,
       UsedMethods | 'authorization'
-    > &
-      RDSSchemaBrand;
+    >;
+    addModelAuthorization: (
+      callback: (models: BaseSchema<T>['data']['types']) => void,
+    ) => RDSModelSchema<T, UsedMethods | 'addModelAuthorization'>;
+    renameModel: <
+      OldName extends keyof BaseSchema<T>['models'],
+      const SelectedModel extends ModelType<ModelTypeParamShape, any>,
+    >(
+      callback: (
+        models: BaseSchema<T>['models'],
+      ) => Record<OldName, SelectedModel>,
+    ) => Record<
+      OldName,
+      SelectedModel extends ModelType<infer ModelTypeArg, any>
+        ? ModelTypeArg['renamedTo']
+        : never
+    >;
+    renameModels: <
+      OldName extends keyof BaseSchema<T>['models'],
+      const SelectedModel extends ModelType<ModelTypeParamShape, any>,
+    >(
+      callback: (
+        models: BaseSchema<T>['models'],
+      ) => Record<OldName, SelectedModel>,
+    ) => Record<
+      OldName,
+      SelectedModel extends ModelType<infer ModelTypeArg, any>
+        ? ModelTypeArg['renamedTo']
+        : never
+    >;
+    // ) => RDSModelSchema<
+    //   SetTypeSubArg<T, 'types', T['types']>,
+    //   UsedMethods | 'renameModels'
+    // >;
   },
   UsedMethods
 > &
@@ -142,28 +179,6 @@ export type RDSModelSchema<
  * Amplify API Next Model Schema shape
  */
 export type ModelSchemaType = ModelSchema<ModelSchemaParamShape>;
-
-/**
- * Filter the schema types down to only include the ModelTypes as SchemaModelType
- *
- * @param schemaContents The object containing all SchemaContent for this schema
- * @returns Only the schemaContents that are ModelTypes, coerced to the SchemaModelType surface
- */
-const filterSchemaModelTypes = (
-  schemaContents: ModelSchemaContents,
-): Record<string, SchemaModelType> => {
-  const modelTypes: Record<string, SchemaModelType> = {};
-
-  if (schemaContents) {
-    Object.entries(schemaContents).forEach(([key, content]) => {
-      if (isSchemaModelType(content)) {
-        modelTypes[key] = content;
-      }
-    });
-  }
-
-  return modelTypes;
-};
 
 /**
  * Model Schema type guard
@@ -212,6 +227,10 @@ function _rdsSchema<
       const { addSubscriptions: _, ...rest } = this;
       return rest;
     },
+    addModelAuthorization(callback) {
+      callback(data.types);
+    },
+
     ...rdsSchemaBrand,
   } as RDSModelSchema<T>;
 }
@@ -237,7 +256,7 @@ function _ddbSchema<
       const { authorization: _, ...rest } = this;
       return rest;
     },
-    models: filterSchemaModelTypes(data.types),
+    // models: filterSchemaModelTypes(data.types),
     ...ddbSchemaBrand,
   } as ModelSchema<T>;
 }

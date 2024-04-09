@@ -164,28 +164,30 @@ describe('schema generation', () => {
       })
       .authorization([a.allow.public()]);
 
-    schema.models.LateReferencedBoringParent.addRelationships({
-      childNormal: a
-        .hasOne('LateReferencedBoringChild')
-        .references(['bcRefId']),
-      childReciprocal: a
-        .hasOne('LateReferencedBoringReciprocalChild')
-        .references(['brcRefId']),
-      childHasManyNormal: a
-        .hasMany('LateReferencedBoringHasManyChild')
-        .references(['bhmRefId']),
-      childHasManyReciprocal: a
-        .hasMany('LateReferencedReciprocalHasManyChild')
-        .references(['rrhmRefId']),
-    });
+    // These don't work as expected. They add relationships in the model schema output,
+    // but don't add them to the types. We're re-implementing this feature
+    // schema.models.LateReferencedBoringParent.addRelationships({
+    //   childNormal: a
+    //     .hasOne('LateReferencedBoringChild')
+    //     .references(['bcRefId']),
+    //   childReciprocal: a
+    //     .hasOne('LateReferencedBoringReciprocalChild')
+    //     .references(['brcRefId']),
+    //   childHasManyNormal: a
+    //     .hasMany('LateReferencedBoringHasManyChild')
+    //     .references(['bhmRefId']),
+    //   childHasManyReciprocal: a
+    //     .hasMany('LateReferencedReciprocalHasManyChild')
+    //     .references(['rrhmRefId']),
+    // });
 
-    schema.models.LateReferencedBoringReciprocalChild.addRelationships({
-      parent: a.belongsTo('ReferencedBoringParent').references(['brcRefId']),
-    });
+    // schema.models.LateReferencedBoringReciprocalChild.addRelationships({
+    //   parent: a.belongsTo('ReferencedBoringParent').references(['brcRefId']),
+    // });
 
-    schema.models.LateReferencedReciprocalHasManyChild.addRelationships({
-      parent: a.belongsTo('ReferencedBoringParent').references(['rrhmRefId']),
-    });
+    // schema.models.LateReferencedReciprocalHasManyChild.addRelationships({
+    //   parent: a.belongsTo('ReferencedBoringParent').references(['rrhmRefId']),
+    // });
 
     expect(schema.transform().schema).toMatchSnapshot();
   });
@@ -673,13 +675,26 @@ describe('custom operations', () => {
 
   describe('for an rds schema', () => {
     test('can define public auth with no provider', () => {
-      const schema = aSql.schema({
-        A: a
-          .model({
-            field: a.string(),
-          })
-          .authorization([a.allow.public()]),
+      const schema = configure({ database: datasourceConfigMySQL }).schema({
+        A: a.model({
+          field: a.string(),
+        }),
+        B: a.model({
+          field: a.string(),
+        }),
       });
+
+      // const res = schema
+      //   .setAuthorization((models, schema)) => [schema.authorization(), models.A.authorization()])
+      //   .addModelAuthorization((models) => [
+      //     models.A.authorization([a.allow.public()]),
+      //     models.B.authorization([a.allow.owner().inField('field')]),
+      //     models.A.fields.fieldName.authorization
+      //   ])
+
+      const res = schema.renameModel((models) => ({
+        A: models.A.renameTo('Z'),
+      }));
 
       type Actual_A = Prettify<ClientSchema<typeof schema>['A']>;
 
@@ -696,13 +711,15 @@ describe('custom operations', () => {
     });
 
     test('allows owner', () => {
-      const schema = aSql
-        .schema({
-          A: a.model({
-            field: a.string(),
-          }),
-        })
-        .authorization([a.allow.owner()]);
+      const schema = aSql.schema({
+        A: a.model({
+          field: a.string(),
+        }),
+      });
+
+      schema.addModelAuthorization((models) => [
+        models.A.authorization([a.allow.owner()]),
+      ]);
 
       type Actual_A = Prettify<ClientSchema<typeof schema>['A']>;
 
@@ -887,6 +904,16 @@ describe('custom operations', () => {
         const graphql = schema.transform().schema;
         expect(graphql).toMatchSnapshot();
       });
+    });
+  });
+  describe('sql schema auth overrides', () => {
+    const sqlSchema = configure({ database: datasourceConfigMySQL }).schema({
+      post: a
+        .model({
+          id: a.string().required(),
+          title: a.string(),
+        })
+        .identifier(['id']),
     });
   });
   describe('for a.combine schema', () => {

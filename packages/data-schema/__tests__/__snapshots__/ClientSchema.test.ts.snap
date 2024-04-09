@@ -499,12 +499,7 @@ type ReferencedReciprocalHasManyChild @model @auth(rules: [{allow: public}])
 
 type LateReferencedBoringParent @model @auth(rules: [{allow: public}])
 {
-  childNormal: LateReferencedBoringChild @hasOne(references: ["bcRefId"])
-  childReciprocal: LateReferencedBoringReciprocalChild @hasOne(references: ["brcRefId"])
-  childHasManyNormal: [LateReferencedBoringHasManyChild] @hasMany(references: ["bhmRefId"])
-  childHasManyReciprocal: [LateReferencedReciprocalHasManyChild] @hasMany(references: ["rrhmRefId"])
-  lateReferencedBoringParentChildNormalId: ID
-  lateReferencedBoringParentChildReciprocalId: ID
+  
 }
 
 type LateReferencedBoringChild @model @auth(rules: [{allow: public}])
@@ -517,21 +512,17 @@ type LateReferencedBoringReciprocalChild @model @auth(rules: [{allow: public}])
 {
   brcRefId: String
   value: String
-  parent: ReferencedBoringParent @belongsTo(references: ["brcRefId"])
 }
 
 type LateReferencedBoringHasManyChild @model @auth(rules: [{allow: public}])
 {
   bhmRefId: String
   value: String
-  lateReferencedBoringParentChildHasManyNormalId: ID
 }
 
 type LateReferencedReciprocalHasManyChild @model @auth(rules: [{allow: public}])
 {
   rrhmRefId: String
   value: String
-  parent: ReferencedBoringParent @belongsTo(references: ["rrhmRefId"])
-  lateReferencedBoringParentChildHasManyReciprocalId: ID
 }"
 `;
