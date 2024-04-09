@@ -1525,7 +1525,7 @@ const normalizeDataSourceName = (
 
 const sanitizeStackTrace = (stackTrace: string): string[] => {
   // normalize EOL to \n so that parsing is consistent across platforms
-  const normalizedStackTrace = stackTrace.replaceAll(os.EOL, '\n');
+  const normalizedStackTrace = stackTrace.replace(new RegExp(os.EOL), '\n');
   return (
     normalizedStackTrace
       .split('\n')

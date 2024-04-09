@@ -31,6 +31,6 @@
     "tsx": "^4.6.1"
   },
   "dependencies": {
-    "aws-amplify": "*"
+    "aws-amplify": "6.0.18-unstable.54+1480fa792"
   }
 }

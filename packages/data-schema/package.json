@@ -1,6 +1,6 @@
 {
   "name": "@aws-amplify/data-schema",
-  "version": "0.14.23",
+  "version": "0.14.27",
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
@@ -26,6 +26,10 @@
     "./internals": {
       "types": "./lib-esm/src/internals/index.d.ts",
       "import": "./lib-esm/src/internals/index.js"
+    },
+    "./runtime": {
+      "types": "./lib-esm/src/runtime/index.d.ts",
+      "import": "./lib-esm/src/runtime/index.js"
     }
   },
   "typesVersions": {
@@ -54,6 +58,7 @@
   "files": [
     "lib-esm/**",
     "internals",
+    "runtime",
     "package.json",
     "README.md",
     "CHANGELOG",

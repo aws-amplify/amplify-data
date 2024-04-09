@@ -912,11 +912,11 @@ type ExcludeNeverFields<O> = {
 
 export type ClientExtensions<T extends Record<any, any> = never> =
   ExcludeNeverFields<{
-    models: ModelTypes<T>;
+    models: ModelTypes<T, 'CLIENT'>;
     enums: EnumTypes<T>;
-    queries: CustomQueries<T>;
-    mutations: CustomMutations<T>;
-    subscriptions: CustomSubscriptions<T>;
+    queries: CustomQueries<T, 'CLIENT'>;
+    mutations: CustomMutations<T, 'CLIENT'>;
+    subscriptions: CustomSubscriptions<T, 'CLIENT'>;
   }>;
 
 export type ClientExtensionsSSRRequest<T extends Record<any, any> = never> =
