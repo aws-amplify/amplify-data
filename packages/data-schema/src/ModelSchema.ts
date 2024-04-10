@@ -150,8 +150,11 @@ export type RDSModelSchema<
       UsedMethods | 'authorization'
     >;
     setAuthorization: (
-      callback: (models: BaseSchema<T>['data']['types'], schema: T) => void,
-    ) => RDSModelSchema<T, UsedMethods | 'setAuthorization'>;
+      callback: (
+        models: BaseSchema<T>['data']['types'],
+        schema: RDSModelSchema<T>,
+      ) => void,
+    ) => RDSModelSchema<T>;
     relationships: <
       Relationships extends ReadonlyArray<
         Partial<Record<keyof T['types'], RelationshipTemplate>>
@@ -260,9 +263,10 @@ function _rdsSchema<
       return rest;
     },
     setAuthorization(callback) {
-      callback(data.types, this as any);
+      callback(data.types, this);
+      const { setAuthorization: _, ...rest } = this;
+      return rest;
     },
-
     relationships(callback): any {
       const { relationships: _, ...rest } = this;
       // The relationships are added via `models.<Model>.addRelationships`
@@ -272,7 +276,7 @@ function _rdsSchema<
       callback(models);
       return rest;
     },
-    ...rdsSchemaBrand,
+    // ...rdsSchemaBrand,
   } as RDSModelSchema<T>;
 }
 

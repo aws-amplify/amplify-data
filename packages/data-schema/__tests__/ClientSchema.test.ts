@@ -597,13 +597,15 @@ describe('custom operations', () => {
 
   describe('for an rds schema', () => {
     test('can define public auth with no provider', () => {
-      const schema = configure({ database: datasourceConfigMySQL })
-        .schema({
-          A: a.model({
-            field: a.string(),
-          }),
-        })
-        .authorization([a.allow.public()]);
+      const schema = configure({ database: datasourceConfigMySQL }).schema({
+        A: a.model({
+          field: a.string(),
+        }),
+      });
+
+      schema.setAuthorization((models) => [
+        models.A.authorization([a.allow.public()]),
+      ]);
 
       type Actual_A = Prettify<ClientSchema<typeof schema>['A']>;
 
@@ -626,9 +628,8 @@ describe('custom operations', () => {
         }),
       });
 
-      schema.setAuthorization((models, schema) => [
+      schema.setAuthorization((models) => [
         models.A.authorization([a.allow.owner()]),
-        // schema.authorization([a.allow.private()]),
       ]);
 
       type Actual_A = Prettify<ClientSchema<typeof schema>['A']>;
