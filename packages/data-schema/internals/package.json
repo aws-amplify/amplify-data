@@ -1,6 +1,6 @@
 {
   "name": "@aws-amplify/data-schema/internals",
   "types": "../dist/esm/src/internals/index.d.ts",
-  "main": "../dist/esm/src/internals/index.js",
+  "main": "../dist/esm/internals/index.mjs",
   "sideEffects": false
 }
