@@ -430,7 +430,7 @@ describe('CRUD error handling', () => {
       jest.clearAllMocks();
     });
 
-    test.only('get an item', async () => {
+    test('get an item', async () => {
       // #region mocking
       const { spy, generateClient } = mockedGenerateClient([
         {
@@ -457,14 +457,14 @@ describe('CRUD error handling', () => {
 
       // #region assertions
       expect(errors).toEqual(expect.arrayContaining([authError2]));
-      expect(getTodo).toEqual({ getTodo: sampleTodo });
+      expect(getTodo).toEqual(sampleTodo);
       // #endregion assertions
     });
     test('list an item', async () => {
       // #region mocking
       const { spy, generateClient } = mockedGenerateClient([
         {
-          data: { listTodos: [sampleTodo] },
+          data: { listTodos: { items: [sampleTodo] } },
           errors: [authError2],
         },
       ]);
@@ -476,13 +476,14 @@ describe('CRUD error handling', () => {
       // App.tsx
       Amplify.configure(config);
       const client = generateClient<Schema>();
-      const { data } = await client.models.Todo.list({
+
+      const { data, errors } = await client.models.Todo.list({
         selectionSet: ['id', 'content', 'additionalInfo.*'],
       });
 
       // #region assertions
       expect(errors).toEqual(expect.arrayContaining([authError2]));
-      expect(data).toEqual({ listTodos: [sampleTodo] });
+      expect(data).toEqual([sampleTodo]);
       // #endregion assertions
     });
   });
