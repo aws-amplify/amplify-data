@@ -277,7 +277,7 @@ function _rdsSchema<
       callback(models);
       return rest;
     },
-    // ...rdsSchemaBrand,
+    ...rdsSchemaBrand,
   } as RDSModelSchema<T>;
 }
 
