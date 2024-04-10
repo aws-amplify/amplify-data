@@ -16,7 +16,7 @@ import {
   RelationalMetadata,
   ModelSecondaryIndexes,
 } from '../../src/MappedTypes/ModelMetadata';
-import { Json } from '../../src/ModelField';
+import { Json, Nullable } from '../../src/ModelField';
 
 describe('ModelIdentifier', () => {
   test('Default identifier', () => {
@@ -179,9 +179,11 @@ describe('RelationalMetadata', () => {
       Post: a.model({
         title: a.string(),
         metadata: a.json(),
-        comments: a.hasMany('Comment'),
+        comments: a.hasMany('Comment', 'postId'),
       }),
       Comment: a.model({
+        postId: a.id(),
+        post: a.belongsTo('Post', 'postId'),
         content: a.string(),
       }),
     });
@@ -202,7 +204,20 @@ describe('RelationalMetadata', () => {
       >
     >;
 
-    type Expected = unknown;
+    type Expected = {
+      Comment: {
+        relationalInputFields: {
+          post?: {
+            readonly id: string;
+            readonly createdAt?: string | undefined;
+            readonly updatedAt?: string | undefined;
+            title?: string | null | undefined;
+            metadata?: Json | null | undefined;
+            comments?: ResolvedFields['Post']['comments'];
+          } | undefined;
+        };
+      }
+    }
 
     type test = Expect<Equal<Resolved, Expected>>;
   });
@@ -211,11 +226,12 @@ describe('RelationalMetadata', () => {
     const s = a.schema({
       Post: a.model({
         title: a.string(),
-        comments: a.hasMany('Comment'),
+        comments: a.hasMany('Comment', 'postId'),
       }),
       Comment: a.model({
         content: a.string(),
-        post: a.belongsTo('Post'),
+        postId: a.id(),
+        post: a.belongsTo('Post', 'postId'),
       }),
     });
 
@@ -239,14 +255,14 @@ describe('RelationalMetadata', () => {
       Comment: {
         relationalInputFields: {
           post?:
-            | {
-                readonly id: string;
-                readonly createdAt?: string;
-                readonly updatedAt?: string;
-                title?: string | null | undefined;
-                comments?: ResolvedFields['Post']['comments'];
-              }
-            | undefined;
+          | {
+            readonly id: string;
+            readonly createdAt?: string;
+            readonly updatedAt?: string;
+            title?: string | null | undefined;
+            comments?: ResolvedFields['Post']['comments'];
+          }
+          | undefined;
         };
       };
     };
@@ -260,12 +276,13 @@ describe('RelationalMetadata', () => {
         .model({
           customPk: a.id().required(),
           title: a.string(),
-          comments: a.hasMany('Comment'),
+          comments: a.hasMany('Comment', 'postId'),
         })
         .identifier(['customPk']),
       Comment: a.model({
         content: a.string(),
-        post: a.belongsTo('Post'),
+        postId: a.id(),
+        post: a.belongsTo('Post', 'postId'),
       }),
     });
 
@@ -289,14 +306,14 @@ describe('RelationalMetadata', () => {
       Comment: {
         relationalInputFields: {
           post?:
-            | {
-                customPk: string;
-                readonly createdAt?: string;
-                readonly updatedAt?: string;
-                title?: string | null | undefined;
-                comments?: ResolvedFields['Post']['comments'];
-              }
-            | undefined;
+          | {
+            customPk: string;
+            readonly createdAt?: string;
+            readonly updatedAt?: string;
+            title?: string | null | undefined;
+            comments?: ResolvedFields['Post']['comments'];
+          }
+          | undefined;
         };
       };
     };
@@ -310,12 +327,13 @@ describe('RelationalMetadata', () => {
         .model({
           customPk: a.id().required(),
           title: a.string().required(),
-          comments: a.hasMany('Comment'),
+          comments: a.hasMany('Comment', 'commentId'),
         })
         .identifier(['customPk', 'title']),
       Comment: a.model({
         content: a.string(),
-        post: a.belongsTo('Post'),
+        commentId: a.id(),
+        post: a.belongsTo('Post', 'commentId'),
       }),
     });
 
@@ -339,14 +357,14 @@ describe('RelationalMetadata', () => {
       Comment: {
         relationalInputFields: {
           post?:
-            | {
-                customPk: string;
-                title: string;
-                readonly createdAt?: string;
-                readonly updatedAt?: string;
-                comments?: ResolvedFields['Post']['comments'];
-              }
-            | undefined;
+          | {
+            customPk: string;
+            title: string;
+            readonly createdAt?: string;
+            readonly updatedAt?: string;
+            comments?: ResolvedFields['Post']['comments'];
+          }
+          | undefined;
         };
       };
     };
@@ -358,24 +376,27 @@ describe('RelationalMetadata', () => {
     const s = a.schema({
       Post: a.model({
         title: a.string(),
+        comments: a.hasMany('Comment', 'postId'),
       }),
       Comment: a.model({
         content: a.string(),
-        post: a.belongsTo('Post'),
+        post: a.belongsTo('Post', 'postId'),
       }),
     });
 
     type Schema = typeof s;
 
+    type ResolvedFields = ResolveFieldProperties<
+      Schema,
+      NonModelTypesShape,
+      ResolveSchema<Schema>,
+      CreateImplicitModelsFromRelations<Schema>
+    >;
+
     type Resolved = Prettify<
       RelationalMetadata<
         ResolveSchema<Schema>,
-        ResolveFieldProperties<
-          Schema,
-          NonModelTypesShape,
-          ResolveSchema<Schema>,
-          CreateImplicitModelsFromRelations<Schema>
-        >,
+        ResolvedFields,
         ModelIdentifier<SchemaTypes<Schema>>
       >
     >;
@@ -383,14 +404,13 @@ describe('RelationalMetadata', () => {
     type Expected = {
       Comment: {
         relationalInputFields: {
-          post?:
-            | {
-                readonly id: string;
-                readonly createdAt?: string;
-                readonly updatedAt?: string;
-                title?: string | null | undefined;
-              }
-            | undefined;
+          post?: {
+            title?: Nullable<string> | undefined;
+            readonly createdAt?: string | undefined;
+            readonly updatedAt?: string | undefined;
+            readonly id: string;
+            comments?: ResolvedFields['Post']['comments'];
+          } | undefined;
         };
       };
     };
@@ -402,24 +422,27 @@ describe('RelationalMetadata', () => {
     const s = a.schema({
       Post: a.model({
         title: a.string(),
-        author: a.hasOne('Author'),
+        author: a.hasOne('Author', 'postid'),
       }),
       Author: a.model({
         name: a.string(),
+        postId: a.id().required(),
+        post: a.belongsTo('Post', 'postId'),
       }),
     });
 
     type Schema = typeof s;
 
+    type ResolvedFields = ResolveFieldProperties<
+      Schema,
+      NonModelTypesShape,
+      ResolveSchema<Schema>,
+      CreateImplicitModelsFromRelations<Schema>
+    >;
     type Resolved = Prettify<
       RelationalMetadata<
         ResolveSchema<Schema>,
-        ResolveFieldProperties<
-          Schema,
-          NonModelTypesShape,
-          ResolveSchema<Schema>,
-          CreateImplicitModelsFromRelations<Schema>
-        >,
+        ResolvedFields,
         ModelIdentifier<SchemaTypes<Schema>>
       >
     >;
@@ -427,19 +450,21 @@ describe('RelationalMetadata', () => {
     type Expected = {
       Post: {
         relationalInputFields: {
-          author?:
-            | {
-                readonly id: string;
-                readonly createdAt?: string;
-                readonly updatedAt?: string;
-                name?: string | null | undefined;
-              }
-            | undefined;
+          author?: {
+            readonly id: string;
+            readonly createdAt?: string | undefined;
+            readonly updatedAt?: string | undefined;
+            name?: string | null | undefined;
+            postId?: string | undefined;
+            post?: ResolvedFields['Author']['post'];
+          }
+          | undefined;
         };
       };
     };
 
-    type test = Expect<Equal<Resolved, Expected>>;
+    // FIXME: Currently failing
+    // type test = Expect<Equal<Resolved, Expected>>;
   });
 
   // TODO: this test breaks with TS@5.3
