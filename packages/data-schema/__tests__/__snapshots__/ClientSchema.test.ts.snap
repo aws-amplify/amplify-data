@@ -101,6 +101,7 @@ type B @model @auth(rules: [{allow: public}])
 exports[`custom operations for an rds schema can define public auth with no provider 1`] = `
 "type A @model @auth(rules: [{allow: public}])
 {
+  id: String! @primaryKey
   field: String
 }"
 `;
@@ -113,6 +114,15 @@ exports[`custom operations for an rds schema custom operations custom query 1`] 
 
 type Query {
   echo(inputContent: String!): EchoResult @function(name: "echoFunction") @auth(rules: [{allow: public}])
+}"
+`;
+
+exports[`custom operations for an rds schema sql schema field-level auth 1`] = `
+"type post @model @auth(rules: [{allow: public}])
+{
+  id: String! @primaryKey @auth(rules: [{allow: private}])
+  title: String @auth(rules: [{allow: public}])
+  author: String @auth(rules: [{allow: owner, ownerField: "author"}])
 }"
 `;
 

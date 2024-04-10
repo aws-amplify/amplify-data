@@ -74,7 +74,10 @@ export type BaseSchema<
 > = {
   data: T;
   models: {
-    [TypeKey in keyof T['types']]: T['types'][TypeKey] extends ModelType<ModelTypeParamShape>
+    [TypeKey in keyof T['types']]: T['types'][TypeKey] extends ModelType<
+      ModelTypeParamShape,
+      never | 'identifier'
+    >
       ? SchemaModelType<T['types'][TypeKey], TypeKey & string, IsRDS>
       : never;
   };

@@ -233,7 +233,10 @@ export type ModelType<
  * Used on the complete schema object.
  */
 export type SchemaModelType<
-  T extends ModelType<ModelTypeParamShape> = ModelType<ModelTypeParamShape>,
+  T extends ModelType<ModelTypeParamShape, never | 'identifier'> = ModelType<
+    ModelTypeParamShape,
+    never | 'identifier'
+  >,
   ModelName extends string = string,
   IsRDS extends boolean = false,
 > = IsRDS extends true
@@ -246,7 +249,7 @@ export type SchemaModelType<
       >(
         relationships: Param,
       ): Record<ModelName, Param>;
-      fields: T extends ModelType<infer R extends ModelTypeParamShape>
+      fields: T extends ModelType<infer R extends ModelTypeParamShape, any>
         ? R['fields']
         : never;
     }
