@@ -213,10 +213,6 @@ describe('Basic operations', () => {
           id: 'something',
         });
 
-        if (!data) {
-          throw new Error('no data');
-        }
-
         await data.comments({ authMode });
       });
 
@@ -226,10 +222,6 @@ describe('Basic operations', () => {
           id: 'something',
         });
 
-        if (!data) {
-          throw new Error('no data');
-        }
-
         await data.meta({ authMode });
       });
 
@@ -238,10 +230,6 @@ describe('Basic operations', () => {
         const { data } = await client.models.Comment.get({
           id: 'something',
         });
-
-        if (!data) {
-          throw new Error('no data');
-        }
 
         await data.post({ authMode });
       });
@@ -269,10 +257,6 @@ describe('Basic operations', () => {
         id: 'something',
       });
 
-      if (!data) {
-        throw new Error('no data');
-      }
-
       await data.comments({ authMode: 'lambda', authToken: 'any string' });
     });
 
@@ -282,10 +266,6 @@ describe('Basic operations', () => {
         id: 'something',
       });
 
-      if (!data) {
-        throw new Error('no data');
-      }
-
       await data.meta({ authMode: 'lambda', authToken: 'any string' });
     });
 
@@ -294,10 +274,6 @@ describe('Basic operations', () => {
       const { data } = await client.models.Comment.get({
         id: 'something',
       });
-
-      if (!data) {
-        throw new Error('no data');
-      }
 
       await data.post({ authMode: 'lambda', authToken: 'any string' });
     });
