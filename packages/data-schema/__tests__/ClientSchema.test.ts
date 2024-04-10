@@ -600,14 +600,20 @@ describe('custom operations', () => {
       const schema = aSql.schema({
         A: a
           .model({
+            id: a.string().required(),
             field: a.string(),
           })
-          .authorization([a.allow.public()]),
+          .identifier(['id']),
       });
+
+      schema.setAuthorization((models) => [
+        models.A.authorization([a.allow.public()]),
+      ]);
 
       type Actual_A = Prettify<ClientSchema<typeof schema>['A']>;
 
       type Expected_A = {
+        id: string;
         field?: string | null | undefined;
         // doesn't imply id field
         // doesn't imply timestamp fields
@@ -620,13 +626,15 @@ describe('custom operations', () => {
     });
 
     test('allows owner', () => {
-      const schema = aSql
-        .schema({
-          A: a.model({
-            field: a.string(),
-          }),
-        })
-        .authorization([a.allow.owner()]);
+      const schema = aSql.schema({
+        A: a.model({
+          field: a.string(),
+        }),
+      });
+
+      schema.setAuthorization((models) => [
+        models.A.authorization([a.allow.owner()]),
+      ]);
 
       type Actual_A = Prettify<ClientSchema<typeof schema>['A']>;
 
@@ -645,16 +653,18 @@ describe('custom operations', () => {
     });
 
     test('allows id to be specified', () => {
-      const schema = aSql
-        .schema({
-          A: a
-            .model({
-              idNum: a.integer().required(),
-              field: a.string(),
-            })
-            .identifier(['idNum']),
-        })
-        .authorization([a.allow.owner()]);
+      const schema = aSql.schema({
+        A: a
+          .model({
+            idNum: a.integer().required(),
+            field: a.string(),
+          })
+          .identifier(['idNum']),
+      });
+
+      schema.setAuthorization((_, schema) => [
+        schema.authorization([a.allow.owner()]),
+      ]);
 
       type Actual_A = Prettify<ClientSchema<typeof schema>['A']>;
 
@@ -673,24 +683,26 @@ describe('custom operations', () => {
     });
 
     test('related models', () => {
-      const schema = aSql
-        .schema({
-          B: a
-            .model({
-              id: a.string().required(),
-              title: a.string(),
-            })
-            .identifier(['id']),
-          A: a
-            .model({
-              idNum: a.integer().required(),
-              field: a.string(),
-              bId: a.string(),
-              b: a.belongsTo('B').references(['bId']),
-            })
-            .identifier(['idNum']),
-        })
-        .authorization([a.allow.owner()]);
+      const schema = aSql.schema({
+        B: a
+          .model({
+            id: a.string().required(),
+            title: a.string(),
+          })
+          .identifier(['id']),
+        A: a
+          .model({
+            idNum: a.integer().required(),
+            field: a.string(),
+            bId: a.string(),
+            b: a.belongsTo('B').references(['bId']),
+          })
+          .identifier(['idNum']),
+      });
+
+      schema.setAuthorization((_, schema) => [
+        schema.authorization([a.allow.owner()]),
+      ]);
 
       type Actual_A = Prettify<ClientSchema<typeof schema>['A']>;
 
@@ -727,23 +739,25 @@ describe('custom operations', () => {
     });
 
     test('related models with missing foreign keys', () => {
-      const schema = aSql
-        .schema({
-          B: a
-            .model({
-              id: a.string().required(),
-              title: a.string(),
-            })
-            .identifier(['id']),
-          A: a
-            .model({
-              idNum: a.integer().required(),
-              field: a.string(),
-              b: a.belongsTo('B').references(['bId']),
-            })
-            .identifier(['idNum']),
-        })
-        .authorization([a.allow.public()]);
+      const schema = aSql.schema({
+        B: a
+          .model({
+            id: a.string().required(),
+            title: a.string(),
+          })
+          .identifier(['id']),
+        A: a
+          .model({
+            idNum: a.integer().required(),
+            field: a.string(),
+            b: a.belongsTo('B').references(['bId']),
+          })
+          .identifier(['idNum']),
+      });
+
+      schema.setAuthorization((_, schema) => [
+        schema.authorization([a.allow.owner()]),
+      ]);
 
       type Actual_A = Prettify<ClientSchema<typeof schema>['A']>;
 
@@ -774,12 +788,39 @@ describe('custom operations', () => {
       type test = Expect<Equal<Actual_A, Expected_A>>;
     });
 
+    test('sql schema field-level auth', () => {
+      const sqlSchema = configure({ database: datasourceConfigMySQL }).schema({
+        post: a
+          .model({
+            id: a.string().required(),
+            title: a.string(),
+            author: a.string(),
+          })
+          .identifier(['id']),
+      });
+
+      sqlSchema.setAuthorization((models) => [
+        models.post.authorization([a.allow.public()]),
+        models.post.fields.id.authorization([a.allow.private()]),
+        models.post.fields.title.authorization([a.allow.public()]),
+        models.post.fields.author.authorization([
+          a.allow.owner().inField('author'),
+        ]),
+      ]);
+
+      const graphql = sqlSchema.transform().schema;
+      expect(graphql).toMatchSnapshot();
+    });
+
     describe('custom operations', () => {
       test('custom query', () => {
-        const schema = aSql.schema({
+        const initial = aSql.schema({
           EchoResult: a.customType({
             resultContent: a.string(),
           }),
+        });
+
+        const schema = initial.addQueries({
           echo: a
             .query()
             .arguments({

@@ -58,9 +58,7 @@ export type ModelSchemaParamShape = {
   configuration: SchemaConfiguration<any, any>;
 };
 
-export type RDSModelSchemaParamShape = ModelSchemaParamShape & {
-  sqlStatementFolderPath?: CustomPathData;
-};
+export type RDSModelSchemaParamShape = ModelSchemaParamShape;
 
 export type InternalSchema = {
   data: {
@@ -76,7 +74,10 @@ export type BaseSchema<
 > = {
   data: T;
   models: {
-    [TypeKey in keyof T['types']]: T['types'][TypeKey] extends ModelType<ModelTypeParamShape>
+    [TypeKey in keyof T['types']]: T['types'][TypeKey] extends ModelType<
+      ModelTypeParamShape,
+      never | 'identifier'
+    >
       ? SchemaModelType<T['types'][TypeKey], TypeKey & string, IsRDS>
       : never;
   };
@@ -108,7 +109,8 @@ type RDSModelSchemaFunctions =
   | 'addMutations'
   | 'addSubscriptions'
   | 'authorization'
-  | 'relationships';
+  | 'relationships'
+  | 'setAuthorization';
 
 export type RDSModelSchema<
   T extends RDSModelSchemaParamShape,
@@ -148,6 +150,12 @@ export type RDSModelSchema<
       SetTypeSubArg<T, 'authorization', AuthRules[]>,
       UsedMethods | 'authorization'
     >;
+    setAuthorization: (
+      callback: (
+        models: BaseSchema<T, true>['models'],
+        schema: RDSModelSchema<T>,
+      ) => void,
+    ) => RDSModelSchema<T>;
     relationships: <
       Relationships extends ReadonlyArray<
         Partial<Record<keyof T['types'], RelationshipTemplate>>
@@ -253,6 +261,11 @@ function _rdsSchema<
     addSubscriptions(types: Record<string, SubscriptionCustomOperation>): any {
       this.data.types = { ...this.data.types, ...types };
       const { addSubscriptions: _, ...rest } = this;
+      return rest;
+    },
+    setAuthorization(callback) {
+      callback(models, this);
+      const { setAuthorization: _, ...rest } = this;
       return rest;
     },
     relationships(callback): any {

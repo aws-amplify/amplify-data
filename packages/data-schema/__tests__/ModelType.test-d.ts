@@ -58,7 +58,6 @@ describe('identifiers', () => {
 
     type ExpectedType = {
       fields: {
-        // id: ModelField<string>;
         title: ModelField<string | null>;
       };
       identifier: Array<'id'>;
