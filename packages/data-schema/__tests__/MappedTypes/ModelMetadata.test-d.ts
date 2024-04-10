@@ -255,14 +255,14 @@ describe('RelationalMetadata', () => {
       Comment: {
         relationalInputFields: {
           post?:
-          | {
-            readonly id: string;
-            readonly createdAt?: string;
-            readonly updatedAt?: string;
-            title?: string | null | undefined;
-            comments?: ResolvedFields['Post']['comments'];
-          }
-          | undefined;
+            | {
+                readonly id: string;
+                readonly createdAt?: string;
+                readonly updatedAt?: string;
+                title?: string | null | undefined;
+                comments?: ResolvedFields['Post']['comments'];
+              }
+            | undefined;
         };
       };
     };
@@ -306,14 +306,14 @@ describe('RelationalMetadata', () => {
       Comment: {
         relationalInputFields: {
           post?:
-          | {
-            customPk: string;
-            readonly createdAt?: string;
-            readonly updatedAt?: string;
-            title?: string | null | undefined;
-            comments?: ResolvedFields['Post']['comments'];
-          }
-          | undefined;
+            | {
+                customPk: string;
+                readonly createdAt?: string;
+                readonly updatedAt?: string;
+                title?: string | null | undefined;
+                comments?: ResolvedFields['Post']['comments'];
+              }
+            | undefined;
         };
       };
     };
@@ -357,14 +357,14 @@ describe('RelationalMetadata', () => {
       Comment: {
         relationalInputFields: {
           post?:
-          | {
-            customPk: string;
-            title: string;
-            readonly createdAt?: string;
-            readonly updatedAt?: string;
-            comments?: ResolvedFields['Post']['comments'];
-          }
-          | undefined;
+            | {
+                customPk: string;
+                title: string;
+                readonly createdAt?: string;
+                readonly updatedAt?: string;
+                comments?: ResolvedFields['Post']['comments'];
+              }
+            | undefined;
         };
       };
     };
@@ -404,16 +404,19 @@ describe('RelationalMetadata', () => {
     type Expected = {
       Comment: {
         relationalInputFields: {
-          post?: {
-            title?: Nullable<string> | undefined;
-            readonly createdAt?: string | undefined;
-            readonly updatedAt?: string | undefined;
-            readonly id: string;
-            comments?: ResolvedFields['Post']['comments'];
-          } | undefined;
+          post?:
+            | {
+                readonly id: string;
+                readonly createdAt?: string;
+                readonly updatedAt?: string;
+                title?: string | null | undefined;
+                comments?: ResolvedFields['Post']['comments'];
+              }
+            | undefined;
         };
       };
     };
+
 
     type test = Expect<Equal<Resolved, Expected>>;
   });
@@ -450,15 +453,16 @@ describe('RelationalMetadata', () => {
     type Expected = {
       Post: {
         relationalInputFields: {
-          author?: {
-            readonly id: string;
-            readonly createdAt?: string | undefined;
-            readonly updatedAt?: string | undefined;
-            name?: string | null | undefined;
-            postId?: string | undefined;
-            post?: ResolvedFields['Author']['post'];
-          }
-          | undefined;
+          author?:
+            | {
+                readonly id: string;
+                readonly createdAt?: string;
+                readonly updatedAt?: string;
+                name?: string | null | undefined;
+                postId?: string | undefined;
+                post?: ResolvedFields['Author']['post'];
+              }
+            | undefined;
         };
       };
     };
