@@ -1,15 +1,10 @@
 import { type CustomPathData, type InternalSchema } from './ModelSchema';
 import {
-  type ModelField,
-  ModelFieldType,
-  type InternalField,
-  id,
-  string,
-  ModelFieldTypeParamOuter,
+  type ModelField, type InternalField, string,
+  ModelFieldTypeParamOuter
 } from './ModelField';
 import {
-  type InternalRelationalField,
-  ModelRelationshipTypes,
+  type InternalRelationalField
 } from './ModelRelationalField';
 import type { ModelType, InternalModel } from './ModelType';
 import type { InternalModelIndexType } from './ModelIndex';
@@ -552,21 +547,28 @@ function validateImpliedFields(
 }
 
 /**
- * Produces a new field definition object from every field definition object
- * given as an argument. Performs validation (conflict detection) as objects
- * are merged together.
+ * Validates that defined relationships are valid
+ * - relationships are bidirectional
+ *  - hasOne has a belongsTo counterpart
+ *  - hasMany has a belongsTo counterpart
+ *  - belongsTo has either a hasOne or hasMany counterpart
+ * - both sides of a relationship have identical `references` defined.
+ * - the `references` match the primary key of the Primary model
+ *  - references[0] is the primaryKey's paritionKey on the Primary model
+ *  - references[1...n] are the primaryKey's sortKey(s) on the Primary model
+ *  - types match (id / string / number)
+ * - the `references` are fields defined on the Related model
+ *  - field names match the named `references` arguments
+ *  - Related model references fields types match those of the Primary model's primaryKey
  *
- * @param fieldsObjects A list of field definition objects to merge.
- * @returns
+ * @param record
  */
-function mergeFieldObjects(
-  ...fieldsObjects: (Record<string, ModelField<any, any>> | undefined)[]
-): Record<string, ModelField<any, any>> {
-  const result: Record<string, ModelField<any, any>> = {};
-  for (const fields of fieldsObjects) {
-    if (fields) addFields(result, fields);
+function validateRelationships(
+  record: Record<string, ModelField<any, any>>,
+) {
+  for (const [_k, _field] of Object.entries(record)) {
+    // TODO: validate relationship
   }
-  return result;
 }
 
 /**
@@ -775,135 +777,6 @@ function calculateCustomAuth(authorization: Authorization<any, any, any>[]) {
 function capitalize<T extends string>(s: T): Capitalize<T> {
   return `${s[0].toUpperCase()}${s.slice(1)}` as Capitalize<T>;
 }
-
-function uncapitalize<T extends string>(s: T): Uncapitalize<T> {
-  return `${s[0].toLowerCase()}${s.slice(1)}` as Uncapitalize<T>;
-}
-
-function fkName(model: string, field: string, identifier: string): string {
-  return `${uncapitalize(model)}${capitalize(field)}${capitalize(identifier)}`;
-}
-
-/**
- * Returns all explicitly defined and implied fields from a model.
- *
- * @param schema The schema the model is part of. Necessary to derive implied FK's.
- * @param model The model to extract fields from and derive fields for.
- * @returns
- */
-const allImpliedFKs = (schema: InternalSchema) => {
-  const fks = {} as Record<string, Record<string, any>>;
-
-  function addFk({
-    onModel,
-    asField,
-    fieldDef,
-  }: {
-    onModel: string;
-    asField: string;
-    fieldDef: any;
-  }) {
-    fks[onModel] = fks[onModel] || {};
-    fks[onModel][asField] = fieldDef;
-  }
-
-  // implied FK's
-  for (const [modelName, typeDef] of Object.entries(schema.data.types)) {
-    if (!isInternalModel(typeDef)) continue;
-    for (const [fieldName, fieldDef] of Object.entries(typeDef.data.fields)) {
-      if (!isModelField(fieldDef)) continue;
-      const relatedModel = schema.data.types[fieldDef.data.relatedModel];
-      switch (fieldDef.data.type) {
-        case ModelRelationshipTypes.hasOne:
-          for (const idField of relatedModel.data.identifier) {
-            addFk({
-              onModel: modelName,
-              asField: fkName(modelName, fieldName, idField),
-              fieldDef: {
-                data: {
-                  ...fieldDef.data,
-                  fieldType:
-                    relatedModel.data.fields[idField]?.data.fieldType ||
-                    ModelFieldType.Id,
-                },
-              },
-            });
-          }
-          break;
-        case ModelRelationshipTypes.hasMany:
-          {
-            let authorization: Authorization<any, any, any>[] = [];
-            let required = false;
-            const [_belongsToName, belongsToDef] =
-              Object.entries(relatedModel.data.fields).find(([_name, def]) => {
-                return (
-                  isModelField(def) &&
-                  def.data.type === ModelRelationshipTypes.belongsTo &&
-                  def.data.relatedModel === fieldName
-                );
-              }) || [];
-            if (belongsToDef && isModelField(belongsToDef)) {
-              authorization = belongsToDef.data.authorization;
-              required = belongsToDef.data.valueRequired;
-            }
-
-            for (const idField of typeDef.data.identifier) {
-              addFk({
-                onModel: fieldDef.data.relatedModel,
-                asField: fkName(modelName, fieldName, idField),
-                fieldDef: {
-                  data: {
-                    ...(typeDef.data.fields[idField]?.data ||
-                      (id() as any).data),
-                    authorization,
-                    required,
-                  },
-                },
-              });
-            }
-          }
-          break;
-        case ModelRelationshipTypes.belongsTo:
-          {
-            // only create if corresponds to hasOne
-            const [_hasOneName, hasOneDef] =
-              Object.entries(relatedModel.data.fields).find(([_name, def]) => {
-                return (
-                  isModelField(def) &&
-                  def.data.type === ModelRelationshipTypes.hasOne &&
-                  def.data.relatedModel === modelName
-                );
-              }) || [];
-            if (hasOneDef && isModelField(hasOneDef)) {
-              for (const idField of relatedModel.data.identifier) {
-                addFk({
-                  onModel: modelName,
-                  asField: fkName(modelName, fieldName, idField),
-                  fieldDef: {
-                    data: {
-                      ...typeDef.data,
-                      fieldType:
-                        relatedModel.data.fields[idField]?.data.fieldType ||
-                        ModelFieldType.Id,
-                    },
-                  },
-                });
-              }
-            }
-          }
-          break;
-        case ModelRelationshipTypes.manyToMany:
-          // pretty sure there's nothing to do here.
-          // the implicit join table already has everything, AFAIK.
-          break;
-        default:
-        // nothing to do.
-      }
-    }
-  }
-
-  return fks;
-};
 
 function processFieldLevelAuthRules(
   fields: Record<string, ModelField<any, any>>,
@@ -1208,8 +1081,6 @@ const schemaPreprocessor = (
 
   const staticSchema =
     schema.data.configuration.database.engine === 'dynamodb' ? false : true;
-
-  const fkFields = staticSchema ? {} : allImpliedFKs(schema);
   const topLevelTypes = Object.entries(schema.data.types);
 
   const { schemaAuth, functionSchemaAccess } = extractFunctionSchemaAccess(
@@ -1325,7 +1196,7 @@ const schemaPreprocessor = (
       const identifier = typeDef.data.identifier;
       const [partitionKey] = identifier;
 
-      validateStaticFields(fields, fkFields[typeName]);
+      validateRelationships(fields);
 
       const { authString, authFields } = calculateAuth(mostRelevantAuthRules);
       if (authString == '') {
@@ -1356,10 +1227,7 @@ const schemaPreprocessor = (
       const model = `type ${typeName} @model ${authString}\n{\n  ${joined}\n}`;
       gqlModels.push(model);
     } else {
-      const fields = mergeFieldObjects(
-        typeDef.data.fields as Record<string, ModelField<any, any>>,
-        fkFields[typeName],
-      );
+      const fields = typeDef.data.fields as Record<string, ModelField<any, any>>;
       const identifier = typeDef.data.identifier;
       const [partitionKey] = identifier;
 
