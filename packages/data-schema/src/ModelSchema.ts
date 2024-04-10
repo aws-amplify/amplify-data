@@ -58,9 +58,7 @@ export type ModelSchemaParamShape = {
   configuration: SchemaConfiguration<any, any>;
 };
 
-export type RDSModelSchemaParamShape = ModelSchemaParamShape & {
-  sqlStatementFolderPath?: CustomPathData;
-};
+export type RDSModelSchemaParamShape = ModelSchemaParamShape;
 
 export type InternalSchema = {
   data: {
@@ -151,7 +149,7 @@ export type RDSModelSchema<
     >;
     setAuthorization: (
       callback: (
-        models: BaseSchema<T>['data']['types'],
+        models: BaseSchema<T, true>['models'],
         schema: RDSModelSchema<T>,
       ) => void,
     ) => RDSModelSchema<T>;
@@ -263,7 +261,7 @@ function _rdsSchema<
       return rest;
     },
     setAuthorization(callback) {
-      callback(data.types, this);
+      callback(models, this);
       const { setAuthorization: _, ...rest } = this;
       return rest;
     },
@@ -301,7 +299,7 @@ function _ddbSchema<
       const { authorization: _, ...rest } = this;
       return rest;
     },
-    // models: filterSchemaModelTypes(data.types),
+    models: filterSchemaModelTypes(data.types),
     ...ddbSchemaBrand,
   } as ModelSchema<T>;
 }

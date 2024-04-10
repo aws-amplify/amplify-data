@@ -246,6 +246,9 @@ export type SchemaModelType<
       >(
         relationships: Param,
       ): Record<ModelName, Param>;
+      fields: T extends ModelType<infer R extends ModelTypeParamShape>
+        ? R['fields']
+        : never;
     }
   : T;
 
@@ -294,6 +297,7 @@ function _model<T extends ModelTypeParamShape>(fields: T['fields']) {
     addRelationships(relationships) {
       data.fields = { ...data.fields, ...relationships };
     },
+    fields: data.fields,
   } as InternalModel as ModelType<T>;
 }
 
