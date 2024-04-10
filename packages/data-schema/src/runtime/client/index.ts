@@ -9,8 +9,10 @@ import type {
 } from '@aws-amplify/data-schema-types';
 import type { Observable } from 'rxjs';
 
+// temporarily importing from `data-schema-types` because in case part of the
+// problem with the runtime -> data-schema migration comes down to a mismatch
+// around this symbol and it's extractor.
 export declare const __modelMeta__: unique symbol;
-
 export type ExtractModelMeta<T extends Record<any, any>> =
   T[typeof __modelMeta__];
 
@@ -36,7 +38,7 @@ type ReturnValue<
   M extends Model,
   FlatModel extends Model,
   Paths extends ReadonlyArray<ModelPath<FlatModel>>,
-> = Paths extends never[]
+> = Paths extends undefined | never[]
   ? M
   : CustomSelectionSetReturnValue<FlatModel, Paths[number]>;
 
@@ -226,7 +228,8 @@ export type ModelPath<
  * 
  * ```
  */
-type ResolvedModel<
+// TODO: temporarily exported for troubleshooting
+export type ResolvedModel<
   Model extends Record<string, unknown>,
   Depth extends number = 7,
   RecursionLoop extends number[] = [-1, 0, 1, 2, 3, 4, 5, 6],
@@ -255,7 +258,7 @@ export type SelectionSet<
 // #endregion
 
 // #region Input mapped types
-type ModelIdentifier<Model extends Record<any, any>> = Prettify<
+export type ModelIdentifier<Model extends Record<any, any>> = Prettify<
   Record<Model['identifier'] & string, string>
 >;
 
@@ -478,12 +481,14 @@ export type ModelSortDirection = 'ASC' | 'DESC';
 
 type ModelMetaShape = {
   secondaryIndexes: SecondaryIndexIrShape[];
-  identifier: string[];
+  identifier: string;
 };
 
-type ModelTypesClient<
+// TODO: remove export. added for debugging.
+export type ModelTypesClient<
   Model extends Record<string, unknown>,
   ModelMeta extends ModelMetaShape,
+  FlatModel extends Record<string, unknown> = ResolvedModel<Model>,
 > = IndexQueryMethodsFromIR<ModelMeta['secondaryIndexes'], Model> & {
   create: (
     model: Prettify<CreateModelInput<Model, ModelMeta>>,
@@ -511,10 +516,7 @@ type ModelTypesClient<
       headers?: CustomHeaders;
     },
   ) => SingularReturnValue<Model>;
-  get<
-    FlatModel extends Record<string, unknown> = ResolvedModel<Model>,
-    SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[],
-  >(
+  get<SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[]>(
     identifier: ModelIdentifier<ModelMeta>,
     options?: {
       selectionSet?: SelectionSet;
@@ -523,10 +525,7 @@ type ModelTypesClient<
       headers?: CustomHeaders;
     },
   ): SingularReturnValue<Prettify<ReturnValue<Model, FlatModel, SelectionSet>>>;
-  list<
-    FlatModel extends Record<string, unknown> = ResolvedModel<Model>,
-    SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[],
-  >(
+  list<SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[]>(
     options?: Partial<ModelIdentifier<ModelMeta>> & {
       filter?: ModelFilter<Model>;
       sortDirection?: ModelSortDirection;
@@ -539,7 +538,6 @@ type ModelTypesClient<
     },
   ): ListReturnValue<Prettify<ReturnValue<Model, FlatModel, SelectionSet>>>;
   onCreate<
-    FlatModel extends Record<string, unknown> = ResolvedModel<Model>,
     SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[],
   >(options?: {
     filter?: ModelFilter<Model>;
@@ -551,7 +549,6 @@ type ModelTypesClient<
     Prettify<ReturnValue<Model, FlatModel, SelectionSet>>
   >;
   onUpdate<
-    FlatModel extends Record<string, unknown> = ResolvedModel<Model>,
     SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[],
   >(options?: {
     filter?: ModelFilter<Model>;
@@ -563,7 +560,6 @@ type ModelTypesClient<
     Prettify<ReturnValue<Model, FlatModel, SelectionSet>>
   >;
   onDelete<
-    FlatModel extends Record<string, unknown> = ResolvedModel<Model>,
     SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[],
   >(options?: {
     filter?: ModelFilter<Model>;
@@ -575,7 +571,6 @@ type ModelTypesClient<
     Prettify<ReturnValue<Model, FlatModel, SelectionSet>>
   >;
   observeQuery<
-    FlatModel extends Record<string, unknown> = ResolvedModel<Model>,
     SelectionSet extends ModelPath<FlatModel>[] = never[],
   >(options?: {
     filter?: ModelFilter<Model>;
