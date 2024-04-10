@@ -585,6 +585,7 @@ export type ModelTypesClient<
 type ModelTypesSSRCookies<
   Model extends Record<string, unknown>,
   ModelMeta extends ModelMetaShape,
+  FlatModel extends Record<string, unknown> = ResolvedModel<Model>,
 > = IndexQueryMethodsFromIR<ModelMeta['secondaryIndexes'], Model> & {
   create: (
     model: Prettify<CreateModelInput<Model, ModelMeta>>,
@@ -612,10 +613,7 @@ type ModelTypesSSRCookies<
       headers?: CustomHeaders;
     },
   ) => SingularReturnValue<Model>;
-  get<
-    FlatModel extends Record<string, unknown> = ResolvedModel<Model>,
-    SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[],
-  >(
+  get<SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[]>(
     identifier: ModelIdentifier<ModelMeta>,
     options?: {
       selectionSet?: SelectionSet;
@@ -624,10 +622,7 @@ type ModelTypesSSRCookies<
       headers?: CustomHeaders;
     },
   ): SingularReturnValue<Prettify<ReturnValue<Model, FlatModel, SelectionSet>>>;
-  list<
-    FlatModel extends Record<string, unknown> = ResolvedModel<Model>,
-    SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[],
-  >(
+  list<SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[]>(
     options?: Partial<ModelIdentifier<ModelMeta>> & {
       filter?: ModelFilter<Model>;
       sortDirection?: ModelSortDirection;
@@ -644,6 +639,7 @@ type ModelTypesSSRCookies<
 type ModelTypesSSRRequest<
   Model extends Record<string, unknown>,
   ModelMeta extends ModelMetaShape,
+  FlatModel extends Record<string, unknown> = ResolvedModel<Model>,
 > = IndexQueryMethodsFromIR<ModelMeta['secondaryIndexes'], Model> & {
   create: (
     // TODO: actual type
@@ -675,10 +671,7 @@ type ModelTypesSSRRequest<
       headers?: CustomHeaders;
     },
   ) => SingularReturnValue<Model>;
-  get<
-    FlatModel extends Record<string, unknown> = ResolvedModel<Model>,
-    SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[],
-  >(
+  get<SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[]>(
     contextSpec: any,
     identifier: ModelIdentifier<ModelMeta>,
     options?: {
@@ -688,10 +681,7 @@ type ModelTypesSSRRequest<
       headers?: CustomHeaders;
     },
   ): SingularReturnValue<Prettify<ReturnValue<Model, FlatModel, SelectionSet>>>;
-  list<
-    FlatModel extends Record<string, unknown> = ResolvedModel<Model>,
-    SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[],
-  >(
+  list<SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[]>(
     contextSpec: any,
     options?: Partial<ModelIdentifier<ModelMeta>> & {
       filter?: ModelFilter<Model>;

@@ -24,17 +24,29 @@ describe('client extension types', () => {
   type CookieExtensions = ClientExtensionsSSRCookies<Schema>;
   type RequestExtensions = ClientExtensionsSSRRequest<Schema>;
 
-  type Meta = ExtractModelMeta<Schema>['Model'];
-  type Identifier = ModelIdentifier<Meta>;
-  type Resolved = ResolvedModel<Schema['Model']>;
-  type Path = ReadonlyArray<ModelPath<Resolved>>;
-  type TTTT = Prettify<ModelTypesClient<Schema['Model'], Meta>>['get'];
+  // type Meta = ExtractModelMeta<Schema>['Model'];
+  // type Identifier = ModelIdentifier<Meta>;
+  // type Resolved = ResolvedModel<Schema['Model']>;
+  // type Path = ReadonlyArray<ModelPath<Resolved>>;
+  // type TTTT = Prettify<ModelTypesClient<Schema['Model'], Meta>>['get'];
 
   describe('model get args', () => {
-    test('web client', () => {
+    test('web client component types', async () => {
+      type Get = Extensions['models']['Model']['get'];
+      const get = {} as Get;
+      const rv = await get({ id: 'something' });
+      type GetArgs = Parameters<typeof get>;
+      type RT = typeof rv.data;
+      type Expected = Schema['Model'];
+      type T_ModelFields = Expect<Equal<Actual, Expected>>;
+    });
+
+    test('web client', async () => {
       type Get = Extensions['models']['Model']['get'];
       type GetArgs = Parameters<Get>;
-      type RT = ReturnType<Get>;
+      const get = {} as Get;
+      const rv = await get({ id: '123' });
+      type RT = typeof rv.data;
       type Expected = Schema['Model'];
       type T_ModelFields = Expect<Equal<Actual, Expected>>;
     });
