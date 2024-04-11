@@ -303,7 +303,7 @@ function customOperationToGql(
     subscriptionSource,
   } = typeDef.data;
 
-  const functionFieldName: string = typeName;
+  let callSignature: string = typeName;
   const implicitModels: [string, any][] = [];
 
   const { authString } = isCustom
@@ -367,7 +367,8 @@ function customOperationToGql(
   }
 
   if (Object.keys(fieldArgs).length > 0) {
-    const { models } = processFields(typeName, fieldArgs, {}, {});
+    const { gqlFields, models } = processFields(typeName, fieldArgs, {}, {});
+    callSignature += `(${gqlFields.join(', ')})`;
     implicitModels.push(...models);
   }
 
@@ -381,7 +382,7 @@ function customOperationToGql(
   if (isFunctionHandler(handlers)) {
     ({ gqlHandlerContent, lambdaFunctionDefinition } = transformFunctionHandler(
       handlers,
-      functionFieldName,
+      typeName,
     ));
   } else if (functionRef) {
     gqlHandlerContent = `@function(name: "${functionRef}") `;
@@ -431,7 +432,7 @@ function customOperationToGql(
     gqlHandlerContent += `@aws_subscribe(mutations: ["${subscriptionSources}"]) `;
   }
 
-  const gqlField = `${functionFieldName}: ${returnTypeName} ${gqlHandlerContent}${authString}`;
+  const gqlField = `${callSignature}: ${returnTypeName} ${gqlHandlerContent}${authString}`;
   return {
     gqlField,
     models: implicitModels,
