@@ -406,7 +406,7 @@ describe('SQL Schema', () => {
     connectionUri: fakeSecret(),
   } as const;
 
-  test('.renameModels', () => {
+  test('.renameModels() on a SQL schema', () => {
     const sqlSchema = configure({ database: datasourceConfigMySQL }).schema({
       post: a
         .model({
@@ -434,5 +434,20 @@ describe('SQL Schema', () => {
     };
 
     type test = Expect<Equal<Resolved, Expected>>;
+  });
+
+  test('.renameModels() not available on a DDB schema', () => {
+    const schema = a.schema({
+      post: a
+        .model({
+          id: a.string().required(),
+          title: a.string(),
+          author: a.string(),
+        })
+        .identifier(['id']),
+    });
+
+    // @ts-expect-error
+    const modified = schema.renameModels(() => [['post', 'RenamedPost']]);
   });
 });
