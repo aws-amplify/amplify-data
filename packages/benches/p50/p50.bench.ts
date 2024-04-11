@@ -15,8 +15,8 @@ bench('p50', () => {
         phone: a.phone().authorization([a.allow.owner()]),
         website: a.url(),
         ssn: a.string().authorization([a.allow.owner()]),
-        todos: a.hasMany('Todo'),
-        posts: a.hasMany('Post'),
+        todos: a.hasMany('Todo', ['employeeId']),
+        posts: a.hasMany('Post', ['employeeId']),
       })
       .authorization([a.allow.private().to(['read']), a.allow.owner()]),
     Todo: a
@@ -26,7 +26,8 @@ bench('p50', () => {
         privacySetting: a.enum(['PRIVATE', 'FRIENDS_ONLY', 'PUBLIC']),
         viewCount: a.integer(),
         complete: a.boolean(),
-        employee: a.belongsTo('Employee'),
+        employeeId: a.id(),
+        employee: a.belongsTo('Employee', ['employeeId']),
       })
       .identifier(['todoId', 'name']),
     Post: a
@@ -39,7 +40,8 @@ bench('p50', () => {
         }),
         lastViewedDate: a.date(),
         lastViewedTime: a.time(),
-        employee: a.belongsTo('Employee'),
+        employeeId: a.id(),
+        employee: a.belongsTo('Employee', ['employeeId']),
       })
       .authorization([a.allow.public().to(['read']), a.allow.owner()]),
   }).authorization([a.allow.public()]);
@@ -55,8 +57,8 @@ bench('p50 w/ client types', () => {
           phone: a.phone().authorization([a.allow.owner()]),
           website: a.url(),
           ssn: a.string().authorization([a.allow.owner()]),
-          todos: a.hasMany('Todo'),
-          posts: a.hasMany('Post'),
+          todos: a.hasMany('Todo', ['employeeId']),
+          posts: a.hasMany('Post', ['employeeId']),
         })
         .authorization([a.allow.private().to(['read']), a.allow.owner()]),
       Todo: a
@@ -66,7 +68,8 @@ bench('p50 w/ client types', () => {
           privacySetting: a.enum(['PRIVATE', 'FRIENDS_ONLY', 'PUBLIC']),
           viewCount: a.integer(),
           complete: a.boolean(),
-          employee: a.belongsTo('Employee'),
+          employeeId: a.id(),
+          employee: a.belongsTo('Employee', ['employeeId']),
         })
         .identifier(['todoId', 'name']),
       Post: a
@@ -79,7 +82,8 @@ bench('p50 w/ client types', () => {
           }),
           lastViewedDate: a.date(),
           lastViewedTime: a.time(),
-          employee: a.belongsTo('Employee'),
+          employeeId: a.id(),
+          employee: a.belongsTo('Employee', ['employeeId']),
         })
         .authorization([a.allow.public().to(['read']), a.allow.owner()]),
     })
@@ -98,8 +102,8 @@ bench('p50 combined schema w/ client types', () => {
           phone: a.phone().authorization([a.allow.owner()]),
           website: a.url(),
           ssn: a.string().authorization([a.allow.owner()]),
-          todos: a.hasMany('Todo'),
-          posts: a.hasMany('Post'),
+          todos: a.hasMany('Todo', ['employeeId']),
+          posts: a.hasMany('Post', ['employeeId']),
         })
         .authorization([a.allow.private().to(['read']), a.allow.owner()]),
 
@@ -113,7 +117,8 @@ bench('p50 combined schema w/ client types', () => {
           }),
           lastViewedDate: a.date(),
           lastViewedTime: a.time(),
-          employee: a.belongsTo('Employee'),
+          employeeId: a.id(),
+          employee: a.belongsTo('Employee', ['employeeId']),
         })
         .authorization([a.allow.public().to(['read']), a.allow.owner()]),
     })
@@ -127,7 +132,7 @@ bench('p50 combined schema w/ client types', () => {
         privacySetting: a.enum(['PRIVATE', 'FRIENDS_ONLY', 'PUBLIC']),
         viewCount: a.integer(),
         complete: a.boolean(),
-        employee: a.belongsTo('Employee'),
+        employee: a.belongsTo('Employee', ['employeeId']),
       })
       .identifier(['todoId', 'name']),
   });

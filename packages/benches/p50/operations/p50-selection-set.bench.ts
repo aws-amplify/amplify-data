@@ -20,8 +20,8 @@ bench('p50 CRUDL', async () => {
           phone: a.phone().authorization([a.allow.owner()]),
           website: a.url(),
           ssn: a.string().authorization([a.allow.owner()]),
-          todos: a.hasMany('Todo'),
-          posts: a.hasMany('Post'),
+          todos: a.hasMany('Todo', 'employeeId'),
+          posts: a.hasMany('Post', 'employeeId'),
         })
         .authorization([a.allow.private().to(['read']), a.allow.owner()]),
       Todo: a
@@ -31,7 +31,8 @@ bench('p50 CRUDL', async () => {
           privacySetting: a.enum(['PRIVATE', 'FRIENDS_ONLY', 'PUBLIC']),
           viewCount: a.integer(),
           complete: a.boolean(),
-          employee: a.belongsTo('Employee'),
+          employeeId: a.id(),
+          employee: a.belongsTo('Employee', 'employeeId'),
         })
         .identifier(['todoId', 'name']),
       Post: a
@@ -44,7 +45,8 @@ bench('p50 CRUDL', async () => {
           }),
           lastViewedDate: a.date(),
           lastViewedTime: a.time(),
-          employee: a.belongsTo('Employee'),
+          employeeId: a.id(),
+          employee: a.belongsTo('Employee', 'employeeId'),
         })
         .authorization([a.allow.public().to(['read']), a.allow.owner()]),
     })

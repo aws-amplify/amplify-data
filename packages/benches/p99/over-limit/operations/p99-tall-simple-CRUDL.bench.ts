@@ -4581,7 +4581,6 @@ bench('1522 simple models with 1 field each CRUDL', async () => {
     })
     .authorization([a.allow.public()]);
 
-  // @ts-expect-error Type instantiation is excessively deep and possibly infinite is expected for this schema
   type _ = ClientSchema<typeof schema>;
 
   // TODO:
