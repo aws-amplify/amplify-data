@@ -32,10 +32,10 @@ describe('RDSModelSchema', () => {
     .authorization([a.allow.public()])
     .relationships((models) => [
       models.Post.addRelationships({
-        parentBlog: a.belongsTo('Blog').references(['parentBlogId']),
+        parentBlog: a.belongsTo('Blog', 'parentBlogId'),
       }),
       models.Blog.addRelationships({
-        childPosts: a.hasMany('Post').references(['parentBlogId']),
+        childPosts: a.hasMany('Post', 'parentBlogId'),
       }),
     ]);
 
