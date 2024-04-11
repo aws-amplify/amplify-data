@@ -135,6 +135,29 @@ exports[`custom operations for an rds schema sql schema rename 1`] = `
 }"
 `;
 
+exports[`custom operations for an rds schema sql schema rename multiple models 1`] = `
+"type tags @model @auth(rules: [{allow: public}])
+{
+  id: String! @primaryKey
+  title: String
+  author: String
+}
+
+type RenamedPost @model @auth(rules: [{allow: public}])
+{
+  id: String! @primaryKey
+  title: String
+  author: String
+}
+
+type RenamedComment @model @auth(rules: [{allow: public}])
+{
+  id: String! @primaryKey
+  title: String
+  author: String
+}"
+`;
+
 exports[`schema auth rules allows custom 1`] = `
 {
   "customSqlDataSourceStrategies": [],

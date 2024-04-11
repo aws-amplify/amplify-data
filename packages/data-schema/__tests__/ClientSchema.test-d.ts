@@ -425,12 +425,98 @@ describe('SQL Schema', () => {
 
     type Schema = typeof modified;
 
-    type Resolved = Prettify<ClientSchema<Schema>['RenamedPost']>;
+    type Resolved = Prettify<ClientSchema<Schema>>;
 
     type Expected = {
-      id: string;
-      title?: string | null;
-      author?: string | null;
+      RenamedPost: {
+        id: string;
+        title?: string | null;
+        author?: string | null;
+      };
+      [__modelMeta__]: {
+        RenamedPost: {
+          identifier: 'id';
+        };
+        enums: Record<never, never>;
+        customTypes: Record<never, never>;
+        customOperations: Record<never, never>;
+      };
+    };
+
+    type test = Expect<Equal<Resolved, Expected>>;
+  });
+
+  test('sql schema rename multiple models', () => {
+    const sqlSchema = configure({ database: datasourceConfigMySQL }).schema({
+      post: a
+        .model({
+          id: a.string().required(),
+          title: a.string(),
+          author: a.string(),
+        })
+        .identifier(['id']),
+      comment: a
+        .model({
+          id: a.string().required(),
+          title: a.string(),
+          author: a.string(),
+        })
+        .identifier(['id']),
+      tags: a
+        .model({
+          id: a.string().required(),
+          title: a.string(),
+          author: a.string(),
+        })
+        .identifier(['id']),
+    });
+
+    const modified = sqlSchema
+      .renameModels(() => [
+        ['post', 'RenamedPost'],
+        ['comment', 'RenamedComment'],
+      ])
+      .setAuthorization((models) => [
+        models.RenamedPost.authorization([a.allow.public()]),
+        models.RenamedComment.authorization([a.allow.public()]),
+        // tags is unchanged, since we didn't rename it
+        models.tags.authorization([a.allow.public()]),
+      ]);
+
+    type Schema = typeof modified;
+
+    type Resolved = Prettify<ClientSchema<Schema>>;
+
+    type Expected = {
+      RenamedPost: {
+        id: string;
+        title?: string | null;
+        author?: string | null;
+      };
+      RenamedComment: {
+        id: string;
+        title?: string | null;
+        author?: string | null;
+      };
+      tags: {
+        id: string;
+        title?: string | null;
+        author?: string | null;
+      };
+      [__modelMeta__]: {
+        RenamedPost: {
+          identifier: 'id';
+        };
+        RenamedComment: {
+          identifier: 'id';
+        };
+        tags: {
+          identifier: 'id';
+        };
+        enums: Record<never, never>;
+        customTypes: Record<never, never>;
+        customOperations: Record<never, never>;
+      };
     };
 
     type test = Expect<Equal<Resolved, Expected>>;
@@ -447,7 +533,11 @@ describe('SQL Schema', () => {
         .identifier(['id']),
     });
 
-    // @ts-expect-error
-    const modified = schema.renameModels(() => [['post', 'RenamedPost']]);
+    try {
+      // @ts-expect-error
+      schema.renameModels(() => [['post', 'RenamedPost']]);
+    } catch (error) {
+      error;
+    }
   });
 });
