@@ -41,7 +41,6 @@ type ModelData = {
   identifier: string[];
   secondaryIndexes: ReadonlyArray<ModelIndexType<any, any, any, any, any>>;
   authorization: Authorization<any, any, any>[];
-  renamedTo: undefined | string;
 };
 
 type InternalModelData = ModelData & {
@@ -56,7 +55,6 @@ export type ModelTypeParamShape = {
   identifier: string[];
   secondaryIndexes: ReadonlyArray<SecondaryIndexIrShape>;
   authorization: Authorization<any, any, any>[];
-  renamedTo: string;
 };
 
 // Extract field names that can be used to define a secondary index PK or SK
@@ -254,7 +252,6 @@ export type SchemaModelType<
       fields: T extends ModelType<infer R extends ModelTypeParamShape, any>
         ? R['fields']
         : never;
-      renameTo<RenamedModel extends string>(name: RenamedModel): T;
     }
   : T;
 
@@ -276,7 +273,6 @@ function _model<T extends ModelTypeParamShape>(fields: T['fields']) {
     identifier: ['id'],
     secondaryIndexes: [],
     authorization: [],
-    renamedTo: undefined,
   };
 
   const builder = {
@@ -303,9 +299,6 @@ function _model<T extends ModelTypeParamShape>(fields: T['fields']) {
     data,
     addRelationships(relationships) {
       data.fields = { ...data.fields, ...relationships };
-    },
-    renameTo(name: string): void {
-      data.renamedTo = name;
     },
     fields: data.fields,
   } as InternalModel as ModelType<T>;
@@ -345,7 +338,6 @@ export function model<T extends ModelFields>(
   identifier: Array<'id'>;
   secondaryIndexes: [];
   authorization: [];
-  renamedTo: never;
 }> {
   return _model(fields);
 }
