@@ -1,4 +1,5 @@
 import { a, ClientSchema } from '../index';
+import { configure } from '../src/internals';
 import {
   Expect,
   Equal,
@@ -394,5 +395,44 @@ describe('Enum types', () => {
     };
 
     type test2 = Expect<Equal<ResolvedEnumMeta, ExpectedEnumMeta>>;
+  });
+});
+
+describe('SQL Schema', () => {
+  const fakeSecret = () => ({}) as any;
+
+  const datasourceConfigMySQL = {
+    engine: 'mysql',
+    connectionUri: fakeSecret(),
+  } as const;
+
+  test('.renameModels', () => {
+    const sqlSchema = configure({ database: datasourceConfigMySQL }).schema({
+      post: a
+        .model({
+          id: a.string().required(),
+          title: a.string(),
+          author: a.string(),
+        })
+        .identifier(['id']),
+    });
+
+    const modified = sqlSchema
+      .renameModels(() => [['post', 'RenamedPost']])
+      .setAuthorization((models) =>
+        models.RenamedPost.authorization([a.allow.public()]),
+      );
+
+    type Schema = typeof modified;
+
+    type Resolved = Prettify<ClientSchema<Schema>['RenamedPost']>;
+
+    type Expected = {
+      id: string;
+      title?: string | null;
+      author?: string | null;
+    };
+
+    type test = Expect<Equal<Resolved, Expected>>;
   });
 });

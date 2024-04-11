@@ -126,6 +126,15 @@ exports[`custom operations for an rds schema sql schema field-level auth 1`] = `
 }"
 `;
 
+exports[`custom operations for an rds schema sql schema rename 1`] = `
+"type RenamedPost @model @auth(rules: [{allow: public}])
+{
+  id: String! @primaryKey
+  title: String
+  author: String
+}"
+`;
+
 exports[`schema auth rules allows custom 1`] = `
 {
   "customSqlDataSourceStrategies": [],

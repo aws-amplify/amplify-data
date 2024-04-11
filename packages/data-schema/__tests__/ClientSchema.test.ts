@@ -812,6 +812,27 @@ describe('custom operations', () => {
       expect(graphql).toMatchSnapshot();
     });
 
+    test('sql schema rename', () => {
+      const sqlSchema = configure({ database: datasourceConfigMySQL }).schema({
+        post: a
+          .model({
+            id: a.string().required(),
+            title: a.string(),
+            author: a.string(),
+          })
+          .identifier(['id']),
+      });
+
+      const modified = sqlSchema
+        .renameModels(() => [['post', 'RenamedPost']])
+        .setAuthorization((models) =>
+          models.RenamedPost.authorization([a.allow.public()]),
+        );
+
+      const graphql = modified.transform().schema;
+      expect(graphql).toMatchSnapshot();
+    });
+
     describe('custom operations', () => {
       test('custom query', () => {
         const initial = aSql.schema({
