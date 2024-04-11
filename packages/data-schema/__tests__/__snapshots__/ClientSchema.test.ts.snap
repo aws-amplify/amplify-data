@@ -32,7 +32,7 @@ exports[`custom operations custom mutation 1`] = `
 }
 
 type Mutation {
-  likePost(postId: String!): LikePostResult @function(name: "likePost") @auth(rules: [{allow: public}])
+  likePost: LikePostResult @function(name: "likePost") @auth(rules: [{allow: public}])
 }"
 `;
 
@@ -43,7 +43,7 @@ exports[`custom operations custom query 1`] = `
 }
 
 type Query {
-  echo(inputContent: String!): EchoResult @function(name: "echoFunction") @auth(rules: [{allow: public}])
+  echo: EchoResult @function(name: "echoFunction") @auth(rules: [{allow: public}])
 }"
 `;
 
@@ -70,7 +70,7 @@ type A @model @auth(rules: [{allow: public}])
 }
 
 type Mutation {
-  likePost(postId: String!): LikePostResult @function(name: "likePost") @auth(rules: [{allow: public}])
+  likePost: LikePostResult @function(name: "likePost") @auth(rules: [{allow: public}])
 }
 type DislikePostResult 
 {
@@ -83,7 +83,7 @@ type B @model @auth(rules: [{allow: public}])
 }
 
 type Mutation {
-  dislikePost(postId: String!): DislikePostResult @function(name: "dislikePost") @auth(rules: [{allow: public}])
+  dislikePost: DislikePostResult @function(name: "dislikePost") @auth(rules: [{allow: public}])
 }"
 `;
 
@@ -113,7 +113,7 @@ exports[`custom operations for an rds schema custom operations custom query 1`] 
 }
 
 type Query {
-  echo(inputContent: String!): EchoResult @function(name: "echoFunction") @auth(rules: [{allow: public}])
+  echo: EchoResult @function(name: "echoFunction") @auth(rules: [{allow: public}])
 }"
 `;
 
@@ -319,7 +319,7 @@ exports[`schema auth rules do not pull out custom operations 1`] = `
 }
 
 type Mutation {
-  likePost(postId: String): Post @function(name: "myFunc") @auth(rules: [{allow: owner, ownerField: "owner"}])
+  likePost: Post @function(name: "myFunc") @auth(rules: [{allow: owner, ownerField: "owner"}])
 }
 
 type Query {
