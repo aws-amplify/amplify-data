@@ -4574,7 +4574,7 @@ bench('1522 simple models with 1 field each', () => {
       field1: a.string(),
     }),
   }).authorization([a.allow.public()]);
-}).types([1941017, 'instantiations']);
+}).types([1941008, 'instantiations']);
 
 bench('1522 simple models with 1 field each w/ client types', () => {
   const s = a
@@ -9150,4 +9150,4 @@ bench('1522 simple models with 1 field each w/ client types', () => {
 
   // @ts-expect-error Type instantiation is excessively deep and possibly infinite is expected for this schema
   type _ = ClientSchema<typeof s>;
-}).types([9618855, 'instantiations']);
+}).types([9617895, 'instantiations']);

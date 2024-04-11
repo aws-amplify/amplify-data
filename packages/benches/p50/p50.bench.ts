@@ -43,7 +43,7 @@ bench('p50', () => {
       })
       .authorization([a.allow.public().to(['read']), a.allow.owner()]),
   }).authorization([a.allow.public()]);
-}).types([28010, 'instantiations']);
+}).types([26679, 'instantiations']);
 
 bench('p50 w/ client types', () => {
   const s = a
@@ -86,7 +86,7 @@ bench('p50 w/ client types', () => {
     .authorization([a.allow.public()]);
 
   type _ = ClientSchema<typeof s>;
-}).types([117007, 'instantiations']);
+}).types([115329, 'instantiations']);
 
 bench('p50 combined schema w/ client types', () => {
   const s1 = a
@@ -134,4 +134,4 @@ bench('p50 combined schema w/ client types', () => {
 
   const s = a.combine([s1, s2]);
   type _ = ClientSchema<typeof s>;
-}).types([336530, 'instantiations']);
+}).types([470880, 'instantiations']);
