@@ -1,5 +1,11 @@
 # @aws-amplify/data-schema
 
+## 0.14.12
+
+### Patch Changes
+
+- 05915ab: enable model rename for SQL schemas
+
 ## 0.14.11
 
 ### Patch Changes
