@@ -812,6 +812,109 @@ describe('custom operations', () => {
       expect(graphql).toMatchSnapshot();
     });
 
+    test('sql schema rename', () => {
+      const sqlSchema = configure({ database: datasourceConfigMySQL }).schema({
+        post: a
+          .model({
+            id: a.string().required(),
+            title: a.string(),
+            author: a.string(),
+          })
+          .identifier(['id']),
+      });
+
+      const modified = sqlSchema
+        .renameModels(() => [['post', 'RenamedPost']])
+        .setAuthorization((models) =>
+          models.RenamedPost.authorization([a.allow.public()]),
+        );
+
+      const graphql = modified.transform().schema;
+      expect(graphql).toMatchSnapshot();
+    });
+
+    test('sql schema rename multiple models', () => {
+      const sqlSchema = configure({ database: datasourceConfigMySQL }).schema({
+        post: a
+          .model({
+            id: a.string().required(),
+            title: a.string(),
+            author: a.string(),
+          })
+          .identifier(['id']),
+        comment: a
+          .model({
+            id: a.string().required(),
+            title: a.string(),
+            author: a.string(),
+          })
+          .identifier(['id']),
+        tags: a
+          .model({
+            id: a.string().required(),
+            title: a.string(),
+            author: a.string(),
+          })
+          .identifier(['id']),
+      });
+
+      const modified = sqlSchema
+        .renameModels(() => [
+          ['post', 'RenamedPost'],
+          ['comment', 'RenamedComment'],
+        ])
+        .setAuthorization((models) => [
+          models.RenamedPost.authorization([a.allow.public()]),
+          models.RenamedComment.authorization([a.allow.public()]),
+          // tags is unchanged, since we didn't rename it
+          models.tags.authorization([a.allow.public()]),
+        ]);
+
+      const graphql = modified.transform().schema;
+      expect(graphql).toMatchSnapshot();
+
+      // ensure old models are no longer accessible
+      // @ts-expect-error
+      expect(modified.models.post).toBeUndefined();
+      // @ts-expect-error
+      expect(modified.models.comment).toBeUndefined();
+    });
+
+    test('sql schema rename new model name validation', () => {
+      const sqlSchema = configure({ database: datasourceConfigMySQL }).schema({
+        post: a
+          .model({
+            id: a.string().required(),
+            title: a.string(),
+            author: a.string(),
+          })
+          .identifier(['id']),
+      });
+
+      expect(() => sqlSchema.renameModels(() => [['post', '']])).toThrowError(
+        'Invalid renameModels call. New name must be a non-empty string. Received: ""',
+      );
+    });
+
+    test('sql schema rename nonexistent model validation', () => {
+      const sqlSchema = configure({ database: datasourceConfigMySQL }).schema({
+        post: a
+          .model({
+            id: a.string().required(),
+            title: a.string(),
+            author: a.string(),
+          })
+          .identifier(['id']),
+      });
+
+      expect(() =>
+        // @ts-expect-error - the first element in the tuple is typed to keysof schema, so we get TS validation here as well
+        sqlSchema.renameModels(() => [['does-not-exist', 'RenamedPost']]),
+      ).toThrowError(
+        'Invalid renameModels call. does-not-exist is not defined in the schema',
+      );
+    });
+
     describe('custom operations', () => {
       test('custom query', () => {
         const initial = aSql.schema({

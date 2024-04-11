@@ -110,7 +110,9 @@ type RDSModelSchemaFunctions =
   | 'addSubscriptions'
   | 'authorization'
   | 'relationships'
-  | 'setAuthorization';
+  | 'setAuthorization'
+  | 'renameModelFields'
+  | 'renameModels';
 
 export type RDSModelSchema<
   T extends RDSModelSchemaParamShape,
@@ -144,6 +146,7 @@ export type RDSModelSchema<
       SetTypeSubArg<T, 'types', T['types'] & Subscriptions>,
       UsedMethods | 'addSubscriptions'
     >;
+    // TODO: hide this, since SQL schema auth is configured via .setAuthorization?
     authorization: <AuthRules extends SchemaAuthorization<any, any, any>>(
       auth: AuthRules[],
     ) => RDSModelSchema<
@@ -153,7 +156,7 @@ export type RDSModelSchema<
     setAuthorization: (
       callback: (
         models: BaseSchema<T, true>['models'],
-        schema: RDSModelSchema<T>,
+        schema: RDSModelSchema<T, UsedMethods | 'setAuthorization'>,
       ) => void,
     ) => RDSModelSchema<T>;
     relationships: <
@@ -181,11 +184,39 @@ export type RDSModelSchema<
         : T,
       UsedMethods | 'relationships'
     >;
+    renameModels: <
+      NewName extends string,
+      CurName extends string = keyof BaseSchema<T>['models'] & string,
+      const ChangeLog extends readonly [CurName, NewName][] = [],
+    >(
+      callback: () => ChangeLog,
+    ) => RDSModelSchema<
+      SetTypeSubArg<T, 'types', RenameModelArr<ChangeLog, T['types']>>,
+      UsedMethods | 'renameModels'
+    >;
   },
   UsedMethods
 > &
   BaseSchema<T, true> &
   RDSSchemaBrand;
+
+type RenameModel<
+  CurName extends string,
+  NewName extends string,
+  Types extends ModelSchemaContents,
+> = {
+  [Type in keyof Types as Type extends CurName ? NewName : Type]: Types[Type];
+};
+
+type RenameModelArr<
+  ChangeLog extends readonly [string, string][],
+  Types extends ModelSchemaContents,
+> = ChangeLog extends readonly [
+  infer CurPair extends [string, string],
+  ...infer Rest extends readonly [string, string][],
+]
+  ? RenameModelArr<Rest, RenameModel<CurPair[0], CurPair[1], Types>>
+  : Types;
 
 /**
  * Amplify API Next Model Schema shape
@@ -277,6 +308,35 @@ function _rdsSchema<
       callback(models);
       return rest;
     },
+    renameModels(callback): any {
+      const { renameModels: _, ...rest } = this;
+      // returns an array of tuples [curName, newName]
+      const changeLog = callback();
+
+      changeLog.forEach(([curName, newName]) => {
+        const currentType = data.types[curName];
+
+        if (currentType === undefined) {
+          throw new Error(
+            `Invalid renameModels call. ${curName} is not defined in the schema`,
+          );
+        }
+
+        if (typeof newName !== 'string' || newName.length < 1) {
+          throw new Error(
+            `Invalid renameModels call. New name must be a non-empty string. Received: "${newName}"`,
+          );
+        }
+
+        models[newName] = currentType;
+        data.types[newName] = currentType;
+
+        delete models[curName];
+        delete data.types[curName];
+      });
+
+      return rest;
+    },
     ...rdsSchemaBrand,
   } as RDSModelSchema<T>;
 }
@@ -312,7 +372,11 @@ type SchemaReturnType<
   Types extends ModelSchemaContents,
 > = DE extends 'dynamodb'
   ? ModelSchema<{ types: Types; authorization: []; configuration: any }>
-  : RDSModelSchema<{ types: Types; authorization: []; configuration: any }>;
+  : RDSModelSchema<{
+      types: Types;
+      authorization: [];
+      configuration: any;
+    }>;
 
 function bindConfigToSchema<DE extends DatasourceEngine>(
   config: SchemaConfiguration<DE, DataSourceConfiguration<DE>>,
