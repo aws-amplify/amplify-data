@@ -6,64 +6,497 @@
 
 ## Interfaces
 
-|  Interface | Description |
-|  --- | --- |
-|  [DerivedApiDefinition](./data-schema-types.derivedapidefinition.md) | <p>references IAmplifyGraphqlDefinition from: https://github.com/aws-amplify/amplify-category-api/blob/4c0ea253a0bae51f775383929ba4748593185bc1/packages/amplify-graphql-api-construct/src/types.ts\#L491-L503</p><p>function slots is any'd for now. Will add actual type when we add support for this feature</p> |
-|  [GraphQLFormattedError](./data-schema-types.graphqlformattederror.md) | See: https://spec.graphql.org/draft/\#sec-Errors |
-|  [SourceLocation](./data-schema-types.sourcelocation.md) | Represents a location in a Source. |
+<table><thead><tr><th>
+
+Interface
+
+
+</th><th>
+
+Description
+
+
+</th></tr></thead>
+<tbody><tr><td>
+
+[DerivedApiDefinition](./data-schema-types.derivedapidefinition.md)
+
+
+</td><td>
+
+references IAmplifyGraphqlDefinition from: https://github.com/aws-amplify/amplify-category-api/blob/4c0ea253a0bae51f775383929ba4748593185bc1/packages/amplify-graphql-api-construct/src/types.ts\#L491-L503
+
+function slots is any'd for now. Will add actual type when we add support for this feature
+
+
+</td></tr>
+<tr><td>
+
+[GraphQLFormattedError](./data-schema-types.graphqlformattederror.md)
+
+
+</td><td>
+
+See: https://spec.graphql.org/draft/\#sec-Errors
+
+
+</td></tr>
+<tr><td>
+
+[SourceLocation](./data-schema-types.sourcelocation.md)
+
+
+</td><td>
+
+Represents a location in a Source.
+
+
+</td></tr>
+</tbody></table>
 
 ## Variables
 
-|  Variable | Description |
-|  --- | --- |
-|  [\_\_modelMeta\_\_](./data-schema-types.__modelmeta__.md) |  |
+<table><thead><tr><th>
+
+Variable
+
+
+</th><th>
+
+Description
+
+
+</th></tr></thead>
+<tbody><tr><td>
+
+[\_\_modelMeta\_\_](./data-schema-types.__modelmeta__.md)
+
+
+</td><td>
+
+
+</td></tr>
+</tbody></table>
 
 ## Type Aliases
 
-|  Type Alias | Description |
-|  --- | --- |
-|  [AuthMode](./data-schema-types.authmode.md) |  |
-|  [CustomHeaders](./data-schema-types.customheaders.md) | Custom headers that can be passed either to the client or to individual model operations, either as a static object or a function that returns a promise. |
-|  [CustomMutations](./data-schema-types.custommutations.md) |  |
-|  [CustomOperations](./data-schema-types.customoperations.md) |  |
-|  [CustomQueries](./data-schema-types.customqueries.md) |  |
-|  [CustomSubscriptions](./data-schema-types.customsubscriptions.md) |  |
-|  [Debug](./data-schema-types.debug.md) |  |
-|  [DeepReadOnlyObject](./data-schema-types.deepreadonlyobject.md) |  |
-|  [DefineFunction](./data-schema-types.definefunction.md) |  |
-|  [DerivedModelSchema](./data-schema-types.derivedmodelschema.md) |  |
-|  [EnumTypes](./data-schema-types.enumtypes.md) | The utility type that is used to infer the type (interface) of the generated <code>client.enums</code> property. |
-|  [Equal](./data-schema-types.equal.md) |  |
-|  [ExcludeEmpty](./data-schema-types.excludeempty.md) |  |
-|  [Expect](./data-schema-types.expect.md) |  |
-|  [ExpectFalse](./data-schema-types.expectfalse.md) |  |
-|  [ExpectTrue](./data-schema-types.expecttrue.md) |  |
-|  [ExtractModelMeta](./data-schema-types.extractmodelmeta.md) |  |
-|  [FunctionSchemaAccess](./data-schema-types.functionschemaaccess.md) |  |
-|  [HasKey](./data-schema-types.haskey.md) |  |
-|  [IsAny](./data-schema-types.isany.md) |  |
-|  [IsEmptyStringOrNever](./data-schema-types.isemptystringornever.md) |  |
-|  [IsFalse](./data-schema-types.isfalse.md) |  |
-|  [IsTrue](./data-schema-types.istrue.md) |  |
-|  [JsResolver](./data-schema-types.jsresolver.md) |  |
-|  [JsResolverEntry](./data-schema-types.jsresolverentry.md) |  |
-|  [LambdaFunctionDefinition](./data-schema-types.lambdafunctiondefinition.md) |  |
-|  [LazyLoader](./data-schema-types.lazyloader.md) |  |
-|  [ListReturnValue](./data-schema-types.listreturnvalue.md) |  |
-|  [ModelPath](./data-schema-types.modelpath.md) | Generates custom selection set type with up to 6 levels of nested fields |
-|  [ModelSortDirection](./data-schema-types.modelsortdirection.md) |  |
-|  [ModelTypes](./data-schema-types.modeltypes.md) |  |
-|  [NotAny](./data-schema-types.notany.md) |  |
-|  [NotEqual](./data-schema-types.notequal.md) |  |
-|  [ObjectIsNonEmpty](./data-schema-types.objectisnonempty.md) |  |
-|  [ObservedReturnValue](./data-schema-types.observedreturnvalue.md) |  |
-|  [ObserveQueryReturnValue](./data-schema-types.observequeryreturnvalue.md) |  |
-|  [Prettify](./data-schema-types.prettify.md) |  |
-|  [RequestOptions](./data-schema-types.requestoptions.md) | Request options that are passed to custom header functions. <code>method</code> and <code>headers</code> are not included in custom header functions passed to subscriptions. |
-|  [SecondaryIndexIrShape](./data-schema-types.secondaryindexirshape.md) | SecondaryIndex index types and query methods |
-|  [SelectionSet](./data-schema-types.selectionset.md) |  |
-|  [SetTypeSubArg](./data-schema-types.settypesubarg.md) | Replaces the value of a key in a complex generic type param |
-|  [SingularReturnValue](./data-schema-types.singularreturnvalue.md) |  |
-|  [UnionToIntersection](./data-schema-types.uniontointersection.md) |  |
-|  [UnwrapArray](./data-schema-types.unwraparray.md) |  |
+<table><thead><tr><th>
 
+Type Alias
+
+
+</th><th>
+
+Description
+
+
+</th></tr></thead>
+<tbody><tr><td>
+
+[AuthMode](./data-schema-types.authmode.md)
+
+
+</td><td>
+
+
+</td></tr>
+<tr><td>
+
+[CustomHeaders](./data-schema-types.customheaders.md)
+
+
+</td><td>
+
+Custom headers that can be passed either to the client or to individual model operations, either as a static object or a function that returns a promise.
+
+
+</td></tr>
+<tr><td>
+
+[CustomMutations](./data-schema-types.custommutations.md)
+
+
+</td><td>
+
+
+</td></tr>
+<tr><td>
+
+[CustomOperations](./data-schema-types.customoperations.md)
+
+
+</td><td>
+
+
+</td></tr>
+<tr><td>
+
+[CustomQueries](./data-schema-types.customqueries.md)
+
+
+</td><td>
+
+
+</td></tr>
+<tr><td>
+
+[CustomSubscriptions](./data-schema-types.customsubscriptions.md)
+
+
+</td><td>
+
+
+</td></tr>
+<tr><td>
+
+[Debug](./data-schema-types.debug.md)
+
+
+</td><td>
+
+
+</td></tr>
+<tr><td>
+
+[DeepReadOnlyObject](./data-schema-types.deepreadonlyobject.md)
+
+
+</td><td>
+
+
+</td></tr>
+<tr><td>
+
+[DefineFunction](./data-schema-types.definefunction.md)
+
+
+</td><td>
+
+
+</td></tr>
+<tr><td>
+
+[DerivedModelSchema](./data-schema-types.derivedmodelschema.md)
+
+
+</td><td>
+
+
+</td></tr>
+<tr><td>
+
+[EnumTypes](./data-schema-types.enumtypes.md)
+
+
+</td><td>
+
+The utility type that is used to infer the type (interface) of the generated `client.enums` property.
+
+
+</td></tr>
+<tr><td>
+
+[Equal](./data-schema-types.equal.md)
+
+
+</td><td>
+
+
+</td></tr>
+<tr><td>
+
+[ExcludeEmpty](./data-schema-types.excludeempty.md)
+
+
+</td><td>
+
+
+</td></tr>
+<tr><td>
+
+[Expect](./data-schema-types.expect.md)
+
+
+</td><td>
+
+
+</td></tr>
+<tr><td>
+
+[ExpectFalse](./data-schema-types.expectfalse.md)
+
+
+</td><td>
+
+
+</td></tr>
+<tr><td>
+
+[ExpectTrue](./data-schema-types.expecttrue.md)
+
+
+</td><td>
+
+
+</td></tr>
+<tr><td>
+
+[ExtractModelMeta](./data-schema-types.extractmodelmeta.md)
+
+
+</td><td>
+
+
+</td></tr>
+<tr><td>
+
+[FunctionSchemaAccess](./data-schema-types.functionschemaaccess.md)
+
+
+</td><td>
+
+
+</td></tr>
+<tr><td>
+
+[HasKey](./data-schema-types.haskey.md)
+
+
+</td><td>
+
+
+</td></tr>
+<tr><td>
+
+[IsAny](./data-schema-types.isany.md)
+
+
+</td><td>
+
+
+</td></tr>
+<tr><td>
+
+[IsEmptyStringOrNever](./data-schema-types.isemptystringornever.md)
+
+
+</td><td>
+
+
+</td></tr>
+<tr><td>
+
+[IsFalse](./data-schema-types.isfalse.md)
+
+
+</td><td>
+
+
+</td></tr>
+<tr><td>
+
+[IsTrue](./data-schema-types.istrue.md)
+
+
+</td><td>
+
+
+</td></tr>
+<tr><td>
+
+[JsResolver](./data-schema-types.jsresolver.md)
+
+
+</td><td>
+
+
+</td></tr>
+<tr><td>
+
+[JsResolverEntry](./data-schema-types.jsresolverentry.md)
+
+
+</td><td>
+
+
+</td></tr>
+<tr><td>
+
+[LambdaFunctionDefinition](./data-schema-types.lambdafunctiondefinition.md)
+
+
+</td><td>
+
+
+</td></tr>
+<tr><td>
+
+[LazyLoader](./data-schema-types.lazyloader.md)
+
+
+</td><td>
+
+
+</td></tr>
+<tr><td>
+
+[ListReturnValue](./data-schema-types.listreturnvalue.md)
+
+
+</td><td>
+
+
+</td></tr>
+<tr><td>
+
+[ModelPath](./data-schema-types.modelpath.md)
+
+
+</td><td>
+
+Generates custom selection set type with up to 6 levels of nested fields
+
+
+</td></tr>
+<tr><td>
+
+[ModelSortDirection](./data-schema-types.modelsortdirection.md)
+
+
+</td><td>
+
+
+</td></tr>
+<tr><td>
+
+[ModelTypes](./data-schema-types.modeltypes.md)
+
+
+</td><td>
+
+
+</td></tr>
+<tr><td>
+
+[NotAny](./data-schema-types.notany.md)
+
+
+</td><td>
+
+
+</td></tr>
+<tr><td>
+
+[NotEqual](./data-schema-types.notequal.md)
+
+
+</td><td>
+
+
+</td></tr>
+<tr><td>
+
+[ObjectIsNonEmpty](./data-schema-types.objectisnonempty.md)
+
+
+</td><td>
+
+
+</td></tr>
+<tr><td>
+
+[ObservedReturnValue](./data-schema-types.observedreturnvalue.md)
+
+
+</td><td>
+
+
+</td></tr>
+<tr><td>
+
+[ObserveQueryReturnValue](./data-schema-types.observequeryreturnvalue.md)
+
+
+</td><td>
+
+
+</td></tr>
+<tr><td>
+
+[Prettify](./data-schema-types.prettify.md)
+
+
+</td><td>
+
+
+</td></tr>
+<tr><td>
+
+[RequestOptions](./data-schema-types.requestoptions.md)
+
+
+</td><td>
+
+Request options that are passed to custom header functions. `method` and `headers` are not included in custom header functions passed to subscriptions.
+
+
+</td></tr>
+<tr><td>
+
+[SecondaryIndexIrShape](./data-schema-types.secondaryindexirshape.md)
+
+
+</td><td>
+
+SecondaryIndex index types and query methods
+
+
+</td></tr>
+<tr><td>
+
+[SelectionSet](./data-schema-types.selectionset.md)
+
+
+</td><td>
+
+
+</td></tr>
+<tr><td>
+
+[SetTypeSubArg](./data-schema-types.settypesubarg.md)
+
+
+</td><td>
+
+Replaces the value of a key in a complex generic type param
+
+
+</td></tr>
+<tr><td>
+
+[SingularReturnValue](./data-schema-types.singularreturnvalue.md)
+
+
+</td><td>
+
+
+</td></tr>
+<tr><td>
+
+[UnionToIntersection](./data-schema-types.uniontointersection.md)
+
+
+</td><td>
+
+
+</td></tr>
+<tr><td>
+
+[UnwrapArray](./data-schema-types.unwraparray.md)
+
+
+</td><td>
+
+
+</td></tr>
+</tbody></table>

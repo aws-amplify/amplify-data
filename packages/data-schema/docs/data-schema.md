@@ -6,13 +6,48 @@
 
 ## Namespaces
 
-|  Namespace | Description |
-|  --- | --- |
-|  [a](./data-schema.a.md) |  |
+<table><thead><tr><th>
+
+Namespace
+
+
+</th><th>
+
+Description
+
+
+</th></tr></thead>
+<tbody><tr><td>
+
+[a](./data-schema.a.md)
+
+
+</td><td>
+
+
+</td></tr>
+</tbody></table>
 
 ## Type Aliases
 
-|  Type Alias | Description |
-|  --- | --- |
-|  [ClientSchema](./data-schema.clientschema.md) |  |
+<table><thead><tr><th>
 
+Type Alias
+
+
+</th><th>
+
+Description
+
+
+</th></tr></thead>
+<tbody><tr><td>
+
+[ClientSchema](./data-schema.clientschema.md)
+
+
+</td><td>
+
+
+</td></tr>
+</tbody></table>

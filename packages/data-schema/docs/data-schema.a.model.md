@@ -19,10 +19,39 @@ export declare function model<T extends ModelFields>(fields: T): ModelType<{
 
 ## Parameters
 
-|  Parameter | Type | Description |
-|  --- | --- | --- |
-|  fields | T | database table fields. Supports scalar types and relationship types. |
+<table><thead><tr><th>
 
+Parameter
+
+
+</th><th>
+
+Type
+
+
+</th><th>
+
+Description
+
+
+</th></tr></thead>
+<tbody><tr><td>
+
+fields
+
+
+</td><td>
+
+T
+
+
+</td><td>
+
+database table fields. Supports scalar types and relationship types.
+
+
+</td></tr>
+</tbody></table>
 **Returns:**
 
 ModelType&lt;{ fields: T; identifier: Array&lt;'id'&gt;; secondaryIndexes: \[\]; authorization: \[\]; }&gt;

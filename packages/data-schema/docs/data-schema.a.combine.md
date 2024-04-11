@@ -14,10 +14,39 @@ export declare function combine<Schema extends GenericModelSchema<any>[]>(schema
 
 ## Parameters
 
-|  Parameter | Type | Description |
-|  --- | --- | --- |
-|  schemas | \[...Schema\] | The schemas to combine into a single API |
+<table><thead><tr><th>
 
+Parameter
+
+
+</th><th>
+
+Type
+
+
+</th><th>
+
+Description
+
+
+</th></tr></thead>
+<tbody><tr><td>
+
+schemas
+
+
+</td><td>
+
+\[...Schema\]
+
+
+</td><td>
+
+The schemas to combine into a single API
+
+
+</td></tr>
+</tbody></table>
 **Returns:**
 
 CombinedModelSchema&lt;Schema&gt;

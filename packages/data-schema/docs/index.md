@@ -6,7 +6,24 @@
 
 ## Packages
 
-|  Package | Description |
-|  --- | --- |
-|  [@aws-amplify/data-schema](./data-schema.md) |  |
+<table><thead><tr><th>
 
+Package
+
+
+</th><th>
+
+Description
+
+
+</th></tr></thead>
+<tbody><tr><td>
+
+[@aws-amplify/data-schema](./data-schema.md)
+
+
+</td><td>
+
+
+</td></tr>
+</tbody></table>

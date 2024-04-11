@@ -14,10 +14,37 @@ export declare function enumType<Value extends string, T extends readonly Value[
 
 ## Parameters
 
-|  Parameter | Type | Description |
-|  --- | --- | --- |
-|  values | T |  |
+<table><thead><tr><th>
 
+Parameter
+
+
+</th><th>
+
+Type
+
+
+</th><th>
+
+Description
+
+
+</th></tr></thead>
+<tbody><tr><td>
+
+values
+
+
+</td><td>
+
+T
+
+
+</td><td>
+
+
+</td></tr>
+</tbody></table>
 **Returns:**
 
 EnumType&lt;EnumTypeArgFactory&lt;T&gt;&gt;

@@ -14,10 +14,39 @@ export declare function belongsTo<RM extends string>(relatedModel: RM): ModelRel
 
 ## Parameters
 
-|  Parameter | Type | Description |
-|  --- | --- | --- |
-|  relatedModel | RM | name of the related <code>.hasOne()</code> or <code>.hasMany()</code> model |
+<table><thead><tr><th>
 
+Parameter
+
+
+</th><th>
+
+Type
+
+
+</th><th>
+
+Description
+
+
+</th></tr></thead>
+<tbody><tr><td>
+
+relatedModel
+
+
+</td><td>
+
+RM
+
+
+</td><td>
+
+name of the related `.hasOne()` or `.hasMany()` model
+
+
+</td></tr>
+</tbody></table>
 **Returns:**
 
 ModelRelationalField&lt;ModelRelationalTypeArgFactory&lt;RM, ModelRelationshipTypes.belongsTo, false, undefined&gt;, RM, "required" \| "valueRequired" \| "arrayRequired", undefined&gt;

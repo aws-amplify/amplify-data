@@ -6,40 +6,337 @@
 
 ## Functions
 
-|  Function | Description |
-|  --- | --- |
-|  [belongsTo(relatedModel)](./data-schema.a.belongsto.md) | Make a <code>hasOne()</code> or <code>hasMany()</code> relationship bi-directional using the <code>belongsTo()</code> method. The belongsTo() method requires that a hasOne() or hasMany() relationship already exists from parent to the related model. |
-|  [boolean()](./data-schema.a.boolean.md) | A boolean scalar type that can be either true or false. |
-|  [combine(schemas)](./data-schema.a.combine.md) | The interface for merging up to 50 schemas into a single API. |
-|  [customType(fields)](./data-schema.a.customtype.md) |  |
-|  [date()](./data-schema.a.date.md) | A date scalar type that is represented server-side as an extended ISO 8601 date string in the format <code>YYYY-MM-DD</code>. |
-|  [datetime()](./data-schema.a.datetime.md) | A date time scalar type that is represented server-side as an extended ISO 8601 date and time string in the format <code>YYYY-MM-DDThh:mm:ss.sssZ</code>. |
-|  [email()](./data-schema.a.email.md) | An email scalar type that is represented server-side in the format <code>local-part@domain-part</code> as defined by RFC 822. |
-|  [enum(values)](./data-schema.a.enum.md) | this type param pattern allows us to infer literal type values from the array without using the <code>as const</code> suffix |
-|  [float()](./data-schema.a.float.md) | A float scalar type following represented server-side as an IEEE 754 floating point value. |
-|  [hasMany(relatedModel)](./data-schema.a.hasmany.md) | Create a one-directional one-to-many relationship between two models using the <code>hasMany()</code> method. |
-|  [hasOne(relatedModel)](./data-schema.a.hasone.md) | Create a one-directional one-to-one relationship between two models using the <code>hasOne(&quot;MODEL_NAME&quot;)</code> method. A hasOne relationship always uses a reference to the related model's identifier. Typically this is the <code>id</code> field unless overwritten with the <code>identifier()</code> method. |
-|  [id()](./data-schema.a.id.md) | A unique identifier scalar type. This scalar is serialized like a String but isn't meant to be human-readable. If not specified on create operations, a ULID will be auto-generated service-side. |
-|  [integer()](./data-schema.a.integer.md) | An integer scalar type with a supported value range between -(2^31) and 2^31-1. |
-|  [ipAddress()](./data-schema.a.ipaddress.md) | A valid IPv4 or IPv6 address scalar type. IPv4 addresses are expected in quad-dotted notation (123.12.34.56). IPv6 addresses are expected in non-bracketed, colon-separated format (1a2b:3c4b:🔢4567). You can include an optional CIDR suffix (123.45.67.89/16) to indicate subnet mask. |
-|  [json()](./data-schema.a.json.md) | A JSON scalar type that is automatically parsed and loaded server-side as maps, lists, or scalar values rather than as the literal input strings. |
-|  [manyToMany(relatedModel, opts)](./data-schema.a.manytomany.md) | Create a many-to-many relationship between two models with the manyToMany() method. Provide a common relationName on both models to join them into a many-to-many relationship. Under the hood a many-to-many relationship is modeled with a "join table" with corresponding <code>hasMany()</code> relationships between the two related models. You must set the same <code>manyToMany()</code> field on both models of the relationship. |
-|  [model(fields)](./data-schema.a.model.md) | A data model that creates a matching Amazon DynamoDB table and provides create, read (list and get), update, delete, and subscription APIs. |
-|  [mutation()](./data-schema.a.mutation.md) |  |
-|  [phone()](./data-schema.a.phone.md) | A phone number scalar type thas is stored as a string server-side. Phone numbers can contain either spaces or hyphens to separate digit groups. Phone numbers without a country code are assumed to be US/North American numbers adhering to the North American Numbering Plan. |
-|  [query()](./data-schema.a.query.md) |  |
-|  [ref(link)](./data-schema.a.ref.md) |  |
-|  [schema(types)](./data-schema.a.schema.md) | The API and data model definition for Amplify Data. Pass in <code>{ &lt;NAME&gt;: a.model(...) }</code> to create a database table and exposes CRUDL operations via an API. |
-|  [string()](./data-schema.a.string.md) | A string scalar type that is represented server-side as a UTF-8 character sequence. |
-|  [subscription()](./data-schema.a.subscription.md) |  |
-|  [time()](./data-schema.a.time.md) | A time scalar type that is represented server-side as an extended ISO 8601 time string in the format <code>hh:mm:ss.sss</code>. |
-|  [timestamp()](./data-schema.a.timestamp.md) | A timestamp scalar type that is represented by an integer value of the number of seconds before or after <code>1970-01-01-T00:00Z</code>. |
-|  [url()](./data-schema.a.url.md) | A URL scalar type as defined by RFC 1738. For example, https://www.amazon.com/dp/B000NZW3KC/ or mailto:example<!-- -->@<!-- -->example.com. URLs must contain a schema (http, mailto) and can't contain two forward slashes (//) in the path part. |
+<table><thead><tr><th>
+
+Function
+
+
+</th><th>
+
+Description
+
+
+</th></tr></thead>
+<tbody><tr><td>
+
+[belongsTo(relatedModel)](./data-schema.a.belongsto.md)
+
+
+</td><td>
+
+Make a `hasOne()` or `hasMany()` relationship bi-directional using the `belongsTo()` method. The belongsTo() method requires that a hasOne() or hasMany() relationship already exists from parent to the related model.
+
+
+</td></tr>
+<tr><td>
+
+[boolean()](./data-schema.a.boolean.md)
+
+
+</td><td>
+
+A boolean scalar type that can be either true or false.
+
+
+</td></tr>
+<tr><td>
+
+[combine(schemas)](./data-schema.a.combine.md)
+
+
+</td><td>
+
+The interface for merging up to 50 schemas into a single API.
+
+
+</td></tr>
+<tr><td>
+
+[customType(fields)](./data-schema.a.customtype.md)
+
+
+</td><td>
+
+
+</td></tr>
+<tr><td>
+
+[date()](./data-schema.a.date.md)
+
+
+</td><td>
+
+A date scalar type that is represented server-side as an extended ISO 8601 date string in the format `YYYY-MM-DD`<!-- -->.
+
+
+</td></tr>
+<tr><td>
+
+[datetime()](./data-schema.a.datetime.md)
+
+
+</td><td>
+
+A date time scalar type that is represented server-side as an extended ISO 8601 date and time string in the format `YYYY-MM-DDThh:mm:ss.sssZ`<!-- -->.
+
+
+</td></tr>
+<tr><td>
+
+[email()](./data-schema.a.email.md)
+
+
+</td><td>
+
+An email scalar type that is represented server-side in the format `local-part@domain-part` as defined by RFC 822.
+
+
+</td></tr>
+<tr><td>
+
+[enum(values)](./data-schema.a.enum.md)
+
+
+</td><td>
+
+this type param pattern allows us to infer literal type values from the array without using the `as const` suffix
+
+
+</td></tr>
+<tr><td>
+
+[float()](./data-schema.a.float.md)
+
+
+</td><td>
+
+A float scalar type following represented server-side as an IEEE 754 floating point value.
+
+
+</td></tr>
+<tr><td>
+
+[hasMany(relatedModel)](./data-schema.a.hasmany.md)
+
+
+</td><td>
+
+Create a one-directional one-to-many relationship between two models using the `hasMany()` method.
+
+
+</td></tr>
+<tr><td>
+
+[hasOne(relatedModel)](./data-schema.a.hasone.md)
+
+
+</td><td>
+
+Create a one-directional one-to-one relationship between two models using the `hasOne("MODEL_NAME")` method. A hasOne relationship always uses a reference to the related model's identifier. Typically this is the `id` field unless overwritten with the `identifier()` method.
+
+
+</td></tr>
+<tr><td>
+
+[id()](./data-schema.a.id.md)
+
+
+</td><td>
+
+A unique identifier scalar type. This scalar is serialized like a String but isn't meant to be human-readable. If not specified on create operations, a ULID will be auto-generated service-side.
+
+
+</td></tr>
+<tr><td>
+
+[integer()](./data-schema.a.integer.md)
+
+
+</td><td>
+
+An integer scalar type with a supported value range between -(2^31) and 2^31-1.
+
+
+</td></tr>
+<tr><td>
+
+[ipAddress()](./data-schema.a.ipaddress.md)
+
+
+</td><td>
+
+A valid IPv4 or IPv6 address scalar type. IPv4 addresses are expected in quad-dotted notation (123.12.34.56). IPv6 addresses are expected in non-bracketed, colon-separated format (1a2b:3c4b:🔢4567). You can include an optional CIDR suffix (123.45.67.89/16) to indicate subnet mask.
+
+
+</td></tr>
+<tr><td>
+
+[json()](./data-schema.a.json.md)
+
+
+</td><td>
+
+A JSON scalar type that is automatically parsed and loaded server-side as maps, lists, or scalar values rather than as the literal input strings.
+
+
+</td></tr>
+<tr><td>
+
+[manyToMany(relatedModel, opts)](./data-schema.a.manytomany.md)
+
+
+</td><td>
+
+Create a many-to-many relationship between two models with the manyToMany() method. Provide a common relationName on both models to join them into a many-to-many relationship. Under the hood a many-to-many relationship is modeled with a "join table" with corresponding `hasMany()` relationships between the two related models. You must set the same `manyToMany()` field on both models of the relationship.
+
+
+</td></tr>
+<tr><td>
+
+[model(fields)](./data-schema.a.model.md)
+
+
+</td><td>
+
+A data model that creates a matching Amazon DynamoDB table and provides create, read (list and get), update, delete, and subscription APIs.
+
+
+</td></tr>
+<tr><td>
+
+[mutation()](./data-schema.a.mutation.md)
+
+
+</td><td>
+
+
+</td></tr>
+<tr><td>
+
+[phone()](./data-schema.a.phone.md)
+
+
+</td><td>
+
+A phone number scalar type thas is stored as a string server-side. Phone numbers can contain either spaces or hyphens to separate digit groups. Phone numbers without a country code are assumed to be US/North American numbers adhering to the North American Numbering Plan.
+
+
+</td></tr>
+<tr><td>
+
+[query()](./data-schema.a.query.md)
+
+
+</td><td>
+
+
+</td></tr>
+<tr><td>
+
+[ref(link)](./data-schema.a.ref.md)
+
+
+</td><td>
+
+
+</td></tr>
+<tr><td>
+
+[schema(types)](./data-schema.a.schema.md)
+
+
+</td><td>
+
+The API and data model definition for Amplify Data. Pass in `{ <NAME>: a.model(...) }` to create a database table and exposes CRUDL operations via an API.
+
+
+</td></tr>
+<tr><td>
+
+[string()](./data-schema.a.string.md)
+
+
+</td><td>
+
+A string scalar type that is represented server-side as a UTF-8 character sequence.
+
+
+</td></tr>
+<tr><td>
+
+[subscription()](./data-schema.a.subscription.md)
+
+
+</td><td>
+
+
+</td></tr>
+<tr><td>
+
+[time()](./data-schema.a.time.md)
+
+
+</td><td>
+
+A time scalar type that is represented server-side as an extended ISO 8601 time string in the format `hh:mm:ss.sss`<!-- -->.
+
+
+</td></tr>
+<tr><td>
+
+[timestamp()](./data-schema.a.timestamp.md)
+
+
+</td><td>
+
+A timestamp scalar type that is represented by an integer value of the number of seconds before or after `1970-01-01-T00:00Z`<!-- -->.
+
+
+</td></tr>
+<tr><td>
+
+[url()](./data-schema.a.url.md)
+
+
+</td><td>
+
+A URL scalar type as defined by RFC 1738. For example, https://www.amazon.com/dp/B000NZW3KC/ or mailto:example<!-- -->@<!-- -->example.com. URLs must contain a schema (http, mailto) and can't contain two forward slashes (//) in the path part.
+
+
+</td></tr>
+</tbody></table>
 
 ## Variables
 
-|  Variable | Description |
-|  --- | --- |
-|  [allow](./data-schema.a.allow.md) | Defines an authorization rule for your data models and fields. First choose an authorization strategy (<code>public</code>, <code>private</code>, <code>owner</code>, <code>group</code>, or <code>custom</code>), then choose an auth provider (<code>apiKey</code>, <code>iam</code>, <code>userPools</code>, <code>oidc</code>, or <code>function</code>) and optionally use <code>.to(...)</code> to specify the operations that can be performed against your data models and fields. |
-|  [handler](./data-schema.a.handler.md) |  |
+<table><thead><tr><th>
 
+Variable
+
+
+</th><th>
+
+Description
+
+
+</th></tr></thead>
+<tbody><tr><td>
+
+[allow](./data-schema.a.allow.md)
+
+
+</td><td>
+
+Defines an authorization rule for your data models and fields. First choose an authorization strategy (`public`<!-- -->, `private`<!-- -->, `owner`<!-- -->, `group`<!-- -->, or `custom`<!-- -->), then choose an auth provider (`apiKey`<!-- -->, `iam`<!-- -->, `userPools`<!-- -->, `oidc`<!-- -->, or `function`<!-- -->) and optionally use `.to(...)` to specify the operations that can be performed against your data models and fields.
+
+
+</td></tr>
+<tr><td>
+
+[handler](./data-schema.a.handler.md)
+
+
+</td><td>
+
+
+</td></tr>
+</tbody></table>

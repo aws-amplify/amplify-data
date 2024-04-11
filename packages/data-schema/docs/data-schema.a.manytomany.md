@@ -16,11 +16,55 @@ export declare function manyToMany<RM extends string, RN extends string>(related
 
 ## Parameters
 
-|  Parameter | Type | Description |
-|  --- | --- | --- |
-|  relatedModel | RM | name of the related model |
-|  opts | { relationName: RN; } | pass in the <code>relationName</code> that will serve as the join table name for this many-to-many relationship |
+<table><thead><tr><th>
 
+Parameter
+
+
+</th><th>
+
+Type
+
+
+</th><th>
+
+Description
+
+
+</th></tr></thead>
+<tbody><tr><td>
+
+relatedModel
+
+
+</td><td>
+
+RM
+
+
+</td><td>
+
+name of the related model
+
+
+</td></tr>
+<tr><td>
+
+opts
+
+
+</td><td>
+
+{ relationName: RN; }
+
+
+</td><td>
+
+pass in the `relationName` that will serve as the join table name for this many-to-many relationship
+
+
+</td></tr>
+</tbody></table>
 **Returns:**
 
 ModelRelationalField&lt;ModelRelationalTypeArgFactory&lt;RM, ModelRelationshipTypes.manyToMany, true, RN&gt;, RM, "required" \| "references", undefined&gt;
