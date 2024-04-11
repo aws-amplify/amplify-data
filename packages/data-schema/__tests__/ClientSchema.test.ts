@@ -1,14 +1,12 @@
 import { expectTypeTestsToPassAsync } from 'jest-tsd';
 import { a, ClientSchema } from '../index';
+import { Expect, Equal, Prettify } from '@aws-amplify/data-schema-types';
 import {
-  Expect,
-  Equal,
-  Prettify,
-  __modelMeta__,
   AuthMode,
   CustomHeaders,
   SingularReturnValue,
-} from '@aws-amplify/data-schema-types';
+  __modelMeta__,
+} from '../src/runtime';
 import { configure } from '../src/internals';
 import { Nullable } from '../src/ModelField';
 

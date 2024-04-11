@@ -1,12 +1,6 @@
 import { a, ClientSchema } from '../index';
-import {
-  Expect,
-  Equal,
-  Prettify,
-  ExpectFalse,
-  HasKey,
-  __modelMeta__,
-} from '@aws-amplify/data-schema-types';
+import { __modelMeta__ } from '../src/runtime';
+import { Expect, Equal, Prettify } from '@aws-amplify/data-schema-types';
 
 describe('implied fields', () => {
   describe('boring model keys', () => {
