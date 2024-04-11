@@ -1083,11 +1083,9 @@ describe('CustomOperation transform', () => {
   });
 
   describe('handler function to lambda function mapping', () => {
-    const mockHandler = {
-      [Symbol('brand')]: 'functionHandler',
-      [Symbol('Data')]: {},
-      getInstance: jest.fn(),
-    };
+    const fn1 = defineFunctionStub({});
+    const fn2 = defineFunctionStub({});
+    const fn3 = defineFunctionStub({});
 
     const schema = a.schema({
       echo: a
@@ -1098,7 +1096,7 @@ describe('CustomOperation transform', () => {
           description: a.string(),
         })
         .returns(a.ref('NestedCustomTypes'))
-        .handler(a.handler.function(mockHandler as any))
+        .handler([a.handler.function(fn1), a.handler.function(fn2)])
         .authorization([a.allow.public()]),
       echoList: a
         .query()
@@ -1108,7 +1106,7 @@ describe('CustomOperation transform', () => {
           description: a.string(),
         })
         .returns(a.ref('NestedCustomTypes').required().array().required())
-        .handler(a.handler.function(mockHandler as any))
+        .handler(a.handler.function(fn3))
         .authorization([a.allow.public()]),
     });
 
@@ -1116,9 +1114,9 @@ describe('CustomOperation transform', () => {
       const { lambdaFunctions } = schema.transform();
 
       expect(lambdaFunctions).toMatchObject({
-        'FnEcho(content: String, int: Int, description: String)': mockHandler,
-        'FnEchoList(content: String, int: Int, description: String)':
-          mockHandler,
+        FnEcho: fn1,
+        FnEcho2: fn2,
+        FnEchoList: fn3,
       });
     });
   });

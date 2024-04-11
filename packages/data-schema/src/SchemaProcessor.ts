@@ -253,7 +253,7 @@ function refFieldToGql(fieldDef: RefFieldDef): string {
 
 function transformFunctionHandler(
   handlers: FunctionHandler[],
-  callSignature: string,
+  functionFieldName: string,
 ): {
   gqlHandlerContent: string;
   lambdaFunctionDefinition: LambdaFunctionDefinition;
@@ -267,15 +267,13 @@ function transformFunctionHandler(
     if (typeof handlerData === 'string') {
       gqlHandlerContent += `@function(name: "${handlerData}") `;
     } else if (typeof handlerData.getInstance === 'function') {
-      const fnBaseName = `Fn${capitalize(callSignature)}`;
-      const fnNameSuffix = idx === 0 ? '' : `${idx + 1}`;
-      const fnName = fnBaseName + fnNameSuffix;
+      const fnName = `Fn${capitalize(functionFieldName)}${idx === 0 ? '' : `${idx + 1}`}`;
 
       lambdaFunctionDefinition[fnName] = handlerData;
       gqlHandlerContent += `@function(name: "${fnName}") `;
     } else {
       throw new Error(
-        `Invalid value specified for ${callSignature} handler.function(). Expected: defineFunction or string.`,
+        `Invalid value specified for ${functionFieldName} handler.function(). Expected: defineFunction or string.`,
       );
     }
   });
@@ -305,7 +303,7 @@ function customOperationToGql(
     subscriptionSource,
   } = typeDef.data;
 
-  let callSignature: string = typeName;
+  const functionFieldName: string = typeName;
   const implicitModels: [string, any][] = [];
 
   const { authString } = isCustom
@@ -369,8 +367,7 @@ function customOperationToGql(
   }
 
   if (Object.keys(fieldArgs).length > 0) {
-    const { gqlFields, models } = processFields(typeName, fieldArgs, {}, {});
-    callSignature += `(${gqlFields.join(', ')})`;
+    const { models } = processFields(typeName, fieldArgs, {}, {});
     implicitModels.push(...models);
   }
 
@@ -384,7 +381,7 @@ function customOperationToGql(
   if (isFunctionHandler(handlers)) {
     ({ gqlHandlerContent, lambdaFunctionDefinition } = transformFunctionHandler(
       handlers,
-      callSignature,
+      functionFieldName,
     ));
   } else if (functionRef) {
     gqlHandlerContent = `@function(name: "${functionRef}") `;
@@ -434,7 +431,7 @@ function customOperationToGql(
     gqlHandlerContent += `@aws_subscribe(mutations: ["${subscriptionSources}"]) `;
   }
 
-  const gqlField = `${callSignature}: ${returnTypeName} ${gqlHandlerContent}${authString}`;
+  const gqlField = `${functionFieldName}: ${returnTypeName} ${gqlHandlerContent}${authString}`;
   return {
     gqlField,
     models: implicitModels,

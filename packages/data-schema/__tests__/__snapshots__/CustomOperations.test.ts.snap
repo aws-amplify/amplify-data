@@ -2,13 +2,13 @@
 
 exports[`CustomOperation transform deprecated .function Custom Mutation w string function reference & auth 1`] = `
 "type Mutation {
-  likePost(postId: String!): Post @function(name: "myFunc") @auth(rules: [{allow: private}])
+  likePost: Post @function(name: "myFunc") @auth(rules: [{allow: private}])
 }"
 `;
 
 exports[`CustomOperation transform deprecated .function Custom Mutation w string function reference 1`] = `
 "type Mutation {
-  likePost(postId: String!): Post @function(name: "myFunc") @auth(rules: [{allow: private}])
+  likePost: Post @function(name: "myFunc") @auth(rules: [{allow: private}])
 }"
 `;
 
@@ -19,7 +19,7 @@ exports[`CustomOperation transform deprecated .function Schema w model, custom q
 }
 
 type Mutation {
-  likePost(postId: String): Post @function(name: "myFunc") @auth(rules: [{allow: public}])
+  likePost: Post @function(name: "myFunc") @auth(rules: [{allow: public}])
 }
 
 type Query {
@@ -76,25 +76,25 @@ exports[`CustomOperation transform dynamo schema Custom Mutation w required arg 
 }
 
 type Mutation {
-  likePost(postId: String!, reactionType: LikePostReactionType): Post 
+  likePost: Post 
 }"
 `;
 
 exports[`CustomOperation transform dynamo schema Custom Mutation w string function reference & auth 1`] = `
 "type Mutation {
-  likePost(postId: String!): Post @function(name: "myFunc") @auth(rules: [{allow: private}])
+  likePost: Post @function(name: "myFunc") @auth(rules: [{allow: private}])
 }"
 `;
 
 exports[`CustomOperation transform dynamo schema Custom Mutation w string function reference 1`] = `
 "type Mutation {
-  likePost(postId: String!): Post @function(name: "myFunc") @auth(rules: [{allow: private}])
+  likePost: Post @function(name: "myFunc") @auth(rules: [{allow: private}])
 }"
 `;
 
 exports[`CustomOperation transform dynamo schema Custom mutation w inline boolean return type 1`] = `
 "type Mutation {
-  likePost(postId: String!): Boolean 
+  likePost: Boolean 
 }"
 `;
 
@@ -110,43 +110,43 @@ exports[`CustomOperation transform dynamo schema Custom mutation w inline custom
 }
 
 type Mutation {
-  likePost(postId: String!): LikePostReturnType 
+  likePost: LikePostReturnType 
 }"
 `;
 
 exports[`CustomOperation transform dynamo schema Custom mutation w inline datetime return type 1`] = `
 "type Mutation {
-  likePost(postId: String!): AWSDateTime 
+  likePost: AWSDateTime 
 }"
 `;
 
 exports[`CustomOperation transform dynamo schema Custom mutation w inline float return type 1`] = `
 "type Mutation {
-  likePost(postId: String!): Float 
+  likePost: Float 
 }"
 `;
 
 exports[`CustomOperation transform dynamo schema Custom mutation w inline integer return type 1`] = `
 "type Mutation {
-  likePost(postId: String!): Int 
+  likePost: Int 
 }"
 `;
 
 exports[`CustomOperation transform dynamo schema Custom mutation w inline json return type 1`] = `
 "type Mutation {
-  likePost(postId: String!): AWSJSON 
+  likePost: AWSJSON 
 }"
 `;
 
 exports[`CustomOperation transform dynamo schema Custom mutation w inline string return type 1`] = `
 "type Mutation {
-  likePost(postId: String!): String 
+  likePost: String 
 }"
 `;
 
 exports[`CustomOperation transform dynamo schema Custom query w inline boolean return type 1`] = `
 "type Query {
-  getPostDetails(postId: String!): Boolean 
+  getPostDetails: Boolean 
 }"
 `;
 
@@ -162,37 +162,37 @@ exports[`CustomOperation transform dynamo schema Custom query w inline custom re
 }
 
 type Query {
-  getPostDetails(postId: String!): GetPostDetailsReturnType 
+  getPostDetails: GetPostDetailsReturnType 
 }"
 `;
 
 exports[`CustomOperation transform dynamo schema Custom query w inline datetime return type 1`] = `
 "type Query {
-  getPostDetails(postId: String!): AWSDateTime 
+  getPostDetails: AWSDateTime 
 }"
 `;
 
 exports[`CustomOperation transform dynamo schema Custom query w inline float return type 1`] = `
 "type Query {
-  getPostDetails(postId: String!): Float 
+  getPostDetails: Float 
 }"
 `;
 
 exports[`CustomOperation transform dynamo schema Custom query w inline integer return type 1`] = `
 "type Query {
-  getPostDetails(postId: String!): Int 
+  getPostDetails: Int 
 }"
 `;
 
 exports[`CustomOperation transform dynamo schema Custom query w inline json return type 1`] = `
 "type Query {
-  getPostDetails(postId: String!): AWSJSON 
+  getPostDetails: AWSJSON 
 }"
 `;
 
 exports[`CustomOperation transform dynamo schema Custom query w inline string return type 1`] = `
 "type Query {
-  getPostDetails(postId: String!): String 
+  getPostDetails: String 
 }"
 `;
 
@@ -203,7 +203,7 @@ exports[`CustomOperation transform dynamo schema Schema w model, custom query, m
 }
 
 type Mutation {
-  likePost(postId: String): Post @function(name: "myFunc") @auth(rules: [{allow: public}])
+  likePost: Post @function(name: "myFunc") @auth(rules: [{allow: public}])
 }
 
 type Query {
@@ -285,7 +285,7 @@ exports[`CustomOperation transform dynamo schema custom subscriptions Custom sub
 }
 
 type Mutation {
-  likePost(postId: String): Post @function(name: "likePost") @auth(rules: [{allow: public}])
+  likePost: Post @function(name: "likePost") @auth(rules: [{allow: public}])
 }
 
 type Subscription {
@@ -300,7 +300,7 @@ exports[`CustomOperation transform dynamo schema custom subscriptions Custom sub
 }
 
 type Mutation {
-  likePost(postId: String): Post @function(name: "likePost") @auth(rules: [{allow: public}])
+  likePost: Post @function(name: "likePost") @auth(rules: [{allow: public}])
 }
 
 type Subscription {
@@ -453,7 +453,7 @@ exports[`CustomOperation transform sql schema Schema w model, custom query, muta
 }
 
 type Mutation {
-  likePost(postId: String): Post @function(name: "myFunc") @auth(rules: [{allow: public}])
+  likePost: Post @function(name: "myFunc") @auth(rules: [{allow: public}])
 }
 
 type Query {
@@ -472,7 +472,7 @@ exports[`CustomOperation transform sql schema schema.add* will not accept custom
 }
 
 type Mutation {
-  likePost(postId: String): Post @function(name: "myFunc") @auth(rules: [{allow: public}])
+  likePost: Post @function(name: "myFunc") @auth(rules: [{allow: public}])
 }
 
 type Query {
