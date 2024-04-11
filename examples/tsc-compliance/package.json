@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "@aws-amplify/data-schema": "*",
-    "aws-amplify": "6.0.18-unstable.54+1480fa792"
+    "aws-amplify": "6.0.18-unstable.56+7013fbcb2"
   },
   "keywords": [],
   "author": "",

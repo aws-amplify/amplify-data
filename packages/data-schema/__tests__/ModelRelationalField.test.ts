@@ -1,4 +1,4 @@
-import { a } from '../index';
+import { a } from '../src/index';
 import { InternalField } from '../src/ModelField';
 import {
   InternalRelationalField,

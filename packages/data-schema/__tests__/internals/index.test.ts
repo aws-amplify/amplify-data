@@ -1,5 +1,5 @@
 import { configure } from '../../src/internals';
-import { a } from '../../index';
+import { a } from '../../src/index';
 
 const fakeSecret = () => ({}) as any;
 

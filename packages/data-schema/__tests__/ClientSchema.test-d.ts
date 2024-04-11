@@ -1,4 +1,4 @@
-import { a, ClientSchema } from '../index';
+import { a, ClientSchema } from '../src/index';
 import { __modelMeta__ } from '../src/runtime';
 import { Expect, Equal, Prettify } from '@aws-amplify/data-schema-types';
 

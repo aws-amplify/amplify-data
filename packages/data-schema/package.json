@@ -1,6 +1,6 @@
 {
   "name": "@aws-amplify/data-schema",
-  "version": "0.14.29",
+  "version": "0.14.30",
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
@@ -21,21 +21,24 @@
   },
   "exports": {
     ".": {
-      "types": "./dist/esm/index.d.ts",
+      "types": "./dist/esm/src/index.d.ts",
       "import": "./dist/esm/index.mjs",
       "require": "./dist/cjs/index.js",
-      "node": "./index.ts"
+      "node": "./src/index.ts"
     },
     "./internals": {
       "types": "./dist/esm/src/internals/index.d.ts",
       "import": "./dist/esm/internals/index.mjs",
-      "require": "./dist/cjs/internals/index.js"
+      "require": "./dist/cjs/internals/index.js",
+      "node": "./src/internals/index.ts"
     },
     "./runtime": {
       "types": "./dist/esm/src/runtime/index.d.ts",
       "import": "./dist/esm/runtime/index.mjs",
-      "require": "./dist/cjs/runtime/index.js"
-    }
+      "require": "./dist/cjs/runtime/index.js",
+      "node": "./src/runtime/index.ts"
+    },
+    "./package.json": "./package.json"
   },
   "typesVersions": {
     ">=5.0": {

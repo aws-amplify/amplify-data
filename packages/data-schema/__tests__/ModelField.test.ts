@@ -1,5 +1,5 @@
 import { expectTypeTestsToPassAsync } from 'jest-tsd';
-import { a } from '../index';
+import { a } from '../src/index';
 import { ModelField, InternalField, __auth } from '../src/ModelField';
 import {
   ModelRelationalField,
@@ -26,15 +26,12 @@ describe('field level auth', () => {
           .to(['read', 'create', 'delete']),
       ]);
 
-    type ExpectedAuthFields = typeof field extends ModelField<
-      any,
-      any,
-      infer Auth
-    >
-      ? Auth extends Authorization<any, any, any>
-        ? ImpliedAuthFields<Auth>
-        : never
-      : never;
+    type ExpectedAuthFields =
+      typeof field extends ModelField<any, any, infer Auth>
+        ? Auth extends Authorization<any, any, any>
+          ? ImpliedAuthFields<Auth>
+          : never
+        : never;
 
     const authFields: ExpectedAuthFields = {
       admin: ['array', 'of', 'string'],
@@ -58,16 +55,12 @@ describe('field level auth', () => {
           .to(['read', 'create', 'delete']),
       ]);
 
-    type ExpectedAuthFields = typeof field extends ModelRelationalField<
-      any,
-      any,
-      any,
-      infer Auth
-    >
-      ? Auth extends Authorization<any, any, any>
-        ? ImpliedAuthFields<Auth>
-        : never
-      : never;
+    type ExpectedAuthFields =
+      typeof field extends ModelRelationalField<any, any, any, infer Auth>
+        ? Auth extends Authorization<any, any, any>
+          ? ImpliedAuthFields<Auth>
+          : never
+        : never;
 
     const authFields: ExpectedAuthFields = {
       admin: ['array', 'of', 'string'],

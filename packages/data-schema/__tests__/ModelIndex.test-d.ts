@@ -1,4 +1,4 @@
-import { a } from '../index';
+import { a } from '../src/index';
 
 test('secondaryIndexes input validation', () => {
   a.schema({

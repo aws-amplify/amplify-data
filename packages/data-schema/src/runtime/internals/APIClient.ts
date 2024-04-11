@@ -725,10 +725,13 @@ export function generateGraphQLDocument(
     case 'LIST':
       graphQLArguments ??
         (graphQLArguments = {
-          // TS says this `filter: ...` line is redundant.
-          // Leaving in place and commented-out for now to show it was
-          // not *inadvertently* dropped during code migration.
-          // filter: `Model${name}FilterInput`,
+          // eslint doesn't like the ts-ignore, because it thinks it's unnecessary.
+          // But TS doesn't like the `filter: ...` because it think it will always be
+          // overwritten. (it won't be.) so, we need to ignore the TS error and then
+          // ignore the eslint error on the ts-ignore.
+          // eslint-disable-next-line
+          // @ts-ignore
+          filter: `Model${name}FilterInput`,
           ...(sortKeyFieldNames.length > 0
             ? [primaryKeyFieldName, ...sortKeyFieldNames].reduce(
                 (acc: Record<string, any>, fieldName) => {

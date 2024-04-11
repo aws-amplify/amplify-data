@@ -1,5 +1,5 @@
 import type { Prettify, Equal, Expect } from '@aws-amplify/data-schema-types';
-import { a } from '../../index';
+import { a } from '../../src/index';
 import type {
   CreateImplicitModelsFromRelations,
   ResolveFieldProperties,

@@ -1,5 +1,5 @@
 import { expectTypeTestsToPassAsync } from 'jest-tsd';
-import { a } from '../index';
+import { a } from '../src/index';
 import { defineFunctionStub } from './utils';
 
 // evaluates type defs in corresponding test-d.ts file
