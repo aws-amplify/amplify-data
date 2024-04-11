@@ -1081,4 +1081,45 @@ describe('CustomOperation transform', () => {
       expect(result).toMatchSnapshot();
     });
   });
+
+  describe('handler function to lambda function mapping', () => {
+    const mockHandler = {
+      [Symbol('brand')]: 'functionHandler',
+      [Symbol('Data')]: {},
+      getInstance: jest.fn(),
+    };
+
+    const schema = a.schema({
+      echo: a
+        .query()
+        .arguments({
+          content: a.string(),
+          int: a.integer(),
+          description: a.string(),
+        })
+        .returns(a.ref('NestedCustomTypes'))
+        .handler(a.handler.function(mockHandler as any))
+        .authorization([a.allow.public()]),
+      echoList: a
+        .query()
+        .arguments({
+          content: a.string(),
+          int: a.integer(),
+          description: a.string(),
+        })
+        .returns(a.ref('NestedCustomTypes').required().array().required())
+        .handler(a.handler.function(mockHandler as any))
+        .authorization([a.allow.public()]),
+    });
+
+    it('generates two lambda functions aside schema', () => {
+      const { lambdaFunctions } = schema.transform();
+
+      expect(lambdaFunctions).toMatchObject({
+        'FnEcho(content: String, int: Int, description: String)': mockHandler,
+        'FnEchoList(content: String, int: Int, description: String)':
+          mockHandler,
+      });
+    });
+  });
 });

@@ -1198,7 +1198,7 @@ const schemaPreprocessor = (
   const customSubscriptions = [];
 
   const jsFunctions: JsResolver[] = [];
-  let lambdaFunctions: LambdaFunctionDefinition = {};
+  const lambdaFunctions: LambdaFunctionDefinition = {};
   const customSqlDataSourceStrategies: CustomSqlDataSourceStrategy[] = [];
 
   const databaseType =
@@ -1291,7 +1291,7 @@ const schemaPreprocessor = (
           getRefType,
         );
 
-        lambdaFunctions = lambdaFunctionDefinition;
+        Object.assign(lambdaFunctions, lambdaFunctionDefinition);
 
         topLevelTypes.push(...models);
 
