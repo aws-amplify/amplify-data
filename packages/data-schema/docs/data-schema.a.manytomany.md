@@ -11,7 +11,7 @@ Create a many-to-many relationship between two models with the manyToMany() meth
 ```typescript
 export declare function manyToMany<RM extends string, RN extends string>(relatedModel: RM, opts: {
     relationName: RN;
-}): ModelRelationalField<ModelRelationalTypeArgFactory<RM, ModelRelationshipTypes.manyToMany, true, RN>, RM, "required" | "references", undefined>;
+}): ModelRelationalField<ModelRelationalTypeArgFactory<RM, ModelRelationshipTypes.manyToMany, true, RN>, RM, "required", undefined>;
 ```
 
 ## Parameters
@@ -23,7 +23,7 @@ export declare function manyToMany<RM extends string, RN extends string>(related
 
 **Returns:**
 
-ModelRelationalField&lt;ModelRelationalTypeArgFactory&lt;RM, ModelRelationshipTypes.manyToMany, true, RN&gt;, RM, "required" \| "references", undefined&gt;
+ModelRelationalField&lt;ModelRelationalTypeArgFactory&lt;RM, ModelRelationshipTypes.manyToMany, true, RN&gt;, RM, "required", undefined&gt;
 
 a many-to-many relationship definition
 

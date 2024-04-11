@@ -7,7 +7,7 @@ describe('Custom Selection Set XXL', () => {
     const schema = a.schema({
       Blog: a.model({
         name: a.string(),
-        posts: a.hasMany('Post'),
+        posts: a.hasMany('Post', 'blogId'),
         // #region 50 fields
         field1: a.string(),
         field2: a.string(),
@@ -64,7 +64,8 @@ describe('Custom Selection Set XXL', () => {
       Post: a.model({
         title: a.string().required(),
         description: a.string(),
-        comments: a.hasMany('Comment'),
+        blogId: a.id(),
+        comments: a.hasMany('Comment', 'postId'),
         // #region 50 fields
         field1: a.string(),
         field2: a.string(),
@@ -120,8 +121,9 @@ describe('Custom Selection Set XXL', () => {
       }),
       Comment: a.model({
         content: a.string(),
-        post: a.belongsTo('Post'),
-        blogs2: a.hasMany('Blog2'),
+        postId: a.id(),
+        post: a.belongsTo('Post', 'postId'),
+        blogs2: a.hasMany('Blog2', 'commentId'),
         // #region 50 fields
         field1: a.string(),
         field2: a.string(),
@@ -177,7 +179,8 @@ describe('Custom Selection Set XXL', () => {
       }),
       Blog2: a.model({
         name: a.string(),
-        posts2: a.hasMany('Post2'),
+        commentId: a.id(),
+        posts2: a.hasMany('Post2', 'blog2Id'),
         // #region 50 fields
         field1: a.string(),
         field2: a.string(),
@@ -234,7 +237,8 @@ describe('Custom Selection Set XXL', () => {
       Post2: a.model({
         title: a.string().required(),
         description: a.string(),
-        comments2: a.hasMany('Comment2'),
+        blog2Id: a.id(),
+        comments2: a.hasMany('Comment2', 'post2Id'),
         // #region 50 fields
         field1: a.string(),
         field2: a.string(),
@@ -290,7 +294,8 @@ describe('Custom Selection Set XXL', () => {
       }),
       Comment2: a.model({
         content: a.string(),
-        post: a.belongsTo('Post2'),
+        post2Id: a.id(),
+        post: a.belongsTo('Post2', 'post2Id'),
         // #region 50 fields
         field1: a.string(),
         field2: a.string(),
@@ -346,7 +351,7 @@ describe('Custom Selection Set XXL', () => {
       }),
       Blog3: a.model({
         name: a.string(),
-        posts: a.hasMany('Post3'),
+        posts: a.hasMany('Post3', 'blog3Id'),
         // #region 50 fields
         field1: a.string(),
         field2: a.string(),
@@ -403,7 +408,7 @@ describe('Custom Selection Set XXL', () => {
       Post3: a.model({
         title: a.string().required(),
         description: a.string(),
-        comments: a.hasMany('Comment3'),
+        comments: a.hasMany('Comment3', 'post3Id'),
         // #region 50 fields
         field1: a.string(),
         field2: a.string(),
@@ -459,7 +464,8 @@ describe('Custom Selection Set XXL', () => {
       }),
       Comment3: a.model({
         content: a.string(),
-        post: a.belongsTo('Post3'),
+        post3Id: a.id(),
+        post: a.belongsTo('Post3', 'post3Id'),
         // #region 50 fields
         field1: a.string(),
         field2: a.string(),
@@ -515,7 +521,7 @@ describe('Custom Selection Set XXL', () => {
       }),
       Blog4: a.model({
         name: a.string(),
-        posts: a.hasMany('Post4'),
+        posts: a.hasMany('Post4', 'blog4Id'),
         // #region 50 fields
         field1: a.string(),
         field2: a.string(),
@@ -572,7 +578,7 @@ describe('Custom Selection Set XXL', () => {
       Post4: a.model({
         title: a.string().required(),
         description: a.string(),
-        comments: a.hasMany('Comment4'),
+        comments: a.hasMany('Comment4', 'post4Id'),
         // #region 50 fields
         field1: a.string(),
         field2: a.string(),
@@ -628,7 +634,8 @@ describe('Custom Selection Set XXL', () => {
       }),
       Comment4: a.model({
         content: a.string(),
-        post: a.belongsTo('Post4'),
+        post4Id: a.id(),
+        post: a.belongsTo('Post4', 'post4Id'),
         // #region 50 fields
         field1: a.string(),
         field2: a.string(),
@@ -684,7 +691,7 @@ describe('Custom Selection Set XXL', () => {
       }),
       Blog5: a.model({
         name: a.string(),
-        posts: a.hasMany('Post5'),
+        posts: a.hasMany('Post5', 'blog5Id'),
         // #region 50 fields
         field1: a.string(),
         field2: a.string(),
@@ -741,7 +748,7 @@ describe('Custom Selection Set XXL', () => {
       Post5: a.model({
         title: a.string().required(),
         description: a.string(),
-        comments: a.hasMany('Comment5'),
+        comments: a.hasMany('Comment5', 'post5Id'),
         // #region 50 fields
         field1: a.string(),
         field2: a.string(),
@@ -797,7 +804,8 @@ describe('Custom Selection Set XXL', () => {
       }),
       Comment5: a.model({
         content: a.string(),
-        post: a.belongsTo('Post5'),
+        post5Id: a.id(),
+        post: a.belongsTo('Post5', 'post5Id'),
         // #region 50 fields
         field1: a.string(),
         field2: a.string(),
@@ -853,7 +861,7 @@ describe('Custom Selection Set XXL', () => {
       }),
       Blog6: a.model({
         name: a.string(),
-        posts: a.hasMany('Post6'),
+        posts: a.hasMany('Post6', 'blog6Id'),
         // #region 50 fields
         field1: a.string(),
         field2: a.string(),
@@ -910,7 +918,7 @@ describe('Custom Selection Set XXL', () => {
       Post6: a.model({
         title: a.string().required(),
         description: a.string(),
-        comments: a.hasMany('Comment6'),
+        comments: a.hasMany('Comment6', 'pos6Id'),
         // #region 50 fields
         field1: a.string(),
         field2: a.string(),
@@ -966,7 +974,8 @@ describe('Custom Selection Set XXL', () => {
       }),
       Comment6: a.model({
         content: a.string(),
-        post: a.belongsTo('Post6'),
+        post6Id: a.id(),
+        post: a.belongsTo('Post6', 'post6Id'),
         // #region 50 fields
         field1: a.string(),
         field2: a.string(),

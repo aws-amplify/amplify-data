@@ -18,15 +18,18 @@ describe('Basic operations', () => {
     Post: a.model({
       title: a.string().required(),
       description: a.string(),
-      comments: a.hasMany('Comment'),
-      meta: a.hasOne('Meta'),
+      comments: a.hasMany('Comment', 'postId'),
+      meta: a.hasOne('Meta', 'postId'),
     }),
     Comment: a.model({
       body: a.string().required(),
-      post: a.belongsTo('Post'),
+      postId: a.id(),
+      post: a.belongsTo('Post', 'postId'),
     }),
     Meta: a.model({
       body: a.string(),
+      postId: a.id(),
+      post: a.belongsTo('Post', 'postId'),
     }),
   });
 

@@ -12,28 +12,34 @@ describe('implied fields', () => {
   describe('boring model keys', () => {
     const schema = a.schema({
       BoringParent: a.model({
-        childNormal: a.hasOne('BoringChild'),
-        childReciprocal: a.hasOne('BoringReciprocalChild'),
-        childHasManyNormal: a.hasMany('BoringHasManyChild'),
-        childHasManyReciprocal: a.hasMany('ReciprocalHasManyChild'),
+        childNormal: a.hasOne('BoringChild', 'boringParentId'),
+        childReciprocal: a.hasOne('BoringReciprocalChild', 'boringParentId'),
+        childHasManyNormal: a.hasMany('BoringHasManyChild', 'boringParentId'),
+        childHasManyReciprocal: a.hasMany('ReciprocalHasManyChild', 'boringParentId'),
       }),
       BoringChild: a.model({
         value: a.string(),
         json: a.json(),
+        boringParentId: a.id(),
+        parent: a.belongsTo('BoringParent', 'boringParentId')
       }),
       BoringReciprocalChild: a.model({
-        parent: a.belongsTo('BoringParent'),
+        boringParentId: a.id(),
+        parent: a.belongsTo('BoringParent', 'boringParentId'),
         value: a.string(),
         json: a.json(),
       }),
       BoringHasManyChild: a.model({
         value: a.string(),
         json: a.json(),
+        boringParentId: a.id(),
+        parent: a.belongsTo('BoringParent', 'boringParentId')
       }),
       ReciprocalHasManyChild: a.model({
         value: a.string(),
         json: a.json(),
-        parent: a.belongsTo('BoringParent'),
+        boringParentId: a.id(),
+        parent: a.belongsTo('BoringParent', 'boringParentId'),
       }),
     });
 
@@ -85,10 +91,10 @@ describe('implied fields', () => {
         .model({
           CPKParentIdFieldA: a.id().required(),
           CPKParentIdFieldB: a.id().required(),
-          childNormal: a.hasOne('CPKChild'),
-          childReciprocal: a.hasOne('CPKReciprocalChild'),
-          childHasManyNormal: a.hasMany('CPKHasManyChild'),
-          childHasManyReciprocal: a.hasMany('CPKReciprocalHasManyChild'),
+          childNormal: a.hasOne('CPKChild', ['CPKParentIdFieldA', 'CPKParentIdFieldB']),
+          childReciprocal: a.hasOne('CPKReciprocalChild', ['CPKParentIdFieldA', 'CPKParentIdFieldB']),
+          childHasManyNormal: a.hasMany('CPKHasManyChild', ['CPKParentIdFieldA', 'CPKParentIdFieldB']),
+          childHasManyReciprocal: a.hasMany('CPKReciprocalHasManyChild', ['CPKParentIdFieldA', 'CPKParentIdFieldB']),
         })
         .identifier(['CPKParentIdFieldA', 'CPKParentIdFieldB']),
       CPKChild: a
@@ -96,14 +102,19 @@ describe('implied fields', () => {
           CPKChildIdFieldA: a.id().required(),
           CPKChildIdFieldB: a.id().required(),
           value: a.string(),
+          CPKParentIdFieldA: a.id(),
+          CPKParentIdFieldB: a.id(),
+          parent: a.belongsTo('CPKParent', ['CPKParentIdFieldA', 'CPKParentIdFieldB']),
         })
         .identifier(['CPKChildIdFieldA', 'CPKChildIdFieldB']),
       CPKReciprocalChild: a
         .model({
           CPKReciprocalChildIdFieldA: a.id().required(),
           CPKReciprocalChildIdFieldB: a.id().required(),
-          parent: a.belongsTo('CPKParent'),
           value: a.string(),
+          CPKParentIdFieldA: a.id().required(),
+          CPKParentIdFieldB: a.id().required(),
+          parent: a.belongsTo('CPKParent', ['CPKParentIdFieldA', 'CPKParentIdFieldB']),
         })
         .identifier([
           'CPKReciprocalChildIdFieldA',
@@ -114,6 +125,9 @@ describe('implied fields', () => {
           CPKHasManyChildIdFieldA: a.id().required(),
           CPKHasManyChildIdFieldB: a.id().required(),
           value: a.string(),
+          CPKParentIdFieldA: a.id(),
+          CPKParentIdFieldB: a.id(),
+          parent: a.belongsTo('CPKParent', ['CPKParentIdFieldA', 'CPKParentIdFieldB']),
         })
         .identifier(['CPKHasManyChildIdFieldA', 'CPKHasManyChildIdFieldB']),
       CPKReciprocalHasManyChild: a
@@ -121,7 +135,9 @@ describe('implied fields', () => {
           CPKReciprocalHasManyChildIdFieldA: a.id().required(),
           CPKReciprocalHasManyChildIdFieldB: a.id().required(),
           value: a.string(),
-          parent: a.belongsTo('CPKParent'),
+          CPKParentIdFieldA: a.id(),
+          CPKParentIdFieldB: a.id(),
+          parent: a.belongsTo('CPKParent', ['CPKParentIdFieldA', 'CPKParentIdFieldB']),
         })
         .identifier([
           'CPKReciprocalHasManyChildIdFieldA',
@@ -130,44 +146,17 @@ describe('implied fields', () => {
     });
     type Schema = ClientSchema<typeof schema>;
 
-    test('hasOne FKs are implied', () => {
-      type hasOneA = Expect<
-        Equal<
-          Schema['CPKParent']['cPKParentChildNormalCPKChildIdFieldA'],
-          string | undefined
-        >
-      >;
-      type hasOneB = Expect<
-        Equal<
-          Schema['CPKParent']['cPKParentChildNormalCPKChildIdFieldB'],
-          string | undefined
-        >
-      >;
-      type hasOneReciprocatedA = Expect<
-        Equal<
-          Schema['CPKParent']['cPKParentChildReciprocalCPKReciprocalChildIdFieldA'],
-          string | undefined
-        >
-      >;
-      type hasOneReciprocatedB = Expect<
-        Equal<
-          Schema['CPKParent']['cPKParentChildReciprocalCPKReciprocalChildIdFieldB'],
-          string | undefined
-        >
-      >;
-    });
-
-    test('repriprocal belongsTo on hasOne implies FKs', () => {
+    test('repriprocal belongsTo on hasOne has explicitly defined reference fields', () => {
       type belongsToA = Expect<
         Equal<
-          Schema['CPKReciprocalChild']['cPKReciprocalChildParentCPKParentIdFieldA'],
-          string | undefined
+          Schema['CPKReciprocalChild']['CPKParentIdFieldA'],
+          string
         >
       >;
       type belongsToB = Expect<
         Equal<
-          Schema['CPKReciprocalChild']['cPKReciprocalChildParentCPKParentIdFieldB'],
-          string | undefined
+          Schema['CPKReciprocalChild']['CPKParentIdFieldB'],
+          string
         >
       >;
     });

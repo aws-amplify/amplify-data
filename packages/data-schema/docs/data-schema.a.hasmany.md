@@ -9,7 +9,7 @@ Create a one-directional one-to-many relationship between two models using the `
 **Signature:**
 
 ```typescript
-export declare function hasMany<RM extends string>(relatedModel: RM): ModelRelationalField<ModelRelationalTypeArgFactory<RM, ModelRelationshipTypes.hasMany, true, undefined>, RM, "required", undefined>;
+export declare function hasMany<RM extends string>(relatedModel: RM, references: string | string[]): ModelRelationalField<ModelRelationalTypeArgFactory<RM, ModelRelationshipTypes.hasMany, true, undefined>, RM, "required", undefined>;
 ```
 
 ## Parameters
@@ -17,6 +17,7 @@ export declare function hasMany<RM extends string>(relatedModel: RM): ModelRelat
 |  Parameter | Type | Description |
 |  --- | --- | --- |
 |  relatedModel | RM | the name of the related model |
+|  references | string \| string\[\] |  |
 
 **Returns:**
 

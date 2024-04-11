@@ -57,15 +57,6 @@ type ModelRelationalFieldFunctions<
     K | 'valueRequired'
   >;
   /**
-   * Reference sets the foreign key on which to establish the relationship
-   */
-  references(
-    references: string[],
-  ): ModelRelationalField<
-    SetTypeSubArg<T, 'references', string[]>,
-    K | 'references'
-  >;
-  /**
    * When set, it requires the relationship to always return a value
    */
   required(): ModelRelationalField<
@@ -118,7 +109,6 @@ const relationalModifiers = [
   'required',
   'arrayRequired',
   'valueRequired',
-  'references',
   'authorization',
 ] as const;
 
@@ -126,9 +116,9 @@ const relationModifierMap: Record<
   `${ModelRelationshipTypes}`,
   (typeof relationalModifiers)[number][]
 > = {
-  belongsTo: ['authorization', 'references'],
-  hasMany: ['arrayRequired', 'valueRequired', 'authorization', 'references'],
-  hasOne: ['required', 'authorization', 'references'],
+  belongsTo: ['authorization'],
+  hasMany: ['arrayRequired', 'valueRequired', 'authorization'],
+  hasOne: ['required', 'authorization'],
   manyToMany: ['arrayRequired', 'valueRequired', 'authorization'],
 };
 
@@ -141,14 +131,14 @@ export type RelationTypeFunctionOmitMapping<
     : Type extends ModelRelationshipTypes.hasOne
       ? 'arrayRequired' | 'valueRequired'
       : Type extends ModelRelationshipTypes.manyToMany
-        ? 'required' | 'references'
+        ? 'required'
         : never;
 
 function _modelRelationalField<
   T extends ModelRelationalFieldParamShape,
   RelatedModel extends string,
   RT extends ModelRelationshipTypes,
->(type: RT, relatedModel: RelatedModel, relationName?: string) {
+>(type: RT, relatedModel: RelatedModel, relationName?: string, references?: string[]) {
   const data: ModelRelationalFieldData = {
     relatedModel,
     type,
@@ -156,7 +146,7 @@ function _modelRelationalField<
     array: false,
     valueRequired: false,
     arrayRequired: false,
-    references: undefined,
+    references,
     relationName,
     authorization: [],
   };
@@ -177,11 +167,6 @@ function _modelRelationalField<
     },
     valueRequired() {
       data.valueRequired = true;
-
-      return this;
-    },
-    references(references: string[]) {
-      data.references = references;
 
       return this;
     },
@@ -232,12 +217,20 @@ export type ModelRelationalTypeArgFactory<
  * @param relatedModel the name of the related model
  * @returns a one-to-one relationship definition
  */
-export function hasOne<RM extends string>(relatedModel: RM) {
+export function hasOne<RM extends string>(
+  relatedModel: RM,
+  references: string | string[],
+) {
   return _modelRelationalField<
     ModelRelationalTypeArgFactory<RM, ModelRelationshipTypes.hasOne, false>,
     RM,
     ModelRelationshipTypes.hasOne
-  >(ModelRelationshipTypes.hasOne, relatedModel);
+  >(
+    ModelRelationshipTypes.hasOne,
+    relatedModel,
+    undefined,
+    Array.isArray(references) ? references : [references]
+  )
 }
 
 /**
@@ -245,12 +238,20 @@ export function hasOne<RM extends string>(relatedModel: RM) {
  * @param relatedModel the name of the related model
  * @returns a one-to-many relationship definition
  */
-export function hasMany<RM extends string>(relatedModel: RM) {
+export function hasMany<RM extends string>(
+  relatedModel: RM,
+  references: string | string[],
+) {
   return _modelRelationalField<
     ModelRelationalTypeArgFactory<RM, ModelRelationshipTypes.hasMany, true>,
     RM,
     ModelRelationshipTypes.hasMany
-  >(ModelRelationshipTypes.hasMany, relatedModel);
+  >(
+    ModelRelationshipTypes.hasMany,
+    relatedModel,
+    undefined,
+    Array.isArray(references) ? references : [references],
+  )
 }
 
 /**
@@ -260,12 +261,20 @@ export function hasMany<RM extends string>(relatedModel: RM) {
  * @param relatedModel name of the related `.hasOne()` or `.hasMany()` model
  * @returns a belong-to relationship definition
  */
-export function belongsTo<RM extends string>(relatedModel: RM) {
+export function belongsTo<RM extends string>(
+  relatedModel: RM,
+  references: string | string[],
+) {
   return _modelRelationalField<
     ModelRelationalTypeArgFactory<RM, ModelRelationshipTypes.belongsTo, false>,
     RM,
     ModelRelationshipTypes.belongsTo
-  >(ModelRelationshipTypes.belongsTo, relatedModel);
+  >(
+    ModelRelationshipTypes.belongsTo,
+    relatedModel,
+    undefined,
+    Array.isArray(references) ? references : [references]
+  )
 }
 
 /**
