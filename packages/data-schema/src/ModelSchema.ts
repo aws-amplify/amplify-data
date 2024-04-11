@@ -322,6 +322,12 @@ function _rdsSchema<
           );
         }
 
+        if (typeof newName !== 'string' || newName.length < 1) {
+          throw new Error(
+            `Invalid renameModels call. New name must be a non-empty string. Received: "${newName}"`,
+          );
+        }
+
         models[newName] = currentType;
         data.types[newName] = currentType;
 
