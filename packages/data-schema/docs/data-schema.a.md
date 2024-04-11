@@ -8,7 +8,7 @@
 
 |  Function | Description |
 |  --- | --- |
-|  [belongsTo(relatedModel)](./data-schema.a.belongsto.md) | Make a <code>hasOne()</code> or <code>hasMany()</code> relationship bi-directional using the <code>belongsTo()</code> method. The belongsTo() method requires that a hasOne() or hasMany() relationship already exists from parent to the related model. |
+|  [belongsTo(relatedModel, references)](./data-schema.a.belongsto.md) | Make a <code>hasOne()</code> or <code>hasMany()</code> relationship bi-directional using the <code>belongsTo()</code> method. The belongsTo() method requires that a hasOne() or hasMany() relationship already exists from parent to the related model. |
 |  [boolean()](./data-schema.a.boolean.md) | A boolean scalar type that can be either true or false. |
 |  [combine(schemas)](./data-schema.a.combine.md) | The interface for merging up to 50 schemas into a single API. |
 |  [customType(fields)](./data-schema.a.customtype.md) |  |
@@ -17,8 +17,8 @@
 |  [email()](./data-schema.a.email.md) | An email scalar type that is represented server-side in the format <code>local-part@domain-part</code> as defined by RFC 822. |
 |  [enum(values)](./data-schema.a.enum.md) | this type param pattern allows us to infer literal type values from the array without using the <code>as const</code> suffix |
 |  [float()](./data-schema.a.float.md) | A float scalar type following represented server-side as an IEEE 754 floating point value. |
-|  [hasMany(relatedModel)](./data-schema.a.hasmany.md) | Create a one-directional one-to-many relationship between two models using the <code>hasMany()</code> method. |
-|  [hasOne(relatedModel)](./data-schema.a.hasone.md) | Create a one-directional one-to-one relationship between two models using the <code>hasOne(&quot;MODEL_NAME&quot;)</code> method. A hasOne relationship always uses a reference to the related model's identifier. Typically this is the <code>id</code> field unless overwritten with the <code>identifier()</code> method. |
+|  [hasMany(relatedModel, references)](./data-schema.a.hasmany.md) | Create a one-directional one-to-many relationship between two models using the <code>hasMany()</code> method. |
+|  [hasOne(relatedModel, references)](./data-schema.a.hasone.md) | Create a one-directional one-to-one relationship between two models using the <code>hasOne(&quot;MODEL_NAME&quot;)</code> method. A hasOne relationship always uses a reference to the related model's identifier. Typically this is the <code>id</code> field unless overwritten with the <code>identifier()</code> method. |
 |  [id()](./data-schema.a.id.md) | A unique identifier scalar type. This scalar is serialized like a String but isn't meant to be human-readable. If not specified on create operations, a ULID will be auto-generated service-side. |
 |  [integer()](./data-schema.a.integer.md) | An integer scalar type with a supported value range between -(2^31) and 2^31-1. |
 |  [ipAddress()](./data-schema.a.ipaddress.md) | A valid IPv4 or IPv6 address scalar type. IPv4 addresses are expected in quad-dotted notation (123.12.34.56). IPv6 addresses are expected in non-bracketed, colon-separated format (1a2b:3c4b:🔢4567). You can include an optional CIDR suffix (123.45.67.89/16) to indicate subnet mask. |
