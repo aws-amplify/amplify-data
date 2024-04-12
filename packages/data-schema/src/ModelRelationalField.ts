@@ -18,9 +18,6 @@ export enum ModelRelationshipTypes {
 
 type RelationshipTypes = `${ModelRelationshipTypes}`;
 
-// TODO: can this be simplified now?
-const arrayTypeRelationships = ['hasMany'];
-
 type ModelRelationalFieldData = {
   fieldType: 'model';
   type: ModelRelationshipTypes;
@@ -137,7 +134,7 @@ function _modelRelationalField<
   T extends ModelRelationalFieldParamShape,
   RelatedModel extends string,
   RT extends ModelRelationshipTypes,
->(type: RT, relatedModel: RelatedModel, relationName?: string, references?: string[]) {
+>(type: RT, relatedModel: RelatedModel, references?: string[]) {
   const data: ModelRelationalFieldData = {
     relatedModel,
     type,
@@ -149,7 +146,7 @@ function _modelRelationalField<
     authorization: [],
   };
 
-  if (arrayTypeRelationships.includes(type)) {
+  if (type === 'hasMany') {
     data.array = true;
   }
   const relationshipBuilderFunctions = {
@@ -226,7 +223,6 @@ export function hasOne<RM extends string>(
   >(
     ModelRelationshipTypes.hasOne,
     relatedModel,
-    undefined,
     Array.isArray(references) ? references : [references]
   )
 }
@@ -247,7 +243,6 @@ export function hasMany<RM extends string>(
   >(
     ModelRelationshipTypes.hasMany,
     relatedModel,
-    undefined,
     Array.isArray(references) ? references : [references],
   )
 }
@@ -270,7 +265,6 @@ export function belongsTo<RM extends string>(
   >(
     ModelRelationshipTypes.belongsTo,
     relatedModel,
-    undefined,
     Array.isArray(references) ? references : [references]
   )
 }
