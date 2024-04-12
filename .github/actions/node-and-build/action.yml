@@ -18,7 +18,7 @@ runs:
       with:
         path: |
           **/node_modules
-          **/lib-esm/
+          **/dist/
         key: ${{ runner.os }}-build-artifacts-${{ github.sha }}
         restore-keys: |
           ${{ runner.os }}-build-artifacts-
