@@ -185,7 +185,7 @@ export type ModelType<
   K extends keyof ModelType<T> = never,
 > = Omit<
   {
-    identifier<ID extends IdentifierType<T> = []>(
+    identifier<const ID extends IdentifierType<T> = []>(
       identifier: ID,
     ): ModelType<SetTypeSubArg<T, 'identifier', ID>, K | 'identifier'>;
     secondaryIndexes<
