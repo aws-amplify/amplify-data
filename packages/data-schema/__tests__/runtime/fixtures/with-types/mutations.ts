@@ -3,8 +3,8 @@
 // this is an auto generated file. This will be overwritten
 
 type GeneratedMutation<InputType, OutputType> = string & {
-	__generatedMutationInput: InputType;
-	__generatedMutationOutput: OutputType;
+  __generatedMutationInput: InputType;
+  __generatedMutationOutput: OutputType;
 };
 import * as APITypes from './API';
 
@@ -33,8 +33,8 @@ export const createThread = /* GraphQL */ `
     }
   }
 ` as GeneratedMutation<
-	APITypes.CreateThreadMutationVariables,
-	APITypes.CreateThreadMutation
+  APITypes.CreateThreadMutationVariables,
+  APITypes.CreateThreadMutation
 >;
 
 export const updateThread = /* GraphQL */ `
@@ -62,8 +62,8 @@ export const updateThread = /* GraphQL */ `
     }
   }
 ` as GeneratedMutation<
-	APITypes.UpdateThreadMutationVariables,
-	APITypes.UpdateThreadMutation
+  APITypes.UpdateThreadMutationVariables,
+  APITypes.UpdateThreadMutation
 >;
 
 export const deleteThread = /* GraphQL */ `
@@ -91,6 +91,6 @@ export const deleteThread = /* GraphQL */ `
     }
   }
 ` as GeneratedMutation<
-	APITypes.DeleteThreadMutationVariables,
-	APITypes.DeleteThreadMutation
+  APITypes.DeleteThreadMutationVariables,
+  APITypes.DeleteThreadMutation
 >;
