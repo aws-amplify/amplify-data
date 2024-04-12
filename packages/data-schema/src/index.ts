@@ -18,7 +18,7 @@ import {
   ipAddress,
 } from './ModelField';
 import { ref } from './RefType';
-import { hasOne, hasMany, belongsTo, manyToMany } from './ModelRelationalField';
+import { hasOne, hasMany, belongsTo } from './ModelRelationalField';
 import { allow } from './Authorization';
 import { customType } from './CustomType';
 import { enumType } from './EnumType';
@@ -41,7 +41,6 @@ export {
   hasOne,
   hasMany,
   belongsTo,
-  manyToMany,
   allow,
   id,
   string,

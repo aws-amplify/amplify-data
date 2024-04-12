@@ -282,43 +282,6 @@ describe('Custom Selection Set', () => {
     });
   });
 
-  describe('Many to many relationship', () => {
-    const schema = a.schema({
-      Post: a.model({
-        title: a.string().required(),
-        description: a.string(),
-        postTags: a.manyToMany('Tag', { relationName: 'PostTags' }),
-      }),
-      Tag: a.model({
-        label: a.string().required(),
-        post: a.manyToMany('Post', { relationName: 'PostTags' }),
-      }),
-    });
-
-    type Schema = ClientSchema<typeof schema>;
-
-    test('wildcard on the target model', async () => {
-      const client = generateClient<Schema>();
-
-      const posts = await client.models.Post.list({
-        selectionSet: ['id', 'postTags.tag.*'],
-      });
-
-      type ExpectedType = {
-        readonly id: string;
-        readonly postTags: {
-          readonly tag: {
-            readonly id: string;
-            readonly label: string;
-            readonly createdAt: string;
-            readonly updatedAt: string;
-          };
-        }[];
-      }[];
-
-      type test = Expect<Equal<typeof posts.data, ExpectedType>>;
-    });
-  });
 
   describe('Complex relationship', () => {
     const schema = a.schema({
