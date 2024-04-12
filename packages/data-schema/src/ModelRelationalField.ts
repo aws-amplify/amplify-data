@@ -13,12 +13,13 @@ export enum ModelRelationshipTypes {
   hasOne = 'hasOne',
   hasMany = 'hasMany',
   belongsTo = 'belongsTo',
-  manyToMany = 'manyToMany',
+  manyToMany = 'manyToMany', // TODO: remove this once type work is complete
 }
 
 type RelationshipTypes = `${ModelRelationshipTypes}`;
 
-const arrayTypeRelationships = ['hasMany', 'manyToMany'];
+// TODO: can this be simplified now?
+const arrayTypeRelationships = ['hasMany'];
 
 type ModelRelationalFieldData = {
   fieldType: 'model';
@@ -130,9 +131,7 @@ export type RelationTypeFunctionOmitMapping<
     ? 'required'
     : Type extends ModelRelationshipTypes.hasOne
       ? 'arrayRequired' | 'valueRequired'
-      : Type extends ModelRelationshipTypes.manyToMany
-        ? 'required'
-        : never;
+      : never;
 
 function _modelRelationalField<
   T extends ModelRelationalFieldParamShape,
@@ -147,7 +146,6 @@ function _modelRelationalField<
     valueRequired: false,
     arrayRequired: false,
     references,
-    relationName,
     authorization: [],
   };
 
@@ -275,30 +273,4 @@ export function belongsTo<RM extends string>(
     undefined,
     Array.isArray(references) ? references : [references]
   )
-}
-
-/**
- * Create a many-to-many relationship between two models with the manyToMany() method.
- * Provide a common relationName on both models to join them into a many-to-many relationship.
- * Under the hood a many-to-many relationship is modeled with a "join table" with corresponding
- * `hasMany()` relationships between the two related models. You must set the same `manyToMany()`
- * field on both models of the relationship.
- * @param relatedModel name of the related model
- * @param opts pass in the `relationName` that will serve as the join table name for this many-to-many relationship
- * @returns a many-to-many relationship definition
- */
-export function manyToMany<RM extends string, RN extends string>(
-  relatedModel: RM,
-  opts: { relationName: RN },
-) {
-  return _modelRelationalField<
-    ModelRelationalTypeArgFactory<
-      RM,
-      ModelRelationshipTypes.manyToMany,
-      true,
-      RN
-    >,
-    RM,
-    ModelRelationshipTypes.manyToMany
-  >(ModelRelationshipTypes.manyToMany, relatedModel, opts.relationName);
 }
