@@ -21,7 +21,7 @@
     "clean": "turbo run clean",
     "turbo": "turbo",
     "publish-packages:release": "changeset version && changeset publish",
-    "publish-packages:preid": "changeset pre enter ${PREID_PREFIX} && changeset version && changeset publish --tag ${PREID_PREFIX}",
+    "publish-packages:preid": "changeset version --snapshot ${PREID_PREFIX} && changeset publish --tag ${PREID_PREFIX}",
     "publish-packages:local": "npm_config_registry=http://localhost:4873/ npm run publish-packages"
   },
   "devDependencies": {
