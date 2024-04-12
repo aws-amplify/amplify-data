@@ -1,5 +1,11 @@
 # @aws-amplify/data-schema
 
+## 0.14.13
+
+### Patch Changes
+
+- f106212: fix: only the last function handler can be linked as data source
+
 ## 0.14.12
 
 ### Patch Changes
