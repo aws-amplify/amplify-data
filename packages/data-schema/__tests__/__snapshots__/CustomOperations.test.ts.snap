@@ -414,6 +414,12 @@ type Query {
 
 exports[`CustomOperation transform dynamo schema handlers a.handler.inlineSql works 1`] = `
 {
+  "customSqlDataSourceStrategies": [
+    {
+      "fieldName": "getPostDetails",
+      "typeName": "Query",
+    },
+  ],
   "functionSchemaAccess": [],
   "functionSlots": [],
   "jsFunctions": [],
@@ -436,7 +442,7 @@ exports[`CustomOperation transform dynamo schema handlers a.handler.sqlReference
 }
 
 type Query {
-  getPostDetails: GetPostDetailsReturnType @sql(reference: "testQueryName") @auth(rules: [{allow: private}])
+  getPostDetails: GetPostDetailsReturnType @sql(reference: "./testQueryName") @auth(rules: [{allow: private}])
 }"
 `;
 

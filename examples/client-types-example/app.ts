@@ -20,6 +20,10 @@ async function test() {
 
   const { data } = await client.models.Post.get({ id: 'MyId' });
 
+  const { data: data2 } = await client.mutations.myMutation();
+
+  type TM = typeof data2;
+
   type TPost = typeof post;
   //    ^?
 }

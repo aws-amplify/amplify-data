@@ -836,7 +836,7 @@ describe('CustomOperation transform', () => {
           getPostDetails: a
             .query()
             .arguments({})
-            .handler(a.handler.sqlReference('testQueryName'))
+            .handler(a.handler.sqlReference('./testQueryName'))
             .authorization([a.allow.private()])
             .returns(a.customType({})),
         });
@@ -1079,6 +1079,45 @@ describe('CustomOperation transform', () => {
       const result = s.transform().schema;
 
       expect(result).toMatchSnapshot();
+    });
+  });
+
+  describe('handler function to lambda function mapping', () => {
+    const fn1 = defineFunctionStub({});
+    const fn2 = defineFunctionStub({});
+    const fn3 = defineFunctionStub({});
+
+    const schema = a.schema({
+      echo: a
+        .query()
+        .arguments({
+          content: a.string(),
+          int: a.integer(),
+          description: a.string(),
+        })
+        .returns(a.ref('NestedCustomTypes'))
+        .handler([a.handler.function(fn1), a.handler.function(fn2)])
+        .authorization([a.allow.public()]),
+      echoList: a
+        .query()
+        .arguments({
+          content: a.string(),
+          int: a.integer(),
+          description: a.string(),
+        })
+        .returns(a.ref('NestedCustomTypes').required().array().required())
+        .handler(a.handler.function(fn3))
+        .authorization([a.allow.public()]),
+    });
+
+    it('generates 3 lambda functions with expected names aside schema', () => {
+      const { lambdaFunctions } = schema.transform();
+
+      expect(lambdaFunctions).toMatchObject({
+        FnEcho: fn1,
+        FnEcho2: fn2,
+        FnEchoList: fn3,
+      });
     });
   });
 });

@@ -1,0 +1,77 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`RDSModelSchema .relationships() modifier generates expected schema for bidirectional hasMany<->belongsTo 1`] = `
+"type Post @model @auth(rules: [{allow: public}])
+{
+  title: String!
+  content: String
+  parentBlogId: String
+  parentBlog: Blog @belongsTo(references: ["parentBlogId"])
+}
+
+type Blog @model @auth(rules: [{allow: public}])
+{
+  title: String!
+  description: String
+  childPosts: [Post] @hasMany(references: ["parentBlogId"])
+}"
+`;
+
+exports[`RDSModelSchema .relationships() modifier generates expected schema for bidirectional hasOne<->belongsTo 1`] = `
+"type Supplier @model @auth(rules: [{allow: public}])
+{
+  name: String!
+  account: Account @hasOne(references: ["supplierIds"])
+}
+
+type Account @model @auth(rules: [{allow: public}])
+{
+  email: String!
+  supplierId: String
+  supplier: Supplier @belongsTo(references: ["supplierId"])
+}"
+`;
+
+exports[`RDSModelSchema .relationships() modifier generates expected schema for unidirectional belongsTo 1`] = `
+"type Supplier @model @auth(rules: [{allow: public}])
+{
+  name: String!
+}
+
+type Account @model @auth(rules: [{allow: public}])
+{
+  email: String!
+  supplierId: String
+  supplier: Supplier @belongsTo(references: ["supplierId"])
+}"
+`;
+
+exports[`RDSModelSchema .relationships() modifier generates expected schema for unidirectional hasMany 1`] = `
+"type Post @model @auth(rules: [{allow: public}])
+{
+  title: String!
+  content: String
+  parentBlogId: String
+}
+
+type Blog @model @auth(rules: [{allow: public}])
+{
+  title: String!
+  description: String
+  childPosts: [Post] @hasMany(references: ["parentBlogId"])
+}"
+`;
+
+exports[`RDSModelSchema .relationships() modifier generates expected schema for unidirectional hasOne 1`] = `
+"type Supplier @model @auth(rules: [{allow: public}])
+{
+  name: String!
+  account: Account @hasOne(references: ["supplierId"])
+}
+
+type Account @model @auth(rules: [{allow: public}])
+{
+  email: String!
+  supplierId: String
+}"
+`;

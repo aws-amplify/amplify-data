@@ -1,5 +1,30 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`RDS Schema with sql statement references schema with full path sql reference 1`] = `
+{
+  "customSqlDataSourceStrategies": [
+    {
+      "entry": "/full/path/to/sql/statement/directory/testReferenceName",
+      "fieldName": "callSql",
+      "typeName": "Query",
+    },
+  ],
+  "functionSchemaAccess": [],
+  "functionSlots": [],
+  "jsFunctions": [],
+  "lambdaFunctions": {},
+  "schema": "type widget @model @auth(rules: [{allow: public}])
+{
+  title: String!
+  someOwnerField: String
+}
+
+type Query {
+  callSql: widget @sql(reference: "/full/path/to/sql/statement/directory/testReferenceName") @auth(rules: [{allow: public}])
+}",
+}
+`;
+
 exports[`custom operations custom mutation 1`] = `
 "type LikePostResult 
 {
@@ -23,8 +48,7 @@ type Query {
 `;
 
 exports[`custom operations for a.combine schema a ddb and sql schemas combine without issues 1`] = `
-"
-type A @model @auth(rules: [{allow: public}])
+"type A @model @auth(rules: [{allow: public}])
 {
   field: String
 }
@@ -35,8 +59,7 @@ type B @model @auth(rules: [{allow: public}])
 `;
 
 exports[`custom operations for a.combine schema combining two schemas with custom mutation results in customTypes and customOperations that intersect the separate schemas 1`] = `
-"
-type LikePostResult 
+"type LikePostResult 
 {
   likes: Int!
 }
@@ -65,8 +88,7 @@ type Mutation {
 `;
 
 exports[`custom operations for a.combine schema two schemas combine without issues 1`] = `
-"
-type A @model @auth(rules: [{allow: public}])
+"type A @model @auth(rules: [{allow: public}])
 {
   field: String
 }
@@ -79,6 +101,7 @@ type B @model @auth(rules: [{allow: public}])
 exports[`custom operations for an rds schema can define public auth with no provider 1`] = `
 "type A @model @auth(rules: [{allow: public}])
 {
+  id: String! @primaryKey
   field: String
 }"
 `;
@@ -94,8 +117,50 @@ type Query {
 }"
 `;
 
+exports[`custom operations for an rds schema sql schema field-level auth 1`] = `
+"type post @model @auth(rules: [{allow: public}])
+{
+  id: String! @primaryKey @auth(rules: [{allow: private}])
+  title: String @auth(rules: [{allow: public}])
+  author: String @auth(rules: [{allow: owner, ownerField: "author"}])
+}"
+`;
+
+exports[`custom operations for an rds schema sql schema rename 1`] = `
+"type RenamedPost @model @auth(rules: [{allow: public}])
+{
+  id: String! @primaryKey
+  title: String
+  author: String
+}"
+`;
+
+exports[`custom operations for an rds schema sql schema rename multiple models 1`] = `
+"type tags @model @auth(rules: [{allow: public}])
+{
+  id: String! @primaryKey
+  title: String
+  author: String
+}
+
+type RenamedPost @model @auth(rules: [{allow: public}])
+{
+  id: String! @primaryKey
+  title: String
+  author: String
+}
+
+type RenamedComment @model @auth(rules: [{allow: public}])
+{
+  id: String! @primaryKey
+  title: String
+  author: String
+}"
+`;
+
 exports[`schema auth rules allows custom 1`] = `
 {
+  "customSqlDataSourceStrategies": [],
   "functionSchemaAccess": [],
   "functionSlots": [],
   "jsFunctions": [],
@@ -109,6 +174,7 @@ exports[`schema auth rules allows custom 1`] = `
 
 exports[`schema auth rules allows groupDefinedIn 1`] = `
 {
+  "customSqlDataSourceStrategies": [],
   "functionSchemaAccess": [],
   "functionSlots": [],
   "jsFunctions": [],
@@ -122,6 +188,7 @@ exports[`schema auth rules allows groupDefinedIn 1`] = `
 
 exports[`schema auth rules allows groupsDefinedIn 1`] = `
 {
+  "customSqlDataSourceStrategies": [],
   "functionSchemaAccess": [],
   "functionSlots": [],
   "jsFunctions": [],
@@ -135,6 +202,7 @@ exports[`schema auth rules allows groupsDefinedIn 1`] = `
 
 exports[`schema auth rules allows multiple entries 1`] = `
 {
+  "customSqlDataSourceStrategies": [],
   "functionSchemaAccess": [],
   "functionSlots": [],
   "jsFunctions": [],
@@ -149,6 +217,7 @@ exports[`schema auth rules allows multiple entries 1`] = `
 
 exports[`schema auth rules allows multipleOwners 1`] = `
 {
+  "customSqlDataSourceStrategies": [],
   "functionSchemaAccess": [],
   "functionSlots": [],
   "jsFunctions": [],
@@ -162,6 +231,7 @@ exports[`schema auth rules allows multipleOwners 1`] = `
 
 exports[`schema auth rules allows owner 1`] = `
 {
+  "customSqlDataSourceStrategies": [],
   "functionSchemaAccess": [],
   "functionSlots": [],
   "jsFunctions": [],
@@ -175,6 +245,7 @@ exports[`schema auth rules allows owner 1`] = `
 
 exports[`schema auth rules allows private 1`] = `
 {
+  "customSqlDataSourceStrategies": [],
   "functionSchemaAccess": [],
   "functionSlots": [],
   "jsFunctions": [],
@@ -188,6 +259,7 @@ exports[`schema auth rules allows private 1`] = `
 
 exports[`schema auth rules allows public 1`] = `
 {
+  "customSqlDataSourceStrategies": [],
   "functionSchemaAccess": [],
   "functionSlots": [],
   "jsFunctions": [],
@@ -201,6 +273,7 @@ exports[`schema auth rules allows public 1`] = `
 
 exports[`schema auth rules allows specificGroups 1`] = `
 {
+  "customSqlDataSourceStrategies": [],
   "functionSchemaAccess": [],
   "functionSlots": [],
   "jsFunctions": [],
@@ -221,6 +294,7 @@ exports[`schema auth rules can define public auth with no provider 1`] = `
 
 exports[`schema auth rules disallows specificGroup 1`] = `
 {
+  "customSqlDataSourceStrategies": [],
   "functionSchemaAccess": [],
   "functionSlots": [],
   "jsFunctions": [],
@@ -234,6 +308,7 @@ exports[`schema auth rules disallows specificGroup 1`] = `
 
 exports[`schema auth rules do not pull out custom operations 1`] = `
 {
+  "customSqlDataSourceStrategies": [],
   "functionSchemaAccess": [],
   "functionSlots": [],
   "jsFunctions": [],
@@ -259,6 +334,7 @@ type Subscription {
 
 exports[`schema auth rules global public auth - multiple models 1`] = `
 {
+  "customSqlDataSourceStrategies": [],
   "functionSchemaAccess": [],
   "functionSlots": [],
   "jsFunctions": [],
@@ -298,6 +374,7 @@ enum DTired {
 
 exports[`schema auth rules prefers model auth over global auth owner auth on model vs owner auth on schema 1`] = `
 {
+  "customSqlDataSourceStrategies": [],
   "functionSchemaAccess": [],
   "functionSlots": [],
   "jsFunctions": [],
@@ -311,6 +388,7 @@ exports[`schema auth rules prefers model auth over global auth owner auth on mod
 
 exports[`schema auth rules prefers model auth over global auth owner auth on model vs public auth on schema 1`] = `
 {
+  "customSqlDataSourceStrategies": [],
   "functionSchemaAccess": [],
   "functionSlots": [],
   "jsFunctions": [],
@@ -324,6 +402,7 @@ exports[`schema auth rules prefers model auth over global auth owner auth on mod
 
 exports[`schema auth rules prefers model auth over global auth public auth on model vs owner auth on schema 1`] = `
 {
+  "customSqlDataSourceStrategies": [],
   "functionSchemaAccess": [],
   "functionSlots": [],
   "jsFunctions": [],
@@ -419,82 +498,5 @@ type CPKReciprocalHasManyChild @model @auth(rules: [{allow: public}])
   parent: CPKParent @belongsTo
   cPKParentChildHasManyReciprocalCPKParentIdFieldA: ID
   cPKParentChildHasManyReciprocalCPKParentIdFieldB: ID
-}
-
-type ReferencedBoringParent @model @auth(rules: [{allow: public}])
-{
-  childNormal: ReferencedBoringChild @hasOne(references: ["bcRefId"])
-  childReciprocal: ReferencedBoringReciprocalChild @hasOne(references: ["brcRefId"])
-  childHasManyNormal: [ReferencedBoringHasManyChild] @hasMany(references: ["bhmRefId"])
-  childHasManyReciprocal: [ReferencedReciprocalHasManyChild] @hasMany(references: ["rrhmRefId"])
-  referencedBoringParentChildNormalId: ID
-  referencedBoringParentChildReciprocalId: ID
-}
-
-type ReferencedBoringChild @model @auth(rules: [{allow: public}])
-{
-  bcRefId: String
-  value: String
-}
-
-type ReferencedBoringReciprocalChild @model @auth(rules: [{allow: public}])
-{
-  brcRefId: String
-  parent: ReferencedBoringParent @belongsTo(references: ["brcRefId"])
-  value: String
-  referencedBoringReciprocalChildParentId: ID
-}
-
-type ReferencedBoringHasManyChild @model @auth(rules: [{allow: public}])
-{
-  bhmRefId: String
-  value: String
-  referencedBoringParentChildHasManyNormalId: ID
-}
-
-type ReferencedReciprocalHasManyChild @model @auth(rules: [{allow: public}])
-{
-  rrhmRefId: String
-  value: String
-  parent: ReferencedBoringParent @belongsTo(references: ["rrhmRefId"])
-  referencedBoringParentChildHasManyReciprocalId: ID
-}
-
-type LateReferencedBoringParent @model @auth(rules: [{allow: public}])
-{
-  childNormal: LateReferencedBoringChild @hasOne(references: ["bcRefId"])
-  childReciprocal: LateReferencedBoringReciprocalChild @hasOne(references: ["brcRefId"])
-  childHasManyNormal: [LateReferencedBoringHasManyChild] @hasMany(references: ["bhmRefId"])
-  childHasManyReciprocal: [LateReferencedReciprocalHasManyChild] @hasMany(references: ["rrhmRefId"])
-  lateReferencedBoringParentChildNormalId: ID
-  lateReferencedBoringParentChildReciprocalId: ID
-}
-
-type LateReferencedBoringChild @model @auth(rules: [{allow: public}])
-{
-  bcRefId: String
-  value: String
-}
-
-type LateReferencedBoringReciprocalChild @model @auth(rules: [{allow: public}])
-{
-  brcRefId: String
-  value: String
-  parent: ReferencedBoringParent @belongsTo(references: ["brcRefId"])
-}
-
-type LateReferencedBoringHasManyChild @model @auth(rules: [{allow: public}])
-{
-  bhmRefId: String
-  value: String
-  lateReferencedBoringParentChildHasManyNormalId: ID
-}
-
-type LateReferencedReciprocalHasManyChild @model @auth(rules: [{allow: public}])
-{
-  rrhmRefId: String
-  value: String
-  parent: ReferencedBoringParent @belongsTo(references: ["rrhmRefId"])
-  lateReferencedBoringParentChildHasManyReciprocalId: ID
 }"
 `;

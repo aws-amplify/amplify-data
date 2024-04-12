@@ -1,6 +1,13 @@
 import { a, ClientSchema } from '../src/index';
 import { __modelMeta__ } from '../src/runtime';
-import { Expect, Equal, Prettify } from '@aws-amplify/data-schema-types';
+import { configure } from '../src/internals';
+import {
+  Expect,
+  Equal,
+  Prettify,
+  ExpectFalse,
+  HasKey,
+} from '@aws-amplify/data-schema-types';
 
 describe('implied fields', () => {
   describe('boring model keys', () => {
@@ -388,5 +395,149 @@ describe('Enum types', () => {
     };
 
     type test2 = Expect<Equal<ResolvedEnumMeta, ExpectedEnumMeta>>;
+  });
+});
+
+describe('SQL Schema', () => {
+  const fakeSecret = () => ({}) as any;
+
+  const datasourceConfigMySQL = {
+    engine: 'mysql',
+    connectionUri: fakeSecret(),
+  } as const;
+
+  test('.renameModels() on a SQL schema', () => {
+    const sqlSchema = configure({ database: datasourceConfigMySQL }).schema({
+      post: a
+        .model({
+          id: a.string().required(),
+          title: a.string(),
+          author: a.string(),
+        })
+        .identifier(['id']),
+    });
+
+    const modified = sqlSchema
+      .renameModels(() => [['post', 'RenamedPost']])
+      .setAuthorization((models) =>
+        models.RenamedPost.authorization([a.allow.public()]),
+      );
+
+    type Schema = typeof modified;
+
+    type Resolved = Prettify<ClientSchema<Schema>>;
+
+    type Expected = {
+      RenamedPost: {
+        id: string;
+        title?: string | null;
+        author?: string | null;
+      };
+      [__modelMeta__]: {
+        RenamedPost: {
+          identifier: 'id';
+        };
+        enums: Record<never, never>;
+        customTypes: Record<never, never>;
+        customOperations: Record<never, never>;
+      };
+    };
+
+    type test = Expect<Equal<Resolved, Expected>>;
+  });
+
+  test('sql schema rename multiple models', () => {
+    const sqlSchema = configure({ database: datasourceConfigMySQL }).schema({
+      post: a
+        .model({
+          id: a.string().required(),
+          title: a.string(),
+          author: a.string(),
+        })
+        .identifier(['id']),
+      comment: a
+        .model({
+          id: a.string().required(),
+          title: a.string(),
+          author: a.string(),
+        })
+        .identifier(['id']),
+      tags: a
+        .model({
+          id: a.string().required(),
+          title: a.string(),
+          author: a.string(),
+        })
+        .identifier(['id']),
+    });
+
+    const modified = sqlSchema
+      .renameModels(() => [
+        ['post', 'RenamedPost'],
+        ['comment', 'RenamedComment'],
+      ])
+      .setAuthorization((models) => [
+        models.RenamedPost.authorization([a.allow.public()]),
+        models.RenamedComment.authorization([a.allow.public()]),
+        // tags is unchanged, since we didn't rename it
+        models.tags.authorization([a.allow.public()]),
+      ]);
+
+    type Schema = typeof modified;
+
+    type Resolved = Prettify<ClientSchema<Schema>>;
+
+    type Expected = {
+      RenamedPost: {
+        id: string;
+        title?: string | null;
+        author?: string | null;
+      };
+      RenamedComment: {
+        id: string;
+        title?: string | null;
+        author?: string | null;
+      };
+      tags: {
+        id: string;
+        title?: string | null;
+        author?: string | null;
+      };
+      [__modelMeta__]: {
+        RenamedPost: {
+          identifier: 'id';
+        };
+        RenamedComment: {
+          identifier: 'id';
+        };
+        tags: {
+          identifier: 'id';
+        };
+        enums: Record<never, never>;
+        customTypes: Record<never, never>;
+        customOperations: Record<never, never>;
+      };
+    };
+
+    type test = Expect<Equal<Resolved, Expected>>;
+  });
+
+  test('.renameModels() not available on a DDB schema', () => {
+    const schema = a.schema({
+      post: a
+        .model({
+          id: a.string().required(),
+          title: a.string(),
+          author: a.string(),
+        })
+        .identifier(['id']),
+    });
+
+    try {
+      // @ts-expect-error
+      schema.renameModels(() => [['post', 'RenamedPost']]);
+    } catch (error) {
+      error;
+    }
   });
 });

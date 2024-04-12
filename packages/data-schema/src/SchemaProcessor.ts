@@ -1,4 +1,4 @@
-import type { InternalSchema } from './ModelSchema';
+import { type CustomPathData, type InternalSchema } from './ModelSchema';
 import {
   type ModelField,
   ModelFieldType,
@@ -26,6 +26,7 @@ import {
   JsResolverEntry,
   FunctionSchemaAccess,
   LambdaFunctionDefinition,
+  CustomSqlDataSourceStrategy,
 } from '@aws-amplify/data-schema-types';
 import type { InternalRef, RefType } from './RefType';
 import type { EnumType } from './EnumType';
@@ -40,7 +41,7 @@ import {
   getHandlerData,
   type HandlerType,
   type CustomHandler,
-  type CustomHandlerData,
+  type SqlReferenceHandler,
   FunctionHandler,
 } from './Handler';
 import * as os from 'os';
@@ -252,7 +253,7 @@ function refFieldToGql(fieldDef: RefFieldDef): string {
 
 function transformFunctionHandler(
   handlers: FunctionHandler[],
-  callSignature: string,
+  functionFieldName: string,
 ): {
   gqlHandlerContent: string;
   lambdaFunctionDefinition: LambdaFunctionDefinition;
@@ -266,15 +267,13 @@ function transformFunctionHandler(
     if (typeof handlerData === 'string') {
       gqlHandlerContent += `@function(name: "${handlerData}") `;
     } else if (typeof handlerData.getInstance === 'function') {
-      const fnBaseName = `Fn${capitalize(callSignature)}`;
-      const fnNameSuffix = idx === 0 ? '' : `${idx + 1}`;
-      const fnName = fnBaseName + fnNameSuffix;
+      const fnName = `Fn${capitalize(functionFieldName)}${idx === 0 ? '' : `${idx + 1}`}`;
 
       lambdaFunctionDefinition[fnName] = handlerData;
       gqlHandlerContent += `@function(name: "${fnName}") `;
     } else {
       throw new Error(
-        `Invalid value specified for ${callSignature} handler.function(). Expected: defineFunction or string.`,
+        `Invalid value specified for ${functionFieldName} handler.function(). Expected: defineFunction or string.`,
       );
     }
   });
@@ -293,6 +292,7 @@ function customOperationToGql(
   gqlField: string;
   models: [string, any][];
   lambdaFunctionDefinition: LambdaFunctionDefinition;
+  customSqlDataSourceStrategy: CustomSqlDataSourceStrategy | undefined;
 } {
   const {
     arguments: fieldArgs,
@@ -377,11 +377,12 @@ function customOperationToGql(
 
   let gqlHandlerContent = '';
   let lambdaFunctionDefinition: LambdaFunctionDefinition = {};
+  let customSqlDataSourceStrategy: CustomSqlDataSourceStrategy | undefined;
 
   if (isFunctionHandler(handlers)) {
     ({ gqlHandlerContent, lambdaFunctionDefinition } = transformFunctionHandler(
       handlers,
-      callSignature,
+      typeName,
     ));
   } else if (functionRef) {
     gqlHandlerContent = `@function(name: "${functionRef}") `;
@@ -389,8 +390,24 @@ function customOperationToGql(
     gqlHandlerContent = `@sql(statement: ${escapeGraphQlString(
       String(getHandlerData(handler)),
     )}) `;
-  } else if (databaseType === 'sql' && handler && brand === 'sqlReference') {
-    gqlHandlerContent = `@sql(reference: "${getHandlerData(handler)}") `;
+    customSqlDataSourceStrategy = {
+      typeName: opType as `Query` | `Mutation`,
+      fieldName: typeName,
+    };
+  } else if (isSqlReferenceHandler(handlers)) {
+    const handlerData = getHandlerData(handlers[0]);
+    const entry = resolveEntryPath(
+      handlerData,
+      'Could not determine import path to construct absolute code path for sql reference handler. Consider using an absolute path instead.',
+    );
+    const reference = typeof entry === 'string' ? entry : entry.relativePath;
+
+    customSqlDataSourceStrategy = {
+      typeName: opType as `Query` | `Mutation`,
+      fieldName: typeName,
+      entry,
+    };
+    gqlHandlerContent = `@sql(reference: "${reference}") `;
   }
 
   if (opType === 'Subscription') {
@@ -405,7 +422,8 @@ function customOperationToGql(
 
         if (type === 'Model') {
           return source.data.mutationOperations.map(
-            (op: string) => `${op}${refTarget}`,
+            // capitalize explicitly in case customer used lowercase model name
+            (op: string) => `${op}${capitalize(refTarget)}`,
           );
         }
       })
@@ -415,7 +433,12 @@ function customOperationToGql(
   }
 
   const gqlField = `${callSignature}: ${returnTypeName} ${gqlHandlerContent}${authString}`;
-  return { gqlField, models: implicitModels, lambdaFunctionDefinition };
+  return {
+    gqlField,
+    models: implicitModels,
+    lambdaFunctionDefinition,
+    customSqlDataSourceStrategy,
+  };
 }
 
 /**
@@ -1164,6 +1187,7 @@ const schemaPreprocessor = (
   jsFunctions: JsResolver[];
   functionSchemaAccess: FunctionSchemaAccess[];
   lambdaFunctions: LambdaFunctionDefinition;
+  customSqlDataSourceStrategies?: CustomSqlDataSourceStrategy[];
 } => {
   const gqlModels: string[] = [];
 
@@ -1172,7 +1196,8 @@ const schemaPreprocessor = (
   const customSubscriptions = [];
 
   const jsFunctions: JsResolver[] = [];
-  let lambdaFunctions: LambdaFunctionDefinition = {};
+  const lambdaFunctions: LambdaFunctionDefinition = {};
+  const customSqlDataSourceStrategies: CustomSqlDataSourceStrategy[] = [];
 
   const databaseType =
     schema.data.configuration.database.engine === 'dynamodb'
@@ -1182,7 +1207,7 @@ const schemaPreprocessor = (
   const staticSchema =
     schema.data.configuration.database.engine === 'dynamodb' ? false : true;
 
-  const fkFields = allImpliedFKs(schema);
+  const fkFields = staticSchema ? {} : allImpliedFKs(schema);
   const topLevelTypes = Object.entries(schema.data.types);
 
   const { schemaAuth, functionSchemaAccess } = extractFunctionSchemaAccess(
@@ -1255,6 +1280,7 @@ const schemaPreprocessor = (
           models,
           jsFunctionForField,
           lambdaFunctionDefinition,
+          customSqlDataSourceStrategy,
         } = transformCustomOperations(
           typeDef,
           typeName,
@@ -1263,12 +1289,16 @@ const schemaPreprocessor = (
           getRefType,
         );
 
-        lambdaFunctions = lambdaFunctionDefinition;
+        Object.assign(lambdaFunctions, lambdaFunctionDefinition);
 
         topLevelTypes.push(...models);
 
         if (jsFunctionForField) {
           jsFunctions.push(jsFunctionForField);
+        }
+
+        if (customSqlDataSourceStrategy) {
+          customSqlDataSourceStrategies.push(customSqlDataSourceStrategy);
         }
 
         switch (opType) {
@@ -1381,6 +1411,7 @@ const schemaPreprocessor = (
     jsFunctions,
     functionSchemaAccess,
     lambdaFunctions,
+    customSqlDataSourceStrategies,
   };
 };
 
@@ -1494,6 +1525,12 @@ function validateCustomOperations(
   }
 }
 
+const isSqlReferenceHandler = (
+  handler: HandlerType[] | null,
+): handler is [SqlReferenceHandler] => {
+  return Array.isArray(handler) && getBrand(handler[0]) === 'sqlReference';
+};
+
 const isCustomHandler = (
   handler: HandlerType[] | null,
 ): handler is CustomHandler[] => {
@@ -1537,25 +1574,22 @@ const sanitizeStackTrace = (stackTrace: string): string[] => {
 
 // copied from the defineFunction path resolution impl:
 // https://github.com/aws-amplify/amplify-backend/blob/main/packages/backend-function/src/get_caller_directory.ts
-const resolveCustomHandlerEntryPath = (
-  data: CustomHandlerData,
+const resolveEntryPath = (
+  data: CustomPathData,
+  errorMessage: string,
 ): JsResolverEntry => {
   if (path.isAbsolute(data.entry)) {
     return data.entry;
   }
 
-  const unresolvedImportLocationError = new Error(
-    'Could not determine import path to construct absolute code path for custom handler. Consider using an absolute path instead.',
-  );
-
   if (!data.stack) {
-    throw unresolvedImportLocationError;
+    throw new Error(errorMessage);
   }
 
   const stackTraceLines = sanitizeStackTrace(data.stack);
 
   if (stackTraceLines.length < 2) {
-    throw unresolvedImportLocationError;
+    throw new Error(errorMessage);
   }
 
   const stackTraceImportLine = stackTraceLines[1]; // the first entry is the file where the error was initialized (our code). The second entry is where the customer called our code which is what we are interested in
@@ -1574,7 +1608,10 @@ const handleCustom = (
 
     return {
       dataSource: normalizeDataSourceName(handlerData.dataSource),
-      entry: resolveCustomHandlerEntryPath(handlerData),
+      entry: resolveEntryPath(
+        handlerData,
+        'Could not determine import path to construct absolute code path for custom handler. Consider using an absolute path instead.',
+      ),
     };
   });
 
@@ -1605,7 +1642,12 @@ function transformCustomOperations(
 
   const isCustom = Boolean(jsFunctionForField);
 
-  const { gqlField, models, lambdaFunctionDefinition } = customOperationToGql(
+  const {
+    gqlField,
+    models,
+    lambdaFunctionDefinition,
+    customSqlDataSourceStrategy,
+  } = customOperationToGql(
     typeName,
     typeDef,
     authRules,
@@ -1614,7 +1656,13 @@ function transformCustomOperations(
     getRefType,
   );
 
-  return { gqlField, models, jsFunctionForField, lambdaFunctionDefinition };
+  return {
+    gqlField,
+    models,
+    jsFunctionForField,
+    lambdaFunctionDefinition,
+    customSqlDataSourceStrategy,
+  };
 }
 
 function generateCustomOperationTypes({
@@ -1647,8 +1695,13 @@ function generateCustomOperationTypes({
 export function processSchema(arg: {
   schema: InternalSchema;
 }): DerivedApiDefinition {
-  const { schema, jsFunctions, functionSchemaAccess, lambdaFunctions } =
-    schemaPreprocessor(arg.schema);
+  const {
+    schema,
+    jsFunctions,
+    functionSchemaAccess,
+    lambdaFunctions,
+    customSqlDataSourceStrategies,
+  } = schemaPreprocessor(arg.schema);
 
   return {
     schema,
@@ -1656,5 +1709,6 @@ export function processSchema(arg: {
     jsFunctions,
     functionSchemaAccess,
     lambdaFunctions,
+    customSqlDataSourceStrategies,
   };
 }

@@ -1,5 +1,51 @@
 # @aws-amplify/data-schema
 
+## 0.14.13
+
+### Patch Changes
+
+- f106212: fix: only the last function handler can be linked as data source
+
+## 0.14.12
+
+### Patch Changes
+
+- 05915ab: enable model rename for SQL schemas
+
+## 0.14.11
+
+### Patch Changes
+
+- 14a1951: fix: Change interface to move schema combination processing and expose rds config
+- Updated dependencies [14a1951]
+  - @aws-amplify/data-schema-types@0.7.16
+
+## 0.14.10
+
+### Patch Changes
+
+- 9dfc6a9: feat: add .relationships() modifiers for RDSSchema
+
+## 0.14.9
+
+### Patch Changes
+
+- 62a26bc: fix: Change interface to move schema combination processing and expose rds config
+- Updated dependencies [62a26bc]
+  - @aws-amplify/data-schema-types@0.7.15
+
+## 0.14.8
+
+### Patch Changes
+
+- 08e47d1: fix: rds custom operations are missing from resolved types
+
+## 0.14.7
+
+### Patch Changes
+
+- 96f3ee4: fix: field with field auth cannot be used as sort key of index
+
 ## 0.14.6
 
 ### Patch Changes

@@ -1,7 +1,7 @@
-import { print, parse, DocumentNode, TypeNode } from 'graphql';
+import { GraphQLError, print, parse, DocumentNode, TypeNode } from 'graphql';
 import { generateModels } from '@aws-amplify/graphql-generator';
 import { generateClient as actualGenerateClient } from 'aws-amplify/api';
-import { GraphQLAPI } from '@aws-amplify/api-graphql'; // eslint-disable-line
+import { GraphQLAPI, GraphQLResult } from '@aws-amplify/api-graphql'; // eslint-disable-line
 import { Observable, Subscriber } from 'rxjs'; // eslint-disable-line
 import { Amplify } from 'aws-amplify';
 
@@ -20,9 +20,20 @@ export function mockApiResponse<T>(client: T, value: any) {
   });
 }
 
-export type GraphQLResult = {
-  data: null | Record<string, any>;
-  errors?: null | Record<string, any>;
+/**
+ * Represents current runtime behavior: passes through `data` as-is, but wraps
+ * `error` in a `GraphQLError`. Once the runtime has been updated to handle
+ * errors correctly, this function will be updated to flatten the `data`
+ * response accordingly.
+ */
+const createMockGraphQLResultWithError = <T>(
+  data: any,
+  error: Error,
+): GraphQLResult<T> => {
+  return {
+    data,
+    errors: [new GraphQLError(error.message, null, null, null, null, error)],
+  };
 };
 
 /**
@@ -70,14 +81,24 @@ export function mockedGenerateClient(
 ) {
   const subs = {} as Record<string, Subscriber<any>>;
 
-  function generateClient<T extends Record<any, any>>() {
+  function generateClient<T extends Record<any, any>>(config?: any) {
     const client = actualGenerateClient<T>();
     _graphqlspy.mockImplementation(async () => {
       const result = responses.shift();
       if (typeof result === 'function') {
         return result();
       } else {
-        return result;
+        if (
+          result &&
+          Array.isArray(result.errors) &&
+          result.errors.length > 0
+        ) {
+          throw createMockGraphQLResultWithError(
+            result.data,
+            new Error(result.errors[0].message),
+          );
+        }
+        return result as unknown as GraphQLResult<T>;
       }
     });
     _graphqlsubspy.mockImplementation((amplify: any, options: any) => {

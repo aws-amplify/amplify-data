@@ -2,7 +2,9 @@ import { a, ClientSchema } from '@aws-amplify/data-schema';
 import { __modelMeta__ } from '@aws-amplify/data-schema-types';
 import { configure } from '@aws-amplify/data-schema/internals';
 
-const schema = a.schema({
+const schema = configure({
+  database: { engine: 'mysql', connectionUri: {} as any },
+}).schema({
   Post: a.model({
     title: a.string().required(),
     description: a.string(),
@@ -15,4 +17,8 @@ const schema = a.schema({
   }),
 });
 
-export type Schema = ClientSchema<typeof schema>;
+const s2 = schema.addMutations({
+  myMutation: a.mutation().returns(a.ref('Post')),
+});
+
+export type Schema = ClientSchema<typeof s2>;

@@ -140,7 +140,34 @@ Custom headers that can be passed either to the client or to individual model op
 </td></tr>
 <tr><td>
 
+[CustomSqlDataSourceStrategy](./data-schema-types.customsqldatasourcestrategy.md)
+
+
+</td><td>
+
+
+</td></tr>
+<tr><td>
+
 [CustomSubscriptions](./data-schema-types.customsubscriptions.md)
+
+
+</td><td>
+
+
+</td></tr>
+<tr><td>
+
+[DataSourceConfiguration](./data-schema-types.datasourceconfiguration.md)
+
+
+</td><td>
+
+
+</td></tr>
+<tr><td>
+
+[DatasourceEngine](./data-schema-types.datasourceengine.md)
 
 
 </td><td>
@@ -168,6 +195,15 @@ Custom headers that can be passed either to the client or to individual model op
 <tr><td>
 
 [DefineFunction](./data-schema-types.definefunction.md)
+
+
+</td><td>
+
+
+</td></tr>
+<tr><td>
+
+[DerivedCombinedSchema](./data-schema-types.derivedcombinedschema.md)
 
 
 </td><td>
@@ -443,6 +479,15 @@ Request options that are passed to custom header functions. `method` and `header
 </td></tr>
 <tr><td>
 
+[SchemaConfiguration](./data-schema-types.schemaconfiguration.md)
+
+
+</td><td>
+
+
+</td></tr>
+<tr><td>
+
 [SecondaryIndexIrShape](./data-schema-types.secondaryindexirshape.md)
 
 
@@ -475,6 +520,15 @@ Replaces the value of a key in a complex generic type param
 <tr><td>
 
 [SingularReturnValue](./data-schema-types.singularreturnvalue.md)
+
+
+</td><td>
+
+
+</td></tr>
+<tr><td>
+
+[SqlStatementFolderEntry](./data-schema-types.sqlstatementfolderentry.md)
 
 
 </td><td>

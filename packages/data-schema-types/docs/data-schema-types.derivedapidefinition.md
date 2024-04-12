@@ -39,6 +39,27 @@ Description
 </th></tr></thead>
 <tbody><tr><td>
 
+[customSqlDataSourceStrategies?](./data-schema-types.derivedapidefinition.customsqldatasourcestrategies.md)
+
+
+</td><td>
+
+`readonly`
+
+
+</td><td>
+
+[CustomSqlDataSourceStrategy](./data-schema-types.customsqldatasourcestrategy.md)<!-- -->\[\]
+
+
+</td><td>
+
+_(Optional)_
+
+
+</td></tr>
+<tr><td>
+
 [functionSchemaAccess](./data-schema-types.derivedapidefinition.functionschemaaccess.md)
 
 

@@ -1,6 +1,10 @@
 import type {
   DerivedApiDefinition,
   SetTypeSubArg,
+  SchemaConfiguration,
+  DataSourceConfiguration,
+  DatasourceEngine,
+  UnionToIntersection,
 } from '@aws-amplify/data-schema-types';
 import {
   type ModelType,
@@ -8,6 +12,7 @@ import {
   type InternalModel,
   isSchemaModelType,
   SchemaModelType,
+  AddRelationshipFieldsToModelTypeFields,
 } from './ModelType';
 import type { EnumType, EnumTypeParamShape } from './EnumType';
 import type { CustomType, CustomTypeParamShape } from './CustomType';
@@ -22,6 +27,10 @@ import type {
 import { processSchema } from './SchemaProcessor';
 import { SchemaAuthorization } from './Authorization';
 import { Brand, brand } from './util';
+import {
+  ModelRelationalField,
+  ModelRelationalFieldParamShape,
+} from './ModelRelationalField';
 
 export const rdsSchemaBrandName = 'RDSSchema';
 export const rdsSchemaBrand = brand(rdsSchemaBrandName);
@@ -43,69 +52,33 @@ type InternalSchemaModels = Record<
   InternalModel | EnumType<any> | CustomType<any> | InternalCustom
 >;
 
-/**
- * Importing the full objects from @aws-amplify/plugin-types
- * more than doubles dev env runtime. This type replacement
- * will contain the content for config without the negative
- * side-effects. We may need to re-approach if customers interact
- * with these programmatically to avoid forcing narrowing.
- */
-type BackendSecret = {
-  resolve: (scope: any, backendIdentifier: any) => any;
-  resolvePath: (backendIdentifier: any) => any;
-};
-
-export type DatasourceEngine = 'mysql' | 'postgresql' | 'dynamodb';
-
-type SubnetAZ = {
-  subnetId: string;
-  availabilityZone: string;
-};
-
-type VpcConfig = {
-  vpcId: string;
-  securityGroupIds: string[];
-  subnetAvailabilityZones: SubnetAZ[];
-};
-
-type DatasourceConfig<DE extends DatasourceEngine> = DE extends 'dynamodb'
-  ? { engine: DE }
-  : {
-      engine: DE;
-      connectionUri: BackendSecret;
-      vpcConfig?: VpcConfig;
-    };
-
-export type SchemaConfig<
-  DE extends DatasourceEngine,
-  DC extends DatasourceConfig<DE>,
-> = {
-  database: DC;
-};
-
 export type ModelSchemaParamShape = {
   types: ModelSchemaContents;
   authorization: SchemaAuthorization<any, any, any>[];
-  configuration: SchemaConfig<any, any>;
+  configuration: SchemaConfiguration<any, any>;
 };
 
-export type RDSModelSchemaParamShape = ModelSchemaParamShape & {
-  setSqlStatementFolderPath?: string;
-};
+export type RDSModelSchemaParamShape = ModelSchemaParamShape;
 
 export type InternalSchema = {
   data: {
     types: InternalSchemaModels;
     authorization: SchemaAuthorization<any, any, any>[];
-    configuration: SchemaConfig<any, any>;
+    configuration: SchemaConfiguration<any, any>;
   };
 };
 
-export type BaseSchema<T extends ModelSchemaParamShape> = {
+export type BaseSchema<
+  T extends ModelSchemaParamShape,
+  IsRDS extends boolean = false,
+> = {
   data: T;
   models: {
-    [TypeKey in keyof T['types']]: T['types'][TypeKey] extends ModelType<ModelTypeParamShape>
-      ? SchemaModelType<T['types'][TypeKey]>
+    [TypeKey in keyof T['types']]: T['types'][TypeKey] extends ModelType<
+      ModelTypeParamShape,
+      never | 'identifier'
+    >
+      ? SchemaModelType<T['types'][TypeKey], TypeKey & string, IsRDS>
       : never;
   };
   transform: () => DerivedApiDefinition;
@@ -116,7 +89,7 @@ export type GenericModelSchema<T extends ModelSchemaParamShape> =
 
 export type ModelSchema<
   T extends ModelSchemaParamShape,
-  UsedMethods extends 'authorization' = never,
+  UsedMethods extends 'authorization' | 'addRelationships' = never,
 > = Omit<
   {
     authorization: <AuthRules extends SchemaAuthorization<any, any, any>>(
@@ -132,41 +105,118 @@ export type ModelSchema<
   DDBSchemaBrand;
 
 type RDSModelSchemaFunctions =
-  | 'setSqlStatementFolderPath'
   | 'addQueries'
   | 'addMutations'
   | 'addSubscriptions'
-  | 'authorization';
+  | 'authorization'
+  | 'relationships'
+  | 'setAuthorization'
+  | 'renameModelFields'
+  | 'renameModels';
 
 export type RDSModelSchema<
   T extends RDSModelSchemaParamShape,
   UsedMethods extends RDSModelSchemaFunctions = never,
+  RelationshipTemplate extends Record<
+    string,
+    ModelRelationalField<ModelRelationalFieldParamShape, string, any, any>
+  > = Record<
+    string,
+    ModelRelationalField<ModelRelationalFieldParamShape, string, any, any>
+  >,
 > = Omit<
   {
-    setSqlStatementFolderPath: (
-      path: string,
-    ) => RDSModelSchema<T, UsedMethods | 'setSqlStatementFolderPath'>;
-    addQueries: (
-      types: Record<string, QueryCustomOperation>,
-    ) => RDSModelSchema<T, UsedMethods | 'addQueries'>;
-    addMutations: (
-      types: Record<string, MutationCustomOperation>,
-    ) => RDSModelSchema<T, UsedMethods | 'addMutations'>;
-    addSubscriptions: (
-      types: Record<string, SubscriptionCustomOperation>,
-    ) => RDSModelSchema<T, UsedMethods | 'addSubscriptions'>;
+    addQueries: <Queries extends Record<string, QueryCustomOperation>>(
+      types: Queries,
+    ) => RDSModelSchema<
+      SetTypeSubArg<T, 'types', T['types'] & Queries>,
+      UsedMethods | 'addQueries'
+    >;
+    addMutations: <Mutations extends Record<string, MutationCustomOperation>>(
+      types: Mutations,
+    ) => RDSModelSchema<
+      SetTypeSubArg<T, 'types', T['types'] & Mutations>,
+      UsedMethods | 'addMutations'
+    >;
+    addSubscriptions: <
+      Subscriptions extends Record<string, SubscriptionCustomOperation>,
+    >(
+      types: Subscriptions,
+    ) => RDSModelSchema<
+      SetTypeSubArg<T, 'types', T['types'] & Subscriptions>,
+      UsedMethods | 'addSubscriptions'
+    >;
+    // TODO: hide this, since SQL schema auth is configured via .setAuthorization?
     authorization: <AuthRules extends SchemaAuthorization<any, any, any>>(
       auth: AuthRules[],
     ) => RDSModelSchema<
       SetTypeSubArg<T, 'authorization', AuthRules[]>,
       UsedMethods | 'authorization'
-    > &
-      RDSSchemaBrand;
+    >;
+    setAuthorization: (
+      callback: (
+        models: BaseSchema<T, true>['models'],
+        schema: RDSModelSchema<T, UsedMethods | 'setAuthorization'>,
+      ) => void,
+    ) => RDSModelSchema<T>;
+    relationships: <
+      Relationships extends ReadonlyArray<
+        Partial<Record<keyof T['types'], RelationshipTemplate>>
+      >,
+    >(
+      callback: (models: BaseSchema<T, true>['models']) => Relationships,
+    ) => RDSModelSchema<
+      UnionToIntersection<Relationships[number]> extends infer RelationshipsDefs
+        ? RelationshipsDefs extends Record<string, RelationshipTemplate>
+          ? SetTypeSubArg<
+              T,
+              'types',
+              {
+                [ModelName in keyof T['types']]: ModelName extends keyof RelationshipsDefs
+                  ? AddRelationshipFieldsToModelTypeFields<
+                      T['types'][ModelName],
+                      RelationshipsDefs[ModelName]
+                    >
+                  : T['types'][ModelName];
+              }
+            >
+          : T
+        : T,
+      UsedMethods | 'relationships'
+    >;
+    renameModels: <
+      NewName extends string,
+      CurName extends string = keyof BaseSchema<T>['models'] & string,
+      const ChangeLog extends readonly [CurName, NewName][] = [],
+    >(
+      callback: () => ChangeLog,
+    ) => RDSModelSchema<
+      SetTypeSubArg<T, 'types', RenameModelArr<ChangeLog, T['types']>>,
+      UsedMethods | 'renameModels'
+    >;
   },
   UsedMethods
 > &
-  BaseSchema<T> &
+  BaseSchema<T, true> &
   RDSSchemaBrand;
+
+type RenameModel<
+  CurName extends string,
+  NewName extends string,
+  Types extends ModelSchemaContents,
+> = {
+  [Type in keyof Types as Type extends CurName ? NewName : Type]: Types[Type];
+};
+
+type RenameModelArr<
+  ChangeLog extends readonly [string, string][],
+  Types extends ModelSchemaContents,
+> = ChangeLog extends readonly [
+  infer CurPair extends [string, string],
+  ...infer Rest extends readonly [string, string][],
+]
+  ? RenameModelArr<Rest, RenameModel<CurPair[0], CurPair[1], Types>>
+  : Types;
 
 /**
  * Amplify API Next Model Schema shape
@@ -208,15 +258,17 @@ export const isModelSchema = (
 
 function _rdsSchema<
   T extends RDSModelSchemaParamShape,
-  DSC extends SchemaConfig<any, any>,
+  DSC extends SchemaConfiguration<any, any>,
 >(types: T['types'], config: DSC): RDSModelSchema<T> {
   const data: RDSModelSchemaParamShape = {
     types,
     authorization: [],
     configuration: config,
   };
+  const models = filterSchemaModelTypes(data.types) as any;
   return {
     data,
+    models,
     transform(): DerivedApiDefinition {
       const internalSchema: InternalSchema = { data } as InternalSchema;
 
@@ -225,11 +277,6 @@ function _rdsSchema<
     authorization(rules: any): any {
       this.data.authorization = rules;
       const { authorization: _, ...rest } = this;
-      return rest;
-    },
-    setSqlStatementFolderPath(path: string): any {
-      this.data.setSqlStatementFolderPath = path;
-      const { setSqlStatementFolderPath: _, ...rest } = this;
       return rest;
     },
     addQueries(types: Record<string, QueryCustomOperation>): any {
@@ -247,13 +294,56 @@ function _rdsSchema<
       const { addSubscriptions: _, ...rest } = this;
       return rest;
     },
+    setAuthorization(callback) {
+      callback(models, this);
+      const { setAuthorization: _, ...rest } = this;
+      return rest;
+    },
+    relationships(callback): any {
+      const { relationships: _, ...rest } = this;
+      // The relationships are added via `models.<Model>.addRelationships`
+      // modifiers that's being called within the callback. They are modifying
+      // by references on each model, so there is not anything else to be done
+      // here.
+      callback(models);
+      return rest;
+    },
+    renameModels(callback): any {
+      const { renameModels: _, ...rest } = this;
+      // returns an array of tuples [curName, newName]
+      const changeLog = callback();
+
+      changeLog.forEach(([curName, newName]) => {
+        const currentType = data.types[curName];
+
+        if (currentType === undefined) {
+          throw new Error(
+            `Invalid renameModels call. ${curName} is not defined in the schema`,
+          );
+        }
+
+        if (typeof newName !== 'string' || newName.length < 1) {
+          throw new Error(
+            `Invalid renameModels call. New name must be a non-empty string. Received: "${newName}"`,
+          );
+        }
+
+        models[newName] = currentType;
+        data.types[newName] = currentType;
+
+        delete models[curName];
+        delete data.types[curName];
+      });
+
+      return rest;
+    },
     ...rdsSchemaBrand,
   } as RDSModelSchema<T>;
 }
 
 function _ddbSchema<
   T extends ModelSchemaParamShape,
-  DSC extends SchemaConfig<any, any>,
+  DSC extends SchemaConfiguration<any, any>,
 >(types: T['types'], config: DSC) {
   const data: ModelSchemaParamShape = {
     types,
@@ -282,10 +372,14 @@ type SchemaReturnType<
   Types extends ModelSchemaContents,
 > = DE extends 'dynamodb'
   ? ModelSchema<{ types: Types; authorization: []; configuration: any }>
-  : RDSModelSchema<{ types: Types; authorization: []; configuration: any }>;
+  : RDSModelSchema<{
+      types: Types;
+      authorization: [];
+      configuration: any;
+    }>;
 
 function bindConfigToSchema<DE extends DatasourceEngine>(
-  config: SchemaConfig<DE, DatasourceConfig<DE>>,
+  config: SchemaConfiguration<DE, DataSourceConfiguration<DE>>,
 ): <Types extends ModelSchemaContents>(
   types: Types,
 ) => SchemaReturnType<DE, Types> {
@@ -315,7 +409,7 @@ export const schema = bindConfigToSchema({ database: { engine: 'dynamodb' } });
  * @returns
  */
 export function configure<DE extends DatasourceEngine>(
-  config: SchemaConfig<DE, DatasourceConfig<DE>>,
+  config: SchemaConfiguration<DE, DataSourceConfiguration<DE>>,
 ): {
   schema: <Types extends ModelSchemaContents>(
     types: Types,
@@ -325,3 +419,17 @@ export function configure<DE extends DatasourceEngine>(
     schema: bindConfigToSchema(config),
   };
 }
+
+export function isCustomPathData(obj: any): obj is CustomPathData {
+  return (
+    'stack' in obj &&
+    (typeof obj.stack === 'undefined' || typeof obj.stack === 'string') &&
+    'entry' in obj &&
+    typeof obj.entry === 'string'
+  );
+}
+
+export type CustomPathData = {
+  stack: string | undefined;
+  entry: string;
+};

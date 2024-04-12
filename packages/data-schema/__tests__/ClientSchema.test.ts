@@ -5,6 +5,8 @@ import {
   AuthMode,
   CustomHeaders,
   SingularReturnValue,
+  DerivedCombinedSchema,
+  DerivedModelSchema,
   __modelMeta__,
 } from '../src/runtime';
 import { configure } from '../src/internals';
@@ -25,6 +27,16 @@ it('should not produce static type errors', async () => {
 });
 
 describe('schema generation', () => {
+  test('matches shared backend type', () => {
+    const _schema: DerivedModelSchema = a.schema({
+      A: a
+        .model({
+          field: a.string(),
+        })
+        .authorization([a.allow.public()]),
+    });
+  });
+
   test('with relationships', () => {
     const schema = a
       .schema({
@@ -94,84 +106,8 @@ describe('schema generation', () => {
             'CPKReciprocalHasManyChildIdFieldA',
             'CPKReciprocalHasManyChildIdFieldB',
           ]),
-        ReferencedBoringParent: a.model({
-          childNormal: a
-            .hasOne('ReferencedBoringChild')
-            .references(['bcRefId']),
-          childReciprocal: a
-            .hasOne('ReferencedBoringReciprocalChild')
-            .references(['brcRefId']),
-          childHasManyNormal: a
-            .hasMany('ReferencedBoringHasManyChild')
-            .references(['bhmRefId']),
-          childHasManyReciprocal: a
-            .hasMany('ReferencedReciprocalHasManyChild')
-            .references(['rrhmRefId']),
-        }),
-        ReferencedBoringChild: a.model({
-          bcRefId: a.string(),
-          value: a.string(),
-        }),
-        ReferencedBoringReciprocalChild: a.model({
-          brcRefId: a.string(),
-          parent: a
-            .belongsTo('ReferencedBoringParent')
-            .references(['brcRefId']),
-          value: a.string(),
-        }),
-        ReferencedBoringHasManyChild: a.model({
-          bhmRefId: a.string(),
-          value: a.string(),
-        }),
-        ReferencedReciprocalHasManyChild: a.model({
-          rrhmRefId: a.string(),
-          value: a.string(),
-          parent: a
-            .belongsTo('ReferencedBoringParent')
-            .references(['rrhmRefId']),
-        }),
-        LateReferencedBoringParent: a.model({}),
-        LateReferencedBoringChild: a.model({
-          bcRefId: a.string(),
-          value: a.string(),
-        }),
-        LateReferencedBoringReciprocalChild: a.model({
-          brcRefId: a.string(),
-          value: a.string(),
-        }),
-        LateReferencedBoringHasManyChild: a.model({
-          bhmRefId: a.string(),
-          value: a.string(),
-        }),
-        LateReferencedReciprocalHasManyChild: a.model({
-          rrhmRefId: a.string(),
-          value: a.string(),
-        }),
       })
       .authorization([a.allow.public()]);
-
-    schema.models.LateReferencedBoringParent.addRelationships({
-      childNormal: a
-        .hasOne('LateReferencedBoringChild')
-        .references(['bcRefId']),
-      childReciprocal: a
-        .hasOne('LateReferencedBoringReciprocalChild')
-        .references(['brcRefId']),
-      childHasManyNormal: a
-        .hasMany('LateReferencedBoringHasManyChild')
-        .references(['bhmRefId']),
-      childHasManyReciprocal: a
-        .hasMany('LateReferencedReciprocalHasManyChild')
-        .references(['rrhmRefId']),
-    });
-
-    schema.models.LateReferencedBoringReciprocalChild.addRelationships({
-      parent: a.belongsTo('ReferencedBoringParent').references(['brcRefId']),
-    });
-
-    schema.models.LateReferencedReciprocalHasManyChild.addRelationships({
-      parent: a.belongsTo('ReferencedBoringParent').references(['rrhmRefId']),
-    });
 
     expect(schema.transform().schema).toMatchSnapshot();
   });
@@ -662,14 +598,20 @@ describe('custom operations', () => {
       const schema = aSql.schema({
         A: a
           .model({
+            id: a.string().required(),
             field: a.string(),
           })
-          .authorization([a.allow.public()]),
+          .identifier(['id']),
       });
+
+      schema.setAuthorization((models) => [
+        models.A.authorization([a.allow.public()]),
+      ]);
 
       type Actual_A = Prettify<ClientSchema<typeof schema>['A']>;
 
       type Expected_A = {
+        id: string;
         field?: string | null | undefined;
         // doesn't imply id field
         // doesn't imply timestamp fields
@@ -682,13 +624,15 @@ describe('custom operations', () => {
     });
 
     test('allows owner', () => {
-      const schema = aSql
-        .schema({
-          A: a.model({
-            field: a.string(),
-          }),
-        })
-        .authorization([a.allow.owner()]);
+      const schema = aSql.schema({
+        A: a.model({
+          field: a.string(),
+        }),
+      });
+
+      schema.setAuthorization((models) => [
+        models.A.authorization([a.allow.owner()]),
+      ]);
 
       type Actual_A = Prettify<ClientSchema<typeof schema>['A']>;
 
@@ -707,16 +651,18 @@ describe('custom operations', () => {
     });
 
     test('allows id to be specified', () => {
-      const schema = aSql
-        .schema({
-          A: a
-            .model({
-              idNum: a.integer().required(),
-              field: a.string(),
-            })
-            .identifier(['idNum']),
-        })
-        .authorization([a.allow.owner()]);
+      const schema = aSql.schema({
+        A: a
+          .model({
+            idNum: a.integer().required(),
+            field: a.string(),
+          })
+          .identifier(['idNum']),
+      });
+
+      schema.setAuthorization((_, schema) => [
+        schema.authorization([a.allow.owner()]),
+      ]);
 
       type Actual_A = Prettify<ClientSchema<typeof schema>['A']>;
 
@@ -735,24 +681,26 @@ describe('custom operations', () => {
     });
 
     test('related models', () => {
-      const schema = aSql
-        .schema({
-          B: a
-            .model({
-              id: a.string().required(),
-              title: a.string(),
-            })
-            .identifier(['id']),
-          A: a
-            .model({
-              idNum: a.integer().required(),
-              field: a.string(),
-              bId: a.string(),
-              b: a.belongsTo('B').references(['bId']),
-            })
-            .identifier(['idNum']),
-        })
-        .authorization([a.allow.owner()]);
+      const schema = aSql.schema({
+        B: a
+          .model({
+            id: a.string().required(),
+            title: a.string(),
+          })
+          .identifier(['id']),
+        A: a
+          .model({
+            idNum: a.integer().required(),
+            field: a.string(),
+            bId: a.string(),
+            b: a.belongsTo('B').references(['bId']),
+          })
+          .identifier(['idNum']),
+      });
+
+      schema.setAuthorization((_, schema) => [
+        schema.authorization([a.allow.owner()]),
+      ]);
 
       type Actual_A = Prettify<ClientSchema<typeof schema>['A']>;
 
@@ -789,23 +737,25 @@ describe('custom operations', () => {
     });
 
     test('related models with missing foreign keys', () => {
-      const schema = aSql
-        .schema({
-          B: a
-            .model({
-              id: a.string().required(),
-              title: a.string(),
-            })
-            .identifier(['id']),
-          A: a
-            .model({
-              idNum: a.integer().required(),
-              field: a.string(),
-              b: a.belongsTo('B').references(['bId']),
-            })
-            .identifier(['idNum']),
-        })
-        .authorization([a.allow.public()]);
+      const schema = aSql.schema({
+        B: a
+          .model({
+            id: a.string().required(),
+            title: a.string(),
+          })
+          .identifier(['id']),
+        A: a
+          .model({
+            idNum: a.integer().required(),
+            field: a.string(),
+            b: a.belongsTo('B').references(['bId']),
+          })
+          .identifier(['idNum']),
+      });
+
+      schema.setAuthorization((_, schema) => [
+        schema.authorization([a.allow.owner()]),
+      ]);
 
       type Actual_A = Prettify<ClientSchema<typeof schema>['A']>;
 
@@ -836,12 +786,142 @@ describe('custom operations', () => {
       type test = Expect<Equal<Actual_A, Expected_A>>;
     });
 
+    test('sql schema field-level auth', () => {
+      const sqlSchema = configure({ database: datasourceConfigMySQL }).schema({
+        post: a
+          .model({
+            id: a.string().required(),
+            title: a.string(),
+            author: a.string(),
+          })
+          .identifier(['id']),
+      });
+
+      sqlSchema.setAuthorization((models) => [
+        models.post.authorization([a.allow.public()]),
+        models.post.fields.id.authorization([a.allow.private()]),
+        models.post.fields.title.authorization([a.allow.public()]),
+        models.post.fields.author.authorization([
+          a.allow.owner().inField('author'),
+        ]),
+      ]);
+
+      const graphql = sqlSchema.transform().schema;
+      expect(graphql).toMatchSnapshot();
+    });
+
+    test('sql schema rename', () => {
+      const sqlSchema = configure({ database: datasourceConfigMySQL }).schema({
+        post: a
+          .model({
+            id: a.string().required(),
+            title: a.string(),
+            author: a.string(),
+          })
+          .identifier(['id']),
+      });
+
+      const modified = sqlSchema
+        .renameModels(() => [['post', 'RenamedPost']])
+        .setAuthorization((models) =>
+          models.RenamedPost.authorization([a.allow.public()]),
+        );
+
+      const graphql = modified.transform().schema;
+      expect(graphql).toMatchSnapshot();
+    });
+
+    test('sql schema rename multiple models', () => {
+      const sqlSchema = configure({ database: datasourceConfigMySQL }).schema({
+        post: a
+          .model({
+            id: a.string().required(),
+            title: a.string(),
+            author: a.string(),
+          })
+          .identifier(['id']),
+        comment: a
+          .model({
+            id: a.string().required(),
+            title: a.string(),
+            author: a.string(),
+          })
+          .identifier(['id']),
+        tags: a
+          .model({
+            id: a.string().required(),
+            title: a.string(),
+            author: a.string(),
+          })
+          .identifier(['id']),
+      });
+
+      const modified = sqlSchema
+        .renameModels(() => [
+          ['post', 'RenamedPost'],
+          ['comment', 'RenamedComment'],
+        ])
+        .setAuthorization((models) => [
+          models.RenamedPost.authorization([a.allow.public()]),
+          models.RenamedComment.authorization([a.allow.public()]),
+          // tags is unchanged, since we didn't rename it
+          models.tags.authorization([a.allow.public()]),
+        ]);
+
+      const graphql = modified.transform().schema;
+      expect(graphql).toMatchSnapshot();
+
+      // ensure old models are no longer accessible
+      // @ts-expect-error
+      expect(modified.models.post).toBeUndefined();
+      // @ts-expect-error
+      expect(modified.models.comment).toBeUndefined();
+    });
+
+    test('sql schema rename new model name validation', () => {
+      const sqlSchema = configure({ database: datasourceConfigMySQL }).schema({
+        post: a
+          .model({
+            id: a.string().required(),
+            title: a.string(),
+            author: a.string(),
+          })
+          .identifier(['id']),
+      });
+
+      expect(() => sqlSchema.renameModels(() => [['post', '']])).toThrowError(
+        'Invalid renameModels call. New name must be a non-empty string. Received: ""',
+      );
+    });
+
+    test('sql schema rename nonexistent model validation', () => {
+      const sqlSchema = configure({ database: datasourceConfigMySQL }).schema({
+        post: a
+          .model({
+            id: a.string().required(),
+            title: a.string(),
+            author: a.string(),
+          })
+          .identifier(['id']),
+      });
+
+      expect(() =>
+        // @ts-expect-error - the first element in the tuple is typed to keysof schema, so we get TS validation here as well
+        sqlSchema.renameModels(() => [['does-not-exist', 'RenamedPost']]),
+      ).toThrowError(
+        'Invalid renameModels call. does-not-exist is not defined in the schema',
+      );
+    });
+
     describe('custom operations', () => {
       test('custom query', () => {
-        const schema = aSql.schema({
+        const initial = aSql.schema({
           EchoResult: a.customType({
             resultContent: a.string(),
           }),
+        });
+
+        const schema = initial.addQueries({
           echo: a
             .query()
             .arguments({
@@ -876,6 +956,25 @@ describe('custom operations', () => {
     });
   });
   describe('for a.combine schema', () => {
+    test('matches shared backend type', () => {
+      const schemaA = a.schema({
+        A: a
+          .model({
+            field: a.string(),
+          })
+          .authorization([a.allow.public()]),
+      });
+
+      const schemaB = a.schema({
+        B: a
+          .model({
+            field: a.string(),
+          })
+          .authorization([a.allow.public()]),
+      });
+
+      const _schema: DerivedCombinedSchema = a.combine([schemaA, schemaB]);
+    });
     test('two schemas combine without issues', () => {
       const schemaA = a.schema({
         A: a
@@ -919,7 +1018,9 @@ describe('custom operations', () => {
 
       type testB = Expect<Equal<Actual_B, Expected_B>>;
 
-      const graphql = schema.transform().schema;
+      const graphql = schema.schemas
+        .map((schema) => schema.transform().schema)
+        .join('\n');
       expect(graphql).toMatchSnapshot();
     });
 
@@ -963,7 +1064,9 @@ describe('custom operations', () => {
 
       type testB = Expect<Equal<Actual_B, Expected_B>>;
 
-      const graphql = schema.transform().schema;
+      const graphql = schema.schemas
+        .map((schema) => schema.transform().schema)
+        .join('\n');
       expect(graphql).toMatchSnapshot();
     });
 
@@ -1032,7 +1135,9 @@ describe('custom operations', () => {
         Equal<ExpectedCustomOperations, ActualCustomOperations>
       >;
 
-      const graphql = schema.transform().schema;
+      const graphql = schema.schemas
+        .map((schema) => schema.transform().schema)
+        .join('\n');
       expect(graphql).toMatchSnapshot();
     });
 
@@ -1053,11 +1158,71 @@ describe('custom operations', () => {
           .authorization([a.allow.public()]),
       });
 
-      const schema = a.combine([schemaA, schemaB]);
-
-      expect(() => schema.transform()).toThrowError(
+      expect(() => a.combine([schemaA, schemaB])).toThrowError(
         'The schemas you are attempting to combine have a name collision. Please remove or rename DupTest.',
       );
+    });
+  });
+});
+
+describe('RDS Schema with sql statement references', () => {
+  const fakeSecret = () => ({}) as any;
+
+  const datasourceConfigMySQL = {
+    engine: 'mysql',
+    connectionUri: fakeSecret(),
+  } as const;
+
+  const aSql = configure({ database: datasourceConfigMySQL });
+
+  it('schema with full path sql reference', () => {
+    const rdsSchema = aSql
+      .schema({
+        widget: a.model({
+          title: a.string().required(),
+          someOwnerField: a.string(),
+        }),
+        callSql: a
+          .query()
+          .arguments({})
+          .returns(a.ref('widget'))
+          .handler(
+            a.handler.sqlReference(
+              '/full/path/to/sql/statement/directory/testReferenceName',
+            ),
+          ),
+      })
+      .authorization([a.allow.public()]);
+
+    expect(rdsSchema.transform()).toMatchSnapshot();
+  });
+
+  it('schema with relative path sql reference', () => {
+    const rdsSchema = aSql
+      .schema({
+        widget: a.model({
+          title: a.string().required(),
+          someOwnerField: a.string(),
+        }),
+        callSql: a
+          .query()
+          .arguments({})
+          .returns(a.ref('widget'))
+          .handler(a.handler.sqlReference('./testReferenceName')),
+      })
+      .authorization([a.allow.public()]);
+
+    const { customSqlDataSourceStrategies } = rdsSchema.transform();
+
+    expect(customSqlDataSourceStrategies).not.toBeUndefined();
+
+    expect(customSqlDataSourceStrategies![0]).toMatchObject({
+      typeName: 'Query',
+      fieldName: 'callSql',
+      entry: {
+        relativePath: './testReferenceName',
+        importLine: expect.stringContaining('__tests__'),
+      },
     });
   });
 });

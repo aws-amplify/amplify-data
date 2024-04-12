@@ -119,7 +119,7 @@ type InternalCombinedSchema<
   ClientSchemas extends [...any] = CombinedClientSchemas<Combined['schemas']>,
 > = SpreadTuple<{
   [I in keyof ClientSchemas]: I extends CombinedSchemaIndexesUnion
-    ? Exclude<ClientSchemas[I], typeof __modelMeta__>
+    ? Omit<ClientSchemas[I], typeof __modelMeta__>
     : never;
 }> & {
   [__modelMeta__]: SpreadTuple<{

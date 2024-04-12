@@ -13,6 +13,10 @@ test('secondaryIndexes input validation', () => {
         comments: a.hasMany('Comment'),
         location: a.customType({ lat: a.float(), long: a.float() }),
         status: a.ref('Status'),
+        fieldWithAuth: a
+          .string()
+          .required()
+          .authorization([a.allow.owner().to(['read'])]),
       })
       .secondaryIndexes((index) => [
         // VALID cases
@@ -25,6 +29,10 @@ test('secondaryIndexes input validation', () => {
         // nullable number
         index('viewCount'),
         index('title').sortKeys(['description', 'viewCount', 'postNumber']),
+        // field with field level auth can be used as the partition key
+        index('fieldWithAuth'),
+        // field with field level auth can be used as a sort key
+        index('title').sortKeys(['fieldWithAuth']),
 
         // ERROR cases
         // @ts-expect-error - nonexistent
