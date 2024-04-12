@@ -9,7 +9,7 @@
   "typesVersions": {
     "<5": {
       "dist/esm/index.d.ts": [
-        "dist/esm/index.v3.d.ts"
+        "./dist/esm/index.v3.d.ts"
       ]
     }
   },

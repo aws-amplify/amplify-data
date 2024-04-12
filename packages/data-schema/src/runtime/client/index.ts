@@ -6,15 +6,26 @@ import type {
   UnionToIntersection,
   Prettify,
   Equal,
+  __modelMeta__,
+  ExtractModelMeta,
 } from '@aws-amplify/data-schema-types';
 import type { Observable } from 'rxjs';
 
-// temporarily importing from `data-schema-types` because in case part of the
+// temporarily export symbols from `data-schema-types` because in case part of the
 // problem with the runtime -> data-schema migration comes down to a mismatch
 // around this symbol and it's extractor.
-export declare const __modelMeta__: unique symbol;
-export type ExtractModelMeta<T extends Record<any, any>> =
-  T[typeof __modelMeta__];
+//
+// before switching to declare these here, we need to prove it won't break any
+// customer experiences. this *might* need to happen as a breaking change.
+//
+// export declare const __modelMeta__: unique symbol;
+// export type ExtractModelMeta<T extends Record<any, any>> =
+//   T[typeof __modelMeta__];
+
+export {
+  __modelMeta__,
+  ExtractModelMeta,
+} from '@aws-amplify/data-schema-types';
 
 type Model = Record<string, any>;
 
