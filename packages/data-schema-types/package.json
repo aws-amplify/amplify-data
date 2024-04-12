@@ -24,6 +24,14 @@
     "test": "echo \"No tests\"",
     "lint": "eslint ."
   },
+  "exports": {
+    ".": {
+      "types": "./dist/esm/index.d.ts",
+      "import": "./dist/esm/index.mjs",
+      "require": "./dist/cjs/index.js",
+      "node": "./src/index.ts"
+    }
+  },
   "devDependencies": {
     "typescript": "^5.1.6"
   },
