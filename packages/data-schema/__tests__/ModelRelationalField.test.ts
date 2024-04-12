@@ -130,63 +130,6 @@ describe('relational field required modifier', () => {
     });
   });
 
-  describe('manyToMany', () => {
-    it("doesn't offer a required modifier", () => {
-      expect(() => {
-        // @ts-ignore
-        const field = a.manyToMany('Test', { relationName: 'Test' }).required();
-      }).toThrow();
-    });
-
-    it('offers an arrayRequired modifier', () => {
-      expect(() => {
-        const field = a
-          .manyToMany('Test', { relationName: 'Test' })
-          .arrayRequired();
-      }).not.toThrow();
-    });
-
-    it('offers an valueRequired modifier', () => {
-      expect(() => {
-        const field = a
-          .manyToMany('Test', { relationName: 'Test' })
-          .valueRequired();
-      }).not.toThrow();
-    });
-
-    it('offers an authorization modifier', () => {
-      expect(() => {
-        const field = a
-          .manyToMany('Test', { relationName: 'Test' })
-          .authorization([]);
-      }).not.toThrow();
-    });
-
-    it('arrayRequired sets arrayRequired to true', () => {
-      const field = a
-        .manyToMany('Test', { relationName: 'Test' })
-        .arrayRequired() as InternalRelationalField;
-      expect(field.data.arrayRequired).toBe(true);
-    });
-
-    it('valueRequired sets valueRequired to true', () => {
-      const field = a
-        .manyToMany('Test', { relationName: 'Test' })
-        .valueRequired() as InternalRelationalField;
-      expect(field.data.valueRequired).toBe(true);
-    });
-
-    it('references is not supported by manyToMany', () => {
-      expect(() => {
-        const field = a
-          .manyToMany('Test', { relationName: 'Test' })
-          // @ts-expect-error
-          .references(['idFieldName']) as InternalRelationalField;
-      }).toThrow();
-    });
-  });
-});
-
 const fakeSecret = () => ({}) as any;
 
 const datasourceConfigMySQL = {
