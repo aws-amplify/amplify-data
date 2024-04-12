@@ -1,5 +1,7 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+
 // SPDX-License-Identifier: Apache-2.0
+
 import {
   AmplifyServer,
   AssociationBelongsTo,
@@ -16,6 +18,7 @@ import {
   SchemaModel,
   SchemaNonModel,
 } from '../bridge-types';
+
 import { CustomHeaders } from '../client';
 import { resolveOwnerFields } from '../utils/resolveOwnerFields';
 
@@ -312,10 +315,10 @@ export type ModelOperation = keyof typeof graphQLOperationsInfo;
 
 const SELECTION_SET_WILDCARD = '*';
 
-export function defaultSelectionSetForNonModelWithIR(
+export const getDefaultSelectionSetForNonModelWithIR = (
   nonModelDefinition: SchemaNonModel,
   modelIntrospection: ModelIntrospectionSchema,
-): Record<string, unknown> {
+): Record<string, unknown> => {
   const { fields } = nonModelDefinition;
   const mappedFields = Object.values(fields)
     .map(({ type, name }) => {
@@ -326,7 +329,7 @@ export function defaultSelectionSetForNonModelWithIR(
       if (typeof (type as NonModelFieldType).nonModel === 'string') {
         return [
           name,
-          defaultSelectionSetForNonModelWithIR(
+          getDefaultSelectionSetForNonModelWithIR(
             modelIntrospection.nonModels[(type as NonModelFieldType).nonModel],
             modelIntrospection,
           ),
@@ -346,7 +349,47 @@ export function defaultSelectionSetForNonModelWithIR(
     );
 
   return Object.fromEntries(mappedFields);
-}
+};
+
+const getDefaultSelectionSetForModelWithIR = (
+  modelDefinition: SchemaModel,
+  modelIntrospection: ModelIntrospectionSchema,
+): Record<string, unknown> => {
+  const { fields } = modelDefinition;
+  const mappedFields = Object.values(fields)
+    .map(({ type, name }) => {
+      if (
+        typeof (type as { enum: string }).enum === 'string' ||
+        typeof type === 'string'
+      ) {
+        return [name, FIELD_IR];
+      }
+
+      if (typeof (type as NonModelFieldType).nonModel === 'string') {
+        return [
+          name,
+          getDefaultSelectionSetForNonModelWithIR(
+            modelIntrospection.nonModels[(type as NonModelFieldType).nonModel],
+            modelIntrospection,
+          ),
+        ];
+      }
+
+      return undefined;
+    })
+    .filter(
+      (
+        pair: (string | Record<string, unknown>)[] | undefined,
+      ): pair is (string | Record<string, unknown>)[] => pair !== undefined,
+    );
+
+  const ownerFields = resolveOwnerFields(modelDefinition).map((field) => [
+    field,
+    FIELD_IR,
+  ]);
+
+  return Object.fromEntries(mappedFields.concat(ownerFields));
+};
 
 function defaultSelectionSetForModel(modelDefinition: SchemaModel): string[] {
   // fields that are explicitly part of the graphql schema; not
@@ -439,7 +482,7 @@ export function customSelectionSetToIR(
 
       if (nested === SELECTION_SET_WILDCARD) {
         result = {
-          [fieldName]: defaultSelectionSetForNonModelWithIR(
+          [fieldName]: getDefaultSelectionSetForNonModelWithIR(
             relatedNonModelDefinition,
             modelIntrospection,
           ),
@@ -465,8 +508,9 @@ export function customSelectionSetToIR(
           modelIntrospection.models[relatedModel];
 
         result = {
-          [fieldName]: modelsDefaultSelectionSetIR(
+          [fieldName]: getDefaultSelectionSetForModelWithIR(
             nestedRelatedModelDefinition,
+            modelIntrospection,
           ),
         };
       } else {
@@ -522,23 +566,6 @@ export function customSelectionSetToIR(
     {} as Record<string, any>,
   );
 }
-
-const modelsDefaultSelectionSetIR = (relatedModelDefinition: SchemaModel) => {
-  const defaultSelectionSet = defaultSelectionSetForModel(
-    relatedModelDefinition,
-  );
-
-  const reduced = defaultSelectionSet.reduce(
-    (acc: Record<string, any>, curVal) => {
-      acc[curVal] = FIELD_IR;
-
-      return acc;
-    },
-    {},
-  );
-
-  return reduced;
-};
 
 /**
  * Stringifies selection set IR

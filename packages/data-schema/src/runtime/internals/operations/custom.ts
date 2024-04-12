@@ -14,11 +14,12 @@ import {
   QueryArgs,
   ModelIntrospectionSchema,
 } from '../../bridge-types';
+
 import { map } from 'rxjs';
 
 import {
   authModeParams,
-  defaultSelectionSetForNonModelWithIR,
+  getDefaultSelectionSetForNonModelWithIR,
   flattenItems,
   generateSelectionSet,
   getCustomHeaders,
@@ -292,13 +293,10 @@ function operationSelectionSet(
     const nonModel = modelIntrospection.nonModels[operation.type.nonModel];
 
     return `{${selectionSetIRToString(
-      defaultSelectionSetForNonModelWithIR(nonModel, modelIntrospection),
+      getDefaultSelectionSetForNonModelWithIR(nonModel, modelIntrospection),
     )}}`;
   } else if (hasStringField(operation.type, 'model')) {
-    return `{${generateSelectionSet(
-      modelIntrospection,
-      operation.type.model,
-    )}}`;
+    return `{${generateSelectionSet(modelIntrospection, operation.type.model)}}`;
   } else {
     return '';
   }
@@ -367,9 +365,11 @@ async function _op(
     ? operation.type.model
     : undefined;
 
-  const query = `${operationType.toLocaleLowerCase()}${outerArgsString} {
-    ${operationName}${innerArgsString} ${selectionSet}
-  }`;
+  const query = `
+    ${operationType.toLocaleLowerCase()}${outerArgsString} {
+      ${operationName}${innerArgsString} ${selectionSet}
+    }
+  `;
 
   const variables = operationVariables(operation, args);
 
@@ -458,9 +458,11 @@ function _opSubscription(
     ? operation.type.model
     : undefined;
 
-  const query = `${operationType.toLocaleLowerCase()}${outerArgsString} {
-    ${operationName}${innerArgsString} ${selectionSet}
-  }`;
+  const query = `
+    ${operationType.toLocaleLowerCase()}${outerArgsString} {
+      ${operationName}${innerArgsString} ${selectionSet}
+    }
+  `;
 
   const variables = operationVariables(operation, args);
 
