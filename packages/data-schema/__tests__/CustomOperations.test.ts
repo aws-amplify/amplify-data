@@ -1110,7 +1110,7 @@ describe('CustomOperation transform', () => {
         .authorization([a.allow.public()]),
     });
 
-    it('generates two lambda functions aside schema', () => {
+    it('generates 3 lambda functions with expected names aside schema', () => {
       const { lambdaFunctions } = schema.transform();
 
       expect(lambdaFunctions).toMatchObject({
