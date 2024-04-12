@@ -146,9 +146,7 @@ function _modelRelationalField<
     authorization: [],
   };
 
-  if (type === 'hasMany') {
-    data.array = true;
-  }
+  data.array = type === 'hasMany';
   const relationshipBuilderFunctions = {
     required() {
       data.arrayRequired = true;
