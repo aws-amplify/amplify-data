@@ -1,10 +1,6 @@
 import { a } from '../index';
-import { InternalField } from '../src/ModelField';
 import {
-  InternalRelationalField,
-  ModelRelationalField,
-  ModelRelationalTypeArgFactory,
-  ModelRelationshipTypes,
+  InternalRelationalField
 } from '../src/ModelRelationalField';
 import { configure } from '../src/ModelSchema';
 
@@ -129,6 +125,7 @@ describe('relational field required modifier', () => {
       expect(field.data.references).toEqual(['idFieldName']);
     });
   });
+});
 
 const fakeSecret = () => ({}) as any;
 
@@ -258,7 +255,6 @@ describe('schema generation with relationships', () => {
   })
 
   test('sql references', () => {
-
     const schema = aSql
       .schema({
         Team: a
