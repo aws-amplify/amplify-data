@@ -190,7 +190,6 @@ function modelFieldToGql(fieldDef: ModelFieldDef) {
     type,
     relatedModel,
     array,
-    relationName,
     valueRequired,
     arrayRequired,
     references,
@@ -216,11 +215,6 @@ function modelFieldToGql(fieldDef: ModelFieldDef) {
     )}])`;
   } else {
     field += ` @${type}`;
-  }
-
-  // TODO: accept other relationship options e.g. `fields`
-  if (type === 'manyToMany') {
-    field += `(relationName: "${relationName}")`;
   }
 
   return field;
