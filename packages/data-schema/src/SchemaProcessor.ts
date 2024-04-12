@@ -6,7 +6,7 @@ import {
 import {
   type InternalRelationalField
 } from './ModelRelationalField';
-import type { ModelType, InternalModel } from './ModelType';
+import { type ModelType, type InternalModel, isSchemaModelType } from './ModelType';
 import type { InternalModelIndexType } from './ModelIndex';
 import {
   type Authorization,
@@ -540,6 +540,8 @@ function validateImpliedFields(
   }
 }
 
+// func validateBidirectionality
+
 /**
  * Validates that defined relationships are valid
  * - relationships are bidirectional
@@ -558,10 +560,88 @@ function validateImpliedFields(
  * @param record
  */
 function validateRelationships(
+  typeName: string,
   record: Record<string, ModelField<any, any>>,
+  getRef: (source: string, target: string) => GetRef,
 ) {
-  for (const [_k, _field] of Object.entries(record)) {
-    // TODO: validate relationship
+  // TODO: come back to this -- filtering out non-model fields at start.
+  // const modelFields = Object.entries(record).filter(([_key, field]) => {
+  //   return isModelField(field)
+  // })
+
+  for (const [_k, field] of Object.entries(record)) {
+    const fk = field;
+    if (isModelField(fk)) {
+
+      const relatedModel = getRef(fk.data.relatedModel, '');
+      const relatedModelDefintion = relatedModel.def;
+      if (isInternalModel(relatedModelDefintion)) {
+        const relatedModelFields = relatedModelDefintion.data.fields;
+
+        // extract to separate function
+        if (fk.data.type === 'hasMany') {
+
+          const relatedModelAssociatedFieldCandidates = Object.entries(relatedModelFields).filter(([_rk, rf]) => {
+            if (isModelField(rf)) {
+              const relationalReferences = fk.data.references;
+              const associatedReferences = rf.data.references;
+
+              if (relationalReferences != null && associatedReferences != null) {
+                return rf.data.relatedModel === typeName
+                  && rf.data.type === 'belongsTo'
+                  // TODO: ensure that fk.data.references isn't null / undefined earlier
+                  && relationalReferences.length === associatedReferences.length
+                  && relationalReferences.every((v, i) => v === associatedReferences[i]);
+              }
+
+              return false;
+            }
+          })
+
+          //
+          if (relatedModelAssociatedFieldCandidates.length !== 1) {
+            // TODO better error message with context.
+            throw new Error('Validation Error: cannot find counterpart to relationship definition')
+          }
+
+          const relatedModelAssociatedField = relatedModelAssociatedFieldCandidates[0][1];
+          if (isModelField(relatedModelAssociatedField)) {
+            // related model for belongsTo!!!
+            const modelRefDefintion = getRef(typeName, '').def;
+            if (isInternalModel(modelRefDefintion)) {
+              const primaryModelIdentifier = modelRefDefintion.data.identifier;
+              // Get primary key types on Primary model
+              const primaryModelIdentifierTypes = primaryModelIdentifier.map((field) => {
+                const primaryField = modelRefDefintion.data.fields[field];
+                if (primaryField) {
+                  return primaryField.data.fieldType
+                } else if (field === 'id') {
+                  // implicity generated ID
+                  return 'ID'
+                }
+              });
+
+
+              const relatedModelAssociatedFieldReferences = relatedModelAssociatedField.data.references
+              if (relatedModelAssociatedFieldReferences != null) {
+                // Get reference field types on Related model
+                const relatedModelAssociatedReferenceFieldTypes = relatedModelAssociatedFieldReferences.map((field) =>
+                  relatedModelDefintion.data.fields[field].data.fieldType);
+
+                const referenceFieldTypesMatchPrimaryModelPrimaryKeyTypes = primaryModelIdentifierTypes.length === relatedModelAssociatedReferenceFieldTypes.length
+                  && primaryModelIdentifierTypes.every((type, index) => type === relatedModelAssociatedReferenceFieldTypes[index])
+
+                  // Validate that the reference field types on Related model match the primary key types on Primary model.
+                  // TODO: String & ID are interchangeable
+                  if (!referenceFieldTypesMatchPrimaryModelPrimaryKeyTypes) {
+                    throw new Error('Validation Error: !referenceFieldTypesMatchPrimaryModelPrimaryKeyTypes')
+                  }
+              }
+            }
+          }
+        }
+      }
+    }
   }
 }
 
@@ -1000,16 +1080,16 @@ const extractFunctionSchemaAccess = (
 
 type GetRef =
   | {
-      type: 'Model';
-      def: InternalModel;
-    }
+    type: 'Model';
+    def: InternalModel;
+  }
   | { type: 'CustomOperation'; def: InternalCustom }
   | {
-      type: 'CustomType';
-      def: {
-        data: CustomType<CustomTypeParamShape>;
-      };
-    }
+    type: 'CustomType';
+    def: {
+      data: CustomType<CustomTypeParamShape>;
+    };
+  }
   | { type: 'Enum'; def: EnumType<any> };
 
 /**
@@ -1190,8 +1270,6 @@ const schemaPreprocessor = (
       const identifier = typeDef.data.identifier;
       const [partitionKey] = identifier;
 
-      validateRelationships(fields);
-
       const { authString, authFields } = calculateAuth(mostRelevantAuthRules);
       if (authString == '') {
         throw new Error(
@@ -1236,6 +1314,8 @@ const schemaPreprocessor = (
           `Model \`${typeName}\` is missing authorization rules. Add global rules to the schema or ensure every model has its own rules.`,
         );
       }
+
+      validateRelationships(typeName, fields, getRefType);
 
       const fieldLevelAuthRules = processFieldLevelAuthRules(
         fields,
