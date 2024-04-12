@@ -1,4 +1,4 @@
-import { SchemaModel } from '@aws-amplify/core/internals/utils';
+import { SchemaModel } from '../../../../../src/runtime/bridge-types';
 
 export const userSchemaModel: SchemaModel = {
   name: 'User',
