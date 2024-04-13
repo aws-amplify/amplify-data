@@ -47,14 +47,14 @@ type ModelRelationalFieldFunctions<
   T extends ModelRelationalFieldParamShape,
   // RM adds structural separation with ModelField; easier to identify it when mapping to ClientTypes
   RM extends string | symbol,
-  K extends keyof ModelRelationalField<T, RM> = never,
+  UsedMethod extends keyof ModelRelationalField<T, RM> = never,
 > = {
   /**
    * When set, it requires the value of the relationship type to be required.
    */
   valueRequired(): ModelRelationalField<
     SetTypeSubArg<T, 'valueRequired', true>,
-    K | 'valueRequired'
+    UsedMethod | 'valueRequired'
   >;
   /**
    * Reference sets the foreign key on which to establish the relationship
@@ -63,7 +63,7 @@ type ModelRelationalFieldFunctions<
     references: string[],
   ): ModelRelationalField<
     SetTypeSubArg<T, 'references', string[]>,
-    K | 'references'
+    UsedMethod | 'references'
   >;
   /**
    * When set, it requires the relationship to always return a value
@@ -71,7 +71,7 @@ type ModelRelationalFieldFunctions<
   required(): ModelRelationalField<
     // The RM generic cannot be "required" since no such field exists
     SetTypeSubArg<T, 'arrayRequired', true>,
-    K | 'required'
+    UsedMethod | 'required'
   >;
   /**
    * When set, it requires the relationship to always return an array value
@@ -80,7 +80,7 @@ type ModelRelationalFieldFunctions<
    */
   arrayRequired(): ModelRelationalField<
     SetTypeSubArg<T, 'arrayRequired', true>,
-    K | 'arrayRequired'
+    UsedMethod | 'arrayRequired'
   >;
   /**
    * Configures field-level authorization rules. Pass in an array of authorizations `(a.allow.____)` to mix and match
@@ -88,7 +88,12 @@ type ModelRelationalFieldFunctions<
    */
   authorization<AuthRuleType extends Authorization<any, any, any>>(
     rules: AuthRuleType[],
-  ): ModelRelationalField<T, K | 'authorization', K, AuthRuleType>;
+  ): ModelRelationalField<
+    T,
+    UsedMethod | 'authorization',
+    UsedMethod,
+    AuthRuleType
+  >;
 };
 
 export type ModelRelationalField<

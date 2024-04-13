@@ -1,16 +1,15 @@
 import { SetTypeSubArg } from '@aws-amplify/data-schema-types';
-import { Brand, brand } from './util';
-
-import { ModelField, InternalField } from './ModelField';
+import { brand, type brandSymbol } from './util';
 import { Authorization } from './Authorization';
-import { RefType, InternalRef } from './RefType';
-import { EnumType, EnumTypeParamShape } from './EnumType';
 import { CustomType } from './CustomType';
+import { EnumType, EnumTypeParamShape } from './EnumType';
 import type {
   CustomHandler,
   FunctionHandler,
   HandlerType as Handler,
 } from './Handler';
+import { InternalField, ModelField } from './ModelField';
+import { InternalRef, RefType } from './RefType';
 
 const queryBrand = 'queryCustomOperation';
 const mutationBrand = 'mutationCustomOperation';
@@ -72,22 +71,23 @@ export type CustomOperationParamShape = {
 
 export type CustomOperation<
   T extends CustomOperationParamShape,
-  K extends keyof CustomOperation<T> = never,
+  UsedMethod extends keyof CustomOperation<T> = never,
   B extends CustomOperationBrand = CustomOperationBrand,
 > = Omit<
   {
+    [brandSymbol]: B;
     arguments<Arguments extends CustomArguments>(
       args: Arguments,
     ): CustomOperation<
       SetTypeSubArg<T, 'arguments', Arguments>,
-      K | 'arguments',
+      UsedMethod | 'arguments',
       B
     >;
     returns<ReturnType extends CustomReturnType>(
       returnType: ReturnType,
     ): CustomOperation<
       SetTypeSubArg<T, 'returnType', ReturnType>,
-      K | 'returns',
+      UsedMethod | 'returns',
       B
     >;
     /**
@@ -102,19 +102,19 @@ export type CustomOperation<
       functionRefOrName: FunctionRef,
     ): CustomOperation<
       SetTypeSubArg<T, 'functionRef', FunctionRef>,
-      K | 'function',
+      UsedMethod | 'function',
       B
     >;
     authorization<AuthRuleType extends Authorization<any, any, any>>(
       rules: AuthRuleType[],
     ): CustomOperation<
       SetTypeSubArg<T, 'authorization', AuthRuleType[]>,
-      K | 'authorization',
+      UsedMethod | 'authorization',
       B
     >;
     handler<H extends HandlerInputType>(
       handlers: H,
-    ): CustomOperation<T, K | 'handler', B>;
+    ): CustomOperation<T, UsedMethod | 'handler', B>;
     for<Source extends SubscriptionSource>(
       source: Source | Source[],
     ): CustomOperation<
@@ -128,13 +128,12 @@ export type CustomOperation<
             Source extends SubscriptionSource[] ? Source[number] : Source
           >
         : T,
-      K | 'for',
+      UsedMethod | 'for',
       B
     >;
   },
-  K
-> &
-  Brand<B>;
+  UsedMethod
+>;
 
 function brandedBuilder<T extends CustomOperationParamShape>(
   builder: Record<keyof CustomOperation<T> & string, any>,
