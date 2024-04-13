@@ -28,7 +28,7 @@ type MutationOperations = 'create' | 'update' | 'delete';
 
 export type RefType<
   T extends RefTypeParamShape,
-  K extends keyof RefType<T> = never,
+  UsedMethod extends keyof RefType<T> = never,
   Auth = undefined,
   // Branding the exported type allows us to detect it
   // nominally in our mapped types, ignoring structural overlap with other types
@@ -43,14 +43,14 @@ export type RefType<
         T['array'] extends true ? 'arrayRequired' : 'valueRequired',
         true
       >,
-      K | 'required'
+      UsedMethod | 'required'
     >;
     /**
      * Marks a field as an array of the specified ref type.
      */
     array(): RefType<
       SetTypeSubArg<T, 'array', true>,
-      Exclude<K, 'required'> | 'array'
+      Exclude<UsedMethod, 'required'> | 'array'
     >;
     /**
      * Configures field-level authorization rules. Pass in an array of authorizations `(a.allow.____)` to mix and match
@@ -58,11 +58,13 @@ export type RefType<
      */
     authorization<AuthRuleType extends Authorization<any, any, any>>(
       rules: AuthRuleType[],
-    ): RefType<T, K | 'authorization', AuthRuleType>;
+    ): RefType<T, UsedMethod | 'authorization', AuthRuleType>;
 
-    mutations(operations: MutationOperations[]): RefType<T, K | 'mutations'>;
+    mutations(
+      operations: MutationOperations[],
+    ): RefType<T, UsedMethod | 'mutations'>;
   },
-  K
+  UsedMethod
 > & {
   // This is a lie. This property is never set at runtime. It's just used to smuggle auth types through.
   [__auth]?: Auth;

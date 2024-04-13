@@ -1,6 +1,6 @@
 import { SetTypeSubArg } from '@aws-amplify/data-schema-types';
-import { Brand } from './util';
 import { Authorization } from './Authorization';
+import { type brandSymbol } from './util';
 
 /**
  * Used to "attach" auth types to ModelField without exposing them on the builder.
@@ -43,64 +43,65 @@ export type ModelRelationalFieldParamShape = {
   relationName?: string;
 };
 
-type ModelRelationalFieldFunctions<
-  T extends ModelRelationalFieldParamShape,
-  // RM adds structural separation with ModelField; easier to identify it when mapping to ClientTypes
-  RM extends string | symbol,
-  K extends keyof ModelRelationalField<T, RM> = never,
-> = {
-  /**
-   * When set, it requires the value of the relationship type to be required.
-   */
-  valueRequired(): ModelRelationalField<
-    SetTypeSubArg<T, 'valueRequired', true>,
-    K | 'valueRequired'
-  >;
-  /**
-   * Reference sets the foreign key on which to establish the relationship
-   */
-  references(
-    references: string[],
-  ): ModelRelationalField<
-    SetTypeSubArg<T, 'references', string[]>,
-    K | 'references'
-  >;
-  /**
-   * When set, it requires the relationship to always return a value
-   */
-  required(): ModelRelationalField<
-    // The RM generic cannot be "required" since no such field exists
-    SetTypeSubArg<T, 'arrayRequired', true>,
-    K | 'required'
-  >;
-  /**
-   * When set, it requires the relationship to always return an array value
-   * @deprecated this modifier should not be used and will be removed
-   * in the next minor version of this package.
-   */
-  arrayRequired(): ModelRelationalField<
-    SetTypeSubArg<T, 'arrayRequired', true>,
-    K | 'arrayRequired'
-  >;
-  /**
-   * Configures field-level authorization rules. Pass in an array of authorizations `(a.allow.____)` to mix and match
-   * multiple authorization rules for this field.
-   */
-  authorization<AuthRuleType extends Authorization<any, any, any>>(
-    rules: AuthRuleType[],
-  ): ModelRelationalField<T, K | 'authorization', K, AuthRuleType>;
-};
-
 export type ModelRelationalField<
   T extends ModelRelationalFieldParamShape,
   // RM adds structural separation with ModelField; easier to identify it when mapping to ClientTypes
   RM extends string | symbol,
-  K extends keyof ModelRelationalField<T, RM> = never,
+  UsedMethod extends keyof ModelRelationalField<T, RM> = never,
   Auth = undefined,
-> = Omit<ModelRelationalFieldFunctions<T, RM, K>, K> & {
-  // This is a lie. This property is never set at runtime. It's just used to smuggle auth types through.
-  [__auth]?: Auth;
-} & Brand<typeof brandName>;
+> = Omit<
+  {
+    // This is a lie. This property is never set at runtime. It's just used to smuggle auth types through.
+    [__auth]?: Auth;
+    [brandSymbol]: typeof brandName;
+    /**
+     * When set, it requires the value of the relationship type to be required.
+     */
+    valueRequired(): ModelRelationalField<
+      SetTypeSubArg<T, 'valueRequired', true>,
+      UsedMethod | 'valueRequired'
+    >;
+    /**
+     * Reference sets the foreign key on which to establish the relationship
+     */
+    references(
+      references: string[],
+    ): ModelRelationalField<
+      SetTypeSubArg<T, 'references', string[]>,
+      UsedMethod | 'references'
+    >;
+    /**
+     * When set, it requires the relationship to always return a value
+     */
+    required(): ModelRelationalField<
+      // The RM generic cannot be "required" since no such field exists
+      SetTypeSubArg<T, 'arrayRequired', true>,
+      UsedMethod | 'required'
+    >;
+    /**
+     * When set, it requires the relationship to always return an array value
+     * @deprecated this modifier should not be used and will be removed
+     * in the next minor version of this package.
+     */
+    arrayRequired(): ModelRelationalField<
+      SetTypeSubArg<T, 'arrayRequired', true>,
+      UsedMethod | 'arrayRequired'
+    >;
+    /**
+     * Configures field-level authorization rules. Pass in an array of authorizations `(a.allow.____)` to mix and match
+     * multiple authorization rules for this field.
+     */
+    authorization<AuthRuleType extends Authorization<any, any, any>>(
+      rules: AuthRuleType[],
+    ): ModelRelationalField<
+      T,
+      UsedMethod | 'authorization',
+      UsedMethod,
+      AuthRuleType
+    >;
+  },
+  UsedMethod
+>;
 
 /**
  * Internal representation of Model Field that exposes the `data` property.

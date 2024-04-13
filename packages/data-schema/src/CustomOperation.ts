@@ -72,7 +72,7 @@ export type CustomOperationParamShape = {
 
 export type CustomOperation<
   T extends CustomOperationParamShape,
-  K extends keyof CustomOperation<T> = never,
+  UsedMethod extends keyof CustomOperation<T> = never,
   B extends CustomOperationBrand = CustomOperationBrand,
 > = Omit<
   {
@@ -80,14 +80,14 @@ export type CustomOperation<
       args: Arguments,
     ): CustomOperation<
       SetTypeSubArg<T, 'arguments', Arguments>,
-      K | 'arguments',
+      UsedMethod | 'arguments',
       B
     >;
     returns<ReturnType extends CustomReturnType>(
       returnType: ReturnType,
     ): CustomOperation<
       SetTypeSubArg<T, 'returnType', ReturnType>,
-      K | 'returns',
+      UsedMethod | 'returns',
       B
     >;
     /**
@@ -102,19 +102,19 @@ export type CustomOperation<
       functionRefOrName: FunctionRef,
     ): CustomOperation<
       SetTypeSubArg<T, 'functionRef', FunctionRef>,
-      K | 'function',
+      UsedMethod | 'function',
       B
     >;
     authorization<AuthRuleType extends Authorization<any, any, any>>(
       rules: AuthRuleType[],
     ): CustomOperation<
       SetTypeSubArg<T, 'authorization', AuthRuleType[]>,
-      K | 'authorization',
+      UsedMethod | 'authorization',
       B
     >;
     handler<H extends HandlerInputType>(
       handlers: H,
-    ): CustomOperation<T, K | 'handler', B>;
+    ): CustomOperation<T, UsedMethod | 'handler', B>;
     for<Source extends SubscriptionSource>(
       source: Source | Source[],
     ): CustomOperation<
@@ -128,11 +128,11 @@ export type CustomOperation<
             Source extends SubscriptionSource[] ? Source[number] : Source
           >
         : T,
-      K | 'for',
+      UsedMethod | 'for',
       B
     >;
   },
-  K
+  UsedMethod
 > &
   Brand<B>;
 

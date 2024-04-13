@@ -1,4 +1,4 @@
-import { Brand, brand } from './util';
+import { brand, type brandSymbol } from './util';
 
 const brandName = 'modelIndexType';
 
@@ -18,28 +18,28 @@ export type ModelIndexType<
   PK,
   SK = readonly [],
   QueryField = never,
-  K extends keyof ModelIndexType<any, any, any, any> = never,
+  UsedMethod extends keyof ModelIndexType<any, any, any, any> = never,
 > = Omit<
   {
+    [brandSymbol]: typeof brandName;
     sortKeys<
       FieldKeys extends ModelFieldKeys = ModelFieldKeys,
       const SK extends ReadonlyArray<Exclude<FieldKeys, PK>> = readonly [],
     >(
       sortKeys: SK,
-    ): ModelIndexType<FieldKeys, PK, SK, QueryField, K | 'sortKeys'>;
+    ): ModelIndexType<FieldKeys, PK, SK, QueryField, UsedMethod | 'sortKeys'>;
     name(
       name: string,
-    ): ModelIndexType<ModelFieldKeys, PK, SK, QueryField, K | 'name'>;
+    ): ModelIndexType<ModelFieldKeys, PK, SK, QueryField, UsedMethod | 'name'>;
     queryField<
       QF extends string = never,
       MF extends ModelFieldKeys = ModelFieldKeys,
     >(
       field: QF,
-    ): ModelIndexType<MF, PK, SK, QF, K | 'queryField'>;
+    ): ModelIndexType<MF, PK, SK, QF, UsedMethod | 'queryField'>;
   },
-  K
-> &
-  Brand<typeof brandName>;
+  UsedMethod
+>;
 
 function _modelIndex<
   ModelFieldKeys extends string,

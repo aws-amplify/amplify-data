@@ -72,11 +72,11 @@ export type ArrayField<T> = [T] extends [ModelFieldTypeParamInner]
  * The type is narrowing e.g., after calling .array() it will be omitted from intellisense suggestions
  *
  * @typeParam T - holds the JS data type of the field
- * @typeParam RedundantKey - union of strings representing already-invoked method names. Used to improve Intellisense
+ * @typeParam UsedMethod - union of strings representing already-invoked method names. Used to improve Intellisense
  */
 export type ModelField<
   T extends ModelFieldTypeParamOuter,
-  UsedMethods extends keyof ModelField<T> = never,
+  UsedMethod extends keyof ModelField<T> = never,
   Auth = undefined,
 > = Omit<
   {
@@ -86,14 +86,14 @@ export type ModelField<
     /**
      * Marks a field as required.
      */
-    required(): ModelField<Required<T>, UsedMethods | 'required'>;
+    required(): ModelField<Required<T>, UsedMethod | 'required'>;
     // Exclude `optional` after calling array, because both the value and the array itself can be optional
     /**
      * Converts a field type definition to an array of the field type.
      */
     array(): ModelField<
       ArrayField<T>,
-      Exclude<UsedMethods, 'required'> | 'array'
+      Exclude<UsedMethod, 'required'> | 'array'
     >;
     // TODO: should be T, but .array breaks this constraint. Fix later
     /**
@@ -102,16 +102,16 @@ export type ModelField<
      */
     default(
       value: ModelFieldTypeParamOuter,
-    ): ModelField<T, UsedMethods | 'default'>;
+    ): ModelField<T, UsedMethod | 'default'>;
     /**
      * Configures field-level authorization rules. Pass in an array of authorizations `(a.allow.____)` to mix and match
      * multiple authorization rules for this field.
      */
     authorization<AuthRuleType extends Authorization<any, any, any>>(
       rules: AuthRuleType[],
-    ): ModelField<T, UsedMethods | 'authorization', AuthRuleType>;
+    ): ModelField<T, UsedMethod | 'authorization', AuthRuleType>;
   },
-  UsedMethods
+  UsedMethod
 >;
 
 /**

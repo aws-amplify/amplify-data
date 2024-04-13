@@ -178,16 +178,13 @@ type _ConflictingAuthRules<T extends ModelTypeParamShape> =
 
 export type ModelType<
   T extends ModelTypeParamShape,
-  UsedMethods extends keyof ModelType<T> = never,
+  UsedMethod extends keyof ModelType<T> = never,
 > = Omit<
   {
     [brandSymbol]: typeof brandName;
     identifier<ID extends IdentifierType<T> = []>(
       identifier: ID,
-    ): ModelType<
-      SetTypeSubArg<T, 'identifier', ID>,
-      UsedMethods | 'identifier'
-    >;
+    ): ModelType<SetTypeSubArg<T, 'identifier', ID>, UsedMethod | 'identifier'>;
     secondaryIndexes<
       const SecondaryIndexPKPool extends string = SecondaryIndexFields<
         ExtractType<T>
@@ -215,16 +212,16 @@ export type ModelType<
       ) => Indexes,
     ): ModelType<
       SetTypeSubArg<T, 'secondaryIndexes', IndexesIR>,
-      UsedMethods | 'secondaryIndexes'
+      UsedMethod | 'secondaryIndexes'
     >;
     authorization<AuthRuleType extends Authorization<any, any, any>>(
       rules: AuthRuleType[],
     ): ModelType<
       SetTypeSubArg<T, 'authorization', AuthRuleType[]>,
-      UsedMethods | 'authorization'
+      UsedMethod | 'authorization'
     >;
   },
-  UsedMethods
+  UsedMethod
 >;
 
 export interface RDSSchemaModelType<
