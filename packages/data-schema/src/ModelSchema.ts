@@ -74,11 +74,9 @@ export type BaseSchema<
 > = {
   data: T;
   models: {
-    [TypeKey in keyof T['types']]: T['types'][TypeKey] extends ModelType<
-      ModelTypeParamShape,
-      never | 'identifier'
-    >
-      ? SchemaModelType<T['types'][TypeKey], TypeKey & string, IsRDS>
+    [TypeKey in keyof T['types'] &
+      string]: T['types'][TypeKey] extends ModelType<infer Shape, 'identifier'>
+      ? SchemaModelType<Shape, TypeKey, IsRDS>
       : never;
   };
   transform: () => DerivedApiDefinition;

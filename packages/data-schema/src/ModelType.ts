@@ -59,12 +59,11 @@ export type ModelTypeParamShape = {
 
 // Extract field names that can be used to define a secondary index PK or SK
 // i.e., nullable string or nullable number fields
-type SecondaryIndexFields<T extends Record<string, unknown>> = keyof {
-  [Field in keyof T as NonNullable<T[Field]> extends string | number
+type SecondaryIndexFields<T extends Record<string, unknown>> = {
+  [Field in keyof T]: T[Field] extends string | number | null | undefined
     ? Field
-    : never]: T[Field];
-} &
-  string;
+    : never;
+}[keyof T];
 
 type ExtractType<T extends ModelTypeParamShape> = {
   [FieldProp in keyof T['fields'] as T['fields'][FieldProp] extends ModelField<
@@ -139,10 +138,7 @@ export type AddRelationshipFieldsToModelTypeFields<
     ModelRelationalField<ModelRelationalFieldParamShape, string, any, any>
   >,
 > =
-  Model extends ModelType<
-    infer ModelParam extends ModelTypeParamShape,
-    infer HiddenKeys
-  >
+  Model extends ModelType<infer ModelParam, infer HiddenKeys>
     ? ModelType<
         SetTypeSubArg<
           ModelParam,
@@ -231,44 +227,38 @@ export type ModelType<
   RedundantKey
 >;
 
+export interface RdsSchemaModelType<
+  T extends ModelTypeParamShape = ModelTypeParamShape,
+  ModelName extends string = string,
+> extends ModelType<T, 'identifier'> {
+  addRelationships<
+    Param extends Record<string, ModelRelationalField<any, string, any, any>>,
+  >(
+    relationships: Param,
+  ): Record<ModelName, Param>;
+  fields: T['fields'];
+}
+
 /**
  * External representation of Model Type that exposes the `addRelationships` modifier.
  * Used on the complete schema object.
  */
 export type SchemaModelType<
-  T extends ModelType<ModelTypeParamShape, 'identifier'> = ModelType<
-    ModelTypeParamShape,
-    'identifier'
-  >,
+  T extends ModelTypeParamShape = ModelTypeParamShape,
   ModelName extends string = string,
   IsRDS extends boolean = false,
 > = IsRDS extends true
-  ? T & {
-      addRelationships<
-        Param extends Record<
-          string,
-          ModelRelationalField<any, string, any, any>
-        > = {},
-      >(
-        relationships: Param,
-      ): Record<ModelName, Param>;
-      fields: T extends ModelType<infer R extends ModelTypeParamShape, any>
-        ? R['fields']
-        : never;
-    }
-  : T;
+  ? RdsSchemaModelType<T, ModelName>
+  : ModelType<T, 'identifier'>;
 
 /**
  * Internal representation of Model Type that exposes the `data` property.
  * Used at buildtime.
  */
-export type InternalModel = SchemaModelType<
-  ModelType<ModelTypeParamShape>,
-  string,
-  true
-> & {
+export interface InternalModel
+  extends SchemaModelType<ModelTypeParamShape, string, true> {
   data: InternalModelData;
-};
+}
 
 function _model<T extends ModelTypeParamShape>(fields: T['fields']) {
   const data: ModelData = {
@@ -300,11 +290,11 @@ function _model<T extends ModelTypeParamShape>(fields: T['fields']) {
   return {
     ...builder,
     data,
-    addRelationships(relationships) {
+    addRelationships: ((relationships) => {
       data.fields = { ...data.fields, ...relationships };
-    },
+    }) as RdsSchemaModelType['addRelationships'],
     fields: data.fields,
-  } as InternalModel as ModelType<T>;
+  } as ModelType<T>;
 }
 
 /**
