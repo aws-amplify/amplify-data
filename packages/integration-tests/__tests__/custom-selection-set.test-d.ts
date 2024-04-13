@@ -282,7 +282,6 @@ describe('Custom Selection Set', () => {
     });
   });
 
-
   describe('Complex relationship', () => {
     const schema = a.schema({
       Blog: a.model({
@@ -352,7 +351,7 @@ describe('Custom Selection Set', () => {
             readonly content: string;
             readonly meta: {
               readonly id: string;
-              readonly commentId: string | null
+              readonly commentId: string | null;
               readonly createdAt: string;
               readonly updatedAt: string;
               readonly metaData: Json;
