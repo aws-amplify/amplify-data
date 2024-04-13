@@ -27,6 +27,16 @@
     "no-tabs": "error",
     "import/no-extraneous-dependencies": "error",
     "@typescript-eslint/no-explicit-any": "off",
+    "@typescript-eslint/ban-types": [
+      "error",
+      {
+        "types": {
+          // this should be used as a base-type for mapping Record<any, never>
+          // et al. are more expensive and can have unintended side effects in these contexts
+          "{}": false
+        }
+      }
+    ],
     "no-unused-vars": "off",
     "@typescript-eslint/no-unused-vars": [
       "error",

@@ -1,24 +1,24 @@
 import type {
-  SetTypeSubArg,
   SecondaryIndexIrShape,
+  SetTypeSubArg,
 } from '@aws-amplify/data-schema-types';
-import { Brand, brand } from './util';
-import { ModelField, InternalField } from './ModelField';
-import type {
-  ModelRelationalField,
-  InternalRelationalField,
-  ModelRelationalFieldParamShape,
-} from './ModelRelationalField';
 import { Authorization } from './Authorization';
-import { RefType } from './RefType';
-import { EnumType, EnumTypeParamShape } from './EnumType';
 import { CustomType, CustomTypeParamShape } from './CustomType';
+import { EnumType, EnumTypeParamShape } from './EnumType';
+import { SecondaryIndexToIR } from './MappedTypes/MapSecondaryIndexes';
+import { InternalField, ModelField } from './ModelField';
 import {
-  ModelIndexType,
   InternalModelIndexType,
   modelIndex,
+  ModelIndexType,
 } from './ModelIndex';
-import { SecondaryIndexToIR } from './MappedTypes/MapSecondaryIndexes';
+import type {
+  InternalRelationalField,
+  ModelRelationalField,
+  ModelRelationalFieldParamShape,
+} from './ModelRelationalField';
+import { RefType } from './RefType';
+import { brand, type brandSymbol } from './util';
 
 const brandName = 'modelType';
 
@@ -182,12 +182,16 @@ type _ConflictingAuthRules<T extends ModelTypeParamShape> =
 
 export type ModelType<
   T extends ModelTypeParamShape,
-  K extends keyof ModelType<T> = never,
+  RedundantKey extends keyof ModelType<T> = never,
 > = Omit<
   {
+    [brandSymbol]: typeof brandName;
     identifier<ID extends IdentifierType<T> = []>(
       identifier: ID,
-    ): ModelType<SetTypeSubArg<T, 'identifier', ID>, K | 'identifier'>;
+    ): ModelType<
+      SetTypeSubArg<T, 'identifier', ID>,
+      RedundantKey | 'identifier'
+    >;
     secondaryIndexes<
       const SecondaryIndexPKPool extends string = SecondaryIndexFields<
         ExtractType<T>
@@ -215,27 +219,26 @@ export type ModelType<
       ) => Indexes,
     ): ModelType<
       SetTypeSubArg<T, 'secondaryIndexes', IndexesIR>,
-      K | 'secondaryIndexes'
+      RedundantKey | 'secondaryIndexes'
     >;
     authorization<AuthRuleType extends Authorization<any, any, any>>(
       rules: AuthRuleType[],
     ): ModelType<
       SetTypeSubArg<T, 'authorization', AuthRuleType[]>,
-      K | 'authorization'
+      RedundantKey | 'authorization'
     >;
   },
-  K
-> &
-  Brand<typeof brandName>;
+  RedundantKey
+>;
 
 /**
  * External representation of Model Type that exposes the `addRelationships` modifier.
  * Used on the complete schema object.
  */
 export type SchemaModelType<
-  T extends ModelType<ModelTypeParamShape, never | 'identifier'> = ModelType<
+  T extends ModelType<ModelTypeParamShape, 'identifier'> = ModelType<
     ModelTypeParamShape,
-    never | 'identifier'
+    'identifier'
   >,
   ModelName extends string = string,
   IsRDS extends boolean = false,
@@ -245,7 +248,7 @@ export type SchemaModelType<
         Param extends Record<
           string,
           ModelRelationalField<any, string, any, any>
-        > = Record<never, never>,
+        > = {},
       >(
         relationships: Param,
       ): Record<ModelName, Param>;
