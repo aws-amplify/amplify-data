@@ -30,7 +30,7 @@ describe('ModelIdentifier', () => {
     type Schema = typeof s;
 
     type Resolved = ModelIdentifier<SchemaTypes<Schema>>;
-    type Expected = { Post: { identifier: 'id' } };
+    type Expected = { Post: { identifier: 'id'; identifierTuple: 'id'[] } };
 
     type test = Expect<Equal<Resolved, Expected>>;
   });
@@ -104,6 +104,26 @@ describe('ModelSecondaryIndexes', () => {
             sk: never;
           },
         ];
+      };
+    };
+
+    type test = Expect<Equal<Resolved, Expected>>;
+  });
+
+  test('No GSI', () => {
+    const s = a.schema({
+      Nothin: a.model({
+        title: a.string().required(),
+        description: a.string().required(),
+        metadata: a.json(),
+      }),
+    });
+
+    type Resolved = ModelSecondaryIndexes<SchemaTypes<typeof s>>;
+
+    type Expected = {
+      Post: {
+        secondaryIndexes: [];
       };
     };
 

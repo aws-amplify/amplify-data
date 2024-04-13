@@ -527,7 +527,10 @@ type ModelTypesClient<
     FlatModel extends Record<string, unknown> = ResolvedModel<Model>,
     SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[],
   >(
-    options?: IncludeIdentifierIfComposite<ModelIdentifier<ModelMeta>> & {
+    options?: IncludeIdentifierIfComposite<
+      ModelIdentifier<ModelMeta>,
+      ModelMeta['secondaryIndexes']
+    > & {
       filter?: ModelFilter<Model>;
       sortDirection?: ModelSortDirection;
       limit?: number;
@@ -902,7 +905,7 @@ type IndexQueryMethodSignature<
   ) => ListReturnValue<Prettify<ReturnValue<Model, FlatModel, SelectionSet>>>;
 };
 
-type IncludeIdentifierIfComposite<Identifiers> = Identifiers extends {
+type IncludeIdentifierIfComposite<Identifiers, S> = Identifiers extends {
   identifiers: string[];
   identifierTuple: any[];
 }
@@ -910,3 +913,11 @@ type IncludeIdentifierIfComposite<Identifiers> = Identifiers extends {
     ? unknown
     : Partial<Identifiers>
   : unknown;
+
+// TODO: combine with above ^
+type IncludeIdentifierIfSecondary<Identifiers, S> =
+  S extends SecondaryIndexIrShape[]
+    ? S['length'] extends 0
+      ? unknown
+      : Partial<Identifiers>
+    : unknown;
