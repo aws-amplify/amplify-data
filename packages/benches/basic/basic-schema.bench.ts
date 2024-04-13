@@ -19,4 +19,4 @@ bench('basic schema w client types', () => {
   });
 
   type _ = ClientSchema<typeof s>;
-}).types([42233, 'instantiations']);
+}).types([28918, 'instantiations']);
