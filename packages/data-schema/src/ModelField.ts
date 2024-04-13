@@ -76,7 +76,7 @@ export type ArrayField<T> = [T] extends [ModelFieldTypeParamInner]
  */
 export type ModelField<
   T extends ModelFieldTypeParamOuter,
-  RedundantKey extends keyof ModelField<T> = never,
+  UsedMethods extends keyof ModelField<T> = never,
   Auth = undefined,
 > = Omit<
   {
@@ -86,14 +86,14 @@ export type ModelField<
     /**
      * Marks a field as required.
      */
-    required(): ModelField<Required<T>, RedundantKey | 'required'>;
+    required(): ModelField<Required<T>, UsedMethods | 'required'>;
     // Exclude `optional` after calling array, because both the value and the array itself can be optional
     /**
      * Converts a field type definition to an array of the field type.
      */
     array(): ModelField<
       ArrayField<T>,
-      Exclude<RedundantKey, 'required'> | 'array'
+      Exclude<UsedMethods, 'required'> | 'array'
     >;
     // TODO: should be T, but .array breaks this constraint. Fix later
     /**
@@ -102,16 +102,16 @@ export type ModelField<
      */
     default(
       value: ModelFieldTypeParamOuter,
-    ): ModelField<T, RedundantKey | 'default'>;
+    ): ModelField<T, UsedMethods | 'default'>;
     /**
      * Configures field-level authorization rules. Pass in an array of authorizations `(a.allow.____)` to mix and match
      * multiple authorization rules for this field.
      */
     authorization<AuthRuleType extends Authorization<any, any, any>>(
       rules: AuthRuleType[],
-    ): ModelField<T, RedundantKey | 'authorization', AuthRuleType>;
+    ): ModelField<T, UsedMethods | 'authorization', AuthRuleType>;
   },
-  RedundantKey
+  UsedMethods
 >;
 
 /**

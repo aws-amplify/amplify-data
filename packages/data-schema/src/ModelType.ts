@@ -178,7 +178,7 @@ type _ConflictingAuthRules<T extends ModelTypeParamShape> =
 
 export type ModelType<
   T extends ModelTypeParamShape,
-  RedundantKey extends keyof ModelType<T> = never,
+  UsedMethods extends keyof ModelType<T> = never,
 > = Omit<
   {
     [brandSymbol]: typeof brandName;
@@ -186,7 +186,7 @@ export type ModelType<
       identifier: ID,
     ): ModelType<
       SetTypeSubArg<T, 'identifier', ID>,
-      RedundantKey | 'identifier'
+      UsedMethods | 'identifier'
     >;
     secondaryIndexes<
       const SecondaryIndexPKPool extends string = SecondaryIndexFields<
@@ -215,19 +215,19 @@ export type ModelType<
       ) => Indexes,
     ): ModelType<
       SetTypeSubArg<T, 'secondaryIndexes', IndexesIR>,
-      RedundantKey | 'secondaryIndexes'
+      UsedMethods | 'secondaryIndexes'
     >;
     authorization<AuthRuleType extends Authorization<any, any, any>>(
       rules: AuthRuleType[],
     ): ModelType<
       SetTypeSubArg<T, 'authorization', AuthRuleType[]>,
-      RedundantKey | 'authorization'
+      UsedMethods | 'authorization'
     >;
   },
-  RedundantKey
+  UsedMethods
 >;
 
-export interface RdsSchemaModelType<
+export interface RDSSchemaModelType<
   T extends ModelTypeParamShape = ModelTypeParamShape,
   ModelName extends string = string,
 > extends ModelType<T, 'identifier'> {
@@ -248,7 +248,7 @@ export type SchemaModelType<
   ModelName extends string = string,
   IsRDS extends boolean = false,
 > = IsRDS extends true
-  ? RdsSchemaModelType<T, ModelName>
+  ? RDSSchemaModelType<T, ModelName>
   : ModelType<T, 'identifier'>;
 
 /**
@@ -292,7 +292,7 @@ function _model<T extends ModelTypeParamShape>(fields: T['fields']) {
     data,
     addRelationships: ((relationships) => {
       data.fields = { ...data.fields, ...relationships };
-    }) as RdsSchemaModelType['addRelationships'],
+    }) as RDSSchemaModelType['addRelationships'],
     fields: data.fields,
   } as ModelType<T>;
 }
