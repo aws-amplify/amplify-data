@@ -6,16 +6,13 @@ import {
 import type { ModelType } from '../ModelType';
 import type { ModelRelationalFieldParamShape } from '../ModelRelationalField';
 
-// function tuple<const Arr extends string[]>(arr: Arr) {
-//   return arr;
-// }
-
 export type ModelIdentifier<T> = {
   [Property in keyof T]: T[Property] extends ModelType<infer R, any>
-    ? // reduce back to union
-      R['identifier'] extends any[]
+    ? R['identifier'] extends any[]
       ? {
+          // union:
           identifier: R['identifier'][number];
+          // tuple:
           identifierTuple: R['identifier'];
         }
       : never

@@ -527,7 +527,7 @@ type ModelTypesClient<
     FlatModel extends Record<string, unknown> = ResolvedModel<Model>,
     SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[],
   >(
-    options?: Partial<ModelIdentifier<ModelMeta>> & {
+    options?: IncludeIdentifierIfComposite<ModelIdentifier<ModelMeta>> & {
       filter?: ModelFilter<Model>;
       sortDirection?: ModelSortDirection;
       limit?: number;
@@ -633,7 +633,7 @@ type ModelTypesSSRCookies<
     FlatModel extends Record<string, unknown> = ResolvedModel<Model>,
     SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[],
   >(
-    options?: Partial<ModelIdentifier<ModelMeta>> & {
+    options?: IncludeIdentifierIfComposite<ModelIdentifier<ModelMeta>> & {
       filter?: ModelFilter<Model>;
       sortDirection?: ModelSortDirection;
       limit?: number;
@@ -698,7 +698,7 @@ type ModelTypesSSRRequest<
     SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[],
   >(
     contextSpec: any,
-    options?: Partial<ModelIdentifier<ModelMeta>> & {
+    options?: IncludeIdentifierIfComposite<ModelIdentifier<ModelMeta>> & {
       filter?: ModelFilter<Model>;
       sortDirection?: ModelSortDirection;
       limit?: number;
@@ -901,3 +901,12 @@ type IndexQueryMethodSignature<
     },
   ) => ListReturnValue<Prettify<ReturnValue<Model, FlatModel, SelectionSet>>>;
 };
+
+type IncludeIdentifierIfComposite<Identifiers> = Identifiers extends {
+  identifiers: string[];
+  identifierTuple: any[];
+}
+  ? Identifiers['identifierTuple']['length'] extends 1
+    ? unknown
+    : Partial<Identifiers>
+  : unknown;

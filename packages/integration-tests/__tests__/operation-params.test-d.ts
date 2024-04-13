@@ -63,6 +63,11 @@ describe('Basic operations', () => {
         await client.models.Post.list();
       });
 
+      test('pk should not exist in options', async () => {
+        // @ts-expect-error
+        await client.models.Post.list({ id: 'some-id' });
+      });
+
       test('allows filter param', async () => {
         await client.models.Post.list({
           filter: { description: { eq: 'something' } },

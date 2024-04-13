@@ -48,7 +48,9 @@ describe('ModelIdentifier', () => {
     type Schema = typeof s;
 
     type Resolved = ModelIdentifier<SchemaTypes<Schema>>;
-    type Expected = { Post: { identifier: 'title' } };
+    type Expected = {
+      Post: { identifier: 'title'; identifierTuple: ['title'] };
+    };
 
     type test = Expect<Equal<Resolved, Expected>>;
   });
