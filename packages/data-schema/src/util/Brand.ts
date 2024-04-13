@@ -1,4 +1,6 @@
-const brandSymbol = Symbol('brand');
+/** This can be used internally to efficiently add a type-level brand without an
+ * intersection */
+export const brandSymbol = Symbol('brand');
 
 /**
  * @typeParam BrandStr - String type to brand this object with

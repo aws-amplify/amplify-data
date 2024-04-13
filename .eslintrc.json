@@ -36,5 +36,14 @@
         "caughtErrorsIgnorePattern": "^_"
       }
     ]
-  }
+  },
+  "overrides": [
+    {
+      "files": ["**/*.bench.ts", "**/*.test.ts"],
+      "rules": {
+        // Allow devDependencies from repo root in tests
+        "import/no-extraneous-dependencies": "off"
+      }
+    }
+  ]
 }

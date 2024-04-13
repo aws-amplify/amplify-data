@@ -20,11 +20,13 @@
     "lint": "turbo run lint",
     "clean": "turbo run clean",
     "turbo": "turbo",
+    "type-stats": "attest stats packages/*",
     "publish-packages:release": "changeset version && changeset publish",
     "publish-packages:preid": "changeset version && changeset publish --tag=${PREID_PREFIX}",
     "publish-packages:local": "npm_config_registry=http://localhost:4873/ npm run publish-packages"
   },
   "devDependencies": {
+    "@arktype/attest": "0.6.8",
     "@changesets/cli": "^2.26.2",
     "@microsoft/api-documenter": "^7.23.37",
     "@microsoft/api-extractor": "^7.42.3",

@@ -1,4 +1,4 @@
-import { Brand, brand } from './util';
+import { brand, brandSymbol } from './util';
 import { Authorization } from './Authorization';
 
 /**
@@ -72,43 +72,47 @@ export type ArrayField<T> = [T] extends [ModelFieldTypeParamInner]
  * The type is narrowing e.g., after calling .array() it will be omitted from intellisense suggestions
  *
  * @typeParam T - holds the JS data type of the field
- * @typeParam K - union of strings representing already-invoked method names. Used to improve Intellisense
+ * @typeParam RedundantKey - union of strings representing already-invoked method names. Used to improve Intellisense
  */
 export type ModelField<
   T extends ModelFieldTypeParamOuter,
-  // rename K
-  K extends keyof ModelField<T> = never,
+  RedundantKey extends keyof ModelField<T> = never,
   Auth = undefined,
 > = Omit<
   {
+    // This is a lie. This property is never set at runtime. It's just used to smuggle auth types through.
+    [__auth]?: Auth;
+    [brandSymbol]: typeof brandName;
     /**
      * Marks a field as required.
      */
-    required(): ModelField<Required<T>, K | 'required'>;
+    required(): ModelField<Required<T>, RedundantKey | 'required'>;
     // Exclude `optional` after calling array, because both the value and the array itself can be optional
     /**
      * Converts a field type definition to an array of the field type.
      */
-    array(): ModelField<ArrayField<T>, Exclude<K, 'required'> | 'array'>;
+    array(): ModelField<
+      ArrayField<T>,
+      Exclude<RedundantKey, 'required'> | 'array'
+    >;
     // TODO: should be T, but .array breaks this constraint. Fix later
     /**
      * Sets a default value for the scalar type.
      * @param value the default value
      */
-    default(value: ModelFieldTypeParamOuter): ModelField<T, K | 'default'>;
+    default(
+      value: ModelFieldTypeParamOuter,
+    ): ModelField<T, RedundantKey | 'default'>;
     /**
      * Configures field-level authorization rules. Pass in an array of authorizations `(a.allow.____)` to mix and match
      * multiple authorization rules for this field.
      */
     authorization<AuthRuleType extends Authorization<any, any, any>>(
       rules: AuthRuleType[],
-    ): ModelField<T, K | 'authorization', AuthRuleType>;
+    ): ModelField<T, RedundantKey | 'authorization', AuthRuleType>;
   },
-  K
-> & {
-  // This is a lie. This property is never set at runtime. It's just used to smuggle auth types through.
-  [__auth]?: Auth;
-} & Brand<typeof brandName>;
+  RedundantKey
+>;
 
 /**
  * Internal representation of Model Field that exposes the `data` property.
