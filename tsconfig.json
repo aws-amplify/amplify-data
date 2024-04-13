@@ -1,0 +1,7 @@
+{
+  "references": [
+    { "path": "packages/benches" },
+    { "path": "packages/data-schema" },
+    { "path": "packages/data-schema-types" }
+  ]
+}
