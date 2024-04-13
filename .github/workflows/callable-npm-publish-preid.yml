@@ -43,6 +43,7 @@ jobs:
         uses: ./amplify-api-next/.github/actions/npm-publish
         with:
           target: preid
+          preid: ${{ inputs.preid }}
           npm_token: ${{ secrets.NPM_TOKEN }}
           github_user: ${{ vars.GH_USER}}
           github_email: ${{ vars.GH_EMAIL}}
