@@ -1,7 +1,7 @@
 import { SetTypeSubArg } from '@aws-amplify/data-schema-types';
+import { Brand } from './util';
 import { Authorization } from './Authorization';
 import { __auth } from './ModelField';
-import { type brandSymbol } from './util';
 
 const brandName = 'ref';
 
@@ -28,15 +28,12 @@ type MutationOperations = 'create' | 'update' | 'delete';
 
 export type RefType<
   T extends RefTypeParamShape,
-  UsedMethod extends keyof RefType<T> = never,
+  K extends keyof RefType<T> = never,
   Auth = undefined,
   // Branding the exported type allows us to detect it
   // nominally in our mapped types, ignoring structural overlap with other types
 > = Omit<
   {
-    // This is a lie. This property is never set at runtime. It's just used to smuggle auth types through.
-    [__auth]?: Auth;
-    [brandSymbol]: typeof brandName;
     /**
      * Marks a field as required.
      */
@@ -46,14 +43,14 @@ export type RefType<
         T['array'] extends true ? 'arrayRequired' : 'valueRequired',
         true
       >,
-      UsedMethod | 'required'
+      K | 'required'
     >;
     /**
      * Marks a field as an array of the specified ref type.
      */
     array(): RefType<
       SetTypeSubArg<T, 'array', true>,
-      Exclude<UsedMethod, 'required'> | 'array'
+      Exclude<K, 'required'> | 'array'
     >;
     /**
      * Configures field-level authorization rules. Pass in an array of authorizations `(a.allow.____)` to mix and match
@@ -61,14 +58,15 @@ export type RefType<
      */
     authorization<AuthRuleType extends Authorization<any, any, any>>(
       rules: AuthRuleType[],
-    ): RefType<T, UsedMethod | 'authorization', AuthRuleType>;
+    ): RefType<T, K | 'authorization', AuthRuleType>;
 
-    mutations(
-      operations: MutationOperations[],
-    ): RefType<T, UsedMethod | 'mutations'>;
+    mutations(operations: MutationOperations[]): RefType<T, K | 'mutations'>;
   },
-  UsedMethod
->;
+  K
+> & {
+  // This is a lie. This property is never set at runtime. It's just used to smuggle auth types through.
+  [__auth]?: Auth;
+} & Brand<typeof brandName>;
 
 function brandedBuilder<T extends RefTypeParamShape>(
   builder: Record<keyof RefType<T> & string, any>,

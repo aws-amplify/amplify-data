@@ -1,12 +1,21 @@
 import type {
+  DerivedApiDefinition,
+  SetTypeSubArg,
+  SchemaConfiguration,
   DataSourceConfiguration,
   DatasourceEngine,
-  DerivedApiDefinition,
-  SchemaConfiguration,
-  SetTypeSubArg,
   UnionToIntersection,
 } from '@aws-amplify/data-schema-types';
-import { SchemaAuthorization } from './Authorization';
+import {
+  type ModelType,
+  type ModelTypeParamShape,
+  type InternalModel,
+  isSchemaModelType,
+  SchemaModelType,
+  AddRelationshipFieldsToModelTypeFields,
+} from './ModelType';
+import type { EnumType, EnumTypeParamShape } from './EnumType';
+import type { CustomType, CustomTypeParamShape } from './CustomType';
 import type {
   CustomOperation,
   CustomOperationParamShape,
@@ -15,28 +24,21 @@ import type {
   QueryCustomOperation,
   SubscriptionCustomOperation,
 } from './CustomOperation';
-import type { CustomType, CustomTypeParamShape } from './CustomType';
-import type { EnumType, EnumTypeParamShape } from './EnumType';
+import { processSchema } from './SchemaProcessor';
+import { SchemaAuthorization } from './Authorization';
+import { Brand, brand } from './util';
 import {
   ModelRelationalField,
   ModelRelationalFieldParamShape,
 } from './ModelRelationalField';
-import {
-  AddRelationshipFieldsToModelTypeFields,
-  type InternalModel,
-  isSchemaModelType,
-  type ModelType,
-  type ModelTypeParamShape,
-  SchemaModelType,
-} from './ModelType';
-import { processSchema } from './SchemaProcessor';
-import { brand, type brandSymbol } from './util';
 
 export const rdsSchemaBrandName = 'RDSSchema';
 export const rdsSchemaBrand = brand(rdsSchemaBrandName);
+export type RDSSchemaBrand = Brand<typeof rdsSchemaBrandName>;
 
 export const ddbSchemaBrandName = 'DDBSchema';
 const ddbSchemaBrand = brand(ddbSchemaBrandName);
+export type DDBSchemaBrand = Brand<typeof ddbSchemaBrandName>;
 
 type SchemaContent =
   | ModelType<ModelTypeParamShape, any>
@@ -80,17 +82,14 @@ export type BaseSchema<
   transform: () => DerivedApiDefinition;
 };
 
-export interface GenericModelSchema<T extends ModelSchemaParamShape>
-  extends BaseSchema<T> {
-  [brandSymbol]: typeof rdsSchemaBrandName | typeof ddbSchemaBrandName;
-}
+export type GenericModelSchema<T extends ModelSchemaParamShape> =
+  BaseSchema<T> & Brand<typeof rdsSchemaBrandName | typeof ddbSchemaBrandName>;
 
 export type ModelSchema<
   T extends ModelSchemaParamShape,
   UsedMethods extends 'authorization' | 'addRelationships' = never,
 > = Omit<
   {
-    [brandSymbol]: typeof ddbSchemaBrandName;
     authorization: <AuthRules extends SchemaAuthorization<any, any, any>>(
       auth: AuthRules[],
     ) => ModelSchema<
@@ -100,7 +99,8 @@ export type ModelSchema<
   },
   UsedMethods
 > &
-  BaseSchema<T>;
+  BaseSchema<T> &
+  DDBSchemaBrand;
 
 type RDSModelSchemaFunctions =
   | 'addQueries'
@@ -114,7 +114,7 @@ type RDSModelSchemaFunctions =
 
 export type RDSModelSchema<
   T extends RDSModelSchemaParamShape,
-  UsedMethod extends RDSModelSchemaFunctions = never,
+  UsedMethods extends RDSModelSchemaFunctions = never,
   RelationshipTemplate extends Record<
     string,
     ModelRelationalField<ModelRelationalFieldParamShape, string, any, any>
@@ -122,86 +122,81 @@ export type RDSModelSchema<
     string,
     ModelRelationalField<ModelRelationalFieldParamShape, string, any, any>
   >,
-> = Omit<UnusedRDSModelSchema<T, UsedMethod, RelationshipTemplate>, UsedMethod>;
-
-interface UnusedRDSModelSchema<
-  T extends RDSModelSchemaParamShape,
-  UsedMethod extends RDSModelSchemaFunctions,
-  RelationshipTemplate extends Record<
-    string,
-    ModelRelationalField<ModelRelationalFieldParamShape, string, any, any>
-  >,
-> extends BaseSchema<T, true> {
-  [brandSymbol]: typeof rdsSchemaBrandName;
-  addQueries: <Queries extends Record<string, QueryCustomOperation>>(
-    types: Queries,
-  ) => RDSModelSchema<
-    SetTypeSubArg<T, 'types', T['types'] & Queries>,
-    UsedMethod | 'addQueries'
-  >;
-  addMutations: <Mutations extends Record<string, MutationCustomOperation>>(
-    types: Mutations,
-  ) => RDSModelSchema<
-    SetTypeSubArg<T, 'types', T['types'] & Mutations>,
-    UsedMethod | 'addMutations'
-  >;
-  addSubscriptions: <
-    Subscriptions extends Record<string, SubscriptionCustomOperation>,
-  >(
-    types: Subscriptions,
-  ) => RDSModelSchema<
-    SetTypeSubArg<T, 'types', T['types'] & Subscriptions>,
-    UsedMethod | 'addSubscriptions'
-  >;
-  // TODO: hide this, since SQL schema auth is configured via .setAuthorization?
-  authorization: <AuthRules extends SchemaAuthorization<any, any, any>>(
-    auth: AuthRules[],
-  ) => RDSModelSchema<
-    SetTypeSubArg<T, 'authorization', AuthRules[]>,
-    UsedMethod | 'authorization'
-  >;
-  setAuthorization: (
-    callback: (
-      models: BaseSchema<T, true>['models'],
-      schema: RDSModelSchema<T, UsedMethod | 'setAuthorization'>,
-    ) => void,
-  ) => RDSModelSchema<T>;
-  relationships: <
-    Relationships extends ReadonlyArray<
-      Partial<Record<keyof T['types'], RelationshipTemplate>>
-    >,
-  >(
-    callback: (models: BaseSchema<T, true>['models']) => Relationships,
-  ) => RDSModelSchema<
-    UnionToIntersection<Relationships[number]> extends infer RelationshipsDefs
-      ? RelationshipsDefs extends Record<string, RelationshipTemplate>
-        ? SetTypeSubArg<
-            T,
-            'types',
-            {
-              [ModelName in keyof T['types']]: ModelName extends keyof RelationshipsDefs
-                ? AddRelationshipFieldsToModelTypeFields<
-                    T['types'][ModelName],
-                    RelationshipsDefs[ModelName]
-                  >
-                : T['types'][ModelName];
-            }
-          >
-        : T
-      : T,
-    UsedMethod | 'relationships'
-  >;
-  renameModels: <
-    NewName extends string,
-    CurName extends string = keyof BaseSchema<T>['models'] & string,
-    const ChangeLog extends readonly [CurName, NewName][] = [],
-  >(
-    callback: () => ChangeLog,
-  ) => RDSModelSchema<
-    SetTypeSubArg<T, 'types', RenameModelArr<ChangeLog, T['types']>>,
-    UsedMethod | 'renameModels'
-  >;
-}
+> = Omit<
+  {
+    addQueries: <Queries extends Record<string, QueryCustomOperation>>(
+      types: Queries,
+    ) => RDSModelSchema<
+      SetTypeSubArg<T, 'types', T['types'] & Queries>,
+      UsedMethods | 'addQueries'
+    >;
+    addMutations: <Mutations extends Record<string, MutationCustomOperation>>(
+      types: Mutations,
+    ) => RDSModelSchema<
+      SetTypeSubArg<T, 'types', T['types'] & Mutations>,
+      UsedMethods | 'addMutations'
+    >;
+    addSubscriptions: <
+      Subscriptions extends Record<string, SubscriptionCustomOperation>,
+    >(
+      types: Subscriptions,
+    ) => RDSModelSchema<
+      SetTypeSubArg<T, 'types', T['types'] & Subscriptions>,
+      UsedMethods | 'addSubscriptions'
+    >;
+    // TODO: hide this, since SQL schema auth is configured via .setAuthorization?
+    authorization: <AuthRules extends SchemaAuthorization<any, any, any>>(
+      auth: AuthRules[],
+    ) => RDSModelSchema<
+      SetTypeSubArg<T, 'authorization', AuthRules[]>,
+      UsedMethods | 'authorization'
+    >;
+    setAuthorization: (
+      callback: (
+        models: BaseSchema<T, true>['models'],
+        schema: RDSModelSchema<T, UsedMethods | 'setAuthorization'>,
+      ) => void,
+    ) => RDSModelSchema<T>;
+    relationships: <
+      Relationships extends ReadonlyArray<
+        Partial<Record<keyof T['types'], RelationshipTemplate>>
+      >,
+    >(
+      callback: (models: BaseSchema<T, true>['models']) => Relationships,
+    ) => RDSModelSchema<
+      UnionToIntersection<Relationships[number]> extends infer RelationshipsDefs
+        ? RelationshipsDefs extends Record<string, RelationshipTemplate>
+          ? SetTypeSubArg<
+              T,
+              'types',
+              {
+                [ModelName in keyof T['types']]: ModelName extends keyof RelationshipsDefs
+                  ? AddRelationshipFieldsToModelTypeFields<
+                      T['types'][ModelName],
+                      RelationshipsDefs[ModelName]
+                    >
+                  : T['types'][ModelName];
+              }
+            >
+          : T
+        : T,
+      UsedMethods | 'relationships'
+    >;
+    renameModels: <
+      NewName extends string,
+      CurName extends string = keyof BaseSchema<T>['models'] & string,
+      const ChangeLog extends readonly [CurName, NewName][] = [],
+    >(
+      callback: () => ChangeLog,
+    ) => RDSModelSchema<
+      SetTypeSubArg<T, 'types', RenameModelArr<ChangeLog, T['types']>>,
+      UsedMethods | 'renameModels'
+    >;
+  },
+  UsedMethods
+> &
+  BaseSchema<T, true> &
+  RDSSchemaBrand;
 
 type RenameModel<
   CurName extends string,

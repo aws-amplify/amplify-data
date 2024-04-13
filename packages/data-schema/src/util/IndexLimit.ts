@@ -1,12 +1,12 @@
 /**
- * Create a tuple literal of numbers as index strings
+ * Create a type literal of numbers as index strings
  * The resulting literal will include 0 up to (N - 1)
  *
- * @typeParam Length - The number of literal values to include
+ * @typeParam N - The number of literal values to include
  */
-export type IndexLiteralTuple<
-  Length extends number,
+export type IndexLimitUnion<
+  N extends number,
   Result extends Array<unknown> = [],
-> = Result['length'] extends Length
+> = Result['length'] extends N
   ? Result
-  : IndexLiteralTuple<Length, [...Result, `${Result['length']}`]>;
+  : IndexLimitUnion<N, [...Result, `${Result['length']}`]>;
