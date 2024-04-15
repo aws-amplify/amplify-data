@@ -1,5 +1,16 @@
 # @aws-amplify/data-schema
 
+## 0.15.0
+
+### Minor Changes
+
+- 922c344: feat!: support references based relationships. remove support for manyToMany
+
+### Patch Changes
+
+- Updated dependencies [922c344]
+  - @aws-amplify/data-schema-types@0.8.0
+
 ## 0.14.14
 
 ### Patch Changes
