@@ -150,8 +150,88 @@ describe('schema generation with relationships', () => {
     })
       .authorization([a.allow.public()]);
 
-    expect(schema.transform().schema).toThrowError(`Validation Error: reference field 'teamId' must be defined on Member. Team.members: [Member] @hasMany(references: ['teamId']) <-> Member.team: Team @belongsTo(references: ['teamId'])`);
+    expect(() => schema.transform().schema).toThrowError(
+      `reference field 'teamId' must be defined on Member. Team.members: [Member] @hasMany(references: ['teamId']) <-> Member.team: Team @belongsTo(references: ['teamId'])`
+    );
   });
+
+  test('conflicting relational definition on related model fails', () => {
+    const schema = a.schema({
+      Team: a.model({
+        members: a.hasMany('Member', ['teamId']),
+      }),
+      Member: a.model({
+        teamId: a.id(),
+        team: a.belongsTo('Team', ['teamId']),
+        team2: a.belongsTo('Team', ['teamId']),
+      })
+    })
+      .authorization([a.allow.public()]);
+
+    expect(() => schema.transform().schema).toThrowError(
+      `Found multiple relationship associations with Member.team, Member.team2 for Team.members: [Member] @hasMany(references: ['teamId'])`
+    );
+  })
+
+  test('conflicting relational definition on primary model fails', () => {
+    const schema = a.schema({
+      Team: a.model({
+        members: a.hasMany('Member', ['teamId']),
+        members2: a.hasMany('Member', ['teamId']),
+      }),
+      Member: a.model({
+        teamId: a.id(),
+        team: a.belongsTo('Team', ['teamId']),
+      })
+    })
+      .authorization([a.allow.public()]);
+
+    expect(() => schema.transform().schema).toThrowError(
+      `Found multiple relationship associations with Team.members, Team.members2 for Member.team: Team @belongsTo(references: ['teamId'])`
+    );
+  })
+
+  test('More identifiers on Primary than references defined fails', () => {
+    const schema = a.schema({
+      Team: a.model({
+        id: a.id().required(),
+        id2: a.id().required(),
+        members: a.hasMany('Member', ['teamId']),
+        members2: a.hasMany('Member', ['teamId']),
+      })
+      .identifier(['id', 'id2']),
+      Member: a.model({
+        teamId: a.id(),
+        team: a.belongsTo('Team', ['teamId']),
+      })
+    })
+      .authorization([a.allow.public()]);
+
+    expect(() => schema.transform().schema).toThrowError(
+      `The identifiers defined on Team must match the reference fields defined on Member.\n`
+      + `2 identifiers defined on Team.\n`
+      + `1 reference fields found on Member`
+    );
+  })
+
+  test('Multiple relational definition on primary model ', () => {
+    const schema = a.schema({
+      Team: a.model({
+        members: a.hasMany('Member', ['teamId']),
+        members2: a.hasMany('Member', ['teamId']),
+      }),
+      Member: a.model({
+        teamId: a.id(),
+        team: a.belongsTo('Team', ['teamId']),
+      })
+    })
+      .authorization([a.allow.public()]);
+
+    expect(() => schema.transform().schema).toThrowError(
+      `Found multiple relationship associations with Team.members, Team.members2 for Member.team: Team @belongsTo(references: ['teamId'])`
+    );
+  })
+
 
   test('ddb masMany / belongsTo explicitly defined reference field on related model is supported', () => {
     const schema = a.schema({
@@ -208,8 +288,9 @@ describe('schema generation with relationships', () => {
     })
       .authorization([a.allow.public()]);
 
-    expect(schema.transform().schema)
-    .toThrowError(`Validation Error: reference field 'teamSk' must be defined on Member. Team.members: [Member] @hasMany(references: ['teamId', 'teamSk']) <-> Member.team: Team @belongsTo(references: ['teamId', 'teamSk'])`);
+    expect(() => schema.transform().schema).toThrowError(
+      `reference field 'teamSk' must be defined on Member. Team.members: [Member] @hasMany(references: ['teamId', 'teamSk']) <-> Member.team: Team @belongsTo(references: ['teamId', 'teamSk'])`
+    );
   });
 
   test('ddb hasOne / belongsTo explicitly defined reference field on related model is supported', () => {
