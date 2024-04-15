@@ -215,8 +215,8 @@ export function hasOne<RM extends string>(
   >(
     ModelRelationshipTypes.hasOne,
     relatedModel,
-    Array.isArray(references) ? references : [references]
-  )
+    Array.isArray(references) ? references : [references],
+  );
 }
 
 /**
@@ -236,7 +236,7 @@ export function hasMany<RM extends string>(
     ModelRelationshipTypes.hasMany,
     relatedModel,
     Array.isArray(references) ? references : [references],
-  )
+  );
 }
 
 /**
@@ -257,6 +257,6 @@ export function belongsTo<RM extends string>(
   >(
     ModelRelationshipTypes.belongsTo,
     relatedModel,
-    Array.isArray(references) ? references : [references]
-  )
+    Array.isArray(references) ? references : [references],
+  );
 }
