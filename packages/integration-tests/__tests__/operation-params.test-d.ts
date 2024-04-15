@@ -288,14 +288,6 @@ describe('Basic operations', () => {
         },
       });
     });
-
-    test('implicit FK', async () => {
-      await client.models.Comment.list({
-        filter: {
-          postCommentsId: { eq: 'whatever' },
-        },
-      });
-    });
   });
 
   describe('can not filter on', () => {

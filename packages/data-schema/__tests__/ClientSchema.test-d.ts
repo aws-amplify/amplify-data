@@ -9,82 +9,6 @@ import {
 } from '@aws-amplify/data-schema-types';
 
 describe('implied fields', () => {
-  describe('boring model keys', () => {
-    const schema = a.schema({
-      BoringParent: a.model({
-        childNormal: a.hasOne('BoringChild', 'boringParentId'),
-        childReciprocal: a.hasOne('BoringReciprocalChild', 'boringParentId'),
-        childHasManyNormal: a.hasMany('BoringHasManyChild', 'boringParentId'),
-        childHasManyReciprocal: a.hasMany('ReciprocalHasManyChild', 'boringParentId'),
-      }),
-      BoringChild: a.model({
-        value: a.string(),
-        json: a.json(),
-        boringParentId: a.id(),
-        parent: a.belongsTo('BoringParent', 'boringParentId')
-      }),
-      BoringReciprocalChild: a.model({
-        boringParentId: a.id(),
-        parent: a.belongsTo('BoringParent', 'boringParentId'),
-        value: a.string(),
-        json: a.json(),
-      }),
-      BoringHasManyChild: a.model({
-        value: a.string(),
-        json: a.json(),
-        boringParentId: a.id(),
-        parent: a.belongsTo('BoringParent', 'boringParentId')
-      }),
-      ReciprocalHasManyChild: a.model({
-        value: a.string(),
-        json: a.json(),
-        boringParentId: a.id(),
-        parent: a.belongsTo('BoringParent', 'boringParentId'),
-      }),
-    });
-
-    type Schema = ClientSchema<typeof schema>;
-
-    test('hasOne FK is implied', () => {
-      type assert1 = Expect<
-        Equal<
-          Schema['BoringParent']['boringParentChildNormalId'],
-          string | undefined
-        >
-      >;
-      type assert2 = Expect<
-        Equal<
-          Schema['BoringParent']['boringParentChildReciprocalId'],
-          string | undefined
-        >
-      >;
-    });
-
-    test('repriprocal belongsTo on hasOne implies FK', () => {
-      type assert = Expect<
-        Equal<
-          Schema['BoringReciprocalChild']['boringReciprocalChildParentId'],
-          string | undefined
-        >
-      >;
-    });
-
-    test('hasMany FK is implied on children', () => {
-      type assert1 = Expect<
-        Equal<
-          Schema['BoringHasManyChild']['boringParentChildHasManyNormalId'],
-          string | undefined
-        >
-      >;
-      type assert2 = Expect<
-        Equal<
-          Schema['ReciprocalHasManyChild']['boringParentChildHasManyReciprocalId'],
-          string | undefined
-        >
-      >;
-    });
-  });
-
   describe('CPK model keys', () => {
     const schema = a.schema({
       CPKParent: a
@@ -157,33 +81,6 @@ describe('implied fields', () => {
         Equal<
           Schema['CPKReciprocalChild']['CPKParentIdFieldB'],
           string
-        >
-      >;
-    });
-
-    test('hasMany FK is implied on children', () => {
-      type hasManyA = Expect<
-        Equal<
-          Schema['CPKHasManyChild']['cPKParentChildHasManyNormalCPKParentIdFieldA'],
-          string | undefined
-        >
-      >;
-      type hasManyB = Expect<
-        Equal<
-          Schema['CPKHasManyChild']['cPKParentChildHasManyNormalCPKParentIdFieldB'],
-          string | undefined
-        >
-      >;
-      type hasManyReprocatedA = Expect<
-        Equal<
-          Schema['CPKReciprocalHasManyChild']['cPKParentChildHasManyReciprocalCPKParentIdFieldA'],
-          string | undefined
-        >
-      >;
-      type hasManyReprocatedB = Expect<
-        Equal<
-          Schema['CPKReciprocalHasManyChild']['cPKParentChildHasManyReciprocalCPKParentIdFieldB'],
-          string | undefined
         >
       >;
     });
