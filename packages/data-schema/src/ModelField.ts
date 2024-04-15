@@ -1,5 +1,5 @@
 import { Brand, brand } from './util';
-import { Authorization } from './Authorization';
+import { AllowModifier, Authorization, allow } from './Authorization';
 
 /**
  * Used to "attach" auth types to ModelField without exposing them on the builder.
@@ -101,7 +101,7 @@ export type ModelField<
      * multiple authorization rules for this field.
      */
     authorization<AuthRuleType extends Authorization<any, any, any>>(
-      rules: AuthRuleType[],
+      callback: (allow: AllowModifier) => AuthRuleType | AuthRuleType[],
     ): ModelField<T, K | 'authorization', AuthRuleType>;
   },
   K
@@ -168,8 +168,9 @@ function _field<T extends ModelFieldTypeParamOuter>(fieldType: ModelFieldType) {
 
       return this;
     },
-    authorization(rules) {
-      data.authorization = rules;
+    authorization(callback) {
+      const rules = callback(allow);
+      data.authorization = Array.isArray(rules) ? rules : [rules];
       _meta.lastInvokedMethod = 'authorization';
 
       return this;

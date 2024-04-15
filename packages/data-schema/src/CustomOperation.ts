@@ -2,7 +2,7 @@ import { SetTypeSubArg } from '@aws-amplify/data-schema-types';
 import { Brand, brand } from './util';
 
 import { ModelField, InternalField } from './ModelField';
-import { Authorization } from './Authorization';
+import { AllowModifier, Authorization, allow } from './Authorization';
 import { RefType, InternalRef } from './RefType';
 import { EnumType, EnumTypeParamShape } from './EnumType';
 import { CustomType } from './CustomType';
@@ -106,7 +106,7 @@ export type CustomOperation<
       B
     >;
     authorization<AuthRuleType extends Authorization<any, any, any>>(
-      rules: AuthRuleType[],
+      callback: (allow: AllowModifier) => AuthRuleType | AuthRuleType[],
     ): CustomOperation<
       SetTypeSubArg<T, 'authorization', AuthRuleType[]>,
       K | 'authorization',
@@ -183,8 +183,11 @@ function _custom<
 
         return this;
       },
-      authorization(rules: Authorization<any, any, any>[]) {
-        data.authorization = rules;
+      authorization<AuthRuleType extends Authorization<any, any, any>>(
+        callback: (allow: AllowModifier) => AuthRuleType | AuthRuleType[],
+      ) {
+        const rules = callback(allow);
+        data.authorization = Array.isArray(rules) ? rules : [rules];
 
         return this;
       },

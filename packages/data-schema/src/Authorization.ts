@@ -122,10 +122,6 @@ export type Authorization<
 
 export type OwnerField = object;
 
-type BuilderMethods<T extends object> = {
-  [K in keyof T as T[K] extends (...args: any) => any ? K : never]: T[K];
-};
-
 /**
  * Creates a shallow copy of an object with an individual field pruned away.
  *
@@ -148,21 +144,6 @@ function to<SELF extends Authorization<any, any, any>>(
 ) {
   (this as any)[__data].operations = operations;
   return omit(this, 'to');
-}
-
-function inField<
-  SELF extends Authorization<any, any, any>,
-  Field extends string,
->(this: SELF, field: Field) {
-  this[__data].groupOrOwnerField = field;
-  const built = omit(this, 'inField');
-
-  return built as unknown as BuilderMethods<typeof built> &
-    Authorization<
-      SELF[typeof __data]['strategy'],
-      Field,
-      SELF[typeof __data]['multiOwner']
-    >;
 }
 
 /**
@@ -229,17 +210,30 @@ function authData<
  */
 export const allow = {
   /**
-   * Authorize unauthenticated users. By default, `.public()` uses an API key based authorization. You can additionally
-   * use `.public('iam')` to use IAM based authorization for unauthenticated users.
-   * @param provider the authentication provider - supports "apiKey" or "iam" as valid providers
+   * Authorize unauthenticated users by using API key based authorization.
    * @returns an authorization rule for unauthenticated users
    */
-  public(provider?: PublicProvider) {
-    validateProvider(provider, PublicProviders);
+  publicApiKey() {
     return authData(
       {
         strategy: 'public',
-        provider,
+        provider: 'apiKey',
+      },
+      {
+        to,
+      },
+    );
+  },
+
+  /**
+   * Authorize unauthenticated users by using IAM based authorization.
+   * @returns an authorization rule for unauthenticated users
+   */
+  guest() {
+    return authData(
+      {
+        strategy: 'public',
+        provider: 'iam',
       },
       {
         to,
@@ -249,11 +243,11 @@ export const allow = {
 
   /**
    * Authorize authenticated users. By default, `.private()` uses an Amazon Cognito user pool based authorization. You can additionally
-   * use `.private("iam")` or `.private("oidc")` to use IAM or OIDC based authorization for authenticated users.
+   * use `.authenticated("iam")` or `.authenticated("oidc")` to use IAM or OIDC based authorization for authenticated users.
    * @param provider the authentication provider - supports "userPools", "iam", or "oidc"
    * @returns an authorization rule for authenticated users
    */
-  private(provider?: PrivateProvider) {
+  authenticated(provider?: PrivateProvider) {
     validateProvider(provider, PrivateProviders);
     return authData(
       {
@@ -269,8 +263,8 @@ export const allow = {
   /**
    * Authorize access on a per-user (owner) basis. By setting owner-based authorization, a new `owner: a.string()`
    * field will be added to the model to store which user "owns" the item. Upon item creation, the "owner field" is
-   * auto-populated with the authenticated user's information. You can which field should be used as the owner field
-   * by chaining the * `.inField(...)` method.
+   * auto-populated with the authenticated user's information. If you want to specify which field should be used as
+   * the owner field, you can use the `ownerDefinedIn` builder function instead.
    *
    * By default, `.owner()` uses an Amazon Cognito user pool based authorization. You can additionally
    * use `.owner("oidc")` to use OIDC based authentication to designate the owner.
@@ -291,7 +285,35 @@ export const allow = {
       },
       {
         to,
-        inField,
+        identityClaim,
+      },
+    );
+  },
+
+  /**
+   * Authorize access on a per-user (owner) basis with specifying which field should be used as the owner field.
+   *
+   * By default, `.owner()` uses an Amazon Cognito user pool based authorization. You can additionally
+   * use `.ownerDefinedIn("owner", "oidc")` to use OIDC based authentication to designate the owner.
+   *
+   * To change the specific claim that should be used as the user identifier within the owner field, chain the
+   * `.identityClaim(...)` method.
+   *
+   * @param ownerField the field that contains the owner information
+   * @param provider the authentication provider - supports "userPools", "iam", or "oidc"
+   * @returns an authorization rule for authenticated users
+   */
+  ownerDefinedIn<T extends string>(ownerField: T, provider?: OwnerProviders) {
+    validateProvider(provider, OwnerProviders);
+
+    return authData(
+      {
+        strategy: 'owner',
+        provider,
+        groupOrOwnerField: ownerField,
+      },
+      {
+        to,
         identityClaim,
       },
     );
@@ -301,29 +323,31 @@ export const allow = {
    * Authorize access for multi-user / multi-owner access. By setting multi-owner-based authorization, a new `owners: a.string().array()`
    * field will be added to the model to store which users "own" the item. Upon item creation, the "owners field" is
    * auto-populated with the authenticated user's information. To grant other users access to the item, append their user identifier into the `owners` array.
-   * You can which field should be used as the owners field by chaining the * `.inField(...)` method.
    *
-   * By default, `.multipleOwners()` uses an Amazon Cognito user pool based authorization. You can additionally
-   * use `.multipleOwners("oidc")` to use OIDC based authentication to designate the owner.
+   * You can specify which field should be used as the owners field by passing the `ownersField` parameter.
+   *
+   * By default, `.ownersDefinedIn()` uses an Amazon Cognito user pool based authorization. You can additionally
+   * use `.ownersDefinedIn("owners", "oidc")` to use OIDC based authentication to designate the owner.
    *
    * To change the specific claim that should be used as the user identifier within the owners field, chain the
    * `.identityClaim(...)` method.
    *
+   * @param ownersField the field that contains the owners information
    * @param provider the authentication provider - supports "userPools", "iam", or "oidc"
    * @returns an authorization rule for authenticated users
    */
-  multipleOwners(provider?: OwnerProviders) {
+  ownersDefinedIn<T extends string>(ownersField: T, provider?: OwnerProviders) {
     validateProvider(provider, OwnerProviders);
+
     return authData(
       {
         strategy: 'owner',
-        multiOwner: true,
         provider,
-        groupOrOwnerField: 'owner',
+        groupOrOwnerField: ownersField,
+        multiOwner: true,
       },
       {
         to,
-        inField,
         identityClaim,
       },
     );
@@ -332,8 +356,8 @@ export const allow = {
   /**
    * Authorize a specific user group. Provide the name of the specific user group to have access.
    *
-   * By default, `.specificGroup()` uses an Amazon Cognito user pool based authorization. You can additionally
-   * use `.specificGroup("group-name", "oidc")` to use OIDC based authentication to designate the user group.
+   * By default, `.group()` uses an Amazon Cognito user pool based authorization. You can additionally
+   * use `.group("group-name", "oidc")` to use OIDC based authentication to designate the user group.
    *
    * To change the specific claim that should be used as the user group identifier, chain the
    * `.withClaimIn(...)` method.
@@ -341,7 +365,7 @@ export const allow = {
    * @param provider the authentication provider - supports "userPools" or "oidc"
    * @returns an authorization rule to grant access by a specific group
    */
-  specificGroup(group: string, provider?: GroupProvider) {
+  group(group: string, provider?: GroupProvider) {
     return authData(
       {
         strategy: 'groups',
@@ -358,8 +382,8 @@ export const allow = {
   /**
    * Authorize multiple specific user groups. Provide the names of the specific user groups to have access.
    *
-   * By default, `.specificGroups()` uses an Amazon Cognito user pool based authorization. You can additionally
-   * use `.specificGroups(["group-a", "group-b"], "oidc")` to use OIDC based authentication to designate the user group.
+   * By default, `.groups()` uses an Amazon Cognito user pool based authorization. You can additionally
+   * use `.groups(["group-a", "group-b"], "oidc")` to use OIDC based authentication to designate the user group.
    *
    * To change the specific claim that should be used as the user group identifier, chain the
    * `.withClaimIn(...)` method.
@@ -367,7 +391,7 @@ export const allow = {
    * @param provider the authentication provider - supports "userPools" or "oidc"
    * @returns an authorization rule to grant access by a specific group
    */
-  specificGroups(groups: string[], provider?: GroupProvider) {
+  groups(groups: string[], provider?: GroupProvider) {
     return authData(
       {
         strategy: 'groups',
@@ -480,8 +504,8 @@ function resourceAuthData<Builders extends object = object>(
  * ```typescript
  * [
  *  allow.public(),
- *  allow.owner().inField('otherfield'),
- *  allow.multipleOwners().inField('editors')
+ *  allow.ownerDefinedIn('otherfield'),
+ *  allow.ownersDefinedIn('editors')
  * ]
  * ```
  *
@@ -514,8 +538,8 @@ export type ImpliedAuthField<T extends Authorization<any, any, any>> =
  * ```typescript
  * [
  *  allow.public(),
- *  allow.owner().inField('otherfield'),
- *  allow.multipleOwners().inField('editors')
+ *  allow.ownerDefinedIn('otherfield'),
+ *  allow.ownersDefinedIn('editors')
  * ]
  * ```
  *
@@ -542,3 +566,6 @@ export const accessData = <T extends Authorization<any, any, any>>(
 export const accessSchemaData = <T extends SchemaAuthorization<any, any, any>>(
   authorization: T,
 ): T[typeof __data] => authorization[__data];
+
+// `allow` is declared as a `const` above
+export type AllowModifier = typeof allow;
