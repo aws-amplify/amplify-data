@@ -539,31 +539,6 @@ function validateImpliedFields(
 }
 
 /**
- * Validates that defined relationships are valid
- * - relationships are bidirectional
- *  - hasOne has a belongsTo counterpart
- *  - hasMany has a belongsTo counterpart
- *  - belongsTo has either a hasOne or hasMany counterpart
- * - both sides of a relationship have identical `references` defined.
- * - the `references` match the primary key of the Primary model
- *  - references[0] is the primaryKey's paritionKey on the Primary model
- *  - references[1...n] are the primaryKey's sortKey(s) on the Primary model
- *  - types match (id / string / number)
- * - the `references` are fields defined on the Related model
- *  - field names match the named `references` arguments
- *  - Related model references fields types match those of the Primary model's primaryKey
- *
- * @param record
- */
-function validateRelationships(
-  record: Record<string, ModelField<any, any>>,
-) {
-  for (const [_k, _field] of Object.entries(record)) {
-    // TODO: validate relationship
-  }
-}
-
-/**
  * Throws if resource/lambda auth is configured at the model or field level
  *
  * @param authorization A list of authorization rules.
@@ -1187,8 +1162,6 @@ const schemaPreprocessor = (
       >;
       const identifier = typeDef.data.identifier;
       const [partitionKey] = identifier;
-
-      validateRelationships(fields);
 
       const { authString, authFields } = calculateAuth(mostRelevantAuthRules);
       if (authString == '') {

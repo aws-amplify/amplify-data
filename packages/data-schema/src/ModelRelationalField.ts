@@ -13,7 +13,6 @@ export enum ModelRelationshipTypes {
   hasOne = 'hasOne',
   hasMany = 'hasMany',
   belongsTo = 'belongsTo',
-  manyToMany = 'manyToMany', // TODO: remove this once type work is complete
 }
 
 type RelationshipTypes = `${ModelRelationshipTypes}`;
@@ -25,8 +24,7 @@ type ModelRelationalFieldData = {
   array: boolean;
   valueRequired: boolean;
   arrayRequired: boolean;
-  relationName?: string;
-  references?: string[];
+  references: string[];
   authorization: Authorization<any, any, any>[];
 };
 
@@ -36,9 +34,8 @@ export type ModelRelationalFieldParamShape = {
   relatedModel: string;
   array: boolean;
   valueRequired: boolean;
-  references?: string[];
+  references: string[];
   arrayRequired: boolean;
-  relationName?: string;
 };
 
 type ModelRelationalFieldFunctions<
@@ -117,7 +114,6 @@ const relationModifierMap: Record<
   belongsTo: ['authorization'],
   hasMany: ['arrayRequired', 'valueRequired', 'authorization'],
   hasOne: ['required', 'authorization'],
-  manyToMany: ['arrayRequired', 'valueRequired', 'authorization'],
 };
 
 export type RelationTypeFunctionOmitMapping<
@@ -134,7 +130,7 @@ function _modelRelationalField<
   T extends ModelRelationalFieldParamShape,
   RelatedModel extends string,
   RT extends ModelRelationshipTypes,
->(type: RT, relatedModel: RelatedModel, references?: string[]) {
+>(type: RT, relatedModel: RelatedModel, references: string[]) {
   const data: ModelRelationalFieldData = {
     relatedModel,
     type,
@@ -191,7 +187,6 @@ export type ModelRelationalTypeArgFactory<
   RM extends string,
   RT extends RelationshipTypes,
   IsArray extends boolean,
-  RelationName extends string | undefined = undefined,
 > = {
   type: 'model';
   relatedModel: RM;
@@ -199,7 +194,6 @@ export type ModelRelationalTypeArgFactory<
   array: IsArray;
   valueRequired: false;
   arrayRequired: false;
-  relationName: RelationName;
   references: string[];
 };
 
@@ -221,8 +215,8 @@ export function hasOne<RM extends string>(
   >(
     ModelRelationshipTypes.hasOne,
     relatedModel,
-    Array.isArray(references) ? references : [references]
-  )
+    Array.isArray(references) ? references : [references],
+  );
 }
 
 /**
@@ -242,7 +236,7 @@ export function hasMany<RM extends string>(
     ModelRelationshipTypes.hasMany,
     relatedModel,
     Array.isArray(references) ? references : [references],
-  )
+  );
 }
 
 /**
@@ -263,6 +257,6 @@ export function belongsTo<RM extends string>(
   >(
     ModelRelationshipTypes.belongsTo,
     relatedModel,
-    Array.isArray(references) ? references : [references]
-  )
+    Array.isArray(references) ? references : [references],
+  );
 }

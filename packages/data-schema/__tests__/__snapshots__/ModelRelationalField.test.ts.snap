@@ -30,37 +30,6 @@ type Member @model @auth(rules: [{allow: public}])
 }"
 `;
 
-exports[`schema generation with relationships ddb masMany / belongsTo fails if reference field on related model is undefined 1`] = `
-"type Team @model @auth(rules: [{allow: public}])
-{
-  motto: String
-  members: [Member] @hasMany(references: ["teamId"])
-}
-
-type Member @model @auth(rules: [{allow: public}])
-{
-  name: String
-  team: Team @belongsTo(references: ["teamId"])
-}"
-`;
-
-exports[`schema generation with relationships ddb masMany / belongsTo partition key + sort key - undefined sort key reference on related model fails 1`] = `
-"type Team @model @auth(rules: [{allow: public}])
-{
-  id: ID! @primaryKey(sortKeyFields: ["sk"])
-  sk: ID!
-  motto: String
-  members: [Member] @hasMany(references: ["teamId","teamSk"])
-}
-
-type Member @model @auth(rules: [{allow: public}])
-{
-  name: String
-  teamId: ID
-  team: Team @belongsTo(references: ["teamId","teamSk"])
-}"
-`;
-
 exports[`schema generation with relationships ddb masMany / belongsTo partition key + sort key is supported 1`] = `
 "type Team @model @auth(rules: [{allow: public}])
 {
@@ -76,6 +45,31 @@ type Member @model @auth(rules: [{allow: public}])
   teamId: ID
   teamSk: ID
   team: Team @belongsTo(references: ["teamId","teamSk"])
+}"
+`;
+
+exports[`schema generation with relationships heterogenous data source relationships 1`] = `
+"type Team @model @auth(rules: [{allow: public}])
+{
+  id: ID! @primaryKey
+  motto: String
+  members: [Member] @hasMany(references: ["teamId"])
+  project: Project @hasOne(references: ["teamId"])
+}
+type Project @model @auth(rules: [{allow: public}])
+{
+  id: ID! @primaryKey
+  name: String
+  teamId: ID
+  team: Team @belongsTo(references: ["teamId"])
+}
+
+type Member @model @auth(rules: [{allow: public}])
+{
+  id: ID! @primaryKey
+  name: String
+  teamId: ID
+  team: Team @belongsTo(references: ["teamId"])
 }"
 `;
 

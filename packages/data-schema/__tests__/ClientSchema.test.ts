@@ -39,17 +39,14 @@ describe('schema generation', () => {
     });
   });
 
-  test('with relationships', () => {
+   test('with relationships', () => {
     const schema = a
       .schema({
         BoringParent: a.model({
-          childNormal: a.hasOne('BoringChild', 'BoringParentId'),
-          childReciprocal: a.hasOne('BoringReciprocalChild', 'BoringParentId'),
-          childHasManyNormal: a.hasMany('BoringHasManyChild', 'BoringParentId'),
-          childHasManyReciprocal: a.hasMany(
-            'ReciprocalHasManyChild',
-            'BoringParentId',
-          ),
+          childNormal: a.hasOne('BoringChild', 'boringParentId'),
+          childReciprocal: a.hasOne('BoringReciprocalChild', 'boringParentId'),
+          childHasManyNormal: a.hasMany('BoringHasManyChild', 'boringParentId'),
+          childHasManyReciprocal: a.hasMany('ReciprocalHasManyChild', 'boringParentId'),
         }),
         BoringChild: a.model({
           value: a.string(),

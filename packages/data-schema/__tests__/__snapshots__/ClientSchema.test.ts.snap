@@ -418,10 +418,10 @@ exports[`schema auth rules prefers model auth over global auth public auth on mo
 exports[`schema generation with relationships 1`] = `
 "type BoringParent @model @auth(rules: [{allow: public}])
 {
-  childNormal: BoringChild @hasOne(references: ["BoringParentId"])
-  childReciprocal: BoringReciprocalChild @hasOne(references: ["BoringParentId"])
-  childHasManyNormal: [BoringHasManyChild] @hasMany(references: ["BoringParentId"])
-  childHasManyReciprocal: [ReciprocalHasManyChild] @hasMany(references: ["BoringParentId"])
+  childNormal: BoringChild @hasOne(references: ["boringParentId"])
+  childReciprocal: BoringReciprocalChild @hasOne(references: ["boringParentId"])
+  childHasManyNormal: [BoringHasManyChild] @hasMany(references: ["boringParentId"])
+  childHasManyReciprocal: [ReciprocalHasManyChild] @hasMany(references: ["boringParentId"])
 }
 
 type BoringChild @model @auth(rules: [{allow: public}])

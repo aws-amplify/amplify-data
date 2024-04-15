@@ -160,21 +160,12 @@ type ResolveModelsRelationalAndRefFields<
       ? ResolveRef<NonModelTypes, R>
       : Schema[ModelProp][FieldProp] extends ModelRelationalFieldParamShape
         ? Schema[ModelProp][FieldProp]['relatedModel'] extends keyof Schema
-          ? Schema[ModelProp][FieldProp]['relationshipType'] extends 'manyToMany'
-            ? Schema[ModelProp][FieldProp]['relationName'] extends keyof Schema
-              ? GetRelationshipRef<
-                  Schema,
-                  Schema[ModelProp][FieldProp]['relationName'],
-                  Schema[ModelProp][FieldProp],
-                  Flat
-                >
-              : never
-            : GetRelationshipRef<
-                Schema,
-                Schema[ModelProp][FieldProp]['relatedModel'],
-                Schema[ModelProp][FieldProp],
-                Flat
-              >
+          ? GetRelationshipRef<
+              Schema,
+              Schema[ModelProp][FieldProp]['relatedModel'],
+              Schema[ModelProp][FieldProp],
+              Flat
+            >
           : never // if the field value extends ModelRelationalFieldShape "relatedModel" should always point to a Model (keyof Schema)
         : Schema[ModelProp][FieldProp];
   };
