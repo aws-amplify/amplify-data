@@ -44,7 +44,7 @@ describe('Implicit System Field Handling. Given:', () => {
           content: a.string(),
         }),
       })
-      .authorization([a.allow.public()]);
+      .authorization((allow) => allow.publicApiKey());
     type Schema = ClientSchema<typeof schema>;
 
     afterEach(() => {
@@ -152,7 +152,7 @@ describe('Implicit System Field Handling. Given:', () => {
           content: a.string(),
         }),
       })
-      .authorization([a.allow.public()]);
+      .authorization((allow) => allow.publicApiKey());
     type Schema = ClientSchema<typeof schema>;
 
     afterEach(() => {

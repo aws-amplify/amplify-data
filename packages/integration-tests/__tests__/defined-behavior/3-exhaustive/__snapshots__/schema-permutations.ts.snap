@@ -1,27 +1,27 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`auth rules owner() 1`] = `
-"type Model @model @auth(rules: [{allow: owner, ownerField: "owner"}])
-{
-  field: String
-}"
-`;
-
-exports[`auth rules owner().inField() 1`] = `
+exports[`auth rules given auth rule builder ".ownerDefinedIn()", generates schema with expected auth rule 1`] = `
 "type Model @model @auth(rules: [{allow: owner, ownerField: "field"}])
 {
   field: String
 }"
 `;
 
-exports[`auth rules owner().inField().to() 1`] = `
+exports[`auth rules given auth rule builder "allow.ownerDefinedIn().to()", generates schema with expected auth rule 1`] = `
 "type Model @model @auth(rules: [{allow: owner, operations: [create, delete], ownerField: "field"}])
 {
   field: String
 }"
 `;
 
-exports[`auth rules owner(userpool).inField().to(). 1`] = `
+exports[`auth rules given auth rule builder "owner()", generates schema with expected auth rule 1`] = `
+"type Model @model @auth(rules: [{allow: owner, ownerField: "owner"}])
+{
+  field: String
+}"
+`;
+
+exports[`auth rules given auth rule builder "owner(userpool).inField().to()", generates schema with expected auth rule 1`] = `
 "type Model @model @auth(rules: [{allow: owner, provider: userPools, operations: [create, list], ownerField: "owner"}])
 {
   field: String

@@ -14,7 +14,10 @@ describe('getting started guides', () => {
           done: a.boolean(),
           priority: a.enum(['low', 'medium', 'high']),
         })
-        .authorization([a.allow.owner(), a.allow.public().to(['read'])]),
+        .authorization((allow) => [
+          allow.owner(),
+          allow.publicApiKey().to(['read']),
+        ]),
     });
     type Schema = ClientSchema<typeof schema>;
 

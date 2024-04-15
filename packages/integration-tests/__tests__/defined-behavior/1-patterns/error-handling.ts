@@ -40,7 +40,7 @@ describe('CRUD error handling', () => {
           done: a.boolean(),
           priority: a.enum(['low', 'medium', 'high']),
         })
-        .authorization([a.allow.owner()]),
+        .authorization((allow) => allow.owner()),
     });
     type Schema = ClientSchema<typeof schema>;
 
@@ -242,7 +242,7 @@ describe('CRUD error handling', () => {
           done: a.boolean(),
           priority: a.enum(['low', 'medium', 'high']),
         })
-        .authorization([a.allow.owner()]),
+        .authorization((allow) => allow.owner()),
     });
     type Schema = ClientSchema<typeof schema>;
 
@@ -416,14 +416,17 @@ describe('CRUD error handling', () => {
           description: a.string(),
           additionalInfo: a.hasOne('Note', 'todoId'),
         })
-        .authorization([a.allow.public()]),
+        .authorization((allow) => allow.publicApiKey()),
       Note: a
         .model({
           content: a.string(),
           todoId: a.id(),
-          todo: a.belongsTo('Todo', 'todoId')
+          todo: a.belongsTo('Todo', 'todoId'),
         })
-        .authorization([a.allow.public().to(['create']), a.allow.owner()]),
+        .authorization((allow) => [
+          allow.publicApiKey().to(['create']),
+          allow.owner(),
+        ]),
     });
 
     type Schema = ClientSchema<typeof schema>;
