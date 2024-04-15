@@ -13,7 +13,6 @@ export enum ModelRelationshipTypes {
   hasOne = 'hasOne',
   hasMany = 'hasMany',
   belongsTo = 'belongsTo',
-  manyToMany = 'manyToMany', // TODO: remove this once type work is complete
 }
 
 type RelationshipTypes = `${ModelRelationshipTypes}`;
@@ -25,7 +24,6 @@ type ModelRelationalFieldData = {
   array: boolean;
   valueRequired: boolean;
   arrayRequired: boolean;
-  relationName?: string;
   references: string[];
   authorization: Authorization<any, any, any>[];
 };
@@ -38,7 +36,6 @@ export type ModelRelationalFieldParamShape = {
   valueRequired: boolean;
   references: string[];
   arrayRequired: boolean;
-  relationName?: string;
 };
 
 type ModelRelationalFieldFunctions<
@@ -117,7 +114,6 @@ const relationModifierMap: Record<
   belongsTo: ['authorization'],
   hasMany: ['arrayRequired', 'valueRequired', 'authorization'],
   hasOne: ['required', 'authorization'],
-  manyToMany: ['arrayRequired', 'valueRequired', 'authorization'],
 };
 
 export type RelationTypeFunctionOmitMapping<
@@ -191,7 +187,6 @@ export type ModelRelationalTypeArgFactory<
   RM extends string,
   RT extends RelationshipTypes,
   IsArray extends boolean,
-  RelationName extends string | undefined = undefined,
 > = {
   type: 'model';
   relatedModel: RM;
@@ -199,7 +194,6 @@ export type ModelRelationalTypeArgFactory<
   array: IsArray;
   valueRequired: false;
   arrayRequired: false;
-  relationName: RelationName;
   references: string[];
 };
 
