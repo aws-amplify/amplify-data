@@ -544,29 +544,28 @@ function validateImpliedFields(
   }
 }
 
-// func validateBidirectionality
-
 /**
- * Validates that defined relationships are valid
+ * Validates that defined relationships conform to the followign rules.
  * - relationships are bidirectional
- *  - hasOne has a belongsTo counterpart
- *  - hasMany has a belongsTo counterpart
- *  - belongsTo has either a hasOne or hasMany counterpart
+ *   - hasOne has a belongsTo counterpart
+ *   - hasMany has a belongsTo counterpart
+ *   - belongsTo has either a hasOne or hasMany counterpart
  * - both sides of a relationship have identical `references` defined.
  * - the `references` match the primary key of the Primary model
- *  - references[0] is the primaryKey's paritionKey on the Primary model
- *  - references[1...n] are the primaryKey's sortKey(s) on the Primary model
- *  - types match (id / string / number)
+ *   - references[0] is the primaryKey's paritionKey on the Primary model
+ *   - references[1...n] are the primaryKey's sortKey(s) on the Primary model
+ *   - types match (id / string / number)
  * - the `references` are fields defined on the Related model
- *  - field names match the named `references` arguments
- *  - Related model references fields types match those of the Primary model's primaryKey
- *
- * @param record
+ *   - field names match the named `references` arguments
+ *   - Related model references fields types match those of the Primary model's primaryKey
+ * @param typeName source model's type name.
+ * @param record map of field name to {@link ModelField}
+ * @param getInternalModel given a model name, return an {@link InternalModel}
  */
 function validateRelationships(
   typeName: string,
   record: Record<string, ModelField<any, any>>,
-  getRef: (source: string, target: string) => GetRef,
+  getInternalModel: (source: string) => InternalModel,
 ) {
   for (const [name, field] of Object.entries(record)) {
     // If the field's type is not a model, there's no relationship
@@ -575,39 +574,37 @@ function validateRelationships(
       continue;
     }
 
+    // Create a structure representing the relationship for validation.
     const relationship = getModelRelationship(
       typeName,
       { name: name, def: field.data },
-      field.data.relatedModel,
-      getRef,
+      getInternalModel,
     )
 
+    // Validate that the references defined in the relationship follow the
+    // relational definition rules.
     validateRelationalReferences(relationship);
   }
 }
 
 /**
- * Helper function that describes the relationship for use in logging or error messages.
+ * Helper function that describes the relationship of a given connection field for use in logging or error messages.
  *
- * `Primary.related: Related @hasMany(references: ['primaryId']) <-> Related.primary: Primary @belongsTo(references: ['primaryId'])`
- * @param relationship The {@link ModelRelationship} to describe.
+ * `Primary.related: Related @hasMany(references: ['primaryId'])`
+ * -- or --
+ * `Related.primary: Primary @belongsTo(references: ['primaryId'])`
+ * @param sourceField The {@link ConnectionField} to describe.
+ * @param sourceModelName The name of the model within which the sourceField is defined.
  * @returns a 'string' describing the relationship
  */
-function prettifyRelationshipDescription(relationship: ModelRelationship): string {
-  const { primaryConnectionField, relatedConnectionField, references } = relationship;
-  const primaryModelName = relatedConnectionField.def.relatedModel;
-  const relatedModelName = primaryConnectionField.def.relatedModel;
-  const primaryConnectionFieldType = primaryConnectionField.def.array
-    ? `[${relatedModelName}]`
-    : relatedModelName;
-
-  const referencesDescription = references
+function describeConnectFieldRelationship(sourceField: ConnectionField, sourceModelName: string): string {
+  const associatedTypeDescription = sourceField.def.array
+    ? `[${sourceField.def.relatedModel}]`
+    : sourceField.def.relatedModel
+  const referencesDescription = sourceField.def.references
     .reduce((description, reference) => description + `'${reference}', `, 'references: [')
     .slice(0, -2) + ']'
-
-  return `${primaryModelName}.${primaryConnectionField.name}: ${primaryConnectionFieldType} @${primaryConnectionField.def.type}(${referencesDescription})`
-  + ' <-> '
-  + `${relatedModelName}.${relatedConnectionField.name}: ${primaryModelName} @${relatedConnectionField.def.type}(${referencesDescription})`;
+  return `${sourceModelName}.${sourceField.name}: ${associatedTypeDescription} @${sourceField.def.type}(${referencesDescription})`;
 }
 
 /**
@@ -628,16 +625,22 @@ function validateRelationalReferences(
     const relatedReferenceType = related.data.fields[reference]?.data.fieldType as ModelFieldType
     // reference field on related type with name passed to references not found. Time to throw a validation error.
     if (!relatedReferenceType) {
-      const errorMessage = `Validation Error: reference field '${reference}' must be defined on ${primaryConnectionField.def.relatedModel}. `
-      + `${prettifyRelationshipDescription(relationship)}`;
+      const errorMessage = `reference field '${reference}' must be defined on ${primaryConnectionField.def.relatedModel}. `
+      + describeConnectFieldRelationship(primaryConnectionField, relatedConnectionField.def.relatedModel)
+      + ' <-> '
+      + describeConnectFieldRelationship(relatedConnectionField, primaryConnectionField.def.relatedModel);
       throw new Error(errorMessage);
     }
     relatedReferenceTypes.push(relatedReferenceType);
   }
 
+
   if (primaryIdentifiers.length !== relatedReferenceTypes.length) {
-    // TODO: better error message
-    throw new Error(`references defined '${relatedConnectionField.def.references}' do not match`)
+    throw new Error(
+      `The identifiers defined on ${relatedConnectionField.def.relatedModel} must match the reference fields defined on ${primaryConnectionField.def.relatedModel}.\n`
+      + `${primaryIdentifiers.length} identifiers defined on ${relatedConnectionField.def.relatedModel}.\n`
+      + `${relatedReferenceTypes.length} reference fields found on ${primaryConnectionField.def.relatedModel}`
+    );
   }
 
   const matchingModelFieldType = (a: ModelFieldType, b: ModelFieldType): boolean => {
@@ -660,11 +663,20 @@ function validateRelationalReferences(
   })
 }
 
+/**
+ * Internal convenience type that contains the name of the connection field along with
+ * its {@link ModelFieldDef}.
+ */
 type ConnectionField = {
   name: string,
   def: ModelFieldDef,
 }
 
+/**
+ * An internal representation of a model relationship used by validation functions.
+ * Use {@link getModelRelationship} to create this.
+ * See {@link validateRelationalReferences} for validation example.
+ */
 type ModelRelationship = {
   primary: InternalModel,
   primaryConnectionField: ConnectionField
@@ -673,6 +685,17 @@ type ModelRelationship = {
   references: string[],
 }
 
+/**
+ * Relationship definitions require bi-directionality.
+ * Use this to generate a `ModelRelationshipTypes[]` containing acceptable counterparts on the
+ * associated model.
+ *
+ * Given {@link ModelRelationshipTypes.hasOne} or {@link ModelRelationshipTypes.hasOne} returns [{@link ModelRelationshipTypes.belongsTo}]
+ * Given {@link ModelRelationshipTypes.belongsTo} returns [{@link ModelRelationshipTypes.hasOne}, {@link ModelRelationshipTypes.belongsTo}]
+ *
+ * @param relationshipType {@link ModelRelationshipTypes} defined on source model's connection field.
+ * @returns possible counterpart {@link ModelRelationshipTypes} as `ModelRelationshipTypes[]`
+ */
 function associatedRelationshipTypes(relationshipType: ModelRelationshipTypes): ModelRelationshipTypes[] {
   switch (relationshipType) {
     case ModelRelationshipTypes.hasOne:
@@ -681,10 +704,21 @@ function associatedRelationshipTypes(relationshipType: ModelRelationshipTypes): 
     case ModelRelationshipTypes.belongsTo:
       return [ModelRelationshipTypes.hasOne, ModelRelationshipTypes.hasMany];
     case ModelRelationshipTypes.manyToMany:
-      return []; // TODO: Remove this case
+      return []; // TODO: Remove this case on types are updated.
   }
 }
 
+/**
+ * Retrieves the types of the identifiers defined on a model.
+ *
+ * Note: if a field by the name `id` isn't found in the {@link InternalModel},
+ * this assumes an implicitly generated identifier is used with the type.
+ *
+ * This function does not validate that a corresponding field exists for each of the
+ * identifers because this validation happens at compile time.
+ * @param model {@link InternalModel} from which to retrieve identifier types.
+ * @returns Array of {@link ModelFieldType} of the model's identifiers found.
+ */
 function getIndentifierTypes(model: InternalModel): ModelFieldType[] {
   return model.data.identifier.flatMap((field) => {
     const primaryField = model.data.fields[field];
@@ -698,47 +732,85 @@ function getIndentifierTypes(model: InternalModel): ModelFieldType[] {
   });
 }
 
+/**
+ * Given a relationship definition within a source model (`sourceModelName`, `sourceConnectionField`) and
+ * the associated model (`associatedModel`), this finds the connection field for the relationship defined on the
+ * associated model. Invalid states, such a 0 or >1 matching connection fields result in an error.
+ * @param sourceModelName
+ * @param sourceConnectionField
+ * @param associatedModel
+ * @returns
+ */
 function getAssociatedConnectionField(
   sourceModelName: string,
   sourceConnectionField: ConnectionField,
   associatedModel: InternalModel
 ): ConnectionField {
   const associatedRelationshipOptions = associatedRelationshipTypes(sourceConnectionField.def.type);
+  // Iterate through the associated model's fields to find the associated connection field for the relationship defined on the source model.
   const associatedConnectionFieldCandidates = Object.entries(associatedModel.data.fields).filter(([_key, connectionField]) => {
+    // If the field isn't a model, it's not part of the relationship definition -- ignore the field.
     if (!isModelField(connectionField)) {
       return false;
     }
 
+    // In order to find that associated connection field, we need to do some validation that we'll depend on further downstream.
+    // 1. Field type matches the source model's type.
+    // 2. A valid counterpart relational modifier is defined on the field. See `associatedRelationshipTypes` for more information.
+    // 3. The reference arguments provided to the field match (element count + string comparison) references passed to the source connection field.
     return connectionField.data.relatedModel === sourceModelName
       && associatedRelationshipOptions.includes(connectionField.data.type)
       && connectionField.data.references.length === sourceConnectionField.def.references.length
       && connectionField.data.references.every((value, index) => value === sourceConnectionField.def.references[index]);
   });
 
-  if (associatedConnectionFieldCandidates.length !== 1) {
-    // TODO better error message with context.
-    throw new Error('Validation Error: cannot find counterpart to relationship definition')
+  // We should have found exactly one connection field candidate. If that's not the case, we need to throw a validation error.
+  if (associatedConnectionFieldCandidates.length != 1) {
+    // const associatedModelDescription = sourceConnectionField.def.array
+    // ? `[${sourceConnectionField.def.relatedModel}]`
+    // : sourceConnectionField.def.relatedModel
+    const sourceConnectionFieldDescription = describeConnectFieldRelationship(sourceConnectionField, sourceModelName); // `${sourceModelName}.${sourceConnectionField.name}: ${associatedModelDescription} @${sourceConnectionField.def.type}(references: [${sourceConnectionField.def.references}])`
+    const errorMessage = associatedConnectionFieldCandidates.length === 0
+      ? `Unable to find associated relationship definition in ${sourceConnectionField.def.relatedModel}`
+      : `Found multiple relationship associations with ${associatedConnectionFieldCandidates.map(field => `${sourceConnectionField.def.relatedModel}.${field[0]}`).join(', ')}`
+      throw new Error(`${errorMessage} for ${sourceConnectionFieldDescription}`)
   }
 
   const associatedConnectionField = associatedConnectionFieldCandidates[0];
   if (!isModelField(associatedConnectionField[1])) {
-    throw new Error('Validation Error: cannot find counterpart to relationship definition');
+    // This shouldn't happen because we've validated that it's a model field above.
+    // However it's necessary to narrow the type.
+    // const associatedModelDescription = sourceConnectionField.def.array
+    // ? `[${sourceConnectionField.def.relatedModel}]`
+    // : sourceConnectionField.def.relatedModel
+    const sourceConnectionFieldDescription = describeConnectFieldRelationship(sourceConnectionField, sourceModelName)
+    const errorMessage = `Cannot find counterpart to relationship defintion for ${sourceConnectionFieldDescription}`
+    throw new Error(errorMessage);
   }
 
   return { name: associatedConnectionField[0], def: associatedConnectionField[1].data };
 }
 
+/**
+ * Given one side of a relationship (source), this retrieves the other side (associated)
+ * and packages the information neatly into a {@link ModelRelationship} for validation purposes.
+ *
+ * Regardless of whether you supply the Primary or Related side of the relationship, the
+ * returned {@link ModelRelationalField} defines the Primary and Related sides correctly.
+ *
+ * @param sourceModelName
+ * @param sourceConnectionField
+ * @param associatedModelName
+ * @param getInternalModel
+ * @returns a {@link ModelRelationship}
+ */
 function getModelRelationship(
   sourceModelName: string,
-  sourceConnectionField: { name: string, def: ModelFieldDef },
-  associatedModelName: string,
-  getRef: (source: string, target: string) => GetRef
+  sourceConnectionField: ConnectionField,
+  getInternalModel: (source: string) => InternalModel
 ): ModelRelationship {
-  const sourceModel = getRef(sourceModelName, '').def;
-  const associatedModel = getRef(associatedModelName, '').def;
-  if (!isInternalModel(sourceModel) || !isInternalModel(associatedModel)) {
-    throw new Error('is not internal model -- TODO: determine failure scenarios');
-  }
+  const sourceModel = getInternalModel(sourceModelName);
+  const associatedModel = getInternalModel(sourceConnectionField.def.relatedModel);
 
   const associatedConnectionField = getAssociatedConnectionField(
     sourceModelName,
@@ -765,10 +837,9 @@ function getModelRelationship(
         references: sourceConnectionField.def.references,
       }
     case ModelRelationshipTypes.manyToMany:
-      throw new Error('many to many') // TODO: Remove me
+      throw new Error('many to many') // TODO: Remove me one types are updated
   }
 }
-
 
 /**
  * Throws if resource/lambda auth is configured at the model or field level
@@ -1440,7 +1511,14 @@ const schemaPreprocessor = (
         );
       }
 
-      validateRelationships(typeName, fields, getRefType);
+      const getInternalModel = (source: string): InternalModel => {
+        const model = getRefType(source, '');
+        if (!isInternalModel(model.def)) {
+          throw new Error(`Expected to find model type with name ${source}`)
+        }
+        return model.def;
+      }
+      validateRelationships(typeName, fields, getInternalModel);
 
       const fieldLevelAuthRules = processFieldLevelAuthRules(
         fields,
