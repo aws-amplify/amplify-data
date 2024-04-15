@@ -233,7 +233,10 @@ export type ModelType<
  * Used on the complete schema object.
  */
 export type SchemaModelType<
-  T extends ModelType<ModelTypeParamShape> = ModelType<ModelTypeParamShape>,
+  T extends ModelType<ModelTypeParamShape, never | 'identifier'> = ModelType<
+    ModelTypeParamShape,
+    never | 'identifier'
+  >,
   ModelName extends string = string,
   IsRDS extends boolean = false,
 > = IsRDS extends true
@@ -246,6 +249,9 @@ export type SchemaModelType<
       >(
         relationships: Param,
       ): Record<ModelName, Param>;
+      fields: T extends ModelType<infer R extends ModelTypeParamShape, any>
+        ? R['fields']
+        : never;
     }
   : T;
 
@@ -294,6 +300,7 @@ function _model<T extends ModelTypeParamShape>(fields: T['fields']) {
     addRelationships(relationships) {
       data.fields = { ...data.fields, ...relationships };
     },
+    fields: data.fields,
   } as InternalModel as ModelType<T>;
 }
 
@@ -334,6 +341,3 @@ export function model<T extends ModelFields>(
 }> {
   return _model(fields);
 }
-
-// TODO: rename and extract into separate file;
-// Will breaking apart SecondaryIndexToIR optimize it?

@@ -1,5 +1,33 @@
 # @aws-amplify/data-schema
 
+## 0.14.14
+
+### Patch Changes
+
+- 4ef3d8d: latest tag is wrong from tag release testing; bumping patch to fix tag
+- Updated dependencies [4ef3d8d]
+  - @aws-amplify/data-schema-types@0.7.17
+
+## 0.14.13
+
+### Patch Changes
+
+- f106212: fix: only the last function handler can be linked as data source
+
+## 0.14.12
+
+### Patch Changes
+
+- 05915ab: enable model rename for SQL schemas
+
+## 0.14.11
+
+### Patch Changes
+
+- 14a1951: fix: Change interface to move schema combination processing and expose rds config
+- Updated dependencies [14a1951]
+  - @aws-amplify/data-schema-types@0.7.16
+
 ## 0.14.10
 
 ### Patch Changes
