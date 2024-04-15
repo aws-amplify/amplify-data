@@ -137,23 +137,6 @@ const datasourceConfigMySQL = {
 const aSql = configure({ database: datasourceConfigMySQL });
 
 describe('schema generation with relationships', () => {
-  test('ddb masMany / belongsTo fails if reference field on related model is undefined', () => {
-    const schema = a.schema({
-      Team: a.model({
-        motto: a.string(),
-        members: a.hasMany('Member', ['teamId']),
-      }),
-      Member: a.model({
-        name: a.string(),
-        team: a.belongsTo('Team', ['teamId'])
-      })
-    })
-      .authorization([a.allow.public()]);
-
-    // FIXME: This should throw an error -- `teamId` isn't defined on `Member`
-    expect(schema.transform().schema).toMatchSnapshot(); // .toThrowError()
-  });
-
   test('ddb masMany / belongsTo explicitly defined reference field on related model is supported', () => {
     const schema = a.schema({
       Team: a.model({
@@ -190,27 +173,6 @@ describe('schema generation with relationships', () => {
       .authorization([a.allow.public()]);
 
     expect(schema.transform().schema).toMatchSnapshot();
-  });
-
-  test('ddb masMany / belongsTo partition key + sort key - undefined sort key reference on related model fails', () => {
-    const schema = a.schema({
-      Team: a.model({
-        id: a.id().required(),
-        sk: a.id().required(),
-        motto: a.string(),
-        members: a.hasMany('Member', ['teamId', 'teamSk']),
-      })
-      .identifier(['id', 'sk']),
-      Member: a.model({
-        name: a.string(),
-        teamId: a.id(),
-        team: a.belongsTo('Team', ['teamId', 'teamSk'])
-      })
-    })
-      .authorization([a.allow.public()]);
-
-    // FIXME: This should throw an error -- ...
-    expect(schema.transform().schema).toMatchSnapshot(); // toThrowError
   });
 
   test('ddb hasOne / belongsTo explicitly defined reference field on related model is supported', () => {
@@ -315,8 +277,9 @@ describe('schema generation with relationships', () => {
     .authorization([a.allow.public()]);
 
     const schema = a.combine([sqlSchema, ddbSchema]);
-    // FIXME: Property 'transform' does not exist on type 'CombinedModelSchema<[RDSModelSchema<SetTypeSubArg< ...
-    // const graphql = schema.transform().schema
-    // expect(graphql).toMatchSnapshot();
+    const graphql = schema.schemas
+      .map((schema) => schema.transform().schema)
+      .join('\n')
+    expect(graphql).toMatchSnapshot();
   });
 });
