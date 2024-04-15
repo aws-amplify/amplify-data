@@ -26,7 +26,7 @@ type ModelRelationalFieldData = {
   valueRequired: boolean;
   arrayRequired: boolean;
   relationName?: string;
-  references?: string[];
+  references: string[];
   authorization: Authorization<any, any, any>[];
 };
 
@@ -36,7 +36,7 @@ export type ModelRelationalFieldParamShape = {
   relatedModel: string;
   array: boolean;
   valueRequired: boolean;
-  references?: string[];
+  references: string[];
   arrayRequired: boolean;
   relationName?: string;
 };
@@ -134,7 +134,7 @@ function _modelRelationalField<
   T extends ModelRelationalFieldParamShape,
   RelatedModel extends string,
   RT extends ModelRelationshipTypes,
->(type: RT, relatedModel: RelatedModel, references?: string[]) {
+>(type: RT, relatedModel: RelatedModel, references: string[]) {
   const data: ModelRelationalFieldData = {
     relatedModel,
     type,
