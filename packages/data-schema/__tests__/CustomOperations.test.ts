@@ -39,7 +39,7 @@ describe('CustomOperation transform', () => {
             .for(a.ref('likePost'))
             .handler(a.handler.function('myFunc')),
         })
-        .authorization([a.allow.public()]);
+        .authorization((allow) => allow.publicApiKey());
 
       const result = s.transform().schema;
 
@@ -65,7 +65,7 @@ describe('CustomOperation transform', () => {
             .for(a.ref('Post').mutations(['create']))
             .handler(a.handler.function('myFunc')),
         })
-        .authorization([a.allow.public()]);
+        .authorization((allow) => allow.publicApiKey());
 
       const result = s.transform().schema;
 
@@ -91,7 +91,7 @@ describe('CustomOperation transform', () => {
             .for(a.ref('listPosts'))
             .handler(a.handler.function('myFunc')),
         })
-        .authorization([a.allow.public()]);
+        .authorization((allow) => allow.publicApiKey());
 
       const result = s.transform().schema;
 
@@ -104,7 +104,7 @@ describe('CustomOperation transform', () => {
           .mutation()
           .arguments({ postId: a.string() })
           .returns(a.ref('Post'))
-          .authorization([a.allow.private()]),
+          .authorization((allow) => allow.authenticated()),
       });
 
       expect(() => s.transform()).toThrow(
@@ -151,7 +151,7 @@ describe('CustomOperation transform', () => {
           })
           .returns(a.ref('Post'))
           .handler(a.handler.function('myFunc'))
-          .authorization([a.allow.private()]),
+          .authorization((allow) => allow.authenticated()),
       });
 
       const result = s.transform().schema;
@@ -168,7 +168,7 @@ describe('CustomOperation transform', () => {
           })
           .returns(a.ref('Post'))
           .handler(a.handler.function('myFunc'))
-          .authorization([a.allow.private()]),
+          .authorization((allow) => allow.authenticated()),
       });
 
       const result = s.transform().schema;
@@ -276,7 +276,7 @@ describe('CustomOperation transform', () => {
               .for(a.ref('Post').mutations(['create']))
               .handler(a.handler.function('myFunc')),
           })
-          .authorization([a.allow.public()]);
+          .authorization((allow) => allow.publicApiKey());
 
         const result = s.transform().schema;
 
@@ -295,7 +295,7 @@ describe('CustomOperation transform', () => {
               .for(a.ref('Post').mutations(['create', 'update', 'delete']))
               .handler(a.handler.function('myFunc')),
           })
-          .authorization([a.allow.public()]);
+          .authorization((allow) => allow.publicApiKey());
 
         const result = s.transform().schema;
 
@@ -314,7 +314,7 @@ describe('CustomOperation transform', () => {
               .for(a.ref('Post'))
               .handler(a.handler.function('myFunc')),
           })
-          .authorization([a.allow.public()]);
+          .authorization((allow) => allow.publicApiKey());
 
         expect(() => s.transform()).toThrow(
           'Invalid subscription definition. .mutations() modifier must be used with a Model ref subscription source',
@@ -339,7 +339,7 @@ describe('CustomOperation transform', () => {
               .for(a.ref('likePost'))
               .handler(a.handler.function('myFunc')),
           })
-          .authorization([a.allow.public()]);
+          .authorization((allow) => allow.publicApiKey());
 
         const result = s.transform().schema;
 
@@ -364,7 +364,7 @@ describe('CustomOperation transform', () => {
               .for([a.ref('likePost'), a.ref('Post').mutations(['update'])])
               .handler(a.handler.function('myFunc')),
           })
-          .authorization([a.allow.public()]);
+          .authorization((allow) => allow.publicApiKey());
 
         const result = s.transform().schema;
 
@@ -388,7 +388,7 @@ describe('CustomOperation transform', () => {
               .for(a.ref('getLikedPosts'))
               .handler(a.handler.function('myFunc')),
           })
-          .authorization([a.allow.public()]);
+          .authorization((allow) => allow.publicApiKey());
 
         expect(() => s.transform()).toThrow(
           'Invalid subscription definition. .for() can only reference a mutation.',
@@ -409,7 +409,7 @@ describe('CustomOperation transform', () => {
 
             onLikePost: a.subscription().handler(a.handler.function('myFunc')),
           })
-          .authorization([a.allow.public()]);
+          .authorization((allow) => allow.publicApiKey());
 
         expect(() => s.transform()).toThrow('is missing a mutation source');
       });
@@ -422,7 +422,7 @@ describe('CustomOperation transform', () => {
               .for(a.ref('Post').mutations(['create']))
               .handler(a.handler.function('myFunc')),
           })
-          .authorization([a.allow.public()]);
+          .authorization((allow) => allow.publicApiKey());
 
         expect(() => s.transform()).toThrow(
           'Invalid ref. onLikePost is referencing Post which is not defined in the schema',
@@ -449,7 +449,7 @@ describe('CustomOperation transform', () => {
               ])
               .handler(a.handler.function('myFunc')),
           })
-          .authorization([a.allow.public()]);
+          .authorization((allow) => allow.publicApiKey());
 
         expect(() => s.transform()).toThrow(
           'Invalid subscription definition. .for() can only reference resources that have the same return type. onLikePost is referencing resources that have different return types.',
@@ -469,7 +469,7 @@ describe('CustomOperation transform', () => {
               .for(a.ref('likePost'))
               .handler(a.handler.function('onLikePost')),
           })
-          .authorization([a.allow.public()]);
+          .authorization((allow) => allow.publicApiKey());
 
         const result = s.transform().schema;
 
@@ -493,7 +493,7 @@ describe('CustomOperation transform', () => {
               .for(a.ref('createCustomTypePost'))
               .handler(a.handler.function('onCreateCustomTypePost')),
           })
-          .authorization([a.allow.public()]);
+          .authorization((allow) => allow.publicApiKey());
 
         const result = s.transform().schema;
 
@@ -528,7 +528,7 @@ describe('CustomOperation transform', () => {
               .query()
               .arguments({})
               .returns(a.customType({}))
-              .authorization([a.allow.public()]),
+              .authorization((allow) => allow.publicApiKey()),
           });
 
           expect(() => s.transform()).toThrow(
@@ -542,7 +542,7 @@ describe('CustomOperation transform', () => {
               .query()
               .arguments({})
               .returns(a.customType({}))
-              .authorization([a.allow.public()])
+              .authorization((allow) => allow.publicApiKey())
               .handler([
                 a.handler.custom({
                   entry: './filename.js',
@@ -571,7 +571,7 @@ describe('CustomOperation transform', () => {
                   dataSource: a.ref('Comment'),
                 }),
               )
-              .authorization([a.allow.specificGroups(['groupA', 'groupB'])])
+              .authorization((allow) => allow.groups(['groupA', 'groupB']))
               .returns(a.customType({})),
           });
 
@@ -614,7 +614,7 @@ describe('CustomOperation transform', () => {
                 ])
                 .returns(a.customType({})),
             })
-            .authorization([a.allow.public()]);
+            .authorization((allow) => allow.publicApiKey());
 
           const {
             schema,
@@ -644,7 +644,7 @@ describe('CustomOperation transform', () => {
               .model({
                 title: a.string(),
               })
-              .authorization([a.allow.private()]),
+              .authorization((allow) => allow.authenticated()),
             customQuery: a
               .query()
               .returns(a.string())
@@ -654,9 +654,9 @@ describe('CustomOperation transform', () => {
                   dataSource: a.ref('Post'),
                 }),
               ])
-              .authorization([
-                a.allow.private(),
-                a.allow.specificGroups(['groupA', 'groupB']),
+              .authorization((allow) => [
+                allow.authenticated(),
+                allow.groups(['groupA', 'groupB']),
               ]),
           });
 
@@ -675,7 +675,7 @@ describe('CustomOperation transform', () => {
                   dataSource: 'CommentTable',
                 }),
               ])
-              .authorization([a.allow.owner()]),
+              .authorization((allow) => allow.owner()),
           });
 
           expect(() => s.transform()).toThrow(
@@ -691,7 +691,7 @@ describe('CustomOperation transform', () => {
                   dataSource: 'CommentTable',
                 }),
               ])
-              .authorization([a.allow.private().to(['read'])]),
+              .authorization((allow) => allow.authenticated().to(['read'])),
           });
 
           expect(() => s2.transform()).toThrow(
@@ -707,7 +707,7 @@ describe('CustomOperation transform', () => {
                   dataSource: 'CommentTable',
                 }),
               ])
-              .authorization([a.allow.specificGroups(['group1'], 'oidc')]),
+              .authorization((allow) => allow.groups(['group1'], 'oidc')),
           });
 
           expect(() => s3.transform()).toThrow(
@@ -723,7 +723,7 @@ describe('CustomOperation transform', () => {
               .query()
               .arguments({})
               .handler(a.handler.function('myFunc'))
-              .authorization([a.allow.private()])
+              .authorization((allow) => allow.authenticated())
               .returns(a.customType({})),
           });
 
@@ -741,7 +741,7 @@ describe('CustomOperation transform', () => {
               .query()
               .arguments({})
               .handler(a.handler.function(fn1))
-              .authorization([a.allow.private()])
+              .authorization((allow) => allow.authenticated())
               .returns(a.customType({})),
           });
 
@@ -767,7 +767,7 @@ describe('CustomOperation transform', () => {
                 a.handler.function(fn2),
                 a.handler.function('myFunc2'),
               ])
-              .authorization([a.allow.private()])
+              .authorization((allow) => allow.authenticated())
               .returns(a.customType({})),
           });
 
@@ -789,7 +789,7 @@ describe('CustomOperation transform', () => {
               .arguments({})
               // @ts-expect-error
               .handler([a.handler.function(invalidFnDef)])
-              .authorization([a.allow.private()])
+              .authorization((allow) => allow.authenticated())
               .returns(a.customType({})),
           });
 
@@ -805,7 +805,7 @@ describe('CustomOperation transform', () => {
             .query()
             .arguments({})
             .handler(a.handler.inlineSql('SELECT * from TESTTABLE;'))
-            .authorization([a.allow.private()])
+            .authorization((allow) => allow.authenticated())
             .returns(a.customType({})),
         });
 
@@ -822,7 +822,7 @@ describe('CustomOperation transform', () => {
             .handler(
               a.handler.inlineSql('SELECT * from TESTTABLE status = "active";'),
             )
-            .authorization([a.allow.private()])
+            .authorization((allow) => allow.authenticated())
             .returns(a.customType({})),
         });
 
@@ -837,7 +837,7 @@ describe('CustomOperation transform', () => {
             .query()
             .arguments({})
             .handler(a.handler.sqlReference('./testQueryName'))
-            .authorization([a.allow.private()])
+            .authorization((allow) => allow.authenticated())
             .returns(a.customType({})),
         });
 
@@ -881,7 +881,7 @@ describe('CustomOperation transform', () => {
           .for(a.ref('likePost'))
           .handler(a.handler.function('myFunc')),
       });
-      s.authorization([a.allow.public()]);
+      s.authorization((allow) => allow.publicApiKey());
 
       const result = s.transform().schema;
 
@@ -932,7 +932,7 @@ describe('CustomOperation transform', () => {
           .returns(a.ref('Post'))
           .handler(a.handler.function('myFunc')),
       });
-      s.authorization([a.allow.public()]);
+      s.authorization((allow) => allow.publicApiKey());
 
       const result = s.transform().schema;
 
@@ -960,7 +960,7 @@ describe('CustomOperation transform', () => {
             .for(a.ref('likePost'))
             .function('myFunc'),
         })
-        .authorization([a.allow.public()]);
+        .authorization((allow) => allow.publicApiKey());
 
       const result = s.transform().schema;
 
@@ -986,7 +986,7 @@ describe('CustomOperation transform', () => {
             .for(a.ref('listPosts'))
             .function('myFunc'),
         })
-        .authorization([a.allow.public()]);
+        .authorization((allow) => allow.publicApiKey());
 
       const result = s.transform().schema;
 
@@ -1012,7 +1012,7 @@ describe('CustomOperation transform', () => {
             .for(a.ref('listPosts'))
             .function('myFunc'),
         })
-        .authorization([a.allow.public()]);
+        .authorization((allow) => allow.publicApiKey());
 
       const result = s.transform().schema;
 
@@ -1025,7 +1025,7 @@ describe('CustomOperation transform', () => {
           .mutation()
           .arguments({ postId: a.string() })
           .returns(a.ref('Post'))
-          .authorization([a.allow.private()]),
+          .authorization((allow) => allow.authenticated()),
       });
 
       expect(() => s.transform()).toThrow(
@@ -1056,7 +1056,7 @@ describe('CustomOperation transform', () => {
           })
           .returns(a.ref('Post'))
           .function('myFunc')
-          .authorization([a.allow.private()]),
+          .authorization((allow) => allow.authenticated()),
       });
 
       const result = s.transform().schema;
@@ -1073,7 +1073,7 @@ describe('CustomOperation transform', () => {
           })
           .returns(a.ref('Post'))
           .function('myFunc')
-          .authorization([a.allow.private()]),
+          .authorization((allow) => allow.authenticated()),
       });
 
       const result = s.transform().schema;
@@ -1097,7 +1097,7 @@ describe('CustomOperation transform', () => {
         })
         .returns(a.ref('NestedCustomTypes'))
         .handler([a.handler.function(fn1), a.handler.function(fn2)])
-        .authorization([a.allow.public()]),
+        .authorization((allow) => allow.publicApiKey()),
       echoList: a
         .query()
         .arguments({
@@ -1107,7 +1107,7 @@ describe('CustomOperation transform', () => {
         })
         .returns(a.ref('NestedCustomTypes').required().array().required())
         .handler(a.handler.function(fn3))
-        .authorization([a.allow.public()]),
+        .authorization((allow) => allow.publicApiKey()),
     });
 
     it('generates 3 lambda functions with expected names aside schema', () => {
