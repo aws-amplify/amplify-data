@@ -9,7 +9,7 @@ Make a `hasOne()` or `hasMany()` relationship bi-directional using the `belongsT
 **Signature:**
 
 ```typescript
-export declare function belongsTo<RM extends string>(relatedModel: RM, references: string | string[]): ModelRelationalField<ModelRelationalTypeArgFactory<RM, ModelRelationshipTypes.belongsTo, false, undefined>, RM, "required" | "valueRequired" | "arrayRequired", undefined>;
+export declare function belongsTo<RM extends string>(relatedModel: RM, references: string | string[]): ModelRelationalField<ModelRelationalTypeArgFactory<RM, ModelRelationshipTypes.belongsTo, false>, RM, "required" | "valueRequired" | "arrayRequired", undefined>;
 ```
 
 ## Parameters
@@ -21,7 +21,7 @@ export declare function belongsTo<RM extends string>(relatedModel: RM, reference
 
 **Returns:**
 
-ModelRelationalField&lt;ModelRelationalTypeArgFactory&lt;RM, ModelRelationshipTypes.belongsTo, false, undefined&gt;, RM, "required" \| "valueRequired" \| "arrayRequired", undefined&gt;
+ModelRelationalField&lt;ModelRelationalTypeArgFactory&lt;RM, ModelRelationshipTypes.belongsTo, false&gt;, RM, "required" \| "valueRequired" \| "arrayRequired", undefined&gt;
 
 a belong-to relationship definition
 
