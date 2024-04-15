@@ -1,5 +1,13 @@
 # @aws-amplify/data-schema
 
+## 0.14.14
+
+### Patch Changes
+
+- 4ef3d8d: latest tag is wrong from tag release testing; bumping patch to fix tag
+- Updated dependencies [4ef3d8d]
+  - @aws-amplify/data-schema-types@0.7.17
+
 ## 0.14.13
 
 ### Patch Changes
