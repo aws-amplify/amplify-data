@@ -362,12 +362,16 @@ describe('model auth rules', () => {
       .schema({
         widget: a.model({
           id: a.id().required(),
+          widgetParentId: a.id(),
           parent: a
-            .belongsTo('widget', 'widgetId')
+            .belongsTo('WidgetParent', 'widgetParentId')
             .authorization([
               a.allow.owner().inField('customOwner').to(['create', 'read']),
             ]),
         }),
+        WidgetParent: a.model({
+          widget: a.hasOne('widget', 'widgetParentId')
+        })
       })
       .authorization([a.allow.owner()]);
 
