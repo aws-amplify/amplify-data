@@ -1,12 +1,7 @@
 import type { Equal, Expect } from '@aws-amplify/data-schema-types';
 import { type ModelType, type InternalModel, model } from '../src/ModelType';
 import { modelIndex } from '../src/ModelIndex';
-import {
-  type ModelField,
-  type InternalField,
-  string,
-  id,
-} from '../src/ModelField';
+import { type ModelField, string, id } from '../src/ModelField';
 
 const a = { model, index: modelIndex };
 
@@ -58,7 +53,6 @@ describe('identifiers', () => {
 
     type ExpectedType = {
       fields: {
-        // id: ModelField<string>;
         title: ModelField<string | null>;
       };
       identifier: Array<'id'>;

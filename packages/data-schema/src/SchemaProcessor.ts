@@ -242,7 +242,7 @@ function refFieldToGql(fieldDef: RefFieldDef): string {
 
 function transformFunctionHandler(
   handlers: FunctionHandler[],
-  callSignature: string,
+  functionFieldName: string,
 ): {
   gqlHandlerContent: string;
   lambdaFunctionDefinition: LambdaFunctionDefinition;
@@ -256,15 +256,13 @@ function transformFunctionHandler(
     if (typeof handlerData === 'string') {
       gqlHandlerContent += `@function(name: "${handlerData}") `;
     } else if (typeof handlerData.getInstance === 'function') {
-      const fnBaseName = `Fn${capitalize(callSignature)}`;
-      const fnNameSuffix = idx === 0 ? '' : `${idx + 1}`;
-      const fnName = fnBaseName + fnNameSuffix;
+      const fnName = `Fn${capitalize(functionFieldName)}${idx === 0 ? '' : `${idx + 1}`}`;
 
       lambdaFunctionDefinition[fnName] = handlerData;
       gqlHandlerContent += `@function(name: "${fnName}") `;
     } else {
       throw new Error(
-        `Invalid value specified for ${callSignature} handler.function(). Expected: defineFunction or string.`,
+        `Invalid value specified for ${functionFieldName} handler.function(). Expected: defineFunction or string.`,
       );
     }
   });
@@ -373,7 +371,7 @@ function customOperationToGql(
   if (isFunctionHandler(handlers)) {
     ({ gqlHandlerContent, lambdaFunctionDefinition } = transformFunctionHandler(
       handlers,
-      callSignature,
+      typeName,
     ));
   } else if (functionRef) {
     gqlHandlerContent = `@function(name: "${functionRef}") `;
@@ -1065,7 +1063,7 @@ const schemaPreprocessor = (
   const customSubscriptions = [];
 
   const jsFunctions: JsResolver[] = [];
-  let lambdaFunctions: LambdaFunctionDefinition = {};
+  const lambdaFunctions: LambdaFunctionDefinition = {};
   const customSqlDataSourceStrategies: CustomSqlDataSourceStrategy[] = [];
 
   const databaseType =
@@ -1156,7 +1154,7 @@ const schemaPreprocessor = (
           getRefType,
         );
 
-        lambdaFunctions = lambdaFunctionDefinition;
+        Object.assign(lambdaFunctions, lambdaFunctionDefinition);
 
         topLevelTypes.push(...models);
 
