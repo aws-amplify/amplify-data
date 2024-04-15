@@ -48,7 +48,7 @@ describe('field level auth', () => {
 
   it('implied field types can be inferred from related model fields', () => {
     const field = a
-      .belongsTo('Widget')
+      .belongsTo('Widget', 'widgetId')
       .authorization([
         a.allow.public().to(['read']),
         a.allow.private().to(['read', 'create']),
@@ -102,7 +102,7 @@ describe('field level auth', () => {
 
   it('implied fields objects can be extracted from related model fields', () => {
     const field = a
-      .belongsTo('Widget')
+      .belongsTo('Widget', 'widgetId')
       .authorization([
         a.allow.public().to(['read']),
         a.allow.private().to(['read', 'create']),

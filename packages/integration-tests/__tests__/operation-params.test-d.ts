@@ -18,15 +18,18 @@ describe('Basic operations', () => {
     Post: a.model({
       title: a.string().required(),
       description: a.string(),
-      comments: a.hasMany('Comment'),
-      meta: a.hasOne('Meta'),
+      comments: a.hasMany('Comment', 'postId'),
+      meta: a.hasOne('Meta', 'postId'),
     }),
     Comment: a.model({
       body: a.string().required(),
-      post: a.belongsTo('Post'),
+      postId: a.id(),
+      post: a.belongsTo('Post', 'postId'),
     }),
     Meta: a.model({
       body: a.string(),
+      postId: a.id(),
+      post: a.belongsTo('Post', 'postId'),
     }),
   });
 
@@ -285,14 +288,6 @@ describe('Basic operations', () => {
         },
       });
     });
-
-    test('implicit FK', async () => {
-      await client.models.Comment.list({
-        filter: {
-          postCommentsId: { eq: 'whatever' },
-        },
-      });
-    });
   });
 
   describe('can not filter on', () => {
@@ -304,74 +299,5 @@ describe('Basic operations', () => {
         },
       });
     });
-  });
-});
-
-describe('operation params for many-to-many implicit models', () => {
-  const schema = a.schema({
-    Post: a.model({
-      title: a.string().required(),
-      postTags: a.manyToMany('Tag', { relationName: 'PostTag' }),
-    }),
-    Tag: a.model({
-      label: a.string().required(),
-      postTags: a.manyToMany('Post', { relationName: 'PostTag' }),
-    }),
-  });
-
-  type Schema = ClientSchema<typeof schema>;
-  const client = generateClient<Schema>();
-
-  test('create operation has correct id parameter types', () => {
-    type Resolved = Pick<
-      Parameters<typeof client.models.PostTag.create>[0],
-      'id'
-    >;
-
-    type Expected = {
-      id?: string;
-    };
-
-    type _ = Expect<Equal<Resolved, Expected>>;
-  });
-
-  test('update operation has correct id parameter types', () => {
-    type Resolved = Pick<
-      Parameters<typeof client.models.PostTag.update>[0],
-      'id'
-    >;
-
-    type Expected = {
-      id: string;
-    };
-
-    type _ = Expect<Equal<Resolved, Expected>>;
-  });
-
-  test('delete operation has correct id parameter types', () => {
-    type Resolved = Pick<
-      Parameters<typeof client.models.PostTag.delete>[0],
-      'id'
-    >;
-
-    type Expected = {
-      id: string;
-    };
-
-    type _ = Expect<Equal<Resolved, Expected>>;
-  });
-
-  test('get operation has correct id parameter types', () => {
-    const getFunc = client.models.Post.get<
-      Record<string, unknown>,
-      ReadonlyArray<any>
-    >;
-    type Resolved = Parameters<typeof getFunc>[0];
-
-    type Expected = {
-      id: string;
-    };
-
-    type _ = Expect<Equal<Resolved, Expected>>;
   });
 });

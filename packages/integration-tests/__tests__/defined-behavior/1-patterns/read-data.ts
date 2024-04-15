@@ -239,27 +239,37 @@ describe('Read application data', () => {
     const schema = a
       .schema({
         Blog: a.model({
-          author: a.hasOne('Author'),
-          content: a.hasMany('Content'),
-          publication: a.hasOne('Publication'),
+          author: a.hasOne('Author', 'blogId'),
+          content: a.hasMany('Content', 'blogId'),
+          publication: a.hasOne('Publication', 'blogId'),
         }),
         Content: a.model({
           title: a.string(),
           description: a.string(),
+          blogId: a.id(),
+          blog: a.belongsTo('Blog', 'blogId'),
         }),
         Author: a.model({
           email: a.string(),
+          blogId: a.id(),
+          blog: a.belongsTo('Blog', 'blogId'),
         }),
         Publication: a.model({
-          company: a.hasOne('Company'),
+          company: a.hasOne('Company', 'publicationId'),
+          blogId: a.id(),
+          blog: a.belongsTo('Blog', 'blogId'),
         }),
         Company: a.model({
           name: a.string().required(),
-          location: a.hasOne('Location'),
+          publicationId: a.id(),
+          publication: a.belongsTo('Publication', 'publicationId'),
+          location: a.hasOne('Location', 'companyId'),
         }),
         Location: a.model({
           city: a.string(),
           state: a.string(),
+          companyId: a.id(),
+          company: a.belongsTo('Company', 'companyId'),
         }),
       })
       .authorization([a.allow.public()]);
@@ -333,11 +343,13 @@ describe('Read application data', () => {
         Post: a.model({
           content: a.string(),
           author: a.string(),
-          comments: a.hasMany('Comment'),
+          comments: a.hasMany('Comment', 'postId'),
         }),
         Comment: a.model({
           content: a.string(),
           author: a.string(),
+          postId: a.id(),
+          post: a.belongsTo('Post', 'postId'),
         }),
       })
       .authorization([a.allow.public()]);
@@ -373,11 +385,13 @@ describe('Read application data', () => {
         Post: a.model({
           content: a.string(),
           author: a.string(),
-          comments: a.hasMany('Comment'),
+          comments: a.hasMany('Comment', 'postId'),
         }),
         Comment: a.model({
           content: a.string(),
           author: a.string(),
+          postId: a.id(),
+          post: a.belongsTo('Post', 'postId'),
         }),
       })
       .authorization([a.allow.public()]);

@@ -13,12 +13,9 @@ export enum ModelRelationshipTypes {
   hasOne = 'hasOne',
   hasMany = 'hasMany',
   belongsTo = 'belongsTo',
-  manyToMany = 'manyToMany',
 }
 
 type RelationshipTypes = `${ModelRelationshipTypes}`;
-
-const arrayTypeRelationships = ['hasMany', 'manyToMany'];
 
 type ModelRelationalFieldData = {
   fieldType: 'model';
@@ -27,8 +24,7 @@ type ModelRelationalFieldData = {
   array: boolean;
   valueRequired: boolean;
   arrayRequired: boolean;
-  relationName?: string;
-  references?: string[];
+  references: string[];
   authorization: Authorization<any, any, any>[];
 };
 
@@ -38,9 +34,8 @@ export type ModelRelationalFieldParamShape = {
   relatedModel: string;
   array: boolean;
   valueRequired: boolean;
-  references?: string[];
+  references: string[];
   arrayRequired: boolean;
-  relationName?: string;
 };
 
 type ModelRelationalFieldFunctions<
@@ -55,15 +50,6 @@ type ModelRelationalFieldFunctions<
   valueRequired(): ModelRelationalField<
     SetTypeSubArg<T, 'valueRequired', true>,
     K | 'valueRequired'
-  >;
-  /**
-   * Reference sets the foreign key on which to establish the relationship
-   */
-  references(
-    references: string[],
-  ): ModelRelationalField<
-    SetTypeSubArg<T, 'references', string[]>,
-    K | 'references'
   >;
   /**
    * When set, it requires the relationship to always return a value
@@ -118,7 +104,6 @@ const relationalModifiers = [
   'required',
   'arrayRequired',
   'valueRequired',
-  'references',
   'authorization',
 ] as const;
 
@@ -126,10 +111,9 @@ const relationModifierMap: Record<
   `${ModelRelationshipTypes}`,
   (typeof relationalModifiers)[number][]
 > = {
-  belongsTo: ['authorization', 'references'],
-  hasMany: ['arrayRequired', 'valueRequired', 'authorization', 'references'],
-  hasOne: ['required', 'authorization', 'references'],
-  manyToMany: ['arrayRequired', 'valueRequired', 'authorization'],
+  belongsTo: ['authorization'],
+  hasMany: ['arrayRequired', 'valueRequired', 'authorization'],
+  hasOne: ['required', 'authorization'],
 };
 
 export type RelationTypeFunctionOmitMapping<
@@ -140,15 +124,13 @@ export type RelationTypeFunctionOmitMapping<
     ? 'required'
     : Type extends ModelRelationshipTypes.hasOne
       ? 'arrayRequired' | 'valueRequired'
-      : Type extends ModelRelationshipTypes.manyToMany
-        ? 'required' | 'references'
-        : never;
+      : never;
 
 function _modelRelationalField<
   T extends ModelRelationalFieldParamShape,
   RelatedModel extends string,
   RT extends ModelRelationshipTypes,
->(type: RT, relatedModel: RelatedModel, relationName?: string) {
+>(type: RT, relatedModel: RelatedModel, references: string[]) {
   const data: ModelRelationalFieldData = {
     relatedModel,
     type,
@@ -156,14 +138,11 @@ function _modelRelationalField<
     array: false,
     valueRequired: false,
     arrayRequired: false,
-    references: undefined,
-    relationName,
+    references,
     authorization: [],
   };
 
-  if (arrayTypeRelationships.includes(type)) {
-    data.array = true;
-  }
+  data.array = type === 'hasMany';
   const relationshipBuilderFunctions = {
     required() {
       data.arrayRequired = true;
@@ -177,11 +156,6 @@ function _modelRelationalField<
     },
     valueRequired() {
       data.valueRequired = true;
-
-      return this;
-    },
-    references(references: string[]) {
-      data.references = references;
 
       return this;
     },
@@ -213,7 +187,6 @@ export type ModelRelationalTypeArgFactory<
   RM extends string,
   RT extends RelationshipTypes,
   IsArray extends boolean,
-  RelationName extends string | undefined = undefined,
 > = {
   type: 'model';
   relatedModel: RM;
@@ -221,7 +194,6 @@ export type ModelRelationalTypeArgFactory<
   array: IsArray;
   valueRequired: false;
   arrayRequired: false;
-  relationName: RelationName;
   references: string[];
 };
 
@@ -232,12 +204,19 @@ export type ModelRelationalTypeArgFactory<
  * @param relatedModel the name of the related model
  * @returns a one-to-one relationship definition
  */
-export function hasOne<RM extends string>(relatedModel: RM) {
+export function hasOne<RM extends string>(
+  relatedModel: RM,
+  references: string | string[],
+) {
   return _modelRelationalField<
     ModelRelationalTypeArgFactory<RM, ModelRelationshipTypes.hasOne, false>,
     RM,
     ModelRelationshipTypes.hasOne
-  >(ModelRelationshipTypes.hasOne, relatedModel);
+  >(
+    ModelRelationshipTypes.hasOne,
+    relatedModel,
+    Array.isArray(references) ? references : [references],
+  );
 }
 
 /**
@@ -245,12 +224,19 @@ export function hasOne<RM extends string>(relatedModel: RM) {
  * @param relatedModel the name of the related model
  * @returns a one-to-many relationship definition
  */
-export function hasMany<RM extends string>(relatedModel: RM) {
+export function hasMany<RM extends string>(
+  relatedModel: RM,
+  references: string | string[],
+) {
   return _modelRelationalField<
     ModelRelationalTypeArgFactory<RM, ModelRelationshipTypes.hasMany, true>,
     RM,
     ModelRelationshipTypes.hasMany
-  >(ModelRelationshipTypes.hasMany, relatedModel);
+  >(
+    ModelRelationshipTypes.hasMany,
+    relatedModel,
+    Array.isArray(references) ? references : [references],
+  );
 }
 
 /**
@@ -260,36 +246,17 @@ export function hasMany<RM extends string>(relatedModel: RM) {
  * @param relatedModel name of the related `.hasOne()` or `.hasMany()` model
  * @returns a belong-to relationship definition
  */
-export function belongsTo<RM extends string>(relatedModel: RM) {
+export function belongsTo<RM extends string>(
+  relatedModel: RM,
+  references: string | string[],
+) {
   return _modelRelationalField<
     ModelRelationalTypeArgFactory<RM, ModelRelationshipTypes.belongsTo, false>,
     RM,
     ModelRelationshipTypes.belongsTo
-  >(ModelRelationshipTypes.belongsTo, relatedModel);
-}
-
-/**
- * Create a many-to-many relationship between two models with the manyToMany() method.
- * Provide a common relationName on both models to join them into a many-to-many relationship.
- * Under the hood a many-to-many relationship is modeled with a "join table" with corresponding
- * `hasMany()` relationships between the two related models. You must set the same `manyToMany()`
- * field on both models of the relationship.
- * @param relatedModel name of the related model
- * @param opts pass in the `relationName` that will serve as the join table name for this many-to-many relationship
- * @returns a many-to-many relationship definition
- */
-export function manyToMany<RM extends string, RN extends string>(
-  relatedModel: RM,
-  opts: { relationName: RN },
-) {
-  return _modelRelationalField<
-    ModelRelationalTypeArgFactory<
-      RM,
-      ModelRelationshipTypes.manyToMany,
-      true,
-      RN
-    >,
-    RM,
-    ModelRelationshipTypes.manyToMany
-  >(ModelRelationshipTypes.manyToMany, relatedModel, opts.relationName);
+  >(
+    ModelRelationshipTypes.belongsTo,
+    relatedModel,
+    Array.isArray(references) ? references : [references],
+  );
 }

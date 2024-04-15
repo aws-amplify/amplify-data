@@ -8,7 +8,7 @@
 
 |  Function | Description |
 |  --- | --- |
-|  [belongsTo(relatedModel)](./data-schema.a.belongsto.md) | Make a <code>hasOne()</code> or <code>hasMany()</code> relationship bi-directional using the <code>belongsTo()</code> method. The belongsTo() method requires that a hasOne() or hasMany() relationship already exists from parent to the related model. |
+|  [belongsTo(relatedModel, references)](./data-schema.a.belongsto.md) | Make a <code>hasOne()</code> or <code>hasMany()</code> relationship bi-directional using the <code>belongsTo()</code> method. The belongsTo() method requires that a hasOne() or hasMany() relationship already exists from parent to the related model. |
 |  [boolean()](./data-schema.a.boolean.md) | A boolean scalar type that can be either true or false. |
 |  [combine(schemas)](./data-schema.a.combine.md) | The interface for merging up to 50 schemas into a single API. |
 |  [customType(fields)](./data-schema.a.customtype.md) |  |
@@ -17,13 +17,12 @@
 |  [email()](./data-schema.a.email.md) | An email scalar type that is represented server-side in the format <code>local-part@domain-part</code> as defined by RFC 822. |
 |  [enum(values)](./data-schema.a.enum.md) | this type param pattern allows us to infer literal type values from the array without using the <code>as const</code> suffix |
 |  [float()](./data-schema.a.float.md) | A float scalar type following represented server-side as an IEEE 754 floating point value. |
-|  [hasMany(relatedModel)](./data-schema.a.hasmany.md) | Create a one-directional one-to-many relationship between two models using the <code>hasMany()</code> method. |
-|  [hasOne(relatedModel)](./data-schema.a.hasone.md) | Create a one-directional one-to-one relationship between two models using the <code>hasOne(&quot;MODEL_NAME&quot;)</code> method. A hasOne relationship always uses a reference to the related model's identifier. Typically this is the <code>id</code> field unless overwritten with the <code>identifier()</code> method. |
+|  [hasMany(relatedModel, references)](./data-schema.a.hasmany.md) | Create a one-directional one-to-many relationship between two models using the <code>hasMany()</code> method. |
+|  [hasOne(relatedModel, references)](./data-schema.a.hasone.md) | Create a one-directional one-to-one relationship between two models using the <code>hasOne(&quot;MODEL_NAME&quot;)</code> method. A hasOne relationship always uses a reference to the related model's identifier. Typically this is the <code>id</code> field unless overwritten with the <code>identifier()</code> method. |
 |  [id()](./data-schema.a.id.md) | A unique identifier scalar type. This scalar is serialized like a String but isn't meant to be human-readable. If not specified on create operations, a ULID will be auto-generated service-side. |
 |  [integer()](./data-schema.a.integer.md) | An integer scalar type with a supported value range between -(2^31) and 2^31-1. |
 |  [ipAddress()](./data-schema.a.ipaddress.md) | A valid IPv4 or IPv6 address scalar type. IPv4 addresses are expected in quad-dotted notation (123.12.34.56). IPv6 addresses are expected in non-bracketed, colon-separated format (1a2b:3c4b:🔢4567). You can include an optional CIDR suffix (123.45.67.89/16) to indicate subnet mask. |
 |  [json()](./data-schema.a.json.md) | A JSON scalar type that is automatically parsed and loaded server-side as maps, lists, or scalar values rather than as the literal input strings. |
-|  [manyToMany(relatedModel, opts)](./data-schema.a.manytomany.md) | Create a many-to-many relationship between two models with the manyToMany() method. Provide a common relationName on both models to join them into a many-to-many relationship. Under the hood a many-to-many relationship is modeled with a "join table" with corresponding <code>hasMany()</code> relationships between the two related models. You must set the same <code>manyToMany()</code> field on both models of the relationship. |
 |  [model(fields)](./data-schema.a.model.md) | A data model that creates a matching Amazon DynamoDB table and provides create, read (list and get), update, delete, and subscription APIs. |
 |  [mutation()](./data-schema.a.mutation.md) |  |
 |  [phone()](./data-schema.a.phone.md) | A phone number scalar type thas is stored as a string server-side. Phone numbers can contain either spaces or hyphens to separate digit groups. Phone numbers without a country code are assumed to be US/North American numbers adhering to the North American Numbering Plan. |

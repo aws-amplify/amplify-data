@@ -666,7 +666,7 @@ exports[`model auth rules includes auth from related model fields 1`] = `
 "type widget @model @auth(rules: [{allow: owner, ownerField: "owner"}])
 {
   id: ID! @primaryKey
-  parent: widget @belongsTo @auth(rules: [{allow: owner, operations: [create, read], ownerField: "customOwner"}])
+  parent: widget @belongsTo(references: ["widgetId"]) @auth(rules: [{allow: owner, operations: [create, read], ownerField: "customOwner"}])
 }"
 `;
 

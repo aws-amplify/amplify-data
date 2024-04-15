@@ -39,51 +39,80 @@ describe('schema generation', () => {
     });
   });
 
-  test('with relationships', () => {
+   test('with relationships', () => {
     const schema = a
       .schema({
         BoringParent: a.model({
-          childNormal: a.hasOne('BoringChild'),
-          childReciprocal: a.hasOne('BoringReciprocalChild'),
-          childHasManyNormal: a.hasMany('BoringHasManyChild'),
-          childHasManyReciprocal: a.hasMany('ReciprocalHasManyChild'),
+          childNormal: a.hasOne('BoringChild', 'boringParentId'),
+          childReciprocal: a.hasOne('BoringReciprocalChild', 'boringParentId'),
+          childHasManyNormal: a.hasMany('BoringHasManyChild', 'boringParentId'),
+          childHasManyReciprocal: a.hasMany('ReciprocalHasManyChild', 'boringParentId'),
         }),
         BoringChild: a.model({
           value: a.string(),
+          boringParentId: a.id(),
+          boringParent: a.belongsTo('BoringParent', 'boringParentId'),
         }),
         BoringReciprocalChild: a.model({
-          parent: a.belongsTo('BoringParent'),
           value: a.string(),
+          boringParentId: a.id(),
+          parent: a.belongsTo('BoringParent', 'boringParentId'),
         }),
         BoringHasManyChild: a.model({
           value: a.string(),
+          boringParentId: a.id(),
+          parent: a.belongsTo('BoringParent', 'boringParentId'),
         }),
         ReciprocalHasManyChild: a.model({
           value: a.string(),
-          parent: a.belongsTo('BoringParent'),
+          boringParentId: a.id(),
+          parent: a.belongsTo('BoringParent', 'boringParentId'),
         }),
         CPKParent: a
           .model({
             CPKParentIdFieldA: a.id().required(),
             CPKParentIdFieldB: a.id().required(),
-            childNormal: a.hasOne('CPKChild'),
-            childReciprocal: a.hasOne('CPKReciprocalChild'),
-            childHasManyNormal: a.hasMany('CPKHasManyChild'),
-            childHasManyReciprocal: a.hasMany('CPKReciprocalHasManyChild'),
+            childNormal: a.hasOne('CPKChild', [
+              'CPKParentIdFieldA',
+              'CPKParentIdFieldB',
+            ]),
+            childReciprocal: a.hasOne('CPKReciprocalChild', [
+              'CPKParentIdFieldA',
+              'CPKParentIdFieldB',
+            ]),
+            childHasManyNormal: a.hasMany('CPKHasManyChild', [
+              'CPKParentIdFieldA',
+              'CPKParentIdFieldB',
+            ]),
+            childHasManyReciprocal: a.hasMany('CPKReciprocalHasManyChild', [
+              'CPKParentIdFieldA',
+              'CPKParentIdFieldB',
+            ]),
           })
           .identifier(['CPKParentIdFieldA', 'CPKParentIdFieldB']),
         CPKChild: a
           .model({
+            value: a.string(),
             CPKChildIdFieldA: a.id().required(),
             CPKChildIdFieldB: a.id().required(),
-            value: a.string(),
+            CPKParentIdFieldA: a.id(),
+            CPKParentIdFieldB: a.id(),
+            cpkParent: a.belongsTo('CPKParent', [
+              'CPKParentIdFieldA',
+              'CPKParentIdFieldB',
+            ]),
           })
           .identifier(['CPKChildIdFieldA', 'CPKChildIdFieldB']),
         CPKReciprocalChild: a
           .model({
             CPKReciprocalChildIdFieldA: a.id().required(),
             CPKReciprocalChildIdFieldB: a.id().required(),
-            parent: a.belongsTo('CPKParent'),
+            CPKParentIdFieldA: a.id(),
+            CPKParentIdFieldB: a.id(),
+            cpkParent: a.belongsTo('CPKParent', [
+              'CPKParentIdFieldA',
+              'CPKParentIdFieldB',
+            ]),
             value: a.string(),
           })
           .identifier([
@@ -92,9 +121,15 @@ describe('schema generation', () => {
           ]),
         CPKHasManyChild: a
           .model({
+            value: a.string(),
             CPKHasManyChildIdFieldA: a.id().required(),
             CPKHasManyChildIdFieldB: a.id().required(),
-            value: a.string(),
+            CPKParentIdFieldA: a.id(),
+            CPKParentIdFieldB: a.id(),
+            cpkParent: a.belongsTo('CPKParent', [
+              'CPKParentIdFieldA',
+              'CPKParentIdFieldB',
+            ]),
           })
           .identifier(['CPKHasManyChildIdFieldA', 'CPKHasManyChildIdFieldB']),
         CPKReciprocalHasManyChild: a
@@ -102,7 +137,12 @@ describe('schema generation', () => {
             CPKReciprocalHasManyChildIdFieldA: a.id().required(),
             CPKReciprocalHasManyChildIdFieldB: a.id().required(),
             value: a.string(),
-            parent: a.belongsTo('CPKParent'),
+            CPKParentIdFieldA: a.id().required(),
+            CPKParentIdFieldB: a.id().required(),
+            parent: a.belongsTo('CPKParent', [
+              'CPKParentIdFieldA',
+              'CPKParentIdFieldB',
+            ]),
           })
           .identifier([
             'CPKReciprocalHasManyChildIdFieldA',
@@ -110,7 +150,6 @@ describe('schema generation', () => {
           ]),
       })
       .authorization([a.allow.public()]);
-
     expect(schema.transform().schema).toMatchSnapshot();
   });
 });
@@ -175,7 +214,7 @@ describe('schema auth rules', () => {
           field: a.json(),
         }),
         C: a.model({
-          d: a.hasOne('D'),
+          d: a.hasOne('D', 'cId'),
         }),
         D: a.model({
           can: a.integer(),
@@ -185,6 +224,8 @@ describe('schema auth rules', () => {
           am: a.ipAddress(),
           getting: a.url(),
           tired: a.enum(['?']),
+          cId: a.id(),
+          c: a.belongsTo('C', 'cId'),
         }),
       })
       .authorization([a.allow.public()]);
@@ -695,7 +736,7 @@ describe('custom operations', () => {
             idNum: a.integer().required(),
             field: a.string(),
             bId: a.string(),
-            b: a.belongsTo('B').references(['bId']),
+            b: a.belongsTo('B', 'bId'),
           })
           .identifier(['idNum']),
       });
@@ -750,7 +791,8 @@ describe('custom operations', () => {
           .model({
             idNum: a.integer().required(),
             field: a.string(),
-            b: a.belongsTo('B').references(['bId']),
+            bId: a.id(),
+            b: a.belongsTo('B', 'bId'),
           })
           .identifier(['idNum']),
       });
@@ -764,6 +806,7 @@ describe('custom operations', () => {
       type Expected_A = {
         idNum: number;
         field?: string | null | undefined;
+        bId?: string | null | undefined;
         b: (
           options?:
             | {
@@ -775,7 +818,7 @@ describe('custom operations', () => {
         ) => SingularReturnValue<
           | {
               id: string;
-              title: Nullable<string>;
+              title: string | null;
             }
           | null
           | undefined
