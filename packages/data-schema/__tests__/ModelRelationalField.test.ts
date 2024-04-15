@@ -150,8 +150,7 @@ describe('schema generation with relationships', () => {
     })
       .authorization([a.allow.public()]);
 
-    // FIXME: This should throw an error -- `teamId` isn't defined on `Member`
-    expect(schema.transform().schema).toMatchSnapshot(); // .toThrowError()
+    expect(schema.transform().schema).toThrowError(`Validation Error: reference field 'teamId' must be defined on Member. Team.members: [Member] @hasMany(references: ['teamId']) <-> Member.team: Team @belongsTo(references: ['teamId'])`);
   });
 
   test('ddb masMany / belongsTo explicitly defined reference field on related model is supported', () => {
@@ -179,7 +178,7 @@ describe('schema generation with relationships', () => {
         motto: a.string(),
         members: a.hasMany('Member', ['teamId', 'teamSk']),
       })
-      .identifier(['id', 'sk']),
+        .identifier(['id', 'sk']),
       Member: a.model({
         name: a.string(),
         teamId: a.id(),
@@ -192,7 +191,7 @@ describe('schema generation with relationships', () => {
     expect(schema.transform().schema).toMatchSnapshot();
   });
 
-  test('ddb masMany / belongsTo partition key + sort key - undefined sort key reference on related model fails', () => {
+  test('ddb masMany / belongsTo partition key and sort key with undefined sort key reference on related model fails', () => {
     const schema = a.schema({
       Team: a.model({
         id: a.id().required(),
@@ -200,7 +199,7 @@ describe('schema generation with relationships', () => {
         motto: a.string(),
         members: a.hasMany('Member', ['teamId', 'teamSk']),
       })
-      .identifier(['id', 'sk']),
+        .identifier(['id', 'sk']),
       Member: a.model({
         name: a.string(),
         teamId: a.id(),
@@ -209,8 +208,8 @@ describe('schema generation with relationships', () => {
     })
       .authorization([a.allow.public()]);
 
-    // FIXME: This should throw an error -- ...
-    expect(schema.transform().schema).toMatchSnapshot(); // toThrowError
+    expect(schema.transform().schema)
+    .toThrowError(`Validation Error: reference field 'teamSk' must be defined on Member. Team.members: [Member] @hasMany(references: ['teamId', 'teamSk']) <-> Member.team: Team @belongsTo(references: ['teamId', 'teamSk'])`);
   });
 
   test('ddb hasOne / belongsTo explicitly defined reference field on related model is supported', () => {
@@ -293,9 +292,9 @@ describe('schema generation with relationships', () => {
         members: a.hasMany('Member', ['teamId']),
         project: a.hasOne('Project', ['teamId']),
       })
-      .identifier(['id']),
+        .identifier(['id']),
     })
-    .authorization([a.allow.public()]);
+      .authorization([a.allow.public()]);
 
     const ddbSchema = a.schema({
       Project: a.model({
@@ -312,7 +311,7 @@ describe('schema generation with relationships', () => {
         team: a.belongsTo('Team', ['teamId'])
       })
     })
-    .authorization([a.allow.public()]);
+      .authorization([a.allow.public()]);
 
     const schema = a.combine([sqlSchema, ddbSchema]);
     // FIXME: Property 'transform' does not exist on type 'CombinedModelSchema<[RDSModelSchema<SetTypeSubArg< ...
