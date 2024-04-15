@@ -40,10 +40,18 @@ export const esmOutput = {
 
 export const esmTSOptions = {
   outDir: 'dist/esm',
-  module: 'nodenext',
-  moduleResolution: 'nodenext',
   sourceMap: false,
   tsconfig: defaultTSConfigPath,
   tsBuildInfoFile: 'dist/meta/cjs.tsbuildinfo',
   noEmitOnError: !isWatch,
 };
+
+// export const esmTSOptions = {
+//   outDir: 'dist/esm',
+//   module: 'nodenext',
+//   moduleResolution: 'nodenext',
+//   sourceMap: false,
+//   tsconfig: defaultTSConfigPath,
+//   tsBuildInfoFile: 'dist/meta/cjs.tsbuildinfo',
+//   noEmitOnError: !isWatch,
+// };

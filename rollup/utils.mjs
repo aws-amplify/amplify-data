@@ -20,6 +20,7 @@ export const getInputForGlob = (matcher, { ignore } = {}) =>
       .map((file) => [
         // This remove `src/` as well as the file extension from each
         // file, so e.g. src/nested/foo.js becomes nested/foo
+        // file,
         path.relative(
           'src',
           file.slice(0, file.length - path.extname(file).length),

@@ -1,6 +1,6 @@
 {
   "name": "@aws-amplify/data-schema",
-  "version": "0.14.14",
+  "version": "0.15.4",
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
@@ -8,7 +8,7 @@
   },
   "main": "./dist/cjs/index.js",
   "module": "./dist/esm/index.mjs",
-  "typings": "./dist/esm/index.d.ts",
+  "types": "./dist/esm/src/index.d.ts",
   "scripts": {
     "build:esm-cjs": "rollup -c rollup.config.mjs",
     "build": "npm run clean && npm run build:esm-cjs",
@@ -24,19 +24,19 @@
       "types": "./dist/esm/src/index.d.ts",
       "import": "./dist/esm/index.mjs",
       "require": "./dist/cjs/index.js",
-      "node": "./src/index.ts"
+      "node": "./dist/esm/index.mjs"
     },
     "./internals": {
       "types": "./dist/esm/src/internals/index.d.ts",
       "import": "./dist/esm/internals/index.mjs",
       "require": "./dist/cjs/internals/index.js",
-      "node": "./src/internals/index.ts"
+      "node": "./dist/esm/index.mjs"
     },
     "./runtime": {
       "types": "./dist/esm/src/runtime/index.d.ts",
       "import": "./dist/esm/runtime/index.mjs",
       "require": "./dist/cjs/runtime/index.js",
-      "node": "./src/runtime/index.ts"
+      "node": "./dist/esm/index.mjs"
     },
     "./package.json": "./package.json"
   },
@@ -66,6 +66,7 @@
     "typescript": "^5.1.6"
   },
   "files": [
+    "src",
     "dist/**",
     "internals",
     "runtime",

@@ -1,5 +1,11 @@
 # @aws-amplify/data-schema-types
 
+## 0.8.0
+
+### Minor Changes
+
+- 970e4fe: updated build system to include cjs, esm; moved runtime types and behavior into data-schema/runtime
+
 ## 0.7.17
 
 ### Patch Changes
