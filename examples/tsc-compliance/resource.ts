@@ -11,7 +11,7 @@ const schema = a.schema({
           a.allow.public().to(['read']),
         ]),
       description: a.string().default('My new post'),
-      comments: a.hasMany('Comment'),
+      comments: a.hasMany('Comment', 'postId'),
       location: a.ref('Location'),
       privacy: a.ref('Privacy'),
     })
@@ -20,7 +20,8 @@ const schema = a.schema({
   Comment: a
     .model({
       content: a.string(),
-      post: a.belongsTo('Post'),
+      postId: a.id(),
+      post: a.belongsTo('Post', 'postId'),
       commentStatus: a.enum(['submitted', 'approved']),
     })
     .authorization([a.allow.owner(), a.allow.public().to(['read'])]),

@@ -19,7 +19,7 @@ Description
 </th></tr></thead>
 <tbody><tr><td>
 
-[belongsTo(relatedModel)](./data-schema.a.belongsto.md)
+[belongsTo(relatedModel, references)](./data-schema.a.belongsto.md)
 
 
 </td><td>
@@ -116,7 +116,7 @@ A float scalar type following represented server-side as an IEEE 754 floating po
 </td></tr>
 <tr><td>
 
-[hasMany(relatedModel)](./data-schema.a.hasmany.md)
+[hasMany(relatedModel, references)](./data-schema.a.hasmany.md)
 
 
 </td><td>
@@ -127,7 +127,7 @@ Create a one-directional one-to-many relationship between two models using the `
 </td></tr>
 <tr><td>
 
-[hasOne(relatedModel)](./data-schema.a.hasone.md)
+[hasOne(relatedModel, references)](./data-schema.a.hasone.md)
 
 
 </td><td>
@@ -177,17 +177,6 @@ A valid IPv4 or IPv6 address scalar type. IPv4 addresses are expected in quad-do
 </td><td>
 
 A JSON scalar type that is automatically parsed and loaded server-side as maps, lists, or scalar values rather than as the literal input strings.
-
-
-</td></tr>
-<tr><td>
-
-[manyToMany(relatedModel, opts)](./data-schema.a.manytomany.md)
-
-
-</td><td>
-
-Create a many-to-many relationship between two models with the manyToMany() method. Provide a common relationName on both models to join them into a many-to-many relationship. Under the hood a many-to-many relationship is modeled with a "join table" with corresponding `hasMany()` relationships between the two related models. You must set the same `manyToMany()` field on both models of the relationship.
 
 
 </td></tr>

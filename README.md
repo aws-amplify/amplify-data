@@ -9,12 +9,13 @@ const schema = a.schema({
   Post: a.model({
     id: a.id(),
     title: a.string(),
-    comments: a.hasMany('Comment'),
+    comments: a.hasMany('Comment', 'postId'),
   }),
   Comment: a.model({
     id: a.id(),
     content: a.string(),
-    post: a.belongsTo('Post'),
+    postId: a.id(),
+    post: a.belongsTo('Post', 'postId'),
   }),
 });
 

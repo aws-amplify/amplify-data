@@ -4,11 +4,11 @@
 
 ### Minor Changes
 
-- 970e4fe: updated build system to include cjs, esm; moved runtime types and behavior into data-schema/runtime
+- 922c344: feat!: support references based relationships. remove support for manyToMany
 
 ### Patch Changes
 
-- Updated dependencies [970e4fe]
+- Updated dependencies [922c344]
   - @aws-amplify/data-schema-types@0.8.0
 
 ## 0.14.14

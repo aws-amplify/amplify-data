@@ -30,7 +30,7 @@ describe('RDSModelSchema', () => {
         .authorization([a.allow.public()])
         .relationships((models) => [
           models.Blog.addRelationships({
-            childPosts: a.hasMany('Post').references(['parentBlogId']),
+            childPosts: a.hasMany('Post', 'parentBlogId'),
           }),
         ]);
 
@@ -58,10 +58,10 @@ describe('RDSModelSchema', () => {
         .authorization([a.allow.public()])
         .relationships((models) => [
           models.Post.addRelationships({
-            parentBlog: a.belongsTo('Blog').references(['parentBlogId']),
+            parentBlog: a.belongsTo('Blog', 'parentBlogId'),
           }),
           models.Blog.addRelationships({
-            childPosts: a.hasMany('Post').references(['parentBlogId']),
+            childPosts: a.hasMany('Post', 'parentBlogId'),
           }),
         ]);
 
@@ -87,7 +87,7 @@ describe('RDSModelSchema', () => {
         .authorization([a.allow.public()])
         .relationships((models) => [
           models.Supplier.addRelationships({
-            account: a.hasOne('Account').references(['supplierId']),
+            account: a.hasOne('Account', 'supplierId'),
           }),
         ]);
 
@@ -113,7 +113,7 @@ describe('RDSModelSchema', () => {
         .authorization([a.allow.public()])
         .relationships((models) => [
           models.Account.addRelationships({
-            supplier: a.belongsTo('Supplier').references(['supplierId']),
+            supplier: a.belongsTo('Supplier', 'supplierId'),
           }),
         ]);
 
@@ -139,10 +139,10 @@ describe('RDSModelSchema', () => {
         .authorization([a.allow.public()])
         .relationships((models) => [
           models.Account.addRelationships({
-            supplier: a.belongsTo('Supplier').references(['supplierId']),
+            supplier: a.belongsTo('Supplier', 'supplierId'),
           }),
           models.Supplier.addRelationships({
-            account: a.hasOne('Account').references(['supplierIds']),
+            account: a.hasOne('Account', 'supplierIds'),
           }),
         ]);
 

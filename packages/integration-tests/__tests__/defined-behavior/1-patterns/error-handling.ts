@@ -414,12 +414,14 @@ describe('CRUD error handling', () => {
         .model({
           content: a.string(),
           description: a.string(),
-          additionalInfo: a.hasOne('Note'),
+          additionalInfo: a.hasOne('Note', 'todoId'),
         })
         .authorization([a.allow.public()]),
       Note: a
         .model({
           content: a.string(),
+          todoId: a.id(),
+          todo: a.belongsTo('Todo', 'todoId')
         })
         .authorization([a.allow.public().to(['create']), a.allow.owner()]),
     });

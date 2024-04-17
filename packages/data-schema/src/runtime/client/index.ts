@@ -290,8 +290,6 @@ type WritableKeys<T> = {
  */
 type MutationInput<
   Fields,
-  ModelMeta extends Record<any, any>,
-  RelationalFields = ModelMeta['relationalInputFields'],
   WritableFields = Pick<Fields, WritableKeys<Fields>>,
 > = {
   [Prop in keyof WritableFields as WritableFields[Prop] extends (
@@ -299,7 +297,7 @@ type MutationInput<
   ) => any
     ? never
     : Prop]: WritableFields[Prop];
-} & RelationalFields;
+};
 
 /**
  * All identifiers and fields used to create a model
@@ -309,9 +307,8 @@ type CreateModelInput<
   ModelMeta extends Record<string, unknown>,
 > =
   Equal<ModelIdentifier<ModelMeta>, { id: string }> extends true
-    ? Partial<ModelIdentifier<ModelMeta>> &
-        Omit<MutationInput<Model, ModelMeta>, 'id'>
-    : MutationInput<Model, ModelMeta>;
+    ? Partial<ModelIdentifier<ModelMeta>> & Omit<MutationInput<Model>, 'id'>
+    : MutationInput<Model>;
 
 // #endregion
 
@@ -510,9 +507,7 @@ export type ModelTypesClient<
     },
   ) => SingularReturnValue<Model>;
   update: (
-    model: Prettify<
-      ModelIdentifier<ModelMeta> & Partial<MutationInput<Model, ModelMeta>>
-    >,
+    model: Prettify<ModelIdentifier<ModelMeta> & Partial<MutationInput<Model>>>,
     options?: {
       authMode?: AuthMode;
       authToken?: string;
@@ -607,9 +602,7 @@ type ModelTypesSSRCookies<
     },
   ) => SingularReturnValue<Model>;
   update: (
-    model: Prettify<
-      ModelIdentifier<ModelMeta> & Partial<MutationInput<Model, ModelMeta>>
-    >,
+    model: Prettify<ModelIdentifier<ModelMeta> & Partial<MutationInput<Model>>>,
     options?: {
       authMode?: AuthMode;
       authToken?: string;
@@ -664,9 +657,7 @@ type ModelTypesSSRRequest<
   ) => SingularReturnValue<Model>;
   update: (
     contextSpec: any,
-    model: Prettify<
-      ModelIdentifier<ModelMeta> & Partial<MutationInput<Model, ModelMeta>>
-    >,
+    model: Prettify<ModelIdentifier<ModelMeta> & Partial<MutationInput<Model>>>,
     options?: {
       authMode?: AuthMode;
       authToken?: string;

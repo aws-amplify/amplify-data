@@ -10,7 +10,7 @@ test('secondaryIndexes input validation', () => {
         metadata: a.json(),
         viewCount: a.integer(),
         tags: a.string().array(),
-        comments: a.hasMany('Comment'),
+        comments: a.hasMany('Comment', 'postId'),
         location: a.customType({ lat: a.float(), long: a.float() }),
         status: a.ref('Status'),
         fieldWithAuth: a
@@ -64,6 +64,8 @@ test('secondaryIndexes input validation', () => {
       ]),
     Comment: a.model({
       content: a.string(),
+      postId: a.id(),
+      post: a.belongsTo('Post', 'postId')
     }),
     Status: a.enum(['DRAFT', 'PENDING', 'PUBLISHED']),
   });

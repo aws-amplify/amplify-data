@@ -5,10 +5,7 @@ import {
   SchemaTypes,
 } from '../../src/MappedTypes/ResolveSchema';
 
-import type {
-  CreateImplicitModelsFromRelations,
-  ResolveFieldProperties,
-} from '../../src/MappedTypes/ResolveFieldProperties';
+import type { ResolveFieldProperties } from '../../src/MappedTypes/ResolveFieldProperties';
 import type { NonModelTypesShape } from '../../src/MappedTypes/ExtractNonModelTypes';
 
 import {
@@ -16,7 +13,7 @@ import {
   RelationalMetadata,
   ModelSecondaryIndexes,
 } from '../../src/MappedTypes/ModelMetadata';
-import { Json } from '../../src/ModelField';
+import { Json, Nullable } from '../../src/ModelField';
 
 describe('ModelIdentifier', () => {
   test('Default identifier', () => {
@@ -160,12 +157,7 @@ describe('RelationalMetadata', () => {
 
     type Resolved = RelationalMetadata<
       ResolveSchema<Schema>,
-      ResolveFieldProperties<
-        Schema,
-        NonModelTypesShape,
-        ResolveSchema<Schema>,
-        CreateImplicitModelsFromRelations<Schema>
-      >,
+      ResolveFieldProperties<Schema, NonModelTypesShape, ResolveSchema<Schema>>,
       ModelIdentifier<SchemaTypes<Schema>>
     >;
 
@@ -179,9 +171,11 @@ describe('RelationalMetadata', () => {
       Post: a.model({
         title: a.string(),
         metadata: a.json(),
-        comments: a.hasMany('Comment'),
+        comments: a.hasMany('Comment', 'postId'),
       }),
       Comment: a.model({
+        postId: a.id(),
+        post: a.belongsTo('Post', 'postId'),
         content: a.string(),
       }),
     });
@@ -191,8 +185,7 @@ describe('RelationalMetadata', () => {
     type ResolvedFields = ResolveFieldProperties<
       Schema,
       NonModelTypesShape,
-      ResolveSchema<Schema>,
-      CreateImplicitModelsFromRelations<Schema>
+      ResolveSchema<Schema>
     >;
     type Resolved = Prettify<
       RelationalMetadata<
@@ -202,7 +195,22 @@ describe('RelationalMetadata', () => {
       >
     >;
 
-    type Expected = unknown;
+    type Expected = {
+      Comment: {
+        relationalInputFields: {
+          post?:
+            | {
+                readonly id: string;
+                readonly createdAt?: string | undefined;
+                readonly updatedAt?: string | undefined;
+                title?: string | null | undefined;
+                metadata?: Json | null | undefined;
+                comments?: ResolvedFields['Post']['comments'];
+              }
+            | undefined;
+        };
+      };
+    };
 
     type test = Expect<Equal<Resolved, Expected>>;
   });
@@ -211,11 +219,12 @@ describe('RelationalMetadata', () => {
     const s = a.schema({
       Post: a.model({
         title: a.string(),
-        comments: a.hasMany('Comment'),
+        comments: a.hasMany('Comment', 'postId'),
       }),
       Comment: a.model({
         content: a.string(),
-        post: a.belongsTo('Post'),
+        postId: a.id(),
+        post: a.belongsTo('Post', 'postId'),
       }),
     });
 
@@ -224,8 +233,7 @@ describe('RelationalMetadata', () => {
     type ResolvedFields = ResolveFieldProperties<
       Schema,
       NonModelTypesShape,
-      ResolveSchema<Schema>,
-      CreateImplicitModelsFromRelations<Schema>
+      ResolveSchema<Schema>
     >;
     type Resolved = Prettify<
       RelationalMetadata<
@@ -260,12 +268,13 @@ describe('RelationalMetadata', () => {
         .model({
           customPk: a.id().required(),
           title: a.string(),
-          comments: a.hasMany('Comment'),
+          comments: a.hasMany('Comment', 'postId'),
         })
         .identifier(['customPk']),
       Comment: a.model({
         content: a.string(),
-        post: a.belongsTo('Post'),
+        postId: a.id(),
+        post: a.belongsTo('Post', 'postId'),
       }),
     });
 
@@ -274,8 +283,7 @@ describe('RelationalMetadata', () => {
     type ResolvedFields = ResolveFieldProperties<
       Schema,
       NonModelTypesShape,
-      ResolveSchema<Schema>,
-      CreateImplicitModelsFromRelations<Schema>
+      ResolveSchema<Schema>
     >;
     type Resolved = Prettify<
       RelationalMetadata<
@@ -310,12 +318,13 @@ describe('RelationalMetadata', () => {
         .model({
           customPk: a.id().required(),
           title: a.string().required(),
-          comments: a.hasMany('Comment'),
+          comments: a.hasMany('Comment', 'commentId'),
         })
         .identifier(['customPk', 'title']),
       Comment: a.model({
         content: a.string(),
-        post: a.belongsTo('Post'),
+        commentId: a.id(),
+        post: a.belongsTo('Post', 'commentId'),
       }),
     });
 
@@ -324,8 +333,7 @@ describe('RelationalMetadata', () => {
     type ResolvedFields = ResolveFieldProperties<
       Schema,
       NonModelTypesShape,
-      ResolveSchema<Schema>,
-      CreateImplicitModelsFromRelations<Schema>
+      ResolveSchema<Schema>
     >;
     type Resolved = Prettify<
       RelationalMetadata<
@@ -358,24 +366,26 @@ describe('RelationalMetadata', () => {
     const s = a.schema({
       Post: a.model({
         title: a.string(),
+        comments: a.hasMany('Comment', 'postId'),
       }),
       Comment: a.model({
         content: a.string(),
-        post: a.belongsTo('Post'),
+        post: a.belongsTo('Post', 'postId'),
       }),
     });
 
     type Schema = typeof s;
 
+    type ResolvedFields = ResolveFieldProperties<
+      Schema,
+      NonModelTypesShape,
+      ResolveSchema<Schema>
+    >;
+
     type Resolved = Prettify<
       RelationalMetadata<
         ResolveSchema<Schema>,
-        ResolveFieldProperties<
-          Schema,
-          NonModelTypesShape,
-          ResolveSchema<Schema>,
-          CreateImplicitModelsFromRelations<Schema>
-        >,
+        ResolvedFields,
         ModelIdentifier<SchemaTypes<Schema>>
       >
     >;
@@ -389,6 +399,7 @@ describe('RelationalMetadata', () => {
                 readonly createdAt?: string;
                 readonly updatedAt?: string;
                 title?: string | null | undefined;
+                comments?: ResolvedFields['Post']['comments'];
               }
             | undefined;
         };
@@ -402,24 +413,26 @@ describe('RelationalMetadata', () => {
     const s = a.schema({
       Post: a.model({
         title: a.string(),
-        author: a.hasOne('Author'),
+        author: a.hasOne('Author', 'postId'),
       }),
       Author: a.model({
         name: a.string(),
+        postId: a.id().required(),
+        post: a.belongsTo('Post', 'postId'),
       }),
     });
 
     type Schema = typeof s;
 
+    type ResolvedFields = ResolveFieldProperties<
+      Schema,
+      NonModelTypesShape,
+      ResolveSchema<Schema>
+    >;
     type Resolved = Prettify<
       RelationalMetadata<
         ResolveSchema<Schema>,
-        ResolveFieldProperties<
-          Schema,
-          NonModelTypesShape,
-          ResolveSchema<Schema>,
-          CreateImplicitModelsFromRelations<Schema>
-        >,
+        ResolvedFields,
         ModelIdentifier<SchemaTypes<Schema>>
       >
     >;
@@ -433,68 +446,27 @@ describe('RelationalMetadata', () => {
                 readonly createdAt?: string;
                 readonly updatedAt?: string;
                 name?: string | null | undefined;
+                postId?: string | undefined;
+                post?: ResolvedFields['Author']['post'];
+              }
+            | undefined;
+        };
+      };
+      Author: {
+        relationalInputFields: {
+          post?:
+            | {
+                title?: Nullable<string> | undefined;
+                readonly createdAt?: string | undefined;
+                readonly updatedAt?: string | undefined;
+                author?: ResolvedFields['Post']['author'];
+                readonly id: string;
               }
             | undefined;
         };
       };
     };
 
-    type test = Expect<Equal<Resolved, Expected>>;
-  });
-
-  // TODO: this test breaks with TS@5.3
-  test('ManyToMany', () => {
-    const s = a.schema({
-      Post: a.model({
-        title: a.string(),
-        metadata: a.json().required(),
-        postTags: a.manyToMany('Tag', { relationName: 'PostTag' }),
-      }),
-      Tag: a.model({
-        name: a.string(),
-        postTags: a.manyToMany('Post', { relationName: 'PostTag' }),
-      }),
-    });
-
-    type Schema = typeof s;
-
-    type ResolvedFields = ResolveFieldProperties<
-      Schema,
-      NonModelTypesShape,
-      ResolveSchema<Schema>,
-      CreateImplicitModelsFromRelations<Schema>
-    >;
-    type Resolved = Prettify<
-      RelationalMetadata<
-        ResolveSchema<Schema>,
-        ResolvedFields,
-        ModelIdentifier<SchemaTypes<Schema>>
-      >
-    >;
-
-    type Expected = Prettify<{
-      PostTag: {
-        relationalInputFields: {
-          post?: {
-            readonly id: string;
-            readonly createdAt?: string;
-            readonly updatedAt?: string;
-            title?: string | null | undefined;
-            // metadata: a.json().required() => Required<Json> removes `null` from the union
-            // see packages/data-schema/src/ModelField.ts
-            metadata?: Exclude<Json, null> | undefined;
-            postTags?: ResolvedFields['Post']['postTags'];
-          };
-          tag?: {
-            readonly id: string;
-            readonly createdAt?: string;
-            readonly updatedAt?: string;
-            name?: string | null | undefined;
-            postTags?: ResolvedFields['Tag']['postTags'];
-          };
-        };
-      };
-    }>;
     type test = Expect<Equal<Resolved, Expected>>;
   });
 });

@@ -363,7 +363,7 @@ describe('model auth rules', () => {
         widget: a.model({
           id: a.id().required(),
           parent: a
-            .belongsTo('widget')
+            .belongsTo('widget', 'widgetId')
             .authorization([
               a.allow.owner().inField('customOwner').to(['create', 'read']),
             ]),
