@@ -7,12 +7,10 @@ import type {
   Prettify,
   Equal,
 } from '../util';
+import { __modelMeta__, ExtractModelMeta } from './symbol';
 import type { Observable } from 'rxjs';
 
-export declare const __modelMeta__: unique symbol;
-
-export type ExtractModelMeta<T extends Record<any, any>> =
-  T[typeof __modelMeta__];
+export { __modelMeta__, ExtractModelMeta } from './symbol';
 
 type Model = Record<string, any>;
 
