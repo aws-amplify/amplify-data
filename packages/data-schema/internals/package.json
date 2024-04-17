@@ -1,6 +1,8 @@
 {
   "name": "@aws-amplify/data-schema/internals",
+  "main": "../dist/cjs/internals/index.js",
+  "module": "../dist/esm/internals/index.mjs",
   "types": "../dist/esm/internals/index.d.ts",
-  "main": "../dist/esm/internals/index.mjs",
+  "react-native": "../src/internals/index.ts",
   "sideEffects": false
 }
