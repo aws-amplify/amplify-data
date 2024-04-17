@@ -8,7 +8,7 @@
   },
   "main": "./dist/cjs/index.js",
   "module": "./dist/esm/index.mjs",
-  "types": "./dist/esm/src/index.d.ts",
+  "types": "./dist/esm/index.d.ts",
   "scripts": {
     "build:esm-cjs": "rollup -c rollup.config.mjs",
     "build": "npm run clean && npm run build:esm-cjs",
@@ -21,19 +21,19 @@
   },
   "exports": {
     ".": {
-      "types": "./dist/esm/src/index.d.ts",
+      "types": "./dist/esm/index.d.ts",
       "import": "./dist/esm/index.mjs",
       "require": "./dist/cjs/index.js",
       "node": "./dist/esm/index.mjs"
     },
     "./internals": {
-      "types": "./dist/esm/src/internals/index.d.ts",
+      "types": "./dist/esm/internals/index.d.ts",
       "import": "./dist/esm/internals/index.mjs",
       "require": "./dist/cjs/internals/index.js",
       "node": "./dist/esm/index.mjs"
     },
     "./runtime": {
-      "types": "./dist/esm/src/runtime/index.d.ts",
+      "types": "./dist/esm/runtime/index.d.ts",
       "import": "./dist/esm/runtime/index.mjs",
       "require": "./dist/cjs/runtime/index.js",
       "node": "./dist/esm/index.mjs"
@@ -43,7 +43,7 @@
   "typesVersions": {
     ">=5.0": {
       "internals": [
-        "./dist/esm/src/internals/index.d.ts"
+        "./dist/esm/internals/index.d.ts"
       ]
     }
   },

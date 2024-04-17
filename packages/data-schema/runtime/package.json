@@ -1,6 +1,6 @@
 {
   "name": "@aws-amplify/data-schema/runtime",
-  "types": "../dist/esm/src/runtime/index.d.ts",
+  "types": "../dist/esm/runtime/index.d.ts",
   "main": "../dist/esm/runtime/index.mjs",
   "sideEffects": false
 }
