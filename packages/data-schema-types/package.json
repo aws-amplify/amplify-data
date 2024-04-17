@@ -17,7 +17,7 @@
     "build": "npm run clean && npm run build:esm-cjs",
     "build:esm-cjs": "rollup -c rollup.config.mjs",
     "build:esm:watch": "npm run build:esm -- --watch",
-    "clean": "rimraf dist tsconfig.tsbuildinfo",
+    "clean": "rimraf dist",
     "docs": "api-extractor run && api-documenter markdown --input-folder temp --output-folder docs",
     "docs:temp": "api-extractor run && api-documenter markdown --input-folder temp --output-folder temp/docs",
     "check-api": "rimraf temp && npm run docs:temp && node ../../scripts/shallow-dir-diff.js docs temp/docs",
