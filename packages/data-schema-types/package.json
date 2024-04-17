@@ -16,7 +16,7 @@
   "scripts": {
     "build": "npm run clean && npm run build:esm-cjs",
     "build:esm-cjs": "rollup -c rollup.config.mjs",
-    "build:esm:watch": "npm run build:esm -- --watch",
+    "build:watch": "npm run build:esm-cjs -- --watch",
     "clean": "rimraf dist",
     "docs": "api-extractor run && api-documenter markdown --input-folder temp --output-folder docs",
     "docs:temp": "api-extractor run && api-documenter markdown --input-folder temp --output-folder temp/docs",
