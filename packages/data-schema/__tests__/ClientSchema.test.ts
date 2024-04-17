@@ -283,6 +283,30 @@ describe('schema auth rules', () => {
     expect(schema.transform()).toMatchSnapshot();
   });
 
+  test('allows guest', () => {
+    const schema = a
+      .schema({
+        A: a.model({
+          field: a.string(),
+        }),
+      })
+      .authorization((allow) => allow.guest());
+
+    type Actual_A = Prettify<ClientSchema<typeof schema>['A']>;
+
+    type Expected_A = {
+      readonly id: string;
+      readonly createdAt: string;
+      readonly updatedAt: string;
+      field?: string | null | undefined;
+      // no implied owner field
+    };
+
+    type test = Expect<Equal<Actual_A, Expected_A>>;
+
+    expect(schema.transform()).toMatchSnapshot();
+  })
+
   test('allows owner', () => {
     const schema = a
       .schema({

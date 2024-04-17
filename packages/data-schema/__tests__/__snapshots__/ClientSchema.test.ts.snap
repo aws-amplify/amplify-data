@@ -200,6 +200,20 @@ exports[`schema auth rules allows groupsDefinedIn 1`] = `
 }
 `;
 
+exports[`schema auth rules allows guest 1`] = `
+{
+  "customSqlDataSourceStrategies": [],
+  "functionSchemaAccess": [],
+  "functionSlots": [],
+  "jsFunctions": [],
+  "lambdaFunctions": {},
+  "schema": "type A @model @auth(rules: [{allow: public, provider: iam}])
+{
+  field: String
+}",
+}
+`;
+
 exports[`schema auth rules allows multiple entries 1`] = `
 {
   "customSqlDataSourceStrategies": [],

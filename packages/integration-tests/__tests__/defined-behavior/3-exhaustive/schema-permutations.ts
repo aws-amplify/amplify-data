@@ -45,6 +45,7 @@ describe('primitive field types', () => {
 // how can we do this better to ensure we've got full coverage over auth graphql generation?
 describe('auth rules', () => {
   test.each([
+    ['guest()', (allow: AllowModifier) => allow.guest()],
     ['owner()', (allow: AllowModifier) => allow.owner()],
     [
       '.ownerDefinedIn()',
@@ -56,7 +57,7 @@ describe('auth rules', () => {
         allow.ownerDefinedIn('field').to(['create', 'delete']),
     ],
     [
-      'owner(userpool).inField().to()',
+      'owner(userPools).to()',
       (allow: AllowModifier) => allow.owner('userPools').to(['create', 'list']),
     ],
   ])(
