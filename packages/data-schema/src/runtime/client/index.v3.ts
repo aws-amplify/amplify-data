@@ -1,10 +1,14 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
+import {
+  __modelMeta__,
+  ExtractModelMeta,
+} from '@aws-amplify/data-schema-types';
 
-export declare const __modelMeta__: unique symbol;
-
-export type ExtractModelMeta<T extends Record<any, any>> =
-  T[typeof __modelMeta__];
+export {
+  __modelMeta__,
+  ExtractModelMeta,
+} from '@aws-amplify/data-schema-types';
 
 export type ModelTypes<
   _T extends Record<any, any> = never,
