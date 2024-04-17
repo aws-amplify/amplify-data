@@ -39,6 +39,5 @@
 
 |  Variable | Description |
 |  --- | --- |
-|  [allow](./data-schema.a.allow.md) | Defines an authorization rule for your data models and fields. First choose an authorization strategy (<code>public</code>, <code>private</code>, <code>owner</code>, <code>group</code>, or <code>custom</code>), then choose an auth provider (<code>apiKey</code>, <code>iam</code>, <code>userPools</code>, <code>oidc</code>, or <code>function</code>) and optionally use <code>.to(...)</code> to specify the operations that can be performed against your data models and fields. |
 |  [handler](./data-schema.a.handler.md) |  |
 
