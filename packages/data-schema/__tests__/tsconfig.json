@@ -3,5 +3,11 @@
   "compilerOptions": {
     "noEmit": true
   },
-  "include": ["./eslintrc.json", "**/*.ts", "../src/internals/index.ts"]
+  "include": [
+    "./eslintrc.json",
+    "**/*.ts",
+    "../src/internals/index.ts",
+    "../src/runtime/index.ts",
+    "../src/runtime/index.v3.ts"
+  ]
 }

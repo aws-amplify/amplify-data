@@ -1,6 +1,6 @@
 import { expectTypeTestsToPassAsync } from 'jest-tsd';
 import { configure } from '../src/ModelSchema';
-import { a } from '../index';
+import { a } from '../src/index';
 
 // evaluates type defs in corresponding test-d.ts file
 it('should not produce static type errors', async () => {

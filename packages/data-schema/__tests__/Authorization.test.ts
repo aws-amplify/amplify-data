@@ -1,4 +1,4 @@
-import { a } from '../index';
+import { a } from '../src/index';
 
 describe('.authorization(allow) builder disallowed use cases', () => {
   describe('allow.resource()', () => {

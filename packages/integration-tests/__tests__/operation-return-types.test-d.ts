@@ -1,13 +1,11 @@
 import { a, ClientSchema } from '@aws-amplify/data-schema';
 import {
-  Expect,
-  Equal,
-  Prettify,
   AuthMode,
   CustomHeaders,
   SingularReturnValue,
   ListReturnValue,
-} from '@aws-amplify/data-schema-types';
+} from '@aws-amplify/data-schema/runtime';
+import { Expect, Equal, Prettify } from '@aws-amplify/data-schema-types';
 import { generateClient } from 'aws-amplify/api';
 
 describe('operation return types', () => {

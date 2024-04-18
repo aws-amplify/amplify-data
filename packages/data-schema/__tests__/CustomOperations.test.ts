@@ -1,5 +1,5 @@
 import { expectTypeTestsToPassAsync } from 'jest-tsd';
-import { a } from '../index';
+import { a } from '../src/index';
 import { configure } from '../src/internals';
 import { defineFunctionStub } from './utils';
 

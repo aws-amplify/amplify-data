@@ -1,5 +1,6 @@
 import { a, ClientSchema } from '@aws-amplify/data-schema';
-import { Expect, Equal, __modelMeta__ } from '@aws-amplify/data-schema-types';
+import { Expect, Equal } from '@aws-amplify/data-schema-types';
+import { __modelMeta__ } from '@aws-amplify/data-schema/runtime';
 import { generateClient } from 'aws-amplify/api';
 
 type Json = null | string | number | boolean | object | any[];

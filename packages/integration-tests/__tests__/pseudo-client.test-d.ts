@@ -1,17 +1,19 @@
 import { a, ClientSchema } from '@aws-amplify/data-schema';
 import {
-  type Expect,
-  type ExpectFalse,
-  type Equal,
-  type HasKey,
+  __modelMeta__,
+  type ExtractModelMeta,
   type CustomQueries,
   type CustomMutations,
   type CustomSubscriptions,
   type ModelTypes,
   type GraphQLFormattedError,
-  __modelMeta__,
+} from '@aws-amplify/data-schema/runtime';
+import type {
+  Expect,
+  ExpectFalse,
+  Equal,
+  HasKey,
   Prettify,
-  ExtractModelMeta,
 } from '@aws-amplify/data-schema-types';
 
 type FilteredKeys<T> = {

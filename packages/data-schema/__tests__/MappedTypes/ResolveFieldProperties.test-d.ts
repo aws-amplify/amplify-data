@@ -1,5 +1,5 @@
 import type { Prettify, Equal, Expect } from '@aws-amplify/data-schema-types';
-import { a } from '../../index';
+import { a } from '../../src/index';
 import type { ResolveFieldProperties } from '../../src/MappedTypes/ResolveFieldProperties';
 import type { ExtractNonModelTypes } from '../../src/MappedTypes/ExtractNonModelTypes';
 import type { Json } from '../../src/ModelField';

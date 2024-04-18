@@ -22,7 +22,7 @@
     "turbo": "turbo",
     "publish-packages:release": "changeset version && changeset publish",
     "publish-packages:preid": "changeset version --snapshot ${PREID_PREFIX} && changeset publish --tag ${PREID_PREFIX}",
-    "publish-packages:local": "npm_config_registry=http://localhost:4873/ npm run publish-packages"
+    "publish-packages:local": "npm_config_registry=http://localhost:4873/ npm run publish-packages:release"
   },
   "devDependencies": {
     "@changesets/cli": "^2.26.2",
@@ -33,6 +33,7 @@
     "@types/prettier": "^3.0.0",
     "@typescript-eslint/eslint-plugin": "^6.7.4",
     "@typescript-eslint/parser": "^6.7.4",
+    "glob": "^10.3.10",
     "eslint": "^8.50.0",
     "eslint-config-prettier": "^9.0.0",
     "eslint-plugin-import": "^2.28.1",
