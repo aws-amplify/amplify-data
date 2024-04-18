@@ -43,7 +43,7 @@ describe('operation return types', () => {
         patient: a.belongsTo('Patient', 'doctorPatientId'),
       }),
     })
-    .authorization([a.allow.public()]);
+    .authorization((allow) => allow.publicApiKey());
 
   type Schema = ClientSchema<typeof schema>;
   const client = generateClient<Schema>();

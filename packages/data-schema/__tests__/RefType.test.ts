@@ -27,7 +27,7 @@ describe('RefType', () => {
           }),
           Enum: a.enum(['1', '2']),
         })
-        .authorization([a.allow.public()]);
+        .authorization((allow) => allow.publicApiKey());
 
       const transformed = schema.transform().schema;
 
@@ -56,7 +56,7 @@ describe('RefType', () => {
             }),
             Enum: a.enum(['1', '2']),
           })
-          .authorization([a.allow.public()]);
+          .authorization((allow) => allow.publicApiKey());
 
         const transformed = schema.transform().schema;
 
@@ -84,7 +84,7 @@ describe('RefType', () => {
             }),
             Enum: a.enum(['1', '2']),
           })
-          .authorization([a.allow.public()]);
+          .authorization((allow) => allow.publicApiKey());
 
         const transformed = schema.transform().schema;
 
@@ -112,7 +112,7 @@ describe('RefType', () => {
             }),
             Enum: a.enum(['1', '2']),
           })
-          .authorization([a.allow.public()]);
+          .authorization((allow) => allow.publicApiKey());
 
         const transformed = schema.transform().schema;
 
@@ -140,7 +140,7 @@ describe('RefType', () => {
             }),
             Enum: a.enum(['1', '2']),
           })
-          .authorization([a.allow.public()]);
+          .authorization((allow) => allow.publicApiKey());
 
         const transformed = schema.transform().schema;
 
@@ -168,7 +168,7 @@ describe('RefType', () => {
             }),
             Enum: a.enum(['1', '2']),
           })
-          .authorization([a.allow.public()]);
+          .authorization((allow) => allow.publicApiKey());
 
         const transformed = schema.transform().schema;
 

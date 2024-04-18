@@ -64,7 +64,7 @@ describe('model auth rules', () => {
         .model({
           title: a.string().required(),
         })
-        .authorization([a.allow.public()]),
+        .authorization((allow) => allow.publicApiKey()),
     });
 
     const graphql = schema.transform().schema;
@@ -79,7 +79,7 @@ describe('model auth rules', () => {
             title: a.string().required(),
           })
           // @ts-expect-error
-          .authorization([a.allow.public('bad-provider')]),
+          .authorization((allow) => allow.public('bad-provider')),
       });
     }).toThrow();
   });
@@ -90,7 +90,7 @@ describe('model auth rules', () => {
         .model({
           title: a.string().required(),
         })
-        .authorization([a.allow.private()]),
+        .authorization((allow) => allow.authenticated()),
     });
 
     const graphql = schema.transform().schema;
@@ -103,7 +103,7 @@ describe('model auth rules', () => {
         .model({
           title: a.string().required(),
         })
-        .authorization([a.allow.owner()]),
+        .authorization((allow) => allow.owner()),
     });
 
     const graphql = schema.transform().schema;
@@ -116,7 +116,7 @@ describe('model auth rules', () => {
         .model({
           title: a.string().required(),
         })
-        .authorization([a.allow.owner().inField('title')]),
+        .authorization((allow) => allow.ownerDefinedIn('title')),
     });
 
     const graphql = schema.transform().schema;
@@ -129,7 +129,7 @@ describe('model auth rules', () => {
         .model({
           title: a.string().required(),
         })
-        .authorization([a.allow.public().to(['create', 'read'])]),
+        .authorization((allow) => allow.publicApiKey().to(['create', 'read'])),
     });
 
     const graphql = schema.transform().schema;
@@ -142,7 +142,7 @@ describe('model auth rules', () => {
         .model({
           title: a.string().required(),
         })
-        .authorization([a.allow.owner().identityClaim('user_id')]),
+        .authorization((allow) => allow.owner().identityClaim('user_id')),
     });
 
     const graphql = schema.transform().schema;
@@ -156,7 +156,7 @@ describe('model auth rules', () => {
           title: a.string().required(),
           authors: a.string().required().array().required(),
         })
-        .authorization([a.allow.multipleOwners().inField('authors')]),
+        .authorization((allow) => allow.ownersDefinedIn('authors')),
     });
 
     const graphql = schema.transform().schema;
@@ -169,7 +169,7 @@ describe('model auth rules', () => {
         .model({
           title: a.string().required(),
         })
-        .authorization([a.allow.multipleOwners().inField('authors')]),
+        .authorization((allow) => allow.ownersDefinedIn('authors')),
     });
 
     // what customers export
@@ -202,7 +202,7 @@ describe('model auth rules', () => {
 
   //       // authorization expects `author` to be singular `string`
   //       // @ts-expect-error
-  //       .authorization([a.allow.owner().inField('author')]),
+  //       .authorization((allow) => allow.ownerDefinedIn('author')]),
   //   });
   // });
 
@@ -212,7 +212,7 @@ describe('model auth rules', () => {
         .model({
           title: a.string().required(),
         })
-        .authorization([a.allow.specificGroup('Admins')]),
+        .authorization((allow) => allow.group('Admins')),
     });
 
     const graphql = schema.transform().schema;
@@ -225,7 +225,7 @@ describe('model auth rules', () => {
         .model({
           title: a.string().required(),
         })
-        .authorization([a.allow.specificGroups(['Admins', 'Moderators'])]),
+        .authorization((allow) => allow.groups(['Admins', 'Moderators'])),
     });
 
     const graphql = schema.transform().schema;
@@ -238,7 +238,7 @@ describe('model auth rules', () => {
         .model({
           title: a.string().required(),
         })
-        .authorization([a.allow.groupDefinedIn('businessUnitOwner')]),
+        .authorization((allow) => allow.groupDefinedIn('businessUnitOwner')),
     });
 
     const graphql = schema.transform().schema;
@@ -251,9 +251,9 @@ describe('model auth rules', () => {
         .model({
           title: a.string().required(),
         })
-        .authorization([
-          a.allow.groupsDefinedIn('sharedWithGroups').to(['read']),
-        ]),
+        .authorization((allow) =>
+          allow.groupsDefinedIn('sharedWithGroups').to(['read']),
+        ),
     });
 
     const graphql = schema.transform().schema;
@@ -266,11 +266,11 @@ describe('model auth rules', () => {
         .model({
           title: a.string().required(),
         })
-        .authorization([
-          a.allow
+        .authorization((allow) =>
+          allow
             .groupDefinedIn('businessUnitOwner')
             .withClaimIn('someClaimsField'),
-        ]),
+        ),
     });
 
     const graphql = schema.transform().schema;
@@ -283,12 +283,12 @@ describe('model auth rules', () => {
         .model({
           title: a.string().required(),
         })
-        .authorization([
-          a.allow
+        .authorization((allow) =>
+          allow
             .groupsDefinedIn('sharedWithGroups')
             .to(['read'])
             .withClaimIn('someClaimsField'),
-        ]),
+        ),
     });
 
     const graphql = schema.transform().schema;
@@ -301,9 +301,9 @@ describe('model auth rules', () => {
         .model({
           title: a.string().required(),
         })
-        .authorization([
-          a.allow.owner().inField('customOwnerField').to(['create', 'read']),
-        ]),
+        .authorization((allow) =>
+          allow.ownerDefinedIn('customOwnerField').to(['create', 'read']),
+        ),
     });
 
     const graphql = schema.transform().schema;
@@ -316,12 +316,9 @@ describe('model auth rules', () => {
         .model({
           title: a.string().required(),
         })
-        .authorization([
-          a.allow
-            .multipleOwners()
-            .inField('customOwnerField')
-            .to(['create', 'read']),
-        ]),
+        .authorization((allow) =>
+          allow.ownersDefinedIn('customOwnerField').to(['create', 'read']),
+        ),
     });
 
     const graphql = schema.transform().schema;
@@ -336,11 +333,11 @@ describe('model auth rules', () => {
           title: a
             .string()
             .required()
-            .authorization([
-              a.allow.owner().inField('customOwner').to(['create', 'read']),
-            ]),
+            .authorization((allow) =>
+              allow.ownerDefinedIn('customOwner').to(['create', 'read']),
+            ),
         })
-        .authorization([a.allow.owner()]),
+        .authorization((allow) => allow.owner()),
     });
 
     type Schema = ClientSchema<typeof schema>;
@@ -364,12 +361,12 @@ describe('model auth rules', () => {
           id: a.id().required(),
           parent: a
             .belongsTo('widget', 'widgetId')
-            .authorization([
-              a.allow.owner().inField('customOwner').to(['create', 'read']),
-            ]),
+            .authorization((allow) =>
+              allow.ownerDefinedIn('customOwner').to(['create', 'read']),
+            ),
         }),
       })
-      .authorization([a.allow.owner()]);
+      .authorization((allow) => allow.owner());
 
     type Schema = ClientSchema<typeof schema>;
     type CustomOwnerType = Schema['widget']['customOwner'];
@@ -385,48 +382,6 @@ describe('model auth rules', () => {
     expect(graphql).toMatchSnapshot();
   });
 
-  for (const provider of PublicProviders) {
-    it(`can define public with with provider ${provider}`, () => {
-      const schema = a.schema({
-        widget: a
-          .model({
-            title: a.string().required(),
-          })
-          .authorization([a.allow.public(provider)]),
-      });
-
-      const graphql = schema.transform().schema;
-      expect(graphql).toMatchSnapshot();
-    });
-
-    const TestOperations: Operation[][] = [
-      // each individual operation
-      ...Operations.map((op) => [op]),
-
-      // a couple sanity checks to support a combinations
-      ['create', 'read', 'update', 'delete'],
-      ['create', 'read', 'listen'],
-    ];
-
-    for (const operations of TestOperations) {
-      it(`can define public with with provider ${provider} for operations ${operations}`, () => {
-        const schema = a.schema({
-          widget: a
-            .model({
-              title: a.string().required(),
-            })
-            .authorization([
-              a.allow.public(provider).to(operations),
-              // 'whatever',
-            ]),
-        });
-
-        const graphql = schema.transform().schema;
-        expect(graphql).toMatchSnapshot();
-      });
-    }
-  }
-
   for (const provider of PrivateProviders) {
     it(`can define private with with provider ${provider}`, () => {
       const schema = a.schema({
@@ -434,7 +389,7 @@ describe('model auth rules', () => {
           .model({
             title: a.string().required(),
           })
-          .authorization([a.allow.private(provider)]),
+          .authorization((allow) => allow.authenticated(provider)),
       });
 
       const graphql = schema.transform().schema;
@@ -457,7 +412,9 @@ describe('model auth rules', () => {
             .model({
               title: a.string().required(),
             })
-            .authorization([a.allow.private(provider).to(operations)]),
+            .authorization((allow) =>
+              allow.authenticated(provider).to(operations),
+            ),
         });
 
         const graphql = schema.transform().schema;
@@ -472,7 +429,7 @@ describe('model auth rules', () => {
         .model({
           title: a.string().required(),
         })
-        .authorization([a.allow.custom()]),
+        .authorization((allow) => allow.custom()),
     });
 
     const graphql = schema.transform().schema;
@@ -495,7 +452,7 @@ describe('model auth rules', () => {
           .model({
             title: a.string().required(),
           })
-          .authorization([a.allow.custom().to(operations)]),
+          .authorization((allow) => allow.custom().to(operations)),
       });
 
       const graphql = schema.transform().schema;
@@ -507,9 +464,12 @@ describe('model auth rules', () => {
     const schema = a.schema({
       widget: a
         .model({
-          title: a.string().required().authorization([a.allow.owner()]),
+          title: a
+            .string()
+            .required()
+            .authorization((allow) => allow.owner()),
         })
-        .authorization([a.allow.public()]),
+        .authorization((allow) => allow.publicApiKey()),
     });
   });
 
@@ -517,9 +477,12 @@ describe('model auth rules', () => {
     const schema = a.schema({
       widget: a
         .model({
-          title: a.string().required().authorization([a.allow.owner()]),
+          title: a
+            .string()
+            .required()
+            .authorization((allow) => allow.owner()),
         })
-        .authorization([a.allow.private()]),
+        .authorization((allow) => allow.authenticated()),
     });
   });
 
@@ -530,9 +493,9 @@ describe('model auth rules', () => {
           title: a
             .string()
             .required()
-            .authorization([a.allow.owner().inField('someOwnerField')]),
+            .authorization((allow) => allow.ownerDefinedIn('someOwnerField')),
         })
-        .authorization([a.allow.multipleOwners().inField('someOwnerField')]),
+        .authorization((allow) => allow.ownersDefinedIn('someOwnerField')),
     });
     expect(() => schema.transform().schema).toThrow();
   });
@@ -544,7 +507,7 @@ describe('model auth rules', () => {
           title: a.string().required(),
           someOwnerField: a.string(),
         })
-        .authorization([a.allow.multipleOwners().inField('someOwnerField')]),
+        .authorization((allow) => allow.ownersDefinedIn('someOwnerField')),
     });
     expect(() => schema.transform().schema).toThrow();
   });
@@ -555,7 +518,7 @@ describe('model auth rules', () => {
         title: a
           .string()
           .required()
-          .authorization([a.allow.multipleOwners().inField('someOwnerField')]),
+          .authorization((allow) => allow.ownersDefinedIn('someOwnerField')),
         someOwnerField: a.string(),
       }),
     });
@@ -569,10 +532,10 @@ describe('model auth rules', () => {
           title: a
             .string()
             .required()
-            .authorization([a.allow.owner().inField('someOwnerField')]),
+            .authorization((allow) => allow.ownerDefinedIn('someOwnerField')),
         }),
       })
-      .authorization([a.allow.multipleOwners().inField('someOwnerField')]);
+      .authorization((allow) => allow.ownersDefinedIn('someOwnerField'));
     expect(() => schema.transform().schema).toThrow();
   });
 
@@ -584,7 +547,7 @@ describe('model auth rules', () => {
           someOwnerField: a.string(),
         }),
       })
-      .authorization([a.allow.multipleOwners().inField('someOwnerField')]);
+      .authorization((allow) => allow.ownersDefinedIn('someOwnerField'));
     expect(() => schema.transform().schema).toThrow();
   });
 
@@ -601,7 +564,7 @@ describe('model auth rules', () => {
             })
             .identifier(['id']),
         })
-        .authorization([a.allow.public()]);
+        .authorization((allow) => allow.publicApiKey());
       expect(schema.transform().schema).toMatchSnapshot();
     });
 
@@ -614,7 +577,7 @@ describe('model auth rules', () => {
             })
             .identifier(['id']),
         })
-        .authorization([a.allow.public()]);
+        .authorization((allow) => allow.publicApiKey());
       expect(schema.transform().schema).toMatchSnapshot();
     });
 
@@ -627,7 +590,7 @@ describe('model auth rules', () => {
             })
             .identifier(['customId']),
         })
-        .authorization([a.allow.public()]);
+        .authorization((allow) => allow.publicApiKey());
       expect(schema.transform().schema).toMatchSnapshot();
     });
 
@@ -641,7 +604,7 @@ describe('model auth rules', () => {
             })
             .identifier(['idFieldA', 'idFieldB']),
         })
-        .authorization([a.allow.public()]);
+        .authorization((allow) => allow.publicApiKey());
       expect(schema.transform().schema).toMatchSnapshot();
     });
 
@@ -655,7 +618,7 @@ describe('model auth rules', () => {
             })
             .identifier(['idFieldA', 'idFieldB']),
         })
-        .authorization([a.allow.public()]);
+        .authorization((allow) => allow.publicApiKey());
       expect(schema.transform().schema).toMatchSnapshot();
     });
   });
@@ -671,7 +634,7 @@ describe('secondary indexes', () => {
           })
           .secondaryIndexes((index) => [index('title')]),
       })
-      .authorization([a.allow.public()]);
+      .authorization((allow) => allow.publicApiKey());
 
     expect(schema.transform().schema).toMatchSnapshot();
   });
@@ -692,7 +655,7 @@ describe('secondary indexes', () => {
               .queryField('byTitleDescTs'),
           ]),
       })
-      .authorization([a.allow.public()]);
+      .authorization((allow) => allow.publicApiKey());
 
     expect(schema.transform().schema).toMatchSnapshot();
   });
@@ -714,7 +677,7 @@ describe('secondary indexes', () => {
               .queryField('byTitleDescTs'),
           ]),
       })
-      .authorization([a.allow.public()]);
+      .authorization((allow) => allow.publicApiKey());
 
     expect(schema.transform().schema).toMatchSnapshot();
   });
@@ -737,7 +700,7 @@ describe('secondary indexes', () => {
               .queryField('byTitleDescTs'),
           ]),
       })
-      .authorization([a.allow.public()]);
+      .authorization((allow) => allow.publicApiKey());
 
     expect(schema.transform().schema).toMatchSnapshot();
   });
@@ -759,7 +722,7 @@ describe('secondary indexes', () => {
               .queryField('byTimeStampDesc'),
           ]),
       })
-      .authorization([a.allow.public()]);
+      .authorization((allow) => allow.publicApiKey());
 
     expect(schema.transform().schema).toMatchSnapshot();
   });

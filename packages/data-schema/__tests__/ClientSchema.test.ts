@@ -32,23 +32,26 @@ it('should not produce static type errors', async () => {
 
 describe('schema generation', () => {
   test('matches shared backend type', () => {
-    const _schema: DerivedModelSchema = a.schema({
+    const schema: DerivedModelSchema = a.schema({
       A: a
         .model({
           field: a.string(),
         })
-        .authorization([a.allow.public()]),
+        .authorization((allow) => allow.publicApiKey()),
     });
   });
 
-   test('with relationships', () => {
+  test('with relationships', () => {
     const schema = a
       .schema({
         BoringParent: a.model({
           childNormal: a.hasOne('BoringChild', 'boringParentId'),
           childReciprocal: a.hasOne('BoringReciprocalChild', 'boringParentId'),
           childHasManyNormal: a.hasMany('BoringHasManyChild', 'boringParentId'),
-          childHasManyReciprocal: a.hasMany('ReciprocalHasManyChild', 'boringParentId'),
+          childHasManyReciprocal: a.hasMany(
+            'ReciprocalHasManyChild',
+            'boringParentId',
+          ),
         }),
         BoringChild: a.model({
           value: a.string(),
@@ -151,7 +154,7 @@ describe('schema generation', () => {
             'CPKReciprocalHasManyChildIdFieldB',
           ]),
       })
-      .authorization([a.allow.public()]);
+      .authorization((allow) => allow.publicApiKey());
     expect(schema.transform().schema).toMatchSnapshot();
   });
 });
@@ -163,7 +166,7 @@ describe('schema auth rules', () => {
         .model({
           field: a.string(),
         })
-        .authorization([a.allow.public()]),
+        .authorization((allow) => allow.publicApiKey()),
     });
 
     type Actual_A = Prettify<ClientSchema<typeof schema>['A']>;
@@ -189,7 +192,7 @@ describe('schema auth rules', () => {
           field: a.string(),
         }),
       })
-      .authorization([a.allow.public()]);
+      .authorization((allow) => allow.publicApiKey());
 
     type Actual_A = Prettify<ClientSchema<typeof schema>['A']>;
 
@@ -230,7 +233,7 @@ describe('schema auth rules', () => {
           c: a.belongsTo('C', 'cId'),
         }),
       })
-      .authorization([a.allow.public()]);
+      .authorization((allow) => allow.publicApiKey());
     expect(schema.transform()).toMatchSnapshot();
   });
 
@@ -241,7 +244,7 @@ describe('schema auth rules', () => {
           field: a.string(),
         }),
       })
-      .authorization([a.allow.public(), a.allow.private()]);
+      .authorization((allow) => [allow.publicApiKey(), allow.authenticated()]);
 
     type Actual_A = Prettify<ClientSchema<typeof schema>['A']>;
 
@@ -265,7 +268,7 @@ describe('schema auth rules', () => {
           field: a.string(),
         }),
       })
-      .authorization([a.allow.private()]);
+      .authorization((allow) => allow.authenticated());
 
     type Actual_A = Prettify<ClientSchema<typeof schema>['A']>;
 
@@ -282,6 +285,30 @@ describe('schema auth rules', () => {
     expect(schema.transform()).toMatchSnapshot();
   });
 
+  test('allows guest', () => {
+    const schema = a
+      .schema({
+        A: a.model({
+          field: a.string(),
+        }),
+      })
+      .authorization((allow) => allow.guest());
+
+    type Actual_A = Prettify<ClientSchema<typeof schema>['A']>;
+
+    type Expected_A = {
+      readonly id: string;
+      readonly createdAt: string;
+      readonly updatedAt: string;
+      field?: string | null | undefined;
+      // no implied owner field
+    };
+
+    type test = Expect<Equal<Actual_A, Expected_A>>;
+
+    expect(schema.transform()).toMatchSnapshot();
+  })
+
   test('allows owner', () => {
     const schema = a
       .schema({
@@ -289,7 +316,7 @@ describe('schema auth rules', () => {
           field: a.string(),
         }),
       })
-      .authorization([a.allow.owner()]);
+      .authorization((allow) => allow.owner());
 
     type Actual_A = Prettify<ClientSchema<typeof schema>['A']>;
 
@@ -315,7 +342,7 @@ describe('schema auth rules', () => {
           field: a.string(),
         }),
       })
-      .authorization([a.allow.multipleOwners()]);
+      .authorization((allow) => allow.ownersDefinedIn('owner'));
 
     type Actual_A = Prettify<ClientSchema<typeof schema>['A']>;
 
@@ -341,7 +368,7 @@ describe('schema auth rules', () => {
           field: a.string(),
         }),
       })
-      .authorization([a.allow.custom()]);
+      .authorization((allow) => allow.custom());
 
     type Actual_A = Prettify<ClientSchema<typeof schema>['A']>;
 
@@ -365,7 +392,7 @@ describe('schema auth rules', () => {
           field: a.string(),
         }),
       })
-      .authorization([a.allow.owner().inField('someField')]);
+      .authorization((allow) => allow.ownerDefinedIn('someField'));
 
     type Actual_A = Prettify<ClientSchema<typeof schema>['A']>;
 
@@ -391,7 +418,7 @@ describe('schema auth rules', () => {
           field: a.string(),
         }),
       })
-      .authorization([a.allow.groupsDefinedIn('someField')]);
+      .authorization((allow) => allow.groupsDefinedIn('someField'));
 
     type Actual_A = Prettify<ClientSchema<typeof schema>['A']>;
 
@@ -417,7 +444,7 @@ describe('schema auth rules', () => {
           field: a.string(),
         }),
       })
-      .authorization([a.allow.specificGroup('group')]);
+      .authorization((allow) => allow.group('group'));
 
     type Actual_A = Prettify<ClientSchema<typeof schema>['A']>;
 
@@ -441,7 +468,7 @@ describe('schema auth rules', () => {
           field: a.string(),
         }),
       })
-      .authorization([a.allow.specificGroups(['a', 'b'])]);
+      .authorization((allow) => allow.groups(['a', 'b']));
 
     type Actual_A = Prettify<ClientSchema<typeof schema>['A']>;
 
@@ -466,9 +493,9 @@ describe('schema auth rules', () => {
             .model({
               field: a.string(),
             })
-            .authorization([a.allow.public()]),
+            .authorization((allow) => allow.publicApiKey()),
         })
-        .authorization([a.allow.owner()]);
+        .authorization((allow) => allow.owner());
 
       type Actual_A = Prettify<ClientSchema<typeof schema>['A']>;
 
@@ -492,9 +519,9 @@ describe('schema auth rules', () => {
             .model({
               field: a.string(),
             })
-            .authorization([a.allow.owner()]),
+            .authorization((allow) => allow.owner()),
         })
-        .authorization([a.allow.public()]);
+        .authorization((allow) => allow.publicApiKey());
 
       type Actual_A = Prettify<ClientSchema<typeof schema>['A']>;
 
@@ -518,9 +545,9 @@ describe('schema auth rules', () => {
             .model({
               field: a.string(),
             })
-            .authorization([a.allow.owner().inField('modelOwnerField')]),
+            .authorization((allow) => allow.ownerDefinedIn('modelOwnerField')),
         })
-        .authorization([a.allow.owner().inField('schemaOwnerField')]);
+        .authorization((allow) => allow.ownerDefinedIn('schemaOwnerField'));
 
       type Actual_A = Prettify<ClientSchema<typeof schema>['A']>;
 
@@ -558,7 +585,7 @@ describe('schema auth rules', () => {
           .for(a.ref('likePost'))
           .handler(a.handler.function('myFunc')),
       })
-      .authorization([a.allow.owner()]);
+      .authorization((allow) => allow.owner());
 
     expect(schema.transform()).toMatchSnapshot();
   });
@@ -577,7 +604,7 @@ describe('custom operations', () => {
         })
         .returns(a.ref('EchoResult'))
         .handler(a.handler.function('echoFunction'))
-        .authorization([a.allow.public()]),
+        .authorization((allow) => allow.publicApiKey()),
     });
 
     type Schema = ClientSchema<typeof schema>;
@@ -613,7 +640,7 @@ describe('custom operations', () => {
         })
         .returns(a.ref('LikePostResult'))
         .handler(a.handler.function('likePost'))
-        .authorization([a.allow.public()]),
+        .authorization((allow) => allow.publicApiKey()),
     });
 
     type Schema = ClientSchema<typeof schema>;
@@ -650,7 +677,7 @@ describe('custom operations', () => {
       });
 
       schema.setAuthorization((models) => [
-        models.A.authorization([a.allow.public()]),
+        models.A.authorization((allow) => allow.publicApiKey()),
       ]);
 
       type Actual_A = Prettify<ClientSchema<typeof schema>['A']>;
@@ -676,7 +703,7 @@ describe('custom operations', () => {
       });
 
       schema.setAuthorization((models) => [
-        models.A.authorization([a.allow.owner()]),
+        models.A.authorization((allow) => allow.owner()),
       ]);
 
       type Actual_A = Prettify<ClientSchema<typeof schema>['A']>;
@@ -706,7 +733,7 @@ describe('custom operations', () => {
       });
 
       schema.setAuthorization((_, schema) => [
-        schema.authorization([a.allow.owner()]),
+        schema.authorization((allow) => allow.owner()),
       ]);
 
       type Actual_A = Prettify<ClientSchema<typeof schema>['A']>;
@@ -744,7 +771,7 @@ describe('custom operations', () => {
       });
 
       schema.setAuthorization((_, schema) => [
-        schema.authorization([a.allow.owner()]),
+        schema.authorization((allow) => allow.owner()),
       ]);
 
       type Actual_A = Prettify<ClientSchema<typeof schema>['A']>;
@@ -800,7 +827,7 @@ describe('custom operations', () => {
       });
 
       schema.setAuthorization((_, schema) => [
-        schema.authorization([a.allow.owner()]),
+        schema.authorization((allow) => allow.owner()),
       ]);
 
       type Actual_A = Prettify<ClientSchema<typeof schema>['A']>;
@@ -845,12 +872,12 @@ describe('custom operations', () => {
       });
 
       sqlSchema.setAuthorization((models) => [
-        models.post.authorization([a.allow.public()]),
-        models.post.fields.id.authorization([a.allow.private()]),
-        models.post.fields.title.authorization([a.allow.public()]),
-        models.post.fields.author.authorization([
-          a.allow.owner().inField('author'),
-        ]),
+        models.post.authorization((allow) => allow.publicApiKey()),
+        models.post.fields.id.authorization((allow) => allow.authenticated()),
+        models.post.fields.title.authorization((allow) => allow.publicApiKey()),
+        models.post.fields.author.authorization((allow) =>
+          allow.ownerDefinedIn('author'),
+        ),
       ]);
 
       const graphql = sqlSchema.transform().schema;
@@ -871,7 +898,7 @@ describe('custom operations', () => {
       const modified = sqlSchema
         .renameModels(() => [['post', 'RenamedPost']])
         .setAuthorization((models) =>
-          models.RenamedPost.authorization([a.allow.public()]),
+          models.RenamedPost.authorization((allow) => allow.publicApiKey()),
         );
 
       const graphql = modified.transform().schema;
@@ -909,10 +936,10 @@ describe('custom operations', () => {
           ['comment', 'RenamedComment'],
         ])
         .setAuthorization((models) => [
-          models.RenamedPost.authorization([a.allow.public()]),
-          models.RenamedComment.authorization([a.allow.public()]),
+          models.RenamedPost.authorization((allow) => allow.publicApiKey()),
+          models.RenamedComment.authorization((allow) => allow.publicApiKey()),
           // tags is unchanged, since we didn't rename it
-          models.tags.authorization([a.allow.public()]),
+          models.tags.authorization((allow) => allow.publicApiKey()),
         ]);
 
       const graphql = modified.transform().schema;
@@ -976,7 +1003,7 @@ describe('custom operations', () => {
             })
             .returns(a.ref('EchoResult'))
             .handler(a.handler.function('echoFunction'))
-            .authorization([a.allow.public()]),
+            .authorization((allow) => allow.publicApiKey()),
         });
 
         type Schema = ClientSchema<typeof schema>;
@@ -1009,7 +1036,7 @@ describe('custom operations', () => {
           .model({
             field: a.string(),
           })
-          .authorization([a.allow.public()]),
+          .authorization((allow) => allow.publicApiKey()),
       });
 
       const schemaB = a.schema({
@@ -1017,7 +1044,7 @@ describe('custom operations', () => {
           .model({
             field: a.string(),
           })
-          .authorization([a.allow.public()]),
+          .authorization((allow) => allow.publicApiKey()),
       });
 
       const _schema: DerivedCombinedSchema = a.combine([schemaA, schemaB]);
@@ -1028,7 +1055,7 @@ describe('custom operations', () => {
           .model({
             field: a.string(),
           })
-          .authorization([a.allow.public()]),
+          .authorization((allow) => allow.publicApiKey()),
       });
 
       const schemaB = a.schema({
@@ -1036,7 +1063,7 @@ describe('custom operations', () => {
           .model({
             field: a.string(),
           })
-          .authorization([a.allow.public()]),
+          .authorization((allow) => allow.publicApiKey()),
       });
 
       const schema = a.combine([schemaA, schemaB]);
@@ -1077,7 +1104,7 @@ describe('custom operations', () => {
           .model({
             field: a.string(),
           })
-          .authorization([a.allow.public()]),
+          .authorization((allow) => allow.publicApiKey()),
       });
 
       const schemaB = a.schema({
@@ -1085,7 +1112,7 @@ describe('custom operations', () => {
           .model({
             field: a.string(),
           })
-          .authorization([a.allow.public()]),
+          .authorization((allow) => allow.publicApiKey()),
       });
 
       const schema = a.combine([schemaA, schemaB]);
@@ -1129,12 +1156,12 @@ describe('custom operations', () => {
           })
           .returns(a.ref('LikePostResult'))
           .handler(a.handler.function('likePost'))
-          .authorization([a.allow.public()]),
+          .authorization((allow) => allow.publicApiKey()),
         A: a
           .model({
             fieldA: a.string(),
           })
-          .authorization([a.allow.public()]),
+          .authorization((allow) => allow.publicApiKey()),
       });
 
       const schemaB = a.schema({
@@ -1148,12 +1175,12 @@ describe('custom operations', () => {
           })
           .returns(a.ref('DislikePostResult'))
           .handler(a.handler.function('dislikePost'))
-          .authorization([a.allow.public()]),
+          .authorization((allow) => allow.publicApiKey()),
         B: a
           .model({
             fieldB: a.string(),
           })
-          .authorization([a.allow.public()]),
+          .authorization((allow) => allow.publicApiKey()),
       });
 
       const schema = a.combine([schemaA, schemaB]);
@@ -1194,7 +1221,7 @@ describe('custom operations', () => {
           .model({
             fieldB: a.string(),
           })
-          .authorization([a.allow.public()]),
+          .authorization((allow) => allow.publicApiKey()),
       });
 
       const schemaB = a.schema({
@@ -1202,7 +1229,7 @@ describe('custom operations', () => {
           .model({
             fieldA: a.string(),
           })
-          .authorization([a.allow.public()]),
+          .authorization((allow) => allow.publicApiKey()),
       });
 
       expect(() => a.combine([schemaA, schemaB])).toThrowError(
@@ -1239,7 +1266,7 @@ describe('RDS Schema with sql statement references', () => {
             ),
           ),
       })
-      .authorization([a.allow.public()]);
+      .authorization((allow) => allow.publicApiKey());
 
     expect(rdsSchema.transform()).toMatchSnapshot();
   });
@@ -1257,7 +1284,7 @@ describe('RDS Schema with sql statement references', () => {
           .returns(a.ref('widget'))
           .handler(a.handler.sqlReference('./testReferenceName')),
       })
-      .authorization([a.allow.public()]);
+      .authorization((allow) => allow.publicApiKey());
 
     const { customSqlDataSourceStrategies } = rdsSchema.transform();
 

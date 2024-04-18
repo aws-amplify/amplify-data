@@ -16,7 +16,7 @@ test('secondaryIndexes input validation', () => {
         fieldWithAuth: a
           .string()
           .required()
-          .authorization([a.allow.owner().to(['read'])]),
+          .authorization((allow) => allow.owner().to(['read'])),
       })
       .secondaryIndexes((index) => [
         // VALID cases
@@ -65,7 +65,7 @@ test('secondaryIndexes input validation', () => {
     Comment: a.model({
       content: a.string(),
       postId: a.id(),
-      post: a.belongsTo('Post', 'postId')
+      post: a.belongsTo('Post', 'postId'),
     }),
     Status: a.enum(['DRAFT', 'PENDING', 'PUBLISHED']),
   });

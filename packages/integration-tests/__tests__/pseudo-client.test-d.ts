@@ -45,7 +45,7 @@ describe('client', () => {
         })
         .returns(a.string().required())
         .handler(a.handler.function('echoFunction'))
-        .authorization([a.allow.public()]),
+        .authorization((allow) => allow.publicApiKey()),
     });
 
     type Schema = ClientSchema<typeof schema>;
@@ -79,7 +79,7 @@ describe('client', () => {
         })
         .returns(a.ref('Status').required())
         .handler(a.handler.function('echoFunction'))
-        .authorization([a.allow.public()]),
+        .authorization((allow) => allow.publicApiKey()),
     });
 
     type Schema = ClientSchema<typeof schema>;
@@ -115,7 +115,7 @@ describe('client', () => {
         })
         .returns(a.ref('EchoResult'))
         .handler(a.handler.function('echoFunction'))
-        .authorization([a.allow.public()]),
+        .authorization((allow) => allow.publicApiKey()),
     });
 
     type Schema = ClientSchema<typeof schema>;
@@ -154,13 +154,13 @@ describe('client', () => {
         })
         .returns(a.ref('DataModel'))
         .handler(a.handler.function('echoFunction'))
-        .authorization([a.allow.public()]),
+        .authorization((allow) => allow.publicApiKey()),
 
       getAllDataModels: a
         .query()
         .returns(a.ref('DataModel').array())
         .handler(a.handler.function('echoFunction'))
-        .authorization([a.allow.public()]),
+        .authorization((allow) => allow.publicApiKey()),
     });
 
     type Schema = ClientSchema<typeof schema>;
@@ -216,13 +216,13 @@ describe('client', () => {
         })
         .returns(a.ref('LikeResult'))
         .handler(a.handler.function('likePost'))
-        .authorization([a.allow.public()]),
+        .authorization((allow) => allow.publicApiKey()),
 
       likeAllPosts: a
         .mutation()
         .returns(a.ref('LikeResult').array())
         .handler(a.handler.function('likeAllPosts'))
-        .authorization([a.allow.public()]),
+        .authorization((allow) => allow.publicApiKey()),
     });
 
     type Schema = ClientSchema<typeof schema>;
@@ -282,7 +282,7 @@ describe('client', () => {
             .for(a.ref('Post').mutations(['create', 'update']))
             .handler(a.handler.function('onCreateOrUpdatePost')),
         })
-        .authorization([a.allow.public()]);
+        .authorization((allow) => allow.publicApiKey());
 
       type Schema = ClientSchema<typeof schema>;
       const client = generateClient<Schema>();
@@ -326,7 +326,7 @@ describe('client', () => {
             })
             .handler(a.handler.function('onCreateOrUpdatePost')),
         })
-        .authorization([a.allow.public()]);
+        .authorization((allow) => allow.publicApiKey());
 
       type Schema = ClientSchema<typeof schema>;
       const client = generateClient<Schema>();
@@ -377,7 +377,7 @@ describe('client', () => {
             .for(a.ref('createString'))
             .handler(a.handler.function('onCreateString')),
         })
-        .authorization([a.allow.public()]);
+        .authorization((allow) => allow.publicApiKey());
 
       type Schema = ClientSchema<typeof schema>;
       const client = generateClient<Schema>();
@@ -413,7 +413,7 @@ describe('client', () => {
             .for([a.ref('createString'), a.ref('updateString')])
             .handler(a.handler.function('onCreateString')),
         })
-        .authorization([a.allow.public()]);
+        .authorization((allow) => allow.publicApiKey());
 
       type Schema = ClientSchema<typeof schema>;
       const client = generateClient<Schema>();
@@ -448,7 +448,7 @@ describe('client', () => {
             .for(a.ref('createProduct'))
             .handler(a.handler.function('onCreateProduct')),
         })
-        .authorization([a.allow.public()]);
+        .authorization((allow) => allow.publicApiKey());
 
       type Schema = ClientSchema<typeof schema>;
       const client = generateClient<Schema>();
@@ -492,7 +492,7 @@ describe('client', () => {
             .for([a.ref('createProduct'), a.ref('updateProductDescription')])
             .handler(a.handler.function('onProductChanges')),
         })
-        .authorization([a.allow.public()]);
+        .authorization((allow) => allow.publicApiKey());
 
       type Schema = ClientSchema<typeof schema>;
       const client = generateClient<Schema>();
@@ -530,7 +530,7 @@ describe('client', () => {
             ])
             .handler(a.handler.function('onCreateString')),
         })
-        .authorization([a.allow.public()]);
+        .authorization((allow) => allow.publicApiKey());
 
       type Schema = ClientSchema<typeof schema>;
       const client = generateClient<Schema>();
@@ -571,7 +571,7 @@ describe('client', () => {
             ])
             .handler(a.handler.function('onCreateString')),
         })
-        .authorization([a.allow.public()]);
+        .authorization((allow) => allow.publicApiKey());
 
       type Schema = ClientSchema<typeof schema>;
       const client = generateClient<Schema>();
@@ -605,7 +605,7 @@ describe('client', () => {
           .returns(a.string()),
         mySubscription: a.subscription().arguments({ input: a.string() }),
       })
-      .authorization([a.allow.public()]);
+      .authorization((allow) => allow.publicApiKey());
 
     type Schema = ClientSchema<typeof schema>;
     const client = generateClient<Schema>();

@@ -17,13 +17,10 @@ describe('field level auth', () => {
     const field = a
       .string()
       .array()
-      .authorization([
-        a.allow.public().to(['read']),
-        a.allow.private().to(['read', 'create']),
-        a.allow
-          .multipleOwners()
-          .inField('admin')
-          .to(['read', 'create', 'delete']),
+      .authorization((allow) => [
+        allow.publicApiKey().to(['read']),
+        allow.authenticated().to(['read', 'create']),
+        allow.ownersDefinedIn('admin').to(['read', 'create', 'delete']),
       ]);
 
     type ExpectedAuthFields =
@@ -46,13 +43,10 @@ describe('field level auth', () => {
   it('implied field types can be inferred from related model fields', () => {
     const field = a
       .belongsTo('Widget', 'widgetId')
-      .authorization([
-        a.allow.public().to(['read']),
-        a.allow.private().to(['read', 'create']),
-        a.allow
-          .multipleOwners()
-          .inField('admin')
-          .to(['read', 'create', 'delete']),
+      .authorization((allow) => [
+        allow.publicApiKey().to(['read']),
+        allow.authenticated().to(['read', 'create']),
+        allow.ownersDefinedIn('admin').to(['read', 'create', 'delete']),
       ]);
 
     type ExpectedAuthFields =
@@ -76,16 +70,12 @@ describe('field level auth', () => {
     const field = a
       .string()
       .array()
-      .authorization([
-        a.allow.public().to(['read']),
-        a.allow.private().to(['read', 'create']),
-        a.allow
-          .multipleOwners()
-          .inField('admin')
-          .to(['read', 'create', 'delete']),
-        a.allow
-          .multipleOwners()
-          .inField('admin')
+      .authorization((allow) => [
+        allow.publicApiKey().to(['read']),
+        allow.authenticated().to(['read', 'create']),
+        allow.ownersDefinedIn('admin').to(['read', 'create', 'delete']),
+        allow
+          .ownersDefinedIn('admin')
           .to(['read', 'create', 'delete'])
           .identityClaim('identityClaimValue'),
       ]) as InternalField;
@@ -96,16 +86,12 @@ describe('field level auth', () => {
   it('implied fields objects can be extracted from related model fields', () => {
     const field = a
       .belongsTo('Widget', 'widgetId')
-      .authorization([
-        a.allow.public().to(['read']),
-        a.allow.private().to(['read', 'create']),
-        a.allow
-          .multipleOwners()
-          .inField('admin')
-          .to(['read', 'create', 'delete']),
-        a.allow
-          .multipleOwners()
-          .inField('admin')
+      .authorization((allow) => [
+        allow.publicApiKey().to(['read']),
+        allow.authenticated().to(['read', 'create']),
+        allow.ownersDefinedIn('admin').to(['read', 'create', 'delete']),
+        allow
+          .ownersDefinedIn('admin')
           .to(['read', 'create', 'delete'])
           .identityClaim('identityClaimValue'),
       ]) as InternalRelationalField;

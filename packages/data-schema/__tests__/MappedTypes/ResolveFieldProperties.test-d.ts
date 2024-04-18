@@ -223,7 +223,10 @@ describe('ResolveFieldProperties Mapped Type', () => {
       Post: a.model({
         title: a.string().required(),
         metadata: a.json(),
-        location: a.ref('Location').required().authorization([a.allow.owner()]),
+        location: a
+          .ref('Location')
+          .required()
+          .authorization((allow) => allow.owner()),
       }),
       Comment: a.model({
         content: a.string(),

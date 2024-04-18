@@ -7,7 +7,7 @@ describe('a', () => {
         .model({
           field: a.string(),
         })
-        .authorization([a.allow.public()]),
+        .authorization((allow) => [allow.publicApiKey()]),
     });
     type Schema = ClientSchema<typeof schema>;
   });

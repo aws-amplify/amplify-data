@@ -27,7 +27,9 @@ describe('relational field required modifier', () => {
 
     it('offers an authorization modifier', () => {
       expect(() => {
-        const field = a.belongsTo('Test', 'testId').authorization([]);
+        const field = a
+          .belongsTo('Test', 'testId')
+          .authorization((allow) => allow.publicApiKey());
       }).not.toThrow();
     });
 
@@ -63,7 +65,9 @@ describe('relational field required modifier', () => {
 
     it('offers an authorization modifier', () => {
       expect(() => {
-        const field = a.hasOne('Test', 'testId').authorization([]);
+        const field = a
+          .hasOne('Test', 'testId')
+          .authorization((allow) => allow.publicApiKey());
       }).not.toThrow();
     });
 
@@ -102,7 +106,9 @@ describe('relational field required modifier', () => {
 
     it('offers an authorization modifier', () => {
       expect(() => {
-        const field = a.hasMany('Test', 'testId').authorization([]);
+        const field = a
+          .hasMany('Test', 'testId')
+          .authorization((allow) => allow.publicApiKey());
       }).not.toThrow();
     });
 
@@ -150,7 +156,7 @@ describe('schema generation with relationships', () => {
           team: a.belongsTo('Team', ['teamId']),
         }),
       })
-      .authorization([a.allow.public()]);
+      .authorization((allow) => allow.publicApiKey());
 
     expect(schema.transform().schema).toMatchSnapshot();
   });
@@ -173,7 +179,7 @@ describe('schema generation with relationships', () => {
           team: a.belongsTo('Team', ['teamId', 'teamSk']),
         }),
       })
-      .authorization([a.allow.public()]);
+      .authorization((allow) => allow.publicApiKey());
 
     expect(schema.transform().schema).toMatchSnapshot();
   });
@@ -191,7 +197,7 @@ describe('schema generation with relationships', () => {
           team: a.belongsTo('Team', ['teamId']),
         }),
       })
-      .authorization([a.allow.public()]);
+      .authorization((allow) => allow.publicApiKey());
 
     expect(schema.transform().schema).toMatchSnapshot();
   });
@@ -215,7 +221,7 @@ describe('schema generation with relationships', () => {
           team: a.belongsTo('Team', ['teamId']),
         }),
       })
-      .authorization([a.allow.public()]);
+      .authorization((allow) => allow.publicApiKey());
 
     expect(schema.transform().schema).toMatchSnapshot();
   });
@@ -248,7 +254,7 @@ describe('schema generation with relationships', () => {
           })
           .identifier(['id']),
       })
-      .authorization([a.allow.public()]);
+      .authorization((allow) => allow.publicApiKey());
 
     expect(schema.transform().schema).toMatchSnapshot();
   });
@@ -265,7 +271,7 @@ describe('schema generation with relationships', () => {
           })
           .identifier(['id']),
       })
-      .authorization([a.allow.public()]);
+      .authorization((allow) => allow.publicApiKey());
 
     const ddbSchema = a
       .schema({
@@ -284,7 +290,7 @@ describe('schema generation with relationships', () => {
           team: a.belongsTo('Team', ['teamId']),
         }),
       })
-      .authorization([a.allow.public()]);
+      .authorization((allow) => allow.publicApiKey());
 
     const schema = a.combine([sqlSchema, ddbSchema]);
     const graphql = schema.schemas

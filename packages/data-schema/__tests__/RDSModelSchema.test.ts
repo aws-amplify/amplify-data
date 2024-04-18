@@ -27,7 +27,7 @@ describe('RDSModelSchema', () => {
             description: a.string(),
           }),
         })
-        .authorization([a.allow.public()])
+        .authorization((allow) => allow.publicApiKey())
         .relationships((models) => [
           models.Blog.addRelationships({
             childPosts: a.hasMany('Post', 'parentBlogId'),
@@ -55,7 +55,7 @@ describe('RDSModelSchema', () => {
             description: a.string(),
           }),
         })
-        .authorization([a.allow.public()])
+        .authorization((allow) => allow.publicApiKey())
         .relationships((models) => [
           models.Post.addRelationships({
             parentBlog: a.belongsTo('Blog', 'parentBlogId'),
@@ -84,7 +84,7 @@ describe('RDSModelSchema', () => {
             supplierId: a.string(),
           }),
         })
-        .authorization([a.allow.public()])
+        .authorization((allow) => allow.publicApiKey())
         .relationships((models) => [
           models.Supplier.addRelationships({
             account: a.hasOne('Account', 'supplierId'),
@@ -110,7 +110,7 @@ describe('RDSModelSchema', () => {
             supplierId: a.string(),
           }),
         })
-        .authorization([a.allow.public()])
+        .authorization((allow) => allow.publicApiKey())
         .relationships((models) => [
           models.Account.addRelationships({
             supplier: a.belongsTo('Supplier', 'supplierId'),
@@ -136,7 +136,7 @@ describe('RDSModelSchema', () => {
             supplierId: a.string(),
           }),
         })
-        .authorization([a.allow.public()])
+        .authorization((allow) => allow.publicApiKey())
         .relationships((models) => [
           models.Account.addRelationships({
             supplier: a.belongsTo('Supplier', 'supplierId'),

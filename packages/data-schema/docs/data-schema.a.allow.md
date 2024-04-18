@@ -10,35 +10,40 @@ Defines an authorization rule for your data models and fields. First choose an a
 
 ```typescript
 allow: {
-    readonly public: (provider?: PublicProvider) => Authorization<"public", undefined, false> & {
+    readonly publicApiKey: () => Authorization<"public", undefined, false> & {
         to: typeof to;
     };
-    readonly private: (provider?: PrivateProvider) => Authorization<"private", undefined, false> & {
+    readonly guest: () => Authorization<"public", undefined, false> & {
+        to: typeof to;
+    };
+    readonly authenticated: (provider?: PrivateProvider) => Authorization<"private", undefined, false> & {
         to: typeof to;
     };
     readonly owner: (provider?: OwnerProviders) => Authorization<"owner", "owner", false> & {
         to: typeof to;
-        inField: typeof inField;
         identityClaim: typeof identityClaim;
     };
-    readonly multipleOwners: (provider?: OwnerProviders) => Authorization<"owner", "owner", true> & {
+    readonly ownerDefinedIn: <T extends string>(ownerField: T, provider?: OwnerProviders) => Authorization<"owner", T, false> & {
         to: typeof to;
-        inField: typeof inField;
         identityClaim: typeof identityClaim;
     };
-    readonly specificGroup: (group: string, provider?: GroupProvider) => Authorization<"groups", undefined, false> & {
+    readonly ownersDefinedIn: <T_1 extends string>(ownersField: T_1, provider?: OwnerProviders) => Authorization<"owner", T_1, true> & {
+        to: typeof to;
+        identityClaim: typeof identityClaim;
+    };
+    readonly group: (group: string, provider?: GroupProvider) => Authorization<"groups", undefined, false> & {
         to: typeof to;
         withClaimIn: typeof withClaimIn;
     };
-    readonly specificGroups: (groups: string[], provider?: GroupProvider) => Authorization<"groups", undefined, false> & {
+    readonly groups: (groups: string[], provider?: GroupProvider) => Authorization<"groups", undefined, false> & {
         to: typeof to;
         withClaimIn: typeof withClaimIn;
     };
-    readonly groupDefinedIn: <T extends string>(groupsField: T, provider?: GroupProvider) => Authorization<"groups", T, false> & {
+    readonly groupDefinedIn: <T_2 extends string>(groupsField: T_2, provider?: GroupProvider) => Authorization<"groups", T_2, false> & {
         to: typeof to;
         withClaimIn: typeof withClaimIn;
     };
-    readonly groupsDefinedIn: <T_1 extends string>(groupsField: T_1, provider?: GroupProvider) => Authorization<"groups", T_1, true> & {
+    readonly groupsDefinedIn: <T_3 extends string>(groupsField: T_3, provider?: GroupProvider) => Authorization<"groups", T_3, true> & {
         to: typeof to;
         withClaimIn: typeof withClaimIn;
     };

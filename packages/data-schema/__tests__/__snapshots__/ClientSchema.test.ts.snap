@@ -13,14 +13,14 @@ exports[`RDS Schema with sql statement references schema with full path sql refe
   "functionSlots": [],
   "jsFunctions": [],
   "lambdaFunctions": {},
-  "schema": "type widget @model @auth(rules: [{allow: public}])
+  "schema": "type widget @model @auth(rules: [{allow: public, provider: apiKey}])
 {
   title: String!
   someOwnerField: String
 }
 
 type Query {
-  callSql: widget @sql(reference: "/full/path/to/sql/statement/directory/testReferenceName") @auth(rules: [{allow: public}])
+  callSql: widget @sql(reference: "/full/path/to/sql/statement/directory/testReferenceName") @auth(rules: [{allow: public, provider: apiKey}])
 }",
 }
 `;
@@ -32,7 +32,7 @@ exports[`custom operations custom mutation 1`] = `
 }
 
 type Mutation {
-  likePost(postId: String!): LikePostResult @function(name: "likePost") @auth(rules: [{allow: public}])
+  likePost(postId: String!): LikePostResult @function(name: "likePost") @auth(rules: [{allow: public, provider: apiKey}])
 }"
 `;
 
@@ -43,16 +43,16 @@ exports[`custom operations custom query 1`] = `
 }
 
 type Query {
-  echo(inputContent: String!): EchoResult @function(name: "echoFunction") @auth(rules: [{allow: public}])
+  echo(inputContent: String!): EchoResult @function(name: "echoFunction") @auth(rules: [{allow: public, provider: apiKey}])
 }"
 `;
 
 exports[`custom operations for a.combine schema a ddb and sql schemas combine without issues 1`] = `
-"type A @model @auth(rules: [{allow: public}])
+"type A @model @auth(rules: [{allow: public, provider: apiKey}])
 {
   field: String
 }
-type B @model @auth(rules: [{allow: public}])
+type B @model @auth(rules: [{allow: public, provider: apiKey}])
 {
   field: String
 }"
@@ -64,42 +64,42 @@ exports[`custom operations for a.combine schema combining two schemas with custo
   likes: Int!
 }
 
-type A @model @auth(rules: [{allow: public}])
+type A @model @auth(rules: [{allow: public, provider: apiKey}])
 {
   fieldA: String
 }
 
 type Mutation {
-  likePost(postId: String!): LikePostResult @function(name: "likePost") @auth(rules: [{allow: public}])
+  likePost(postId: String!): LikePostResult @function(name: "likePost") @auth(rules: [{allow: public, provider: apiKey}])
 }
 type DislikePostResult 
 {
   likes: Int!
 }
 
-type B @model @auth(rules: [{allow: public}])
+type B @model @auth(rules: [{allow: public, provider: apiKey}])
 {
   fieldB: String
 }
 
 type Mutation {
-  dislikePost(postId: String!): DislikePostResult @function(name: "dislikePost") @auth(rules: [{allow: public}])
+  dislikePost(postId: String!): DislikePostResult @function(name: "dislikePost") @auth(rules: [{allow: public, provider: apiKey}])
 }"
 `;
 
 exports[`custom operations for a.combine schema two schemas combine without issues 1`] = `
-"type A @model @auth(rules: [{allow: public}])
+"type A @model @auth(rules: [{allow: public, provider: apiKey}])
 {
   field: String
 }
-type B @model @auth(rules: [{allow: public}])
+type B @model @auth(rules: [{allow: public, provider: apiKey}])
 {
   field: String
 }"
 `;
 
 exports[`custom operations for an rds schema can define public auth with no provider 1`] = `
-"type A @model @auth(rules: [{allow: public}])
+"type A @model @auth(rules: [{allow: public, provider: apiKey}])
 {
   id: String! @primaryKey
   field: String
@@ -113,21 +113,21 @@ exports[`custom operations for an rds schema custom operations custom query 1`] 
 }
 
 type Query {
-  echo(inputContent: String!): EchoResult @function(name: "echoFunction") @auth(rules: [{allow: public}])
+  echo(inputContent: String!): EchoResult @function(name: "echoFunction") @auth(rules: [{allow: public, provider: apiKey}])
 }"
 `;
 
 exports[`custom operations for an rds schema sql schema field-level auth 1`] = `
-"type post @model @auth(rules: [{allow: public}])
+"type post @model @auth(rules: [{allow: public, provider: apiKey}])
 {
   id: String! @primaryKey @auth(rules: [{allow: private}])
-  title: String @auth(rules: [{allow: public}])
+  title: String @auth(rules: [{allow: public, provider: apiKey}])
   author: String @auth(rules: [{allow: owner, ownerField: "author"}])
 }"
 `;
 
 exports[`custom operations for an rds schema sql schema rename 1`] = `
-"type RenamedPost @model @auth(rules: [{allow: public}])
+"type RenamedPost @model @auth(rules: [{allow: public, provider: apiKey}])
 {
   id: String! @primaryKey
   title: String
@@ -136,21 +136,21 @@ exports[`custom operations for an rds schema sql schema rename 1`] = `
 `;
 
 exports[`custom operations for an rds schema sql schema rename multiple models 1`] = `
-"type tags @model @auth(rules: [{allow: public}])
+"type tags @model @auth(rules: [{allow: public, provider: apiKey}])
 {
   id: String! @primaryKey
   title: String
   author: String
 }
 
-type RenamedPost @model @auth(rules: [{allow: public}])
+type RenamedPost @model @auth(rules: [{allow: public, provider: apiKey}])
 {
   id: String! @primaryKey
   title: String
   author: String
 }
 
-type RenamedComment @model @auth(rules: [{allow: public}])
+type RenamedComment @model @auth(rules: [{allow: public, provider: apiKey}])
 {
   id: String! @primaryKey
   title: String
@@ -200,6 +200,20 @@ exports[`schema auth rules allows groupsDefinedIn 1`] = `
 }
 `;
 
+exports[`schema auth rules allows guest 1`] = `
+{
+  "customSqlDataSourceStrategies": [],
+  "functionSchemaAccess": [],
+  "functionSlots": [],
+  "jsFunctions": [],
+  "lambdaFunctions": {},
+  "schema": "type A @model @auth(rules: [{allow: public, provider: iam}])
+{
+  field: String
+}",
+}
+`;
+
 exports[`schema auth rules allows multiple entries 1`] = `
 {
   "customSqlDataSourceStrategies": [],
@@ -207,7 +221,7 @@ exports[`schema auth rules allows multiple entries 1`] = `
   "functionSlots": [],
   "jsFunctions": [],
   "lambdaFunctions": {},
-  "schema": "type A @model @auth(rules: [{allow: public},
+  "schema": "type A @model @auth(rules: [{allow: public, provider: apiKey},
   {allow: private}])
 {
   field: String
@@ -264,7 +278,7 @@ exports[`schema auth rules allows public 1`] = `
   "functionSlots": [],
   "jsFunctions": [],
   "lambdaFunctions": {},
-  "schema": "type A @model @auth(rules: [{allow: public}])
+  "schema": "type A @model @auth(rules: [{allow: public, provider: apiKey}])
 {
   field: String
 }",
@@ -286,7 +300,7 @@ exports[`schema auth rules allows specificGroups 1`] = `
 `;
 
 exports[`schema auth rules can define public auth with no provider 1`] = `
-"type A @model @auth(rules: [{allow: public}])
+"type A @model @auth(rules: [{allow: public, provider: apiKey}])
 {
   field: String
 }"
@@ -339,22 +353,22 @@ exports[`schema auth rules global public auth - multiple models 1`] = `
   "functionSlots": [],
   "jsFunctions": [],
   "lambdaFunctions": {},
-  "schema": "type A @model @auth(rules: [{allow: public}])
+  "schema": "type A @model @auth(rules: [{allow: public, provider: apiKey}])
 {
   field: String
 }
 
-type B @model @auth(rules: [{allow: public}])
+type B @model @auth(rules: [{allow: public, provider: apiKey}])
 {
   field: AWSJSON
 }
 
-type C @model @auth(rules: [{allow: public}])
+type C @model @auth(rules: [{allow: public, provider: apiKey}])
 {
   d: D @hasOne(references: ["cId"])
 }
 
-type D @model @auth(rules: [{allow: public}])
+type D @model @auth(rules: [{allow: public, provider: apiKey}])
 {
   can: Int
   you: Boolean
@@ -408,7 +422,7 @@ exports[`schema auth rules prefers model auth over global auth public auth on mo
   "functionSlots": [],
   "jsFunctions": [],
   "lambdaFunctions": {},
-  "schema": "type A @model @auth(rules: [{allow: public}])
+  "schema": "type A @model @auth(rules: [{allow: public, provider: apiKey}])
 {
   field: String
 }",
@@ -416,7 +430,7 @@ exports[`schema auth rules prefers model auth over global auth public auth on mo
 `;
 
 exports[`schema generation with relationships 1`] = `
-"type BoringParent @model @auth(rules: [{allow: public}])
+"type BoringParent @model @auth(rules: [{allow: public, provider: apiKey}])
 {
   childNormal: BoringChild @hasOne(references: ["boringParentId"])
   childReciprocal: BoringReciprocalChild @hasOne(references: ["boringParentId"])
@@ -424,35 +438,35 @@ exports[`schema generation with relationships 1`] = `
   childHasManyReciprocal: [ReciprocalHasManyChild] @hasMany(references: ["boringParentId"])
 }
 
-type BoringChild @model @auth(rules: [{allow: public}])
+type BoringChild @model @auth(rules: [{allow: public, provider: apiKey}])
 {
   value: String
   boringParentId: ID
   boringParent: BoringParent @belongsTo(references: ["boringParentId"])
 }
 
-type BoringReciprocalChild @model @auth(rules: [{allow: public}])
+type BoringReciprocalChild @model @auth(rules: [{allow: public, provider: apiKey}])
 {
   value: String
   boringParentId: ID
   parent: BoringParent @belongsTo(references: ["boringParentId"])
 }
 
-type BoringHasManyChild @model @auth(rules: [{allow: public}])
+type BoringHasManyChild @model @auth(rules: [{allow: public, provider: apiKey}])
 {
   value: String
   boringParentId: ID
   parent: BoringParent @belongsTo(references: ["boringParentId"])
 }
 
-type ReciprocalHasManyChild @model @auth(rules: [{allow: public}])
+type ReciprocalHasManyChild @model @auth(rules: [{allow: public, provider: apiKey}])
 {
   value: String
   boringParentId: ID
   parent: BoringParent @belongsTo(references: ["boringParentId"])
 }
 
-type CPKParent @model @auth(rules: [{allow: public}])
+type CPKParent @model @auth(rules: [{allow: public, provider: apiKey}])
 {
   CPKParentIdFieldA: ID! @primaryKey(sortKeyFields: ["CPKParentIdFieldB"])
   CPKParentIdFieldB: ID!
@@ -462,7 +476,7 @@ type CPKParent @model @auth(rules: [{allow: public}])
   childHasManyReciprocal: [CPKReciprocalHasManyChild] @hasMany(references: ["CPKParentIdFieldA","CPKParentIdFieldB"])
 }
 
-type CPKChild @model @auth(rules: [{allow: public}])
+type CPKChild @model @auth(rules: [{allow: public, provider: apiKey}])
 {
   value: String
   CPKChildIdFieldA: ID! @primaryKey(sortKeyFields: ["CPKChildIdFieldB"])
@@ -472,7 +486,7 @@ type CPKChild @model @auth(rules: [{allow: public}])
   cpkParent: CPKParent @belongsTo(references: ["CPKParentIdFieldA","CPKParentIdFieldB"])
 }
 
-type CPKReciprocalChild @model @auth(rules: [{allow: public}])
+type CPKReciprocalChild @model @auth(rules: [{allow: public, provider: apiKey}])
 {
   CPKReciprocalChildIdFieldA: ID! @primaryKey(sortKeyFields: ["CPKReciprocalChildIdFieldB"])
   CPKReciprocalChildIdFieldB: ID!
@@ -482,7 +496,7 @@ type CPKReciprocalChild @model @auth(rules: [{allow: public}])
   value: String
 }
 
-type CPKHasManyChild @model @auth(rules: [{allow: public}])
+type CPKHasManyChild @model @auth(rules: [{allow: public, provider: apiKey}])
 {
   value: String
   CPKHasManyChildIdFieldA: ID! @primaryKey(sortKeyFields: ["CPKHasManyChildIdFieldB"])
@@ -492,7 +506,7 @@ type CPKHasManyChild @model @auth(rules: [{allow: public}])
   cpkParent: CPKParent @belongsTo(references: ["CPKParentIdFieldA","CPKParentIdFieldB"])
 }
 
-type CPKReciprocalHasManyChild @model @auth(rules: [{allow: public}])
+type CPKReciprocalHasManyChild @model @auth(rules: [{allow: public, provider: apiKey}])
 {
   CPKReciprocalHasManyChildIdFieldA: ID! @primaryKey(sortKeyFields: ["CPKReciprocalHasManyChildIdFieldB"])
   CPKReciprocalHasManyChildIdFieldB: ID!
