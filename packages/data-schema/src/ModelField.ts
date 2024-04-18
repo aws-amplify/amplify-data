@@ -101,7 +101,7 @@ export type ModelField<
      * multiple authorization rules for this field.
      */
     authorization<AuthRuleType extends Authorization<any, any, any>>(
-      callback: (allow: AllowModifier) => AuthRuleType | AuthRuleType[],
+      callback: (allow: Omit<AllowModifier, 'resource'>) => AuthRuleType | AuthRuleType[],
     ): ModelField<T, K | 'authorization', AuthRuleType>;
   },
   K
@@ -169,7 +169,8 @@ function _field<T extends ModelFieldTypeParamOuter>(fieldType: ModelFieldType) {
       return this;
     },
     authorization(callback) {
-      const rules = callback(allow);
+      const { resource: _, ...rest } = allow;
+      const rules = callback(rest);
       data.authorization = Array.isArray(rules) ? rules : [rules];
       _meta.lastInvokedMethod = 'authorization';
 

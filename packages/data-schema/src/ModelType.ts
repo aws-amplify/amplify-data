@@ -218,7 +218,7 @@ export type ModelType<
       K | 'secondaryIndexes'
     >;
     authorization<AuthRuleType extends Authorization<any, any, any>>(
-      callback: (allow: AllowModifier) => AuthRuleType | AuthRuleType[],
+      callback: (allow: Omit<AllowModifier, 'resource'>) => AuthRuleType | AuthRuleType[],
     ): ModelType<
       SetTypeSubArg<T, 'authorization', AuthRuleType[]>,
       K | 'authorization'
@@ -287,7 +287,8 @@ function _model<T extends ModelTypeParamShape>(fields: T['fields']) {
       return this;
     },
     authorization(callback) {
-      const rules = callback(allow);
+      const { resource: _, ...rest } = allow;
+      const rules = callback(rest);
       data.authorization = Array.isArray(rules) ? rules : [rules];
 
       return this;

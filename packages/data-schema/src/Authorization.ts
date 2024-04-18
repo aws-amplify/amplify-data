@@ -477,6 +477,118 @@ export const allow = {
   },
 } as const;
 
+/**
+ * This is a copy of the {@link allow} defined above, with modifications for custom operations.
+ *
+ * Removed builder methods:
+ *
+ * * `owner`
+ * * `ownerDefinedIn`
+ * * `ownersDefinedIn`
+ * * `groupDefinedIn`
+ * * `groupsDefinedIn`
+ * * `resource`
+ * * `.to()` builder method from each available rule builder
+ */
+export const allowForCustomOperations = {
+  /**
+   * Authorize unauthenticated users by using API key based authorization.
+   * @returns an authorization rule for unauthenticated users
+   */
+  publicApiKey() {
+    return authData(
+      {
+        strategy: 'public',
+        provider: 'apiKey',
+      },
+      {},
+    );
+  },
+
+  /**
+   * Authorize unauthenticated users by using IAM based authorization.
+   * @returns an authorization rule for unauthenticated users
+   */
+  guest() {
+    return authData(
+      {
+        strategy: 'public',
+        provider: 'iam',
+      },
+      {},
+    );
+  },
+
+  /**
+   * Authorize authenticated users. By default, `.private()` uses an Amazon Cognito user pool based authorization. You can additionally
+   * use `.authenticated("iam")` or `.authenticated("oidc")` to use IAM or OIDC based authorization for authenticated users.
+   * @param provider the authentication provider - supports "userPools", "iam", or "oidc"
+   * @returns an authorization rule for authenticated users
+   */
+  authenticated(provider?: PrivateProvider) {
+    validateProvider(provider, PrivateProviders);
+    return authData(
+      {
+        strategy: 'private',
+        provider,
+      },
+      {},
+    );
+  },
+
+  /**
+   * Authorize a specific user group. Provide the name of the specific user group to have access.
+   *
+   * By default, `.group()` uses an Amazon Cognito user pool based authorization. You can additionally
+   * use `.group("group-name", "oidc")` to use OIDC based authentication to designate the user group.
+   *
+   * @param group the name of the group to authorize
+   * @param provider the authentication provider - supports "userPools" or "oidc"
+   * @returns an authorization rule to grant access by a specific group
+   */
+  group(group: string, provider?: GroupProvider) {
+    return authData(
+      {
+        strategy: 'groups',
+        provider,
+        groups: [group],
+      },
+      {},
+    );
+  },
+
+  /**
+   * Authorize multiple specific user groups. Provide the names of the specific user groups to have access.
+   *
+   * By default, `.groups()` uses an Amazon Cognito user pool based authorization. You can additionally
+   * use `.groups(["group-a", "group-b"], "oidc")` to use OIDC based authentication to designate the user group.
+   *
+   * @param groups the names of the group to authorize defined as an array
+   * @param provider the authentication provider - supports "userPools" or "oidc"
+   * @returns an authorization rule to grant access by a specific group
+   */
+  groups(groups: string[], provider?: GroupProvider) {
+    return authData(
+      {
+        strategy: 'groups',
+        provider,
+        groups,
+      },
+      {},
+    );
+  },
+
+  custom(provider?: CustomProvider) {
+    return authData(
+      {
+        strategy: 'custom',
+        provider,
+      },
+      {},
+    );
+  },
+} as const;
+
 function resourceTo<SELF extends ResourceAuthorization>(
   this: SELF,
   operations: ResourceOperation[],
@@ -569,3 +681,4 @@ export const accessSchemaData = <T extends SchemaAuthorization<any, any, any>>(
 
 // `allow` is declared as a `const` above
 export type AllowModifier = typeof allow;
+export type AllowModifierForCustomOperation = typeof allowForCustomOperations;

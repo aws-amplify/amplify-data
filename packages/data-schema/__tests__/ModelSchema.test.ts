@@ -145,28 +145,4 @@ describe('Lambda resource access', () => {
       },
     ]);
   });
-
-  it('lambda access not valid on model or field', () => {
-    const fn1 = defineFunctionStub({});
-
-    const schema = a
-      .schema({
-        Todo: a
-          .model({
-            content: a.string().authorization((allow) => [
-              // @ts-expect-error
-              allow.resource(fn1).to(['query']),
-            ]),
-          })
-          .authorization((allow) => [
-            // @ts-expect-error
-            allow.resource(fn1).to(['query']),
-          ]),
-      })
-      .authorization((allow) => allow.publicApiKey());
-
-    expect(() => schema.transform()).toThrow(
-      'Lambda resource authorization is only confiugrable at the schema level',
-    );
-  });
 });
