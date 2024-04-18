@@ -25,7 +25,7 @@ describe('validated on execution', () => {
         .model({
           content: a.string(),
         })
-        .authorization([a.allow.public()])
+        .authorization((allow) => allow.publicApiKey())
         // @ts-ignore
         .identifier(['content']),
     });

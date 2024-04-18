@@ -1,5 +1,6 @@
 import { a, ClientSchema } from '@aws-amplify/data-schema';
 import { buildAmplifyConfig } from '../../utils';
+import { AllowModifier } from '@aws-amplify/data-schema/internals';
 
 const fieldTypes = [
   'boolean',
@@ -33,7 +34,7 @@ describe('primitive field types', () => {
               requiredField: a[fieldType]().required(),
             }),
           })
-          .authorization([a.allow.public()]);
+          .authorization((allow) => allow.publicApiKey());
         const graphql = schema.transform().schema;
         expect(graphql).toMatchSnapshot();
       });
@@ -43,27 +44,36 @@ describe('primitive field types', () => {
 
 // how can we do this better to ensure we've got full coverage over auth graphql generation?
 describe('auth rules', () => {
-  for (const [name, rule] of Object.entries({
-    'owner()': a.allow.owner(),
-    'owner().inField()': a.allow.owner().inField('field'),
-    'owner().inField().to()': a.allow
-      .owner()
-      .inField('field')
-      .to(['create', 'delete']),
-    'owner(userpool).inField().to().': a.allow
-      .owner('userPools')
-      .to(['create', 'list']),
-  })) {
-    test(name, () => {
+  test.each([
+    ['guest()', (allow: AllowModifier) => allow.guest()],
+    ['owner()', (allow: AllowModifier) => allow.owner()],
+    [
+      '.ownerDefinedIn()',
+      (allow: AllowModifier) => allow.ownerDefinedIn('field'),
+    ],
+    [
+      'allow.ownerDefinedIn().to()',
+      (allow: AllowModifier) =>
+        allow.ownerDefinedIn('field').to(['create', 'delete']),
+    ],
+    [
+      'owner(userPools).to()',
+      (allow: AllowModifier) => allow.owner('userPools').to(['create', 'list']),
+    ],
+  ])(
+    'given auth rule builder %p, generates schema with expected auth rule',
+    (_, ruleBuilderCallback) => {
       const schema = a.schema({
         Model: a
           .model({
             field: a.string(),
           })
-          .authorization([rule]),
+          .authorization(ruleBuilderCallback as any),
       });
+
       const graphql = schema.transform().schema;
+
       expect(graphql).toMatchSnapshot();
-    });
-  }
+    },
+  );
 });

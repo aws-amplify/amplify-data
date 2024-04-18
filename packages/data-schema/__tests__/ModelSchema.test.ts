@@ -27,7 +27,7 @@ it('requires a model to have at least one auth rule - empty model authorization 
         title: a.string().required(),
         someOwnerField: a.string(),
       })
-      .authorization([]),
+      .authorization((allow) => []),
   });
 
   expect(() => schema.transform().schema).toThrow(
@@ -43,7 +43,7 @@ it('requires a model to have at least one auth rule - empty global authorization
         someOwnerField: a.string(),
       }),
     })
-    .authorization([]);
+    .authorization((allow) => []);
 
   expect(() => schema.transform().schema).toThrow(
     'missing authorization rules',
@@ -58,9 +58,9 @@ it('empty model auth inherits global auth', () => {
           title: a.string().required(),
           someOwnerField: a.string(),
         })
-        .authorization([]),
+        .authorization((allow) => []),
     })
-    .authorization([a.allow.owner()]);
+    .authorization((allow) => allow.owner());
 
   expect(schema.transform().schema).toMatchSnapshot();
 });
@@ -75,9 +75,9 @@ describe('Lambda resource access', () => {
           .model({
             content: a.string(),
           })
-          .authorization([a.allow.public()]),
+          .authorization((allow) => allow.publicApiKey()),
       })
-      .authorization([a.allow.resource(fn1)]);
+      .authorization((allow) => allow.resource(fn1));
 
     const { functionSchemaAccess } = schema.transform();
     expect(functionSchemaAccess).toEqual([
@@ -97,9 +97,9 @@ describe('Lambda resource access', () => {
           .model({
             content: a.string(),
           })
-          .authorization([a.allow.public()]),
+          .authorization((allow) => allow.publicApiKey()),
       })
-      .authorization([a.allow.resource(fn1).to(['query'])]);
+      .authorization((allow) => allow.resource(fn1).to(['query']));
 
     const { functionSchemaAccess } = schema.transform();
     expect(functionSchemaAccess).toEqual([
@@ -121,12 +121,12 @@ describe('Lambda resource access', () => {
           .model({
             content: a.string(),
           })
-          .authorization([a.allow.public()]),
+          .authorization((allow) => allow.publicApiKey()),
       })
-      .authorization([
-        a.allow.resource(fn1).to(['query']),
-        a.allow.resource(fn2).to(['mutate']),
-        a.allow.resource(fn3).to(['listen']),
+      .authorization((allow) => [
+        allow.resource(fn1).to(['query']),
+        allow.resource(fn2).to(['mutate']),
+        allow.resource(fn3).to(['listen']),
       ]);
 
     const { functionSchemaAccess } = schema.transform();
@@ -144,29 +144,5 @@ describe('Lambda resource access', () => {
         actions: ['listen'],
       },
     ]);
-  });
-
-  it('lambda access not valid on model or field', () => {
-    const fn1 = defineFunctionStub({});
-
-    const schema = a
-      .schema({
-        Todo: a
-          .model({
-            content: a.string().authorization([
-              // @ts-expect-error
-              a.allow.resource(fn1).to(['query']),
-            ]),
-          })
-          .authorization([
-            // @ts-expect-error
-            a.allow.resource(fn1).to(['query']),
-          ]),
-      })
-      .authorization([a.allow.public()]);
-
-    expect(() => schema.transform()).toThrow(
-      'Lambda resource authorization is only confiugrable at the schema level',
-    );
   });
 });

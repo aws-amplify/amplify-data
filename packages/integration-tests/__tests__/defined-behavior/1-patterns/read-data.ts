@@ -32,7 +32,10 @@ describe('Read application data', () => {
         done: a.boolean(),
         priority: a.integer(),
       })
-      .authorization([a.allow.owner(), a.allow.public().to(['read'])]),
+      .authorization((allow) => [
+        allow.owner(),
+        allow.publicApiKey().to(['read']),
+      ]),
     Inventory: a
       .model({
         productId: a.id().required(),
@@ -40,7 +43,10 @@ describe('Read application data', () => {
         description: a.string(),
       })
       .identifier(['productId', 'warehouseId'])
-      .authorization([a.allow.owner(), a.allow.public().to(['read'])]),
+      .authorization((allow) => [
+        allow.owner(),
+        allow.publicApiKey().to(['read']),
+      ]),
   });
   type Schema = ClientSchema<typeof schema>;
 
@@ -272,7 +278,7 @@ describe('Read application data', () => {
           company: a.belongsTo('Company', 'companyId'),
         }),
       })
-      .authorization([a.allow.public()]);
+      .authorization((allow) => allow.publicApiKey());
     type Schema = ClientSchema<typeof schema>;
 
     const blogWithSelectionSet = {
@@ -352,7 +358,7 @@ describe('Read application data', () => {
           post: a.belongsTo('Post', 'postId'),
         }),
       })
-      .authorization([a.allow.public()]);
+      .authorization((allow) => allow.publicApiKey());
     type Schema = ClientSchema<typeof schema>;
 
     // #endregion mocking
@@ -394,7 +400,7 @@ describe('Read application data', () => {
           post: a.belongsTo('Post', 'postId'),
         }),
       })
-      .authorization([a.allow.public()]);
+      .authorization((allow) => allow.publicApiKey());
     type Schema = ClientSchema<typeof schema>;
 
     // simulated amplifyconfiguration.json

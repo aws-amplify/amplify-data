@@ -16,10 +16,22 @@ describe('implied fields', () => {
         .model({
           CPKParentIdFieldA: a.id().required(),
           CPKParentIdFieldB: a.id().required(),
-          childNormal: a.hasOne('CPKChild', ['CPKParentIdFieldA', 'CPKParentIdFieldB']),
-          childReciprocal: a.hasOne('CPKReciprocalChild', ['CPKParentIdFieldA', 'CPKParentIdFieldB']),
-          childHasManyNormal: a.hasMany('CPKHasManyChild', ['CPKParentIdFieldA', 'CPKParentIdFieldB']),
-          childHasManyReciprocal: a.hasMany('CPKReciprocalHasManyChild', ['CPKParentIdFieldA', 'CPKParentIdFieldB']),
+          childNormal: a.hasOne('CPKChild', [
+            'CPKParentIdFieldA',
+            'CPKParentIdFieldB',
+          ]),
+          childReciprocal: a.hasOne('CPKReciprocalChild', [
+            'CPKParentIdFieldA',
+            'CPKParentIdFieldB',
+          ]),
+          childHasManyNormal: a.hasMany('CPKHasManyChild', [
+            'CPKParentIdFieldA',
+            'CPKParentIdFieldB',
+          ]),
+          childHasManyReciprocal: a.hasMany('CPKReciprocalHasManyChild', [
+            'CPKParentIdFieldA',
+            'CPKParentIdFieldB',
+          ]),
         })
         .identifier(['CPKParentIdFieldA', 'CPKParentIdFieldB']),
       CPKChild: a
@@ -29,7 +41,10 @@ describe('implied fields', () => {
           value: a.string(),
           CPKParentIdFieldA: a.id(),
           CPKParentIdFieldB: a.id(),
-          parent: a.belongsTo('CPKParent', ['CPKParentIdFieldA', 'CPKParentIdFieldB']),
+          parent: a.belongsTo('CPKParent', [
+            'CPKParentIdFieldA',
+            'CPKParentIdFieldB',
+          ]),
         })
         .identifier(['CPKChildIdFieldA', 'CPKChildIdFieldB']),
       CPKReciprocalChild: a
@@ -39,7 +54,10 @@ describe('implied fields', () => {
           value: a.string(),
           CPKParentIdFieldA: a.id().required(),
           CPKParentIdFieldB: a.id().required(),
-          parent: a.belongsTo('CPKParent', ['CPKParentIdFieldA', 'CPKParentIdFieldB']),
+          parent: a.belongsTo('CPKParent', [
+            'CPKParentIdFieldA',
+            'CPKParentIdFieldB',
+          ]),
         })
         .identifier([
           'CPKReciprocalChildIdFieldA',
@@ -52,7 +70,10 @@ describe('implied fields', () => {
           value: a.string(),
           CPKParentIdFieldA: a.id(),
           CPKParentIdFieldB: a.id(),
-          parent: a.belongsTo('CPKParent', ['CPKParentIdFieldA', 'CPKParentIdFieldB']),
+          parent: a.belongsTo('CPKParent', [
+            'CPKParentIdFieldA',
+            'CPKParentIdFieldB',
+          ]),
         })
         .identifier(['CPKHasManyChildIdFieldA', 'CPKHasManyChildIdFieldB']),
       CPKReciprocalHasManyChild: a
@@ -62,7 +83,10 @@ describe('implied fields', () => {
           value: a.string(),
           CPKParentIdFieldA: a.id(),
           CPKParentIdFieldB: a.id(),
-          parent: a.belongsTo('CPKParent', ['CPKParentIdFieldA', 'CPKParentIdFieldB']),
+          parent: a.belongsTo('CPKParent', [
+            'CPKParentIdFieldA',
+            'CPKParentIdFieldB',
+          ]),
         })
         .identifier([
           'CPKReciprocalHasManyChildIdFieldA',
@@ -73,16 +97,10 @@ describe('implied fields', () => {
 
     test('repriprocal belongsTo on hasOne has explicitly defined reference fields', () => {
       type belongsToA = Expect<
-        Equal<
-          Schema['CPKReciprocalChild']['CPKParentIdFieldA'],
-          string
-        >
+        Equal<Schema['CPKReciprocalChild']['CPKParentIdFieldA'], string>
       >;
       type belongsToB = Expect<
-        Equal<
-          Schema['CPKReciprocalChild']['CPKParentIdFieldB'],
-          string
-        >
+        Equal<Schema['CPKReciprocalChild']['CPKParentIdFieldB'], string>
       >;
     });
   });
@@ -94,25 +112,25 @@ describe('implied fields', () => {
           somefield: a.string(),
           jsonfield: a.json(),
         })
-        .authorization([a.allow.owner()]),
+        .authorization((allow) => allow.owner()),
       CustomOwnerField: a
         .model({
           somefield: a.string(),
           jsonfield: a.json(),
         })
-        .authorization([a.allow.owner().inField('customOwnerField')]),
+        .authorization((allow) => allow.ownerDefinedIn('customOwnerField')),
       GroupIn: a
         .model({
           somefield: a.string(),
           jsonfield: a.json(),
         })
-        .authorization([a.allow.groupDefinedIn('myGroupField')]),
+        .authorization((allow) => allow.groupDefinedIn('myGroupField')),
       GroupsIn: a
         .model({
           somefield: a.string(),
           jsonfield: a.json(),
         })
-        .authorization([a.allow.groupsDefinedIn('myGroupsField')]),
+        .authorization((allow) => allow.groupsDefinedIn('myGroupsField')),
     });
     type Schema = ClientSchema<typeof schema>;
 
@@ -306,7 +324,7 @@ describe('SQL Schema', () => {
     const modified = sqlSchema
       .renameModels(() => [['post', 'RenamedPost']])
       .setAuthorization((models) =>
-        models.RenamedPost.authorization([a.allow.public()]),
+        models.RenamedPost.authorization((allow) => allow.publicApiKey()),
       );
 
     type Schema = typeof modified;
@@ -363,10 +381,10 @@ describe('SQL Schema', () => {
         ['comment', 'RenamedComment'],
       ])
       .setAuthorization((models) => [
-        models.RenamedPost.authorization([a.allow.public()]),
-        models.RenamedComment.authorization([a.allow.public()]),
+        models.RenamedPost.authorization((allow) => allow.publicApiKey()),
+        models.RenamedComment.authorization((allow) => allow.publicApiKey()),
         // tags is unchanged, since we didn't rename it
-        models.tags.authorization([a.allow.public()]),
+        models.tags.authorization((allow) => allow.publicApiKey()),
       ]);
 
     type Schema = typeof modified;

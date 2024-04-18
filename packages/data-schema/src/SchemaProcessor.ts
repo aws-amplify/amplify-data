@@ -1,11 +1,11 @@
 import { type CustomPathData, type InternalSchema } from './ModelSchema';
 import {
-  type ModelField, type InternalField, string,
-  ModelFieldTypeParamOuter
+  type ModelField,
+  type InternalField,
+  string,
+  ModelFieldTypeParamOuter,
 } from './ModelField';
-import {
-  type InternalRelationalField
-} from './ModelRelationalField';
+import { type InternalRelationalField } from './ModelRelationalField';
 import type { ModelType, InternalModel } from './ModelType';
 import type { InternalModelIndexType } from './ModelIndex';
 import {
@@ -539,21 +539,6 @@ function validateImpliedFields(
 }
 
 /**
- * Throws if resource/lambda auth is configured at the model or field level
- *
- * @param authorization A list of authorization rules.
- */
-function validateAuth(authorization: Authorization<any, any, any>[] = []) {
-  for (const entry of authorization) {
-    if (ruleIsResourceAuth(entry)) {
-      throw new Error(
-        'Lambda resource authorization is only confiugrable at the schema level',
-      );
-    }
-  }
-}
-
-/**
  * Given a list of authorization rules, produces a set of the implied owner and/or
  * group fields, along with the associated graphql `@auth` string directive.
  *
@@ -643,30 +628,6 @@ function calculateAuth(authorization: Authorization<any, any, any>[]) {
 type AuthRule = ReturnType<typeof accessData>;
 
 function validateCustomAuthRule(rule: AuthRule) {
-  if (rule.operations) {
-    throw new Error(
-      '.to() modifier is not supported for custom queries/mutations',
-    );
-  }
-
-  if (rule.groupOrOwnerField) {
-    throw new Error(
-      'Dynamic auth (owner or dynamic groups) is not supported for custom queries/mutations',
-    );
-  }
-
-  // identityClaim
-  if (rule.identityClaim) {
-    throw new Error(
-      'identityClaim attr is not supported with a.handler.custom',
-    );
-  }
-
-  // groupClaim
-  if (rule.groupClaim) {
-    throw new Error('groupClaim attr is not supported with a.handler.custom');
-  }
-
   if (rule.groups && rule.provider === 'oidc') {
     throw new Error('OIDC group auth is not supported with a.handler.custom');
   }
@@ -756,7 +717,6 @@ function processFieldLevelAuthRules(
   for (const [fieldName, fieldDef] of Object.entries(fields)) {
     const fieldAuth = (fieldDef as InternalField)?.data?.authorization || [];
 
-    validateAuth(fieldAuth);
     const { authString, authFields: fieldAuthField } = calculateAuth(fieldAuth);
 
     if (authString) fieldLevelAuthRules[fieldName] = authString;
@@ -1057,7 +1017,6 @@ const schemaPreprocessor = (
   const getRefType = getRefTypeForSchema(schema);
 
   for (const [typeName, typeDef] of topLevelTypes) {
-    validateAuth(typeDef.data?.authorization);
     const mostRelevantAuthRules: Authorization<any, any, any>[] =
       typeDef.data?.authorization?.length > 0
         ? typeDef.data.authorization
@@ -1188,11 +1147,19 @@ const schemaPreprocessor = (
       topLevelTypes.push(...models);
 
       const joined = gqlFields.join('\n  ');
-
-      const model = `type ${typeName} @model ${authString}\n{\n  ${joined}\n}`;
+      // TODO: update @model(timestamps: null) once a longer term solution gets
+      // determined.
+      //
+      // Context: SQL schema should not be automatically inserted with timestamp fields,
+      // passing (timestamps: null) to @model to suppress this behavior as a short
+      // term solution.
+      const model = `type ${typeName} @model(timestamps: null) ${authString}\n{\n  ${joined}\n}`;
       gqlModels.push(model);
     } else {
-      const fields = typeDef.data.fields as Record<string, ModelField<any, any>>;
+      const fields = typeDef.data.fields as Record<
+        string,
+        ModelField<any, any>
+      >;
       const identifier = typeDef.data.identifier;
       const [partitionKey] = identifier;
 

@@ -28,7 +28,7 @@ describe('Custom Operations mapper utils', () => {
       .mutation()
       .arguments({ x: a.string(), y: a.string().required() })
       .returns(a.string())
-      .authorization([a.allow.public()])
+      .authorization((allow) => allow.publicApiKey())
       .handler(a.handler.function('asdf'));
 
     type Actual = CustomOpArguments<OpShape<typeof aMutation>>;
@@ -44,7 +44,7 @@ describe('Custom Operations mapper utils', () => {
     const aMutation = a
       .mutation()
       .returns(a.string())
-      .authorization([a.allow.public()])
+      .authorization((allow) => allow.publicApiKey())
       .handler(a.handler.function('asdf'));
 
     type Actual = CustomOpArguments<OpShape<typeof aMutation>>;
@@ -58,14 +58,14 @@ describe('Custom Operations mapper utils', () => {
       .query()
       .arguments({ x: a.string(), y: a.string().required() })
       .returns(a.string())
-      .authorization([a.allow.public()])
+      .authorization((allow) => allow.publicApiKey())
       .handler(a.handler.function('asdf'));
 
     const aMutation = a
       .mutation()
       .arguments({ x: a.string() })
       .returns(a.string())
-      .authorization([a.allow.public()])
+      .authorization((allow) => allow.publicApiKey())
       .handler(a.handler.function('asdf'));
 
     const schema = a.schema({

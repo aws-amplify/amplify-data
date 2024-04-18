@@ -1,7 +1,5 @@
 import { a } from '../index';
-import {
-  InternalRelationalField
-} from '../src/ModelRelationalField';
+import { InternalRelationalField } from '../src/ModelRelationalField';
 import { configure } from '../src/ModelSchema';
 
 describe('relational field required modifier', () => {
@@ -29,13 +27,17 @@ describe('relational field required modifier', () => {
 
     it('offers an authorization modifier', () => {
       expect(() => {
-        const field = a.belongsTo('Test', 'testId').authorization([]);
+        const field = a
+          .belongsTo('Test', 'testId')
+          .authorization((allow) => allow.publicApiKey());
       }).not.toThrow();
     });
 
     it('references sets the references field value', () => {
-      const field = a
-        .belongsTo('Test', 'idFieldName') as InternalRelationalField;
+      const field = a.belongsTo(
+        'Test',
+        'idFieldName',
+      ) as InternalRelationalField;
       expect(field.data.references).toEqual(['idFieldName']);
     });
   });
@@ -63,18 +65,21 @@ describe('relational field required modifier', () => {
 
     it('offers an authorization modifier', () => {
       expect(() => {
-        const field = a.hasOne('Test', 'testId').authorization([]);
+        const field = a
+          .hasOne('Test', 'testId')
+          .authorization((allow) => allow.publicApiKey());
       }).not.toThrow();
     });
 
     it('required sets arrayRequired to true', () => {
-      const field = a.hasOne('Test', 'testId').required() as InternalRelationalField;
+      const field = a
+        .hasOne('Test', 'testId')
+        .required() as InternalRelationalField;
       expect(field.data.arrayRequired).toBe(true);
     });
 
     it('references sets the reference field value', () => {
-      const field = a
-        .hasOne('Test', 'idFieldName') as InternalRelationalField;
+      const field = a.hasOne('Test', 'idFieldName') as InternalRelationalField;
       expect(field.data.references).toEqual(['idFieldName']);
     });
   });
@@ -101,7 +106,9 @@ describe('relational field required modifier', () => {
 
     it('offers an authorization modifier', () => {
       expect(() => {
-        const field = a.hasMany('Test', 'testId').authorization([]);
+        const field = a
+          .hasMany('Test', 'testId')
+          .authorization((allow) => allow.publicApiKey());
       }).not.toThrow();
     });
 
@@ -120,8 +127,7 @@ describe('relational field required modifier', () => {
     });
 
     it('references sets the reference field value', () => {
-      const field = a
-        .hasMany('Test', 'idFieldName') as InternalRelationalField;
+      const field = a.hasMany('Test', 'idFieldName') as InternalRelationalField;
       expect(field.data.references).toEqual(['idFieldName']);
     });
   });
@@ -138,56 +144,60 @@ const aSql = configure({ database: datasourceConfigMySQL });
 
 describe('schema generation with relationships', () => {
   test('ddb masMany / belongsTo explicitly defined reference field on related model is supported', () => {
-    const schema = a.schema({
-      Team: a.model({
-        motto: a.string(),
-        members: a.hasMany('Member', ['teamId']),
-      }),
-      Member: a.model({
-        name: a.string(),
-        teamId: a.id(),
-        team: a.belongsTo('Team', ['teamId'])
+    const schema = a
+      .schema({
+        Team: a.model({
+          motto: a.string(),
+          members: a.hasMany('Member', ['teamId']),
+        }),
+        Member: a.model({
+          name: a.string(),
+          teamId: a.id(),
+          team: a.belongsTo('Team', ['teamId']),
+        }),
       })
-    })
-      .authorization([a.allow.public()]);
+      .authorization((allow) => allow.publicApiKey());
 
     expect(schema.transform().schema).toMatchSnapshot();
   });
 
   test('ddb masMany / belongsTo partition key + sort key is supported', () => {
-    const schema = a.schema({
-      Team: a.model({
-        id: a.id().required(),
-        sk: a.id().required(),
-        motto: a.string(),
-        members: a.hasMany('Member', ['teamId', 'teamSk']),
+    const schema = a
+      .schema({
+        Team: a
+          .model({
+            id: a.id().required(),
+            sk: a.id().required(),
+            motto: a.string(),
+            members: a.hasMany('Member', ['teamId', 'teamSk']),
+          })
+          .identifier(['id', 'sk']),
+        Member: a.model({
+          name: a.string(),
+          teamId: a.id(),
+          teamSk: a.id(),
+          team: a.belongsTo('Team', ['teamId', 'teamSk']),
+        }),
       })
-      .identifier(['id', 'sk']),
-      Member: a.model({
-        name: a.string(),
-        teamId: a.id(),
-        teamSk: a.id(),
-        team: a.belongsTo('Team', ['teamId', 'teamSk'])
-      })
-    })
-      .authorization([a.allow.public()]);
+      .authorization((allow) => allow.publicApiKey());
 
     expect(schema.transform().schema).toMatchSnapshot();
   });
 
   test('ddb hasOne / belongsTo explicitly defined reference field on related model is supported', () => {
-    const schema = a.schema({
-      Team: a.model({
-        motto: a.string(),
-        project: a.hasOne('Project', ['teamId']),
-      }),
-      Project: a.model({
-        name: a.string(),
-        teamId: a.id(),
-        team: a.belongsTo('Team', ['teamId']),
+    const schema = a
+      .schema({
+        Team: a.model({
+          motto: a.string(),
+          project: a.hasOne('Project', ['teamId']),
+        }),
+        Project: a.model({
+          name: a.string(),
+          teamId: a.id(),
+          team: a.belongsTo('Team', ['teamId']),
+        }),
       })
-    })
-      .authorization([a.allow.public()]);
+      .authorization((allow) => allow.publicApiKey());
 
     expect(schema.transform().schema).toMatchSnapshot();
   });
@@ -208,13 +218,13 @@ describe('schema generation with relationships', () => {
         Member: a.model({
           name: a.string(),
           teamId: a.id(),
-          team: a.belongsTo('Team', ['teamId'])
-        })
+          team: a.belongsTo('Team', ['teamId']),
+        }),
       })
-      .authorization([a.allow.public()]);
+      .authorization((allow) => allow.publicApiKey());
 
     expect(schema.transform().schema).toMatchSnapshot();
-  })
+  });
 
   test('sql references', () => {
     const schema = aSql
@@ -227,59 +237,65 @@ describe('schema generation with relationships', () => {
             project: a.hasOne('Project', 'teamProjectId'),
           })
           .identifier(['id']),
-        Project: a.model({
-          id: a.id().required(),
-          name: a.string(),
-          teamId: a.id(),
-          team: a.belongsTo('Team', ['teamId']),
-        })
+        Project: a
+          .model({
+            id: a.id().required(),
+            name: a.string(),
+            teamId: a.id(),
+            team: a.belongsTo('Team', ['teamId']),
+          })
           .identifier(['id']),
-        Member: a.model({
-          id: a.id().required(),
-          name: a.string(),
-          teamId: a.id(),
-          team: a.belongsTo('Team', ['teamId'])
-        })
-          .identifier(['id'])
+        Member: a
+          .model({
+            id: a.id().required(),
+            name: a.string(),
+            teamId: a.id(),
+            team: a.belongsTo('Team', ['teamId']),
+          })
+          .identifier(['id']),
       })
-      .authorization([a.allow.public()]);
+      .authorization((allow) => allow.publicApiKey());
 
     expect(schema.transform().schema).toMatchSnapshot();
   });
 
   test('heterogenous data source relationships', () => {
-    const sqlSchema = aSql.schema({
-      Team: a.model({
-        id: a.id().required(),
-        motto: a.string(),
-        members: a.hasMany('Member', ['teamId']),
-        project: a.hasOne('Project', ['teamId']),
+    const sqlSchema = aSql
+      .schema({
+        Team: a
+          .model({
+            id: a.id().required(),
+            motto: a.string(),
+            members: a.hasMany('Member', ['teamId']),
+            project: a.hasOne('Project', ['teamId']),
+          })
+          .identifier(['id']),
       })
-      .identifier(['id']),
-    })
-    .authorization([a.allow.public()]);
+      .authorization((allow) => allow.publicApiKey());
 
-    const ddbSchema = a.schema({
-      Project: a.model({
-        id: a.id().required(),
-        name: a.string(),
-        teamId: a.id(),
-        team: a.belongsTo('Team', ['teamId']),
+    const ddbSchema = a
+      .schema({
+        Project: a
+          .model({
+            id: a.id().required(),
+            name: a.string(),
+            teamId: a.id(),
+            team: a.belongsTo('Team', ['teamId']),
+          })
+          .identifier(['id']),
+        Member: a.model({
+          id: a.id().required(),
+          name: a.string(),
+          teamId: a.id(),
+          team: a.belongsTo('Team', ['teamId']),
+        }),
       })
-        .identifier(['id']),
-      Member: a.model({
-        id: a.id().required(),
-        name: a.string(),
-        teamId: a.id(),
-        team: a.belongsTo('Team', ['teamId'])
-      })
-    })
-    .authorization([a.allow.public()]);
+      .authorization((allow) => allow.publicApiKey());
 
     const schema = a.combine([sqlSchema, ddbSchema]);
     const graphql = schema.schemas
       .map((schema) => schema.transform().schema)
-      .join('\n')
+      .join('\n');
     expect(graphql).toMatchSnapshot();
   });
 });

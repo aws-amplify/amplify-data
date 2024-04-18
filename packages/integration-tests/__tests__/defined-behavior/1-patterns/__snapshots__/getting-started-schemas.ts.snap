@@ -45,6 +45,7 @@ exports[`getting started guides Todo schema 1`] = `
                   "operations": [
                     "read",
                   ],
+                  "provider": "apiKey",
                 },
               ],
             },

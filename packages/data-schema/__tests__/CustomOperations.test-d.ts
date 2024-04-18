@@ -462,7 +462,7 @@ describe('RDS custom operations', () => {
         .for(a.ref('likePost'))
         .handler(a.handler.function('myFunc')),
     })
-    .authorization([a.allow.public()]);
+    .authorization((allow) => allow.publicApiKey());
 
   type ResolvedClientSchema = ClientSchema<typeof s>;
 
