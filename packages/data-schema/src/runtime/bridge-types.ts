@@ -348,12 +348,14 @@ export interface GenerateServerClientParams {
   authToken?: string;
 }
 
-export type ClientInternalsGetter = (client: any) => {
+export type ClientInternals = {
   amplify: AmplifyClass;
   authMode: GraphQLAuthMode | undefined;
   authToken: string | undefined;
   headers: CustomHeaders | undefined;
 };
+
+export type ClientInternalsGetter = (client: any) => ClientInternals;
 
 export type BaseClient = BaseBrowserClient | BaseSSRClient;
 

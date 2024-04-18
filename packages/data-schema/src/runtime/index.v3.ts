@@ -4,3 +4,4 @@
 export * from './client/index.v3';
 export { addSchemaToClient } from './addSchemaToClient';
 export { addSchemaToClientWithInstance } from './addSchemaToClientWithInstance';
+export { BaseClient, ClientInternals } from './bridge-types';
