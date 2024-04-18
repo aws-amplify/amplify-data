@@ -20,14 +20,14 @@ describe('CustomOperations', () => {
     const client = generateClient<Schema>();
 
     test('the custom query input type matches the expected type', () => {
-      type ResolvedCreateInputType = Parameters<typeof client.queries.echo>[0];
+      type ResolvedQueryInputType = Parameters<typeof client.queries.echo>[0];
 
       type Expected = {
         optionalField?: string | null | undefined;
         requiredField: string;
       };
 
-      type _ = Expect<Equal<ResolvedCreateInputType, Expected>>;
+      type _ = Expect<Equal<ResolvedQueryInputType, Expected>>;
     });
   });
 });
