@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`internals - configure configure can set databaseType to SQL 1`] = `
-"type widget @model @auth(rules: [{allow: owner, ownerField: "owner"}])
+"type widget @model(timestamps: null) @auth(rules: [{allow: owner, ownerField: "owner"}])
 {
   title: String!
   someOwnerField: String
