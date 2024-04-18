@@ -18,7 +18,6 @@ import { BaseClient, ClientInternalsGetter } from './bridge-types';
 export function addSchemaToClientWithInstance<T extends Record<any, any>>(
   client: BaseClient,
   params: any,
-  // params: ServerClientGenerationParams & CommonPublicClientOptions,
   getInternals: ClientInternalsGetter,
 ): BaseClient &
   (ClientExtensionsSSRCookies<T> | ClientExtensionsSSRRequest<T>) {
