@@ -25,7 +25,7 @@ import type {
   SubscriptionCustomOperation,
 } from './CustomOperation';
 import { processSchema } from './SchemaProcessor';
-import { SchemaAuthorization } from './Authorization';
+import { AllowModifier, SchemaAuthorization, allow } from './Authorization';
 import { Brand, brand } from './util';
 import {
   ModelRelationalField,
@@ -93,7 +93,7 @@ export type ModelSchema<
 > = Omit<
   {
     authorization: <AuthRules extends SchemaAuthorization<any, any, any>>(
-      auth: AuthRules[],
+      callback: (allow: AllowModifier) => AuthRules | AuthRules[],
     ) => ModelSchema<
       SetTypeSubArg<T, 'authorization', AuthRules[]>,
       UsedMethods | 'authorization'
@@ -148,7 +148,7 @@ export type RDSModelSchema<
     >;
     // TODO: hide this, since SQL schema auth is configured via .setAuthorization?
     authorization: <AuthRules extends SchemaAuthorization<any, any, any>>(
-      auth: AuthRules[],
+      callback: (allow: AllowModifier) => AuthRules | AuthRules[],
     ) => RDSModelSchema<
       SetTypeSubArg<T, 'authorization', AuthRules[]>,
       UsedMethods | 'authorization'
@@ -274,8 +274,9 @@ function _rdsSchema<
 
       return processSchema({ schema: internalSchema });
     },
-    authorization(rules: any): any {
-      this.data.authorization = rules;
+    authorization(callback): any {
+      const rules = callback(allow);
+      this.data.authorization = Array.isArray(rules) ? rules : [rules];
       const { authorization: _, ...rest } = this;
       return rest;
     },
@@ -357,8 +358,9 @@ function _ddbSchema<
 
       return processSchema({ schema: internalSchema });
     },
-    authorization(rules: any): any {
-      this.data.authorization = rules;
+    authorization(callback): any {
+      const rules = callback(allow);
+      this.data.authorization = Array.isArray(rules) ? rules : [rules];
       const { authorization: _, ...rest } = this;
       return rest;
     },

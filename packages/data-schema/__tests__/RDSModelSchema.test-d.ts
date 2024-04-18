@@ -28,7 +28,7 @@ describe('RDSModelSchema', () => {
         description: a.string(),
       }),
     })
-    .authorization([a.allow.public()])
+    .authorization((allow) => allow.publicApiKey())
     .relationships((models) => [
       models.Post.addRelationships({
         parentBlog: a.belongsTo('Blog', 'parentBlogId'),

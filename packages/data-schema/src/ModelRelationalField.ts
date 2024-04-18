@@ -1,6 +1,6 @@
 import { SetTypeSubArg } from '@aws-amplify/data-schema-types';
 import { Brand } from './util';
-import { Authorization } from './Authorization';
+import { AllowModifier, Authorization, allow } from './Authorization';
 
 /**
  * Used to "attach" auth types to ModelField without exposing them on the builder.
@@ -73,7 +73,7 @@ type ModelRelationalFieldFunctions<
    * multiple authorization rules for this field.
    */
   authorization<AuthRuleType extends Authorization<any, any, any>>(
-    rules: AuthRuleType[],
+    callback: (allow: AllowModifier) => AuthRuleType | AuthRuleType[],
   ): ModelRelationalField<T, K | 'authorization', K, AuthRuleType>;
 };
 
@@ -159,8 +159,9 @@ function _modelRelationalField<
 
       return this;
     },
-    authorization(rules) {
-      data.authorization = rules;
+    authorization(callback) {
+      const rules = callback(allow);
+      data.authorization = Array.isArray(rules) ? rules : [rules];
 
       return this;
     },

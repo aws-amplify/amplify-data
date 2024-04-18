@@ -9,7 +9,7 @@ import type {
   InternalRelationalField,
   ModelRelationalFieldParamShape,
 } from './ModelRelationalField';
-import { Authorization } from './Authorization';
+import { AllowModifier, Authorization, allow } from './Authorization';
 import { RefType } from './RefType';
 import { EnumType, EnumTypeParamShape } from './EnumType';
 import { CustomType, CustomTypeParamShape } from './CustomType';
@@ -218,7 +218,7 @@ export type ModelType<
       K | 'secondaryIndexes'
     >;
     authorization<AuthRuleType extends Authorization<any, any, any>>(
-      rules: AuthRuleType[],
+      callback: (allow: Omit<AllowModifier, 'resource'>) => AuthRuleType | AuthRuleType[],
     ): ModelType<
       SetTypeSubArg<T, 'authorization', AuthRuleType[]>,
       K | 'authorization'
@@ -286,8 +286,10 @@ function _model<T extends ModelTypeParamShape>(fields: T['fields']) {
 
       return this;
     },
-    authorization(rules) {
-      data.authorization = rules;
+    authorization(callback) {
+      const { resource: _, ...rest } = allow;
+      const rules = callback(rest);
+      data.authorization = Array.isArray(rules) ? rules : [rules];
 
       return this;
     },

@@ -1,27 +1,34 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`auth rules owner() 1`] = `
-"type Model @model @auth(rules: [{allow: owner, ownerField: "owner"}])
-{
-  field: String
-}"
-`;
-
-exports[`auth rules owner().inField() 1`] = `
+exports[`auth rules given auth rule builder ".ownerDefinedIn()", generates schema with expected auth rule 1`] = `
 "type Model @model @auth(rules: [{allow: owner, ownerField: "field"}])
 {
   field: String
 }"
 `;
 
-exports[`auth rules owner().inField().to() 1`] = `
+exports[`auth rules given auth rule builder "allow.ownerDefinedIn().to()", generates schema with expected auth rule 1`] = `
 "type Model @model @auth(rules: [{allow: owner, operations: [create, delete], ownerField: "field"}])
 {
   field: String
 }"
 `;
 
-exports[`auth rules owner(userpool).inField().to(). 1`] = `
+exports[`auth rules given auth rule builder "guest()", generates schema with expected auth rule 1`] = `
+"type Model @model @auth(rules: [{allow: public, provider: iam}])
+{
+  field: String
+}"
+`;
+
+exports[`auth rules given auth rule builder "owner()", generates schema with expected auth rule 1`] = `
+"type Model @model @auth(rules: [{allow: owner, ownerField: "owner"}])
+{
+  field: String
+}"
+`;
+
+exports[`auth rules given auth rule builder "owner(userPools).to()", generates schema with expected auth rule 1`] = `
 "type Model @model @auth(rules: [{allow: owner, provider: userPools, operations: [create, list], ownerField: "owner"}])
 {
   field: String
@@ -29,7 +36,7 @@ exports[`auth rules owner(userpool).inField().to(). 1`] = `
 `;
 
 exports[`primitive field types generate expected graphql boolean 1`] = `
-"type Model @model @auth(rules: [{allow: public}])
+"type Model @model @auth(rules: [{allow: public, provider: apiKey}])
 {
   optionalField: Boolean
   requiredField: Boolean!
@@ -37,7 +44,7 @@ exports[`primitive field types generate expected graphql boolean 1`] = `
 `;
 
 exports[`primitive field types generate expected graphql date 1`] = `
-"type Model @model @auth(rules: [{allow: public}])
+"type Model @model @auth(rules: [{allow: public, provider: apiKey}])
 {
   optionalField: AWSDate
   requiredField: AWSDate!
@@ -45,7 +52,7 @@ exports[`primitive field types generate expected graphql date 1`] = `
 `;
 
 exports[`primitive field types generate expected graphql datetime 1`] = `
-"type Model @model @auth(rules: [{allow: public}])
+"type Model @model @auth(rules: [{allow: public, provider: apiKey}])
 {
   optionalField: AWSDateTime
   requiredField: AWSDateTime!
@@ -53,7 +60,7 @@ exports[`primitive field types generate expected graphql datetime 1`] = `
 `;
 
 exports[`primitive field types generate expected graphql email 1`] = `
-"type Model @model @auth(rules: [{allow: public}])
+"type Model @model @auth(rules: [{allow: public, provider: apiKey}])
 {
   optionalField: AWSEmail
   requiredField: AWSEmail!
@@ -61,7 +68,7 @@ exports[`primitive field types generate expected graphql email 1`] = `
 `;
 
 exports[`primitive field types generate expected graphql float 1`] = `
-"type Model @model @auth(rules: [{allow: public}])
+"type Model @model @auth(rules: [{allow: public, provider: apiKey}])
 {
   optionalField: Float
   requiredField: Float!
@@ -69,7 +76,7 @@ exports[`primitive field types generate expected graphql float 1`] = `
 `;
 
 exports[`primitive field types generate expected graphql id 1`] = `
-"type Model @model @auth(rules: [{allow: public}])
+"type Model @model @auth(rules: [{allow: public, provider: apiKey}])
 {
   optionalField: ID
   requiredField: ID!
@@ -77,7 +84,7 @@ exports[`primitive field types generate expected graphql id 1`] = `
 `;
 
 exports[`primitive field types generate expected graphql integer 1`] = `
-"type Model @model @auth(rules: [{allow: public}])
+"type Model @model @auth(rules: [{allow: public, provider: apiKey}])
 {
   optionalField: Int
   requiredField: Int!
@@ -85,7 +92,7 @@ exports[`primitive field types generate expected graphql integer 1`] = `
 `;
 
 exports[`primitive field types generate expected graphql ipAddress 1`] = `
-"type Model @model @auth(rules: [{allow: public}])
+"type Model @model @auth(rules: [{allow: public, provider: apiKey}])
 {
   optionalField: AWSIPAddress
   requiredField: AWSIPAddress!
@@ -93,7 +100,7 @@ exports[`primitive field types generate expected graphql ipAddress 1`] = `
 `;
 
 exports[`primitive field types generate expected graphql json 1`] = `
-"type Model @model @auth(rules: [{allow: public}])
+"type Model @model @auth(rules: [{allow: public, provider: apiKey}])
 {
   optionalField: AWSJSON
   requiredField: AWSJSON!
@@ -101,7 +108,7 @@ exports[`primitive field types generate expected graphql json 1`] = `
 `;
 
 exports[`primitive field types generate expected graphql phone 1`] = `
-"type Model @model @auth(rules: [{allow: public}])
+"type Model @model @auth(rules: [{allow: public, provider: apiKey}])
 {
   optionalField: AWSPhone
   requiredField: AWSPhone!
@@ -109,7 +116,7 @@ exports[`primitive field types generate expected graphql phone 1`] = `
 `;
 
 exports[`primitive field types generate expected graphql string 1`] = `
-"type Model @model @auth(rules: [{allow: public}])
+"type Model @model @auth(rules: [{allow: public, provider: apiKey}])
 {
   optionalField: String
   requiredField: String!
@@ -117,7 +124,7 @@ exports[`primitive field types generate expected graphql string 1`] = `
 `;
 
 exports[`primitive field types generate expected graphql time 1`] = `
-"type Model @model @auth(rules: [{allow: public}])
+"type Model @model @auth(rules: [{allow: public, provider: apiKey}])
 {
   optionalField: AWSTime
   requiredField: AWSTime!
@@ -125,7 +132,7 @@ exports[`primitive field types generate expected graphql time 1`] = `
 `;
 
 exports[`primitive field types generate expected graphql timestamp 1`] = `
-"type Model @model @auth(rules: [{allow: public}])
+"type Model @model @auth(rules: [{allow: public, provider: apiKey}])
 {
   optionalField: AWSTimestamp
   requiredField: AWSTimestamp!
@@ -133,7 +140,7 @@ exports[`primitive field types generate expected graphql timestamp 1`] = `
 `;
 
 exports[`primitive field types generate expected graphql url 1`] = `
-"type Model @model @auth(rules: [{allow: public}])
+"type Model @model @auth(rules: [{allow: public, provider: apiKey}])
 {
   optionalField: AWSURL
   requiredField: AWSURL!

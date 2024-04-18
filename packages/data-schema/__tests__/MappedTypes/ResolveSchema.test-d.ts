@@ -250,7 +250,7 @@ describe('ResolveSchema Mapped Type', () => {
             dataSource: a.ref('Post'),
           }),
         )
-        .authorization([a.allow.private()]),
+        .authorization((allow) => allow.authenticated()),
 
       onUpdateOrLikePost: a
         .subscription()
