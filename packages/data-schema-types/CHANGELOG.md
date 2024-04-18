@@ -1,5 +1,11 @@
 # @aws-amplify/data-schema-types
 
+## 0.9.0
+
+### Minor Changes
+
+- daeafeb: updates builds to include cjs, esm. moves runtime types and behavior into data-schema
+
 ## 0.8.0
 
 ### Minor Changes

@@ -1,5 +1,18 @@
 # @aws-amplify/data-schema
 
+## 0.16.0
+
+### Minor Changes
+
+- 2b0f03c: refactor: update authorization builder
+- daeafeb: updates builds to include cjs, esm. moves runtime types and behavior into data-schema
+
+### Patch Changes
+
+- d7954e3: fix: timestamp fields are inserted for SQL schema
+- Updated dependencies [daeafeb]
+  - @aws-amplify/data-schema-types@0.9.0
+
 ## 0.15.0
 
 ### Minor Changes
