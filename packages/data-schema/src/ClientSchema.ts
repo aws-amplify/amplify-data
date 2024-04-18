@@ -1,4 +1,4 @@
-import type { __modelMeta__ } from '@aws-amplify/data-schema-types';
+import type { __modelMeta__ } from './runtime/client';
 import type { GenericModelSchema, RDSModelSchema } from './ModelSchema';
 
 // MappedTypes

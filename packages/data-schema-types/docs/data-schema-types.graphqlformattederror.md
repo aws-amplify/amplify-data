@@ -14,12 +14,151 @@ export interface GraphQLFormattedError
 
 ## Properties
 
-|  Property | Modifiers | Type | Description |
-|  --- | --- | --- | --- |
-|  [errorInfo](./data-schema-types.graphqlformattederror.errorinfo.md) | <code>readonly</code> | null \| { \[key: string\]: unknown; } | Additional error metadata that can be surfaced via error handling resolver utils: \* JS - https://docs.aws.amazon.com/appsync/latest/devguide/built-in-util-js.html\#utility-helpers-in-error-js \* VTL - https://docs.aws.amazon.com/appsync/latest/devguide/utility-helpers-in-util.html\#utility-helpers-in-error |
-|  [errorType](./data-schema-types.graphqlformattederror.errortype.md) | <code>readonly</code> | string | The AppSync exception category. Indicates the source of the error. |
-|  [extensions?](./data-schema-types.graphqlformattederror.extensions.md) | <code>readonly</code> | { \[key: string\]: unknown; } | _(Optional)_ Reserved for implementors to extend the protocol however they see fit, and hence there are no additional restrictions on its contents. |
-|  [locations?](./data-schema-types.graphqlformattederror.locations.md) | <code>readonly</code> | ReadonlyArray&lt;[SourceLocation](./data-schema-types.sourcelocation.md)<!-- -->&gt; | _(Optional)_ If an error can be associated to a particular point in the requested GraphQL document, it should contain a list of locations. |
-|  [message](./data-schema-types.graphqlformattederror.message.md) | <code>readonly</code> | string | A short, human-readable summary of the problem that \*\*SHOULD NOT\*\* change from occurrence to occurrence of the problem, except for purposes of localization. |
-|  [path?](./data-schema-types.graphqlformattederror.path.md) | <code>readonly</code> | ReadonlyArray&lt;string \| number&gt; | _(Optional)_ If an error can be associated to a particular field in the GraphQL result, it \_must\_ contain an entry with the key <code>path</code> that details the path of the response field which experienced the error. This allows clients to identify whether a null result is intentional or caused by a runtime error. |
+<table><thead><tr><th>
 
+Property
+
+
+</th><th>
+
+Modifiers
+
+
+</th><th>
+
+Type
+
+
+</th><th>
+
+Description
+
+
+</th></tr></thead>
+<tbody><tr><td>
+
+[errorInfo](./data-schema-types.graphqlformattederror.errorinfo.md)
+
+
+</td><td>
+
+`readonly`
+
+
+</td><td>
+
+null \| { \[key: string\]: unknown; }
+
+
+</td><td>
+
+Additional error metadata that can be surfaced via error handling resolver utils: \* JS - https://docs.aws.amazon.com/appsync/latest/devguide/built-in-util-js.html\#utility-helpers-in-error-js \* VTL - https://docs.aws.amazon.com/appsync/latest/devguide/utility-helpers-in-util.html\#utility-helpers-in-error
+
+
+</td></tr>
+<tr><td>
+
+[errorType](./data-schema-types.graphqlformattederror.errortype.md)
+
+
+</td><td>
+
+`readonly`
+
+
+</td><td>
+
+string
+
+
+</td><td>
+
+The AppSync exception category. Indicates the source of the error.
+
+
+</td></tr>
+<tr><td>
+
+[extensions?](./data-schema-types.graphqlformattederror.extensions.md)
+
+
+</td><td>
+
+`readonly`
+
+
+</td><td>
+
+{ \[key: string\]: unknown; }
+
+
+</td><td>
+
+_(Optional)_ Reserved for implementors to extend the protocol however they see fit, and hence there are no additional restrictions on its contents.
+
+
+</td></tr>
+<tr><td>
+
+[locations?](./data-schema-types.graphqlformattederror.locations.md)
+
+
+</td><td>
+
+`readonly`
+
+
+</td><td>
+
+ReadonlyArray&lt;[SourceLocation](./data-schema-types.sourcelocation.md)<!-- -->&gt;
+
+
+</td><td>
+
+_(Optional)_ If an error can be associated to a particular point in the requested GraphQL document, it should contain a list of locations.
+
+
+</td></tr>
+<tr><td>
+
+[message](./data-schema-types.graphqlformattederror.message.md)
+
+
+</td><td>
+
+`readonly`
+
+
+</td><td>
+
+string
+
+
+</td><td>
+
+A short, human-readable summary of the problem that \*\*SHOULD NOT\*\* change from occurrence to occurrence of the problem, except for purposes of localization.
+
+
+</td></tr>
+<tr><td>
+
+[path?](./data-schema-types.graphqlformattederror.path.md)
+
+
+</td><td>
+
+`readonly`
+
+
+</td><td>
+
+ReadonlyArray&lt;string \| number&gt;
+
+
+</td><td>
+
+_(Optional)_ If an error can be associated to a particular field in the GraphQL result, it \_must\_ contain an entry with the key `path` that details the path of the response field which experienced the error. This allows clients to identify whether a null result is intentional or caused by a runtime error.
+
+
+</td></tr>
+</tbody></table>

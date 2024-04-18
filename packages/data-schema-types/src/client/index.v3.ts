@@ -1,10 +1,7 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
-
-export declare const __modelMeta__: unique symbol;
-
-export type ExtractModelMeta<T extends Record<any, any>> =
-  T[typeof __modelMeta__];
+import { __modelMeta__, ExtractModelMeta } from './symbol';
+export { __modelMeta__, ExtractModelMeta } from './symbol';
 
 export type ModelTypes<
   _T extends Record<any, any> = never,

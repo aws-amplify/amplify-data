@@ -9,19 +9,61 @@ Make a `hasOne()` or `hasMany()` relationship bi-directional using the `belongsT
 **Signature:**
 
 ```typescript
-export declare function belongsTo<RM extends string>(relatedModel: RM, references: string | string[]): ModelRelationalField<ModelRelationalTypeArgFactory<RM, ModelRelationshipTypes.belongsTo, false>, RM, "required" | "valueRequired" | "arrayRequired", undefined>;
+export declare function belongsTo<RM extends string>(relatedModel: RM, references: string | string[]): ModelRelationalField<ModelRelationalTypeArgFactory<RM, ModelRelationshipTypes.belongsTo, false>, RM, "valueRequired" | "arrayRequired" | "required", undefined>;
 ```
 
 ## Parameters
 
-|  Parameter | Type | Description |
-|  --- | --- | --- |
-|  relatedModel | RM | name of the related <code>.hasOne()</code> or <code>.hasMany()</code> model |
-|  references | string \| string\[\] |  |
+<table><thead><tr><th>
 
+Parameter
+
+
+</th><th>
+
+Type
+
+
+</th><th>
+
+Description
+
+
+</th></tr></thead>
+<tbody><tr><td>
+
+relatedModel
+
+
+</td><td>
+
+RM
+
+
+</td><td>
+
+name of the related `.hasOne()` or `.hasMany()` model
+
+
+</td></tr>
+<tr><td>
+
+references
+
+
+</td><td>
+
+string \| string\[\]
+
+
+</td><td>
+
+
+</td></tr>
+</tbody></table>
 **Returns:**
 
-ModelRelationalField&lt;ModelRelationalTypeArgFactory&lt;RM, ModelRelationshipTypes.belongsTo, false&gt;, RM, "required" \| "valueRequired" \| "arrayRequired", undefined&gt;
+ModelRelationalField&lt;ModelRelationalTypeArgFactory&lt;RM, ModelRelationshipTypes.belongsTo, false&gt;, RM, "valueRequired" \| "arrayRequired" \| "required", undefined&gt;
 
 a belong-to relationship definition
 

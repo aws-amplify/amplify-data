@@ -14,11 +14,53 @@ export declare function hasOne<RM extends string>(relatedModel: RM, references: 
 
 ## Parameters
 
-|  Parameter | Type | Description |
-|  --- | --- | --- |
-|  relatedModel | RM | the name of the related model |
-|  references | string \| string\[\] |  |
+<table><thead><tr><th>
 
+Parameter
+
+
+</th><th>
+
+Type
+
+
+</th><th>
+
+Description
+
+
+</th></tr></thead>
+<tbody><tr><td>
+
+relatedModel
+
+
+</td><td>
+
+RM
+
+
+</td><td>
+
+the name of the related model
+
+
+</td></tr>
+<tr><td>
+
+references
+
+
+</td><td>
+
+string \| string\[\]
+
+
+</td><td>
+
+
+</td></tr>
+</tbody></table>
 **Returns:**
 
 ModelRelationalField&lt;ModelRelationalTypeArgFactory&lt;RM, ModelRelationshipTypes.hasOne, false&gt;, RM, "valueRequired" \| "arrayRequired", undefined&gt;

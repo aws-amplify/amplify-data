@@ -16,12 +16,145 @@ export interface DerivedApiDefinition
 
 ## Properties
 
-|  Property | Modifiers | Type | Description |
-|  --- | --- | --- | --- |
-|  [customSqlDataSourceStrategies?](./data-schema-types.derivedapidefinition.customsqldatasourcestrategies.md) | <code>readonly</code> | [CustomSqlDataSourceStrategy](./data-schema-types.customsqldatasourcestrategy.md)<!-- -->\[\] | _(Optional)_ |
-|  [functionSchemaAccess](./data-schema-types.derivedapidefinition.functionschemaaccess.md) | <code>readonly</code> | [FunctionSchemaAccess](./data-schema-types.functionschemaaccess.md)<!-- -->\[\] |  |
-|  [functionSlots](./data-schema-types.derivedapidefinition.functionslots.md) | <code>readonly</code> | any\[\] | Retrieve any function slots defined explicitly in the Api definition. |
-|  [jsFunctions](./data-schema-types.derivedapidefinition.jsfunctions.md) | <code>readonly</code> | [JsResolver](./data-schema-types.jsresolver.md)<!-- -->\[\] |  |
-|  [lambdaFunctions](./data-schema-types.derivedapidefinition.lambdafunctions.md) | <code>readonly</code> | [LambdaFunctionDefinition](./data-schema-types.lambdafunctiondefinition.md) |  |
-|  [schema](./data-schema-types.derivedapidefinition.schema.md) | <code>readonly</code> | string | Return the schema definition as a graphql string, with amplify directives allowed. |
+<table><thead><tr><th>
 
+Property
+
+
+</th><th>
+
+Modifiers
+
+
+</th><th>
+
+Type
+
+
+</th><th>
+
+Description
+
+
+</th></tr></thead>
+<tbody><tr><td>
+
+[customSqlDataSourceStrategies?](./data-schema-types.derivedapidefinition.customsqldatasourcestrategies.md)
+
+
+</td><td>
+
+`readonly`
+
+
+</td><td>
+
+[CustomSqlDataSourceStrategy](./data-schema-types.customsqldatasourcestrategy.md)<!-- -->\[\]
+
+
+</td><td>
+
+_(Optional)_
+
+
+</td></tr>
+<tr><td>
+
+[functionSchemaAccess](./data-schema-types.derivedapidefinition.functionschemaaccess.md)
+
+
+</td><td>
+
+`readonly`
+
+
+</td><td>
+
+[FunctionSchemaAccess](./data-schema-types.functionschemaaccess.md)<!-- -->\[\]
+
+
+</td><td>
+
+
+</td></tr>
+<tr><td>
+
+[functionSlots](./data-schema-types.derivedapidefinition.functionslots.md)
+
+
+</td><td>
+
+`readonly`
+
+
+</td><td>
+
+any\[\]
+
+
+</td><td>
+
+Retrieve any function slots defined explicitly in the Api definition.
+
+
+</td></tr>
+<tr><td>
+
+[jsFunctions](./data-schema-types.derivedapidefinition.jsfunctions.md)
+
+
+</td><td>
+
+`readonly`
+
+
+</td><td>
+
+[JsResolver](./data-schema-types.jsresolver.md)<!-- -->\[\]
+
+
+</td><td>
+
+
+</td></tr>
+<tr><td>
+
+[lambdaFunctions](./data-schema-types.derivedapidefinition.lambdafunctions.md)
+
+
+</td><td>
+
+`readonly`
+
+
+</td><td>
+
+[LambdaFunctionDefinition](./data-schema-types.lambdafunctiondefinition.md)
+
+
+</td><td>
+
+
+</td></tr>
+<tr><td>
+
+[schema](./data-schema-types.derivedapidefinition.schema.md)
+
+
+</td><td>
+
+`readonly`
+
+
+</td><td>
+
+string
+
+
+</td><td>
+
+Return the schema definition as a graphql string, with amplify directives allowed.
+
+
+</td></tr>
+</tbody></table>

@@ -7,12 +7,10 @@ import type {
   Prettify,
   Equal,
 } from '../util';
+import { __modelMeta__, ExtractModelMeta } from './symbol';
 import type { Observable } from 'rxjs';
 
-export declare const __modelMeta__: unique symbol;
-
-export type ExtractModelMeta<T extends Record<any, any>> =
-  T[typeof __modelMeta__];
+export { __modelMeta__, ExtractModelMeta } from './symbol';
 
 type Model = Record<string, any>;
 
@@ -481,6 +479,7 @@ type ModelMetaShape = {
 type ModelTypesClient<
   Model extends Record<string, unknown>,
   ModelMeta extends ModelMetaShape,
+  FlatModel extends Record<string, unknown> = ResolvedModel<Model>,
 > = IndexQueryMethodsFromIR<ModelMeta['secondaryIndexes'], Model> & {
   create: (
     model: Prettify<CreateModelInput<Model, ModelMeta>>,
@@ -506,10 +505,7 @@ type ModelTypesClient<
       headers?: CustomHeaders;
     },
   ) => SingularReturnValue<Model>;
-  get<
-    FlatModel extends Record<string, unknown> = ResolvedModel<Model>,
-    SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[],
-  >(
+  get<SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[]>(
     identifier: ModelIdentifier<ModelMeta>,
     options?: {
       selectionSet?: SelectionSet;
@@ -518,10 +514,7 @@ type ModelTypesClient<
       headers?: CustomHeaders;
     },
   ): SingularReturnValue<Prettify<ReturnValue<Model, FlatModel, SelectionSet>>>;
-  list<
-    FlatModel extends Record<string, unknown> = ResolvedModel<Model>,
-    SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[],
-  >(
+  list<SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[]>(
     options?: Partial<ModelIdentifier<ModelMeta>> & {
       filter?: ModelFilter<Model>;
       sortDirection?: ModelSortDirection;
@@ -534,7 +527,6 @@ type ModelTypesClient<
     },
   ): ListReturnValue<Prettify<ReturnValue<Model, FlatModel, SelectionSet>>>;
   onCreate<
-    FlatModel extends Record<string, unknown> = ResolvedModel<Model>,
     SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[],
   >(options?: {
     filter?: ModelFilter<Model>;
@@ -546,7 +538,6 @@ type ModelTypesClient<
     Prettify<ReturnValue<Model, FlatModel, SelectionSet>>
   >;
   onUpdate<
-    FlatModel extends Record<string, unknown> = ResolvedModel<Model>,
     SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[],
   >(options?: {
     filter?: ModelFilter<Model>;
@@ -558,7 +549,6 @@ type ModelTypesClient<
     Prettify<ReturnValue<Model, FlatModel, SelectionSet>>
   >;
   onDelete<
-    FlatModel extends Record<string, unknown> = ResolvedModel<Model>,
     SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[],
   >(options?: {
     filter?: ModelFilter<Model>;
@@ -570,7 +560,6 @@ type ModelTypesClient<
     Prettify<ReturnValue<Model, FlatModel, SelectionSet>>
   >;
   observeQuery<
-    FlatModel extends Record<string, unknown> = ResolvedModel<Model>,
     SelectionSet extends ModelPath<FlatModel>[] = never[],
   >(options?: {
     filter?: ModelFilter<Model>;
@@ -585,6 +574,7 @@ type ModelTypesClient<
 type ModelTypesSSRCookies<
   Model extends Record<string, unknown>,
   ModelMeta extends ModelMetaShape,
+  FlatModel extends Record<string, unknown> = ResolvedModel<Model>,
 > = IndexQueryMethodsFromIR<ModelMeta['secondaryIndexes'], Model> & {
   create: (
     model: Prettify<CreateModelInput<Model, ModelMeta>>,
@@ -610,10 +600,7 @@ type ModelTypesSSRCookies<
       headers?: CustomHeaders;
     },
   ) => SingularReturnValue<Model>;
-  get<
-    FlatModel extends Record<string, unknown> = ResolvedModel<Model>,
-    SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[],
-  >(
+  get<SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[]>(
     identifier: ModelIdentifier<ModelMeta>,
     options?: {
       selectionSet?: SelectionSet;
@@ -622,10 +609,7 @@ type ModelTypesSSRCookies<
       headers?: CustomHeaders;
     },
   ): SingularReturnValue<Prettify<ReturnValue<Model, FlatModel, SelectionSet>>>;
-  list<
-    FlatModel extends Record<string, unknown> = ResolvedModel<Model>,
-    SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[],
-  >(
+  list<SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[]>(
     options?: Partial<ModelIdentifier<ModelMeta>> & {
       filter?: ModelFilter<Model>;
       sortDirection?: ModelSortDirection;
@@ -642,6 +626,7 @@ type ModelTypesSSRCookies<
 type ModelTypesSSRRequest<
   Model extends Record<string, unknown>,
   ModelMeta extends ModelMetaShape,
+  FlatModel extends Record<string, unknown> = ResolvedModel<Model>,
 > = IndexQueryMethodsFromIR<ModelMeta['secondaryIndexes'], Model> & {
   create: (
     // TODO: actual type
@@ -671,10 +656,7 @@ type ModelTypesSSRRequest<
       headers?: CustomHeaders;
     },
   ) => SingularReturnValue<Model>;
-  get<
-    FlatModel extends Record<string, unknown> = ResolvedModel<Model>,
-    SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[],
-  >(
+  get<SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[]>(
     contextSpec: any,
     identifier: ModelIdentifier<ModelMeta>,
     options?: {
@@ -684,10 +666,7 @@ type ModelTypesSSRRequest<
       headers?: CustomHeaders;
     },
   ): SingularReturnValue<Prettify<ReturnValue<Model, FlatModel, SelectionSet>>>;
-  list<
-    FlatModel extends Record<string, unknown> = ResolvedModel<Model>,
-    SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[],
-  >(
+  list<SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[]>(
     contextSpec: any,
     options?: Partial<ModelIdentifier<ModelMeta>> & {
       filter?: ModelFilter<Model>;

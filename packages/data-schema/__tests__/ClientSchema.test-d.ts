@@ -1,4 +1,5 @@
-import { a, ClientSchema } from '../index';
+import { a, ClientSchema } from '../src/index';
+import { __modelMeta__ } from '../src/runtime';
 import { configure } from '../src/internals';
 import {
   Expect,
@@ -6,7 +7,6 @@ import {
   Prettify,
   ExpectFalse,
   HasKey,
-  __modelMeta__,
 } from '@aws-amplify/data-schema-types';
 
 describe('implied fields', () => {

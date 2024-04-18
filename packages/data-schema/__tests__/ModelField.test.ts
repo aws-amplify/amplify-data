@@ -1,5 +1,5 @@
 import { expectTypeTestsToPassAsync } from 'jest-tsd';
-import { a } from '../index';
+import { a } from '../src/index';
 import { ModelField, InternalField, __auth } from '../src/ModelField';
 import {
   ModelRelationalField,

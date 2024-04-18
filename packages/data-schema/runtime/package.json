@@ -1,0 +1,8 @@
+{
+  "name": "@aws-amplify/data-schema/runtime",
+  "main": "../dist/cjs/runtime/index.js",
+  "module": "../dist/esm/runtime/index.mjs",
+  "types": "../dist/esm/runtime/index.d.ts",
+  "react-native": "../src/runtime/index.ts",
+  "sideEffects": false
+}

@@ -2,37 +2,47 @@
   "name": "@aws-amplify/data-schema-types",
   "version": "0.8.0",
   "license": "Apache-2.0",
-  "main": "./lib-esm/index.d.ts",
-  "types": "./lib-esm/index.d.ts",
+  "main": "./dist/cjs/index.js",
+  "module": "./dist/esm/index.mjs",
+  "types": "./dist/esm/index.d.ts",
   "react-native": "./src/index.ts",
   "typesVersions": {
     "<5": {
-      "lib-esm/index.d.ts": [
-        "lib-esm/index.v3.d.ts"
+      "dist/esm/index.d.ts": [
+        "./dist/esm/index.v3.d.ts"
       ]
     }
   },
   "scripts": {
-    "build": "npm run build:esm",
-    "build:esm": "npm run clean && tsc -p ./tsconfig.json",
-    "build:esm:watch": "npm run build:esm -- --watch",
-    "clean": "rimraf lib-esm tsconfig.tsbuildinfo",
+    "build": "npm run clean && npm run build:esm-cjs",
+    "build:esm-cjs": "rollup -c rollup.config.mjs",
+    "build:watch": "npm run build:esm-cjs -- --watch",
+    "clean": "rimraf dist",
     "docs": "api-extractor run && api-documenter markdown --input-folder temp --output-folder docs",
     "docs:temp": "api-extractor run && api-documenter markdown --input-folder temp --output-folder temp/docs",
     "check-api": "rimraf temp && npm run docs:temp && node ../../scripts/shallow-dir-diff.js docs temp/docs",
     "test": "echo \"No tests\"",
     "lint": "eslint ."
   },
+  "exports": {
+    ".": {
+      "types": "./dist/esm/index.d.ts",
+      "import": "./dist/esm/index.mjs",
+      "require": "./dist/cjs/index.js",
+      "react-native": "./src/index.ts"
+    }
+  },
   "devDependencies": {
     "typescript": "^5.1.6"
   },
   "files": [
     "src",
-    "lib-esm/**",
+    "dist/**",
     "package.json"
   ],
   "dependencies": {
-    "rxjs": "^7.8.1",
-    "@aws-amplify/plugin-types": "^0.9.0-beta.1"
+    "@aws-amplify/plugin-types": "^0.9.0-beta.1",
+    "graphql": "15.8.0",
+    "rxjs": "^7.8.1"
   }
 }

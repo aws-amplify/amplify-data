@@ -1,10 +1,6 @@
-import type {
-  Equal,
-  Expect,
-  ExtractModelMeta,
-  Prettify,
-} from '@aws-amplify/data-schema-types';
-import { ClientSchema, a } from '../index';
+import type { Equal, Expect, Prettify } from '@aws-amplify/data-schema-types';
+import type { ExtractModelMeta } from '../src/runtime';
+import { ClientSchema, a } from '../src/index';
 import type { AppSyncResolverHandler } from 'aws-lambda';
 import { configure } from '../src/ModelSchema';
 
