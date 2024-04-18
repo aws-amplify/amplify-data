@@ -310,17 +310,6 @@ Description
 </th></tr></thead>
 <tbody><tr><td>
 
-[allow](./data-schema.a.allow.md)
-
-
-</td><td>
-
-Defines an authorization rule for your data models and fields. First choose an authorization strategy (`public`<!-- -->, `private`<!-- -->, `owner`<!-- -->, `group`<!-- -->, or `custom`<!-- -->), then choose an auth provider (`apiKey`<!-- -->, `iam`<!-- -->, `userPools`<!-- -->, `oidc`<!-- -->, or `function`<!-- -->) and optionally use `.to(...)` to specify the operations that can be performed against your data models and fields.
-
-
-</td></tr>
-<tr><td>
-
 [handler](./data-schema.a.handler.md)
 
 
