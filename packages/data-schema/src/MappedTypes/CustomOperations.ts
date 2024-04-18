@@ -67,14 +67,16 @@ export type CustomOpArguments<Shape extends CustomOperationParamShape> =
   Shape['arguments'] extends null
     ? never
     : {
-        [FieldName in keyof Shape['arguments']]: Shape['arguments'][FieldName] extends ModelField<
-          infer R,
-          any,
-          any
-        >
-          ? R
-          : never;
-      };
+          [FieldName in keyof Shape['arguments']]: Shape['arguments'][FieldName] extends ModelField<
+            infer R,
+            any,
+            any
+          >
+            ? R
+            : never;
+        } extends infer Resolved
+      ? ResolveCustomTypeFieldsRequirements<Resolved>
+      : never;
 
 /**
  * Computes the return type from the `returnType` of a custom operation shape.
@@ -111,7 +113,7 @@ export type CustomOpReturnType<
                   thisCustomType: R['fields'];
                 }>['thisCustomType']
               > // The inline `.customType()` with a custom operation doesn't have
-              // `.required()` modifier, hence it's nullable
+            // `.required()` modifier, hence it's nullable
             | null
         : never;
 
@@ -237,20 +239,21 @@ export type CustomOperationHandlerTypes<
  *
  * (Custom handlers should not return lazy loaded fields -- they're *lazy loaded*.)
  */
-type LambdaReturnType<T> = T extends Record<string, any>
-  ? {
-      // Return type can include `null | undefined`, which we can't meaningfully
-      // map over.
-      [K in keyof Exclude<T, null | undefined> as Exclude<
-        T,
-        null | undefined
-      >[K] extends (...args: any) => any
-        ? never
-        : K]: Exclude<T, null | undefined>[K];
-    }
-  :
-      | T
-      // If the original return type allowed null | undefined, mix them back into
-      // the final return type
-      | (null extends T ? null : never)
-      | (undefined extends T ? undefined : never);
+type LambdaReturnType<T> =
+  T extends Record<string, any>
+    ? {
+        // Return type can include `null | undefined`, which we can't meaningfully
+        // map over.
+        [K in keyof Exclude<T, null | undefined> as Exclude<
+          T,
+          null | undefined
+        >[K] extends (...args: any) => any
+          ? never
+          : K]: Exclude<T, null | undefined>[K];
+      }
+    :
+        | T
+        // If the original return type allowed null | undefined, mix them back into
+        // the final return type
+        | (null extends T ? null : never)
+        | (undefined extends T ? undefined : never);
