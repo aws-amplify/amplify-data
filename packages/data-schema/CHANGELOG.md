@@ -1,5 +1,11 @@
 # @aws-amplify/data-schema
 
+## 0.16.1
+
+### Patch Changes
+
+- 29d18a8: adds TS types and typesVersions for TS less than 5
+
 ## 0.16.0
 
 ### Minor Changes
