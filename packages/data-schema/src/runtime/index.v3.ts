@@ -8,5 +8,5 @@ export declare function addSchemaToClient<T extends Record<any, any> = never>(
   getInternals: any,
 ): any;
 export declare function addSchemaToClientWithInstance<
-  T extends Record<any, any>,
+  _T extends Record<any, any>,
 >(client: any, params: any, getInternals: any): any;
