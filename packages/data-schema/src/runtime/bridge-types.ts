@@ -355,7 +355,7 @@ export type ClientInternals = {
   headers: CustomHeaders | undefined;
 };
 
-export type ClientInternalsGetter = (client: any) => ClientInternals;
+export type ClientInternalsGetter = (client: BaseClient) => ClientInternals;
 
 export type BaseClient = BaseBrowserClient | BaseSSRClient;
 

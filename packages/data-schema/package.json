@@ -1,6 +1,6 @@
 {
   "name": "@aws-amplify/data-schema",
-  "version": "0.16.0",
+  "version": "0.15.0",
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
@@ -34,6 +34,7 @@
     },
     "./runtime": {
       "types": "./dist/esm/runtime/index.d.ts",
+      "types@<5": "./dist/esm/runtime/index.v3.d.ts",
       "import": "./dist/esm/runtime/index.mjs",
       "require": "./dist/cjs/runtime/index.js",
       "node": "./dist/esm/index.mjs"
