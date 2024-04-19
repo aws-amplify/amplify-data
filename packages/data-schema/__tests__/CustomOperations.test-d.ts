@@ -43,6 +43,7 @@ describe('custom operations return types', () => {
           .function('someHandler')
           .arguments({
             input: a.string(),
+            content: a.string().required(),
           })
           .returns(a.ref('MyType').required()),
       });
@@ -54,7 +55,8 @@ describe('custom operations return types', () => {
       type ActualHandler = Schema['aQuery']['functionHandler'];
 
       type ExpectedArgs = {
-        input: string | null;
+        input?: string | null | undefined;
+        content: string;
       };
       type ExpectedResult = {
         enum?: 'hello' | 'bye' | null | undefined;
@@ -138,6 +140,7 @@ describe('custom operations return types', () => {
           .function('someHandler')
           .arguments({
             input: a.string(),
+            content: a.string().required(),
           })
           .returns(a.ref('MyType').required()),
       });
@@ -149,7 +152,8 @@ describe('custom operations return types', () => {
       type ActualHandler = Schema['aQuery']['functionHandler'];
 
       type ExpectedArgs = {
-        input: string | null;
+        input?: string | null | undefined;
+        content: string;
       };
       type ExpectedResult = {
         enum?: 'hello' | 'bye' | null | undefined;
@@ -220,6 +224,7 @@ describe('custom operations return types', () => {
           .function('someHandler')
           .arguments({
             input: a.string(),
+            content: a.string().required(),
           })
           .returns(a.ref('MyModel').required()),
       });
@@ -231,7 +236,8 @@ describe('custom operations return types', () => {
       type ActualHandler = Schema['aQuery']['functionHandler'];
 
       type ExpectedArgs = {
-        input: string | null;
+        input?: string | null | undefined;
+        content: string;
       };
       type ExpectedResult = {
         string: string;
@@ -321,6 +327,7 @@ describe('custom operations return types', () => {
           .function('someHandler')
           .arguments({
             input: a.string(),
+            content: a.string().required(),
           })
           .returns(a.ref('MyModel').required()),
       });
@@ -332,7 +339,8 @@ describe('custom operations return types', () => {
       type ActualHandler = Schema['aQuery']['functionHandler'];
 
       type ExpectedArgs = {
-        input: string | null;
+        input?: string | null | undefined;
+        content: string;
       };
       type ExpectedResult = {
         string: string;
@@ -392,7 +400,7 @@ describe('custom operations return types', () => {
         aQuery: a
           .query()
           .function('someHandler')
-          .arguments({ input: a.string() })
+          .arguments({ input: a.string(), content: a.string().required() })
           .returns(a.ref('Value').required()),
       });
 
@@ -403,7 +411,8 @@ describe('custom operations return types', () => {
       type ActualHandler = Schema['aQuery']['functionHandler'];
 
       type ExpectedArgs = {
-        input: string | null;
+        input?: string | null | undefined;
+        content: string;
       };
       type ExpectedResult = 'succeeded' | 'failed';
       type ExpectedFunctionHandler = AppSyncResolverHandler<
@@ -433,7 +442,7 @@ describe('RDS custom operations', () => {
     .addMutations({
       likePost: a
         .mutation()
-        .arguments({ postId: a.string() })
+        .arguments({ postId: a.string(), content: a.string().required() })
         .returns(a.ref('Post'))
         .handler(a.handler.function('myFunc')),
     })
@@ -460,7 +469,8 @@ describe('RDS custom operations', () => {
     type Expected = {
       likePost: {
         arguments: {
-          postId: string | null;
+          postId?: string | null | undefined;
+          content: string;
         };
         returnType: {
           title?: string | null | undefined;

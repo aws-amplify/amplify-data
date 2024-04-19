@@ -138,10 +138,10 @@ export type ResolveRefsOfCustomType<
     ? ResolveRef<NonModelTypes, R>
     : T[Prop];
 } extends infer Resolved
-  ? ResolveCustomTypeFieldsRequirements<Resolved>
+  ? ResolveFieldRequirements<Resolved>
   : never;
 
-export type ResolveCustomTypeFieldsRequirements<Resolved> = Intersection<
+export type ResolveFieldRequirements<Resolved> = Intersection<
   ExtractNullableFieldsToOptionalFields<Resolved>,
   ExtractNonNullableFieldsToRequiredFields<Resolved>
 >;

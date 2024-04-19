@@ -26,14 +26,15 @@ describe('Custom Operations mapper utils', () => {
   test('can resolve arguments from custom op', () => {
     const aMutation = a
       .mutation()
-      .arguments({ x: a.string() })
+      .arguments({ x: a.string(), y: a.string().required() })
       .returns(a.string())
       .authorization((allow) => allow.publicApiKey())
       .handler(a.handler.function('asdf'));
 
     type Actual = CustomOpArguments<OpShape<typeof aMutation>>;
     type Expected = {
-      x: string | null;
+      x?: string | null | undefined;
+      y: string;
     };
 
     type T = Expect<Equal<Actual, Expected>>;
@@ -55,7 +56,7 @@ describe('Custom Operations mapper utils', () => {
   test('can select custom op shapes from a schema', () => {
     const aQuery = a
       .query()
-      .arguments({ x: a.string() })
+      .arguments({ x: a.string(), y: a.string().required() })
       .returns(a.string())
       .authorization((allow) => allow.publicApiKey())
       .handler(a.handler.function('asdf'));
