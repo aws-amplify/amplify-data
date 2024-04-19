@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 export * from './client/index.v3';
-export declare function addSchemaToClient<T extends Record<any, any> = never>(
+export declare function addSchemaToClient<_T extends Record<any, any> = never>(
   client: any,
   apiGraphqlConfig: any,
   getInternals: any,
