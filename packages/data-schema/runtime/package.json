@@ -4,5 +4,12 @@
   "module": "../dist/esm/runtime/index.mjs",
   "types": "../dist/esm/runtime/index.d.ts",
   "react-native": "../src/runtime/index.ts",
-  "sideEffects": false
+  "sideEffects": false,
+  "typesVersions": {
+    "<5": {
+      "../dist/esm/runtime/index.d.ts": [
+        "../dist/esm/runtime/index.v3.d.ts"
+      ]
+    }
+  }
 }

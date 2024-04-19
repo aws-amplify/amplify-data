@@ -34,6 +34,7 @@
     },
     "./runtime": {
       "types": "./dist/esm/runtime/index.d.ts",
+      "types@<5": "./dist/esm/runtime/index.v3.d.ts",
       "import": "./dist/esm/runtime/index.mjs",
       "require": "./dist/cjs/runtime/index.js",
       "node": "./dist/esm/index.mjs"
@@ -41,6 +42,11 @@
     "./package.json": "./package.json"
   },
   "typesVersions": {
+    "<5": {
+      "./dist/esm/runtime/index.d.ts": [
+        "./dist/esm/runtime/index.v3.d.ts"
+      ]
+    },
     ">=5.0": {
       "internals": [
         "./dist/esm/internals/index.d.ts"
