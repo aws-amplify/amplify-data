@@ -7,7 +7,7 @@ import type {
 import type { ModelField } from '../ModelField';
 import type { RefType, RefTypeParamShape } from '../RefType';
 import type {
-  ResolveCustomTypeFieldsRequirements,
+  ResolveFieldRequirements,
   ResolveRefsOfCustomType,
   ResolveRefValueArrayTraits,
 } from './ResolveFieldProperties';
@@ -75,7 +75,7 @@ export type CustomOpArguments<Shape extends CustomOperationParamShape> =
             ? R
             : never;
         } extends infer Resolved
-      ? ResolveCustomTypeFieldsRequirements<Resolved>
+      ? ResolveFieldRequirements<Resolved>
       : never;
 
 /**
@@ -108,7 +108,7 @@ export type CustomOpReturnType<
       ? R
       : Shape['returnType'] extends CustomType<infer R>
         ?
-            | ResolveCustomTypeFieldsRequirements<
+            | ResolveFieldRequirements<
                 FieldTypesOfCustomType<{
                   thisCustomType: R['fields'];
                 }>['thisCustomType']
