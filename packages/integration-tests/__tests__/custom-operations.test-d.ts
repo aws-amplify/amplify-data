@@ -11,7 +11,7 @@ describe('CustomOperations', () => {
         optionalField: a.string(),
       })
       .returns('something')
-      .authorization([a.allow.public()])
+      .authorization((allow) => allow.publicApiKey())
       .handler(a.handler.function('echoHandler')),
   });
 
