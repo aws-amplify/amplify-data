@@ -2,6 +2,11 @@
 // SPDX-License-Identifier: Apache-2.0
 
 export * from './client/index.v3';
-export { addSchemaToClient } from './addSchemaToClient';
-export { addSchemaToClientWithInstance } from './addSchemaToClientWithInstance';
-export { BaseClient, ClientInternals } from './bridge-types';
+export declare function addSchemaToClient<_T extends Record<any, any> = never>(
+  client: any,
+  apiGraphqlConfig: any,
+  getInternals: any,
+): any;
+export declare function addSchemaToClientWithInstance<
+  _T extends Record<any, any>,
+>(client: any, params: any, getInternals: any): any;
