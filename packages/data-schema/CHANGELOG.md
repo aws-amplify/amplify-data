@@ -1,5 +1,11 @@
 # @aws-amplify/data-schema
 
+## 0.16.2
+
+### Patch Changes
+
+- 4f2b22c: update custom operation types to respect optional fields
+
 ## 0.16.1
 
 ### Patch Changes
