@@ -1,32 +1,33 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
-import { AmplifyServer } from '@aws-amplify/core/internals/adapter-core';
 import {
+  AuthModeParams,
+  AmplifyServer,
+  BaseClient,
+  BaseBrowserClient,
+  BaseSSRClient,
+  ClientInternalsGetter,
   CustomOperation,
+  GraphQLResult,
+  GraphqlSubscriptionResult,
+  ListArgs,
+  QueryArgs,
   ModelIntrospectionSchema,
-} from '@aws-amplify/core/internals/utils';
+} from '../../bridge-types';
+
 import { map } from 'rxjs';
+
 import isEmpty from 'lodash/isEmpty.js';
 
 import {
   authModeParams,
-  defaultSelectionSetForNonModelWithIR,
+  getDefaultSelectionSetForNonModelWithIR,
   flattenItems,
   generateSelectionSet,
   getCustomHeaders,
   initializeModel,
   selectionSetIRToString,
 } from '../APIClient';
-import {
-  AuthModeParams,
-  ClientWithModels,
-  GraphQLResult,
-  GraphqlSubscriptionResult,
-  ListArgs,
-  QueryArgs,
-  V6Client,
-  V6ClientSSRRequest,
-} from '../../types';
 
 import { handleSingularGraphQlError } from './utils';
 
@@ -109,11 +110,12 @@ const argIsContextSpec = (
  * @returns The operation function to attach to query, mutations, etc.
  */
 export function customOpFactory(
-  client: ClientWithModels,
+  client: BaseClient,
   modelIntrospection: ModelIntrospectionSchema,
   operationType: 'query' | 'mutation' | 'subscription',
   operation: CustomOperation,
   useContext: boolean,
+  getInternals: ClientInternalsGetter,
 ) {
   // .arguments() are defined for the custom operation in the schema builder
   // and are present in the model introspection schema
@@ -147,9 +149,10 @@ export function customOpFactory(
     if (operationType === 'subscription') {
       return _opSubscription(
         // subscriptions are only enabled on the clientside
-        client as V6Client<Record<string, any>>,
+        client as BaseBrowserClient,
         modelIntrospection,
         operation,
+        getInternals,
         arg,
         options,
       );
@@ -160,6 +163,7 @@ export function customOpFactory(
       modelIntrospection,
       operationType,
       operation,
+      getInternals,
       arg,
       options,
       contextSpec,
@@ -293,7 +297,7 @@ function operationSelectionSet(
     const nonModel = modelIntrospection.nonModels[operation.type.nonModel];
 
     return `{${selectionSetIRToString(
-      defaultSelectionSetForNonModelWithIR(nonModel, modelIntrospection),
+      getDefaultSelectionSetForNonModelWithIR(nonModel, modelIntrospection),
     )}}`;
   } else if (hasStringField(operation.type, 'model')) {
     return `{${generateSelectionSet(modelIntrospection, operation.type.model)}}`;
@@ -345,17 +349,18 @@ function operationVariables(
  * @returns Result from the graphql request, model-instantiated when relevant.
  */
 async function _op(
-  client: ClientWithModels,
+  client: BaseClient,
   modelIntrospection: ModelIntrospectionSchema,
   operationType: 'query' | 'mutation',
   operation: CustomOperation,
+  getInternals: ClientInternalsGetter,
   args?: QueryArgs,
   options?: AuthModeParams & ListArgs,
   context?: AmplifyServer.ContextSpec,
 ) {
   const { name: operationName } = operation;
-  const auth = authModeParams(client, options);
-  const headers = getCustomHeaders(client, options?.headers);
+  const auth = authModeParams(client, getInternals, options);
+  const headers = getCustomHeaders(client, getInternals, options?.headers);
   const outerArgsString = outerArguments(operation);
   const innerArgsString = innerArguments(operation);
   const selectionSet = operationSelectionSet(modelIntrospection, operation);
@@ -365,16 +370,16 @@ async function _op(
     : undefined;
 
   const query = `
-		${operationType.toLocaleLowerCase()}${outerArgsString} {
-			${operationName}${innerArgsString} ${selectionSet}
-		}
-	`;
+    ${operationType.toLocaleLowerCase()}${outerArgsString} {
+      ${operationName}${innerArgsString} ${selectionSet}
+    }
+  `;
 
   const variables = operationVariables(operation, args);
 
   try {
     const { data, extensions } = context
-      ? ((await (client as V6ClientSSRRequest<Record<string, any>>).graphql(
+      ? ((await (client as BaseSSRClient).graphql(
           context,
           {
             ...auth,
@@ -382,15 +387,15 @@ async function _op(
             variables,
           },
           headers,
-        )) as GraphQLResult<any>)
-      : ((await (client as V6Client<Record<string, any>>).graphql(
+        )) as GraphQLResult)
+      : ((await (client as BaseBrowserClient).graphql(
           {
             ...auth,
             query,
             variables,
           },
           headers,
-        )) as GraphQLResult<any>);
+        )) as GraphQLResult);
 
     // flatten response
     if (data) {
@@ -475,16 +480,17 @@ async function _op(
  * @returns Result from the graphql request, model-instantiated when relevant.
  */
 function _opSubscription(
-  client: V6Client<Record<string, any>>,
+  client: BaseBrowserClient,
   modelIntrospection: ModelIntrospectionSchema,
   operation: CustomOperation,
+  getInternals: ClientInternalsGetter,
   args?: QueryArgs,
   options?: AuthModeParams & ListArgs,
 ) {
   const operationType = 'subscription';
   const { name: operationName } = operation;
-  const auth = authModeParams(client, options);
-  const headers = getCustomHeaders(client, options?.headers);
+  const auth = authModeParams(client, getInternals, options);
+  const headers = getCustomHeaders(client, getInternals, options?.headers);
   const outerArgsString = outerArguments(operation);
   const innerArgsString = innerArguments(operation);
   const selectionSet = operationSelectionSet(modelIntrospection, operation);
@@ -494,10 +500,10 @@ function _opSubscription(
     : undefined;
 
   const query = `
-		${operationType.toLocaleLowerCase()}${outerArgsString} {
-			${operationName}${innerArgsString} ${selectionSet}
-		}
-	`;
+    ${operationType.toLocaleLowerCase()}${outerArgsString} {
+      ${operationName}${innerArgsString} ${selectionSet}
+    }
+  `;
 
   const variables = operationVariables(operation, args);
 
@@ -508,7 +514,7 @@ function _opSubscription(
       variables,
     },
     headers,
-  ) as GraphqlSubscriptionResult<object>;
+  ) as GraphqlSubscriptionResult;
 
   return observable.pipe(
     map((value) => {
@@ -517,7 +523,7 @@ function _opSubscription(
 
       const [initialized] = returnTypeModelName
         ? initializeModel(
-            client as V6Client<Record<string, any>>,
+            client,
             returnTypeModelName,
             [data],
             modelIntrospection,

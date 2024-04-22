@@ -1,11 +1,17 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
-import { AmplifyServer } from '@aws-amplify/core/internals/adapter-core';
 import {
+  AmplifyServer,
+  AuthModeParams,
+  BaseClient,
+  BaseBrowserClient,
+  BaseSSRClient,
+  ClientInternalsGetter,
+  GraphQLResult,
+  ListArgs,
   ModelIntrospectionSchema,
   SchemaModel,
-} from '@aws-amplify/core/internals/utils';
-import isEmpty from 'lodash/isEmpty.js';
+} from '../../bridge-types';
 
 import {
   authModeParams,
@@ -15,41 +21,44 @@ import {
   getCustomHeaders,
   initializeModel,
 } from '../APIClient';
-import {
-  AuthModeParams,
-  ClientWithModels,
-  GraphQLResult,
-  ListArgs,
-  V6Client,
-  V6ClientSSRRequest,
-} from '../../types';
+
+import isEmpty from 'lodash/isEmpty.js';
 
 import { handleListGraphQlError } from './utils';
 
 export function listFactory(
-  client: ClientWithModels,
+  client: BaseClient,
   modelIntrospection: ModelIntrospectionSchema,
   model: SchemaModel,
+  getInternals: ClientInternalsGetter,
   context = false,
 ) {
   const listWithContext = async (
     contextSpec: AmplifyServer.ContextSpec,
     args?: ListArgs,
   ) => {
-    return _list(client, modelIntrospection, model, args, contextSpec);
+    return _list(
+      client,
+      modelIntrospection,
+      model,
+      getInternals,
+      args,
+      contextSpec,
+    );
   };
 
-  const list = async (args?: any) => {
-    return _list(client, modelIntrospection, model, args);
+  const list = async (args?: Record<string, any>) => {
+    return _list(client, modelIntrospection, model, getInternals, args);
   };
 
   return context ? listWithContext : list;
 }
 
 async function _list(
-  client: ClientWithModels,
+  client: BaseClient,
   modelIntrospection: ModelIntrospectionSchema,
   model: SchemaModel,
+  getInternals: ClientInternalsGetter,
   args?: ListArgs & AuthModeParams,
   contextSpec?: AmplifyServer.ContextSpec,
 ) {
@@ -63,13 +72,13 @@ async function _list(
     modelIntrospection,
   );
 
-  const auth = authModeParams(client, args);
+  const auth = authModeParams(client, getInternals, args);
 
   try {
-    const headers = getCustomHeaders(client, args?.headers);
+    const headers = getCustomHeaders(client, getInternals, args?.headers);
 
     const { data, extensions } = contextSpec
-      ? ((await (client as V6ClientSSRRequest<Record<string, any>>).graphql(
+      ? ((await (client as BaseSSRClient).graphql(
           contextSpec,
           {
             ...auth,
@@ -77,15 +86,15 @@ async function _list(
             variables,
           },
           headers,
-        )) as GraphQLResult<any>)
-      : ((await (client as V6Client<Record<string, any>>).graphql(
+        )) as GraphQLResult)
+      : ((await (client as BaseBrowserClient).graphql(
           {
             ...auth,
             query,
             variables,
           },
           headers,
-        )) as GraphQLResult<any>);
+        )) as GraphQLResult);
 
     // flatten response
     if (data !== undefined) {

@@ -1,11 +1,16 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
-import { AmplifyServer } from '@aws-amplify/core/internals/adapter-core';
 import {
+  AmplifyServer,
+  AuthModeParams,
+  BaseClient,
+  ClientInternalsGetter,
+  GraphQLResult,
+  ListArgs,
   ModelIntrospectionSchema,
   SchemaModel,
-} from '@aws-amplify/core/internals/utils';
-import isEmpty from 'lodash/isEmpty.js';
+  QueryArgs,
+} from '../../bridge-types';
 
 import {
   authModeParams,
@@ -15,14 +20,8 @@ import {
   getCustomHeaders,
   initializeModel,
 } from '../APIClient';
-import {
-  AuthModeParams,
-  ClientWithModels,
-  GraphQLResult,
-  ListArgs,
-  QueryArgs,
-  V6ClientSSRRequest,
-} from '../../types';
+
+import isEmpty from 'lodash/isEmpty.js';
 
 import { handleListGraphQlError } from './utils';
 
@@ -33,10 +32,11 @@ export interface IndexMeta {
 }
 
 export function indexQueryFactory(
-  client: ClientWithModels,
+  client: BaseClient,
   modelIntrospection: ModelIntrospectionSchema,
   model: SchemaModel,
   indexMeta: IndexMeta,
+  getInternals: ClientInternalsGetter,
   context = false,
 ) {
   const indexQueryWithContext = async (
@@ -49,6 +49,7 @@ export function indexQueryFactory(
       modelIntrospection,
       model,
       indexMeta,
+      getInternals,
       {
         ...args,
         ...options,
@@ -58,17 +59,24 @@ export function indexQueryFactory(
   };
 
   const indexQuery = async (args: QueryArgs, options?: ListArgs) => {
-    return _indexQuery(client, modelIntrospection, model, indexMeta, {
-      ...args,
-      ...options,
-    });
+    return _indexQuery(
+      client,
+      modelIntrospection,
+      model,
+      indexMeta,
+      getInternals,
+      {
+        ...args,
+        ...options,
+      },
+    );
   };
 
   return context ? indexQueryWithContext : indexQuery;
 }
 
 function processGraphQlResponse(
-  result: GraphQLResult<any>,
+  result: GraphQLResult,
   selectionSet: undefined | string[],
   modelInitializer: (flattenedResult: any[]) => any[],
 ) {
@@ -94,10 +102,11 @@ function processGraphQlResponse(
 }
 
 async function _indexQuery(
-  client: ClientWithModels,
+  client: BaseClient,
   modelIntrospection: ModelIntrospectionSchema,
   model: SchemaModel,
   indexMeta: IndexMeta,
+  getInternals: ClientInternalsGetter,
   args?: ListArgs & AuthModeParams,
   contextSpec?: AmplifyServer.ContextSpec,
 ) {
@@ -118,7 +127,7 @@ async function _indexQuery(
     indexMeta,
   );
 
-  const auth = authModeParams(client, args);
+  const auth = authModeParams(client, getInternals, args);
 
   const modelInitializer = (flattenedResult: any[]) =>
     initializeModel(
@@ -132,7 +141,7 @@ async function _indexQuery(
     );
 
   try {
-    const headers = getCustomHeaders(client, args?.headers);
+    const headers = getCustomHeaders(client, getInternals, args?.headers);
 
     const graphQlParams = {
       ...auth,
@@ -146,9 +155,9 @@ async function _indexQuery(
       requestArgs.unshift(contextSpec);
     }
 
-    const response = (await (
-      client as V6ClientSSRRequest<Record<string, any>>
-    ).graphql(...requestArgs)) as GraphQLResult<any>;
+    const response = (await (client as BaseClient).graphql(
+      ...requestArgs,
+    )) as GraphQLResult;
 
     if (response.data !== undefined) {
       return processGraphQlResponse(
