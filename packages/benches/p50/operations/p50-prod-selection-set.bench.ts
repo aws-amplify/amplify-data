@@ -21,12 +21,15 @@ bench('prod p50 CRUDL', async () => {
           phone: a
             .phone()
             .required()
-            .authorization([a.allow.private().to(['read']), a.allow.owner()]),
+            .authorization((allow) => [
+              allow.authenticated().to(['read']),
+              allow.owner(),
+            ]),
           website: a.url(),
           privateIdentifier: a
             .string()
             .required()
-            .authorization([a.allow.owner()]),
+            .authorization((allow) => allow.owner()),
           employees: a.hasMany('Employee', 'companyId'),
           stores: a.hasMany('Store', 'companyId'),
           warehouses: a.hasMany('Warehouse', 'companyId'),
@@ -35,19 +38,31 @@ bench('prod p50 CRUDL', async () => {
             long: a.float().required(),
           }),
         })
-        .authorization([a.allow.private().to(['read']), a.allow.owner()]),
+        .authorization((allow) => [
+          allow.authenticated().to(['read']),
+          allow.owner(),
+        ]),
       // Model #2:
       Employee: a
         .model({
           employeeId: a.id().required(),
           name: a.string().required(),
-          email: a.email().required().authorization([a.allow.owner()]),
+          email: a
+            .email()
+            .required()
+            .authorization((allow) => allow.owner()),
           phone: a
             .phone()
             .required()
-            .authorization([a.allow.private().to(['read']), a.allow.owner()]),
+            .authorization((allow) => [
+              allow.authenticated().to(['read']),
+              allow.owner(),
+            ]),
           website: a.url(),
-          ssn: a.string().required().authorization([a.allow.owner()]),
+          ssn: a
+            .string()
+            .required()
+            .authorization((allow) => allow.owner()),
           companyId: a.id(),
           company: a.belongsTo('Company', 'companyId'),
           todos: a.hasMany('Todo', 'employeeId'),
@@ -55,14 +70,17 @@ bench('prod p50 CRUDL', async () => {
           tasks: a.hasMany('Task', 'employeeId'),
         })
         .identifier(['employeeId', 'name'])
-        .authorization([a.allow.private().to(['read']), a.allow.owner()]),
+        .authorization((allow) => [
+          allow.authenticated().to(['read']),
+          allow.owner(),
+        ]),
       // Model #3:
       Salary: a
         .model({
           wage: a.float(),
           currency: a.string(),
         })
-        .authorization([a.allow.specificGroups(['Admin', 'Leadership'])]),
+        .authorization((allow) => [allow.groups(['Admin', 'Leadership'])]),
       // Model #4:
       Store: a.model({
         id: a.id().required(),
@@ -76,7 +94,10 @@ bench('prod p50 CRUDL', async () => {
         phone: a
           .phone()
           .required()
-          .authorization([a.allow.private().to(['read']), a.allow.owner()]),
+          .authorization((allow) => [
+            allow.authenticated().to(['read']),
+            allow.owner(),
+          ]),
         privacySetting: a.ref('PrivacySetting').required(),
         companyId: a.id(),
         company: a.belongsTo('Company', 'companyId'),
@@ -96,7 +117,10 @@ bench('prod p50 CRUDL', async () => {
         phone: a
           .phone()
           .required()
-          .authorization([a.allow.private().to(['read']), a.allow.owner()]),
+          .authorization((allow) => [
+            allow.authenticated().to(['read']),
+            allow.owner(),
+          ]),
         privacySetting: a.ref('PrivacySetting'),
         companyId: a.id(),
         company: a.belongsTo('Company', 'companyId'),
@@ -113,9 +137,9 @@ bench('prod p50 CRUDL', async () => {
           phone: a
             .phone()
             .required()
-            .authorization([
-              a.allow.specificGroup('Admin').to(['read']),
-              a.allow.owner(),
+            .authorization((allow) => [
+              allow.group('Admin').to(['read']),
+              allow.owner(),
             ]),
           orders: a.hasMany('Order', 'customerId'),
           textField1: a.string(),
@@ -157,7 +181,10 @@ bench('prod p50 CRUDL', async () => {
           textField2: a.string(),
           textField3: a.string(),
         })
-        .authorization([a.allow.public().to(['read']), a.allow.owner()]),
+        .authorization((allow) => [
+          allow.publicApiKey().to(['read']),
+          allow.owner(),
+        ]),
       // Model #9:
       Task: a.model({
         name: a.string().required(),
@@ -248,7 +275,7 @@ bench('prod p50 CRUDL', async () => {
           textField8: a.string(),
           groups: a.string().array(),
         })
-        .authorization([a.allow.groupDefinedIn('groups')]),
+        .authorization((allow) => [allow.groupDefinedIn('groups')]),
       /**
        * With the exception of the last 4 unconnected models, the following models
        * are duplicates of the above models, with different names.
@@ -261,12 +288,15 @@ bench('prod p50 CRUDL', async () => {
           phone: a
             .phone()
             .required()
-            .authorization([a.allow.private().to(['read']), a.allow.owner()]),
+            .authorization((allow) => [
+              allow.authenticated().to(['read']),
+              allow.owner(),
+            ]),
           website: a.url(),
           privateIdentifier: a
             .string()
             .required()
-            .authorization([a.allow.owner()]),
+            .authorization((allow) => allow.owner()),
           employees: a.hasMany('Employee2', 'company2Id'),
           stores: a.hasMany('Store2', 'company2Id'),
           warehouses: a.hasMany('Warehouse2', 'company2Id'),
@@ -275,19 +305,31 @@ bench('prod p50 CRUDL', async () => {
             long: a.float().required(),
           }),
         })
-        .authorization([a.allow.private().to(['read']), a.allow.owner()]),
+        .authorization((allow) => [
+          allow.authenticated().to(['read']),
+          allow.owner(),
+        ]),
       // Model #15:
       Employee2: a
         .model({
           employeeId: a.id().required(),
           name: a.string().required(),
-          email: a.email().required().authorization([a.allow.owner()]),
+          email: a
+            .email()
+            .required()
+            .authorization((allow) => allow.owner()),
           phone: a
             .phone()
             .required()
-            .authorization([a.allow.private().to(['read']), a.allow.owner()]),
+            .authorization((allow) => [
+              allow.authenticated().to(['read']),
+              allow.owner(),
+            ]),
           website: a.url(),
-          ssn: a.string().required().authorization([a.allow.owner()]),
+          ssn: a
+            .string()
+            .required()
+            .authorization((allow) => allow.owner()),
           company2Id: a.id(),
           company: a.belongsTo('Company2', 'company2Id'),
           todos: a.hasMany('Todo2', 'employee2Id'),
@@ -295,14 +337,17 @@ bench('prod p50 CRUDL', async () => {
           tasks: a.hasMany('Task2', 'employee2Id'),
         })
         .identifier(['employeeId', 'name'])
-        .authorization([a.allow.private().to(['read']), a.allow.owner()]),
+        .authorization((allow) => [
+          allow.authenticated().to(['read']),
+          allow.owner(),
+        ]),
       // Model #16:
       Salary2: a
         .model({
           wage: a.float(),
           currency: a.string(),
         })
-        .authorization([a.allow.specificGroups(['Admin2', 'Leadership2'])]),
+        .authorization((allow) => [allow.groups(['Admin2', 'Leadership2'])]),
       // Model #17:
       Store2: a.model({
         id: a.id().required(),
@@ -316,7 +361,10 @@ bench('prod p50 CRUDL', async () => {
         phone: a
           .phone()
           .required()
-          .authorization([a.allow.private().to(['read']), a.allow.owner()]),
+          .authorization((allow) => [
+            allow.authenticated().to(['read']),
+            allow.owner(),
+          ]),
         privacySetting: a.ref('PrivacySetting').required(),
         company2Id: a.id(),
         company: a.belongsTo('Company2', 'company2Id'),
@@ -336,7 +384,10 @@ bench('prod p50 CRUDL', async () => {
         phone: a
           .phone()
           .required()
-          .authorization([a.allow.private().to(['read']), a.allow.owner()]),
+          .authorization((allow) => [
+            allow.authenticated().to(['read']),
+            allow.owner(),
+          ]),
         privacySetting: a.ref('PrivacySetting2'),
         company2Id: a.id(),
         company: a.belongsTo('Company2', 'company2Id'),
@@ -353,9 +404,9 @@ bench('prod p50 CRUDL', async () => {
           phone: a
             .phone()
             .required()
-            .authorization([
-              a.allow.specificGroup('Admin2').to(['read']),
-              a.allow.owner(),
+            .authorization((allow) => [
+              allow.group('Admin2').to(['read']),
+              allow.owner(),
             ]),
           orders: a.hasMany('Order2', 'customer2Id'),
           textField1: a.string(),
@@ -397,7 +448,10 @@ bench('prod p50 CRUDL', async () => {
           textField2: a.string(),
           textField3: a.string(),
         })
-        .authorization([a.allow.public().to(['read']), a.allow.owner()]),
+        .authorization((allow) => [
+          allow.publicApiKey().to(['read']),
+          allow.owner(),
+        ]),
       // Model #22:
       Model22: a
         .model({
@@ -409,18 +463,30 @@ bench('prod p50 CRUDL', async () => {
           boolean: a.boolean().required(),
           date: a
             .date()
-            .authorization([a.allow.private().to(['read']), a.allow.owner()]),
+            .authorization((allow) => [
+              allow.authenticated().to(['read']),
+              allow.owner(),
+            ]),
           time: a
             .time()
-            .authorization([a.allow.private().to(['read']), a.allow.owner()]),
+            .authorization((allow) => [
+              allow.authenticated().to(['read']),
+              allow.owner(),
+            ]),
           dateTime: a
             .datetime()
-            .authorization([a.allow.private().to(['read']), a.allow.owner()]),
+            .authorization((allow) => [
+              allow.authenticated().to(['read']),
+              allow.owner(),
+            ]),
           timestamp: a.timestamp(),
           json: a.json(),
           ipAddress: a.ipAddress(),
         })
-        .authorization([a.allow.private('iam').to(['read']), a.allow.owner()]),
+        .authorization((allow) => [
+          allow.authenticated('iam').to(['read']),
+          allow.owner(),
+        ]),
       // Model #23:
       Model23: a
         .model({
@@ -432,18 +498,30 @@ bench('prod p50 CRUDL', async () => {
           boolean: a.boolean().required(),
           date: a
             .date()
-            .authorization([a.allow.private().to(['read']), a.allow.owner()]),
+            .authorization((allow) => [
+              allow.authenticated().to(['read']),
+              allow.owner(),
+            ]),
           time: a
             .time()
-            .authorization([a.allow.private().to(['read']), a.allow.owner()]),
+            .authorization((allow) => [
+              allow.authenticated().to(['read']),
+              allow.owner(),
+            ]),
           dateTime: a
             .datetime()
-            .authorization([a.allow.private().to(['read']), a.allow.owner()]),
+            .authorization((allow) => [
+              allow.authenticated().to(['read']),
+              allow.owner(),
+            ]),
           timestamp: a.timestamp(),
           json: a.json(),
           ipAddress: a.ipAddress(),
         })
-        .authorization([a.allow.private('iam').to(['read']), a.allow.owner()]),
+        .authorization((allow) => [
+          allow.authenticated('iam').to(['read']),
+          allow.owner(),
+        ]),
       // Model #24:
       Model24: a
         .model({
@@ -455,18 +533,30 @@ bench('prod p50 CRUDL', async () => {
           boolean: a.boolean().required(),
           date: a
             .date()
-            .authorization([a.allow.private().to(['read']), a.allow.owner()]),
+            .authorization((allow) => [
+              allow.authenticated().to(['read']),
+              allow.owner(),
+            ]),
           time: a
             .time()
-            .authorization([a.allow.private().to(['read']), a.allow.owner()]),
+            .authorization((allow) => [
+              allow.authenticated().to(['read']),
+              allow.owner(),
+            ]),
           dateTime: a
             .datetime()
-            .authorization([a.allow.private().to(['read']), a.allow.owner()]),
+            .authorization((allow) => [
+              allow.authenticated().to(['read']),
+              allow.owner(),
+            ]),
           timestamp: a.timestamp(),
           json: a.json(),
           ipAddress: a.ipAddress(),
         })
-        .authorization([a.allow.private('iam').to(['read']), a.allow.owner()]),
+        .authorization((allow) => [
+          allow.authenticated('iam').to(['read']),
+          allow.owner(),
+        ]),
       // Model #25:
       Model25: a
         .model({
@@ -478,21 +568,33 @@ bench('prod p50 CRUDL', async () => {
           boolean: a.boolean().required(),
           date: a
             .date()
-            .authorization([a.allow.private().to(['read']), a.allow.owner()]),
+            .authorization((allow) => [
+              allow.authenticated().to(['read']),
+              allow.owner(),
+            ]),
           time: a
             .time()
-            .authorization([a.allow.private().to(['read']), a.allow.owner()]),
+            .authorization((allow) => [
+              allow.authenticated().to(['read']),
+              allow.owner(),
+            ]),
           dateTime: a
             .datetime()
-            .authorization([a.allow.private().to(['read']), a.allow.owner()]),
+            .authorization((allow) => [
+              allow.authenticated().to(['read']),
+              allow.owner(),
+            ]),
           timestamp: a.timestamp(),
           json: a.json(),
           ipAddress: a.ipAddress(),
         })
-        .authorization([a.allow.private('iam').to(['read']), a.allow.owner()]),
+        .authorization((allow) => [
+          allow.authenticated('iam').to(['read']),
+          allow.owner(),
+        ]),
       // [Global authorization rule]
     })
-    .authorization([a.allow.public()]);
+    .authorization((allow) => allow.publicApiKey());
 
   type Schema = ClientSchema<typeof schema>;
 
@@ -530,4 +632,4 @@ bench('prod p50 CRUDL', async () => {
   });
 
   await client.models.Todo.list({ selectionSet });
-}).types([8725903, 'instantiations']);
+}).types([8817674, 'instantiations']);

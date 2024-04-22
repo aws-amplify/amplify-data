@@ -10109,8 +10109,8 @@ bench('1 model containing 2288 fields, 34 models w/ 215 fields each', () => {
       field214: a.string(),
       field215: a.string(),
     }),
-  }).authorization([a.allow.public()]);
-}).types([50603, 'instantiations']);
+  }).authorization((allow) => allow.publicApiKey());
+}).types([50569, 'instantiations']);
 
 bench(
   '1 model containing 2288 fields, 34 models w/ 215 fields each w/ client types',
@@ -20220,8 +20220,8 @@ bench(
           field215: a.string(),
         }),
       })
-      .authorization([a.allow.public()]);
+      .authorization((allow) => allow.publicApiKey());
 
     type _ = ClientSchema<typeof s>;
   },
-).types([1081705, 'instantiations']);
+).types([1081474, 'instantiations']);

@@ -56,7 +56,7 @@ bench('1 simple model w/ 43 fields CRUDL', async () => {
         field43: a.string(),
       }),
     })
-    .authorization([a.allow.public()]);
+    .authorization((allow) => allow.publicApiKey());
 
   type Schema = ClientSchema<typeof s>;
 
@@ -91,4 +91,4 @@ bench('1 simple model w/ 43 fields CRUDL', async () => {
   await client.models.Model1.delete({ id: result.data.id });
 
   await client.models.Model1.list();
-}).types([1736136, 'instantiations']);
+}).types([1743863, 'instantiations']);
