@@ -8,7 +8,9 @@
     "incremental": true,
     "esModuleInterop": true,
     "resolveJsonModule": true,
-    "noErrorTruncation": true // prevents truncatation when hovering over type in VSCode
+    "noErrorTruncation": true, // prevents truncatation when hovering over type in VSCode
+    "module": "esnext",
+    "moduleResolution": "bundler"
   },
   "exclude": ["**/node_modules", "**/dist", "__tests__"]
 }
