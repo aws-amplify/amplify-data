@@ -219,7 +219,7 @@ bench('70 simple models with 1 field each w/ client types', async () => {
         field1: a.string(),
       }),
     })
-    .authorization([a.allow.public()]);
+    .authorization((allow) => allow.publicApiKey());
 
   type Schema = ClientSchema<typeof s>;
 
@@ -250,4 +250,4 @@ bench('70 simple models with 1 field each w/ client types', async () => {
   await client.models.Model1.delete({ id: result.data.id });
 
   await client.models.Model1.list();
-}).types([1419233, 'instantiations']);
+}).types([1425856, 'instantiations']);
