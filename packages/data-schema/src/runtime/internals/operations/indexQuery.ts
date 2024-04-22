@@ -1,16 +1,11 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
+import { AmplifyServer } from '@aws-amplify/core/internals/adapter-core';
 import {
-  AmplifyServer,
-  AuthModeParams,
-  BaseClient,
-  ClientInternalsGetter,
-  GraphQLResult,
-  ListArgs,
   ModelIntrospectionSchema,
   SchemaModel,
-  QueryArgs,
-} from '../../bridge-types';
+} from '@aws-amplify/core/internals/utils';
+import isEmpty from 'lodash/isEmpty.js';
 
 import {
   authModeParams,
@@ -20,6 +15,16 @@ import {
   getCustomHeaders,
   initializeModel,
 } from '../APIClient';
+import {
+  AuthModeParams,
+  ClientWithModels,
+  GraphQLResult,
+  ListArgs,
+  QueryArgs,
+  V6ClientSSRRequest,
+} from '../../types';
+
+import { handleListGraphQlError } from './utils';
 
 export interface IndexMeta {
   queryField: string;
@@ -28,11 +33,10 @@ export interface IndexMeta {
 }
 
 export function indexQueryFactory(
-  client: BaseClient,
+  client: ClientWithModels,
   modelIntrospection: ModelIntrospectionSchema,
   model: SchemaModel,
   indexMeta: IndexMeta,
-  getInternals: ClientInternalsGetter,
   context = false,
 ) {
   const indexQueryWithContext = async (
@@ -45,7 +49,6 @@ export function indexQueryFactory(
       modelIntrospection,
       model,
       indexMeta,
-      getInternals,
       {
         ...args,
         ...options,
@@ -55,24 +58,17 @@ export function indexQueryFactory(
   };
 
   const indexQuery = async (args: QueryArgs, options?: ListArgs) => {
-    return _indexQuery(
-      client,
-      modelIntrospection,
-      model,
-      indexMeta,
-      getInternals,
-      {
-        ...args,
-        ...options,
-      },
-    );
+    return _indexQuery(client, modelIntrospection, model, indexMeta, {
+      ...args,
+      ...options,
+    });
   };
 
   return context ? indexQueryWithContext : indexQuery;
 }
 
 function processGraphQlResponse(
-  result: GraphQLResult,
+  result: GraphQLResult<any>,
   selectionSet: undefined | string[],
   modelInitializer: (flattenedResult: any[]) => any[],
 ) {
@@ -97,22 +93,11 @@ function processGraphQlResponse(
   };
 }
 
-function handleGraphQlError(error: any) {
-  if (error.errors) {
-    // graphql errors pass through
-    return error as any;
-  } else {
-    // non-graphql errors re re-thrown
-    throw error;
-  }
-}
-
 async function _indexQuery(
-  client: BaseClient,
+  client: ClientWithModels,
   modelIntrospection: ModelIntrospectionSchema,
   model: SchemaModel,
   indexMeta: IndexMeta,
-  getInternals: ClientInternalsGetter,
   args?: ListArgs & AuthModeParams,
   contextSpec?: AmplifyServer.ContextSpec,
 ) {
@@ -133,7 +118,7 @@ async function _indexQuery(
     indexMeta,
   );
 
-  const auth = authModeParams(client, getInternals, args);
+  const auth = authModeParams(client, args);
 
   const modelInitializer = (flattenedResult: any[]) =>
     initializeModel(
@@ -147,7 +132,7 @@ async function _indexQuery(
     );
 
   try {
-    const headers = getCustomHeaders(client, getInternals, args?.headers);
+    const headers = getCustomHeaders(client, args?.headers);
 
     const graphQlParams = {
       ...auth,
@@ -161,9 +146,9 @@ async function _indexQuery(
       requestArgs.unshift(contextSpec);
     }
 
-    const response = (await (client as BaseClient).graphql(
-      ...requestArgs,
-    )) as GraphQLResult;
+    const response = (await (
+      client as V6ClientSSRRequest<Record<string, any>>
+    ).graphql(...requestArgs)) as GraphQLResult<any>;
 
     if (response.data !== undefined) {
       return processGraphQlResponse(
@@ -173,6 +158,46 @@ async function _indexQuery(
       );
     }
   } catch (error: any) {
-    return handleGraphQlError(error);
+    /**
+     * The `data` type returned by `error` here could be:
+     * 1) `null`
+     * 2) an empty object
+     * 3) "populated" but with a `null` value:
+     *   `data: { listByExampleId: null }`
+     * 4) an actual record:
+     *   `data: { listByExampleId: items: [{ id: '1', ...etc } }]`
+     */
+    const { data, errors } = error;
+
+    // `data` is not `null`, and is not an empty object:
+    if (data !== undefined && !isEmpty(data) && errors) {
+      const [key] = Object.keys(data);
+
+      if (data[key]?.items) {
+        const flattenedResult = flattenItems(data)[key];
+
+        /**
+         * Check exists since `flattenedResult` could be `null`.
+         * if `flattenedResult` exists, result is an actual record.
+         */
+        if (flattenedResult) {
+          return {
+            data: args?.selectionSet
+              ? flattenedResult
+              : modelInitializer(flattenedResult),
+            nextToken: data[key]?.nextToken,
+          };
+        }
+      }
+
+      // response is of type `data: { listByExampleId: null }`
+      return {
+        data: data[key],
+        nextToken: data[key]?.nextToken,
+      };
+    } else {
+      // `data` is `null` or an empty object:
+      return handleListGraphQlError(error);
+    }
   }
 }

@@ -1,19 +1,11 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
+import { AmplifyServer } from '@aws-amplify/core/internals/adapter-core';
 import {
-  AmplifyServer,
-  AuthModeParams,
-  BaseClient,
-  BaseBrowserClient,
-  BaseSSRClient,
-  ClientInternalsGetter,
-  GraphQLOptions,
-  GraphQLResult,
-  ListArgs,
   ModelIntrospectionSchema,
   SchemaModel,
-  QueryArgs,
-} from '../../bridge-types';
+} from '@aws-amplify/core/internals/utils';
+import isEmpty from 'lodash/isEmpty.js';
 
 import {
   ModelOperation,
@@ -24,17 +16,28 @@ import {
   getCustomHeaders,
   initializeModel,
 } from '../APIClient';
+import {
+  AuthModeParams,
+  ClientWithModels,
+  GraphQLOptionsV6,
+  GraphQLResult,
+  ListArgs,
+  QueryArgs,
+  V6Client,
+  V6ClientSSRRequest,
+} from '../../types';
+
+import { handleSingularGraphQlError } from './utils';
 
 export function getFactory(
-  client: BaseClient,
+  client: ClientWithModels,
   modelIntrospection: ModelIntrospectionSchema,
   model: SchemaModel,
   operation: ModelOperation,
-  getInternals: ClientInternalsGetter,
   useContext = false,
 ) {
   const getWithContext = async (
-    contextSpec: AmplifyServer.ContextSpec & GraphQLOptions,
+    contextSpec: AmplifyServer.ContextSpec & GraphQLOptionsV6<unknown, string>,
     arg?: any,
     options?: any,
   ) => {
@@ -45,34 +48,24 @@ export function getFactory(
       arg,
       options,
       operation,
-      getInternals,
       contextSpec,
     );
   };
 
   const get = async (arg?: any, options?: any) => {
-    return _get(
-      client,
-      modelIntrospection,
-      model,
-      arg,
-      options,
-      operation,
-      getInternals,
-    );
+    return _get(client, modelIntrospection, model, arg, options, operation);
   };
 
   return useContext ? getWithContext : get;
 }
 
 async function _get(
-  client: BaseClient,
+  client: ClientWithModels,
   modelIntrospection: ModelIntrospectionSchema,
   model: SchemaModel,
   arg: QueryArgs,
   options: AuthModeParams & ListArgs,
   operation: ModelOperation,
-  getInternals: ClientInternalsGetter,
   context?: AmplifyServer.ContextSpec,
 ) {
   const { name } = model;
@@ -90,13 +83,13 @@ async function _get(
     modelIntrospection,
   );
 
-  try {
-    const auth = authModeParams(client, getInternals, options);
+  const auth = authModeParams(client, options);
 
-    const headers = getCustomHeaders(client, getInternals, options?.headers);
+  try {
+    const headers = getCustomHeaders(client, options?.headers);
 
     const { data, extensions } = context
-      ? ((await (client as BaseSSRClient).graphql(
+      ? ((await (client as V6ClientSSRRequest<Record<string, any>>).graphql(
           context,
           {
             ...auth,
@@ -104,15 +97,15 @@ async function _get(
             variables,
           },
           headers,
-        )) as GraphQLResult)
-      : ((await (client as BaseBrowserClient).graphql(
+        )) as GraphQLResult<any>)
+      : ((await (client as V6Client<Record<string, any>>).graphql(
           {
             ...auth,
             query,
             variables,
           },
           headers,
-        )) as GraphQLResult);
+        )) as GraphQLResult<any>);
 
     // flatten response
     if (data) {
@@ -139,12 +132,50 @@ async function _get(
       return { data: null, extensions };
     }
   } catch (error: any) {
-    if (error.errors) {
-      // graphql errors pass through
-      return error as any;
+    /**
+     * The `data` type returned by `error` here could be:
+     * 1) `null`
+     * 2) an empty object
+     * 3) "populated" but with a `null` value `{ getPost: null }`
+     * 4) an actual record `{ getPost: { id: '1', title: 'Hello, World!' } }`
+     */
+    const { data, errors } = error;
+
+    /**
+     * `data` is not `null`, and is not an empty object:
+     */
+    if (data && !isEmpty(data) && errors) {
+      const [key] = Object.keys(data);
+      const flattenedResult = flattenItems(data)[key];
+
+      /**
+       * `flattenedResult` could be `null` here (e.g. `data: { getPost: null }`)
+       * if `flattenedResult`, result is an actual record:
+       */
+      if (flattenedResult) {
+        if (options?.selectionSet) {
+          return { data: flattenedResult, errors };
+        } else {
+          // TODO: refactor to avoid destructuring here
+          const [initialized] = initializeModel(
+            client,
+            name,
+            [flattenedResult],
+            modelIntrospection,
+            auth.authMode,
+            auth.authToken,
+            !!context,
+          );
+
+          return { data: initialized, errors };
+        }
+      } else {
+        // was `data: { getPost: null }`)
+        return handleSingularGraphQlError(error);
+      }
     } else {
-      // non-graphql errors re re-thrown
-      throw error;
+      // `data` is `null`:
+      return handleSingularGraphQlError(error);
     }
   }
 }

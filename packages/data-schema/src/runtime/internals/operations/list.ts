@@ -1,17 +1,11 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
+import { AmplifyServer } from '@aws-amplify/core/internals/adapter-core';
 import {
-  AmplifyServer,
-  AuthModeParams,
-  BaseClient,
-  BaseBrowserClient,
-  BaseSSRClient,
-  ClientInternalsGetter,
-  GraphQLResult,
-  ListArgs,
   ModelIntrospectionSchema,
   SchemaModel,
-} from '../../bridge-types';
+} from '@aws-amplify/core/internals/utils';
+import isEmpty from 'lodash/isEmpty.js';
 
 import {
   authModeParams,
@@ -21,40 +15,41 @@ import {
   getCustomHeaders,
   initializeModel,
 } from '../APIClient';
+import {
+  AuthModeParams,
+  ClientWithModels,
+  GraphQLResult,
+  ListArgs,
+  V6Client,
+  V6ClientSSRRequest,
+} from '../../types';
+
+import { handleListGraphQlError } from './utils';
 
 export function listFactory(
-  client: BaseClient,
+  client: ClientWithModels,
   modelIntrospection: ModelIntrospectionSchema,
   model: SchemaModel,
-  getInternals: ClientInternalsGetter,
   context = false,
 ) {
   const listWithContext = async (
     contextSpec: AmplifyServer.ContextSpec,
     args?: ListArgs,
   ) => {
-    return _list(
-      client,
-      modelIntrospection,
-      model,
-      getInternals,
-      args,
-      contextSpec,
-    );
+    return _list(client, modelIntrospection, model, args, contextSpec);
   };
 
-  const list = async (args?: Record<string, any>) => {
-    return _list(client, modelIntrospection, model, getInternals, args);
+  const list = async (args?: any) => {
+    return _list(client, modelIntrospection, model, args);
   };
 
   return context ? listWithContext : list;
 }
 
 async function _list(
-  client: BaseClient,
+  client: ClientWithModels,
   modelIntrospection: ModelIntrospectionSchema,
   model: SchemaModel,
-  getInternals: ClientInternalsGetter,
   args?: ListArgs & AuthModeParams,
   contextSpec?: AmplifyServer.ContextSpec,
 ) {
@@ -68,13 +63,13 @@ async function _list(
     modelIntrospection,
   );
 
-  try {
-    const auth = authModeParams(client, getInternals, args);
+  const auth = authModeParams(client, args);
 
-    const headers = getCustomHeaders(client, getInternals, args?.headers);
+  try {
+    const headers = getCustomHeaders(client, args?.headers);
 
     const { data, extensions } = contextSpec
-      ? ((await (client as BaseSSRClient).graphql(
+      ? ((await (client as V6ClientSSRRequest<Record<string, any>>).graphql(
           contextSpec,
           {
             ...auth,
@@ -82,15 +77,15 @@ async function _list(
             variables,
           },
           headers,
-        )) as GraphQLResult)
-      : ((await (client as BaseBrowserClient).graphql(
+        )) as GraphQLResult<any>)
+      : ((await (client as V6Client<Record<string, any>>).graphql(
           {
             ...auth,
             query,
             variables,
           },
           headers,
-        )) as GraphQLResult);
+        )) as GraphQLResult<any>);
 
     // flatten response
     if (data !== undefined) {
@@ -132,12 +127,66 @@ async function _list(
       };
     }
   } catch (error: any) {
-    if (error.errors) {
-      // graphql errors pass through
-      return error as any;
+    /**
+     * The `data` type returned by `error` here could be:
+     * 1) `null`
+     * 2) an empty object
+     * 3) "populated" but with a `null` value `data: { listPosts: null }`
+     * 4) actual records `data: { listPosts: items: [{ id: '1', ...etc }] }`
+     */
+    const { data, errors } = error;
+
+    // `data` is not `null`, and is not an empty object:
+    if (data !== undefined && !isEmpty(data) && errors) {
+      const [key] = Object.keys(data);
+
+      if (data[key]?.items) {
+        const flattenedResult = flattenItems(data)[key];
+
+        /**
+         * Check exists since `flattenedResult` could be `null`.
+         * if `flattenedResult` exists, result is an actual record.
+         */
+        if (flattenedResult) {
+          // don't init if custom selection set
+          if (args?.selectionSet) {
+            return {
+              data: flattenedResult,
+              nextToken: data[key]?.nextToken,
+              errors,
+            };
+          } else {
+            const initialized = initializeModel(
+              client,
+              name,
+              flattenedResult,
+              modelIntrospection,
+              auth.authMode,
+              auth.authToken,
+              !!contextSpec,
+            );
+
+            // data is full record w/out selection set:
+            return {
+              data: initialized,
+              nextToken: data[key]?.nextToken,
+              errors,
+            };
+          }
+        }
+
+        return {
+          data: data[key],
+          nextToken: data[key]?.nextToken,
+          errors,
+        };
+      } else {
+        // response is of type `data: { getPost: null }`)
+        return handleListGraphQlError(error);
+      }
     } else {
-      // non-graphql errors re re-thrown
-      throw error;
+      // `data` is `null` or an empty object:
+      return handleListGraphQlError(error);
     }
   }
 }
