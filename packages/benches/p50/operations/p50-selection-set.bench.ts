@@ -16,14 +16,17 @@ bench('p50 CRUDL', async () => {
       Employee: a
         .model({
           name: a.string().required(),
-          email: a.email().authorization([a.allow.owner()]),
-          phone: a.phone().authorization([a.allow.owner()]),
+          email: a.email().authorization((allow) => allow.owner()),
+          phone: a.phone().authorization((allow) => allow.owner()),
           website: a.url(),
-          ssn: a.string().authorization([a.allow.owner()]),
+          ssn: a.string().authorization((allow) => allow.owner()),
           todos: a.hasMany('Todo', 'employeeId'),
           posts: a.hasMany('Post', 'employeeId'),
         })
-        .authorization([a.allow.private().to(['read']), a.allow.owner()]),
+        .authorization((allow) => [
+          allow.authenticated().to(['read']),
+          allow.owner(),
+        ]),
       Todo: a
         .model({
           todoId: a.id().required(),
@@ -48,9 +51,12 @@ bench('p50 CRUDL', async () => {
           employeeId: a.id(),
           employee: a.belongsTo('Employee', 'employeeId'),
         })
-        .authorization([a.allow.public().to(['read']), a.allow.owner()]),
+        .authorization((allow) => [
+          allow.publicApiKey().to(['read']),
+          allow.owner(),
+        ]),
     })
-    .authorization([a.allow.public()]);
+    .authorization((allow) => allow.publicApiKey());
 
   type Schema = ClientSchema<typeof schema>;
 

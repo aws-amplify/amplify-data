@@ -4579,7 +4579,7 @@ bench('1522 simple models with 1 field each CRUDL', async () => {
         field1: a.string(),
       }),
     })
-    .authorization([a.allow.public()]);
+    .authorization((allow) => allow.publicApiKey());
 
   type _ = ClientSchema<typeof schema>;
 

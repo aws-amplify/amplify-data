@@ -10117,7 +10117,7 @@ bench(
           field215: a.string(),
         }),
       })
-      .authorization([a.allow.public()]);
+      .authorization((allow) => allow.publicApiKey());
 
     type _ = ClientSchema<typeof schema>;
 

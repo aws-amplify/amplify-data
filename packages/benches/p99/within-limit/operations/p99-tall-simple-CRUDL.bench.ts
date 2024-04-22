@@ -219,7 +219,7 @@ bench('70 simple models with 1 field each w/ client types', async () => {
         field1: a.string(),
       }),
     })
-    .authorization([a.allow.public()]);
+    .authorization((allow) => allow.publicApiKey());
 
   type Schema = ClientSchema<typeof s>;
 

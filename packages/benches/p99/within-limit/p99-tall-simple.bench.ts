@@ -236,7 +236,7 @@ bench('100 simple models with 1 field each', () => {
     Model75: a.model({
       field1: a.string(),
     }),
-  }).authorization([a.allow.public()]);
+  }).authorization((allow) => allow.publicApiKey());
 }).types([98977, 'instantiations']);
 
 bench('100 simple models with 1 field each w/ client types', () => {
@@ -468,7 +468,7 @@ bench('100 simple models with 1 field each w/ client types', () => {
         field1: a.string(),
       }),
     })
-    .authorization([a.allow.public()]);
+    .authorization((allow) => allow.publicApiKey());
 
   type _ = ClientSchema<typeof s>;
 }).types([330199, 'instantiations']);
