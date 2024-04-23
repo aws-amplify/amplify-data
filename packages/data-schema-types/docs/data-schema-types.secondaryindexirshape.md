@@ -11,6 +11,7 @@ SecondaryIndex index types and query methods
 ```typescript
 export type SecondaryIndexIrShape = {
     queryField: string;
+    defaultQueryFieldSuffix: string;
     pk: {
         [key: string]: string | number;
     };
