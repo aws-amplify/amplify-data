@@ -579,7 +579,7 @@ describe('Custom Selection Set', () => {
       type ExpectedType = {
         readonly title: string;
         readonly visibility: 'PRIVATE' | 'PUBLIC' | null | undefined;
-      };
+      } | null;
 
       type test = Expect<Equal<typeof post, ExpectedType>>;
     });
@@ -595,7 +595,7 @@ describe('Custom Selection Set', () => {
       type ExpectedType = {
         readonly title: string;
         readonly status: 'DRAFT' | 'PENDING' | 'PUBLISHED' | null | undefined;
-      };
+      } | null;
 
       type test = Expect<Equal<typeof post, ExpectedType>>;
     });
