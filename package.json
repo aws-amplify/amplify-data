@@ -34,7 +34,7 @@
     "@types/prettier": "^3.0.0",
     "@typescript-eslint/eslint-plugin": "^6.7.4",
     "@typescript-eslint/parser": "^6.7.4",
-    "aws-amplify": "unstable",
+    "aws-amplify": "^6.0.29",
     "glob": "^10.3.10",
     "eslint": "^8.50.0",
     "eslint-config-prettier": "^9.0.0",
