@@ -97,11 +97,7 @@ describe('Basic operations', () => {
           id: 'something',
         });
 
-        if (!data) {
-          throw new Error('no data');
-        }
-
-        const comments = await data.comments();
+        const comments = await data?.comments();
 
         type Comments = (typeof comments)['data'];
 
