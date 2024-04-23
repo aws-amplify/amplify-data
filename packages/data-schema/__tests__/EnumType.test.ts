@@ -1,5 +1,5 @@
 import { expectTypeTestsToPassAsync } from 'jest-tsd';
-import { a } from '../index';
+import { a } from '../src/index';
 
 // evaluates type defs in corresponding test-d.ts file
 it('should not produce static type errors', async () => {
@@ -34,7 +34,7 @@ describe('EnumType transform', () => {
         }),
         AccessLevel: a.enum(['public', 'protected', 'private']),
       })
-      .authorization([a.allow.public()]);
+      .authorization((allow) => allow.publicApiKey());
 
     const result = s.transform().schema;
 
@@ -49,7 +49,7 @@ describe('EnumType transform', () => {
         }),
         AccessLevel: a.enum(['public', 'protected', 'private']),
       })
-      .authorization([a.allow.public()]);
+      .authorization((allow) => allow.publicApiKey());
 
     const result = s.transform().schema;
 
@@ -60,11 +60,13 @@ describe('EnumType transform', () => {
     const s = a
       .schema({
         File: a.model({
-          accessLevel: a.ref('AccessLevel').authorization([a.allow.owner()]),
+          accessLevel: a
+            .ref('AccessLevel')
+            .authorization((allow) => allow.owner()),
         }),
         AccessLevel: a.enum(['public', 'protected', 'private']),
       })
-      .authorization([a.allow.public()]);
+      .authorization((allow) => allow.publicApiKey());
 
     const result = s.transform().schema;
 
@@ -78,7 +80,7 @@ describe('EnumType transform', () => {
           accessLevel: a.enum(['public', 'protected', 'private']),
         }),
       })
-      .authorization([a.allow.public()]);
+      .authorization((allow) => allow.publicApiKey());
 
     const result = s.transform().schema;
 
@@ -92,7 +94,7 @@ describe('EnumType transform', () => {
           enumField: a.enum(['string string', 'value']),
         }),
       })
-      .authorization([a.allow.public()]);
+      .authorization((allow) => allow.publicApiKey());
 
     expect(() => {
       testSchema.transform();

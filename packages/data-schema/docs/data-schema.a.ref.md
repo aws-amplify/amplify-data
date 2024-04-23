@@ -12,10 +12,37 @@ export declare function ref<Value extends string, T extends Value>(link: T): Ref
 
 ## Parameters
 
-|  Parameter | Type | Description |
-|  --- | --- | --- |
-|  link | T |  |
+<table><thead><tr><th>
 
+Parameter
+
+
+</th><th>
+
+Type
+
+
+</th><th>
+
+Description
+
+
+</th></tr></thead>
+<tbody><tr><td>
+
+link
+
+
+</td><td>
+
+T
+
+
+</td><td>
+
+
+</td></tr>
+</tbody></table>
 **Returns:**
 
 RefType&lt;RefTypeArgFactory&lt;T&gt;, never, undefined&gt;

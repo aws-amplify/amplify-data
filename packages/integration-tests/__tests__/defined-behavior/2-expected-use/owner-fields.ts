@@ -41,7 +41,7 @@ describe('Implicit Auth Field Handling. Given:', () => {
           content: a.string(),
         }),
       })
-      .authorization([a.allow.owner()]);
+      .authorization((allow) => allow.owner());
     type Schema = ClientSchema<typeof schema>;
 
     afterEach(() => {
@@ -125,7 +125,7 @@ describe('Implicit Auth Field Handling. Given:', () => {
           content: a.string(),
         }),
       })
-      .authorization([a.allow.owner().inField('customOwner')]);
+      .authorization((allow) => allow.ownerDefinedIn('customOwner'));
     type Schema = ClientSchema<typeof schema>;
 
     afterEach(() => {
@@ -210,7 +210,7 @@ describe('Implicit Auth Field Handling. Given:', () => {
           explicitOwner: a.string(),
         }),
       })
-      .authorization([a.allow.owner().inField('explicitOwner')]);
+      .authorization((allow) => allow.ownerDefinedIn('explicitOwner'));
     type Schema = ClientSchema<typeof schema>;
 
     afterEach(() => {
@@ -304,7 +304,7 @@ describe('Implicit Auth Field Handling. Given:', () => {
           content: a.string(),
         }),
       })
-      .authorization([a.allow.groupDefinedIn('group')]);
+      .authorization((allow) => allow.groupDefinedIn('group'));
     type Schema = ClientSchema<typeof schema>;
 
     afterEach(() => {
@@ -389,7 +389,7 @@ describe('Implicit Auth Field Handling. Given:', () => {
           content: a.string(),
         }),
       })
-      .authorization([a.allow.groupsDefinedIn('groups')]);
+      .authorization((allow) => allow.groupsDefinedIn('groups'));
     type Schema = ClientSchema<typeof schema>;
 
     afterEach(() => {
@@ -474,7 +474,7 @@ describe('Implicit Auth Field Handling. Given:', () => {
           content: a.string(),
         }),
       })
-      .authorization([a.allow.groupsDefinedIn('groups', 'oidc')]);
+      .authorization((allow) => allow.groupsDefinedIn('groups', 'oidc'));
     type Schema = ClientSchema<typeof schema>;
 
     afterEach(() => {

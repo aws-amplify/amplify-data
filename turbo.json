@@ -3,7 +3,7 @@
   "pipeline": {
     "build": {
       "dependsOn": ["^build"],
-      "outputs": ["lib-esm/**"]
+      "outputs": ["dist/**"]
     },
     "docs": {
       "dependsOn": ["build"]

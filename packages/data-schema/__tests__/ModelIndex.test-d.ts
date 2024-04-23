@@ -1,4 +1,4 @@
-import { a } from '../index';
+import { a } from '../src/index';
 
 test('secondaryIndexes input validation', () => {
   a.schema({
@@ -10,13 +10,13 @@ test('secondaryIndexes input validation', () => {
         metadata: a.json(),
         viewCount: a.integer(),
         tags: a.string().array(),
-        comments: a.hasMany('Comment'),
+        comments: a.hasMany('Comment', 'postId'),
         location: a.customType({ lat: a.float(), long: a.float() }),
         status: a.ref('Status'),
         fieldWithAuth: a
           .string()
           .required()
-          .authorization([a.allow.owner().to(['read'])]),
+          .authorization((allow) => allow.owner().to(['read'])),
       })
       .secondaryIndexes((index) => [
         // VALID cases
@@ -64,6 +64,8 @@ test('secondaryIndexes input validation', () => {
       ]),
     Comment: a.model({
       content: a.string(),
+      postId: a.id(),
+      post: a.belongsTo('Post', 'postId'),
     }),
     Status: a.enum(['DRAFT', 'PENDING', 'PUBLISHED']),
   });

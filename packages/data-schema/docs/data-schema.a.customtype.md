@@ -14,10 +14,37 @@ export declare function customType<T extends CustomTypeFields>(fields: T): Custo
 
 ## Parameters
 
-|  Parameter | Type | Description |
-|  --- | --- | --- |
-|  fields | T |  |
+<table><thead><tr><th>
 
+Parameter
+
+
+</th><th>
+
+Type
+
+
+</th><th>
+
+Description
+
+
+</th></tr></thead>
+<tbody><tr><td>
+
+fields
+
+
+</td><td>
+
+T
+
+
+</td><td>
+
+
+</td></tr>
+</tbody></table>
 **Returns:**
 
 CustomType&lt;{ fields: T; }&gt;

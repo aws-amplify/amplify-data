@@ -35,7 +35,7 @@ exports[`Read application data Fetch only the data you need with custom selectio
     {
       "authMode": undefined,
       "authToken": undefined,
-      "query": "query($id: ID!) { getBlog(id: $id) { author { email } publication { company { location { city } } } content { items { id title description blogContentId createdAt updatedAt } } } }",
+      "query": "query($id: ID!) { getBlog(id: $id) { author { email } publication { company { location { city } } } content { items { id title description blogId createdAt updatedAt } } } }",
       "variables": {
         "id": "<MY_BLOG_ID>",
       },
@@ -114,7 +114,7 @@ exports[`Read application data TypeScript type helpers for Amplify Data part 2 1
     {
       "authMode": undefined,
       "authToken": undefined,
-      "query": "query($filter: ModelPostFilterInput,$limit: Int,$nextToken: String) { listPosts(filter: $filter,limit: $limit,nextToken: $nextToken) { items { content author comments { items { id content author postCommentsId createdAt updatedAt } } } nextToken __typename } }",
+      "query": "query($filter: ModelPostFilterInput,$limit: Int,$nextToken: String) { listPosts(filter: $filter,limit: $limit,nextToken: $nextToken) { items { content author comments { items { id content author postId createdAt updatedAt } } } nextToken __typename } }",
       "variables": {},
     },
     {},

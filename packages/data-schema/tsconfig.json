@@ -1,10 +1,8 @@
 {
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
-    "rootDir": "./",
-    "outDir": "lib-esm",
     "declaration": true,
-    "declarationMap": true
-  },
-  "exclude": ["**/node_modules", "**/lib-esm", "__tests__"]
+    "lib": ["dom", "es2019", "es2020"],
+    "target": "es2020"
+  }
 }

@@ -11,7 +11,7 @@ exports[`field level auth implied fields objects can be extracted 1`] = `
       "operations": [
         "read",
       ],
-      "provider": undefined,
+      "provider": "apiKey",
       "strategy": "public",
     },
   },
@@ -74,7 +74,7 @@ exports[`field level auth implied fields objects can be extracted from related m
       "operations": [
         "read",
       ],
-      "provider": undefined,
+      "provider": "apiKey",
       "strategy": "public",
     },
   },

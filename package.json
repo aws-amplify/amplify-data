@@ -12,7 +12,7 @@
   ],
   "scripts": {
     "build": "turbo run build",
-    "build:clean": "turbo run clean && rimraf node_modules",
+    "build:clean": "turbo run clean && rimraf node_modules && npm run delete-cache",
     "check": "npm run build && npm run test && npm run lint && npm run check-api",
     "check-api": "turbo run check-api",
     "docs": "turbo run docs",
@@ -20,8 +20,10 @@
     "lint": "turbo run lint",
     "clean": "turbo run clean",
     "turbo": "turbo",
-    "publish-packages": "changeset version && changeset publish",
-    "publish-packages:local": "npm_config_registry=http://localhost:4873/ npm run publish-packages"
+    "delete-cache": "find . -type d ( -name .turbo -o -name .rollup.cache ) -exec rm -rf {} +",
+    "publish-packages:release": "changeset version && changeset publish",
+    "publish-packages:preid": "changeset version --snapshot ${PREID_PREFIX} && changeset publish --tag ${PREID_PREFIX}",
+    "publish-packages:local": "npm_config_registry=http://localhost:4873/ npm run publish-packages:release"
   },
   "devDependencies": {
     "@changesets/cli": "^2.26.2",
@@ -29,6 +31,7 @@
     "@microsoft/api-extractor": "^7.42.3",
     "@tsd/typescript": "^5.1.6",
     "@types/jest": "29.5.4",
+    "@types/lodash": "^4.17.0",
     "@types/prettier": "^3.0.0",
     "@typescript-eslint/eslint-plugin": "^6.7.4",
     "@typescript-eslint/parser": "^6.7.4",
@@ -38,6 +41,7 @@
     "eslint-plugin-jsdoc": "^46.8.2",
     "eslint-plugin-n": "^16.1.0",
     "eslint-plugin-promise": "^6.1.1",
+    "glob": "^10.3.10",
     "jest": "^29.7.0",
     "jest-tsd": "^0.2.2",
     "prettier": "^3.0.3",

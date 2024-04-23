@@ -11,14 +11,17 @@ bench('p50', () => {
     Employee: a
       .model({
         name: a.string().required(),
-        email: a.email().authorization([a.allow.owner()]),
-        phone: a.phone().authorization([a.allow.owner()]),
+        email: a.email().authorization((allow) => allow.owner()),
+        phone: a.phone().authorization((allow) => allow.owner()),
         website: a.url(),
-        ssn: a.string().authorization([a.allow.owner()]),
-        todos: a.hasMany('Todo'),
-        posts: a.hasMany('Post'),
+        ssn: a.string().authorization((allow) => allow.owner()),
+        todos: a.hasMany('Todo', ['employeeId']),
+        posts: a.hasMany('Post', ['employeeId']),
       })
-      .authorization([a.allow.private().to(['read']), a.allow.owner()]),
+      .authorization((allow) => [
+        allow.authenticated().to(['read']),
+        allow.owner(),
+      ]),
     Todo: a
       .model({
         todoId: a.id().required(),
@@ -26,7 +29,8 @@ bench('p50', () => {
         privacySetting: a.enum(['PRIVATE', 'FRIENDS_ONLY', 'PUBLIC']),
         viewCount: a.integer(),
         complete: a.boolean(),
-        employee: a.belongsTo('Employee'),
+        employeeId: a.id(),
+        employee: a.belongsTo('Employee', ['employeeId']),
       })
       .identifier(['todoId', 'name']),
     Post: a
@@ -39,11 +43,15 @@ bench('p50', () => {
         }),
         lastViewedDate: a.date(),
         lastViewedTime: a.time(),
-        employee: a.belongsTo('Employee'),
+        employeeId: a.id(),
+        employee: a.belongsTo('Employee', ['employeeId']),
       })
-      .authorization([a.allow.public().to(['read']), a.allow.owner()]),
-  }).authorization([a.allow.public()]);
-}).types([28010, 'instantiations']);
+      .authorization((allow) => [
+        allow.publicApiKey().to(['read']),
+        allow.owner(),
+      ]),
+  }).authorization((allow) => allow.publicApiKey());
+}).types([27218, 'instantiations']);
 
 bench('p50 w/ client types', () => {
   const s = a
@@ -51,14 +59,17 @@ bench('p50 w/ client types', () => {
       Employee: a
         .model({
           name: a.string().required(),
-          email: a.email().authorization([a.allow.owner()]),
-          phone: a.phone().authorization([a.allow.owner()]),
+          email: a.email().authorization((allow) => allow.owner()),
+          phone: a.phone().authorization((allow) => allow.owner()),
           website: a.url(),
-          ssn: a.string().authorization([a.allow.owner()]),
-          todos: a.hasMany('Todo'),
-          posts: a.hasMany('Post'),
+          ssn: a.string().authorization((allow) => allow.owner()),
+          todos: a.hasMany('Todo', ['employeeId']),
+          posts: a.hasMany('Post', ['employeeId']),
         })
-        .authorization([a.allow.private().to(['read']), a.allow.owner()]),
+        .authorization((allow) => [
+          allow.authenticated().to(['read']),
+          allow.owner(),
+        ]),
       Todo: a
         .model({
           todoId: a.id().required(),
@@ -66,7 +77,8 @@ bench('p50 w/ client types', () => {
           privacySetting: a.enum(['PRIVATE', 'FRIENDS_ONLY', 'PUBLIC']),
           viewCount: a.integer(),
           complete: a.boolean(),
-          employee: a.belongsTo('Employee'),
+          employeeId: a.id(),
+          employee: a.belongsTo('Employee', ['employeeId']),
         })
         .identifier(['todoId', 'name']),
       Post: a
@@ -79,14 +91,18 @@ bench('p50 w/ client types', () => {
           }),
           lastViewedDate: a.date(),
           lastViewedTime: a.time(),
-          employee: a.belongsTo('Employee'),
+          employeeId: a.id(),
+          employee: a.belongsTo('Employee', ['employeeId']),
         })
-        .authorization([a.allow.public().to(['read']), a.allow.owner()]),
+        .authorization((allow) => [
+          allow.publicApiKey().to(['read']),
+          allow.owner(),
+        ]),
     })
-    .authorization([a.allow.public()]);
+    .authorization((allow) => allow.publicApiKey());
 
   type _ = ClientSchema<typeof s>;
-}).types([117007, 'instantiations']);
+}).types([106478, 'instantiations']);
 
 bench('p50 combined schema w/ client types', () => {
   const s1 = a
@@ -94,14 +110,17 @@ bench('p50 combined schema w/ client types', () => {
       Employee: a
         .model({
           name: a.string().required(),
-          email: a.email().authorization([a.allow.owner()]),
-          phone: a.phone().authorization([a.allow.owner()]),
+          email: a.email().authorization((allow) => allow.owner()),
+          phone: a.phone().authorization((allow) => allow.owner()),
           website: a.url(),
-          ssn: a.string().authorization([a.allow.owner()]),
-          todos: a.hasMany('Todo'),
-          posts: a.hasMany('Post'),
+          ssn: a.string().authorization((allow) => allow.owner()),
+          todos: a.hasMany('Todo', ['employeeId']),
+          posts: a.hasMany('Post', ['employeeId']),
         })
-        .authorization([a.allow.private().to(['read']), a.allow.owner()]),
+        .authorization((allow) => [
+          allow.authenticated().to(['read']),
+          allow.owner(),
+        ]),
 
       Post: a
         .model({
@@ -113,11 +132,15 @@ bench('p50 combined schema w/ client types', () => {
           }),
           lastViewedDate: a.date(),
           lastViewedTime: a.time(),
-          employee: a.belongsTo('Employee'),
+          employeeId: a.id(),
+          employee: a.belongsTo('Employee', ['employeeId']),
         })
-        .authorization([a.allow.public().to(['read']), a.allow.owner()]),
+        .authorization((allow) => [
+          allow.publicApiKey().to(['read']),
+          allow.owner(),
+        ]),
     })
-    .authorization([a.allow.public()]);
+    .authorization((allow) => allow.publicApiKey());
 
   const s2 = a.schema({
     Todo: a
@@ -127,11 +150,11 @@ bench('p50 combined schema w/ client types', () => {
         privacySetting: a.enum(['PRIVATE', 'FRIENDS_ONLY', 'PUBLIC']),
         viewCount: a.integer(),
         complete: a.boolean(),
-        employee: a.belongsTo('Employee'),
+        employee: a.belongsTo('Employee', ['employeeId']),
       })
       .identifier(['todoId', 'name']),
   });
 
   const s = a.combine([s1, s2]);
   type _ = ClientSchema<typeof s>;
-}).types([336530, 'instantiations']);
+}).types([444437, 'instantiations']);

@@ -1,5 +1,5 @@
 import { expectTypeTestsToPassAsync } from 'jest-tsd';
-import { a } from '../index';
+import { a } from '../src/index';
 
 // evaluates type defs in corresponding test-d.ts file
 it('should not produce static type errors', async () => {
@@ -27,7 +27,7 @@ describe('RefType', () => {
           }),
           Enum: a.enum(['1', '2']),
         })
-        .authorization([a.allow.public()]);
+        .authorization((allow) => allow.publicApiKey());
 
       const transformed = schema.transform().schema;
 
@@ -56,7 +56,7 @@ describe('RefType', () => {
             }),
             Enum: a.enum(['1', '2']),
           })
-          .authorization([a.allow.public()]);
+          .authorization((allow) => allow.publicApiKey());
 
         const transformed = schema.transform().schema;
 
@@ -84,7 +84,7 @@ describe('RefType', () => {
             }),
             Enum: a.enum(['1', '2']),
           })
-          .authorization([a.allow.public()]);
+          .authorization((allow) => allow.publicApiKey());
 
         const transformed = schema.transform().schema;
 
@@ -112,7 +112,7 @@ describe('RefType', () => {
             }),
             Enum: a.enum(['1', '2']),
           })
-          .authorization([a.allow.public()]);
+          .authorization((allow) => allow.publicApiKey());
 
         const transformed = schema.transform().schema;
 
@@ -140,7 +140,7 @@ describe('RefType', () => {
             }),
             Enum: a.enum(['1', '2']),
           })
-          .authorization([a.allow.public()]);
+          .authorization((allow) => allow.publicApiKey());
 
         const transformed = schema.transform().schema;
 
@@ -168,7 +168,7 @@ describe('RefType', () => {
             }),
             Enum: a.enum(['1', '2']),
           })
-          .authorization([a.allow.public()]);
+          .authorization((allow) => allow.publicApiKey());
 
         const transformed = schema.transform().schema;
 

@@ -1,8 +1,8 @@
 import {
   type UnionToIntersection,
   type ExcludeEmpty,
-  __modelMeta__,
 } from '@aws-amplify/data-schema-types';
+import { __modelMeta__ } from '../runtime/client';
 import type { ModelType } from '../ModelType';
 import type { ModelRelationalFieldParamShape } from '../ModelRelationalField';
 
@@ -39,16 +39,10 @@ export type RelationalMetadata<
             ? // For hasOne we're adding metadata to the model itself
               // E.g. if Post hasOne Author, we need to add a postAuthorId field to the Post model
               ModelName
-            : ResolvedSchema[ModelName][Field]['relationshipType'] extends 'manyToMany'
-              ? ResolvedSchema[ModelName][Field]['relationName'] extends string
-                ? ResolvedSchema[ModelName][Field]['relationName']
-                : never
-              : never
+            : never
           : never]: ResolvedSchema[ModelName][Field] extends ModelRelationalFieldParamShape
           ? ResolvedSchema[ModelName][Field] extends ModelRelationalFieldParamShape
-            ? ResolvedSchema[ModelName][Field]['relationshipType'] extends
-                | 'manyToMany'
-                | 'hasMany'
+            ? ResolvedSchema[ModelName][Field]['relationshipType'] extends 'hasMany'
               ? {
                   relationalInputFields: Partial<
                     Record<

@@ -1,94 +1,37 @@
-import { a, ClientSchema } from '../index';
+import { a, ClientSchema } from '../src/index';
+import { __modelMeta__ } from '../src/runtime';
+import { configure } from '../src/internals';
 import {
   Expect,
   Equal,
   Prettify,
   ExpectFalse,
   HasKey,
-  __modelMeta__,
 } from '@aws-amplify/data-schema-types';
 
 describe('implied fields', () => {
-  describe('boring model keys', () => {
-    const schema = a.schema({
-      BoringParent: a.model({
-        childNormal: a.hasOne('BoringChild'),
-        childReciprocal: a.hasOne('BoringReciprocalChild'),
-        childHasManyNormal: a.hasMany('BoringHasManyChild'),
-        childHasManyReciprocal: a.hasMany('ReciprocalHasManyChild'),
-      }),
-      BoringChild: a.model({
-        value: a.string(),
-        json: a.json(),
-      }),
-      BoringReciprocalChild: a.model({
-        parent: a.belongsTo('BoringParent'),
-        value: a.string(),
-        json: a.json(),
-      }),
-      BoringHasManyChild: a.model({
-        value: a.string(),
-        json: a.json(),
-      }),
-      ReciprocalHasManyChild: a.model({
-        value: a.string(),
-        json: a.json(),
-        parent: a.belongsTo('BoringParent'),
-      }),
-    });
-
-    type Schema = ClientSchema<typeof schema>;
-
-    test('hasOne FK is implied', () => {
-      type assert1 = Expect<
-        Equal<
-          Schema['BoringParent']['boringParentChildNormalId'],
-          string | undefined
-        >
-      >;
-      type assert2 = Expect<
-        Equal<
-          Schema['BoringParent']['boringParentChildReciprocalId'],
-          string | undefined
-        >
-      >;
-    });
-
-    test('repriprocal belongsTo on hasOne implies FK', () => {
-      type assert = Expect<
-        Equal<
-          Schema['BoringReciprocalChild']['boringReciprocalChildParentId'],
-          string | undefined
-        >
-      >;
-    });
-
-    test('hasMany FK is implied on children', () => {
-      type assert1 = Expect<
-        Equal<
-          Schema['BoringHasManyChild']['boringParentChildHasManyNormalId'],
-          string | undefined
-        >
-      >;
-      type assert2 = Expect<
-        Equal<
-          Schema['ReciprocalHasManyChild']['boringParentChildHasManyReciprocalId'],
-          string | undefined
-        >
-      >;
-    });
-  });
-
   describe('CPK model keys', () => {
     const schema = a.schema({
       CPKParent: a
         .model({
           CPKParentIdFieldA: a.id().required(),
           CPKParentIdFieldB: a.id().required(),
-          childNormal: a.hasOne('CPKChild'),
-          childReciprocal: a.hasOne('CPKReciprocalChild'),
-          childHasManyNormal: a.hasMany('CPKHasManyChild'),
-          childHasManyReciprocal: a.hasMany('CPKReciprocalHasManyChild'),
+          childNormal: a.hasOne('CPKChild', [
+            'CPKParentIdFieldA',
+            'CPKParentIdFieldB',
+          ]),
+          childReciprocal: a.hasOne('CPKReciprocalChild', [
+            'CPKParentIdFieldA',
+            'CPKParentIdFieldB',
+          ]),
+          childHasManyNormal: a.hasMany('CPKHasManyChild', [
+            'CPKParentIdFieldA',
+            'CPKParentIdFieldB',
+          ]),
+          childHasManyReciprocal: a.hasMany('CPKReciprocalHasManyChild', [
+            'CPKParentIdFieldA',
+            'CPKParentIdFieldB',
+          ]),
         })
         .identifier(['CPKParentIdFieldA', 'CPKParentIdFieldB']),
       CPKChild: a
@@ -96,14 +39,25 @@ describe('implied fields', () => {
           CPKChildIdFieldA: a.id().required(),
           CPKChildIdFieldB: a.id().required(),
           value: a.string(),
+          CPKParentIdFieldA: a.id(),
+          CPKParentIdFieldB: a.id(),
+          parent: a.belongsTo('CPKParent', [
+            'CPKParentIdFieldA',
+            'CPKParentIdFieldB',
+          ]),
         })
         .identifier(['CPKChildIdFieldA', 'CPKChildIdFieldB']),
       CPKReciprocalChild: a
         .model({
           CPKReciprocalChildIdFieldA: a.id().required(),
           CPKReciprocalChildIdFieldB: a.id().required(),
-          parent: a.belongsTo('CPKParent'),
           value: a.string(),
+          CPKParentIdFieldA: a.id().required(),
+          CPKParentIdFieldB: a.id().required(),
+          parent: a.belongsTo('CPKParent', [
+            'CPKParentIdFieldA',
+            'CPKParentIdFieldB',
+          ]),
         })
         .identifier([
           'CPKReciprocalChildIdFieldA',
@@ -114,6 +68,12 @@ describe('implied fields', () => {
           CPKHasManyChildIdFieldA: a.id().required(),
           CPKHasManyChildIdFieldB: a.id().required(),
           value: a.string(),
+          CPKParentIdFieldA: a.id(),
+          CPKParentIdFieldB: a.id(),
+          parent: a.belongsTo('CPKParent', [
+            'CPKParentIdFieldA',
+            'CPKParentIdFieldB',
+          ]),
         })
         .identifier(['CPKHasManyChildIdFieldA', 'CPKHasManyChildIdFieldB']),
       CPKReciprocalHasManyChild: a
@@ -121,7 +81,12 @@ describe('implied fields', () => {
           CPKReciprocalHasManyChildIdFieldA: a.id().required(),
           CPKReciprocalHasManyChildIdFieldB: a.id().required(),
           value: a.string(),
-          parent: a.belongsTo('CPKParent'),
+          CPKParentIdFieldA: a.id(),
+          CPKParentIdFieldB: a.id(),
+          parent: a.belongsTo('CPKParent', [
+            'CPKParentIdFieldA',
+            'CPKParentIdFieldB',
+          ]),
         })
         .identifier([
           'CPKReciprocalHasManyChildIdFieldA',
@@ -130,72 +95,12 @@ describe('implied fields', () => {
     });
     type Schema = ClientSchema<typeof schema>;
 
-    test('hasOne FKs are implied', () => {
-      type hasOneA = Expect<
-        Equal<
-          Schema['CPKParent']['cPKParentChildNormalCPKChildIdFieldA'],
-          string | undefined
-        >
-      >;
-      type hasOneB = Expect<
-        Equal<
-          Schema['CPKParent']['cPKParentChildNormalCPKChildIdFieldB'],
-          string | undefined
-        >
-      >;
-      type hasOneReciprocatedA = Expect<
-        Equal<
-          Schema['CPKParent']['cPKParentChildReciprocalCPKReciprocalChildIdFieldA'],
-          string | undefined
-        >
-      >;
-      type hasOneReciprocatedB = Expect<
-        Equal<
-          Schema['CPKParent']['cPKParentChildReciprocalCPKReciprocalChildIdFieldB'],
-          string | undefined
-        >
-      >;
-    });
-
-    test('repriprocal belongsTo on hasOne implies FKs', () => {
+    test('repriprocal belongsTo on hasOne has explicitly defined reference fields', () => {
       type belongsToA = Expect<
-        Equal<
-          Schema['CPKReciprocalChild']['cPKReciprocalChildParentCPKParentIdFieldA'],
-          string | undefined
-        >
+        Equal<Schema['CPKReciprocalChild']['CPKParentIdFieldA'], string>
       >;
       type belongsToB = Expect<
-        Equal<
-          Schema['CPKReciprocalChild']['cPKReciprocalChildParentCPKParentIdFieldB'],
-          string | undefined
-        >
-      >;
-    });
-
-    test('hasMany FK is implied on children', () => {
-      type hasManyA = Expect<
-        Equal<
-          Schema['CPKHasManyChild']['cPKParentChildHasManyNormalCPKParentIdFieldA'],
-          string | undefined
-        >
-      >;
-      type hasManyB = Expect<
-        Equal<
-          Schema['CPKHasManyChild']['cPKParentChildHasManyNormalCPKParentIdFieldB'],
-          string | undefined
-        >
-      >;
-      type hasManyReprocatedA = Expect<
-        Equal<
-          Schema['CPKReciprocalHasManyChild']['cPKParentChildHasManyReciprocalCPKParentIdFieldA'],
-          string | undefined
-        >
-      >;
-      type hasManyReprocatedB = Expect<
-        Equal<
-          Schema['CPKReciprocalHasManyChild']['cPKParentChildHasManyReciprocalCPKParentIdFieldB'],
-          string | undefined
-        >
+        Equal<Schema['CPKReciprocalChild']['CPKParentIdFieldB'], string>
       >;
     });
   });
@@ -207,25 +112,25 @@ describe('implied fields', () => {
           somefield: a.string(),
           jsonfield: a.json(),
         })
-        .authorization([a.allow.owner()]),
+        .authorization((allow) => allow.owner()),
       CustomOwnerField: a
         .model({
           somefield: a.string(),
           jsonfield: a.json(),
         })
-        .authorization([a.allow.owner().inField('customOwnerField')]),
+        .authorization((allow) => allow.ownerDefinedIn('customOwnerField')),
       GroupIn: a
         .model({
           somefield: a.string(),
           jsonfield: a.json(),
         })
-        .authorization([a.allow.groupDefinedIn('myGroupField')]),
+        .authorization((allow) => allow.groupDefinedIn('myGroupField')),
       GroupsIn: a
         .model({
           somefield: a.string(),
           jsonfield: a.json(),
         })
-        .authorization([a.allow.groupsDefinedIn('myGroupsField')]),
+        .authorization((allow) => allow.groupsDefinedIn('myGroupsField')),
     });
     type Schema = ClientSchema<typeof schema>;
 
@@ -394,5 +299,149 @@ describe('Enum types', () => {
     };
 
     type test2 = Expect<Equal<ResolvedEnumMeta, ExpectedEnumMeta>>;
+  });
+});
+
+describe('SQL Schema', () => {
+  const fakeSecret = () => ({}) as any;
+
+  const datasourceConfigMySQL = {
+    engine: 'mysql',
+    connectionUri: fakeSecret(),
+  } as const;
+
+  test('.renameModels() on a SQL schema', () => {
+    const sqlSchema = configure({ database: datasourceConfigMySQL }).schema({
+      post: a
+        .model({
+          id: a.string().required(),
+          title: a.string(),
+          author: a.string(),
+        })
+        .identifier(['id']),
+    });
+
+    const modified = sqlSchema
+      .renameModels(() => [['post', 'RenamedPost']])
+      .setAuthorization((models) =>
+        models.RenamedPost.authorization((allow) => allow.publicApiKey()),
+      );
+
+    type Schema = typeof modified;
+
+    type Resolved = Prettify<ClientSchema<Schema>>;
+
+    type Expected = {
+      RenamedPost: {
+        id: string;
+        title?: string | null;
+        author?: string | null;
+      };
+      [__modelMeta__]: {
+        RenamedPost: {
+          identifier: 'id';
+        };
+        enums: Record<never, never>;
+        customTypes: Record<never, never>;
+        customOperations: Record<never, never>;
+      };
+    };
+
+    type test = Expect<Equal<Resolved, Expected>>;
+  });
+
+  test('sql schema rename multiple models', () => {
+    const sqlSchema = configure({ database: datasourceConfigMySQL }).schema({
+      post: a
+        .model({
+          id: a.string().required(),
+          title: a.string(),
+          author: a.string(),
+        })
+        .identifier(['id']),
+      comment: a
+        .model({
+          id: a.string().required(),
+          title: a.string(),
+          author: a.string(),
+        })
+        .identifier(['id']),
+      tags: a
+        .model({
+          id: a.string().required(),
+          title: a.string(),
+          author: a.string(),
+        })
+        .identifier(['id']),
+    });
+
+    const modified = sqlSchema
+      .renameModels(() => [
+        ['post', 'RenamedPost'],
+        ['comment', 'RenamedComment'],
+      ])
+      .setAuthorization((models) => [
+        models.RenamedPost.authorization((allow) => allow.publicApiKey()),
+        models.RenamedComment.authorization((allow) => allow.publicApiKey()),
+        // tags is unchanged, since we didn't rename it
+        models.tags.authorization((allow) => allow.publicApiKey()),
+      ]);
+
+    type Schema = typeof modified;
+
+    type Resolved = Prettify<ClientSchema<Schema>>;
+
+    type Expected = {
+      RenamedPost: {
+        id: string;
+        title?: string | null;
+        author?: string | null;
+      };
+      RenamedComment: {
+        id: string;
+        title?: string | null;
+        author?: string | null;
+      };
+      tags: {
+        id: string;
+        title?: string | null;
+        author?: string | null;
+      };
+      [__modelMeta__]: {
+        RenamedPost: {
+          identifier: 'id';
+        };
+        RenamedComment: {
+          identifier: 'id';
+        };
+        tags: {
+          identifier: 'id';
+        };
+        enums: Record<never, never>;
+        customTypes: Record<never, never>;
+        customOperations: Record<never, never>;
+      };
+    };
+
+    type test = Expect<Equal<Resolved, Expected>>;
+  });
+
+  test('.renameModels() not available on a DDB schema', () => {
+    const schema = a.schema({
+      post: a
+        .model({
+          id: a.string().required(),
+          title: a.string(),
+          author: a.string(),
+        })
+        .identifier(['id']),
+    });
+
+    try {
+      // @ts-expect-error
+      schema.renameModels(() => [['post', 'RenamedPost']]);
+    } catch (error) {
+      error;
+    }
   });
 });

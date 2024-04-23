@@ -429,175 +429,7 @@ exports[`model auth rules can define private with with provider userPools for op
 `;
 
 exports[`model auth rules can define public auth with no provider 1`] = `
-"type widget @model @auth(rules: [{allow: public}])
-{
-  title: String!
-}"
-`;
-
-exports[`model auth rules can define public with with provider apiKey 1`] = `
 "type widget @model @auth(rules: [{allow: public, provider: apiKey}])
-{
-  title: String!
-}"
-`;
-
-exports[`model auth rules can define public with with provider apiKey for operations create 1`] = `
-"type widget @model @auth(rules: [{allow: public, provider: apiKey, operations: [create]}])
-{
-  title: String!
-}"
-`;
-
-exports[`model auth rules can define public with with provider apiKey for operations create,read,listen 1`] = `
-"type widget @model @auth(rules: [{allow: public, provider: apiKey, operations: [create, read, listen]}])
-{
-  title: String!
-}"
-`;
-
-exports[`model auth rules can define public with with provider apiKey for operations create,read,update,delete 1`] = `
-"type widget @model @auth(rules: [{allow: public, provider: apiKey, operations: [create, read, update, delete]}])
-{
-  title: String!
-}"
-`;
-
-exports[`model auth rules can define public with with provider apiKey for operations delete 1`] = `
-"type widget @model @auth(rules: [{allow: public, provider: apiKey, operations: [delete]}])
-{
-  title: String!
-}"
-`;
-
-exports[`model auth rules can define public with with provider apiKey for operations get 1`] = `
-"type widget @model @auth(rules: [{allow: public, provider: apiKey, operations: [get]}])
-{
-  title: String!
-}"
-`;
-
-exports[`model auth rules can define public with with provider apiKey for operations list 1`] = `
-"type widget @model @auth(rules: [{allow: public, provider: apiKey, operations: [list]}])
-{
-  title: String!
-}"
-`;
-
-exports[`model auth rules can define public with with provider apiKey for operations listen 1`] = `
-"type widget @model @auth(rules: [{allow: public, provider: apiKey, operations: [listen]}])
-{
-  title: String!
-}"
-`;
-
-exports[`model auth rules can define public with with provider apiKey for operations read 1`] = `
-"type widget @model @auth(rules: [{allow: public, provider: apiKey, operations: [read]}])
-{
-  title: String!
-}"
-`;
-
-exports[`model auth rules can define public with with provider apiKey for operations search 1`] = `
-"type widget @model @auth(rules: [{allow: public, provider: apiKey, operations: [search]}])
-{
-  title: String!
-}"
-`;
-
-exports[`model auth rules can define public with with provider apiKey for operations sync 1`] = `
-"type widget @model @auth(rules: [{allow: public, provider: apiKey, operations: [sync]}])
-{
-  title: String!
-}"
-`;
-
-exports[`model auth rules can define public with with provider apiKey for operations update 1`] = `
-"type widget @model @auth(rules: [{allow: public, provider: apiKey, operations: [update]}])
-{
-  title: String!
-}"
-`;
-
-exports[`model auth rules can define public with with provider iam 1`] = `
-"type widget @model @auth(rules: [{allow: public, provider: iam}])
-{
-  title: String!
-}"
-`;
-
-exports[`model auth rules can define public with with provider iam for operations create 1`] = `
-"type widget @model @auth(rules: [{allow: public, provider: iam, operations: [create]}])
-{
-  title: String!
-}"
-`;
-
-exports[`model auth rules can define public with with provider iam for operations create,read,listen 1`] = `
-"type widget @model @auth(rules: [{allow: public, provider: iam, operations: [create, read, listen]}])
-{
-  title: String!
-}"
-`;
-
-exports[`model auth rules can define public with with provider iam for operations create,read,update,delete 1`] = `
-"type widget @model @auth(rules: [{allow: public, provider: iam, operations: [create, read, update, delete]}])
-{
-  title: String!
-}"
-`;
-
-exports[`model auth rules can define public with with provider iam for operations delete 1`] = `
-"type widget @model @auth(rules: [{allow: public, provider: iam, operations: [delete]}])
-{
-  title: String!
-}"
-`;
-
-exports[`model auth rules can define public with with provider iam for operations get 1`] = `
-"type widget @model @auth(rules: [{allow: public, provider: iam, operations: [get]}])
-{
-  title: String!
-}"
-`;
-
-exports[`model auth rules can define public with with provider iam for operations list 1`] = `
-"type widget @model @auth(rules: [{allow: public, provider: iam, operations: [list]}])
-{
-  title: String!
-}"
-`;
-
-exports[`model auth rules can define public with with provider iam for operations listen 1`] = `
-"type widget @model @auth(rules: [{allow: public, provider: iam, operations: [listen]}])
-{
-  title: String!
-}"
-`;
-
-exports[`model auth rules can define public with with provider iam for operations read 1`] = `
-"type widget @model @auth(rules: [{allow: public, provider: iam, operations: [read]}])
-{
-  title: String!
-}"
-`;
-
-exports[`model auth rules can define public with with provider iam for operations search 1`] = `
-"type widget @model @auth(rules: [{allow: public, provider: iam, operations: [search]}])
-{
-  title: String!
-}"
-`;
-
-exports[`model auth rules can define public with with provider iam for operations sync 1`] = `
-"type widget @model @auth(rules: [{allow: public, provider: iam, operations: [sync]}])
-{
-  title: String!
-}"
-`;
-
-exports[`model auth rules can define public with with provider iam for operations update 1`] = `
-"type widget @model @auth(rules: [{allow: public, provider: iam, operations: [update]}])
 {
   title: String!
 }"
@@ -611,35 +443,35 @@ exports[`model auth rules can specify an owner identityClaim 1`] = `
 `;
 
 exports[`model auth rules can specify operations  1`] = `
-"type widget @model @auth(rules: [{allow: public, operations: [create, read]}])
+"type widget @model @auth(rules: [{allow: public, provider: apiKey, operations: [create, read]}])
 {
   title: String!
 }"
 `;
 
 exports[`model auth rules duplicate field validation does not issue errors for \`identifier()\` explicit \`customId: string\` field 1`] = `
-"type widget @model @auth(rules: [{allow: public}])
+"type widget @model @auth(rules: [{allow: public, provider: apiKey}])
 {
   customId: String! @primaryKey
 }"
 `;
 
 exports[`model auth rules duplicate field validation does not issue errors for \`identifier()\` explicit \`id: ID\` field 1`] = `
-"type widget @model @auth(rules: [{allow: public}])
+"type widget @model @auth(rules: [{allow: public, provider: apiKey}])
 {
   id: ID! @primaryKey
 }"
 `;
 
 exports[`model auth rules duplicate field validation does not issue errors for \`identifier()\` explicit \`id: string\` field 1`] = `
-"type widget @model @auth(rules: [{allow: public}])
+"type widget @model @auth(rules: [{allow: public, provider: apiKey}])
 {
   id: String! @primaryKey
 }"
 `;
 
 exports[`model auth rules duplicate field validation does not issue errors for \`identifier()\` explicit multi-field mixed types PK 1`] = `
-"type widget @model @auth(rules: [{allow: public}])
+"type widget @model @auth(rules: [{allow: public, provider: apiKey}])
 {
   idFieldA: String! @primaryKey(sortKeyFields: ["idFieldB"])
   idFieldB: Int!
@@ -647,7 +479,7 @@ exports[`model auth rules duplicate field validation does not issue errors for \
 `;
 
 exports[`model auth rules duplicate field validation does not issue errors for \`identifier()\` explicit multi-field string type PK 1`] = `
-"type widget @model @auth(rules: [{allow: public}])
+"type widget @model @auth(rules: [{allow: public, provider: apiKey}])
 {
   idFieldA: String! @primaryKey(sortKeyFields: ["idFieldB"])
   idFieldB: String!
@@ -666,12 +498,12 @@ exports[`model auth rules includes auth from related model fields 1`] = `
 "type widget @model @auth(rules: [{allow: owner, ownerField: "owner"}])
 {
   id: ID! @primaryKey
-  parent: widget @belongsTo @auth(rules: [{allow: owner, operations: [create, read], ownerField: "customOwner"}])
+  parent: widget @belongsTo(references: ["widgetId"]) @auth(rules: [{allow: owner, operations: [create, read], ownerField: "customOwner"}])
 }"
 `;
 
 exports[`secondary indexes generates a primary key AND secondary index annotation with attributes 1`] = `
-"type widget @model @auth(rules: [{allow: public}])
+"type widget @model @auth(rules: [{allow: public, provider: apiKey}])
 {
   title: String! @primaryKey @index(name: "myGSI", sortKeyFields: ["description", "timestamp"], queryField: "byTitleDescTs")
   description: String!
@@ -680,14 +512,14 @@ exports[`secondary indexes generates a primary key AND secondary index annotatio
 `;
 
 exports[`secondary indexes generates a secondary index annotation 1`] = `
-"type widget @model @auth(rules: [{allow: public}])
+"type widget @model @auth(rules: [{allow: public, provider: apiKey}])
 {
   title: String! @index(queryField: "listByTitle")
 }"
 `;
 
 exports[`secondary indexes generates a secondary index annotation with attributes 1`] = `
-"type widget @model @auth(rules: [{allow: public}])
+"type widget @model @auth(rules: [{allow: public, provider: apiKey}])
 {
   title: String! @index(name: "myGSI", sortKeyFields: ["description", "timestamp"], queryField: "byTitleDescTs")
   description: String!
@@ -696,7 +528,7 @@ exports[`secondary indexes generates a secondary index annotation with attribute
 `;
 
 exports[`secondary indexes generates multiple secondary index annotations on the same field 1`] = `
-"type widget @model @auth(rules: [{allow: public}])
+"type widget @model @auth(rules: [{allow: public, provider: apiKey}])
 {
   title: String! @index(queryField: "listByTitle") @index(sortKeyFields: ["timestamp"], queryField: "listByTitleAndTimestamp") @index(name: "myGSI", sortKeyFields: ["description", "timestamp"], queryField: "byTitleDescTs")
   description: String!
@@ -705,7 +537,7 @@ exports[`secondary indexes generates multiple secondary index annotations on the
 `;
 
 exports[`secondary indexes generates secondary index annotations on different fields 1`] = `
-"type widget @model @auth(rules: [{allow: public}])
+"type widget @model @auth(rules: [{allow: public, provider: apiKey}])
 {
   title: String! @index(queryField: "listByTitle")
   description: String! @index(sortKeyFields: ["timestamp"], queryField: "listByDescriptionAndTimestamp")

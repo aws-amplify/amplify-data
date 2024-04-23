@@ -34,7 +34,7 @@ bench('custom op returning primitive types; schema only', () => {
       })
       .returns(a.string().required())
       .handler(a.handler.function('echoFunction'))
-      .authorization([a.allow.public()]),
+      .authorization((allow) => allow.publicApiKey()),
   });
 }).types([17419, 'instantiations']);
 
@@ -47,7 +47,7 @@ bench('custom op returning primitive types; schema + ClientSchema', () => {
       })
       .returns(a.string().required())
       .handler(a.handler.function('echoFunction'))
-      .authorization([a.allow.public()]),
+      .authorization((allow) => allow.publicApiKey()),
   });
 
   type _Schema = ClientSchema<typeof schema>;
@@ -64,7 +64,7 @@ bench(
         })
         .returns(a.string().required())
         .handler(a.handler.function('echoFunction'))
-        .authorization([a.allow.public()]),
+        .authorization((allow) => allow.publicApiKey()),
     });
 
     type Schema = ClientSchema<typeof schema>;
@@ -82,7 +82,7 @@ bench('custom op returning an enum; schema only', () => {
       })
       .returns(a.ref('Status').required())
       .handler(a.handler.function('echoFunction'))
-      .authorization([a.allow.public()]),
+      .authorization((allow) => allow.publicApiKey()),
   });
 }).types([17560, 'instantiations']);
 
@@ -96,7 +96,7 @@ bench('custom op returning an enum; schema + ClientSchema', () => {
       })
       .returns(a.ref('Status').required())
       .handler(a.handler.function('echoFunction'))
-      .authorization([a.allow.public()]),
+      .authorization((allow) => allow.publicApiKey()),
   });
 
   type _Schema = ClientSchema<typeof schema>;
@@ -114,7 +114,7 @@ bench(
         })
         .returns(a.ref('Status').required())
         .handler(a.handler.function('echoFunction'))
-        .authorization([a.allow.public()]),
+        .authorization((allow) => allow.publicApiKey()),
     });
 
     type Schema = ClientSchema<typeof schema>;
@@ -134,7 +134,7 @@ bench('custom op returning custom type; schema only', () => {
       })
       .returns(a.ref('EchoResult'))
       .handler(a.handler.function('echoFunction'))
-      .authorization([a.allow.public()]),
+      .authorization((allow) => allow.publicApiKey()),
   });
 }).types([18876, 'instantiations']);
 
@@ -150,7 +150,7 @@ bench('custom op returning custom type; schema + ClientSchema', () => {
       })
       .returns(a.ref('EchoResult'))
       .handler(a.handler.function('echoFunction'))
-      .authorization([a.allow.public()]),
+      .authorization((allow) => allow.publicApiKey()),
   });
   type _Schema = ClientSchema<typeof schema>;
 }).types([59193, 'instantiations']);
@@ -169,7 +169,7 @@ bench(
         })
         .returns(a.ref('EchoResult'))
         .handler(a.handler.function('echoFunction'))
-        .authorization([a.allow.public()]),
+        .authorization((allow) => allow.publicApiKey()),
     });
     type Schema = ClientSchema<typeof schema>;
     const _client = generateClient<Schema>();
@@ -188,7 +188,7 @@ bench('custom op returning model; schema only', () => {
       })
       .returns(a.ref('DataModel'))
       .handler(a.handler.function('echoFunction'))
-      .authorization([a.allow.public()]),
+      .authorization((allow) => allow.publicApiKey()),
   });
 }).types([20043, 'instantiations']);
 
@@ -204,7 +204,7 @@ bench('custom op returning model; schema + ClientSchema', () => {
       })
       .returns(a.ref('DataModel'))
       .handler(a.handler.function('echoFunction'))
-      .authorization([a.allow.public()]),
+      .authorization((allow) => allow.publicApiKey()),
   });
   type _Schema = ClientSchema<typeof schema>;
 }).types([69637, 'instantiations']);
@@ -221,7 +221,7 @@ bench('custom op returning model; schema + ClientSchema + client types', () => {
       })
       .returns(a.ref('DataModel'))
       .handler(a.handler.function('echoFunction'))
-      .authorization([a.allow.public()]),
+      .authorization((allow) => allow.publicApiKey()),
   });
   type Schema = ClientSchema<typeof schema>;
   const _client = generateClient<Schema>();

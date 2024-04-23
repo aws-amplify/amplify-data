@@ -1,7 +1,6 @@
 import type {
   UnionToIntersection,
   LazyLoader,
-  ExcludeEmpty,
 } from '@aws-amplify/data-schema-types';
 import type { Authorization, ImpliedAuthFields } from '../Authorization';
 import type { ModelField } from '../ModelField';
@@ -10,10 +9,7 @@ import type { GenericModelSchema } from '../ModelSchema';
 import type {
   ModelRelationalField,
   ModelRelationalFieldParamShape,
-  ModelRelationalTypeArgFactory,
-  ModelRelationshipTypes,
 } from '../ModelRelationalField';
-import type { AllImpliedFKs } from './ForeignKeys';
 
 import type { ResolveSchema, SchemaTypes } from './ResolveSchema';
 import type { InjectImplicitModelFields } from './ImplicitFieldInjector';
@@ -32,17 +28,16 @@ import type {
 export type ResolveFieldProperties<
   Schema extends GenericModelSchema<any>,
   NonModelTypes extends NonModelTypesShape,
-  ImplicitModelsSchema,
   ResolvedSchema = ResolveSchema<Schema>,
   IdentifierMeta extends Record<
     string,
     { identifier: string }
   > = ModelIdentifier<SchemaTypes<Schema>>,
   FieldsWithInjectedImplicitFields = InjectImplicitModelFields<
-    ResolvedSchema & ImplicitModelsSchema,
+    ResolvedSchema,
     IdentifierMeta
   >,
-  FieldsWithRelationships = ResolveRelationships<
+  FieldsWithRelationships = ResolveModelsRelationalAndRefFields<
     FieldsWithInjectedImplicitFields,
     NonModelTypes
   >,
@@ -51,8 +46,7 @@ export type ResolveFieldProperties<
     MarkModelsNonNullableFieldsRequired<FieldsWithRelationships>
   >,
   FilterFieldTypes<MarkModelsNullableFieldsOptional<FieldsWithRelationships>>,
-  FilterFieldTypes<ModelImpliedAuthFields<Schema>>,
-  AllImpliedFKs<ResolvedSchema, IdentifierMeta>
+  FilterFieldTypes<ModelImpliedAuthFields<Schema>>
 >;
 
 export type ResolveStaticFieldProperties<
@@ -64,7 +58,7 @@ export type ResolveStaticFieldProperties<
     ResolvedSchema & ImplicitModelsSchema,
     object
   >,
-  FieldsWithRelationships = ResolveRelationships<
+  FieldsWithRelationships = ResolveModelsRelationalAndRefFields<
     FieldsWithInjectedImplicitFields,
     NonModelTypes
   >,
@@ -73,30 +67,6 @@ export type ResolveStaticFieldProperties<
     MarkModelsNonNullableFieldsRequired<FieldsWithRelationships>
   >,
   FilterFieldTypes<MarkModelsNullableFieldsOptional<FieldsWithRelationships>>
->;
-
-export type CreateImplicitModelsFromRelations<Schema> = UnionToIntersection<
-  ExcludeEmpty<
-    {
-      [ModelProp in keyof Schema]: {
-        [FieldProp in keyof Schema[ModelProp] as Schema[ModelProp][FieldProp] extends ModelRelationalFieldParamShape
-          ? Schema[ModelProp][FieldProp]['relationName'] extends string
-            ? Schema[ModelProp][FieldProp]['relationName'] extends keyof Schema
-              ? never
-              : Schema[ModelProp][FieldProp]['relationName']
-            : never
-          : never]: Record<
-          // The id field of this implicit model gets inserted by `InjectImplicitModelFields` above
-          `${Lowercase<ModelProp & string>}`,
-          ModelRelationalTypeArgFactory<
-            ModelProp & string,
-            ModelRelationshipTypes.hasMany,
-            false
-          >
-        >;
-      };
-    }[keyof Schema]
-  >
 >;
 
 type GetRelationshipRef<
@@ -168,15 +138,15 @@ export type ResolveRefsOfCustomType<
     ? ResolveRef<NonModelTypes, R>
     : T[Prop];
 } extends infer Resolved
-  ? ResolveCustomTypeFieldsRequirements<Resolved>
+  ? ResolveFieldRequirements<Resolved>
   : never;
 
-export type ResolveCustomTypeFieldsRequirements<Resolved> = Intersection<
+export type ResolveFieldRequirements<Resolved> = Intersection<
   ExtractNullableFieldsToOptionalFields<Resolved>,
   ExtractNonNullableFieldsToRequiredFields<Resolved>
 >;
 
-type ResolveRelationships<
+type ResolveModelsRelationalAndRefFields<
   Schema,
   NonModelTypes extends NonModelTypesShape,
   Flat extends boolean = false,
@@ -190,21 +160,12 @@ type ResolveRelationships<
       ? ResolveRef<NonModelTypes, R>
       : Schema[ModelProp][FieldProp] extends ModelRelationalFieldParamShape
         ? Schema[ModelProp][FieldProp]['relatedModel'] extends keyof Schema
-          ? Schema[ModelProp][FieldProp]['relationshipType'] extends 'manyToMany'
-            ? Schema[ModelProp][FieldProp]['relationName'] extends keyof Schema
-              ? GetRelationshipRef<
-                  Schema,
-                  Schema[ModelProp][FieldProp]['relationName'],
-                  Schema[ModelProp][FieldProp],
-                  Flat
-                >
-              : never
-            : GetRelationshipRef<
-                Schema,
-                Schema[ModelProp][FieldProp]['relatedModel'],
-                Schema[ModelProp][FieldProp],
-                Flat
-              >
+          ? GetRelationshipRef<
+              Schema,
+              Schema[ModelProp][FieldProp]['relatedModel'],
+              Schema[ModelProp][FieldProp],
+              Flat
+            >
           : never // if the field value extends ModelRelationalFieldShape "relatedModel" should always point to a Model (keyof Schema)
         : Schema[ModelProp][FieldProp];
   };

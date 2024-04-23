@@ -1,5 +1,23 @@
 # @aws-amplify/data-schema-types
 
+## 0.9.0
+
+### Minor Changes
+
+- daeafeb: updates builds to include cjs, esm. moves runtime types and behavior into data-schema
+
+## 0.8.0
+
+### Minor Changes
+
+- 922c344: feat!: support references based relationships. remove support for manyToMany
+
+## 0.7.17
+
+### Patch Changes
+
+- 4ef3d8d: latest tag is wrong from tag release testing; bumping patch to fix tag
+
 ## 0.7.16
 
 ### Patch Changes

@@ -95,10 +95,12 @@ describe('Custom Selection Set', () => {
       Post: a.model({
         title: a.string().required(),
         description: a.string(),
-        author: a.hasOne('Author'),
+        author: a.hasOne('Author', 'postId'),
       }),
       Author: a.model({
         name: a.string().required(),
+        postId: a.id(),
+        post: a.belongsTo('Post', 'postId'),
       }),
     });
 
@@ -153,6 +155,7 @@ describe('Custom Selection Set', () => {
         readonly author: {
           readonly name: string;
           readonly id: string;
+          readonly postId: string | null;
           readonly createdAt: string;
           readonly updatedAt: string;
         };
@@ -191,11 +194,12 @@ describe('Custom Selection Set', () => {
       Post: a.model({
         title: a.string().required(),
         description: a.string(),
-        comments: a.hasMany('Comment'),
+        comments: a.hasMany('Comment', 'postId'),
       }),
       Comment: a.model({
         content: a.string().required(),
-        post: a.belongsTo('Post'),
+        postId: a.id(),
+        post: a.belongsTo('Post', 'postId'),
       }),
     });
 
@@ -213,6 +217,7 @@ describe('Custom Selection Set', () => {
         readonly comments: {
           readonly content: string;
           readonly id: string;
+          readonly postId: string | null;
           readonly createdAt: string;
           readonly updatedAt: string;
           // post is omitted;
@@ -243,6 +248,7 @@ describe('Custom Selection Set', () => {
                     readonly comments: {
                       readonly content: string;
                       readonly id: string;
+                      readonly postId: string | null;
                       readonly createdAt: string;
                       readonly updatedAt: string;
                     }[];
@@ -276,63 +282,30 @@ describe('Custom Selection Set', () => {
     });
   });
 
-  describe('Many to many relationship', () => {
-    const schema = a.schema({
-      Post: a.model({
-        title: a.string().required(),
-        description: a.string(),
-        postTags: a.manyToMany('Tag', { relationName: 'PostTags' }),
-      }),
-      Tag: a.model({
-        label: a.string().required(),
-        post: a.manyToMany('Post', { relationName: 'PostTags' }),
-      }),
-    });
-
-    type Schema = ClientSchema<typeof schema>;
-
-    test('wildcard on the target model', async () => {
-      const client = generateClient<Schema>();
-
-      const posts = await client.models.Post.list({
-        selectionSet: ['id', 'postTags.tag.*'],
-      });
-
-      type ExpectedType = {
-        readonly id: string;
-        readonly postTags: {
-          readonly tag: {
-            readonly id: string;
-            readonly label: string;
-            readonly createdAt: string;
-            readonly updatedAt: string;
-          };
-        }[];
-      }[];
-
-      type test = Expect<Equal<typeof posts.data, ExpectedType>>;
-    });
-  });
-
   describe('Complex relationship', () => {
     const schema = a.schema({
       Blog: a.model({
-        posts: a.hasMany('Post'),
+        posts: a.hasMany('Post', 'blogId'),
       }),
       Post: a.model({
         title: a.string().required(),
         description: a.string(),
         meta: a.string().array(),
-        comments: a.hasMany('Comment'),
-        comments2: a.hasMany('Comment'),
+        blogId: a.id(),
+        blog: a.belongsTo('Blog', 'blogId'),
+        comments: a.hasMany('Comment', 'postId'),
+        comments2: a.hasMany('Comment', 'postId'),
       }),
       Comment: a.model({
         content: a.string().required(),
-        post: a.belongsTo('Post'),
-        meta: a.hasMany('CommentMeta'),
+        postId: a.id(),
+        post: a.belongsTo('Post', 'postId'),
+        meta: a.hasMany('CommentMeta', 'commentId'),
       }),
       CommentMeta: a.model({
         metaData: a.json(),
+        commentId: a.id(),
+        comment: a.belongsTo('Comment', 'commentId'),
       }),
     });
 
@@ -368,6 +341,7 @@ describe('Custom Selection Set', () => {
             readonly content: string;
             readonly meta: {
               readonly id: string;
+              readonly commentId: string | null;
               readonly createdAt: string;
               readonly updatedAt: string;
               readonly metaData: Json;
@@ -377,6 +351,7 @@ describe('Custom Selection Set', () => {
             readonly content: string;
             readonly meta: {
               readonly id: string;
+              readonly commentId: string | null;
               readonly createdAt: string;
               readonly updatedAt: string;
               readonly metaData: Json;

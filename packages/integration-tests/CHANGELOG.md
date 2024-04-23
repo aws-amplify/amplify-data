@@ -1,5 +1,11 @@
 # integration-tests
 
+## 0.0.8
+
+### Patch Changes
+
+- 4f2b22c: update custom operation types to respect optional fields
+
 ## 0.0.7
 
 ### Patch Changes

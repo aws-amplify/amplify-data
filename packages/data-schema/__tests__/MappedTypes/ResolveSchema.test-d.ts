@@ -1,5 +1,5 @@
 import type { Prettify, Equal, Expect } from '@aws-amplify/data-schema-types';
-import { a } from '../../index';
+import { a } from '../../src/index';
 import { ResolveSchema } from '../../src/MappedTypes/ResolveSchema';
 import type { RefType, RefTypeParamShape } from '../../src/RefType';
 import { Authorization } from '../../src/Authorization';
@@ -250,7 +250,7 @@ describe('ResolveSchema Mapped Type', () => {
             dataSource: a.ref('Post'),
           }),
         )
-        .authorization([a.allow.private()]),
+        .authorization((allow) => allow.authenticated()),
 
       onUpdateOrLikePost: a
         .subscription()

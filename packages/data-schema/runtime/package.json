@@ -1,0 +1,20 @@
+{
+  "name": "@aws-amplify/data-schema/runtime",
+  "main": "../dist/cjs/runtime/index.js",
+  "typings": "./defer-to-types-versions",
+  "module": "../dist/esm/runtime/index.mjs",
+  "react-native": "../src/runtime/index.ts",
+  "sideEffects": false,
+  "typesVersions": {
+    "<5": {
+      "defer-to-types-versions": [
+        "../dist/esm/runtime/index.v3.d.ts"
+      ]
+    },
+    ">=5": {
+      "defer-to-types-versions": [
+        "../dist/esm/runtime/index.d.ts"
+      ]
+    }
+  }
+}

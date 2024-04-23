@@ -1,5 +1,5 @@
 import { expectTypeTestsToPassAsync } from 'jest-tsd';
-import { a } from '../index';
+import { a } from '../src/index';
 
 // evaluates type defs in corresponding test-d.ts file
 it('should not produce static type errors', async () => {
@@ -46,7 +46,7 @@ describe('CustomType transform', () => {
           long: a.float(),
         }),
       })
-      .authorization([a.allow.public()]);
+      .authorization((allow) => allow.publicApiKey());
 
     const result = s.transform().schema;
 
@@ -64,7 +64,7 @@ describe('CustomType transform', () => {
           long: a.float(),
         }),
       })
-      .authorization([a.allow.public()]);
+      .authorization((allow) => allow.publicApiKey());
 
     const result = s.transform().schema;
 
@@ -82,7 +82,7 @@ describe('CustomType transform', () => {
           publishedDate: a.date(),
         }),
       })
-      .authorization([a.allow.public()]);
+      .authorization((allow) => allow.publicApiKey());
 
     const result = s.transform().schema;
 
@@ -102,7 +102,7 @@ describe('CustomType transform', () => {
           }),
         }),
       })
-      .authorization([a.allow.public()]);
+      .authorization((allow) => allow.publicApiKey());
 
     const result = s.transform().schema;
 
@@ -121,7 +121,7 @@ describe('CustomType transform', () => {
         }),
         PostStatus: a.enum(['unpublished', 'published']),
       })
-      .authorization([a.allow.public()]);
+      .authorization((allow) => allow.publicApiKey());
 
     const result = s.transform().schema;
 
@@ -143,7 +143,7 @@ describe('CustomType transform', () => {
           field1: a.string(),
         }),
       })
-      .authorization([a.allow.public()]);
+      .authorization((allow) => allow.publicApiKey());
 
     const result = s.transform().schema;
 
@@ -154,14 +154,14 @@ describe('CustomType transform', () => {
     const s = a
       .schema({
         Post: a.model({
-          location: a.ref('Location').authorization([a.allow.owner()]),
+          location: a.ref('Location').authorization((allow) => allow.owner()),
         }),
         Location: a.customType({
           lat: a.float(),
           long: a.float(),
         }),
       })
-      .authorization([a.allow.public()]);
+      .authorization((allow) => allow.publicApiKey());
 
     const result = s.transform().schema;
 
@@ -178,7 +178,7 @@ describe('CustomType transform', () => {
           }),
         }),
       })
-      .authorization([a.allow.public()]);
+      .authorization((allow) => allow.publicApiKey());
 
     const result = s.transform().schema;
 
@@ -195,7 +195,7 @@ describe('CustomType transform', () => {
           }),
         }),
       })
-      .authorization([a.allow.public()]);
+      .authorization((allow) => allow.publicApiKey());
 
     const result = s.transform().schema;
 
@@ -214,7 +214,7 @@ describe('CustomType transform', () => {
           }),
         }),
       })
-      .authorization([a.allow.public()]);
+      .authorization((allow) => allow.publicApiKey());
 
     const result = s.transform().schema;
 
@@ -232,7 +232,7 @@ describe('CustomType transform', () => {
         }),
         PostStatus: a.enum(['unpublished', 'published']),
       })
-      .authorization([a.allow.public()]);
+      .authorization((allow) => allow.publicApiKey());
 
     const result = s.transform().schema;
 
@@ -252,7 +252,7 @@ describe('CustomType transform', () => {
           field1: a.string(),
         }),
       })
-      .authorization([a.allow.public()]);
+      .authorization((allow) => allow.publicApiKey());
 
     const result = s.transform().schema;
 

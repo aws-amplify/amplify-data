@@ -1,5 +1,61 @@
 # @aws-amplify/data-schema
 
+## 0.16.2
+
+### Patch Changes
+
+- 4f2b22c: update custom operation types to respect optional fields
+
+## 0.16.1
+
+### Patch Changes
+
+- 29d18a8: adds TS types and typesVersions for TS less than 5
+
+## 0.16.0
+
+### Minor Changes
+
+- 2b0f03c: refactor: update authorization builder
+- daeafeb: updates builds to include cjs, esm. moves runtime types and behavior into data-schema
+
+### Patch Changes
+
+- d7954e3: fix: timestamp fields are inserted for SQL schema
+- Updated dependencies [daeafeb]
+  - @aws-amplify/data-schema-types@0.9.0
+
+## 0.15.0
+
+### Minor Changes
+
+- 922c344: feat!: support references based relationships. remove support for manyToMany
+
+### Patch Changes
+
+- Updated dependencies [922c344]
+  - @aws-amplify/data-schema-types@0.8.0
+
+## 0.14.14
+
+### Patch Changes
+
+- 4ef3d8d: latest tag is wrong from tag release testing; bumping patch to fix tag
+- Updated dependencies [4ef3d8d]
+  - @aws-amplify/data-schema-types@0.7.17
+
+## 0.14.13
+
+### Patch Changes
+
+- f106212: fix: only the last function handler can be linked as data source
+
+## 0.14.12
+
+### Patch Changes
+
+- 05915ab: enable model rename for SQL schemas
+
 ## 0.14.11
 
 ### Patch Changes

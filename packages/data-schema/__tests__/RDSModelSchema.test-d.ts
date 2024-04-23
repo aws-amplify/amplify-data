@@ -1,13 +1,11 @@
-import type {
+import type { Equal, Expect, Prettify } from '@aws-amplify/data-schema-types';
+import {
   AuthMode,
   CustomHeaders,
-  Equal,
-  Expect,
   ListReturnValue,
-  Prettify,
   SingularReturnValue,
-} from '@aws-amplify/data-schema-types';
-import { type ClientSchema, a } from '../index';
+} from '../src/runtime';
+import { type ClientSchema, a } from '../src/index';
 import { configure } from '../src/ModelSchema';
 
 describe('RDSModelSchema', () => {
@@ -28,13 +26,13 @@ describe('RDSModelSchema', () => {
         description: a.string(),
       }),
     })
-    .authorization([a.allow.public()])
+    .authorization((allow) => allow.publicApiKey())
     .relationships((models) => [
       models.Post.addRelationships({
-        parentBlog: a.belongsTo('Blog').references(['parentBlogId']),
+        parentBlog: a.belongsTo('Blog', 'parentBlogId'),
       }),
       models.Blog.addRelationships({
-        childPosts: a.hasMany('Post').references(['parentBlogId']),
+        childPosts: a.hasMany('Post', 'parentBlogId'),
       }),
     ]);
 

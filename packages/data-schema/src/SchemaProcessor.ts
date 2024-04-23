@@ -1,16 +1,11 @@
 import { type CustomPathData, type InternalSchema } from './ModelSchema';
 import {
   type ModelField,
-  ModelFieldType,
   type InternalField,
-  id,
   string,
   ModelFieldTypeParamOuter,
 } from './ModelField';
-import {
-  type InternalRelationalField,
-  ModelRelationshipTypes,
-} from './ModelRelationalField';
+import { type InternalRelationalField } from './ModelRelationalField';
 import type { ModelType, InternalModel } from './ModelType';
 import type { InternalModelIndexType } from './ModelIndex';
 import {
@@ -195,7 +190,6 @@ function modelFieldToGql(fieldDef: ModelFieldDef) {
     type,
     relatedModel,
     array,
-    relationName,
     valueRequired,
     arrayRequired,
     references,
@@ -223,11 +217,6 @@ function modelFieldToGql(fieldDef: ModelFieldDef) {
     field += ` @${type}`;
   }
 
-  // TODO: accept other relationship options e.g. `fields`
-  if (type === 'manyToMany') {
-    field += `(relationName: "${relationName}")`;
-  }
-
   return field;
 }
 
@@ -253,7 +242,7 @@ function refFieldToGql(fieldDef: RefFieldDef): string {
 
 function transformFunctionHandler(
   handlers: FunctionHandler[],
-  callSignature: string,
+  functionFieldName: string,
 ): {
   gqlHandlerContent: string;
   lambdaFunctionDefinition: LambdaFunctionDefinition;
@@ -267,15 +256,13 @@ function transformFunctionHandler(
     if (typeof handlerData === 'string') {
       gqlHandlerContent += `@function(name: "${handlerData}") `;
     } else if (typeof handlerData.getInstance === 'function') {
-      const fnBaseName = `Fn${capitalize(callSignature)}`;
-      const fnNameSuffix = idx === 0 ? '' : `${idx + 1}`;
-      const fnName = fnBaseName + fnNameSuffix;
+      const fnName = `Fn${capitalize(functionFieldName)}${idx === 0 ? '' : `${idx + 1}`}`;
 
       lambdaFunctionDefinition[fnName] = handlerData;
       gqlHandlerContent += `@function(name: "${fnName}") `;
     } else {
       throw new Error(
-        `Invalid value specified for ${callSignature} handler.function(). Expected: defineFunction or string.`,
+        `Invalid value specified for ${functionFieldName} handler.function(). Expected: defineFunction or string.`,
       );
     }
   });
@@ -384,7 +371,7 @@ function customOperationToGql(
   if (isFunctionHandler(handlers)) {
     ({ gqlHandlerContent, lambdaFunctionDefinition } = transformFunctionHandler(
       handlers,
-      callSignature,
+      typeName,
     ));
   } else if (functionRef) {
     gqlHandlerContent = `@function(name: "${functionRef}") `;
@@ -552,39 +539,6 @@ function validateImpliedFields(
 }
 
 /**
- * Produces a new field definition object from every field definition object
- * given as an argument. Performs validation (conflict detection) as objects
- * are merged together.
- *
- * @param fieldsObjects A list of field definition objects to merge.
- * @returns
- */
-function mergeFieldObjects(
-  ...fieldsObjects: (Record<string, ModelField<any, any>> | undefined)[]
-): Record<string, ModelField<any, any>> {
-  const result: Record<string, ModelField<any, any>> = {};
-  for (const fields of fieldsObjects) {
-    if (fields) addFields(result, fields);
-  }
-  return result;
-}
-
-/**
- * Throws if resource/lambda auth is configured at the model or field level
- *
- * @param authorization A list of authorization rules.
- */
-function validateAuth(authorization: Authorization<any, any, any>[] = []) {
-  for (const entry of authorization) {
-    if (ruleIsResourceAuth(entry)) {
-      throw new Error(
-        'Lambda resource authorization is only confiugrable at the schema level',
-      );
-    }
-  }
-}
-
-/**
  * Given a list of authorization rules, produces a set of the implied owner and/or
  * group fields, along with the associated graphql `@auth` string directive.
  *
@@ -674,30 +628,6 @@ function calculateAuth(authorization: Authorization<any, any, any>[]) {
 type AuthRule = ReturnType<typeof accessData>;
 
 function validateCustomAuthRule(rule: AuthRule) {
-  if (rule.operations) {
-    throw new Error(
-      '.to() modifier is not supported for custom queries/mutations',
-    );
-  }
-
-  if (rule.groupOrOwnerField) {
-    throw new Error(
-      'Dynamic auth (owner or dynamic groups) is not supported for custom queries/mutations',
-    );
-  }
-
-  // identityClaim
-  if (rule.identityClaim) {
-    throw new Error(
-      'identityClaim attr is not supported with a.handler.custom',
-    );
-  }
-
-  // groupClaim
-  if (rule.groupClaim) {
-    throw new Error('groupClaim attr is not supported with a.handler.custom');
-  }
-
   if (rule.groups && rule.provider === 'oidc') {
     throw new Error('OIDC group auth is not supported with a.handler.custom');
   }
@@ -776,135 +706,6 @@ function capitalize<T extends string>(s: T): Capitalize<T> {
   return `${s[0].toUpperCase()}${s.slice(1)}` as Capitalize<T>;
 }
 
-function uncapitalize<T extends string>(s: T): Uncapitalize<T> {
-  return `${s[0].toLowerCase()}${s.slice(1)}` as Uncapitalize<T>;
-}
-
-function fkName(model: string, field: string, identifier: string): string {
-  return `${uncapitalize(model)}${capitalize(field)}${capitalize(identifier)}`;
-}
-
-/**
- * Returns all explicitly defined and implied fields from a model.
- *
- * @param schema The schema the model is part of. Necessary to derive implied FK's.
- * @param model The model to extract fields from and derive fields for.
- * @returns
- */
-const allImpliedFKs = (schema: InternalSchema) => {
-  const fks = {} as Record<string, Record<string, any>>;
-
-  function addFk({
-    onModel,
-    asField,
-    fieldDef,
-  }: {
-    onModel: string;
-    asField: string;
-    fieldDef: any;
-  }) {
-    fks[onModel] = fks[onModel] || {};
-    fks[onModel][asField] = fieldDef;
-  }
-
-  // implied FK's
-  for (const [modelName, typeDef] of Object.entries(schema.data.types)) {
-    if (!isInternalModel(typeDef)) continue;
-    for (const [fieldName, fieldDef] of Object.entries(typeDef.data.fields)) {
-      if (!isModelField(fieldDef)) continue;
-      const relatedModel = schema.data.types[fieldDef.data.relatedModel];
-      switch (fieldDef.data.type) {
-        case ModelRelationshipTypes.hasOne:
-          for (const idField of relatedModel.data.identifier) {
-            addFk({
-              onModel: modelName,
-              asField: fkName(modelName, fieldName, idField),
-              fieldDef: {
-                data: {
-                  ...fieldDef.data,
-                  fieldType:
-                    relatedModel.data.fields[idField]?.data.fieldType ||
-                    ModelFieldType.Id,
-                },
-              },
-            });
-          }
-          break;
-        case ModelRelationshipTypes.hasMany:
-          {
-            let authorization: Authorization<any, any, any>[] = [];
-            let required = false;
-            const [_belongsToName, belongsToDef] =
-              Object.entries(relatedModel.data.fields).find(([_name, def]) => {
-                return (
-                  isModelField(def) &&
-                  def.data.type === ModelRelationshipTypes.belongsTo &&
-                  def.data.relatedModel === fieldName
-                );
-              }) || [];
-            if (belongsToDef && isModelField(belongsToDef)) {
-              authorization = belongsToDef.data.authorization;
-              required = belongsToDef.data.valueRequired;
-            }
-
-            for (const idField of typeDef.data.identifier) {
-              addFk({
-                onModel: fieldDef.data.relatedModel,
-                asField: fkName(modelName, fieldName, idField),
-                fieldDef: {
-                  data: {
-                    ...(typeDef.data.fields[idField]?.data ||
-                      (id() as any).data),
-                    authorization,
-                    required,
-                  },
-                },
-              });
-            }
-          }
-          break;
-        case ModelRelationshipTypes.belongsTo:
-          {
-            // only create if corresponds to hasOne
-            const [_hasOneName, hasOneDef] =
-              Object.entries(relatedModel.data.fields).find(([_name, def]) => {
-                return (
-                  isModelField(def) &&
-                  def.data.type === ModelRelationshipTypes.hasOne &&
-                  def.data.relatedModel === modelName
-                );
-              }) || [];
-            if (hasOneDef && isModelField(hasOneDef)) {
-              for (const idField of relatedModel.data.identifier) {
-                addFk({
-                  onModel: modelName,
-                  asField: fkName(modelName, fieldName, idField),
-                  fieldDef: {
-                    data: {
-                      ...typeDef.data,
-                      fieldType:
-                        relatedModel.data.fields[idField]?.data.fieldType ||
-                        ModelFieldType.Id,
-                    },
-                  },
-                });
-              }
-            }
-          }
-          break;
-        case ModelRelationshipTypes.manyToMany:
-          // pretty sure there's nothing to do here.
-          // the implicit join table already has everything, AFAIK.
-          break;
-        default:
-        // nothing to do.
-      }
-    }
-  }
-
-  return fks;
-};
-
 function processFieldLevelAuthRules(
   fields: Record<string, ModelField<any, any>>,
   authFields: Record<string, ModelField<any, any>>,
@@ -916,7 +717,6 @@ function processFieldLevelAuthRules(
   for (const [fieldName, fieldDef] of Object.entries(fields)) {
     const fieldAuth = (fieldDef as InternalField)?.data?.authorization || [];
 
-    validateAuth(fieldAuth);
     const { authString, authFields: fieldAuthField } = calculateAuth(fieldAuth);
 
     if (authString) fieldLevelAuthRules[fieldName] = authString;
@@ -1198,7 +998,7 @@ const schemaPreprocessor = (
   const customSubscriptions = [];
 
   const jsFunctions: JsResolver[] = [];
-  let lambdaFunctions: LambdaFunctionDefinition = {};
+  const lambdaFunctions: LambdaFunctionDefinition = {};
   const customSqlDataSourceStrategies: CustomSqlDataSourceStrategy[] = [];
 
   const databaseType =
@@ -1208,8 +1008,6 @@ const schemaPreprocessor = (
 
   const staticSchema =
     schema.data.configuration.database.engine === 'dynamodb' ? false : true;
-
-  const fkFields = staticSchema ? {} : allImpliedFKs(schema);
   const topLevelTypes = Object.entries(schema.data.types);
 
   const { schemaAuth, functionSchemaAccess } = extractFunctionSchemaAccess(
@@ -1219,7 +1017,6 @@ const schemaPreprocessor = (
   const getRefType = getRefTypeForSchema(schema);
 
   for (const [typeName, typeDef] of topLevelTypes) {
-    validateAuth(typeDef.data?.authorization);
     const mostRelevantAuthRules: Authorization<any, any, any>[] =
       typeDef.data?.authorization?.length > 0
         ? typeDef.data.authorization
@@ -1291,7 +1088,7 @@ const schemaPreprocessor = (
           getRefType,
         );
 
-        lambdaFunctions = lambdaFunctionDefinition;
+        Object.assign(lambdaFunctions, lambdaFunctionDefinition);
 
         topLevelTypes.push(...models);
 
@@ -1325,8 +1122,6 @@ const schemaPreprocessor = (
       const identifier = typeDef.data.identifier;
       const [partitionKey] = identifier;
 
-      validateStaticFields(fields, fkFields[typeName]);
-
       const { authString, authFields } = calculateAuth(mostRelevantAuthRules);
       if (authString == '') {
         throw new Error(
@@ -1352,14 +1147,19 @@ const schemaPreprocessor = (
       topLevelTypes.push(...models);
 
       const joined = gqlFields.join('\n  ');
-
-      const model = `type ${typeName} @model ${authString}\n{\n  ${joined}\n}`;
+      // TODO: update @model(timestamps: null) once a longer term solution gets
+      // determined.
+      //
+      // Context: SQL schema should not be automatically inserted with timestamp fields,
+      // passing (timestamps: null) to @model to suppress this behavior as a short
+      // term solution.
+      const model = `type ${typeName} @model(timestamps: null) ${authString}\n{\n  ${joined}\n}`;
       gqlModels.push(model);
     } else {
-      const fields = mergeFieldObjects(
-        typeDef.data.fields as Record<string, ModelField<any, any>>,
-        fkFields[typeName],
-      );
+      const fields = typeDef.data.fields as Record<
+        string,
+        ModelField<any, any>
+      >;
       const identifier = typeDef.data.identifier;
       const [partitionKey] = identifier;
 
@@ -1564,7 +1364,7 @@ const normalizeDataSourceName = (
 
 const sanitizeStackTrace = (stackTrace: string): string[] => {
   // normalize EOL to \n so that parsing is consistent across platforms
-  const normalizedStackTrace = stackTrace.replaceAll(os.EOL, '\n');
+  const normalizedStackTrace = stackTrace.replace(new RegExp(os.EOL), '\n');
   return (
     normalizedStackTrace
       .split('\n')

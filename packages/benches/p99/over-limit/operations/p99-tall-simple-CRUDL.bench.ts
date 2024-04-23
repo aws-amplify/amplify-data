@@ -4579,9 +4579,8 @@ bench('1522 simple models with 1 field each CRUDL', async () => {
         field1: a.string(),
       }),
     })
-    .authorization([a.allow.public()]);
+    .authorization((allow) => allow.publicApiKey());
 
-  // @ts-expect-error Type instantiation is excessively deep and possibly infinite is expected for this schema
   type _ = ClientSchema<typeof schema>;
 
   // TODO:
@@ -4612,4 +4611,4 @@ bench('1522 simple models with 1 field each CRUDL', async () => {
   // await client.models.Model1.delete({ id: result.data.id });
 
   // await client.models.Model1.list();
-}).types([9618855, 'instantiations']);
+}).types([6036328, 'instantiations']);

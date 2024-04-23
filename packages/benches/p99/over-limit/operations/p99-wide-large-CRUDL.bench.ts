@@ -10117,7 +10117,7 @@ bench(
           field215: a.string(),
         }),
       })
-      .authorization([a.allow.public()]);
+      .authorization((allow) => allow.publicApiKey());
 
     type _ = ClientSchema<typeof schema>;
 
@@ -10154,4 +10154,4 @@ bench(
 
     // await client.models.Model35.list();
   },
-).types([3860906, 'instantiations']);
+).types([1081474, 'instantiations']);

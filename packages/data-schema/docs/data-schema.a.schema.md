@@ -18,10 +18,39 @@ schema: <Types extends ModelSchemaContents>(types: Types) => ModelSchema<{
 
 ## Parameters
 
-|  Parameter | Type | Description |
-|  --- | --- | --- |
-|  types | Types | The API and data model definition |
+<table><thead><tr><th>
 
+Parameter
+
+
+</th><th>
+
+Type
+
+
+</th><th>
+
+Description
+
+
+</th></tr></thead>
+<tbody><tr><td>
+
+types
+
+
+</td><td>
+
+Types
+
+
+</td><td>
+
+The API and data model definition
+
+
+</td></tr>
+</tbody></table>
 **Returns:**
 
 ModelSchema&lt;{ types: Types; authorization: \[\]; configuration: any; }, never&gt;

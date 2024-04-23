@@ -14,8 +14,63 @@ export interface SourceLocation
 
 ## Properties
 
-|  Property | Modifiers | Type | Description |
-|  --- | --- | --- | --- |
-|  [column](./data-schema-types.sourcelocation.column.md) | <code>readonly</code> | number |  |
-|  [line](./data-schema-types.sourcelocation.line.md) | <code>readonly</code> | number |  |
+<table><thead><tr><th>
 
+Property
+
+
+</th><th>
+
+Modifiers
+
+
+</th><th>
+
+Type
+
+
+</th><th>
+
+Description
+
+
+</th></tr></thead>
+<tbody><tr><td>
+
+[column](./data-schema-types.sourcelocation.column.md)
+
+
+</td><td>
+
+`readonly`
+
+
+</td><td>
+
+number
+
+
+</td><td>
+
+
+</td></tr>
+<tr><td>
+
+[line](./data-schema-types.sourcelocation.line.md)
+
+
+</td><td>
+
+`readonly`
+
+
+</td><td>
+
+number
+
+
+</td><td>
+
+
+</td></tr>
+</tbody></table>

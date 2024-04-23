@@ -1,5 +1,5 @@
 import type { Equal, Expect } from '@aws-amplify/data-schema-types';
-import { a } from '../../index';
+import { a } from '../../src/index';
 import { RefType } from '../../src/RefType';
 import {
   CustomOpShapes,
@@ -26,14 +26,15 @@ describe('Custom Operations mapper utils', () => {
   test('can resolve arguments from custom op', () => {
     const aMutation = a
       .mutation()
-      .arguments({ x: a.string() })
+      .arguments({ x: a.string(), y: a.string().required() })
       .returns(a.string())
-      .authorization([a.allow.public()])
+      .authorization((allow) => allow.publicApiKey())
       .handler(a.handler.function('asdf'));
 
     type Actual = CustomOpArguments<OpShape<typeof aMutation>>;
     type Expected = {
-      x: string | null;
+      x?: string | null | undefined;
+      y: string;
     };
 
     type T = Expect<Equal<Actual, Expected>>;
@@ -43,7 +44,7 @@ describe('Custom Operations mapper utils', () => {
     const aMutation = a
       .mutation()
       .returns(a.string())
-      .authorization([a.allow.public()])
+      .authorization((allow) => allow.publicApiKey())
       .handler(a.handler.function('asdf'));
 
     type Actual = CustomOpArguments<OpShape<typeof aMutation>>;
@@ -55,16 +56,16 @@ describe('Custom Operations mapper utils', () => {
   test('can select custom op shapes from a schema', () => {
     const aQuery = a
       .query()
-      .arguments({ x: a.string() })
+      .arguments({ x: a.string(), y: a.string().required() })
       .returns(a.string())
-      .authorization([a.allow.public()])
+      .authorization((allow) => allow.publicApiKey())
       .handler(a.handler.function('asdf'));
 
     const aMutation = a
       .mutation()
       .arguments({ x: a.string() })
       .returns(a.string())
-      .authorization([a.allow.public()])
+      .authorization((allow) => allow.publicApiKey())
       .handler(a.handler.function('asdf'));
 
     const schema = a.schema({
