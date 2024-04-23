@@ -17,8 +17,6 @@ import {
 
 import { map } from 'rxjs';
 
-import isEmpty from 'lodash/isEmpty.js';
-
 import {
   authModeParams,
   getDefaultSelectionSetForNonModelWithIR,
@@ -433,7 +431,7 @@ async function _op(
     /**
      * `data` is not `null`, and is not an empty object:
      */
-    if (data && !isEmpty(data) && errors) {
+    if (data && Object.keys(data).length !== 0 && errors) {
       const [key] = Object.keys(data);
       const flattenedResult = flattenItems(data)[key];
 

@@ -1,6 +1,5 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
-import isEmpty from 'lodash/isEmpty.js';
 import {
   AmplifyServer,
   AuthModeParams,
@@ -154,7 +153,7 @@ async function _get(
     /**
      * `data` is not `null`, and is not an empty object:
      */
-    if (data && !isEmpty(data) && errors) {
+    if (data && Object.keys(data).length !== 0 && errors) {
       const [key] = Object.keys(data);
       const flattenedResult = flattenItems(data)[key];
 

@@ -21,8 +21,6 @@ import {
   initializeModel,
 } from '../APIClient';
 
-import isEmpty from 'lodash/isEmpty.js';
-
 import { handleListGraphQlError } from './utils';
 
 export interface IndexMeta {
@@ -179,7 +177,7 @@ async function _indexQuery(
     const { data, errors } = error;
 
     // `data` is not `null`, and is not an empty object:
-    if (data !== undefined && !isEmpty(data) && errors) {
+    if (data !== undefined && Object.keys(data).length !== 0 && errors) {
       const [key] = Object.keys(data);
 
       if (data[key]?.items) {
