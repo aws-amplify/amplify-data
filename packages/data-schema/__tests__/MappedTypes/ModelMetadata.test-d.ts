@@ -87,7 +87,8 @@ describe('ModelSecondaryIndexes', () => {
       Post: {
         secondaryIndexes: [
           {
-            queryField: 'listByTitle';
+            defaultQueryFieldSuffix: 'Title';
+            queryField: never;
             pk: {
               title: string;
             };
@@ -121,6 +122,7 @@ describe('ModelSecondaryIndexes', () => {
       Post: {
         secondaryIndexes: [
           {
+            defaultQueryFieldSuffix: 'TitleAndViewCount';
             queryField: 'myFavIdx';
             pk: {
               title: string;
@@ -130,7 +132,8 @@ describe('ModelSecondaryIndexes', () => {
             };
           },
           {
-            queryField: 'listByDescription';
+            defaultQueryFieldSuffix: 'Description';
+            queryField: never;
             pk: {
               description: string;
             };

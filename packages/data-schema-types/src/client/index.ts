@@ -6,6 +6,7 @@ import type {
   UnionToIntersection,
   Prettify,
   Equal,
+  IsEmptyStringOrNever,
 } from '../util';
 import { __modelMeta__, ExtractModelMeta } from './symbol';
 import type { Observable } from 'rxjs';
@@ -477,10 +478,11 @@ type ModelMetaShape = {
 };
 
 type ModelTypesClient<
+  ModelName extends string,
   Model extends Record<string, unknown>,
   ModelMeta extends ModelMetaShape,
   FlatModel extends Record<string, unknown> = ResolvedModel<Model>,
-> = IndexQueryMethodsFromIR<ModelMeta['secondaryIndexes'], Model> & {
+> = IndexQueryMethodsFromIR<ModelMeta['secondaryIndexes'], ModelName, Model> & {
   create: (
     model: Prettify<CreateModelInput<Model, ModelMeta>>,
     options?: {
@@ -572,10 +574,11 @@ type ModelTypesClient<
 };
 
 type ModelTypesSSRCookies<
+  ModelName extends string,
   Model extends Record<string, unknown>,
   ModelMeta extends ModelMetaShape,
   FlatModel extends Record<string, unknown> = ResolvedModel<Model>,
-> = IndexQueryMethodsFromIR<ModelMeta['secondaryIndexes'], Model> & {
+> = IndexQueryMethodsFromIR<ModelMeta['secondaryIndexes'], ModelName, Model> & {
   create: (
     model: Prettify<CreateModelInput<Model, ModelMeta>>,
     options?: {
@@ -624,10 +627,11 @@ type ModelTypesSSRCookies<
 };
 
 type ModelTypesSSRRequest<
+  ModelName extends string,
   Model extends Record<string, unknown>,
   ModelMeta extends ModelMetaShape,
   FlatModel extends Record<string, unknown> = ResolvedModel<Model>,
-> = IndexQueryMethodsFromIR<ModelMeta['secondaryIndexes'], Model> & {
+> = IndexQueryMethodsFromIR<ModelMeta['secondaryIndexes'], ModelName, Model> & {
   create: (
     // TODO: actual type
     contextSpec: any,
@@ -699,11 +703,19 @@ export type ModelTypes<
   >]: ModelName extends string
     ? Schema[ModelName] extends Record<string, unknown>
       ? Context extends 'CLIENT'
-        ? ModelTypesClient<Schema[ModelName], ModelMeta[ModelName]>
+        ? ModelTypesClient<ModelName, Schema[ModelName], ModelMeta[ModelName]>
         : Context extends 'COOKIES'
-          ? ModelTypesSSRCookies<Schema[ModelName], ModelMeta[ModelName]>
+          ? ModelTypesSSRCookies<
+              ModelName,
+              Schema[ModelName],
+              ModelMeta[ModelName]
+            >
           : Context extends 'REQUEST'
-            ? ModelTypesSSRRequest<Schema[ModelName], ModelMeta[ModelName]>
+            ? ModelTypesSSRRequest<
+                ModelName,
+                Schema[ModelName],
+                ModelMeta[ModelName]
+              >
             : never
       : never
     : never;
@@ -831,26 +843,37 @@ export type CustomHeaders =
  */
 export type SecondaryIndexIrShape = {
   queryField: string;
+  defaultQueryFieldSuffix: string;
   pk: { [key: string]: string | number };
   sk: { [key: string]: string | number };
 };
 
 type IndexQueryMethodsFromIR<
   SecondaryIdxTuple extends SecondaryIndexIrShape[],
+  ModelName extends string,
   Model extends Record<string, unknown>,
   Res = unknown, // defaulting `unknown` because it gets absorbed in an intersection, e.g. `{a: 1} & unknown` => `{a: 1}`
 > = SecondaryIdxTuple extends [
   infer A extends SecondaryIndexIrShape,
   ...infer B extends SecondaryIndexIrShape[],
 ]
-  ? IndexQueryMethodsFromIR<B, Model, IndexQueryMethodSignature<A, Model> & Res>
+  ? IndexQueryMethodsFromIR<
+      B,
+      ModelName,
+      Model,
+      IndexQueryMethodSignature<A, ModelName, Model> & Res
+    >
   : Res;
 
 type IndexQueryMethodSignature<
   Idx extends SecondaryIndexIrShape,
+  ModelName extends string,
   Model extends Record<string, unknown>,
-> = {
-  [K in Idx['queryField'] & string]: <
+> = Record<
+  IsEmptyStringOrNever<Idx['queryField']> extends false
+    ? Idx['queryField']
+    : `list${ModelName}By${Idx['defaultQueryFieldSuffix']}`,
+  <
     FlatModel extends Record<string, unknown> = ResolvedModel<Model>,
     SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[],
   >(
@@ -869,5 +892,5 @@ type IndexQueryMethodSignature<
       authToken?: string;
       headers?: CustomHeaders;
     },
-  ) => ListReturnValue<Prettify<ReturnValue<Model, FlatModel, SelectionSet>>>;
-};
+  ) => ListReturnValue<Prettify<ReturnValue<Model, FlatModel, SelectionSet>>>
+>;

@@ -1,4 +1,3 @@
-import { IsEmptyStringOrNever } from '@aws-amplify/data-schema-types';
 import { ModelIndexType } from '../ModelIndex';
 
 type ModelIndexTypeShape = ModelIndexType<any, any, any, any, any>;
@@ -34,31 +33,28 @@ export type SecondaryIndexToIR<
  *
  * @remarks - the IR type alias is defined as SecondaryIndexIrShape in data-schema-types
  */
-type SingleIndexIrFromType<
-  Idx extends ModelIndexTypeShape,
-  ResolvedFields,
-> = Idx extends ModelIndexType<
-  any,
-  infer PK extends string,
-  infer SK,
-  infer QueryField extends string | never,
-  any
->
-  ? {
-      queryField: IsEmptyStringOrNever<QueryField> extends true
-        ? `listBy${QueryFieldLabelFromTuple<SK, Capitalize<PK>>}`
-        : QueryField;
-      pk: PK extends keyof ResolvedFields
-        ? {
-            [Key in PK]: Exclude<ResolvedFields[PK], null>;
-          }
-        : never;
-      // distribute ResolvedFields over SK
-      sk: unknown extends SK
-        ? never
-        : ResolvedSortKeyFields<SK, ResolvedFields>;
-    }
-  : never;
+type SingleIndexIrFromType<Idx extends ModelIndexTypeShape, ResolvedFields> =
+  Idx extends ModelIndexType<
+    any,
+    infer PK extends string,
+    infer SK,
+    infer QueryField extends string | never,
+    any
+  >
+    ? {
+        defaultQueryFieldSuffix: `${QueryFieldLabelFromTuple<SK, Capitalize<PK>>}`;
+        queryField: QueryField;
+        pk: PK extends keyof ResolvedFields
+          ? {
+              [Key in PK]: Exclude<ResolvedFields[PK], null>;
+            }
+          : never;
+        // distribute ResolvedFields over SK
+        sk: unknown extends SK
+          ? never
+          : ResolvedSortKeyFields<SK, ResolvedFields>;
+      }
+    : never;
 
 /**
  * @typeParam SK - tuple of SortKey field names, e.g. ['viewCount', 'createdAt']
