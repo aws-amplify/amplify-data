@@ -576,12 +576,14 @@ describe('Custom Selection Set', () => {
         },
       );
 
+      type expected = typeof post;
+
       type ExpectedType = {
         readonly title: string;
         readonly visibility: 'PRIVATE' | 'PUBLIC' | null | undefined;
-      } | null;
+      };
 
-      type test = Expect<Equal<typeof post, ExpectedType>>;
+      type test = Expect<Equal<expected, ExpectedType>>;
     });
 
     test('custom selection set on enum ref', async () => {
@@ -595,7 +597,7 @@ describe('Custom Selection Set', () => {
       type ExpectedType = {
         readonly title: string;
         readonly status: 'DRAFT' | 'PENDING' | 'PUBLISHED' | null | undefined;
-      } | null;
+      };
 
       type test = Expect<Equal<typeof post, ExpectedType>>;
     });

@@ -91,6 +91,7 @@ export function mockedGenerateClient(
     const client = actualGenerateClient<T>();
     _graphqlspy.mockImplementation(async () => {
       const result = responses.shift();
+
       if (typeof result === 'function') {
         return result();
       } else {
