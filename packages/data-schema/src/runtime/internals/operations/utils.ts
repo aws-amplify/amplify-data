@@ -3,7 +3,7 @@
 // import { GraphQLFormattedError } from '@aws-amplify/data-schema-types';
 
 /**
- * Handle errors for list and index query operations
+ * Handle errors for list return types (list and index query operations)
  */
 export function handleListGraphQlError(error: any) {
   if (error?.errors) {
@@ -13,13 +13,13 @@ export function handleListGraphQlError(error: any) {
       data: [],
     } as any;
   } else {
-    // non-graphql errors re re-thrown
+    // non-graphql errors are re-thrown
     throw error;
   }
 }
 
 /**
- * Handle errors for singular operations (create, get, update, delete)
+ * Handle errors for singular return types (create, get, update, delete operations)
  */
 export function handleSingularGraphQlError(error: any) {
   if (error.errors) {
@@ -29,7 +29,7 @@ export function handleSingularGraphQlError(error: any) {
       data: null,
     } as any;
   } else {
-    // non-graphql errors re re-thrown
+    // non-graphql errors are re-thrown
     throw error;
   }
 }
