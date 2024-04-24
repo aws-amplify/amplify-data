@@ -52,7 +52,7 @@ describe('CRUD error handling', () => {
       // #region mocking
       const { spy, innerSpy, generateClient } = mockedGenerateClient([
         {
-          data: {},
+          data: null,
           errors: [authError1],
         },
       ]);
@@ -79,7 +79,7 @@ describe('CRUD error handling', () => {
 
       // #region assertions
       expect(errors).toEqual(expect.arrayContaining([authError1]));
-      expect(newTodo).toEqual({});
+      expect(newTodo).toBeNull();
       // #endregion assertions
     });
 
@@ -87,7 +87,7 @@ describe('CRUD error handling', () => {
       // #region mocking
       const { spy, innerSpy, generateClient } = mockedGenerateClient([
         {
-          data: {},
+          data: null,
           errors: [authError1],
         },
       ]);
@@ -113,7 +113,7 @@ describe('CRUD error handling', () => {
 
       // #region assertions
       expect(errors).toEqual(expect.arrayContaining([authError1]));
-      expect(todo).toEqual({});
+      expect(todo).toBeNull();
       // #endregion assertions
     });
 
@@ -121,7 +121,7 @@ describe('CRUD error handling', () => {
       // #region mocking
       const { spy, generateClient } = mockedGenerateClient([
         {
-          data: {},
+          data: null,
           errors: [authError1],
         },
       ]);
@@ -148,7 +148,7 @@ describe('CRUD error handling', () => {
 
       // #region assertions
       expect(errors).toEqual(expect.arrayContaining([authError1]));
-      expect(updatedTodo).toEqual({});
+      expect(updatedTodo).toBeNull();
       // #endregion assertions
     });
 
@@ -156,7 +156,7 @@ describe('CRUD error handling', () => {
       // #region mocking
       const { spy, generateClient } = mockedGenerateClient([
         {
-          data: {},
+          data: null,
           errors: [authError1],
         },
       ]);
@@ -184,7 +184,7 @@ describe('CRUD error handling', () => {
 
       // #region assertions
       expect(errors).toEqual(expect.arrayContaining([authError1]));
-      expect(deletedTodo).toEqual({});
+      expect(deletedTodo).toBeNull();
       // #endregion assertions
     });
 
@@ -192,7 +192,7 @@ describe('CRUD error handling', () => {
       // #region mocking
       const { spy, generateClient } = mockedGenerateClient([
         {
-          data: {},
+          data: [],
           errors: [authError1],
         },
       ]);
@@ -218,7 +218,7 @@ describe('CRUD error handling', () => {
 
       // #region assertions
       expect(errors).toEqual(expect.arrayContaining([authError1]));
-      expect(todos).toEqual({});
+      expect(todos).toEqual(expect.arrayContaining([]));
       // #endregion assertions
     });
   });
@@ -276,7 +276,7 @@ describe('CRUD error handling', () => {
 
       // #region assertions
       expect(errors).toEqual(expect.arrayContaining([authError1]));
-      expect(newTodo).toEqual({ createTodo: null });
+      expect(newTodo).toBeNull();
       // #endregion assertions
     });
 
@@ -305,7 +305,7 @@ describe('CRUD error handling', () => {
 
       // #region assertions
       expect(errors).toEqual(expect.arrayContaining([authError1]));
-      expect(todo).toEqual({ getTodo: null });
+      expect(todo).toBeNull();
       // #endregion assertions
     });
 
@@ -334,7 +334,7 @@ describe('CRUD error handling', () => {
 
       // #region assertions
       expect(errors).toEqual(expect.arrayContaining([authError1]));
-      expect(updatedTodo).toEqual({ updateTodo: null });
+      expect(updatedTodo).toBeNull();
       // #endregion assertions
     });
 
@@ -364,7 +364,7 @@ describe('CRUD error handling', () => {
 
       // #region assertions
       expect(errors).toEqual(expect.arrayContaining([authError1]));
-      expect(deletedTodo).toEqual({ deleteTodo: null });
+      expect(deletedTodo).toBeNull();
       // #endregion assertions
     });
 
@@ -393,7 +393,7 @@ describe('CRUD error handling', () => {
 
       // #region assertions
       expect(errors).toEqual(expect.arrayContaining([authError1]));
-      expect(todos).toEqual({ listTodo: null });
+      expect(todos).toEqual(expect.arrayContaining([]));
       // #endregion assertions
     });
   });
@@ -462,14 +462,14 @@ describe('CRUD error handling', () => {
 
       // #region assertions
       expect(errors).toEqual(expect.arrayContaining([authError2]));
-      expect(getTodo).toEqual({ getTodo: sampleTodo });
+      expect(getTodo).toEqual(sampleTodo);
       // #endregion assertions
     });
     test('list an item', async () => {
       // #region mocking
       const { spy, generateClient } = mockedGenerateClient([
         {
-          data: { listTodos: [sampleTodo] },
+          data: { listTodos: { items: [sampleTodo] } },
           errors: [authError2],
         },
       ]);
@@ -481,13 +481,14 @@ describe('CRUD error handling', () => {
       // App.tsx
       Amplify.configure(config);
       const client = generateClient<Schema>();
+
       const { data, errors } = await client.models.Todo.list({
         selectionSet: ['id', 'content', 'additionalInfo.*'],
       });
 
       // #region assertions
       expect(errors).toEqual(expect.arrayContaining([authError2]));
-      expect(data).toEqual({ listTodos: [sampleTodo] });
+      expect(data).toEqual([sampleTodo]);
       // #endregion assertions
     });
   });

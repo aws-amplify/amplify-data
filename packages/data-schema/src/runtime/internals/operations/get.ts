@@ -25,6 +25,8 @@ import {
   initializeModel,
 } from '../APIClient';
 
+import { handleSingularGraphQlError } from './utils';
+
 export function getFactory(
   client: BaseClient,
   modelIntrospection: ModelIntrospectionSchema,
@@ -90,9 +92,9 @@ async function _get(
     modelIntrospection,
   );
 
-  try {
-    const auth = authModeParams(client, getInternals, options);
+  const auth = authModeParams(client, getInternals, options);
 
+  try {
     const headers = getCustomHeaders(client, getInternals, options?.headers);
 
     const { data, extensions } = context
@@ -139,12 +141,50 @@ async function _get(
       return { data: null, extensions };
     }
   } catch (error: any) {
-    if (error.errors) {
-      // graphql errors pass through
-      return error as any;
+    /**
+     * The `data` type returned by `error` here could be:
+     * 1) `null`
+     * 2) an empty object
+     * 3) "populated" but with a `null` value `{ getPost: null }`
+     * 4) an actual record `{ getPost: { id: '1', title: 'Hello, World!' } }`
+     */
+    const { data, errors } = error;
+
+    /**
+     * `data` is not `null`, and is not an empty object:
+     */
+    if (data && Object.keys(data).length !== 0 && errors) {
+      const [key] = Object.keys(data);
+      const flattenedResult = flattenItems(data)[key];
+
+      /**
+       * `flattenedResult` could be `null` here (e.g. `data: { getPost: null }`)
+       * if `flattenedResult`, result is an actual record:
+       */
+      if (flattenedResult) {
+        if (options?.selectionSet) {
+          return { data: flattenedResult, errors };
+        } else {
+          // TODO: refactor to avoid destructuring here
+          const [initialized] = initializeModel(
+            client,
+            name,
+            [flattenedResult],
+            modelIntrospection,
+            auth.authMode,
+            auth.authToken,
+            !!context,
+          );
+
+          return { data: initialized, errors };
+        }
+      } else {
+        // was `data: { getPost: null }`)
+        return handleSingularGraphQlError(error);
+      }
     } else {
-      // non-graphql errors re re-thrown
-      throw error;
+      // `data` is `null`:
+      return handleSingularGraphQlError(error);
     }
   }
 }

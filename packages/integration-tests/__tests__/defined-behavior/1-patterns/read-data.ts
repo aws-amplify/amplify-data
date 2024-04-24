@@ -427,6 +427,7 @@ describe('Read application data', () => {
       const { data: postsWithComments } = await client.models.Post.list({
         selectionSet,
       });
+
       setPosts(postsWithComments);
     }
     // #endregion docs code

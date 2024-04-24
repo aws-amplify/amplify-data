@@ -15,6 +15,7 @@ import type {
   HasKey,
   Prettify,
 } from '@aws-amplify/data-schema-types';
+import { generateClient } from 'aws-amplify/api';
 
 type FilteredKeys<T> = {
   [P in keyof T]: T[P] extends never ? never : P;
@@ -30,10 +31,6 @@ type PartialClient<T extends Record<any, any> = never> = ExcludeNeverFields<{
   mutations: CustomMutations<T>;
   subscriptions: CustomSubscriptions<T>;
 }>;
-
-function generateClient<T extends Record<any, any>>() {
-  return {} as PartialClient<T>;
-}
 
 describe('client', () => {
   test('query returning a primitive type', async () => {

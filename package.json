@@ -20,7 +20,7 @@
     "lint": "turbo run lint",
     "clean": "turbo run clean",
     "turbo": "turbo",
-    "delete-cache": "find . -type d ( -name .turbo -o -name .rollup.cache ) -exec rm -rf {} +",
+    "delete-cache": "find . -type d \\( -name .turbo -o -name .rollup.cache \\) -exec rm -rf {} +",
     "publish-packages:release": "changeset version && changeset publish",
     "publish-packages:preid": "changeset version --snapshot ${PREID_PREFIX} && changeset publish --tag ${PREID_PREFIX}",
     "publish-packages:local": "npm_config_registry=http://localhost:4873/ npm run publish-packages:release"

@@ -349,7 +349,7 @@ export interface SourceLocation {
 // #endregion
 
 export type SingularReturnValue<T> = Promise<{
-  data: T;
+  data: T | null;
   errors?: GraphQLFormattedError[];
   extensions?: {
     [key: string]: any;
