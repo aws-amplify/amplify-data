@@ -1,5 +1,11 @@
 # integration-tests
 
+## 0.1.0
+
+### Minor Changes
+
+- f159fcd: update return types to be nullable on error
+
 ## 0.0.8
 
 ### Patch Changes

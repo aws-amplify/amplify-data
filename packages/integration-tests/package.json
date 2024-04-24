@@ -1,6 +1,6 @@
 {
   "name": "integration-tests",
-  "version": "0.0.8",
+  "version": "0.1.0",
   "private": true,
   "description": "",
   "license": "Apache-2.0",

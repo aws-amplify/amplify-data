@@ -1,5 +1,11 @@
 # @aws-amplify/data-schema-types
 
+## 0.10.0
+
+### Minor Changes
+
+- f159fcd: update return types to be nullable on error
+
 ## 0.9.0
 
 ### Minor Changes
