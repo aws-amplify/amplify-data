@@ -1,5 +1,11 @@
 # @aws-amplify/data-schema
 
+## 0.17.0
+
+### Minor Changes
+
+- e3fd1c7: bump minor in data-schema; missed in previous PR
+
 ## 0.16.2
 
 ### Patch Changes
