@@ -1,5 +1,11 @@
 # @aws-amplify/data-schema
 
+## 0.17.1
+
+### Patch Changes
+
+- abfbd9d: fix: naming collision on default secondary index queryField
+
 ## 0.17.0
 
 ### Minor Changes
