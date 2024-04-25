@@ -10,7 +10,8 @@
   },
   "dependencies": {
     "@aws-amplify/data-schema": "*",
-    "aws-amplify": "*"
+    "aws-amplify": "*",
+    "aws-cdk-lib": "^2.127.0"
   },
   "keywords": [],
   "author": "",
