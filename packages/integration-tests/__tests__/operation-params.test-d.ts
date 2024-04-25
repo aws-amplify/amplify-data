@@ -36,8 +36,6 @@ describe('Basic operations', () => {
 
   type Schema = ClientSchema<typeof schema>;
 
-  type M = Schema[typeof __modelMeta__];
-
   const client = generateClient<Schema>();
 
   describe('basic typed params', () => {

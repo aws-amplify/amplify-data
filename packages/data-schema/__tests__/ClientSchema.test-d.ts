@@ -97,10 +97,10 @@ describe('implied fields', () => {
 
     test('repriprocal belongsTo on hasOne has explicitly defined reference fields', () => {
       type belongsToA = Expect<
-        Equal<Schema['CPKReciprocalChild']['CPKParentIdFieldA'], string>
+        Equal<Schema['CPKReciprocalChild']['type']['CPKParentIdFieldA'], string>
       >;
       type belongsToB = Expect<
-        Equal<Schema['CPKReciprocalChild']['CPKParentIdFieldB'], string>
+        Equal<Schema['CPKReciprocalChild']['type']['CPKParentIdFieldB'], string>
       >;
     });
   });
@@ -136,14 +136,14 @@ describe('implied fields', () => {
 
     test('default owner', () => {
       type test = Expect<
-        Equal<Schema['DefaultOwnerField']['owner'], string | undefined>
+        Equal<Schema['DefaultOwnerField']['type']['owner'], string | undefined>
       >;
     });
 
     test('custom owner', () => {
       type test = Expect<
         Equal<
-          Schema['CustomOwnerField']['customOwnerField'],
+          Schema['CustomOwnerField']['type']['customOwnerField'],
           string | undefined
         >
       >;
@@ -151,13 +151,13 @@ describe('implied fields', () => {
 
     test('group', () => {
       type test = Expect<
-        Equal<Schema['GroupIn']['myGroupField'], string | undefined>
+        Equal<Schema['GroupIn']['type']['myGroupField'], string | undefined>
       >;
     });
 
     test('groups', () => {
       type test = Expect<
-        Equal<Schema['GroupsIn']['myGroupsField'], string[] | undefined>
+        Equal<Schema['GroupsIn']['type']['myGroupsField'], string[] | undefined>
       >;
     });
   });
@@ -175,10 +175,10 @@ describe('implied fields', () => {
 
     test('default fields', () => {
       type testCreatedAt = Expect<
-        Equal<Schema['SimpleModel']['createdAt'], string>
+        Equal<Schema['SimpleModel']['type']['createdAt'], string>
       >;
       type testUpdatedAt = Expect<
-        Equal<Schema['SimpleModel']['updatedAt'], string>
+        Equal<Schema['SimpleModel']['type']['updatedAt'], string>
       >;
     });
   });

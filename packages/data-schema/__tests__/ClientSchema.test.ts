@@ -307,7 +307,7 @@ describe('schema auth rules', () => {
     type test = Expect<Equal<Actual_A, Expected_A>>;
 
     expect(schema.transform()).toMatchSnapshot();
-  })
+  });
 
   test('allows owner', () => {
     const schema = a
@@ -608,13 +608,13 @@ describe('custom operations', () => {
     });
 
     type Schema = ClientSchema<typeof schema>;
-    type ActualEcho = Schema[typeof __modelMeta__]['customOperations']['echo'];
+    type ActualEcho = Schema['echo'];
 
     type Expected = {
-      arguments: {
+      args: {
         inputContent: string;
       };
-      typeName: 'Query';
+      operationType: 'Query';
       returnType: {
         resultContent?: string | null | undefined;
       } | null;
@@ -644,14 +644,13 @@ describe('custom operations', () => {
     });
 
     type Schema = ClientSchema<typeof schema>;
-    type ActualLikePost =
-      Schema[typeof __modelMeta__]['customOperations']['likePost'];
+    type ActualLikePost = Schema['likePost'];
 
     type Expected = {
-      arguments: {
+      args: {
         postId: string;
       };
-      typeName: 'Mutation';
+      operationType: 'Mutation';
       returnType: {
         likes: number;
       } | null;
@@ -1007,14 +1006,13 @@ describe('custom operations', () => {
         });
 
         type Schema = ClientSchema<typeof schema>;
-        type ActualEcho =
-          Schema[typeof __modelMeta__]['customOperations']['echo'];
+        type ActualEcho = Schema['echo'];
 
         type Expected = {
-          arguments: {
+          args: {
             inputContent: string;
           };
-          typeName: 'Query';
+          operationType: 'Query';
           returnType: {
             resultContent?: string | null | undefined;
           } | null;

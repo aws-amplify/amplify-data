@@ -172,7 +172,7 @@ describe('client', () => {
     type T = ResponseType['data'];
 
     type Expected = {
-      data: Schema['DataModel'] | null;
+      data: Schema['DataModel']['type'] | null;
       errors?: GraphQLFormattedError[] | undefined;
       extensions?:
         | {
@@ -189,7 +189,7 @@ describe('client', () => {
     type Response2Type = typeof response2;
 
     type Expected2 = {
-      data: (Schema['DataModel'] | null)[] | null;
+      data: (Schema['DataModel']['type'] | null)[] | null;
       errors?: GraphQLFormattedError[] | undefined;
       extensions?:
         | {
@@ -327,9 +327,6 @@ describe('client', () => {
 
       type Schema = ClientSchema<typeof schema>;
       const client = generateClient<Schema>();
-
-      type ModelMeta =
-        ExtractModelMeta<Schema>['customOperations']['onCreateOrUpdatePost'];
 
       const sub = client.subscriptions
         .onCreateOrUpdatePost({ postId: 'abc' })
