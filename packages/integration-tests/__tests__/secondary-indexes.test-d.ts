@@ -31,7 +31,7 @@ describe('secondary indexes / index queries', () => {
       // Doing the following input type validation as an alternative:
 
       // Valid key input
-      client.models.Post.listByTitle(
+      client.models.Post.listPostByTitle(
         {
           title: 'abc',
         },
@@ -58,7 +58,7 @@ describe('secondary indexes / index queries', () => {
     });
 
     test('Return type', async () => {
-      const { data: posts } = await client.models.Post.listByTitle(
+      const { data: posts } = await client.models.Post.listPostByTitle(
         {
           title: 'abc',
         },
@@ -81,7 +81,7 @@ describe('secondary indexes / index queries', () => {
     });
 
     test('Custom selection set return type', async () => {
-      const { data: posts } = await client.models.Post.listByTitle(
+      const { data: posts } = await client.models.Post.listPostByTitle(
         {
           title: 'abc',
         },
