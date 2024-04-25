@@ -200,7 +200,7 @@ type IndividualCustomHandlerTypes<Op extends CustomOperationMinimalDef> = {
    * }
    * ```
    */
-  functionHandlerArguments: Op['arguments'];
+  args: Op['arguments'];
 
   /**
    * The return type expected by a lambda function handler.
@@ -217,7 +217,7 @@ type IndividualCustomHandlerTypes<Op extends CustomOperationMinimalDef> = {
    * }
    * ```
    */
-  functionHandlerResult: LambdaReturnType<Op['returnType']>;
+  returnType: LambdaReturnType<Op['returnType']>;
 };
 
 /**
