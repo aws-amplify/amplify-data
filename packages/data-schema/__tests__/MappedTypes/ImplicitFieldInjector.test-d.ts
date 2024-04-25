@@ -21,7 +21,7 @@ describe('InjectImplicitModelFields Mapped Type', () => {
       title?: string | null | undefined;
     };
 
-    type test = Expect<Equal<Schema['Post'], ExpectedFieldType>>;
+    type test = Expect<Equal<Schema['Post']['type'], ExpectedFieldType>>;
   });
 
   test('Writable `id` when explicitly defined in model', () => {
@@ -42,7 +42,7 @@ describe('InjectImplicitModelFields Mapped Type', () => {
       title?: string | null | undefined;
     };
 
-    type test = Expect<Equal<Schema['Post'], ExpectedFieldType>>;
+    type test = Expect<Equal<Schema['Post']['type'], ExpectedFieldType>>;
   });
 
   test('Writable timestamps when explicitly defined in model', () => {
@@ -65,7 +65,7 @@ describe('InjectImplicitModelFields Mapped Type', () => {
       title?: string | null | undefined;
     };
 
-    type test = Expect<Equal<Schema['Post'], ExpectedFieldType>>;
+    type test = Expect<Equal<Schema['Post']['type'], ExpectedFieldType>>;
   });
 
   test('Implicit `id` is not added when model has a custom identifier', () => {
@@ -85,7 +85,7 @@ describe('InjectImplicitModelFields Mapped Type', () => {
       readonly updatedAt: string;
     };
 
-    type test = Expect<Equal<Schema['Post'], ExpectedFieldType>>;
+    type test = Expect<Equal<Schema['Post']['type'], ExpectedFieldType>>;
   });
 
   test('`id` remains writeable when model has a custom identifier that includes an explicit id', () => {
@@ -107,6 +107,6 @@ describe('InjectImplicitModelFields Mapped Type', () => {
       readonly updatedAt: string;
     };
 
-    type test = Expect<Equal<Schema['Post'], ExpectedFieldType>>;
+    type test = Expect<Equal<Schema['Post']['type'], ExpectedFieldType>>;
   });
 });

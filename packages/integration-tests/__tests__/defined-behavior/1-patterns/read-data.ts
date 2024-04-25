@@ -364,7 +364,7 @@ describe('Read application data', () => {
     // #endregion mocking
 
     // #region docs code
-    type Post = Schema['Post'];
+    type Post = Schema['Post']['type'];
 
     const [post, setPosts] = useState<Post[]>([]);
     // #endregion docs code
@@ -419,7 +419,10 @@ describe('Read application data', () => {
 
     // #region docs code
     const selectionSet = ['content', 'author', 'comments.*'] as const;
-    type PostWithComments = SelectionSet<Schema['Post'], typeof selectionSet>;
+    type PostWithComments = SelectionSet<
+      Schema['Post']['type'],
+      typeof selectionSet
+    >;
 
     const [posts, setPosts] = useState<PostWithComments[]>([]);
 

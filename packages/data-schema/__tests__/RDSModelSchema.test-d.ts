@@ -40,8 +40,8 @@ describe('RDSModelSchema', () => {
 
   describe('.relationships() modifier', () => {
     it('inserts model relation fields into target models', () => {
-      type ResolvedPost = Prettify<Schema['Post']>;
-      type ResolvedBlog = Prettify<Schema['Blog']>;
+      type ResolvedPost = Prettify<Schema['Post']['type']>;
+      type ResolvedBlog = Prettify<Schema['Blog']['type']>;
 
       type ExpectedPostShape = {
         title: string;

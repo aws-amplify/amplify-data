@@ -63,7 +63,7 @@ describe('Custom Selection Set', () => {
 
       type test = Expect<Equal<typeof posts.data, ExpectedType>>;
 
-      type WithUtil = SelectionSet<Schema['Post'], typeof selSet>[];
+      type WithUtil = SelectionSet<Schema['Post']['type'], typeof selSet>[];
 
       type test2 = Expect<Equal<WithUtil, ExpectedType>>;
     });
@@ -74,7 +74,7 @@ describe('Custom Selection Set', () => {
         selectionSet: ['id', 'title'],
       });
 
-      type Post = Schema['Post'];
+      type Post = Schema['Post']['type'];
 
       type ExpectedType = SelectionSet<Post, ['id', 'title']>[];
 
@@ -178,7 +178,7 @@ describe('Custom Selection Set', () => {
         ],
       });
 
-      type Post = Schema['Post'];
+      type Post = Schema['Post']['type'];
 
       type ExpectedType = SelectionSet<
         Post,
@@ -274,7 +274,7 @@ describe('Custom Selection Set', () => {
       });
 
       type ExpectedType = SelectionSet<
-        Schema['Post'],
+        Schema['Post']['type'],
         ['id', 'comments.post.comments.post.comments.post.*']
       >[];
 
@@ -382,7 +382,7 @@ describe('Custom Selection Set', () => {
       });
 
       type ExpectedType = SelectionSet<
-        Schema['Blog'],
+        Schema['Blog']['type'],
         [
           'id',
           'updatedAt',

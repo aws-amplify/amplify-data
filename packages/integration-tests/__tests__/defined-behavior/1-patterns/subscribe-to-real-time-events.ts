@@ -59,7 +59,7 @@ describe('Subscribe to real-time events', () => {
     // #endregion mocking
 
     // #region docs code
-    type Todo = Schema['Todo'];
+    type Todo = Schema['Todo']['type'];
     const client = generateClient<Schema>();
 
     // function MyComponent() {

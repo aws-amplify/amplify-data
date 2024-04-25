@@ -52,7 +52,9 @@ describe('Implicit System Field Handling. Given:', () => {
     });
 
     test('the client schema type has a default `id: string`', () => {
-      type _IdStringIsPresent = Expect<Equal<string, Schema['Model']['id']>>;
+      type _IdStringIsPresent = Expect<
+        Equal<string, Schema['Model']['type']['id']>
+      >;
     });
 
     test('the generated graphql excludes `id: ID!` PK', async () => {
@@ -157,10 +159,10 @@ describe('Implicit System Field Handling. Given:', () => {
 
     test('the client schema type has a createdAt: string, updatedAt: string fields', () => {
       type _createAtStringIsPresent = Expect<
-        Equal<string, Schema['Model']['createdAt']>
+        Equal<string, Schema['Model']['type']['createdAt']>
       >;
       type _updatedAtStringIsPresent = Expect<
-        Equal<string, Schema['Model']['updatedAt']>
+        Equal<string, Schema['Model']['type']['updatedAt']>
       >;
     });
 
