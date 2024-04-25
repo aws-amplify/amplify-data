@@ -1,5 +1,5 @@
 import * as a from './a';
-import { ClientSchema } from './ClientSchema';
+import { ClientSchema } from './ClientSchemaV2';
 
 export { a };
 

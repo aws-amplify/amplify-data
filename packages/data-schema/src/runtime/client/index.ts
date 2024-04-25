@@ -701,8 +701,9 @@ type ModelTypesSSRRequest<
 type ContextType = 'CLIENT' | 'COOKIES' | 'REQUEST';
 
 export type ModelTypes<
-  Schema extends Record<any, any>,
+  T extends Record<any, any>,
   Context extends ContextType = 'CLIENT',
+  Schema extends Record<any, any> = T['__AmplifyInternal']['v1Schema'],
   ModelMeta extends Record<any, any> = ExtractModelMeta<Schema>,
 > = {
   [ModelName in Exclude<
@@ -727,20 +728,23 @@ export type ModelTypes<
 };
 
 export type CustomQueries<
-  Schema extends Record<any, any>,
+  T extends Record<any, any>,
   Context extends ContextType = 'CLIENT',
+  Schema extends Record<any, any> = T['__AmplifyInternal']['v1Schema'],
   ModelMeta extends Record<any, any> = ExtractModelMeta<Schema>,
 > = CustomOperations<Schema, 'Query', Context, ModelMeta>;
 
 export type CustomMutations<
-  Schema extends Record<any, any>,
+  T extends Record<any, any>,
   Context extends ContextType = 'CLIENT',
+  Schema extends Record<any, any> = T['__AmplifyInternal']['v1Schema'],
   ModelMeta extends Record<any, any> = ExtractModelMeta<Schema>,
 > = CustomOperations<Schema, 'Mutation', Context, ModelMeta>;
 
 export type CustomSubscriptions<
-  Schema extends Record<any, any>,
+  T extends Record<any, any>,
   Context extends ContextType = 'CLIENT',
+  Schema extends Record<any, any> = T['__AmplifyInternal']['v1Schema'],
   ModelMeta extends Record<any, any> = ExtractModelMeta<Schema>,
 > = CustomOperations<Schema, 'Subscription', Context, ModelMeta>;
 
