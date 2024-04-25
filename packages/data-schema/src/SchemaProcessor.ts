@@ -810,12 +810,13 @@ type TransformedSecondaryIndexes = {
  * @returns default query field name
  */
 const secondaryIndexDefaultQueryField = (
+  modelName: string,
   pk: string,
   sk?: readonly string[],
 ): string => {
   const skName = sk?.length ? 'And' + sk?.map(capitalize).join('And') : '';
 
-  const queryField = `listBy${capitalize(pk)}${skName}`;
+  const queryField = `list${capitalize(modelName)}By${capitalize(pk)}${skName}`;
 
   return queryField;
 };
@@ -825,6 +826,7 @@ const secondaryIndexDefaultQueryField = (
  * and the value is an array of transformed Amplify @index directives with all supplied attributes
  */
 const transformedSecondaryIndexesForModel = (
+  modelName: string,
   secondaryIndexes: readonly InternalModelIndexType[],
 ): TransformedSecondaryIndexes => {
   const indexDirectiveWithAttributes = (
@@ -835,6 +837,7 @@ const transformedSecondaryIndexesForModel = (
   ): string => {
     if (!sortKeys.length && !indexName && !queryField) {
       return `@index(queryField: "${secondaryIndexDefaultQueryField(
+        modelName,
         partitionKey,
       )}")`;
     }
@@ -856,6 +859,7 @@ const transformedSecondaryIndexesForModel = (
     } else {
       attributes.push(
         `queryField: "${secondaryIndexDefaultQueryField(
+          modelName,
           partitionKey,
           sortKeys,
         )}"`,
@@ -1164,6 +1168,7 @@ const schemaPreprocessor = (
       const [partitionKey] = identifier;
 
       const transformedSecondaryIndexes = transformedSecondaryIndexesForModel(
+        typeName,
         typeDef.data.secondaryIndexes,
       );
 

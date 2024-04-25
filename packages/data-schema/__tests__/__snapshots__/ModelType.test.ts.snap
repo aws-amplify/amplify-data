@@ -514,7 +514,7 @@ exports[`secondary indexes generates a primary key AND secondary index annotatio
 exports[`secondary indexes generates a secondary index annotation 1`] = `
 "type widget @model @auth(rules: [{allow: public, provider: apiKey}])
 {
-  title: String! @index(queryField: "listByTitle")
+  title: String! @index(queryField: "listWidgetByTitle")
 }"
 `;
 
@@ -530,7 +530,7 @@ exports[`secondary indexes generates a secondary index annotation with attribute
 exports[`secondary indexes generates multiple secondary index annotations on the same field 1`] = `
 "type widget @model @auth(rules: [{allow: public, provider: apiKey}])
 {
-  title: String! @index(queryField: "listByTitle") @index(sortKeyFields: ["timestamp"], queryField: "listByTitleAndTimestamp") @index(name: "myGSI", sortKeyFields: ["description", "timestamp"], queryField: "byTitleDescTs")
+  title: String! @index(queryField: "listWidgetByTitle") @index(sortKeyFields: ["timestamp"], queryField: "listWidgetByTitleAndTimestamp") @index(name: "myGSI", sortKeyFields: ["description", "timestamp"], queryField: "byTitleDescTs")
   description: String!
   timestamp: Int!
 }"
@@ -539,8 +539,8 @@ exports[`secondary indexes generates multiple secondary index annotations on the
 exports[`secondary indexes generates secondary index annotations on different fields 1`] = `
 "type widget @model @auth(rules: [{allow: public, provider: apiKey}])
 {
-  title: String! @index(queryField: "listByTitle")
-  description: String! @index(sortKeyFields: ["timestamp"], queryField: "listByDescriptionAndTimestamp")
+  title: String! @index(queryField: "listWidgetByTitle")
+  description: String! @index(sortKeyFields: ["timestamp"], queryField: "listWidgetByDescriptionAndTimestamp")
   timestamp: Int! @index(sortKeyFields: ["description"], queryField: "byTimeStampDesc")
 }"
 `;
