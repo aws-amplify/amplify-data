@@ -69,7 +69,7 @@ describe('a', () => {
 
     type T = Schema['likeAllPosts']['returnType'];
 
-    type T2 = Schema['Status']['type'];
+    // type T2 = Schema['Status']['type'];
     const values = client.enums.Status.values();
     //    ^?
 
@@ -136,7 +136,7 @@ describe('a', () => {
     const client = {} as ClientExtensions<Schema>;
 
     type T0 = Schema['Post']['createArgs'];
-    type T1 = Schema['Post']['indexedQueries'];
+    type T1 = Schema['Post'];
 
     // Valid key input
     client.models.Post.listByTitle(

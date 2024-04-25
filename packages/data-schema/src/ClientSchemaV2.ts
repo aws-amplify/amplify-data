@@ -65,9 +65,11 @@ type RemappedModel<
   createArgs: Prettify<CreateModelInput<Model, Meta>>;
   updateArgs: Prettify<ModelIdentifier<Meta> & Partial<MutationInput<Model>>>;
   deleteArgs: ModelIdentifier<Meta>;
-  filterType: ModelFilter<Model>;
   identifier: ModelIdentifier<Meta>;
-  indexedQueries: IndexQueryMethodsDetails<Meta['secondaryIndexes'], any>;
+
+  // TODO:
+  // filterType: ModelFilter<Model>;
+  // indexQueries: IndexQueryMethodsDetails<Meta['secondaryIndexes'], any>;
 };
 
 type CustomOperationHandlerDefinition = Record<
@@ -84,6 +86,7 @@ type RemappedCustomOperation<
   functionHandler: Schema[Key]['functionHandler'];
   args: Schema[Key]['functionHandlerArguments'];
   returnType: Schema[Key]['functionHandlerResult'];
+  RAW: Schema[Key];
 };
 
 export type RemappedEnum<T extends string> = {
@@ -103,11 +106,12 @@ type RemappedSchemaType<
   ? Schema[Key] extends CustomOperationHandlerDefinition
     ? RemappedCustomOperation<Schema, Key>
     : RemappedModel<Schema[Key], ExtractModelMeta<Schema>[Key]>
-  : Key extends keyof ExtractModelMeta<Schema>['enums']
-    ? RemappedEnum<ExtractModelMeta<Schema>['enums'][Key]>
-    : Key extends keyof ExtractModelMeta<Schema>['customTypes']
-      ? RemappedCustomType<ExtractModelMeta<Schema>['customTypes'][Key]>
-      : never;
+  : never;
+// : Key extends keyof ExtractModelMeta<Schema>['enums']
+//   ? RemappedEnum<ExtractModelMeta<Schema>['enums'][Key]>
+//   : Key extends keyof ExtractModelMeta<Schema>['customTypes']
+//     ? RemappedCustomType<ExtractModelMeta<Schema>['customTypes'][Key]>
+//     : never;
 
 export type ClientSchema<
   RawSchema extends {
@@ -115,45 +119,46 @@ export type ClientSchema<
   } & (GenericModelSchema<any> | CombinedModelSchema<any>),
   BaseSchema extends Record<any, any> = BaseClientSchema<RawSchema>,
 > = Prettify<{
-  [K in keyof RawSchema['data']['types']]: RemappedSchemaType<BaseSchema, K>;
+  // [K in keyof RawSchema['data']['types']]: RemappedSchemaType<BaseSchema, K>;
+  [K in keyof BaseSchema]: RemappedSchemaType<BaseSchema, K>;
 }> & {
   __AmplifyInternal: {
     v1Schema: BaseSchema;
   };
 };
 
-type Select<T, M> = {
-  [K in keyof T as T[K] extends M ? K : never]: T[K] extends M ? T[K] : never;
-};
+// type Select<T, M> = {
+//   [K in keyof T as T[K] extends M ? K : never]: T[K] extends M ? T[K] : never;
+// };
 
-export type ClientSchemaByEntityTypeBaseShape = {
-  enums: Record<string, RemappedEnum<any>>;
-  customTypes: Record<string, RemappedCustomType<any>>;
-  models: Record<string, RemappedModel<any, any>>;
-  queries: Record<string, RemappedCustomOperation<any, any>>;
-  mutations: Record<string, RemappedCustomOperation<any, any>>;
-  subscriptions: Record<string, RemappedCustomOperation<any, any>>;
-};
+// export type ClientSchemaByEntityTypeBaseShape = {
+//   enums: Record<string, RemappedEnum<any>>;
+//   customTypes: Record<string, RemappedCustomType<any>>;
+//   models: Record<string, RemappedModel<any, any>>;
+//   queries: Record<string, RemappedCustomOperation<any, any>>;
+//   mutations: Record<string, RemappedCustomOperation<any, any>>;
+//   subscriptions: Record<string, RemappedCustomOperation<any, any>>;
+// };
 
-export type ClientSchemaByEntityType<T> = {
-  enums: Select<T, { __entityType: 'enum' }>;
-  customTypes: Select<T, { __entityType: 'customType' }>;
-  models: Select<T, { __entityType: 'model' }>;
+// export type ClientSchemaByEntityType<T> = {
+//   enums: Select<T, { __entityType: 'enum' }>;
+//   customTypes: Select<T, { __entityType: 'customType' }>;
+//   models: Select<T, { __entityType: 'model' }>;
 
-  // TODO: Need a way to distinguish these!
-  queries: Select<
-    T,
-    { __entityType: 'customOperation'; operationType: 'Query' }
-  >;
-  mutations: Select<
-    T,
-    { __entityType: 'customOperation'; operationType: 'Mutation' }
-  >;
-  subscriptions: Select<
-    T,
-    { __entityType: 'customOperation'; operationType: 'Subscription' }
-  >;
+//   // TODO: Need a way to distinguish these!
+//   queries: Select<
+//     T,
+//     { __entityType: 'customOperation'; operationType: 'Query' }
+//   >;
+//   mutations: Select<
+//     T,
+//     { __entityType: 'customOperation'; operationType: 'Mutation' }
+//   >;
+//   subscriptions: Select<
+//     T,
+//     { __entityType: 'customOperation'; operationType: 'Subscription' }
+//   >;
 
-  // TODO: appsync handlers? ... do we need something distinct here ... brain is stuck.
-  // handlers: Select<T, { __entityType: 'customHandler' }>;
-};
+//   // TODO: appsync handlers? ... do we need something distinct here ... brain is stuck.
+//   // handlers: Select<T, { __entityType: 'customHandler' }>;
+// };
