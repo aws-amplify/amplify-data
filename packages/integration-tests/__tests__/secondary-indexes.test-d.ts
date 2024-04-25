@@ -1,5 +1,5 @@
 import { a, ClientSchema } from '@aws-amplify/data-schema';
-import { Expect, Equal } from '@aws-amplify/data-schema-types';
+import { Expect, Equal, Prettify } from '@aws-amplify/data-schema-types';
 import { generateClient } from 'aws-amplify/api';
 
 describe('secondary indexes / index queries', () => {
@@ -191,6 +191,111 @@ describe('secondary indexes / index queries', () => {
       }[];
 
       type test = Expect<Equal<ResolvedReturnType, ExpectedReturnType>>;
+    });
+  });
+
+  describe('use enum field as index field', () => {
+    const schema = a
+      .schema({
+        Todo: a
+          .model({
+            title: a.string().required(),
+            content: a.string(),
+            status: a.enum(['open', 'in_progress', 'completed']),
+          })
+          .secondaryIndexes((index) => [
+            index('status').sortKeys(['title']),
+            index('title').sortKeys(['status']),
+          ]),
+      })
+      .authorization((allow) => allow.publicApiKey());
+
+    type Schema = ClientSchema<typeof schema>;
+    const client = generateClient<Schema>();
+
+    test('generated query function has expected input type when using the enum field as the partition key', () => {
+      // correct input param
+      client.models.Todo.listTodoByStatusAndTitle({
+        status: 'completed',
+        title: { eq: 'test' },
+      });
+
+      // incorrect input param
+      client.models.Todo.listTodoByStatusAndTitle({
+        // @ts-expect-error the string value doesn't conform to the enum values
+        status: 'value_not_in_enum',
+        // @ts-expect-error the number doesn't conform to string
+        title: { eq: 123 },
+      });
+    });
+
+    test('generated query function has expected input type when using the enum field as the sort key', () => {
+      // correct input param
+      client.models.Todo.listTodoByTitleAndStatus({
+        title: 'test',
+        status: { eq: 'completed' },
+      });
+
+      // incorrect input param
+      client.models.Todo.listTodoByTitleAndStatus({
+        // @ts-expect-error the number doesn't conform to string
+        title: 123,
+        // @ts-expect-error the string value doesn't conform to the enum values
+        status: { eq: 'value_not_in_enum' },
+      });
+    });
+  });
+
+  describe('use ref field (that refers to a enum type) as index field', () => {
+    const schema = a
+      .schema({
+        Todo: a
+          .model({
+            title: a.string().required(),
+            content: a.string(),
+            status: a.ref('Status'),
+          })
+          .secondaryIndexes((index) => [
+            index('status').sortKeys(['title']),
+            index('title').sortKeys(['status']),
+          ]),
+        Status: a.enum(['open', 'in_progress', 'completed']),
+      })
+      .authorization((allow) => allow.publicApiKey());
+
+    type Schema = ClientSchema<typeof schema>;
+    const client = generateClient<Schema>();
+
+    test('generated query function has expected input type when using the enum field as the partition key', () => {
+      // correct input param
+      client.models.Todo.listTodoByStatusAndTitle({
+        status: 'completed',
+        title: { eq: 'test' },
+      });
+
+      // incorrect input param
+      client.models.Todo.listTodoByStatusAndTitle({
+        // @ts-expect-error the string value doesn't conform to the enum values
+        status: 'value_not_in_enum',
+        // @ts-expect-error the number doesn't conform to string
+        title: { eq: 123 },
+      });
+    });
+
+    test('generated query function has expected input type when using the enum field as the sort key', () => {
+      // correct input param
+      client.models.Todo.listTodoByTitleAndStatus({
+        title: 'test',
+        status: { eq: 'completed' },
+      });
+
+      // incorrect input param
+      client.models.Todo.listTodoByTitleAndStatus({
+        // @ts-expect-error the number doesn't conform to string
+        title: 123,
+        // @ts-expect-error the string value doesn't conform to the enum values
+        status: { eq: 'value_not_in_enum' },
+      });
     });
   });
 });

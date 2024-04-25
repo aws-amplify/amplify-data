@@ -692,14 +692,23 @@ export function generateGraphQLDocument(
     graphQLFieldName = queryField;
 
     const skQueryArgs = sk.reduce((acc: Record<string, any>, fieldName) => {
-      const fieldType = fields[fieldName].type;
+      const fieldType = Object.prototype.hasOwnProperty.call(
+        fields[fieldName].type,
+        'enum',
+      )
+        ? 'String' // AppSync schema sets `ModelStringKeyConditionInput` as the type of the enum field that's used as SK
+        : fields[fieldName].type;
       acc[fieldName] = `Model${fieldType}KeyConditionInput`;
 
       return acc;
     }, {});
 
     indexQueryArgs = {
-      [pk]: `${fields[pk].type}!`,
+      [pk]: `${
+        Object.prototype.hasOwnProperty.call(fields[pk].type, 'enum')
+          ? (fields[pk].type as any).enum // AppSync schema sets enum type as the type of the enum fields that's used as PK
+          : fields[pk].type
+      }!`,
       ...skQueryArgs,
     };
   } else {

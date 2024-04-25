@@ -12,7 +12,8 @@ test('secondaryIndexes input validation', () => {
         tags: a.string().array(),
         comments: a.hasMany('Comment', 'postId'),
         location: a.customType({ lat: a.float(), long: a.float() }),
-        status: a.ref('Status'),
+        enumStatus: a.enum(['DRAFT', 'PENDING', 'PUBLISHED']),
+        refStatus: a.ref('Status'),
         fieldWithAuth: a
           .string()
           .required()
@@ -33,6 +34,14 @@ test('secondaryIndexes input validation', () => {
         index('fieldWithAuth'),
         // field with field level auth can be used as a sort key
         index('title').sortKeys(['fieldWithAuth']),
+        // field with `a.ref()` as PK
+        index('refStatus'),
+        // field with `a.enum()` as PK
+        index('enumStatus'),
+        // field with `a.ref()` as SK
+        index('title').sortKeys(['refStatus']),
+        // field with `a.enum()` as SK
+        index('title').sortKeys(['enumStatus']),
 
         // ERROR cases
         // @ts-expect-error - nonexistent
@@ -45,8 +54,6 @@ test('secondaryIndexes input validation', () => {
         index('comments'),
         // @ts-expect-error - custom type field
         index('location'),
-        // @ts-expect-error - ref type field
-        index('status'),
         // @ts-expect-error - nonexistent
         index('title').sortKeys(['nonexistent-field']),
         // @ts-expect-error

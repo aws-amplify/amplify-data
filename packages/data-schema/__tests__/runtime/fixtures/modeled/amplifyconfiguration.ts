@@ -1806,6 +1806,342 @@ const amplifyConfig = {
           sortKeyFieldNames: [],
         },
       },
+      EnumAsIndexPartitionKey: {
+        name: 'EnumAsIndexPartitionKey',
+        fields: {
+          id: {
+            name: 'id',
+            isArray: false,
+            type: 'ID',
+            isRequired: true,
+            attributes: [],
+          },
+          title: {
+            name: 'title',
+            isArray: false,
+            type: 'String',
+            isRequired: false,
+            attributes: [],
+          },
+          status: {
+            name: 'status',
+            isArray: false,
+            type: {
+              enum: 'EnumAsIndexPartitionKeyStatus',
+            },
+            isRequired: false,
+            attributes: [],
+          },
+          createdAt: {
+            name: 'createdAt',
+            isArray: false,
+            type: 'AWSDateTime',
+            isRequired: false,
+            attributes: [],
+            isReadOnly: true,
+          },
+          updatedAt: {
+            name: 'updatedAt',
+            isArray: false,
+            type: 'AWSDateTime',
+            isRequired: false,
+            attributes: [],
+            isReadOnly: true,
+          },
+        },
+        syncable: true,
+        pluralName: 'EnumAsIndexPartitionKeys',
+        attributes: [
+          {
+            type: 'model',
+            properties: {},
+          },
+          {
+            type: 'key',
+            properties: {
+              name: 'enumAsIndexPartitionKeysByStatusAndTitle',
+              queryField: 'enumIndexFieldTest1',
+              fields: ['status', 'title'],
+            },
+          },
+          {
+            type: 'auth',
+            properties: {
+              rules: [
+                {
+                  provider: 'userPools',
+                  ownerField: 'owner',
+                  allow: 'owner',
+                  identityClaim: 'cognito:username',
+                  operations: ['create', 'update', 'delete', 'read'],
+                },
+                {
+                  allow: 'public',
+                  provider: 'apiKey',
+                  operations: ['read'],
+                },
+              ],
+            },
+          },
+        ],
+        primaryKeyInfo: {
+          isCustomPrimaryKey: false,
+          primaryKeyFieldName: 'id',
+          sortKeyFieldNames: [],
+        },
+      },
+      EnumAsIndexSortKey: {
+        name: 'EnumAsIndexSortKey',
+        fields: {
+          id: {
+            name: 'id',
+            isArray: false,
+            type: 'ID',
+            isRequired: true,
+            attributes: [],
+          },
+          title: {
+            name: 'title',
+            isArray: false,
+            type: 'String',
+            isRequired: false,
+            attributes: [],
+          },
+          status: {
+            name: 'status',
+            isArray: false,
+            type: {
+              enum: 'EnumAsIndexSortKeyStatus',
+            },
+            isRequired: false,
+            attributes: [],
+          },
+          createdAt: {
+            name: 'createdAt',
+            isArray: false,
+            type: 'AWSDateTime',
+            isRequired: false,
+            attributes: [],
+            isReadOnly: true,
+          },
+          updatedAt: {
+            name: 'updatedAt',
+            isArray: false,
+            type: 'AWSDateTime',
+            isRequired: false,
+            attributes: [],
+            isReadOnly: true,
+          },
+        },
+        syncable: true,
+        pluralName: 'EnumAsIndexSortKeys',
+        attributes: [
+          {
+            type: 'model',
+            properties: {},
+          },
+          {
+            type: 'key',
+            properties: {
+              name: 'enumAsIndexSortKeysByTitleAndStatus',
+              queryField: 'enumIndexFieldTest2',
+              fields: ['title', 'status'],
+            },
+          },
+          {
+            type: 'auth',
+            properties: {
+              rules: [
+                {
+                  provider: 'userPools',
+                  ownerField: 'owner',
+                  allow: 'owner',
+                  identityClaim: 'cognito:username',
+                  operations: ['create', 'update', 'delete', 'read'],
+                },
+                {
+                  allow: 'public',
+                  provider: 'apiKey',
+                  operations: ['read'],
+                },
+              ],
+            },
+          },
+        ],
+        primaryKeyInfo: {
+          isCustomPrimaryKey: false,
+          primaryKeyFieldName: 'id',
+          sortKeyFieldNames: [],
+        },
+      },
+      RefEnumAsIndexPartitionKey: {
+        name: 'RefEnumAsIndexPartitionKey',
+        fields: {
+          id: {
+            name: 'id',
+            isArray: false,
+            type: 'ID',
+            isRequired: true,
+            attributes: [],
+          },
+          title: {
+            name: 'title',
+            isArray: false,
+            type: 'String',
+            isRequired: false,
+            attributes: [],
+          },
+          status: {
+            name: 'status',
+            isArray: false,
+            type: {
+              enum: 'EnumIndexStatus',
+            },
+            isRequired: false,
+            attributes: [],
+          },
+          createdAt: {
+            name: 'createdAt',
+            isArray: false,
+            type: 'AWSDateTime',
+            isRequired: false,
+            attributes: [],
+            isReadOnly: true,
+          },
+          updatedAt: {
+            name: 'updatedAt',
+            isArray: false,
+            type: 'AWSDateTime',
+            isRequired: false,
+            attributes: [],
+            isReadOnly: true,
+          },
+        },
+        syncable: true,
+        pluralName: 'RefEnumAsIndexPartitionKeys',
+        attributes: [
+          {
+            type: 'model',
+            properties: {},
+          },
+          {
+            type: 'key',
+            properties: {
+              name: 'refEnumAsIndexPartitionKeysByStatusAndTitle',
+              queryField: 'enumIndexFieldTest3',
+              fields: ['status', 'title'],
+            },
+          },
+          {
+            type: 'auth',
+            properties: {
+              rules: [
+                {
+                  provider: 'userPools',
+                  ownerField: 'owner',
+                  allow: 'owner',
+                  identityClaim: 'cognito:username',
+                  operations: ['create', 'update', 'delete', 'read'],
+                },
+                {
+                  allow: 'public',
+                  provider: 'apiKey',
+                  operations: ['read'],
+                },
+              ],
+            },
+          },
+        ],
+        primaryKeyInfo: {
+          isCustomPrimaryKey: false,
+          primaryKeyFieldName: 'id',
+          sortKeyFieldNames: [],
+        },
+      },
+      RefEnumAsIndexSortKey: {
+        name: 'RefEnumAsIndexSortKey',
+        fields: {
+          id: {
+            name: 'id',
+            isArray: false,
+            type: 'ID',
+            isRequired: true,
+            attributes: [],
+          },
+          title: {
+            name: 'title',
+            isArray: false,
+            type: 'String',
+            isRequired: false,
+            attributes: [],
+          },
+          status: {
+            name: 'status',
+            isArray: false,
+            type: {
+              enum: 'EnumIndexStatus',
+            },
+            isRequired: false,
+            attributes: [],
+          },
+          createdAt: {
+            name: 'createdAt',
+            isArray: false,
+            type: 'AWSDateTime',
+            isRequired: false,
+            attributes: [],
+            isReadOnly: true,
+          },
+          updatedAt: {
+            name: 'updatedAt',
+            isArray: false,
+            type: 'AWSDateTime',
+            isRequired: false,
+            attributes: [],
+            isReadOnly: true,
+          },
+        },
+        syncable: true,
+        pluralName: 'RefEnumAsIndexSortKeys',
+        attributes: [
+          {
+            type: 'model',
+            properties: {},
+          },
+          {
+            type: 'key',
+            properties: {
+              name: 'refEnumAsIndexSortKeysByTitleAndStatus',
+              queryField: 'enumIndexFieldTest4',
+              fields: ['title', 'status'],
+            },
+          },
+          {
+            type: 'auth',
+            properties: {
+              rules: [
+                {
+                  provider: 'userPools',
+                  ownerField: 'owner',
+                  allow: 'owner',
+                  identityClaim: 'cognito:username',
+                  operations: ['create', 'update', 'delete', 'read'],
+                },
+                {
+                  allow: 'public',
+                  provider: 'apiKey',
+                  operations: ['read'],
+                },
+              ],
+            },
+          },
+        ],
+        primaryKeyInfo: {
+          isCustomPrimaryKey: false,
+          primaryKeyFieldName: 'id',
+          sortKeyFieldNames: [],
+        },
+      },
     },
     enums: {
       Status: {
@@ -1815,6 +2151,18 @@ const amplifyConfig = {
       ProductMetaStatus: {
         name: 'ProductMetaStatus',
         values: ['discontinued', 'in_production'],
+      },
+      EnumIndexStatus: {
+        name: 'EnumIndexStatus',
+        values: ['yes', 'no'],
+      },
+      EnumAsIndexPartitionKeyStatus: {
+        name: 'EnumAsIndexPartitionKeyStatus',
+        values: ['yes', 'no'],
+      },
+      EnumAsIndexSortKeyStatus: {
+        name: 'EnumAsIndexSortKeyStatus',
+        values: ['yes', 'no'],
       },
     },
     nonModels: {

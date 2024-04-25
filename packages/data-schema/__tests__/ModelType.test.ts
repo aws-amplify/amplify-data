@@ -1,13 +1,6 @@
 import { expectTypeTestsToPassAsync } from 'jest-tsd';
 import { a, ClientSchema } from '../src/index';
-import {
-  PublicProviders,
-  PrivateProviders,
-  Operations,
-  Operation,
-} from '../src/Authorization';
-import { ModelRelationalField } from '../src/ModelRelationalField';
-import { ModelField } from '../src/ModelField';
+import { PrivateProviders, Operations, Operation } from '../src/Authorization';
 
 describe('type definition tests', () => {
   // evaluates type defs in corresponding test-d.ts file
