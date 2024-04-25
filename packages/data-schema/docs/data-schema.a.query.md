@@ -14,9 +14,9 @@ export declare function query(): CustomOperation<{
     authorization: [];
     typeName: 'Query';
     handlers: null;
-}, never, typeof queryBrand>;
+}, 'for', typeof queryBrand>;
 ```
 **Returns:**
 
-CustomOperation&lt;{ arguments: null; returnType: null; functionRef: null; authorization: \[\]; typeName: 'Query'; handlers: null; }, never, typeof queryBrand&gt;
+CustomOperation&lt;{ arguments: null; returnType: null; functionRef: null; authorization: \[\]; typeName: 'Query'; handlers: null; }, 'for', typeof queryBrand&gt;
 
