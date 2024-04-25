@@ -1089,3 +1089,38 @@ describe('CustomOperation transform', () => {
     });
   });
 });
+
+describe('.for() modifier', () => {
+  it('is unavailable on a.query()', () => {
+    const schema = a.schema({
+      Model: a.customType({ content: a.string() }),
+      /// @ts-expect-error .for() is not a valid modifier function of a.query()
+      myQuery: a.query().for(a.ref('Model')),
+    });
+
+    expect(() => schema.transform()).toThrow(
+      'The .for() modifier function can only be used with a custom subscription. myQuery is not a custom subscription.',
+    );
+  });
+
+  it('is unavailable on a.mutation()', () => {
+    const schema = a.schema({
+      Model: a.customType({ content: a.string() }),
+      /// @ts-expect-error .for() is not a valid modifier function of a.mutation()
+      myMutation: a.mutation().for(a.ref('Model')),
+    });
+
+    expect(() => schema.transform()).toThrow(
+      'The .for() modifier function can only be used with a custom subscription. myMutation is not a custom subscription.',
+    );
+  });
+
+  it('is available only on a.subscription()', () => {
+    const schema = a.schema({
+      Model: a.customType({ content: a.string() }),
+      mySubscription: a.subscription().for(a.ref('Model')),
+    });
+
+    expect(() => schema.transform()).not.toThrow();
+  });
+});
