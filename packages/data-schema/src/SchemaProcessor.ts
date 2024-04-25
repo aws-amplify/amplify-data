@@ -816,7 +816,7 @@ const secondaryIndexDefaultQueryField = (
 ): string => {
   const skName = sk?.length ? 'And' + sk?.map(capitalize).join('And') : '';
 
-  const queryField = `list${modelName}By${capitalize(pk)}${skName}`;
+  const queryField = `list${capitalize(modelName)}By${capitalize(pk)}${skName}`;
 
   return queryField;
 };
