@@ -92,12 +92,6 @@ describe('relational field required modifier', () => {
       }).toThrow();
     });
 
-    it('offers an arrayRequired modifier', () => {
-      expect(() => {
-        const field = a.hasMany('Test', 'testId').arrayRequired();
-      }).not.toThrow();
-    });
-
     it('offers an valueRequired modifier', () => {
       expect(() => {
         const field = a.hasMany('Test', 'testId').valueRequired();
@@ -110,13 +104,6 @@ describe('relational field required modifier', () => {
           .hasMany('Test', 'testId')
           .authorization((allow) => allow.publicApiKey());
       }).not.toThrow();
-    });
-
-    it('arrayRequired sets arrayRequired to true', () => {
-      const field = a
-        .hasMany('Test', 'testId')
-        .arrayRequired() as InternalRelationalField;
-      expect(field.data.arrayRequired).toBe(true);
     });
 
     it('valueRequired sets valueRequired to true', () => {

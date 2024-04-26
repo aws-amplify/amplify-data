@@ -7,5 +7,8 @@
 **Signature:**
 
 ```typescript
-export type DefineFunction = ConstructFactory<ResourceProvider<FunctionResources> & ResourceAccessAcceptorFactory>;
+export type DefineFunction = {
+    readonly provides?: string | undefined;
+    getInstance: (props: any) => any;
+};
 ```

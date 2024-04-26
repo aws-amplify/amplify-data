@@ -9,7 +9,7 @@ Create a one-directional one-to-one relationship between two models using the `h
 **Signature:**
 
 ```typescript
-export declare function hasOne<RM extends string>(relatedModel: RM, references: string | string[]): ModelRelationalField<ModelRelationalTypeArgFactory<RM, ModelRelationshipTypes.hasOne, false>, RM, "valueRequired" | "arrayRequired", undefined>;
+export declare function hasOne<RM extends string>(relatedModel: RM, references: string | string[]): ModelRelationalField<ModelRelationalTypeArgFactory<RM, ModelRelationshipTypes.hasOne, false>, RM, "valueRequired", undefined>;
 ```
 
 ## Parameters
@@ -63,7 +63,7 @@ string \| string\[\]
 </tbody></table>
 **Returns:**
 
-ModelRelationalField&lt;ModelRelationalTypeArgFactory&lt;RM, ModelRelationshipTypes.hasOne, false&gt;, RM, "valueRequired" \| "arrayRequired", undefined&gt;
+ModelRelationalField&lt;ModelRelationalTypeArgFactory&lt;RM, ModelRelationshipTypes.hasOne, false&gt;, RM, "valueRequired", undefined&gt;
 
 a one-to-one relationship definition
 
