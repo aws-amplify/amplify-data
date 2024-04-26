@@ -1,5 +1,11 @@
 # @aws-amplify/data-schema-types
 
+## 0.10.1
+
+### Patch Changes
+
+- b3fffcf: feat: rename iam -> identityPool
+
 ## 0.10.0
 
 ### Minor Changes
