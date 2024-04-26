@@ -7,5 +7,5 @@
 **Signature:**
 
 ```typescript
-export type AuthMode = 'apiKey' | 'iam' | 'oidc' | 'userPool' | 'lambda' | 'none';
+export type AuthMode = 'apiKey' | 'iam' | 'identityPool' | 'oidc' | 'userPool' | 'lambda' | 'none';
 ```

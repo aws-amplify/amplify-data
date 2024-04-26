@@ -481,7 +481,7 @@ bench('prod p50 CRUDL', async () => {
           ipAddress: a.ipAddress(),
         })
         .authorization((allow) => [
-          allow.authenticated('iam').to(['read']),
+          allow.authenticated('identityPool').to(['read']),
           allow.owner(),
         ]),
       // Model #23:
@@ -516,7 +516,7 @@ bench('prod p50 CRUDL', async () => {
           ipAddress: a.ipAddress(),
         })
         .authorization((allow) => [
-          allow.authenticated('iam').to(['read']),
+          allow.authenticated('identityPool').to(['read']),
           allow.owner(),
         ]),
       // Model #24:
@@ -551,7 +551,7 @@ bench('prod p50 CRUDL', async () => {
           ipAddress: a.ipAddress(),
         })
         .authorization((allow) => [
-          allow.authenticated('iam').to(['read']),
+          allow.authenticated('identityPool').to(['read']),
           allow.owner(),
         ]),
       // Model #25:
@@ -586,7 +586,7 @@ bench('prod p50 CRUDL', async () => {
           ipAddress: a.ipAddress(),
         })
         .authorization((allow) => [
-          allow.authenticated('iam').to(['read']),
+          allow.authenticated('identityPool').to(['read']),
           allow.owner(),
         ]),
       // [Global authorization rule]

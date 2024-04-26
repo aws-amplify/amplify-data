@@ -410,6 +410,7 @@ export type LazyLoader<Model, IsArray extends boolean> = (
 export type AuthMode =
   | 'apiKey'
   | 'iam'
+  | 'identityPool'
   | 'oidc'
   | 'userPool'
   | 'lambda'
