@@ -88,7 +88,7 @@ describe('RDSModelSchema', () => {
         ) => SingularReturnValue<any>;
         content?: string | null | undefined;
         parentBlogId?: string | null | undefined;
-      };
+      } | null;
 
       type Resolved = DataType extends Expected ? true : false;
 
@@ -116,7 +116,7 @@ describe('RDSModelSchema', () => {
         ) => SingularReturnValue<any>;
         content?: string | null | undefined;
         parentBlogId?: string | null | undefined;
-      };
+      } | null;
 
       type Resolved = DataType extends Expected ? true : false;
 
