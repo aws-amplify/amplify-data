@@ -1,5 +1,17 @@
 # @aws-amplify/data-schema
 
+## 1.0.0
+
+### Major Changes
+
+- 9daf354: first major version
+
+### Patch Changes
+
+- 4fb85b8: chore: add validation to schema process to disallow invalid ref use cases
+- Updated dependencies [9daf354]
+  - @aws-amplify/data-schema-types@1.0.0
+
 ## 0.18.4
 
 ### Patch Changes
