@@ -10,11 +10,11 @@ const __data = Symbol('data');
  *
  * This list should not be used if you need to restrict available providers
  * according to an auth strategcy. E.g., `public` auth can only be facilitated
- * by `apiKey` and `iam` providers.
+ * by `apiKey` and `identityPool` providers.
  */
 export const Providers = [
   'apiKey',
-  'iam',
+  'identityPool',
   'userPools',
   'oidc',
   'function',
@@ -24,13 +24,13 @@ export type Provider = (typeof Providers)[number];
 /**
  * The subset of auth providers that can facilitate `public` auth.
  */
-export const PublicProviders = ['apiKey', 'iam'] as const;
+export const PublicProviders = ['apiKey', 'identityPool'] as const;
 export type PublicProvider = (typeof PublicProviders)[number];
 
 /**
  * The subset of auth providers that can facilitate `private` auth.
  */
-export const PrivateProviders = ['userPools', 'oidc', 'iam'] as const;
+export const PrivateProviders = ['userPools', 'oidc', 'identityPool'] as const;
 export type PrivateProvider = (typeof PrivateProviders)[number];
 
 /**
@@ -205,7 +205,7 @@ function authData<
 
 /**
  * Defines an authorization rule for your data models and fields. First choose an authorization strategy (`public`,
- * `private`, `owner`, `group`, or `custom`), then choose an auth provider (`apiKey`, `iam`, `userPools`, `oidc`, or `function`)
+ * `private`, `owner`, `group`, or `custom`), then choose an auth provider (`apiKey`, `identitypool`, `userPools`, `oidc`, or `function`)
  * and optionally use `.to(...)` to specify the operations that can be performed against your data models and fields.
  */
 export const allow = {
@@ -226,14 +226,14 @@ export const allow = {
   },
 
   /**
-   * Authorize unauthenticated users by using IAM based authorization.
+   * Authorize unauthenticated users by using IDENTITYPOOL based authorization.
    * @returns an authorization rule for unauthenticated users
    */
   guest() {
     return authData(
       {
         strategy: 'public',
-        provider: 'iam',
+        provider: 'identityPool',
       },
       {
         to,
@@ -242,9 +242,9 @@ export const allow = {
   },
 
   /**
-   * Authorize authenticated users. By default, `.private()` uses an Amazon Cognito user pool based authorization. You can additionally
-   * use `.authenticated("iam")` or `.authenticated("oidc")` to use IAM or OIDC based authorization for authenticated users.
-   * @param provider the authentication provider - supports "userPools", "iam", or "oidc"
+   * Authorize authenticated users. By default, `.authenticated()` uses an Amazon Cognito user pool based authorization. You can additionally
+   * use `.authenticated("identityPool")` or `.authenticated("oidc")` to use identityPool or OIDC based authorization for authenticated users.
+   * @param provider the authentication provider - supports "userPools", "identityPool", or "oidc"
    * @returns an authorization rule for authenticated users
    */
   authenticated(provider?: PrivateProvider) {
@@ -272,7 +272,7 @@ export const allow = {
    * To change the specific claim that should be used as the user identifier within the owner field, chain the
    * `.identityClaim(...)` method.
    *
-   * @param provider the authentication provider - supports "userPools", "iam", or "oidc"
+   * @param provider the authentication provider - supports "userPools", "identityPool", or "oidc"
    * @returns an authorization rule for authenticated users
    */
   owner(provider?: OwnerProviders) {
@@ -300,7 +300,7 @@ export const allow = {
    * `.identityClaim(...)` method.
    *
    * @param ownerField the field that contains the owner information
-   * @param provider the authentication provider - supports "userPools", "iam", or "oidc"
+   * @param provider the authentication provider - supports "userPools", "identityPool", or "oidc"
    * @returns an authorization rule for authenticated users
    */
   ownerDefinedIn<T extends string>(ownerField: T, provider?: OwnerProviders) {
@@ -333,7 +333,7 @@ export const allow = {
    * `.identityClaim(...)` method.
    *
    * @param ownersField the field that contains the owners information
-   * @param provider the authentication provider - supports "userPools", "iam", or "oidc"
+   * @param provider the authentication provider - supports "userPools", "identityPool", or "oidc"
    * @returns an authorization rule for authenticated users
    */
   ownersDefinedIn<T extends string>(ownersField: T, provider?: OwnerProviders) {
@@ -506,14 +506,14 @@ export const allowForCustomOperations = {
   },
 
   /**
-   * Authorize unauthenticated users by using IAM based authorization.
+   * Authorize unauthenticated users by using identityPool based authorization.
    * @returns an authorization rule for unauthenticated users
    */
   guest() {
     return authData(
       {
         strategy: 'public',
-        provider: 'iam',
+        provider: 'identityPool',
       },
       {},
     );
@@ -521,8 +521,8 @@ export const allowForCustomOperations = {
 
   /**
    * Authorize authenticated users. By default, `.private()` uses an Amazon Cognito user pool based authorization. You can additionally
-   * use `.authenticated("iam")` or `.authenticated("oidc")` to use IAM or OIDC based authorization for authenticated users.
-   * @param provider the authentication provider - supports "userPools", "iam", or "oidc"
+   * use `.authenticated("identityPool")` or `.authenticated("oidc")` to use Identity Pool or OIDC based authorization for authenticated users.
+   * @param provider the authentication provider - supports "userPools", "identityPool", or "oidc"
    * @returns an authorization rule for authenticated users
    */
   authenticated(provider?: PrivateProvider) {

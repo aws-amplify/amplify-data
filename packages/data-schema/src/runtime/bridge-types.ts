@@ -174,6 +174,7 @@ export type GraphQLAuthMode =
   | 'oidc'
   | 'userPool'
   | 'iam'
+  | 'identityPool'
   | 'lambda'
   | 'none';
 

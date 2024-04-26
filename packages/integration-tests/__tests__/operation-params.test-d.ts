@@ -7,7 +7,7 @@ type Json = null | string | number | boolean | object | any[];
 
 const authModes = [
   'apiKey',
-  'iam',
+  'identityPool',
   'lambda',
   'oidc',
   'userPool',
