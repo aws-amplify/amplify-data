@@ -1,5 +1,11 @@
 # @aws-amplify/data-schema
 
+## 0.18.0
+
+### Minor Changes
+
+- d49a92a: restructured ClientSchema properties for extensibility
+
 ## 0.17.1
 
 ### Patch Changes
