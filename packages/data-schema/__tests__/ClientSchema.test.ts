@@ -169,7 +169,7 @@ describe('schema auth rules', () => {
         .authorization((allow) => allow.publicApiKey()),
     });
 
-    type Actual_A = Prettify<ClientSchema<typeof schema>['A']>;
+    type Actual_A = Prettify<ClientSchema<typeof schema>['A']['type']>;
 
     type Expected_A = {
       readonly id: string;
@@ -194,7 +194,7 @@ describe('schema auth rules', () => {
       })
       .authorization((allow) => allow.publicApiKey());
 
-    type Actual_A = Prettify<ClientSchema<typeof schema>['A']>;
+    type Actual_A = Prettify<ClientSchema<typeof schema>['A']['type']>;
 
     type Expected_A = {
       readonly id: string;
@@ -246,7 +246,7 @@ describe('schema auth rules', () => {
       })
       .authorization((allow) => [allow.publicApiKey(), allow.authenticated()]);
 
-    type Actual_A = Prettify<ClientSchema<typeof schema>['A']>;
+    type Actual_A = Prettify<ClientSchema<typeof schema>['A']['type']>;
 
     type Expected_A = {
       readonly id: string;
@@ -270,7 +270,7 @@ describe('schema auth rules', () => {
       })
       .authorization((allow) => allow.authenticated());
 
-    type Actual_A = Prettify<ClientSchema<typeof schema>['A']>;
+    type Actual_A = Prettify<ClientSchema<typeof schema>['A']['type']>;
 
     type Expected_A = {
       readonly id: string;
@@ -294,7 +294,7 @@ describe('schema auth rules', () => {
       })
       .authorization((allow) => allow.guest());
 
-    type Actual_A = Prettify<ClientSchema<typeof schema>['A']>;
+    type Actual_A = Prettify<ClientSchema<typeof schema>['A']['type']>;
 
     type Expected_A = {
       readonly id: string;
@@ -307,7 +307,7 @@ describe('schema auth rules', () => {
     type test = Expect<Equal<Actual_A, Expected_A>>;
 
     expect(schema.transform()).toMatchSnapshot();
-  })
+  });
 
   test('allows owner', () => {
     const schema = a
@@ -318,7 +318,7 @@ describe('schema auth rules', () => {
       })
       .authorization((allow) => allow.owner());
 
-    type Actual_A = Prettify<ClientSchema<typeof schema>['A']>;
+    type Actual_A = Prettify<ClientSchema<typeof schema>['A']['type']>;
 
     type Expected_A = {
       readonly id: string;
@@ -344,7 +344,7 @@ describe('schema auth rules', () => {
       })
       .authorization((allow) => allow.ownersDefinedIn('owner'));
 
-    type Actual_A = Prettify<ClientSchema<typeof schema>['A']>;
+    type Actual_A = Prettify<ClientSchema<typeof schema>['A']['type']>;
 
     type Expected_A = {
       readonly id: string;
@@ -370,7 +370,7 @@ describe('schema auth rules', () => {
       })
       .authorization((allow) => allow.custom());
 
-    type Actual_A = Prettify<ClientSchema<typeof schema>['A']>;
+    type Actual_A = Prettify<ClientSchema<typeof schema>['A']['type']>;
 
     type Expected_A = {
       readonly id: string;
@@ -394,7 +394,7 @@ describe('schema auth rules', () => {
       })
       .authorization((allow) => allow.ownerDefinedIn('someField'));
 
-    type Actual_A = Prettify<ClientSchema<typeof schema>['A']>;
+    type Actual_A = Prettify<ClientSchema<typeof schema>['A']['type']>;
 
     type Expected_A = {
       readonly id: string;
@@ -420,7 +420,7 @@ describe('schema auth rules', () => {
       })
       .authorization((allow) => allow.groupsDefinedIn('someField'));
 
-    type Actual_A = Prettify<ClientSchema<typeof schema>['A']>;
+    type Actual_A = Prettify<ClientSchema<typeof schema>['A']['type']>;
 
     type Expected_A = {
       readonly id: string;
@@ -446,7 +446,7 @@ describe('schema auth rules', () => {
       })
       .authorization((allow) => allow.group('group'));
 
-    type Actual_A = Prettify<ClientSchema<typeof schema>['A']>;
+    type Actual_A = Prettify<ClientSchema<typeof schema>['A']['type']>;
 
     type Expected_A = {
       readonly id: string;
@@ -470,7 +470,7 @@ describe('schema auth rules', () => {
       })
       .authorization((allow) => allow.groups(['a', 'b']));
 
-    type Actual_A = Prettify<ClientSchema<typeof schema>['A']>;
+    type Actual_A = Prettify<ClientSchema<typeof schema>['A']['type']>;
 
     type Expected_A = {
       readonly id: string;
@@ -497,7 +497,7 @@ describe('schema auth rules', () => {
         })
         .authorization((allow) => allow.owner());
 
-      type Actual_A = Prettify<ClientSchema<typeof schema>['A']>;
+      type Actual_A = Prettify<ClientSchema<typeof schema>['A']['type']>;
 
       type Expected_A = {
         readonly id: string;
@@ -523,7 +523,7 @@ describe('schema auth rules', () => {
         })
         .authorization((allow) => allow.publicApiKey());
 
-      type Actual_A = Prettify<ClientSchema<typeof schema>['A']>;
+      type Actual_A = Prettify<ClientSchema<typeof schema>['A']['type']>;
 
       type Expected_A = {
         readonly id: string;
@@ -549,7 +549,7 @@ describe('schema auth rules', () => {
         })
         .authorization((allow) => allow.ownerDefinedIn('schemaOwnerField'));
 
-      type Actual_A = Prettify<ClientSchema<typeof schema>['A']>;
+      type Actual_A = Prettify<ClientSchema<typeof schema>['A']['type']>;
 
       type Expected_A = {
         readonly id: string;
@@ -680,7 +680,7 @@ describe('custom operations', () => {
         models.A.authorization((allow) => allow.publicApiKey()),
       ]);
 
-      type Actual_A = Prettify<ClientSchema<typeof schema>['A']>;
+      type Actual_A = Prettify<ClientSchema<typeof schema>['A']['type']>;
 
       type Expected_A = {
         id: string;
@@ -706,7 +706,7 @@ describe('custom operations', () => {
         models.A.authorization((allow) => allow.owner()),
       ]);
 
-      type Actual_A = Prettify<ClientSchema<typeof schema>['A']>;
+      type Actual_A = Prettify<ClientSchema<typeof schema>['A']['type']>;
 
       type Expected_A = {
         field?: string | null | undefined;
@@ -736,7 +736,7 @@ describe('custom operations', () => {
         schema.authorization((allow) => allow.owner()),
       ]);
 
-      type Actual_A = Prettify<ClientSchema<typeof schema>['A']>;
+      type Actual_A = Prettify<ClientSchema<typeof schema>['A']['type']>;
 
       type Expected_A = {
         idNum: number;
@@ -774,7 +774,7 @@ describe('custom operations', () => {
         schema.authorization((allow) => allow.owner()),
       ]);
 
-      type Actual_A = Prettify<ClientSchema<typeof schema>['A']>;
+      type Actual_A = Prettify<ClientSchema<typeof schema>['A']['type']>;
 
       type Expected_A = {
         idNum: number;
@@ -830,7 +830,7 @@ describe('custom operations', () => {
         schema.authorization((allow) => allow.owner()),
       ]);
 
-      type Actual_A = Prettify<ClientSchema<typeof schema>['A']>;
+      type Actual_A = Prettify<ClientSchema<typeof schema>['A']['type']>;
 
       type Expected_A = {
         idNum: number;
@@ -1068,7 +1068,7 @@ describe('custom operations', () => {
 
       const schema = a.combine([schemaA, schemaB]);
 
-      type Actual_A = Prettify<ClientSchema<typeof schema>['A']>;
+      type Actual_A = Prettify<ClientSchema<typeof schema>['A']['type']>;
 
       type Expected_A = {
         readonly id: string;
@@ -1080,7 +1080,7 @@ describe('custom operations', () => {
 
       type testA = Expect<Equal<Actual_A, Expected_A>>;
 
-      type Actual_B = Prettify<ClientSchema<typeof schema>['B']>;
+      type Actual_B = Prettify<ClientSchema<typeof schema>['B']['type']>;
 
       type Expected_B = {
         readonly id: string;
@@ -1117,7 +1117,7 @@ describe('custom operations', () => {
 
       const schema = a.combine([schemaA, schemaB]);
 
-      type Actual_A = Prettify<ClientSchema<typeof schema>['A']>;
+      type Actual_A = Prettify<ClientSchema<typeof schema>['A']['type']>;
 
       type Expected_A = {
         field?: string | null | undefined;
@@ -1126,7 +1126,7 @@ describe('custom operations', () => {
 
       type testA = Expect<Equal<Actual_A, Expected_A>>;
 
-      type Actual_B = Prettify<ClientSchema<typeof schema>['B']>;
+      type Actual_B = Prettify<ClientSchema<typeof schema>['B']['type']>;
 
       type Expected_B = {
         readonly id: string;

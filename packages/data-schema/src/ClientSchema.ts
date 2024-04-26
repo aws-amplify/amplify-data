@@ -74,14 +74,17 @@ type InternalClientSchema<
     ResolvedFields,
     NonModelTypes
   >['customOperations']
-> &
-  ResolvedFields & {
-    [__modelMeta__]: IdentifierMeta &
-      SecondaryIndexes &
-      RelationalMetadata<ResolvedSchema, ResolvedFields, IdentifierMeta> &
-      NonModelTypes &
-      ResolveCustomOperations<Schema, ResolvedFields, NonModelTypes>;
+> & {
+  [K in keyof ResolvedFields]: {
+    type: ResolvedFields[K];
   };
+} & {
+  [__modelMeta__]: IdentifierMeta &
+    SecondaryIndexes &
+    RelationalMetadata<ResolvedSchema, ResolvedFields, IdentifierMeta> &
+    NonModelTypes &
+    ResolveCustomOperations<Schema, ResolvedFields, NonModelTypes>;
+};
 
 type GetInternalClientSchema<Schema> =
   Schema extends GenericModelSchema<any> ? InternalClientSchema<Schema> : never;

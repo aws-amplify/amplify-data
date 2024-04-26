@@ -176,7 +176,7 @@ describe('model auth rules', () => {
     type Schema = ClientSchema<typeof schema>;
 
     // If the types are correct, this field should exist
-    type AuthorsType = Schema['widget']['authors'];
+    type AuthorsType = Schema['widget']['type']['authors'];
 
     // I should NOT be able to assign a singular `string` to it
     // @ts-expect-error
@@ -341,7 +341,7 @@ describe('model auth rules', () => {
     });
 
     type Schema = ClientSchema<typeof schema>;
-    type CustomOwnerType = Schema['widget']['customOwner'];
+    type CustomOwnerType = Schema['widget']['type']['customOwner'];
 
     // single owner should be allowed
     let customOwner: CustomOwnerType = 'abc';
@@ -369,7 +369,7 @@ describe('model auth rules', () => {
       .authorization((allow) => allow.owner());
 
     type Schema = ClientSchema<typeof schema>;
-    type CustomOwnerType = Schema['widget']['customOwner'];
+    type CustomOwnerType = Schema['widget']['type']['customOwner'];
 
     // single owner should be allowed
     let customOwner: CustomOwnerType = 'abc';

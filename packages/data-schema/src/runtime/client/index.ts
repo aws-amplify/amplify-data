@@ -720,17 +720,21 @@ export type ModelTypes<
   >]: ModelName extends string
     ? Schema[ModelName] extends Record<string, unknown>
       ? Context extends 'CLIENT'
-        ? ModelTypesClient<ModelName, Schema[ModelName], ModelMeta[ModelName]>
+        ? ModelTypesClient<
+            ModelName,
+            Schema[ModelName]['type'],
+            ModelMeta[ModelName]
+          >
         : Context extends 'COOKIES'
           ? ModelTypesSSRCookies<
               ModelName,
-              Schema[ModelName],
+              Schema[ModelName]['type'],
               ModelMeta[ModelName]
             >
           : Context extends 'REQUEST'
             ? ModelTypesSSRRequest<
                 ModelName,
-                Schema[ModelName],
+                Schema[ModelName]['type'],
                 ModelMeta[ModelName]
               >
             : never

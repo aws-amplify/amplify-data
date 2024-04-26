@@ -50,8 +50,8 @@ describe('custom operations return types', () => {
 
       type Schema = ClientSchema<typeof schema>;
 
-      type ActualArgs = Prettify<Schema['aQuery']['functionHandlerArguments']>;
-      type ActualResult = Prettify<Schema['aQuery']['functionHandlerResult']>;
+      type ActualArgs = Prettify<Schema['aQuery']['args']>;
+      type ActualResult = Prettify<Schema['aQuery']['returnType']>;
       type ActualHandler = Schema['aQuery']['functionHandler'];
 
       type ExpectedArgs = {
@@ -147,8 +147,8 @@ describe('custom operations return types', () => {
 
       type Schema = ClientSchema<typeof schema>;
 
-      type ActualArgs = Prettify<Schema['aQuery']['functionHandlerArguments']>;
-      type ActualResult = Prettify<Schema['aQuery']['functionHandlerResult']>;
+      type ActualArgs = Prettify<Schema['aQuery']['args']>;
+      type ActualResult = Prettify<Schema['aQuery']['returnType']>;
       type ActualHandler = Schema['aQuery']['functionHandler'];
 
       type ExpectedArgs = {
@@ -231,8 +231,8 @@ describe('custom operations return types', () => {
 
       type Schema = ClientSchema<typeof schema>;
 
-      type ActualArgs = Prettify<Schema['aQuery']['functionHandlerArguments']>;
-      type ActualResult = Prettify<Schema['aQuery']['functionHandlerResult']>;
+      type ActualArgs = Prettify<Schema['aQuery']['args']>;
+      type ActualResult = Prettify<Schema['aQuery']['returnType']>;
       type ActualHandler = Schema['aQuery']['functionHandler'];
 
       type ExpectedArgs = {
@@ -334,8 +334,8 @@ describe('custom operations return types', () => {
 
       type Schema = ClientSchema<typeof schema>;
 
-      type ActualArgs = Prettify<Schema['aQuery']['functionHandlerArguments']>;
-      type ActualResult = Prettify<Schema['aQuery']['functionHandlerResult']>;
+      type ActualArgs = Prettify<Schema['aQuery']['args']>;
+      type ActualResult = Prettify<Schema['aQuery']['returnType']>;
       type ActualHandler = Schema['aQuery']['functionHandler'];
 
       type ExpectedArgs = {
@@ -406,8 +406,8 @@ describe('custom operations return types', () => {
 
       type Schema = ClientSchema<typeof schema>;
 
-      type ActualArgs = Prettify<Schema['aQuery']['functionHandlerArguments']>;
-      type ActualResult = Prettify<Schema['aQuery']['functionHandlerResult']>;
+      type ActualArgs = Prettify<Schema['aQuery']['args']>;
+      type ActualResult = Prettify<Schema['aQuery']['returnType']>;
       type ActualHandler = Schema['aQuery']['functionHandler'];
 
       type ExpectedArgs = {
