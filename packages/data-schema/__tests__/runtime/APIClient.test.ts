@@ -567,4 +567,71 @@ describe('generateGraphQLDocument()', () => {
       },
     );
   });
+
+  describe('for indexed queries', () => {
+    const modelOperation = 'INDEX_QUERY';
+    const getIndexMeta = (
+      modelName: string,
+    ): {
+      queryField: string;
+      pk: string;
+      sk: string[];
+    } => {
+      const indexProperties = modelIntroSchema.models[
+        modelName
+      ].attributes?.find((attribute) => attribute.type === 'key')?.properties;
+
+      if (!indexProperties) {
+        fail('Test fixture contains incorrect schema for this test.');
+      }
+
+      return {
+        queryField: indexProperties.queryField,
+        pk: indexProperties.fields[0],
+        sk: indexProperties.fields.slice(1),
+      };
+    };
+
+    test.each([
+      [
+        'EnumAsIndexPartitionKey',
+        '$status: EnumAsIndexPartitionKeyStatus!',
+        getIndexMeta('EnumAsIndexPartitionKey'),
+        { status: 'yes' },
+      ],
+      [
+        'EnumAsIndexSortKey',
+        '$status: ModelStringKeyConditionInput',
+        getIndexMeta('EnumAsIndexSortKey'),
+        { title: 'test' },
+      ],
+      [
+        'RefEnumAsIndexPartitionKey',
+        '$status: EnumIndexStatus!',
+        getIndexMeta('RefEnumAsIndexPartitionKey'),
+        { status: 'yes' },
+      ],
+      [
+        'RefEnumAsIndexSortKey',
+        '$status: ModelStringKeyConditionInput',
+        getIndexMeta('RefEnumAsIndexSortKey'),
+        { title: 'test' },
+      ],
+    ])(
+      'generates document for model %p containing input type: %p',
+      (modelName, expectedEnumInputString, indexMeta, args) => {
+        const document = generateGraphQLDocument(
+          modelIntroSchema,
+          modelName,
+          modelOperation,
+          args,
+          indexMeta,
+        );
+
+        expect(document).toEqual(
+          expect.stringContaining(expectedEnumInputString),
+        );
+      },
+    );
+  });
 });

@@ -230,6 +230,42 @@ const schema = a.schema({
     })
     .authorization([a.allow.specificGroup('Admin')]),
   // #endregion
+
+  // #region Enum field used as secondary index fields
+  EnumAsIndexPartitionKey: a
+    .model({
+      title: a.string(),
+      status: a.enum(['yes', 'no']),
+    })
+    .secondaryIndexes((index) => [
+      index('status').sortKeys(['title']).queryField('enumIndexFieldTest1'),
+    ]),
+  EnumAsIndexSortKey: a
+    .model({
+      title: a.string(),
+      status: a.enum(['yes', 'no']),
+    })
+    .secondaryIndexes((index) => [
+      index('title').sortKeys(['status']).queryField('enumIndexFieldTest2'),
+    ]),
+  RefEnumAsIndexPartitionKey: a
+    .model({
+      title: a.string(),
+      status: a.ref('EnumIndexStatus'),
+    })
+    .secondaryIndexes((index) => [
+      index('status').sortKeys(['title']).queryField('enumIndexFieldTest3'),
+    ]),
+  RefEnumAsIndexSortKey: a
+    .model({
+      title: a.string(),
+      status: a.ref('EnumIndexStatus'),
+    })
+    .secondaryIndexes((index) => [
+      index('title').sortKeys(['status']).queryField('enumIndexFieldTest4'),
+    ]),
+  EnumIndexStatus: a.enum(['yes', 'no']),
+  // #endregion
 });
 
 export type Schema = ClientSchema<typeof schema>;

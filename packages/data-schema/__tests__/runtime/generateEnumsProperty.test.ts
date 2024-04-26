@@ -5,7 +5,7 @@ describe('generateEnumsProperty()', () => {
   it('returns an empty object when there is no valid `modelIntrospection`', () => {
     const mockAPIGraphQLConfig: GraphQLProviderConfig['GraphQL'] = {
       endpoint: 'endpoint',
-      defaultAuthMode: 'iam',
+      defaultAuthMode: 'identityPool',
     } as any;
     const result = generateEnumsProperty(mockAPIGraphQLConfig);
 
@@ -15,7 +15,7 @@ describe('generateEnumsProperty()', () => {
   it('returns expected `enums` object', () => {
     const mockAPIGraphQLConfig: GraphQLProviderConfig['GraphQL'] = {
       endpoint: 'endpoint',
-      defaultAuthMode: 'iam',
+      defaultAuthMode: 'identityPool',
       modelIntrospection: {
         version: 1,
         models: {},

@@ -11,6 +11,7 @@ import {
   IsEmptyStringOrNever,
 } from '@aws-amplify/data-schema-types';
 import type { Observable } from 'rxjs';
+import { deferredRefResolvingPrefix } from '../../ModelType';
 
 // temporarily export symbols from `data-schema-types` because in case part of the
 // problem with the runtime -> data-schema migration comes down to a mismatch
@@ -410,6 +411,7 @@ export type LazyLoader<Model, IsArray extends boolean> = (
 export type AuthMode =
   | 'apiKey'
   | 'iam'
+  | 'identityPool'
   | 'oidc'
   | 'userPool'
   | 'lambda'
@@ -444,17 +446,17 @@ type SizeFilter = {
 /**
  * Filters options that can be used on string-like fields.
  */
-type StringFilter = {
+type StringFilter<T extends string = string> = {
   attributeExists?: boolean;
   beginsWith?: string;
   between?: [string, string];
   contains?: string;
-  eq?: string;
+  eq?: T;
   ge?: string;
   gt?: string;
   le?: string;
   lt?: string;
-  ne?: string;
+  ne?: T;
   notContains?: string;
   size?: SizeFilter;
 };
@@ -498,8 +500,14 @@ export type ModelTypesClient<
   ModelName extends string,
   Model extends Record<string, unknown>,
   ModelMeta extends ModelMetaShape,
+  Enums extends Record<string, string>,
   FlatModel extends Record<string, unknown> = ResolvedModel<Model>,
-> = IndexQueryMethodsFromIR<ModelMeta['secondaryIndexes'], ModelName, Model> & {
+> = IndexQueryMethodsFromIR<
+  ModelMeta['secondaryIndexes'],
+  ModelName,
+  Model,
+  Enums
+> & {
   create: (
     model: Prettify<CreateModelInput<Model, ModelMeta>>,
     options?: {
@@ -594,8 +602,14 @@ type ModelTypesSSRCookies<
   ModelName extends string,
   Model extends Record<string, unknown>,
   ModelMeta extends ModelMetaShape,
+  Enums extends Record<string, string>,
   FlatModel extends Record<string, unknown> = ResolvedModel<Model>,
-> = IndexQueryMethodsFromIR<ModelMeta['secondaryIndexes'], ModelName, Model> & {
+> = IndexQueryMethodsFromIR<
+  ModelMeta['secondaryIndexes'],
+  ModelName,
+  Model,
+  Enums
+> & {
   create: (
     model: Prettify<CreateModelInput<Model, ModelMeta>>,
     options?: {
@@ -647,8 +661,14 @@ type ModelTypesSSRRequest<
   ModelName extends string,
   Model extends Record<string, unknown>,
   ModelMeta extends ModelMetaShape,
+  Enums extends Record<string, string>,
   FlatModel extends Record<string, unknown> = ResolvedModel<Model>,
-> = IndexQueryMethodsFromIR<ModelMeta['secondaryIndexes'], ModelName, Model> & {
+> = IndexQueryMethodsFromIR<
+  ModelMeta['secondaryIndexes'],
+  ModelName,
+  Model,
+  Enums
+> & {
   create: (
     // TODO: actual type
     contextSpec: any,
@@ -723,19 +743,22 @@ export type ModelTypes<
         ? ModelTypesClient<
             ModelName,
             Schema[ModelName]['type'],
-            ModelMeta[ModelName]
+            ModelMeta[ModelName],
+            ModelMeta['enums']
           >
         : Context extends 'COOKIES'
           ? ModelTypesSSRCookies<
               ModelName,
               Schema[ModelName]['type'],
-              ModelMeta[ModelName]
+              ModelMeta[ModelName],
+              ModelMeta['enums']
             >
           : Context extends 'REQUEST'
             ? ModelTypesSSRRequest<
                 ModelName,
                 Schema[ModelName]['type'],
-                ModelMeta[ModelName]
+                ModelMeta[ModelName],
+                ModelMeta['enums']
               >
             : never
       : never
@@ -873,6 +896,7 @@ type IndexQueryMethodsFromIR<
   SecondaryIdxTuple extends SecondaryIndexIrShape[],
   ModelName extends string,
   Model extends Record<string, unknown>,
+  Enums extends Record<string, string>,
   Res = unknown, // defaulting `unknown` because it gets absorbed in an intersection, e.g. `{a: 1} & unknown` => `{a: 1}`
 > = SecondaryIdxTuple extends [
   infer A extends SecondaryIndexIrShape,
@@ -882,7 +906,8 @@ type IndexQueryMethodsFromIR<
       B,
       ModelName,
       Model,
-      IndexQueryMethodSignature<A, ModelName, Model> & Res
+      Enums,
+      IndexQueryMethodSignature<A, ModelName, Model, Enums> & Res
     >
   : Res;
 
@@ -890,6 +915,7 @@ type IndexQueryMethodSignature<
   Idx extends SecondaryIndexIrShape,
   ModelName extends string,
   Model extends Record<string, unknown>,
+  Enums extends Record<string, string>,
 > = Record<
   IsEmptyStringOrNever<Idx['queryField']> extends false
     ? Idx['queryField']
@@ -898,10 +924,16 @@ type IndexQueryMethodSignature<
     FlatModel extends Record<string, unknown> = ResolvedModel<Model>,
     SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[],
   >(
-    input: Idx['pk'] & {
-      [SKField in keyof Idx['sk']]+?: string extends Idx['sk'][SKField]
-        ? StringFilter
-        : NumericFilter;
+    input: {
+      [PKField in keyof Idx['pk']]: Idx['pk'][PKField] extends `${deferredRefResolvingPrefix}${infer R}`
+        ? Enums[R]
+        : Idx['pk'][PKField];
+    } & {
+      [SKField in keyof Idx['sk']]+?: number extends Idx['sk'][SKField]
+        ? NumericFilter
+        : Idx['sk'][SKField] extends `${deferredRefResolvingPrefix}${infer R}`
+          ? StringFilter<Enums[R]>
+          : StringFilter<Idx['sk'][SKField] & string>;
     },
     options?: {
       filter?: ModelFilter<Model>;

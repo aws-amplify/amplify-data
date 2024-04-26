@@ -70,7 +70,7 @@ describe('CRUD error handling', () => {
        * in us hitting the following util:
        * https://github.com/aws-amplify/amplify-js/blob/main/packages/api-graphql/src/utils/errors/createGraphQLResultWithError.ts
        */
-      const client = generateClient<Schema>({ authMode: 'iam' });
+      const client = generateClient<Schema>({ authMode: 'identityPool' });
 
       const { data: newTodo, errors } = await client.models.Todo.create({
         content: 'My new todo',
@@ -105,7 +105,7 @@ describe('CRUD error handling', () => {
        * in us hitting the following util:
        * https://github.com/aws-amplify/amplify-js/blob/main/packages/api-graphql/src/utils/errors/createGraphQLResultWithError.ts
        */
-      const client = generateClient<Schema>({ authMode: 'iam' });
+      const client = generateClient<Schema>({ authMode: 'identityPool' });
 
       const { data: todo, errors } = await client.models.Todo.get({
         id: 'some-id',
@@ -139,7 +139,7 @@ describe('CRUD error handling', () => {
        * in us hitting the following util:
        * https://github.com/aws-amplify/amplify-js/blob/main/packages/api-graphql/src/utils/errors/createGraphQLResultWithError.ts
        */
-      const client = generateClient<Schema>({ authMode: 'iam' });
+      const client = generateClient<Schema>({ authMode: 'identityPool' });
 
       const { data: updatedTodo, errors } = await client.models.Todo.update({
         id: 'some_id',
@@ -174,7 +174,7 @@ describe('CRUD error handling', () => {
        * in us hitting the following util:
        * https://github.com/aws-amplify/amplify-js/blob/main/packages/api-graphql/src/utils/errors/createGraphQLResultWithError.ts
        */
-      const client = generateClient<Schema>({ authMode: 'iam' });
+      const client = generateClient<Schema>({ authMode: 'identityPool' });
 
       const toBeDeletedTodo = {
         id: '123123213',
@@ -210,7 +210,7 @@ describe('CRUD error handling', () => {
        * in us hitting the following util:
        * https://github.com/aws-amplify/amplify-js/blob/main/packages/api-graphql/src/utils/errors/createGraphQLResultWithError.ts
        */
-      const client = generateClient<Schema>({ authMode: 'iam' });
+      const client = generateClient<Schema>({ authMode: 'identityPool' });
 
       const { data: todos, errors } = await client.models.Todo.list({
         id: 'some_id',

@@ -220,7 +220,10 @@ function modelFieldToGql(fieldDef: ModelFieldDef) {
   return field;
 }
 
-function refFieldToGql(fieldDef: RefFieldDef): string {
+function refFieldToGql(
+  fieldDef: RefFieldDef,
+  secondaryIndexes: string[] = [],
+): string {
   const { link, valueRequired, array, arrayRequired } = fieldDef;
 
   let field = link;
@@ -235,6 +238,20 @@ function refFieldToGql(fieldDef: RefFieldDef): string {
 
   if (arrayRequired === true) {
     field += '!';
+  }
+
+  for (const index of secondaryIndexes) {
+    field += ` ${index}`;
+  }
+
+  return field;
+}
+
+function enumFieldToGql(enumName: string, secondaryIndexes: string[] = []) {
+  let field = enumName;
+
+  for (const index of secondaryIndexes) {
+    field += ` ${index}`;
   }
 
   return field;
@@ -571,7 +588,9 @@ function calculateAuth(authorization: Authorization<any, any, any>[]) {
     }
 
     if (rule.provider) {
-      ruleParts.push(`provider: ${rule.provider}`);
+      // identityPool maps to iam in the transform
+      const provider = rule.provider === 'identityPool' ? 'iam' : rule.provider;
+      ruleParts.push(`provider: ${provider}`);
     }
 
     if (rule.operations) {
@@ -762,7 +781,7 @@ function processFields(
         );
       } else if (isRefField(fieldDef)) {
         gqlFields.push(
-          `${fieldName}: ${refFieldToGql(fieldDef.data)}${fieldAuth}`,
+          `${fieldName}: ${refFieldToGql(fieldDef.data, secondaryIndexes[fieldName])}${fieldAuth}`,
         );
       } else if (isEnumType(fieldDef)) {
         // The inline enum type name should be `<TypeName><FieldName>` to avoid
@@ -771,7 +790,9 @@ function processFields(
 
         models.push([enumName, fieldDef]);
 
-        gqlFields.push(`${fieldName}: ${enumName}`);
+        gqlFields.push(
+          `${fieldName}: ${enumFieldToGql(enumName, secondaryIndexes[fieldName])}`,
+        );
       } else if (isCustomType(fieldDef)) {
         // The inline CustomType name should be `<TypeName><FieldName>` to avoid
         // CustomType name conflicts
@@ -828,6 +849,8 @@ const secondaryIndexDefaultQueryField = (
 const transformedSecondaryIndexesForModel = (
   modelName: string,
   secondaryIndexes: readonly InternalModelIndexType[],
+  modelFields: Record<string, ModelField<any, any>>,
+  getRefType: ReturnType<typeof getRefTypeForSchema>,
 ): TransformedSecondaryIndexes => {
   const indexDirectiveWithAttributes = (
     partitionKey: string,
@@ -835,6 +858,19 @@ const transformedSecondaryIndexesForModel = (
     indexName: string,
     queryField: string,
   ): string => {
+    for (const keyName of [partitionKey, ...sortKeys]) {
+      const field = modelFields[keyName];
+
+      if (isRefField(field)) {
+        const { def } = getRefType(field.data.link, modelName);
+        if (!isEnumType(def)) {
+          throw new Error(
+            `The ref field \`${keyName}\` used in the secondary index of \`${modelName}\` should refer to an enum type. \`${field.data.link}\` is not a enum type.`,
+          );
+        }
+      }
+    }
+
     if (!sortKeys.length && !indexName && !queryField) {
       return `@index(queryField: "${secondaryIndexDefaultQueryField(
         modelName,
@@ -1170,6 +1206,8 @@ const schemaPreprocessor = (
       const transformedSecondaryIndexes = transformedSecondaryIndexesForModel(
         typeName,
         typeDef.data.secondaryIndexes,
+        fields,
+        getRefType,
       );
 
       const { authString, authFields } = calculateAuth(mostRelevantAuthRules);

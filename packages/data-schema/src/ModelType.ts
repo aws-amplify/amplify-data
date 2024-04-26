@@ -10,7 +10,7 @@ import type {
   ModelRelationalFieldParamShape,
 } from './ModelRelationalField';
 import { AllowModifier, Authorization, allow } from './Authorization';
-import { RefType } from './RefType';
+import { RefType, RefTypeParamShape } from './RefType';
 import { EnumType, EnumTypeParamShape } from './EnumType';
 import { CustomType, CustomTypeParamShape } from './CustomType';
 import {
@@ -21,6 +21,7 @@ import {
 import { SecondaryIndexToIR } from './MappedTypes/MapSecondaryIndexes';
 
 const brandName = 'modelType';
+export type deferredRefResolvingPrefix = 'deferredRefResolving:';
 
 type ModelFields = Record<
   string,
@@ -57,14 +58,41 @@ export type ModelTypeParamShape = {
   authorization: Authorization<any, any, any>[];
 };
 
-// Extract field names that can be used to define a secondary index PK or SK
-// i.e., nullable string or nullable number fields
-type SecondaryIndexFields<T extends Record<string, unknown>> = keyof {
-  [Field in keyof T as NonNullable<T[Field]> extends string | number
-    ? Field
-    : never]: T[Field];
-} &
-  string;
+/**
+ * Extract fields that are eligible to be PK or SK fields with their resolved type.
+ *
+ * Eligible fields include:
+ * 1. ModelField that contains string or number
+ * 2. inline EnumType
+ * 3. RefType that refers to a top level defined EnumType (this is enforced by
+ * validation that happens in the Schema Processor)
+ *
+ * NOTE: at this point, there is no way to resolve the type from a RefType as
+ * we don't have access to the NonModelType at this location. So we generate am
+ * indicator string, and resolve its corresponding type later in
+ * packages/data-schema/src/runtime/client/index.ts
+ */
+type ExtractSecondaryIndexIRFields<T extends ModelTypeParamShape> = {
+  [FieldProp in keyof T['fields'] as T['fields'][FieldProp] extends ModelField<
+    infer R,
+    any,
+    any
+  >
+    ? NonNullable<R> extends string | number
+      ? FieldProp
+      : never
+    : T['fields'][FieldProp] extends EnumType<EnumTypeParamShape>
+      ? FieldProp
+      : T['fields'][FieldProp] extends RefType<RefTypeParamShape, any, any>
+        ? FieldProp
+        : never]: T['fields'][FieldProp] extends ModelField<infer R, any, any>
+    ? R
+    : T['fields'][FieldProp] extends EnumType<infer R>
+      ? R['values'][number]
+      : T['fields'][FieldProp] extends RefType<infer R, any, any>
+        ? `${deferredRefResolvingPrefix}${R['link']}`
+        : never;
+};
 
 type ExtractType<T extends ModelTypeParamShape> = {
   [FieldProp in keyof T['fields'] as T['fields'][FieldProp] extends ModelField<
@@ -189,9 +217,9 @@ export type ModelType<
       identifier: ID,
     ): ModelType<SetTypeSubArg<T, 'identifier', ID>, K | 'identifier'>;
     secondaryIndexes<
-      const SecondaryIndexPKPool extends string = SecondaryIndexFields<
-        ExtractType<T>
-      >,
+      const SecondaryIndexFields = ExtractSecondaryIndexIRFields<T>,
+      const SecondaryIndexPKPool extends string = keyof SecondaryIndexFields &
+        string,
       const Indexes extends readonly ModelIndexType<
         string,
         string,
@@ -201,7 +229,7 @@ export type ModelType<
       >[] = readonly [],
       const IndexesIR extends readonly any[] = SecondaryIndexToIR<
         Indexes,
-        ExtractType<T>
+        SecondaryIndexFields
       >,
     >(
       callback: (
@@ -218,7 +246,9 @@ export type ModelType<
       K | 'secondaryIndexes'
     >;
     authorization<AuthRuleType extends Authorization<any, any, any>>(
-      callback: (allow: Omit<AllowModifier, 'resource'>) => AuthRuleType | AuthRuleType[],
+      callback: (
+        allow: Omit<AllowModifier, 'resource'>,
+      ) => AuthRuleType | AuthRuleType[],
     ): ModelType<
       SetTypeSubArg<T, 'authorization', AuthRuleType[]>,
       K | 'authorization'
