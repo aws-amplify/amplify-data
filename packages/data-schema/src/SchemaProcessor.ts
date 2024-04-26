@@ -304,7 +304,6 @@ function customOperationToGql(
     arguments: fieldArgs,
     typeName: opType,
     returnType,
-    functionRef,
     handlers,
     subscriptionSource,
   } = typeDef.data;
@@ -390,8 +389,6 @@ function customOperationToGql(
       handlers,
       typeName,
     ));
-  } else if (functionRef) {
-    gqlHandlerContent = `@function(name: "${functionRef}") `;
   } else if (databaseType === 'sql' && handler && brand === 'inlineSql') {
     gqlHandlerContent = `@sql(statement: ${escapeGraphQlString(
       String(getHandlerData(handler)),
@@ -1266,15 +1263,9 @@ function validateCustomOperations(
   authRules: Authorization<any, any, any>[],
   getRefType: ReturnType<typeof getRefTypeForSchema>,
 ) {
-  const {
-    functionRef,
-    handlers,
-    typeName: opType,
-    subscriptionSource,
-  } = typeDef.data;
+  const { handlers, typeName: opType, subscriptionSource } = typeDef.data;
 
-  // TODO: remove `functionRef` after deprecating
-  const handlerConfigured = functionRef !== null || handlers?.length;
+  const handlerConfigured = handlers?.length;
   const authConfigured = authRules.length > 0;
 
   if (

@@ -36,7 +36,6 @@ export type ResolveCustomOperations<
         NonModelTypes,
         CustomOperations
       >;
-      functionRef: CustomOperations[OpName]['functionRef'];
       typeName: CustomOperations[OpName]['typeName'];
       authorization: CustomOperations[OpName]['authorization'];
     };

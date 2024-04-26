@@ -40,7 +40,7 @@ describe('custom operations return types', () => {
         }),
         aQuery: a
           .query()
-          .function('someHandler')
+          .handler(a.handler.function('someHandler'))
           .arguments({
             input: a.string(),
             content: a.string().required(),
@@ -137,7 +137,7 @@ describe('custom operations return types', () => {
         }),
         aQuery: a
           .query()
-          .function('someHandler')
+          .handler(a.handler.function('someHandler'))
           .arguments({
             input: a.string(),
             content: a.string().required(),
@@ -221,7 +221,7 @@ describe('custom operations return types', () => {
         }),
         aQuery: a
           .query()
-          .function('someHandler')
+          .handler(a.handler.function('someHandler'))
           .arguments({
             input: a.string(),
             content: a.string().required(),
@@ -324,7 +324,7 @@ describe('custom operations return types', () => {
         }),
         aQuery: a
           .query()
-          .function('someHandler')
+          .handler(a.handler.function('someHandler'))
           .arguments({
             input: a.string(),
             content: a.string().required(),
@@ -399,7 +399,7 @@ describe('custom operations return types', () => {
         Value: a.enum(['succeeded', 'failed']),
         aQuery: a
           .query()
-          .function('someHandler')
+          .handler(a.handler.function('someHandler'))
           .arguments({ input: a.string(), content: a.string().required() })
           .returns(a.ref('Value').required()),
       });
@@ -475,7 +475,6 @@ describe('RDS custom operations', () => {
         returnType: {
           title?: string | null | undefined;
         } | null;
-        functionRef: null;
         typeName: 'Mutation';
         authorization: [];
       };
@@ -484,7 +483,6 @@ describe('RDS custom operations', () => {
         returnType: {
           title?: string | null | undefined;
         } | null;
-        functionRef: null;
         typeName: 'Query';
         authorization: [];
       };
@@ -493,7 +491,6 @@ describe('RDS custom operations', () => {
         returnType: {
           title?: string | null | undefined;
         } | null;
-        functionRef: null;
         typeName: 'Subscription';
         authorization: [];
       };
