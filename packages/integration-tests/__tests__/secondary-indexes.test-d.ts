@@ -286,7 +286,7 @@ describe('secondary indexes / index queries', () => {
       // correct input param
       client.models.Todo.listTodoByTitleAndStatus({
         title: 'test',
-        status: { eq: 'completed' },
+        status: { eq: 'completed', beginsWith: 'com', notContains: 'test' },
       });
 
       // incorrect input param

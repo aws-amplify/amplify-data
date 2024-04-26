@@ -448,16 +448,16 @@ type SizeFilter = {
  */
 type StringFilter<T extends string = string> = {
   attributeExists?: boolean;
-  beginsWith?: T;
-  between?: [T, T];
-  contains?: T;
+  beginsWith?: string;
+  between?: [string, string];
+  contains?: string;
   eq?: T;
-  ge?: T;
-  gt?: T;
-  le?: T;
-  lt?: T;
+  ge?: string;
+  gt?: string;
+  le?: string;
+  lt?: string;
   ne?: T;
-  notContains?: T;
+  notContains?: string;
   size?: SizeFilter;
 };
 
