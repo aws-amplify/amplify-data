@@ -1,5 +1,11 @@
 # @aws-amplify/data-schema
 
+## 0.18.1
+
+### Patch Changes
+
+- e06891d: fix: hide .for() for a.query() and a.mutation()
+
 ## 0.18.0
 
 ### Minor Changes

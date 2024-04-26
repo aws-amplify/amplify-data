@@ -14,9 +14,9 @@ export declare function mutation(): CustomOperation<{
     authorization: [];
     typeName: 'Mutation';
     handlers: null;
-}, never, typeof mutationBrand>;
+}, 'for', typeof mutationBrand>;
 ```
 **Returns:**
 
-CustomOperation&lt;{ arguments: null; returnType: null; functionRef: null; authorization: \[\]; typeName: 'Mutation'; handlers: null; }, never, typeof mutationBrand&gt;
+CustomOperation&lt;{ arguments: null; returnType: null; functionRef: null; authorization: \[\]; typeName: 'Mutation'; handlers: null; }, 'for', typeof mutationBrand&gt;
 

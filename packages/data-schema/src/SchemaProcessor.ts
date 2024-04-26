@@ -1272,6 +1272,12 @@ function validateCustomOperations(
     }
   }
 
+  if (opType !== 'Subscription' && subscriptionSource.length > 0) {
+    throw new Error(
+      `The .for() modifier function can only be used with a custom subscription. ${typeName} is not a custom subscription.`,
+    );
+  }
+
   if (opType === 'Subscription') {
     if (subscriptionSource.length < 1) {
       throw new Error(
