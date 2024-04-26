@@ -237,7 +237,7 @@ export function query(): CustomOperation<
     typeName: 'Query';
     handlers: null;
   },
-  never,
+  'for',
   typeof queryBrand
 > {
   return _custom('Query', queryBrand);
@@ -258,7 +258,7 @@ export function mutation(): CustomOperation<
     typeName: 'Mutation';
     handlers: null;
   },
-  never,
+  'for',
   typeof mutationBrand
 > {
   return _custom('Mutation', mutationBrand);

@@ -502,3 +502,19 @@ describe('RDS custom operations', () => {
     type _ = Expect<Equal<Resolved, Expected>>;
   });
 });
+
+describe('.for() modifier', () => {
+  it('is unavailable on a.query()', () => {
+    // @ts-expect-error .for() is not a valid modifier function of a.query()
+    a.query().for();
+  });
+
+  it('is unavailable on a.mutation()', () => {
+    // @ts-expect-error .for() is not a valid modifier function of a.mutation()
+    a.mutation().for();
+  });
+
+  it('is available only on a.subscription()', () => {
+    a.subscription().for(a.ref('Model'));
+  });
+});
