@@ -1,5 +1,11 @@
 # @aws-amplify/data-schema
 
+## 0.18.4
+
+### Patch Changes
+
+- a4385c1: fixes return type data prop to always be nullable
+
 ## 0.18.3
 
 ### Patch Changes
