@@ -46,6 +46,8 @@ type SchemaContent =
   | EnumType<EnumTypeParamShape>
   | CustomOperation<CustomOperationParamShape, any>;
 
+type NonEmpty<T> = keyof T extends never ? never : T;
+
 type ModelSchemaContents = Record<string, SchemaContent>;
 type InternalSchemaModels = Record<
   string,
@@ -383,7 +385,7 @@ type SchemaReturnType<
 function bindConfigToSchema<DE extends DatasourceEngine>(
   config: SchemaConfiguration<DE, DataSourceConfiguration<DE>>,
 ): <Types extends ModelSchemaContents>(
-  types: Types,
+  types: NonEmpty<Types>,
 ) => SchemaReturnType<DE, Types> {
   return (types) => {
     return (
@@ -414,7 +416,7 @@ export function configure<DE extends DatasourceEngine>(
   config: SchemaConfiguration<DE, DataSourceConfiguration<DE>>,
 ): {
   schema: <Types extends ModelSchemaContents>(
-    types: Types,
+    types: NonEmpty<Types>,
   ) => SchemaReturnType<DE, Types>;
 } {
   return {
