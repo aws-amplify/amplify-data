@@ -240,14 +240,14 @@ bench('70 simple models with 1 field each w/ client types', async () => {
     field1: 'Field 1',
   });
 
-  await client.models.Model1.get({ id: result.data.id });
+  await client.models.Model1.get({ id: result.data!.id });
 
   await client.models.Model1.update({
-    id: result.data.id,
+    id: result.data!.id,
     field1: 'Updated Field 1',
   });
 
-  await client.models.Model1.delete({ id: result.data.id });
+  await client.models.Model1.delete({ id: result.data!.id });
 
   await client.models.Model1.list();
 }).types([1471130, 'instantiations']);

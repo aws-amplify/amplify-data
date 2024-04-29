@@ -79,18 +79,18 @@ bench('p50 CRUDL', async () => {
   });
 
   await client.models.Todo.get(
-    { todoId: result.data.todoId, name: result.data.name },
+    { todoId: result.data!.todoId, name: result.data!.name },
     { selectionSet },
   );
 
   await client.models.Todo.update({
-    todoId: result.data.todoId,
+    todoId: result.data!.todoId,
     name: 'Updated Todo',
   });
 
   await client.models.Todo.delete({
-    todoId: result.data.todoId,
-    name: result.data.name,
+    todoId: result.data!.todoId,
+    name: result.data!.name,
   });
 
   await client.models.Todo.list({ selectionSet });

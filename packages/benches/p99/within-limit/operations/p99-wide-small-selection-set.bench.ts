@@ -83,14 +83,14 @@ bench('1 simple model w/ 43 fields CRUDL', async () => {
     field5: 'test',
   });
 
-  await client.models.Model1.get({ id: result.data.id }, { selectionSet });
+  await client.models.Model1.get({ id: result.data!.id }, { selectionSet });
 
   await client.models.Model1.update({
-    id: result.data.id,
+    id: result.data!.id,
     field1: 'Updated Field 200',
   });
 
-  await client.models.Model1.delete({ id: result.data.id });
+  await client.models.Model1.delete({ id: result.data!.id });
 
   await client.models.Model1.list({ selectionSet });
 }).types([1975644, 'instantiations']);
