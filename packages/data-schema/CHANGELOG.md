@@ -1,5 +1,11 @@
 # @aws-amplify/data-schema
 
+## 1.0.1
+
+### Patch Changes
+
+- cdfeda5: fix: enforce non-empty a.schema definitions
+
 ## 1.0.0
 
 ### Major Changes
