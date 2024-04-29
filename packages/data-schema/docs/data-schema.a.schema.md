@@ -9,7 +9,7 @@ The API and data model definition for Amplify Data. Pass in `{ <NAME>: a.model(.
 **Signature:**
 
 ```typescript
-schema: <Types extends ModelSchemaContents>(types: Types) => ModelSchema<{
+schema: <Types extends ModelSchemaContents>(types: NonEmpty<Types>) => ModelSchema<{
     types: Types;
     authorization: [];
     configuration: any;
@@ -41,7 +41,7 @@ types
 
 </td><td>
 
-Types
+NonEmpty&lt;Types&gt;
 
 
 </td><td>

@@ -36,7 +36,7 @@ it('requires a model to have at least one auth rule - empty model authorization 
 });
 
 it('requires non-empty schema definition', () => {
-// @ts-expect-error Argument of type '{}' is not assignable to parameter of type 'never'
+  // @ts-expect-error Argument of type '{}' is not assignable to parameter of type 'never'
   const schema = a.schema({});
 });
 
