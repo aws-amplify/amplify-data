@@ -60,15 +60,6 @@ type ModelRelationalFieldFunctions<
     K | 'required'
   >;
   /**
-   * When set, it requires the relationship to always return an array value
-   * @deprecated this modifier should not be used and will be removed
-   * in the next minor version of this package.
-   */
-  arrayRequired(): ModelRelationalField<
-    SetTypeSubArg<T, 'arrayRequired', true>,
-    K | 'arrayRequired'
-  >;
-  /**
    * Configures field-level authorization rules. Pass in an array of authorizations `(a.allow.____)` to mix and match
    * multiple authorization rules for this field.
    */
@@ -102,7 +93,6 @@ export type InternalRelationalField = ModelRelationalField<
 
 const relationalModifiers = [
   'required',
-  'arrayRequired',
   'valueRequired',
   'authorization',
 ] as const;
@@ -112,18 +102,18 @@ const relationModifierMap: Record<
   (typeof relationalModifiers)[number][]
 > = {
   belongsTo: ['authorization'],
-  hasMany: ['arrayRequired', 'valueRequired', 'authorization'],
+  hasMany: ['valueRequired', 'authorization'],
   hasOne: ['required', 'authorization'],
 };
 
 export type RelationTypeFunctionOmitMapping<
   Type extends ModelRelationshipTypes,
 > = Type extends ModelRelationshipTypes.belongsTo
-  ? 'required' | 'arrayRequired' | 'valueRequired'
+  ? 'required' | 'valueRequired'
   : Type extends ModelRelationshipTypes.hasMany
     ? 'required'
     : Type extends ModelRelationshipTypes.hasOne
-      ? 'arrayRequired' | 'valueRequired'
+      ? 'valueRequired'
       : never;
 
 function _modelRelationalField<
@@ -145,11 +135,6 @@ function _modelRelationalField<
   data.array = type === 'hasMany';
   const relationshipBuilderFunctions = {
     required() {
-      data.arrayRequired = true;
-
-      return this;
-    },
-    arrayRequired() {
       data.arrayRequired = true;
 
       return this;

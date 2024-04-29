@@ -1,5 +1,11 @@
 # @aws-amplify/data-schema-types
 
+## 1.0.0
+
+### Major Changes
+
+- 9daf354: first major version
+
 ## 0.10.1
 
 ### Patch Changes

@@ -10,7 +10,6 @@
 export declare function query(): CustomOperation<{
     arguments: null;
     returnType: null;
-    functionRef: null;
     authorization: [];
     typeName: 'Query';
     handlers: null;
@@ -18,5 +17,5 @@ export declare function query(): CustomOperation<{
 ```
 **Returns:**
 
-CustomOperation&lt;{ arguments: null; returnType: null; functionRef: null; authorization: \[\]; typeName: 'Query'; handlers: null; }, 'for', typeof queryBrand&gt;
+CustomOperation&lt;{ arguments: null; returnType: null; authorization: \[\]; typeName: 'Query'; handlers: null; }, 'for', typeof queryBrand&gt;
 

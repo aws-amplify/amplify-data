@@ -34,8 +34,6 @@ type SubscriptionSource = RefType<any, any>;
 type InternalSubscriptionSource = InternalRef;
 
 type CustomReturnType = RefType<any> | CustomType<any>;
-type CustomFunctionRefType = string; // extend to include reference
-
 type InternalCustomArguments = Record<string, InternalField>;
 type InternalCustomReturnType = InternalRef;
 type HandlerInputType = FunctionHandler[] | CustomHandler[] | Handler;
@@ -50,7 +48,6 @@ type CustomOperationName = (typeof CustomOperationNames)[number];
 type CustomData = {
   arguments: CustomArguments;
   returnType: CustomReturnType | null;
-  functionRef: string | null; // extend to include reference
   authorization: Authorization<any, any, any>[];
   typeName: CustomOperationName;
   handlers: Handler[] | null;
@@ -60,7 +57,6 @@ type CustomData = {
 type InternalCustomData = CustomData & {
   arguments: InternalCustomArguments;
   returnType: InternalCustomReturnType;
-  functionRef: string | null;
   subscriptionSource: InternalSubscriptionSource[];
   authorization: Authorization<any, any, any>[];
 };
@@ -68,7 +64,6 @@ type InternalCustomData = CustomData & {
 export type CustomOperationParamShape = {
   arguments: CustomArguments | null;
   returnType: CustomReturnType | null;
-  functionRef: string | null;
   authorization: Authorization<any, any, any>[];
   typeName: CustomOperationName;
   handlers: Handler | null;
@@ -92,21 +87,6 @@ export type CustomOperation<
     ): CustomOperation<
       SetTypeSubArg<T, 'returnType', ReturnType>,
       K | 'returns',
-      B
-    >;
-    /**
-     *
-     * @deprecated
-     * `.function` should no longer be used and will be removed
-     * in the next minor version of this package.
-     *
-     * Use `.handler(a.handler.function())` instead
-     */
-    function<FunctionRef extends CustomFunctionRefType>(
-      functionRefOrName: FunctionRef,
-    ): CustomOperation<
-      SetTypeSubArg<T, 'functionRef', FunctionRef>,
-      K | 'function',
       B
     >;
     authorization<AuthRuleType extends Authorization<any, any, any>>(
@@ -165,7 +145,6 @@ function _custom<
   const data: CustomData = {
     arguments: {},
     returnType: null,
-    functionRef: null,
     authorization: [],
     typeName: typeName,
     handlers: null,
@@ -181,11 +160,6 @@ function _custom<
       },
       returns(returnType: CustomReturnType) {
         data.returnType = returnType;
-
-        return this;
-      },
-      function(functionRefOrName: CustomFunctionRefType) {
-        data.functionRef = functionRefOrName;
 
         return this;
       },
@@ -232,7 +206,6 @@ export function query(): CustomOperation<
   {
     arguments: null;
     returnType: null;
-    functionRef: null;
     authorization: [];
     typeName: 'Query';
     handlers: null;
@@ -253,7 +226,6 @@ export function mutation(): CustomOperation<
   {
     arguments: null;
     returnType: null;
-    functionRef: null;
     authorization: [];
     typeName: 'Mutation';
     handlers: null;
@@ -274,7 +246,6 @@ export function subscription(): CustomOperation<
   {
     arguments: null;
     returnType: null;
-    functionRef: null;
     authorization: [];
     typeName: 'Subscription';
     handlers: null;

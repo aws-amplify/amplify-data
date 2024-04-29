@@ -304,7 +304,6 @@ function customOperationToGql(
     arguments: fieldArgs,
     typeName: opType,
     returnType,
-    functionRef,
     handlers,
     subscriptionSource,
   } = typeDef.data;
@@ -390,8 +389,6 @@ function customOperationToGql(
       handlers,
       typeName,
     ));
-  } else if (functionRef) {
-    gqlHandlerContent = `@function(name: "${functionRef}") `;
   } else if (databaseType === 'sql' && handler && brand === 'inlineSql') {
     gqlHandlerContent = `@sql(statement: ${escapeGraphQlString(
       String(getHandlerData(handler)),
@@ -550,6 +547,32 @@ function validateImpliedFields(
     if (existing[k] && areConflicting(existing[k], field)) {
       throw new Error(
         `Implicit field ${k} conflicts with the explicit field definition.`,
+      );
+    }
+  }
+}
+
+function validateRefUseCases(
+  referrerName: string,
+  referrerType: 'customType' | 'model',
+  fields: Record<string, any>,
+  getRefType: ReturnType<typeof getRefTypeForSchema>,
+) {
+  const check = (fieldName: string, refLink: string, targetType: string) => {
+    const { def } = getRefType(refLink, referrerName);
+    if (isInternalModel(def)) {
+      throw new Error(
+        `Cannot use \`.ref()\` to refer a model from a \`${targetType}\`. Field \`${fieldName}\` of \`${referrerName}\` refers to model \`${refLink}\``,
+      );
+    }
+  };
+
+  for (const [fieldName, field] of Object.entries(fields)) {
+    if (isRefField(field)) {
+      check(
+        fieldName,
+        field.data.link,
+        referrerType === 'customType' ? 'custom type' : 'model',
       );
     }
   }
@@ -1075,6 +1098,9 @@ const schemaPreprocessor = (
         gqlModels.push(enumType);
       } else if (isCustomType(typeDef)) {
         const fields = typeDef.data.fields;
+
+        validateRefUseCases(typeName, 'customType', fields, getRefType);
+
         const fieldAuthApplicableFields = Object.fromEntries(
           Object.entries(fields).filter(
             (
@@ -1159,6 +1185,9 @@ const schemaPreprocessor = (
         string,
         ModelField<any, any>
       >;
+
+      validateRefUseCases(typeName, 'model', fields, getRefType);
+
       const identifier = typeDef.data.identifier;
       const [partitionKey] = identifier;
 
@@ -1200,6 +1229,9 @@ const schemaPreprocessor = (
         string,
         ModelField<any, any>
       >;
+
+      validateRefUseCases(typeName, 'model', fields, getRefType);
+
       const identifier = typeDef.data.identifier;
       const [partitionKey] = identifier;
 
@@ -1266,15 +1298,9 @@ function validateCustomOperations(
   authRules: Authorization<any, any, any>[],
   getRefType: ReturnType<typeof getRefTypeForSchema>,
 ) {
-  const {
-    functionRef,
-    handlers,
-    typeName: opType,
-    subscriptionSource,
-  } = typeDef.data;
+  const { handlers, typeName: opType, subscriptionSource } = typeDef.data;
 
-  // TODO: remove `functionRef` after deprecating
-  const handlerConfigured = functionRef !== null || handlers?.length;
+  const handlerConfigured = handlers?.length;
   const authConfigured = authRules.length > 0;
 
   if (

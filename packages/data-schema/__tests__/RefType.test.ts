@@ -1,5 +1,6 @@
 import { expectTypeTestsToPassAsync } from 'jest-tsd';
 import { a } from '../src/index';
+import { configure } from '../src/ModelSchema';
 
 // evaluates type defs in corresponding test-d.ts file
 it('should not produce static type errors', async () => {
@@ -173,6 +174,67 @@ describe('RefType', () => {
         const transformed = schema.transform().schema;
 
         expect(/ref: \[Enum!\]!/.test(transformed)).toBe(true);
+      });
+    });
+
+    describe('disallowed use cases', () => {
+      it('throws when ref another model from a model in DDB schema', () => {
+        const schema = a
+          .schema({
+            ModelA: a.model({
+              content: a.string(),
+              modelB: a.ref('ModelB'),
+            }),
+            ModelB: a.model({
+              title: a.string(),
+            }),
+          })
+          .authorization((allow) => allow.publicApiKey());
+
+        expect(() => schema.transform()).toThrow(
+          'Cannot use `.ref()` to refer a model from a `model`. Field `modelB` of `ModelA` refers to model `ModelB`',
+        );
+      });
+
+      it('throws when ref another model from a model in RDS schema', () => {
+        const schema = configure({
+          database: {
+            engine: 'mysql',
+            connectionUri: 'fake',
+          } as any,
+        })
+          .schema({
+            ModelA: a.model({
+              content: a.string(),
+              modelB: a.ref('ModelB'),
+            }),
+            ModelB: a.model({
+              title: a.string(),
+            }),
+          })
+          .authorization((allow) => allow.publicApiKey());
+
+        expect(() => schema.transform()).toThrow(
+          'Cannot use `.ref()` to refer a model from a `model`. Field `modelB` of `ModelA` refers to model `ModelB`',
+        );
+      });
+
+      it('throws when ref a model from a custom type', () => {
+        const schema = a
+          .schema({
+            ModelA: a.model({
+              content: a.string(),
+            }),
+            CustomType: a.customType({
+              title: a.string(),
+              modelA: a.ref('ModelA'),
+            }),
+          })
+          .authorization((allow) => allow.publicApiKey());
+
+        expect(() => schema.transform()).toThrow(
+          'Cannot use `.ref()` to refer a model from a `custom type`. Field `modelA` of `CustomType` refers to model `ModelA`',
+        );
       });
     });
   });
