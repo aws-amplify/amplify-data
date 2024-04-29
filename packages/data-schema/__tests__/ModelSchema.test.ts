@@ -35,6 +35,11 @@ it('requires a model to have at least one auth rule - empty model authorization 
   );
 });
 
+it('requires non-empty schema definition', () => {
+// @ts-expect-error Argument of type '{}' is not assignable to parameter of type 'never'
+  const schema = a.schema({});
+});
+
 it('requires a model to have at least one auth rule - empty global authorization call', () => {
   const schema = a
     .schema({
