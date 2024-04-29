@@ -32,6 +32,11 @@ import {
   ModelRelationalFieldParamShape,
 } from './ModelRelationalField';
 
+export { ModelType } from './ModelType';
+export { EnumType } from './EnumType';
+export { CustomType } from './CustomType';
+export { CustomOperation } from './CustomOperation';
+
 export const rdsSchemaBrandName = 'RDSSchema';
 export const rdsSchemaBrand = brand(rdsSchemaBrandName);
 export type RDSSchemaBrand = Brand<typeof rdsSchemaBrandName>;
@@ -46,7 +51,7 @@ type SchemaContent =
   | EnumType<EnumTypeParamShape>
   | CustomOperation<CustomOperationParamShape, any>;
 
-type ModelSchemaContents = Record<string, SchemaContent>;
+export type ModelSchemaContents = Record<string, SchemaContent>;
 type InternalSchemaModels = Record<
   string,
   InternalModel | EnumType<any> | CustomType<any> | InternalCustom
