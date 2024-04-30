@@ -259,7 +259,7 @@ export type ModelType<
   Brand<typeof brandName>;
 
 /**
- * External representation of Model Type that exposes the `addRelationships` modifier.
+ * External representation of Model Type that exposes the `relationships` modifier.
  * Used on the complete schema object.
  */
 export type SchemaModelType<
@@ -271,7 +271,7 @@ export type SchemaModelType<
   IsRDS extends boolean = false,
 > = IsRDS extends true
   ? T & {
-      addRelationships<
+    relationships<
         Param extends Record<
           string,
           ModelRelationalField<any, string, any, any>
@@ -329,7 +329,7 @@ function _model<T extends ModelTypeParamShape>(fields: T['fields']) {
   return {
     ...builder,
     data,
-    addRelationships(relationships) {
+    relationships(relationships) {
       data.fields = { ...data.fields, ...relationships };
     },
     fields: data.fields,
@@ -352,7 +352,7 @@ export const isSchemaModelType = (
     internalType.data.authorization !== undefined &&
     internalType.data.identifier !== undefined &&
     internalType.data.secondaryIndexes !== undefined &&
-    typeof internalType.addRelationships === 'function'
+    typeof internalType.relationships === 'function'
   );
 };
 
