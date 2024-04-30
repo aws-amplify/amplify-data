@@ -8,10 +8,12 @@ import {
   generateSelectionSet,
   customSelectionSetToIR,
   generateGraphQLDocument,
+  ModelOperation,
 } from '../../src/runtime/internals/APIClient';
 
 import config from './fixtures/modeled/amplifyconfiguration';
 import {
+  personSchemaModel,
   productSchemaModel,
   userSchemaModel,
 } from './fixtures/schema-models/with-custom-primary-key/models';
@@ -539,8 +541,7 @@ describe('flattenItems', () => {
 });
 
 describe('generateGraphQLDocument()', () => {
-  describe('for `READ` operation', () => {
-    const modelOperation = 'READ';
+  describe('for operation', () => {
     const mockModelDefinitions = {
       version: 1 as const,
       enums: {},
@@ -548,19 +549,29 @@ describe('generateGraphQLDocument()', () => {
       models: {
         User: userSchemaModel,
         Product: productSchemaModel,
+        person: personSchemaModel,
       },
     };
 
     test.each([
-      ['User', '$userId: ID!'],
-      ['Product', '$sku: String!,$factoryId: String!,$warehouseId: String!'],
+      ['READ', 'User', '$userId: ID!'],
+      ['READ', 'Product', '$sku: String!,$factoryId: String!,$warehouseId: String!'],
+      ['READ', 'person', 'getPerson'],
+      ['LIST', 'person', 'listPeople'],
+      ['LIST', 'person', '$filter: ModelPersonFilterInput'],
+      ['CREATE', 'person', '$input: CreatePersonInput!'],
+      ['UPDATE', 'person', '$input: UpdatePersonInput!'],
+      ['DELETE', 'person', '$input: DeletePersonInput!'],
+      ['ONCREATE', 'person', '$filter: ModelSubscriptionPersonFilterInput'],
+      ['ONUPDATE', 'person', '$filter: ModelSubscriptionPersonFilterInput'],
+      ['ONDELETE', 'person', '$filter: ModelSubscriptionPersonFilterInput'],
     ])(
-      'generates arguments for model %s to be %s',
-      (modelName, expectedArgs) => {
+      '%s generates operation name or arguments for model %s to contain %s',
+      (modelOperation, modelName, expectedArgs) => {
         const document = generateGraphQLDocument(
           mockModelDefinitions,
           modelName,
-          modelOperation,
+          modelOperation as ModelOperation,
         );
 
         expect(document).toEqual(expect.stringContaining(expectedArgs));

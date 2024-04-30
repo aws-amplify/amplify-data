@@ -197,3 +197,67 @@ export const productSchemaModel: SchemaModel = {
     sortKeyFieldNames: ['factoryId', 'warehouseId'],
   },
 };
+
+export const personSchemaModel: SchemaModel = {
+  name: 'person', // intentional lowercase
+  fields: {
+    personId: {
+      name: 'personId',
+      isArray: false,
+      type: 'ID',
+      isRequired: true,
+      attributes: [],
+    },
+    name: {
+      name: 'name',
+      isArray: false,
+      type: 'String',
+      isRequired: true,
+      attributes: [],
+    },
+    createdAt: {
+      name: 'createdAt',
+      isArray: false,
+      type: 'AWSDateTime',
+      isRequired: true,
+      attributes: [],
+    },
+    updatedAt: {
+      name: 'updatedAt',
+      isArray: false,
+      type: 'AWSDateTime',
+      isRequired: true,
+      attributes: [],
+    },
+  },
+  syncable: true,
+  pluralName: 'people', // intentional lowercase
+  attributes: [
+    {
+      type: 'model',
+      properties: {},
+    },
+    {
+      type: 'key',
+      properties: {
+        fields: ['personId'],
+      },
+    },
+    {
+      type: 'auth',
+      properties: {
+        rules: [
+          {
+            allow: 'public',
+            operations: ['read'],
+          },
+        ],
+      },
+    },
+  ],
+  primaryKeyInfo: {
+    isCustomPrimaryKey: true,
+    primaryKeyFieldName: 'personId',
+    sortKeyFieldNames: [],
+  },
+};

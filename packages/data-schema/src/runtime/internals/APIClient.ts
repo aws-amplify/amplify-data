@@ -678,6 +678,9 @@ export function generateGraphQLDocument(
     },
   } = modelDefinition;
 
+  const namePascaleCase = name.charAt(0).toUpperCase() + name.slice(1);
+  const pluralNamePascaleCase = pluralName.charAt(0).toUpperCase() + pluralName.slice(1);
+
   const { operationPrefix, usePlural } = graphQLOperationsInfo[modelOperation];
 
   const { selectionSet } = listArgs || {};
@@ -686,7 +689,7 @@ export function generateGraphQLDocument(
   let indexQueryArgs: Record<string, string>;
 
   if (operationPrefix) {
-    graphQLFieldName = `${operationPrefix}${usePlural ? pluralName : name}`;
+    graphQLFieldName = `${operationPrefix}${usePlural ? pluralNamePascaleCase : namePascaleCase}`;
   } else if (indexMeta) {
     const { queryField, pk, sk = [] } = indexMeta;
     graphQLFieldName = queryField;
@@ -775,7 +778,7 @@ export function generateGraphQLDocument(
           input: `${
             operationPrefix.charAt(0).toLocaleUpperCase() +
             operationPrefix.slice(1)
-          }${name}Input!`,
+          }${namePascaleCase}Input!`,
         });
       graphQLOperationType ?? (graphQLOperationType = 'mutation');
     // TODO(Eslint): this this case clause correct without the break statement?
@@ -795,7 +798,7 @@ export function generateGraphQLDocument(
           // ignore the eslint error on the ts-ignore.
           // eslint-disable-next-line
           // @ts-ignore
-          filter: `Model${name}FilterInput`,
+          filter: `Model${namePascaleCase}FilterInput`,
           limit: 'Int',
           nextToken: 'String',
         });
@@ -808,7 +811,7 @@ export function generateGraphQLDocument(
       graphQLArguments ??
         (graphQLArguments = {
           ...indexQueryArgs!,
-          filter: `Model${name}FilterInput`,
+          filter: `Model${namePascaleCase}FilterInput`,
           sortDirection: 'ModelSortDirection',
           limit: 'Int',
           nextToken: 'String',
@@ -823,7 +826,7 @@ export function generateGraphQLDocument(
     case 'ONDELETE':
       graphQLArguments ??
         (graphQLArguments = {
-          filter: `ModelSubscription${name}FilterInput`,
+          filter: `ModelSubscription${namePascaleCase}FilterInput`,
         });
       graphQLOperationType ?? (graphQLOperationType = 'subscription');
       graphQLSelectionSet ?? (graphQLSelectionSet = selectionSetFields);
