@@ -91,7 +91,7 @@ export type GenericModelSchema<T extends ModelSchemaParamShape> =
 
 export type ModelSchema<
   T extends ModelSchemaParamShape,
-  UsedMethods extends 'authorization' | 'addRelationships' = never,
+  UsedMethods extends 'authorization' | 'relationships' = never,
 > = Omit<
   {
     authorization: <AuthRules extends SchemaAuthorization<any, any, any>>(
@@ -111,7 +111,7 @@ type RDSModelSchemaFunctions =
   | 'addMutations'
   | 'addSubscriptions'
   | 'authorization'
-  | 'relationships'
+  | 'setRelationships'
   | 'setAuthorization'
   | 'renameModelFields'
   | 'renameModels';
@@ -161,7 +161,7 @@ export type RDSModelSchema<
         schema: RDSModelSchema<T, UsedMethods | 'setAuthorization'>,
       ) => void,
     ) => RDSModelSchema<T>;
-    relationships: <
+    setRelationships: <
       Relationships extends ReadonlyArray<
         Partial<Record<keyof T['types'], RelationshipTemplate>>
       >,
@@ -184,7 +184,7 @@ export type RDSModelSchema<
             >
           : T
         : T,
-      UsedMethods | 'relationships'
+      UsedMethods | 'setRelationships'
     >;
     renameModels: <
       NewName extends string,
@@ -302,9 +302,9 @@ function _rdsSchema<
       const { setAuthorization: _, ...rest } = this;
       return rest;
     },
-    relationships(callback): any {
-      const { relationships: _, ...rest } = this;
-      // The relationships are added via `models.<Model>.addRelationships`
+    setRelationships(callback): any {
+      const { setRelationships: _, ...rest } = this;
+      // The relationships are added via `models.<Model>.relationships`
       // modifiers that's being called within the callback. They are modifying
       // by references on each model, so there is not anything else to be done
       // here.
