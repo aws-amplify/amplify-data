@@ -1,5 +1,11 @@
 # @aws-amplify/data-schema
 
+## 1.1.0
+
+### Minor Changes
+
+- 454ab50: feat!: rename relational modifiers for SQL schemas
+
 ## 1.0.1
 
 ### Patch Changes
