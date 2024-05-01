@@ -1,5 +1,11 @@
 # @aws-amplify/data-schema
 
+## 1.1.3
+
+### Patch Changes
+
+- ecc5540: Renaming SQL models should add refersTo directive
+
 ## 1.1.2
 
 ### Patch Changes
