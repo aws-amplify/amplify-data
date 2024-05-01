@@ -1,5 +1,11 @@
 # @aws-amplify/data-schema
 
+## 1.1.2
+
+### Patch Changes
+
+- 7f25eb0: Fixes auth permissions for custom types referenced by custom operations; other minor custom ops fixes
+
 ## 1.1.1
 
 ### Patch Changes
