@@ -333,7 +333,8 @@ function _rdsSchema<
 
         models[newName] = currentType;
         data.types[newName] = currentType;
-
+        models[newName].data.originalName = curName;
+        
         delete models[curName];
         delete data.types[curName];
       });

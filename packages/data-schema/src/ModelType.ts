@@ -49,6 +49,7 @@ type InternalModelData = ModelData & {
   identifier: string[];
   secondaryIndexes: ReadonlyArray<InternalModelIndexType>;
   authorization: Authorization<any, any, any>[];
+  originalName?: string;
 };
 
 export type ModelTypeParamShape = {
