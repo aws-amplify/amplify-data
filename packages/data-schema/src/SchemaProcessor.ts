@@ -1097,7 +1097,11 @@ const getRefTypeForSchema = (schema: InternalSchema) => {
   return getRefType;
 };
 
-// custom types are last
+/**
+ * Sorts top-level schema types to where Custom Types are processed last
+ * This allows us to accrue and then apply inherited auth rules for custom types from custom operations
+ * that reference them in their return values
+ */
 const sortTopLevelTypes = (topLevelTypes: [string, any][]) => {
   return topLevelTypes.sort(
     ([_typeNameA, typeDefA], [_typeNameB, typeDefB]) => {
@@ -1112,6 +1116,9 @@ const sortTopLevelTypes = (topLevelTypes: [string, any][]) => {
   );
 };
 
+/**
+ * Builds up dictionary of Custom Type name - array of inherited auth rules
+ */
 const mergeCustomTypeAuthRules = (
   existing: Record<string, Authorization<any, any, any>[]>,
   added: CustomTypeAuthRules,
