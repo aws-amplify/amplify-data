@@ -27,18 +27,18 @@ describe('RDSModelSchema', () => {
       }),
     })
     .authorization((allow) => allow.publicApiKey())
-    .relationships((models) => [
-      models.Post.addRelationships({
+    .setRelationships((models) => [
+      models.Post.relationships({
         parentBlog: a.belongsTo('Blog', 'parentBlogId'),
       }),
-      models.Blog.addRelationships({
+      models.Blog.relationships({
         childPosts: a.hasMany('Post', 'parentBlogId'),
       }),
     ]);
 
   type Schema = ClientSchema<typeof schema>;
 
-  describe('.relationships() modifier', () => {
+  describe('.setRelationships() modifier', () => {
     it('inserts model relation fields into target models', () => {
       type ResolvedPost = Prettify<Schema['Post']['type']>;
       type ResolvedBlog = Prettify<Schema['Blog']['type']>;

@@ -8,7 +8,7 @@ it('should not produce static type errors', async () => {
 });
 
 describe('RDSModelSchema', () => {
-  describe('.relationships() modifier', () => {
+  describe('.setRelationships() modifier', () => {
     it('generates expected schema for unidirectional hasMany', () => {
       const schema = configure({
         database: {
@@ -28,8 +28,8 @@ describe('RDSModelSchema', () => {
           }),
         })
         .authorization((allow) => allow.publicApiKey())
-        .relationships((models) => [
-          models.Blog.addRelationships({
+        .setRelationships((models) => [
+          models.Blog.relationships({
             childPosts: a.hasMany('Post', 'parentBlogId'),
           }),
         ]);
@@ -56,11 +56,11 @@ describe('RDSModelSchema', () => {
           }),
         })
         .authorization((allow) => allow.publicApiKey())
-        .relationships((models) => [
-          models.Post.addRelationships({
+        .setRelationships((models) => [
+          models.Post.relationships({
             parentBlog: a.belongsTo('Blog', 'parentBlogId'),
           }),
-          models.Blog.addRelationships({
+          models.Blog.relationships({
             childPosts: a.hasMany('Post', 'parentBlogId'),
           }),
         ]);
@@ -85,8 +85,8 @@ describe('RDSModelSchema', () => {
           }),
         })
         .authorization((allow) => allow.publicApiKey())
-        .relationships((models) => [
-          models.Supplier.addRelationships({
+        .setRelationships((models) => [
+          models.Supplier.relationships({
             account: a.hasOne('Account', 'supplierId'),
           }),
         ]);
@@ -111,8 +111,8 @@ describe('RDSModelSchema', () => {
           }),
         })
         .authorization((allow) => allow.publicApiKey())
-        .relationships((models) => [
-          models.Account.addRelationships({
+        .setRelationships((models) => [
+          models.Account.relationships({
             supplier: a.belongsTo('Supplier', 'supplierId'),
           }),
         ]);
@@ -137,14 +137,14 @@ describe('RDSModelSchema', () => {
           }),
         })
         .authorization((allow) => allow.publicApiKey())
-        .relationships((models) => [
-          models.Account.addRelationships({
+        .setRelationships((models) => [
+          models.Account.relationships({
             supplier: a.belongsTo('Supplier', 'supplierId'),
           }),
-          models.Supplier.addRelationships({
+          models.Supplier.relationships({
             account: a.hasOne('Account', 'supplierIds'),
-          }),
-        ]);
+          })
+        ])
 
       expect(schema.transform().schema).toMatchSnapshot();
     });
@@ -158,8 +158,8 @@ describe('RDSModelSchema', () => {
               content: a.string(),
             }),
           })
-          // @ts-expect-error .relationships() should not be available for non-RDS schema
-          .relationships((models) => []),
+          // @ts-expect-error .setRelationships() should not be available for non-RDS schema
+          .setRelationships((models) => []),
       ).toThrow();
     });
   });

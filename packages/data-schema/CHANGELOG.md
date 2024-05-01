@@ -1,5 +1,17 @@
 # @aws-amplify/data-schema
 
+## 1.1.1
+
+### Patch Changes
+
+- 9bf67b7: Use pascal case of model name in graphql operation names
+
+## 1.1.0
+
+### Minor Changes
+
+- 454ab50: feat!: rename relational modifiers for SQL schemas
+
 ## 1.0.1
 
 ### Patch Changes

@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`RDSModelSchema .relationships() modifier generates expected schema for bidirectional hasMany<->belongsTo 1`] = `
+exports[`RDSModelSchema .setRelationships() modifier generates expected schema for bidirectional hasMany<->belongsTo 1`] = `
 "type Blog @model(timestamps: null) @auth(rules: [{allow: public, provider: apiKey}])
 {
   title: String!
@@ -17,7 +17,7 @@ type Post @model(timestamps: null) @auth(rules: [{allow: public, provider: apiKe
 }"
 `;
 
-exports[`RDSModelSchema .relationships() modifier generates expected schema for bidirectional hasOne<->belongsTo 1`] = `
+exports[`RDSModelSchema .setRelationships() modifier generates expected schema for bidirectional hasOne<->belongsTo 1`] = `
 "type Account @model(timestamps: null) @auth(rules: [{allow: public, provider: apiKey}])
 {
   email: String!
@@ -32,7 +32,7 @@ type Supplier @model(timestamps: null) @auth(rules: [{allow: public, provider: a
 }"
 `;
 
-exports[`RDSModelSchema .relationships() modifier generates expected schema for unidirectional belongsTo 1`] = `
+exports[`RDSModelSchema .setRelationships() modifier generates expected schema for unidirectional belongsTo 1`] = `
 "type Account @model(timestamps: null) @auth(rules: [{allow: public, provider: apiKey}])
 {
   email: String!
@@ -46,7 +46,7 @@ type Supplier @model(timestamps: null) @auth(rules: [{allow: public, provider: a
 }"
 `;
 
-exports[`RDSModelSchema .relationships() modifier generates expected schema for unidirectional hasMany 1`] = `
+exports[`RDSModelSchema .setRelationships() modifier generates expected schema for unidirectional hasMany 1`] = `
 "type Blog @model(timestamps: null) @auth(rules: [{allow: public, provider: apiKey}])
 {
   title: String!
@@ -62,7 +62,7 @@ type Post @model(timestamps: null) @auth(rules: [{allow: public, provider: apiKe
 }"
 `;
 
-exports[`RDSModelSchema .relationships() modifier generates expected schema for unidirectional hasOne 1`] = `
+exports[`RDSModelSchema .setRelationships() modifier generates expected schema for unidirectional hasOne 1`] = `
 "type Account @model(timestamps: null) @auth(rules: [{allow: public, provider: apiKey}])
 {
   email: String!
