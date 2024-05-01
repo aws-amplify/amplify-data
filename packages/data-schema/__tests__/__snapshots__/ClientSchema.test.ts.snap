@@ -26,7 +26,7 @@ type Query {
 `;
 
 exports[`custom operations custom mutation 1`] = `
-"type LikePostResult 
+"type LikePostResult @aws_api_key
 {
   likes: Int!
 }
@@ -37,7 +37,7 @@ type Mutation {
 `;
 
 exports[`custom operations custom query 1`] = `
-"type EchoResult 
+"type EchoResult @aws_api_key
 {
   resultContent: String
 }
@@ -59,27 +59,27 @@ type B @model @auth(rules: [{allow: public, provider: apiKey}])
 `;
 
 exports[`custom operations for a.combine schema combining two schemas with custom mutation results in customTypes and customOperations that intersect the separate schemas 1`] = `
-"type LikePostResult 
-{
-  likes: Int!
-}
-
-type A @model @auth(rules: [{allow: public, provider: apiKey}])
+"type A @model @auth(rules: [{allow: public, provider: apiKey}])
 {
   fieldA: String
+}
+
+type LikePostResult @aws_api_key
+{
+  likes: Int!
 }
 
 type Mutation {
   likePost(postId: String!): LikePostResult @function(name: "likePost") @auth(rules: [{allow: public, provider: apiKey}])
 }
-type DislikePostResult 
-{
-  likes: Int!
-}
-
 type B @model @auth(rules: [{allow: public, provider: apiKey}])
 {
   fieldB: String
+}
+
+type DislikePostResult @aws_api_key
+{
+  likes: Int!
 }
 
 type Mutation {
@@ -107,7 +107,7 @@ exports[`custom operations for an rds schema can define public auth with no prov
 `;
 
 exports[`custom operations for an rds schema custom operations custom query 1`] = `
-"type EchoResult 
+"type EchoResult @aws_api_key
 {
   resultContent: String
 }
