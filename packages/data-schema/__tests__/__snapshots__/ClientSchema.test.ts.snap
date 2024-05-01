@@ -136,7 +136,7 @@ exports[`custom operations for an rds schema sql schema rename 1`] = `
 `;
 
 exports[`custom operations for an rds schema sql schema rename multiple models 1`] = `
-"type RenamedComment @model(timestamps: null) @auth(rules: [{allow: public, provider: apiKey}])
+"type tags @model(timestamps: null) @auth(rules: [{allow: public, provider: apiKey}])
 {
   id: String! @primaryKey
   title: String
@@ -150,7 +150,7 @@ type RenamedPost @model(timestamps: null) @auth(rules: [{allow: public, provider
   author: String
 }
 
-type tags @model(timestamps: null) @auth(rules: [{allow: public, provider: apiKey}])
+type RenamedComment @model(timestamps: null) @auth(rules: [{allow: public, provider: apiKey}])
 {
   id: String! @primaryKey
   title: String
@@ -353,7 +353,22 @@ exports[`schema auth rules global public auth - multiple models 1`] = `
   "functionSlots": [],
   "jsFunctions": [],
   "lambdaFunctions": {},
-  "schema": "type D @model @auth(rules: [{allow: public, provider: apiKey}])
+  "schema": "type A @model @auth(rules: [{allow: public, provider: apiKey}])
+{
+  field: String
+}
+
+type B @model @auth(rules: [{allow: public, provider: apiKey}])
+{
+  field: AWSJSON
+}
+
+type C @model @auth(rules: [{allow: public, provider: apiKey}])
+{
+  d: D @hasOne(references: ["cId"])
+}
+
+type D @model @auth(rules: [{allow: public, provider: apiKey}])
 {
   can: Int
   you: Boolean
@@ -364,21 +379,6 @@ exports[`schema auth rules global public auth - multiple models 1`] = `
   tired: DTired
   cId: ID
   c: C @belongsTo(references: ["cId"])
-}
-
-type C @model @auth(rules: [{allow: public, provider: apiKey}])
-{
-  d: D @hasOne(references: ["cId"])
-}
-
-type B @model @auth(rules: [{allow: public, provider: apiKey}])
-{
-  field: AWSJSON
-}
-
-type A @model @auth(rules: [{allow: public, provider: apiKey}])
-{
-  field: String
 }
 
 enum DTired {
@@ -430,21 +430,57 @@ exports[`schema auth rules prefers model auth over global auth public auth on mo
 `;
 
 exports[`schema generation with relationships 1`] = `
-"type CPKReciprocalHasManyChild @model @auth(rules: [{allow: public, provider: apiKey}])
+"type BoringParent @model @auth(rules: [{allow: public, provider: apiKey}])
 {
-  CPKReciprocalHasManyChildIdFieldA: ID! @primaryKey(sortKeyFields: ["CPKReciprocalHasManyChildIdFieldB"])
-  CPKReciprocalHasManyChildIdFieldB: ID!
-  value: String
-  CPKParentIdFieldA: ID!
-  CPKParentIdFieldB: ID!
-  parent: CPKParent @belongsTo(references: ["CPKParentIdFieldA","CPKParentIdFieldB"])
+  childNormal: BoringChild @hasOne(references: ["boringParentId"])
+  childReciprocal: BoringReciprocalChild @hasOne(references: ["boringParentId"])
+  childHasManyNormal: [BoringHasManyChild] @hasMany(references: ["boringParentId"])
+  childHasManyReciprocal: [ReciprocalHasManyChild] @hasMany(references: ["boringParentId"])
 }
 
-type CPKHasManyChild @model @auth(rules: [{allow: public, provider: apiKey}])
+type BoringChild @model @auth(rules: [{allow: public, provider: apiKey}])
 {
   value: String
-  CPKHasManyChildIdFieldA: ID! @primaryKey(sortKeyFields: ["CPKHasManyChildIdFieldB"])
-  CPKHasManyChildIdFieldB: ID!
+  boringParentId: ID
+  boringParent: BoringParent @belongsTo(references: ["boringParentId"])
+}
+
+type BoringReciprocalChild @model @auth(rules: [{allow: public, provider: apiKey}])
+{
+  value: String
+  boringParentId: ID
+  parent: BoringParent @belongsTo(references: ["boringParentId"])
+}
+
+type BoringHasManyChild @model @auth(rules: [{allow: public, provider: apiKey}])
+{
+  value: String
+  boringParentId: ID
+  parent: BoringParent @belongsTo(references: ["boringParentId"])
+}
+
+type ReciprocalHasManyChild @model @auth(rules: [{allow: public, provider: apiKey}])
+{
+  value: String
+  boringParentId: ID
+  parent: BoringParent @belongsTo(references: ["boringParentId"])
+}
+
+type CPKParent @model @auth(rules: [{allow: public, provider: apiKey}])
+{
+  CPKParentIdFieldA: ID! @primaryKey(sortKeyFields: ["CPKParentIdFieldB"])
+  CPKParentIdFieldB: ID!
+  childNormal: CPKChild @hasOne(references: ["CPKParentIdFieldA","CPKParentIdFieldB"])
+  childReciprocal: CPKReciprocalChild @hasOne(references: ["CPKParentIdFieldA","CPKParentIdFieldB"])
+  childHasManyNormal: [CPKHasManyChild] @hasMany(references: ["CPKParentIdFieldA","CPKParentIdFieldB"])
+  childHasManyReciprocal: [CPKReciprocalHasManyChild] @hasMany(references: ["CPKParentIdFieldA","CPKParentIdFieldB"])
+}
+
+type CPKChild @model @auth(rules: [{allow: public, provider: apiKey}])
+{
+  value: String
+  CPKChildIdFieldA: ID! @primaryKey(sortKeyFields: ["CPKChildIdFieldB"])
+  CPKChildIdFieldB: ID!
   CPKParentIdFieldA: ID
   CPKParentIdFieldB: ID
   cpkParent: CPKParent @belongsTo(references: ["CPKParentIdFieldA","CPKParentIdFieldB"])
@@ -460,59 +496,23 @@ type CPKReciprocalChild @model @auth(rules: [{allow: public, provider: apiKey}])
   value: String
 }
 
-type CPKChild @model @auth(rules: [{allow: public, provider: apiKey}])
+type CPKHasManyChild @model @auth(rules: [{allow: public, provider: apiKey}])
 {
   value: String
-  CPKChildIdFieldA: ID! @primaryKey(sortKeyFields: ["CPKChildIdFieldB"])
-  CPKChildIdFieldB: ID!
+  CPKHasManyChildIdFieldA: ID! @primaryKey(sortKeyFields: ["CPKHasManyChildIdFieldB"])
+  CPKHasManyChildIdFieldB: ID!
   CPKParentIdFieldA: ID
   CPKParentIdFieldB: ID
   cpkParent: CPKParent @belongsTo(references: ["CPKParentIdFieldA","CPKParentIdFieldB"])
 }
 
-type CPKParent @model @auth(rules: [{allow: public, provider: apiKey}])
+type CPKReciprocalHasManyChild @model @auth(rules: [{allow: public, provider: apiKey}])
 {
-  CPKParentIdFieldA: ID! @primaryKey(sortKeyFields: ["CPKParentIdFieldB"])
+  CPKReciprocalHasManyChildIdFieldA: ID! @primaryKey(sortKeyFields: ["CPKReciprocalHasManyChildIdFieldB"])
+  CPKReciprocalHasManyChildIdFieldB: ID!
+  value: String
+  CPKParentIdFieldA: ID!
   CPKParentIdFieldB: ID!
-  childNormal: CPKChild @hasOne(references: ["CPKParentIdFieldA","CPKParentIdFieldB"])
-  childReciprocal: CPKReciprocalChild @hasOne(references: ["CPKParentIdFieldA","CPKParentIdFieldB"])
-  childHasManyNormal: [CPKHasManyChild] @hasMany(references: ["CPKParentIdFieldA","CPKParentIdFieldB"])
-  childHasManyReciprocal: [CPKReciprocalHasManyChild] @hasMany(references: ["CPKParentIdFieldA","CPKParentIdFieldB"])
-}
-
-type ReciprocalHasManyChild @model @auth(rules: [{allow: public, provider: apiKey}])
-{
-  value: String
-  boringParentId: ID
-  parent: BoringParent @belongsTo(references: ["boringParentId"])
-}
-
-type BoringHasManyChild @model @auth(rules: [{allow: public, provider: apiKey}])
-{
-  value: String
-  boringParentId: ID
-  parent: BoringParent @belongsTo(references: ["boringParentId"])
-}
-
-type BoringReciprocalChild @model @auth(rules: [{allow: public, provider: apiKey}])
-{
-  value: String
-  boringParentId: ID
-  parent: BoringParent @belongsTo(references: ["boringParentId"])
-}
-
-type BoringChild @model @auth(rules: [{allow: public, provider: apiKey}])
-{
-  value: String
-  boringParentId: ID
-  boringParent: BoringParent @belongsTo(references: ["boringParentId"])
-}
-
-type BoringParent @model @auth(rules: [{allow: public, provider: apiKey}])
-{
-  childNormal: BoringChild @hasOne(references: ["boringParentId"])
-  childReciprocal: BoringReciprocalChild @hasOne(references: ["boringParentId"])
-  childHasManyNormal: [BoringHasManyChild] @hasMany(references: ["boringParentId"])
-  childHasManyReciprocal: [ReciprocalHasManyChild] @hasMany(references: ["boringParentId"])
+  parent: CPKParent @belongsTo(references: ["CPKParentIdFieldA","CPKParentIdFieldB"])
 }"
 `;

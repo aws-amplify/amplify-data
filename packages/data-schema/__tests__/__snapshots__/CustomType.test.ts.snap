@@ -40,14 +40,14 @@ type Location
 `;
 
 exports[`CustomType transform Explicit CustomType nests explicit CustomType 1`] = `
-"enum PostStatus {
-  unpublished
-  published
-}
-
-type Post @model @auth(rules: [{allow: public, provider: apiKey}])
+"type Post @model @auth(rules: [{allow: public, provider: apiKey}])
 {
   meta: Meta
+}
+
+enum PostStatus {
+  unpublished
+  published
 }
 
 type Meta 
@@ -63,14 +63,14 @@ type AltMeta
 `;
 
 exports[`CustomType transform Explicit CustomType nests explicit enum 1`] = `
-"enum PostStatus {
-  unpublished
-  published
-}
-
-type Post @model @auth(rules: [{allow: public, provider: apiKey}])
+"type Post @model @auth(rules: [{allow: public, provider: apiKey}])
 {
   meta: Meta
+}
+
+enum PostStatus {
+  unpublished
+  published
 }
 
 type Meta 
@@ -158,14 +158,14 @@ enum PostMetaStatus {
 `;
 
 exports[`CustomType transform Implicit CustomType nests explicit enum 1`] = `
-"enum PostStatus {
-  unpublished
-  published
-}
-
-type Post @model @auth(rules: [{allow: public, provider: apiKey}])
+"type Post @model @auth(rules: [{allow: public, provider: apiKey}])
 {
   meta: PostMeta
+}
+
+enum PostStatus {
+  unpublished
+  published
 }
 
 type PostMeta 

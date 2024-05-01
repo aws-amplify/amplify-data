@@ -445,8 +445,8 @@ type Query {
 }
 
 type Subscription {
-  onLikePost: Post @function(name: "myFunc") @aws_subscribe(mutations: ["updatePost"]) @auth(rules: [{allow: public, provider: apiKey}])
   onCreatePost: Post @function(name: "myFunc") @aws_subscribe(mutations: ["createPost"]) @auth(rules: [{allow: public, provider: apiKey}])
+  onLikePost: Post @function(name: "myFunc") @aws_subscribe(mutations: ["updatePost"]) @auth(rules: [{allow: public, provider: apiKey}])
 }"
 `;
 
@@ -491,14 +491,14 @@ type Query {
 `;
 
 exports[`custom operations + custom type auth inheritance top-level custom type inherits combined auth rules from referencing ops 1`] = `
-"type QueryReturn @aws_cognito_user_pools @aws_api_key
+"type QueryReturn @aws_api_key @aws_cognito_user_pools
 {
   fieldA: String
   fieldB: Int
 }
 
 type Query {
-  myMutation: QueryReturn @function(name: "myFn") @auth(rules: [{allow: private}])
   myQuery: QueryReturn @function(name: "myFn") @auth(rules: [{allow: public, provider: apiKey}])
+  myMutation: QueryReturn @function(name: "myFn") @auth(rules: [{allow: private}])
 }"
 `;

@@ -1,41 +1,41 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`EnumType transform Explicit Enum - auth 1`] = `
-"enum AccessLevel {
+"type File @model @auth(rules: [{allow: public, provider: apiKey}])
+{
+  accessLevel: AccessLevel @auth(rules: [{allow: owner, ownerField: "owner"}])
+}
+
+enum AccessLevel {
   public
   protected
   private
-}
-
-type File @model @auth(rules: [{allow: public, provider: apiKey}])
-{
-  accessLevel: AccessLevel @auth(rules: [{allow: owner, ownerField: "owner"}])
 }"
 `;
 
 exports[`EnumType transform Explicit Enum - required 1`] = `
-"enum AccessLevel {
+"type File @model @auth(rules: [{allow: public, provider: apiKey}])
+{
+  accessLevel: AccessLevel!
+}
+
+enum AccessLevel {
   public
   protected
   private
-}
-
-type File @model @auth(rules: [{allow: public, provider: apiKey}])
-{
-  accessLevel: AccessLevel!
 }"
 `;
 
 exports[`EnumType transform Explicit Enum 1`] = `
-"enum AccessLevel {
+"type File @model @auth(rules: [{allow: public, provider: apiKey}])
+{
+  accessLevel: AccessLevel
+}
+
+enum AccessLevel {
   public
   protected
   private
-}
-
-type File @model @auth(rules: [{allow: public, provider: apiKey}])
-{
-  accessLevel: AccessLevel
 }"
 `;
 

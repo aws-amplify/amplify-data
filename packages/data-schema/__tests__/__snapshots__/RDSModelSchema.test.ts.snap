@@ -1,77 +1,77 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`RDSModelSchema .setRelationships() modifier generates expected schema for bidirectional hasMany<->belongsTo 1`] = `
-"type Blog @model(timestamps: null) @auth(rules: [{allow: public, provider: apiKey}])
-{
-  title: String!
-  description: String
-  childPosts: [Post] @hasMany(references: ["parentBlogId"])
-}
-
-type Post @model(timestamps: null) @auth(rules: [{allow: public, provider: apiKey}])
+"type Post @model(timestamps: null) @auth(rules: [{allow: public, provider: apiKey}])
 {
   title: String!
   content: String
   parentBlogId: String
   parentBlog: Blog @belongsTo(references: ["parentBlogId"])
-}"
-`;
-
-exports[`RDSModelSchema .setRelationships() modifier generates expected schema for bidirectional hasOne<->belongsTo 1`] = `
-"type Account @model(timestamps: null) @auth(rules: [{allow: public, provider: apiKey}])
-{
-  email: String!
-  supplierId: String
-  supplier: Supplier @belongsTo(references: ["supplierId"])
 }
 
-type Supplier @model(timestamps: null) @auth(rules: [{allow: public, provider: apiKey}])
-{
-  name: String!
-  account: Account @hasOne(references: ["supplierIds"])
-}"
-`;
-
-exports[`RDSModelSchema .setRelationships() modifier generates expected schema for unidirectional belongsTo 1`] = `
-"type Account @model(timestamps: null) @auth(rules: [{allow: public, provider: apiKey}])
-{
-  email: String!
-  supplierId: String
-  supplier: Supplier @belongsTo(references: ["supplierId"])
-}
-
-type Supplier @model(timestamps: null) @auth(rules: [{allow: public, provider: apiKey}])
-{
-  name: String!
-}"
-`;
-
-exports[`RDSModelSchema .setRelationships() modifier generates expected schema for unidirectional hasMany 1`] = `
-"type Blog @model(timestamps: null) @auth(rules: [{allow: public, provider: apiKey}])
+type Blog @model(timestamps: null) @auth(rules: [{allow: public, provider: apiKey}])
 {
   title: String!
   description: String
   childPosts: [Post] @hasMany(references: ["parentBlogId"])
+}"
+`;
+
+exports[`RDSModelSchema .setRelationships() modifier generates expected schema for bidirectional hasOne<->belongsTo 1`] = `
+"type Supplier @model(timestamps: null) @auth(rules: [{allow: public, provider: apiKey}])
+{
+  name: String!
+  account: Account @hasOne(references: ["supplierIds"])
 }
 
-type Post @model(timestamps: null) @auth(rules: [{allow: public, provider: apiKey}])
+type Account @model(timestamps: null) @auth(rules: [{allow: public, provider: apiKey}])
+{
+  email: String!
+  supplierId: String
+  supplier: Supplier @belongsTo(references: ["supplierId"])
+}"
+`;
+
+exports[`RDSModelSchema .setRelationships() modifier generates expected schema for unidirectional belongsTo 1`] = `
+"type Supplier @model(timestamps: null) @auth(rules: [{allow: public, provider: apiKey}])
+{
+  name: String!
+}
+
+type Account @model(timestamps: null) @auth(rules: [{allow: public, provider: apiKey}])
+{
+  email: String!
+  supplierId: String
+  supplier: Supplier @belongsTo(references: ["supplierId"])
+}"
+`;
+
+exports[`RDSModelSchema .setRelationships() modifier generates expected schema for unidirectional hasMany 1`] = `
+"type Post @model(timestamps: null) @auth(rules: [{allow: public, provider: apiKey}])
 {
   title: String!
   content: String
   parentBlogId: String
+}
+
+type Blog @model(timestamps: null) @auth(rules: [{allow: public, provider: apiKey}])
+{
+  title: String!
+  description: String
+  childPosts: [Post] @hasMany(references: ["parentBlogId"])
 }"
 `;
 
 exports[`RDSModelSchema .setRelationships() modifier generates expected schema for unidirectional hasOne 1`] = `
-"type Account @model(timestamps: null) @auth(rules: [{allow: public, provider: apiKey}])
-{
-  email: String!
-  supplierId: String
-}
-
-type Supplier @model(timestamps: null) @auth(rules: [{allow: public, provider: apiKey}])
+"type Supplier @model(timestamps: null) @auth(rules: [{allow: public, provider: apiKey}])
 {
   name: String!
   account: Account @hasOne(references: ["supplierId"])
+}
+
+type Account @model(timestamps: null) @auth(rules: [{allow: public, provider: apiKey}])
+{
+  email: String!
+  supplierId: String
 }"
 `;

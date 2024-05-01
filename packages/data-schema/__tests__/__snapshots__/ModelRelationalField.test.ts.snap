@@ -1,50 +1,50 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`schema generation with relationships ddb hasOne / belongsTo explicitly defined reference field on related model is supported 1`] = `
-"type Project @model @auth(rules: [{allow: public, provider: apiKey}])
+"type Team @model @auth(rules: [{allow: public, provider: apiKey}])
+{
+  motto: String
+  project: Project @hasOne(references: ["teamId"])
+}
+
+type Project @model @auth(rules: [{allow: public, provider: apiKey}])
 {
   name: String
   teamId: ID
   team: Team @belongsTo(references: ["teamId"])
-}
-
-type Team @model @auth(rules: [{allow: public, provider: apiKey}])
-{
-  motto: String
-  project: Project @hasOne(references: ["teamId"])
 }"
 `;
 
 exports[`schema generation with relationships ddb masMany / belongsTo explicitly defined reference field on related model is supported 1`] = `
-"type Member @model @auth(rules: [{allow: public, provider: apiKey}])
+"type Team @model @auth(rules: [{allow: public, provider: apiKey}])
+{
+  motto: String
+  members: [Member] @hasMany(references: ["teamId"])
+}
+
+type Member @model @auth(rules: [{allow: public, provider: apiKey}])
 {
   name: String
   teamId: ID
   team: Team @belongsTo(references: ["teamId"])
-}
-
-type Team @model @auth(rules: [{allow: public, provider: apiKey}])
-{
-  motto: String
-  members: [Member] @hasMany(references: ["teamId"])
 }"
 `;
 
 exports[`schema generation with relationships ddb masMany / belongsTo partition key + sort key is supported 1`] = `
-"type Member @model @auth(rules: [{allow: public, provider: apiKey}])
-{
-  name: String
-  teamId: ID
-  teamSk: ID
-  team: Team @belongsTo(references: ["teamId","teamSk"])
-}
-
-type Team @model @auth(rules: [{allow: public, provider: apiKey}])
+"type Team @model @auth(rules: [{allow: public, provider: apiKey}])
 {
   id: ID! @primaryKey(sortKeyFields: ["sk"])
   sk: ID!
   motto: String
   members: [Member] @hasMany(references: ["teamId","teamSk"])
+}
+
+type Member @model @auth(rules: [{allow: public, provider: apiKey}])
+{
+  name: String
+  teamId: ID
+  teamSk: ID
+  team: Team @belongsTo(references: ["teamId","teamSk"])
 }"
 `;
 
@@ -56,7 +56,7 @@ exports[`schema generation with relationships heterogenous data source relations
   members: [Member] @hasMany(references: ["teamId"])
   project: Project @hasOne(references: ["teamId"])
 }
-type Member @model @auth(rules: [{allow: public, provider: apiKey}])
+type Project @model @auth(rules: [{allow: public, provider: apiKey}])
 {
   id: ID! @primaryKey
   name: String
@@ -64,7 +64,7 @@ type Member @model @auth(rules: [{allow: public, provider: apiKey}])
   team: Team @belongsTo(references: ["teamId"])
 }
 
-type Project @model @auth(rules: [{allow: public, provider: apiKey}])
+type Member @model @auth(rules: [{allow: public, provider: apiKey}])
 {
   id: ID! @primaryKey
   name: String
@@ -74,11 +74,11 @@ type Project @model @auth(rules: [{allow: public, provider: apiKey}])
 `;
 
 exports[`schema generation with relationships relationships 1`] = `
-"type Member @model @auth(rules: [{allow: public, provider: apiKey}])
+"type Team @model @auth(rules: [{allow: public, provider: apiKey}])
 {
-  name: String
-  teamId: ID
-  team: Team @belongsTo(references: ["teamId"])
+  motto: String
+  members: [Member] @hasMany(references: ["teamId"])
+  project: Project @hasOne(references: ["teamId"])
 }
 
 type Project @model @auth(rules: [{allow: public, provider: apiKey}])
@@ -88,21 +88,21 @@ type Project @model @auth(rules: [{allow: public, provider: apiKey}])
   team: Team @belongsTo(references: ["teamId"])
 }
 
-type Team @model @auth(rules: [{allow: public, provider: apiKey}])
+type Member @model @auth(rules: [{allow: public, provider: apiKey}])
 {
-  motto: String
-  members: [Member] @hasMany(references: ["teamId"])
-  project: Project @hasOne(references: ["teamId"])
+  name: String
+  teamId: ID
+  team: Team @belongsTo(references: ["teamId"])
 }"
 `;
 
 exports[`schema generation with relationships sql references 1`] = `
-"type Member @model(timestamps: null) @auth(rules: [{allow: public, provider: apiKey}])
+"type Team @model(timestamps: null) @auth(rules: [{allow: public, provider: apiKey}])
 {
   id: ID! @primaryKey
-  name: String
-  teamId: ID
-  team: Team @belongsTo(references: ["teamId"])
+  motto: String
+  members: [Member] @hasMany(references: ["teamMembersId"])
+  project: Project @hasOne(references: ["teamProjectId"])
 }
 
 type Project @model(timestamps: null) @auth(rules: [{allow: public, provider: apiKey}])
@@ -113,11 +113,11 @@ type Project @model(timestamps: null) @auth(rules: [{allow: public, provider: ap
   team: Team @belongsTo(references: ["teamId"])
 }
 
-type Team @model(timestamps: null) @auth(rules: [{allow: public, provider: apiKey}])
+type Member @model(timestamps: null) @auth(rules: [{allow: public, provider: apiKey}])
 {
   id: ID! @primaryKey
-  motto: String
-  members: [Member] @hasMany(references: ["teamMembersId"])
-  project: Project @hasOne(references: ["teamProjectId"])
+  name: String
+  teamId: ID
+  team: Team @belongsTo(references: ["teamId"])
 }"
 `;

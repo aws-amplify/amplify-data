@@ -1105,7 +1105,10 @@ const getRefTypeForSchema = (schema: InternalSchema) => {
 const sortTopLevelTypes = (topLevelTypes: [string, any][]) => {
   return topLevelTypes.sort(
     ([_typeNameA, typeDefA], [_typeNameB, typeDefB]) => {
-      if (isCustomType(typeDefA) && isCustomType(typeDefB)) {
+      if (
+        (isCustomType(typeDefA) && isCustomType(typeDefB)) ||
+        (!isCustomType(typeDefA) && !isCustomType(typeDefB))
+      ) {
         return 0;
       } else if (isCustomType(typeDefA) && !isCustomType(typeDefB)) {
         return 1;
