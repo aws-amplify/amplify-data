@@ -425,3 +425,56 @@ type Subscription {
   onCreatePost: Post @function(name: "myFunc") @aws_subscribe(mutations: ["createPost"]) @auth(rules: [{allow: public, provider: apiKey}])
 }"
 `;
+
+exports[`custom operations + custom type auth inheritance implicit custom type inherits auth rules from referencing op 1`] = `
+"type MyQueryReturnType @aws_api_key
+{
+  fieldA: String
+  fieldB: Int
+}
+
+type Query {
+  myQuery: MyQueryReturnType @function(name: "myFn") @auth(rules: [{allow: public, provider: apiKey}])
+}"
+`;
+
+exports[`custom operations + custom type auth inheritance op returns top-level custom type with 1 auth mode 1`] = `
+"type QueryReturn @aws_api_key
+{
+  fieldA: String
+  fieldB: Int
+}
+
+type Query {
+  myQuery: QueryReturn @function(name: "myFn") @auth(rules: [{allow: public, provider: apiKey}])
+}"
+`;
+
+exports[`custom operations + custom type auth inheritance op returns top-level custom type with all supported auth modes 1`] = `
+"type QueryReturn @aws_api_key @aws_cognito_user_pools @aws_cognito_user_pools(cognito_groups: ["admin", "superAdmin"]) @aws_iam
+{
+  fieldA: String
+  fieldB: Int
+}
+
+type Query {
+  myQuery: QueryReturn @function(name: "myFn") @auth(rules: [{allow: public, provider: apiKey},
+  {allow: private},
+  {allow: groups, groups: ["admin", "superAdmin"]},
+  {allow: public, provider: iam},
+  {allow: private, provider: iam}])
+}"
+`;
+
+exports[`custom operations + custom type auth inheritance top-level custom type inherits combined auth rules from referencing ops 1`] = `
+"type QueryReturn @aws_cognito_user_pools @aws_api_key
+{
+  fieldA: String
+  fieldB: Int
+}
+
+type Query {
+  myMutation: QueryReturn @function(name: "myFn") @auth(rules: [{allow: private}])
+  myQuery: QueryReturn @function(name: "myFn") @auth(rules: [{allow: public, provider: apiKey}])
+}"
+`;

@@ -705,20 +705,29 @@ function validateCustomHandlerAuthRule(rule: AuthRule) {
   if (rule.groups && rule.provider === 'oidc') {
     throw new Error('OIDC group auth is not supported with a.handler.custom');
   }
+
+  // not currently supported with handler.custom (JS Resolvers); but will be in the future
+  if (rule.provider === 'identityPool' || (rule.provider as string) === 'iam') {
+    throw new Error(
+      "identityPool-based auth (allow.guest() and allow.authenticated('identityPool')) is not supported with a.handler.custom",
+    );
+  }
 }
 
-function getCustomAuthProvider(rule: AuthRule): string {
+function getAppSyncAuthDirectiveFromRule(rule: AuthRule): string {
   const strategyDict: Record<string, Record<string, string>> = {
     public: {
       default: '@aws_api_key',
       apiKey: '@aws_api_key',
       iam: '@aws_iam',
+      identityPool: '@aws_iam',
     },
     private: {
       default: '@aws_cognito_user_pools',
       userPools: '@aws_cognito_user_pools',
       oidc: '@aws_oidc',
       iam: '@aws_iam',
+      identityPool: '@aws_iam',
     },
     groups: {
       default: '@aws_cognito_user_pools',
@@ -761,7 +770,7 @@ function mapToNativeAppSyncAuthDirectives(
 
     isCustomHandler && validateCustomHandlerAuthRule(rule);
 
-    const provider = getCustomAuthProvider(rule);
+    const provider = getAppSyncAuthDirectiveFromRule(rule);
 
     if (rule.groups) {
       // example: (cognito_groups: ["Bloggers", "Readers"])

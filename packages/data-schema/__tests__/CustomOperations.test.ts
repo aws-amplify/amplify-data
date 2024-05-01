@@ -995,3 +995,105 @@ describe('.for() modifier', () => {
     expect(() => schema.transform()).not.toThrow();
   });
 });
+
+describe.only('custom operations + custom type auth inheritance', () => {
+  test('op returns top-level custom type with 1 auth mode', () => {
+    const s = a.schema({
+      myQuery: a
+        .query()
+        .handler(a.handler.function('myFn'))
+        .returns(a.ref('QueryReturn'))
+        .authorization((allow) => allow.publicApiKey()),
+      QueryReturn: a.customType({
+        fieldA: a.string(),
+        fieldB: a.integer(),
+      }),
+    });
+
+    const result = s.transform().schema;
+
+    expect(result).toMatchSnapshot();
+    expect(result).toEqual(
+      expect.stringContaining('type QueryReturn @aws_api_key'),
+    );
+  });
+
+  test('op returns top-level custom type with all supported auth modes', () => {
+    const s = a.schema({
+      myQuery: a
+        .query()
+        .handler(a.handler.function('myFn'))
+        .returns(a.ref('QueryReturn'))
+        .authorization((allow) => [
+          allow.publicApiKey(),
+          allow.authenticated(),
+          allow.groups(['admin', 'superAdmin']),
+          allow.guest(),
+          allow.authenticated('identityPool'),
+        ]),
+      QueryReturn: a.customType({
+        fieldA: a.string(),
+        fieldB: a.integer(),
+      }),
+    });
+
+    const result = s.transform().schema;
+
+    expect(result).toMatchSnapshot();
+    expect(result).toEqual(
+      expect.stringContaining(
+        'type QueryReturn @aws_api_key @aws_cognito_user_pools @aws_cognito_user_pools(cognito_groups: ["admin", "superAdmin"]) @aws_iam',
+      ),
+    );
+  });
+
+  test('top-level custom type inherits combined auth rules from referencing ops', () => {
+    const s = a.schema({
+      myQuery: a
+        .query()
+        .handler(a.handler.function('myFn'))
+        .returns(a.ref('QueryReturn'))
+        .authorization((allow) => allow.publicApiKey()),
+      myMutation: a
+        .query()
+        .handler(a.handler.function('myFn'))
+        .returns(a.ref('QueryReturn'))
+        .authorization((allow) => allow.authenticated()),
+      QueryReturn: a.customType({
+        fieldA: a.string(),
+        fieldB: a.integer(),
+      }),
+    });
+
+    const result = s.transform().schema;
+
+    expect(result).toMatchSnapshot();
+    expect(result).toEqual(
+      expect.stringContaining(
+        'type QueryReturn @aws_cognito_user_pools @aws_api_key',
+      ),
+    );
+  });
+
+  test('implicit custom type inherits auth rules from referencing op', () => {
+    const s = a.schema({
+      myQuery: a
+        .query()
+        .handler(a.handler.function('myFn'))
+        .returns(
+          a.customType({
+            fieldA: a.string(),
+            fieldB: a.integer(),
+          }),
+        )
+        .authorization((allow) => allow.publicApiKey()),
+    });
+
+    const result = s.transform().schema;
+
+    expect(result).toMatchSnapshot();
+    expect(result).toEqual(
+      expect.stringContaining('type MyQueryReturnType @aws_api_key'),
+    );
+  });
+});
