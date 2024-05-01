@@ -127,7 +127,7 @@ exports[`custom operations for an rds schema sql schema field-level auth 1`] = `
 `;
 
 exports[`custom operations for an rds schema sql schema rename 1`] = `
-"type RenamedPost @model(timestamps: null) @auth(rules: [{allow: public, provider: apiKey}])
+"type RenamedPost @model(timestamps: null) @auth(rules: [{allow: public, provider: apiKey}]) @refersTo(name: "post")
 {
   id: String! @primaryKey
   title: String
@@ -143,14 +143,14 @@ exports[`custom operations for an rds schema sql schema rename multiple models 1
   author: String
 }
 
-type RenamedPost @model(timestamps: null) @auth(rules: [{allow: public, provider: apiKey}])
+type RenamedPost @model(timestamps: null) @auth(rules: [{allow: public, provider: apiKey}]) @refersTo(name: "post")
 {
   id: String! @primaryKey
   title: String
   author: String
 }
 
-type RenamedComment @model(timestamps: null) @auth(rules: [{allow: public, provider: apiKey}])
+type RenamedComment @model(timestamps: null) @auth(rules: [{allow: public, provider: apiKey}]) @refersTo(name: "comment")
 {
   id: String! @primaryKey
   title: String

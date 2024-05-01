@@ -1216,13 +1216,14 @@ const schemaPreprocessor = (
       topLevelTypes.push(...models);
 
       const joined = gqlFields.join('\n  ');
+      const refersToString = typeDef.data.originalName ? ` @refersTo(name: "${typeDef.data.originalName}")` : '';
       // TODO: update @model(timestamps: null) once a longer term solution gets
       // determined.
       //
       // Context: SQL schema should not be automatically inserted with timestamp fields,
       // passing (timestamps: null) to @model to suppress this behavior as a short
       // term solution.
-      const model = `type ${typeName} @model(timestamps: null) ${authString}\n{\n  ${joined}\n}`;
+      const model = `type ${typeName} @model(timestamps: null) ${authString}${refersToString}\n{\n  ${joined}\n}`;
       gqlModels.push(model);
     } else {
       const fields = typeDef.data.fields as Record<
