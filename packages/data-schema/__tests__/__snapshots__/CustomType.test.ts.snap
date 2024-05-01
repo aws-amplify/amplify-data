@@ -40,7 +40,12 @@ type Location
 `;
 
 exports[`CustomType transform Explicit CustomType nests explicit CustomType 1`] = `
-"type Post @model @auth(rules: [{allow: public, provider: apiKey}])
+"enum PostStatus {
+  unpublished
+  published
+}
+
+type Post @model @auth(rules: [{allow: public, provider: apiKey}])
 {
   meta: Meta
 }
@@ -51,11 +56,6 @@ type Meta
   nestedMeta: AltMeta
 }
 
-enum PostStatus {
-  unpublished
-  published
-}
-
 type AltMeta 
 {
   field1: String
@@ -63,7 +63,12 @@ type AltMeta
 `;
 
 exports[`CustomType transform Explicit CustomType nests explicit enum 1`] = `
-"type Post @model @auth(rules: [{allow: public, provider: apiKey}])
+"enum PostStatus {
+  unpublished
+  published
+}
+
+type Post @model @auth(rules: [{allow: public, provider: apiKey}])
 {
   meta: Meta
 }
@@ -72,11 +77,6 @@ type Meta
 {
   status: PostStatus
   publishedDate: AWSDate
-}
-
-enum PostStatus {
-  unpublished
-  published
 }"
 `;
 
@@ -158,14 +158,14 @@ enum PostMetaStatus {
 `;
 
 exports[`CustomType transform Implicit CustomType nests explicit enum 1`] = `
-"type Post @model @auth(rules: [{allow: public, provider: apiKey}])
-{
-  meta: PostMeta
-}
-
-enum PostStatus {
+"enum PostStatus {
   unpublished
   published
+}
+
+type Post @model @auth(rules: [{allow: public, provider: apiKey}])
+{
+  meta: PostMeta
 }
 
 type PostMeta 

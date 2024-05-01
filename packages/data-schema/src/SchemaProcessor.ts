@@ -296,7 +296,7 @@ function customOperationToGql(
   getRefType: ReturnType<typeof getRefTypeForSchema>,
 ): {
   gqlField: string;
-  models: [string, any][];
+  implicitTypes: [string, any][];
   lambdaFunctionDefinition: LambdaFunctionDefinition;
   customSqlDataSourceStrategy: CustomSqlDataSourceStrategy | undefined;
 } {
@@ -309,7 +309,7 @@ function customOperationToGql(
   } = typeDef.data;
 
   let callSignature: string = typeName;
-  const implicitModels: [string, any][] = [];
+  const implicitTypes: [string, any][] = [];
 
   const { authString } = isCustom
     ? calculateCustomAuth(authorization)
@@ -319,7 +319,7 @@ function customOperationToGql(
    *
    * @param returnType The return type from the `data` field of a customer operation.
    * @param refererTypeName The type the refers {@link returnType} by `a.ref()`.
-   * @param shouldAddCustomTypeToImplicitModels A flag indicates wether it should push
+   * @param shouldAddCustomTypeToImplicitTypes A flag indicates wether it should push
    * the return type resolved CustomType to the `implicitModels` list.
    * @returns
    */
@@ -327,18 +327,18 @@ function customOperationToGql(
     returnType: any,
     {
       refererTypeName,
-      shouldAddCustomTypeToImplicitModels = true,
+      shouldAddCustomTypeToImplicitTypes = true,
     }: {
       refererTypeName: string;
-      shouldAddCustomTypeToImplicitModels?: boolean;
+      shouldAddCustomTypeToImplicitTypes?: boolean;
     },
   ): string => {
     if (isRefField(returnType)) {
       return refFieldToGql(returnType?.data);
     } else if (isCustomType(returnType)) {
       const returnTypeName = `${capitalize(refererTypeName)}ReturnType`;
-      if (shouldAddCustomTypeToImplicitModels) {
-        implicitModels.push([returnTypeName, returnType]);
+      if (shouldAddCustomTypeToImplicitTypes) {
+        implicitTypes.push([returnTypeName, returnType]);
       }
       return returnTypeName;
     } else if (isScalarField(returnType)) {
@@ -359,7 +359,7 @@ function customOperationToGql(
         def.data.returnType,
         {
           refererTypeName: subscriptionSource[0].data.link,
-          shouldAddCustomTypeToImplicitModels: false,
+          shouldAddCustomTypeToImplicitTypes: false,
         },
       );
     } else {
@@ -372,9 +372,14 @@ function customOperationToGql(
   }
 
   if (Object.keys(fieldArgs).length > 0) {
-    const { gqlFields, models } = processFields(typeName, fieldArgs, {}, {});
+    const { gqlFields, implicitTypes } = processFields(
+      typeName,
+      fieldArgs,
+      {},
+      {},
+    );
     callSignature += `(${gqlFields.join(', ')})`;
-    implicitModels.push(...models);
+    implicitTypes.push(...implicitTypes);
   }
 
   const handler = handlers && handlers[0];
@@ -438,7 +443,7 @@ function customOperationToGql(
   const gqlField = `${callSignature}: ${returnTypeName} ${gqlHandlerContent}${authString}`;
   return {
     gqlField,
-    models: implicitModels,
+    implicitTypes: implicitTypes,
     lambdaFunctionDefinition,
     customSqlDataSourceStrategy,
   };
@@ -780,7 +785,9 @@ function processFields(
   secondaryIndexes: TransformedSecondaryIndexes = {},
 ) {
   const gqlFields: string[] = [];
-  const models: [string, any][] = [];
+  // stores nested, field-level type definitions (custom types and enums)
+  // the need to be hoisted to top-level schema types and processed accordingly
+  const implicitTypes: [string, any][] = [];
 
   validateImpliedFields(fields, impliedFields);
 
@@ -811,7 +818,7 @@ function processFields(
         // enum type name conflicts
         const enumName = `${capitalize(typeName)}${capitalize(fieldName)}`;
 
-        models.push([enumName, fieldDef]);
+        implicitTypes.push([enumName, fieldDef]);
 
         gqlFields.push(
           `${fieldName}: ${enumFieldToGql(enumName, secondaryIndexes[fieldName])}`,
@@ -823,7 +830,7 @@ function processFields(
           fieldName,
         )}`;
 
-        models.push([customTypeName, fieldDef]);
+        implicitTypes.push([customTypeName, fieldDef]);
 
         gqlFields.push(`${fieldName}: ${customTypeName}`);
       } else {
@@ -840,7 +847,7 @@ function processFields(
     }
   }
 
-  return { gqlFields, models };
+  return { gqlFields, implicitTypes };
 }
 
 type TransformedSecondaryIndexes = {
@@ -1045,6 +1052,21 @@ const getRefTypeForSchema = (schema: InternalSchema) => {
   return getRefType;
 };
 
+// custom types are last
+const sortTopLevelTypes = (topLevelTypes: [string, any][]) => {
+  return topLevelTypes.sort(
+    ([_typeNameA, typeDefA], [_typeNameB, typeDefB]) => {
+      if (isCustomType(typeDefA) && isCustomType(typeDefB)) {
+        return 0;
+      } else if (isCustomType(typeDefA) && !isCustomType(typeDefB)) {
+        return 1;
+      } else {
+        return -1;
+      }
+    },
+  );
+};
+
 const schemaPreprocessor = (
   schema: InternalSchema,
 ): {
@@ -1071,7 +1093,8 @@ const schemaPreprocessor = (
 
   const staticSchema =
     schema.data.configuration.database.engine === 'dynamodb' ? false : true;
-  const topLevelTypes = Object.entries(schema.data.types);
+
+  const topLevelTypes = sortTopLevelTypes(Object.entries(schema.data.types));
 
   const { schemaAuth, functionSchemaAccess } = extractFunctionSchemaAccess(
     schema.data.authorization,
@@ -1124,14 +1147,14 @@ const schemaPreprocessor = (
           authFields,
         );
 
-        const { gqlFields, models } = processFields(
+        const { gqlFields, implicitTypes } = processFields(
           typeName,
           fields,
           authFields,
           fieldLevelAuthRules,
         );
 
-        topLevelTypes.push(...models);
+        topLevelTypes.push(...implicitTypes);
 
         const joined = gqlFields.join('\n  ');
 
@@ -1142,7 +1165,7 @@ const schemaPreprocessor = (
 
         const {
           gqlField,
-          models,
+          implicitTypes,
           jsFunctionForField,
           lambdaFunctionDefinition,
           customSqlDataSourceStrategy,
@@ -1156,7 +1179,7 @@ const schemaPreprocessor = (
 
         Object.assign(lambdaFunctions, lambdaFunctionDefinition);
 
-        topLevelTypes.push(...models);
+        topLevelTypes.push(...implicitTypes);
 
         if (jsFunctionForField) {
           jsFunctions.push(jsFunctionForField);
@@ -1204,7 +1227,7 @@ const schemaPreprocessor = (
 
       validateStaticFields(fields, authFields);
 
-      const { gqlFields, models } = processFields(
+      const { gqlFields, implicitTypes } = processFields(
         typeName,
         fields,
         authFields,
@@ -1213,7 +1236,7 @@ const schemaPreprocessor = (
         partitionKey,
       );
 
-      topLevelTypes.push(...models);
+      topLevelTypes.push(...implicitTypes);
 
       const joined = gqlFields.join('\n  ');
       // TODO: update @model(timestamps: null) once a longer term solution gets
@@ -1255,7 +1278,7 @@ const schemaPreprocessor = (
         authFields,
       );
 
-      const { gqlFields, models } = processFields(
+      const { gqlFields, implicitTypes } = processFields(
         typeName,
         fields,
         authFields,
@@ -1264,7 +1287,7 @@ const schemaPreprocessor = (
         partitionKey,
         transformedSecondaryIndexes,
       );
-      topLevelTypes.push(...models);
+      topLevelTypes.push(...implicitTypes);
 
       const joined = gqlFields.join('\n  ');
 
@@ -1501,6 +1524,36 @@ const handleCustom = (
   return jsFn;
 };
 
+/**
+ * When Custom Operations are defined with a Custom Type return type,
+ * the Custom Type inherits the operation's auth rules
+ *
+ * @returns returns a dict with the name of the custom type and the auth rules defined on the operation
+ *  or `undefined` when the operation's return type is not a custom type.
+ */
+function extractAuthRulesForCustomTypes(
+  typeDef: InternalCustom,
+  typeName: string,
+  authRules: Authorization<any, any, any>[],
+  getRefType: ReturnType<typeof getRefTypeForSchema>,
+): { typeName: string; authRules: Authorization<any, any, any>[] } | undefined {
+  const returnType = typeDef.data.returnType;
+
+  if (isRefField(returnType)) {
+    const { type } = getRefType(returnType.data.link, typeName);
+
+    if (type === 'CustomType') {
+      return { typeName, authRules };
+    }
+  }
+
+  if (isCustomType(returnType)) {
+  }
+  // Need to also handle inline definition
+
+  return undefined;
+}
+
 function transformCustomOperations(
   typeDef: InternalCustom,
   typeName: string,
@@ -1521,7 +1574,7 @@ function transformCustomOperations(
 
   const {
     gqlField,
-    models,
+    implicitTypes,
     lambdaFunctionDefinition,
     customSqlDataSourceStrategy,
   } = customOperationToGql(
@@ -1535,7 +1588,7 @@ function transformCustomOperations(
 
   return {
     gqlField,
-    models,
+    implicitTypes,
     jsFunctionForField,
     lambdaFunctionDefinition,
     customSqlDataSourceStrategy,

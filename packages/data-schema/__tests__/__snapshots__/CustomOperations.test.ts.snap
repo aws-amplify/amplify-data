@@ -1,12 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`CustomOperation transform dynamo schema Custom Mutation w required arg and enum 1`] = `
-"enum LikePostReactionType {
-  :shipit:
-  :risitas:
-}
-
-type Mutation {
+"type Mutation {
   likePost(postId: String!, reactionType: LikePostReactionType): Post 
 }"
 `;
@@ -411,7 +406,7 @@ type Query {
 }
 
 type Subscription {
-  onCreatePost: Post @function(name: "myFunc") @aws_subscribe(mutations: ["createPost"]) @auth(rules: [{allow: public, provider: apiKey}])
   onLikePost: Post @function(name: "myFunc") @aws_subscribe(mutations: ["updatePost"]) @auth(rules: [{allow: public, provider: apiKey}])
+  onCreatePost: Post @function(name: "myFunc") @aws_subscribe(mutations: ["createPost"]) @auth(rules: [{allow: public, provider: apiKey}])
 }"
 `;
