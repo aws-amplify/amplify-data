@@ -367,6 +367,11 @@ function customOperationToGql(
         implicitTypes.push([returnTypeName, returnType]);
       }
       return returnTypeName;
+    } else if (isEnumType(returnType)) {
+      const returnTypeName = `${capitalize(refererTypeName)}ReturnType`;
+      implicitTypes.push([returnTypeName, returnType]);
+
+      return returnTypeName;
     } else if (isScalarField(returnType)) {
       return scalarFieldToGql(returnType?.data);
     } else {
@@ -706,7 +711,7 @@ function validateCustomHandlerAuthRule(rule: AuthRule) {
     throw new Error('OIDC group auth is not supported with a.handler.custom');
   }
 
-  // not currently supported with handler.custom (JS Resolvers); but will be in the future
+  // not currently supported with handler.custom (JS Resolvers), but will be in the future
   if (rule.provider === 'identityPool' || (rule.provider as string) === 'iam') {
     throw new Error(
       "identityPool-based auth (allow.guest() and allow.authenticated('identityPool')) is not supported with a.handler.custom",

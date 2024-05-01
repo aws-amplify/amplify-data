@@ -91,6 +91,18 @@ exports[`CustomOperation transform dynamo schema Custom query w inline boolean r
 }"
 `;
 
+exports[`CustomOperation transform dynamo schema Custom query w inline custom enum return type 1`] = `
+"enum GetPostStatusReturnType {
+  draft
+  pending
+  approved
+}
+
+type Query {
+  getPostStatus(postId: String!): GetPostStatusReturnType 
+}"
+`;
+
 exports[`CustomOperation transform dynamo schema Custom query w inline custom return type 1`] = `
 "type GetPostDetailsReturnType 
 {
@@ -134,6 +146,18 @@ exports[`CustomOperation transform dynamo schema Custom query w inline json retu
 exports[`CustomOperation transform dynamo schema Custom query w inline string return type 1`] = `
 "type Query {
   getPostDetails(postId: String!): String 
+}"
+`;
+
+exports[`CustomOperation transform dynamo schema Custom query w referenced enum return type 1`] = `
+"enum PostStatus {
+  draft
+  pending
+  approved
+}
+
+type Query {
+  getPostStatus(postId: String!): PostStatus 
 }"
 `;
 

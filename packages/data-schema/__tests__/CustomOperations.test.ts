@@ -233,6 +233,37 @@ describe('CustomOperation transform', () => {
       expect(result).toMatchSnapshot();
     });
 
+    test('Custom query w inline custom enum return type', () => {
+      const s = a.schema({
+        getPostStatus: a
+          .query()
+          .arguments({
+            postId: a.string().required(),
+          })
+          .returns(a.enum(['draft', 'pending', 'approved'])),
+      });
+
+      const result = s.transform().schema;
+
+      expect(result).toMatchSnapshot();
+    });
+
+    test('Custom query w referenced enum return type', () => {
+      const s = a.schema({
+        getPostStatus: a
+          .query()
+          .arguments({
+            postId: a.string().required(),
+          })
+          .returns(a.ref('PostStatus')),
+        PostStatus: a.enum(['draft', 'pending', 'approved']),
+      });
+
+      const result = s.transform().schema;
+
+      expect(result).toMatchSnapshot();
+    });
+
     for (const returnType of [
       'string',
       'integer',
@@ -996,7 +1027,7 @@ describe('.for() modifier', () => {
   });
 });
 
-describe.only('custom operations + custom type auth inheritance', () => {
+describe('custom operations + custom type auth inheritance', () => {
   test('op returns top-level custom type with 1 auth mode', () => {
     const s = a.schema({
       myQuery: a
