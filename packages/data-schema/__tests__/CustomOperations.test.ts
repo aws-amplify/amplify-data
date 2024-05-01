@@ -128,6 +128,9 @@ describe('CustomOperation transform', () => {
 
     test('Custom Mutation w required arg and enum', () => {
       const s = a.schema({
+        Post: a
+          .model({ title: a.string() })
+          .authorization((allow) => allow.authenticated()),
         likePost: a
           .mutation()
           .arguments({
@@ -144,6 +147,9 @@ describe('CustomOperation transform', () => {
 
     test('Custom Mutation w string function reference', () => {
       const s = a.schema({
+        Post: a
+          .model({ title: a.string() })
+          .authorization((allow) => allow.authenticated()),
         likePost: a
           .mutation()
           .arguments({
@@ -161,6 +167,9 @@ describe('CustomOperation transform', () => {
 
     test('Custom Mutation w string function reference & auth', () => {
       const s = a.schema({
+        Post: a
+          .model({ title: a.string() })
+          .authorization((allow) => allow.authenticated()),
         likePost: a
           .mutation()
           .arguments({
@@ -921,7 +930,7 @@ describe('CustomOperation transform', () => {
           int: a.integer(),
           description: a.string(),
         })
-        .returns(a.ref('NestedCustomTypes'))
+        .returns(a.ref('SomeCustomType'))
         .handler([a.handler.function(fn1), a.handler.function(fn2)])
         .authorization((allow) => allow.publicApiKey()),
       echoList: a
@@ -931,9 +940,13 @@ describe('CustomOperation transform', () => {
           int: a.integer(),
           description: a.string(),
         })
-        .returns(a.ref('NestedCustomTypes').required().array().required())
+        .returns(a.ref('SomeCustomType').required().array().required())
         .handler(a.handler.function(fn3))
         .authorization((allow) => allow.publicApiKey()),
+      SomeCustomType: a.customType({
+        fieldA: a.string(),
+        fieldB: a.integer(),
+      }),
     });
 
     it('generates 3 lambda functions with expected names aside schema', () => {

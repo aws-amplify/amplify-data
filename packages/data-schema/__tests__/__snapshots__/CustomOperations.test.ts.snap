@@ -1,19 +1,34 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`CustomOperation transform dynamo schema Custom Mutation w required arg and enum 1`] = `
-"type Mutation {
+"type Post @model @auth(rules: [{allow: private}])
+{
+  title: String
+}
+
+type Mutation {
   likePost(postId: String!, reactionType: LikePostReactionType): Post 
 }"
 `;
 
 exports[`CustomOperation transform dynamo schema Custom Mutation w string function reference & auth 1`] = `
-"type Mutation {
+"type Post @model @auth(rules: [{allow: private}])
+{
+  title: String
+}
+
+type Mutation {
   likePost(postId: String!): Post @function(name: "myFunc") @auth(rules: [{allow: private}])
 }"
 `;
 
 exports[`CustomOperation transform dynamo schema Custom Mutation w string function reference 1`] = `
-"type Mutation {
+"type Post @model @auth(rules: [{allow: private}])
+{
+  title: String
+}
+
+type Mutation {
   likePost(postId: String!): Post @function(name: "myFunc") @auth(rules: [{allow: private}])
 }"
 `;
@@ -142,7 +157,7 @@ type Subscription {
 `;
 
 exports[`CustomOperation transform dynamo schema Schema w model, custom query, mutation, and subscription and ref of custom type with array modifier 1`] = `
-"type PostCustomType 
+"type PostCustomType @aws_api_key
 {
   title: String
 }
@@ -180,7 +195,7 @@ type Subscription {
 `;
 
 exports[`CustomOperation transform dynamo schema custom subscriptions Custom subscription where .for() resource has a CustomType return type 1`] = `
-"type CreateCustomTypePostReturnType 
+"type CreateCustomTypePostReturnType @aws_api_key
 {
   title: String!
 }
@@ -262,7 +277,7 @@ exports[`CustomOperation transform dynamo schema handlers a.handler.custom a.han
   title: String
 }
 
-type GetPostDetailsReturnType 
+type GetPostDetailsReturnType @aws_api_key
 {
   
 }
@@ -273,7 +288,7 @@ type Query {
 `;
 
 exports[`CustomOperation transform dynamo schema handlers a.handler.custom a.handler.custom with auth works 1`] = `
-"type GetPostDetailsReturnType 
+"type GetPostDetailsReturnType @aws_cognito_user_pools(cognito_groups: ["groupA", "groupB"])
 {
   
 }
@@ -295,7 +310,7 @@ type Query {
 `;
 
 exports[`CustomOperation transform dynamo schema handlers a.handler.function defineFunction 1`] = `
-"type GetPostDetailsReturnType 
+"type GetPostDetailsReturnType @aws_cognito_user_pools
 {
   
 }
@@ -306,7 +321,7 @@ type Query {
 `;
 
 exports[`CustomOperation transform dynamo schema handlers a.handler.function pipeline / mix 1`] = `
-"type GetPostDetailsReturnType 
+"type GetPostDetailsReturnType @aws_cognito_user_pools
 {
   
 }
@@ -317,7 +332,7 @@ type Query {
 `;
 
 exports[`CustomOperation transform dynamo schema handlers a.handler.function string 1`] = `
-"type GetPostDetailsReturnType 
+"type GetPostDetailsReturnType @aws_cognito_user_pools
 {
   
 }
@@ -328,7 +343,7 @@ type Query {
 `;
 
 exports[`CustomOperation transform dynamo schema handlers a.handler.inlineSql escapes quotes 1`] = `
-"type GetPostDetailsReturnType 
+"type GetPostDetailsReturnType @aws_cognito_user_pools
 {
   
 }
@@ -350,7 +365,7 @@ exports[`CustomOperation transform dynamo schema handlers a.handler.inlineSql wo
   "functionSlots": [],
   "jsFunctions": [],
   "lambdaFunctions": {},
-  "schema": "type GetPostDetailsReturnType 
+  "schema": "type GetPostDetailsReturnType @aws_cognito_user_pools
 {
   
 }
@@ -362,7 +377,7 @@ type Query {
 `;
 
 exports[`CustomOperation transform dynamo schema handlers a.handler.sqlReference works 1`] = `
-"type GetPostDetailsReturnType 
+"type GetPostDetailsReturnType @aws_cognito_user_pools
 {
   
 }
