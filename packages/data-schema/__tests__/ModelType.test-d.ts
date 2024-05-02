@@ -55,7 +55,7 @@ describe('identifiers', () => {
       fields: {
         title: ModelField<string | null>;
       };
-      identifier: Array<'id'>;
+      identifier: ['id'];
       secondaryIndexes: [];
       authorization: [];
     };
@@ -74,7 +74,7 @@ describe('identifiers', () => {
       fields: {
         customId: ModelField<string, 'required'>;
       };
-      identifier: Array<'customId'>;
+      identifier: ['customId'];
       secondaryIndexes: [];
       authorization: [];
     };

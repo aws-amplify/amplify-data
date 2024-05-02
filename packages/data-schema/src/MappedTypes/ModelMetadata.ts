@@ -17,8 +17,7 @@ export type ModelIdentifier<T> = {
 
 export type ModelSecondaryIndexes<T> = {
   [Property in keyof T]: T[Property] extends ModelType<infer R, any>
-    ? // reduce back to union
-      R['secondaryIndexes'] extends any[]
+    ? R['secondaryIndexes'] extends any[]
       ? { secondaryIndexes: R['secondaryIndexes'] }
       : never
     : never;

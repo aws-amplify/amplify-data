@@ -214,7 +214,7 @@ export type ModelType<
   K extends keyof ModelType<T> = never,
 > = Omit<
   {
-    identifier<ID extends IdentifierType<T> = []>(
+    identifier<const ID extends IdentifierType<T> = []>(
       identifier: ID,
     ): ModelType<SetTypeSubArg<T, 'identifier', ID>, K | 'identifier'>;
     secondaryIndexes<
@@ -272,7 +272,7 @@ export type SchemaModelType<
   IsRDS extends boolean = false,
 > = IsRDS extends true
   ? T & {
-    relationships<
+      relationships<
         Param extends Record<
           string,
           ModelRelationalField<any, string, any, any>
@@ -368,7 +368,7 @@ export function model<T extends ModelFields>(
   fields: T,
 ): ModelType<{
   fields: T;
-  identifier: Array<'id'>;
+  identifier: ['id'];
   secondaryIndexes: [];
   authorization: [];
 }> {
