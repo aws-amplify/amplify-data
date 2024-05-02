@@ -7,6 +7,15 @@ import { RefType } from '../../RefType';
 import { ResolveRef } from './ResolveRef';
 import { LazyLoader } from '../../runtime';
 
+/**
+ * Takes a `ReturnType<typeof a.model()>` and turns it into a client-consumable type. Fields
+ * definitions (e.g., `a.string()`) are turned into the client facing types (e.g., `string`),
+ * `a.ref()` fields will be resolved, and relationships (e.g., `a.belongsTo()`) will be
+ * turned into `LazyLoader` fields (e.g., `post.comments({...})`).
+ *
+ * The first type parameter (`Bag`) should always just be the top-level `ClientSchema` that
+ * references and related model definitions can be resolved against.
+ */
 export type ResolveFields<Bag extends Record<string, any>, T> = {
   [K in keyof T]: ResolveIndividualField<Bag, T[K]>;
 };

@@ -22,69 +22,6 @@ import type {
 } from '../CombineSchema';
 import type { Brand, SpreadTuple } from '../util';
 
-import { a } from '../index';
-
-const schema = a.schema({
-  Status: a.enum(['a', 'b', 'c']),
-
-  getStatus: a
-    .query()
-    .arguments({
-      postId: a.id(),
-    })
-    .returns(a.ref('Status')),
-
-  echo: a
-    .query()
-    .arguments({
-      message: a.string(),
-    })
-    .returns(a.string()),
-
-  LikeResult: a.customType({
-    likes: a.integer().required(),
-  }),
-
-  likePost: a
-    .mutation()
-    .arguments({
-      postId: a.string().required(),
-    })
-    .returns(a.ref('LikeResult'))
-    .handler(a.handler.function('likePost'))
-    .authorization((allow) => allow.publicApiKey()),
-
-  likeAllPosts: a
-    .mutation()
-    .returns(a.ref('LikeResult').array())
-    .handler(a.handler.function('likeAllPosts'))
-    .authorization((allow) => allow.publicApiKey()),
-
-  Post: a
-    .model({
-      title: a.string().required(),
-      description: a.string(),
-      viewCount: a.integer(),
-      updatedAt: a.string(),
-      comments: a.hasMany('Comment', 'postId'),
-    })
-    .secondaryIndexes((index) => [
-      index('title'),
-      index('description')
-        .queryField('myCustomIdx')
-        .sortKeys(['updatedAt', 'viewCount']),
-    ])
-    .authorization((allow) => [allow.publicApiKey()]),
-
-  Comment: a
-    .model({
-      body: a.string().required(),
-      postId: a.id(),
-      post: a.belongsTo('Post', 'postId'),
-    })
-    .authorization((allow) => [allow.publicApiKey()]),
-});
-
 export type ClientSchema<
   Schema extends GenericModelSchema<any> | CombinedModelSchema<any>,
 > =
@@ -135,9 +72,6 @@ type RemapModel<T extends ModelSchemaContents, E> =
     ? ClientModel<InternalClientSchema<T>, MT>
     : 'd';
 
-type _Schema = InternalClientSchema<typeof schema>;
-type _T = _Schema['Post']['type'];
-
 type GetInternalClientSchema<Schema> =
   Schema extends GenericModelSchema<any> ? InternalClientSchema<Schema> : never;
 
@@ -165,3 +99,34 @@ type InternalCombinedSchema<
     ? Omit<ClientSchemas[I], typeof __modelMeta__>
     : never;
 }>;
+
+// not sure where to put these types yet
+
+type Select<T, M> = {
+  [K in keyof T as T[K] extends M ? K : never]: T[K] extends M ? T[K] : never;
+};
+
+export type ClientSchemaByEntityTypeBaseShape = {
+  enums: Record<string, ClientEnum<any>>;
+  customTypes: Record<string, ClientCustomType<any, any>>;
+  models: Record<string, ClientModel<any, any>>;
+  queries: Record<string, ClientCustomOperation<any, any>>;
+  mutations: Record<string, ClientCustomOperation<any, any>>;
+  subscriptions: Record<string, ClientCustomOperation<any, any>>;
+};
+
+export type ClientSchemaByEntityType<T> = {
+  enums: Select<T, { __entityType: 'enum' }>;
+  customTypes: Select<T, { __entityType: 'customType' }>;
+  models: Select<T, { __entityType: 'model' }>;
+
+  queries: Select<T, { __entityType: 'customQuery' }>;
+  mutations: Select<T, { __entityType: 'customMutation' }>;
+  subscriptions: Select<T, { __entityType: 'customSubscription' }>;
+
+  // TODO: appsync handlers? ... do we need something distinct here ... brain is stuck.
+  // handlers: Select<T, { __entityType: 'customHandler' }>;
+};
+
+// type _T2 = ClientSchemaByEntityType<_Schema>;
+// type _T3 = _T2['queries']['echo']['returnType'];
