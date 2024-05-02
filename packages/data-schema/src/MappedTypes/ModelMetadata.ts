@@ -8,8 +8,7 @@ import type { ModelRelationalFieldParamShape } from '../ModelRelationalField';
 
 export type ModelIdentifier<T> = {
   [Property in keyof T]: T[Property] extends ModelType<infer R, any>
-    ? // reduce back to union
-      R['identifier'] extends any[]
+    ? R['identifier'] extends any[]
       ? { identifier: R['identifier'][number] }
       : never
     : never;

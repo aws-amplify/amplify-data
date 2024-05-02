@@ -828,13 +828,19 @@ export type CustomHeaders =
   | ((requestOptions?: RequestOptions) => Promise<Record<string, string>>);
 
 /**
- * SecondaryIndex index types and query methods
+ * PrimaryIndex field types and query methods
  */
-export type SecondaryIndexIrShape = {
-  queryField: string;
+export interface PrimaryIndexIrShape {
   pk: { [key: string]: string | number };
   sk: { [key: string]: string | number };
-};
+}
+
+/**
+ * SecondaryIndex field types and query methods
+ */
+export interface SecondaryIndexIrShape extends PrimaryIndexIrShape {
+  queryField: string;
+}
 
 type IndexQueryMethodsFromIR<
   SecondaryIdxTuple extends SecondaryIndexIrShape[],

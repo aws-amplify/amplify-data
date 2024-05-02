@@ -1,7 +1,7 @@
 import type { Equal, Expect } from '@aws-amplify/data-schema-types';
 import { type ModelType, type InternalModel, model } from '../src/ModelType';
 import { modelIndex } from '../src/ModelIndex';
-import { type ModelField, string, id } from '../src/ModelField';
+import { type ModelField, string, id, integer } from '../src/ModelField';
 
 const a = { model, index: modelIndex };
 
@@ -66,9 +66,12 @@ describe('identifiers', () => {
   test('model() with fields and custom id produces expected type args', () => {
     const m = model({
       customId: id().required(),
-    }).identifier(['customId']);
+      customNum: integer(),
+    }).identifier(['customId', 'customNum']);
 
     type MT = GetModelTypeArg<typeof m>;
+
+    type IIR = MT['identifierIr'];
 
     type ExpectedType = {
       fields: {
@@ -86,8 +89,6 @@ describe('identifiers', () => {
       title: string(),
     });
 
-    // optional fields can't be used as identifier
-    // @ts-expect-error
     m2.identifier(['title']);
   });
 
