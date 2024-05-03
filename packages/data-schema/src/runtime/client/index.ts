@@ -821,12 +821,9 @@ export type CustomOperations<
  *   }
  * }
  */
-export type EnumTypes<
-  Schema extends Record<any, any>,
-  ModelMeta extends Record<any, any> = ExtractModelMeta<Schema>,
-> = {
-  [EnumName in keyof ModelMeta['enums']]: {
-    values: () => Array<ModelMeta['enums'][EnumName]>;
+export type EnumTypes<T extends Record<any, any>> = {
+  [EnumName in keyof ClientSchemaByEntityType<T>['enums']]: {
+    values: () => Array<ClientSchemaByEntityType<T>['enums'][EnumName]['type']>;
   };
 };
 

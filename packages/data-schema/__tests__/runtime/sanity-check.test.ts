@@ -32,13 +32,20 @@ describe('a', () => {
           })
           .returns(a.ref('LikeResult'))
           .handler(a.handler.function('likePost'))
-          .authorization((allow) => [allow.publicApiKey(z)]),
+          .authorization((allow) => [allow.publicApiKey()]),
 
         likeAllPosts: a
           .mutation()
           .returns(a.ref('LikeResult').array())
           .handler(a.handler.function('likeAllPosts'))
           .authorization((allow) => allow.publicApiKey()),
+
+        onLikePost: a
+          .subscription()
+          .arguments({
+            postId: a.id(),
+          })
+          .for(a.ref('likePost')),
 
         SomeThing: a.model({
           name: a.string(),
@@ -80,7 +87,12 @@ describe('a', () => {
 
     type Something = Schema['SomeThing']['type']['groupOwner'];
 
+    type Status = Schema['Status']['type'];
+
     const _client = {} as ClientExtensions<Schema>;
+
+    const status = _client.enums.Status.values();
+
     const { data: posts } = await _client.models.Post.list({
       filter: {
         or: [
@@ -118,5 +130,11 @@ describe('a', () => {
       postId: 'something',
     });
     const likes2 = likePostResult?.likes;
+
+    _client.subscriptions.onLikePost({ postId: '123' }).subscribe({
+      next(message) {
+        console.log(message?.likes);
+      },
+    });
   });
 });
