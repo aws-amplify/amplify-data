@@ -1,38 +1,40 @@
+import type { PrimaryIndexIrShape } from '../runtime/';
+
 type DefaultIdentifierFields = {
   // implicit `id` is readonly because it's managed by the resolver; explicit `id` is writable
   readonly id: string;
 };
+
+type DefaultIdentifierType = { pk: { id: string } };
 
 type DefaultTimestampFields = {
   readonly createdAt: string;
   readonly updatedAt: string;
 };
 
-type InitialImplicitFields<Identifier> = Identifier extends 'id'
-  ? DefaultIdentifierFields & DefaultTimestampFields
-  : DefaultTimestampFields;
+type InitialImplicitFields<Identifier> =
+  Identifier extends DefaultIdentifierType
+    ? DefaultIdentifierFields & DefaultTimestampFields
+    : DefaultTimestampFields;
 
 /**
  * @returns true if a string union `ExplicitFieldNames` contains a given string `FieldName`
  */
-type FieldExists<
-  ExplicitFieldNames extends string,
-  FieldName extends string,
-> = Extract<ExplicitFieldNames, FieldName> extends never ? false : true;
+type FieldExists<ExplicitFieldNames extends string, FieldName extends string> =
+  Extract<ExplicitFieldNames, FieldName> extends never ? false : true;
 
 /**
  * @returns union of explicitly defined field names for a model
  */
-type GetModelFieldNames<FlatModel> = FlatModel extends Record<infer R, any>
-  ? R
-  : never;
+type GetModelFieldNames<FlatModel> =
+  FlatModel extends Record<infer R, any> ? R : never;
 
 /**
  * Generate Record type containing all implicit fields for a given model
  */
 type ImplicitFields<
   FlatModel,
-  Identifier,
+  Identifier extends PrimaryIndexIrShape,
   ModelFieldNames = GetModelFieldNames<FlatModel>,
 > = {
   [ImplicitField in keyof InitialImplicitFields<Identifier> as FieldExists<
@@ -46,7 +48,10 @@ type ImplicitFields<
 /**
  * @returns intersection of explicit and implicit model fields
  */
-type InjectDefaultFieldsForModel<FlatModel, ModelIdentifier> = FlatModel &
+type InjectDefaultFieldsForModel<
+  FlatModel,
+  ModelIdentifier extends { identifier: PrimaryIndexIrShape },
+> = FlatModel &
   ImplicitFields<
     FlatModel,
     'identifier' extends keyof ModelIdentifier
@@ -61,9 +66,12 @@ type InjectDefaultFieldsForModel<FlatModel, ModelIdentifier> = FlatModel &
  *
  * @typeParam FlattenedSchema - resolved schema type (TODO: add detail/example/link to type)
  */
-export type InjectImplicitModelFields<FlattenedSchema, IdentifierMeta> = {
+export type InjectImplicitModelFields<
+  FlattenedSchema,
+  IdentifierMeta extends Record<string, { identifier: PrimaryIndexIrShape }>,
+> = {
   [ModelName in keyof FlattenedSchema]: InjectDefaultFieldsForModel<
     FlattenedSchema[ModelName],
-    ModelName extends keyof IdentifierMeta ? IdentifierMeta[ModelName] : object
+    ModelName extends keyof IdentifierMeta ? IdentifierMeta[ModelName] : never
   >;
 };

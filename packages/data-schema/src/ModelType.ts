@@ -40,6 +40,7 @@ type InternalModelFields = Record<
 
 type ModelData = {
   fields: ModelFields;
+  // TODO: also convert to {pk; sk;} shape?
   identifier: ReadonlyArray<string>;
   secondaryIndexes: ReadonlyArray<ModelIndexType<any, any, any, any, any>>;
   authorization: Authorization<any, any, any>[];

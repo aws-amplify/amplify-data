@@ -2,14 +2,14 @@ import {
   type UnionToIntersection,
   type ExcludeEmpty,
 } from '@aws-amplify/data-schema-types';
-import { __modelMeta__ } from '../runtime/client';
+import { __modelMeta__, type PrimaryIndexIrShape } from '../runtime/';
 import type { ModelType } from '../ModelType';
 import type { ModelRelationalFieldParamShape } from '../ModelRelationalField';
 
 export type ModelIdentifier<T> = {
   [Property in keyof T]: T[Property] extends ModelType<infer R, any>
-    ? R['identifier'] extends any[]
-      ? { identifier: R['identifier'][number] }
+    ? R['identifier'] extends PrimaryIndexIrShape
+      ? { identifier: R['identifier'] }
       : never
     : never;
 };
