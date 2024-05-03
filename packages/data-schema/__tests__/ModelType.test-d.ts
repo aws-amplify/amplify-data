@@ -55,7 +55,12 @@ describe('identifiers', () => {
       fields: {
         title: ModelField<string | null>;
       };
-      identifier: ['id'];
+      identifier: {
+        pk: {
+          id: string;
+        };
+        sk: never;
+      };
       secondaryIndexes: [];
       authorization: [];
     };
@@ -66,18 +71,20 @@ describe('identifiers', () => {
   test('model() with fields and custom id produces expected type args', () => {
     const m = model({
       customId: id().required(),
-      customNum: integer(),
-    }).identifier(['customId', 'customNum']);
+    }).identifier(['customId']);
 
     type MT = GetModelTypeArg<typeof m>;
-
-    type IIR = MT['identifierIr'];
 
     type ExpectedType = {
       fields: {
         customId: ModelField<string, 'required'>;
       };
-      identifier: ['customId'];
+      identifier: {
+        pk: {
+          customId: string;
+        };
+        sk: never;
+      };
       secondaryIndexes: [];
       authorization: [];
     };

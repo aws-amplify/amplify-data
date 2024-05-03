@@ -9,7 +9,7 @@ export type PrimaryIndexFieldsToIR<
   ? {
       pk: PK extends keyof ResolvedFields
         ? {
-            [Key in PK]: Exclude<ResolvedFields[PK], null>;
+            [Key in PK]: Exclude<ResolvedFields[PK], null> & (string | number);
           }
         : never;
       sk: unknown extends SK

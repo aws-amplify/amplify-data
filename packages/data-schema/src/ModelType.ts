@@ -1,8 +1,5 @@
-import type {
-  SetTypeSubArg,
-  PrimaryIndexIrShape,
-  SecondaryIndexIrShape,
-} from '@aws-amplify/data-schema-types';
+import type { SetTypeSubArg } from '@aws-amplify/data-schema-types';
+import type { PrimaryIndexIrShape, SecondaryIndexIrShape } from './runtime';
 import { type Brand, brand } from './util';
 import type { ModelField, InternalField } from './ModelField';
 import type {
@@ -43,14 +40,14 @@ type InternalModelFields = Record<
 
 type ModelData = {
   fields: ModelFields;
-  identifier: PrimaryIndexIrShape;
+  identifier: ReadonlyArray<string>;
   secondaryIndexes: ReadonlyArray<ModelIndexType<any, any, any, any, any>>;
   authorization: Authorization<any, any, any>[];
 };
 
 type InternalModelData = ModelData & {
   fields: InternalModelFields;
-  identifier: PrimaryIndexIrShape;
+  identifier: ReadonlyArray<string>;
   secondaryIndexes: ReadonlyArray<InternalModelIndexType>;
   authorization: Authorization<any, any, any>[];
   originalName?: string;
@@ -199,18 +196,18 @@ export type ModelType<
 > = Omit<
   {
     identifier<
+      // TODO: bench collapsing these type params
       const PrimaryIndexFields = ExtractSecondaryIndexIRFields<T>,
-      const ID extends ReadonlyArray<
-        keyof PrimaryIndexFields & string
-      > = readonly [],
+      const PrimaryIndexPool extends string = keyof PrimaryIndexFields & string,
+      const ID extends ReadonlyArray<PrimaryIndexPool> = readonly [],
+      const PrimaryIndexIR extends PrimaryIndexIrShape = PrimaryIndexFieldsToIR<
+        ID,
+        PrimaryIndexFields
+      >,
     >(
       identifier: ID,
     ): ModelType<
-      SetTypeSubArg<
-        T,
-        'identifier',
-        PrimaryIndexFieldsToIR<ID, PrimaryIndexFields>
-      >,
+      SetTypeSubArg<T, 'identifier', PrimaryIndexIR>,
       K | 'identifier'
     >;
     secondaryIndexes<
