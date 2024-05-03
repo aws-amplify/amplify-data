@@ -1,5 +1,5 @@
 import { a, ClientSchema } from '@aws-amplify/data-schema';
-import { Expect, Equal } from '@aws-amplify/data-schema-types';
+import { Expect, Equal, Prettify } from '@aws-amplify/data-schema-types';
 import { __modelMeta__ } from '@aws-amplify/data-schema/runtime';
 import { generateClient } from 'aws-amplify/api';
 
@@ -35,6 +35,8 @@ describe('Basic operations', () => {
   });
 
   type Schema = ClientSchema<typeof schema>;
+
+  type MM = Prettify<Schema[typeof __modelMeta__]>;
 
   const client = generateClient<Schema>();
 

@@ -271,9 +271,12 @@ export type SelectionSet<
 // #endregion
 
 // #region Input mapped types
-export type ModelIdentifier<Model extends Record<any, any>> = Prettify<
-  Record<Model['identifier'] & string, string>
->;
+
+export type ModelIdentifier<ModelMeta extends ModelMetaShape> =
+  ModelMeta['identifier']['pk'] &
+    (ModelMeta['identifier']['sk'] extends never
+      ? unknown // unknown collapses in an intersection
+      : ModelMeta['identifier']['sk']);
 
 type IfEquals<X, Y, A = X, B = never> =
   (<T>() => T extends X ? 1 : 2) extends <T>() => T extends Y ? 1 : 2 ? A : B;
@@ -306,7 +309,7 @@ type MutationInput<
  */
 type CreateModelInput<
   Model extends Record<string, unknown>,
-  ModelMeta extends Record<string, unknown>,
+  ModelMeta extends ModelMetaShape,
 > =
   Equal<ModelIdentifier<ModelMeta>, { id: string }> extends true
     ? Partial<ModelIdentifier<ModelMeta>> & Omit<MutationInput<Model>, 'id'>
@@ -492,7 +495,7 @@ export type ModelSortDirection = 'ASC' | 'DESC';
 
 type ModelMetaShape = {
   secondaryIndexes: SecondaryIndexIrShape[];
-  identifier: string;
+  identifier: PrimaryIndexIrShape;
 };
 
 // TODO: remove export. added for debugging.
