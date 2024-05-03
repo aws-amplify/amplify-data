@@ -133,7 +133,7 @@ function isRefField(
 
 function scalarFieldToGql(
   fieldDef: ScalarFieldDef,
-  identifier?: string[],
+  identifier?: readonly string[],
   secondaryIndexes: string[] = [],
 ) {
   const {
@@ -825,7 +825,7 @@ function processFields(
   fields: Record<string, any>,
   impliedFields: Record<string, any>,
   fieldLevelAuthRules: Record<string, string | null>,
-  identifier?: string[],
+  identifier?: readonly string[],
   partitionKey?: string,
   secondaryIndexes: TransformedSecondaryIndexes = {},
 ) {
@@ -1329,7 +1329,9 @@ const schemaPreprocessor = (
       topLevelTypes.push(...implicitTypes);
 
       const joined = gqlFields.join('\n  ');
-      const refersToString = typeDef.data.originalName ? ` @refersTo(name: "${typeDef.data.originalName}")` : '';
+      const refersToString = typeDef.data.originalName
+        ? ` @refersTo(name: "${typeDef.data.originalName}")`
+        : '';
       // TODO: update @model(timestamps: null) once a longer term solution gets
       // determined.
       //

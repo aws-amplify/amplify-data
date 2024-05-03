@@ -1,24 +1,25 @@
-import type {
-  SetTypeSubArg,
-  SecondaryIndexIrShape,
-} from '@aws-amplify/data-schema-types';
-import { Brand, brand } from './util';
-import { ModelField, InternalField } from './ModelField';
+import type { SetTypeSubArg } from '@aws-amplify/data-schema-types';
+import type { PrimaryIndexIrShape, SecondaryIndexIrShape } from './runtime';
+import { type Brand, brand } from './util';
+import type { ModelField, InternalField } from './ModelField';
 import type {
   ModelRelationalField,
   InternalRelationalField,
   ModelRelationalFieldParamShape,
 } from './ModelRelationalField';
-import { AllowModifier, Authorization, allow } from './Authorization';
-import { RefType, RefTypeParamShape } from './RefType';
-import { EnumType, EnumTypeParamShape } from './EnumType';
-import { CustomType, CustomTypeParamShape } from './CustomType';
+import { type AllowModifier, type Authorization, allow } from './Authorization';
+import type { RefType, RefTypeParamShape } from './RefType';
+import type { EnumType, EnumTypeParamShape } from './EnumType';
+import type { CustomType, CustomTypeParamShape } from './CustomType';
 import {
-  ModelIndexType,
-  InternalModelIndexType,
+  type ModelIndexType,
+  type InternalModelIndexType,
   modelIndex,
 } from './ModelIndex';
-import { SecondaryIndexToIR } from './MappedTypes/MapSecondaryIndexes';
+import type {
+  PrimaryIndexFieldsToIR,
+  SecondaryIndexToIR,
+} from './MappedTypes/MapIndexes';
 
 const brandName = 'modelType';
 export type deferredRefResolvingPrefix = 'deferredRefResolving:';
@@ -39,14 +40,14 @@ type InternalModelFields = Record<
 
 type ModelData = {
   fields: ModelFields;
-  identifier: string[];
+  identifier: ReadonlyArray<string>;
   secondaryIndexes: ReadonlyArray<ModelIndexType<any, any, any, any, any>>;
   authorization: Authorization<any, any, any>[];
 };
 
 type InternalModelData = ModelData & {
   fields: InternalModelFields;
-  identifier: string[];
+  identifier: ReadonlyArray<string>;
   secondaryIndexes: ReadonlyArray<InternalModelIndexType>;
   authorization: Authorization<any, any, any>[];
   originalName?: string;
@@ -54,7 +55,7 @@ type InternalModelData = ModelData & {
 
 export type ModelTypeParamShape = {
   fields: ModelFields;
-  identifier: string[];
+  identifier: PrimaryIndexIrShape;
   secondaryIndexes: ReadonlyArray<SecondaryIndexIrShape>;
   authorization: Authorization<any, any, any>[];
 };
@@ -73,20 +74,27 @@ export type ModelTypeParamShape = {
  * indicator string, and resolve its corresponding type later in
  * packages/data-schema/src/runtime/client/index.ts
  */
-type ExtractSecondaryIndexIRFields<T extends ModelTypeParamShape> = {
+export type ExtractSecondaryIndexIRFields<
+  T extends ModelTypeParamShape,
+  RequiredOnly extends boolean = false,
+> = {
   [FieldProp in keyof T['fields'] as T['fields'][FieldProp] extends ModelField<
     infer R,
     any,
     any
   >
     ? NonNullable<R> extends string | number
-      ? FieldProp
-      : never
-    : T['fields'][FieldProp] extends EnumType<EnumTypeParamShape>
-      ? FieldProp
-      : T['fields'][FieldProp] extends RefType<RefTypeParamShape, any, any>
+      ? RequiredOnly extends false
         ? FieldProp
-        : never]: T['fields'][FieldProp] extends ModelField<infer R, any, any>
+        : null extends R
+          ? never
+          : FieldProp
+      : never
+    : T['fields'][FieldProp] extends
+          | EnumType<EnumTypeParamShape>
+          | RefType<RefTypeParamShape, any, any>
+      ? FieldProp
+      : never]: T['fields'][FieldProp] extends ModelField<infer R, any, any>
     ? R
     : T['fields'][FieldProp] extends EnumType<infer R>
       ? R['values'][number]
@@ -106,26 +114,6 @@ type ExtractType<T extends ModelTypeParamShape> = {
     ? R
     : never;
 };
-
-type GetRequiredFields<T> = {
-  [FieldProp in keyof T as T[FieldProp] extends NonNullable<T[FieldProp]>
-    ? FieldProp
-    : never]: T[FieldProp];
-};
-
-type IdentifierMap<T extends ModelTypeParamShape> = GetRequiredFields<
-  ExtractType<T>
->;
-
-// extracts model fields that CAN BE used as identifiers (scalar, non-nullable fields)
-// TODO: make this also filter out all non-scalars e.g., model fields and custom types
-type IdentifierFields<T extends ModelTypeParamShape> = keyof IdentifierMap<T> &
-  string;
-
-type IdentifierType<
-  T extends ModelTypeParamShape,
-  Fields extends string = IdentifierFields<T>,
-> = Array<Fields>;
 
 /**
  * For a given ModelTypeParamShape, produces a map of Authorization rules
@@ -214,9 +202,20 @@ export type ModelType<
   K extends keyof ModelType<T> = never,
 > = Omit<
   {
-    identifier<ID extends IdentifierType<T> = []>(
+    identifier<
+      PrimaryIndexFields = ExtractSecondaryIndexIRFields<T, true>,
+      PrimaryIndexPool extends string = keyof PrimaryIndexFields & string,
+      const ID extends ReadonlyArray<PrimaryIndexPool> = readonly [],
+      const PrimaryIndexIR extends PrimaryIndexIrShape = PrimaryIndexFieldsToIR<
+        ID,
+        PrimaryIndexFields
+      >,
+    >(
       identifier: ID,
-    ): ModelType<SetTypeSubArg<T, 'identifier', ID>, K | 'identifier'>;
+    ): ModelType<
+      SetTypeSubArg<T, 'identifier', PrimaryIndexIR>,
+      K | 'identifier'
+    >;
     secondaryIndexes<
       const SecondaryIndexFields = ExtractSecondaryIndexIRFields<T>,
       const SecondaryIndexPKPool extends string = keyof SecondaryIndexFields &
@@ -272,7 +271,7 @@ export type SchemaModelType<
   IsRDS extends boolean = false,
 > = IsRDS extends true
   ? T & {
-    relationships<
+      relationships<
         Param extends Record<
           string,
           ModelRelationalField<any, string, any, any>
@@ -368,7 +367,7 @@ export function model<T extends ModelFields>(
   fields: T,
 ): ModelType<{
   fields: T;
-  identifier: Array<'id'>;
+  identifier: { pk: { id: string }; sk: never };
   secondaryIndexes: [];
   authorization: [];
 }> {

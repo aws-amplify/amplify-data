@@ -2,6 +2,22 @@ import { ModelIndexType } from '../ModelIndex';
 
 type ModelIndexTypeShape = ModelIndexType<any, any, any, any, any>;
 
+export type PrimaryIndexFieldsToIR<
+  IdxFields extends ReadonlyArray<string>,
+  ResolvedFields,
+> = IdxFields extends readonly [infer PK, ...infer SK]
+  ? {
+      pk: PK extends keyof ResolvedFields
+        ? {
+            [Key in PK]: Exclude<ResolvedFields[PK], null> & (string | number);
+          }
+        : never;
+      sk: unknown extends SK
+        ? never
+        : ResolvedSortKeyFields<SK, ResolvedFields>;
+    }
+  : never;
+
 /**
  * Maps array of ModelIndexType to SecondaryIndexIrShape (defined in in data-schema-types)
  * */

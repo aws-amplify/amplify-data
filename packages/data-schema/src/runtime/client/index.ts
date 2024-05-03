@@ -271,9 +271,12 @@ export type SelectionSet<
 // #endregion
 
 // #region Input mapped types
-export type ModelIdentifier<Model extends Record<any, any>> = Prettify<
-  Record<Model['identifier'] & string, string>
->;
+
+export type ModelIdentifier<ModelMeta extends ModelMetaShape> =
+  ModelMeta['identifier']['pk'] &
+    (ModelMeta['identifier']['sk'] extends never
+      ? unknown // unknown collapses in an intersection
+      : ModelMeta['identifier']['sk']);
 
 type IfEquals<X, Y, A = X, B = never> =
   (<T>() => T extends X ? 1 : 2) extends <T>() => T extends Y ? 1 : 2 ? A : B;
@@ -306,7 +309,7 @@ type MutationInput<
  */
 type CreateModelInput<
   Model extends Record<string, unknown>,
-  ModelMeta extends Record<string, unknown>,
+  ModelMeta extends ModelMetaShape,
 > =
   Equal<ModelIdentifier<ModelMeta>, { id: string }> extends true
     ? Partial<ModelIdentifier<ModelMeta>> & Omit<MutationInput<Model>, 'id'>
@@ -492,7 +495,7 @@ export type ModelSortDirection = 'ASC' | 'DESC';
 
 type ModelMetaShape = {
   secondaryIndexes: SecondaryIndexIrShape[];
-  identifier: string;
+  identifier: PrimaryIndexIrShape;
 };
 
 // TODO: remove export. added for debugging.
@@ -542,9 +545,8 @@ export type ModelTypesClient<
     },
   ): SingularReturnValue<Prettify<ReturnValue<Model, FlatModel, SelectionSet>>>;
   list<SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[]>(
-    options?: Partial<ModelIdentifier<ModelMeta>> & {
+    options?: ListPkOptions<ModelMeta, Enums> & {
       filter?: ModelFilter<Model>;
-      sortDirection?: ModelSortDirection;
       limit?: number;
       nextToken?: string | null;
       selectionSet?: SelectionSet;
@@ -644,7 +646,7 @@ type ModelTypesSSRCookies<
     },
   ): SingularReturnValue<Prettify<ReturnValue<Model, FlatModel, SelectionSet>>>;
   list<SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[]>(
-    options?: Partial<ModelIdentifier<ModelMeta>> & {
+    options?: ListPkOptions<ModelMeta, Enums> & {
       filter?: ModelFilter<Model>;
       sortDirection?: ModelSortDirection;
       limit?: number;
@@ -709,7 +711,7 @@ type ModelTypesSSRRequest<
   ): SingularReturnValue<Prettify<ReturnValue<Model, FlatModel, SelectionSet>>>;
   list<SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[]>(
     contextSpec: any,
-    options?: Partial<ModelIdentifier<ModelMeta>> & {
+    options?: ListPkOptions<ModelMeta, Enums> & {
       filter?: ModelFilter<Model>;
       sortDirection?: ModelSortDirection;
       limit?: number;
@@ -883,14 +885,20 @@ export type CustomHeaders =
   | ((requestOptions?: RequestOptions) => Promise<Record<string, string>>);
 
 /**
- * SecondaryIndex index types and query methods
+ * PrimaryIndex field types and query methods
  */
-export type SecondaryIndexIrShape = {
+export interface PrimaryIndexIrShape {
+  pk: { [key: string]: string | number };
+  sk: { [key: string]: string | number } | never;
+}
+
+/**
+ * SecondaryIndex field types and query methods
+ */
+export interface SecondaryIndexIrShape extends PrimaryIndexIrShape {
   defaultQueryFieldSuffix: string;
   queryField: string;
-  pk: { [key: string]: string | number };
-  sk: { [key: string]: string | number };
-};
+}
 
 type IndexQueryMethodsFromIR<
   SecondaryIdxTuple extends SecondaryIndexIrShape[],
@@ -911,6 +919,35 @@ type IndexQueryMethodsFromIR<
     >
   : Res;
 
+type ListPkOptions<
+  ModelMeta extends ModelMetaShape,
+  Enums extends Record<string, string>,
+> = ModelMeta['identifier']['sk'] extends never
+  ? unknown
+  : Prettify<
+      Partial<IndexQueryInput<ModelMeta['identifier'], Enums>> & {
+        sortDirection?: ModelSortDirection;
+      }
+    >;
+
+/**
+ * Accepts a PrimaryIndexIr or SecondaryIndexIr and returns resolved parameters
+ */
+type IndexQueryInput<
+  Idx extends PrimaryIndexIrShape,
+  Enums extends Record<string, string>,
+> = {
+  [PKField in keyof Idx['pk']]: Idx['pk'][PKField] extends `${deferredRefResolvingPrefix}${infer R}`
+    ? Enums[R]
+    : Idx['pk'][PKField];
+} & {
+  [SKField in keyof Idx['sk']]+?: number extends Idx['sk'][SKField]
+    ? NumericFilter
+    : Idx['sk'][SKField] extends `${deferredRefResolvingPrefix}${infer R}`
+      ? StringFilter<Enums[R]>
+      : StringFilter<Idx['sk'][SKField] & string>;
+};
+
 type IndexQueryMethodSignature<
   Idx extends SecondaryIndexIrShape,
   ModelName extends string,
@@ -924,17 +961,7 @@ type IndexQueryMethodSignature<
     FlatModel extends Record<string, unknown> = ResolvedModel<Model>,
     SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[],
   >(
-    input: {
-      [PKField in keyof Idx['pk']]: Idx['pk'][PKField] extends `${deferredRefResolvingPrefix}${infer R}`
-        ? Enums[R]
-        : Idx['pk'][PKField];
-    } & {
-      [SKField in keyof Idx['sk']]+?: number extends Idx['sk'][SKField]
-        ? NumericFilter
-        : Idx['sk'][SKField] extends `${deferredRefResolvingPrefix}${infer R}`
-          ? StringFilter<Enums[R]>
-          : StringFilter<Idx['sk'][SKField] & string>;
-    },
+    input: IndexQueryInput<Idx, Enums>,
     options?: {
       filter?: ModelFilter<Model>;
       sortDirection?: ModelSortDirection;

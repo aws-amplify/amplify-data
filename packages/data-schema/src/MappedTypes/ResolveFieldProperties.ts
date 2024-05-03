@@ -10,6 +10,7 @@ import type {
   ModelRelationalField,
   ModelRelationalFieldParamShape,
 } from '../ModelRelationalField';
+import type { PrimaryIndexIrShape } from '../runtime/';
 
 import type { ResolveSchema, SchemaTypes } from './ResolveSchema';
 import type { InjectImplicitModelFields } from './ImplicitFieldInjector';
@@ -31,7 +32,7 @@ export type ResolveFieldProperties<
   ResolvedSchema = ResolveSchema<Schema>,
   IdentifierMeta extends Record<
     string,
-    { identifier: string }
+    { identifier: PrimaryIndexIrShape }
   > = ModelIdentifier<SchemaTypes<Schema>>,
   FieldsWithInjectedImplicitFields = InjectImplicitModelFields<
     ResolvedSchema,
@@ -56,7 +57,7 @@ export type ResolveStaticFieldProperties<
   ResolvedSchema = ResolveSchema<Schema>,
   FieldsWithInjectedImplicitFields = InjectImplicitModelFields<
     ResolvedSchema & ImplicitModelsSchema,
-    object
+    never
   >,
   FieldsWithRelationships = ResolveModelsRelationalAndRefFields<
     FieldsWithInjectedImplicitFields,

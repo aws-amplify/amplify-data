@@ -2336,4 +2336,4 @@ bench('99 complex models CRUDL', async () => {
   // await client.models.Todo.delete({ todoId: result.data.todoId });
 
   // await client.models.Todo.list();
-}).types([2928215, 'instantiations']);
+}).types([2903329, 'instantiations']);

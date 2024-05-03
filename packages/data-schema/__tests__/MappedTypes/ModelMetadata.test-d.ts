@@ -27,7 +27,7 @@ describe('ModelIdentifier', () => {
     type Schema = typeof s;
 
     type Resolved = ModelIdentifier<SchemaTypes<Schema>>;
-    type Expected = { Post: { identifier: 'id' } };
+    type Expected = { Post: { identifier: { pk: { id: string }; sk: never } } };
 
     type test = Expect<Equal<Resolved, Expected>>;
   });
@@ -45,7 +45,9 @@ describe('ModelIdentifier', () => {
     type Schema = typeof s;
 
     type Resolved = ModelIdentifier<SchemaTypes<Schema>>;
-    type Expected = { Post: { identifier: 'title' } };
+    type Expected = {
+      Post: { identifier: { pk: { title: string }; sk: never } };
+    };
 
     type test = Expect<Equal<Resolved, Expected>>;
   });
@@ -63,7 +65,11 @@ describe('ModelIdentifier', () => {
 
     type Schema = typeof s;
     type Resolved = ModelIdentifier<SchemaTypes<Schema>>;
-    type Expected = { Post: { identifier: 'title' | 'createdAt' } };
+    type Expected = {
+      Post: {
+        identifier: { pk: { title: string }; sk: { createdAt: string } };
+      };
+    };
 
     type test = Expect<Equal<Resolved, Expected>>;
   });
@@ -190,6 +196,9 @@ describe('RelationalMetadata', () => {
       NonModelTypesShape,
       ResolveSchema<Schema>
     >;
+
+    type TTT = ModelIdentifier<SchemaTypes<Schema>>;
+
     type Resolved = Prettify<
       RelationalMetadata<
         ResolveSchema<Schema>,
@@ -321,13 +330,14 @@ describe('RelationalMetadata', () => {
         .model({
           customPk: a.id().required(),
           title: a.string().required(),
-          comments: a.hasMany('Comment', 'commentId'),
+          comments: a.hasMany('Comment', ['commentId', 'commentTitle']),
         })
         .identifier(['customPk', 'title']),
       Comment: a.model({
         content: a.string(),
         commentId: a.id(),
-        post: a.belongsTo('Post', 'commentId'),
+        commentTitle: a.string(),
+        post: a.belongsTo('Post', ['commentId', 'commentTitle']),
       }),
     });
 
@@ -338,6 +348,7 @@ describe('RelationalMetadata', () => {
       NonModelTypesShape,
       ResolveSchema<Schema>
     >;
+
     type Resolved = Prettify<
       RelationalMetadata<
         ResolveSchema<Schema>,
