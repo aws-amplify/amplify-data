@@ -20,6 +20,7 @@ import type {
   CombinedModelSchema,
   CombinedSchemaIndexesUnion,
 } from '../CombineSchema';
+import type { SchemaMetadata } from './utilities/SchemaMetadata';
 import type { Brand, SpreadTuple } from '../util';
 
 export type ClientSchema<
@@ -33,13 +34,27 @@ export type ClientSchema<
 
 type InternalClientSchema<
   CustomerSchema extends ModelSchemaContents | BaseSchema<any, any>,
+  Metadata extends SchemaMetadata<any> = never,
 > = CustomerSchema extends ModelSchemaContents
   ? {
-      [K in keyof CustomerSchema]: ClientSchemaProperty<CustomerSchema, K>;
+      [K in keyof CustomerSchema]: ClientSchemaProperty<
+        CustomerSchema,
+        Metadata,
+        K
+      >;
     }
-  : InternalClientSchema<CustomerSchema['data']['types']>;
+  : CustomerSchema extends BaseSchema<any, any>
+    ? InternalClientSchema<
+        CustomerSchema['data']['types'],
+        SchemaMetadata<CustomerSchema>
+      >
+    : never;
 
-type ClientSchemaProperty<T extends ModelSchemaContents, K extends keyof T> =
+type ClientSchemaProperty<
+  T extends ModelSchemaContents,
+  Metadata extends SchemaMetadata<any>,
+  K extends keyof T,
+> =
   T[K] extends Brand<'enum'>
     ? RemapEnum<T, T[K]>
     : T[K] extends Brand<'customType'>
@@ -51,7 +66,7 @@ type ClientSchemaProperty<T extends ModelSchemaContents, K extends keyof T> =
           >
         ? RemapCustomOperation<T, T[K]>
         : T[K] extends Brand<'modelType'>
-          ? RemapModel<T, T[K]>
+          ? RemapModel<T, Metadata, T[K]>
           : never;
 
 type RemapEnum<_T extends ModelSchemaContents, E> =
@@ -67,9 +82,13 @@ type RemapCustomOperation<T extends ModelSchemaContents, E> =
     ? ClientCustomOperation<InternalClientSchema<T>, CO>
     : 'c';
 
-type RemapModel<T extends ModelSchemaContents, E> =
+type RemapModel<
+  T extends ModelSchemaContents,
+  Metadata extends SchemaMetadata<any>,
+  E,
+> =
   E extends ModelType<infer MT, any>
-    ? ClientModel<InternalClientSchema<T>, MT>
+    ? ClientModel<InternalClientSchema<T>, Metadata, MT>
     : 'd';
 
 type GetInternalClientSchema<Schema> =
@@ -109,7 +128,7 @@ type Select<T, M> = {
 export type ClientSchemaByEntityTypeBaseShape = {
   enums: Record<string, ClientEnum<any>>;
   customTypes: Record<string, ClientCustomType<any, any>>;
-  models: Record<string, ClientModel<any, any>>;
+  models: Record<string, ClientModel<any, any, any>>;
   queries: Record<string, ClientCustomOperation<any, any>>;
   mutations: Record<string, ClientCustomOperation<any, any>>;
   subscriptions: Record<string, ClientCustomOperation<any, any>>;

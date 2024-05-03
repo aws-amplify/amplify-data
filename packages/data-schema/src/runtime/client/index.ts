@@ -521,7 +521,7 @@ export type ModelTypesClient<
         authToken?: string;
         headers?: CustomHeaders;
       },
-    ) => SingularReturnValue<Model>;
+    ) => SingularReturnValue<Model['type']>;
     update: (
       model: Prettify<Model['identifier'] & Partial<MutationInput<Model>>>,
       options?: {
@@ -529,7 +529,7 @@ export type ModelTypesClient<
         authToken?: string;
         headers?: CustomHeaders;
       },
-    ) => SingularReturnValue<Model>;
+    ) => SingularReturnValue<Model['type']>;
     delete: (
       identifier: Model['identifier'],
       options?: {
@@ -537,7 +537,7 @@ export type ModelTypesClient<
         authToken?: string;
         headers?: CustomHeaders;
       },
-    ) => SingularReturnValue<Model>;
+    ) => SingularReturnValue<Model['type']>;
     get<SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[]>(
       identifier: Model['identifier'],
       options?: {
