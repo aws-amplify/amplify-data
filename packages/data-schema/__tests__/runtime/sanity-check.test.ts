@@ -114,6 +114,12 @@ describe('a', () => {
       },
     });
 
+    const { data: created } = await _client.models.Comment.create({
+      cpkA: '123',
+      cpkB: 123,
+      body: 'something',
+    });
+
     const { data: comment } = await _client.models.Comment.get({
       cpkA: 'sdf',
       cpkB: 123,

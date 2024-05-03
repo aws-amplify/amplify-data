@@ -297,12 +297,18 @@ type WritableKeys<T> = {
 type MutationInput<
   Model extends ClientSchemaByEntityTypeBaseShape['models'][string],
   WritableFields = Pick<Model['type'], WritableKeys<Model['type']>>,
-> = {
+> = WithNullablesAsOptional<{
   [Prop in keyof WritableFields as WritableFields[Prop] extends (
     ...args: any
   ) => any
     ? never
     : Prop]: WritableFields[Prop];
+}>;
+
+type WithNullablesAsOptional<T> = {
+  [K in keyof T as null extends T[K] ? K : never]+?: T[K];
+} & {
+  [K in keyof T as null extends T[K] ? never : K]: T[K];
 };
 
 /**
