@@ -40,7 +40,6 @@ type InternalModelFields = Record<
 
 type ModelData = {
   fields: ModelFields;
-  // TODO: also convert to {pk; sk;} shape?
   identifier: ReadonlyArray<string>;
   secondaryIndexes: ReadonlyArray<ModelIndexType<any, any, any, any, any>>;
   authorization: Authorization<any, any, any>[];
@@ -75,20 +74,27 @@ export type ModelTypeParamShape = {
  * indicator string, and resolve its corresponding type later in
  * packages/data-schema/src/runtime/client/index.ts
  */
-type ExtractSecondaryIndexIRFields<T extends ModelTypeParamShape> = {
+export type ExtractSecondaryIndexIRFields<
+  T extends ModelTypeParamShape,
+  RequiredOnly extends boolean = false,
+> = {
   [FieldProp in keyof T['fields'] as T['fields'][FieldProp] extends ModelField<
     infer R,
     any,
     any
   >
     ? NonNullable<R> extends string | number
-      ? FieldProp
-      : never
-    : T['fields'][FieldProp] extends EnumType<EnumTypeParamShape>
-      ? FieldProp
-      : T['fields'][FieldProp] extends RefType<RefTypeParamShape, any, any>
+      ? RequiredOnly extends false
         ? FieldProp
-        : never]: T['fields'][FieldProp] extends ModelField<infer R, any, any>
+        : null extends R
+          ? never
+          : FieldProp
+      : never
+    : T['fields'][FieldProp] extends
+          | EnumType<EnumTypeParamShape>
+          | RefType<RefTypeParamShape, any, any>
+      ? FieldProp
+      : never]: T['fields'][FieldProp] extends ModelField<infer R, any, any>
     ? R
     : T['fields'][FieldProp] extends EnumType<infer R>
       ? R['values'][number]
@@ -197,8 +203,8 @@ export type ModelType<
 > = Omit<
   {
     identifier<
-      const PrimaryIndexFields = ExtractSecondaryIndexIRFields<T>,
-      const PrimaryIndexPool extends string = keyof PrimaryIndexFields & string,
+      PrimaryIndexFields = ExtractSecondaryIndexIRFields<T, true>,
+      PrimaryIndexPool extends string = keyof PrimaryIndexFields & string,
       const ID extends ReadonlyArray<PrimaryIndexPool> = readonly [],
       const PrimaryIndexIR extends PrimaryIndexIrShape = PrimaryIndexFieldsToIR<
         ID,

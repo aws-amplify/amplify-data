@@ -83,7 +83,6 @@ type ExtractModelIdentifier<
 type NormalizeInputFields<
   ModelFields,
   IdentifierMeta extends { identifier: PrimaryIndexIrShape },
-  // TODO: bench - param or inline or separate type?
   IdFields extends keyof ModelFields =
     | (keyof IdentifierMeta['identifier']['pk'] & keyof ModelFields)
     | (IdentifierMeta['identifier']['sk'] extends never
