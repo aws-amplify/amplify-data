@@ -1,5 +1,11 @@
 # @aws-amplify/data-schema
 
+## 1.1.4
+
+### Patch Changes
+
+- 555d0ff: fix identifier - all supported data types; correct SK for list
+
 ## 1.1.3
 
 ### Patch Changes
