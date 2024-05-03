@@ -20,6 +20,7 @@ export interface ClientCustomOperation<
   Op extends CustomOperationParamShape,
 > extends ClientSchemaProperty {
   __entityType: CustomOperationSubType<Op>;
+  operationType: Op['typeName'];
 
   /**
    * Handler type for lambda function implementations. E.g.,

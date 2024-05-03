@@ -7,7 +7,7 @@ import type {
   GenericModelSchema,
   ModelSchemaContents,
   ModelType,
-  RDSModelSchema,
+  // RDSModelSchema,
 } from '../ModelSchema';
 
 import type {
@@ -146,6 +146,3 @@ export type ClientSchemaByEntityType<T> = {
   // TODO: appsync handlers? ... do we need something distinct here ... brain is stuck.
   // handlers: Select<T, { __entityType: 'customHandler' }>;
 };
-
-// type _T2 = ClientSchemaByEntityType<_Schema>;
-// type _T3 = _T2['queries']['echo']['returnType'];

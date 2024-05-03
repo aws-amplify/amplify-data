@@ -747,22 +747,22 @@ export type ModelTypes<
 };
 
 export type CustomQueries<
-  Schema extends Record<any, any>,
+  T extends Record<any, any>,
   Context extends ContextType = 'CLIENT',
-  ModelMeta extends Record<any, any> = ExtractModelMeta<Schema>,
-> = CustomOperations<Schema, 'Query', Context, ModelMeta>;
+  Schema extends ClientSchemaByEntityType<T> = ClientSchemaByEntityType<T>,
+> = CustomOperations<Schema['queries'], Context>;
 
 export type CustomMutations<
-  Schema extends Record<any, any>,
+  T extends Record<any, any>,
   Context extends ContextType = 'CLIENT',
-  ModelMeta extends Record<any, any> = ExtractModelMeta<Schema>,
-> = CustomOperations<Schema, 'Mutation', Context, ModelMeta>;
+  Schema extends ClientSchemaByEntityType<T> = ClientSchemaByEntityType<T>,
+> = CustomOperations<Schema['mutations'], Context>;
 
 export type CustomSubscriptions<
-  Schema extends Record<any, any>,
+  T extends Record<any, any>,
   Context extends ContextType = 'CLIENT',
-  ModelMeta extends Record<any, any> = ExtractModelMeta<Schema>,
-> = CustomOperations<Schema, 'Subscription', Context, ModelMeta>;
+  Schema extends ClientSchemaByEntityType<T> = ClientSchemaByEntityType<T>,
+> = CustomOperations<Schema['subscriptions'], Context>;
 
 type CustomOperationMethodOptions = {
   // selectionSet?: SelectionSet;
@@ -781,39 +781,26 @@ type CustomOperationFnParams<Args extends Record<string, unknown> | never> = [
   : [Args, CustomOperationMethodOptions?];
 
 export type CustomOperations<
-  Schema extends Record<any, any>,
-  OperationType extends 'Query' | 'Mutation' | 'Subscription',
+  OperationDefs extends ClientSchemaByEntityTypeBaseShape[
+    | 'queries'
+    | 'mutations'
+    | 'subscriptions'],
   Context extends ContextType = 'CLIENT',
-  ModelMeta extends Record<any, any> = ExtractModelMeta<Schema>,
 > = {
-  [OpName in keyof ModelMeta['customOperations'] as ModelMeta['customOperations'][OpName]['typeName'] extends OperationType
-    ? OpName
-    : never]: {
+  [OpName in keyof OperationDefs]: {
     CLIENT: (
-      ...params: CustomOperationFnParams<
-        ModelMeta['customOperations'][OpName]['arguments']
-      >
+      ...params: CustomOperationFnParams<OperationDefs[OpName]['args']>
     ) => // we only generate subscriptions on the clientside; so this isn't applied to COOKIES | REQUEST
-    ModelMeta['customOperations'][OpName]['typeName'] extends 'Subscription'
-      ? ObservedReturnValue<ModelMeta['customOperations'][OpName]['returnType']>
-      : SingularReturnValue<
-          ModelMeta['customOperations'][OpName]['returnType']
-        >;
+    OperationDefs[OpName]['operationType'] extends 'Subscription'
+      ? ObservedReturnValue<OperationDefs[OpName]['returnType']>
+      : SingularReturnValue<OperationDefs[OpName]['returnType']>;
     COOKIES: (
-      ...params: CustomOperationFnParams<
-        ModelMeta['customOperations'][OpName]['arguments']
-      >
-    ) => SingularReturnValue<
-      ModelMeta['customOperations'][OpName]['returnType']
-    >;
+      ...params: CustomOperationFnParams<OperationDefs[OpName]['args']>
+    ) => SingularReturnValue<OperationDefs[OpName]['returnType']>;
     REQUEST: (
       contextSpec: any,
-      ...params: CustomOperationFnParams<
-        ModelMeta['customOperations'][OpName]['arguments']
-      >
-    ) => SingularReturnValue<
-      ModelMeta['customOperations'][OpName]['returnType']
-    >;
+      ...params: CustomOperationFnParams<OperationDefs[OpName]['args']>
+    ) => SingularReturnValue<OperationDefs[OpName]['returnType']>;
   }[Context];
 };
 

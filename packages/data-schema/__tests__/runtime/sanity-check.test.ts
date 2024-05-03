@@ -106,5 +106,17 @@ describe('a', () => {
     const { data: lazyComments } = await posts[0]!.comments();
     const lazyComment = lazyComments[0];
     const { data: lazyPost } = await lazyComment.post();
+
+    const { data: echoResult } = await _client.queries.echo({
+      message: 'something',
+    });
+
+    const { data: likeAllPostsResult } = await _client.mutations.likeAllPosts();
+    const likes = likeAllPostsResult?.[0]?.likes;
+
+    const { data: likePostResult } = await _client.mutations.likePost({
+      postId: 'something',
+    });
+    const likes2 = likePostResult?.likes;
   });
 });
