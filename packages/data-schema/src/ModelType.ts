@@ -197,7 +197,8 @@ export type ModelType<
 > = Omit<
   {
     identifier<
-      // TODO: bench collapsing these type params
+      // TODO bench collapsing these type params
+      // TODO 2 - only required fields for PK
       const PrimaryIndexFields = ExtractSecondaryIndexIRFields<T>,
       const PrimaryIndexPool extends string = keyof PrimaryIndexFields & string,
       const ID extends ReadonlyArray<PrimaryIndexPool> = readonly [],

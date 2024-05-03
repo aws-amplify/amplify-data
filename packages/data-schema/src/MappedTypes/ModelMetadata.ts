@@ -25,7 +25,7 @@ export type ModelSecondaryIndexes<T> = {
 export type RelationalMetadata<
   ResolvedSchema,
   ResolvedFields extends Record<string, unknown>,
-  IdentifierMeta extends Record<string, any>,
+  IdentifierMeta extends Record<string, { identifier: PrimaryIndexIrShape }>,
 > = UnionToIntersection<
   ExcludeEmpty<
     {
@@ -75,11 +75,19 @@ export type RelationalMetadata<
   >
 >;
 
-type ExtractModelIdentifier<ModelName, IdentifierMeta> =
-  ModelName extends keyof IdentifierMeta ? IdentifierMeta[ModelName] : never;
+type ExtractModelIdentifier<
+  ModelName,
+  IdentifierMeta extends Record<string, { identifier: PrimaryIndexIrShape }>,
+> = ModelName extends keyof IdentifierMeta ? IdentifierMeta[ModelName] : never;
 
 type NormalizeInputFields<
   ModelFields,
-  IdentifierMeta extends Record<string, any>,
-> = Partial<Omit<ModelFields, IdentifierMeta['identifier']>> &
-  Required<Pick<ModelFields, IdentifierMeta['identifier']>>;
+  IdentifierMeta extends { identifier: PrimaryIndexIrShape },
+  // TODO: bench - param or inline or separate type?
+  IdFields extends keyof ModelFields =
+    | (keyof IdentifierMeta['identifier']['pk'] & keyof ModelFields)
+    | (IdentifierMeta['identifier']['sk'] extends never
+        ? never
+        : keyof IdentifierMeta['identifier']['sk'] & keyof ModelFields),
+> = Partial<Omit<ModelFields, IdFields>> &
+  Required<Pick<ModelFields, IdFields>>;
