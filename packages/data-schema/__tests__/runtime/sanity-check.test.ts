@@ -1,5 +1,7 @@
 import { a, ClientSchema } from '../../src/index';
+import { ClientSchemaByEntityType } from '../../src/ClientSchema';
 import { ClientExtensions } from '../../src/runtime';
+import { ExtractNestedTypes } from '../../src/ClientSchema/utilities/ExtractNestedTypes';
 
 describe('a', () => {
   test('b', async () => {
@@ -49,6 +51,10 @@ describe('a', () => {
 
         SomeThing: a.model({
           name: a.string(),
+          deletionState: a.enum(['active', 'deleted']),
+          nestedModelThing: a.customType({
+            details: a.string(),
+          }),
         }),
 
         Post: a
@@ -74,7 +80,6 @@ describe('a', () => {
             body: a.string().required(),
             postId: a.id(),
             post: a.belongsTo('Post', 'postId'),
-            deletionState: a.enum(['active', 'deleted']),
           })
           .identifier(['cpkA', 'cpkB'])
           .authorization((allow) => [allow.publicApiKey()]),
@@ -85,13 +90,17 @@ describe('a', () => {
       ]);
 
     type Schema = ClientSchema<typeof schema>;
-    type Comment = Schema['Comment']['type']['deletionState'];
+    type Comment = Schema['Comment']['nestedTypes'];
     type CommentPK = Schema['Comment']['identifier'];
     type Post = Schema['Post']['type'];
 
-    type Something = Schema['SomeThing']['type']['someGroupField'];
+    type Something = Schema['SomeThing']['nestedTypes']['nestedModelThing'];
 
     type Status = Schema['Status']['type'];
+
+    type ByType = ClientSchemaByEntityType<Schema>;
+    // type Models = ByType['models'][string];
+    type Nested = ExtractNestedTypes<ByType>;
 
     const _client = {} as ClientExtensions<Schema>;
 
@@ -118,7 +127,6 @@ describe('a', () => {
       cpkA: '123',
       cpkB: 123,
       body: 'something',
-      deletionState: 'active',
     });
 
     const { data: comment } = await _client.models.Comment.get({

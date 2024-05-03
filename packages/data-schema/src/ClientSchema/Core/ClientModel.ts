@@ -6,6 +6,8 @@ import { SchemaMetadata } from '../utilities/SchemaMetadata';
 import { UnionToIntersection } from '@aws-amplify/data-schema-types';
 import { ModelField } from '../../ModelField';
 import { ModelRelationalField } from '../../ModelRelationalField';
+import { EnumType, EnumTypeParamShape } from '../../EnumType';
+import { CustomType, CustomTypeParamShape } from '../../CustomType';
 import { RefType } from '../../RefType';
 
 export interface ClientModel<
@@ -16,6 +18,9 @@ export interface ClientModel<
   __entityType: 'model';
   type: ClientFields<Bag, Metadata, T>;
   identifier: ModelIdentifier<Bag, T>;
+
+  // This makes identifying nested types from `ClientSchema<...>` more tenable,
+  nestedTypes: NestedTypes<ClientFields<Bag, Metadata, T>, T>;
 }
 
 type ClientFields<
@@ -63,3 +68,16 @@ type ImpliedAuthFieldsFromFields<T> = UnionToIntersection<
       : object
     : object
 >;
+
+type NestedTypes<
+  Bag extends Record<string, unknown>,
+  T extends ModelTypeParamShape,
+> = {
+  [K in keyof T['fields'] as T['fields'][K] extends
+    | EnumType<EnumTypeParamShape>
+    | CustomType<CustomTypeParamShape>
+    ? K extends string
+      ? `${K}` // Possibly unnecessary to rename here. But, ready to do so ...
+      : never
+    : never]: K extends keyof Bag ? Bag[K] : never;
+};
