@@ -42,7 +42,7 @@ export function generateCustomOperationsProperty<
   // if that occurs, we need to *not error* while we wait. handling for late configuration
   // occurs in `generateClient()`. we do not need to subscribe to Hub events here.
   if (!config) {
-    return {} as CustomOpsProperty<T, OpType>;
+    return {} as any;
   }
 
   const modelIntrospection: ModelIntrospectionSchema | undefined =
@@ -50,14 +50,14 @@ export function generateCustomOperationsProperty<
 
   // model intro schema might be absent if there's not actually a configured GraphQL API
   if (!modelIntrospection) {
-    return {} as CustomOpsProperty<T, OpType>;
+    return {} as any;
   }
 
   // custom operations will be absent from model intro schema if no custom ops
   // are present on the source schema.
   const operations = modelIntrospection[operationsType];
   if (!operations) {
-    return {} as CustomOpsProperty<T, OpType>;
+    return {} as any;
   }
 
   const ops = {} as CustomOpsProperty<T, OpType>;
@@ -73,7 +73,7 @@ export function generateCustomOperationsProperty<
     );
   }
 
-  return ops;
+  return ops as any;
 }
 
 export function generateCustomMutationsProperty<T extends Record<any, any>>(

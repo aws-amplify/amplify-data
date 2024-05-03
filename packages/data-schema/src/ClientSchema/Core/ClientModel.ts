@@ -43,7 +43,9 @@ type AuthFields<
   Metadata extends SchemaMetadata<any>,
   Model extends ModelTypeParamShape,
 > = (Model['authorization'][number] extends never
-  ? Metadata['authFields']
+  ? Metadata['authFields'] extends never
+    ? object
+    : Metadata['authFields']
   : ImpliedAuthFields<Model['authorization'][number]> extends never
     ? object
     : ImpliedAuthFields<Model['authorization'][number]>) &

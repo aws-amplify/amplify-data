@@ -65,7 +65,7 @@ describe('a', () => {
               .queryField('myCustomIdx')
               .sortKeys(['updatedAt', 'viewCount']),
           ])
-          .authorization((allow) => [allow.publicApiKey(), allow.owner()]),
+          .authorization((allow) => allow.publicApiKey()),
 
         Comment: a
           .model({
@@ -74,18 +74,22 @@ describe('a', () => {
             body: a.string().required(),
             postId: a.id(),
             post: a.belongsTo('Post', 'postId'),
+            deletionState: a.enum(['active', 'deleted']),
           })
           .identifier(['cpkA', 'cpkB'])
           .authorization((allow) => [allow.publicApiKey()]),
       })
-      .authorization((allow) => [allow.groupDefinedIn('groupOwner')]);
+      .authorization((allow) => [
+        allow.publicApiKey(),
+        allow.groupDefinedIn('someGroupField'),
+      ]);
 
     type Schema = ClientSchema<typeof schema>;
-    type Comment = Schema['Comment']['type'];
+    type Comment = Schema['Comment']['type']['deletionState'];
     type CommentPK = Schema['Comment']['identifier'];
     type Post = Schema['Post']['type'];
 
-    type Something = Schema['SomeThing']['type']['groupOwner'];
+    type Something = Schema['SomeThing']['type']['someGroupField'];
 
     type Status = Schema['Status']['type'];
 
