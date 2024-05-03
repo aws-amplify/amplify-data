@@ -3,6 +3,8 @@ import {
   ModelRelationalField,
   ModelRelationalFieldParamShape,
 } from '../../ModelRelationalField';
+import { EnumType } from '../../EnumType';
+import { CustomType } from '../../CustomType';
 import { RefType } from '../../RefType';
 import { ResolveRef } from './ResolveRef';
 import { LazyLoader } from '../../runtime';
@@ -27,7 +29,11 @@ export type ResolveIndividualField<Bag extends Record<string, any>, T> =
       ? ResolveRef<RefShape, Bag>
       : T extends ModelRelationalField<infer RelationshipShape, any, any, any>
         ? ResolveRelationship<Bag, RelationshipShape>
-        : never;
+        : T extends CustomType<infer CT>
+          ? ResolveFields<Bag, CT>
+          : T extends EnumType<infer ET>
+            ? ET['values'][number]
+            : never;
 
 type ResolveRelationship<
   Bag extends Record<string, any>,

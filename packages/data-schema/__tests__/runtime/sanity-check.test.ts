@@ -118,6 +118,7 @@ describe('a', () => {
       cpkA: '123',
       cpkB: 123,
       body: 'something',
+      deletionState: 'active',
     });
 
     const { data: comment } = await _client.models.Comment.get({
