@@ -4,7 +4,6 @@
   "license": "Apache-2.0",
   "description": "",
   "private": true,
-  "type": "module",
   "main": "schema.bench.ts",
   "scripts": {
     "bench": "tsx",
