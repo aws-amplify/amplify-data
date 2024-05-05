@@ -16,6 +16,8 @@ import {
   ClientSchemaByEntityType,
   ClientSchemaByEntityTypeBaseShape,
 } from '../../ClientSchema';
+import { ExtractNestedTypes } from '../../ClientSchema/utilities/ExtractNestedTypes';
+import { Select } from '../../util';
 
 // temporarily export symbols from `data-schema-types` because in case part of the
 // problem with the runtime -> data-schema migration comes down to a mismatch
@@ -828,10 +830,17 @@ export type CustomOperations<
  * }
  */
 export type EnumTypes<T extends Record<any, any>> = {
-  [EnumName in keyof ClientSchemaByEntityType<T>['enums']]: {
-    values: () => Array<ClientSchemaByEntityType<T>['enums'][EnumName]['type']>;
+  [EnumName in keyof AllEnumTypesRecursively<T>]: {
+    values: () => Array<AllEnumTypesRecursively<T>[EnumName]['type']>;
   };
 };
+
+type AllEnumTypesRecursively<T extends Record<any, any>> =
+  ClientSchemaByEntityType<T>['enums'] &
+    Select<
+      ExtractNestedTypes<ClientSchemaByEntityType<T>>,
+      { __entityType: 'enum' }
+    >;
 
 /**
  * Request options that are passed to custom header functions.

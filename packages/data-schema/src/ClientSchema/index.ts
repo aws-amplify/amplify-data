@@ -21,7 +21,7 @@ import type {
   CombinedSchemaIndexesUnion,
 } from '../CombineSchema';
 import type { SchemaMetadata } from './utilities/SchemaMetadata';
-import type { Brand, SpreadTuple } from '../util';
+import type { Brand, Select, SpreadTuple } from '../util';
 
 export type ClientSchema<
   Schema extends GenericModelSchema<any> | CombinedModelSchema<any>,
@@ -120,10 +120,6 @@ type InternalCombinedSchema<
 }>;
 
 // not sure where to put these types yet
-
-type Select<T, M> = {
-  [K in keyof T as T[K] extends M ? K : never]: T[K] extends M ? T[K] : never;
-};
 
 export type ClientSchemaByEntityTypeBaseShape = {
   enums: Record<string, ClientEnum<any>>;

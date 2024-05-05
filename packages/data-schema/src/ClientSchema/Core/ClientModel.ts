@@ -76,8 +76,15 @@ type NestedTypes<
   [K in keyof T['fields'] as T['fields'][K] extends
     | EnumType<EnumTypeParamShape>
     | CustomType<CustomTypeParamShape>
-    ? K extends string
-      ? `${K}` // Possibly unnecessary to rename here. But, ready to do so ...
-      : never
-    : never]: K extends keyof Bag ? Bag[K] : never;
+    ? K
+    : never]: K extends keyof Bag
+    ? {
+        // A little hackier than I'd like here.
+        // Ideally, adapt ClientEnum and ClientCustomType to work with us here instead.
+        __entityType: T['fields'][K] extends EnumType<EnumTypeParamShape>
+          ? 'enum'
+          : 'customType';
+        type: Bag[K];
+      }
+    : never;
 };

@@ -2,6 +2,8 @@ import { a, ClientSchema } from '../../src/index';
 import { ClientSchemaByEntityType } from '../../src/ClientSchema';
 import { ClientExtensions } from '../../src/runtime';
 import { ExtractNestedTypes } from '../../src/ClientSchema/utilities/ExtractNestedTypes';
+import { Prettify } from '@aws-amplify/data-schema-types';
+import { Select } from '../../src/util';
 
 describe('a', () => {
   test('b', async () => {
@@ -94,17 +96,21 @@ describe('a', () => {
     type CommentPK = Schema['Comment']['identifier'];
     type Post = Schema['Post']['type'];
 
-    type Something = Schema['SomeThing']['nestedTypes']['nestedModelThing'];
+    type Something =
+      Schema['SomeThing']['nestedTypes']['deletionState']['type'];
 
     type Status = Schema['Status']['type'];
 
+    type TopEnums = Prettify<ClientSchemaByEntityType<Schema>['enums']>;
     type ByType = ClientSchemaByEntityType<Schema>;
-    // type Models = ByType['models'][string];
-    type Nested = ExtractNestedTypes<ByType>;
+    type Nested = Prettify<
+      Select<ExtractNestedTypes<ByType>, { __entityType: 'enum' }>
+    >;
+    type AllEnums = TopEnums & Nested;
 
     const _client = {} as ClientExtensions<Schema>;
 
-    const status = _client.enums.Status.values();
+    const status = _client.enums.SomeThingDeletionState.values();
 
     const { data: posts } = await _client.models.Post.list({
       filter: {
