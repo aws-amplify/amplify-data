@@ -1,3 +1,6 @@
-export type { ClientSchema } from './ClientSchema';
+import * as a from './a';
+import { ClientSchema } from './ClientSchema';
 
-export * as a from './a';
+export { a };
+
+export type { ClientSchema };
