@@ -4,7 +4,7 @@
 
 ## a.hasMany() function
 
-Create a one-directional one-to-many relationship between two models using the `hasMany()` method.
+Create a one-directional one-to-many relationship between two models using the `hasMany("MODEL_NAME", "REFERENCE_FIELD(s)")` method.
 
 **Signature:**
 
@@ -58,6 +58,8 @@ string \| string\[\]
 
 </td><td>
 
+the field(s) that should be used to reference the related model
+
 
 </td></tr>
 </tbody></table>
@@ -66,4 +68,10 @@ string \| string\[\]
 ModelRelationalField&lt;ModelRelationalTypeArgFactory&lt;RM, ModelRelationshipTypes.hasMany, true&gt;, RM, "required", undefined&gt;
 
 a one-to-many relationship definition
+
+## Example
+
+const schema = a.schema(<!-- -->{ Member: a.model(<!-- -->{ name: a.string().required(), // 1. Create a reference field teamId: a.id(), // 2. Create a belongsTo relationship with the reference field team: a.belongsTo('Team', 'teamId'), }<!-- -->) .authorization(allow =<!-- -->&gt; \[allow.publicApiKey()\]),
+
+Team: a.model(<!-- -->{ mantra: a.string().required(), // 3. Create a hasMany relationship with the reference field // from the `Member`<!-- -->s model. members: a.hasMany('Member', 'teamId'), }<!-- -->) .authorization(allow =<!-- -->&gt; \[allow.publicApiKey()\]), }<!-- -->);
 

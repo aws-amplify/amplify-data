@@ -4,7 +4,7 @@
 
 ## a.hasOne() function
 
-Create a one-directional one-to-one relationship between two models using the `hasOne("MODEL_NAME")` method. A hasOne relationship always uses a reference to the related model's identifier. Typically this is the `id` field unless overwritten with the `identifier()` method.
+Create one-to-one relationship between two models using the `hasOne("MODEL_NAME", "REFERENCE_FIELD(s)")` method. A hasOne relationship always uses a reference to the related model's identifier. Typically this is the `id` field unless overwritten with the `identifier()` method.
 
 **Signature:**
 
@@ -58,6 +58,8 @@ string \| string\[\]
 
 </td><td>
 
+the field(s) that should be used to reference the related model
+
 
 </td></tr>
 </tbody></table>
@@ -66,4 +68,8 @@ string \| string\[\]
 ModelRelationalField&lt;ModelRelationalTypeArgFactory&lt;RM, ModelRelationshipTypes.hasOne, false&gt;, RM, "valueRequired", undefined&gt;
 
 a one-to-one relationship definition
+
+## Example
+
+const schema = a.schema(<!-- -->{ Cart: a.model(<!-- -->{ items: a.string().required().array(), // 1. Create reference field customerId: a.id(), // 2. Create relationship field with the reference field customer: a.belongsTo('Customer', 'customerId'), }<!-- -->), Customer: a.model(<!-- -->{ name: a.string(), // 3. Create relationship field with the reference field // from the Cart model activeCart: a.hasOne('Cart', 'customerId') }<!-- -->), }<!-- -->);
 

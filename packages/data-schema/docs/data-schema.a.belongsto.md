@@ -4,7 +4,7 @@
 
 ## a.belongsTo() function
 
-Make a `hasOne()` or `hasMany()` relationship bi-directional using the `belongsTo()` method. The belongsTo() method requires that a hasOne() or hasMany() relationship already exists from parent to the related model.
+Use `belongsTo()` to create a field to query the related `hasOne()` or `hasMany()` relationship. The belongsTo() method requires that a hasOne() or hasMany() relationship already exists from parent to the related model.
 
 **Signature:**
 
@@ -58,6 +58,8 @@ string \| string\[\]
 
 </td><td>
 
+the field(s) that should be used to reference the related model
+
 
 </td></tr>
 </tbody></table>
@@ -66,4 +68,14 @@ string \| string\[\]
 ModelRelationalField&lt;ModelRelationalTypeArgFactory&lt;RM, ModelRelationshipTypes.belongsTo, false&gt;, RM, "required" \| "valueRequired", undefined&gt;
 
 a belong-to relationship definition
+
+## Example 1
+
+// one-to-many relationship const schema = a.schema(<!-- -->{ Member: a.model(<!-- -->{ name: a.string().required(), // 1. Create a reference field teamId: a.id(), // 2. Create a belongsTo relationship with the reference field team: a.belongsTo('Team', 'teamId'), }<!-- -->) .authorization(allow =<!-- -->&gt; \[allow.publicApiKey()\]),
+
+Team: a.model(<!-- -->{ mantra: a.string().required(), // 3. Create a hasMany relationship with the reference field // from the `Member`<!-- -->s model. members: a.hasMany('Member', 'teamId'), }<!-- -->) .authorization(allow =<!-- -->&gt; \[allow.publicApiKey()\]), }<!-- -->);
+
+## Example 2
+
+// one-to-one relationship const schema = a.schema(<!-- -->{ Cart: a.model(<!-- -->{ items: a.string().required().array(), // 1. Create reference field customerId: a.id(), // 2. Create relationship field with the reference field customer: a.belongsTo('Customer', 'customerId'), }<!-- -->), Customer: a.model(<!-- -->{ name: a.string(), // 3. Create relationship field with the reference field // from the Cart model activeCart: a.hasOne('Cart', 'customerId') }<!-- -->), }<!-- -->);
 
