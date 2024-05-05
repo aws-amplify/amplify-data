@@ -11,7 +11,13 @@
     "resolveJsonModule": true,
     "noErrorTruncation": true, // prevents truncatation when hovering over type in VSCode
     "module": "esnext",
-    "moduleResolution": "bundler"
+    "moduleResolution": "bundler",
+    "paths": {
+      "@aws-amplify/data-schema-types": [
+        "./packages/data-schema-types/src/index.ts"
+      ],
+      "@aws-amplify/data-schema": ["./packages/data-schema/src/index.ts"]
+    }
   },
-  "exclude": ["**/node_modules", "**/dist", "__tests__"]
+  "exclude": ["**/node_modules", "**/dist", "**/lib-esm", "**/__tests__"]
 }
