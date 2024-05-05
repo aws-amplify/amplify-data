@@ -4,6 +4,8 @@
 
 ## a.query() function
 
+Use a custom query to define an API request that will retrieve backend data.
+
 **Signature:**
 
 ```typescript
@@ -18,4 +20,12 @@ export declare function query(): CustomOperation<{
 **Returns:**
 
 CustomOperation&lt;{ arguments: null; returnType: null; authorization: \[\]; typeName: 'Query'; handlers: null; }, 'for', typeof queryBrand&gt;
+
+a custom query
+
+## Example
+
+const schema = a.schema(<!-- -->{ echo: a .query() .arguments(<!-- -->{ content: a.string() }<!-- -->) .returns(a.ref('EchoResponse')) .authorization(allow =<!-- -->&gt; \[allow.publicApiKey()\]) // 3. set the function has the handler .handler(a.handler.function(echoHandler)),
+
+EchoResponse: a.customType(<!-- -->{ content: a.string(), executionDuration: a.float() }<!-- -->), }<!-- -->);
 

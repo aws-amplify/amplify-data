@@ -24,7 +24,7 @@ Description
 
 </td><td>
 
-Make a `hasOne()` or `hasMany()` relationship bi-directional using the `belongsTo()` method. The belongsTo() method requires that a hasOne() or hasMany() relationship already exists from parent to the related model.
+Use `belongsTo()` to create a field to query the related `hasOne()` or `hasMany()` relationship. The belongsTo() method requires that a hasOne() or hasMany() relationship already exists from parent to the related model.
 
 
 </td></tr>
@@ -56,6 +56,8 @@ The interface for merging up to 50 schemas into a single API.
 
 
 </td><td>
+
+Define a custom type. This type represents an inline, typed JSON object.
 
 
 </td></tr>
@@ -121,7 +123,7 @@ A float scalar type following represented server-side as an IEEE 754 floating po
 
 </td><td>
 
-Create a one-directional one-to-many relationship between two models using the `hasMany()` method.
+Create a one-directional one-to-many relationship between two models using the `hasMany("MODEL_NAME", "REFERENCE_FIELD(s)")` method.
 
 
 </td></tr>
@@ -132,7 +134,7 @@ Create a one-directional one-to-many relationship between two models using the `
 
 </td><td>
 
-Create a one-directional one-to-one relationship between two models using the `hasOne("MODEL_NAME")` method. A hasOne relationship always uses a reference to the related model's identifier. Typically this is the `id` field unless overwritten with the `identifier()` method.
+Create one-to-one relationship between two models using the `hasOne("MODEL_NAME", "REFERENCE_FIELD(s)")` method. A hasOne relationship always uses a reference to the related model's identifier. Typically this is the `id` field unless overwritten with the `identifier()` method.
 
 
 </td></tr>
@@ -198,6 +200,8 @@ A data model that creates a matching Amazon DynamoDB table and provides create, 
 
 </td><td>
 
+Use a custom mutation to define an API request that will modify backend data or trigger a subscription event.
+
 
 </td></tr>
 <tr><td>
@@ -217,6 +221,8 @@ A phone number scalar type thas is stored as a string server-side. Phone numbers
 
 
 </td><td>
+
+Use a custom query to define an API request that will retrieve backend data.
 
 
 </td></tr>
@@ -257,6 +263,8 @@ A string scalar type that is represented server-side as a UTF-8 character sequen
 
 
 </td><td>
+
+Define a custom subscription to receive an event when a mutation is triggered
 
 
 </td></tr>
