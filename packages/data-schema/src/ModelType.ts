@@ -1,6 +1,6 @@
 import type { SetTypeSubArg } from '@aws-amplify/data-schema-types';
 import type { PrimaryIndexIrShape, SecondaryIndexIrShape } from './runtime';
-import { type Brand, brand } from './util';
+import { brand } from './util';
 import type { InternalField, BaseModelField } from './ModelField';
 import type {
   ModelRelationalField,
@@ -20,6 +20,8 @@ import type {
   PrimaryIndexFieldsToIR,
   SecondaryIndexToIR,
 } from './MappedTypes/MapIndexes';
+import type { brandSymbol } from './util/Brand.js';
+import type { methodKeyOf } from './util/usedMethods.js';
 
 const brandName = 'modelType';
 export type deferredRefResolvingPrefix = 'deferredRefResolving:';
@@ -191,11 +193,17 @@ export type AddRelationshipFieldsToModelTypeFields<
 type _ConflictingAuthRules<T extends ModelTypeParamShape> =
   ConflictingAuthRulesMap<T>[keyof ConflictingAuthRulesMap<T>];
 
+export type BaseModelType<T extends ModelTypeParamShape = ModelTypeParamShape> =
+  ModelType<T, UsableModelTypeKey>;
+
+export type UsableModelTypeKey = methodKeyOf<ModelType>;
+
 export type ModelType<
-  T extends ModelTypeParamShape,
-  K extends keyof ModelType<T> = never,
+  T extends ModelTypeParamShape = ModelTypeParamShape,
+  UsedMethod extends UsableModelTypeKey = never,
 > = Omit<
   {
+    [brandSymbol]: typeof brandName;
     identifier<
       PrimaryIndexFields = ExtractSecondaryIndexIRFields<T, true>,
       PrimaryIndexPool extends string = keyof PrimaryIndexFields & string,
@@ -208,7 +216,7 @@ export type ModelType<
       identifier: ID,
     ): ModelType<
       SetTypeSubArg<T, 'identifier', PrimaryIndexIR>,
-      K | 'identifier'
+      UsedMethod | 'identifier'
     >;
     secondaryIndexes<
       const SecondaryIndexFields = ExtractSecondaryIndexIRFields<T>,
@@ -237,7 +245,7 @@ export type ModelType<
       ) => Indexes,
     ): ModelType<
       SetTypeSubArg<T, 'secondaryIndexes', IndexesIR>,
-      K | 'secondaryIndexes'
+      UsedMethod | 'secondaryIndexes'
     >;
     authorization<AuthRuleType extends Authorization<any, any, any>>(
       callback: (
@@ -245,22 +253,18 @@ export type ModelType<
       ) => AuthRuleType | AuthRuleType[],
     ): ModelType<
       SetTypeSubArg<T, 'authorization', AuthRuleType[]>,
-      K | 'authorization'
+      UsedMethod | 'authorization'
     >;
   },
-  K
-> &
-  Brand<typeof brandName>;
+  UsedMethod
+>;
 
 /**
  * External representation of Model Type that exposes the `relationships` modifier.
  * Used on the complete schema object.
  */
 export type SchemaModelType<
-  T extends ModelType<ModelTypeParamShape, never | 'identifier'> = ModelType<
-    ModelTypeParamShape,
-    never | 'identifier'
-  >,
+  T extends BaseModelType = ModelType<ModelTypeParamShape, 'identifier'>,
   ModelName extends string = string,
   IsRDS extends boolean = false,
 > = IsRDS extends true
@@ -273,9 +277,7 @@ export type SchemaModelType<
       >(
         relationships: Param,
       ): Record<ModelName, Param>;
-      fields: T extends ModelType<infer R extends ModelTypeParamShape, any>
-        ? R['fields']
-        : never;
+      fields: T extends ModelType<infer R, any> ? R['fields'] : never;
     }
   : T;
 

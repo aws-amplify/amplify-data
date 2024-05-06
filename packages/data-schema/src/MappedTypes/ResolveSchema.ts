@@ -47,11 +47,13 @@ export type ModelAndCustomTypes<Schema> = {
     | EnumType<EnumTypeParamShape>
     | CustomOperation<CustomOperationParamShape, any>
     ? never
-    : Model]: Schema[Model] extends ModelType<any, any>
+    : // TODO: This should use BaseModel, but seems to only work because it relies on
+      // omitting extra methods
+      Model]: Schema[Model] extends
+    | ModelType<any, any>
+    | CustomType<CustomTypeParamShape>
     ? Schema[Model]
-    : Schema[Model] extends CustomType<CustomTypeParamShape>
-      ? Schema[Model]
-      : never;
+    : never;
 };
 
 /**

@@ -6,7 +6,7 @@ import {
   type BaseModelField,
 } from './ModelField';
 import { type InternalRelationalField } from './ModelRelationalField';
-import type { ModelType, InternalModel } from './ModelType';
+import type { InternalModel } from './ModelType';
 import type { InternalModelIndexType } from './ModelIndex';
 import {
   type Authorization,
@@ -53,7 +53,7 @@ type CustomOperationFields = {
   subscriptions: string[];
 };
 
-function isInternalModel(model: ModelType<any, any>): model is InternalModel {
+function isInternalModel(model: unknown): model is InternalModel {
   if (
     (model as any).data &&
     !isCustomType(model) &&
