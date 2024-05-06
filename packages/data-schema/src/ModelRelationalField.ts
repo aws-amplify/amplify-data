@@ -60,7 +60,7 @@ type ModelRelationalFieldFunctions<
     K | 'required'
   >;
   /**
-   * Configures field-level authorization rules. Pass in an array of authorizations `(a.allow.____)` to mix and match
+   * Configures field-level authorization rules. Pass in an array of authorizations `(allow => allow.____)` to mix and match
    * multiple authorization rules for this field.
    */
   authorization<AuthRuleType extends Authorization<any, any, any>>(
@@ -184,10 +184,28 @@ export type ModelRelationalTypeArgFactory<
 };
 
 /**
- * Create a one-directional one-to-one relationship between two models using the `hasOne("MODEL_NAME")` method.
+ * Create one-to-one relationship between two models using the `hasOne("MODEL_NAME", "REFERENCE_FIELD(s)")` method.
  * A hasOne relationship always uses a reference to the related model's identifier. Typically this is the `id` field
  * unless overwritten with the `identifier()` method.
+ * @example
+ * const schema = a.schema({
+ *   Cart: a.model({
+ *     items: a.string().required().array(),
+ *     // 1. Create reference field
+ *     customerId: a.id(),
+ *     // 2. Create relationship field with the reference field
+ *     customer: a.belongsTo('Customer', 'customerId'),
+ *   }),
+ *   Customer: a.model({
+ *     name: a.string(),
+ *     // 3. Create relationship field with the reference field
+ *     //    from the Cart model
+ *     activeCart: a.hasOne('Cart', 'customerId')
+ *   }),
+ * });
+ * @see {@link https://docs.amplify.aws/react/build-a-backend/data/data-modeling/relationships/#model-a-one-to-one-relationship}
  * @param relatedModel the name of the related model
+ * @param references the field(s) that should be used to reference the related model
  * @returns a one-to-one relationship definition
  */
 export function hasOne<RM extends string>(
@@ -206,8 +224,29 @@ export function hasOne<RM extends string>(
 }
 
 /**
- * Create a one-directional one-to-many relationship between two models using the `hasMany()` method.
+ * Create a one-directional one-to-many relationship between two models using the `hasMany("MODEL_NAME", "REFERENCE_FIELD(s)")` method.
+ * @example
+ * const schema = a.schema({
+ *   Member: a.model({
+ *     name: a.string().required(),
+ *     // 1. Create a reference field
+ *     teamId: a.id(),
+ *     // 2. Create a belongsTo relationship with the reference field
+ *     team: a.belongsTo('Team', 'teamId'),
+ *   })
+ *   .authorization(allow => [allow.publicApiKey()]),
+ * 
+ *   Team: a.model({
+ *     mantra: a.string().required(),
+ *     // 3. Create a hasMany relationship with the reference field
+ *     //    from the `Member`s model.
+ *     members: a.hasMany('Member', 'teamId'),
+ *   })
+ *   .authorization(allow => [allow.publicApiKey()]),
+ * });
+ * @see {@link https://docs.amplify.aws/react/build-a-backend/data/data-modeling/relationships/#model-one-to-many-relationships}
  * @param relatedModel the name of the related model
+ * @param references the field(s) that should be used to reference the related model
  * @returns a one-to-many relationship definition
  */
 export function hasMany<RM extends string>(
@@ -226,10 +265,50 @@ export function hasMany<RM extends string>(
 }
 
 /**
- * Make a `hasOne()` or `hasMany()` relationship bi-directional using the `belongsTo()` method.
+ * Use `belongsTo()` to create a field to query the related `hasOne()` or `hasMany()` relationship.
  * The belongsTo() method requires that a hasOne() or hasMany() relationship already exists from
  * parent to the related model.
+ * 
+ * @example 
+ * // one-to-many relationship
+ * const schema = a.schema({
+ *   Member: a.model({
+ *     name: a.string().required(),
+ *     // 1. Create a reference field
+ *     teamId: a.id(),
+ *     // 2. Create a belongsTo relationship with the reference field
+ *     team: a.belongsTo('Team', 'teamId'),
+ *   })
+ *   .authorization(allow => [allow.publicApiKey()]),
+ * 
+ *   Team: a.model({
+ *     mantra: a.string().required(),
+ *     // 3. Create a hasMany relationship with the reference field
+ *     //    from the `Member`s model.
+ *     members: a.hasMany('Member', 'teamId'),
+ *   })
+ *   .authorization(allow => [allow.publicApiKey()]),
+ * });
+ * @example
+ * // one-to-one relationship
+ * const schema = a.schema({
+ *   Cart: a.model({
+ *     items: a.string().required().array(),
+ *     // 1. Create reference field
+ *     customerId: a.id(),
+ *     // 2. Create relationship field with the reference field
+ *     customer: a.belongsTo('Customer', 'customerId'),
+ *   }),
+ *   Customer: a.model({
+ *     name: a.string(),
+ *     // 3. Create relationship field with the reference field
+ *     //    from the Cart model
+ *     activeCart: a.hasOne('Cart', 'customerId')
+ *   }),
+ * });
+ * @see {@link https://docs.amplify.aws/react/build-a-backend/data/data-modeling/relationships/}
  * @param relatedModel name of the related `.hasOne()` or `.hasMany()` model
+ * @param references the field(s) that should be used to reference the related model
  * @returns a belong-to relationship definition
  */
 export function belongsTo<RM extends string>(
