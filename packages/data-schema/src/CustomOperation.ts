@@ -7,7 +7,7 @@ import {
   allowForCustomOperations,
 } from './Authorization';
 import { RefType, InternalRef } from './RefType';
-import { EnumType, EnumTypeParamShape } from './EnumType';
+import { EnumType } from './EnumType';
 import { CustomType } from './CustomType';
 import type {
   CustomHandler,
@@ -24,10 +24,7 @@ type CustomOperationBrand =
   | typeof mutationBrand
   | typeof subscriptionBrand;
 
-type CustomArguments = Record<
-  string,
-  BaseModelField | EnumType<EnumTypeParamShape>
->;
+type CustomArguments = Record<string, BaseModelField | EnumType>;
 
 type SubscriptionSource = RefType<any, any>;
 type InternalSubscriptionSource = InternalRef;

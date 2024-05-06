@@ -9,7 +9,7 @@ import type {
 } from './ModelRelationalField';
 import { type AllowModifier, type Authorization, allow } from './Authorization';
 import type { RefType, RefTypeParamShape } from './RefType';
-import type { EnumType, EnumTypeParamShape } from './EnumType';
+import type { EnumType } from './EnumType';
 import type { CustomType, CustomTypeParamShape } from './CustomType';
 import {
   type ModelIndexType,
@@ -31,7 +31,7 @@ type ModelFields = Record<
   | BaseModelField
   | ModelRelationalField<any, string, any, any>
   | RefType<any, any, any>
-  | EnumType<EnumTypeParamShape>
+  | EnumType
   | CustomType<CustomTypeParamShape>
 >;
 
@@ -91,13 +91,13 @@ export type ExtractSecondaryIndexIRFields<
           : FieldProp
       : never
     : T['fields'][FieldProp] extends
-          | EnumType<EnumTypeParamShape>
+          | EnumType
           | RefType<RefTypeParamShape, any, any>
       ? FieldProp
       : never]: T['fields'][FieldProp] extends BaseModelField<infer R>
     ? R
-    : T['fields'][FieldProp] extends EnumType<infer R>
-      ? R['values'][number]
+    : T['fields'][FieldProp] extends EnumType<infer values>
+      ? values[number]
       : T['fields'][FieldProp] extends RefType<infer R, any, any>
         ? `${deferredRefResolvingPrefix}${R['link']}`
         : never;

@@ -13,7 +13,7 @@ import {
   AddRelationshipFieldsToModelTypeFields,
   type BaseModelType,
 } from './ModelType';
-import type { EnumType, EnumTypeParamShape } from './EnumType';
+import type { EnumType } from './EnumType';
 import type { CustomType, CustomTypeParamShape } from './CustomType';
 import type {
   CustomOperation,
@@ -42,7 +42,7 @@ export type DDBSchemaBrand = Brand<typeof ddbSchemaBrandName>;
 type SchemaContent =
   | BaseModelType
   | CustomType<CustomTypeParamShape>
-  | EnumType<EnumTypeParamShape>
+  | EnumType
   | CustomOperation<CustomOperationParamShape, any>;
 
 type NonEmpty<T> = keyof T extends never ? never : T;

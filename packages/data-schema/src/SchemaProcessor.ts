@@ -64,9 +64,7 @@ function isInternalModel(model: unknown): model is InternalModel {
   return false;
 }
 
-function isEnumType(
-  data: any,
-): data is EnumType<{ type: 'enum'; values: string[] }> {
+function isEnumType(data: any): data is EnumType {
   if (data?.type === 'enum') {
     return true;
   }

@@ -1,7 +1,7 @@
 import type { Brand } from './util';
 import type { InternalField, BaseModelField } from './ModelField';
 import type { RefType } from './RefType';
-import type { EnumType, EnumTypeParamShape } from './EnumType';
+import type { EnumType } from './EnumType';
 
 /**
  * Custom Types
@@ -17,7 +17,7 @@ type CustomTypeFields = Record<
   string,
   | BaseModelField
   | RefType<any, any, any>
-  | EnumType<EnumTypeParamShape>
+  | EnumType
   | CustomType<CustomTypeParamShape>
 >;
 

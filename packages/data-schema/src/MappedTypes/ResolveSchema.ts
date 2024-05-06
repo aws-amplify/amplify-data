@@ -7,7 +7,7 @@ import type {
 } from '../ModelRelationalField';
 import type { BaseModelField } from '../ModelField';
 import type { CustomType, CustomTypeParamShape } from '../CustomType';
-import type { EnumType, EnumTypeParamShape } from '../EnumType';
+import type { EnumType } from '../EnumType';
 import type { RefType, RefTypeParamShape } from '../RefType';
 import type {
   CustomOperation,
@@ -29,7 +29,7 @@ export type SchemaTypes<T> =
  */
 export type ModelTypes<Schema> = {
   [Model in keyof Schema as Schema[Model] extends
-    | EnumType<EnumTypeParamShape>
+    | EnumType
     | CustomType<CustomTypeParamShape>
     | CustomOperation<CustomOperationParamShape, any>
     ? never
@@ -44,7 +44,7 @@ export type ModelTypes<Schema> = {
  */
 export type ModelAndCustomTypes<Schema> = {
   [Model in keyof Schema as Schema[Model] extends
-    | EnumType<EnumTypeParamShape>
+    | EnumType
     | CustomOperation<CustomOperationParamShape, any>
     ? never
     : // TODO: This should use BaseModel, but seems to only work because it relies on
@@ -79,7 +79,7 @@ export type FieldTypes<T> = {
           : T[ModelProp][FieldProp] | null
         : // replace non-model types with Ref
           T[ModelProp][FieldProp] extends
-              | EnumType<EnumTypeParamShape>
+              | EnumType
               | CustomType<CustomTypeParamShape>
           ? RefType<{
               link: `${Capitalize<ModelProp & string>}${Capitalize<
@@ -128,7 +128,7 @@ export type FieldTypesOfCustomType<T> = {
           : T[CustomTypeName][FieldProp] | null
         : // replace non-model types with Ref
           T[CustomTypeName][FieldProp] extends
-              | EnumType<EnumTypeParamShape>
+              | EnumType
               | CustomType<CustomTypeParamShape>
           ? RefType<{
               link: `${Capitalize<CustomTypeName & string>}${Capitalize<
