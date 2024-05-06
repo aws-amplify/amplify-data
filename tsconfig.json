@@ -19,5 +19,5 @@
       "@aws-amplify/data-schema": ["./packages/data-schema/src/index.ts"]
     }
   },
-  "exclude": ["**/node_modules", "**/dist", "**/lib-esm"]
+  "exclude": ["**/node_modules", "**/dist", "**/lib-esm", "**/*js"]
 }

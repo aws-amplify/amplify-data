@@ -1,7 +1,6 @@
 import { SetTypeSubArg } from '@aws-amplify/data-schema-types';
 import { Brand, brand } from './util';
-
-import { ModelField, InternalField } from './ModelField';
+import { InternalField, type BaseModelField } from './ModelField';
 import {
   AllowModifierForCustomOperation,
   Authorization,
@@ -27,7 +26,7 @@ type CustomOperationBrand =
 
 type CustomArguments = Record<
   string,
-  ModelField<any, any> | EnumType<EnumTypeParamShape>
+  BaseModelField | EnumType<EnumTypeParamShape>
 >;
 
 type SubscriptionSource = RefType<any, any>;

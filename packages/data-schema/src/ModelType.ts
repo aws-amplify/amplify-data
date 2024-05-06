@@ -1,7 +1,7 @@
 import type { SetTypeSubArg } from '@aws-amplify/data-schema-types';
 import type { PrimaryIndexIrShape, SecondaryIndexIrShape } from './runtime';
 import { type Brand, brand } from './util';
-import type { ModelField, InternalField } from './ModelField';
+import type { InternalField, BaseModelField } from './ModelField';
 import type {
   ModelRelationalField,
   InternalRelationalField,
@@ -26,7 +26,7 @@ export type deferredRefResolvingPrefix = 'deferredRefResolving:';
 
 type ModelFields = Record<
   string,
-  | ModelField<any, any, any>
+  | BaseModelField
   | ModelRelationalField<any, string, any, any>
   | RefType<any, any, any>
   | EnumType<EnumTypeParamShape>
@@ -78,10 +78,8 @@ export type ExtractSecondaryIndexIRFields<
   T extends ModelTypeParamShape,
   RequiredOnly extends boolean = false,
 > = {
-  [FieldProp in keyof T['fields'] as T['fields'][FieldProp] extends ModelField<
-    infer R,
-    any,
-    any
+  [FieldProp in keyof T['fields'] as T['fields'][FieldProp] extends BaseModelField<
+    infer R
   >
     ? NonNullable<R> extends string | number
       ? RequiredOnly extends false
@@ -94,7 +92,7 @@ export type ExtractSecondaryIndexIRFields<
           | EnumType<EnumTypeParamShape>
           | RefType<RefTypeParamShape, any, any>
       ? FieldProp
-      : never]: T['fields'][FieldProp] extends ModelField<infer R, any, any>
+      : never]: T['fields'][FieldProp] extends BaseModelField<infer R>
     ? R
     : T['fields'][FieldProp] extends EnumType<infer R>
       ? R['values'][number]
@@ -104,13 +102,9 @@ export type ExtractSecondaryIndexIRFields<
 };
 
 type ExtractType<T extends ModelTypeParamShape> = {
-  [FieldProp in keyof T['fields'] as T['fields'][FieldProp] extends ModelField<
-    any,
-    any,
-    any
-  >
+  [FieldProp in keyof T['fields'] as T['fields'][FieldProp] extends BaseModelField
     ? FieldProp
-    : never]: T['fields'][FieldProp] extends ModelField<infer R, any, any>
+    : never]: T['fields'][FieldProp] extends BaseModelField<infer R>
     ? R
     : never;
 };

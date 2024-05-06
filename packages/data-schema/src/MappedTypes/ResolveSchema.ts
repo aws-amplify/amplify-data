@@ -5,7 +5,7 @@ import type {
   ModelRelationshipTypes,
   RelationTypeFunctionOmitMapping,
 } from '../ModelRelationalField';
-import type { ModelField } from '../ModelField';
+import type { BaseModelField } from '../ModelField';
 import type { CustomType, CustomTypeParamShape } from '../CustomType';
 import type { EnumType, EnumTypeParamShape } from '../EnumType';
 import type { RefType, RefTypeParamShape } from '../RefType';
@@ -17,9 +17,8 @@ import type {
 export type ResolveSchema<Schema> = FieldTypes<ModelTypes<SchemaTypes<Schema>>>;
 
 // TODO: find better name
-export type SchemaTypes<T> = T extends GenericModelSchema<any>
-  ? T['data']['types']
-  : never;
+export type SchemaTypes<T> =
+  T extends GenericModelSchema<any> ? T['data']['types'] : never;
 
 /**
  * Resolves model types
@@ -62,11 +61,9 @@ export type ModelAndCustomTypes<Schema> = {
  */
 export type FieldTypes<T> = {
   [ModelProp in keyof T]: {
-    [FieldProp in keyof T[ModelProp]]: T[ModelProp][FieldProp] extends ModelField<
+    [FieldProp in keyof T[ModelProp]]: T[ModelProp][FieldProp] extends BaseModelField<
       // Match the most common field type to improve resolving performance
-      infer R,
-      any,
-      any
+      infer R
     >
       ? R
       : T[ModelProp][FieldProp] extends RefType<
@@ -114,10 +111,8 @@ export type FieldTypes<T> = {
  */
 export type FieldTypesOfCustomType<T> = {
   [CustomTypeName in keyof T]: {
-    [FieldProp in keyof T[CustomTypeName]]: T[CustomTypeName][FieldProp] extends ModelField<
-      infer R,
-      any,
-      any
+    [FieldProp in keyof T[CustomTypeName]]: T[CustomTypeName][FieldProp] extends BaseModelField<
+      infer R
     >
       ? R
       : T[CustomTypeName][FieldProp] extends RefType<

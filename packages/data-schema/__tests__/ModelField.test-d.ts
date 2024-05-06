@@ -17,12 +17,13 @@ import {
   url,
   ipAddress,
   Json,
+  type BaseModelField,
 } from '../src/ModelField';
 
 /**
  * Extracts first type arg from ModelField
  */
-type GetFieldTypeArg<T> = T extends ModelField<infer R, any> ? R : never;
+type GetFieldTypeArg<T> = T extends BaseModelField<infer R> ? R : never;
 
 test('string() produces expected type args', () => {
   const field = string();

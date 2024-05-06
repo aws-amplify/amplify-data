@@ -3,7 +3,7 @@ import {
   type ModelField,
   type InternalField,
   string,
-  ModelFieldTypeParamOuter,
+  type BaseModelField,
 } from './ModelField';
 import { type InternalRelationalField } from './ModelRelationalField';
 import type { ModelType, InternalModel } from './ModelType';
@@ -25,11 +25,7 @@ import {
 } from '@aws-amplify/data-schema-types';
 import type { InternalRef, RefType } from './RefType';
 import type { EnumType } from './EnumType';
-import type {
-  CustomType,
-  CustomTypeAllowedModifiers,
-  CustomTypeParamShape,
-} from './CustomType';
+import type { CustomType, CustomTypeParamShape } from './CustomType';
 import { type InternalCustom, CustomOperationNames } from './CustomOperation';
 import { Brand, getBrand } from './util';
 import {
@@ -120,13 +116,13 @@ function dataSourceIsRef(
 }
 
 function isScalarField(
-  field: ModelField<any, any>,
+  field: unknown,
 ): field is { data: ScalarFieldDef } & Brand<'modelField'> {
   return isScalarFieldDef((field as any)?.data);
 }
 
 function isRefField(
-  field: ModelField<any, any>,
+  field: unknown,
 ): field is { data: RefFieldDef } & Brand<'modelField'> {
   return isRefFieldDef((field as any)?.data);
 }
@@ -501,10 +497,7 @@ function escapeGraphQlString(str: string) {
  * @param right
  * @returns
  */
-function areConflicting(
-  left: ModelField<any, any>,
-  right: ModelField<any, any>,
-): boolean {
+function areConflicting(left: BaseModelField, right: BaseModelField): boolean {
   // These are the only props we care about for this comparison, because the others
   // (required, arrayRequired, etc) are not specified on auth or FK directives.
   const relevantProps = ['array', 'fieldType'] as const;
@@ -527,8 +520,8 @@ function areConflicting(
  * @param additions A field map to merge in
  */
 function addFields(
-  existing: Record<string, ModelField<any, any>>,
-  additions: Record<string, ModelField<any, any>>,
+  existing: Record<string, BaseModelField>,
+  additions: Record<string, BaseModelField>,
 ): void {
   for (const [k, addition] of Object.entries(additions)) {
     if (!existing[k]) {
@@ -550,8 +543,8 @@ function addFields(
  * @throws An error when an undefined field is used or when a field is used in a way that conflicts with its generated definition
  */
 function validateStaticFields(
-  existing: Record<string, ModelField<any, any>>,
-  implicitFields: Record<string, ModelField<any, any>> | undefined,
+  existing: Record<string, BaseModelField>,
+  implicitFields: Record<string, BaseModelField> | undefined,
 ) {
   if (implicitFields === undefined) {
     return;
@@ -574,8 +567,8 @@ function validateStaticFields(
  * @throws An error when an undefined field is used or when a field is used in a way that conflicts with its generated definition
  */
 function validateImpliedFields(
-  existing: Record<string, ModelField<any, any>>,
-  implicitFields: Record<string, ModelField<any, any>> | undefined,
+  existing: Record<string, BaseModelField>,
+  implicitFields: Record<string, BaseModelField> | undefined,
 ) {
   if (implicitFields === undefined) {
     return;
@@ -631,7 +624,7 @@ function validateRefUseCases(
  * @returns
  */
 function calculateAuth(authorization: Authorization<any, any, any>[]) {
-  const authFields: Record<string, ModelField<any, any>> = {};
+  const authFields: Record<string, BaseModelField> = {};
   const rules: string[] = [];
 
   for (const entry of authorization) {
@@ -799,8 +792,8 @@ function capitalize<T extends string>(s: T): Capitalize<T> {
 }
 
 function processFieldLevelAuthRules(
-  fields: Record<string, ModelField<any, any>>,
-  authFields: Record<string, ModelField<any, any>>,
+  fields: Record<string, BaseModelField>,
+  authFields: Record<string, BaseModelField>,
 ) {
   const fieldLevelAuthRules: {
     [k in keyof typeof fields]: string | null;
@@ -1203,16 +1196,8 @@ const schemaPreprocessor = (
 
         const fieldAuthApplicableFields = Object.fromEntries(
           Object.entries(fields).filter(
-            (
-              pair: [string, unknown],
-            ): pair is [
-              string,
-              ModelField<
-                ModelFieldTypeParamOuter,
-                CustomTypeAllowedModifiers,
-                any
-              >,
-            ] => isModelField(pair[1]),
+            (pair: [string, unknown]): pair is [string, BaseModelField] =>
+              isModelField(pair[1]),
           ),
         );
 
@@ -1296,7 +1281,7 @@ const schemaPreprocessor = (
     } else if (staticSchema) {
       const fields = { ...typeDef.data.fields } as Record<
         string,
-        ModelField<any, any>
+        BaseModelField
       >;
 
       validateRefUseCases(typeName, 'model', fields, getRefType);
@@ -1341,10 +1326,7 @@ const schemaPreprocessor = (
       const model = `type ${typeName} @model(timestamps: null) ${authString}${refersToString}\n{\n  ${joined}\n}`;
       gqlModels.push(model);
     } else {
-      const fields = typeDef.data.fields as Record<
-        string,
-        ModelField<any, any>
-      >;
+      const fields = typeDef.data.fields as Record<string, BaseModelField>;
 
       validateRefUseCases(typeName, 'model', fields, getRefType);
 
