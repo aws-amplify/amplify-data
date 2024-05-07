@@ -518,10 +518,19 @@ exports[`secondary indexes generates a secondary index annotation 1`] = `
 }"
 `;
 
-exports[`secondary indexes generates a secondary index annotation with attributes 1`] = `
+exports[`secondary indexes generates a secondary index annotation with attributes - custom queryField 1`] = `
 "type widget @model @auth(rules: [{allow: public, provider: apiKey}])
 {
   title: String! @index(name: "myGSI", sortKeyFields: ["description", "timestamp"], queryField: "byTitleDescTs")
+  description: String!
+  timestamp: Int!
+}"
+`;
+
+exports[`secondary indexes generates a secondary index annotation with attributes - default 1`] = `
+"type widget @model @auth(rules: [{allow: public, provider: apiKey}])
+{
+  title: String! @index(name: "myGSI", sortKeyFields: ["description", "timestamp"], queryField: "listWidgetByTitleAndDescriptionAndTimestamp")
   description: String!
   timestamp: Int!
 }"
