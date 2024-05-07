@@ -1,5 +1,5 @@
 import { bench } from '@arktype/attest';
-import { a, ClientSchema } from '../../data-schema/src/index.js';
+import { a, ClientSchema } from '@aws-amplify/data-schema';
 
 bench('secondary index of model has only ModelFields', () => {
   const s = a.schema({
