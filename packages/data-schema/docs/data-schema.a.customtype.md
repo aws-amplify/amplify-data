@@ -4,6 +4,8 @@
 
 ## a.customType() function
 
+Define a custom type. This type represents an inline, typed JSON object.
+
 **Signature:**
 
 ```typescript
@@ -42,10 +44,26 @@ T
 
 </td><td>
 
+the fields to be added to the custom type
+
 
 </td></tr>
 </tbody></table>
 **Returns:**
 
 CustomType&lt;{ fields: T; }&gt;
+
+a custom type
+
+## Example 1
+
+a.schema(<!-- -->{ Post: a.model(<!-- -->{ location: a.customType(<!-- -->{ lat: a.float(), long: a.float(), }<!-- -->), content: a.string(), }<!-- -->), }<!-- -->);
+
+## Example 2
+
+a.schema(<!-- -->{ Location: a.customType(<!-- -->{ lat: a.float(), long: a.float(), }<!-- -->),
+
+Post: a.model(<!-- -->{ location: a.ref('Location'), content: a.string(), }<!-- -->),
+
+User: a.model(<!-- -->{ lastKnownLocation: a.ref('Location'), }<!-- -->), }<!-- -->);
 

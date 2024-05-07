@@ -4,6 +4,8 @@
 
 ## a.mutation() function
 
+Use a custom mutation to define an API request that will modify backend data or trigger a subscription event.
+
 **Signature:**
 
 ```typescript
@@ -18,4 +20,10 @@ export declare function mutation(): CustomOperation<{
 **Returns:**
 
 CustomOperation&lt;{ arguments: null; returnType: null; authorization: \[\]; typeName: 'Mutation'; handlers: null; }, 'for', typeof mutationBrand&gt;
+
+a custom mutation
+
+## Example
+
+likePost: a .mutation() .arguments(<!-- -->{ postId: a.string() }<!-- -->) .returns(a.ref('Post')) .authorization(allow =<!-- -->&gt; \[allow.publicApiKey()\]) .handler(a.handler.function(echoHandler))
 

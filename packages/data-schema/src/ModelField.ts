@@ -113,7 +113,7 @@ export type ModelField<
       value: ModelFieldTypeParamOuter,
     ): ModelField<T, UsedMethod | 'default'>;
     /**
-     * Configures field-level authorization rules. Pass in an array of authorizations `(a.allow.____)` to mix and match
+     * Configures field-level authorization rules. Pass in an array of authorizations `(allow => allow.____)` to mix and match
      * multiple authorization rules for this field.
      */
     authorization<AuthRuleType extends Authorization<any, any, any>>(

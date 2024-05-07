@@ -1,5 +1,11 @@
 # @aws-amplify/data-schema
 
+## 1.1.5
+
+### Patch Changes
+
+- 7b044cf: Updated JS Doc strings for relationships, custom queries, mutations, and subscriptions, and custom types
+
 ## 1.1.4
 
 ### Patch Changes
