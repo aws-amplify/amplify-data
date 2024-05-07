@@ -1,6 +1,6 @@
 import type { UnionToIntersection } from '@aws-amplify/data-schema-types';
 import type { CustomType, CustomTypeParamShape } from '../CustomType';
-import type { EnumType, EnumTypeParamShape } from '../EnumType';
+import type { EnumType } from '../EnumType';
 import type {
   SchemaTypes,
   ModelAndCustomTypes,
@@ -9,7 +9,7 @@ import type {
 import type { ModelType, ModelTypeParamShape } from '../ModelType';
 
 export type NonModelTypesShape = {
-  enums: Record<string, EnumType<any>>;
+  enums: Record<string, any>;
   customTypes: Record<string, any>;
 };
 
@@ -51,43 +51,44 @@ export type ExtractNonModelTypes<Schema> = ResolveNonModelFields<
 export type ExtractAndFlattenImplicitNonModelTypesFromFields<
   ParentTypeName extends string,
   Fields,
-> = {
-  // loop through the fields - omit the field that's not a non-model type
-  [FieldProp in keyof Fields as Fields[FieldProp] extends
-    | EnumType<EnumTypeParamShape>
-    | CustomType<CustomTypeParamShape>
-    ? FieldProp
-    : never]: (
-    x: NonNullable<Fields[FieldProp]> extends infer FieldType
-      ? // if the filed is a enum extract it as is
-        FieldType extends EnumType<EnumTypeParamShape>
-        ? {
-            [Key in `${ParentTypeName}${Capitalize<
-              FieldProp & string
-            >}`]: Fields[FieldProp];
-          }
-        : // if the field is a CustomType
-          FieldType extends CustomType<
-              infer CustomTypeShape extends CustomTypeParamShape
-            >
-          ? // recursively extract to the Nested CustomType, and return the
-            // merge of the current CustomType and the extracted (if any)
-            ExtractAndFlattenImplicitNonModelTypesFromFields<
-              `${ParentTypeName}${Capitalize<FieldProp & string>}`,
-              CustomTypeShape['fields']
-            > & {
+> =
+  {
+    // loop through the fields - omit the field that's not a non-model type
+    [FieldProp in keyof Fields as Fields[FieldProp] extends
+      | EnumType
+      | CustomType<CustomTypeParamShape>
+      ? FieldProp
+      : never]: (
+      x: NonNullable<Fields[FieldProp]> extends infer FieldType
+        ? // if the filed is a enum extract it as is
+          FieldType extends EnumType
+          ? {
               [Key in `${ParentTypeName}${Capitalize<
                 FieldProp & string
               >}`]: Fields[FieldProp];
             }
-          : never
-      : never,
-  ) => void;
-} extends Record<string, infer Func>
-  ? Func extends (x: infer P) => void
-    ? P // extract the union of all types of the `x` param used above
-    : Record<never, never> // return an empty mapped object (nothing got extracted)
-  : Record<never, never>; // return an empty mapped object (nothing got extracted)
+          : // if the field is a CustomType
+            FieldType extends CustomType<
+                infer CustomTypeShape extends CustomTypeParamShape
+              >
+            ? // recursively extract to the Nested CustomType, and return the
+              // merge of the current CustomType and the extracted (if any)
+              ExtractAndFlattenImplicitNonModelTypesFromFields<
+                `${ParentTypeName}${Capitalize<FieldProp & string>}`,
+                CustomTypeShape['fields']
+              > & {
+                [Key in `${ParentTypeName}${Capitalize<
+                  FieldProp & string
+                >}`]: Fields[FieldProp];
+              }
+            : never
+        : never,
+    ) => void;
+  } extends Record<string, infer Func>
+    ? Func extends (x: infer P) => void
+      ? P // extract the union of all types of the `x` param used above
+      : Record<never, never> // return an empty mapped object (nothing got extracted)
+    : Record<never, never>; // return an empty mapped object (nothing got extracted)
 
 /**
  * Pulls out implicit, i.e. field-level non-model types from `ModelType` and
@@ -129,12 +130,10 @@ type ResolveNonModelTypes<
   ResolvedSchema = SchemaTypes<Schema> & Extracted,
 > = {
   enums: {
-    [Model in keyof ResolvedSchema as ResolvedSchema[Model] extends EnumType<EnumTypeParamShape>
+    [Model in keyof ResolvedSchema as ResolvedSchema[Model] extends EnumType
       ? Model
-      : never]: ResolvedSchema[Model] extends EnumType<
-      infer R extends EnumTypeParamShape
-    >
-      ? R['values'][number]
+      : never]: ResolvedSchema[Model] extends EnumType<infer values>
+      ? values[number]
       : never;
   };
   customTypes: {

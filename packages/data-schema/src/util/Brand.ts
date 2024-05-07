@@ -1,4 +1,4 @@
-const brandSymbol = Symbol('brand');
+export const brandSymbol = Symbol('brand');
 
 /**
  * @typeParam BrandStr - String type to brand this object with

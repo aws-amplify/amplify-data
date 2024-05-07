@@ -7,14 +7,13 @@ import type {
   UnionToIntersection,
 } from '@aws-amplify/data-schema-types';
 import {
-  type ModelType,
-  type ModelTypeParamShape,
   type InternalModel,
   isSchemaModelType,
   SchemaModelType,
   AddRelationshipFieldsToModelTypeFields,
+  type BaseModelType,
 } from './ModelType';
-import type { EnumType, EnumTypeParamShape } from './EnumType';
+import type { EnumType } from './EnumType';
 import type { CustomType, CustomTypeParamShape } from './CustomType';
 import type {
   CustomOperation,
@@ -41,9 +40,9 @@ const ddbSchemaBrand = brand(ddbSchemaBrandName);
 export type DDBSchemaBrand = Brand<typeof ddbSchemaBrandName>;
 
 type SchemaContent =
-  | ModelType<ModelTypeParamShape, any>
+  | BaseModelType
   | CustomType<CustomTypeParamShape>
-  | EnumType<EnumTypeParamShape>
+  | EnumType
   | CustomOperation<CustomOperationParamShape, any>;
 
 type NonEmpty<T> = keyof T extends never ? never : T;
@@ -76,10 +75,7 @@ export type BaseSchema<
 > = {
   data: T;
   models: {
-    [TypeKey in keyof T['types']]: T['types'][TypeKey] extends ModelType<
-      ModelTypeParamShape,
-      never | 'identifier'
-    >
+    [TypeKey in keyof T['types']]: T['types'][TypeKey] extends BaseModelType
       ? SchemaModelType<T['types'][TypeKey], TypeKey & string, IsRDS>
       : never;
   };
@@ -334,7 +330,7 @@ function _rdsSchema<
         models[newName] = currentType;
         data.types[newName] = currentType;
         models[newName].data.originalName = curName;
-        
+
         delete models[curName];
         delete data.types[curName];
       });
@@ -348,7 +344,7 @@ function _rdsSchema<
 function _ddbSchema<
   T extends ModelSchemaParamShape,
   DSC extends SchemaConfiguration<any, any>,
->(types: T['types'], config: DSC) {
+>(types: T['types'], config: DSC): ModelSchema<T> {
   const data: ModelSchemaParamShape = {
     types,
     authorization: [],
@@ -369,7 +365,7 @@ function _ddbSchema<
     },
     models: filterSchemaModelTypes(data.types),
     ...ddbSchemaBrand,
-  } as ModelSchema<T>;
+  } satisfies ModelSchema<any> as never;
 }
 
 type SchemaReturnType<

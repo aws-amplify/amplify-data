@@ -1,17 +1,3 @@
 {
-  "compilerOptions": {
-    "noEmitOnError": true,
-    "target": "ES2022",
-    "module": "NodeNext",
-    "moduleResolution": "NodeNext",
-    "lib": ["ES2022"],
-    "allowJs": false,
-    "skipLibCheck": true,
-    "strict": true,
-    "forceConsistentCasingInFileNames": true,
-    "esModuleInterop": true,
-    "resolveJsonModule": true,
-    "noErrorTruncation": true // prevents truncatation when hovering over type in VSCode
-  },
-  "exclude": ["**/node_modules", "**/lib-esm", "__tests__"]
+  "extends": "../../tsconfig.json"
 }
