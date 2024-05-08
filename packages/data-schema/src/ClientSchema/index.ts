@@ -37,11 +37,11 @@ type InternalClientSchema<
   Metadata extends SchemaMetadata<any> = never,
 > = CustomerSchema extends ModelSchemaContents
   ? {
-      [K in keyof CustomerSchema]: ClientSchemaProperty<
-        CustomerSchema,
-        Metadata,
-        K
-      >;
+      [K in keyof CustomerSchema as K extends string
+        ? K
+        : never]: K extends string
+        ? ClientSchemaProperty<CustomerSchema, Metadata, K>
+        : never;
     }
   : CustomerSchema extends BaseSchema<any, any>
     ? InternalClientSchema<
@@ -53,7 +53,7 @@ type InternalClientSchema<
 type ClientSchemaProperty<
   T extends ModelSchemaContents,
   Metadata extends SchemaMetadata<any>,
-  K extends keyof T,
+  K extends keyof T & string,
 > =
   T[K] extends Brand<'enum'>
     ? RemapEnum<T, T[K]>
@@ -66,7 +66,7 @@ type ClientSchemaProperty<
           >
         ? RemapCustomOperation<T, T[K]>
         : T[K] extends Brand<'modelType'>
-          ? RemapModel<T, Metadata, T[K]>
+          ? RemapModel<T, Metadata, T[K], K>
           : never;
 
 type RemapEnum<_T extends ModelSchemaContents, E> =
@@ -86,9 +86,10 @@ type RemapModel<
   T extends ModelSchemaContents,
   Metadata extends SchemaMetadata<any>,
   E,
+  K extends keyof T & string,
 > =
   E extends ModelType<infer MT, any>
-    ? ClientModel<InternalClientSchema<T>, Metadata, MT>
+    ? ClientModel<InternalClientSchema<T>, Metadata, MT, K>
     : 'd';
 
 type GetInternalClientSchema<Schema> =
@@ -124,7 +125,7 @@ type InternalCombinedSchema<
 export type ClientSchemaByEntityTypeBaseShape = {
   enums: Record<string, ClientEnum<any>>;
   customTypes: Record<string, ClientCustomType<any, any>>;
-  models: Record<string, ClientModel<any, any, any>>;
+  models: Record<string, ClientModel<any, any, any, any>>;
   queries: Record<string, ClientCustomOperation<any, any>>;
   mutations: Record<string, ClientCustomOperation<any, any>>;
   subscriptions: Record<string, ClientCustomOperation<any, any>>;

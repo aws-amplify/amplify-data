@@ -510,109 +510,134 @@ type _ModelMetaShape = {
   identifier: string;
 };
 
+interface ClientSecondaryIndexField {
+  input: object;
+}
+
+type IndexQueryMethods<
+  Model extends ClientSchemaByEntityTypeBaseShape['models'][string],
+> = {
+  [K in keyof Select<
+    Model['secondaryIndexes'],
+    ClientSecondaryIndexField
+  >]: IndexQueryMethod<
+    Model,
+    Select<Model['secondaryIndexes'], ClientSecondaryIndexField>[K]
+  >;
+};
+
+type IndexQueryMethod<
+  Model extends ClientSchemaByEntityTypeBaseShape['models'][string],
+  Method extends ClientSecondaryIndexField,
+  FlatModel extends Record<string, unknown> = ResolvedModel<Model['type']>,
+> = <SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[]>(
+  input: Method['input'],
+  options?: {
+    filter?: ModelFilter<Model>;
+    sortDirection?: ModelSortDirection;
+    limit?: number;
+    nextToken?: string | null;
+    selectionSet?: SelectionSet;
+    authMode?: AuthMode;
+    authToken?: string;
+    headers?: CustomHeaders;
+  },
+) => ListReturnValue<Prettify<ReturnValue<Model, FlatModel, SelectionSet>>>;
+
 // TODO: remove export. added for debugging.
 export type ModelTypesClient<
   Model extends ClientSchemaByEntityTypeBaseShape['models'][string],
   FlatModel extends Record<string, unknown> = ResolvedModel<Model['type']>,
-> =
-  // IndexQueryMethodsFromIR<
-  // ModelMeta['secondaryIndexes'],
-  // ModelName,
-  // Model,
-  // Enums
-  // > &
-  {
-    create: (
-      model: Prettify<CreateModelInput<Model>>,
-      options?: {
-        authMode?: AuthMode;
-        authToken?: string;
-        headers?: CustomHeaders;
-      },
-    ) => SingularReturnValue<Model['type']>;
-    update: (
-      model: Prettify<Model['identifier'] & Partial<MutationInput<Model>>>,
-      options?: {
-        authMode?: AuthMode;
-        authToken?: string;
-        headers?: CustomHeaders;
-      },
-    ) => SingularReturnValue<Model['type']>;
-    delete: (
-      identifier: Model['identifier'],
-      options?: {
-        authMode?: AuthMode;
-        authToken?: string;
-        headers?: CustomHeaders;
-      },
-    ) => SingularReturnValue<Model['type']>;
-    get<SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[]>(
-      identifier: Model['identifier'],
-      options?: {
-        selectionSet?: SelectionSet;
-        authMode?: AuthMode;
-        authToken?: string;
-        headers?: CustomHeaders;
-      },
-    ): SingularReturnValue<
-      Prettify<ReturnValue<Model, FlatModel, SelectionSet>>
-    >;
-    list<SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[]>(
-      options?: Partial<Model['identifier']> & {
-        filter?: ModelFilter<Model>;
-        sortDirection?: ModelSortDirection;
-        limit?: number;
-        nextToken?: string | null;
-        selectionSet?: SelectionSet;
-        authMode?: AuthMode;
-        authToken?: string;
-        headers?: CustomHeaders;
-      },
-    ): ListReturnValue<Prettify<ReturnValue<Model, FlatModel, SelectionSet>>>;
-    onCreate<
-      SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[],
-    >(options?: {
-      filter?: ModelFilter<Model>;
+> = IndexQueryMethods<Model> & {
+  create: (
+    model: Prettify<CreateModelInput<Model>>,
+    options?: {
+      authMode?: AuthMode;
+      authToken?: string;
+      headers?: CustomHeaders;
+    },
+  ) => SingularReturnValue<Model['type']>;
+  update: (
+    model: Prettify<Model['identifier'] & Partial<MutationInput<Model>>>,
+    options?: {
+      authMode?: AuthMode;
+      authToken?: string;
+      headers?: CustomHeaders;
+    },
+  ) => SingularReturnValue<Model['type']>;
+  delete: (
+    identifier: Model['identifier'],
+    options?: {
+      authMode?: AuthMode;
+      authToken?: string;
+      headers?: CustomHeaders;
+    },
+  ) => SingularReturnValue<Model['type']>;
+  get<SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[]>(
+    identifier: Model['identifier'],
+    options?: {
       selectionSet?: SelectionSet;
       authMode?: AuthMode;
       authToken?: string;
       headers?: CustomHeaders;
-    }): ObservedReturnValue<
-      Prettify<ReturnValue<Model, FlatModel, SelectionSet>>
-    >;
-    onUpdate<
-      SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[],
-    >(options?: {
+    },
+  ): SingularReturnValue<Prettify<ReturnValue<Model, FlatModel, SelectionSet>>>;
+  list<SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[]>(
+    options?: Partial<Model['identifier']> & {
       filter?: ModelFilter<Model>;
+      sortDirection?: ModelSortDirection;
+      limit?: number;
+      nextToken?: string | null;
       selectionSet?: SelectionSet;
       authMode?: AuthMode;
       authToken?: string;
       headers?: CustomHeaders;
-    }): ObservedReturnValue<
-      Prettify<ReturnValue<Model, FlatModel, SelectionSet>>
-    >;
-    onDelete<
-      SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[],
-    >(options?: {
-      filter?: ModelFilter<Model>;
-      selectionSet?: SelectionSet;
-      authMode?: AuthMode;
-      authToken?: string;
-      headers?: CustomHeaders;
-    }): ObservedReturnValue<
-      Prettify<ReturnValue<Model, FlatModel, SelectionSet>>
-    >;
-    observeQuery<
-      SelectionSet extends ModelPath<FlatModel>[] = never[],
-    >(options?: {
-      filter?: ModelFilter<Model>;
-      selectionSet?: SelectionSet;
-      authMode?: AuthMode;
-      authToken?: string;
-    }): ObserveQueryReturnValue<
-      Prettify<ReturnValue<Model, FlatModel, SelectionSet>>
-    >;
-  };
+    },
+  ): ListReturnValue<Prettify<ReturnValue<Model, FlatModel, SelectionSet>>>;
+  onCreate<
+    SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[],
+  >(options?: {
+    filter?: ModelFilter<Model>;
+    selectionSet?: SelectionSet;
+    authMode?: AuthMode;
+    authToken?: string;
+    headers?: CustomHeaders;
+  }): ObservedReturnValue<
+    Prettify<ReturnValue<Model, FlatModel, SelectionSet>>
+  >;
+  onUpdate<
+    SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[],
+  >(options?: {
+    filter?: ModelFilter<Model>;
+    selectionSet?: SelectionSet;
+    authMode?: AuthMode;
+    authToken?: string;
+    headers?: CustomHeaders;
+  }): ObservedReturnValue<
+    Prettify<ReturnValue<Model, FlatModel, SelectionSet>>
+  >;
+  onDelete<
+    SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[],
+  >(options?: {
+    filter?: ModelFilter<Model>;
+    selectionSet?: SelectionSet;
+    authMode?: AuthMode;
+    authToken?: string;
+    headers?: CustomHeaders;
+  }): ObservedReturnValue<
+    Prettify<ReturnValue<Model, FlatModel, SelectionSet>>
+  >;
+  observeQuery<
+    SelectionSet extends ModelPath<FlatModel>[] = never[],
+  >(options?: {
+    filter?: ModelFilter<Model>;
+    selectionSet?: SelectionSet;
+    authMode?: AuthMode;
+    authToken?: string;
+  }): ObserveQueryReturnValue<
+    Prettify<ReturnValue<Model, FlatModel, SelectionSet>>
+  >;
+};
 
 // type ModelTypesSSRCookies<
 //   ModelName extends string,
@@ -872,7 +897,7 @@ export type SecondaryIndexIrShape = {
   sk: { [key: string]: string | number };
 };
 
-// type _IndexQueryMethodsFromIR<
+// type IndexQueryMethodsFromIR<
 //   SecondaryIdxTuple extends SecondaryIndexIrShape[],
 //   ModelName extends string,
 //   Model extends Record<string, unknown>,
@@ -882,7 +907,7 @@ export type SecondaryIndexIrShape = {
 //   infer A extends SecondaryIndexIrShape,
 //   ...infer B extends SecondaryIndexIrShape[],
 // ]
-//   ? _IndexQueryMethodsFromIR<
+//   ? IndexQueryMethodsFromIR<
 //       B,
 //       ModelName,
 //       Model,
@@ -890,43 +915,6 @@ export type SecondaryIndexIrShape = {
 //       IndexQueryMethodSignature<A, ModelName, Model, Enums> & Res
 //     >
 //   : Res;
-
-// type IndexQueryMethodSignature<
-//   Idx extends SecondaryIndexIrShape,
-//   ModelName extends string,
-//   Model extends Record<string, unknown>,
-//   Enums extends Record<string, string>,
-// > = Record<
-//   IsEmptyStringOrNever<Idx['queryField']> extends false
-//     ? Idx['queryField']
-//     : `list${ModelName}By${Idx['defaultQueryFieldSuffix']}`,
-//   <
-//     FlatModel extends Record<string, unknown> = ResolvedModel<Model>,
-//     SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[],
-//   >(
-//     input: {
-//       [PKField in keyof Idx['pk']]: Idx['pk'][PKField] extends `${deferredRefResolvingPrefix}${infer R}`
-//         ? Enums[R]
-//         : Idx['pk'][PKField];
-//     } & {
-//       [SKField in keyof Idx['sk']]+?: number extends Idx['sk'][SKField]
-//         ? NumericFilter
-//         : Idx['sk'][SKField] extends `${deferredRefResolvingPrefix}${infer R}`
-//           ? StringFilter<Enums[R]>
-//           : StringFilter<Idx['sk'][SKField] & string>;
-//     },
-//     options?: {
-//       filter?: ModelFilter<Model>;
-//       sortDirection?: ModelSortDirection;
-//       limit?: number;
-//       nextToken?: string | null;
-//       selectionSet?: SelectionSet;
-//       authMode?: AuthMode;
-//       authToken?: string;
-//       headers?: CustomHeaders;
-//     },
-//   ) => ListReturnValue<Prettify<ReturnValue<Model, FlatModel, SelectionSet>>>
-// >;
 
 type FilteredKeys<T> = {
   [P in keyof T]: T[P] extends never ? never : P;

@@ -51,13 +51,16 @@ describe('a', () => {
           })
           .for(a.ref('likePost')),
 
-        SomeThing: a.model({
-          name: a.string(),
-          deletionState: a.enum(['active', 'deleted']),
-          nestedModelThing: a.customType({
-            details: a.string(),
-          }),
-        }),
+        SomeThing: a
+          .model({
+            name: a.string(),
+            deletionState: a.enum(['active', 'deleted']),
+            status: a.ref('Status'),
+            nestedModelThing: a.customType({
+              details: a.string(),
+            }),
+          })
+          .secondaryIndexes((index) => [index('name').sortKeys(['status'])]),
 
         Post: a
           .model({
@@ -95,9 +98,12 @@ describe('a', () => {
     type Comment = Schema['Comment']['nestedTypes'];
     type CommentPK = Schema['Comment']['identifier'];
     type Post = Schema['Post']['type'];
+    type PostSecondaryIndexes = Schema['Post']['secondaryIndexes'];
 
     type Something =
       Schema['SomeThing']['nestedTypes']['deletionState']['type'];
+
+    type SomethingGSIs = Schema['SomeThing']['secondaryIndexes'];
 
     type Status = Schema['Status']['type'];
 
@@ -109,6 +115,11 @@ describe('a', () => {
     type AllEnums = TopEnums & Nested;
 
     const _client = {} as ClientExtensions<Schema>;
+
+    _client.models.SomeThing.listSomeThingByNameAndStatus({
+      name: 'something',
+      status: { eq: 'whatever' },
+    });
 
     const status = _client.enums.SomeThingDeletionState.values();
 
