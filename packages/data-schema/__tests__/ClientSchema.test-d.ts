@@ -478,24 +478,22 @@ describe('SQL Schema', () => {
 
     type ResolvedClientSchema = ClientSchema<typeof modified>;
 
-    it('adds custom operations to ModelMeta', () => {
-      type ModelMeta = ExtractModelMeta<ResolvedClientSchema>;
-      type ResolvedCustomTypes = Prettify<ModelMeta['customTypes']>;
-      type ResolvedEnums = Prettify<ModelMeta['enums']>;
+    type ModelMeta = ExtractModelMeta<ResolvedClientSchema>;
+    type ResolvedCustomTypes = Prettify<ModelMeta['customTypes']>;
+    type ResolvedEnums = Prettify<ModelMeta['enums']>;
 
-      type ExpectedCustomTypes = {
-        PostMeta: {
-          viewCount: number | null;
-          approvedOn: string | null;
-        };
+    type ExpectedCustomTypes = {
+      PostMeta: {
+        viewCount: number | null;
+        approvedOn: string | null;
       };
+    };
 
-      type ExpectedEnums = {
-        PostStatus: 'draft' | 'pending' | 'approved' | 'published';
-      };
+    type ExpectedEnums = {
+      PostStatus: 'draft' | 'pending' | 'approved' | 'published';
+    };
 
-      type _ = Expect<Equal<ResolvedCustomTypes, ExpectedCustomTypes>>;
-      type _2 = Expect<Equal<ResolvedEnums, ExpectedEnums>>;
-    });
+    type _ = Expect<Equal<ResolvedCustomTypes, ExpectedCustomTypes>>;
+    type _2 = Expect<Equal<ResolvedEnums, ExpectedEnums>>;
   });
 });

@@ -1031,7 +1031,7 @@ describe('custom operations', () => {
     });
   });
 
-  describe.only('Add entities to SQL schema', () => {
+  describe('Add entities to SQL schema', () => {
     const initial = aSql.schema({
       post: a.model({
         title: a.string().required(),
