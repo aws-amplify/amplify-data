@@ -92,4 +92,4 @@ bench('p50 CRUDL', async () => {
   });
 
   await client.models.Todo.list();
-}).types([1688566, 'instantiations']);
+}).types([1650978, 'instantiations']);

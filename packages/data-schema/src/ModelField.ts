@@ -1,5 +1,7 @@
-import { Brand, brand } from './util';
+import { brand } from './util';
 import { AllowModifier, Authorization, allow } from './Authorization';
+import type { methodKeyOf, satisfy } from './util/usedMethods.js';
+import type { brandSymbol } from './util/Brand.js';
 
 /**
  * Used to "attach" auth types to ModelField without exposing them on the builder.
@@ -34,7 +36,7 @@ export enum ModelFieldDataType {
 }
 
 type FieldMeta = {
-  lastInvokedMethod: null | keyof ModelField<ModelFieldTypeParamOuter>;
+  lastInvokedMethod: null | methodKeyOf<ModelField>;
 };
 
 type FieldData = {
@@ -67,56 +69,69 @@ export type ArrayField<T> = [T] extends [ModelFieldTypeParamInner]
   ? Array<T> | null // optional by default
   : never;
 
+export type BaseModelField<
+  T extends ModelFieldTypeParamOuter = ModelFieldTypeParamOuter,
+> = ModelField<T, UsableModelFieldKey, any>;
+
+export type UsableModelFieldKey = satisfy<
+  methodKeyOf<ModelField>,
+  'required' | 'default' | 'authorization'
+>;
+
 /**
  * Public API for the chainable builder methods exposed by Model Field.
  * The type is narrowing e.g., after calling .array() it will be omitted from intellisense suggestions
  *
  * @typeParam T - holds the JS data type of the field
- * @typeParam K - union of strings representing already-invoked method names. Used to improve Intellisense
+ * @typeParam UsedMethod - union of strings representing already-invoked method names. Used to improve Intellisense
  */
 export type ModelField<
-  T extends ModelFieldTypeParamOuter,
-  // rename K
-  K extends keyof ModelField<T> = never,
+  T extends ModelFieldTypeParamOuter = ModelFieldTypeParamOuter,
+  UsedMethod extends UsableModelFieldKey = never,
   Auth = undefined,
 > = Omit<
   {
+    // This is a lie. This property is never set at runtime. It's just used to smuggle auth types through.
+    [__auth]?: Auth;
+    [brandSymbol]: typeof brandName;
+
     /**
      * Marks a field as required.
      */
-    required(): ModelField<Required<T>, K | 'required'>;
+    required(): ModelField<Required<T>, UsedMethod | 'required'>;
     // Exclude `optional` after calling array, because both the value and the array itself can be optional
     /**
      * Converts a field type definition to an array of the field type.
      */
-    array(): ModelField<ArrayField<T>, Exclude<K, 'required'> | 'array'>;
+    array(): ModelField<ArrayField<T>, Exclude<UsedMethod, 'required'>>;
     // TODO: should be T, but .array breaks this constraint. Fix later
     /**
      * Sets a default value for the scalar type.
      * @param value the default value
      */
-    default(value: ModelFieldTypeParamOuter): ModelField<T, K | 'default'>;
+    default(
+      value: ModelFieldTypeParamOuter,
+    ): ModelField<T, UsedMethod | 'default'>;
     /**
      * Configures field-level authorization rules. Pass in an array of authorizations `(allow => allow.____)` to mix and match
      * multiple authorization rules for this field.
      */
     authorization<AuthRuleType extends Authorization<any, any, any>>(
-      callback: (allow: Omit<AllowModifier, 'resource'>) => AuthRuleType | AuthRuleType[],
-    ): ModelField<T, K | 'authorization', AuthRuleType>;
+      callback: (
+        allow: Omit<AllowModifier, 'resource'>,
+      ) => AuthRuleType | AuthRuleType[],
+    ): ModelField<T, UsedMethod | 'authorization', AuthRuleType>;
   },
-  K
-> & {
-  // This is a lie. This property is never set at runtime. It's just used to smuggle auth types through.
-  [__auth]?: Auth;
-} & Brand<typeof brandName>;
+  UsedMethod
+>;
 
 /**
  * Internal representation of Model Field that exposes the `data` property.
  * Used at buildtime.
  */
-export type InternalField = ModelField<ModelFieldTypeParamOuter, never> & {
+export interface InternalField extends ModelField {
   data: FieldData;
-};
+}
 
 /**
  * Model Field Implementation

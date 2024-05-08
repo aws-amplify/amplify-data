@@ -4,7 +4,7 @@ import type {
   CustomOperation,
   CustomOperationParamShape,
 } from '../CustomOperation';
-import type { ModelField } from '../ModelField';
+import type { BaseModelField } from '../ModelField';
 import type { RefType, RefTypeParamShape } from '../RefType';
 import type {
   ResolveFieldRequirements,
@@ -66,10 +66,8 @@ export type CustomOpArguments<Shape extends CustomOperationParamShape> =
   Shape['arguments'] extends null
     ? never
     : ResolveFieldRequirements<{
-        [FieldName in keyof Shape['arguments']]: Shape['arguments'][FieldName] extends ModelField<
-          infer R,
-          any,
-          any
+        [FieldName in keyof Shape['arguments']]: Shape['arguments'][FieldName] extends BaseModelField<
+          infer R
         >
           ? R
           : never;
@@ -101,7 +99,7 @@ export type CustomOpReturnType<
           NonModelTypes,
           CustomOperations
         >
-    : Shape['returnType'] extends ModelField<infer R, any, any>
+    : Shape['returnType'] extends BaseModelField<infer R>
       ? R
       : Shape['returnType'] extends CustomType<infer R>
         ?
