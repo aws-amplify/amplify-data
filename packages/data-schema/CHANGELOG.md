@@ -1,5 +1,13 @@
 # @aws-amplify/data-schema
 
+## 1.1.6
+
+### Patch Changes
+
+- 4c7eb71: perf optimizations, minor builder refactor
+- Updated dependencies [4c7eb71]
+  - @aws-amplify/data-schema-types@1.0.1
+
 ## 1.1.5
 
 ### Patch Changes
