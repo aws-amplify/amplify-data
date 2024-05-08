@@ -987,7 +987,8 @@ describe('custom operations', () => {
       );
     });
 
-    describe('custom operations', () => {
+    // TODO: delete test after removing API
+    describe('custom operations - deprecated', () => {
       test('custom query', () => {
         const initial = aSql.schema({
           EchoResult: a.customType({
@@ -1029,6 +1030,57 @@ describe('custom operations', () => {
       });
     });
   });
+
+  describe.only('Add entities to SQL schema', () => {
+    const initial = aSql.schema({
+      post: a.model({
+        title: a.string().required(),
+        description: a.string(),
+        author: a.string(),
+      }),
+    });
+
+    test('add custom type, enum, and custom query to generated SQL schema', () => {
+      const modified = initial
+        .authorization((allow) => allow.authenticated())
+        .addToSchema({
+          PostMeta: a.customType({
+            viewCount: a.integer(),
+            approvedOn: a.date(),
+          }),
+          PostStatus: a.enum(['draft', 'pending', 'approved', 'published']),
+          getPostMeta: a
+            .query()
+            .arguments({ id: a.string() })
+            .returns(a.ref('PostMeta'))
+            .authorization((allow) => allow.authenticated())
+            .handler(
+              a.handler.inlineSql(
+                'SELECT viewCount, approvedOn FROM some_table',
+              ),
+            ),
+        });
+
+      const graphql = modified.transform().schema;
+      expect(graphql).toMatchSnapshot();
+    });
+
+    test('should throw if adding Model to SQL schema', () => {
+      expect(() =>
+        initial
+          .authorization((allow) => allow.authenticated())
+          .addToSchema({
+            // @ts-ignore
+            Comment: a.model({
+              content: a.string(),
+            }),
+          }),
+      ).toThrowError(
+        'Invalid value specified for Comment in addToSchema(). Models cannot be manually added to a SQL schema.',
+      );
+    });
+  });
+
   describe('for a.combine schema', () => {
     test('matches shared backend type', () => {
       const schemaA = a.schema({
@@ -1239,7 +1291,7 @@ describe('custom operations', () => {
   });
 });
 
-describe('RDS Schema with sql statement references', () => {
+describe('SQL Schema with sql statement references', () => {
   const fakeSecret = () => ({}) as any;
 
   const datasourceConfigMySQL = {

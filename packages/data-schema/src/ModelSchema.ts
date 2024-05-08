@@ -25,7 +25,7 @@ import type {
 } from './CustomOperation';
 import { processSchema } from './SchemaProcessor';
 import { AllowModifier, SchemaAuthorization, allow } from './Authorization';
-import { Brand, brand } from './util';
+import { Brand, brand, getBrand } from './util';
 import {
   ModelRelationalField,
   ModelRelationalFieldParamShape,
@@ -44,6 +44,10 @@ type SchemaContent =
   | CustomType<CustomTypeParamShape>
   | EnumType
   | CustomOperation<CustomOperationParamShape, any>;
+
+// The SQL-only `addToSchema` accepts all top-level entities, excepts models
+type AddToSchemaContent = Exclude<SchemaContent, BaseModelType>;
+type AddToSchemaContents = Record<string, AddToSchemaContent>;
 
 type NonEmpty<T> = keyof T extends never ? never : T;
 
@@ -103,6 +107,7 @@ export type ModelSchema<
   DDBSchemaBrand;
 
 type RDSModelSchemaFunctions =
+  | 'addToSchema'
   | 'addQueries'
   | 'addMutations'
   | 'addSubscriptions'
@@ -124,18 +129,33 @@ export type RDSModelSchema<
   >,
 > = Omit<
   {
+    addToSchema: <AddedTypes extends AddToSchemaContents>(
+      types: AddedTypes,
+    ) => RDSModelSchema<
+      SetTypeSubArg<T, 'types', T['types'] & AddedTypes>,
+      UsedMethods | 'addToSchema'
+    >;
+    /**
+     * @deprecated use `addToSchema()` to add operations to a SQL schema
+     */
     addQueries: <Queries extends Record<string, QueryCustomOperation>>(
       types: Queries,
     ) => RDSModelSchema<
       SetTypeSubArg<T, 'types', T['types'] & Queries>,
       UsedMethods | 'addQueries'
     >;
+    /**
+     * @deprecated use `addToSchema()` to add operations to a SQL schema
+     */
     addMutations: <Mutations extends Record<string, MutationCustomOperation>>(
       types: Mutations,
     ) => RDSModelSchema<
       SetTypeSubArg<T, 'types', T['types'] & Mutations>,
       UsedMethods | 'addMutations'
     >;
+    /**
+     * @deprecated use `addToSchema()` to add operations to a SQL schema
+     */
     addSubscriptions: <
       Subscriptions extends Record<string, SubscriptionCustomOperation>,
     >(
@@ -254,6 +274,22 @@ export const isModelSchema = (
   return typeof schema === 'object' && schema.data !== undefined;
 };
 
+/**
+ * Ensures that only supported entities are being added to the SQL schema through `addToSchema`
+ * Models are not supported for brownfield SQL
+ *
+ * @param types - purposely widened to ModelSchemaContents, because we need to validate at runtime that a model is not being passed in here
+ */
+function validateAddToSchema(types: ModelSchemaContents): void {
+  for (const [name, type] of Object.entries(types)) {
+    if (getBrand(type) === 'modelType') {
+      throw new Error(
+        `Invalid value specified for ${name} in addToSchema(). Models cannot be manually added to a SQL schema.`,
+      );
+    }
+  }
+}
+
 function _rdsSchema<
   T extends RDSModelSchemaParamShape,
   DSC extends SchemaConfiguration<any, any>,
@@ -276,6 +312,12 @@ function _rdsSchema<
       const rules = callback(allow);
       this.data.authorization = Array.isArray(rules) ? rules : [rules];
       const { authorization: _, ...rest } = this;
+      return rest;
+    },
+    addToSchema(types: AddToSchemaContents): any {
+      validateAddToSchema(types);
+      this.data.types = { ...this.data.types, ...types };
+      const { addToSchema: _, ...rest } = this;
       return rest;
     },
     addQueries(types: Record<string, QueryCustomOperation>): any {

@@ -1,5 +1,5 @@
 import { a, ClientSchema } from '../src/index';
-import { __modelMeta__ } from '../src/runtime';
+import { __modelMeta__, type ExtractModelMeta } from '../src/runtime';
 import { configure } from '../src/internals';
 import {
   Expect,
@@ -455,5 +455,47 @@ describe('SQL Schema', () => {
     } catch (error) {
       error;
     }
+  });
+
+  test('.addToSchema() adds custom types and enums to client schema', () => {
+    const sqlSchema = configure({ database: datasourceConfigMySQL }).schema({
+      post: a
+        .model({
+          id: a.string().required(),
+          title: a.string(),
+          author: a.string(),
+        })
+        .identifier(['id']),
+    });
+
+    const modified = sqlSchema.addToSchema({
+      PostMeta: a.customType({
+        viewCount: a.integer(),
+        approvedOn: a.date(),
+      }),
+      PostStatus: a.enum(['draft', 'pending', 'approved', 'published']),
+    });
+
+    type ResolvedClientSchema = ClientSchema<typeof modified>;
+
+    it('adds custom operations to ModelMeta', () => {
+      type ModelMeta = ExtractModelMeta<ResolvedClientSchema>;
+      type ResolvedCustomTypes = Prettify<ModelMeta['customTypes']>;
+      type ResolvedEnums = Prettify<ModelMeta['enums']>;
+
+      type ExpectedCustomTypes = {
+        PostMeta: {
+          viewCount: number | null;
+          approvedOn: string | null;
+        };
+      };
+
+      type ExpectedEnums = {
+        PostStatus: 'draft' | 'pending' | 'approved' | 'published';
+      };
+
+      type _ = Expect<Equal<ResolvedCustomTypes, ExpectedCustomTypes>>;
+      type _2 = Expect<Equal<ResolvedEnums, ExpectedEnums>>;
+    });
   });
 });
