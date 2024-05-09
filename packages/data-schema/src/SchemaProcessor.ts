@@ -1159,8 +1159,7 @@ const schemaPreprocessor = (
       ? 'dynamodb'
       : 'sql';
 
-  const staticSchema =
-    schema.data.configuration.database.engine === 'dynamodb' ? false : true;
+  const staticSchema = databaseType === 'sql';
 
   const topLevelTypes = sortTopLevelTypes(Object.entries(schema.data.types));
 
@@ -1288,11 +1287,7 @@ const schemaPreprocessor = (
       const [partitionKey] = identifier;
 
       const { authString, authFields } = calculateAuth(mostRelevantAuthRules);
-      if (authString == '') {
-        throw new Error(
-          `Model \`${typeName}\` is missing authorization rules. Add global rules to the schema or ensure every model has its own rules.`,
-        );
-      }
+
       const fieldLevelAuthRules = processFieldLevelAuthRules(
         fields,
         authFields,

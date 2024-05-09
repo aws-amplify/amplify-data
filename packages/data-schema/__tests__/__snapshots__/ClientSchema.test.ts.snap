@@ -73,6 +73,66 @@ type Query {
 }"
 `;
 
+exports[`custom operations for a sql schema can define public auth with no provider 1`] = `
+"type A @model(timestamps: null) @auth(rules: [{allow: public, provider: apiKey}])
+{
+  id: String! @primaryKey
+  field: String
+}"
+`;
+
+exports[`custom operations for a sql schema custom operations - deprecated custom query 1`] = `
+"type EchoResult @aws_api_key
+{
+  resultContent: String
+}
+
+type Query {
+  echo(inputContent: String!): EchoResult @function(name: "echoFunction") @auth(rules: [{allow: public, provider: apiKey}])
+}"
+`;
+
+exports[`custom operations for a sql schema sql schema field-level auth 1`] = `
+"type post @model(timestamps: null) @auth(rules: [{allow: public, provider: apiKey}])
+{
+  id: String! @primaryKey @auth(rules: [{allow: private}])
+  title: String @auth(rules: [{allow: public, provider: apiKey}])
+  author: String @auth(rules: [{allow: owner, ownerField: "author"}])
+}"
+`;
+
+exports[`custom operations for a sql schema sql schema rename 1`] = `
+"type RenamedPost @model(timestamps: null) @auth(rules: [{allow: public, provider: apiKey}]) @refersTo(name: "post")
+{
+  id: String! @primaryKey
+  title: String
+  author: String
+}"
+`;
+
+exports[`custom operations for a sql schema sql schema rename multiple models 1`] = `
+"type tags @model(timestamps: null) @auth(rules: [{allow: public, provider: apiKey}])
+{
+  id: String! @primaryKey
+  title: String
+  author: String
+}
+
+type RenamedPost @model(timestamps: null) @auth(rules: [{allow: public, provider: apiKey}]) @refersTo(name: "post")
+{
+  id: String! @primaryKey
+  title: String
+  author: String
+}
+
+type RenamedComment @model(timestamps: null) @auth(rules: [{allow: public, provider: apiKey}]) @refersTo(name: "comment")
+{
+  id: String! @primaryKey
+  title: String
+  author: String
+}"
+`;
+
 exports[`custom operations for a.combine schema a ddb and sql schemas combine without issues 1`] = `
 "type A @model(timestamps: null) @auth(rules: [{allow: public, provider: apiKey}])
 {
@@ -121,66 +181,6 @@ exports[`custom operations for a.combine schema two schemas combine without issu
 type B @model @auth(rules: [{allow: public, provider: apiKey}])
 {
   field: String
-}"
-`;
-
-exports[`custom operations for an rds schema can define public auth with no provider 1`] = `
-"type A @model(timestamps: null) @auth(rules: [{allow: public, provider: apiKey}])
-{
-  id: String! @primaryKey
-  field: String
-}"
-`;
-
-exports[`custom operations for an rds schema custom operations - deprecated custom query 1`] = `
-"type EchoResult @aws_api_key
-{
-  resultContent: String
-}
-
-type Query {
-  echo(inputContent: String!): EchoResult @function(name: "echoFunction") @auth(rules: [{allow: public, provider: apiKey}])
-}"
-`;
-
-exports[`custom operations for an rds schema sql schema field-level auth 1`] = `
-"type post @model(timestamps: null) @auth(rules: [{allow: public, provider: apiKey}])
-{
-  id: String! @primaryKey @auth(rules: [{allow: private}])
-  title: String @auth(rules: [{allow: public, provider: apiKey}])
-  author: String @auth(rules: [{allow: owner, ownerField: "author"}])
-}"
-`;
-
-exports[`custom operations for an rds schema sql schema rename 1`] = `
-"type RenamedPost @model(timestamps: null) @auth(rules: [{allow: public, provider: apiKey}]) @refersTo(name: "post")
-{
-  id: String! @primaryKey
-  title: String
-  author: String
-}"
-`;
-
-exports[`custom operations for an rds schema sql schema rename multiple models 1`] = `
-"type tags @model(timestamps: null) @auth(rules: [{allow: public, provider: apiKey}])
-{
-  id: String! @primaryKey
-  title: String
-  author: String
-}
-
-type RenamedPost @model(timestamps: null) @auth(rules: [{allow: public, provider: apiKey}]) @refersTo(name: "post")
-{
-  id: String! @primaryKey
-  title: String
-  author: String
-}
-
-type RenamedComment @model(timestamps: null) @auth(rules: [{allow: public, provider: apiKey}]) @refersTo(name: "comment")
-{
-  id: String! @primaryKey
-  title: String
-  author: String
 }"
 `;
 

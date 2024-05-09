@@ -485,6 +485,34 @@ describe('schema auth rules', () => {
     expect(schema.transform()).toMatchSnapshot();
   });
 
+  test('imported sql schema does not throw on missing auth rules', () => {
+    const sqlSchema = aSql.schema({
+      post: a
+        .model({
+          id: a.integer().required(),
+          title: a.string(),
+        })
+        .identifier(['id']),
+    });
+
+    expect(() => sqlSchema.transform()).not.toThrow();
+  });
+
+  test('DDB schema throws on missing auth rules', () => {
+    const schema = a.schema({
+      Post: a
+        .model({
+          id: a.integer().required(),
+          title: a.string(),
+        })
+        .identifier(['id']),
+    });
+
+    expect(() => schema.transform()).toThrowError(
+      'Model `Post` is missing authorization rules. Add global rules to the schema or ensure every model has its own rules.',
+    );
+  });
+
   describe('prefers model auth over global auth', () => {
     test('public auth on model vs owner auth on schema', () => {
       const schema = a
@@ -665,7 +693,7 @@ describe('custom operations', () => {
     expect(graphql).toMatchSnapshot();
   });
 
-  describe('for an rds schema', () => {
+  describe('for a sql schema', () => {
     test('can define public auth with no provider', () => {
       const schema = aSql.schema({
         A: a
@@ -1302,7 +1330,7 @@ describe('SQL Schema with sql statement references', () => {
   const aSql = configure({ database: datasourceConfigMySQL });
 
   it('schema with full path sql reference', () => {
-    const rdsSchema = aSql
+    const sqlSchema = aSql
       .schema({
         widget: a.model({
           title: a.string().required(),
@@ -1320,11 +1348,11 @@ describe('SQL Schema with sql statement references', () => {
       })
       .authorization((allow) => allow.publicApiKey());
 
-    expect(rdsSchema.transform()).toMatchSnapshot();
+    expect(sqlSchema.transform()).toMatchSnapshot();
   });
 
   it('schema with relative path sql reference', () => {
-    const rdsSchema = aSql
+    const sqlSchema = aSql
       .schema({
         widget: a.model({
           title: a.string().required(),
@@ -1338,7 +1366,7 @@ describe('SQL Schema with sql statement references', () => {
       })
       .authorization((allow) => allow.publicApiKey());
 
-    const { customSqlDataSourceStrategies } = rdsSchema.transform();
+    const { customSqlDataSourceStrategies } = sqlSchema.transform();
 
     expect(customSqlDataSourceStrategies).not.toBeUndefined();
 
