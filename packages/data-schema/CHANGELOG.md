@@ -1,5 +1,11 @@
 # @aws-amplify/data-schema
 
+## 1.2.0
+
+### Minor Changes
+
+- f67cb71: adds addToSchema modifier to imported schemas
+
 ## 1.1.6
 
 ### Patch Changes
