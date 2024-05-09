@@ -427,7 +427,76 @@ describe('custom operations return types', () => {
   });
 });
 
-describe('RDS custom operations', () => {
+describe('RDS custom operations - current DX', () => {
+  const s = configure({
+    database: {
+      engine: 'mysql',
+      connectionUri: 'fake' as any,
+    },
+  })
+    .schema({
+      Post: a.model({
+        title: a.string(),
+      }),
+    })
+    .addToSchema({
+      likePost: a
+        .mutation()
+        .arguments({ postId: a.string(), content: a.string().required() })
+        .returns(a.ref('Post'))
+        .handler(a.handler.function('myFunc')),
+      getLikedPost: a
+        .query()
+        .returns(a.ref('Post'))
+        .handler(a.handler.function('myFunc')),
+      onLikePost: a
+        .subscription()
+        .for(a.ref('likePost'))
+        .handler(a.handler.function('myFunc')),
+    })
+    .authorization((allow) => allow.publicApiKey());
+
+  type ResolvedClientSchema = ClientSchema<typeof s>;
+
+  it('adds custom operations to ModelMeta', () => {
+    type ModelMeta = ExtractModelMeta<ResolvedClientSchema>;
+    type Resolved = Prettify<ModelMeta['customOperations']>;
+
+    type Expected = {
+      likePost: {
+        arguments: {
+          postId?: string | null | undefined;
+          content: string;
+        };
+        returnType: {
+          title?: string | null | undefined;
+        } | null;
+        typeName: 'Mutation';
+        authorization: [];
+      };
+      getLikedPost: {
+        arguments: never;
+        returnType: {
+          title?: string | null | undefined;
+        } | null;
+        typeName: 'Query';
+        authorization: [];
+      };
+      onLikePost: {
+        arguments: never;
+        returnType: {
+          title?: string | null | undefined;
+        } | null;
+        typeName: 'Subscription';
+        authorization: [];
+      };
+    };
+
+    type _ = Expect<Equal<Resolved, Expected>>;
+  });
+});
+
+describe('RDS custom operations - deprecated DX', () => {
   const s = configure({
     database: {
       engine: 'mysql',

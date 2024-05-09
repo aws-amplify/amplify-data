@@ -485,6 +485,34 @@ describe('schema auth rules', () => {
     expect(schema.transform()).toMatchSnapshot();
   });
 
+  test('imported sql schema does not throw on missing auth rules', () => {
+    const sqlSchema = aSql.schema({
+      post: a
+        .model({
+          id: a.integer().required(),
+          title: a.string(),
+        })
+        .identifier(['id']),
+    });
+
+    expect(() => sqlSchema.transform()).not.toThrow();
+  });
+
+  test('DDB schema throws on missing auth rules', () => {
+    const schema = a.schema({
+      Post: a
+        .model({
+          id: a.integer().required(),
+          title: a.string(),
+        })
+        .identifier(['id']),
+    });
+
+    expect(() => schema.transform()).toThrowError(
+      'Model `Post` is missing authorization rules. Add global rules to the schema or ensure every model has its own rules.',
+    );
+  });
+
   describe('prefers model auth over global auth', () => {
     test('public auth on model vs owner auth on schema', () => {
       const schema = a
@@ -665,7 +693,7 @@ describe('custom operations', () => {
     expect(graphql).toMatchSnapshot();
   });
 
-  describe('for an rds schema', () => {
+  describe('for a sql schema', () => {
     test('can define public auth with no provider', () => {
       const schema = aSql.schema({
         A: a
@@ -987,7 +1015,8 @@ describe('custom operations', () => {
       );
     });
 
-    describe('custom operations', () => {
+    // TODO: delete test after removing API
+    describe('custom operations - deprecated', () => {
       test('custom query', () => {
         const initial = aSql.schema({
           EchoResult: a.customType({
@@ -1029,6 +1058,57 @@ describe('custom operations', () => {
       });
     });
   });
+
+  describe('Add entities to SQL schema', () => {
+    const initial = aSql.schema({
+      post: a.model({
+        title: a.string().required(),
+        description: a.string(),
+        author: a.string(),
+      }),
+    });
+
+    test('add custom type, enum, and custom query to generated SQL schema', () => {
+      const modified = initial
+        .authorization((allow) => allow.authenticated())
+        .addToSchema({
+          PostMeta: a.customType({
+            viewCount: a.integer(),
+            approvedOn: a.date(),
+          }),
+          PostStatus: a.enum(['draft', 'pending', 'approved', 'published']),
+          getPostMeta: a
+            .query()
+            .arguments({ id: a.string() })
+            .returns(a.ref('PostMeta'))
+            .authorization((allow) => allow.authenticated())
+            .handler(
+              a.handler.inlineSql(
+                'SELECT viewCount, approvedOn FROM some_table',
+              ),
+            ),
+        });
+
+      const graphql = modified.transform().schema;
+      expect(graphql).toMatchSnapshot();
+    });
+
+    test('should throw if adding Model to SQL schema', () => {
+      expect(() =>
+        initial
+          .authorization((allow) => allow.authenticated())
+          .addToSchema({
+            // @ts-ignore
+            Comment: a.model({
+              content: a.string(),
+            }),
+          }),
+      ).toThrowError(
+        'Invalid value specified for Comment in addToSchema(). Models cannot be manually added to a SQL schema.',
+      );
+    });
+  });
+
   describe('for a.combine schema', () => {
     test('matches shared backend type', () => {
       const schemaA = a.schema({
@@ -1239,7 +1319,7 @@ describe('custom operations', () => {
   });
 });
 
-describe('RDS Schema with sql statement references', () => {
+describe('SQL Schema with sql statement references', () => {
   const fakeSecret = () => ({}) as any;
 
   const datasourceConfigMySQL = {
@@ -1250,7 +1330,7 @@ describe('RDS Schema with sql statement references', () => {
   const aSql = configure({ database: datasourceConfigMySQL });
 
   it('schema with full path sql reference', () => {
-    const rdsSchema = aSql
+    const sqlSchema = aSql
       .schema({
         widget: a.model({
           title: a.string().required(),
@@ -1268,11 +1348,11 @@ describe('RDS Schema with sql statement references', () => {
       })
       .authorization((allow) => allow.publicApiKey());
 
-    expect(rdsSchema.transform()).toMatchSnapshot();
+    expect(sqlSchema.transform()).toMatchSnapshot();
   });
 
   it('schema with relative path sql reference', () => {
-    const rdsSchema = aSql
+    const sqlSchema = aSql
       .schema({
         widget: a.model({
           title: a.string().required(),
@@ -1286,7 +1366,7 @@ describe('RDS Schema with sql statement references', () => {
       })
       .authorization((allow) => allow.publicApiKey());
 
-    const { customSqlDataSourceStrategies } = rdsSchema.transform();
+    const { customSqlDataSourceStrategies } = sqlSchema.transform();
 
     expect(customSqlDataSourceStrategies).not.toBeUndefined();
 
