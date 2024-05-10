@@ -462,44 +462,6 @@ describe('RDS custom operations', () => {
 
   type ResolvedClientSchema = ClientSchema<typeof s>;
 
-  it('adds custom operations to ModelMeta', () => {
-    type ModelMeta = ExtractModelMeta<ResolvedClientSchema>;
-    type Resolved = Prettify<ModelMeta['customOperations']>;
-
-    type Expected = {
-      likePost: {
-        arguments: {
-          postId?: string | null | undefined;
-          content: string;
-        };
-        returnType: {
-          title?: string | null | undefined;
-        } | null;
-        typeName: 'Mutation';
-        authorization: [];
-      };
-      getLikedPost: {
-        arguments: never;
-        returnType: {
-          title?: string | null | undefined;
-        } | null;
-        typeName: 'Query';
-        authorization: [];
-      };
-      onLikePost: {
-        arguments: never;
-        returnType: {
-          title?: string | null | undefined;
-        } | null;
-        typeName: 'Subscription';
-        authorization: [];
-      };
-    };
-
-    type _ = Expect<Equal<Resolved, Expected>>;
-  });
-});
-
 describe('.for() modifier', () => {
   it('is unavailable on a.query()', () => {
     // @ts-expect-error .for() is not a valid modifier function of a.query()

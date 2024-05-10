@@ -89,6 +89,17 @@ type CustomOpArguments<Shape extends CustomOperationParamShape> =
       }>;
 
 /**
+ * Removes `null | undefined` from the return type if the operation is a subscription,
+ * since subs don't fire on empty/non-existent values.
+ */
+type Normalize<
+  Shape extends CustomOperationParamShape,
+  RT,
+> = Shape['typeName'] extends 'Subscription'
+  ? Exclude<RT, null | undefined>
+  : RT;
+
+/**
  * Computes the return type from the `returnType` of a custom operation shape.
  *
  * This entails dereferencing refs and inferring graphql types from field-type defs.
@@ -96,7 +107,8 @@ type CustomOpArguments<Shape extends CustomOperationParamShape> =
 type CustomOpReturnType<
   Shape extends CustomOperationParamShape,
   RefBag extends Record<string, any>,
-> =
+> = Normalize<
+  Shape,
   Shape['returnType'] extends RefType<infer RefShape, any, any>
     ? RefShape['link'] extends keyof RefBag
       ? ResolveRef<RefShape, RefBag>
@@ -112,7 +124,8 @@ type CustomOpReturnType<
               > // The inline `.customType()` with a custom operation doesn't have
             // `.required()` modifier, hence it's nullable
             | null
-        : never;
+        : never
+>;
 
 /**
  * Returns a return type with lazy loaders removed.

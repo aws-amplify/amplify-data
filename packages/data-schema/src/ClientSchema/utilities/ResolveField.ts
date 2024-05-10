@@ -25,14 +25,14 @@ export type ResolveFields<Bag extends Record<string, any>, T> = {
 export type ResolveIndividualField<Bag extends Record<string, any>, T> =
   T extends ModelField<infer FieldShape, any, any>
     ? FieldShape
-    : T extends RefType<infer RefShape>
+    : T extends RefType<infer RefShape, any, any>
       ? ResolveRef<RefShape, Bag>
       : T extends ModelRelationalField<infer RelationshipShape, any, any, any>
         ? ResolveRelationship<Bag, RelationshipShape>
         : T extends CustomType<infer CT>
-          ? ResolveFields<Bag, CT>
+          ? ResolveFields<Bag, CT['fields']> | null
           : T extends EnumType<infer ET>
-            ? ET['values'][number]
+            ? ET['values'][number] | null
             : never;
 
 type ResolveRelationship<

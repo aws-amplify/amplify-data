@@ -5,13 +5,9 @@ import {
   UnwrapArray,
   UnionToIntersection,
   Prettify,
-  Equal,
   __modelMeta__,
-  ExtractModelMeta,
-  IsEmptyStringOrNever,
 } from '@aws-amplify/data-schema-types';
 import type { Observable } from 'rxjs';
-import { deferredRefResolvingPrefix } from '../../ModelType';
 import {
   ClientSchemaByEntityType,
   ClientSchemaByEntityTypeBaseShape,
@@ -277,51 +273,9 @@ export type SelectionSet<
 // #endregion
 
 // #region Input mapped types
-export type ModelIdentifier<Model extends Record<any, any>> = Prettify<
-  Record<Model['identifier'] & string, string>
->;
-
-type IfEquals<X, Y, A = X, B = never> =
-  (<T>() => T extends X ? 1 : 2) extends <T>() => T extends Y ? 1 : 2 ? A : B;
-
-// Excludes readonly fields from Record type
-type WritableKeys<T> = {
-  [P in keyof T]-?: IfEquals<
-    { [Q in P]: T[P] },
-    { -readonly [Q in P]: T[P] },
-    P
-  >;
-}[keyof T];
-
-/**
- * All required fields and relational fields, exclude readonly fields
- */
-type MutationInput<
-  Model extends ClientSchemaByEntityTypeBaseShape['models'][string],
-  WritableFields = Pick<Model['type'], WritableKeys<Model['type']>>,
-> = WithNullablesAsOptional<{
-  [Prop in keyof WritableFields as WritableFields[Prop] extends (
-    ...args: any
-  ) => any
-    ? never
-    : Prop]: WritableFields[Prop];
-}>;
-
-type WithNullablesAsOptional<T> = {
-  [K in keyof T as null extends T[K] ? K : never]+?: T[K];
-} & {
-  [K in keyof T as null extends T[K] ? never : K]: T[K];
-};
-
-/**
- * All identifiers and fields used to create a model
- */
-type CreateModelInput<
-  Model extends ClientSchemaByEntityTypeBaseShape['models'][string],
-> =
-  Equal<Model['identifier'], { id: string }> extends true
-    ? Partial<Model['identifier'] & Omit<MutationInput<Model>, 'id'>>
-    : MutationInput<Model>;
+// export type ModelIdentifier<Model extends Record<any, any>> = Prettify<
+//   Record<Model['identifier'] & string, string>
+// >;
 
 // #endregion
 
@@ -550,7 +504,7 @@ export type ModelTypesClient<
   FlatModel extends Record<string, unknown> = ResolvedModel<Model['type']>,
 > = IndexQueryMethods<Model> & {
   create: (
-    model: Prettify<CreateModelInput<Model>>,
+    model: Model['createType'],
     options?: {
       authMode?: AuthMode;
       authToken?: string;
@@ -558,7 +512,7 @@ export type ModelTypesClient<
     },
   ) => SingularReturnValue<Model['type']>;
   update: (
-    model: Prettify<Model['identifier'] & Partial<MutationInput<Model>>>,
+    model: Model['updateType'],
     options?: {
       authMode?: AuthMode;
       authToken?: string;
@@ -566,7 +520,7 @@ export type ModelTypesClient<
     },
   ) => SingularReturnValue<Model['type']>;
   delete: (
-    identifier: Model['identifier'],
+    identifier: Model['deleteType'],
     options?: {
       authMode?: AuthMode;
       authToken?: string;

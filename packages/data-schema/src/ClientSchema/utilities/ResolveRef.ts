@@ -10,16 +10,26 @@ import type { RefTypeParamShape } from '../../RefType';
 export type ResolveRef<
   RefShape extends RefTypeParamShape,
   RefBag extends Record<string, { __entityType: string; type: unknown }>,
-  Link = RefShape['link'],
-  RefValue = Link extends keyof RefBag ? RefBag[Link]['type'] : never,
-  Value = RefShape['valueRequired'] extends true ? RefValue : RefValue | null,
-> = ResolveRefValueArrayTraits<RefShape, Value>;
+> = ResolveRefValueArrayTraits<
+  RefShape,
+  ApplyRequiredness<
+    RefShape['link'] extends keyof RefBag
+      ? RefBag[RefShape['link']]['type']
+      : never,
+    RefShape['valueRequired']
+  >
+>;
+
+type ApplyRequiredness<
+  Value,
+  MakeRequired extends boolean,
+> = MakeRequired extends true ? Exclude<Value, null> : Value | null;
 
 /**
  * Converts the resolved RefType Value type into Array<> according to the
  * `array` and `arrayRequired` properties of the RefType
  */
-export type ResolveRefValueArrayTraits<
+type ResolveRefValueArrayTraits<
   Ref extends RefTypeParamShape,
   Value,
 > = Ref['array'] extends false

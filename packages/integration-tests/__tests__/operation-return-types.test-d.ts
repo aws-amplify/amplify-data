@@ -53,8 +53,8 @@ describe('operation return types', () => {
     readonly createdAt: string;
     readonly updatedAt: string;
     name: string;
-    officeId?: string | null | undefined;
-    officeLocationId?: string | null | undefined;
+    officeId: string | null;
+    officeLocationId: string | null;
   };
 
   type ExpectedGetterSuperTypesInDoctorReturnType = {
@@ -93,7 +93,7 @@ describe('operation return types', () => {
     ExpectedGetterSuperTypesInDoctorReturnType;
 
   type ExpectedBasicTypesInLicenseReturnType = {
-    doctorId?: string | null | undefined;
+    doctorId: string | null;
     serial: string;
     readonly id: string;
     readonly createdAt: string;
@@ -124,9 +124,13 @@ describe('operation return types', () => {
         const { data: listedDoctors } = await client.models.Doctor.list();
 
         type ResolvedDoctorType = Prettify<(typeof listedDoctors)[number]>;
+        type SansRelated = Omit<
+          ResolvedDoctorType,
+          'license' | 'office' | 'doctorPatients'
+        >;
 
         type BasicTypeResult = Equal<
-          Omit<ResolvedDoctorType, 'license' | 'office' | 'doctorPatients'>,
+          SansRelated,
           ExpectedBasicTypesInDoctorReturnType
         >;
 

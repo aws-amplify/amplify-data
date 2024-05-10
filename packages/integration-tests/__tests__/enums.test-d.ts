@@ -22,7 +22,7 @@ describe('Enum', () => {
         readonly createdAt: string;
         readonly updatedAt: string;
         title: string;
-        status?: 'draft' | 'pending' | 'published' | null;
+        status: 'draft' | 'pending' | 'published' | null;
       }[];
 
       type test = Expect<Equal<typeof posts, ExpectedType>>;
@@ -58,6 +58,8 @@ describe('Enum', () => {
 
     test('The `.enums` property should contain expect enum type and values getter function', () => {
       type EnumsProp = typeof client.enums;
+
+      type T = Schema['Post']['nestedTypes']['status'];
 
       type ExpectedEnumsPropShape = {
         PostStatus: {
@@ -105,7 +107,7 @@ describe('Enum', () => {
         readonly createdAt: string;
         readonly updatedAt: string;
         content: string;
-        status?: 'draft' | 'pending' | 'published' | null;
+        status: 'draft' | 'pending' | 'published' | null;
       }[];
 
       type test2 = Expect<Equal<typeof comments, ExpectedCommentType>>;

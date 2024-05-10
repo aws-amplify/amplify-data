@@ -2,8 +2,10 @@ import { a, ClientSchema } from '../../src/index';
 import { ClientSchemaByEntityType } from '../../src/ClientSchema';
 import { ClientExtensions } from '../../src/runtime';
 import { ExtractNestedTypes } from '../../src/ClientSchema/utilities/ExtractNestedTypes';
-import { Prettify } from '@aws-amplify/data-schema-types';
+import { Prettify, Expect, Equal } from '@aws-amplify/data-schema-types';
 import { Select } from '../../src/util';
+import { CustomType } from '../../src/CustomType';
+import { ResolvedModel } from '../../src/runtime/client/index';
 
 describe('a', () => {
   test('b', async () => {
@@ -27,6 +29,7 @@ describe('a', () => {
 
         LikeResult: a.customType({
           likes: a.integer().required(),
+          test: a.string(),
         }),
 
         likePost: a
@@ -55,7 +58,8 @@ describe('a', () => {
           .model({
             name: a.string(),
             deletionState: a.enum(['active', 'deleted']),
-            status: a.ref('Status'),
+            status: a.ref('Status').required(),
+            likes: a.ref('LikeResult'),
             nestedModelThing: a.customType({
               details: a.string(),
             }),
@@ -88,6 +92,14 @@ describe('a', () => {
           })
           .identifier(['cpkA', 'cpkB'])
           .authorization((allow) => [allow.publicApiKey()]),
+
+        InputTypesCheck: a.model({
+          title: a.string().required(),
+          meta: a.customType({
+            author: a.string().required(),
+            summary: a.string(),
+          }),
+        }),
       })
       .authorization((allow) => [
         allow.publicApiKey(),
@@ -95,30 +107,14 @@ describe('a', () => {
       ]);
 
     type Schema = ClientSchema<typeof schema>;
-    type Comment = Schema['Comment']['nestedTypes'];
-    type CommentPK = Schema['Comment']['identifier'];
-    type Post = Schema['Post']['type'];
-    type PostSecondaryIndexes = Schema['Post']['secondaryIndexes'];
 
-    type Something =
-      Schema['SomeThing']['nestedTypes']['deletionState']['type'];
-
-    type SomethingGSIs = Schema['SomeThing']['secondaryIndexes'];
-
-    type Status = Schema['Status']['type'];
-
-    type TopEnums = Prettify<ClientSchemaByEntityType<Schema>['enums']>;
-    type ByType = ClientSchemaByEntityType<Schema>;
-    type Nested = Prettify<
-      Select<ExtractNestedTypes<ByType>, { __entityType: 'enum' }>
-    >;
-    type AllEnums = TopEnums & Nested;
+    type onLikePost = Schema['onLikePost']['returnType'];
 
     const _client = {} as ClientExtensions<Schema>;
 
     _client.models.SomeThing.listSomeThingByNameAndStatus({
       name: 'something',
-      status: { eq: 'whatever' },
+      status: { eq: 'a' },
     });
 
     const status = _client.enums.SomeThingDeletionState.values();
