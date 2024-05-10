@@ -103,6 +103,7 @@ describe('secondary indexes / index queries', () => {
       client.models.Post.myCustomIdx(
         {
           description: 'abc',
+          updatedAtViewCount: { gt: { updatedAt: '1/1/1900', viewCount: 3 } },
         },
         {
           sortDirection: 'ASC',
@@ -113,8 +114,6 @@ describe('secondary indexes / index queries', () => {
       client.models.Post.myCustomIdx(
         {
           description: 'abc',
-          viewCount: { gt: 3 },
-          updatedAt: { beginsWith: '123' },
         },
         {
           sortDirection: 'ASC',
@@ -124,8 +123,9 @@ describe('secondary indexes / index queries', () => {
       client.models.Post.myCustomIdx(
         {
           description: 'abc',
-          viewCount: { gt: 3 },
-          updatedAt: { beginsWith: '123' },
+          updatedAtViewCount: {
+            beginsWith: { updatedAt: '123', viewCount: 0 },
+          },
         },
         {
           // Wrong `sortDirection` value

@@ -61,6 +61,7 @@ describe('identifiers', () => {
           id: string;
         };
         sk: never;
+        compositeSk: never;
       };
       secondaryIndexes: [];
       authorization: [];
@@ -85,6 +86,7 @@ describe('identifiers', () => {
           customId: string;
         };
         sk: never;
+        compositeSk: never;
       };
       secondaryIndexes: [];
       authorization: [];

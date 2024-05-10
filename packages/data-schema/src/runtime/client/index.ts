@@ -481,6 +481,53 @@ type BooleanFilters = {
   ne?: boolean;
 };
 
+/**
+ * A composite SK (in an identifier or secondaryIndex) resolves to this type for
+ * list queries and index queries
+ * 
+ * @example
+ * Given
+ * ```ts
+ * MyModel: a
+  .model({
+    pk: a.string().required(),
+    sk1: a.string().required(),
+    sk2: a.integer().required(),
+  })
+  .identifier(['pk', 'sk1', 'sk2']),
+ * ``` 
+ * Expected list options: 
+ * ```ts
+ * {
+ *   pk?: string
+ *   sk1Sk2?: ModelPrimaryCompositeKeyConditionInput
+ * }
+ * ```
+ * Where ModelPrimaryCompositeKeyConditionInput resolves to:
+ * ```ts
+ * {
+ *   eq: {sk1: string; sk2: number};
+ *   le: {sk1: string; sk2: number};
+ *   lt: {sk1: string; sk2: number};
+ *   ge: {sk1: string; sk2: number};
+ *   gt: {sk1: string; sk2: number};
+ *   between: [ {sk1: string; sk2: number} ];
+ *   beginsWith: {sk1: string; sk2: number};
+ * }
+ * ```
+ * */
+export type ModelPrimaryCompositeKeyInput<
+  SkIr extends Record<string, string | number>,
+> = {
+  eq?: SkIr;
+  le?: SkIr;
+  lt?: SkIr;
+  ge?: SkIr;
+  gt?: SkIr;
+  between?: [SkIr];
+  beginsWith?: SkIr;
+};
+
 type ModelFilter<Model extends Record<any, any>> = LogicalFilters<Model> & {
   [K in keyof Model as Model[K] extends LazyLoader<any, any>
     ? never
@@ -890,6 +937,7 @@ export type CustomHeaders =
 export interface PrimaryIndexIrShape {
   pk: { [key: string]: string | number };
   sk: { [key: string]: string | number } | never;
+  compositeSk: never | string;
 }
 
 /**
@@ -919,7 +967,7 @@ type IndexQueryMethodsFromIR<
     >
   : Res;
 
-type ListPkOptions<
+export type ListPkOptions<
   ModelMeta extends ModelMetaShape,
   Enums extends Record<string, string>,
 > = ModelMeta['identifier']['sk'] extends never
@@ -940,13 +988,19 @@ type IndexQueryInput<
   [PKField in keyof Idx['pk']]: Idx['pk'][PKField] extends `${deferredRefResolvingPrefix}${infer R}`
     ? Enums[R]
     : Idx['pk'][PKField];
-} & {
-  [SKField in keyof Idx['sk']]+?: number extends Idx['sk'][SKField]
-    ? NumericFilter
-    : Idx['sk'][SKField] extends `${deferredRefResolvingPrefix}${infer R}`
-      ? StringFilter<Enums[R]>
-      : StringFilter<Idx['sk'][SKField] & string>;
-};
+} & (Idx['compositeSk'] extends never
+  ? {
+      [SKField in keyof Idx['sk']]+?: number extends Idx['sk'][SKField]
+        ? NumericFilter
+        : Idx['sk'][SKField] extends `${deferredRefResolvingPrefix}${infer R}`
+          ? StringFilter<Enums[R]>
+          : StringFilter<Idx['sk'][SKField] & string>;
+    }
+  : {
+      [CompositeSk in Idx['compositeSk']]+?: ModelPrimaryCompositeKeyInput<
+        Idx['sk']
+      >;
+    });
 
 type IndexQueryMethodSignature<
   Idx extends SecondaryIndexIrShape,
