@@ -363,7 +363,7 @@ export function model<T extends ModelFields>(
   fields: T,
 ): ModelType<{
   fields: T;
-  identifier: { pk: { id: string }; sk: never };
+  identifier: { pk: { id: string }; sk: never; compositeSk: never };
   secondaryIndexes: [];
   authorization: [];
 }> {

@@ -632,7 +632,25 @@ describe('secondary indexes', () => {
     expect(schema.transform().schema).toMatchSnapshot();
   });
 
-  it('generates a secondary index annotation with attributes', () => {
+  it('generates a secondary index annotation with attributes - default', () => {
+    const schema = a
+      .schema({
+        widget: a
+          .model({
+            title: a.string().required(),
+            description: a.string().required(),
+            timestamp: a.integer().required(),
+          })
+          .secondaryIndexes((index) => [
+            index('title').name('myGSI').sortKeys(['description', 'timestamp']),
+          ]),
+      })
+      .authorization((allow) => allow.publicApiKey());
+
+    expect(schema.transform().schema).toMatchSnapshot();
+  });
+
+  it('generates a secondary index annotation with attributes - custom queryField', () => {
     const schema = a
       .schema({
         widget: a

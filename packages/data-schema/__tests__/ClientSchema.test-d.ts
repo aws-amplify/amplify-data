@@ -345,7 +345,7 @@ describe('SQL Schema', () => {
       };
       [__modelMeta__]: {
         RenamedPost: {
-          identifier: { pk: { id: string }; sk: never };
+          identifier: { pk: { id: string }; sk: never; compositeSk: never };
         };
         enums: Record<never, never>;
         customTypes: Record<never, never>;
@@ -421,13 +421,13 @@ describe('SQL Schema', () => {
       };
       [__modelMeta__]: {
         RenamedPost: {
-          identifier: { pk: { id: string }; sk: never };
+          identifier: { pk: { id: string }; sk: never; compositeSk: never };
         };
         RenamedComment: {
-          identifier: { pk: { id: string }; sk: never };
+          identifier: { pk: { id: string }; sk: never; compositeSk: never };
         };
         tags: {
-          identifier: { pk: { id: string }; sk: never };
+          identifier: { pk: { id: string }; sk: never; compositeSk: never };
         };
         enums: Record<never, never>;
         customTypes: Record<never, never>;
