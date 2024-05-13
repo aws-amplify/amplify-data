@@ -16,6 +16,7 @@ export declare function model<T extends ModelFields>(fields: T): ModelType<{
             id: string;
         };
         sk: never;
+        compositeSk: never;
     };
     secondaryIndexes: [];
     authorization: [];
@@ -59,7 +60,7 @@ database table fields. Supports scalar types and relationship types.
 </tbody></table>
 **Returns:**
 
-ModelType&lt;{ fields: T; identifier: { pk: { id: string; }; sk: never; }; secondaryIndexes: \[\]; authorization: \[\]; }&gt;
+ModelType&lt;{ fields: T; identifier: { pk: { id: string; }; sk: never; compositeSk: never; }; secondaryIndexes: \[\]; authorization: \[\]; }&gt;
 
 a data model definition
 
