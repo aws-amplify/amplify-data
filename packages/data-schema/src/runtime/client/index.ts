@@ -545,7 +545,6 @@ type ModelMetaShape = {
   identifier: PrimaryIndexIrShape;
 };
 
-// TODO: remove export. added for debugging.
 export type ModelTypesClient<
   ModelName extends string,
   Model extends Record<string, unknown>,
@@ -948,7 +947,7 @@ export interface SecondaryIndexIrShape extends PrimaryIndexIrShape {
   queryField: string;
 }
 
-type IndexQueryMethodsFromIR<
+export type IndexQueryMethodsFromIR<
   SecondaryIdxTuple extends SecondaryIndexIrShape[],
   ModelName extends string,
   Model extends Record<string, unknown>,
@@ -981,7 +980,7 @@ export type ListPkOptions<
 /**
  * Accepts a PrimaryIndexIr or SecondaryIndexIr and returns resolved parameters
  */
-type IndexQueryInput<
+export type IndexQueryInput<
   Idx extends PrimaryIndexIrShape,
   Enums extends Record<string, string>,
 > = {
@@ -997,9 +996,11 @@ type IndexQueryInput<
           : StringFilter<Idx['sk'][SKField] & string>;
     }
   : {
-      [CompositeSk in Idx['compositeSk']]+?: ModelPrimaryCompositeKeyInput<
-        Idx['sk']
-      >;
+      [CompositeSk in Idx['compositeSk']]+?: ModelPrimaryCompositeKeyInput<{
+        [SKField in keyof Idx['sk']]: Idx['sk'][SKField] extends `${deferredRefResolvingPrefix}${infer _R}`
+          ? string
+          : Idx['sk'][SKField];
+      }>;
     });
 
 type IndexQueryMethodSignature<

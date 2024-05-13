@@ -38,6 +38,24 @@ const connectionType = {
   BELONGS_TO: 'BELONGS_TO',
 };
 
+// When generating an SK's KeyConditionInput name, string-like types map to String
+const skGraphQlFieldTypeMap = {
+  ID: 'ID',
+  String: 'String',
+  AWSDate: 'String',
+  AWSTime: 'String',
+  AWSDateTime: 'String',
+  AWSTimestamp: 'String',
+  AWSEmail: 'String',
+  AWSPhone: 'String',
+  AWSURL: 'String',
+  AWSIPAddress: 'String',
+  AWSJSON: 'String',
+  Boolean: 'Boolean',
+  Int: 'Int',
+  Float: 'Float',
+};
+
 /**
  *
  * @param GraphQL response object
@@ -676,6 +694,7 @@ export function generateGraphQLDocument(
       primaryKeyFieldName,
       sortKeyFieldNames,
     },
+    attributes,
   } = modelDefinition;
 
   // Use pascal case of the model name to generate the operations and the arguments.
@@ -698,19 +717,50 @@ export function generateGraphQLDocument(
     graphQLFieldName = queryField;
 
     /**
+     * **a. Single field SK** -> single arg where name is the field name and the type is `Model${gqlFieldType}KeyConditionInput` (nullable)
+     *  Note: string-like data types e.g.,  AWSDateTime, AWSEmail, AWSPhone, etc. should map to String. See `skGraphQlFieldTypeMap` above
+     * @example
+     * ```
+     * sk1: ModelStringKeyConditionInput
+     * ```
      *
+     * **b. Composite SK** -> single arg where the name is camelCase concatenation of all the field names that comprise the SK
+     *  and the type is `Model${modelName}${keyAttributeName}CompositeKeyConditionInput` (nullable)
+     * @example
+     * ```
+     * sk1Sk2: ModelMyModelMyModelByPkAndSk1AndSk2CompositeKeyConditionInput
      */
-    const skQueryArgs = sk.reduce((acc: Record<string, any>, fieldName) => {
-      const fieldType = Object.prototype.hasOwnProperty.call(
-        fields[fieldName].type,
-        'enum',
-      )
-        ? 'String' // AppSync schema sets `ModelStringKeyConditionInput` as the type of the enum field that's used as SK
-        : fields[fieldName].type;
-      acc[fieldName] = `Model${fieldType}KeyConditionInput`;
+    let skQueryArgs = {};
 
-      return acc;
-    }, {});
+    if (sk.length === 1) {
+      const [skField] = sk;
+      const type = (
+        typeof fields[skField].type === 'string'
+          ? fields[skField].type
+          : 'String'
+      ) as keyof typeof skGraphQlFieldTypeMap;
+      const normalizedType = skGraphQlFieldTypeMap[type];
+
+      skQueryArgs = {
+        [skField]: `Model${normalizedType}KeyConditionInput`,
+      };
+    } else if (sk.length > 1) {
+      const compositeSkArgName = sk.reduce((acc, curr, idx) => {
+        if (idx === 0) {
+          return curr;
+        } else {
+          return acc + capitalize(curr);
+        }
+      }, '');
+
+      const keyName = attributes?.find(
+        (attr) => attr?.properties?.queryField === queryField,
+      )?.properties?.name;
+
+      skQueryArgs = {
+        [compositeSkArgName]: `Model${capitalize(modelName)}${capitalize(keyName)}CompositeKeyConditionInput`,
+      };
+    }
 
     indexQueryArgs = {
       [pk]: `${
@@ -743,23 +793,6 @@ export function generateGraphQLDocument(
   };
   const listPkArgs = {};
 
-  const skGraphQlFieldTypeMap = {
-    ID: 'ID',
-    String: 'String',
-    AWSDate: 'String',
-    AWSTime: 'String',
-    AWSDateTime: 'String',
-    AWSTimestamp: 'String',
-    AWSEmail: 'String',
-    AWSPhone: 'String',
-    AWSURL: 'String',
-    AWSIPAddress: 'String',
-    AWSJSON: 'String',
-    Boolean: 'Boolean',
-    Int: 'Int',
-    Float: 'Float',
-  };
-
   /**
    * Generate query field args for the SK if it's defined
    *
@@ -778,7 +811,7 @@ export function generateGraphQLDocument(
    * sk1: ModelStringKeyConditionInput
    * ```
    *
-   * **b. Composite SK** -> single arg where the name is camaelCase concatenation of all the field names that comprise the SK
+   * **b. Composite SK** -> single arg where the name is camelCase concatenation of all the field names that comprise the SK
    *  and the type is `Model${modelName}PrimaryCompositeKeyConditionInput` (nullable)
    * @example
    * ```
