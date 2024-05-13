@@ -1,5 +1,11 @@
 # @aws-amplify/data-schema
 
+## 1.2.1
+
+### Patch Changes
+
+- d6114be: fix composite sk in identifier/secondaryIndex
+
 ## 1.2.0
 
 ### Minor Changes
