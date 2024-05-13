@@ -81,7 +81,12 @@ exports[`Read application data List and get your data 1`] = `
       "authMode": undefined,
       "authToken": undefined,
       "query": "query($productId: ID,$sortDirection: ModelSortDirection,$warehouseId: ModelIDKeyConditionInput,$filter: ModelInventoryFilterInput,$limit: Int,$nextToken: String) { listInventories(productId: $productId,sortDirection: $sortDirection,warehouseId: $warehouseId,filter: $filter,limit: $limit,nextToken: $nextToken) { items { productId warehouseId description createdAt updatedAt owner } nextToken __typename } }",
-      "variables": {},
+      "variables": {
+        "productId": "...",
+        "warehouseId": {
+          "beginsWith": "...",
+        },
+      },
     },
     {},
   ],
