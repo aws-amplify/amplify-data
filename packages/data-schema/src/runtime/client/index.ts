@@ -449,7 +449,7 @@ type SizeFilter = {
 /**
  * Filters options that can be used on string-like fields.
  */
-type StringFilter<T extends string = string> = {
+export type StringFilter<T extends string = string> = {
   attributeExists?: boolean;
   beginsWith?: string;
   between?: [string, string];
@@ -464,7 +464,7 @@ type StringFilter<T extends string = string> = {
   size?: SizeFilter;
 };
 
-type NumericFilter = {
+export type NumericFilter = {
   attributeExists?: boolean;
   between?: [number, number];
   eq?: number;
