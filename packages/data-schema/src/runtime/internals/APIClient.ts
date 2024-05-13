@@ -56,6 +56,21 @@ const skGraphQlFieldTypeMap = {
   Float: 'Float',
 };
 
+// move to util
+const resolvedSkName = (sk: string[]): string => {
+  if (sk.length === 1) {
+    return sk[0];
+  } else {
+    return sk.reduce((acc, curr, idx) => {
+      if (idx === 0) {
+        return curr;
+      } else {
+        return acc + capitalize(curr);
+      }
+    }, '');
+  }
+};
+
 /**
  *
  * @param GraphQL response object
@@ -745,13 +760,7 @@ export function generateGraphQLDocument(
         [skField]: `Model${normalizedType}KeyConditionInput`,
       };
     } else if (sk.length > 1) {
-      const compositeSkArgName = sk.reduce((acc, curr, idx) => {
-        if (idx === 0) {
-          return curr;
-        } else {
-          return acc + capitalize(curr);
-        }
-      }, '');
+      const compositeSkArgName = resolvedSkName(sk);
 
       const keyName = attributes?.find(
         (attr) => attr?.properties?.queryField === queryField,
@@ -849,16 +858,7 @@ export function generateGraphQLDocument(
         };
       } else {
         // Composite SK
-        const compositeSkArgName = sortKeyFieldNames.reduce(
-          (acc, curr, idx) => {
-            if (idx === 0) {
-              return curr;
-            } else {
-              return acc + capitalize(curr);
-            }
-          },
-          '',
-        );
+        const compositeSkArgName = resolvedSkName(sortKeyFieldNames);
 
         return {
           [compositeSkArgName]: `Model${capitalize(modelName)}PrimaryCompositeKeyConditionInput`,
@@ -984,6 +984,8 @@ export function buildGraphQLVariables(
     },
   } = modelDefinition;
 
+  const skName = sortKeyFieldNames?.length && resolvedSkName(sortKeyFieldNames);
+
   let variables: Record<string, any> = {};
 
   // TODO: process input
@@ -1041,7 +1043,12 @@ export function buildGraphQLVariables(
       }
       if (arg?.sortDirection) {
         variables.sortDirection = arg.sortDirection;
+      }
+      if (arg && arg[primaryKeyFieldName]) {
         variables[primaryKeyFieldName] = arg[primaryKeyFieldName];
+      }
+      if (skName && arg && arg[skName]) {
+        variables[skName] = arg[skName];
       }
       if (arg?.nextToken) {
         variables.nextToken = arg.nextToken;
@@ -1053,10 +1060,12 @@ export function buildGraphQLVariables(
     case 'INDEX_QUERY': {
       const { pk, sk = [] } = indexMeta!;
 
+      const indexQuerySkName = sk?.length && resolvedSkName(sk);
+
       variables[pk] = arg![pk];
 
-      for (const skField of sk) {
-        variables[skField] = arg![skField];
+      if (indexQuerySkName && arg && arg[indexQuerySkName]) {
+        variables[indexQuerySkName] = arg[indexQuerySkName];
       }
 
       if (arg?.filter) {

@@ -144,7 +144,12 @@ describe('Primary Indexes', () => {
         ),
       );
 
-      console.log('options & headers', query, variables);
+      expect(variables).toStrictEqual({
+        pk: 'abc',
+        sk1: {
+          gt: 'a',
+        },
+      });
     });
   });
 
@@ -274,7 +279,15 @@ describe('Primary Indexes', () => {
         ),
       );
 
-      console.log('options & headers', query, variables);
+      expect(variables).toStrictEqual({
+        pk: 'abc',
+        sk1Sk2: {
+          gt: {
+            sk1: 'a',
+            sk2: 1,
+          },
+        },
+      });
     });
   });
 });
@@ -407,6 +420,11 @@ describe('Secondary Indexes', () => {
       expect(query).toEqual(
         expect.stringContaining('$sortDirection: ModelSortDirection,'),
       );
+
+      expect(variables).toStrictEqual({
+        gsiPk: 'abc',
+        gsiSk: { beginsWith: '...' },
+      });
     });
   });
   describe('Secondary index with composite SK', () => {
@@ -552,6 +570,11 @@ describe('Secondary Indexes', () => {
       expect(query).toEqual(
         expect.stringContaining('$sortDirection: ModelSortDirection,'),
       );
+
+      expect(variables).toStrictEqual({
+        gsiPk: 'abc',
+        gsiSk1GsiSk2: { beginsWith: { gsiSk1: '...', gsiSk2: 0 } },
+      });
     });
   });
 });
