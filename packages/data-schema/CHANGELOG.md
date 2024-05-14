@@ -1,5 +1,11 @@
 # @aws-amplify/data-schema
 
+## 1.2.2
+
+### Patch Changes
+
+- 5aa23c0: fix: generate correct filter type for non-string fields
+
 ## 1.2.1
 
 ### Patch Changes
