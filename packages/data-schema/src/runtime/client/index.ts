@@ -531,9 +531,9 @@ export type ModelPrimaryCompositeKeyInput<
 type ModelFilter<Model extends Record<any, any>> = LogicalFilters<Model> & {
   [K in keyof Model as Model[K] extends LazyLoader<any, any>
     ? never
-    : K]?: Model[K] extends boolean
+    : K]?: boolean extends Model[K]
     ? BooleanFilters
-    : Model[K] extends number
+    : number extends Model[K]
       ? NumericFilter
       : StringFilter;
 };
