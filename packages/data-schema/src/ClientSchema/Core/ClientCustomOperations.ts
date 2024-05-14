@@ -7,7 +7,6 @@ import type { CustomType } from '../../CustomType';
 import type { FieldTypesOfCustomType } from '../../MappedTypes/ResolveSchema';
 import type { ResolveRef } from '../utilities/ResolveRef';
 import { ClientSchemaProperty } from './ClientSchemaProperty';
-import { Prettify } from '@aws-amplify/data-schema-types';
 
 type CustomOperationSubType<Op extends CustomOperationParamShape> =
   `custom${Op['typeName']}`;
@@ -134,20 +133,22 @@ type CustomOpReturnType<
  * (Custom handlers should not return lazy loaded fields -- they're *lazy loaded*.)
  */
 type LambdaReturnType<T> =
-  T extends Record<string, any>
-    ? {
-        // Return type can include `null | undefined`, which we can't meaningfully
-        // map over.
-        [K in keyof Exclude<T, null | undefined> as Exclude<
-          T,
-          null | undefined
-        >[K] extends (...args: any) => any
-          ? never
-          : K]: Exclude<T, null | undefined>[K];
-      }
-    :
-        | T
-        // If the original return type allowed null | undefined, mix them back into
-        // the final return type
-        | (null extends T ? null : never)
-        | (undefined extends T ? undefined : never);
+  T extends Array<infer RT>
+    ? Array<LambdaReturnType<RT>>
+    : T extends Record<string, any>
+      ? {
+          // Return type can include `null | undefined`, which we can't meaningfully
+          // map over.
+          [K in keyof Exclude<T, null | undefined> as Exclude<
+            T,
+            null | undefined
+          >[K] extends (...args: any) => any
+            ? never
+            : K]: Exclude<T, null | undefined>[K];
+        }
+      :
+          | T
+          // If the original return type allowed null | undefined, mix them back into
+          // the final return type
+          | (null extends T ? null : never)
+          | (undefined extends T ? undefined : never);
