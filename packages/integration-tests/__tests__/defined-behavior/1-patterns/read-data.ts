@@ -191,13 +191,9 @@ describe('Read application data', () => {
       filter: {
         or: [
           {
-            // BUG!
-            // @ts-ignore
             priority: { eq: 1 },
           },
           {
-            // BUG!
-            // @ts-ignore
             priority: { eq: 2 },
           },
         ],
