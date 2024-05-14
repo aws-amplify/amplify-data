@@ -59,7 +59,7 @@ describe('a', () => {
             name: a.string(),
             deletionState: a.enum(['active', 'deleted']),
             status: a.ref('Status').required(),
-            likes: a.ref('LikeResult'),
+            likes: a.ref('LikeResult').array(),
             nestedModelThing: a.customType({
               details: a.string(),
             }),
@@ -108,7 +108,9 @@ describe('a', () => {
 
     type Schema = ClientSchema<typeof schema>;
 
-    type onLikePost = Schema['onLikePost']['returnType'];
+    type T = Schema['SomeThing']['type']['likes'];
+
+    type onLikePost = Schema['likeAllPosts']['type'];
 
     const _client = {} as ClientExtensions<Schema>;
 

@@ -47,7 +47,7 @@ type ClientFields<
 > = ResolveFields<Bag, T['fields']> &
   ModelIdentifier<Bag, T> &
   AuthFields<Metadata, T> &
-  SystemFields;
+  Omit<SystemFields, keyof ResolveFields<Bag, T['fields']>>;
 
 type SystemFields = {
   readonly createdAt: string;
@@ -101,7 +101,7 @@ type NestedTypes<
         __entityType: T['fields'][K] extends EnumType<EnumTypeParamShape>
           ? 'enum'
           : 'customType';
-        type: Bag[K];
+        type: Exclude<Bag[K], null>;
       }
     : never;
 };

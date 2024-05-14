@@ -172,7 +172,7 @@ describe('client', () => {
     type Response2Type = typeof response2;
 
     type Expected2 = {
-      data: (Schema['DataModel']['type'] | null)[] | null;
+      data: Schema['getAllDataModels']['returnType'];
       errors?: GraphQLFormattedError[] | undefined;
       extensions?:
         | {

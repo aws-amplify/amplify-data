@@ -7,6 +7,7 @@ import type { CustomType } from '../../CustomType';
 import type { FieldTypesOfCustomType } from '../../MappedTypes/ResolveSchema';
 import type { ResolveRef } from '../utilities/ResolveRef';
 import { ClientSchemaProperty } from './ClientSchemaProperty';
+import { Prettify } from '@aws-amplify/data-schema-types';
 
 type CustomOperationSubType<Op extends CustomOperationParamShape> =
   `custom${Op['typeName']}`;
