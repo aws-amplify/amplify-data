@@ -64,9 +64,9 @@ type SystemFields = {
 };
 
 type ModelIdentifier<T extends ModelTypeParamShape> = T['identifier']['pk'] &
-  T['identifier']['sk'] extends never
-  ? unknown // unknown collapses in an intersection
-  : T['identifier']['sk'];
+  (T['identifier']['sk'] extends never
+    ? unknown // unknown collapses in an intersection
+    : T['identifier']['sk']);
 
 /**
  * Models with composite PKs defined are expected to contain the model's pk, sk, and sortDirection properties in the `options` param

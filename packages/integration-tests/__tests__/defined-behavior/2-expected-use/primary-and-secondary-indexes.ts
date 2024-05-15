@@ -1,24 +1,16 @@
 import { a, ClientSchema } from '@aws-amplify/data-schema';
-import type {
-  Expect,
-  Equal,
-  ExtractModelMeta,
-  Prettify,
-} from '@aws-amplify/data-schema-types';
+import type { Expect, Equal, Prettify } from '@aws-amplify/data-schema-types';
 import { Amplify } from 'aws-amplify';
-import type {
-  ListPkOptions,
-  ModelPrimaryCompositeKeyInput,
-  StringFilter,
-  IndexQueryInput,
-} from '../../../../data-schema/src/runtime/client/index';
 import {
   buildAmplifyConfig,
   mockedGenerateClient,
   optionsAndHeaders,
   expectSchemaModelExcludes,
 } from '../../utils';
-import { ModelSortDirection } from '@aws-amplify/data-schema/runtime';
+import type {
+  ModelPrimaryCompositeKeyInput,
+  StringFilter,
+} from '../../../../data-schema/src/util';
 
 /**
  * Custom Identifier and Secondary Index permutations
@@ -50,37 +42,16 @@ describe('Primary Indexes', () => {
       jest.clearAllMocks();
     });
 
-    test('the client schema type has the expected identifier IR shape', () => {
-      type ResolvedIdentifierMeta = Prettify<
-        ExtractModelMeta<Schema>['Model']['identifier']
-      >;
+    test('the client schema type has the expected identifier', () => {
+      type ResolvedIdentifier = Schema['Model']['identifier'];
       type ExpectedIdentifier = {
-        pk: {
-          pk: string;
-        };
-        sk: {
-          sk1: string;
-        };
-        compositeSk: never;
+        pk: string;
+        sk1: string;
       };
 
       type _AssertIdentifierType = Expect<
-        Equal<ResolvedIdentifierMeta, ExpectedIdentifier>
+        Equal<ResolvedIdentifier, ExpectedIdentifier>
       >;
-    });
-
-    test('the client schema type has the expected list PK params', () => {
-      type ModelMeta = ExtractModelMeta<Schema>['Model'];
-
-      type ListPk = ListPkOptions<ModelMeta, Record<string, string>>;
-
-      type ExpectedPkParams = {
-        pk?: string;
-        sk1?: StringFilter;
-        sortDirection?: ModelSortDirection | undefined;
-      };
-
-      type _AssertIdentifierType = Expect<Equal<ListPk, ExpectedPkParams>>;
     });
 
     test('the generated graphql excludes `id: ID!` PK', async () => {
@@ -173,37 +144,16 @@ describe('Primary Indexes', () => {
     });
 
     test('the client schema type has the expected identifier IR shape', () => {
-      type ResolvedIdentifierMeta = Prettify<
-        ExtractModelMeta<Schema>['Model']['identifier']
-      >;
+      type ResolvedIdentifier = Schema['Model']['identifier'];
       type ExpectedIdentifier = {
-        pk: {
-          pk: string;
-        };
-        sk: {
-          sk1: string;
-          sk2: number;
-        };
-        compositeSk: 'sk1Sk2';
+        pk: string;
+        sk1: string;
+        sk2: number;
       };
 
       type _AssertIdentifierType = Expect<
-        Equal<ResolvedIdentifierMeta, ExpectedIdentifier>
+        Equal<ResolvedIdentifier, ExpectedIdentifier>
       >;
-    });
-
-    test('the client schema type has the expected list PK params', () => {
-      type ModelMeta = ExtractModelMeta<Schema>['Model'];
-
-      type ListPk = ListPkOptions<ModelMeta, Record<string, string>>;
-
-      type ExpectedPkParams = {
-        pk?: string;
-        sk1Sk2?: ModelPrimaryCompositeKeyInput<{ sk1: string; sk2: number }>;
-        sortDirection?: ModelSortDirection | undefined;
-      };
-
-      type _AssertIdentifierType = Expect<Equal<ListPk, ExpectedPkParams>>;
     });
 
     test('the generated graphql excludes `id: ID!` PK', async () => {
@@ -311,47 +261,20 @@ describe('Secondary Indexes', () => {
       jest.clearAllMocks();
     });
 
-    test('the client schema type has the expected secondary index IR shape', () => {
-      type ResolvedGsiMeta = Prettify<
-        ExtractModelMeta<Schema>['Model']['secondaryIndexes']
-      >;
-      type ExpectedGsiMeta = [
-        {
-          defaultQueryFieldSuffix: 'GsiPkAndGsiSk';
-          queryField: never;
-          pk: {
-            gsiPk: string;
-          };
-          sk: {
-            gsiSk: string;
-          };
-          compositeSk: never;
-        },
-      ];
-
-      type _AssertIdentifierType = Expect<
-        Equal<ResolvedGsiMeta, ExpectedGsiMeta>
-      >;
-    });
-
     test('the client schema type has the expected index query input params', () => {
-      type ModelName = 'Model';
-      type ModelMeta = ExtractModelMeta<Schema>[ModelName];
-
-      type ResolvedIndexQueryInput = Prettify<
-        IndexQueryInput<
-          ModelMeta['secondaryIndexes'][0],
-          Record<string, string>
-        >
-      >;
+      type ResolvedGsi = Prettify<Schema['Model']['secondaryIndexes']>;
 
       type ExpectedIndexQueryInput = {
-        gsiPk: string;
-        gsiSk?: StringFilter;
+        listModelByGsiPkAndGsiSk: {
+          input: {
+            gsiPk: string;
+            gsiSk?: StringFilter;
+          };
+        };
       };
 
       type _AssertIdentifierType = Expect<
-        Equal<ResolvedIndexQueryInput, ExpectedIndexQueryInput>
+        Equal<ResolvedGsi, ExpectedIndexQueryInput>
       >;
     });
 
@@ -448,51 +371,23 @@ describe('Secondary Indexes', () => {
       jest.clearAllMocks();
     });
 
-    test('the client schema type has the expected secondary index IR shape', () => {
-      type ResolvedGsiMeta = Prettify<
-        ExtractModelMeta<Schema>['Model']['secondaryIndexes']
-      >;
-      type ExpectedGsiMeta = [
-        {
-          defaultQueryFieldSuffix: 'GsiPkAndGsiSk1AndGsiSk2';
-          queryField: never;
-          pk: {
-            gsiPk: string;
-          };
-          sk: {
-            gsiSk1: string;
-            gsiSk2: number;
-          };
-          compositeSk: 'gsiSk1GsiSk2';
-        },
-      ];
-
-      type _AssertIdentifierType = Expect<
-        Equal<ResolvedGsiMeta, ExpectedGsiMeta>
-      >;
-    });
-
     test('the client schema type has the expected index query input params', () => {
-      type ModelName = 'Model';
-      type ModelMeta = ExtractModelMeta<Schema>[ModelName];
-
-      type ResolvedIndexQueryInput = Prettify<
-        IndexQueryInput<
-          ModelMeta['secondaryIndexes'][0],
-          Record<string, string>
-        >
-      >;
+      type ResolvedGsi = Prettify<Schema['Model']['secondaryIndexes']>;
 
       type ExpectedIndexQueryInput = {
-        gsiPk: string;
-        gsiSk1GsiSk2?: ModelPrimaryCompositeKeyInput<{
-          gsiSk1: string;
-          gsiSk2: number;
-        }>;
+        listModelByGsiPkAndGsiSk1AndGsiSk2: {
+          input: {
+            gsiPk: string;
+            gsiSk1GsiSk2?: ModelPrimaryCompositeKeyInput<{
+              gsiSk1: string;
+              gsiSk2: number;
+            }>;
+          };
+        };
       };
 
       type _AssertIdentifierType = Expect<
-        Equal<ResolvedIndexQueryInput, ExpectedIndexQueryInput>
+        Equal<ResolvedGsi, ExpectedIndexQueryInput>
       >;
     });
 
