@@ -63,6 +63,7 @@ describe('a', () => {
             nestedModelThing: a.customType({
               details: a.string(),
             }),
+            otherStuff: a.json(),
           })
           .secondaryIndexes((index) => [index('name').sortKeys(['status'])]),
 
@@ -108,9 +109,9 @@ describe('a', () => {
 
     type Schema = ClientSchema<typeof schema>;
 
-    type T = Schema['SomeThing']['type']['likes'];
+    // type T = Schema['SomeThing']
 
-    type onLikePost = Schema['likeAllPosts']['type'];
+    type onLikePost = Prettify<Schema['likePost']['returnType']>;
 
     const _client = {} as ClientExtensions<Schema>;
 

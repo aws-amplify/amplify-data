@@ -197,17 +197,20 @@ type MinusReadonly<T> = {
   -readonly [K in keyof T]: T[K];
 };
 
-type WithNullablesAsOptionalRecursively<T> = T extends object
-  ? {
-      [K in keyof T as null extends T[K]
-        ? K
-        : never]+?: WithNullablesAsOptionalRecursively<T[K]>;
-    } & {
-      [K in keyof T as null extends T[K]
-        ? never
-        : K]: WithNullablesAsOptionalRecursively<T[K]>;
-    }
-  : T;
+type WithNullablesAsOptionalRecursively<T> =
+  T extends Array<any>
+    ? T
+    : T extends object
+      ? {
+          [K in keyof T as null extends T[K]
+            ? K
+            : never]+?: WithNullablesAsOptionalRecursively<T[K]>;
+        } & {
+          [K in keyof T as null extends T[K]
+            ? never
+            : K]: WithNullablesAsOptionalRecursively<T[K]>;
+        }
+      : T;
 
 /**
  * All identifiers and fields used to create a model
