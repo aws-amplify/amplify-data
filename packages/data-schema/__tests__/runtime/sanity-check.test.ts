@@ -63,6 +63,7 @@ describe('a', () => {
             nestedModelThing: a.customType({
               details: a.string(),
             }),
+            otherStuff: a.json(),
           })
           .secondaryIndexes((index) => [index('name').sortKeys(['status'])]),
 
@@ -100,6 +101,21 @@ describe('a', () => {
             summary: a.string(),
           }),
         }),
+
+        RequiredId: a.model({
+          id: a.id().required(),
+          content: a.string(),
+          metadata: a.json(),
+        }),
+
+        Office: a
+          .model({
+            id: a.id().required(),
+            locationId: a.string().required(),
+            name: a.string().required(),
+            doctors: a.hasMany('Doctor', ['officeId', 'officeLocationId']),
+          })
+          .identifier(['id', 'locationId']),
       })
       .authorization((allow) => [
         allow.publicApiKey(),
@@ -108,9 +124,8 @@ describe('a', () => {
 
     type Schema = ClientSchema<typeof schema>;
 
-    type T = Schema['SomeThing']['type']['likes'];
-
-    type onLikePost = Schema['likeAllPosts']['type'];
+    type T = Schema['RequiredId']['createType'];
+    type ID = Prettify<Schema['RequiredId']['identifier']>;
 
     const _client = {} as ClientExtensions<Schema>;
 

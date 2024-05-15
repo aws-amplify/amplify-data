@@ -197,23 +197,26 @@ type MinusReadonly<T> = {
   -readonly [K in keyof T]: T[K];
 };
 
-type WithNullablesAsOptionalRecursively<T> = T extends object
-  ? {
-      [K in keyof T as null extends T[K]
-        ? K
-        : never]+?: WithNullablesAsOptionalRecursively<T[K]>;
-    } & {
-      [K in keyof T as null extends T[K]
-        ? never
-        : K]: WithNullablesAsOptionalRecursively<T[K]>;
-    }
-  : T;
+type WithNullablesAsOptionalRecursively<T> =
+  T extends Array<any>
+    ? T
+    : T extends object
+      ? {
+          [K in keyof T as null extends T[K]
+            ? K
+            : never]+?: WithNullablesAsOptionalRecursively<T[K]>;
+        } & {
+          [K in keyof T as null extends T[K]
+            ? never
+            : K]: WithNullablesAsOptionalRecursively<T[K]>;
+        }
+      : T;
 
 /**
  * All identifiers and fields used to create a model
  */
 type CreateModelInput<Model extends ClientModel<any, any, any, any>> =
-  Equal<Model['identifier'], { readonly id: string }> extends true
+  Equal<MinusReadonly<Model['identifier']>, { id: string }> extends true
     ? Partial<MinusReadonly<Model['identifier']>> &
         Omit<MutationInput<Model>, 'id'>
     : MutationInput<Model>;
