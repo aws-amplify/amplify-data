@@ -1,7 +1,8 @@
-import type { Equal, Expect } from '@aws-amplify/data-schema-types';
+import type { Equal, Expect, Prettify } from '@aws-amplify/data-schema-types';
 import { type ModelType, type InternalModel, model } from '../src/ModelType';
 import { modelIndex } from '../src/ModelIndex';
-import { type ModelField, string, id } from '../src/ModelField';
+import { type ModelField, string, id, integer } from '../src/ModelField';
+import { ref } from '../src/RefType';
 
 const a = { model, index: modelIndex };
 
@@ -20,13 +21,13 @@ describe('InternalModel casting', () => {
     internalModel.data;
   });
 
-  test('addRelationships invalid at model definition', () => {
+  test('relationships invalid at model definition', () => {
     const m = model({
       title: string(),
     });
 
     // @ts-expect-error
-    const data = m.addRelationships({});
+    const data = m.relationships({});
   });
 
   test('ModelType with options can be cast to InternalModel', () => {
@@ -55,7 +56,13 @@ describe('identifiers', () => {
       fields: {
         title: ModelField<string | null>;
       };
-      identifier: Array<'id'>;
+      identifier: {
+        pk: {
+          id: string;
+        };
+        sk: never;
+        compositeSk: never;
+      };
       secondaryIndexes: [];
       authorization: [];
     };
@@ -74,7 +81,13 @@ describe('identifiers', () => {
       fields: {
         customId: ModelField<string, 'required'>;
       };
-      identifier: Array<'customId'>;
+      identifier: {
+        pk: {
+          customId: string;
+        };
+        sk: never;
+        compositeSk: never;
+      };
       secondaryIndexes: [];
       authorization: [];
     };
@@ -86,7 +99,6 @@ describe('identifiers', () => {
       title: string(),
     });
 
-    // optional fields can't be used as identifier
     // @ts-expect-error
     m2.identifier(['title']);
   });

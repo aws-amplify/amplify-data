@@ -40,10 +40,7 @@ describe('CustomType', () => {
         content: ModelField<string, 'required', undefined>;
         meta: CustomType<{
           fields: {
-            enumField: EnumType<{
-              type: 'enum';
-              values: ('value1' | 'value2')[];
-            }>;
+            enumField: EnumType<readonly ['value1', 'value2']>;
             deepMeta: CustomType<{
               fields: {
                 description: ModelField<string, 'required', undefined>;

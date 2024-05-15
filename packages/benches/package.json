@@ -4,7 +4,6 @@
   "license": "Apache-2.0",
   "description": "",
   "private": true,
-  "type": "module",
   "main": "schema.bench.ts",
   "scripts": {
     "bench": "tsx",
@@ -15,20 +14,21 @@
     "bench:basic": "npm run bench:directory basic",
     "bench:p50": "npm run bench:directory p50",
     "bench:p99": "npm run bench:directory p99",
+    "bench:combine": "npm run bench:directory combine",
     "bench:all": "npm run bench:directory .",
     "baseline": "npm run build:library && ./scripts/baseline-bench.sh",
     "baseline:basic": "npm run baseline basic",
     "baseline:p50": "npm run baseline p50",
     "baseline:p99": "npm run baseline p99",
+    "baseline:combine": "npm run baseline combine",
     "baseline:all": "npm run baseline .",
     "tsx": "tsx",
     "lint": "eslint ."
   },
   "devDependencies": {
-    "@arktype/attest": "0.5.0",
+    "@arktype/attest": "^0.7.3",
     "@aws-amplify/data-schema": "*",
-    "@aws-amplify/data-schema-types": "*",
-    "tsx": "^4.6.1"
+    "@aws-amplify/data-schema-types": "*"
   },
   "dependencies": {
     "aws-amplify": "*"

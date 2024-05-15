@@ -1,9 +1,9 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`CustomOperation transform dynamo schema Custom Mutation w required arg and enum 1`] = `
-"enum LikePostReactionType {
-  :shipit:
-  :risitas:
+"type Post @model @auth(rules: [{allow: private}])
+{
+  title: String
 }
 
 type Mutation {
@@ -12,13 +12,23 @@ type Mutation {
 `;
 
 exports[`CustomOperation transform dynamo schema Custom Mutation w string function reference & auth 1`] = `
-"type Mutation {
+"type Post @model @auth(rules: [{allow: private}])
+{
+  title: String
+}
+
+type Mutation {
   likePost(postId: String!): Post @function(name: "myFunc") @auth(rules: [{allow: private}])
 }"
 `;
 
 exports[`CustomOperation transform dynamo schema Custom Mutation w string function reference 1`] = `
-"type Mutation {
+"type Post @model @auth(rules: [{allow: private}])
+{
+  title: String
+}
+
+type Mutation {
   likePost(postId: String!): Post @function(name: "myFunc") @auth(rules: [{allow: private}])
 }"
 `;
@@ -81,6 +91,18 @@ exports[`CustomOperation transform dynamo schema Custom query w inline boolean r
 }"
 `;
 
+exports[`CustomOperation transform dynamo schema Custom query w inline custom enum return type 1`] = `
+"enum GetPostStatusReturnType {
+  draft
+  pending
+  approved
+}
+
+type Query {
+  getPostStatus(postId: String!): GetPostStatusReturnType 
+}"
+`;
+
 exports[`CustomOperation transform dynamo schema Custom query w inline custom return type 1`] = `
 "type GetPostDetailsReturnType 
 {
@@ -127,6 +149,18 @@ exports[`CustomOperation transform dynamo schema Custom query w inline string re
 }"
 `;
 
+exports[`CustomOperation transform dynamo schema Custom query w referenced enum return type 1`] = `
+"enum PostStatus {
+  draft
+  pending
+  approved
+}
+
+type Query {
+  getPostStatus(postId: String!): PostStatus 
+}"
+`;
+
 exports[`CustomOperation transform dynamo schema Schema w model, custom query, mutation, and subscription 1`] = `
 "type Post @model @auth(rules: [{allow: public, provider: apiKey}])
 {
@@ -147,7 +181,7 @@ type Subscription {
 `;
 
 exports[`CustomOperation transform dynamo schema Schema w model, custom query, mutation, and subscription and ref of custom type with array modifier 1`] = `
-"type PostCustomType 
+"type PostCustomType @aws_api_key
 {
   title: String
 }
@@ -185,7 +219,7 @@ type Subscription {
 `;
 
 exports[`CustomOperation transform dynamo schema custom subscriptions Custom subscription where .for() resource has a CustomType return type 1`] = `
-"type CreateCustomTypePostReturnType 
+"type CreateCustomTypePostReturnType @aws_api_key
 {
   title: String!
 }
@@ -267,7 +301,7 @@ exports[`CustomOperation transform dynamo schema handlers a.handler.custom a.han
   title: String
 }
 
-type GetPostDetailsReturnType 
+type GetPostDetailsReturnType @aws_api_key
 {
   
 }
@@ -278,7 +312,7 @@ type Query {
 `;
 
 exports[`CustomOperation transform dynamo schema handlers a.handler.custom a.handler.custom with auth works 1`] = `
-"type GetPostDetailsReturnType 
+"type GetPostDetailsReturnType @aws_cognito_user_pools(cognito_groups: ["groupA", "groupB"])
 {
   
 }
@@ -300,7 +334,7 @@ type Query {
 `;
 
 exports[`CustomOperation transform dynamo schema handlers a.handler.function defineFunction 1`] = `
-"type GetPostDetailsReturnType 
+"type GetPostDetailsReturnType @aws_cognito_user_pools
 {
   
 }
@@ -311,7 +345,7 @@ type Query {
 `;
 
 exports[`CustomOperation transform dynamo schema handlers a.handler.function pipeline / mix 1`] = `
-"type GetPostDetailsReturnType 
+"type GetPostDetailsReturnType @aws_cognito_user_pools
 {
   
 }
@@ -322,7 +356,7 @@ type Query {
 `;
 
 exports[`CustomOperation transform dynamo schema handlers a.handler.function string 1`] = `
-"type GetPostDetailsReturnType 
+"type GetPostDetailsReturnType @aws_cognito_user_pools
 {
   
 }
@@ -333,7 +367,7 @@ type Query {
 `;
 
 exports[`CustomOperation transform dynamo schema handlers a.handler.inlineSql escapes quotes 1`] = `
-"type GetPostDetailsReturnType 
+"type GetPostDetailsReturnType @aws_cognito_user_pools
 {
   
 }
@@ -355,7 +389,7 @@ exports[`CustomOperation transform dynamo schema handlers a.handler.inlineSql wo
   "functionSlots": [],
   "jsFunctions": [],
   "lambdaFunctions": {},
-  "schema": "type GetPostDetailsReturnType 
+  "schema": "type GetPostDetailsReturnType @aws_cognito_user_pools
 {
   
 }
@@ -367,7 +401,7 @@ type Query {
 `;
 
 exports[`CustomOperation transform dynamo schema handlers a.handler.sqlReference works 1`] = `
-"type GetPostDetailsReturnType 
+"type GetPostDetailsReturnType @aws_cognito_user_pools
 {
   
 }
@@ -413,5 +447,58 @@ type Query {
 type Subscription {
   onCreatePost: Post @function(name: "myFunc") @aws_subscribe(mutations: ["createPost"]) @auth(rules: [{allow: public, provider: apiKey}])
   onLikePost: Post @function(name: "myFunc") @aws_subscribe(mutations: ["updatePost"]) @auth(rules: [{allow: public, provider: apiKey}])
+}"
+`;
+
+exports[`custom operations + custom type auth inheritance implicit custom type inherits auth rules from referencing op 1`] = `
+"type MyQueryReturnType @aws_api_key
+{
+  fieldA: String
+  fieldB: Int
+}
+
+type Query {
+  myQuery: MyQueryReturnType @function(name: "myFn") @auth(rules: [{allow: public, provider: apiKey}])
+}"
+`;
+
+exports[`custom operations + custom type auth inheritance op returns top-level custom type with 1 auth mode 1`] = `
+"type QueryReturn @aws_api_key
+{
+  fieldA: String
+  fieldB: Int
+}
+
+type Query {
+  myQuery: QueryReturn @function(name: "myFn") @auth(rules: [{allow: public, provider: apiKey}])
+}"
+`;
+
+exports[`custom operations + custom type auth inheritance op returns top-level custom type with all supported auth modes 1`] = `
+"type QueryReturn @aws_api_key @aws_cognito_user_pools @aws_cognito_user_pools(cognito_groups: ["admin", "superAdmin"]) @aws_iam
+{
+  fieldA: String
+  fieldB: Int
+}
+
+type Query {
+  myQuery: QueryReturn @function(name: "myFn") @auth(rules: [{allow: public, provider: apiKey},
+  {allow: private},
+  {allow: groups, groups: ["admin", "superAdmin"]},
+  {allow: public, provider: iam},
+  {allow: private, provider: iam}])
+}"
+`;
+
+exports[`custom operations + custom type auth inheritance top-level custom type inherits combined auth rules from referencing ops 1`] = `
+"type QueryReturn @aws_api_key @aws_cognito_user_pools
+{
+  fieldA: String
+  fieldB: Int
+}
+
+type Query {
+  myQuery: QueryReturn @function(name: "myFn") @auth(rules: [{allow: public, provider: apiKey}])
+  myMutation: QueryReturn @function(name: "myFn") @auth(rules: [{allow: private}])
 }"
 `;

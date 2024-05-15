@@ -75,6 +75,11 @@ describe('Read application data', () => {
       },
       {
         data: {
+          listInventories: [sampleInventory],
+        },
+      },
+      {
+        data: {
           getInventory: sampleInventory,
         },
       },
@@ -94,6 +99,15 @@ describe('Read application data', () => {
     const { data: todos, errors: listTodoErrors } =
       await client.models.Todo.list();
 
+    // list -> index query
+    const { data: inventories, errors: listInventoryErrors } =
+      await client.models.Inventory.list({
+        productId: '...',
+        warehouseId: {
+          beginsWith: '...',
+        },
+      });
+
     // get a specific item
     const { data: inventory, errors: getInventoryErrors } =
       await client.models.Inventory.get({
@@ -105,8 +119,10 @@ describe('Read application data', () => {
     // #region assertions
     expect(optionsAndHeaders(spy)).toMatchSnapshot();
     expect(listTodoErrors).toBeUndefined();
+    expect(listInventoryErrors).toBeUndefined();
     expect(getInventoryErrors).toBeUndefined();
     expect(todos).toEqual([sampleTodo]);
+    expect(inventories).toEqual([sampleInventory]);
     expect(inventory).toEqual(sampleInventory);
     // #endregion assertions
   });
@@ -175,13 +191,9 @@ describe('Read application data', () => {
       filter: {
         or: [
           {
-            // BUG!
-            // @ts-ignore
             priority: { eq: 1 },
           },
           {
-            // BUG!
-            // @ts-ignore
             priority: { eq: 2 },
           },
         ],

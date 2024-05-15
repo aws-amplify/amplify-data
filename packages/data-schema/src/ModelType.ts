@@ -1,34 +1,40 @@
-import type {
-  SetTypeSubArg,
-  SecondaryIndexIrShape,
-} from '@aws-amplify/data-schema-types';
-import { Brand, brand } from './util';
-import { ModelField, InternalField } from './ModelField';
+import type { SetTypeSubArg } from '@aws-amplify/data-schema-types';
+import {
+  type PrimaryIndexIrShape,
+  type SecondaryIndexIrShape,
+  brand,
+} from './util';
+import type { InternalField, BaseModelField } from './ModelField';
 import type {
   ModelRelationalField,
   InternalRelationalField,
   ModelRelationalFieldParamShape,
 } from './ModelRelationalField';
-import { AllowModifier, Authorization, allow } from './Authorization';
-import { RefType, RefTypeParamShape } from './RefType';
-import { EnumType, EnumTypeParamShape } from './EnumType';
-import { CustomType, CustomTypeParamShape } from './CustomType';
+import { type AllowModifier, type Authorization, allow } from './Authorization';
+import type { RefType, RefTypeParamShape } from './RefType';
+import type { EnumType } from './EnumType';
+import type { CustomType, CustomTypeParamShape } from './CustomType';
 import {
-  ModelIndexType,
-  InternalModelIndexType,
+  type ModelIndexType,
+  type InternalModelIndexType,
   modelIndex,
 } from './ModelIndex';
-import { SecondaryIndexToIR } from './MappedTypes/MapSecondaryIndexes';
+import type {
+  PrimaryIndexFieldsToIR,
+  SecondaryIndexToIR,
+} from './MappedTypes/MapIndexes';
+import type { brandSymbol } from './util/Brand.js';
+import type { methodKeyOf } from './util/usedMethods.js';
 
 const brandName = 'modelType';
 export type deferredRefResolvingPrefix = 'deferredRefResolving:';
 
 type ModelFields = Record<
   string,
-  | ModelField<any, any, any>
+  | BaseModelField
   | ModelRelationalField<any, string, any, any>
   | RefType<any, any, any>
-  | EnumType<EnumTypeParamShape>
+  | EnumType
   | CustomType<CustomTypeParamShape>
 >;
 
@@ -39,21 +45,22 @@ type InternalModelFields = Record<
 
 type ModelData = {
   fields: ModelFields;
-  identifier: string[];
+  identifier: ReadonlyArray<string>;
   secondaryIndexes: ReadonlyArray<ModelIndexType<any, any, any, any, any>>;
   authorization: Authorization<any, any, any>[];
 };
 
 type InternalModelData = ModelData & {
   fields: InternalModelFields;
-  identifier: string[];
+  identifier: ReadonlyArray<string>;
   secondaryIndexes: ReadonlyArray<InternalModelIndexType>;
   authorization: Authorization<any, any, any>[];
+  originalName?: string;
 };
 
 export type ModelTypeParamShape = {
   fields: ModelFields;
-  identifier: string[];
+  identifier: PrimaryIndexIrShape;
   secondaryIndexes: ReadonlyArray<SecondaryIndexIrShape>;
   authorization: Authorization<any, any, any>[];
 };
@@ -72,59 +79,40 @@ export type ModelTypeParamShape = {
  * indicator string, and resolve its corresponding type later in
  * packages/data-schema/src/runtime/client/index.ts
  */
-type ExtractSecondaryIndexIRFields<T extends ModelTypeParamShape> = {
-  [FieldProp in keyof T['fields'] as T['fields'][FieldProp] extends ModelField<
-    infer R,
-    any,
-    any
+export type ExtractSecondaryIndexIRFields<
+  T extends ModelTypeParamShape,
+  RequiredOnly extends boolean = false,
+> = {
+  [FieldProp in keyof T['fields'] as T['fields'][FieldProp] extends BaseModelField<
+    infer R
   >
     ? NonNullable<R> extends string | number
-      ? FieldProp
-      : never
-    : T['fields'][FieldProp] extends EnumType<EnumTypeParamShape>
-      ? FieldProp
-      : T['fields'][FieldProp] extends RefType<RefTypeParamShape, any, any>
+      ? RequiredOnly extends false
         ? FieldProp
-        : never]: T['fields'][FieldProp] extends ModelField<infer R, any, any>
+        : null extends R
+          ? never
+          : FieldProp
+      : never
+    : T['fields'][FieldProp] extends
+          | EnumType
+          | RefType<RefTypeParamShape, any, any>
+      ? FieldProp
+      : never]: T['fields'][FieldProp] extends BaseModelField<infer R>
     ? R
-    : T['fields'][FieldProp] extends EnumType<infer R>
-      ? R['values'][number]
+    : T['fields'][FieldProp] extends EnumType<infer values>
+      ? values[number]
       : T['fields'][FieldProp] extends RefType<infer R, any, any>
         ? `${deferredRefResolvingPrefix}${R['link']}`
         : never;
 };
 
 type ExtractType<T extends ModelTypeParamShape> = {
-  [FieldProp in keyof T['fields'] as T['fields'][FieldProp] extends ModelField<
-    any,
-    any,
-    any
-  >
+  [FieldProp in keyof T['fields'] as T['fields'][FieldProp] extends BaseModelField
     ? FieldProp
-    : never]: T['fields'][FieldProp] extends ModelField<infer R, any, any>
+    : never]: T['fields'][FieldProp] extends BaseModelField<infer R>
     ? R
     : never;
 };
-
-type GetRequiredFields<T> = {
-  [FieldProp in keyof T as T[FieldProp] extends NonNullable<T[FieldProp]>
-    ? FieldProp
-    : never]: T[FieldProp];
-};
-
-type IdentifierMap<T extends ModelTypeParamShape> = GetRequiredFields<
-  ExtractType<T>
->;
-
-// extracts model fields that CAN BE used as identifiers (scalar, non-nullable fields)
-// TODO: make this also filter out all non-scalars e.g., model fields and custom types
-type IdentifierFields<T extends ModelTypeParamShape> = keyof IdentifierMap<T> &
-  string;
-
-type IdentifierType<
-  T extends ModelTypeParamShape,
-  Fields extends string = IdentifierFields<T>,
-> = Array<Fields>;
 
 /**
  * For a given ModelTypeParamShape, produces a map of Authorization rules
@@ -208,14 +196,31 @@ export type AddRelationshipFieldsToModelTypeFields<
 type _ConflictingAuthRules<T extends ModelTypeParamShape> =
   ConflictingAuthRulesMap<T>[keyof ConflictingAuthRulesMap<T>];
 
+export type BaseModelType<T extends ModelTypeParamShape = ModelTypeParamShape> =
+  ModelType<T, UsableModelTypeKey>;
+
+export type UsableModelTypeKey = methodKeyOf<ModelType>;
+
 export type ModelType<
-  T extends ModelTypeParamShape,
-  K extends keyof ModelType<T> = never,
+  T extends ModelTypeParamShape = ModelTypeParamShape,
+  UsedMethod extends UsableModelTypeKey = never,
 > = Omit<
   {
-    identifier<ID extends IdentifierType<T> = []>(
+    [brandSymbol]: typeof brandName;
+    identifier<
+      PrimaryIndexFields = ExtractSecondaryIndexIRFields<T, true>,
+      PrimaryIndexPool extends string = keyof PrimaryIndexFields & string,
+      const ID extends ReadonlyArray<PrimaryIndexPool> = readonly [],
+      const PrimaryIndexIR extends PrimaryIndexIrShape = PrimaryIndexFieldsToIR<
+        ID,
+        PrimaryIndexFields
+      >,
+    >(
       identifier: ID,
-    ): ModelType<SetTypeSubArg<T, 'identifier', ID>, K | 'identifier'>;
+    ): ModelType<
+      SetTypeSubArg<T, 'identifier', PrimaryIndexIR>,
+      UsedMethod | 'identifier'
+    >;
     secondaryIndexes<
       const SecondaryIndexFields = ExtractSecondaryIndexIRFields<T>,
       const SecondaryIndexPKPool extends string = keyof SecondaryIndexFields &
@@ -243,7 +248,7 @@ export type ModelType<
       ) => Indexes,
     ): ModelType<
       SetTypeSubArg<T, 'secondaryIndexes', IndexesIR>,
-      K | 'secondaryIndexes'
+      UsedMethod | 'secondaryIndexes'
     >;
     authorization<AuthRuleType extends Authorization<any, any, any>>(
       callback: (
@@ -251,27 +256,23 @@ export type ModelType<
       ) => AuthRuleType | AuthRuleType[],
     ): ModelType<
       SetTypeSubArg<T, 'authorization', AuthRuleType[]>,
-      K | 'authorization'
+      UsedMethod | 'authorization'
     >;
   },
-  K
-> &
-  Brand<typeof brandName>;
+  UsedMethod
+>;
 
 /**
- * External representation of Model Type that exposes the `addRelationships` modifier.
+ * External representation of Model Type that exposes the `relationships` modifier.
  * Used on the complete schema object.
  */
 export type SchemaModelType<
-  T extends ModelType<ModelTypeParamShape, never | 'identifier'> = ModelType<
-    ModelTypeParamShape,
-    never | 'identifier'
-  >,
+  T extends BaseModelType = ModelType<ModelTypeParamShape, 'identifier'>,
   ModelName extends string = string,
   IsRDS extends boolean = false,
 > = IsRDS extends true
   ? T & {
-      addRelationships<
+      relationships<
         Param extends Record<
           string,
           ModelRelationalField<any, string, any, any>
@@ -279,9 +280,7 @@ export type SchemaModelType<
       >(
         relationships: Param,
       ): Record<ModelName, Param>;
-      fields: T extends ModelType<infer R extends ModelTypeParamShape, any>
-        ? R['fields']
-        : never;
+      fields: T extends ModelType<infer R, any> ? R['fields'] : never;
     }
   : T;
 
@@ -329,7 +328,7 @@ function _model<T extends ModelTypeParamShape>(fields: T['fields']) {
   return {
     ...builder,
     data,
-    addRelationships(relationships) {
+    relationships(relationships) {
       data.fields = { ...data.fields, ...relationships };
     },
     fields: data.fields,
@@ -352,8 +351,14 @@ export const isSchemaModelType = (
     internalType.data.authorization !== undefined &&
     internalType.data.identifier !== undefined &&
     internalType.data.secondaryIndexes !== undefined &&
-    typeof internalType.addRelationships === 'function'
+    typeof internalType.relationships === 'function'
   );
+};
+
+type ModelDefaultIdentifier = {
+  pk: { id: string };
+  sk: never;
+  compositeSk: never;
 };
 
 /**
@@ -367,7 +372,7 @@ export function model<T extends ModelFields>(
   fields: T,
 ): ModelType<{
   fields: T;
-  identifier: Array<'id'>;
+  identifier: ModelDefaultIdentifier;
   secondaryIndexes: [];
   authorization: [];
 }> {

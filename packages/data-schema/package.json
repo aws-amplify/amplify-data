@@ -1,6 +1,6 @@
 {
   "name": "@aws-amplify/data-schema",
-  "version": "1.0.0",
+  "version": "1.2.2",
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
@@ -12,6 +12,7 @@
   "scripts": {
     "build:esm-cjs": "rollup -c rollup.config.mjs",
     "build": "npm run clean && npm run build:esm-cjs",
+    "build:watch": "npm run build:esm-cjs -- --watch",
     "clean": "rimraf dist",
     "docs": "api-extractor run && api-documenter markdown --input-folder temp --output-folder docs",
     "docs:temp": "api-extractor run && api-documenter markdown --input-folder temp --output-folder temp/docs",

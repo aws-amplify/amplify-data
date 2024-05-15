@@ -27,7 +27,11 @@ describe('ModelIdentifier', () => {
     type Schema = typeof s;
 
     type Resolved = ModelIdentifier<SchemaTypes<Schema>>;
-    type Expected = { Post: { identifier: 'id' } };
+    type Expected = {
+      Post: {
+        identifier: { pk: { id: string }; sk: never; compositeSk: never };
+      };
+    };
 
     type test = Expect<Equal<Resolved, Expected>>;
   });
@@ -45,7 +49,11 @@ describe('ModelIdentifier', () => {
     type Schema = typeof s;
 
     type Resolved = ModelIdentifier<SchemaTypes<Schema>>;
-    type Expected = { Post: { identifier: 'title' } };
+    type Expected = {
+      Post: {
+        identifier: { pk: { title: string }; sk: never; compositeSk: never };
+      };
+    };
 
     type test = Expect<Equal<Resolved, Expected>>;
   });
@@ -63,7 +71,15 @@ describe('ModelIdentifier', () => {
 
     type Schema = typeof s;
     type Resolved = ModelIdentifier<SchemaTypes<Schema>>;
-    type Expected = { Post: { identifier: 'title' | 'createdAt' } };
+    type Expected = {
+      Post: {
+        identifier: {
+          pk: { title: string };
+          sk: { createdAt: string };
+          compositeSk: never;
+        };
+      };
+    };
 
     type test = Expect<Equal<Resolved, Expected>>;
   });
@@ -93,6 +109,81 @@ describe('ModelSecondaryIndexes', () => {
               title: string;
             };
             sk: never;
+            compositeSk: never;
+          },
+        ];
+      };
+    };
+
+    type test = Expect<Equal<Resolved, Expected>>;
+  });
+
+  test('Single GSI with Single SK', () => {
+    const s = a.schema({
+      Post: a
+        .model({
+          title: a.string().required(),
+          description: a.string().required(),
+          metadata: a.json(),
+        })
+        .secondaryIndexes((index) => [
+          index('title').sortKeys(['description']),
+        ]),
+    });
+
+    type Resolved = ModelSecondaryIndexes<SchemaTypes<typeof s>>;
+
+    type Expected = {
+      Post: {
+        secondaryIndexes: [
+          {
+            defaultQueryFieldSuffix: 'TitleAndDescription';
+            queryField: never;
+            pk: {
+              title: string;
+            };
+            sk: {
+              description: string;
+            };
+            compositeSk: never;
+          },
+        ];
+      };
+    };
+
+    type test = Expect<Equal<Resolved, Expected>>;
+  });
+
+  test('Single GSI with Composite SK', () => {
+    const s = a.schema({
+      Post: a
+        .model({
+          title: a.string().required(),
+          description: a.string().required(),
+          createdAt: a.string(),
+          metadata: a.json(),
+        })
+        .secondaryIndexes((index) => [
+          index('title').sortKeys(['description', 'createdAt']),
+        ]),
+    });
+
+    type Resolved = Prettify<ModelSecondaryIndexes<SchemaTypes<typeof s>>>;
+
+    type Expected = {
+      Post: {
+        secondaryIndexes: [
+          {
+            defaultQueryFieldSuffix: 'TitleAndDescriptionAndCreatedAt';
+            queryField: never;
+            pk: {
+              title: string;
+            };
+            sk: {
+              description: string;
+              createdAt: string;
+            };
+            compositeSk: 'descriptionCreatedAt';
           },
         ];
       };
@@ -130,6 +221,7 @@ describe('ModelSecondaryIndexes', () => {
             sk: {
               viewCount: number;
             };
+            compositeSk: never;
           },
           {
             defaultQueryFieldSuffix: 'Description';
@@ -138,6 +230,7 @@ describe('ModelSecondaryIndexes', () => {
               description: string;
             };
             sk: never;
+            compositeSk: never;
           },
         ];
       };
@@ -190,6 +283,7 @@ describe('RelationalMetadata', () => {
       NonModelTypesShape,
       ResolveSchema<Schema>
     >;
+
     type Resolved = Prettify<
       RelationalMetadata<
         ResolveSchema<Schema>,
@@ -321,13 +415,14 @@ describe('RelationalMetadata', () => {
         .model({
           customPk: a.id().required(),
           title: a.string().required(),
-          comments: a.hasMany('Comment', 'commentId'),
+          comments: a.hasMany('Comment', ['commentId', 'commentTitle']),
         })
         .identifier(['customPk', 'title']),
       Comment: a.model({
         content: a.string(),
         commentId: a.id(),
-        post: a.belongsTo('Post', 'commentId'),
+        commentTitle: a.string(),
+        post: a.belongsTo('Post', ['commentId', 'commentTitle']),
       }),
     });
 
@@ -338,6 +433,7 @@ describe('RelationalMetadata', () => {
       NonModelTypesShape,
       ResolveSchema<Schema>
     >;
+
     type Resolved = Prettify<
       RelationalMetadata<
         ResolveSchema<Schema>,
