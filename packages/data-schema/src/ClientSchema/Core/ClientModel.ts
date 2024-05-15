@@ -216,7 +216,7 @@ type WithNullablesAsOptionalRecursively<T> =
  * All identifiers and fields used to create a model
  */
 type CreateModelInput<Model extends ClientModel<any, any, any, any>> =
-  Equal<Model['identifier'], { readonly id: string }> extends true
+  Equal<MinusReadonly<Model['identifier']>, { id: string }> extends true
     ? Partial<MinusReadonly<Model['identifier']>> &
         Omit<MutationInput<Model>, 'id'>
     : MutationInput<Model>;
