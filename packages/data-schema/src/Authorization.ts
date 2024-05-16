@@ -639,8 +639,8 @@ export type ImpliedAuthField<T extends Authorization<any, any, any>> =
       ? never
       : Field extends string
         ? isMulti extends true
-          ? { [K in Field]?: string[] }
-          : { [K in Field]?: string }
+          ? { [K in Field]: string[] | null }
+          : { [K in Field]: string | null }
         : never
     : never;
 

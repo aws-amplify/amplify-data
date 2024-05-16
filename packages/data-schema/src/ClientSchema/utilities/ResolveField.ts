@@ -32,7 +32,7 @@ export type ResolveIndividualField<Bag extends Record<string, any>, T> =
         : T extends CustomType<infer CT>
           ? ResolveFields<Bag, CT['fields']> | null
           : T extends EnumType<infer values>
-            ? values[number] | null
+            ? values[number] | null | undefined
             : never;
 
 type ResolveRelationship<

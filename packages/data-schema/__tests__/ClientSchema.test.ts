@@ -7,14 +7,10 @@ import {
   DerivedCombinedSchema,
   DerivedModelSchema,
 } from '@aws-amplify/data-schema-types';
-import {
-  AuthMode,
-  CustomHeaders,
-  SingularReturnValue,
-  __modelMeta__,
-} from '../src/runtime';
+import { AuthMode, CustomHeaders, SingularReturnValue } from '../src/runtime';
 import { configure } from '../src/internals';
 import { Nullable } from '../src/ModelField';
+import { AppSyncResolverEvent, Callback, Context } from 'aws-lambda';
 
 const fakeSecret = () => ({}) as any;
 
@@ -175,7 +171,7 @@ describe('schema auth rules', () => {
       readonly id: string;
       readonly createdAt: string;
       readonly updatedAt: string;
-      field?: string | null | undefined;
+      field: string | null;
       // no implied owner field
     };
 
@@ -200,7 +196,7 @@ describe('schema auth rules', () => {
       readonly id: string;
       readonly createdAt: string;
       readonly updatedAt: string;
-      field?: string | null | undefined;
+      field: string | null;
       // no implied owner field
     };
 
@@ -252,7 +248,7 @@ describe('schema auth rules', () => {
       readonly id: string;
       readonly createdAt: string;
       readonly updatedAt: string;
-      field?: string | null | undefined;
+      field: string | null;
       // no implied owner field
     };
 
@@ -276,7 +272,7 @@ describe('schema auth rules', () => {
       readonly id: string;
       readonly createdAt: string;
       readonly updatedAt: string;
-      field?: string | null | undefined;
+      field: string | null;
       // no implied owner field
     };
 
@@ -300,7 +296,7 @@ describe('schema auth rules', () => {
       readonly id: string;
       readonly createdAt: string;
       readonly updatedAt: string;
-      field?: string | null | undefined;
+      field: string | null;
       // no implied owner field
     };
 
@@ -324,10 +320,10 @@ describe('schema auth rules', () => {
       readonly id: string;
       readonly createdAt: string;
       readonly updatedAt: string;
-      field?: string | null | undefined;
+      field: string | null;
 
       // implied owner field
-      owner?: string | undefined;
+      owner: string | null;
     };
 
     type test = Expect<Equal<Actual_A, Expected_A>>;
@@ -350,10 +346,10 @@ describe('schema auth rules', () => {
       readonly id: string;
       readonly createdAt: string;
       readonly updatedAt: string;
-      field?: string | null | undefined;
+      field: string | null;
 
       // implied owner field
-      owner?: string[] | undefined;
+      owner: string[] | null;
     };
 
     type test = Expect<Equal<Actual_A, Expected_A>>;
@@ -376,7 +372,7 @@ describe('schema auth rules', () => {
       readonly id: string;
       readonly createdAt: string;
       readonly updatedAt: string;
-      field?: string | null | undefined;
+      field: string | null;
       // no implied owner field
     };
 
@@ -400,10 +396,10 @@ describe('schema auth rules', () => {
       readonly id: string;
       readonly createdAt: string;
       readonly updatedAt: string;
-      field?: string | null | undefined;
+      field: string | null;
 
       // implied owner field
-      someField?: string | undefined;
+      someField: string | null;
     };
 
     type test = Expect<Equal<Actual_A, Expected_A>>;
@@ -426,10 +422,10 @@ describe('schema auth rules', () => {
       readonly id: string;
       readonly createdAt: string;
       readonly updatedAt: string;
-      field?: string | null | undefined;
+      field: string | null;
 
       // implied groups field
-      someField?: string[] | undefined;
+      someField: string[] | null;
     };
 
     type test = Expect<Equal<Actual_A, Expected_A>>;
@@ -452,7 +448,7 @@ describe('schema auth rules', () => {
       readonly id: string;
       readonly createdAt: string;
       readonly updatedAt: string;
-      field?: string | null | undefined;
+      field: string | null;
       // no implied owner field
     };
 
@@ -476,7 +472,7 @@ describe('schema auth rules', () => {
       readonly id: string;
       readonly createdAt: string;
       readonly updatedAt: string;
-      field?: string | null | undefined;
+      field: string | null;
       // no implied owner field
     };
 
@@ -531,7 +527,7 @@ describe('schema auth rules', () => {
         readonly id: string;
         readonly createdAt: string;
         readonly updatedAt: string;
-        field?: string | null | undefined;
+        field: string | null;
         // no implied owner field
       };
 
@@ -557,8 +553,8 @@ describe('schema auth rules', () => {
         readonly id: string;
         readonly createdAt: string;
         readonly updatedAt: string;
-        field?: string | null | undefined;
-        owner?: string | undefined;
+        field: string | null;
+        owner: string | null;
       };
 
       type test = Expect<Equal<Actual_A, Expected_A>>;
@@ -583,8 +579,8 @@ describe('schema auth rules', () => {
         readonly id: string;
         readonly createdAt: string;
         readonly updatedAt: string;
-        field?: string | null | undefined;
-        modelOwnerField?: string | undefined;
+        field: string | null;
+        modelOwnerField: string | null;
       };
 
       type test = Expect<Equal<Actual_A, Expected_A>>;
@@ -636,16 +632,28 @@ describe('custom operations', () => {
     });
 
     type Schema = ClientSchema<typeof schema>;
-    type ActualEcho = Schema[typeof __modelMeta__]['customOperations']['echo'];
+    type ActualEcho = Prettify<Schema['echo']>;
 
     type Expected = {
-      arguments: {
+      __entityType: 'customQuery';
+      operationType: 'Query';
+      functionHandler: (
+        event: AppSyncResolverEvent<
+          {
+            inputContent: string;
+          },
+          Record<string, any> | null
+        >,
+        context: Context,
+        callback: Callback<{
+          resultContent: Nullable<string>;
+        } | null>,
+      ) => void | Promise<{
+        resultContent: Nullable<string>;
+      } | null>;
+      args: {
         inputContent: string;
       };
-      typeName: 'Query';
-      returnType: {
-        resultContent?: string | null | undefined;
-      } | null;
     };
 
     type ActualEchoInterface = Pick<ActualEcho, keyof Expected>;
@@ -672,15 +680,32 @@ describe('custom operations', () => {
     });
 
     type Schema = ClientSchema<typeof schema>;
-    type ActualLikePost =
-      Schema[typeof __modelMeta__]['customOperations']['likePost'];
+    type ActualLikePost = Prettify<Schema['likePost']>;
 
     type Expected = {
-      arguments: {
+      __entityType: 'customMutation';
+      operationType: 'Mutation';
+      functionHandler: (
+        event: AppSyncResolverEvent<
+          {
+            postId: string;
+          },
+          Record<string, any> | null
+        >,
+        context: Context,
+        callback: Callback<{
+          likes: number;
+        } | null>,
+      ) => void | Promise<{
+        likes: number;
+      } | null>;
+      args: {
         postId: string;
       };
-      typeName: 'Mutation';
       returnType: {
+        likes: number;
+      } | null;
+      type: {
         likes: number;
       } | null;
     };
@@ -712,7 +737,7 @@ describe('custom operations', () => {
 
       type Expected_A = {
         id: string;
-        field?: string | null | undefined;
+        field: string | null;
         // doesn't imply id field
         // doesn't imply timestamp fields
       };
@@ -737,7 +762,7 @@ describe('custom operations', () => {
       type Actual_A = Prettify<ClientSchema<typeof schema>['A']['type']>;
 
       type Expected_A = {
-        field?: string | null | undefined;
+        field: string | null;
         // doesn't imply id field
         // doesn't imply timestamp fields
         // doesn't imply owner field
@@ -768,7 +793,7 @@ describe('custom operations', () => {
 
       type Expected_A = {
         idNum: number;
-        field?: string | null | undefined;
+        field: string | null;
         // doesn't imply timestamp fields
         // doesn't imply owner field
       };
@@ -806,8 +831,8 @@ describe('custom operations', () => {
 
       type Expected_A = {
         idNum: number;
-        field?: string | null | undefined;
-        bId?: string | null | undefined;
+        field: string | null;
+        bId: string | null;
         b: (
           options?:
             | {
@@ -816,14 +841,10 @@ describe('custom operations', () => {
                 headers?: CustomHeaders | undefined;
               }
             | undefined,
-        ) => SingularReturnValue<
-          | {
-              id: string;
-              title: Nullable<string>;
-            }
-          | null
-          | undefined
-        >;
+        ) => SingularReturnValue<{
+          id: string;
+          title: Nullable<string>;
+        } | null>;
         // doesn't imply id field
         // doesn't imply timestamp fields
         // doesn't imply owner field
@@ -862,8 +883,8 @@ describe('custom operations', () => {
 
       type Expected_A = {
         idNum: number;
-        field?: string | null | undefined;
-        bId?: string | null | undefined;
+        field: string | null;
+        bId: string | null;
         b: (
           options?:
             | {
@@ -872,14 +893,10 @@ describe('custom operations', () => {
                 headers?: CustomHeaders | undefined;
               }
             | undefined,
-        ) => SingularReturnValue<
-          | {
-              id: string;
-              title: string | null;
-            }
-          | null
-          | undefined
-        >;
+        ) => SingularReturnValue<{
+          id: string;
+          title: string | null;
+        } | null>;
         // doesn't imply id field
         // doesn't imply timestamp fields
         // doesn't imply owner field
@@ -1036,16 +1053,33 @@ describe('custom operations', () => {
         });
 
         type Schema = ClientSchema<typeof schema>;
-        type ActualEcho =
-          Schema[typeof __modelMeta__]['customOperations']['echo'];
+        type ActualEcho = Prettify<Schema['echo']>;
 
         type Expected = {
-          arguments: {
+          __entityType: 'customQuery';
+          operationType: 'Query';
+          functionHandler: (
+            event: AppSyncResolverEvent<
+              {
+                inputContent: string;
+              },
+              Record<string, any> | null
+            >,
+            context: Context,
+            callback: Callback<{
+              resultContent: Nullable<string>;
+            } | null>,
+          ) => void | Promise<{
+            resultContent: Nullable<string>;
+          } | null>;
+          args: {
             inputContent: string;
           };
-          typeName: 'Query';
           returnType: {
-            resultContent?: string | null | undefined;
+            resultContent: Nullable<string>;
+          } | null;
+          type: {
+            resultContent: Nullable<string>;
           } | null;
         };
 
@@ -1154,7 +1188,7 @@ describe('custom operations', () => {
         readonly id: string;
         readonly createdAt: string;
         readonly updatedAt: string;
-        field?: string | null | undefined;
+        field: string | null;
         // no implied owner field
       };
 
@@ -1166,7 +1200,7 @@ describe('custom operations', () => {
         readonly id: string;
         readonly createdAt: string;
         readonly updatedAt: string;
-        field?: string | null | undefined;
+        field: string | null;
         // no implied owner field
       };
 
@@ -1200,7 +1234,7 @@ describe('custom operations', () => {
       type Actual_A = Prettify<ClientSchema<typeof schema>['A']['type']>;
 
       type Expected_A = {
-        field?: string | null | undefined;
+        field: string | null;
         // no implied owner field
       };
 
@@ -1212,7 +1246,7 @@ describe('custom operations', () => {
         readonly id: string;
         readonly createdAt: string;
         readonly updatedAt: string;
-        field?: string | null | undefined;
+        field: string | null;
         // no implied owner field
       };
 
@@ -1269,24 +1303,8 @@ describe('custom operations', () => {
       type SchemaB = ClientSchema<typeof schemaB>;
       type Schema = ClientSchema<typeof schema>;
 
-      type CustomOperationsA =
-        SchemaA[typeof __modelMeta__]['customOperations'];
-      type CustomOperationsB =
-        SchemaB[typeof __modelMeta__]['customOperations'];
-      type CustomTypesA = SchemaA[typeof __modelMeta__]['customTypes'];
-      type CustomTypesB = SchemaB[typeof __modelMeta__]['customTypes'];
-      type ExpectedCustomTypes = CustomTypesA & CustomTypesB;
-      type ExpectedCustomOperations = CustomOperationsA & CustomOperationsB;
-
-      type ActualCustomOperations =
-        Schema[typeof __modelMeta__]['customOperations'];
-      type ActualCustomTypes = Schema[typeof __modelMeta__]['customTypes'];
-
-      type testCustomTypes = Expect<
-        Equal<ExpectedCustomTypes, ActualCustomTypes>
-      >;
-      type testCustomOperations = Expect<
-        Equal<ExpectedCustomOperations, ActualCustomOperations>
+      type testCombinedSchemaEqualsIntersection = Expect<
+        Equal<SchemaA & SchemaB, Schema>
       >;
 
       const graphql = schema.schemas

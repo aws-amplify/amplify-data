@@ -50,7 +50,7 @@ describe('Implicit Auth Field Handling. Given:', () => {
 
     test('the client schema type has a owner?: string und fields', () => {
       type _ownerStringIsPresent = Expect<
-        Equal<string | undefined, Schema['Model']['type']['owner']>
+        Equal<string | null, Schema['Model']['type']['owner']>
       >;
     });
 
@@ -134,7 +134,7 @@ describe('Implicit Auth Field Handling. Given:', () => {
 
     test('the client schema type has a customOwner?: string und fields', () => {
       type _ownerStringIsPresent = Expect<
-        Equal<string | undefined, Schema['Model']['type']['customOwner']>
+        Equal<string | null, Schema['Model']['type']['customOwner']>
       >;
     });
 
@@ -219,7 +219,7 @@ describe('Implicit Auth Field Handling. Given:', () => {
 
     test('the client schema type has a explicitOwner?: string und fields', () => {
       type _ownerStringIsPresent = Expect<
-        Equal<string | undefined, Schema['Model']['type']['explicitOwner']>
+        Equal<string | null, Schema['Model']['type']['explicitOwner']>
       >;
     });
 
@@ -313,7 +313,7 @@ describe('Implicit Auth Field Handling. Given:', () => {
 
     test('the client schema type has a group?: string und fields', () => {
       type _ownerStringIsPresent = Expect<
-        Equal<string | undefined, Schema['Model']['type']['group']>
+        Equal<string | null, Schema['Model']['type']['group']>
       >;
     });
 
@@ -398,7 +398,7 @@ describe('Implicit Auth Field Handling. Given:', () => {
 
     test('the client schema type has a group?: string und fields', () => {
       type _ownerStringIsPresent = Expect<
-        Equal<string[] | undefined, Schema['Model']['type']['groups']>
+        Equal<string[] | null, Schema['Model']['type']['groups']>
       >;
     });
 
@@ -483,7 +483,7 @@ describe('Implicit Auth Field Handling. Given:', () => {
 
     test('the client schema type has a group?: string und fields', () => {
       type _ownerStringIsPresent = Expect<
-        Equal<string[] | undefined, Schema['Model']['type']['groups']>
+        Equal<string[] | null, Schema['Model']['type']['groups']>
       >;
     });
 

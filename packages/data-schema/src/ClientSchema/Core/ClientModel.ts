@@ -27,18 +27,23 @@ import type {
 export interface ClientModel<
   Bag extends Record<string, unknown>,
   Metadata extends SchemaMetadata<any>,
+  IsRDS extends boolean,
   T extends ModelTypeParamShape,
   K extends keyof Bag & string,
 > extends ClientSchemaProperty {
   __entityType: 'model';
   // Adding prettify here breaks a bunch of things. Need to revisit Prettify impl.
   // Probably work investigating a sprinkling of shallow prettification around instead.
-  type: ShallowPretty<ClientFields<Bag, Metadata, T>>;
-  createType: Prettify<CreateModelInput<ClientModel<Bag, Metadata, T, K>>>;
-  updateType: Prettify<UpdateModelInput<ClientModel<Bag, Metadata, T, K>>>;
-  deleteType: Prettify<ModelIdentifier<T>>;
-  identifier: ShallowPretty<ModelIdentifier<T>>;
-  nestedTypes: NestedTypes<ClientFields<Bag, Metadata, T>, T>;
+  type: ShallowPretty<ClientFields<Bag, Metadata, IsRDS, T>>;
+  createType: Prettify<
+    CreateModelInput<ClientModel<Bag, Metadata, IsRDS, T, K>>
+  >;
+  updateType: Prettify<
+    UpdateModelInput<ClientModel<Bag, Metadata, IsRDS, T, K>>
+  >;
+  deleteType: Prettify<ModelIdentifier<T, IsRDS>>;
+  identifier: ShallowPretty<ModelIdentifier<T, IsRDS>>;
+  nestedTypes: NestedTypes<ClientFields<Bag, Metadata, IsRDS, T>, T>;
   secondaryIndexes: IndexQueryMethodsFromIR<Bag, T['secondaryIndexes'], K>;
   __meta: {
     listOptionsPkParams: ListOptionsPkParams<Bag, T>;
@@ -52,21 +57,29 @@ type ShallowPretty<T> = {
 type ClientFields<
   Bag extends Record<string, unknown>,
   Metadata extends SchemaMetadata<any>,
+  IsRDS extends boolean,
   T extends ModelTypeParamShape,
 > = ResolveFields<Bag, T['fields']> &
-  ModelIdentifier<T> &
+  ModelIdentifier<T, IsRDS> &
   AuthFields<Metadata, T> &
-  Omit<SystemFields, keyof ResolveFields<Bag, T['fields']>>;
+  Omit<SystemFields<IsRDS>, keyof ResolveFields<Bag, T['fields']>>;
 
-type SystemFields = {
-  readonly createdAt: string;
-  readonly updatedAt: string;
-};
+type SystemFields<IsRDS extends boolean> = IsRDS extends false
+  ? {
+      readonly createdAt: string;
+      readonly updatedAt: string;
+    }
+  : object;
 
-type ModelIdentifier<T extends ModelTypeParamShape> = T['identifier']['pk'] &
-  (T['identifier']['sk'] extends never
-    ? unknown // unknown collapses in an intersection
-    : T['identifier']['sk']);
+type ModelIdentifier<
+  T extends ModelTypeParamShape,
+  IsRDS extends boolean,
+> = IsRDS extends false
+  ? T['identifier']['pk'] &
+      (T['identifier']['sk'] extends never
+        ? unknown // unknown collapses in an intersection
+        : T['identifier']['sk'])
+  : object;
 
 /**
  * Models with composite PKs defined are expected to contain the model's pk, sk, and sortDirection properties in the `options` param
@@ -203,7 +216,7 @@ export type IndexQueryInput<
  * All required fields and relational fields, exclude readonly fields
  */
 type MutationInput<
-  Model extends ClientModel<any, any, any, any>,
+  Model extends ClientModel<any, any, any, any, any>,
   WritableFields = Pick<Model['type'], WritableKeys<Model['type']>>,
 > = WithNullablesAsOptionalRecursively<{
   [Prop in keyof WritableFields as WritableFields[Prop] extends (
@@ -247,11 +260,11 @@ type WithNullablesAsOptionalRecursively<T> =
 /**
  * All identifiers and fields used to create a model
  */
-type CreateModelInput<Model extends ClientModel<any, any, any, any>> =
+type CreateModelInput<Model extends ClientModel<any, any, any, any, any>> =
   Equal<MinusReadonly<Model['identifier']>, { id: string }> extends true
     ? Partial<MinusReadonly<Model['identifier']>> &
         Omit<MutationInput<Model>, 'id'>
     : MutationInput<Model>;
 
-type UpdateModelInput<Model extends ClientModel<any, any, any, any>> =
+type UpdateModelInput<Model extends ClientModel<any, any, any, any, any>> =
   MinusReadonly<Model['identifier']> & Partial<MutationInput<Model>>;
