@@ -128,6 +128,9 @@ describe('CustomOperation transform', () => {
 
     test('Custom Mutation w required arg and enum', () => {
       const s = a.schema({
+        Post: a
+          .model({ title: a.string() })
+          .authorization((allow) => allow.authenticated()),
         likePost: a
           .mutation()
           .arguments({
@@ -144,6 +147,9 @@ describe('CustomOperation transform', () => {
 
     test('Custom Mutation w string function reference', () => {
       const s = a.schema({
+        Post: a
+          .model({ title: a.string() })
+          .authorization((allow) => allow.authenticated()),
         likePost: a
           .mutation()
           .arguments({
@@ -161,6 +167,9 @@ describe('CustomOperation transform', () => {
 
     test('Custom Mutation w string function reference & auth', () => {
       const s = a.schema({
+        Post: a
+          .model({ title: a.string() })
+          .authorization((allow) => allow.authenticated()),
         likePost: a
           .mutation()
           .arguments({
@@ -217,6 +226,37 @@ describe('CustomOperation transform', () => {
               jsonField: a.json(),
             }),
           ),
+      });
+
+      const result = s.transform().schema;
+
+      expect(result).toMatchSnapshot();
+    });
+
+    test('Custom query w inline custom enum return type', () => {
+      const s = a.schema({
+        getPostStatus: a
+          .query()
+          .arguments({
+            postId: a.string().required(),
+          })
+          .returns(a.enum(['draft', 'pending', 'approved'])),
+      });
+
+      const result = s.transform().schema;
+
+      expect(result).toMatchSnapshot();
+    });
+
+    test('Custom query w referenced enum return type', () => {
+      const s = a.schema({
+        getPostStatus: a
+          .query()
+          .arguments({
+            postId: a.string().required(),
+          })
+          .returns(a.ref('PostStatus')),
+        PostStatus: a.enum(['draft', 'pending', 'approved']),
       });
 
       const result = s.transform().schema;
@@ -921,7 +961,7 @@ describe('CustomOperation transform', () => {
           int: a.integer(),
           description: a.string(),
         })
-        .returns(a.ref('NestedCustomTypes'))
+        .returns(a.ref('SomeCustomType'))
         .handler([a.handler.function(fn1), a.handler.function(fn2)])
         .authorization((allow) => allow.publicApiKey()),
       echoList: a
@@ -931,9 +971,13 @@ describe('CustomOperation transform', () => {
           int: a.integer(),
           description: a.string(),
         })
-        .returns(a.ref('NestedCustomTypes').required().array().required())
+        .returns(a.ref('SomeCustomType').required().array().required())
         .handler(a.handler.function(fn3))
         .authorization((allow) => allow.publicApiKey()),
+      SomeCustomType: a.customType({
+        fieldA: a.string(),
+        fieldB: a.integer(),
+      }),
     });
 
     it('generates 3 lambda functions with expected names aside schema', () => {
@@ -980,5 +1024,107 @@ describe('.for() modifier', () => {
     });
 
     expect(() => schema.transform()).not.toThrow();
+  });
+});
+
+describe('custom operations + custom type auth inheritance', () => {
+  test('op returns top-level custom type with 1 auth mode', () => {
+    const s = a.schema({
+      myQuery: a
+        .query()
+        .handler(a.handler.function('myFn'))
+        .returns(a.ref('QueryReturn'))
+        .authorization((allow) => allow.publicApiKey()),
+      QueryReturn: a.customType({
+        fieldA: a.string(),
+        fieldB: a.integer(),
+      }),
+    });
+
+    const result = s.transform().schema;
+
+    expect(result).toMatchSnapshot();
+    expect(result).toEqual(
+      expect.stringContaining('type QueryReturn @aws_api_key'),
+    );
+  });
+
+  test('op returns top-level custom type with all supported auth modes', () => {
+    const s = a.schema({
+      myQuery: a
+        .query()
+        .handler(a.handler.function('myFn'))
+        .returns(a.ref('QueryReturn'))
+        .authorization((allow) => [
+          allow.publicApiKey(),
+          allow.authenticated(),
+          allow.groups(['admin', 'superAdmin']),
+          allow.guest(),
+          allow.authenticated('identityPool'),
+        ]),
+      QueryReturn: a.customType({
+        fieldA: a.string(),
+        fieldB: a.integer(),
+      }),
+    });
+
+    const result = s.transform().schema;
+
+    expect(result).toMatchSnapshot();
+    expect(result).toEqual(
+      expect.stringContaining(
+        'type QueryReturn @aws_api_key @aws_cognito_user_pools @aws_cognito_user_pools(cognito_groups: ["admin", "superAdmin"]) @aws_iam',
+      ),
+    );
+  });
+
+  test('top-level custom type inherits combined auth rules from referencing ops', () => {
+    const s = a.schema({
+      myQuery: a
+        .query()
+        .handler(a.handler.function('myFn'))
+        .returns(a.ref('QueryReturn'))
+        .authorization((allow) => allow.publicApiKey()),
+      myMutation: a
+        .query()
+        .handler(a.handler.function('myFn'))
+        .returns(a.ref('QueryReturn'))
+        .authorization((allow) => allow.authenticated()),
+      QueryReturn: a.customType({
+        fieldA: a.string(),
+        fieldB: a.integer(),
+      }),
+    });
+
+    const result = s.transform().schema;
+
+    expect(result).toMatchSnapshot();
+    expect(result).toEqual(
+      expect.stringContaining(
+        'type QueryReturn @aws_api_key @aws_cognito_user_pools',
+      ),
+    );
+  });
+
+  test('implicit custom type inherits auth rules from referencing op', () => {
+    const s = a.schema({
+      myQuery: a
+        .query()
+        .handler(a.handler.function('myFn'))
+        .returns(
+          a.customType({
+            fieldA: a.string(),
+            fieldB: a.integer(),
+          }),
+        )
+        .authorization((allow) => allow.publicApiKey()),
+    });
+
+    const result = s.transform().schema;
+
+    expect(result).toMatchSnapshot();
+    expect(result).toEqual(
+      expect.stringContaining('type MyQueryReturnType @aws_api_key'),
+    );
   });
 });

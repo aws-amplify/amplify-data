@@ -5,10 +5,7 @@ describe('EnumType', () => {
   test('Happy case', () => {
     const accessLevel = enumType(['public', 'protected', 'private']);
 
-    type Expected = EnumType<{
-      type: 'enum';
-      values: ('public' | 'protected' | 'private')[];
-    }>;
+    type Expected = EnumType<readonly ['public', 'protected', 'private']>;
 
     type Result = typeof accessLevel;
 

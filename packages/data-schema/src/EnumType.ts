@@ -1,36 +1,30 @@
-import { Brand } from './util';
+import type { brandSymbol } from './util/Brand.js';
 
-type EnumTypeData = {
-  type: 'enum';
-  values: readonly string[];
-};
+type EnumTypeParamShape<values extends readonly string[] = readonly string[]> =
+  {
+    type: 'enum';
+    values: values;
+  };
 
-export type EnumTypeParamShape = {
-  type: 'enum';
-  values: readonly string[];
-};
+export interface EnumType<values extends readonly string[] = readonly string[]>
+  extends EnumTypeParamShape<values> {
+  [brandSymbol]: 'enum';
+}
 
-export type EnumType<T extends EnumTypeParamShape> = T & Brand<'enum'>;
-
-function _enum<T extends EnumTypeParamShape>(values: T['values']) {
-  const data: EnumTypeData = {
+function _enum<values extends readonly string[]>(values: values) {
+  const data: EnumTypeParamShape = {
     type: 'enum',
     values,
   };
 
-  return data as EnumType<T>;
+  return data as EnumType<values>;
 }
-
-type EnumTypeArgFactory<Values extends readonly string[]> = {
-  type: 'enum';
-  values: Values;
-};
 
 /**
  * this type param pattern allows us to infer literal type values from the array without using the `as const` suffix
  */
-export function enumType<Value extends string, T extends readonly Value[]>(
-  values: T,
+export function enumType<const values extends readonly string[]>(
+  values: values,
 ) {
-  return _enum<EnumTypeArgFactory<T>>(values);
+  return _enum(values);
 }

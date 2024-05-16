@@ -10,6 +10,7 @@ import type {
   ModelRelationalField,
   ModelRelationalFieldParamShape,
 } from '../ModelRelationalField';
+import type { PrimaryIndexIrShape } from '../util/';
 
 import type { ResolveSchema, SchemaTypes } from './ResolveSchema';
 import type { InjectImplicitModelFields } from './ImplicitFieldInjector';
@@ -19,7 +20,7 @@ import type { RefType, RefTypeParamShape } from '../RefType';
 import type { NonModelTypesShape } from './ExtractNonModelTypes';
 
 import type { CustomType, CustomTypeParamShape } from '../CustomType';
-import type { EnumType, EnumTypeParamShape } from '../EnumType';
+import type { EnumType } from '../EnumType';
 import type {
   CustomOperation,
   CustomOperationParamShape,
@@ -31,7 +32,7 @@ export type ResolveFieldProperties<
   ResolvedSchema = ResolveSchema<Schema>,
   IdentifierMeta extends Record<
     string,
-    { identifier: string }
+    { identifier: PrimaryIndexIrShape }
   > = ModelIdentifier<SchemaTypes<Schema>>,
   FieldsWithInjectedImplicitFields = InjectImplicitModelFields<
     ResolvedSchema,
@@ -56,7 +57,7 @@ export type ResolveStaticFieldProperties<
   ResolvedSchema = ResolveSchema<Schema>,
   FieldsWithInjectedImplicitFields = InjectImplicitModelFields<
     ResolvedSchema & ImplicitModelsSchema,
-    object
+    never
   >,
   FieldsWithRelationships = ResolveModelsRelationalAndRefFields<
     FieldsWithInjectedImplicitFields,
@@ -213,7 +214,7 @@ type Intersection<
 // TODO: this should probably happen in InjectImplicitModelFields instead. Keeping here for now to reduce refactor
 // blast radius
 export type ModelImpliedAuthFields<Schema extends GenericModelSchema<any>> = {
-  [ModelKey in keyof Schema['data']['types'] as Schema['data']['types'][ModelKey] extends EnumType<EnumTypeParamShape>
+  [ModelKey in keyof Schema['data']['types'] as Schema['data']['types'][ModelKey] extends EnumType
     ? never
     : Schema['data']['types'][ModelKey] extends CustomType<CustomTypeParamShape>
       ? never

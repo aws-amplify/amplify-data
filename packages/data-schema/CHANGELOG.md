@@ -1,5 +1,73 @@
 # @aws-amplify/data-schema
 
+## 1.2.2
+
+### Patch Changes
+
+- 5aa23c0: fix: generate correct filter type for non-string fields
+
+## 1.2.1
+
+### Patch Changes
+
+- d6114be: fix composite sk in identifier/secondaryIndex
+
+## 1.2.0
+
+### Minor Changes
+
+- f67cb71: adds addToSchema modifier to imported schemas
+
+## 1.1.6
+
+### Patch Changes
+
+- 4c7eb71: perf optimizations, minor builder refactor
+- Updated dependencies [4c7eb71]
+  - @aws-amplify/data-schema-types@1.0.1
+
+## 1.1.5
+
+### Patch Changes
+
+- 7b044cf: Updated JS Doc strings for relationships, custom queries, mutations, and subscriptions, and custom types
+
+## 1.1.4
+
+### Patch Changes
+
+- 555d0ff: fix identifier - all supported data types; correct SK for list
+
+## 1.1.3
+
+### Patch Changes
+
+- ecc5540: Renaming SQL models should add refersTo directive
+
+## 1.1.2
+
+### Patch Changes
+
+- 7f25eb0: Fixes auth permissions for custom types referenced by custom operations; other minor custom ops fixes
+
+## 1.1.1
+
+### Patch Changes
+
+- 9bf67b7: Use pascal case of model name in graphql operation names
+
+## 1.1.0
+
+### Minor Changes
+
+- 454ab50: feat!: rename relational modifiers for SQL schemas
+
+## 1.0.1
+
+### Patch Changes
+
+- cdfeda5: fix: enforce non-empty a.schema definitions
+
 ## 1.0.0
 
 ### Major Changes

@@ -2,6 +2,42 @@ import { ModelIndexType } from '../ModelIndex';
 
 type ModelIndexTypeShape = ModelIndexType<any, any, any, any, any>;
 
+export type PrimaryIndexFieldsToIR<
+  IdxFields extends ReadonlyArray<string>,
+  ResolvedFields,
+> = IdxFields extends readonly [
+  infer PK,
+  ...infer SK extends never | readonly string[],
+]
+  ? {
+      pk: PK extends keyof ResolvedFields
+        ? {
+            [Key in PK]: Exclude<ResolvedFields[PK], null> & (string | number);
+          }
+        : never;
+      sk: unknown extends SK
+        ? never
+        : ResolvedSortKeyFields<SK, ResolvedFields>;
+      compositeSk: SK['length'] extends 0 | 1
+        ? never
+        : CompositeSkFieldName<ArrayShift<SK>, SK[0]>;
+    }
+  : never;
+
+type ArrayShift<Arr extends ReadonlyArray<any>> = Arr extends readonly [
+  infer _Shift,
+  ...infer Rest,
+]
+  ? Rest
+  : never;
+
+type CompositeSkFieldName<
+  SK,
+  Result extends string = '',
+> = SK extends readonly [infer A extends string, ...infer B extends string[]]
+  ? CompositeSkFieldName<B, `${Result}${Capitalize<A>}`>
+  : Result;
+
 /**
  * Maps array of ModelIndexType to SecondaryIndexIrShape (defined in in data-schema-types)
  * */
@@ -37,12 +73,12 @@ type SingleIndexIrFromType<Idx extends ModelIndexTypeShape, ResolvedFields> =
   Idx extends ModelIndexType<
     any,
     infer PK extends string,
-    infer SK,
+    infer SK extends readonly string[],
     infer QueryField extends string | never,
     any
   >
     ? {
-        defaultQueryFieldSuffix: `${QueryFieldLabelFromTuple<SK, Capitalize<PK>>}`;
+        defaultQueryFieldSuffix: QueryFieldLabelFromTuple<SK, Capitalize<PK>>;
         queryField: QueryField;
         pk: PK extends keyof ResolvedFields
           ? {
@@ -53,6 +89,9 @@ type SingleIndexIrFromType<Idx extends ModelIndexTypeShape, ResolvedFields> =
         sk: unknown extends SK
           ? never
           : ResolvedSortKeyFields<SK, ResolvedFields>;
+        compositeSk: SK['length'] extends 0 | 1
+          ? never
+          : CompositeSkFieldName<ArrayShift<SK>, SK[0]>;
       }
     : never;
 

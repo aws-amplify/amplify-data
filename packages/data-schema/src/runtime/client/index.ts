@@ -1,19 +1,24 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 import {
-  DeepReadOnlyObject,
-  UnwrapArray,
-  UnionToIntersection,
-  Prettify,
+  type DeepReadOnlyObject,
+  type UnwrapArray,
+  type UnionToIntersection,
+  type Prettify,
   __modelMeta__,
 } from '@aws-amplify/data-schema-types';
 import type { Observable } from 'rxjs';
-import {
+import type {
   ClientSchemaByEntityType,
   ClientSchemaByEntityTypeBaseShape,
 } from '../../ClientSchema';
-import { ExtractNestedTypes } from '../../ClientSchema/utilities/ExtractNestedTypes';
-import { Select } from '../../util';
+import type { ExtractNestedTypes } from '../../ClientSchema/utilities/';
+import type {
+  Select,
+  StringFilter,
+  NumericFilter,
+  BooleanFilters,
+} from '../../util';
 
 // temporarily export symbols from `data-schema-types` because in case part of the
 // problem with the runtime -> data-schema migration comes down to a mismatch
@@ -272,13 +277,6 @@ export type SelectionSet<
 > = CustomSelectionSetReturnValue<FlatModel, Path[number]>;
 // #endregion
 
-// #region Input mapped types
-// export type ModelIdentifier<Model extends Record<any, any>> = Prettify<
-//   Record<Model['identifier'] & string, string>
-// >;
-
-// #endregion
-
 // #region Interfaces copied from `graphql` package
 // From https://github.com/graphql/graphql-js/blob/main/src/error/GraphQLError.ts
 
@@ -390,79 +388,27 @@ type LogicalFilters<
   not?: ModelFilter<Model>;
 };
 
-/**
- * Filter options that can be used on fields where size checks are supported.
- */
-type SizeFilter = {
-  between?: [number, number];
-  eq?: number;
-  ge?: number;
-  gt?: number;
-  le?: number;
-  lt?: number;
-  ne?: number;
-};
-
-/**
- * Not actually sure if/how customer can pass this through as variables yet.
- * Leaving it out for now:
- *
- * attributeType: "binary" | "binarySet" | "bool" | "list" | "map" | "number" | "numberSet" | "string" | "stringSet" | "_null"
- */
-
-/**
- * Filters options that can be used on string-like fields.
- */
-type StringFilter<T extends string = string> = {
-  attributeExists?: boolean;
-  beginsWith?: string;
-  between?: [string, string];
-  contains?: string;
-  eq?: T;
-  ge?: string;
-  gt?: string;
-  le?: string;
-  lt?: string;
-  ne?: T;
-  notContains?: string;
-  size?: SizeFilter;
-};
-
-type NumericFilter = {
-  attributeExists?: boolean;
-  between?: [number, number];
-  eq?: number;
-  ge?: number;
-  gt?: number;
-  le?: number;
-  lt?: number;
-  ne?: number;
-};
-
-type BooleanFilters = {
-  attributeExists?: boolean;
-  eq?: boolean;
-  ne?: boolean;
-};
-
 type ModelFilter<
   Model extends ClientSchemaByEntityTypeBaseShape['models'][string],
 > = LogicalFilters<Model> & {
   [K in keyof Model['type'] as Model['type'][K] extends LazyLoader<any, any>
     ? never
-    : K]?: Model['type'][K] extends boolean
+    : K]?: boolean extends Model['type'][K]
     ? BooleanFilters
-    : Model['type'][K] extends number
+    : number extends Model['type'][K]
       ? NumericFilter
       : StringFilter;
 };
 
 export type ModelSortDirection = 'ASC' | 'DESC';
 
-type _ModelMetaShape = {
-  secondaryIndexes: SecondaryIndexIrShape[];
-  identifier: string;
-};
+type ListCpkOptions<
+  Model extends ClientSchemaByEntityTypeBaseShape['models'][string],
+> = unknown extends Model['__meta']['listOptionsPkParams']
+  ? unknown
+  : Model['__meta']['listOptionsPkParams'] & {
+      sortDirection?: ModelSortDirection;
+    };
 
 interface ClientSecondaryIndexField {
   input: object;
@@ -537,9 +483,8 @@ export type ModelTypesClient<
     },
   ): SingularReturnValue<Prettify<ReturnValue<Model, FlatModel, SelectionSet>>>;
   list<SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[]>(
-    options?: Partial<Model['identifier']> & {
+    options?: ListCpkOptions<Model> & {
       filter?: ModelFilter<Model>;
-      sortDirection?: ModelSortDirection;
       limit?: number;
       nextToken?: string | null;
       selectionSet?: SelectionSet;
@@ -639,7 +584,7 @@ export type ModelTypesClient<
 //     },
 //   ): SingularReturnValue<Prettify<ReturnValue<Model, FlatModel, SelectionSet>>>;
 //   list<SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[]>(
-//     options?: Partial<ModelIdentifier<ModelMeta>> & {
+//     options?: ListCpkOptions<Model> & {
 //       filter?: ModelFilter<Model>;
 //       sortDirection?: ModelSortDirection;
 //       limit?: number;
@@ -704,7 +649,7 @@ export type ModelTypesClient<
 //   ): SingularReturnValue<Prettify<ReturnValue<Model, FlatModel, SelectionSet>>>;
 //   list<SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[]>(
 //     contextSpec: any,
-//     options?: Partial<ModelIdentifier<ModelMeta>> & {
+//     options?: ListCpkOptions<Model> & {
 //       filter?: ModelFilter<Model>;
 //       sortDirection?: ModelSortDirection;
 //       limit?: number;
@@ -840,35 +785,6 @@ export type RequestOptions = {
 export type CustomHeaders =
   | Record<string, string>
   | ((requestOptions?: RequestOptions) => Promise<Record<string, string>>);
-
-/**
- * SecondaryIndex index types and query methods
- */
-export type SecondaryIndexIrShape = {
-  defaultQueryFieldSuffix: string;
-  queryField: string;
-  pk: { [key: string]: string | number };
-  sk: { [key: string]: string | number };
-};
-
-// type IndexQueryMethodsFromIR<
-//   SecondaryIdxTuple extends SecondaryIndexIrShape[],
-//   ModelName extends string,
-//   Model extends Record<string, unknown>,
-//   Enums extends Record<string, string>,
-//   Res = unknown, // defaulting `unknown` because it gets absorbed in an intersection, e.g. `{a: 1} & unknown` => `{a: 1}`
-// > = SecondaryIdxTuple extends [
-//   infer A extends SecondaryIndexIrShape,
-//   ...infer B extends SecondaryIndexIrShape[],
-// ]
-//   ? IndexQueryMethodsFromIR<
-//       B,
-//       ModelName,
-//       Model,
-//       Enums,
-//       IndexQueryMethodSignature<A, ModelName, Model, Enums> & Res
-//     >
-//   : Res;
 
 type FilteredKeys<T> = {
   [P in keyof T]: T[P] extends never ? never : P;

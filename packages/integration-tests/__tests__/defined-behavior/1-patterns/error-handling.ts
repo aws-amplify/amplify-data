@@ -212,9 +212,7 @@ describe('CRUD error handling', () => {
        */
       const client = generateClient<Schema>({ authMode: 'identityPool' });
 
-      const { data: todos, errors } = await client.models.Todo.list({
-        id: 'some_id',
-      });
+      const { data: todos, errors } = await client.models.Todo.list();
 
       // #region assertions
       expect(errors).toEqual(expect.arrayContaining([authError1]));
@@ -386,9 +384,7 @@ describe('CRUD error handling', () => {
       Amplify.configure(config);
       const client = generateClient<Schema>();
 
-      const { data: todos, errors } = await client.models.Todo.list({
-        id: 'some_id',
-      });
+      const { data: todos, errors } = await client.models.Todo.list();
       // #endregion docs code
 
       // #region assertions

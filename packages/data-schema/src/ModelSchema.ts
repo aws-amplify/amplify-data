@@ -7,14 +7,13 @@ import type {
   UnionToIntersection,
 } from '@aws-amplify/data-schema-types';
 import {
-  type ModelType,
-  type ModelTypeParamShape,
   type InternalModel,
   isSchemaModelType,
   SchemaModelType,
   AddRelationshipFieldsToModelTypeFields,
+  type BaseModelType,
 } from './ModelType';
-import type { EnumType, EnumTypeParamShape } from './EnumType';
+import type { EnumType } from './EnumType';
 import type { CustomType, CustomTypeParamShape } from './CustomType';
 import type {
   CustomOperation,
@@ -26,7 +25,7 @@ import type {
 } from './CustomOperation';
 import { processSchema } from './SchemaProcessor';
 import { AllowModifier, SchemaAuthorization, allow } from './Authorization';
-import { Brand, brand } from './util';
+import { Brand, brand, getBrand } from './util';
 import {
   ModelRelationalField,
   ModelRelationalFieldParamShape,
@@ -46,15 +45,22 @@ const ddbSchemaBrand = brand(ddbSchemaBrandName);
 export type DDBSchemaBrand = Brand<typeof ddbSchemaBrandName>;
 
 type SchemaContent =
-  | ModelType<ModelTypeParamShape, any>
+  | BaseModelType
   | CustomType<CustomTypeParamShape>
-  | EnumType<EnumTypeParamShape>
+  | EnumType
   | CustomOperation<CustomOperationParamShape, any>;
 
+// The SQL-only `addToSchema` accepts all top-level entities, excepts models
+type AddToSchemaContent = Exclude<SchemaContent, BaseModelType>;
+type AddToSchemaContents = Record<string, AddToSchemaContent>;
+
+type NonEmpty<T> = keyof T extends never ? never : T;
+
 export type ModelSchemaContents = Record<string, SchemaContent>;
+
 type InternalSchemaModels = Record<
   string,
-  InternalModel | EnumType<any> | CustomType<any> | InternalCustom
+  InternalModel | EnumType | CustomType<any> | InternalCustom
 >;
 
 export type ModelSchemaParamShape = {
@@ -79,10 +85,7 @@ export type BaseSchema<
 > = {
   data: T;
   models: {
-    [TypeKey in keyof T['types']]: T['types'][TypeKey] extends ModelType<
-      ModelTypeParamShape,
-      never | 'identifier'
-    >
+    [TypeKey in keyof T['types']]: T['types'][TypeKey] extends BaseModelType
       ? SchemaModelType<T['types'][TypeKey], TypeKey & string, IsRDS>
       : never;
   };
@@ -94,7 +97,7 @@ export type GenericModelSchema<T extends ModelSchemaParamShape> =
 
 export type ModelSchema<
   T extends ModelSchemaParamShape,
-  UsedMethods extends 'authorization' | 'addRelationships' = never,
+  UsedMethods extends 'authorization' | 'relationships' = never,
 > = Omit<
   {
     authorization: <AuthRules extends SchemaAuthorization<any, any, any>>(
@@ -110,11 +113,12 @@ export type ModelSchema<
   DDBSchemaBrand;
 
 type RDSModelSchemaFunctions =
+  | 'addToSchema'
   | 'addQueries'
   | 'addMutations'
   | 'addSubscriptions'
   | 'authorization'
-  | 'relationships'
+  | 'setRelationships'
   | 'setAuthorization'
   | 'renameModelFields'
   | 'renameModels';
@@ -131,18 +135,33 @@ export type RDSModelSchema<
   >,
 > = Omit<
   {
+    addToSchema: <AddedTypes extends AddToSchemaContents>(
+      types: AddedTypes,
+    ) => RDSModelSchema<
+      SetTypeSubArg<T, 'types', T['types'] & AddedTypes>,
+      UsedMethods | 'addToSchema'
+    >;
+    /**
+     * @deprecated use `addToSchema()` to add operations to a SQL schema
+     */
     addQueries: <Queries extends Record<string, QueryCustomOperation>>(
       types: Queries,
     ) => RDSModelSchema<
       SetTypeSubArg<T, 'types', T['types'] & Queries>,
       UsedMethods | 'addQueries'
     >;
+    /**
+     * @deprecated use `addToSchema()` to add operations to a SQL schema
+     */
     addMutations: <Mutations extends Record<string, MutationCustomOperation>>(
       types: Mutations,
     ) => RDSModelSchema<
       SetTypeSubArg<T, 'types', T['types'] & Mutations>,
       UsedMethods | 'addMutations'
     >;
+    /**
+     * @deprecated use `addToSchema()` to add operations to a SQL schema
+     */
     addSubscriptions: <
       Subscriptions extends Record<string, SubscriptionCustomOperation>,
     >(
@@ -164,7 +183,7 @@ export type RDSModelSchema<
         schema: RDSModelSchema<T, UsedMethods | 'setAuthorization'>,
       ) => void,
     ) => RDSModelSchema<T>;
-    relationships: <
+    setRelationships: <
       Relationships extends ReadonlyArray<
         Partial<Record<keyof T['types'], RelationshipTemplate>>
       >,
@@ -187,7 +206,7 @@ export type RDSModelSchema<
             >
           : T
         : T,
-      UsedMethods | 'relationships'
+      UsedMethods | 'setRelationships'
     >;
     renameModels: <
       NewName extends string,
@@ -261,6 +280,22 @@ export const isModelSchema = (
   return typeof schema === 'object' && schema.data !== undefined;
 };
 
+/**
+ * Ensures that only supported entities are being added to the SQL schema through `addToSchema`
+ * Models are not supported for brownfield SQL
+ *
+ * @param types - purposely widened to ModelSchemaContents, because we need to validate at runtime that a model is not being passed in here
+ */
+function validateAddToSchema(types: ModelSchemaContents): void {
+  for (const [name, type] of Object.entries(types)) {
+    if (getBrand(type) === 'modelType') {
+      throw new Error(
+        `Invalid value specified for ${name} in addToSchema(). Models cannot be manually added to a SQL schema.`,
+      );
+    }
+  }
+}
+
 function _rdsSchema<
   T extends RDSModelSchemaParamShape,
   DSC extends SchemaConfiguration<any, any>,
@@ -285,6 +320,12 @@ function _rdsSchema<
       const { authorization: _, ...rest } = this;
       return rest;
     },
+    addToSchema(types: AddToSchemaContents): any {
+      validateAddToSchema(types);
+      this.data.types = { ...this.data.types, ...types };
+      const { addToSchema: _, ...rest } = this;
+      return rest;
+    },
     addQueries(types: Record<string, QueryCustomOperation>): any {
       this.data.types = { ...this.data.types, ...types };
       const { addQueries: _, ...rest } = this;
@@ -305,9 +346,9 @@ function _rdsSchema<
       const { setAuthorization: _, ...rest } = this;
       return rest;
     },
-    relationships(callback): any {
-      const { relationships: _, ...rest } = this;
-      // The relationships are added via `models.<Model>.addRelationships`
+    setRelationships(callback): any {
+      const { setRelationships: _, ...rest } = this;
+      // The relationships are added via `models.<Model>.relationships`
       // modifiers that's being called within the callback. They are modifying
       // by references on each model, so there is not anything else to be done
       // here.
@@ -336,6 +377,7 @@ function _rdsSchema<
 
         models[newName] = currentType;
         data.types[newName] = currentType;
+        models[newName].data.originalName = curName;
 
         delete models[curName];
         delete data.types[curName];
@@ -350,7 +392,7 @@ function _rdsSchema<
 function _ddbSchema<
   T extends ModelSchemaParamShape,
   DSC extends SchemaConfiguration<any, any>,
->(types: T['types'], config: DSC) {
+>(types: T['types'], config: DSC): ModelSchema<T> {
   const data: ModelSchemaParamShape = {
     types,
     authorization: [],
@@ -371,7 +413,7 @@ function _ddbSchema<
     },
     models: filterSchemaModelTypes(data.types),
     ...ddbSchemaBrand,
-  } as ModelSchema<T>;
+  } satisfies ModelSchema<any> as never;
 }
 
 type SchemaReturnType<
@@ -388,7 +430,7 @@ type SchemaReturnType<
 function bindConfigToSchema<DE extends DatasourceEngine>(
   config: SchemaConfiguration<DE, DataSourceConfiguration<DE>>,
 ): <Types extends ModelSchemaContents>(
-  types: Types,
+  types: NonEmpty<Types>,
 ) => SchemaReturnType<DE, Types> {
   return (types) => {
     return (
@@ -419,7 +461,7 @@ export function configure<DE extends DatasourceEngine>(
   config: SchemaConfiguration<DE, DataSourceConfiguration<DE>>,
 ): {
   schema: <Types extends ModelSchemaContents>(
-    types: Types,
+    types: NonEmpty<Types>,
   ) => SchemaReturnType<DE, Types>;
 } {
   return {

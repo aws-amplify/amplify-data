@@ -2,23 +2,22 @@ import {
   type UnionToIntersection,
   type ExcludeEmpty,
 } from '@aws-amplify/data-schema-types';
-import { __modelMeta__ } from '../runtime/client';
+import { __modelMeta__ } from '../runtime/';
+import type { PrimaryIndexIrShape } from '../util';
 import type { ModelType } from '../ModelType';
 import type { ModelRelationalFieldParamShape } from '../ModelRelationalField';
 
 export type ModelIdentifier<T> = {
   [Property in keyof T]: T[Property] extends ModelType<infer R, any>
-    ? // reduce back to union
-      R['identifier'] extends any[]
-      ? { identifier: R['identifier'][number] }
+    ? R['identifier'] extends PrimaryIndexIrShape
+      ? { identifier: R['identifier'] }
       : never
     : never;
 };
 
 export type ModelSecondaryIndexes<T> = {
   [Property in keyof T]: T[Property] extends ModelType<infer R, any>
-    ? // reduce back to union
-      R['secondaryIndexes'] extends any[]
+    ? R['secondaryIndexes'] extends any[]
       ? { secondaryIndexes: R['secondaryIndexes'] }
       : never
     : never;
@@ -27,7 +26,7 @@ export type ModelSecondaryIndexes<T> = {
 export type RelationalMetadata<
   ResolvedSchema,
   ResolvedFields extends Record<string, unknown>,
-  IdentifierMeta extends Record<string, any>,
+  IdentifierMeta extends Record<string, { identifier: PrimaryIndexIrShape }>,
 > = UnionToIntersection<
   ExcludeEmpty<
     {
@@ -77,11 +76,18 @@ export type RelationalMetadata<
   >
 >;
 
-type ExtractModelIdentifier<ModelName, IdentifierMeta> =
-  ModelName extends keyof IdentifierMeta ? IdentifierMeta[ModelName] : never;
+type ExtractModelIdentifier<
+  ModelName,
+  IdentifierMeta extends Record<string, { identifier: PrimaryIndexIrShape }>,
+> = ModelName extends keyof IdentifierMeta ? IdentifierMeta[ModelName] : never;
 
 type NormalizeInputFields<
   ModelFields,
-  IdentifierMeta extends Record<string, any>,
-> = Partial<Omit<ModelFields, IdentifierMeta['identifier']>> &
-  Required<Pick<ModelFields, IdentifierMeta['identifier']>>;
+  IdentifierMeta extends { identifier: PrimaryIndexIrShape },
+  IdFields extends keyof ModelFields =
+    | (keyof IdentifierMeta['identifier']['pk'] & keyof ModelFields)
+    | (IdentifierMeta['identifier']['sk'] extends never
+        ? never
+        : keyof IdentifierMeta['identifier']['sk'] & keyof ModelFields),
+> = Partial<Omit<ModelFields, IdFields>> &
+  Required<Pick<ModelFields, IdFields>>;

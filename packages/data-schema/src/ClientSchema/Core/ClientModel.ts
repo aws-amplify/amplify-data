@@ -2,21 +2,27 @@ import type {
   deferredRefResolvingPrefix,
   ModelTypeParamShape,
 } from '../../ModelType';
-import { ClientSchemaProperty } from './ClientSchemaProperty';
-import { ResolveFields } from '../utilities/ResolveField';
-import { Authorization, ImpliedAuthFields } from '../../Authorization';
-import { SchemaMetadata } from '../utilities/SchemaMetadata';
-import {
+import type { ClientSchemaProperty } from './ClientSchemaProperty';
+import type { Authorization, ImpliedAuthFields } from '../../Authorization';
+import type { SchemaMetadata, ResolveFields } from '../utilities';
+import type {
   IsEmptyStringOrNever,
   UnionToIntersection,
   Equal,
   Prettify,
 } from '@aws-amplify/data-schema-types';
-import { ModelField } from '../../ModelField';
-import { ModelRelationalField } from '../../ModelRelationalField';
-import { EnumType, EnumTypeParamShape } from '../../EnumType';
-import { CustomType, CustomTypeParamShape } from '../../CustomType';
-import { RefType } from '../../RefType';
+import type { ModelField } from '../../ModelField';
+import type { ModelRelationalField } from '../../ModelRelationalField';
+import type { EnumType } from '../../EnumType';
+import type { CustomType, CustomTypeParamShape } from '../../CustomType';
+import type { RefType } from '../../RefType';
+import type {
+  StringFilter,
+  NumericFilter,
+  ModelPrimaryCompositeKeyInput,
+  PrimaryIndexIrShape,
+  SecondaryIndexIrShape,
+} from '../../util';
 
 export interface ClientModel<
   Bag extends Record<string, unknown>,
@@ -30,10 +36,13 @@ export interface ClientModel<
   type: ShallowPretty<ClientFields<Bag, Metadata, T>>;
   createType: Prettify<CreateModelInput<ClientModel<Bag, Metadata, T, K>>>;
   updateType: Prettify<UpdateModelInput<ClientModel<Bag, Metadata, T, K>>>;
-  deleteType: Prettify<ModelIdentifier<Bag, T>>;
-  identifier: ShallowPretty<ModelIdentifier<Bag, T>>;
+  deleteType: Prettify<ModelIdentifier<T>>;
+  identifier: ShallowPretty<ModelIdentifier<T>>;
   nestedTypes: NestedTypes<ClientFields<Bag, Metadata, T>, T>;
   secondaryIndexes: IndexQueryMethodsFromIR<Bag, T['secondaryIndexes'], K>;
+  __meta: {
+    listOptionsPkParams: ListOptionsPkParams<Bag, T>;
+  };
 }
 
 type ShallowPretty<T> = {
@@ -45,7 +54,7 @@ type ClientFields<
   Metadata extends SchemaMetadata<any>,
   T extends ModelTypeParamShape,
 > = ResolveFields<Bag, T['fields']> &
-  ModelIdentifier<Bag, T> &
+  ModelIdentifier<T> &
   AuthFields<Metadata, T> &
   Omit<SystemFields, keyof ResolveFields<Bag, T['fields']>>;
 
@@ -54,12 +63,23 @@ type SystemFields = {
   readonly updatedAt: string;
 };
 
-type ModelIdentifier<
+type ModelIdentifier<T extends ModelTypeParamShape> = T['identifier']['pk'] &
+  (T['identifier']['sk'] extends never
+    ? unknown // unknown collapses in an intersection
+    : T['identifier']['sk']);
+
+/**
+ * Models with composite PKs defined are expected to contain the model's pk, sk, and sortDirection properties in the `options` param
+ *
+ * @returns an object containing additional `options` properties for models with a composite primary index
+ *
+ */
+export type ListOptionsPkParams<
   Bag extends Record<string, unknown>,
   T extends ModelTypeParamShape,
-> = T['identifier'][number] extends keyof T['fields']
-  ? Pick<ResolveFields<Bag, T['fields']>, T['identifier'][number]>
-  : { readonly id: string };
+> = T['identifier']['sk'] extends never
+  ? unknown
+  : Prettify<Partial<IndexQueryInput<Bag, T['identifier']>>>;
 
 type AuthFields<
   Metadata extends SchemaMetadata<any>,
@@ -91,16 +111,14 @@ type NestedTypes<
   T extends ModelTypeParamShape,
 > = {
   [K in keyof T['fields'] as T['fields'][K] extends
-    | EnumType<EnumTypeParamShape>
+    | EnumType
     | CustomType<CustomTypeParamShape>
     ? K
     : never]: K extends keyof Bag
     ? {
         // A little hackier than I'd like here.
         // Ideally, adapt ClientEnum and ClientCustomType to work with us here instead.
-        __entityType: T['fields'][K] extends EnumType<EnumTypeParamShape>
-          ? 'enum'
-          : 'customType';
+        __entityType: T['fields'][K] extends EnumType ? 'enum' : 'customType';
         type: Exclude<Bag[K], null>;
       }
     : never;
@@ -123,11 +141,6 @@ type IndexQueryMethodsFromIR<
     >
   : Res;
 
-/**
- * TODO: Get rid of the `deferredRefResolvingPrefix` reference hack.
- *
- * Instead, just dereference refs as usual?
- */
 type IndexQueryMethodSignature<
   Bag extends Record<string, unknown>,
   Idx extends SecondaryIndexIrShape,
@@ -137,13 +150,27 @@ type IndexQueryMethodSignature<
     ? Idx['queryField']
     : `list${ModelName}By${Idx['defaultQueryFieldSuffix']}`,
   {
-    input: {
-      [PKField in keyof Idx['pk']]: Idx['pk'][PKField] extends `${deferredRefResolvingPrefix}${infer R}`
-        ? 'type' extends keyof Bag[R]
-          ? Bag[R]['type']
-          : never
-        : Idx['pk'][PKField];
-    } & {
+    input: IndexQueryInput<Bag, Idx>;
+  }
+>;
+
+/**
+ * Accepts a PrimaryIndexIr or SecondaryIndexIr and returns resolved parameters
+ *
+ * TODO: Get rid of the `deferredRefResolvingPrefix` reference hack.
+ * Instead, just dereference refs as usual?
+ */
+export type IndexQueryInput<
+  Bag extends Record<string, unknown>,
+  Idx extends PrimaryIndexIrShape,
+> = {
+  [PKField in keyof Idx['pk']]: Idx['pk'][PKField] extends `${deferredRefResolvingPrefix}${infer R}`
+    ? 'type' extends keyof Bag[R]
+      ? Bag[R]['type']
+      : never
+    : Idx['pk'][PKField];
+} & (Idx['compositeSk'] extends never
+  ? {
       [SKField in keyof Idx['sk']]+?: number extends Idx['sk'][SKField]
         ? NumericFilter
         : Idx['sk'][SKField] extends `${deferredRefResolvingPrefix}${infer R}`
@@ -153,9 +180,14 @@ type IndexQueryMethodSignature<
               : never
             : never
           : StringFilter<Idx['sk'][SKField] & string>;
-    };
-  }
->;
+    }
+  : {
+      [CompositeSk in Idx['compositeSk']]+?: ModelPrimaryCompositeKeyInput<{
+        [SKField in keyof Idx['sk']]: Idx['sk'][SKField] extends `${deferredRefResolvingPrefix}${infer _R}`
+          ? string
+          : Idx['sk'][SKField];
+      }>;
+    });
 
 /**
  *
@@ -223,46 +255,3 @@ type CreateModelInput<Model extends ClientModel<any, any, any, any>> =
 
 type UpdateModelInput<Model extends ClientModel<any, any, any, any>> =
   MinusReadonly<Model['identifier']> & Partial<MutationInput<Model>>;
-
-type StringFilter<T extends string = string> = {
-  attributeExists?: boolean;
-  beginsWith?: string;
-  between?: [string, string];
-  contains?: string;
-  eq?: T;
-  ge?: string;
-  gt?: string;
-  le?: string;
-  lt?: string;
-  ne?: T;
-  notContains?: string;
-  size?: SizeFilter;
-};
-
-type NumericFilter = {
-  attributeExists?: boolean;
-  between?: [number, number];
-  eq?: number;
-  ge?: number;
-  gt?: number;
-  le?: number;
-  lt?: number;
-  ne?: number;
-};
-
-type SizeFilter = {
-  between?: [number, number];
-  eq?: number;
-  ge?: number;
-  gt?: number;
-  le?: number;
-  lt?: number;
-  ne?: number;
-};
-
-export type SecondaryIndexIrShape = {
-  defaultQueryFieldSuffix: string;
-  queryField: string;
-  pk: { [key: string]: string | number };
-  sk: { [key: string]: string | number };
-};

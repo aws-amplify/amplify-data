@@ -5,9 +5,9 @@ import type {
   ModelRelationshipTypes,
   RelationTypeFunctionOmitMapping,
 } from '../ModelRelationalField';
-import type { ModelField } from '../ModelField';
+import type { BaseModelField } from '../ModelField';
 import type { CustomType, CustomTypeParamShape } from '../CustomType';
-import type { EnumType, EnumTypeParamShape } from '../EnumType';
+import type { EnumType } from '../EnumType';
 import type { RefType, RefTypeParamShape } from '../RefType';
 import type {
   CustomOperation,
@@ -17,9 +17,8 @@ import type {
 export type ResolveSchema<Schema> = FieldTypes<ModelTypes<SchemaTypes<Schema>>>;
 
 // TODO: find better name
-export type SchemaTypes<T> = T extends GenericModelSchema<any>
-  ? T['data']['types']
-  : never;
+export type SchemaTypes<T> =
+  T extends GenericModelSchema<any> ? T['data']['types'] : never;
 
 /**
  * Resolves model types
@@ -30,7 +29,7 @@ export type SchemaTypes<T> = T extends GenericModelSchema<any>
  */
 export type ModelTypes<Schema> = {
   [Model in keyof Schema as Schema[Model] extends
-    | EnumType<EnumTypeParamShape>
+    | EnumType
     | CustomType<CustomTypeParamShape>
     | CustomOperation<CustomOperationParamShape, any>
     ? never
@@ -45,14 +44,16 @@ export type ModelTypes<Schema> = {
  */
 export type ModelAndCustomTypes<Schema> = {
   [Model in keyof Schema as Schema[Model] extends
-    | EnumType<EnumTypeParamShape>
+    | EnumType
     | CustomOperation<CustomOperationParamShape, any>
     ? never
-    : Model]: Schema[Model] extends ModelType<any, any>
+    : // TODO: This should use BaseModel, but seems to only work because it relies on
+      // omitting extra methods
+      Model]: Schema[Model] extends
+    | ModelType<any, any>
+    | CustomType<CustomTypeParamShape>
     ? Schema[Model]
-    : Schema[Model] extends CustomType<CustomTypeParamShape>
-      ? Schema[Model]
-      : never;
+    : never;
 };
 
 /**
@@ -62,11 +63,9 @@ export type ModelAndCustomTypes<Schema> = {
  */
 export type FieldTypes<T> = {
   [ModelProp in keyof T]: {
-    [FieldProp in keyof T[ModelProp]]: T[ModelProp][FieldProp] extends ModelField<
+    [FieldProp in keyof T[ModelProp]]: T[ModelProp][FieldProp] extends BaseModelField<
       // Match the most common field type to improve resolving performance
-      infer R,
-      any,
-      any
+      infer R
     >
       ? R
       : T[ModelProp][FieldProp] extends RefType<
@@ -80,7 +79,7 @@ export type FieldTypes<T> = {
           : T[ModelProp][FieldProp] | null
         : // replace non-model types with Ref
           T[ModelProp][FieldProp] extends
-              | EnumType<EnumTypeParamShape>
+              | EnumType
               | CustomType<CustomTypeParamShape>
           ? RefType<{
               link: `${Capitalize<ModelProp & string>}${Capitalize<
@@ -114,10 +113,8 @@ export type FieldTypes<T> = {
  */
 export type FieldTypesOfCustomType<T> = {
   [CustomTypeName in keyof T]: {
-    [FieldProp in keyof T[CustomTypeName]]: T[CustomTypeName][FieldProp] extends ModelField<
-      infer R,
-      any,
-      any
+    [FieldProp in keyof T[CustomTypeName]]: T[CustomTypeName][FieldProp] extends BaseModelField<
+      infer R
     >
       ? R
       : T[CustomTypeName][FieldProp] extends RefType<
@@ -131,7 +128,7 @@ export type FieldTypesOfCustomType<T> = {
           : T[CustomTypeName][FieldProp] | null
         : // replace non-model types with Ref
           T[CustomTypeName][FieldProp] extends
-              | EnumType<EnumTypeParamShape>
+              | EnumType
               | CustomType<CustomTypeParamShape>
           ? RefType<{
               link: `${Capitalize<CustomTypeName & string>}${Capitalize<

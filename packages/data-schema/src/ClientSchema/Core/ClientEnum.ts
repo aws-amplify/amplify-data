@@ -1,8 +1,7 @@
-import { EnumTypeParamShape } from '../../EnumType';
 import { ClientSchemaProperty } from './ClientSchemaProperty';
 
-export interface ClientEnum<T extends EnumTypeParamShape>
+export interface ClientEnum<values extends readonly string[]>
   extends ClientSchemaProperty {
   __entityType: 'enum';
-  type: T['values'][number];
+  type: values[number];
 }

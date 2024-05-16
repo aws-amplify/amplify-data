@@ -1,11 +1,7 @@
 import type { Brand } from './util';
-import type {
-  ModelField,
-  InternalField,
-  ModelFieldTypeParamOuter,
-} from './ModelField';
+import type { InternalField, BaseModelField } from './ModelField';
 import type { RefType } from './RefType';
-import type { EnumType, EnumTypeParamShape } from './EnumType';
+import type { EnumType } from './EnumType';
 
 /**
  * Custom Types
@@ -19,9 +15,9 @@ export type CustomTypeAllowedModifiers = 'authorization' | 'array' | 'required';
 
 type CustomTypeFields = Record<
   string,
-  | ModelField<ModelFieldTypeParamOuter, CustomTypeAllowedModifiers, any>
+  | BaseModelField
   | RefType<any, any, any>
-  | EnumType<EnumTypeParamShape>
+  | EnumType
   | CustomType<CustomTypeParamShape>
 >;
 
@@ -60,6 +56,38 @@ function _customType<T extends CustomTypeParamShape>(fields: T['fields']) {
   return { data } as InternalCustomType as CustomType<T>;
 }
 
+/**
+ * Define a custom type. This type represents an inline, typed JSON object. 
+ * @see {@link https://docs.amplify.aws/react/build-a-backend/data/data-modeling/add-fields/#specify-a-custom-field-type}
+ * @param fields the fields to be added to the custom type
+ * @returns a custom type
+ * @example
+ * a.schema({
+ *   Post: a.model({
+ *     location: a.customType({
+ *       lat: a.float(),
+ *       long: a.float(),
+ *     }),
+ *     content: a.string(),
+ *   }),
+ * });
+ * @example
+ * a.schema({
+ *   Location: a.customType({
+ *       lat: a.float(),
+ *       long: a.float(),
+ *   }),
+ * 
+ *   Post: a.model({
+ *     location: a.ref('Location'),
+ *     content: a.string(),
+ *   }),
+ * 
+ *   User: a.model({
+ *     lastKnownLocation: a.ref('Location'),
+ *   }),
+ * });
+ */
 export function customType<T extends CustomTypeFields>(
   fields: T,
 ): CustomType<{ fields: T }> {

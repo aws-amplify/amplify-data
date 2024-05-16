@@ -1,0 +1,26 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "lib": ["ES2022"],
+    "allowJs": false,
+    "skipLibCheck": true,
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
+    "incremental": true,
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
+    "noErrorTruncation": true, // prevents truncatation when hovering over type in VSCode
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "paths": {
+      // "@aws-amplify/data-schema-types": [
+      //   "./packages/data-schema-types/src/index.ts"
+      // ],
+      // "@aws-amplify/data-schema": ["./packages/data-schema/src/index.ts"],
+      // "@aws-amplify/data-schema/internals": [
+      //   "./packages/data-schema/src/internals/index.ts"
+      // ]
+    }
+  },
+  "exclude": ["**/node_modules", "**/dist", "**/lib-esm", "**/*js"]
+}

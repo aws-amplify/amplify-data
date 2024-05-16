@@ -70,7 +70,7 @@ type ClientSchemaProperty<
           : never;
 
 type RemapEnum<_T extends ModelSchemaContents, E> =
-  E extends EnumType<infer ET> ? ClientEnum<ET> : 'a';
+  E extends EnumType<infer values> ? ClientEnum<values> : 'a';
 
 type RemapCustomType<T extends ModelSchemaContents, E> =
   E extends CustomType<infer CT>

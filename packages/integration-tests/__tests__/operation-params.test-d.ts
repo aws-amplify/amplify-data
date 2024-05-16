@@ -1,5 +1,5 @@
 import { a, ClientSchema } from '@aws-amplify/data-schema';
-import { Expect, Equal } from '@aws-amplify/data-schema-types';
+import { Expect, Equal, Prettify } from '@aws-amplify/data-schema-types';
 import { __modelMeta__ } from '@aws-amplify/data-schema/runtime';
 import { generateClient } from 'aws-amplify/api';
 
@@ -323,6 +323,132 @@ describe('Basic operations', () => {
           badField: { eq: 'something naughty' },
         },
       });
+    });
+  });
+});
+
+describe('All supported identifier types', () => {
+  test('CRUDL id types - PK only', async () => {
+    const schema = a.schema({
+      StringPk: a
+        .model({
+          title: a.string().required(),
+        })
+        .identifier(['title']),
+      IntPk: a
+        .model({
+          number: a.integer().required(),
+        })
+        .identifier(['number']),
+      FloatPk: a
+        .model({
+          float: a.float().required(),
+        })
+        .identifier(['float']),
+      DatePk: a
+        .model({
+          createdAt: a.date().required(),
+        })
+        .identifier(['createdAt']),
+      TimePk: a
+        .model({
+          time: a.time().required(),
+        })
+        .identifier(['time']),
+      DateTimePk: a
+        .model({
+          dateTime: a.datetime().required(),
+        })
+        .identifier(['dateTime']),
+      TimestampPk: a
+        .model({
+          ts: a.timestamp().required(),
+        })
+        .identifier(['ts']),
+      EnumPk: a
+        .model({
+          enum: a.enum(['a', 'b', 'c']),
+        })
+        .identifier(['enum']),
+      BoolPk: a
+        .model({
+          bool: a.boolean().required(),
+        })
+        // @ts-expect-error - booleans cannot be used as PKs (not supported in DDB; enforced in the transformer)
+        .identifier(['bool']),
+    });
+
+    type Schema = ClientSchema<typeof schema>;
+
+    const client = generateClient<Schema>();
+
+    await client.models.StringPk.get({ title: '...' });
+
+    // @ts-expect-error - PK should not be included in List Options unless SK is defined as well
+    await client.models.StringPk.list({ title: '...' });
+
+    // @ts-expect-error - sortDirection should not be included in List Options unless SK is defined on the model
+    await client.models.StringPk.list({ sortDirection: 'ASC' });
+
+    await client.models.IntPk.get({ number: 0 });
+
+    await client.models.FloatPk.get({ float: 0.1 });
+
+    await client.models.DatePk.get({ createdAt: '1/1/2000' });
+    await client.models.TimePk.get({ time: '1:23' });
+    await client.models.DateTimePk.get({ dateTime: '1/1/2000T1:23' });
+    await client.models.TimestampPk.get({ ts: 1234 });
+
+    await client.models.EnumPk.get({ enum: 'a' });
+  });
+
+  test('CRUDL - composite', async () => {
+    const schema = a.schema({
+      StringSk: a
+        .model({
+          id: a.string().required(),
+          title: a.string().required(),
+        })
+        .identifier(['id', 'title']),
+      IntSk: a
+        .model({
+          id: a.string().required(),
+          number: a.integer().required(),
+        })
+        .identifier(['id', 'number']),
+      EnumSk: a
+        .model({
+          id: a.string().required(),
+          enum: a.enum(['a', 'b', 'c']),
+        })
+        .identifier(['id', 'enum']),
+    });
+
+    type Schema = ClientSchema<typeof schema>;
+    const client = generateClient<Schema>();
+
+    await client.models.StringSk.get({ id: '...', title: '...' });
+
+    await client.models.StringSk.list({
+      id: '...',
+      title: { beginsWith: '...' },
+      sortDirection: 'ASC',
+    });
+
+    await client.models.IntSk.get({ id: '...', number: 123 });
+
+    await client.models.IntSk.list({
+      id: '...',
+      number: { gt: 1 },
+      sortDirection: 'ASC',
+    });
+
+    await client.models.EnumSk.get({ id: '...', enum: 'a' });
+
+    await client.models.EnumSk.list({
+      id: '...',
+      enum: { beginsWith: 'a' },
+      sortDirection: 'ASC',
     });
   });
 });

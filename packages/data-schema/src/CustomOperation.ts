@@ -1,14 +1,13 @@
 import { SetTypeSubArg } from '@aws-amplify/data-schema-types';
 import { Brand, brand } from './util';
-
-import { ModelField, InternalField } from './ModelField';
+import { InternalField, type BaseModelField } from './ModelField';
 import {
   AllowModifierForCustomOperation,
   Authorization,
   allowForCustomOperations,
 } from './Authorization';
 import { RefType, InternalRef } from './RefType';
-import { EnumType, EnumTypeParamShape } from './EnumType';
+import { EnumType } from './EnumType';
 import { CustomType } from './CustomType';
 import type {
   CustomHandler,
@@ -25,10 +24,7 @@ type CustomOperationBrand =
   | typeof mutationBrand
   | typeof subscriptionBrand;
 
-type CustomArguments = Record<
-  string,
-  ModelField<any, any> | EnumType<EnumTypeParamShape>
->;
+type CustomArguments = Record<string, BaseModelField | EnumType>;
 
 type SubscriptionSource = RefType<any, any>;
 type InternalSubscriptionSource = InternalRef;
@@ -202,6 +198,26 @@ export type QueryCustomOperation = CustomOperation<
   typeof queryBrand
 >;
 
+/**
+ * Use a custom query to define an API request that will retrieve backend data.
+ * @see {@link https://docs.amplify.aws/react/build-a-backend/data/custom-business-logic/}
+ * @example
+ * const schema = a.schema({
+ *   echo: a
+ *     .query()
+ *     .arguments({ content: a.string() })
+ *     .returns(a.ref('EchoResponse'))
+ *     .authorization(allow => [allow.publicApiKey()])
+ *     // 3. set the function has the handler
+ *     .handler(a.handler.function(echoHandler)),
+ * 
+ *   EchoResponse: a.customType({
+ *     content: a.string(),
+ *     executionDuration: a.float()
+ *   }),
+ * });
+ * @returns a custom query
+ */
 export function query(): CustomOperation<
   {
     arguments: null;
@@ -222,6 +238,18 @@ export type MutationCustomOperation = CustomOperation<
   typeof mutationBrand
 >;
 
+/**
+ * Use a custom mutation to define an API request that will modify backend data or trigger a subscription event.
+ * @see {@link https://docs.amplify.aws/react/build-a-backend/data/custom-business-logic/}
+ * @example
+ * likePost: a
+ *   .mutation()
+ *   .arguments({ postId: a.string() })
+ *   .returns(a.ref('Post'))
+ *   .authorization(allow => [allow.publicApiKey()])
+ *   .handler(a.handler.function(echoHandler))
+ * @returns a custom mutation
+ */
 export function mutation(): CustomOperation<
   {
     arguments: null;
@@ -242,6 +270,20 @@ export type SubscriptionCustomOperation = CustomOperation<
   typeof subscriptionBrand
 >;
 
+/**
+ * Define a custom subscription to receive an event when a mutation is triggered
+ * @see {@link https://docs.amplify.aws/react/build-a-backend/data/custom-subscription/}
+ * @example
+ * // Subscribe to incoming messages
+ * receive: a.subscription()
+ *   // subscribes to the 'publish' mutation
+ *   .for(a.ref('publish')) 
+ *   // subscription handler to set custom filters
+ *   .handler(a.handler.custom({entry: './receive.js'})) 
+ *   // authorization rules as to who can subscribe to the data
+ *   .authorization(allow => [allow.publicApiKey()]),
+ * @returns a custom subscription
+ */
 export function subscription(): CustomOperation<
   {
     arguments: null;

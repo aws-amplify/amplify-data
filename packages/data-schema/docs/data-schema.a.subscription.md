@@ -4,6 +4,8 @@
 
 ## a.subscription() function
 
+Define a custom subscription to receive an event when a mutation is triggered
+
 **Signature:**
 
 ```typescript
@@ -18,4 +20,10 @@ export declare function subscription(): CustomOperation<{
 **Returns:**
 
 CustomOperation&lt;{ arguments: null; returnType: null; authorization: \[\]; typeName: 'Subscription'; handlers: null; }, 'returns', typeof subscriptionBrand&gt;
+
+a custom subscription
+
+## Example
+
+// Subscribe to incoming messages receive: a.subscription() // subscribes to the 'publish' mutation .for(a.ref('publish')) // subscription handler to set custom filters .handler(a.handler.custom(<!-- -->{<!-- -->entry: './receive.js'<!-- -->}<!-- -->)) // authorization rules as to who can subscribe to the data .authorization(allow =<!-- -->&gt; \[allow.publicApiKey()\]),
 

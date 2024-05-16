@@ -9,7 +9,7 @@ this type param pattern allows us to infer literal type values from the array wi
 **Signature:**
 
 ```typescript
-export declare function enumType<Value extends string, T extends readonly Value[]>(values: T): EnumType<EnumTypeArgFactory<T>>;
+export declare function enumType<const values extends readonly string[]>(values: values): EnumType<values>;
 ```
 
 ## Parameters
@@ -37,7 +37,7 @@ values
 
 </td><td>
 
-T
+values
 
 
 </td><td>
@@ -47,5 +47,5 @@ T
 </tbody></table>
 **Returns:**
 
-EnumType&lt;EnumTypeArgFactory&lt;T&gt;&gt;
+EnumType&lt;values&gt;
 
