@@ -1,4 +1,4 @@
-import { ModelField } from '../../ModelField';
+import { BaseModelField } from '../../ModelField';
 import {
   ModelRelationalField,
   ModelRelationalFieldParamShape,
@@ -23,7 +23,7 @@ export type ResolveFields<Bag extends Record<string, any>, T> = {
 };
 
 export type ResolveIndividualField<Bag extends Record<string, any>, T> =
-  T extends ModelField<infer FieldShape, any, any>
+  T extends BaseModelField<infer FieldShape>
     ? FieldShape
     : T extends RefType<infer RefShape, any, any>
       ? ResolveRef<RefShape, Bag>

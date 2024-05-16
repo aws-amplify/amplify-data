@@ -95,6 +95,7 @@ bench('combined SQL and DDB schema w client types', async () => {
 
   const _newComment = await client.models.Comment.create({
     content: 'hello world',
+    author: 'bob dole',
   });
   const _updatedComment = await client.models.Comment.update({
     id: 'abc',

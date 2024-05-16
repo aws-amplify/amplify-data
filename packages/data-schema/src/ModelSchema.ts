@@ -57,9 +57,10 @@ type AddToSchemaContents = Record<string, AddToSchemaContent>;
 type NonEmpty<T> = keyof T extends never ? never : T;
 
 export type ModelSchemaContents = Record<string, SchemaContent>;
+
 type InternalSchemaModels = Record<
   string,
-  InternalModel | EnumType<any> | CustomType<any> | InternalCustom
+  InternalModel | EnumType | CustomType<any> | InternalCustom
 >;
 
 export type ModelSchemaParamShape = {

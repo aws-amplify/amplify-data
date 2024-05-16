@@ -1,5 +1,5 @@
 import type { CustomOperationParamShape } from '../../CustomOperation';
-import type { ModelField } from '../../ModelField';
+import type { BaseModelField } from '../../ModelField';
 import type { RefType } from '../../RefType';
 import type { ResolveFieldRequirements } from '../../MappedTypes/ResolveFieldProperties';
 import type { AppSyncResolverHandler } from 'aws-lambda';
@@ -79,10 +79,8 @@ type CustomOpArguments<Shape extends CustomOperationParamShape> =
   Shape['arguments'] extends null
     ? never
     : ResolveFieldRequirements<{
-        [FieldName in keyof Shape['arguments']]: Shape['arguments'][FieldName] extends ModelField<
-          infer R,
-          any,
-          any
+        [FieldName in keyof Shape['arguments']]: Shape['arguments'][FieldName] extends BaseModelField<
+          infer R
         >
           ? R
           : never;
@@ -113,7 +111,7 @@ type CustomOpReturnType<
     ? RefShape['link'] extends keyof RefBag
       ? ResolveRef<RefShape, RefBag>
       : never
-    : Shape['returnType'] extends ModelField<infer R, any, any>
+    : Shape['returnType'] extends BaseModelField<infer R>
       ? R
       : Shape['returnType'] extends CustomType<infer R>
         ?
