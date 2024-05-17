@@ -1,5 +1,32 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`Modeling relationships Model a "one-to-one" relationship Lazy load a "Has One" relationship (belongsTo side) 1`] = `
+[
+  [
+    {
+      "authMode": undefined,
+      "authToken": undefined,
+      "query": "query($id: ID!) { getCart(id: $id) { id itemsX customerId createdAt updatedAt } }",
+      "variables": {
+        "id": "some-cart-id",
+      },
+    },
+    {},
+  ],
+  [
+    {
+      "authMode": undefined,
+      "authToken": undefined,
+      "query": "query($id: ID!) { getCustomer(id: $id) { id name createdAt updatedAt } }",
+      "variables": {
+        "id": "customer-id",
+      },
+    },
+    {},
+  ],
+]
+`;
+
 exports[`Modeling relationships Model a "one-to-one" relationship Lazy load a "Has One" relationship (hasOne side) 1`] = `
 [
   [
@@ -28,33 +55,6 @@ exports[`Modeling relationships Model a "one-to-one" relationship Lazy load a "H
             },
           ],
         },
-      },
-    },
-    {},
-  ],
-]
-`;
-
-exports[`Modeling relationships Model a "one-to-one" relationship Lazy load a "Has One" relationship 1`] = `
-[
-  [
-    {
-      "authMode": undefined,
-      "authToken": undefined,
-      "query": "query($id: ID!) { getCart(id: $id) { id itemsX customerId createdAt updatedAt } }",
-      "variables": {
-        "id": "some-cart-id",
-      },
-    },
-    {},
-  ],
-  [
-    {
-      "authMode": undefined,
-      "authToken": undefined,
-      "query": "query($id: ID!) { getCustomer(id: $id) { id name createdAt updatedAt } }",
-      "variables": {
-        "id": "customer-id",
       },
     },
     {},
