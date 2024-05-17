@@ -1,0 +1,276 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Modeling relationships Model a "one-to-one" relationship Lazy load a "Has One" relationship (hasOne side) 1`] = `
+[
+  [
+    {
+      "authMode": undefined,
+      "authToken": undefined,
+      "query": "query($id: ID!) { getCustomer(id: $id) { id name createdAt updatedAt } }",
+      "variables": {
+        "id": "customer-id",
+      },
+    },
+    {},
+  ],
+  [
+    {
+      "authMode": undefined,
+      "authToken": undefined,
+      "query": "query($filter: ModelCartFilterInput,$limit: Int,$nextToken: String) { listCarts(filter: $filter,limit: $limit,nextToken: $nextToken) { items { id itemsX customerId createdAt updatedAt } nextToken __typename } }",
+      "variables": {
+        "filter": {
+          "and": [
+            {
+              "customerId": {
+                "eq": "customer-id",
+              },
+            },
+          ],
+        },
+      },
+    },
+    {},
+  ],
+]
+`;
+
+exports[`Modeling relationships Model a "one-to-one" relationship Lazy load a "Has One" relationship 1`] = `
+[
+  [
+    {
+      "authMode": undefined,
+      "authToken": undefined,
+      "query": "query($id: ID!) { getCart(id: $id) { id itemsX customerId createdAt updatedAt } }",
+      "variables": {
+        "id": "some-cart-id",
+      },
+    },
+    {},
+  ],
+  [
+    {
+      "authMode": undefined,
+      "authToken": undefined,
+      "query": "query($id: ID!) { getCustomer(id: $id) { id name createdAt updatedAt } }",
+      "variables": {
+        "id": "customer-id",
+      },
+    },
+    {},
+  ],
+]
+`;
+
+exports[`Modeling relationships Model a "one-to-one" relationship Update a "Has One" relationship between records 1`] = `
+[
+  [
+    {
+      "authMode": undefined,
+      "authToken": undefined,
+      "query": "mutation($input: CreateCustomerInput!) { createCustomer(input: $input) { id name createdAt updatedAt } }",
+      "variables": {
+        "input": {
+          "name": "Ian",
+        },
+      },
+    },
+    {},
+  ],
+  [
+    {
+      "authMode": undefined,
+      "authToken": undefined,
+      "query": "mutation($input: UpdateCartInput!) { updateCart(input: $input) { id itemsX customerId createdAt updatedAt } }",
+      "variables": {
+        "input": {
+          "customerId": "customer-id-ian",
+          "id": "some-cart-id",
+        },
+      },
+    },
+    {},
+  ],
+]
+`;
+
+exports[`Modeling relationships Model a "one-to-one" relationship create a "Has One" relationship between records 1`] = `
+[
+  [
+    {
+      "authMode": undefined,
+      "authToken": undefined,
+      "query": "mutation($input: CreateCustomerInput!) { createCustomer(input: $input) { id name createdAt updatedAt } }",
+      "variables": {
+        "input": {
+          "name": "Rene",
+        },
+      },
+    },
+    {},
+  ],
+  [
+    {
+      "authMode": undefined,
+      "authToken": undefined,
+      "query": "mutation($input: CreateCartInput!) { createCart(input: $input) { id itemsX customerId createdAt updatedAt } }",
+      "variables": {
+        "input": {
+          "customerId": "customer-id-rene",
+          "itemsX": [
+            "Tomato",
+            "Ice",
+            "Mint",
+          ],
+        },
+      },
+    },
+    {},
+  ],
+]
+`;
+
+exports[`Modeling relationships Model one-to-many relationship Delete a "Has Many" relationship between records 1`] = `
+[
+  [
+    {
+      "authMode": undefined,
+      "authToken": undefined,
+      "query": "mutation($input: UpdateMemberInput!) { updateMember(input: $input) { id name teamId createdAt updatedAt } }",
+      "variables": {
+        "input": {
+          "id": "member-id",
+          "teamId": null,
+        },
+      },
+    },
+    {},
+  ],
+]
+`;
+
+exports[`Modeling relationships Model one-to-many relationship Lazy load a "Has Many" relationship (belongsTo side) 1`] = `
+[
+  [
+    {
+      "authMode": undefined,
+      "authToken": undefined,
+      "query": "query($id: ID!) { getMember(id: $id) { id name teamId createdAt updatedAt } }",
+      "variables": {
+        "id": "member-id",
+      },
+    },
+    {},
+  ],
+  [
+    {
+      "authMode": undefined,
+      "authToken": undefined,
+      "query": "query($id: ID!) { getTeam(id: $id) { id mantra createdAt updatedAt } }",
+      "variables": {
+        "id": "new-team-id",
+      },
+    },
+    {},
+  ],
+]
+`;
+
+exports[`Modeling relationships Model one-to-many relationship Lazy load a "Has Many" relationship (hasMany side) 1`] = `
+[
+  [
+    {
+      "authMode": undefined,
+      "authToken": undefined,
+      "query": "query($id: ID!) { getTeam(id: $id) { id mantra createdAt updatedAt } }",
+      "variables": {
+        "id": "team-id",
+      },
+    },
+    {},
+  ],
+  [
+    {
+      "authMode": undefined,
+      "authToken": undefined,
+      "query": "query($filter: ModelMemberFilterInput,$limit: Int,$nextToken: String) { listMembers(filter: $filter,limit: $limit,nextToken: $nextToken) { items { id name teamId createdAt updatedAt } nextToken __typename } }",
+      "variables": {
+        "filter": {
+          "and": [
+            {
+              "teamId": {
+                "eq": "new-team-id",
+              },
+            },
+          ],
+        },
+      },
+    },
+    {},
+  ],
+]
+`;
+
+exports[`Modeling relationships Model one-to-many relationship Update a "Has Many" relationship between records 1`] = `
+[
+  [
+    {
+      "authMode": undefined,
+      "authToken": undefined,
+      "query": "mutation($input: CreateTeamInput!) { createTeam(input: $input) { id mantra createdAt updatedAt } }",
+      "variables": {
+        "input": {
+          "mantra": "Go Fullstack",
+        },
+      },
+    },
+    {},
+  ],
+  [
+    {
+      "authMode": undefined,
+      "authToken": undefined,
+      "query": "mutation($input: UpdateMemberInput!) { updateMember(input: $input) { id name teamId createdAt updatedAt } }",
+      "variables": {
+        "input": {
+          "id": "member-id",
+          "teamId": "new-team-id",
+        },
+      },
+    },
+    {},
+  ],
+]
+`;
+
+exports[`Modeling relationships Model one-to-many relationship create a "Has Many" relationship between records 1`] = `
+[
+  [
+    {
+      "authMode": undefined,
+      "authToken": undefined,
+      "query": "mutation($input: CreateTeamInput!) { createTeam(input: $input) { id mantra createdAt updatedAt } }",
+      "variables": {
+        "input": {
+          "mantra": "Go Frontend!",
+        },
+      },
+    },
+    {},
+  ],
+  [
+    {
+      "authMode": undefined,
+      "authToken": undefined,
+      "query": "mutation($input: CreateMemberInput!) { createMember(input: $input) { id name teamId createdAt updatedAt } }",
+      "variables": {
+        "input": {
+          "name": "Tim",
+          "teamId": "some-team-id",
+        },
+      },
+    },
+    {},
+  ],
+]
+`;

@@ -121,7 +121,9 @@ async function _get(
       const [key] = Object.keys(data);
       const flattenedResult = flattenItems(data)[key];
 
-      if (options?.selectionSet) {
+      if (flattenedResult === null) {
+        return { data: null, extensions };
+      } else if (options?.selectionSet) {
         return { data: flattenedResult, extensions };
       } else {
         // TODO: refactor to avoid destructuring here
@@ -161,7 +163,9 @@ async function _get(
        * `flattenedResult` could be `null` here (e.g. `data: { getPost: null }`)
        * if `flattenedResult`, result is an actual record:
        */
-      if (flattenedResult) {
+      if (flattenedResult === null) {
+        return { data: null, errors };
+      } else if (flattenedResult) {
         if (options?.selectionSet) {
           return { data: flattenedResult, errors };
         } else {
