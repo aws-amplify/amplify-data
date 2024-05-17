@@ -132,6 +132,12 @@ export const flattenItems = (
       mapped[fieldName] = dvPair.value.items.map((itemValue) =>
         flattenItems(modelIntrospection, dvPair.fieldDef.type.model, itemValue),
       );
+    } else if (isRelatedModelProperty(fieldDef)) {
+      mapped[fieldName] = flattenItems(
+        modelIntrospection,
+        fieldDef.type.model,
+        value,
+      );
     } else {
       mapped[fieldName] = value;
     }
@@ -159,6 +165,23 @@ function isRelatedModelItemsArrayPair(dv: {
     typeof dv.fieldDef.type.model === 'string' &&
     dv.fieldDef.isArray &&
     Array.isArray(dv.value.items)
+  );
+}
+
+/**
+ * Determines whether the given field definition represents a relationship
+ * to another model.
+ *
+ * @param fieldDef
+ * @returns
+ */
+function isRelatedModelProperty(
+  fieldDef: Field | undefined,
+): fieldDef is Field & { type: ModelFieldType } {
+  return (
+    typeof fieldDef?.type === 'object' &&
+    'model' in fieldDef.type &&
+    typeof fieldDef.type.model === 'string'
   );
 }
 

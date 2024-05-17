@@ -305,6 +305,32 @@ describe('Read application data', () => {
           },
         },
       },
+      content: {
+        items: [
+          {
+            title: 'some title',
+            description: 'some description',
+            id: 'some-id',
+            updatedAt: '2024-03-01T19:05:44.536Z',
+            createdAt: '2024-03-01T18:05:44.536Z',
+          },
+        ],
+      },
+    };
+
+    // Final result will be flattened and not quite quite equal to the graphql response.
+    const blogWithSelectionSetResult = {
+      __typeName: 'Blog',
+      author: {
+        email: 'someone@example.com',
+      },
+      publication: {
+        company: {
+          location: {
+            city: 'wherever',
+          },
+        },
+      },
       content: [
         {
           title: 'some title',
@@ -349,7 +375,7 @@ describe('Read application data', () => {
     // #region assertions
     expect(optionsAndHeaders(spy)).toMatchSnapshot();
     expect(errors).toBeUndefined();
-    expect(blogWithSubsetOfData).toEqual(blogWithSelectionSet);
+    expect(blogWithSubsetOfData).toEqual(blogWithSelectionSetResult);
     // #endregion assertions
   });
 
