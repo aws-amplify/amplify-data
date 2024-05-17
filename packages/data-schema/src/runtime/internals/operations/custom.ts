@@ -20,7 +20,6 @@ import { map } from 'rxjs';
 import {
   authModeParams,
   getDefaultSelectionSetForNonModelWithIR,
-  flattenItems,
   generateSelectionSet,
   getCustomHeaders,
   initializeModel,
