@@ -170,6 +170,51 @@ describe('flattenItems', () => {
     expect(flattened).toEqual(expected);
   });
 
+  test('does not flatten items property when it is string[]', () => {
+    // the `data` property of a full graphql result
+    const data = {
+      createCart: {
+        __typeName: 'Cart',
+        id: 'some-cart-id',
+        customerId: 'customer-id-rene',
+        items: ['Tomato', 'Ice', 'Mint'],
+        updatedAt: '2024-03-01T19:05:44.536Z',
+        createdAt: '2024-03-01T18:05:44.536Z',
+      },
+    };
+
+    const flattenedResult = flattenItems(data)['createCart'];
+    const [initialized] = initializeModel(
+      {} as any,
+      'Cart',
+      [flattenedResult],
+      customerCartConfig.data.model_introspection as any,
+      'apiKey',
+      '',
+      false,
+    );
+
+    expect(flattenedResult).toEqual({
+      __typeName: 'Cart',
+      id: 'some-cart-id',
+      customerId: 'customer-id-rene',
+      items: ['Tomato', 'Ice', 'Mint'],
+      updatedAt: '2024-03-01T19:05:44.536Z',
+      createdAt: '2024-03-01T18:05:44.536Z',
+    });
+
+    expect(initialized).toEqual(
+      expect.objectContaining({
+        __typeName: 'Cart',
+        id: 'some-cart-id',
+        customerId: 'customer-id-rene',
+        items: ['Tomato', 'Ice', 'Mint'],
+        updatedAt: '2024-03-01T19:05:44.536Z',
+        createdAt: '2024-03-01T18:05:44.536Z',
+      }),
+    );
+  });
+
   describe('customSelectionSetToIR', () => {
     test('specific fields on the model', () => {
       const selSet = customSelectionSetToIR(modelIntroSchema, 'Todo', [
@@ -649,53 +694,6 @@ describe('generateGraphQLDocument()', () => {
           expect.stringContaining(expectedEnumInputString),
         );
       },
-    );
-  });
-});
-
-describe('initializeInstance', () => {
-  test('asdf', () => {
-    // the `data` property of a full graphql result
-    const data = {
-      createCart: {
-        __typeName: 'Cart',
-        id: 'some-cart-id',
-        customerId: 'customer-id-rene',
-        items: ['Tomato', 'Ice', 'Mint'],
-        updatedAt: '2024-03-01T19:05:44.536Z',
-        createdAt: '2024-03-01T18:05:44.536Z',
-      },
-    };
-
-    const flattenedResult = flattenItems(data)['createCart'];
-    const [initialized] = initializeModel(
-      {} as any,
-      'Cart',
-      [flattenedResult],
-      customerCartConfig.data.model_introspection as any,
-      'apiKey',
-      '',
-      false,
-    );
-
-    expect(flattenedResult).toEqual({
-      __typeName: 'Cart',
-      id: 'some-cart-id',
-      customerId: 'customer-id-rene',
-      items: ['Tomato', 'Ice', 'Mint'],
-      updatedAt: '2024-03-01T19:05:44.536Z',
-      createdAt: '2024-03-01T18:05:44.536Z',
-    });
-
-    expect(initialized).toEqual(
-      expect.objectContaining({
-        __typeName: 'Cart',
-        id: 'some-cart-id',
-        customerId: 'customer-id-rene',
-        items: ['Tomato', 'Ice', 'Mint'],
-        updatedAt: '2024-03-01T19:05:44.536Z',
-        createdAt: '2024-03-01T18:05:44.536Z',
-      }),
     );
   });
 });
