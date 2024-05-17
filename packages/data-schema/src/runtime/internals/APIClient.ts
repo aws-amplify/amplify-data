@@ -148,7 +148,6 @@ export function initializeModel(
       }
 
       switch (relationType) {
-        case connectionType.HAS_ONE:
         case connectionType.BELONGS_TO: {
           const sortKeyValues = relatedModelSKFieldNames.reduce(
             // TODO(Eslint): is this implementation correct?
@@ -180,7 +179,7 @@ export function initializeModel(
                 );
               }
 
-              return undefined;
+              return { data: null };
             };
           } else {
             initializedRelationalFields[fieldName] = (
@@ -199,13 +198,29 @@ export function initializeModel(
                 );
               }
 
-              return undefined;
+              return { data: null };
             };
           }
 
           break;
         }
+        case connectionType.HAS_ONE:
         case connectionType.HAS_MANY: {
+          /**
+           * If the loader is a HAS_ONE, we just need to attempt to grab the first item
+           * from the result.
+           */
+          const mapResult =
+            relationType === connectionType.HAS_ONE
+              ? (result: Record<string, any>) => {
+                  return {
+                    data: result?.data.shift() || null,
+                    errors: result.errors,
+                    extensions: result.extensions,
+                  };
+                }
+              : (result: Record<string, any>) => result;
+
           const parentPk = introModel.primaryKeyInfo.primaryKeyFieldName;
           const parentSK = introModel.primaryKeyInfo.sortKeyFieldNames;
 
@@ -238,16 +253,15 @@ export function initializeModel(
                 options?: LazyLoadOptions,
               ) => {
                 if (record[parentPk]) {
-                  return (client as any).models[relatedModelName].list(
-                    contextSpec,
-                    {
+                  return (client as any).models[relatedModelName]
+                    .list(contextSpec, {
                       filter: { and: hasManyFilter },
                       limit: options?.limit,
                       nextToken: options?.nextToken,
                       authMode: options?.authMode || authMode,
                       authToken: options?.authToken || authToken,
-                    },
-                  );
+                    })
+                    .then(mapResult);
                 }
 
                 return [];
@@ -257,13 +271,15 @@ export function initializeModel(
                 options?: LazyLoadOptions,
               ) => {
                 if (record[parentPk]) {
-                  return (client as any).models[relatedModelName].list({
-                    filter: { and: hasManyFilter },
-                    limit: options?.limit,
-                    nextToken: options?.nextToken,
-                    authMode: options?.authMode || authMode,
-                    authToken: options?.authToken || authToken,
-                  });
+                  return (client as any).models[relatedModelName]
+                    .list({
+                      filter: { and: hasManyFilter },
+                      limit: options?.limit,
+                      nextToken: options?.nextToken,
+                      authMode: options?.authMode || authMode,
+                      authToken: options?.authToken || authToken,
+                    })
+                    .then(mapResult);
                 }
 
                 return [];
@@ -289,16 +305,15 @@ export function initializeModel(
               options?: LazyLoadOptions,
             ) => {
               if (record[parentPk]) {
-                return (client as any).models[relatedModelName].list(
-                  contextSpec,
-                  {
+                return (client as any).models[relatedModelName]
+                  .list(contextSpec, {
                     filter: { and: hasManyFilter },
                     limit: options?.limit,
                     nextToken: options?.nextToken,
                     authMode: options?.authMode || authMode,
                     authToken: options?.authToken || authToken,
-                  },
-                );
+                  })
+                  .then(mapResult);
               }
 
               return [];
@@ -308,13 +323,15 @@ export function initializeModel(
               options?: LazyLoadOptions,
             ) => {
               if (record[parentPk]) {
-                return (client as any).models[relatedModelName].list({
-                  filter: { and: hasManyFilter },
-                  limit: options?.limit,
-                  nextToken: options?.nextToken,
-                  authMode: options?.authMode || authMode,
-                  authToken: options?.authToken || authToken,
-                });
+                return (client as any).models[relatedModelName]
+                  .list({
+                    filter: { and: hasManyFilter },
+                    limit: options?.limit,
+                    nextToken: options?.nextToken,
+                    authMode: options?.authMode || authMode,
+                    authToken: options?.authToken || authToken,
+                  })
+                  .then(mapResult);
               }
 
               return [];
