@@ -398,27 +398,46 @@ async function _op(
     if (data) {
       const [key] = Object.keys(data);
 
+      const isArray = Array.isArray(data[key]);
+
       // TODO: when adding support for custom selection set, flattening will need
       // to occur recursively. For now, it's expected that related models are not
       // present in the result. Only FK's are present. Any related model properties
       // should be replaced with lazy loaders under the current implementation.
-      const flattenedResult = data[key];
+      const flattenedResult = isArray
+        ? data[key].filter((x: any) => x)
+        : data[key];
 
       // TODO: custom selection set. current selection set is default selection set only
       // custom selection set requires data-schema-type + runtime updates above.
-      const [initialized] = returnTypeModelName
+      const initialized = returnTypeModelName
         ? initializeModel(
             client,
             returnTypeModelName,
-            [flattenedResult],
+            isArray ? flattenedResult : [flattenedResult],
             modelIntrospection,
             auth.authMode,
             auth.authToken,
             !!context,
           )
-        : [flattenedResult];
+        : flattenedResult;
 
-      return { data: initialized, extensions };
+      console.log(
+        JSON.stringify(
+          {
+            returnTypeModelName,
+            isArray,
+            query,
+            data,
+            flattenedResult,
+            initialized,
+          },
+          null,
+          2,
+        ),
+      );
+
+      return { data: isArray ? initialized : initialized.shift(), extensions };
     } else {
       return { data: null, extensions };
     }
@@ -438,11 +457,15 @@ async function _op(
     if (data && Object.keys(data).length !== 0 && errors) {
       const [key] = Object.keys(data);
 
+      const isArray = Array.isArray(data[key]);
+
       // TODO: when adding support for custom selection set, flattening will need
       // to occur recursively. For now, it's expected that related models are not
       // present in the result. Only FK's are present. Any related model properties
       // should be replaced with lazy loaders under the current implementation.
-      const flattenedResult = data[key];
+      const flattenedResult = isArray
+        ? data[key].filter((x: any) => x)
+        : data[key];
 
       /**
        * `flattenedResult` could be `null` here (e.g. `data: { getPost: null }`)
@@ -451,19 +474,21 @@ async function _op(
       if (flattenedResult) {
         // TODO: custom selection set. current selection set is default selection set only
         // custom selection set requires data-schema-type + runtime updates above.
-        const [initialized] = returnTypeModelName
+        const initialized = returnTypeModelName
           ? initializeModel(
               client,
               returnTypeModelName,
-              [flattenedResult],
+              isArray ? flattenedResult : [flattenedResult],
               modelIntrospection,
               auth.authMode,
               auth.authToken,
               !!context,
             )
-          : [flattenedResult];
+          : flattenedResult;
 
-        return { data: initialized, errors };
+        return {
+          data: isArray ? initialized : initialized.shift(),
+        };
       } else {
         // was `data: { getPost: null }`)
         return handleSingularGraphQlError(error);
