@@ -164,7 +164,7 @@ function isRelatedModelItemsArrayPair(dv: {
     'model' in dv.fieldDef.type &&
     typeof dv.fieldDef.type.model === 'string' &&
     dv.fieldDef.isArray &&
-    Array.isArray(dv.value.items)
+    Array.isArray(dv.value?.items)
   );
 }
 
