@@ -57,66 +57,112 @@ describe('APIClient', () => {
 
 describe('flattenItems', () => {
   test('no-op on get without relationships', () => {
-    const getResponse = { getPost: { id: 'myPost' } };
+    // Just the specific props relevant to flattening.
+    const modelIntro = {
+      models: {
+        Post: {
+          fields: {
+            id: {
+              isArray: false,
+              type: 'ID',
+            },
+          },
+        },
+      },
+    } as any;
+
+    const resultItem = { getPost: { id: 'myPost' } };
 
     const expected = { getPost: { id: 'myPost' } };
 
-    const flattened = flattenItems(getResponse);
-
-    expect(flattened).toEqual(expected);
-  });
-
-  test('flatten list without relationships', () => {
-    const listResponse = {
-      listPost: { items: [{ id: 'myPost' }, { id: 'myPost2' }] },
-    };
-
-    const expected = {
-      listPost: [{ id: 'myPost' }, { id: 'myPost2' }],
-    };
-
-    const flattened = flattenItems(listResponse);
+    const flattened = flattenItems(modelIntro, 'Post', resultItem);
 
     expect(flattened).toEqual(expected);
   });
 
   test('flatten list with relationships', () => {
-    const listResponse = {
-      listPosts: {
+    // Just the specific props relevant to flattening.
+    const modelIntro = {
+      models: {
+        Post: {
+          fields: {
+            id: {
+              isArray: false,
+              type: 'ID',
+            },
+            comments: {
+              isArray: true,
+              type: {
+                model: 'Comment',
+              },
+            },
+          },
+        },
+        Comment: {
+          fields: {
+            id: {
+              isArray: false,
+              type: 'ID',
+            },
+            content: {
+              isArray: false,
+              type: 'String',
+            },
+            meta: {
+              isArray: true,
+              type: {
+                model: 'Meta',
+              },
+            },
+            post: {
+              isArray: false,
+              type: {
+                model: 'Post',
+              },
+            },
+          },
+        },
+        Meta: {
+          fields: {
+            id: {
+              isArray: false,
+              type: 'ID',
+            },
+          },
+        },
+      },
+    } as any;
+
+    const resultItem = {
+      id: 'post1',
+      comments: {
         items: [
           {
-            id: 'post1',
-            comments: {
-              items: [
-                {
-                  id: 'comment1',
-                  content: 'my comment 1',
-                  meta: {
-                    items: [{ id: 'meta1' }],
-                  },
-                  post: {
-                    id: 'post1',
-                    comments: {
-                      items: [
-                        {
-                          id: 'comment1',
-                          content: 'my comment 1',
-                          meta: {
-                            items: [{ id: 'meta1' }],
-                          },
-                        },
-                      ],
+            id: 'comment1',
+            content: 'my comment 1',
+            meta: {
+              items: [{ id: 'meta1' }],
+            },
+            post: {
+              id: 'post1',
+              comments: {
+                items: [
+                  {
+                    id: 'comment1',
+                    content: 'my comment 1',
+                    meta: {
+                      items: [{ id: 'meta1' }],
                     },
                   },
-                },
-                {
-                  id: 'comment1',
-                  content: 'my comment 1',
-                  meta: {
-                    items: [{ id: 'meta1' }],
-                  },
-                },
-              ],
+                ],
+              },
+            },
+          },
+          {
+            id: 'comment1',
+            content: 'my comment 1',
+            meta: {
+              items: [{ id: 'meta1' }],
             },
           },
         ],
@@ -124,91 +170,97 @@ describe('flattenItems', () => {
     };
 
     const expected = {
-      listPosts: [
+      id: 'post1',
+      comments: [
         {
-          id: 'post1',
-          comments: [
+          id: 'comment1',
+          content: 'my comment 1',
+          meta: [
             {
-              id: 'comment1',
-              content: 'my comment 1',
-              meta: [
-                {
-                  id: 'meta1',
-                },
-              ],
-              post: {
-                id: 'post1',
-                comments: [
+              id: 'meta1',
+            },
+          ],
+          post: {
+            id: 'post1',
+            comments: [
+              {
+                id: 'comment1',
+                content: 'my comment 1',
+                meta: [
                   {
-                    id: 'comment1',
-                    content: 'my comment 1',
-                    meta: [
-                      {
-                        id: 'meta1',
-                      },
-                    ],
+                    id: 'meta1',
                   },
                 ],
               },
-            },
+            ],
+          },
+        },
+        {
+          id: 'comment1',
+          content: 'my comment 1',
+          meta: [
             {
-              id: 'comment1',
-              content: 'my comment 1',
-              meta: [
-                {
-                  id: 'meta1',
-                },
-              ],
+              id: 'meta1',
             },
           ],
         },
       ],
     };
 
-    const flattened = flattenItems(listResponse);
+    const flattened = flattenItems(modelIntro, 'Post', resultItem);
 
     expect(flattened).toEqual(expected);
   });
 
   test('edge case', () => {
-    const listResponse = {
-      listPosts: {
+    // Just the specific props relevant to flattening.
+    const modelIntro = {
+      models: {
+        Post: {
+          fields: {
+            id: {
+              isArray: false,
+              type: 'ID',
+            },
+            comments: {
+              isArray: true,
+              type: {
+                nonModel: 'Comment',
+              },
+            },
+          },
+        },
+      },
+    } as any;
+
+    const resultItem = {
+      comments: {
         items: [
           {
-            comments: {
-              items: [
-                {
-                  items: [
-                    {
-                      value: 'taco',
-                    },
-                    {
-                      value: 'cat',
-                    },
-                  ],
-                },
-              ],
-            },
+            items: [
+              {
+                value: 'taco',
+              },
+              {
+                value: 'cat',
+              },
+            ],
           },
         ],
       },
     };
 
-    const res = flattenItems(listResponse);
+    const res = flattenItems(modelIntro, 'Post', resultItem);
 
     const expectedRes = {
-      listPosts: [
+      comments: [
         {
-          comments: [
+          items: [
             {
-              items: [
-                {
-                  value: 'taco',
-                },
-                {
-                  value: 'cat',
-                },
-              ],
+              value: 'taco',
+            },
+            {
+              value: 'cat',
             },
           ],
         },
@@ -219,37 +271,91 @@ describe('flattenItems', () => {
   });
 
   test('edge case 2', () => {
-    const listResponse = {
-      listPosts: {
+    // Just the specific props relevant to flattening.
+    const modelIntro = {
+      models: {
+        Post: {
+          fields: {
+            id: {
+              isArray: false,
+              type: 'ID',
+            },
+            title: {
+              isArray: false,
+              type: 'String',
+            },
+            comments: {
+              isArray: true,
+              type: {
+                model: 'Comment',
+              },
+            },
+          },
+        },
+        Comment: {
+          fields: {
+            id: {
+              isArray: false,
+              type: 'ID',
+            },
+            content: {
+              isArray: false,
+              type: 'String',
+            },
+            items: {
+              isArray: true,
+              type: {
+                nonModel: 'Likes',
+              },
+            },
+            post: {
+              isArray: false,
+              type: {
+                model: 'Post',
+              },
+            },
+          },
+        },
+        Likes: {
+          fields: {
+            id: {
+              isArray: false,
+              type: 'ID',
+            },
+            value: {
+              isArray: false,
+              type: 'String',
+            },
+          },
+        },
+      },
+    } as any;
+
+    const resultItem = {
+      id: 'bd4eae4c-20ea-465b-bc7b-e7becfff1388',
+      title: 'Hello 1715959828256',
+      comments: {
         items: [
           {
-            id: 'bd4eae4c-20ea-465b-bc7b-e7becfff1388',
-            title: 'Hello 1715959828256',
-            comments: {
-              items: [
-                {
-                  id: '4f3f03bc-055d-4bb5-ab71-bf319bae6ee4',
-                  content: 'Comment 1715959909804',
-                  items: [
-                    {
-                      value: 'taco',
-                    },
-                    {
-                      value: 'cat',
-                    },
-                  ],
-                  postId: 'bd4eae4c-20ea-465b-bc7b-e7becfff1388',
-                  createdAt: '2024-05-17T15:31:49.835Z',
-                  updatedAt: '2024-05-17T15:31:49.835Z',
-                },
-              ],
-            },
+            id: '4f3f03bc-055d-4bb5-ab71-bf319bae6ee4',
+            content: 'Comment 1715959909804',
+            items: [
+              {
+                value: 'taco',
+              },
+              {
+                value: 'cat',
+              },
+            ],
+            postId: 'bd4eae4c-20ea-465b-bc7b-e7becfff1388',
+            createdAt: '2024-05-17T15:31:49.835Z',
+            updatedAt: '2024-05-17T15:31:49.835Z',
           },
         ],
       },
     };
 
-    const res = flattenItems(listResponse);
+    const res = flattenItems(modelIntro, 'Post', resultItem);
 
     const expectedRes = {
       listPosts: [
@@ -282,26 +388,19 @@ describe('flattenItems', () => {
 
   test('does not flatten items property when it is string[]', () => {
     // the `data` property of a full graphql result
-    const data = {
-      createCart: {
-        __typeName: 'Cart',
-        id: 'some-cart-id',
-        customerId: 'customer-id-rene',
-        items: ['Tomato', 'Ice', 'Mint'],
-        updatedAt: '2024-03-01T19:05:44.536Z',
-        createdAt: '2024-03-01T18:05:44.536Z',
-      },
+    const resultItem = {
+      __typeName: 'Cart',
+      id: 'some-cart-id',
+      customerId: 'customer-id-rene',
+      items: ['Tomato', 'Ice', 'Mint'],
+      updatedAt: '2024-03-01T19:05:44.536Z',
+      createdAt: '2024-03-01T18:05:44.536Z',
     };
 
-    const flattenedResult = flattenItems(data)['createCart'];
-    const [initialized] = initializeModel(
-      {} as any,
-      'Cart',
-      [flattenedResult],
+    const flattenedResult = flattenItems(
       customerCartConfig.data.model_introspection as any,
-      'apiKey',
-      '',
-      false,
+      'Cart',
+      resultItem,
     );
 
     expect(flattenedResult).toEqual({
@@ -312,17 +411,6 @@ describe('flattenItems', () => {
       updatedAt: '2024-03-01T19:05:44.536Z',
       createdAt: '2024-03-01T18:05:44.536Z',
     });
-
-    expect(initialized).toEqual(
-      expect.objectContaining({
-        __typeName: 'Cart',
-        id: 'some-cart-id',
-        customerId: 'customer-id-rene',
-        items: ['Tomato', 'Ice', 'Mint'],
-        updatedAt: '2024-03-01T19:05:44.536Z',
-        createdAt: '2024-03-01T18:05:44.536Z',
-      }),
-    );
   });
 
   describe('customSelectionSetToIR', () => {
