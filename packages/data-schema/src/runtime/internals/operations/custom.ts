@@ -398,7 +398,12 @@ async function _op(
     // flatten response
     if (data) {
       const [key] = Object.keys(data);
-      const flattenedResult = flattenItems(data)[key];
+
+      // TODO: when adding support for custom selection set, flattening will need
+      // to occur recursively. For now, it's expected that related models are not
+      // present in the result. Only FK's are present. Any related model properties
+      // should be replaced with lazy loaders under the current implementation.
+      const flattenedResult = data[key];
 
       // TODO: custom selection set. current selection set is default selection set only
       // custom selection set requires data-schema-type + runtime updates above.
@@ -433,7 +438,12 @@ async function _op(
      */
     if (data && Object.keys(data).length !== 0 && errors) {
       const [key] = Object.keys(data);
-      const flattenedResult = flattenItems(data)[key];
+
+      // TODO: when adding support for custom selection set, flattening will need
+      // to occur recursively. For now, it's expected that related models are not
+      // present in the result. Only FK's are present. Any related model properties
+      // should be replaced with lazy loaders under the current implementation.
+      const flattenedResult = data[key];
 
       /**
        * `flattenedResult` could be `null` here (e.g. `data: { getPost: null }`)

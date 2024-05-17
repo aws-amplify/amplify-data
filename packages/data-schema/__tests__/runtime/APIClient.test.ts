@@ -55,7 +55,7 @@ describe('APIClient', () => {
   });
 });
 
-describe.only('flattenItems', () => {
+describe('flattenItems', () => {
   test('no-op on get without relationships', () => {
     const getResponse = { getPost: { id: 'myPost' } };
 
