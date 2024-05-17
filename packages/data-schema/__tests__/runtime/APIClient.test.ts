@@ -3,6 +3,7 @@ import {
   ModelIntrospectionSchema,
 } from '../../src/runtime/bridge-types';
 import {
+  initializeModel,
   normalizeMutationInput,
   flattenItems,
   generateSelectionSet,
@@ -12,6 +13,7 @@ import {
 } from '../../src/runtime/internals/APIClient';
 
 import config from './fixtures/modeled/amplifyconfiguration';
+import customerCartConfig from './fixtures/modeled/cart-customer-schema';
 import {
   personSchemaModel,
   productSchemaModel,
@@ -555,7 +557,11 @@ describe('generateGraphQLDocument()', () => {
 
     test.each([
       ['READ', 'User', '$userId: ID!'],
-      ['READ', 'Product', '$sku: String!,$factoryId: String!,$warehouseId: String!'],
+      [
+        'READ',
+        'Product',
+        '$sku: String!,$factoryId: String!,$warehouseId: String!',
+      ],
       ['READ', 'person', 'getPerson'],
       ['LIST', 'person', 'listPeople'],
       ['LIST', 'person', '$filter: ModelPersonFilterInput'],
@@ -644,5 +650,37 @@ describe('generateGraphQLDocument()', () => {
         );
       },
     );
+  });
+});
+
+describe.skip('initializeInstance', () => {
+  test('asdf', () => {
+    // the `data` property of a full graphql result
+    const data = {
+      createCart: {
+        __typeName: 'Cart',
+        id: 'some-cart-id',
+        customerId: 'customer-id-rene',
+        items: ['Tomato', 'Ice', 'Mint'],
+        updatedAt: '2024-03-01T19:05:44.536Z',
+        createdAt: '2024-03-01T18:05:44.536Z',
+      },
+    };
+
+    const flattenedResult = flattenItems(data)['createCart'];
+    const [initialized] = initializeModel(
+      {} as any,
+      'Cart',
+      [flattenedResult],
+      customerCartConfig.data.model_introspection as any,
+      'apiKey',
+      '',
+      false,
+    );
+
+    console.log({ flattenedResult, initialized });
+
+    // console.log(flattened);
+    // const initialized =
   });
 });
