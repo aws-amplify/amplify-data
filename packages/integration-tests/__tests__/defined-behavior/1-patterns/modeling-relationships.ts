@@ -422,7 +422,7 @@ describe('Modeling relationships', () => {
       // #endregion assertions
     });
 
-    test('Lazy load a "Has One" relationship', async () => {
+    test('Lazy load a "Has One" relationship (belongsTo side)', async () => {
       // #region mocking
       const expectedCustomer = {
         __typeName: 'Customer',
