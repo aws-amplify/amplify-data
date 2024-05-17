@@ -55,7 +55,7 @@ describe('APIClient', () => {
   });
 });
 
-describe('flattenItems', () => {
+describe.only('flattenItems', () => {
   test('no-op on get without relationships', () => {
     const getResponse = { getPost: { id: 'myPost' } };
 
@@ -168,6 +168,56 @@ describe('flattenItems', () => {
     const flattened = flattenItems(listResponse);
 
     expect(flattened).toEqual(expected);
+  });
+
+  test('edge case', () => {
+    const listResponse = {
+      listPosts: {
+        items: [
+          {
+            comments: {
+              items: [
+                {
+                  items: [
+                    {
+                      value: 'taco',
+                    },
+                    {
+                      value: 'cat',
+                    },
+                  ],
+                },
+              ],
+            },
+          },
+        ],
+      },
+    };
+
+    const res = flattenItems(listResponse);
+
+    console.log('edge case', JSON.stringify(res, null, 2));
+
+    const expectedRes = {
+      listPosts: [
+        {
+          comments: [
+            {
+              items: [
+                {
+                  value: 'taco',
+                },
+                {
+                  value: 'cat',
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    };
+
+    expect(res).toStrictEqual(expectedRes);
   });
 
   describe('customSelectionSetToIR', () => {
