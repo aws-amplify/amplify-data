@@ -1,5 +1,11 @@
 # @aws-amplify/data-schema
 
+## 1.2.4
+
+### Patch Changes
+
+- db27a4a: fix array property and related model result flattening
+
 ## 1.2.3
 
 ### Patch Changes
