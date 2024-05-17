@@ -1,5 +1,11 @@
 # @aws-amplify/data-schema
 
+## 1.2.3
+
+### Patch Changes
+
+- 66f85e7: fix hasOne lazy loading and other lazy loading edge cases around missing data
+
 ## 1.2.2
 
 ### Patch Changes
