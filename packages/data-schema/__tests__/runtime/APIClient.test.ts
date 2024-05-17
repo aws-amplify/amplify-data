@@ -653,7 +653,7 @@ describe('generateGraphQLDocument()', () => {
   });
 });
 
-describe.skip('initializeInstance', () => {
+describe('initializeInstance', () => {
   test('asdf', () => {
     // the `data` property of a full graphql result
     const data = {
@@ -678,9 +678,24 @@ describe.skip('initializeInstance', () => {
       false,
     );
 
-    console.log({ flattenedResult, initialized });
+    expect(flattenedResult).toEqual({
+      __typeName: 'Cart',
+      id: 'some-cart-id',
+      customerId: 'customer-id-rene',
+      items: ['Tomato', 'Ice', 'Mint'],
+      updatedAt: '2024-03-01T19:05:44.536Z',
+      createdAt: '2024-03-01T18:05:44.536Z',
+    });
 
-    // console.log(flattened);
-    // const initialized =
+    expect(initialized).toEqual(
+      expect.objectContaining({
+        __typeName: 'Cart',
+        id: 'some-cart-id',
+        customerId: 'customer-id-rene',
+        items: ['Tomato', 'Ice', 'Mint'],
+        updatedAt: '2024-03-01T19:05:44.536Z',
+        createdAt: '2024-03-01T18:05:44.536Z',
+      }),
+    );
   });
 });
