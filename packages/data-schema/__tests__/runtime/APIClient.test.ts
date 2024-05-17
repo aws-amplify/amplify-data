@@ -196,8 +196,6 @@ describe.only('flattenItems', () => {
 
     const res = flattenItems(listResponse);
 
-    console.log('edge case', JSON.stringify(res, null, 2));
-
     const expectedRes = {
       listPosts: [
         {
@@ -211,6 +209,68 @@ describe.only('flattenItems', () => {
                   value: 'cat',
                 },
               ],
+            },
+          ],
+        },
+      ],
+    };
+
+    expect(res).toStrictEqual(expectedRes);
+  });
+
+  test('edge case 2', () => {
+    const listResponse = {
+      listPosts: {
+        items: [
+          {
+            id: 'bd4eae4c-20ea-465b-bc7b-e7becfff1388',
+            title: 'Hello 1715959828256',
+            comments: {
+              items: [
+                {
+                  id: '4f3f03bc-055d-4bb5-ab71-bf319bae6ee4',
+                  content: 'Comment 1715959909804',
+                  items: [
+                    {
+                      value: 'taco',
+                    },
+                    {
+                      value: 'cat',
+                    },
+                  ],
+                  postId: 'bd4eae4c-20ea-465b-bc7b-e7becfff1388',
+                  createdAt: '2024-05-17T15:31:49.835Z',
+                  updatedAt: '2024-05-17T15:31:49.835Z',
+                },
+              ],
+            },
+          },
+        ],
+      },
+    };
+
+    const res = flattenItems(listResponse);
+
+    const expectedRes = {
+      listPosts: [
+        {
+          id: 'bd4eae4c-20ea-465b-bc7b-e7becfff1388',
+          title: 'Hello 1715959828256',
+          comments: [
+            {
+              id: '4f3f03bc-055d-4bb5-ab71-bf319bae6ee4',
+              content: 'Comment 1715959909804',
+              items: [
+                {
+                  value: 'taco',
+                },
+                {
+                  value: 'cat',
+                },
+              ],
+              postId: 'bd4eae4c-20ea-465b-bc7b-e7becfff1388',
+              createdAt: '2024-05-17T15:31:49.835Z',
+              updatedAt: '2024-05-17T15:31:49.835Z',
             },
           ],
         },
