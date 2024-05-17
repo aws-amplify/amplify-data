@@ -119,7 +119,7 @@ async function _get(
     // flatten response
     if (data) {
       const [key] = Object.keys(data);
-      const flattenedResult = flattenItems(data)[key];
+      const flattenedResult = flattenItems(modelIntrospection, name, data[key]);
 
       if (flattenedResult === null) {
         return { data: null, extensions };
@@ -157,7 +157,7 @@ async function _get(
      */
     if (data && Object.keys(data).length !== 0 && errors) {
       const [key] = Object.keys(data);
-      const flattenedResult = flattenItems(data)[key];
+      const flattenedResult = flattenItems(modelIntrospection, name, data[key]);
 
       /**
        * `flattenedResult` could be `null` here (e.g. `data: { getPost: null }`)

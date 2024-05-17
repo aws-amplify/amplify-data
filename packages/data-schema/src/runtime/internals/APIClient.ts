@@ -11,6 +11,7 @@ import {
   GraphQLAuthMode,
   ClientInternalsGetter,
   ListArgs,
+  Field,
   ModelFieldType,
   ModelIntrospectionSchema,
   NonModelFieldType,
@@ -72,32 +73,117 @@ const resolvedSkName = (sk: string[]): string => {
 };
 
 /**
+ * Crawls a model tree, starting with a given **individual** model instance record, looking
+ * for related hasMany children to extract from their `items` containers.
  *
- * @param GraphQL response object
- * @returns response object with `items` properties flattened
+ * E.g., if we have a record like this:
+ *
+ * ```js
+ * {
+ *   id: 'some-id',
+ *   children: {
+ *     items: [
+ *       { name: 'a' }
+ *       { name: 'b' }
+ *       { name: 'c' }
+ *     ]
+ *   }
+ * }
+ * ```
+ *
+ * And if `children` refers to *an array of another model* (as opposed to a custom type),
+ * the `items` will be extracted. We do this because `items` is just the mechanism for nesting
+ * child records -- we don't want customers to have to dig the items out in application code.
+ * Ultimately, we return this "flattened" structure:
+ *
+ * ```js
+ * {
+ *   id: 'some-id',
+ *   children: [
+ *     { name: 'a' }
+ *     { name: 'b' }
+ *     { name: 'c' }
+ *   ]
+ * }
+ * ```
+ *
+ * Notably, an identical record could be the result of a nested custom type that contains an
+ * `items` property. This will *not* be flattened, because in that case the `items` property is
+ * actually part of the customer's schema. Similarly if a model contains an explicit `items` field.
+ *
+ * @param modelIntrospection Top-level model introspection schema.
+ * @param modelName The name of the model. Can be `undefined`. E.g., for customOperation return types.
+ * @param modelRecord The individual "model instance record" to normalize.
  */
-export const flattenItems = (obj: Record<string, any>): Record<string, any> => {
-  const res: Record<string, any> = {};
+export const flattenItems = (
+  modelIntrospection: ModelIntrospectionSchema,
+  modelName: string | undefined,
+  modelRecord: Record<string, any>,
+): Record<string, any> | null => {
+  if (!modelRecord) return null;
 
-  Object.entries(obj).forEach(([prop, value]) => {
-    if (typeof value === 'object' && !Array.isArray(value) && value !== null) {
-      if (value.items !== undefined) {
-        res[prop] = value.items.map((item: Record<string, any>) =>
-          flattenItems(item),
-        );
-
-        return;
-      }
-      res[prop] = flattenItems(value);
-
-      return;
+  const mapped = {} as Record<string, any>;
+  for (const [fieldName, value] of Object.entries(modelRecord)) {
+    const fieldDef = modelName
+      ? modelIntrospection.models[modelName]?.fields[fieldName]
+      : undefined;
+    const dvPair = { fieldDef, value };
+    if (isRelatedModelItemsArrayPair(dvPair)) {
+      mapped[fieldName] = dvPair.value.items.map((itemValue) =>
+        flattenItems(modelIntrospection, dvPair.fieldDef.type.model, itemValue),
+      );
+    } else if (isRelatedModelProperty(fieldDef)) {
+      mapped[fieldName] = flattenItems(
+        modelIntrospection,
+        fieldDef.type.model,
+        value,
+      );
+    } else {
+      mapped[fieldName] = value;
     }
-
-    res[prop] = value;
-  });
-
-  return res;
+  }
+  return mapped;
 };
+
+/**
+ * Determines whether the given field definition and associated result value
+ * represent a related model array from a HasMany-type relationship.
+ *
+ * @param dv Pair of field definition and associated result value
+ * @returns
+ */
+function isRelatedModelItemsArrayPair(dv: {
+  fieldDef: Field | undefined;
+  value: any;
+}): dv is {
+  fieldDef: Field & { type: ModelFieldType };
+  value: { items: Record<string, any>[] };
+} {
+  return (
+    typeof dv.fieldDef?.type === 'object' &&
+    'model' in dv.fieldDef.type &&
+    typeof dv.fieldDef.type.model === 'string' &&
+    dv.fieldDef.isArray &&
+    Array.isArray(dv.value?.items)
+  );
+}
+
+/**
+ * Determines whether the given field definition represents a relationship
+ * to another model.
+ *
+ * @param fieldDef
+ * @returns
+ */
+function isRelatedModelProperty(
+  fieldDef: Field | undefined,
+): fieldDef is Field & { type: ModelFieldType } {
+  return (
+    typeof fieldDef?.type === 'object' &&
+    'model' in fieldDef.type &&
+    typeof fieldDef.type.model === 'string'
+  );
+}
 
 // TODO: this should accept single result to support CRUD methods; create helper for array/list
 export function initializeModel(

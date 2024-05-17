@@ -207,7 +207,7 @@ describe('Modeling relationships', () => {
         },
         {
           data: {
-            listMembers: [expectedMember],
+            listMembers: { items: [expectedMember] },
           },
         },
       ]);
@@ -501,7 +501,7 @@ describe('Modeling relationships', () => {
         {
           data: {
             // hasOne lazy loader performs a list and just selects the first item
-            listCarts: [expectedCart],
+            listCarts: { items: [expectedCart] },
           },
         },
       ]);
