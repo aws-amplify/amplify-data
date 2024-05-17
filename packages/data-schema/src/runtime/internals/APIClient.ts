@@ -76,7 +76,11 @@ const resolvedSkName = (sk: string[]): string => {
  * @param GraphQL response object
  * @returns response object with `items` properties flattened
  */
-export const flattenItems = (obj: Record<string, any>): Record<string, any> => {
+export const flattenItems = (
+  // modelIntrospection: ModelIntrospectionSchema,
+  // modelName: string,
+  obj: Record<string, any>,
+): Record<string, any> => {
   const res: Record<string, any> = {};
 
   Object.entries(obj).forEach(([prop, value]) => {
