@@ -1,0 +1,104 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`custom operations custom type array result 1`] = `
+[
+  [
+    {
+      "authMode": undefined,
+      "authToken": undefined,
+      "query": "
+    query($value: String) {
+      multiEcho(value: $value) {result}
+    }
+  ",
+      "variables": {
+        "value": "something",
+      },
+    },
+    {},
+  ],
+]
+`;
+
+exports[`custom operations custom type result 1`] = `
+[
+  [
+    {
+      "authMode": undefined,
+      "authToken": undefined,
+      "query": "
+    query($value: String) {
+      echoWithCustomType(value: $value) {result}
+    }
+  ",
+      "variables": {
+        "value": "something",
+      },
+    },
+    {},
+  ],
+]
+`;
+
+exports[`custom operations model array result 1`] = `
+[
+  [
+    {
+      "authMode": undefined,
+      "authToken": undefined,
+      "query": "
+    query($phoneNumbers: [String]) {
+      checkBatchOfPhoneNumbersForActiveUsers(phoneNumbers: $phoneNumbers) {phoneNumber createdAt updatedAt}
+    }
+  ",
+      "variables": {
+        "phoneNumbers": [
+          "123",
+          "123",
+        ],
+      },
+    },
+    {},
+  ],
+]
+`;
+
+exports[`custom operations model result 1`] = `
+[
+  [
+    {
+      "authMode": undefined,
+      "authToken": undefined,
+      "query": "
+    query($query: String) {
+      findJustOnePhoneNumber(query: $query) {phoneNumber createdAt updatedAt}
+    }
+  ",
+      "variables": {
+        "query": "something",
+      },
+    },
+    {},
+  ],
+]
+`;
+
+exports[`custom operations primitive type result 1`] = `
+[
+  [
+    {
+      "authMode": undefined,
+      "authToken": undefined,
+      "query": "
+    query($value: String) {
+      echo(value: $value) 
+    }
+  ",
+      "variables": {
+        "value": "something",
+      },
+    },
+    {},
+  ],
+]
+`;
