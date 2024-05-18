@@ -1,5 +1,11 @@
 # @aws-amplify/data-schema
 
+## 1.2.5
+
+### Patch Changes
+
+- 95ba9ee: fix custom operation array of model return type handling
+
 ## 1.2.4
 
 ### Patch Changes
