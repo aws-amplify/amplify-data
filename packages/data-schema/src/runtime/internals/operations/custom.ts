@@ -398,13 +398,13 @@ async function _op(
     if (data) {
       const [key] = Object.keys(data);
 
-      const isArray = Array.isArray(data[key]);
+      const isArrayResult = Array.isArray(data[key]);
 
       // TODO: when adding support for custom selection set, flattening will need
       // to occur recursively. For now, it's expected that related models are not
       // present in the result. Only FK's are present. Any related model properties
       // should be replaced with lazy loaders under the current implementation.
-      const flattenedResult = isArray
+      const flattenedResult = isArrayResult
         ? data[key].filter((x: any) => x)
         : data[key];
 
@@ -414,7 +414,7 @@ async function _op(
         ? initializeModel(
             client,
             returnTypeModelName,
-            isArray ? flattenedResult : [flattenedResult],
+            isArrayResult ? flattenedResult : [flattenedResult],
             modelIntrospection,
             auth.authMode,
             auth.authToken,
@@ -422,22 +422,13 @@ async function _op(
           )
         : flattenedResult;
 
-      console.log(
-        JSON.stringify(
-          {
-            returnTypeModelName,
-            isArray,
-            query,
-            data,
-            flattenedResult,
-            initialized,
-          },
-          null,
-          2,
-        ),
-      );
-
-      return { data: isArray ? initialized : initialized.shift(), extensions };
+      return {
+        data:
+          !isArrayResult && Array.isArray(initialized)
+            ? initialized.shift()
+            : initialized,
+        extensions,
+      };
     } else {
       return { data: null, extensions };
     }
@@ -457,13 +448,13 @@ async function _op(
     if (data && Object.keys(data).length !== 0 && errors) {
       const [key] = Object.keys(data);
 
-      const isArray = Array.isArray(data[key]);
+      const isArrayResult = Array.isArray(data[key]);
 
       // TODO: when adding support for custom selection set, flattening will need
       // to occur recursively. For now, it's expected that related models are not
       // present in the result. Only FK's are present. Any related model properties
       // should be replaced with lazy loaders under the current implementation.
-      const flattenedResult = isArray
+      const flattenedResult = isArrayResult
         ? data[key].filter((x: any) => x)
         : data[key];
 
@@ -478,7 +469,7 @@ async function _op(
           ? initializeModel(
               client,
               returnTypeModelName,
-              isArray ? flattenedResult : [flattenedResult],
+              isArrayResult ? flattenedResult : [flattenedResult],
               modelIntrospection,
               auth.authMode,
               auth.authToken,
@@ -487,7 +478,11 @@ async function _op(
           : flattenedResult;
 
         return {
-          data: isArray ? initialized : initialized.shift(),
+          data:
+            !isArrayResult && Array.isArray(initialized)
+              ? initialized.shift()
+              : initialized,
+          errors,
         };
       } else {
         // was `data: { getPost: null }`)
