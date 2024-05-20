@@ -74,6 +74,8 @@ export function indexQueryFactory(
 }
 
 function processGraphQlResponse(
+  modelIntroSchema: ModelIntrospectionSchema,
+  modelName: string,
   result: GraphQLResult,
   selectionSet: undefined | string[],
   modelInitializer: (flattenedResult: any[]) => any[],
@@ -83,7 +85,9 @@ function processGraphQlResponse(
   const [key] = Object.keys(data);
 
   if (data[key].items) {
-    const flattenedResult = flattenItems(data)[key];
+    const flattenedResult = data[key].items.map((value: Record<string, any>) =>
+      flattenItems(modelIntroSchema, modelName, value),
+    );
 
     return {
       data: selectionSet ? flattenedResult : modelInitializer(flattenedResult),
@@ -92,6 +96,7 @@ function processGraphQlResponse(
     };
   }
 
+  // Index queries are always list queries. No `items`? No flattening needed.
   return {
     data: data[key],
     nextToken: data[key].nextToken,
@@ -159,6 +164,8 @@ async function _indexQuery(
 
     if (response.data !== undefined) {
       return processGraphQlResponse(
+        modelIntrospection,
+        name,
         response,
         args?.selectionSet,
         modelInitializer,
@@ -181,7 +188,10 @@ async function _indexQuery(
       const [key] = Object.keys(data);
 
       if (data[key]?.items) {
-        const flattenedResult = flattenItems(data)[key];
+        const flattenedResult = data[key]?.items.map(
+          (value: Record<string, any>) =>
+            flattenItems(modelIntrospection, name, value),
+        );
 
         /**
          * Check exists since `flattenedResult` could be `null`.

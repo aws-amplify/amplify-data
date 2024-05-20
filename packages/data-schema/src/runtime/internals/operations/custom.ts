@@ -20,7 +20,6 @@ import { map } from 'rxjs';
 import {
   authModeParams,
   getDefaultSelectionSetForNonModelWithIR,
-  flattenItems,
   generateSelectionSet,
   getCustomHeaders,
   initializeModel,
@@ -398,23 +397,38 @@ async function _op(
     // flatten response
     if (data) {
       const [key] = Object.keys(data);
-      const flattenedResult = flattenItems(data)[key];
+
+      const isArrayResult = Array.isArray(data[key]);
+
+      // TODO: when adding support for custom selection set, flattening will need
+      // to occur recursively. For now, it's expected that related models are not
+      // present in the result. Only FK's are present. Any related model properties
+      // should be replaced with lazy loaders under the current implementation.
+      const flattenedResult = isArrayResult
+        ? data[key].filter((x: any) => x)
+        : data[key];
 
       // TODO: custom selection set. current selection set is default selection set only
       // custom selection set requires data-schema-type + runtime updates above.
-      const [initialized] = returnTypeModelName
+      const initialized = returnTypeModelName
         ? initializeModel(
             client,
             returnTypeModelName,
-            [flattenedResult],
+            isArrayResult ? flattenedResult : [flattenedResult],
             modelIntrospection,
             auth.authMode,
             auth.authToken,
             !!context,
           )
-        : [flattenedResult];
+        : flattenedResult;
 
-      return { data: initialized, extensions };
+      return {
+        data:
+          !isArrayResult && Array.isArray(initialized)
+            ? initialized.shift()
+            : initialized,
+        extensions,
+      };
     } else {
       return { data: null, extensions };
     }
@@ -433,7 +447,16 @@ async function _op(
      */
     if (data && Object.keys(data).length !== 0 && errors) {
       const [key] = Object.keys(data);
-      const flattenedResult = flattenItems(data)[key];
+
+      const isArrayResult = Array.isArray(data[key]);
+
+      // TODO: when adding support for custom selection set, flattening will need
+      // to occur recursively. For now, it's expected that related models are not
+      // present in the result. Only FK's are present. Any related model properties
+      // should be replaced with lazy loaders under the current implementation.
+      const flattenedResult = isArrayResult
+        ? data[key].filter((x: any) => x)
+        : data[key];
 
       /**
        * `flattenedResult` could be `null` here (e.g. `data: { getPost: null }`)
@@ -442,19 +465,25 @@ async function _op(
       if (flattenedResult) {
         // TODO: custom selection set. current selection set is default selection set only
         // custom selection set requires data-schema-type + runtime updates above.
-        const [initialized] = returnTypeModelName
+        const initialized = returnTypeModelName
           ? initializeModel(
               client,
               returnTypeModelName,
-              [flattenedResult],
+              isArrayResult ? flattenedResult : [flattenedResult],
               modelIntrospection,
               auth.authMode,
               auth.authToken,
               !!context,
             )
-          : [flattenedResult];
+          : flattenedResult;
 
-        return { data: initialized, errors };
+        return {
+          data:
+            !isArrayResult && Array.isArray(initialized)
+              ? initialized.shift()
+              : initialized,
+          errors,
+        };
       } else {
         // was `data: { getPost: null }`)
         return handleSingularGraphQlError(error);

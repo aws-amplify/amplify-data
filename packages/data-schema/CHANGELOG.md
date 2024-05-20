@@ -1,5 +1,23 @@
 # @aws-amplify/data-schema
 
+## 1.2.5
+
+### Patch Changes
+
+- 95ba9ee: fix custom operation array of model return type handling
+
+## 1.2.4
+
+### Patch Changes
+
+- db27a4a: fix array property and related model result flattening
+
+## 1.2.3
+
+### Patch Changes
+
+- 66f85e7: fix hasOne lazy loading and other lazy loading edge cases around missing data
+
 ## 1.2.2
 
 ### Patch Changes

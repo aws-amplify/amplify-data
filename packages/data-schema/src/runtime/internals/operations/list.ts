@@ -99,7 +99,10 @@ async function _list(
       const [key] = Object.keys(data);
 
       if (data[key].items) {
-        const flattenedResult = flattenItems(data)[key];
+        const flattenedResult = data[key].items.map(
+          (value: Record<string, any>) =>
+            flattenItems(modelIntrospection, name, value),
+        );
 
         // don't init if custom selection set
         if (args?.selectionSet) {
@@ -153,7 +156,10 @@ async function _list(
       const [key] = Object.keys(data);
 
       if (data[key]?.items) {
-        const flattenedResult = flattenItems(data)[key];
+        const flattenedResult = data[key].items.map(
+          (value: Record<string, any>) =>
+            flattenItems(modelIntrospection, name, value),
+        );
 
         /**
          * Check exists since `flattenedResult` could be `null`.

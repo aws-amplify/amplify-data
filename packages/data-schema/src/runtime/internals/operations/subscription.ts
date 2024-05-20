@@ -59,6 +59,7 @@ export function subscriptionFactory(
     return observable.pipe(
       map((value) => {
         const [key] = Object.keys(value.data);
+        // Will need flattening here if/when custom selection set support is added:
         const data = (value.data as any)[key];
         const [initialized] = initializeModel(
           client,
