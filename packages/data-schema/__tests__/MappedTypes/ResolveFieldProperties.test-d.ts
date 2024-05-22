@@ -252,12 +252,12 @@ describe('ResolveFieldProperties Mapped Type', () => {
       readonly createdAt: string;
       readonly updatedAt: string;
       title: string;
-      metadata?: Json;
+      metadata?: Json | null | undefined;
       location: {
-        lat?: number | null;
-        long?: number | null;
+        lat?: number | null | undefined;
+        long?: number | null | undefined;
       };
-      owner?: string | undefined;
+      owner?: string | null | undefined;
     };
 
     type test = Expect<Equal<Resolved, Expected>>;

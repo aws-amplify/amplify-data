@@ -95,12 +95,12 @@ export type ListOptionsPkParams<
   : Prettify<Partial<IndexQueryInput<Bag, T['identifier']>>>;
 
 type AuthFields<
-  Metadata extends SchemaMetadata<any>,
+  SchemaMeta extends SchemaMetadata<any>,
   Model extends ModelTypeParamShape,
 > = (Model['authorization'][number] extends never
-  ? Metadata['authFields'] extends never
+  ? SchemaMeta['authFields'] extends never
     ? object
-    : Metadata['authFields']
+    : SchemaMeta['authFields']
   : ImpliedAuthFields<Model['authorization'][number]> extends never
     ? object
     : ImpliedAuthFields<Model['authorization'][number]>) &
@@ -242,20 +242,37 @@ type MinusReadonly<T> = {
   -readonly [K in keyof T]: T[K];
 };
 
-type WithNullablesAsOptionalRecursively<T> =
-  T extends Array<any>
-    ? T
-    : T extends object
-      ? {
-          [K in keyof T as null extends T[K]
-            ? K
-            : never]+?: WithNullablesAsOptionalRecursively<T[K]>;
-        } & {
-          [K in keyof T as null extends T[K]
-            ? never
-            : K]: WithNullablesAsOptionalRecursively<T[K]>;
-        }
-      : T;
+type WithNullablesAsOptionalRecursively<T> = T extends
+  | Array<any>
+  | ((...args: any) => any)
+  ? T
+  : T extends object
+    ? {
+        [K in keyof T as null extends T[K]
+          ? K
+          : never]+?: WithNullablesAsOptionalRecursively<T[K]>;
+      } & {
+        [K in keyof T as null extends T[K]
+          ? never
+          : K]: WithNullablesAsOptionalRecursively<T[K]>;
+      }
+    : T;
+
+type WithNullablesAsOptionalRecursivelyB<T> = T extends
+  | Array<any>
+  | ((...args: any) => any)
+  ? T
+  : T extends object
+    ? {
+        [K in keyof T as null extends T[K]
+          ? K
+          : never]+?: WithNullablesAsOptionalRecursivelyB<T[K]>;
+      } & {
+        [K in keyof T as null extends T[K]
+          ? never
+          : K]: WithNullablesAsOptionalRecursivelyB<T[K]>;
+      }
+    : T;
 
 /**
  * All identifiers and fields used to create a model

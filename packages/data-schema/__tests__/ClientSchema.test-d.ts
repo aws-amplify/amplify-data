@@ -103,7 +103,7 @@ describe('implied fields', () => {
         Equal<Schema['CPKReciprocalChild']['type']['CPKParentIdFieldB'], string>
       >;
     });
-  });
+  // });
 
   describe('schemas with owner/group auth models surface ownership fields', () => {
     const schema = a.schema({
@@ -136,7 +136,10 @@ describe('implied fields', () => {
 
     test('default owner', () => {
       type test = Expect<
-        Equal<Schema['DefaultOwnerField']['type']['owner'], string | undefined>
+        Equal<
+          Schema['DefaultOwnerField']['type']['owner'],
+          string | null | undefined
+        >
       >;
     });
 
@@ -144,20 +147,26 @@ describe('implied fields', () => {
       type test = Expect<
         Equal<
           Schema['CustomOwnerField']['type']['customOwnerField'],
-          string | undefined
+          string | null | undefined
         >
       >;
     });
 
     test('group', () => {
       type test = Expect<
-        Equal<Schema['GroupIn']['type']['myGroupField'], string | undefined>
+        Equal<
+          Schema['GroupIn']['type']['myGroupField'],
+          string | null | undefined
+        >
       >;
     });
 
     test('groups', () => {
       type test = Expect<
-        Equal<Schema['GroupsIn']['type']['myGroupsField'], string[] | undefined>
+        Equal<
+          Schema['GroupsIn']['type']['myGroupsField'],
+          string[] | null | undefined
+        >
       >;
     });
   });
@@ -202,7 +211,7 @@ describe('Enum types', () => {
       readonly createdAt: string;
       readonly updatedAt: string;
       title: string;
-      status?: 'draft' | 'pending' | 'published' | null;
+      status?: 'draft' | 'pending' | 'published' | null | undefined;
     };
 
     type test = Expect<Equal<Resolved, Expected>>;

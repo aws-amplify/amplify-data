@@ -171,7 +171,7 @@ describe('schema auth rules', () => {
       readonly id: string;
       readonly createdAt: string;
       readonly updatedAt: string;
-      field: string | null;
+      field?: string | null | undefined;
       // no implied owner field
     };
 
@@ -196,7 +196,7 @@ describe('schema auth rules', () => {
       readonly id: string;
       readonly createdAt: string;
       readonly updatedAt: string;
-      field: string | null;
+      field?: string | null | undefined;
       // no implied owner field
     };
 
@@ -248,7 +248,7 @@ describe('schema auth rules', () => {
       readonly id: string;
       readonly createdAt: string;
       readonly updatedAt: string;
-      field: string | null;
+      field?: string | null | undefined;
       // no implied owner field
     };
 
@@ -272,7 +272,7 @@ describe('schema auth rules', () => {
       readonly id: string;
       readonly createdAt: string;
       readonly updatedAt: string;
-      field: string | null;
+      field?: string | null | undefined;
       // no implied owner field
     };
 
@@ -296,7 +296,7 @@ describe('schema auth rules', () => {
       readonly id: string;
       readonly createdAt: string;
       readonly updatedAt: string;
-      field: string | null;
+      field?: string | null | undefined;
       // no implied owner field
     };
 
@@ -320,10 +320,10 @@ describe('schema auth rules', () => {
       readonly id: string;
       readonly createdAt: string;
       readonly updatedAt: string;
-      field: string | null;
+      field?: string | null | undefined;
 
       // implied owner field
-      owner: string | null;
+      owner?: string | null | undefined;
     };
 
     type test = Expect<Equal<Actual_A, Expected_A>>;
@@ -346,10 +346,10 @@ describe('schema auth rules', () => {
       readonly id: string;
       readonly createdAt: string;
       readonly updatedAt: string;
-      field: string | null;
+      field?: string | null | undefined;
 
       // implied owner field
-      owner: string[] | null;
+      owner?: string[] | null | undefined;
     };
 
     type test = Expect<Equal<Actual_A, Expected_A>>;
@@ -372,7 +372,7 @@ describe('schema auth rules', () => {
       readonly id: string;
       readonly createdAt: string;
       readonly updatedAt: string;
-      field: string | null;
+      field?: string | null | undefined;
       // no implied owner field
     };
 
@@ -396,10 +396,10 @@ describe('schema auth rules', () => {
       readonly id: string;
       readonly createdAt: string;
       readonly updatedAt: string;
-      field: string | null;
+      field?: string | null | undefined;
 
       // implied owner field
-      someField: string | null;
+      someField?: string | null | undefined;
     };
 
     type test = Expect<Equal<Actual_A, Expected_A>>;
@@ -422,10 +422,10 @@ describe('schema auth rules', () => {
       readonly id: string;
       readonly createdAt: string;
       readonly updatedAt: string;
-      field: string | null;
+      field?: string | null | undefined;
 
       // implied groups field
-      someField: string[] | null;
+      someField?: string[] | null | undefined;
     };
 
     type test = Expect<Equal<Actual_A, Expected_A>>;
@@ -448,7 +448,7 @@ describe('schema auth rules', () => {
       readonly id: string;
       readonly createdAt: string;
       readonly updatedAt: string;
-      field: string | null;
+      field?: string | null | undefined;
       // no implied owner field
     };
 
@@ -472,7 +472,7 @@ describe('schema auth rules', () => {
       readonly id: string;
       readonly createdAt: string;
       readonly updatedAt: string;
-      field: string | null;
+      field?: string | null | undefined;
       // no implied owner field
     };
 
@@ -527,7 +527,7 @@ describe('schema auth rules', () => {
         readonly id: string;
         readonly createdAt: string;
         readonly updatedAt: string;
-        field: string | null;
+        field?: string | null | undefined;
         // no implied owner field
       };
 
@@ -553,8 +553,8 @@ describe('schema auth rules', () => {
         readonly id: string;
         readonly createdAt: string;
         readonly updatedAt: string;
-        field: string | null;
-        owner: string | null;
+        field?: string | null | undefined;
+        owner?: string | null | undefined;
       };
 
       type test = Expect<Equal<Actual_A, Expected_A>>;
@@ -579,8 +579,8 @@ describe('schema auth rules', () => {
         readonly id: string;
         readonly createdAt: string;
         readonly updatedAt: string;
-        field: string | null;
-        modelOwnerField: string | null;
+        field?: string | null | undefined;
+        modelOwnerField?: string | null | undefined;
       };
 
       type test = Expect<Equal<Actual_A, Expected_A>>;
@@ -645,15 +645,35 @@ describe('custom operations', () => {
           Record<string, any> | null
         >,
         context: Context,
-        callback: Callback<{
-          resultContent: Nullable<string>;
-        } | null>,
-      ) => void | Promise<{
-        resultContent: Nullable<string>;
-      } | null>;
+        callback: Callback<
+          | {
+              resultContent?: Nullable<string> | undefined;
+            }
+          | null
+          | undefined
+        >,
+      ) => void | Promise<
+        | {
+            resultContent?: Nullable<string> | undefined;
+          }
+        | null
+        | undefined
+      >;
       args: {
         inputContent: string;
       };
+      returnType:
+        | {
+            resultContent?: Nullable<string> | undefined;
+          }
+        | null
+        | undefined;
+      type:
+        | {
+            resultContent?: Nullable<string> | undefined;
+          }
+        | null
+        | undefined;
     };
 
     type ActualEchoInterface = Pick<ActualEcho, keyof Expected>;
@@ -737,7 +757,7 @@ describe('custom operations', () => {
 
       type Expected_A = {
         id: string;
-        field: string | null;
+        field?: string | null | undefined;
         // doesn't imply id field
         // doesn't imply timestamp fields
       };
@@ -762,7 +782,7 @@ describe('custom operations', () => {
       type Actual_A = Prettify<ClientSchema<typeof schema>['A']['type']>;
 
       type Expected_A = {
-        field: string | null;
+        field?: string | null | undefined;
         // doesn't imply id field
         // doesn't imply timestamp fields
         // doesn't imply owner field
@@ -793,7 +813,7 @@ describe('custom operations', () => {
 
       type Expected_A = {
         idNum: number;
-        field: string | null;
+        field?: string | null | undefined;
         // doesn't imply timestamp fields
         // doesn't imply owner field
       };
@@ -831,8 +851,8 @@ describe('custom operations', () => {
 
       type Expected_A = {
         idNum: number;
-        field: string | null;
-        bId: string | null;
+        field?: string | null | undefined;
+        bId?: string | null | undefined;
         b: (
           options?:
             | {
@@ -843,7 +863,7 @@ describe('custom operations', () => {
             | undefined,
         ) => SingularReturnValue<{
           id: string;
-          title: Nullable<string>;
+          title?: Nullable<string> | undefined;
         } | null>;
         // doesn't imply id field
         // doesn't imply timestamp fields
@@ -883,8 +903,8 @@ describe('custom operations', () => {
 
       type Expected_A = {
         idNum: number;
-        field: string | null;
-        bId: string | null;
+        field?: string | null | undefined;
+        bId?: string | null | undefined;
         b: (
           options?:
             | {
@@ -895,7 +915,7 @@ describe('custom operations', () => {
             | undefined,
         ) => SingularReturnValue<{
           id: string;
-          title: string | null;
+          title?: string | null | undefined;
         } | null>;
         // doesn't imply id field
         // doesn't imply timestamp fields
@@ -1188,7 +1208,7 @@ describe('custom operations', () => {
         readonly id: string;
         readonly createdAt: string;
         readonly updatedAt: string;
-        field: string | null;
+        field?: string | null | undefined;
         // no implied owner field
       };
 
@@ -1200,7 +1220,7 @@ describe('custom operations', () => {
         readonly id: string;
         readonly createdAt: string;
         readonly updatedAt: string;
-        field: string | null;
+        field?: string | null | undefined;
         // no implied owner field
       };
 
@@ -1234,7 +1254,7 @@ describe('custom operations', () => {
       type Actual_A = Prettify<ClientSchema<typeof schema>['A']['type']>;
 
       type Expected_A = {
-        field: string | null;
+        field?: string | null | undefined;
         // no implied owner field
       };
 
@@ -1246,7 +1266,7 @@ describe('custom operations', () => {
         readonly id: string;
         readonly createdAt: string;
         readonly updatedAt: string;
-        field: string | null;
+        field?: string | null | undefined;
         // no implied owner field
       };
 

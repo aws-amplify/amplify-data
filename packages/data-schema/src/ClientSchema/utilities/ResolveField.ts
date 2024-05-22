@@ -5,7 +5,7 @@ import {
 } from '../../ModelRelationalField';
 import { EnumType } from '../../EnumType';
 import { CustomType } from '../../CustomType';
-import { RefType } from '../../RefType';
+import { RefType, RefTypeParamShape } from '../../RefType';
 import { ResolveRef } from './ResolveRef';
 import { LazyLoader } from '../../runtime';
 
@@ -18,8 +18,18 @@ import { LazyLoader } from '../../runtime';
  * The first type parameter (`Bag`) should always just be the top-level `ClientSchema` that
  * references and related model definitions can be resolved against.
  */
-export type ResolveFields<Bag extends Record<string, any>, T> = {
-  [K in keyof T]: ResolveIndividualField<Bag, T[K]>;
+export type ResolveFields<Bag extends Record<string, any>, T> = ShallowPretty<
+  FieldMap<Bag, T>
+>;
+
+type FieldMap<Bag extends Record<string, any>, T> = {
+  [K in keyof T as IsRequired<T[K]> extends true
+    ? K
+    : never]: ResolveIndividualField<Bag, T[K]>;
+} & {
+  [K in keyof T as IsRequired<T[K]> extends true
+    ? never
+    : K]+?: ResolveIndividualField<Bag, T[K]>;
 };
 
 export type ResolveIndividualField<Bag extends Record<string, any>, T> =
@@ -32,7 +42,7 @@ export type ResolveIndividualField<Bag extends Record<string, any>, T> =
         : T extends CustomType<infer CT>
           ? ResolveFields<Bag, CT['fields']> | null
           : T extends EnumType<infer values>
-            ? values[number] | null | undefined
+            ? values[number] | null
             : never;
 
 type ResolveRelationship<
@@ -41,6 +51,27 @@ type ResolveRelationship<
 > = LazyLoader<
   RelationshipShape['valueRequired'] extends true
     ? Bag[RelationshipShape['relatedModel']]['type']
-    : Bag[RelationshipShape['relatedModel']]['type'] | null | undefined,
+    : Bag[RelationshipShape['relatedModel']]['type'] | null,
   RelationshipShape['array']
 >;
+
+type ShallowPretty<T> = {
+  [K in keyof T]: T[K];
+};
+
+type IsRequired<T> =
+  T extends BaseModelField<infer FieldShape>
+    ? null extends FieldShape
+      ? false
+      : true
+    : T extends RefType<infer RefShape, any, any>
+      ? IsRefRequired<RefShape>
+      : T extends ModelRelationalField<any, any, any, any>
+        ? true
+        : T extends CustomType<any> | EnumType<any>
+          ? false
+          : never;
+
+type IsRefRequired<T extends RefTypeParamShape> = T['array'] extends true
+  ? T['arrayRequired']
+  : T['valueRequired'];
