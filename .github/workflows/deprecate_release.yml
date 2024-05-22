@@ -1,0 +1,48 @@
+name: deprecate_release
+
+on:
+  workflow_dispatch:
+    inputs:
+      deprecationMessage:
+        required: true
+        type: string
+        description: The deprecation message to apply to the affected package versions.
+      useNpmRegistry:
+        required: false
+        type: boolean
+        default: false
+        description: |
+          Whether to run the workflow against the live npm registry or not.
+          Defaults to false. Must be explicitly set to true to run against the npm registry.
+      searchForReleaseStartingFrom:
+        required: false
+        type: string
+        default: HEAD
+        description: |
+          By default, the most recent release from HEAD (inclusive) of the target branch will be deprecated.
+          To deprecate a different release, specify the release commit to deprecate here.
+
+jobs:
+  deprecate_release:
+    runs-on: ubuntu-latest
+    env:
+      NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # mapping the inputs to these environment variables allows the @actions/core toolkit to pick up the inputs
+      INPUT_DEPRECATIONMESSAGE: ${{ inputs.deprecationMessage }}
+      INPUT_USENPMREGISTRY: ${{ inputs.useNpmRegistry }}
+      INPUT_SEARCHFORRELEASESTARTINGFROM: ${{ inputs.searchForReleaseStartingFrom }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@24cb9080177205b6e8c946b17badbe402adc938f # v3.4.0 https://github.com/actions/checkout/commit/24cb9080177205b6e8c946b17badbe402adc938f
+        with:
+          path: amplify-api-next
+          # fetch full history so that we can properly lookup past releases
+          fetch-depth: 0
+      - name: Setup node and build the repository
+        uses: ./amplify-api-next/.github/actions/node-and-build
+        with:
+          is-prebuild: true
+      - name: Deprecate release versions
+        run: npx tsx scripts/deprecate_release.ts

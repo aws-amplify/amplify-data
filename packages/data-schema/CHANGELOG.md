@@ -1,5 +1,6 @@
 # @aws-amplify/data-schema
 
+<<<<<<< HEAD
 ## 1.3.2
 
 ### Patch Changes
@@ -42,6 +43,8 @@
 
 - 6f9abd0: cleanup
 
+=======
+>>>>>>> 73a6f4c (GH action)
 ## 1.2.5
 
 ### Patch Changes
