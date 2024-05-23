@@ -1430,7 +1430,7 @@ function validateCustomOperations(
     (opType === 'Query' || opType === 'Mutation')
   ) {
     throw new Error(
-      `Invalid Custom ${opType} definition. A Custom ${opType} must include a return type`,
+      `Invalid Custom ${opType} definition. A Custom ${opType} must include a return type. ${typeName} has no return type specified.`,
     );
   }
 
