@@ -129,7 +129,7 @@ describe('CustomOperation transform', () => {
       });
 
       expect(() => s.transform()).toThrow(
-        'Invalid query definition. Queries must include .return',
+        'Invalid custom query definition. Custom Queries must include a return type',
       );
     });
 
