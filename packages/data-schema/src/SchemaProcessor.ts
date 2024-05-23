@@ -1425,9 +1425,12 @@ function validateCustomOperations(
     }
   }
 
-  if (opType === 'Query' && typeDef.data.returnType === null) {
+  if (
+    typeDef.data.returnType === null &&
+    (opType === 'Query' || opType === 'Mutation')
+  ) {
     throw new Error(
-      `Invalid custom query definition. Custom Queries must include a return type`,
+      `Invalid Custom ${opType} definition. A Custom ${opType} must include a return type`,
     );
   }
 

@@ -114,10 +114,6 @@ describe('CustomOperation transform', () => {
 
     test('Custom Query w/ no return should throw', () => {
       const s = a.schema({
-        EchoResponse: a.customType({
-          content: a.string(),
-          executionDuration: a.float(),
-        }),
         echo: a
           .query()
           .arguments({
@@ -128,7 +124,21 @@ describe('CustomOperation transform', () => {
       });
 
       expect(() => s.transform()).toThrow(
-        'Invalid custom query definition. Custom Queries must include a return type',
+        'Invalid Custom Query definition. A Custom Query must include a return type',
+      );
+    });
+
+    test('Custom Mutation w/ no return should throw', () => {
+      const s = a.schema({
+        likePost: a
+          .mutation()
+          .arguments({ postId: a.string() })
+          .authorization((allow) => [allow.publicApiKey()])
+          .handler(a.handler.function('myFunc')),
+      });
+
+      expect(() => s.transform()).toThrow(
+        'Invalid Custom Mutation definition. A Custom Mutation must include a return type',
       );
     });
 
@@ -1030,7 +1040,7 @@ describe('.for() modifier', () => {
     const schema = a.schema({
       Model: a.customType({ content: a.string() }),
       /// @ts-expect-error .for() is not a valid modifier function of a.mutation()
-      myMutation: a.mutation().for(a.ref('Model')),
+      myMutation: a.mutation().for(a.ref('Model')).returns(a.ref('something')),
     });
 
     expect(() => schema.transform()).toThrow(
