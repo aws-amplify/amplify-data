@@ -41,8 +41,8 @@ export interface ClientModel<
   updateType: Prettify<
     UpdateModelInput<ClientModel<Bag, Metadata, IsRDS, T, K>>
   >;
-  deleteType: Prettify<ModelIdentifier<T, IsRDS>>;
-  identifier: ShallowPretty<ModelIdentifier<T, IsRDS>>;
+  deleteType: Prettify<ModelIdentifier<T>>;
+  identifier: ShallowPretty<ModelIdentifier<T>>;
   nestedTypes: NestedTypes<ClientFields<Bag, Metadata, IsRDS, T>, T>;
   secondaryIndexes: IndexQueryMethodsFromIR<Bag, T['secondaryIndexes'], K>;
   __meta: {
@@ -60,7 +60,7 @@ type ClientFields<
   IsRDS extends boolean,
   T extends ModelTypeParamShape,
 > = ResolveFields<Bag, T['fields']> &
-  ModelIdentifier<T, IsRDS> &
+  If<ModelIdentifier<T>, Not<IsRDS>> &
   AuthFields<Metadata, T> &
   Omit<SystemFields<IsRDS>, keyof ResolveFields<Bag, T['fields']>>;
 
@@ -71,15 +71,16 @@ type SystemFields<IsRDS extends boolean> = IsRDS extends false
     }
   : object;
 
-type ModelIdentifier<
-  T extends ModelTypeParamShape,
-  IsRDS extends boolean,
-> = IsRDS extends false
-  ? T['identifier']['pk'] &
-      (T['identifier']['sk'] extends never
-        ? unknown // unknown collapses in an intersection
-        : T['identifier']['sk'])
-  : object;
+type ModelIdentifier<T extends ModelTypeParamShape> = T['identifier']['pk'] &
+  (T['identifier']['sk'] extends never
+    ? unknown // unknown collapses in an intersection
+    : T['identifier']['sk']);
+
+type If<T, IfTrue extends boolean, Default = unknown> = IfTrue extends true
+  ? T
+  : Default;
+
+type Not<T extends boolean> = T extends true ? false : true;
 
 /**
  * Models with composite PKs defined are expected to contain the model's pk, sk, and sortDirection properties in the `options` param
@@ -255,22 +256,6 @@ type WithNullablesAsOptionalRecursively<T> = T extends
         [K in keyof T as null extends T[K]
           ? never
           : K]: WithNullablesAsOptionalRecursively<T[K]>;
-      }
-    : T;
-
-type WithNullablesAsOptionalRecursivelyB<T> = T extends
-  | Array<any>
-  | ((...args: any) => any)
-  ? T
-  : T extends object
-    ? {
-        [K in keyof T as null extends T[K]
-          ? K
-          : never]+?: WithNullablesAsOptionalRecursivelyB<T[K]>;
-      } & {
-        [K in keyof T as null extends T[K]
-          ? never
-          : K]: WithNullablesAsOptionalRecursivelyB<T[K]>;
       }
     : T;
 
