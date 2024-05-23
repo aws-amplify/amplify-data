@@ -1,5 +1,11 @@
 # @aws-amplify/data-schema
 
+## 1.2.7
+
+### Patch Changes
+
+- daff4ed: fix(data): update SchemaProcessor to throw more descriptive errors for Custom Operations
+
 ## 1.2.6
 
 ### Patch Changes
