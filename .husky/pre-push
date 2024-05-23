@@ -1,0 +1,5 @@
+npx changeset status --since main
+npm run check:package-lock
+npm run check:api
+
+exit 1

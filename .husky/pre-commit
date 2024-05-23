@@ -1,2 +1,0 @@
-npx changeset status --since main
-npm run check-api

@@ -15,7 +15,7 @@ jobs:
         uses: ./amplify-api-next/.github/actions/node-and-build
       - name: Run checks
         working-directory: ./amplify-api-next
-        run: npm run check-api
+        run: npm run check:api
       - name: API Check Instructions
         if: failure()
         run: |
