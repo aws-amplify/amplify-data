@@ -123,7 +123,6 @@ describe('CustomOperation transform', () => {
           .arguments({
             content: a.string(),
           })
-          // .returns(a.ref('EchoResponse'))
           .authorization((allow) => [allow.publicApiKey()])
           .handler(a.handler.function('someHandler')),
       });
@@ -736,6 +735,7 @@ describe('CustomOperation transform', () => {
                   dataSource: 'CommentTable',
                 }),
               ])
+              .returns(a.ref('someReturn'))
               .authorization((allow) => allow.groups(['group1'], 'oidc')),
           });
 
@@ -1018,7 +1018,7 @@ describe('.for() modifier', () => {
     const schema = a.schema({
       Model: a.customType({ content: a.string() }),
       /// @ts-expect-error .for() is not a valid modifier function of a.query()
-      myQuery: a.query().for(a.ref('Model')),
+      myQuery: a.query().for(a.ref('Model')).returns(a.ref('something')),
     });
 
     expect(() => schema.transform()).toThrow(
