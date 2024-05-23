@@ -21,10 +21,10 @@
     "clean": "turbo run clean",
     "turbo": "turbo",
     "delete-cache": "find . -type d \\( -name .turbo -o -name .rollup.cache \\) -exec rm -rf {} +",
-    "prepare": "husky install",
     "publish:release": "changeset version && changeset publish",
     "publish:preid": "changeset version --snapshot ${PREID_PREFIX} && changeset publish --tag ${PREID_PREFIX}",
-    "publish:local": "npm_config_registry=http://localhost:4873/ npm run publish:release"
+    "publish:local": "npm_config_registry=http://localhost:4873/ npm run publish:release",
+    "prepare": "husky"
   },
   "devDependencies": {
     "@changesets/cli": "^2.26.2",
