@@ -1,5 +1,11 @@
 # @aws-amplify/data-schema
 
+## 1.2.6
+
+### Patch Changes
+
+- 6f9abd0: cleanup
+
 ## 1.2.5
 
 ### Patch Changes
