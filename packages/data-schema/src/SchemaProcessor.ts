@@ -1425,6 +1425,15 @@ function validateCustomOperations(
     }
   }
 
+  if (
+    typeDef.data.returnType === null &&
+    (opType === 'Query' || opType === 'Mutation')
+  ) {
+    throw new Error(
+      `Invalid Custom ${opType} definition. A Custom ${opType} must include a return type. ${typeName} has no return type specified.`,
+    );
+  }
+
   if (opType !== 'Subscription' && subscriptionSource.length > 0) {
     throw new Error(
       `The .for() modifier function can only be used with a custom subscription. ${typeName} is not a custom subscription.`,

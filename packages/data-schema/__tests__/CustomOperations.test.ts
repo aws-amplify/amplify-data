@@ -112,6 +112,36 @@ describe('CustomOperation transform', () => {
       );
     });
 
+    test('Custom Query w/ no return should throw', () => {
+      const s = a.schema({
+        echo: a
+          .query()
+          .arguments({
+            content: a.string(),
+          })
+          .authorization((allow) => [allow.publicApiKey()])
+          .handler(a.handler.function('someHandler')),
+      });
+
+      expect(() => s.transform()).toThrow(
+        'Invalid Custom Query definition. A Custom Query must include a return type',
+      );
+    });
+
+    test('Custom Mutation w/ no return should throw', () => {
+      const s = a.schema({
+        likePost: a
+          .mutation()
+          .arguments({ postId: a.string() })
+          .authorization((allow) => [allow.publicApiKey()])
+          .handler(a.handler.function('myFunc')),
+      });
+
+      expect(() => s.transform()).toThrow(
+        'Invalid Custom Mutation definition. A Custom Mutation must include a return type',
+      );
+    });
+
     test('Custom Mutation w handler, but no auth rules should throw', () => {
       const s = a.schema({
         likePost: a
@@ -715,6 +745,7 @@ describe('CustomOperation transform', () => {
                   dataSource: 'CommentTable',
                 }),
               ])
+              .returns(a.ref('something'))
               .authorization((allow) => allow.groups(['group1'], 'oidc')),
           });
 
@@ -997,7 +1028,7 @@ describe('.for() modifier', () => {
     const schema = a.schema({
       Model: a.customType({ content: a.string() }),
       /// @ts-expect-error .for() is not a valid modifier function of a.query()
-      myQuery: a.query().for(a.ref('Model')),
+      myQuery: a.query().for(a.ref('Model')).returns(a.ref('something')),
     });
 
     expect(() => schema.transform()).toThrow(
@@ -1009,7 +1040,7 @@ describe('.for() modifier', () => {
     const schema = a.schema({
       Model: a.customType({ content: a.string() }),
       /// @ts-expect-error .for() is not a valid modifier function of a.mutation()
-      myMutation: a.mutation().for(a.ref('Model')),
+      myMutation: a.mutation().for(a.ref('Model')).returns(a.ref('something')),
     });
 
     expect(() => schema.transform()).toThrow(
