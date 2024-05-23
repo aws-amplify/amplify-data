@@ -112,6 +112,47 @@ describe('CustomOperation transform', () => {
       );
     });
 
+    // For debugging only:
+    test.only('Custom Query w/ return should not throw', () => {
+      const s = a.schema({
+        EchoResponse: a.customType({
+          content: a.string(),
+          executionDuration: a.float(),
+        }),
+        echo: a
+          .query()
+          .arguments({
+            content: a.string(),
+          })
+          .returns(a.ref('EchoResponse'))
+          .authorization((allow) => [allow.publicApiKey()])
+          .handler(a.handler.function('someHandler')),
+      });
+
+      expect(() => s.transform()).not.toThrow();
+    });
+
+    test.only('Custom Query w/ no return should throw', () => {
+      const s = a.schema({
+        EchoResponse: a.customType({
+          content: a.string(),
+          executionDuration: a.float(),
+        }),
+        echo: a
+          .query()
+          .arguments({
+            content: a.string(),
+          })
+          // .returns(a.ref('EchoResponse'))
+          .authorization((allow) => [allow.publicApiKey()])
+          .handler(a.handler.function('someHandler')),
+      });
+
+      expect(() => s.transform()).toThrow(
+        'Invalid query definition. Queries must include .return',
+      );
+    });
+
     test('Custom Mutation w handler, but no auth rules should throw', () => {
       const s = a.schema({
         likePost: a
@@ -122,7 +163,7 @@ describe('CustomOperation transform', () => {
       });
 
       expect(() => s.transform()).toThrow(
-        'requires both an authorization rule and a handler reference',
+        'Invalid query definition. Queries must include .retur',
       );
     });
 

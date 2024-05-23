@@ -1425,6 +1425,12 @@ function validateCustomOperations(
     }
   }
 
+  if (opType === 'Query' && typeDef.data.returnType === null) {
+    throw new Error(
+      `Invalid custom query definition. Custom Queries must include a return type`,
+    );
+  }
+
   if (opType !== 'Subscription' && subscriptionSource.length > 0) {
     throw new Error(
       `The .for() modifier function can only be used with a custom subscription. ${typeName} is not a custom subscription.`,
