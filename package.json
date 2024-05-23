@@ -21,6 +21,7 @@
     "clean": "turbo run clean",
     "turbo": "turbo",
     "delete-cache": "find . -type d \\( -name .turbo -o -name .rollup.cache \\) -exec rm -rf {} +",
+    "prepare": "husky install",
     "publish:release": "changeset version && changeset publish",
     "publish:preid": "changeset version --snapshot ${PREID_PREFIX} && changeset publish --tag ${PREID_PREFIX}",
     "publish:local": "npm_config_registry=http://localhost:4873/ npm run publish:release"
@@ -36,6 +37,7 @@
     "@typescript-eslint/parser": "^6.7.4",
     "aws-amplify": "^6.3.0",
     "glob": "^10.3.10",
+    "husky": "^9.0.11",
     "eslint": "^8.50.0",
     "eslint-config-prettier": "^9.0.0",
     "eslint-plugin-import": "^2.28.1",
