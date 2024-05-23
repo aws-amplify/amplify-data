@@ -4,18 +4,21 @@ on: workflow_call
 
 jobs:
   check-api:
-    name: Check for unexpected API changes
+    name: Check for presense of changeset
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@24cb9080177205b6e8c946b17badbe402adc938f # v3.4.0 https://github.com/actions/checkout/commit/24cb9080177205b6e8c946b17badbe402adc938f
         with:
-          path: amplify-api-next
+          path:
+            amplify-api-next
+            # check out full history
+          fetch-depth: 0
       - name: Setup node and build the repository
         uses: ./amplify-api-next/.github/actions/node-and-build
       - name: Run checks
         working-directory: ./amplify-api-next
-        run: npx changeset status --since main
+        run: npx changeset status --since origin/main
       - name: API Check Instructions
         if: failure()
         run: |

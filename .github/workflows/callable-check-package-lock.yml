@@ -4,7 +4,7 @@ on: workflow_call
 
 jobs:
   check-api:
-    name: Check for unexpected API changes
+    name: Check Package Lock
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
