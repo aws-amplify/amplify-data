@@ -28,3 +28,11 @@ jobs:
     needs:
       - prebuild
     uses: ./.github/workflows/callable-check-api.yml
+  check-package-lock:
+    needs:
+      - prebuild
+    uses: ./.github/workflows/callable-check-package-lock.yml
+  check-changeset:
+    needs:
+      - prebuild
+    uses: ./.github/workflows/callable-check-changeset.yml
