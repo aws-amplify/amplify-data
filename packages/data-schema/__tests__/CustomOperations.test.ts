@@ -735,7 +735,7 @@ describe('CustomOperation transform', () => {
                   dataSource: 'CommentTable',
                 }),
               ])
-              .returns(a.ref('someReturn'))
+              .returns(a.ref('something'))
               .authorization((allow) => allow.groups(['group1'], 'oidc')),
           });
 
