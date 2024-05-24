@@ -117,6 +117,15 @@ type RDSModelSchemaFunctions =
   | 'renameModelFields'
   | 'renameModels';
 
+type OmitFromModels<T, K extends keyof any> = {
+  [P in keyof T]: Omit<T[P], K>;
+};
+// Or w/out argument, if folks think a few helpers like this
+// would make things more clear:
+// type OmitSecondaryIndexes<T> = {
+//   [K in keyof T]: Omit<T[K], 'secondaryIndexes'>;
+// };
+
 export type RDSModelSchema<
   T extends RDSModelSchemaParamShape,
   UsedMethods extends RDSModelSchemaFunctions = never,
@@ -173,7 +182,17 @@ export type RDSModelSchema<
     >;
     setAuthorization: (
       callback: (
-        models: BaseSchema<T, true>['models'],
+        models: OmitFromModels<
+          BaseSchema<T, true>['models'],
+          'secondaryIndexes'
+        >,
+        // Or this, if folks don't like the helper:
+        // models: {
+        //   [K in keyof BaseSchema<T, true>['models']]: Omit<
+        //     BaseSchema<T, true>['models'][K],
+        //     'description'
+        //   >;
+        // },
         schema: RDSModelSchema<T, UsedMethods | 'setAuthorization'>,
       ) => void,
     ) => RDSModelSchema<T>;
@@ -182,7 +201,12 @@ export type RDSModelSchema<
         Partial<Record<keyof T['types'], RelationshipTemplate>>
       >,
     >(
-      callback: (models: BaseSchema<T, true>['models']) => Relationships,
+      callback: (
+        models: OmitFromModels<
+          BaseSchema<T, true>['models'],
+          'authorization' | 'fields' | 'secondaryIndexes'
+        >,
+      ) => Relationships,
     ) => RDSModelSchema<
       UnionToIntersection<Relationships[number]> extends infer RelationshipsDefs
         ? RelationshipsDefs extends Record<string, RelationshipTemplate>
@@ -299,6 +323,8 @@ function _rdsSchema<
     authorization: [],
     configuration: config,
   };
+  // eslint-disable-next-line no-debugger
+  // debugger;
   const models = filterSchemaModelTypes(data.types) as any;
   return {
     data,
@@ -342,6 +368,8 @@ function _rdsSchema<
     },
     setRelationships(callback): any {
       const { setRelationships: _, ...rest } = this;
+      // eslint-disable-next-line no-debugger
+      // debugger;
       // The relationships are added via `models.<Model>.relationships`
       // modifiers that's being called within the callback. They are modifying
       // by references on each model, so there is not anything else to be done

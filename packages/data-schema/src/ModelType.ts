@@ -43,7 +43,7 @@ type InternalModelFields = Record<
 type ModelData = {
   fields: ModelFields;
   identifier: ReadonlyArray<string>;
-  secondaryIndexes: ReadonlyArray<ModelIndexType<any, any, any, any, any>>;
+  secondaryIndexes?: ReadonlyArray<ModelIndexType<any, any, any, any, any>>;
   authorization: Authorization<any, any, any>[];
 };
 
@@ -201,6 +201,7 @@ export type UsableModelTypeKey = methodKeyOf<ModelType>;
 export type ModelType<
   T extends ModelTypeParamShape = ModelTypeParamShape,
   UsedMethod extends UsableModelTypeKey = never,
+  // IsRDS extends boolean = false,
 > = Omit<
   {
     [brandSymbol]: typeof brandName;
@@ -218,6 +219,7 @@ export type ModelType<
       SetTypeSubArg<T, 'identifier', PrimaryIndexIR>,
       UsedMethod | 'identifier'
     >;
+    // debugger;
     secondaryIndexes<
       const SecondaryIndexFields = ExtractSecondaryIndexIRFields<T>,
       const SecondaryIndexPKPool extends string = keyof SecondaryIndexFields &
@@ -259,8 +261,11 @@ export type ModelType<
   UsedMethod
 >;
 
+// debugger;
+// T includes fields here
 /**
- * External representation of Model Type that exposes the `relationships` modifier.
+ * External representation of Model Type that exposes the `relationships` modifier,
+ * and omits [todo]
  * Used on the complete schema object.
  */
 export type SchemaModelType<
@@ -268,7 +273,8 @@ export type SchemaModelType<
   ModelName extends string = string,
   IsRDS extends boolean = false,
 > = IsRDS extends true
-  ? T & {
+  ? // ? Omit<T, 'secondaryIndexes'> & {
+    T & {
       relationships<
         Param extends Record<
           string,
