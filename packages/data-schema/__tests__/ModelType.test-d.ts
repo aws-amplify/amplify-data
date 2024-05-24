@@ -58,7 +58,7 @@ describe('identifiers', () => {
       };
       identifier: {
         pk: {
-          id: string;
+          readonly id: string;
         };
         sk: never;
         compositeSk: never;

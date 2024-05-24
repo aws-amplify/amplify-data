@@ -1,11 +1,11 @@
-import { a, ClientSchema } from '../../src/index';
-import { ClientSchemaByEntityType } from '../../src/ClientSchema';
-import { ClientExtensions } from '../../src/runtime';
-import { ExtractNestedTypes } from '../../src/ClientSchema/utilities/ExtractNestedTypes';
+import { a, ClientSchema } from '../src';
+import { ClientSchemaByEntityType } from '../src/ClientSchema';
+import { ClientExtensions } from '../src/runtime';
+import { ExtractNestedTypes } from '../src/ClientSchema/utilities/ExtractNestedTypes';
 import { Prettify, Expect, Equal } from '@aws-amplify/data-schema-types';
-import { Select } from '../../src/util';
-import { CustomType } from '../../src/CustomType';
-import { ResolvedModel } from '../../src/runtime/client/index';
+import { Select } from '../src/util';
+import { CustomType } from '../src/CustomType';
+import { ResolvedModel } from '../src/runtime/client/index';
 
 describe('a', () => {
   test('b', async () => {
