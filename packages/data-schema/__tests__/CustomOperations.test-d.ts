@@ -151,7 +151,7 @@ describe('custom operations return types', () => {
 
       type ActualArgs = Prettify<Schema['aQuery']['args']>;
       type ActualResult = Prettify<Schema['aQuery']['returnType']>;
-      type ActualHandler = Schema['aQuery']['functionHandler'];
+      type ActualHandler = Prettify<Schema['aQuery']['functionHandler']>;
 
       type ExpectedArgs = {
         input?: string | null | undefined;
@@ -334,7 +334,7 @@ describe('custom operations return types', () => {
 
       type ActualArgs = Prettify<Schema['aQuery']['args']>;
       type ActualResult = Prettify<Schema['aQuery']['returnType']>;
-      type ActualHandler = Schema['aQuery']['functionHandler'];
+      type ActualHandler = Prettify<Schema['aQuery']['functionHandler']>;
 
       type ExpectedArgs = {
         input?: string | null | undefined;

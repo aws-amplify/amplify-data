@@ -133,7 +133,7 @@ type NestedTypes<
         // A little hackier than I'd like here.
         // Ideally, adapt ClientEnum and ClientCustomType to work with us here instead.
         __entityType: T['fields'][K] extends EnumType ? 'enum' : 'customType';
-        type: Exclude<Bag[K], null>;
+        type: Exclude<Bag[K], null | undefined>;
       }
     : never;
 };

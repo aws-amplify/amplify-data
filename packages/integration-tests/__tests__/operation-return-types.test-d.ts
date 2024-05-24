@@ -150,15 +150,17 @@ describe('operation return types', () => {
       test('License return type contains readonly doctor getter', async () => {
         const { data: listedLicense } = await client.models.License.list();
 
-        type ResolvedLicenseType = Prettify<(typeof listedLicense)[number]>;
+        type ResolvedLicenseType = Prettify<
+          Omit<(typeof listedLicense)[number], 'doctor'>
+        >;
 
         type BasicTypeResult = Equal<
-          Omit<ResolvedLicenseType, 'doctor'>,
+          ResolvedLicenseType,
           ExpectedBasicTypesInLicenseReturnType
         >;
 
         type DoctorGetterResult = Equal<
-          Pick<ResolvedLicenseType, 'doctor'> extends Pick<
+          ResolvedLicenseType extends Pick<
             ExpectedGetterSuperTypesInLicenseReturnType,
             'doctor'
           >

@@ -8,7 +8,6 @@
     "**/*.ts",
     "../src/internals/index.ts",
     "../src/runtime/index.ts",
-    "../src/runtime/index.v3.ts",
-    "../__scratch/sanity-check.test.ts"
+    "../src/runtime/index.v3.ts"
   ]
 }

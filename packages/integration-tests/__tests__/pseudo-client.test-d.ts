@@ -107,9 +107,12 @@ describe('client', () => {
 
     type ResponseType = typeof response;
     type Expected = {
-      data: {
-        resultContent: string | null;
-      } | null;
+      data:
+        | {
+            resultContent?: string | null | undefined;
+          }
+        | null
+        | undefined;
       errors?: GraphQLFormattedError[] | undefined;
       extensions?:
         | {
@@ -155,7 +158,7 @@ describe('client', () => {
     type T = ResponseType['data'];
 
     type Expected = {
-      data: Schema['DataModel']['type'] | null;
+      data: Schema['DataModel']['type'] | null | undefined;
       errors?: GraphQLFormattedError[] | undefined;
       extensions?:
         | {
@@ -214,9 +217,12 @@ describe('client', () => {
 
     type ResponseType = typeof response;
     type Expected = {
-      data: {
-        likes: number;
-      } | null;
+      data:
+        | {
+            likes: number;
+          }
+        | null
+        | undefined;
       errors?: GraphQLFormattedError[] | undefined;
       extensions?:
         | {
@@ -234,10 +240,15 @@ describe('client', () => {
     type Response2Type = typeof response2;
     type Expected2 = {
       data:
-        | ({
-            likes: number;
-          } | null)[]
-        | null;
+        | (
+            | {
+                likes: number;
+              }
+            | null
+            | undefined
+          )[]
+        | null
+        | undefined;
       errors?: GraphQLFormattedError[] | undefined;
       extensions?:
         | {
@@ -275,8 +286,8 @@ describe('client', () => {
             readonly id: string;
             readonly createdAt: string;
             readonly updatedAt: string;
-            title: string | null;
-            liked: boolean | null;
+            title?: string | null;
+            liked?: boolean | null;
           };
           type test = Expect<Equal<ResponseType, ExpectedType>>;
         },
@@ -321,8 +332,8 @@ describe('client', () => {
               readonly id: string;
               readonly createdAt: string;
               readonly updatedAt: string;
-              title: string | null;
-              liked: boolean | null;
+              title?: string | null;
+              liked?: boolean | null;
             };
             type test = Expect<Equal<ResponseType, ExpectedType>>;
           },
@@ -479,7 +490,7 @@ describe('client', () => {
         next: (data) => {
           type ResponseType = Prettify<typeof data>;
           type ExpectedType = {
-            description: string | null;
+            description?: string | null;
             title: string;
           };
           type _ = Expect<Equal<ResponseType, ExpectedType>>;
@@ -521,7 +532,7 @@ describe('client', () => {
             readonly id: string;
             readonly createdAt: string;
             readonly updatedAt: string;
-            content: string | null;
+            content?: string | null;
           };
           type _ = Expect<Equal<ResponseType, ExpectedType>>;
         },
@@ -562,7 +573,7 @@ describe('client', () => {
             readonly id: string;
             readonly createdAt: string;
             readonly updatedAt: string;
-            content: string | null;
+            content?: string | null | undefined;
           };
           type _ = Expect<Equal<ResponseType, ExpectedType>>;
         },

@@ -26,10 +26,13 @@ describe('CustomType', () => {
           readonly id: string;
           readonly createdAt: string;
           readonly updatedAt: string;
-          meta: {
-            summary: string | null;
-            author: string;
-          } | null;
+          meta?:
+            | {
+                summary?: string | null | undefined;
+                author: string;
+              }
+            | null
+            | undefined;
         }[];
 
         type _ = Expect<Equal<typeof posts, Expected>>;
@@ -103,15 +106,21 @@ describe('CustomType', () => {
           readonly id: string;
           readonly createdAt: string;
           readonly updatedAt: string;
-          meta: {
-            author: string;
-            summary: string | null;
-            status: 'unpublished' | 'published' | null;
-            deepMeta: {
-              field1: number;
-              field2: string | null;
-            } | null;
-          } | null;
+          meta?:
+            | {
+                author: string;
+                summary?: string | null | undefined;
+                status?: 'unpublished' | 'published' | null | undefined;
+                deepMeta?:
+                  | {
+                      field1: number;
+                      field2?: string | null | undefined;
+                    }
+                  | null
+                  | undefined;
+              }
+            | null
+            | undefined;
         }[];
 
         type _ = Expect<Equal<typeof posts, Expected>>;
@@ -203,15 +212,18 @@ describe('CustomType', () => {
           readonly id: string;
           readonly createdAt: string;
           readonly updatedAt: string;
-          meta: {
-            author: string;
-            summary: string | null;
-            status: 'unpublished' | 'published';
-            deepMeta: {
-              field1: number;
-              field2: string | null;
-            };
-          } | null;
+          meta?:
+            | {
+                author: string;
+                summary?: string | null | undefined;
+                status: 'unpublished' | 'published';
+                deepMeta: {
+                  field1: number;
+                  field2?: string | null | undefined;
+                };
+              }
+            | null
+            | undefined;
         }[];
 
         type _ = Expect<Equal<typeof posts, Expected>>;
@@ -293,10 +305,13 @@ describe('CustomType', () => {
           readonly id: string;
           readonly createdAt: string;
           readonly updatedAt: string;
-          meta: {
-            summary: string | null;
-            author: string;
-          } | null;
+          meta?:
+            | {
+                summary?: string | null | undefined;
+                author: string;
+              }
+            | null
+            | undefined;
         }[];
 
         type _ = Expect<Equal<typeof posts, Expected>>;
@@ -371,15 +386,21 @@ describe('CustomType', () => {
           readonly id: string;
           readonly createdAt: string;
           readonly updatedAt: string;
-          meta: {
-            author: string;
-            summary: string | null;
-            status: 'unpublished' | 'published' | null;
-            deepMeta: {
-              field1: number;
-              field2: string | null;
-            } | null;
-          } | null;
+          meta?:
+            | {
+                author: string;
+                summary?: string | null | undefined;
+                status?: 'unpublished' | 'published' | null | undefined;
+                deepMeta?:
+                  | {
+                      field1: number;
+                      field2?: string | null | undefined;
+                    }
+                  | null
+                  | undefined;
+              }
+            | null
+            | undefined;
         }[];
 
         type _ = Expect<Equal<typeof posts, Expected>>;
@@ -475,15 +496,18 @@ describe('CustomType', () => {
         readonly id: string;
         readonly createdAt: string;
         readonly updatedAt: string;
-        meta: {
-          author: string;
-          summary: string | null;
-          status: 'unpublished' | 'published';
-          deepMeta: {
-            field1: number;
-            field2: string | null;
-          };
-        } | null;
+        meta?:
+          | {
+              author: string;
+              summary?: string | null | undefined;
+              status: 'unpublished' | 'published';
+              deepMeta: {
+                field1: number;
+                field2?: string | null | undefined;
+              };
+            }
+          | null
+          | undefined;
       }[];
 
       type _ = Expect<Equal<typeof posts, Expected>>;

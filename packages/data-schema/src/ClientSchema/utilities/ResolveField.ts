@@ -19,17 +19,23 @@ import { LazyLoader } from '../../runtime';
  * references and related model definitions can be resolved against.
  */
 export type ResolveFields<Bag extends Record<string, any>, T> = ShallowPretty<
-  FieldMap<Bag, T>
+  {
+    [K in keyof T as IsRequired<T[K]> extends true
+      ? K
+      : never]: ResolveIndividualField<Bag, T[K]>;
+  } & {
+    [K in keyof T as IsRequired<T[K]> extends true
+      ? never
+      : K]+?: ResolveIndividualField<Bag, T[K]>;
+  }
 >;
 
-type FieldMap<Bag extends Record<string, any>, T> = {
-  [K in keyof T as IsRequired<T[K]> extends true
-    ? K
-    : never]: ResolveIndividualField<Bag, T[K]>;
-} & {
-  [K in keyof T as IsRequired<T[K]> extends true
-    ? never
-    : K]+?: ResolveIndividualField<Bag, T[K]>;
+// TODO: Remove ShallowPretty from this layer of resolution. Re-incorporate prettification
+// down the line *as-needed*. Performing this *here* is somehow essential to getting 2 unit
+// tests to pass, but hurts performance significantly. E.g., p50/operations/p50-prod-CRUDL.bench.ts
+// goes from `783705` to `1046408`.
+type ShallowPretty<T> = {
+  [K in keyof T]: T[K];
 };
 
 export type ResolveIndividualField<Bag extends Record<string, any>, T> =
@@ -54,10 +60,6 @@ type ResolveRelationship<
     : Bag[RelationshipShape['relatedModel']]['type'] | null,
   RelationshipShape['array']
 >;
-
-type ShallowPretty<T> = {
-  [K in keyof T]: T[K];
-};
 
 type IsRequired<T> =
   T extends BaseModelField<infer FieldShape>

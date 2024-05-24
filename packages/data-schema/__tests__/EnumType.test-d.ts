@@ -1,5 +1,7 @@
 import type { Equal, Expect } from '@aws-amplify/data-schema-types';
 import { type EnumType, enumType } from '../src/EnumType';
+import { a, type ClientSchema } from '../src/index';
+import type { ClientExtensions } from '../src/runtime';
 
 describe('EnumType', () => {
   test('Happy case', () => {
@@ -24,5 +26,29 @@ describe('EnumType', () => {
 
     // @ts-expect-error
     enumType([null, undefined]);
+  });
+
+  test('enums types extracted from models', () => {
+    const schema = a.schema({
+      Post: a.model({
+        title: a.string().required(),
+        status: a.enum(['draft', 'pending', 'published']),
+      }),
+    });
+
+    type Schema = ClientSchema<typeof schema>;
+    const client = {} as ClientExtensions<Schema>;
+
+    type EnumsProp = typeof client.enums;
+
+    type T = Schema['Post']['nestedTypes']['status'];
+
+    type ExpectedEnumsPropShape = {
+      PostStatus: {
+        values(): ('draft' | 'pending' | 'published')[];
+      };
+    };
+
+    type test = Expect<Equal<EnumsProp, ExpectedEnumsPropShape>>;
   });
 });

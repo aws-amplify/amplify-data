@@ -56,11 +56,10 @@ export type ExpectTrue<T extends true> = T;
 export type ExpectFalse<T extends false> = T;
 export type IsTrue<T extends true> = T;
 export type IsFalse<T extends false> = T;
-export type Equal<X, Y> = (<T>() => T extends X ? 1 : 2) extends <
-  T,
->() => T extends Y ? 1 : 2
-  ? true
-  : false;
+export type Equal<X, Y> =
+  (<T>() => T extends X ? 1 : 2) extends <T>() => T extends Y ? 1 : 2
+    ? true
+    : false;
 export type NotEqual<X, Y> = true extends Equal<X, Y> ? false : true;
 export type IsAny<T> = 0 extends 1 & T ? true : false;
 export type NotAny<T> = true extends IsAny<T> ? false : true;
@@ -81,8 +80,9 @@ export type HasKey<
  */
 export type UnwrapArray<T> = T extends any[] ? T[number] : T;
 
-export type DeepReadOnlyObject<T> = T extends Array<infer U>
-  ? DeepReadOnlyObject<U>[]
-  : T extends Record<any, any>
-    ? { readonly [k in keyof T]: DeepReadOnlyObject<T[k]> }
-    : T;
+export type DeepReadOnlyObject<T> =
+  T extends Array<infer U>
+    ? DeepReadOnlyObject<U>[]
+    : T extends Record<any, any>
+      ? { readonly [k in keyof T]: DeepReadOnlyObject<T[k]> }
+      : T;
