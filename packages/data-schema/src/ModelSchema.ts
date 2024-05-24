@@ -190,7 +190,7 @@ export type RDSModelSchema<
         // models: {
         //   [K in keyof BaseSchema<T, true>['models']]: Omit<
         //     BaseSchema<T, true>['models'][K],
-        //     'description'
+        //     'secondaryIndexes'
         //   >;
         // },
         schema: RDSModelSchema<T, UsedMethods | 'setAuthorization'>,
