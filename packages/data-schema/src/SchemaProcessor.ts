@@ -1245,13 +1245,29 @@ const schemaPreprocessor = (
           getRefType,
         );
 
+        topLevelTypes.push(...implicitTypes);
+
         mergeCustomTypeAuthRules(
           customTypeInheritedAuthRules,
           customTypeAuthRules,
         );
-        Object.assign(lambdaFunctions, lambdaFunctionDefinition);
 
-        topLevelTypes.push(...implicitTypes);
+        if (customTypeAuthRules) {
+          const nestedCustomTypeNames = extractNestedCustomTypeNames(
+            customTypeAuthRules,
+            topLevelTypes,
+            getRefType,
+          );
+
+          for (const nestedCustomType of nestedCustomTypeNames) {
+            mergeCustomTypeAuthRules(customTypeInheritedAuthRules, {
+              typeName: nestedCustomType,
+              authRules: customTypeAuthRules.authRules, // apply the same auth rules as the top-level custom type
+            });
+          }
+        }
+
+        Object.assign(lambdaFunctions, lambdaFunctionDefinition);
 
         if (jsFunctionForField) {
           jsFunctions.push(jsFunctionForField);
@@ -1423,6 +1439,15 @@ function validateCustomOperations(
         `Field handlers must be of the same type. ${typeName} has been configured with ${configuredHandlersStr}`,
       );
     }
+  }
+
+  if (
+    typeDef.data.returnType === null &&
+    (opType === 'Query' || opType === 'Mutation')
+  ) {
+    throw new Error(
+      `Invalid Custom ${opType} definition. A Custom ${opType} must include a return type. ${typeName} has no return type specified.`,
+    );
   }
 
   if (opType !== 'Subscription' && subscriptionSource.length > 0) {
@@ -1655,6 +1680,55 @@ function generateCustomOperationTypes({
   }
 
   return types;
+}
+
+function extractNestedCustomTypeNames(
+  customTypeAuthRules: CustomTypeAuthRules,
+  topLevelTypes: [string, any][],
+  getRefType: ReturnType<typeof getRefTypeForSchema>,
+): string[] {
+  if (!customTypeAuthRules) {
+    return [];
+  }
+
+  const [_, customTypeDef] = topLevelTypes.find(
+    ([topLevelTypeName]) => customTypeAuthRules.typeName === topLevelTypeName,
+  )!;
+
+  // traverse the custom type's fields and extract any nested custom type names.
+  // Those nested custom types also inherit the custom op's auth configuration.
+  // Supports both inline custom types and refs to custom types
+  const traverseCustomTypeFields = (
+    name: string,
+    typeDef: any,
+    namesList: string[] = [],
+  ) => {
+    const fields = typeDef.data.fields as Record<string, any>;
+
+    for (const [fieldName, fieldDef] of Object.entries(fields)) {
+      if (isCustomType(fieldDef)) {
+        const customTypeName = `${capitalize(name)}${capitalize(fieldName)}`;
+        namesList.push(customTypeName);
+        traverseCustomTypeFields(customTypeName, fieldDef, namesList);
+      } else if (isRefField(fieldDef)) {
+        const refType = getRefType(fieldDef.data.link, name);
+
+        if (refType.type === 'CustomType') {
+          namesList.push(fieldDef.data.link);
+          traverseCustomTypeFields(fieldDef.data.link, refType.def, namesList);
+        }
+      }
+    }
+
+    return namesList;
+  };
+
+  const nestedCustomTypeNames = traverseCustomTypeFields(
+    customTypeAuthRules.typeName,
+    customTypeDef,
+  );
+
+  return nestedCustomTypeNames;
 }
 
 /**

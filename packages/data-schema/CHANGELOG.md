@@ -1,5 +1,23 @@
 # @aws-amplify/data-schema
 
+## 1.2.8
+
+### Patch Changes
+
+- 2077dd4: fix: nested custom types inherit custom op's auth
+
+## 1.2.7
+
+### Patch Changes
+
+- daff4ed: fix(data): update SchemaProcessor to throw more descriptive errors for Custom Operations
+
+## 1.2.6
+
+### Patch Changes
+
+- 6f9abd0: cleanup
+
 ## 1.2.5
 
 ### Patch Changes

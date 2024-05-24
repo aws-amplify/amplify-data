@@ -112,6 +112,36 @@ describe('CustomOperation transform', () => {
       );
     });
 
+    test('Custom Query w/ no return should throw', () => {
+      const s = a.schema({
+        echo: a
+          .query()
+          .arguments({
+            content: a.string(),
+          })
+          .authorization((allow) => [allow.publicApiKey()])
+          .handler(a.handler.function('someHandler')),
+      });
+
+      expect(() => s.transform()).toThrow(
+        'Invalid Custom Query definition. A Custom Query must include a return type',
+      );
+    });
+
+    test('Custom Mutation w/ no return should throw', () => {
+      const s = a.schema({
+        likePost: a
+          .mutation()
+          .arguments({ postId: a.string() })
+          .authorization((allow) => [allow.publicApiKey()])
+          .handler(a.handler.function('myFunc')),
+      });
+
+      expect(() => s.transform()).toThrow(
+        'Invalid Custom Mutation definition. A Custom Mutation must include a return type',
+      );
+    });
+
     test('Custom Mutation w handler, but no auth rules should throw', () => {
       const s = a.schema({
         likePost: a
@@ -715,6 +745,7 @@ describe('CustomOperation transform', () => {
                   dataSource: 'CommentTable',
                 }),
               ])
+              .returns(a.ref('something'))
               .authorization((allow) => allow.groups(['group1'], 'oidc')),
           });
 
@@ -997,7 +1028,7 @@ describe('.for() modifier', () => {
     const schema = a.schema({
       Model: a.customType({ content: a.string() }),
       /// @ts-expect-error .for() is not a valid modifier function of a.query()
-      myQuery: a.query().for(a.ref('Model')),
+      myQuery: a.query().for(a.ref('Model')).returns(a.ref('something')),
     });
 
     expect(() => schema.transform()).toThrow(
@@ -1009,7 +1040,7 @@ describe('.for() modifier', () => {
     const schema = a.schema({
       Model: a.customType({ content: a.string() }),
       /// @ts-expect-error .for() is not a valid modifier function of a.mutation()
-      myMutation: a.mutation().for(a.ref('Model')),
+      myMutation: a.mutation().for(a.ref('Model')).returns(a.ref('something')),
     });
 
     expect(() => schema.transform()).toThrow(
@@ -1125,6 +1156,141 @@ describe('custom operations + custom type auth inheritance', () => {
     expect(result).toMatchSnapshot();
     expect(result).toEqual(
       expect.stringContaining('type MyQueryReturnType @aws_api_key'),
+    );
+  });
+
+  test('nested custom types inherit auth rules from top-level referencing op', () => {
+    const s = a.schema({
+      myQuery: a
+        .query()
+        .handler(a.handler.function('myFn'))
+        .returns(
+          a.customType({
+            fieldA: a.string(),
+            fieldB: a.integer(),
+            nestedCustomType: a.customType({
+              nestedA: a.string(),
+              nestedB: a.string(),
+              grandChild: a.customType({
+                grandA: a.string(),
+                grandB: a.string(),
+              }),
+            }),
+          }),
+        )
+        .authorization((allow) => allow.publicApiKey()),
+    });
+
+    const result = s.transform().schema;
+
+    expect(result).toMatchSnapshot();
+    expect(result).toEqual(
+      expect.stringContaining('type MyQueryReturnType @aws_api_key'),
+    );
+    expect(result).toEqual(
+      expect.stringContaining(
+        'type MyQueryReturnTypeNestedCustomType @aws_api_key',
+      ),
+    );
+    expect(result).toEqual(
+      expect.stringContaining(
+        'type MyQueryReturnTypeNestedCustomTypeGrandChild @aws_api_key',
+      ),
+    );
+  });
+
+  test('top-level custom type with nested top-level custom types inherits combined auth rules from referencing ops', () => {
+    const s = a.schema({
+      myQuery: a
+        .query()
+        .handler(a.handler.function('myFn'))
+        .returns(a.ref('QueryReturn'))
+        .authorization((allow) => allow.publicApiKey()),
+      myMutation: a
+        .query()
+        .handler(a.handler.function('myFn'))
+        .returns(a.ref('QueryReturn'))
+        .authorization((allow) => allow.authenticated()),
+      QueryReturn: a.customType({
+        fieldA: a.string(),
+        fieldB: a.integer(),
+        nested: a.ref('LevelOne'),
+      }),
+      LevelOne: a.customType({
+        fieldA: a.string(),
+        fieldB: a.integer(),
+        nested: a.ref('LevelTwo'),
+      }),
+      LevelTwo: a.customType({
+        fieldA: a.string(),
+        fieldB: a.integer(),
+      }),
+    });
+
+    const result = s.transform().schema;
+
+    expect(result).toMatchSnapshot();
+    expect(result).toEqual(
+      expect.stringContaining(
+        'type QueryReturn @aws_api_key @aws_cognito_user_pools',
+      ),
+    );
+    expect(result).toEqual(
+      expect.stringContaining(
+        'type LevelOne @aws_api_key @aws_cognito_user_pools',
+      ),
+    );
+    expect(result).toEqual(
+      expect.stringContaining(
+        'type LevelTwo @aws_api_key @aws_cognito_user_pools',
+      ),
+    );
+  });
+
+  test('top-level custom type with nested implicit and explicit custom types inherits combined auth rules from referencing ops', () => {
+    const s = a.schema({
+      myQuery: a
+        .query()
+        .handler(a.handler.function('myFn'))
+        .returns(a.ref('QueryReturn'))
+        .authorization((allow) => allow.publicApiKey()),
+      myMutation: a
+        .query()
+        .handler(a.handler.function('myFn'))
+        .returns(a.ref('QueryReturn'))
+        .authorization((allow) => allow.authenticated()),
+      QueryReturn: a.customType({
+        fieldA: a.string(),
+        fieldB: a.integer(),
+        nested: a.customType({
+          fieldA: a.string(),
+          fieldB: a.integer(),
+          nested: a.ref('LevelTwo'),
+        }),
+      }),
+      LevelTwo: a.customType({
+        fieldA: a.string(),
+        fieldB: a.integer(),
+      }),
+    });
+
+    const result = s.transform().schema;
+
+    expect(result).toMatchSnapshot();
+    expect(result).toEqual(
+      expect.stringContaining(
+        'type QueryReturn @aws_api_key @aws_cognito_user_pools',
+      ),
+    );
+    expect(result).toEqual(
+      expect.stringContaining(
+        'type QueryReturnNested @aws_api_key @aws_cognito_user_pools',
+      ),
+    );
+    expect(result).toEqual(
+      expect.stringContaining(
+        'type LevelTwo @aws_api_key @aws_cognito_user_pools',
+      ),
     );
   });
 });
