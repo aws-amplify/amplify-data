@@ -713,21 +713,35 @@ describe('custom operations', () => {
           Record<string, any> | null
         >,
         context: Context,
-        callback: Callback<{
-          likes: number;
-        } | null>,
-      ) => void | Promise<{
-        likes: number;
-      } | null>;
+        callback: Callback<
+          | {
+              likes: number;
+            }
+          | null
+          | undefined
+        >,
+      ) => void | Promise<
+        | {
+            likes: number;
+          }
+        | null
+        | undefined
+      >;
       args: {
         postId: string;
       };
-      returnType: {
-        likes: number;
-      } | null;
-      type: {
-        likes: number;
-      } | null;
+      returnType:
+        | {
+            likes: number;
+          }
+        | null
+        | undefined;
+      type:
+        | {
+            likes: number;
+          }
+        | null
+        | undefined;
     };
 
     type ActualLikePostInterface = Pick<ActualLikePost, keyof Expected>;
@@ -1086,21 +1100,35 @@ describe('custom operations', () => {
               Record<string, any> | null
             >,
             context: Context,
-            callback: Callback<{
-              resultContent: Nullable<string>;
-            } | null>,
-          ) => void | Promise<{
-            resultContent: Nullable<string>;
-          } | null>;
+            callback: Callback<
+              | {
+                  resultContent?: Nullable<string> | undefined;
+                }
+              | null
+              | undefined
+            >,
+          ) => void | Promise<
+            | {
+                resultContent?: Nullable<string> | undefined;
+              }
+            | null
+            | undefined
+          >;
           args: {
             inputContent: string;
           };
-          returnType: {
-            resultContent: Nullable<string>;
-          } | null;
-          type: {
-            resultContent: Nullable<string>;
-          } | null;
+          returnType:
+            | {
+                resultContent?: Nullable<string> | undefined;
+              }
+            | null
+            | undefined;
+          type:
+            | {
+                resultContent?: Nullable<string> | undefined;
+              }
+            | null
+            | undefined;
         };
 
         type ActualEchoInterface = Pick<ActualEcho, keyof Expected>;

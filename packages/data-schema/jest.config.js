@@ -2,5 +2,5 @@
 module.exports = {
   preset: "ts-jest",
   testEnvironment: "node",
-  testPathIgnorePatterns: ["/node_modules/", "utils.ts", "/fixtures/"]
+  testPathIgnorePatterns: ["/node_modules/", "utils.ts", "/fixtures/", "/MappedTypes/"]
 };

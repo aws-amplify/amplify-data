@@ -95,7 +95,7 @@ describe('implied fields', () => {
     });
     type Schema = ClientSchema<typeof schema>;
 
-    test('repriprocal belongsTo on hasOne has explicitly defined reference fields', () => {
+    test('reciprocal belongsTo on hasOne has explicitly defined reference fields', () => {
       type belongsToA = Expect<
         Equal<Schema['CPKReciprocalChild']['type']['CPKParentIdFieldA'], string>
       >;
@@ -103,7 +103,7 @@ describe('implied fields', () => {
         Equal<Schema['CPKReciprocalChild']['type']['CPKParentIdFieldB'], string>
       >;
     });
-  // });
+  });
 
   describe('schemas with owner/group auth models surface ownership fields', () => {
     const schema = a.schema({
@@ -291,7 +291,7 @@ describe('Enum types', () => {
       title: string;
       status: 'draft' | 'pending' | 'published';
     };
-      
+
     type ExpectedComment = {
       readonly id: string;
       readonly createdAt: string;
@@ -303,7 +303,7 @@ describe('Enum types', () => {
     type ExpectedStatus = 'draft' | 'pending' | 'published';
 
     type testPost = Expect<Equal<ActualPost, ExpectedPost>>;
-    type testComment = Expect<Equal<ActualComment, ExpectedComment>>
+    type testComment = Expect<Equal<ActualComment, ExpectedComment>>;
     type testStatus = Expect<Equal<ActualStatus, ExpectedStatus>>;
   });
 });
@@ -335,7 +335,7 @@ describe('SQL Schema', () => {
 
     type Schema = ClientSchema<typeof modified>;
 
-    type ActualModel = Prettify<Schema['RenamedPost']['type']>
+    type ActualModel = Prettify<Schema['RenamedPost']['type']>;
     type ActualModelPK = Schema['RenamedPost']['identifier'];
 
     type ExpectedModel = {
@@ -343,10 +343,10 @@ describe('SQL Schema', () => {
       title?: string | null;
       author?: string | null;
     };
-    
+
     type ExpectedModelPK = {
-      id: string
-    }
+      id: string;
+    };
 
     type testModel = Expect<Equal<ActualModel, ExpectedModel>>;
     type testModelPK = Expect<Equal<ActualModelPK, ExpectedModelPK>>;
@@ -396,19 +396,19 @@ describe('SQL Schema', () => {
     type ActualTags = Prettify<Schema['tags']['type']>;
 
     type ExpectedPost = {
-          id: string;
-          title?: string | null;
-          author?: string | null;
+      id: string;
+      title?: string | null;
+      author?: string | null;
     };
     type ExpectedComment = {
-          id: string;
-          title?: string | null;
-          author?: string | null;
-        };
+      id: string;
+      title?: string | null;
+      author?: string | null;
+    };
     type ExpectedTags = {
-          id: string;
-          title?: string | null;
-          author?: string | null;
+      id: string;
+      title?: string | null;
+      author?: string | null;
     };
 
     type ActualPostId = Schema['RenamedPost']['identifier'];
@@ -417,9 +417,11 @@ describe('SQL Schema', () => {
     type ExpectedPostId = { id: string };
     type ExpectedCommentId = { id: string };
     type ExpectedTagsId = { id: string };
-      
+
     type testPostModel = Expect<Equal<ActualRenamedPost, ExpectedPost>>;
-    type testCommentModel = Expect<Equal<ActualRenamedComment, ExpectedComment>>;
+    type testCommentModel = Expect<
+      Equal<ActualRenamedComment, ExpectedComment>
+    >;
     type testTagsModel = Expect<Equal<ActualTags, ExpectedTags>>;
 
     type testPostPK = Expect<Equal<ActualPostId, ExpectedPostId>>;

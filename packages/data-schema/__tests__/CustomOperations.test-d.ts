@@ -1,8 +1,14 @@
 import type { Equal, Expect, Prettify } from '@aws-amplify/data-schema-types';
 import type { ExtractModelMeta } from '../src/runtime';
 import { ClientSchema, a } from '../src/index';
-import type { AppSyncResolverHandler } from 'aws-lambda';
+import type {
+  AppSyncResolverHandler,
+  AppSyncResolverEvent,
+  Callback,
+  Context,
+} from 'aws-lambda';
 import { configure } from '../src/ModelSchema';
+import { Nullable } from '../src/ModelField';
 
 describe('custom operations return types', () => {
   describe('when .ref() a basic custom type', () => {
@@ -19,9 +25,7 @@ describe('custom operations return types', () => {
       });
 
       type ReturnType = Prettify<
-        ExtractModelMeta<
-          ClientSchema<typeof schema>
-        >['customOperations']['aQuery']['returnType']
+        ClientSchema<typeof schema>['aQuery']['returnType']
       >;
 
       type Expected = {
@@ -95,9 +99,7 @@ describe('custom operations return types', () => {
       });
 
       type ReturnType = Prettify<
-        ExtractModelMeta<
-          ClientSchema<typeof schema>
-        >['customOperations']['aQuery']['returnType']
+        ClientSchema<typeof schema>['aQuery']['returnType']
       >;
 
       type Expected = {
@@ -197,9 +199,7 @@ describe('custom operations return types', () => {
       });
 
       type ReturnType = Prettify<
-        ExtractModelMeta<
-          ClientSchema<typeof schema>
-        >['customOperations']['aQuery']['returnType']
+        ClientSchema<typeof schema>['aQuery']['returnType']
       >;
 
       type Expected = {
@@ -279,9 +279,7 @@ describe('custom operations return types', () => {
       });
 
       type ReturnType = Prettify<
-        ExtractModelMeta<
-          ClientSchema<typeof schema>
-        >['customOperations']['aQuery']['returnType']
+        ClientSchema<typeof schema>['aQuery']['returnType']
       >;
 
       type Expected = {
@@ -384,9 +382,7 @@ describe('custom operations return types', () => {
       });
 
       type ReturnType = Prettify<
-        ExtractModelMeta<
-          ClientSchema<typeof schema>
-        >['customOperations']['aQuery']['returnType']
+        ClientSchema<typeof schema>['aQuery']['returnType']
       >;
 
       type Expected = 'succeeded' | 'failed';
@@ -456,43 +452,118 @@ describe('RDS custom operations - current DX', () => {
     })
     .authorization((allow) => allow.publicApiKey());
 
-  type ResolvedClientSchema = ClientSchema<typeof s>;
+  type Schema = ClientSchema<typeof s>;
 
   it('adds custom operations to ModelMeta', () => {
-    type ModelMeta = ExtractModelMeta<ResolvedClientSchema>;
-    type Resolved = Prettify<ModelMeta['customOperations']>;
+    type ActualLikePost = Prettify<Schema['likePost']>;
+    type ActualGetLikedPost = Prettify<Schema['getLikedPost']>;
+    type ActualOnLikePost = Prettify<Schema['onLikePost']>;
 
-    type Expected = {
-      likePost: {
-        arguments: {
-          postId?: string | null | undefined;
-          content: string;
-        };
-        returnType: {
-          title?: string | null | undefined;
-        } | null;
-        typeName: 'Mutation';
-        authorization: [];
+    type ExpectedLikePost = {
+      __entityType: 'customMutation';
+      operationType: 'Mutation';
+      functionHandler: (
+        event: AppSyncResolverEvent<
+          {
+            postId?: Nullable<string> | undefined;
+            content: string;
+          },
+          Record<string, any> | null
+        >,
+        context: Context,
+        callback: Callback<
+          | {
+              title?: Nullable<string> | undefined;
+            }
+          | null
+          | undefined
+        >,
+      ) => void | Promise<
+        | {
+            title?: Nullable<string> | undefined;
+          }
+        | null
+        | undefined
+      >;
+      args: {
+        postId?: Nullable<string> | undefined;
+        content: string;
       };
-      getLikedPost: {
-        arguments: never;
-        returnType: {
-          title?: string | null | undefined;
-        } | null;
-        typeName: 'Query';
-        authorization: [];
+      returnType:
+        | {
+            title?: Nullable<string> | undefined;
+          }
+        | null
+        | undefined;
+      type:
+        | {
+            title?: Nullable<string> | undefined;
+          }
+        | null
+        | undefined;
+    };
+
+    type ExpectedGetLikedPost = {
+      __entityType: 'customQuery';
+      operationType: 'Query';
+      functionHandler: (
+        event: AppSyncResolverEvent<never, Record<string, any> | null>,
+        context: Context,
+        callback: Callback<
+          | {
+              title?: Nullable<string> | undefined;
+            }
+          | null
+          | undefined
+        >,
+      ) => void | Promise<
+        | {
+            title?: Nullable<string> | undefined;
+          }
+        | null
+        | undefined
+      >;
+      args: never;
+      returnType:
+        | {
+            title?: Nullable<string> | undefined;
+          }
+        | null
+        | undefined;
+      type:
+        | {
+            title?: Nullable<string> | undefined;
+          }
+        | null
+        | undefined;
+    };
+
+    type ExpectedOnLikePost = {
+      __entityType: 'customSubscription';
+      operationType: 'Subscription';
+      functionHandler: (
+        event: AppSyncResolverEvent<never, Record<string, any> | null>,
+        context: Context,
+        callback: Callback<{
+          title?: Nullable<string> | undefined;
+        }>,
+      ) => void | Promise<{
+        title?: Nullable<string> | undefined;
+      }>;
+      args: never;
+      returnType: {
+        title?: Nullable<string> | undefined;
       };
-      onLikePost: {
-        arguments: never;
-        returnType: {
-          title?: string | null | undefined;
-        } | null;
-        typeName: 'Subscription';
-        authorization: [];
+      type: {
+        title?: Nullable<string> | undefined;
       };
     };
 
-    type _ = Expect<Equal<Resolved, Expected>>;
+    type testLikePost = Expect<Equal<ActualLikePost, ExpectedLikePost>>;
+    type testGetLikedPost = Expect<
+      Equal<ActualGetLikedPost, ExpectedGetLikedPost>
+    >;
+    type testOnLikePost = Expect<Equal<ActualOnLikePost, ExpectedOnLikePost>>;
   });
 });
 
@@ -529,7 +600,120 @@ describe('RDS custom operations - deprecated DX', () => {
     })
     .authorization((allow) => allow.publicApiKey());
 
-  type ResolvedClientSchema = ClientSchema<typeof s>;
+  type Schema = ClientSchema<typeof s>;
+
+  it('adds custom operations to ModelMeta', () => {
+    type ActualLikePost = Prettify<Schema['likePost']>;
+    type ActualGetLikedPost = Prettify<Schema['getLikedPost']>;
+    type ActualOnLikePost = Prettify<Schema['onLikePost']>;
+
+    type ExpectedLikePost = {
+      __entityType: 'customMutation';
+      operationType: 'Mutation';
+      functionHandler: (
+        event: AppSyncResolverEvent<
+          {
+            postId?: Nullable<string> | undefined;
+            content: string;
+          },
+          Record<string, any> | null
+        >,
+        context: Context,
+        callback: Callback<
+          | {
+              title?: Nullable<string> | undefined;
+            }
+          | null
+          | undefined
+        >,
+      ) => void | Promise<
+        | {
+            title?: Nullable<string> | undefined;
+          }
+        | null
+        | undefined
+      >;
+      args: {
+        postId?: Nullable<string> | undefined;
+        content: string;
+      };
+      returnType:
+        | {
+            title?: Nullable<string> | undefined;
+          }
+        | null
+        | undefined;
+      type:
+        | {
+            title?: Nullable<string> | undefined;
+          }
+        | null
+        | undefined;
+    };
+
+    type ExpectedGetLikedPost = {
+      __entityType: 'customQuery';
+      operationType: 'Query';
+      functionHandler: (
+        event: AppSyncResolverEvent<never, Record<string, any> | null>,
+        context: Context,
+        callback: Callback<
+          | {
+              title?: Nullable<string> | undefined;
+            }
+          | null
+          | undefined
+        >,
+      ) => void | Promise<
+        | {
+            title?: Nullable<string> | undefined;
+          }
+        | null
+        | undefined
+      >;
+      args: never;
+      returnType:
+        | {
+            title?: Nullable<string> | undefined;
+          }
+        | null
+        | undefined;
+      type:
+        | {
+            title?: Nullable<string> | undefined;
+          }
+        | null
+        | undefined;
+    };
+
+    type ExpectedOnLikePost = {
+      __entityType: 'customSubscription';
+      operationType: 'Subscription';
+      functionHandler: (
+        event: AppSyncResolverEvent<never, Record<string, any> | null>,
+        context: Context,
+        callback: Callback<{
+          title?: Nullable<string> | undefined;
+        }>,
+      ) => void | Promise<{
+        title?: Nullable<string> | undefined;
+      }>;
+      args: never;
+      returnType: {
+        title?: Nullable<string> | undefined;
+      };
+      type: {
+        title?: Nullable<string> | undefined;
+      };
+    };
+
+    type testLikePost = Expect<Equal<ActualLikePost, ExpectedLikePost>>;
+    type testGetLikedPost = Expect<
+      Equal<ActualGetLikedPost, ExpectedGetLikedPost>
+    >;
+    type testOnLikePost = Expect<Equal<ActualOnLikePost, ExpectedOnLikePost>>;
+  });
+});
 
 describe('.for() modifier', () => {
   it('is unavailable on a.query()', () => {
