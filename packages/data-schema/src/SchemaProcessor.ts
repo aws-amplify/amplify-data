@@ -1276,8 +1276,6 @@ const schemaPreprocessor = (
         }
       }
     } else if (staticSchema) {
-      // eslint-disable-next-line no-debugger
-      // debugger;
       const fields = { ...typeDef.data.fields } as Record<
         string,
         BaseModelField

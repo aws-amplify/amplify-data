@@ -323,8 +323,6 @@ function _rdsSchema<
     authorization: [],
     configuration: config,
   };
-  // eslint-disable-next-line no-debugger
-  // debugger;
   const models = filterSchemaModelTypes(data.types) as any;
   return {
     data,
@@ -368,8 +366,6 @@ function _rdsSchema<
     },
     setRelationships(callback): any {
       const { setRelationships: _, ...rest } = this;
-      // eslint-disable-next-line no-debugger
-      // debugger;
       // The relationships are added via `models.<Model>.relationships`
       // modifiers that's being called within the callback. They are modifying
       // by references on each model, so there is not anything else to be done
