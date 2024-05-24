@@ -1,5 +1,11 @@
 # @aws-amplify/data-schema
 
+## 1.2.8
+
+### Patch Changes
+
+- 2077dd4: fix: nested custom types inherit custom op's auth
+
 ## 1.2.7
 
 ### Patch Changes

@@ -8,7 +8,7 @@
     "docs": {
       "dependsOn": ["build"]
     },
-    "check-api": {},
+    "check:api": {},
     "lint": {},
     "test": {
       "dependsOn": ["^test"]

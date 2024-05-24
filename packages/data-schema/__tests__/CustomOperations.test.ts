@@ -1158,4 +1158,139 @@ describe('custom operations + custom type auth inheritance', () => {
       expect.stringContaining('type MyQueryReturnType @aws_api_key'),
     );
   });
+
+  test('nested custom types inherit auth rules from top-level referencing op', () => {
+    const s = a.schema({
+      myQuery: a
+        .query()
+        .handler(a.handler.function('myFn'))
+        .returns(
+          a.customType({
+            fieldA: a.string(),
+            fieldB: a.integer(),
+            nestedCustomType: a.customType({
+              nestedA: a.string(),
+              nestedB: a.string(),
+              grandChild: a.customType({
+                grandA: a.string(),
+                grandB: a.string(),
+              }),
+            }),
+          }),
+        )
+        .authorization((allow) => allow.publicApiKey()),
+    });
+
+    const result = s.transform().schema;
+
+    expect(result).toMatchSnapshot();
+    expect(result).toEqual(
+      expect.stringContaining('type MyQueryReturnType @aws_api_key'),
+    );
+    expect(result).toEqual(
+      expect.stringContaining(
+        'type MyQueryReturnTypeNestedCustomType @aws_api_key',
+      ),
+    );
+    expect(result).toEqual(
+      expect.stringContaining(
+        'type MyQueryReturnTypeNestedCustomTypeGrandChild @aws_api_key',
+      ),
+    );
+  });
+
+  test('top-level custom type with nested top-level custom types inherits combined auth rules from referencing ops', () => {
+    const s = a.schema({
+      myQuery: a
+        .query()
+        .handler(a.handler.function('myFn'))
+        .returns(a.ref('QueryReturn'))
+        .authorization((allow) => allow.publicApiKey()),
+      myMutation: a
+        .query()
+        .handler(a.handler.function('myFn'))
+        .returns(a.ref('QueryReturn'))
+        .authorization((allow) => allow.authenticated()),
+      QueryReturn: a.customType({
+        fieldA: a.string(),
+        fieldB: a.integer(),
+        nested: a.ref('LevelOne'),
+      }),
+      LevelOne: a.customType({
+        fieldA: a.string(),
+        fieldB: a.integer(),
+        nested: a.ref('LevelTwo'),
+      }),
+      LevelTwo: a.customType({
+        fieldA: a.string(),
+        fieldB: a.integer(),
+      }),
+    });
+
+    const result = s.transform().schema;
+
+    expect(result).toMatchSnapshot();
+    expect(result).toEqual(
+      expect.stringContaining(
+        'type QueryReturn @aws_api_key @aws_cognito_user_pools',
+      ),
+    );
+    expect(result).toEqual(
+      expect.stringContaining(
+        'type LevelOne @aws_api_key @aws_cognito_user_pools',
+      ),
+    );
+    expect(result).toEqual(
+      expect.stringContaining(
+        'type LevelTwo @aws_api_key @aws_cognito_user_pools',
+      ),
+    );
+  });
+
+  test('top-level custom type with nested implicit and explicit custom types inherits combined auth rules from referencing ops', () => {
+    const s = a.schema({
+      myQuery: a
+        .query()
+        .handler(a.handler.function('myFn'))
+        .returns(a.ref('QueryReturn'))
+        .authorization((allow) => allow.publicApiKey()),
+      myMutation: a
+        .query()
+        .handler(a.handler.function('myFn'))
+        .returns(a.ref('QueryReturn'))
+        .authorization((allow) => allow.authenticated()),
+      QueryReturn: a.customType({
+        fieldA: a.string(),
+        fieldB: a.integer(),
+        nested: a.customType({
+          fieldA: a.string(),
+          fieldB: a.integer(),
+          nested: a.ref('LevelTwo'),
+        }),
+      }),
+      LevelTwo: a.customType({
+        fieldA: a.string(),
+        fieldB: a.integer(),
+      }),
+    });
+
+    const result = s.transform().schema;
+
+    expect(result).toMatchSnapshot();
+    expect(result).toEqual(
+      expect.stringContaining(
+        'type QueryReturn @aws_api_key @aws_cognito_user_pools',
+      ),
+    );
+    expect(result).toEqual(
+      expect.stringContaining(
+        'type QueryReturnNested @aws_api_key @aws_cognito_user_pools',
+      ),
+    );
+    expect(result).toEqual(
+      expect.stringContaining(
+        'type LevelTwo @aws_api_key @aws_cognito_user_pools',
+      ),
+    );
+  });
 });
