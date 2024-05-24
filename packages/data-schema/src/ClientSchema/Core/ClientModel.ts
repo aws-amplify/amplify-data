@@ -71,6 +71,7 @@ type SystemFields<IsRDS extends boolean> = IsRDS extends false
     }
   : object;
 
+// refs are not being resolved here ... yet.
 type ModelIdentifier<T extends ModelTypeParamShape> = T['identifier']['pk'] &
   (T['identifier']['sk'] extends never
     ? unknown // unknown collapses in an intersection

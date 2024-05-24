@@ -41,8 +41,6 @@ describe('EnumType', () => {
 
     type EnumsProp = typeof client.enums;
 
-    type T = Schema['Post']['nestedTypes']['status'];
-
     type ExpectedEnumsPropShape = {
       PostStatus: {
         values(): ('draft' | 'pending' | 'published')[];
