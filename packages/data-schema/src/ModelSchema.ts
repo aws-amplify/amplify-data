@@ -117,6 +117,10 @@ type RDSModelSchemaFunctions =
   | 'renameModelFields'
   | 'renameModels';
 
+type OmitFromEach<Models, Modifier extends string> = {
+  [ModelName in keyof Models]: Omit<Models[ModelName], Modifier>;
+};
+
 export type RDSModelSchema<
   T extends RDSModelSchemaParamShape,
   UsedMethods extends RDSModelSchemaFunctions = never,
@@ -173,7 +177,7 @@ export type RDSModelSchema<
     >;
     setAuthorization: (
       callback: (
-        models: BaseSchema<T, true>['models'],
+        models: OmitFromEach<BaseSchema<T, true>['models'], 'secondaryIndexes'>,
         schema: RDSModelSchema<T, UsedMethods | 'setAuthorization'>,
       ) => void,
     ) => RDSModelSchema<T>;
@@ -182,7 +186,12 @@ export type RDSModelSchema<
         Partial<Record<keyof T['types'], RelationshipTemplate>>
       >,
     >(
-      callback: (models: BaseSchema<T, true>['models']) => Relationships,
+      callback: (
+        models: OmitFromEach<
+          BaseSchema<T, true>['models'],
+          'authorization' | 'fields' | 'secondaryIndexes'
+        >,
+      ) => Relationships,
     ) => RDSModelSchema<
       UnionToIntersection<Relationships[number]> extends infer RelationshipsDefs
         ? RelationshipsDefs extends Record<string, RelationshipTemplate>
