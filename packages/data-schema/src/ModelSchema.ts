@@ -117,14 +117,9 @@ type RDSModelSchemaFunctions =
   | 'renameModelFields'
   | 'renameModels';
 
-type OmitModelModifier<Models, Modifier extends string> = {
+type OmitFromEach<Models, Modifier extends string> = {
   [ModelName in keyof Models]: Omit<Models[ModelName], Modifier>;
 };
-// Or w/out argument, if folks think a few helpers like this
-// would make things more clear:
-// type OmitSecondaryIndexes<T> = {
-//   [K in keyof T]: Omit<T[K], 'secondaryIndexes'>;
-// };
 
 export type RDSModelSchema<
   T extends RDSModelSchemaParamShape,
@@ -182,17 +177,7 @@ export type RDSModelSchema<
     >;
     setAuthorization: (
       callback: (
-        models: OmitFromModels<
-          BaseSchema<T, true>['models'],
-          'secondaryIndexes'
-        >,
-        // Or this, if folks don't like the helper:
-        // models: {
-        //   [K in keyof BaseSchema<T, true>['models']]: Omit<
-        //     BaseSchema<T, true>['models'][K],
-        //     'secondaryIndexes'
-        //   >;
-        // },
+        models: OmitFromEach<BaseSchema<T, true>['models'], 'secondaryIndexes'>,
         schema: RDSModelSchema<T, UsedMethods | 'setAuthorization'>,
       ) => void,
     ) => RDSModelSchema<T>;
@@ -202,7 +187,7 @@ export type RDSModelSchema<
       >,
     >(
       callback: (
-        models: OmitFromModels<
+        models: OmitFromEach<
           BaseSchema<T, true>['models'],
           'authorization' | 'fields' | 'secondaryIndexes'
         >,
