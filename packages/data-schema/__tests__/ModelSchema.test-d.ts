@@ -1,18 +1,8 @@
-import { type ModelType, type InternalModel, model } from '../src/ModelType';
-import {
-  type ModelField,
-  type InternalField,
-  string,
-  id,
-} from '../src/ModelField';
-import {
-  type ModelSchema,
-  type InternalSchema,
-  schema,
-} from '../src/ModelSchema';
+import { type ModelType, model } from '../src/ModelType';
+import { string, id } from '../src/ModelField';
+import { schema } from '../src/ModelSchema';
 import { configure } from '../src/internals';
-
-type GetModelTypeArg<T> = T extends ModelType<infer R, any> ? R : never;
+import { a } from '../src/index';
 
 const fakeSecret = () => ({}) as any;
 
@@ -43,6 +33,46 @@ describe('ModelSchema', () => {
           title: string(),
         }),
       });
+    });
+  });
+  describe('SQL schema unsupported modifiers', () => {
+    it('expected errors for unsupported `setAuthorization` modifiers', () => {
+      const sqlSchema = configure({ database: datasourceConfigMySQL })
+        .schema({
+          post: a.model({
+            id: a.string().required(),
+            title: a.string(),
+          }),
+        })
+        .setAuthorization((models) => [
+          // @ts-expect-error - not supported
+          models.post.secondaryIndexes((index) => [index('title')]),
+          // @ts-expect-error - not supported
+          models.post.addRelationship,
+        ]);
+    });
+    it('expected errors for unsupported `setRelationship` modifiers', () => {
+      const sqlSchema = configure({ database: datasourceConfigMySQL })
+        .schema({
+          post: a.model({
+            id: a.string().required(),
+            title: a.string(),
+            author: a.string(),
+          }),
+        })
+        .setAuthorization((models) => [
+          models.post.authorization((allow) => allow.publicApiKey()),
+        ])
+        .setRelationships((models) => [
+          // @ts-expect-error - not supported
+          models.post.secondaryIndexes((index) => [index('title')]),
+          // @ts-expect-error - not supported
+          models.post.authorization((allow) => allow.publicApiKey()),
+          // @ts-expect-error - not supported
+          models.post.fields.title.authorization((allow) =>
+            allow.publicApiKey(),
+          ),
+        ]);
     });
   });
 });

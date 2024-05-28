@@ -1,5 +1,11 @@
 # @aws-amplify/data-schema
 
+## 1.2.9
+
+### Patch Changes
+
+- 9bf3b4d: fix[data]: omit unnecessary fields from SQL APIs
+
 ## 1.2.8
 
 ### Patch Changes
