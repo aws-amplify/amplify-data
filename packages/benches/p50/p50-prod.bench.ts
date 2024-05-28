@@ -596,7 +596,7 @@ bench('prod p50', () => {
       ]),
     // [Global authorization rule]
   }).authorization((allow) => allow.publicApiKey());
-}).types([20636, 'instantiations']);
+}).types([20835, 'instantiations']);
 
 bench('prod p50 w/ client types', () => {
   const s = a
@@ -1188,7 +1188,7 @@ bench('prod p50 w/ client types', () => {
     .authorization((allow) => allow.publicApiKey());
 
   type _ = ClientSchema<typeof s>;
-}).types([566944, 'instantiations']);
+}).types([22777, 'instantiations']);
 
 bench('prod p50 combined w/ client types', () => {
   const s1 = a.schema({
@@ -1781,4 +1781,4 @@ bench('prod p50 combined w/ client types', () => {
 
   const s = a.combine([s1, s2]);
   type _ = ClientSchema<typeof s>;
-}).types([1442422, 'instantiations']);
+}).types([26955, 'instantiations']);
