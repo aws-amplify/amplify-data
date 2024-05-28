@@ -538,129 +538,113 @@ export type ModelTypesClient<
   >;
 };
 
-// type ModelTypesSSRCookies<
-//   ModelName extends string,
-//   Model extends Record<string, unknown>,
-//   ModelMeta extends ModelMetaShape,
-//   Enums extends Record<string, string>,
-//   FlatModel extends Record<string, unknown> = ResolvedModel<Model>,
-// > = IndexQueryMethodsFromIR<
-//   ModelMeta['secondaryIndexes'],
-//   ModelName,
-//   Model,
-//   Enums
-// > & {
-//   create: (
-//     model: Prettify<CreateModelInput<Model, ModelMeta>>,
-//     options?: {
-//       authMode?: AuthMode;
-//       authToken?: string;
-//       headers?: CustomHeaders;
-//     },
-//   ) => SingularReturnValue<Model>;
-//   update: (
-//     model: Prettify<ModelIdentifier<ModelMeta> & Partial<MutationInput<Model>>>,
-//     options?: {
-//       authMode?: AuthMode;
-//       authToken?: string;
-//       headers?: CustomHeaders;
-//     },
-//   ) => SingularReturnValue<Model>;
-//   delete: (
-//     identifier: ModelIdentifier<ModelMeta>,
-//     options?: {
-//       authMode?: AuthMode;
-//       authToken?: string;
-//       headers?: CustomHeaders;
-//     },
-//   ) => SingularReturnValue<Model>;
-//   get<SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[]>(
-//     identifier: ModelIdentifier<ModelMeta>,
-//     options?: {
-//       selectionSet?: SelectionSet;
-//       authMode?: AuthMode;
-//       authToken?: string;
-//       headers?: CustomHeaders;
-//     },
-//   ): SingularReturnValue<Prettify<ReturnValue<Model, FlatModel, SelectionSet>>>;
-//   list<SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[]>(
-//     options?: ListCpkOptions<Model> & {
-//       filter?: ModelFilter<Model>;
-//       sortDirection?: ModelSortDirection;
-//       limit?: number;
-//       nextToken?: string | null;
-//       selectionSet?: SelectionSet;
-//       authMode?: AuthMode;
-//       authToken?: string;
-//       headers?: CustomHeaders;
-//     },
-//   ): ListReturnValue<Prettify<ReturnValue<Model, FlatModel, SelectionSet>>>;
-// };
+type ModelTypesSSRCookies<
+  Model extends ClientSchemaByEntityTypeBaseShape['models'][string],
+  FlatModel extends Record<string, unknown> = ResolvedModel<Model['type']>,
+> = IndexQueryMethods<Model> & {
+  create: (
+    model: Model['createType'],
+    options?: {
+      authMode?: AuthMode;
+      authToken?: string;
+      headers?: CustomHeaders;
+    },
+  ) => SingularReturnValue<Model>;
+  update: (
+    model: Model['updateType'],
+    options?: {
+      authMode?: AuthMode;
+      authToken?: string;
+      headers?: CustomHeaders;
+    },
+  ) => SingularReturnValue<Model>;
+  delete: (
+    identifier: Model['deleteType'],
+    options?: {
+      authMode?: AuthMode;
+      authToken?: string;
+      headers?: CustomHeaders;
+    },
+  ) => SingularReturnValue<Model>;
+  get<SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[]>(
+    identifier: Model['identifier'],
+    options?: {
+      selectionSet?: SelectionSet;
+      authMode?: AuthMode;
+      authToken?: string;
+      headers?: CustomHeaders;
+    },
+  ): SingularReturnValue<Prettify<ReturnValue<Model, FlatModel, SelectionSet>>>;
+  list<SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[]>(
+    options?: ListCpkOptions<Model> & {
+      filter?: ModelFilter<Model>;
+      sortDirection?: ModelSortDirection;
+      limit?: number;
+      nextToken?: string | null;
+      selectionSet?: SelectionSet;
+      authMode?: AuthMode;
+      authToken?: string;
+      headers?: CustomHeaders;
+    },
+  ): ListReturnValue<Prettify<ReturnValue<Model, FlatModel, SelectionSet>>>;
+};
 
-// type ModelTypesSSRRequest<
-//   ModelName extends string,
-//   Model extends Record<string, unknown>,
-//   ModelMeta extends ModelMetaShape,
-//   Enums extends Record<string, string>,
-//   FlatModel extends Record<string, unknown> = ResolvedModel<Model>,
-// > = IndexQueryMethodsFromIR<
-//   ModelMeta['secondaryIndexes'],
-//   ModelName,
-//   Model,
-//   Enums
-// > & {
-//   create: (
-//     // TODO: actual type
-//     contextSpec: any,
-//     model: Prettify<CreateModelInput<Model, ModelMeta>>,
-//     options?: {
-//       authMode?: AuthMode;
-//       authToken?: string;
-//       headers?: CustomHeaders;
-//     },
-//   ) => SingularReturnValue<Model>;
-//   update: (
-//     contextSpec: any,
-//     model: Prettify<ModelIdentifier<ModelMeta> & Partial<MutationInput<Model>>>,
-//     options?: {
-//       authMode?: AuthMode;
-//       authToken?: string;
-//       headers?: CustomHeaders;
-//     },
-//   ) => SingularReturnValue<Model>;
-//   delete: (
-//     contextSpec: any,
-//     identifier: ModelIdentifier<ModelMeta>,
-//     options?: {
-//       authMode?: AuthMode;
-//       authToken?: string;
-//       headers?: CustomHeaders;
-//     },
-//   ) => SingularReturnValue<Model>;
-//   get<SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[]>(
-//     contextSpec: any,
-//     identifier: ModelIdentifier<ModelMeta>,
-//     options?: {
-//       selectionSet?: SelectionSet;
-//       authMode?: AuthMode;
-//       authToken?: string;
-//       headers?: CustomHeaders;
-//     },
-//   ): SingularReturnValue<Prettify<ReturnValue<Model, FlatModel, SelectionSet>>>;
-//   list<SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[]>(
-//     contextSpec: any,
-//     options?: ListCpkOptions<Model> & {
-//       filter?: ModelFilter<Model>;
-//       sortDirection?: ModelSortDirection;
-//       limit?: number;
-//       nextToken?: string | null;
-//       selectionSet?: SelectionSet;
-//       authMode?: AuthMode;
-//       authToken?: string;
-//       headers?: CustomHeaders;
-//     },
-//   ): ListReturnValue<Prettify<ReturnValue<Model, FlatModel, SelectionSet>>>;
-// };
+type ModelTypesSSRRequest<
+  Model extends ClientSchemaByEntityTypeBaseShape['models'][string],
+  FlatModel extends Record<string, unknown> = ResolvedModel<Model['type']>,
+> = IndexQueryMethods<Model> & {
+  create: (
+    // TODO: actual type
+    contextSpec: any,
+    model: Model['createType'],
+    options?: {
+      authMode?: AuthMode;
+      authToken?: string;
+      headers?: CustomHeaders;
+    },
+  ) => SingularReturnValue<Model>;
+  update: (
+    contextSpec: any,
+    model: Model['updateType'],
+    options?: {
+      authMode?: AuthMode;
+      authToken?: string;
+      headers?: CustomHeaders;
+    },
+  ) => SingularReturnValue<Model>;
+  delete: (
+    contextSpec: any,
+    identifier: Model['deleteType'],
+    options?: {
+      authMode?: AuthMode;
+      authToken?: string;
+      headers?: CustomHeaders;
+    },
+  ) => SingularReturnValue<Model>;
+  get<SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[]>(
+    contextSpec: any,
+    identifier: Model['identifier'],
+    options?: {
+      selectionSet?: SelectionSet;
+      authMode?: AuthMode;
+      authToken?: string;
+      headers?: CustomHeaders;
+    },
+  ): SingularReturnValue<Prettify<ReturnValue<Model, FlatModel, SelectionSet>>>;
+  list<SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[]>(
+    contextSpec: any,
+    options?: ListCpkOptions<Model> & {
+      filter?: ModelFilter<Model>;
+      sortDirection?: ModelSortDirection;
+      limit?: number;
+      nextToken?: string | null;
+      selectionSet?: SelectionSet;
+      authMode?: AuthMode;
+      authToken?: string;
+      headers?: CustomHeaders;
+    },
+  ): ListReturnValue<Prettify<ReturnValue<Model, FlatModel, SelectionSet>>>;
+};
 
 type ContextType = 'CLIENT' | 'COOKIES' | 'REQUEST';
 
@@ -671,11 +655,11 @@ export type ModelTypes<
 > = {
   [ModelName in keyof Schema['models']]: Context extends 'CLIENT'
     ? ModelTypesClient<Schema['models'][ModelName]>
-    : // : Context extends 'COOKIES'
-      //   ? ModelTypesSSRCookies<Schema['models'][ModelName]>
-      //   : Context extends 'REQUEST'
-      //     ? ModelTypesSSRRequest<Schema['models'][ModelName]>
-      never;
+    : Context extends 'COOKIES'
+      ? ModelTypesSSRCookies<Schema['models'][ModelName]>
+      : Context extends 'REQUEST'
+        ? ModelTypesSSRRequest<Schema['models'][ModelName]>
+        : never;
 };
 
 export type CustomQueries<

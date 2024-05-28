@@ -3,6 +3,11 @@ import { generateModels } from '@aws-amplify/graphql-generator';
 import { generateClient as actualGenerateClient } from 'aws-amplify/api';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import {
+  generateServerClientUsingCookies as actualGenerateServerClientUsingCookies,
+  generateServerClientUsingReqRes as actualGenerateServerClientUsingReqRes,
+} from '@aws-amplify/adapter-nextjs/data';
+// eslint-disable-next-line import/no-extraneous-dependencies
+import {
   GraphQLAPI,
   GraphQLResult as RuntimeGraphQLResult,
 } from '@aws-amplify/api-graphql';
@@ -87,36 +92,47 @@ export function mockedGenerateClient(
 ) {
   const subs = {} as Record<string, Subscriber<any>>;
 
-  function generateClient<T extends Record<any, any>>(config?: any) {
-    const client = actualGenerateClient<T>();
-    _graphqlspy.mockImplementation(async () => {
-      const result = responses.shift();
+  _graphqlspy.mockImplementation(async () => {
+    const result = responses.shift();
 
-      if (typeof result === 'function') {
-        return result();
-      } else {
-        if (
-          result &&
-          Array.isArray(result.errors) &&
-          result.errors.length > 0
-        ) {
-          throw createMockGraphQLResultWithError(
-            result.data,
-            new Error(result.errors[0].message),
-          );
-        }
-        return result as unknown as GraphQLResult<T>;
+    if (typeof result === 'function') {
+      return result();
+    } else {
+      if (result && Array.isArray(result.errors) && result.errors.length > 0) {
+        throw createMockGraphQLResultWithError(
+          result.data,
+          new Error(result.errors[0].message),
+        );
       }
+      return result;
+    }
+  });
+
+  _graphqlsubspy.mockImplementation((amplify: any, options: any) => {
+    const graphql = print(options.query);
+    const operationMatch = graphql.match(/\s+(on(Create|Update|Delete)\w+)/);
+    const operation = operationMatch?.[1];
+    return new Observable((subscriber) => {
+      operation && (subs[operation] = subscriber);
     });
-    _graphqlsubspy.mockImplementation((amplify: any, options: any) => {
-      const graphql = print(options.query);
-      const operationMatch = graphql.match(/\s+(on(Create|Update|Delete)\w+)/);
-      const operation = operationMatch?.[1];
-      return new Observable((subscriber) => {
-        operation && (subs[operation] = subscriber);
-      });
-    });
-    return client;
+  });
+
+  function generateClient<T extends Record<any, any>>(
+    options?: Parameters<typeof actualGenerateClient>[0],
+  ) {
+    return actualGenerateClient<T>(options);
+  }
+
+  function generateServerClientUsingCookies<T extends Record<any, any>>(
+    options: Parameters<typeof actualGenerateServerClientUsingCookies>[0],
+  ) {
+    return actualGenerateServerClientUsingCookies<T>(options);
+  }
+
+  function generateServerClientUsingReqRes<T extends Record<any, any>>(
+    options: Parameters<typeof actualGenerateServerClientUsingReqRes>[0],
+  ) {
+    return actualGenerateServerClientUsingReqRes(options);
   }
 
   return {
@@ -125,6 +141,8 @@ export function mockedGenerateClient(
     subSpy: _graphqlsubspy,
     subs,
     generateClient,
+    generateServerClientUsingCookies,
+    generateServerClientUsingReqRes,
   };
 }
 
