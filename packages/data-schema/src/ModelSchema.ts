@@ -117,8 +117,8 @@ type RDSModelSchemaFunctions =
   | 'renameModelFields'
   | 'renameModels';
 
-type OmitFromModels<T, K extends keyof any> = {
-  [P in keyof T]: Omit<T[P], K>;
+type OmitModelModifier<Models, Modifier extends string> = {
+  [ModelName in keyof Models]: Omit<Models[ModelName], Modifier>;
 };
 // Or w/out argument, if folks think a few helpers like this
 // would make things more clear:
