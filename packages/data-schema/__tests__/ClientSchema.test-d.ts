@@ -391,7 +391,7 @@ describe('SQL Schema', () => {
         models.RenamedComment.authorization((allow) => allow.publicApiKey()),
         // tags is unchanged, since we didn't rename it
         models.tags.authorization((allow) => allow.publicApiKey()),
-        // @ts-expect-error - todo (should not exist:)
+        // @ts-expect-error
         models.tags.secondaryIndexes,
       ]);
 
