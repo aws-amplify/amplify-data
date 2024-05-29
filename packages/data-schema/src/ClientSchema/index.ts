@@ -73,7 +73,7 @@ type ClientSchemaProperty<
           : never;
 
 type RemapEnum<_T extends ModelSchemaContents, E> =
-  E extends EnumType<infer values> ? ClientEnum<values> : 'a';
+  E extends EnumType<infer values> ? ClientEnum<values> : never;
 
 type RemapCustomType<
   T extends ModelSchemaContents,
@@ -83,7 +83,7 @@ type RemapCustomType<
 > =
   E extends CustomType<infer CT>
     ? ClientCustomType<InternalClientSchema<T, Metadata, IsRDS>, CT>
-    : 'b';
+    : never;
 
 type RemapCustomOperation<
   T extends ModelSchemaContents,
@@ -93,7 +93,7 @@ type RemapCustomOperation<
 > =
   E extends CustomOperation<infer CO, any>
     ? ClientCustomOperation<InternalClientSchema<T, Metadata, IsRDS>, CO>
-    : 'c';
+    : never;
 
 type RemapModel<
   T extends ModelSchemaContents,
@@ -110,7 +110,7 @@ type RemapModel<
         MT,
         K
       >
-    : 'd';
+    : never;
 
 type GetInternalClientSchema<Schema> =
   Schema extends GenericModelSchema<any> ? InternalClientSchema<Schema> : never;
@@ -140,8 +140,6 @@ type InternalCombinedSchema<
     : never;
 }>;
 
-// not sure where to put these types yet
-
 export type ClientSchemaByEntityTypeBaseShape = {
   enums: Record<string, ClientEnum<any>>;
   customTypes: Record<string, ClientCustomType<any, any>>;
@@ -155,11 +153,7 @@ export type ClientSchemaByEntityType<T> = {
   enums: Select<T, { __entityType: 'enum' }>;
   customTypes: Select<T, { __entityType: 'customType' }>;
   models: Select<T, { __entityType: 'model' }>;
-
   queries: Select<T, { __entityType: 'customQuery' }>;
   mutations: Select<T, { __entityType: 'customMutation' }>;
   subscriptions: Select<T, { __entityType: 'customSubscription' }>;
-
-  // TODO: appsync handlers? ... do we need something distinct here ... brain is stuck.
-  // handlers: Select<T, { __entityType: 'customHandler' }>;
 };

@@ -1,11 +1,10 @@
 import type { RefTypeParamShape } from '../../RefType';
 
 /**
- * `a.ref()` resolution specific to custom operations, for which `a.ref()`
- * can refer to a model, custom type, or enum.
+ * Dereferences an `a.ref()` against a given "bag" of independently resolved types.
  *
- * This utility is a duplication of ResolveRef (src/MappedTypes/ResolveFieldProperties.ts)
- * with the addition that allows .ref() a model with custom operations.
+ * This util will examine the ref for requiredness and array-ness and wrap/augment
+ * to referred-to type accordingly.
  */
 export type ResolveRef<
   RefShape extends RefTypeParamShape,

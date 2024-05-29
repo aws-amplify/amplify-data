@@ -248,8 +248,7 @@ export type ModelPath<
  * 
  * ```
  */
-// TODO: temporarily exported for troubleshooting
-export type ResolvedModel<
+type ResolvedModel<
   Model extends Record<string, unknown>,
   Depth extends number = 7,
   RecursionLoop extends number[] = [-1, 0, 1, 2, 3, 4, 5, 6],
@@ -769,14 +768,6 @@ export type RequestOptions = {
 export type CustomHeaders =
   | Record<string, string>
   | ((requestOptions?: RequestOptions) => Promise<Record<string, string>>);
-
-type FilteredKeys<T> = {
-  [P in keyof T]: T[P] extends never ? never : P;
-}[keyof T];
-
-type _ExcludeNeverFields<O> = {
-  [K in FilteredKeys<O>]: O[K];
-};
 
 export type ClientExtensions<T extends Record<any, any> = never> = {
   models: ModelTypes<T, 'CLIENT'>;

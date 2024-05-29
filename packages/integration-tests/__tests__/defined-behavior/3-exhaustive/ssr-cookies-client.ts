@@ -87,7 +87,7 @@ describe('something', () => {
       },
     });
 
+    // Just sanity-checking that types are present, for now.
     await client.models.StandaloneModel.get({ id: 'something' });
-    console.log(optionsAndHeaders(spy));
   });
 });
