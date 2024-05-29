@@ -1,6 +1,7 @@
 import type {
   deferredRefResolvingPrefix,
   ModelTypeParamShape,
+  ModelDefaultIdentifier,
 } from '../../ModelType';
 import type { ClientSchemaProperty } from './ClientSchemaProperty';
 import type { Authorization, ImpliedAuthFields } from '../../Authorization';
@@ -60,7 +61,7 @@ type ClientFields<
   IsRDS extends boolean,
   T extends ModelTypeParamShape,
 > = ResolveFields<Bag, T['fields']> &
-  If<Not<IsRDS>, ModelIdentifier<Bag, T>> &
+  If<Not<IsRDS>, ImplicitIdentifier<T>> &
   AuthFields<Metadata, T> &
   Omit<SystemFields<IsRDS>, keyof ResolveFields<Bag, T['fields']>>;
 
@@ -81,8 +82,23 @@ type ModelIdentifier<
     (T['identifier']['sk'] extends never ? unknown : T['identifier']['sk'])
 >;
 
-type ResolveIdentifierFields<Model, Identifier> = {
-  [K in keyof Identifier]: K extends keyof Model ? Model[K] : string;
+/**
+ * Separate util for *injecting* the default implicit identifier for performance
+ * reasons. The full ModelIdentifer util needs to extract types from the fields
+ * matching the explicitly defined field types. Contrast that to **injecting** PK
+ * fields into the model, which is only done specifically when the default of
+ * `readonly id: string` is being injected IF AND ONLY IF another `id` field is
+ * not already present on the model.
+ */
+type ImplicitIdentifier<T extends ModelTypeParamShape> =
+  T['identifier']['pk'] extends ModelDefaultIdentifier['pk']
+    ? 'id' extends keyof T['fields']
+      ? unknown
+      : ModelDefaultIdentifier['pk']
+    : unknown;
+
+type ResolveIdentifierFields<Model, IdentifierFields> = {
+  [K in keyof IdentifierFields]: K extends keyof Model ? Model[K] : string;
 };
 
 type If<

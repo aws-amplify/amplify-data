@@ -355,7 +355,7 @@ export const isSchemaModelType = (
   );
 };
 
-type ModelDefaultIdentifier = {
+export type ModelDefaultIdentifier = {
   pk: { readonly id: string };
   sk: never;
   compositeSk: never;
