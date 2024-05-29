@@ -5,7 +5,7 @@ import { generateClient } from 'aws-amplify/api';
 
 const selectionSet = ['field1'] as const;
 
-bench('baseline', () => {}).types([0, 'instantiations']);
+bench('baseline', () => {}).types();
 
 bench('70 simple models with 1 field each w/ client types', async () => {
   const s = a
@@ -252,4 +252,4 @@ bench('70 simple models with 1 field each w/ client types', async () => {
   await client.models.Model1.delete({ id: result.data!.id });
 
   await client.models.Model1.list({ selectionSet });
-}).types([224018, 'instantiations']);
+}).types();
