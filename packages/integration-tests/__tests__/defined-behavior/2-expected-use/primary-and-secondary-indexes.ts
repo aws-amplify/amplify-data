@@ -5,7 +5,10 @@ import {
   buildAmplifyConfig,
   mockedGenerateClient,
   optionsAndHeaders,
+  expectSchemaModelContains,
   expectSchemaModelExcludes,
+  expectSelectionSetContains,
+  expectVariables,
 } from '../../utils';
 import type {
   ModelPrimaryCompositeKeyInput,
@@ -236,6 +239,152 @@ describe('Primary Indexes', () => {
             sk1: 'a',
             sk2: 1,
           },
+        },
+      });
+    });
+  });
+
+  // Outstanding bug in graphql schema generation.
+  describe.skip('A model with custom identifier, enum PK', () => {
+    const schema = a
+      .schema({
+        Category: a.enum(['cats', 'dogs']),
+        Model: a
+          .model({
+            category: a.ref('Category').required(),
+            name: a.string().required(),
+            content: a.string(),
+          })
+          .identifier(['category', 'name']),
+      })
+      .authorization((allow) => allow.publicApiKey());
+    type Schema = ClientSchema<typeof schema>;
+
+    afterEach(() => {
+      jest.clearAllMocks();
+    });
+
+    test('the client schema type has all PK fields', () => {
+      type _PKStringIsPresent = Expect<
+        Equal<'cats' | 'dogs', Schema['Model']['type']['category']>
+      >;
+      type _SKStringIsPresent = Expect<
+        Equal<string, Schema['Model']['type']['name']>
+      >;
+    });
+
+    test('the generated graphql includes custom PK fields', async () => {
+      console.log(schema.transform().schema);
+      expectSchemaModelContains({
+        schema: schema.transform().schema,
+        model: 'Model',
+        field: 'category',
+        type: { enum: 'Category' } as any,
+        isArray: false,
+        isRequired: true,
+      });
+      expectSchemaModelContains({
+        schema: schema.transform().schema,
+        model: 'Model',
+        field: 'name',
+        type: 'String',
+        isArray: false,
+        isRequired: true,
+      });
+    });
+
+    test('the generated modelIntrospection schema contains the PK field and metadata', async () => {
+      const { modelIntrospection } = await buildAmplifyConfig(schema);
+      expect(modelIntrospection.models['Model'].primaryKeyInfo).toEqual(
+        expect.objectContaining({
+          isCustomPrimaryKey: true,
+          primaryKeyFieldName: 'category',
+          sortKeyFieldNames: ['name'],
+        }),
+      );
+      expect(modelIntrospection.models['Model']['fields']['category']).toEqual(
+        expect.objectContaining({
+          isArray: false,
+          isRequired: true,
+          name: 'customPK',
+          type: { enum: 'Category' },
+        }),
+      );
+      expect(modelIntrospection.models['Model']['fields']['name']).toEqual(
+        expect.objectContaining({
+          isArray: false,
+          isRequired: true,
+          name: 'name',
+          type: 'String',
+        }),
+      );
+    });
+
+    test('the client typing requires all identifier fields in by-PK operations', async () => {
+      const config = await buildAmplifyConfig(schema);
+      Amplify.configure(config);
+      const { spy, generateClient } = mockedGenerateClient([
+        { data: null }, // 1
+        { data: null }, // 2
+        { data: null }, // 3
+        { data: null }, // 4
+        { data: null }, // 5
+      ]);
+
+      const client = generateClient<Schema>();
+
+      // Allowed
+      await client.models.Model.get({
+        category: 'cats',
+        name: 'Garfield',
+      }); // 1
+      await client.models.Model.delete({
+        category: 'dogs',
+        name: 'Odie',
+      }); // 2
+
+      // Missing field is disallowed (but notably no *runtime* exception for this currently)
+
+      // @ts-expect-error
+      await client.models.Model.get({}); // 3
+      // @ts-expect-error
+      await client.models.Model.delete({}); // 4
+
+      // RED HERRING. We don't currently throw at runtime.
+      // Disallowed by types and fails runtime validation
+      // // @ts-expect-error
+      // await expect(client.models.Model.get()).rejects.toThrow(); // 5
+    });
+
+    test('the client includes all identifier fields in selection sets', async () => {
+      const config = await buildAmplifyConfig(schema);
+      Amplify.configure(config);
+      const { spy, generateClient } = mockedGenerateClient([
+        { data: { listModels: { items: [] } } },
+      ]);
+      const client = generateClient<Schema>();
+      await client.models.Model.list();
+
+      expectSelectionSetContains(spy, ['category', 'name']);
+    });
+
+    test('the client can filter on `customId`', async () => {
+      const config = await buildAmplifyConfig(schema);
+      Amplify.configure(config);
+      const { spy, generateClient } = mockedGenerateClient([
+        { data: { listModels: { items: [] } } },
+      ]);
+      const client = generateClient<Schema>();
+      await client.models.Model.list({
+        filter: {
+          category: { eq: 'dogs' },
+          name: { eq: 'Odie' },
+        },
+      });
+      expectVariables(spy, {
+        filter: {
+          category: { eq: 'dogs' },
+          name: { eq: 'Odie' },
         },
       });
     });

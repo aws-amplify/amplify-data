@@ -193,6 +193,84 @@ describe('implied fields', () => {
   });
 });
 
+describe('Identifiers', () => {
+  test('Default PK', () => {
+    const schema = a.schema({
+      Post: a.model({
+        title: a.string(),
+      }),
+    });
+
+    type Schema = ClientSchema<typeof schema>;
+    type ActualPK = Schema['Post']['identifier'];
+    type ExpectedPK = {
+      readonly id: string;
+    };
+
+    type test = Expect<Equal<ActualPK, ExpectedPK>>;
+  });
+
+  test('Default identifier with explicit id field', () => {
+    const schema = a.schema({
+      Post: a.model({
+        id: a.integer().required(),
+        title: a.string(),
+      }),
+    });
+
+    type Schema = ClientSchema<typeof schema>;
+    type ActualPK = Schema['Post']['identifier'];
+    type ExpectedPK = {
+      readonly id: number;
+    };
+
+    type test = Expect<Equal<ActualPK, ExpectedPK>>;
+  });
+
+  test('Explicit CPK', () => {
+    const schema = a.schema({
+      Post: a
+        .model({
+          category: a.string().required(),
+          subcat: a.string().required(),
+          title: a.string(),
+        })
+        .identifier(['category', 'subcat']),
+    });
+
+    type Schema = ClientSchema<typeof schema>;
+    type ActualPK = Schema['Post']['identifier'];
+    type ExpectedPK = {
+      category: string;
+      subcat: string;
+    };
+
+    type test = Expect<Equal<ActualPK, ExpectedPK>>;
+  });
+
+  test('Explicit CPK with enum', () => {
+    const schema = a.schema({
+      Category: a.enum(['Cats', 'Dogs', 'Fish I guess']),
+      Post: a
+        .model({
+          category: a.ref('Category').required(),
+          subcat: a.string().required(),
+          title: a.string(),
+        })
+        .identifier(['category', 'subcat']),
+    });
+
+    type Schema = ClientSchema<typeof schema>;
+    type ActualPK = Schema['Post']['identifier'];
+    type ExpectedPK = {
+      category: 'Cats' | 'Dogs' | 'Fish I guess';
+      subcat: string;
+    };
+
+    type test = Expect<Equal<ActualPK, ExpectedPK>>;
+  });
+});
+
 describe('Enum types', () => {
   test('Inline Enum Type', () => {
     const s = a.schema({

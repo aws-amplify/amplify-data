@@ -41,8 +41,8 @@ export interface ClientModel<
   updateType: Prettify<
     UpdateModelInput<ClientModel<Bag, Metadata, IsRDS, T, K>>
   >;
-  deleteType: Prettify<ModelIdentifier<T>>;
-  identifier: ShallowPretty<ModelIdentifier<T>>;
+  deleteType: Prettify<ModelIdentifier<Bag, T>>;
+  identifier: ShallowPretty<ModelIdentifier<Bag, T>>;
   nestedTypes: NestedTypes<ClientFields<Bag, Metadata, IsRDS, T>, T>;
   secondaryIndexes: IndexQueryMethodsFromIR<Bag, T['secondaryIndexes'], K>;
   __meta: {
@@ -60,7 +60,7 @@ type ClientFields<
   IsRDS extends boolean,
   T extends ModelTypeParamShape,
 > = ResolveFields<Bag, T['fields']> &
-  If<ModelIdentifier<T>, Not<IsRDS>> &
+  If<Not<IsRDS>, ModelIdentifier<Bag, T>> &
   AuthFields<Metadata, T> &
   Omit<SystemFields<IsRDS>, keyof ResolveFields<Bag, T['fields']>>;
 
@@ -72,14 +72,24 @@ type SystemFields<IsRDS extends boolean> = IsRDS extends false
   : object;
 
 // refs are not being resolved here ... yet.
-type ModelIdentifier<T extends ModelTypeParamShape> = T['identifier']['pk'] &
-  (T['identifier']['sk'] extends never
-    ? unknown // unknown collapses in an intersection
-    : T['identifier']['sk']);
+type ModelIdentifier<
+  Bag extends Record<string, unknown>,
+  T extends ModelTypeParamShape,
+> = ResolveIdentifierFields<
+  ResolveFields<Bag, T['fields']>,
+  T['identifier']['pk'] &
+    (T['identifier']['sk'] extends never ? unknown : T['identifier']['sk'])
+>;
 
-type If<T, IfTrue extends boolean, Default = unknown> = IfTrue extends true
-  ? T
-  : Default;
+type ResolveIdentifierFields<Model, Identifier> = {
+  [K in keyof Identifier]: K extends keyof Model ? Model[K] : string;
+};
+
+type If<
+  ConditionResult extends boolean,
+  IfTrueValue,
+  IfFalseValue = unknown,
+> = ConditionResult extends true ? IfTrueValue : IfFalseValue;
 
 type Not<T extends boolean> = T extends true ? false : true;
 
