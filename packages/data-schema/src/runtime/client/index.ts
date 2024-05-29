@@ -443,8 +443,7 @@ type IndexQueryMethod<
   },
 ) => ListReturnValue<Prettify<ReturnValue<Model, FlatModel, SelectionSet>>>;
 
-// TODO: remove export. added for debugging.
-export type ModelTypesClient<
+type ModelTypesClient<
   Model extends ClientSchemaByEntityTypeBaseShape['models'][string],
   FlatModel extends Record<string, unknown> = ResolvedModel<Model['type']>,
 > = IndexQueryMethods<Model> & {
