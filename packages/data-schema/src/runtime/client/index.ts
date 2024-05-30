@@ -63,7 +63,7 @@ type WithOptionalsAsNullishOnly<T> =
 /**
  * Selection set-aware CRUDL operation return value type
  *
- * @returns model type as-is with default selection set; otherwise generates return type from custom sel. set
+ * @returns model type with default selection set; otherwise generates return type from custom sel. set. Optionality is removed from both return types.
  */
 type ReturnValue<
   M extends ClientSchemaByEntityTypeBaseShape['models'][string],
