@@ -721,15 +721,15 @@ export type CustomOperations<
       ...params: CustomOperationFnParams<OperationDefs[OpName]['args']>
     ) => // we only generate subscriptions on the clientside; so this isn't applied to COOKIES | REQUEST
     OperationDefs[OpName]['operationType'] extends 'Subscription'
-      ? ObservedReturnValue<OperationDefs[OpName]['returnType']>
-      : SingularReturnValue<OperationDefs[OpName]['returnType']>;
+      ? ObservedReturnValue<OperationDefs[OpName]['type']>
+      : SingularReturnValue<OperationDefs[OpName]['type']>;
     COOKIES: (
       ...params: CustomOperationFnParams<OperationDefs[OpName]['args']>
-    ) => SingularReturnValue<OperationDefs[OpName]['returnType']>;
+    ) => SingularReturnValue<OperationDefs[OpName]['type']>;
     REQUEST: (
       contextSpec: any,
       ...params: CustomOperationFnParams<OperationDefs[OpName]['args']>
-    ) => SingularReturnValue<OperationDefs[OpName]['returnType']>;
+    ) => SingularReturnValue<OperationDefs[OpName]['type']>;
   }[Context];
 };
 
