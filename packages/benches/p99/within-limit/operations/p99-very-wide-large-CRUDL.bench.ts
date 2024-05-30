@@ -1,7 +1,7 @@
 import { bench } from '@arktype/attest';
 import { a, ClientSchema } from '@aws-amplify/data-schema';
-// import { Amplify } from 'aws-amplify';
-// import { generateClient } from 'aws-amplify/api';
+import { Amplify } from 'aws-amplify';
+import { generateClient } from 'aws-amplify/api';
 
 bench('baseline', () => {}).types([0, 'instantiations']);
 
@@ -10119,39 +10119,38 @@ bench(
       })
       .authorization((allow) => allow.publicApiKey());
 
-    type _ = ClientSchema<typeof schema>;
+    type Schema = ClientSchema<typeof schema>;
 
-    // TODO:
-    // Amplify.configure({
-    //   API: {
-    //     GraphQL: {
-    //       apiKey: 'apikey',
-    //       defaultAuthMode: 'apiKey',
-    //       endpoint: 'https://0.0.0.0/graphql',
-    //       region: 'us-east-1',
-    //     },
-    //   },
-    // });
+    Amplify.configure({
+      API: {
+        GraphQL: {
+          apiKey: 'apikey',
+          defaultAuthMode: 'apiKey',
+          endpoint: 'https://0.0.0.0/graphql',
+          region: 'us-east-1',
+        },
+      },
+    });
 
-    // const client = generateClient<Schema>();
+    const client = generateClient<Schema>();
 
-    // const result = await client.models.Model35.create({
-    //   field1: 'test',
-    //   field2: 'test',
-    //   field3: 'test',
-    //   field4: 'test',
-    //   field5: 'test',
-    // });
+    const result = await client.models.Model35.create({
+      field1: 'test',
+      field2: 'test',
+      field3: 'test',
+      field4: 'test',
+      field5: 'test',
+    });
 
-    // await client.models.Model35.get({ id: result.data.id });
+    await client.models.Model35.get({ id: result.data!.id });
 
-    // await client.models.Model35.update({
-    //   id: result.data.id,
-    //   field200: 'Updated Field 200',
-    // });
+    await client.models.Model35.update({
+      id: result.data!.id,
+      field200: 'Updated Field 200',
+    });
 
-    // await client.models.Model35.delete({ id: result.data.id });
+    await client.models.Model35.delete({ id: result.data!.id });
 
-    // await client.models.Model35.list();
+    await client.models.Model35.list();
   },
-).types([5494, 'instantiations']);
+).types([3538774, 'instantiations']);

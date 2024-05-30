@@ -1,7 +1,7 @@
 import { bench } from '@arktype/attest';
 import { a, ClientSchema } from '@aws-amplify/data-schema';
-// import { Amplify } from 'aws-amplify';
-// import { generateClient } from 'aws-amplify/api';
+import { Amplify } from 'aws-amplify';
+import { generateClient } from 'aws-amplify/api';
 
 bench('baseline', () => {}).types([0, 'instantiations']);
 
@@ -4581,34 +4581,33 @@ bench('1522 simple models with 1 field each CRUDL', async () => {
     })
     .authorization((allow) => allow.publicApiKey());
 
-  type _ = ClientSchema<typeof schema>;
+  type Schema = ClientSchema<typeof schema>;
 
-  // TODO:
-  // Amplify.configure({
-  //   API: {
-  //     GraphQL: {
-  //       apiKey: 'apikey',
-  //       defaultAuthMode: 'apiKey',
-  //       endpoint: 'https://0.0.0.0/graphql',
-  //       region: 'us-east-1',
-  //     },
-  //   },
-  // });
+  Amplify.configure({
+    API: {
+      GraphQL: {
+        apiKey: 'apikey',
+        defaultAuthMode: 'apiKey',
+        endpoint: 'https://0.0.0.0/graphql',
+        region: 'us-east-1',
+      },
+    },
+  });
 
-  // const client = generateClient<Schema>();
+  const client = generateClient<Schema>();
 
-  // const result = await client.models.Model1.create({
-  //   field1: 'Field 1',
-  // });
+  const result = await client.models.Model1.create({
+    field1: 'Field 1',
+  });
 
-  // await client.models.Model1.get({ id: result.data.id });
+  await client.models.Model1.get({ id: result.data!.id });
 
-  // await client.models.Model1.update({
-  //   id: result.data.id,
-  //   field1: 'Updated Field 1',
-  // });
+  await client.models.Model1.update({
+    id: result.data!.id,
+    field1: 'Updated Field 1',
+  });
 
-  // await client.models.Model1.delete({ id: result.data.id });
+  await client.models.Model1.delete({ id: result.data!.id });
 
-  // await client.models.Model1.list();
-}).types([27769, 'instantiations']);
+  await client.models.Model1.list();
+}).types([774407, 'instantiations']);
