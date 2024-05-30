@@ -1,5 +1,11 @@
 import type { Equal, Expect, Prettify } from '@aws-amplify/data-schema-types';
-import type { ExtractModelMeta } from '../src/runtime';
+import type {
+  AuthMode,
+  CustomHeaders,
+  ClientExtensions,
+  ListReturnValue,
+  SingularReturnValue,
+} from '../src/runtime';
 import { ClientSchema, a } from '../src/index';
 import type {
   AppSyncResolverHandler,
@@ -254,6 +260,84 @@ describe('custom operations return types', () => {
       type _T1 = Expect<Equal<ActualArgs, ExpectedArgs>>;
       type _T2 = Expect<Equal<ActualResult, ExpectedResult>>;
       type _T3 = Expect<Equal<ActualHandler, ExpectedFunctionHandler>>;
+    });
+  });
+
+  describe('when .ref() is a model with a relationships', () => {
+    const schema = a.schema({
+      Post: a.model({
+        content: a.string().required(),
+        comments: a.hasMany('Comment', 'postId'),
+      }),
+      Comment: a.model({
+        body: a.string().required(),
+        postId: a.id().required(),
+        post: a.belongsTo('Post', 'postId'),
+      }),
+      likePost: a
+        .mutation()
+        .arguments({ postId: a.id().required() })
+        .handler(a.handler.function('someHandler'))
+        .returns(a.ref('Post').required()),
+    });
+
+    type Schema = ClientSchema<typeof schema>;
+    type LikePost = Prettify<Schema['likePost']>;
+
+    it('generates correct return type', () => {
+      type Expected = {
+        readonly id: string;
+        readonly createdAt: string;
+        readonly updatedAt: string;
+        content: string;
+      };
+
+      type _ = Expect<Equal<LikePost['returnType'], Expected>>;
+    });
+
+    it('generates the correct type', () => {
+      type Expected = {
+        content: string;
+        comments: (
+          options?:
+            | {
+                authMode?: AuthMode | undefined;
+                authToken?: string | undefined;
+                limit?: number | undefined;
+                nextToken?: string | null | undefined;
+                headers?: CustomHeaders | undefined;
+              }
+            | undefined,
+        ) => ListReturnValue<{
+          body: string;
+          postId: string;
+          post: (
+            options?:
+              | {
+                  authMode?: AuthMode | undefined;
+                  authToken?: string | undefined;
+                  headers?: CustomHeaders | undefined;
+                }
+              | undefined,
+          ) => SingularReturnValue<Schema['Post']['type'] | null>;
+          readonly id: string;
+          readonly createdAt: string;
+          readonly updatedAt: string;
+        }>;
+        readonly id: string;
+        readonly createdAt: string;
+        readonly updatedAt: string;
+      };
+
+      type _ = Expect<Equal<LikePost['type'], Expected>>;
+    });
+
+    it(`returns Schema['CustomOpName']['type']`, async () => {
+      const client = {} as ClientExtensions<Schema>;
+      const { data } = await client.mutations.likePost({ postId: 'some-id' });
+
+      // expect no type errors
+      const post: Schema['Post']['type'] = data!;
     });
   });
 

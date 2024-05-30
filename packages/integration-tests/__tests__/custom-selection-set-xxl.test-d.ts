@@ -1051,8 +1051,8 @@ describe('Custom Selection Set XXL', () => {
             readonly blogs2: {
               readonly posts2: {
                 readonly comments2: {
-                  readonly field1: string | null | undefined;
-                  readonly field50: string | null | undefined;
+                  readonly field1: string | null;
+                  readonly field50: string | null;
                 }[];
               }[];
             }[];

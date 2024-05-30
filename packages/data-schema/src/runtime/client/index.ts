@@ -49,18 +49,31 @@ type NonRelationalFields<M extends Model> = {
     : Field]: M[Field];
 };
 
+type WithOptionalsAsNullishOnly<T> =
+  T extends Array<infer ArrayType>
+    ? Array<WithOptionalsAsNullishOnly<ArrayType>>
+    : T extends (...args: any) => any
+      ? T
+      : T extends object
+        ? {
+            [K in keyof T]-?: WithOptionalsAsNullishOnly<T[K]>;
+          }
+        : Exclude<T, undefined>;
+
 /**
  * Selection set-aware CRUDL operation return value type
  *
- * @returns model type as-is with default selection set; otherwise generates return type from custonm sel. set
+ * @returns model type with default selection set; otherwise generates return type from custom sel. set. Optionality is removed from both return types.
  */
 type ReturnValue<
   M extends ClientSchemaByEntityTypeBaseShape['models'][string],
   FlatModel extends Model,
   Paths extends ReadonlyArray<ModelPath<FlatModel>>,
 > = Paths extends undefined | never[]
-  ? M['type']
-  : CustomSelectionSetReturnValue<FlatModel, Paths[number]>;
+  ? WithOptionalsAsNullishOnly<M['type']>
+  : WithOptionalsAsNullishOnly<
+      CustomSelectionSetReturnValue<FlatModel, Paths[number]>
+    >;
 
 /**
  * This mapped type traverses the SelectionSetReturnValue result and the original FlatModel, restoring array types
@@ -273,7 +286,9 @@ export type SelectionSet<
   Model extends Record<string, unknown>,
   Path extends ReadonlyArray<ModelPath<FlatModel>>,
   FlatModel extends Record<string, unknown> = ResolvedModel<Model>,
-> = CustomSelectionSetReturnValue<FlatModel, Path[number]>;
+> = WithOptionalsAsNullishOnly<
+  CustomSelectionSetReturnValue<FlatModel, Path[number]>
+>;
 // #endregion
 
 // #region Interfaces copied from `graphql` package
@@ -706,15 +721,15 @@ export type CustomOperations<
       ...params: CustomOperationFnParams<OperationDefs[OpName]['args']>
     ) => // we only generate subscriptions on the clientside; so this isn't applied to COOKIES | REQUEST
     OperationDefs[OpName]['operationType'] extends 'Subscription'
-      ? ObservedReturnValue<OperationDefs[OpName]['returnType']>
-      : SingularReturnValue<OperationDefs[OpName]['returnType']>;
+      ? ObservedReturnValue<OperationDefs[OpName]['type']>
+      : SingularReturnValue<OperationDefs[OpName]['type']>;
     COOKIES: (
       ...params: CustomOperationFnParams<OperationDefs[OpName]['args']>
-    ) => SingularReturnValue<OperationDefs[OpName]['returnType']>;
+    ) => SingularReturnValue<OperationDefs[OpName]['type']>;
     REQUEST: (
       contextSpec: any,
       ...params: CustomOperationFnParams<OperationDefs[OpName]['args']>
-    ) => SingularReturnValue<OperationDefs[OpName]['returnType']>;
+    ) => SingularReturnValue<OperationDefs[OpName]['type']>;
   }[Context];
 };
 
