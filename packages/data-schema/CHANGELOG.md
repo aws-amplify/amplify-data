@@ -1,5 +1,11 @@
 # @aws-amplify/data-schema
 
+## 1.3.0
+
+### Minor Changes
+
+- 73b128b: Internal types perf refactor; Additional ClientSchema types
+
 ## 1.2.9
 
 ### Patch Changes
