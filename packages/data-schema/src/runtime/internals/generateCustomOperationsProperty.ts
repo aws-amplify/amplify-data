@@ -37,12 +37,12 @@ export function generateCustomOperationsProperty<
   config: GraphQLProviderConfig['GraphQL'],
   operationsType: OpType,
   getInternals: ClientInternalsGetter,
-): OpType extends 'queries' ? CustomQueries<T> : CustomMutations<T> {
+): CustomOpsProperty<T, OpType> {
   // some bundlers end up with `Amplify.configure` being called *after* generate client.
   // if that occurs, we need to *not error* while we wait. handling for late configuration
   // occurs in `generateClient()`. we do not need to subscribe to Hub events here.
   if (!config) {
-    return {} as any;
+    return {} as CustomOpsProperty<T, OpType>;
   }
 
   const modelIntrospection: ModelIntrospectionSchema | undefined =
@@ -50,14 +50,14 @@ export function generateCustomOperationsProperty<
 
   // model intro schema might be absent if there's not actually a configured GraphQL API
   if (!modelIntrospection) {
-    return {} as any;
+    return {} as CustomOpsProperty<T, OpType>;
   }
 
   // custom operations will be absent from model intro schema if no custom ops
   // are present on the source schema.
   const operations = modelIntrospection[operationsType];
   if (!operations) {
-    return {} as any;
+    return {} as CustomOpsProperty<T, OpType>;
   }
 
   const ops = {} as CustomOpsProperty<T, OpType>;
@@ -73,7 +73,7 @@ export function generateCustomOperationsProperty<
     );
   }
 
-  return ops as any;
+  return ops as CustomOpsProperty<T, OpType>;
 }
 
 export function generateCustomMutationsProperty<T extends Record<any, any>>(

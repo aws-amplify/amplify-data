@@ -7,7 +7,6 @@ import type {
   GenericModelSchema,
   ModelSchemaContents,
   ModelType,
-  // RDSModelSchema,
 } from '../ModelSchema';
 
 import type {
