@@ -1,17 +1,24 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 import {
-  DeepReadOnlyObject,
-  UnwrapArray,
-  UnionToIntersection,
-  Prettify,
-  Equal,
+  type DeepReadOnlyObject,
+  type UnwrapArray,
+  type UnionToIntersection,
+  type Prettify,
   __modelMeta__,
-  ExtractModelMeta,
-  IsEmptyStringOrNever,
 } from '@aws-amplify/data-schema-types';
 import type { Observable } from 'rxjs';
-import { deferredRefResolvingPrefix } from '../../ModelType';
+import type {
+  ClientSchemaByEntityType,
+  ClientSchemaByEntityTypeBaseShape,
+} from '../../ClientSchema';
+import type { ExtractNestedTypes } from '../../ClientSchema/utilities/';
+import type {
+  Select,
+  StringFilter,
+  NumericFilter,
+  BooleanFilters,
+} from '../../util';
 
 // temporarily export symbols from `data-schema-types` because in case part of the
 // problem with the runtime -> data-schema migration comes down to a mismatch
@@ -42,18 +49,31 @@ type NonRelationalFields<M extends Model> = {
     : Field]: M[Field];
 };
 
+type WithOptionalsAsNullishOnly<T> =
+  T extends Array<infer ArrayType>
+    ? Array<WithOptionalsAsNullishOnly<ArrayType>>
+    : T extends (...args: any) => any
+      ? T
+      : T extends object
+        ? {
+            [K in keyof T]-?: WithOptionalsAsNullishOnly<T[K]>;
+          }
+        : Exclude<T, undefined>;
+
 /**
  * Selection set-aware CRUDL operation return value type
  *
- * @returns model type as-is with default selection set; otherwise generates return type from custonm sel. set
+ * @returns model type with default selection set; otherwise generates return type from custom sel. set. Optionality is removed from both return types.
  */
 type ReturnValue<
-  M extends Model,
+  M extends ClientSchemaByEntityTypeBaseShape['models'][string],
   FlatModel extends Model,
   Paths extends ReadonlyArray<ModelPath<FlatModel>>,
 > = Paths extends undefined | never[]
-  ? M
-  : CustomSelectionSetReturnValue<FlatModel, Paths[number]>;
+  ? WithOptionalsAsNullishOnly<M['type']>
+  : WithOptionalsAsNullishOnly<
+      CustomSelectionSetReturnValue<FlatModel, Paths[number]>
+    >;
 
 /**
  * This mapped type traverses the SelectionSetReturnValue result and the original FlatModel, restoring array types
@@ -241,8 +261,7 @@ export type ModelPath<
  * 
  * ```
  */
-// TODO: temporarily exported for troubleshooting
-export type ResolvedModel<
+type ResolvedModel<
   Model extends Record<string, unknown>,
   Depth extends number = 7,
   RecursionLoop extends number[] = [-1, 0, 1, 2, 3, 4, 5, 6],
@@ -267,54 +286,9 @@ export type SelectionSet<
   Model extends Record<string, unknown>,
   Path extends ReadonlyArray<ModelPath<FlatModel>>,
   FlatModel extends Record<string, unknown> = ResolvedModel<Model>,
-> = CustomSelectionSetReturnValue<FlatModel, Path[number]>;
-// #endregion
-
-// #region Input mapped types
-
-export type ModelIdentifier<ModelMeta extends ModelMetaShape> =
-  ModelMeta['identifier']['pk'] &
-    (ModelMeta['identifier']['sk'] extends never
-      ? unknown // unknown collapses in an intersection
-      : ModelMeta['identifier']['sk']);
-
-type IfEquals<X, Y, A = X, B = never> =
-  (<T>() => T extends X ? 1 : 2) extends <T>() => T extends Y ? 1 : 2 ? A : B;
-
-// Excludes readonly fields from Record type
-type WritableKeys<T> = {
-  [P in keyof T]-?: IfEquals<
-    { [Q in P]: T[P] },
-    { -readonly [Q in P]: T[P] },
-    P
-  >;
-}[keyof T];
-
-/**
- * All required fields and relational fields, exclude readonly fields
- */
-type MutationInput<
-  Fields,
-  WritableFields = Pick<Fields, WritableKeys<Fields>>,
-> = {
-  [Prop in keyof WritableFields as WritableFields[Prop] extends (
-    ...args: any
-  ) => any
-    ? never
-    : Prop]: WritableFields[Prop];
-};
-
-/**
- * All identifiers and fields used to create a model
- */
-type CreateModelInput<
-  Model extends Record<string, unknown>,
-  ModelMeta extends ModelMetaShape,
-> =
-  Equal<ModelIdentifier<ModelMeta>, { id: string }> extends true
-    ? Partial<ModelIdentifier<ModelMeta>> & Omit<MutationInput<Model>, 'id'>
-    : MutationInput<Model>;
-
+> = WithOptionalsAsNullishOnly<
+  CustomSelectionSetReturnValue<FlatModel, Path[number]>
+>;
 // #endregion
 
 // #region Interfaces copied from `graphql` package
@@ -393,7 +367,7 @@ export type ObserveQueryReturnValue<T> = Observable<{
   isSynced: boolean;
 }>;
 
-export type LazyLoader<Model, IsArray extends boolean> = (
+export type LazyLoader<T, IsArray extends boolean> = (
   options?: IsArray extends true
     ? {
         authMode?: AuthMode;
@@ -408,8 +382,8 @@ export type LazyLoader<Model, IsArray extends boolean> = (
         headers?: CustomHeaders;
       },
 ) => IsArray extends true
-  ? ListReturnValue<Prettify<NonNullable<Model>>>
-  : SingularReturnValue<Prettify<Model>>;
+  ? ListReturnValue<Prettify<NonNullable<T>>>
+  : SingularReturnValue<Prettify<T>>;
 
 export type AuthMode =
   | 'apiKey'
@@ -420,169 +394,100 @@ export type AuthMode =
   | 'lambda'
   | 'none';
 
-type LogicalFilters<Model extends Record<any, any>> = {
+type LogicalFilters<
+  Model extends ClientSchemaByEntityTypeBaseShape['models'][string],
+> = {
   and?: ModelFilter<Model> | ModelFilter<Model>[];
   or?: ModelFilter<Model> | ModelFilter<Model>[];
   not?: ModelFilter<Model>;
 };
 
-/**
- * Filter options that can be used on fields where size checks are supported.
- */
-type SizeFilter = {
-  between?: [number, number];
-  eq?: number;
-  ge?: number;
-  gt?: number;
-  le?: number;
-  lt?: number;
-  ne?: number;
-};
-
-/**
- * Not actually sure if/how customer can pass this through as variables yet.
- * Leaving it out for now:
- *
- * attributeType: "binary" | "binarySet" | "bool" | "list" | "map" | "number" | "numberSet" | "string" | "stringSet" | "_null"
- */
-
-/**
- * Filters options that can be used on string-like fields.
- */
-export type StringFilter<T extends string = string> = {
-  attributeExists?: boolean;
-  beginsWith?: string;
-  between?: [string, string];
-  contains?: string;
-  eq?: T;
-  ge?: string;
-  gt?: string;
-  le?: string;
-  lt?: string;
-  ne?: T;
-  notContains?: string;
-  size?: SizeFilter;
-};
-
-export type NumericFilter = {
-  attributeExists?: boolean;
-  between?: [number, number];
-  eq?: number;
-  ge?: number;
-  gt?: number;
-  le?: number;
-  lt?: number;
-  ne?: number;
-};
-
-type BooleanFilters = {
-  attributeExists?: boolean;
-  eq?: boolean;
-  ne?: boolean;
-};
-
-/**
- * A composite SK (in an identifier or secondaryIndex) resolves to this type for
- * list queries and index queries
- * 
- * @example
- * Given
- * ```ts
- * MyModel: a
-  .model({
-    pk: a.string().required(),
-    sk1: a.string().required(),
-    sk2: a.integer().required(),
-  })
-  .identifier(['pk', 'sk1', 'sk2']),
- * ``` 
- * Expected list options: 
- * ```ts
- * {
- *   pk?: string
- *   sk1Sk2?: ModelPrimaryCompositeKeyConditionInput
- * }
- * ```
- * Where ModelPrimaryCompositeKeyConditionInput resolves to:
- * ```ts
- * {
- *   eq: {sk1: string; sk2: number};
- *   le: {sk1: string; sk2: number};
- *   lt: {sk1: string; sk2: number};
- *   ge: {sk1: string; sk2: number};
- *   gt: {sk1: string; sk2: number};
- *   between: [ {sk1: string; sk2: number} ];
- *   beginsWith: {sk1: string; sk2: number};
- * }
- * ```
- * */
-export type ModelPrimaryCompositeKeyInput<
-  SkIr extends Record<string, string | number>,
-> = {
-  eq?: SkIr;
-  le?: SkIr;
-  lt?: SkIr;
-  ge?: SkIr;
-  gt?: SkIr;
-  between?: [SkIr];
-  beginsWith?: SkIr;
-};
-
-type ModelFilter<Model extends Record<any, any>> = LogicalFilters<Model> & {
-  [K in keyof Model as Model[K] extends LazyLoader<any, any>
+type ModelFilter<
+  Model extends ClientSchemaByEntityTypeBaseShape['models'][string],
+> = LogicalFilters<Model> & {
+  [K in keyof Model['type'] as Model['type'][K] extends LazyLoader<any, any>
     ? never
-    : K]?: boolean extends Model[K]
+    : K]?: boolean extends Model['type'][K]
     ? BooleanFilters
-    : number extends Model[K]
+    : number extends Model['type'][K]
       ? NumericFilter
       : StringFilter;
 };
 
 export type ModelSortDirection = 'ASC' | 'DESC';
 
-type ModelMetaShape = {
-  secondaryIndexes: SecondaryIndexIrShape[];
-  identifier: PrimaryIndexIrShape;
+type ListCpkOptions<
+  Model extends ClientSchemaByEntityTypeBaseShape['models'][string],
+> = unknown extends Model['__meta']['listOptionsPkParams']
+  ? unknown
+  : Model['__meta']['listOptionsPkParams'] & {
+      sortDirection?: ModelSortDirection;
+    };
+
+interface ClientSecondaryIndexField {
+  input: object;
+}
+
+type IndexQueryMethods<
+  Model extends ClientSchemaByEntityTypeBaseShape['models'][string],
+> = {
+  [K in keyof Select<
+    Model['secondaryIndexes'],
+    ClientSecondaryIndexField
+  >]: IndexQueryMethod<
+    Model,
+    Select<Model['secondaryIndexes'], ClientSecondaryIndexField>[K]
+  >;
 };
 
-export type ModelTypesClient<
-  ModelName extends string,
-  Model extends Record<string, unknown>,
-  ModelMeta extends ModelMetaShape,
-  Enums extends Record<string, string>,
-  FlatModel extends Record<string, unknown> = ResolvedModel<Model>,
-> = IndexQueryMethodsFromIR<
-  ModelMeta['secondaryIndexes'],
-  ModelName,
-  Model,
-  Enums
-> & {
+type IndexQueryMethod<
+  Model extends ClientSchemaByEntityTypeBaseShape['models'][string],
+  Method extends ClientSecondaryIndexField,
+  FlatModel extends Record<string, unknown> = ResolvedModel<Model['type']>,
+> = <SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[]>(
+  input: Method['input'],
+  options?: {
+    filter?: ModelFilter<Model>;
+    sortDirection?: ModelSortDirection;
+    limit?: number;
+    nextToken?: string | null;
+    selectionSet?: SelectionSet;
+    authMode?: AuthMode;
+    authToken?: string;
+    headers?: CustomHeaders;
+  },
+) => ListReturnValue<Prettify<ReturnValue<Model, FlatModel, SelectionSet>>>;
+
+type ModelTypesClient<
+  Model extends ClientSchemaByEntityTypeBaseShape['models'][string],
+  FlatModel extends Record<string, unknown> = ResolvedModel<Model['type']>,
+> = IndexQueryMethods<Model> & {
   create: (
-    model: Prettify<CreateModelInput<Model, ModelMeta>>,
+    model: Model['createType'],
     options?: {
       authMode?: AuthMode;
       authToken?: string;
       headers?: CustomHeaders;
     },
-  ) => SingularReturnValue<Model>;
+  ) => SingularReturnValue<Model['type']>;
   update: (
-    model: Prettify<ModelIdentifier<ModelMeta> & Partial<MutationInput<Model>>>,
+    model: Model['updateType'],
     options?: {
       authMode?: AuthMode;
       authToken?: string;
       headers?: CustomHeaders;
     },
-  ) => SingularReturnValue<Model>;
+  ) => SingularReturnValue<Model['type']>;
   delete: (
-    identifier: ModelIdentifier<ModelMeta>,
+    identifier: Model['deleteType'],
     options?: {
       authMode?: AuthMode;
       authToken?: string;
       headers?: CustomHeaders;
     },
-  ) => SingularReturnValue<Model>;
+  ) => SingularReturnValue<Model['type']>;
   get<SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[]>(
-    identifier: ModelIdentifier<ModelMeta>,
+    identifier: Model['identifier'],
     options?: {
       selectionSet?: SelectionSet;
       authMode?: AuthMode;
@@ -591,7 +496,7 @@ export type ModelTypesClient<
     },
   ): SingularReturnValue<Prettify<ReturnValue<Model, FlatModel, SelectionSet>>>;
   list<SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[]>(
-    options?: ListPkOptions<ModelMeta, Enums> & {
+    options?: ListCpkOptions<Model> & {
       filter?: ModelFilter<Model>;
       limit?: number;
       nextToken?: string | null;
@@ -647,19 +552,11 @@ export type ModelTypesClient<
 };
 
 type ModelTypesSSRCookies<
-  ModelName extends string,
-  Model extends Record<string, unknown>,
-  ModelMeta extends ModelMetaShape,
-  Enums extends Record<string, string>,
-  FlatModel extends Record<string, unknown> = ResolvedModel<Model>,
-> = IndexQueryMethodsFromIR<
-  ModelMeta['secondaryIndexes'],
-  ModelName,
-  Model,
-  Enums
-> & {
+  Model extends ClientSchemaByEntityTypeBaseShape['models'][string],
+  FlatModel extends Record<string, unknown> = ResolvedModel<Model['type']>,
+> = IndexQueryMethods<Model> & {
   create: (
-    model: Prettify<CreateModelInput<Model, ModelMeta>>,
+    model: Model['createType'],
     options?: {
       authMode?: AuthMode;
       authToken?: string;
@@ -667,7 +564,7 @@ type ModelTypesSSRCookies<
     },
   ) => SingularReturnValue<Model>;
   update: (
-    model: Prettify<ModelIdentifier<ModelMeta> & Partial<MutationInput<Model>>>,
+    model: Model['updateType'],
     options?: {
       authMode?: AuthMode;
       authToken?: string;
@@ -675,7 +572,7 @@ type ModelTypesSSRCookies<
     },
   ) => SingularReturnValue<Model>;
   delete: (
-    identifier: ModelIdentifier<ModelMeta>,
+    identifier: Model['deleteType'],
     options?: {
       authMode?: AuthMode;
       authToken?: string;
@@ -683,7 +580,7 @@ type ModelTypesSSRCookies<
     },
   ) => SingularReturnValue<Model>;
   get<SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[]>(
-    identifier: ModelIdentifier<ModelMeta>,
+    identifier: Model['identifier'],
     options?: {
       selectionSet?: SelectionSet;
       authMode?: AuthMode;
@@ -692,7 +589,7 @@ type ModelTypesSSRCookies<
     },
   ): SingularReturnValue<Prettify<ReturnValue<Model, FlatModel, SelectionSet>>>;
   list<SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[]>(
-    options?: ListPkOptions<ModelMeta, Enums> & {
+    options?: ListCpkOptions<Model> & {
       filter?: ModelFilter<Model>;
       sortDirection?: ModelSortDirection;
       limit?: number;
@@ -706,21 +603,13 @@ type ModelTypesSSRCookies<
 };
 
 type ModelTypesSSRRequest<
-  ModelName extends string,
-  Model extends Record<string, unknown>,
-  ModelMeta extends ModelMetaShape,
-  Enums extends Record<string, string>,
-  FlatModel extends Record<string, unknown> = ResolvedModel<Model>,
-> = IndexQueryMethodsFromIR<
-  ModelMeta['secondaryIndexes'],
-  ModelName,
-  Model,
-  Enums
-> & {
+  Model extends ClientSchemaByEntityTypeBaseShape['models'][string],
+  FlatModel extends Record<string, unknown> = ResolvedModel<Model['type']>,
+> = IndexQueryMethods<Model> & {
   create: (
     // TODO: actual type
     contextSpec: any,
-    model: Prettify<CreateModelInput<Model, ModelMeta>>,
+    model: Model['createType'],
     options?: {
       authMode?: AuthMode;
       authToken?: string;
@@ -729,7 +618,7 @@ type ModelTypesSSRRequest<
   ) => SingularReturnValue<Model>;
   update: (
     contextSpec: any,
-    model: Prettify<ModelIdentifier<ModelMeta> & Partial<MutationInput<Model>>>,
+    model: Model['updateType'],
     options?: {
       authMode?: AuthMode;
       authToken?: string;
@@ -738,7 +627,7 @@ type ModelTypesSSRRequest<
   ) => SingularReturnValue<Model>;
   delete: (
     contextSpec: any,
-    identifier: ModelIdentifier<ModelMeta>,
+    identifier: Model['deleteType'],
     options?: {
       authMode?: AuthMode;
       authToken?: string;
@@ -747,7 +636,7 @@ type ModelTypesSSRRequest<
   ) => SingularReturnValue<Model>;
   get<SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[]>(
     contextSpec: any,
-    identifier: ModelIdentifier<ModelMeta>,
+    identifier: Model['identifier'],
     options?: {
       selectionSet?: SelectionSet;
       authMode?: AuthMode;
@@ -757,7 +646,7 @@ type ModelTypesSSRRequest<
   ): SingularReturnValue<Prettify<ReturnValue<Model, FlatModel, SelectionSet>>>;
   list<SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[]>(
     contextSpec: any,
-    options?: ListPkOptions<ModelMeta, Enums> & {
+    options?: ListCpkOptions<Model> & {
       filter?: ModelFilter<Model>;
       sortDirection?: ModelSortDirection;
       limit?: number;
@@ -773,63 +662,36 @@ type ModelTypesSSRRequest<
 type ContextType = 'CLIENT' | 'COOKIES' | 'REQUEST';
 
 export type ModelTypes<
-  Schema extends Record<any, any>,
+  T extends Record<any, any>,
   Context extends ContextType = 'CLIENT',
-  ModelMeta extends Record<any, any> = ExtractModelMeta<Schema>,
+  Schema extends ClientSchemaByEntityType<T> = ClientSchemaByEntityType<T>,
 > = {
-  [ModelName in Exclude<
-    keyof Schema,
-    keyof CustomOperations<
-      Schema,
-      'Mutation' | 'Query' | 'Subscription',
-      Context,
-      ModelMeta
-    >
-  >]: ModelName extends string
-    ? Schema[ModelName] extends Record<string, unknown>
-      ? Context extends 'CLIENT'
-        ? ModelTypesClient<
-            ModelName,
-            Schema[ModelName]['type'],
-            ModelMeta[ModelName],
-            ModelMeta['enums']
-          >
-        : Context extends 'COOKIES'
-          ? ModelTypesSSRCookies<
-              ModelName,
-              Schema[ModelName]['type'],
-              ModelMeta[ModelName],
-              ModelMeta['enums']
-            >
-          : Context extends 'REQUEST'
-            ? ModelTypesSSRRequest<
-                ModelName,
-                Schema[ModelName]['type'],
-                ModelMeta[ModelName],
-                ModelMeta['enums']
-              >
-            : never
-      : never
-    : never;
+  [ModelName in keyof Schema['models']]: Context extends 'CLIENT'
+    ? ModelTypesClient<Schema['models'][ModelName]>
+    : Context extends 'COOKIES'
+      ? ModelTypesSSRCookies<Schema['models'][ModelName]>
+      : Context extends 'REQUEST'
+        ? ModelTypesSSRRequest<Schema['models'][ModelName]>
+        : never;
 };
 
 export type CustomQueries<
-  Schema extends Record<any, any>,
+  T extends Record<any, any>,
   Context extends ContextType = 'CLIENT',
-  ModelMeta extends Record<any, any> = ExtractModelMeta<Schema>,
-> = CustomOperations<Schema, 'Query', Context, ModelMeta>;
+  Schema extends ClientSchemaByEntityType<T> = ClientSchemaByEntityType<T>,
+> = CustomOperations<Schema['queries'], Context>;
 
 export type CustomMutations<
-  Schema extends Record<any, any>,
+  T extends Record<any, any>,
   Context extends ContextType = 'CLIENT',
-  ModelMeta extends Record<any, any> = ExtractModelMeta<Schema>,
-> = CustomOperations<Schema, 'Mutation', Context, ModelMeta>;
+  Schema extends ClientSchemaByEntityType<T> = ClientSchemaByEntityType<T>,
+> = CustomOperations<Schema['mutations'], Context>;
 
 export type CustomSubscriptions<
-  Schema extends Record<any, any>,
+  T extends Record<any, any>,
   Context extends ContextType = 'CLIENT',
-  ModelMeta extends Record<any, any> = ExtractModelMeta<Schema>,
-> = CustomOperations<Schema, 'Subscription', Context, ModelMeta>;
+  Schema extends ClientSchemaByEntityType<T> = ClientSchemaByEntityType<T>,
+> = CustomOperations<Schema['subscriptions'], Context>;
 
 type CustomOperationMethodOptions = {
   // selectionSet?: SelectionSet;
@@ -848,39 +710,26 @@ type CustomOperationFnParams<Args extends Record<string, unknown> | never> = [
   : [Args, CustomOperationMethodOptions?];
 
 export type CustomOperations<
-  Schema extends Record<any, any>,
-  OperationType extends 'Query' | 'Mutation' | 'Subscription',
+  OperationDefs extends ClientSchemaByEntityTypeBaseShape[
+    | 'queries'
+    | 'mutations'
+    | 'subscriptions'],
   Context extends ContextType = 'CLIENT',
-  ModelMeta extends Record<any, any> = ExtractModelMeta<Schema>,
 > = {
-  [OpName in keyof ModelMeta['customOperations'] as ModelMeta['customOperations'][OpName]['typeName'] extends OperationType
-    ? OpName
-    : never]: {
+  [OpName in keyof OperationDefs]: {
     CLIENT: (
-      ...params: CustomOperationFnParams<
-        ModelMeta['customOperations'][OpName]['arguments']
-      >
+      ...params: CustomOperationFnParams<OperationDefs[OpName]['args']>
     ) => // we only generate subscriptions on the clientside; so this isn't applied to COOKIES | REQUEST
-    ModelMeta['customOperations'][OpName]['typeName'] extends 'Subscription'
-      ? ObservedReturnValue<ModelMeta['customOperations'][OpName]['returnType']>
-      : SingularReturnValue<
-          ModelMeta['customOperations'][OpName]['returnType']
-        >;
+    OperationDefs[OpName]['operationType'] extends 'Subscription'
+      ? ObservedReturnValue<OperationDefs[OpName]['type']>
+      : SingularReturnValue<OperationDefs[OpName]['type']>;
     COOKIES: (
-      ...params: CustomOperationFnParams<
-        ModelMeta['customOperations'][OpName]['arguments']
-      >
-    ) => SingularReturnValue<
-      ModelMeta['customOperations'][OpName]['returnType']
-    >;
+      ...params: CustomOperationFnParams<OperationDefs[OpName]['args']>
+    ) => SingularReturnValue<OperationDefs[OpName]['type']>;
     REQUEST: (
       contextSpec: any,
-      ...params: CustomOperationFnParams<
-        ModelMeta['customOperations'][OpName]['arguments']
-      >
-    ) => SingularReturnValue<
-      ModelMeta['customOperations'][OpName]['returnType']
-    >;
+      ...params: CustomOperationFnParams<OperationDefs[OpName]['args']>
+    ) => SingularReturnValue<OperationDefs[OpName]['type']>;
   }[Context];
 };
 
@@ -901,14 +750,18 @@ export type CustomOperations<
  *   }
  * }
  */
-export type EnumTypes<
-  Schema extends Record<any, any>,
-  ModelMeta extends Record<any, any> = ExtractModelMeta<Schema>,
-> = {
-  [EnumName in keyof ModelMeta['enums']]: {
-    values: () => Array<ModelMeta['enums'][EnumName]>;
+export type EnumTypes<T extends Record<any, any>> = {
+  [EnumName in keyof AllEnumTypesRecursively<T>]: {
+    values: () => Array<AllEnumTypesRecursively<T>[EnumName]['type']>;
   };
 };
+
+type AllEnumTypesRecursively<T extends Record<any, any>> =
+  ClientSchemaByEntityType<T>['enums'] &
+    Select<
+      ExtractNestedTypes<ClientSchemaByEntityType<T>>,
+      { __entityType: 'enum' }
+    >;
 
 /**
  * Request options that are passed to custom header functions.
@@ -930,135 +783,24 @@ export type CustomHeaders =
   | Record<string, string>
   | ((requestOptions?: RequestOptions) => Promise<Record<string, string>>);
 
-/**
- * PrimaryIndex field types and query methods
- */
-export interface PrimaryIndexIrShape {
-  pk: { [key: string]: string | number };
-  sk: { [key: string]: string | number } | never;
-  compositeSk: never | string;
-}
-
-/**
- * SecondaryIndex field types and query methods
- */
-export interface SecondaryIndexIrShape extends PrimaryIndexIrShape {
-  defaultQueryFieldSuffix: string;
-  queryField: string;
-}
-
-export type IndexQueryMethodsFromIR<
-  SecondaryIdxTuple extends SecondaryIndexIrShape[],
-  ModelName extends string,
-  Model extends Record<string, unknown>,
-  Enums extends Record<string, string>,
-  Res = unknown, // defaulting `unknown` because it gets absorbed in an intersection, e.g. `{a: 1} & unknown` => `{a: 1}`
-> = SecondaryIdxTuple extends [
-  infer A extends SecondaryIndexIrShape,
-  ...infer B extends SecondaryIndexIrShape[],
-]
-  ? IndexQueryMethodsFromIR<
-      B,
-      ModelName,
-      Model,
-      Enums,
-      IndexQueryMethodSignature<A, ModelName, Model, Enums> & Res
-    >
-  : Res;
-
-export type ListPkOptions<
-  ModelMeta extends ModelMetaShape,
-  Enums extends Record<string, string>,
-> = ModelMeta['identifier']['sk'] extends never
-  ? unknown
-  : Prettify<
-      Partial<IndexQueryInput<ModelMeta['identifier'], Enums>> & {
-        sortDirection?: ModelSortDirection;
-      }
-    >;
-
-/**
- * Accepts a PrimaryIndexIr or SecondaryIndexIr and returns resolved parameters
- */
-export type IndexQueryInput<
-  Idx extends PrimaryIndexIrShape,
-  Enums extends Record<string, string>,
-> = {
-  [PKField in keyof Idx['pk']]: Idx['pk'][PKField] extends `${deferredRefResolvingPrefix}${infer R}`
-    ? Enums[R]
-    : Idx['pk'][PKField];
-} & (Idx['compositeSk'] extends never
-  ? {
-      [SKField in keyof Idx['sk']]+?: number extends Idx['sk'][SKField]
-        ? NumericFilter
-        : Idx['sk'][SKField] extends `${deferredRefResolvingPrefix}${infer R}`
-          ? StringFilter<Enums[R]>
-          : StringFilter<Idx['sk'][SKField] & string>;
-    }
-  : {
-      [CompositeSk in Idx['compositeSk']]+?: ModelPrimaryCompositeKeyInput<{
-        [SKField in keyof Idx['sk']]: Idx['sk'][SKField] extends `${deferredRefResolvingPrefix}${infer _R}`
-          ? string
-          : Idx['sk'][SKField];
-      }>;
-    });
-
-type IndexQueryMethodSignature<
-  Idx extends SecondaryIndexIrShape,
-  ModelName extends string,
-  Model extends Record<string, unknown>,
-  Enums extends Record<string, string>,
-> = Record<
-  IsEmptyStringOrNever<Idx['queryField']> extends false
-    ? Idx['queryField']
-    : `list${ModelName}By${Idx['defaultQueryFieldSuffix']}`,
-  <
-    FlatModel extends Record<string, unknown> = ResolvedModel<Model>,
-    SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[],
-  >(
-    input: IndexQueryInput<Idx, Enums>,
-    options?: {
-      filter?: ModelFilter<Model>;
-      sortDirection?: ModelSortDirection;
-      limit?: number;
-      nextToken?: string | null;
-      selectionSet?: SelectionSet;
-      authMode?: AuthMode;
-      authToken?: string;
-      headers?: CustomHeaders;
-    },
-  ) => ListReturnValue<Prettify<ReturnValue<Model, FlatModel, SelectionSet>>>
->;
-
-type FilteredKeys<T> = {
-  [P in keyof T]: T[P] extends never ? never : P;
-}[keyof T];
-
-type ExcludeNeverFields<O> = {
-  [K in FilteredKeys<O>]: O[K];
+export type ClientExtensions<T extends Record<any, any> = never> = {
+  models: ModelTypes<T, 'CLIENT'>;
+  enums: EnumTypes<T>;
+  queries: CustomQueries<T, 'CLIENT'>;
+  mutations: CustomMutations<T, 'CLIENT'>;
+  subscriptions: CustomSubscriptions<T, 'CLIENT'>;
 };
 
-export type ClientExtensions<T extends Record<any, any> = never> =
-  ExcludeNeverFields<{
-    models: ModelTypes<T, 'CLIENT'>;
-    enums: EnumTypes<T>;
-    queries: CustomQueries<T, 'CLIENT'>;
-    mutations: CustomMutations<T, 'CLIENT'>;
-    subscriptions: CustomSubscriptions<T, 'CLIENT'>;
-  }>;
+export type ClientExtensionsSSRRequest<T extends Record<any, any> = never> = {
+  models: ModelTypes<T, 'REQUEST'>;
+  enums: EnumTypes<T>;
+  queries: CustomQueries<T, 'REQUEST'>;
+  mutations: CustomMutations<T, 'REQUEST'>;
+};
 
-export type ClientExtensionsSSRRequest<T extends Record<any, any> = never> =
-  ExcludeNeverFields<{
-    models: ModelTypes<T, 'REQUEST'>;
-    enums: EnumTypes<T>;
-    queries: CustomQueries<T, 'REQUEST'>;
-    mutations: CustomMutations<T, 'REQUEST'>;
-  }>;
-
-export type ClientExtensionsSSRCookies<T extends Record<any, any> = never> =
-  ExcludeNeverFields<{
-    models: ModelTypes<T, 'COOKIES'>;
-    enums: EnumTypes<T>;
-    queries: CustomQueries<T, 'COOKIES'>;
-    mutations: CustomMutations<T, 'COOKIES'>;
-  }>;
+export type ClientExtensionsSSRCookies<T extends Record<any, any> = never> = {
+  models: ModelTypes<T, 'COOKIES'>;
+  enums: EnumTypes<T>;
+  queries: CustomQueries<T, 'COOKIES'>;
+  mutations: CustomMutations<T, 'COOKIES'>;
+};

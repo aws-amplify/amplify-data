@@ -4,7 +4,7 @@ import { RefType } from '../../src/RefType';
 import {
   CustomOpShapes,
   CustomOpArguments,
-} from '../../src/MappedTypes/CustomOperations';
+} from '../../src/ClientSchema/Core/ClientCustomOperations';
 import { CustomOperation } from '../../src/CustomOperation';
 
 type Deref<T> = T extends RefType<infer S> ? S : never;

@@ -1,4 +1,4 @@
-import type { PrimaryIndexIrShape } from '../runtime/';
+import type { PrimaryIndexIrShape } from '../util';
 
 type DefaultIdentifierFields = {
   // implicit `id` is readonly because it's managed by the resolver; explicit `id` is writable

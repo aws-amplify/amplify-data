@@ -10,7 +10,7 @@ import type {
   ModelRelationalField,
   ModelRelationalFieldParamShape,
 } from '../ModelRelationalField';
-import type { PrimaryIndexIrShape } from '../runtime/';
+import type { PrimaryIndexIrShape } from '../util/';
 
 import type { ResolveSchema, SchemaTypes } from './ResolveSchema';
 import type { InjectImplicitModelFields } from './ImplicitFieldInjector';

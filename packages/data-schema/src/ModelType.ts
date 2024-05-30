@@ -1,6 +1,9 @@
 import type { SetTypeSubArg } from '@aws-amplify/data-schema-types';
-import type { PrimaryIndexIrShape, SecondaryIndexIrShape } from './runtime';
-import { brand } from './util';
+import {
+  type PrimaryIndexIrShape,
+  type SecondaryIndexIrShape,
+  brand,
+} from './util';
 import type { InternalField, BaseModelField } from './ModelField';
 import type {
   ModelRelationalField,
@@ -352,6 +355,12 @@ export const isSchemaModelType = (
   );
 };
 
+export type ModelDefaultIdentifier = {
+  pk: { readonly id: string };
+  sk: never;
+  compositeSk: never;
+};
+
 /**
  * A data model that creates a matching Amazon DynamoDB table and provides create, read (list and get), update,
  * delete, and subscription APIs.
@@ -363,7 +372,7 @@ export function model<T extends ModelFields>(
   fields: T,
 ): ModelType<{
   fields: T;
-  identifier: { pk: { id: string }; sk: never; compositeSk: never };
+  identifier: ModelDefaultIdentifier;
   secondaryIndexes: [];
   authorization: [];
 }> {

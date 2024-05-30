@@ -12,6 +12,7 @@
     "rxjs": "^7.8.1"
   },
   "devDependencies": {
+    "@aws-amplify/adapter-nextjs": "*",
     "@aws-amplify/data-schema": "*",
     "@aws-amplify/data-schema-types": "*",
     "@tsd/typescript": "^5.1.6",

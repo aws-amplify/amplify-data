@@ -2,7 +2,8 @@ import {
   type UnionToIntersection,
   type ExcludeEmpty,
 } from '@aws-amplify/data-schema-types';
-import { __modelMeta__, type PrimaryIndexIrShape } from '../runtime/';
+import { __modelMeta__ } from '../runtime/';
+import type { PrimaryIndexIrShape } from '../util';
 import type { ModelType } from '../ModelType';
 import type { ModelRelationalFieldParamShape } from '../ModelRelationalField';
 

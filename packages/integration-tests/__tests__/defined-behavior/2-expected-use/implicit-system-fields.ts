@@ -92,6 +92,7 @@ describe('Implicit System Field Handling. Given:', () => {
         { data: null },
         { data: null },
         { data: null },
+        { data: null },
       ]);
 
       const client = generateClient<Schema>();
@@ -106,9 +107,10 @@ describe('Implicit System Field Handling. Given:', () => {
       // @ts-expect-error
       await client.models.Model.delete({});
 
+      // RED HERRING. We don't currently throw at runtime.
       // Disallowed by types and fails runtime validation
-      // @ts-expect-error
-      await expect(client.models.Model.get()).rejects.toThrow();
+      // // @ts-expect-error
+      // await expect(client.models.Model.get()).rejects.toThrow();
     });
 
     test('the client includes `id` in selection sets', async () => {

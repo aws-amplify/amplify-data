@@ -95,7 +95,7 @@ describe('implied fields', () => {
     });
     type Schema = ClientSchema<typeof schema>;
 
-    test('repriprocal belongsTo on hasOne has explicitly defined reference fields', () => {
+    test('reciprocal belongsTo on hasOne has explicitly defined reference fields', () => {
       type belongsToA = Expect<
         Equal<Schema['CPKReciprocalChild']['type']['CPKParentIdFieldA'], string>
       >;
@@ -136,7 +136,10 @@ describe('implied fields', () => {
 
     test('default owner', () => {
       type test = Expect<
-        Equal<Schema['DefaultOwnerField']['type']['owner'], string | undefined>
+        Equal<
+          Schema['DefaultOwnerField']['type']['owner'],
+          string | null | undefined
+        >
       >;
     });
 
@@ -144,20 +147,26 @@ describe('implied fields', () => {
       type test = Expect<
         Equal<
           Schema['CustomOwnerField']['type']['customOwnerField'],
-          string | undefined
+          string | null | undefined
         >
       >;
     });
 
     test('group', () => {
       type test = Expect<
-        Equal<Schema['GroupIn']['type']['myGroupField'], string | undefined>
+        Equal<
+          Schema['GroupIn']['type']['myGroupField'],
+          string | null | undefined
+        >
       >;
     });
 
     test('groups', () => {
       type test = Expect<
-        Equal<Schema['GroupsIn']['type']['myGroupsField'], string[] | undefined>
+        Equal<
+          Schema['GroupsIn']['type']['myGroupsField'],
+          string[] | null | undefined
+        >
       >;
     });
   });
@@ -184,6 +193,84 @@ describe('implied fields', () => {
   });
 });
 
+describe('Identifiers', () => {
+  test('Default PK', () => {
+    const schema = a.schema({
+      Post: a.model({
+        title: a.string(),
+      }),
+    });
+
+    type Schema = ClientSchema<typeof schema>;
+    type ActualPK = Schema['Post']['identifier'];
+    type ExpectedPK = {
+      readonly id: string;
+    };
+
+    type test = Expect<Equal<ActualPK, ExpectedPK>>;
+  });
+
+  test('Default identifier with explicit id field', () => {
+    const schema = a.schema({
+      Post: a.model({
+        id: a.integer().required(),
+        title: a.string(),
+      }),
+    });
+
+    type Schema = ClientSchema<typeof schema>;
+    type ActualPK = Schema['Post']['identifier'];
+    type ExpectedPK = {
+      readonly id: number;
+    };
+
+    type test = Expect<Equal<ActualPK, ExpectedPK>>;
+  });
+
+  test('Explicit CPK', () => {
+    const schema = a.schema({
+      Post: a
+        .model({
+          category: a.string().required(),
+          subcat: a.string().required(),
+          title: a.string(),
+        })
+        .identifier(['category', 'subcat']),
+    });
+
+    type Schema = ClientSchema<typeof schema>;
+    type ActualPK = Schema['Post']['identifier'];
+    type ExpectedPK = {
+      category: string;
+      subcat: string;
+    };
+
+    type test = Expect<Equal<ActualPK, ExpectedPK>>;
+  });
+
+  test('Explicit CPK with enum', () => {
+    const schema = a.schema({
+      Category: a.enum(['Cats', 'Dogs', 'Fish I guess']),
+      Post: a
+        .model({
+          category: a.ref('Category').required(),
+          subcat: a.string().required(),
+          title: a.string(),
+        })
+        .identifier(['category', 'subcat']),
+    });
+
+    type Schema = ClientSchema<typeof schema>;
+    type ActualPK = Schema['Post']['identifier'];
+    type ExpectedPK = {
+      category: 'Cats' | 'Dogs' | 'Fish I guess';
+      subcat: string;
+    };
+
+    type test = Expect<Equal<ActualPK, ExpectedPK>>;
+  });
+});
+
 describe('Enum types', () => {
   test('Inline Enum Type', () => {
     const s = a.schema({
@@ -202,7 +289,7 @@ describe('Enum types', () => {
       readonly createdAt: string;
       readonly updatedAt: string;
       title: string;
-      status?: 'draft' | 'pending' | 'published' | null;
+      status?: 'draft' | 'pending' | 'published' | null | undefined;
     };
 
     type test = Expect<Equal<Resolved, Expected>>;
@@ -269,40 +356,33 @@ describe('Enum types', () => {
       Status: a.enum(['draft', 'pending', 'published']),
     });
 
-    type Schema = typeof s;
+    type Schema = ClientSchema<typeof s>;
 
-    type Resolved = Prettify<Pick<ClientSchema<Schema>, 'Post' | 'Comment'>>;
+    type ActualPost = Prettify<Schema['Post']['type']>;
+    type ActualComment = Prettify<Schema['Comment']['type']>;
+    type ActualStatus = Schema['Status']['type'];
 
-    type Expected = {
-      Post: {
-        type: {
-          readonly id: string;
-          readonly createdAt: string;
-          readonly updatedAt: string;
-          title: string;
-          status: 'draft' | 'pending' | 'published';
-        };
-      };
-      Comment: {
-        type: {
-          readonly id: string;
-          readonly createdAt: string;
-          readonly updatedAt: string;
-          content: string;
-          status?: 'draft' | 'pending' | 'published' | null;
-        };
-      };
+    type ExpectedPost = {
+      readonly id: string;
+      readonly createdAt: string;
+      readonly updatedAt: string;
+      title: string;
+      status: 'draft' | 'pending' | 'published';
     };
 
-    type test = Expect<Equal<Resolved, Expected>>;
-
-    type ResolvedEnumMeta = ClientSchema<Schema>[typeof __modelMeta__]['enums'];
-
-    type ExpectedEnumMeta = {
-      Status: 'draft' | 'pending' | 'published';
+    type ExpectedComment = {
+      readonly id: string;
+      readonly createdAt: string;
+      readonly updatedAt: string;
+      content: string;
+      status?: 'draft' | 'pending' | 'published' | null;
     };
 
-    type test2 = Expect<Equal<ResolvedEnumMeta, ExpectedEnumMeta>>;
+    type ExpectedStatus = 'draft' | 'pending' | 'published';
+
+    type testPost = Expect<Equal<ActualPost, ExpectedPost>>;
+    type testComment = Expect<Equal<ActualComment, ExpectedComment>>;
+    type testStatus = Expect<Equal<ActualStatus, ExpectedStatus>>;
   });
 });
 
@@ -331,29 +411,23 @@ describe('SQL Schema', () => {
         models.RenamedPost.authorization((allow) => allow.publicApiKey()),
       );
 
-    type Schema = typeof modified;
+    type Schema = ClientSchema<typeof modified>;
 
-    type Resolved = Prettify<ClientSchema<Schema>>;
+    type ActualModel = Prettify<Schema['RenamedPost']['type']>;
+    type ActualModelPK = Schema['RenamedPost']['identifier'];
 
-    type Expected = {
-      RenamedPost: {
-        type: {
-          id: string;
-          title?: string | null;
-          author?: string | null;
-        };
-      };
-      [__modelMeta__]: {
-        RenamedPost: {
-          identifier: { pk: { id: string }; sk: never; compositeSk: never };
-        };
-        enums: Record<never, never>;
-        customTypes: Record<never, never>;
-        customOperations: Record<never, never>;
-      };
+    type ExpectedModel = {
+      id: string;
+      title?: string | null;
+      author?: string | null;
     };
 
-    type test = Expect<Equal<Resolved, Expected>>;
+    type ExpectedModelPK = {
+      id: string;
+    };
+
+    type testModel = Expect<Equal<ActualModel, ExpectedModel>>;
+    type testModelPK = Expect<Equal<ActualModelPK, ExpectedModelPK>>;
   });
 
   test('sql schema rename multiple models', () => {
@@ -393,49 +467,44 @@ describe('SQL Schema', () => {
         models.tags.authorization((allow) => allow.publicApiKey()),
       ]);
 
-    type Schema = typeof modified;
+    type Schema = ClientSchema<typeof modified>;
 
-    type Resolved = Prettify<ClientSchema<Schema>>;
+    type ActualRenamedPost = Prettify<Schema['RenamedPost']['type']>;
+    type ActualRenamedComment = Prettify<Schema['RenamedComment']['type']>;
+    type ActualTags = Prettify<Schema['tags']['type']>;
 
-    type Expected = {
-      RenamedPost: {
-        type: {
-          id: string;
-          title?: string | null;
-          author?: string | null;
-        };
-      };
-      RenamedComment: {
-        type: {
-          id: string;
-          title?: string | null;
-          author?: string | null;
-        };
-      };
-      tags: {
-        type: {
-          id: string;
-          title?: string | null;
-          author?: string | null;
-        };
-      };
-      [__modelMeta__]: {
-        RenamedPost: {
-          identifier: { pk: { id: string }; sk: never; compositeSk: never };
-        };
-        RenamedComment: {
-          identifier: { pk: { id: string }; sk: never; compositeSk: never };
-        };
-        tags: {
-          identifier: { pk: { id: string }; sk: never; compositeSk: never };
-        };
-        enums: Record<never, never>;
-        customTypes: Record<never, never>;
-        customOperations: Record<never, never>;
-      };
+    type ExpectedPost = {
+      id: string;
+      title?: string | null;
+      author?: string | null;
+    };
+    type ExpectedComment = {
+      id: string;
+      title?: string | null;
+      author?: string | null;
+    };
+    type ExpectedTags = {
+      id: string;
+      title?: string | null;
+      author?: string | null;
     };
 
-    type test = Expect<Equal<Resolved, Expected>>;
+    type ActualPostId = Schema['RenamedPost']['identifier'];
+    type ActualCommentId = Schema['RenamedComment']['identifier'];
+    type ActualTagsId = Schema['tags']['identifier'];
+    type ExpectedPostId = { id: string };
+    type ExpectedCommentId = { id: string };
+    type ExpectedTagsId = { id: string };
+
+    type testPostModel = Expect<Equal<ActualRenamedPost, ExpectedPost>>;
+    type testCommentModel = Expect<
+      Equal<ActualRenamedComment, ExpectedComment>
+    >;
+    type testTagsModel = Expect<Equal<ActualTags, ExpectedTags>>;
+
+    type testPostPK = Expect<Equal<ActualPostId, ExpectedPostId>>;
+    type testCommentPK = Expect<Equal<ActualCommentId, ExpectedCommentId>>;
+    type testTagsPK = Expect<Equal<ActualTagsId, ExpectedTagsId>>;
   });
 
   test('.renameModels() not available on a DDB schema', () => {
@@ -476,24 +545,19 @@ describe('SQL Schema', () => {
       PostStatus: a.enum(['draft', 'pending', 'approved', 'published']),
     });
 
-    type ResolvedClientSchema = ClientSchema<typeof modified>;
+    type Schema = ClientSchema<typeof modified>;
 
-    type ModelMeta = ExtractModelMeta<ResolvedClientSchema>;
-    type ResolvedCustomTypes = Prettify<ModelMeta['customTypes']>;
-    type ResolvedEnums = Prettify<ModelMeta['enums']>;
+    type ActualPostMeta = Schema['PostMeta']['type'];
+    type ActualPostStatus = Schema['PostStatus']['type'];
 
-    type ExpectedCustomTypes = {
-      PostMeta: {
-        viewCount: number | null;
-        approvedOn: string | null;
-      };
+    type ExpectedPostMeta = {
+      viewCount?: number | null | undefined;
+      approvedOn?: string | null | undefined;
     };
 
-    type ExpectedEnums = {
-      PostStatus: 'draft' | 'pending' | 'approved' | 'published';
-    };
+    type ExpectedPostStatus = 'draft' | 'pending' | 'approved' | 'published';
 
-    type _ = Expect<Equal<ResolvedCustomTypes, ExpectedCustomTypes>>;
-    type _2 = Expect<Equal<ResolvedEnums, ExpectedEnums>>;
+    type testPostMeta = Expect<Equal<ActualPostMeta, ExpectedPostMeta>>;
+    type testPostStatus = Expect<Equal<ActualPostStatus, ExpectedPostStatus>>;
   });
 });

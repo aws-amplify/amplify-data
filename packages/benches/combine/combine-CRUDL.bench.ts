@@ -95,6 +95,7 @@ bench('combined SQL and DDB schema w client types', async () => {
 
   const _newComment = await client.models.Comment.create({
     content: 'hello world',
+    author: 'bob dole',
   });
   const _updatedComment = await client.models.Comment.update({
     id: 'abc',
@@ -112,4 +113,4 @@ bench('combined SQL and DDB schema w client types', async () => {
     title: 'updated',
   });
   const _deletedBlog = await client.models.Blog.delete({ id: 'abc' });
-}).types([7703640, 'instantiations']);
+}).types([1013327, 'instantiations']);

@@ -14,7 +14,7 @@ export const generateEnumsProperty = <T extends Record<any, any> = never>(
     graphqlConfig.modelIntrospection;
 
   if (!modelIntrospection) {
-    return {} as EnumTypes<never>;
+    return {} as any;
   }
 
   const enums: Record<

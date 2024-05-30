@@ -4574,7 +4574,7 @@ bench('1522 simple models with 1 field each', () => {
       field1: a.string(),
     }),
   }).authorization((allow) => allow.publicApiKey());
-}).types([25725, 'instantiations']);
+}).types([25753, 'instantiations']);
 
 bench('1522 simple models with 1 field each w/ client types', () => {
   const s = a
@@ -9149,4 +9149,4 @@ bench('1522 simple models with 1 field each w/ client types', () => {
     .authorization((allow) => allow.publicApiKey());
 
   type _ = ClientSchema<typeof s>;
-}).types([2202268, 'instantiations']);
+}).types([27769, 'instantiations']);

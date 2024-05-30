@@ -10154,4 +10154,4 @@ bench(
 
     // await client.models.Model35.list();
   },
-).types([917788, 'instantiations']);
+).types([5494, 'instantiations']);

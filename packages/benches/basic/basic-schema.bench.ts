@@ -7,7 +7,7 @@ bench('basic schema', () => {
       title: a.string().required(),
     }),
   });
-}).types([2391, 'instantiations']);
+}).types([2405, 'instantiations']);
 
 bench('basic schema w client types', () => {
   const s = a.schema({
@@ -19,4 +19,4 @@ bench('basic schema w client types', () => {
   });
 
   type _ = ClientSchema<typeof s>;
-}).types([14368, 'instantiations']);
+}).types([4622, 'instantiations']);

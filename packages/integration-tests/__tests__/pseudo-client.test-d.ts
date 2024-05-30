@@ -1,7 +1,5 @@
 import { a, ClientSchema } from '@aws-amplify/data-schema';
 import {
-  __modelMeta__,
-  type ExtractModelMeta,
   type CustomQueries,
   type CustomMutations,
   type CustomSubscriptions,
@@ -16,21 +14,6 @@ import type {
   Prettify,
 } from '@aws-amplify/data-schema-types';
 import { generateClient } from 'aws-amplify/api';
-
-type FilteredKeys<T> = {
-  [P in keyof T]: T[P] extends never ? never : P;
-}[keyof T];
-
-type ExcludeNeverFields<O> = {
-  [K in FilteredKeys<O>]: O[K];
-};
-
-type PartialClient<T extends Record<any, any> = never> = ExcludeNeverFields<{
-  models: ModelTypes<T>;
-  queries: CustomQueries<T>;
-  mutations: CustomMutations<T>;
-  subscriptions: CustomSubscriptions<T>;
-}>;
 
 describe('client', () => {
   test('query returning a primitive type', async () => {
@@ -124,9 +107,12 @@ describe('client', () => {
 
     type ResponseType = typeof response;
     type Expected = {
-      data: {
-        resultContent?: string | null | undefined;
-      } | null;
+      data:
+        | {
+            resultContent?: string | null | undefined;
+          }
+        | null
+        | undefined;
       errors?: GraphQLFormattedError[] | undefined;
       extensions?:
         | {
@@ -172,7 +158,7 @@ describe('client', () => {
     type T = ResponseType['data'];
 
     type Expected = {
-      data: Schema['DataModel']['type'] | null;
+      data: Schema['DataModel']['type'] | null | undefined;
       errors?: GraphQLFormattedError[] | undefined;
       extensions?:
         | {
@@ -189,7 +175,7 @@ describe('client', () => {
     type Response2Type = typeof response2;
 
     type Expected2 = {
-      data: (Schema['DataModel']['type'] | null)[] | null;
+      data: Schema['getAllDataModels']['returnType'];
       errors?: GraphQLFormattedError[] | undefined;
       extensions?:
         | {
@@ -231,9 +217,12 @@ describe('client', () => {
 
     type ResponseType = typeof response;
     type Expected = {
-      data: {
-        likes: number;
-      } | null;
+      data:
+        | {
+            likes: number;
+          }
+        | null
+        | undefined;
       errors?: GraphQLFormattedError[] | undefined;
       extensions?:
         | {
@@ -246,14 +235,20 @@ describe('client', () => {
 
     // Tests custom mutation w/ no args
     const response2 = await client.mutations.likeAllPosts();
+    type Response2Data = Prettify<Exclude<typeof response2.data, null>>;
 
     type Response2Type = typeof response2;
     type Expected2 = {
       data:
-        | ({
-            likes: number;
-          } | null)[]
-        | null;
+        | (
+            | {
+                likes: number;
+              }
+            | null
+            | undefined
+          )[]
+        | null
+        | undefined;
       errors?: GraphQLFormattedError[] | undefined;
       extensions?:
         | {
@@ -293,7 +288,7 @@ describe('client', () => {
             readonly updatedAt: string;
             title?: string | null;
             liked?: boolean | null;
-          } | null;
+          };
           type test = Expect<Equal<ResponseType, ExpectedType>>;
         },
         error: (error) => {},
@@ -328,9 +323,6 @@ describe('client', () => {
       type Schema = ClientSchema<typeof schema>;
       const client = generateClient<Schema>();
 
-      type ModelMeta =
-        ExtractModelMeta<Schema>['customOperations']['onCreateOrUpdatePost'];
-
       const sub = client.subscriptions
         .onCreateOrUpdatePost({ postId: 'abc' })
         .subscribe({
@@ -342,7 +334,7 @@ describe('client', () => {
               readonly updatedAt: string;
               title?: string | null;
               liked?: boolean | null;
-            } | null;
+            };
             type test = Expect<Equal<ResponseType, ExpectedType>>;
           },
           error: (error) => {},
@@ -456,7 +448,7 @@ describe('client', () => {
           type ExpectedType = {
             description?: string | null | undefined;
             title: string;
-          } | null;
+          };
           type _ = Expect<Equal<ResponseType, ExpectedType>>;
         },
       });
@@ -498,9 +490,9 @@ describe('client', () => {
         next: (data) => {
           type ResponseType = Prettify<typeof data>;
           type ExpectedType = {
-            description?: string | null | undefined;
+            description?: string | null;
             title: string;
-          } | null;
+          };
           type _ = Expect<Equal<ResponseType, ExpectedType>>;
         },
       });
@@ -540,8 +532,8 @@ describe('client', () => {
             readonly id: string;
             readonly createdAt: string;
             readonly updatedAt: string;
-            content?: string | null | undefined;
-          } | null;
+            content?: string | null;
+          };
           type _ = Expect<Equal<ResponseType, ExpectedType>>;
         },
       });
@@ -582,7 +574,7 @@ describe('client', () => {
             readonly createdAt: string;
             readonly updatedAt: string;
             content?: string | null | undefined;
-          } | null;
+          };
           type _ = Expect<Equal<ResponseType, ExpectedType>>;
         },
       });

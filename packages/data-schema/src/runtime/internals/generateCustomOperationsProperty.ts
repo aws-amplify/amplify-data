@@ -37,7 +37,7 @@ export function generateCustomOperationsProperty<
   config: GraphQLProviderConfig['GraphQL'],
   operationsType: OpType,
   getInternals: ClientInternalsGetter,
-): OpType extends 'queries' ? CustomQueries<T> : CustomMutations<T> {
+): CustomOpsProperty<T, OpType> {
   // some bundlers end up with `Amplify.configure` being called *after* generate client.
   // if that occurs, we need to *not error* while we wait. handling for late configuration
   // occurs in `generateClient()`. we do not need to subscribe to Hub events here.
@@ -73,7 +73,7 @@ export function generateCustomOperationsProperty<
     );
   }
 
-  return ops;
+  return ops as CustomOpsProperty<T, OpType>;
 }
 
 export function generateCustomMutationsProperty<T extends Record<any, any>>(

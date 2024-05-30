@@ -53,8 +53,8 @@ describe('operation return types', () => {
     readonly createdAt: string;
     readonly updatedAt: string;
     name: string;
-    officeId?: string | null | undefined;
-    officeLocationId?: string | null | undefined;
+    officeId: string | null;
+    officeLocationId: string | null;
   };
 
   type ExpectedGetterSuperTypesInDoctorReturnType = {
@@ -93,7 +93,7 @@ describe('operation return types', () => {
     ExpectedGetterSuperTypesInDoctorReturnType;
 
   type ExpectedBasicTypesInLicenseReturnType = {
-    doctorId?: string | null | undefined;
+    doctorId: string | null;
     serial: string;
     readonly id: string;
     readonly createdAt: string;
@@ -123,47 +123,35 @@ describe('operation return types', () => {
       test('Doctor return type contains readonly license getter', async () => {
         const { data: listedDoctors } = await client.models.Doctor.list();
 
-        type ResolvedDoctorType = Prettify<(typeof listedDoctors)[number]>;
+        type ActualGetter = (typeof listedDoctors)[number]['license'];
+        type ExpectedGetter = (
+          options?:
+            | {
+                authMode?: AuthMode | undefined;
+                authToken?: string | undefined;
+                headers?: CustomHeaders | undefined;
+              }
+            | undefined,
+        ) => SingularReturnValue<Schema['License']['type']>;
 
-        type BasicTypeResult = Equal<
-          Omit<ResolvedDoctorType, 'license' | 'office' | 'doctorPatients'>,
-          ExpectedBasicTypesInDoctorReturnType
-        >;
-
-        type LicenseGetterResult = Equal<
-          Pick<ResolvedDoctorType, 'license'> extends Pick<
-            ExpectedGetterSuperTypesInDoctorReturnType,
-            'license'
-          >
-            ? true
-            : false,
-          true
-        >;
-
-        type _ = Expect<Equal<BasicTypeResult | LicenseGetterResult, true>>;
+        type test = Expect<Equal<ActualGetter, ExpectedGetter>>;
       });
 
       test('License return type contains readonly doctor getter', async () => {
         const { data: listedLicense } = await client.models.License.list();
 
-        type ResolvedLicenseType = Prettify<(typeof listedLicense)[number]>;
+        type ActualGetter = (typeof listedLicense)[number]['doctor'];
+        type ExpectedGetter = (
+          options?:
+            | {
+                authMode?: AuthMode | undefined;
+                authToken?: string | undefined;
+                headers?: CustomHeaders | undefined;
+              }
+            | undefined,
+        ) => SingularReturnValue<Schema['Doctor']['type']>;
 
-        type BasicTypeResult = Equal<
-          Omit<ResolvedLicenseType, 'doctor'>,
-          ExpectedBasicTypesInLicenseReturnType
-        >;
-
-        type DoctorGetterResult = Equal<
-          Pick<ResolvedLicenseType, 'doctor'> extends Pick<
-            ExpectedGetterSuperTypesInLicenseReturnType,
-            'doctor'
-          >
-            ? true
-            : false,
-          true
-        >;
-
-        type _ = Expect<Equal<BasicTypeResult | DoctorGetterResult, true>>;
+        type test = Expect<Equal<ActualGetter, ExpectedGetter>>;
       });
     });
 
