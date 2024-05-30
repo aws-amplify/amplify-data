@@ -1,6 +1,6 @@
 import { a, ClientSchema } from '@aws-amplify/data-schema';
-import { Expect, Equal, SelectionSet } from '@aws-amplify/data-schema-types';
-import { generateClient } from 'aws-amplify/api';
+import { Expect, Equal } from '@aws-amplify/data-schema-types';
+import { generateClient, SelectionSet } from 'aws-amplify/api';
 
 type Json = null | string | number | boolean | object | any[];
 
@@ -25,7 +25,7 @@ describe('Custom Selection Set', () => {
       type ExpectedType = {
         readonly id: string;
         readonly title: string;
-        readonly description: string | null | undefined;
+        readonly description: string | null;
         readonly createdAt: string;
         readonly updatedAt: string;
       }[];
@@ -149,13 +149,13 @@ describe('Custom Selection Set', () => {
       type ExpectedType = {
         readonly id: string;
         readonly title: string;
-        readonly description: string | null | undefined;
+        readonly description: string | null;
         readonly createdAt: string;
         readonly updatedAt: string;
         readonly author: {
           readonly name: string;
           readonly id: string;
-          readonly postId?: string | null | undefined;
+          readonly postId: string | null;
           readonly createdAt: string;
           readonly updatedAt: string;
         };
@@ -217,7 +217,7 @@ describe('Custom Selection Set', () => {
         readonly comments: {
           readonly content: string;
           readonly id: string;
-          readonly postId?: string | null | undefined;
+          readonly postId: string | null;
           readonly createdAt: string;
           readonly updatedAt: string;
           // post is omitted;
@@ -248,7 +248,7 @@ describe('Custom Selection Set', () => {
                     readonly comments: {
                       readonly content: string;
                       readonly id: string;
-                      readonly postId?: string | null | undefined;
+                      readonly postId: string | null;
                       readonly createdAt: string;
                       readonly updatedAt: string;
                     }[];
@@ -334,27 +334,27 @@ describe('Custom Selection Set', () => {
         readonly updatedAt: string;
         readonly posts: {
           readonly id: string;
-          readonly meta: (string | null)[] | null | undefined;
+          readonly meta: (string | null)[] | null;
           readonly updatedAt: string;
           readonly comments: {
             readonly createdAt: string;
             readonly content: string;
             readonly meta: {
               readonly id: string;
-              readonly commentId?: string | null | undefined;
+              readonly commentId: string | null;
               readonly createdAt: string;
               readonly updatedAt: string;
-              readonly metaData?: Json | undefined;
+              readonly metaData: Json;
             }[];
           }[];
           readonly comments2: {
             readonly content: string;
             readonly meta: {
               readonly id: string;
-              readonly commentId?: string | null | undefined;
+              readonly commentId: string | null;
               readonly createdAt: string;
               readonly updatedAt: string;
-              readonly metaData?: Json | undefined;
+              readonly metaData: Json;
             }[];
           }[];
         }[];
@@ -464,7 +464,7 @@ describe('Custom Selection Set', () => {
       type ExpectedType = {
         readonly title: string;
         readonly location: {
-          readonly lat: number | null | undefined;
+          readonly lat: number | null;
         };
       }[];
 
@@ -478,12 +478,9 @@ describe('Custom Selection Set', () => {
 
       type ExpectedType = {
         readonly title: string;
-        readonly location:
-          | {
-              readonly lat: number | null | undefined;
-            }
-          | null
-          | undefined;
+        readonly location: {
+          readonly lat: number | null;
+        } | null;
       }[];
 
       type test = Expect<Equal<typeof posts, ExpectedType>>;
@@ -496,12 +493,9 @@ describe('Custom Selection Set', () => {
 
       type ExpectedType = {
         readonly title: string;
-        readonly altLocation:
-          | {
-              readonly lat: number | null | undefined;
-            }
-          | null
-          | undefined;
+        readonly altLocation: {
+          readonly lat: number | null;
+        } | null;
       }[];
 
       type test = Expect<Equal<typeof posts, ExpectedType>>;
@@ -514,18 +508,12 @@ describe('Custom Selection Set', () => {
 
       type ExpectedType = {
         readonly title: string;
-        readonly meta:
-          | {
-              readonly tags: (string | null)[];
-              readonly location:
-                | {
-                    readonly lat: number | null | undefined;
-                  }
-                | null
-                | undefined;
-            }
-          | null
-          | undefined;
+        readonly meta: {
+          readonly tags: (string | null)[];
+          readonly location: {
+            readonly lat: number | null;
+          } | null;
+        } | null;
       }[];
 
       type _ = Expect<Equal<typeof posts, ExpectedType>>;
@@ -538,15 +526,12 @@ describe('Custom Selection Set', () => {
 
       type ExpectedType = {
         readonly title: string;
-        readonly meta:
-          | {
-              readonly tags: (string | null)[];
-              readonly location: {
-                readonly lat: number | null | undefined;
-              };
-            }
-          | null
-          | undefined;
+        readonly meta: {
+          readonly tags: (string | null)[];
+          readonly location: {
+            readonly lat: number | null;
+          };
+        } | null;
       }[];
 
       type _ = Expect<Equal<typeof posts, ExpectedType>>;
@@ -578,7 +563,7 @@ describe('Custom Selection Set', () => {
 
       type ExpectedType = {
         readonly title: string;
-        readonly visibility: 'PRIVATE' | 'PUBLIC' | null | undefined;
+        readonly visibility: 'PRIVATE' | 'PUBLIC' | null;
       } | null;
 
       type test = Expect<Equal<typeof post, ExpectedType>>;
@@ -594,7 +579,7 @@ describe('Custom Selection Set', () => {
 
       type ExpectedType = {
         readonly title: string;
-        readonly status: 'DRAFT' | 'PENDING' | 'PUBLISHED' | null | undefined;
+        readonly status: 'DRAFT' | 'PENDING' | 'PUBLISHED' | null;
       } | null;
 
       type test = Expect<Equal<typeof post, ExpectedType>>;

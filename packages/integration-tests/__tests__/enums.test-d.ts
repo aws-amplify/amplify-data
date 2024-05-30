@@ -22,7 +22,7 @@ describe('Enum', () => {
         readonly createdAt: string;
         readonly updatedAt: string;
         title: string;
-        status?: 'draft' | 'pending' | 'published' | null;
+        status: 'draft' | 'pending' | 'published' | null;
       }[];
 
       type test = Expect<Equal<typeof posts, ExpectedType>>;
@@ -107,7 +107,7 @@ describe('Enum', () => {
         readonly createdAt: string;
         readonly updatedAt: string;
         content: string;
-        status?: 'draft' | 'pending' | 'published' | null | undefined;
+        status: 'draft' | 'pending' | 'published' | null;
       }[];
 
       type test2 = Expect<Equal<typeof comments, ExpectedCommentType>>;
