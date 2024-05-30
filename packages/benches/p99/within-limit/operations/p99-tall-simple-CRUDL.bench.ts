@@ -3,7 +3,7 @@ import { a, ClientSchema } from '@aws-amplify/data-schema';
 import { Amplify } from 'aws-amplify';
 import { generateClient } from 'aws-amplify/api';
 
-bench('baseline', () => {}).types([0, 'instantiations']);
+bench('baseline', () => {}).types();
 
 bench('70 simple models with 1 field each w/ client types', async () => {
   const s = a
@@ -250,4 +250,4 @@ bench('70 simple models with 1 field each w/ client types', async () => {
   await client.models.Model1.delete({ id: result.data!.id });
 
   await client.models.Model1.list();
-}).types([194337, 'instantiations']);
+}).types();

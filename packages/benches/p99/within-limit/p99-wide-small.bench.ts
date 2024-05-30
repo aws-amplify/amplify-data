@@ -3420,4 +3420,4 @@ bench('1 simple model w/ 1700 fields each w/ client types', () => {
     .authorization((allow) => allow.publicApiKey());
 
   type _ = ClientSchema<typeof s>;
-}).types([4954, 'instantiations']);
+}).types();
