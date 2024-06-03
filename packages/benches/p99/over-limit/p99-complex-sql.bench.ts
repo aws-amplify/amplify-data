@@ -1,5 +1,5 @@
 import { bench } from '@arktype/attest';
-import { a, ClientSchema } from '@aws-amplify/data-schema';
+import { a } from '@aws-amplify/data-schema';
 import { configure } from '@aws-amplify/data-schema/internals';
 
 bench('complex SQL', async () => {
@@ -7,10 +7,10 @@ bench('complex SQL', async () => {
 
   const generatedSqlSchema = configure({
     database: {
-      identifier: 'IDrpwRgsiPF0pVZSGUYZ6Hw',
+      identifier: 'some-identifier',
       engine: 'postgresql',
       // backend not in repo. shouldn't be relevant to the bench.
-      // connectionUri: secret('SQL_CONNECTION_STRING_PLAYGROUND'),
+      connectionUri: '' as any,
     },
   }).schema({
     assignments: a
@@ -216,7 +216,7 @@ bench('complex SQL', async () => {
       .identifier(['id']),
   });
 
-  const sqlSchema = generatedSqlSchema
+  const _sqlSchema = generatedSqlSchema
     .renameModels(() => [
       ['assignments', 'Assignment'],
       ['billing_details', 'BillingDetail'],
