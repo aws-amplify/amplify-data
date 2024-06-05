@@ -1781,4 +1781,4 @@ bench('prod p50 combined w/ client types', () => {
 
   const s = a.combine([s1, s2]);
   type _ = ClientSchema<typeof s>;
-}).types([26955, 'instantiations'][(26955, 'instantiations')]);
+}).types([26955, 'instantiations']);
