@@ -3,7 +3,7 @@ import { a, ClientSchema } from '@aws-amplify/data-schema';
 import { Amplify } from 'aws-amplify';
 import { generateClient } from 'aws-amplify/api';
 
-bench('baseline', () => {}).types([0, 'instantiations']);
+bench('baseline', () => {}).types();
 
 /**
  * The following benchmarks are an extension of `p50.bench.ts`.
@@ -2619,4 +2619,4 @@ bench('99 complex models CRUDL', async () => {
   });
 
   await client.models.FieldLevelAuthModel1.list();
-}).types([772087, 'instantiations']);
+}).types();

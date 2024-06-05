@@ -35,7 +35,7 @@ export interface ClientModel<
   __entityType: 'model';
   // Adding prettify here breaks a bunch of things. Need to revisit Prettify impl.
   // Probably work investigating a sprinkling of shallow prettification around instead.
-  type: ShallowPretty<ClientFields<Bag, Metadata, IsRDS, T>>;
+  type: KindaPretty<ClientFields<Bag, Metadata, IsRDS, T>>;
   createType: Prettify<
     CreateModelInput<ClientModel<Bag, Metadata, IsRDS, T, K>>
   >;
@@ -43,7 +43,7 @@ export interface ClientModel<
     UpdateModelInput<ClientModel<Bag, Metadata, IsRDS, T, K>>
   >;
   deleteType: Prettify<ModelIdentifier<Bag, T>>;
-  identifier: ShallowPretty<ModelIdentifier<Bag, T>>;
+  identifier: KindaPretty<ModelIdentifier<Bag, T>>;
   nestedTypes: NestedTypes<ClientFields<Bag, Metadata, IsRDS, T>, T>;
   secondaryIndexes: IndexQueryMethodsFromIR<Bag, T['secondaryIndexes'], K>;
   __meta: {
@@ -51,9 +51,15 @@ export interface ClientModel<
   };
 }
 
-type ShallowPretty<T> = {
-  [K in keyof T]: T[K];
-};
+type KindaPretty<T> = T extends (...args: any) => any
+  ? T
+  : T extends Array<infer innerT>
+    ? Array<KindaPretty<innerT>>
+    : T extends object
+      ? {
+          [K in keyof T]: KindaPretty<T[K]>;
+        }
+      : T;
 
 type ClientFields<
   Bag extends Record<string, unknown>,

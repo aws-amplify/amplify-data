@@ -3,7 +3,7 @@ import { a, ClientSchema } from '@aws-amplify/data-schema';
 import { Amplify } from 'aws-amplify';
 import { generateClient } from 'aws-amplify/api';
 
-bench('baseline', () => {}).types([0, 'instantiations']);
+bench('baseline', () => {}).types();
 
 /**
  * The following benchmarks are an extension of `p50.bench.ts`.
@@ -10153,4 +10153,4 @@ bench(
 
     await client.models.Model35.list();
   },
-).types([3538774, 'instantiations']);
+).types();

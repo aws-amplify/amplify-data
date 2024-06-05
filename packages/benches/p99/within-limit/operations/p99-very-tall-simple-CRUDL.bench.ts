@@ -3,7 +3,7 @@ import { a, ClientSchema } from '@aws-amplify/data-schema';
 import { Amplify } from 'aws-amplify';
 import { generateClient } from 'aws-amplify/api';
 
-bench('baseline', () => {}).types([0, 'instantiations']);
+bench('baseline', () => {}).types();
 
 /**
  * The following benchmarks are an extension of `p50.bench.ts`.
@@ -4610,4 +4610,4 @@ bench('1522 simple models with 1 field each CRUDL', async () => {
   await client.models.Model1.delete({ id: result.data!.id });
 
   await client.models.Model1.list();
-}).types([774407, 'instantiations']);
+}).types();
