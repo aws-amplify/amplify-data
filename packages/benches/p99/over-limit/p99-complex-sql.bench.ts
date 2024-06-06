@@ -355,4 +355,4 @@ bench('complex SQL', async () => {
 
   // TODO: Uncomment and fix the "Type instantiation excessively deep and possibly infinite" error
   // type Schema = ClientSchema<typeof sqlSchema>;
-}).types([1222452, 'instantiations']);
+}).types([1222445, 'instantiations']);
