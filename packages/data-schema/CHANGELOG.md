@@ -1,5 +1,11 @@
 # @aws-amplify/data-schema
 
+## 1.3.1
+
+### Patch Changes
+
+- 6f65f4d: Deeper prettification of ClientSchema<...>[ModelName]['type']
+
 ## 1.3.0
 
 ### Minor Changes
