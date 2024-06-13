@@ -1,6 +1,5 @@
 import { bench } from '@arktype/attest';
 import { UnionToIntersection } from '@aws-amplify/data-schema-types';
-import { KindaPretty } from '../../data-schema/dist/esm/util';
 
 /**
  * Looking at extracting records from a union versus UnionToIntersection.
