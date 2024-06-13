@@ -56,9 +56,6 @@ type AddToSchemaContents = Record<string, AddToSchemaContent>;
 
 type NonEmpty<T> = keyof T extends never ? never : T;
 
-export const DEBUG = Symbol('debug');
-export type DEBUG = typeof DEBUG;
-
 export type ModelSchemaContents = Record<string, SchemaContent>;
 
 type InternalSchemaModels = Record<
@@ -216,9 +213,7 @@ export type RDSModelSchema<
     renameModels: <
       NewName extends string,
       CurName extends string = keyof BaseSchema<T>['models'] & string,
-      const ChangeLog extends
-        // | Partial<Record<keyof BaseSchema<T>['models'], string>>
-        readonly [CurName, NewName][] = [],
+      const ChangeLog extends readonly [CurName, NewName][] = [],
     >(
       callback: () => ChangeLog,
     ) => RDSModelSchema<
@@ -370,10 +365,7 @@ function _rdsSchema<
       // returns an array of tuples [curName, newName]
       const changeLog = callback();
 
-      (Array.isArray(changeLog)
-        ? changeLog
-        : Object.entries(changeLog)
-      ).forEach(([curName, newName]) => {
+      changeLog.forEach(([curName, newName]) => {
         const currentType = data.types[curName];
 
         if (currentType === undefined) {
