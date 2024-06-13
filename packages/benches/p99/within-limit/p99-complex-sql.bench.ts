@@ -234,12 +234,6 @@ bench('complex SQL', async () => {
       ['time_reports', 'TimeReport'],
       ['users', 'User'],
     ])
-    // .setRelationships((models) => {
-    //   const x = models.Assignment.relationships({
-    //     whatever: a.belongsTo('X', 'y'),
-    //   });
-    //   type T = typeof models.Assignment;
-    // })
     .setRelationships((models) => [
       models.Assignment.relationships({
         contract: a.belongsTo('Contract', 'contract_id'),
