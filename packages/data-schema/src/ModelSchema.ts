@@ -204,7 +204,7 @@ export type RDSModelSchema<
         T,
         'types',
         {
-          [ModelName in keyof T['types']]: TEMP<
+          [ModelName in keyof T['types']]: ModelWithRelationships<
             T['types'],
             Relationships,
             ModelName
@@ -236,7 +236,7 @@ export type RDSModelSchema<
  */
 export type ModelSchemaType = ModelSchema<ModelSchemaParamShape>;
 
-type TEMP<
+type ModelWithRelationships<
   Types extends Record<string, any>,
   Relationships extends ReadonlyArray<
     Record<string, RelationshipTemplate | undefined>
