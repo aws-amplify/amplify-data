@@ -25,7 +25,7 @@ import type {
 } from './CustomOperation';
 import { processSchema } from './SchemaProcessor';
 import { AllowModifier, SchemaAuthorization, allow } from './Authorization';
-import { Brand, brand, getBrand } from './util';
+import { Brand, brand, getBrand, RenameUsingTuples } from './util';
 import {
   ModelRelationalField,
   ModelRelationalFieldParamShape,
@@ -55,6 +55,9 @@ type AddToSchemaContent = Exclude<SchemaContent, BaseModelType>;
 type AddToSchemaContents = Record<string, AddToSchemaContent>;
 
 type NonEmpty<T> = keyof T extends never ? never : T;
+
+export const DEBUG = Symbol('debug');
+export type DEBUG = typeof DEBUG;
 
 export type ModelSchemaContents = Record<string, SchemaContent>;
 
@@ -127,16 +130,14 @@ type OmitFromEach<Models, Modifier extends string> = {
   [ModelName in keyof Models]: Omit<Models[ModelName], Modifier>;
 };
 
+type RelationshipTemplate = Record<
+  string,
+  ModelRelationalField<ModelRelationalFieldParamShape, string, any, any>
+>;
+
 export type RDSModelSchema<
   T extends RDSModelSchemaParamShape,
   UsedMethods extends RDSModelSchemaFunctions = never,
-  RelationshipTemplate extends Record<
-    string,
-    ModelRelationalField<ModelRelationalFieldParamShape, string, any, any>
-  > = Record<
-    string,
-    ModelRelationalField<ModelRelationalFieldParamShape, string, any, any>
-  >,
 > = Omit<
   {
     addToSchema: <AddedTypes extends AddToSchemaContents>(
@@ -199,32 +200,29 @@ export type RDSModelSchema<
         >,
       ) => Relationships,
     ) => RDSModelSchema<
-      UnionToIntersection<Relationships[number]> extends infer RelationshipsDefs
-        ? RelationshipsDefs extends Record<string, RelationshipTemplate>
-          ? SetTypeSubArg<
-              T,
-              'types',
-              {
-                [ModelName in keyof T['types']]: ModelName extends keyof RelationshipsDefs
-                  ? AddRelationshipFieldsToModelTypeFields<
-                      T['types'][ModelName],
-                      RelationshipsDefs[ModelName]
-                    >
-                  : T['types'][ModelName];
-              }
-            >
-          : T
-        : T,
+      SetTypeSubArg<
+        T,
+        'types',
+        {
+          [ModelName in keyof T['types']]: TEMP<
+            T['types'],
+            Relationships,
+            ModelName
+          >;
+        }
+      >,
       UsedMethods | 'setRelationships'
     >;
     renameModels: <
       NewName extends string,
       CurName extends string = keyof BaseSchema<T>['models'] & string,
-      const ChangeLog extends readonly [CurName, NewName][] = [],
+      const ChangeLog extends
+        // | Partial<Record<keyof BaseSchema<T>['models'], string>>
+        readonly [CurName, NewName][] = [],
     >(
       callback: () => ChangeLog,
     ) => RDSModelSchema<
-      SetTypeSubArg<T, 'types', RenameModelArr<ChangeLog, T['types']>>,
+      SetTypeSubArg<T, 'types', RenameUsingTuples<T['types'], ChangeLog>>,
       UsedMethods | 'renameModels'
     >;
   },
@@ -233,28 +231,31 @@ export type RDSModelSchema<
   BaseSchema<T, true> &
   RDSSchemaBrand;
 
-type RenameModel<
-  CurName extends string,
-  NewName extends string,
-  Types extends ModelSchemaContents,
-> = {
-  [Type in keyof Types as Type extends CurName ? NewName : Type]: Types[Type];
-};
-
-type RenameModelArr<
-  ChangeLog extends readonly [string, string][],
-  Types extends ModelSchemaContents,
-> = ChangeLog extends readonly [
-  infer CurPair extends [string, string],
-  ...infer Rest extends readonly [string, string][],
-]
-  ? RenameModelArr<Rest, RenameModel<CurPair[0], CurPair[1], Types>>
-  : Types;
-
 /**
  * Amplify API Next Model Schema shape
  */
 export type ModelSchemaType = ModelSchema<ModelSchemaParamShape>;
+
+type TEMP<
+  Types extends Record<string, any>,
+  Relationships extends ReadonlyArray<
+    Record<string, RelationshipTemplate | undefined>
+  >,
+  ModelName extends keyof Types,
+  RelationshipMap extends UnionToIntersection<
+    Relationships[number]
+  > = UnionToIntersection<Relationships[number]>,
+> = ModelName extends keyof RelationshipMap
+  ? RelationshipMap[ModelName] extends Record<
+      string,
+      ModelRelationalField<ModelRelationalFieldParamShape, string, any, any>
+    >
+    ? AddRelationshipFieldsToModelTypeFields<
+        Types[ModelName],
+        RelationshipMap[ModelName]
+      >
+    : Types[ModelName]
+  : Types[ModelName];
 
 /**
  * Filter the schema types down to only include the ModelTypes as SchemaModelType
@@ -369,7 +370,10 @@ function _rdsSchema<
       // returns an array of tuples [curName, newName]
       const changeLog = callback();
 
-      changeLog.forEach(([curName, newName]) => {
+      (Array.isArray(changeLog)
+        ? changeLog
+        : Object.entries(changeLog)
+      ).forEach(([curName, newName]) => {
         const currentType = data.types[curName];
 
         if (currentType === undefined) {

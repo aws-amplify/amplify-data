@@ -23,6 +23,7 @@ import type {
   ModelPrimaryCompositeKeyInput,
   PrimaryIndexIrShape,
   SecondaryIndexIrShape,
+  KindaPretty,
 } from '../../util';
 
 export interface ClientModel<
@@ -50,16 +51,6 @@ export interface ClientModel<
     listOptionsPkParams: ListOptionsPkParams<Bag, T>;
   };
 }
-
-type KindaPretty<T> = T extends (...args: any) => any
-  ? T
-  : T extends Array<infer innerT>
-    ? Array<KindaPretty<innerT>>
-    : T extends object
-      ? {
-          [K in keyof T]: KindaPretty<T[K]>;
-        }
-      : T;
 
 type ClientFields<
   Bag extends Record<string, unknown>,

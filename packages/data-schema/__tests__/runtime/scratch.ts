@@ -1,8 +1,9 @@
-import { bench } from '@arktype/attest';
-import { a, ClientSchema } from '@aws-amplify/data-schema';
-import { configure } from '@aws-amplify/data-schema/internals';
+// import { bench } from '@arktype/attest';
+import { a, ClientSchema } from '../../src';
+import { configure } from '../../src/internals';
+import { ModelType } from '../../../data-schema/dist/esm/ModelType';
 
-bench('complex SQL', async () => {
+test('complex SQL', async () => {
   // From: https://github.com/aws-amplify/amplify-category-api/issues/2551#issuecomment-2140807302
 
   const generatedSqlSchema = configure({
@@ -350,5 +351,12 @@ bench('complex SQL', async () => {
       ]),
     ]);
 
+  type AssignmentType = (typeof sqlSchema)['data']['types']['Assignment'];
+  type _Assignment =
+    AssignmentType extends ModelType<infer IT, any> ? IT['fields'] : never;
+
   type _Schema = ClientSchema<typeof sqlSchema>;
-}).types([41814, 'instantiations']);
+
+  type Contract = _Schema['Contract']['type'];
+  type Assignment = _Schema['Assignment']['type'];
+});

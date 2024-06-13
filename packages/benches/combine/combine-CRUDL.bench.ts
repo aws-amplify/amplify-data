@@ -65,15 +65,12 @@ bench('combined SQL and DDB schema w client types', async () => {
         allow.ownerDefinedIn('author'),
         allow.publicApiKey().to(['read']),
       ]),
-    );
-  // uncommenting this causes type instantiations infinitely deep error
-  // let's uncomment after we've improved the current instantiation count
-  //
-  // .setRelationships((models) => [
-  //   models.post.relationships({
-  //     comments: a.hasMany('Comment', 'postId'),
-  //   }),
-  // ]);
+    )
+    .setRelationships((models) => [
+      models.post.relationships({
+        comments: a.hasMany('Comment', 'postId'),
+      }),
+    ]);
 
   const combinedSchema = a.combine([modifiedSql, ddbSchema]);
   type Schema = ClientSchema<typeof combinedSchema>;
@@ -113,4 +110,4 @@ bench('combined SQL and DDB schema w client types', async () => {
     title: 'updated',
   });
   const _deletedBlog = await client.models.Blog.delete({ id: 'abc' });
-}).types([955506, 'instantiations']);
+}).types([2047862, 'instantiations']);
