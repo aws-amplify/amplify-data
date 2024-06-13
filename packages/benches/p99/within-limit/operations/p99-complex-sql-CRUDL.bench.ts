@@ -366,5 +366,15 @@ bench('complex SQL', async () => {
     contract_id: 'some-id',
   });
 
+  const { data: updatedAssignment } = await client.models.Assignment.update({
+    ...createdAssignment!,
+  });
+
+  const { data: _deletedAssignment } = await client.models.Assignment.delete(
+    updatedAssignment!,
+  );
+
+  const { data: _listedAssignments } = await client.models.Assignment.list();
+
   const { data: _lazyLoadedContract } = await createdAssignment!.contract();
-}).types([2270168, 'instantiations']);
+}).types([7942623, 'instantiations']);
