@@ -56,13 +56,14 @@ async function runBenches(benchFilePaths: string[]) {
   await Promise.all(
     benchFilePaths.map(async (file) => {
       try {
-        await execa('npx', [
+        const res = await execa('npx', [
           'tsx',
           file,
           '--benchErrorOnThresholdExceeded',
           '--benchPercentThreshold',
           String(BENCH_DEGRADATION_THRESHOLD),
         ]);
+        console.log(res.stdout);
       } catch (error: any) {
         // The message is emitted twice in stderr; grabbing the first occurrence to reduce noise
         const [firstPart] = error.stderr.split('\n');
