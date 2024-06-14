@@ -1,5 +1,11 @@
 # @aws-amplify/data-schema
 
+## 1.3.2
+
+### Patch Changes
+
+- 7add238: fixed infinite recursion on combo of renameModels() and setRelationships()
+
 ## 1.3.1
 
 ### Patch Changes
