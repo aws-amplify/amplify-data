@@ -5,7 +5,19 @@ import { generateClient } from 'aws-amplify/api';
 
 const selectionSet = ['field1'] as const;
 
-bench('baseline', () => {}).types([0, 'instantiations']);
+bench('baseline', () => {
+  const s = a.schema({
+    Model1: a.model({
+      field1: a.string(),
+    }),
+    Model2: a.model({
+      field1: a.string(),
+    }),
+  });
+  type Schema = ClientSchema<typeof s>;
+
+  const _client = generateClient<Schema>();
+}).types([0, 'instantiations']);
 
 bench('70 simple models with 1 field each w/ client types', async () => {
   const s = a
