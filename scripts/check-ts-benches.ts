@@ -8,7 +8,7 @@ type BenchErrors = { file: string; message: string }[];
 const BENCHES_ROOT_DIR = './packages/benches';
 const FILE_SUFFIXES = ['CRUDL', 'selection-set'];
 
-const BENCH_DEGRADATION_THRESHOLD = 5;
+const BENCH_DEGRADATION_THRESHOLD = 1;
 
 // Orchestrator; returns void when benches are within defined threshold, throws if threshold is exceeded
 (async function runCheck() {

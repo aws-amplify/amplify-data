@@ -22,8 +22,12 @@ jobs:
           echo
           echo "Oh no!! The Type Perf Check Failed!"
           echo
-          echo "The changes in this PR introduced type performance degradation that exceeds the configured threshold (5%)"
+          echo "The changes in this PR introduced type performance degradation that exceeds the configured threshold (1%)"
           echo
-          echo "Check the error message above to see which benchmark file(s) are affected"
+          echo "Check the error message above to see which benchmark file(s) are affected."
+          echo 
+          echo "If this change is expected, please baseline the benchmarks. Run `npm run baseline:benchmarks`"
+          echo
+          echo "Then commit and push the changes."
           echo
           exit 1

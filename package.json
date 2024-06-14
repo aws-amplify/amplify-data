@@ -13,7 +13,7 @@
   "scripts": {
     "build": "turbo run build",
     "build:clean": "turbo run clean && rimraf node_modules && npm run delete-cache",
-    "check": "npm run build && npm run test && npm run lint && npm run check:api",
+    "check": "npm run build && npm run test && npm run lint && npm run check:api && npm run check:type-perf",
     "check:api": "turbo run check:api",
     "check:type-perf": "tsx scripts/check-ts-benches.ts",
     "check:package-lock": "tsx scripts/check-package-lock.ts",
@@ -23,6 +23,7 @@
     "clean": "turbo run clean",
     "turbo": "turbo",
     "delete-cache": "find . -type d \\( -name .turbo -o -name .rollup.cache \\) -exec rm -rf {} +",
+    "baseline:benchmarks": "npm run --prefix ./packages/benches baseline:all",
     "publish:release": "changeset version && changeset publish",
     "publish:preid": "changeset version --snapshot ${PREID_PREFIX} && changeset publish --tag ${PREID_PREFIX}",
     "publish:local": "npm_config_registry=http://localhost:4873/ npm run publish:release",
