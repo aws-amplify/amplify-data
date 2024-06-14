@@ -2619,4 +2619,4 @@ bench('99 complex models CRUDL', async () => {
   });
 
   await client.models.FieldLevelAuthModel1.list();
-}).types([574143, 'instantiations']);
+}).types([574151, 'instantiations']);

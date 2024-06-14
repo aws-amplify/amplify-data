@@ -1,6 +1,8 @@
 import { bench } from '@arktype/attest';
-import { a } from '@aws-amplify/data-schema';
+import { a, ClientSchema } from '@aws-amplify/data-schema';
 import { configure } from '@aws-amplify/data-schema/internals';
+import { Amplify } from 'aws-amplify';
+import { generateClient } from 'aws-amplify/api';
 
 bench('complex SQL', async () => {
   // From: https://github.com/aws-amplify/amplify-category-api/issues/2551#issuecomment-2140807302
@@ -216,7 +218,7 @@ bench('complex SQL', async () => {
       .identifier(['id']),
   });
 
-  const _sqlSchema = generatedSqlSchema
+  const sqlSchema = generatedSqlSchema
     .renameModels(() => [
       ['assignments', 'Assignment'],
       ['billing_details', 'BillingDetail'],
@@ -240,45 +242,36 @@ bench('complex SQL', async () => {
         shifts: a.hasMany('Shift', 'assignment_id'),
         user: a.belongsTo('User', 'user_id'),
       }),
-
       models.Contract.relationships({
         assignments: a.hasMany('Assignment', 'contract_id'),
         user: a.belongsTo('User', 'user_id'),
         invoices: a.hasMany('Invoice', 'contract_id'),
       }),
-
       models.Employment.relationships({
         user: a.belongsTo('User', 'user_id'),
       }),
-
       models.IdentityVerification.relationships({
         user: a.belongsTo('User', 'user_id'),
       }),
-
       models.Invoice.relationships({
         contract: a.belongsTo('Contract', 'contract_id'),
       }),
-
       models.Organisation.relationships({
         contact_person: a.belongsTo('User', 'contact_person_id'),
         users: a.hasMany('OrganisationUser', 'organisation_id'),
       }),
-
       models.OrganisationUser.relationships({
         organisation: a.belongsTo('Organisation', 'organisation_id'),
         user: a.belongsTo('User', 'user_id'),
       }),
-
       models.TimeReport.relationships({
         shift: a.belongsTo('Shift', 'shift_id'),
       }),
-
       models.Shift.relationships({
         assignment: a.belongsTo('Assignment', 'assignment_id'),
         time_reports: a.hasMany('TimeReport', 'shift_id'),
         user: a.belongsTo('User', 'user_id'),
       }),
-
       models.User.relationships({
         assignments: a.hasMany('Assignment', 'user_id'),
         contracts: a.hasMany('Contract', 'user_id'),
@@ -353,6 +346,35 @@ bench('complex SQL', async () => {
       ]),
     ]);
 
-  // TODO: Uncomment and fix the "Type instantiation excessively deep and possibly infinite" error
-  // type Schema = ClientSchema<typeof sqlSchema>;
-}).types([1222445, 'instantiations']);
+  type Schema = ClientSchema<typeof sqlSchema>;
+
+  Amplify.configure({
+    API: {
+      GraphQL: {
+        apiKey: 'apikey',
+        defaultAuthMode: 'apiKey',
+        endpoint: 'https://0.0.0.0/graphql',
+        region: 'us-east-1',
+      },
+    },
+  });
+
+  const client = generateClient<Schema>();
+
+  const { data: createdAssignment } = await client.models.Assignment.create({
+    user_id: 'some-user-id',
+    contract_id: 'some-id',
+  });
+
+  const { data: updatedAssignment } = await client.models.Assignment.update({
+    ...createdAssignment!,
+  });
+
+  const { data: _deletedAssignment } = await client.models.Assignment.delete(
+    updatedAssignment!,
+  );
+
+  const { data: _listedAssignments } = await client.models.Assignment.list();
+
+  const { data: _lazyLoadedContract } = await createdAssignment!.contract();
+}).types([7942619, 'instantiations']);
