@@ -32,6 +32,10 @@ jobs:
     needs:
       - prebuild
     uses: ./.github/workflows/callable-check-package-lock.yml
+  check-type-perf:
+    needs:
+      - prebuild
+    uses: ./.github/workflows/callable-check-type-perf.yml
   check-changeset:
     needs:
       - prebuild
