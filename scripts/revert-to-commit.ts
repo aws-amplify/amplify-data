@@ -1,4 +1,6 @@
 import { execa } from 'execa';
+import { promises as fs } from 'fs';
+import path from 'path';
 
 const RELEASE_COMMIT_MESSAGE = 'release: publish [ci skip]';
 
@@ -12,6 +14,17 @@ const ignoreReleaseCommits = async (commitId: string) => {
   ]);
   // Don't revert release commits; this would remove existing library versions from the Changelog
   return !message.includes(RELEASE_COMMIT_MESSAGE);
+};
+
+const deleteRevertedChangesets = async () => {
+  const changesetDir = path.join(__dirname, '.changeset');
+  const files = await fs.readdir(changesetDir);
+
+  for (const file of files) {
+    if (file.endsWith('.md')) {
+      await fs.rm(path.join(changesetDir, file));
+    }
+  }
 };
 
 export async function revertToCommit(commitId: string) {
@@ -34,6 +47,8 @@ export async function revertToCommit(commitId: string) {
     for (const commit of commitList) {
       await execa('git', ['revert', '--no-commit', commit]);
     }
+
+    await deleteRevertedChangesets();
 
     // Commit the reverts
     await execa('git', ['commit', '-m', `Revert to commit ${commitId}`]);
