@@ -1,5 +1,5 @@
 import { GitClient } from './git-client';
-// import { GithubClient } from './github-client';
+import { GithubClient } from './github-client';
 import { ChangesetClient } from './changeset-client';
 import { deleteChangesets } from './delete-changesets';
 
@@ -7,7 +7,7 @@ export class CommitReverter {
   constructor(
     private readonly commitHash: string,
     private readonly gitClient: GitClient,
-    // private readonly githubClient: GithubClient,
+    private readonly githubClient: GithubClient,
     private readonly changesetClient: ChangesetClient,
   ) {}
 
@@ -24,7 +24,7 @@ export class CommitReverter {
     // delete them here
     await deleteChangesets();
 
-    const commitHashMessage = this.gitClient.getCommitMessageForHash(
+    const commitHashMessage = await this.gitClient.getCommitMessageForHash(
       this.commitHash,
     );
     const revertCommitMessage = `Revert to ${commitHashMessage}`;
@@ -35,5 +35,31 @@ export class CommitReverter {
     await this.gitClient.commitAllChanges(revertCommitMessage);
 
     console.log('Reverted commits:', revertedCommits);
+
+    const { pullRequestUrl: prUrl } = await this.githubClient.createPullRequest(
+      {
+        head: revertBranch,
+        title: `Reverting to ${commitHashMessage}`,
+        body: prBodyFromRevertedCommits(revertedCommits),
+      },
+    );
+
+    console.log(`Created revert PR at ${prUrl}`);
   };
 }
+
+const prBodyFromRevertedCommits = (
+  revertedCommits: {
+    hash: string;
+    message: string;
+  }[],
+): string => {
+  let description = `This PR reverts the following commits:\n`;
+
+  for (const { message, hash } of revertedCommits) {
+    const line = `* ${message} - ${hash}\n`;
+    description += line;
+  }
+
+  return description;
+};

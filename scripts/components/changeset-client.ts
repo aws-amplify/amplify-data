@@ -16,7 +16,7 @@ const TEMPLATE = `---
  * Can be extended if we want to support other version bump types in the future
  */
 export class ChangesetClient {
-  constructor(private readonly projectRoot: string) {}
+  constructor(private readonly projectRoot: string = process.cwd()) {}
 
   patch = async (message: string) => {
     const template =
