@@ -91,6 +91,7 @@ export type DataSourceConfiguration<
       connectionUri: BackendSecret;
       vpcConfig?: VpcConfig;
       identifier?: string;
+      sslCert?: BackendSecret;
     };
 
 export type SchemaConfiguration<
