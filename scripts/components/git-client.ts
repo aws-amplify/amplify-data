@@ -2,6 +2,7 @@ import { $ as chainableExeca } from 'execa';
 import { EOL } from 'os';
 
 const RELEASE_COMMIT_MESSAGE = 'release: publish [ci skip]';
+const REPO_DEFAULT_BRANCH = 'main';
 
 /**
  * Client for programmatically  interacting with the local git cli
@@ -94,6 +95,15 @@ export class GitClient {
    */
   push = async ({ force }: { force: boolean } = { force: false }) => {
     await this.configure();
+
+    const currentBranch = await this.getCurrentBranch();
+
+    if (currentBranch === REPO_DEFAULT_BRANCH) {
+      throw new Error(
+        `Direct push to ${REPO_DEFAULT_BRANCH} is prohibited. Push to a different remote branch then open a PR.`,
+      );
+    }
+
     await this.execWithIO`git push ${force ? '--force' : ''}`;
   };
 
