@@ -1,4 +1,4 @@
-name: prepare_revert_pr
+name: Prepare Revert PR
 
 on:
   workflow_dispatch:
@@ -30,4 +30,4 @@ jobs:
         with:
           is-prebuild: true
       - name: Generate Revert PR
-        run: npx tsx scripts/prepare-revert-pr.ts
+        run: npx tsx ./amplify-api-next/scripts/prepare-revert-pr.ts
