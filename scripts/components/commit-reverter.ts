@@ -13,6 +13,8 @@ export class CommitReverter {
   createRevertPr = async () => {
     const revertBranch = `revert-to-${this.commitHash}`;
 
+    console.log('cwd', process.cwd());
+
     await this.gitClient.switchToBranch(revertBranch);
     const revertedCommits = await this.gitClient.revertToCommit(
       this.commitHash,
