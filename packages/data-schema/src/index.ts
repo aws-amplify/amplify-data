@@ -6,3 +6,4 @@ export { a };
 export type { ClientSchema };
 
 console.log('Bad change 1');
+console.log('Bad change 2');
