@@ -32,4 +32,7 @@ jobs:
         with:
           is-prebuild: true
       - name: Generate Revert PR
-        run: npx tsx ./amplify-api-next/scripts/prepare-revert-pr.ts
+        working-directory: ./amplify-api-next
+        run: |
+          ls -la
+          npx tsx ./scripts/prepare-revert-pr.ts
