@@ -1,38 +1,106 @@
-import { writeFile } from 'fs/promises';
+import { readdir, rm, writeFile, readFile } from 'fs/promises';
 import { join } from 'path';
 
-const CHANGESET_DIR = '.changeset';
+const CHANGESET_DIR_NAME = '.changeset';
 const PATCH = 'patch';
-const LEVEL_PLACEHOLDER = '<<__LEVEL__>>';
 
-const TEMPLATE = `---
-"@aws-amplify/data-schema": ${LEVEL_PLACEHOLDER}
----
-
-`;
+export type ParsedChangeset = {
+  packages: string[];
+  summary: string;
+};
 
 /**
- * Rudimentary changeset client for creating a revert patch changeset.
+ * Changeset client for creating and deleting changesets programmatically
  * Can be extended if we want to support other version bump types in the future
  */
 export class ChangesetClient {
-  constructor(private readonly projectRoot: string = process.cwd()) {}
+  private readonly changesetDir: string;
 
-  patch = async (message: string) => {
-    const template =
-      TEMPLATE.replace(LEVEL_PLACEHOLDER, PATCH) + message + '\n';
+  constructor(private readonly projectRoot?: string) {
+    this.projectRoot = projectRoot || process.cwd();
+    this.changesetDir = join(this.projectRoot, CHANGESET_DIR_NAME);
+  }
 
-    await this.generateFromTemplate(template);
+  /**
+   * Generates new changeset from provided array of packages and summary
+   *
+   * Currently it applies a patch bump to each package. If we find ourselves needing fine-grained control
+   * over package version bumps, this class can be extended to accommodate that
+   *
+   */
+  patch = async (packages: string[], summary: string) => {
+    const contents = this.generateChangesetContents(packages, summary, PATCH);
+
+    await this.saveChangeset(contents);
   };
 
-  private generateFromTemplate = async (template: string) => {
-    const changesetFileName = `changeset-${Date.now()}.md`;
-    const changesetFilePath = join(
-      this.projectRoot,
-      CHANGESET_DIR,
-      changesetFileName,
-    );
+  /**
+   * Parses changeset file contents
+   * @param body - contents of changeset markdown file
+   * @returns object containing array of changed packages & summary
+   */
+  parse = (body: string): ParsedChangeset => {
+    const [header, ...summaryLines] = body
+      .split('---')
+      .map((part) => part.trim())
+      .filter(Boolean);
 
-    await writeFile(changesetFilePath, template);
+    const packages = header
+      .split('\n')
+      .map((line) => line.split(':')[0].trim().replace(/['"]/g, ''));
+
+    const summary = summaryLines.join(' ').trim();
+
+    return {
+      packages,
+      summary,
+    };
+  };
+
+  /**
+   * Deletes all changeset markdown files in the .changeset dir
+   *
+   * @returns array of parsed changeset contents from the deleted files
+   */
+  deleteAll = async () => {
+    const files = await readdir(this.changesetDir);
+    const deletedChangesets: ParsedChangeset[] = [];
+
+    for (const file of files) {
+      if (file.endsWith('.md')) {
+        const filePath = join(this.changesetDir, file);
+        const parsed = this.parse(await readFile(filePath, 'utf-8'));
+        deletedChangesets.push(parsed);
+
+        await rm(filePath);
+      }
+    }
+
+    return deletedChangesets;
+  };
+
+  private generateChangesetContents = (
+    packages: string[],
+    summary: string,
+    bumpType = PATCH,
+  ) => {
+    const packageHeader = packages
+      .map((packageName) => `'${packageName}': ${bumpType}\n`)
+      .join('');
+
+    const contents = `---\n${packageHeader}---\n\n${summary}\n`;
+
+    return contents;
+  };
+
+  /**
+   * Creates a new changeset markdown file from provided input
+   */
+  private saveChangeset = async (contents: string) => {
+    const changesetFileName = `changeset-${Date.now()}.md`;
+
+    const changesetFilePath = join(this.changesetDir, changesetFileName);
+
+    await writeFile(changesetFilePath, contents);
   };
 }

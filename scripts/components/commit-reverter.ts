@@ -1,7 +1,6 @@
 import { GitClient } from './git-client';
 import { GithubClient } from './github-client';
-import { ChangesetClient } from './changeset-client';
-import { deleteChangesets } from './delete-changesets';
+import { ChangesetClient, type ParsedChangeset } from './changeset-client';
 
 export class CommitReverter {
   constructor(
@@ -22,7 +21,7 @@ export class CommitReverter {
     // since we're only reverting the code change commits, this will restore changesets that were
     // included in the PR(s). We do not want to re-apply them when we merge the revert PR, so we
     // delete them here
-    await deleteChangesets();
+    const deletedChangesets = await this.changesetClient.deleteAll();
 
     const commitHashMessage = await this.gitClient.getCommitMessageForHash(
       this.commitHash,
@@ -30,11 +29,17 @@ export class CommitReverter {
     const revertCommitMessage = `Revert to ${commitHashMessage}`;
 
     // create revert changeset
-    await this.changesetClient.patch(revertCommitMessage);
+    const { packages, summary } = newChangesetContentsFromDeleted(
+      deletedChangesets,
+      revertCommitMessage,
+    );
+    await this.changesetClient.patch(packages, summary);
 
     await this.gitClient.commitAllChanges(revertCommitMessage);
 
     console.log('Reverted commits:', revertedCommits);
+
+    await this.gitClient.push();
 
     const { pullRequestUrl: prUrl } = await this.githubClient.createPullRequest(
       {
@@ -47,6 +52,30 @@ export class CommitReverter {
     console.log(`Created revert PR at ${prUrl}`);
   };
 }
+
+/**
+ * Generates new revert changeset contents.
+ * Exported for testing.
+ */
+export const newChangesetContentsFromDeleted = (
+  deletedChangesets: ParsedChangeset[],
+  revertCommitMessage: string,
+) => {
+  const dedupedPackages = [
+    ...new Set(deletedChangesets.flatMap((changeset) => changeset.packages)),
+  ];
+
+  const summaryBody = deletedChangesets
+    .map(({ summary }) => `* ${summary}\n`)
+    .join('');
+
+  const summary = `${revertCommitMessage}\nReverted changes:\n${summaryBody}`;
+
+  return {
+    packages: dedupedPackages,
+    summary,
+  };
+};
 
 const prBodyFromRevertedCommits = (
   revertedCommits: {
