@@ -93,7 +93,7 @@ export class GitClient {
   /**
    * Push to the remote
    */
-  push = async ({ force }: { force: boolean } = { force: false }) => {
+  push = async () => {
     await this.configure();
 
     const currentBranch = await this.getCurrentBranch();
@@ -109,7 +109,6 @@ export class GitClient {
       'origin',
       currentBranch,
       '--no-verify',
-      force ? '--force' : '',
     ]);
   };
 
