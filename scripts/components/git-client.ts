@@ -104,7 +104,13 @@ export class GitClient {
       );
     }
 
-    await this.execWithIO`git push ${force ? '--force' : ''}`;
+    await this.execWithIO('git', [
+      'push',
+      'origin',
+      currentBranch,
+      '--no-verify',
+      force ? '--force' : '',
+    ]);
   };
 
   fetchTags = async () => {
