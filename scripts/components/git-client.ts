@@ -104,13 +104,18 @@ export class GitClient {
       );
     }
 
-    let options = `origin ${currentBranch}`;
+    // let options = `origin ${currentBranch}`;
 
-    if (force) {
-      options += ' --force';
-    }
+    // if (force) {
+    //   options += ' --force';
+    // }
 
-    await this.execWithIO`git push ${options}`;
+    await this.execWithIO('git', [
+      'push',
+      'origin',
+      currentBranch,
+      force ? '--force' : '',
+    ]);
   };
 
   fetchTags = async () => {
