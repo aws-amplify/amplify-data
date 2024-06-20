@@ -11,11 +11,17 @@ export class GitClient {
 
   /**
    * execaCommand that allows us to capture stdout
+   *
+   * Template string parameters are escaped automatically by execa. For details:
+   * https://github.com/sindresorhus/execa/blob/HEAD/docs/escaping.md
    */
   private readonly exec;
 
   /**
    * execaCommand that pipes buffers to process buffers
+   *
+   * Template string parameters are escaped automatically by execa. For details:
+   * https://github.com/sindresorhus/execa/blob/HEAD/docs/escaping.md
    */
   private readonly execWithIO;
 
@@ -24,6 +30,9 @@ export class GitClient {
    * Defaults to the process cwd.
    */
   constructor(cwd?: string) {
+    // Amongst other things, `chainableExeca` escapes of template literal parameters
+    // for us. If swapping deps/mechanisms, that escaping must be re-reimplemented.
+    // See: https://github.com/sindresorhus/execa/blob/HEAD/docs/escaping.md
     this.exec = chainableExeca({ cwd });
     this.execWithIO = this.exec({ stdio: 'inherit' });
   }
