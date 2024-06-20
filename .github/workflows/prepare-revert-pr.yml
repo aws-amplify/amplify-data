@@ -1,4 +1,4 @@
-name: Prepare Revert PR
+name: prepare_revert_pr
 
 on:
   workflow_dispatch:
@@ -15,7 +15,7 @@ jobs:
   prepare_revert_pr:
     runs-on: ubuntu-latest
     env:
-      GITHUB_TOKEN: ${{ secrets.GH_TOKEN_AMPLIFY_WRITE }}
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       # mapping the inputs to these environment variables allows the @actions/core toolkit to pick up the inputs
       INPUT_COMMITHASH: ${{ inputs.commitHash }}
     steps:
@@ -23,16 +23,11 @@ jobs:
         uses: actions/checkout@24cb9080177205b6e8c946b17badbe402adc938f # v3.4.0 https://github.com/actions/checkout/commit/24cb9080177205b6e8c946b17badbe402adc938f
         with:
           path: amplify-api-next
-          token: ${{ secrets.GH_TOKEN_AMPLIFY_WRITE }}
           # fetch full history so that we can properly lookup past releases
           fetch-depth: 0
-      - name: list contents
-        run: ls -la
       - name: Setup node and build the repository
         uses: ./amplify-api-next/.github/actions/node-and-build
         with:
           is-prebuild: true
       - name: Generate Revert PR
-        working-directory: ./amplify-api-next
-        run: |
-          npx tsx ./scripts/prepare-revert-pr.ts
+        run: npx tsx scripts/prepare-revert-pr.ts

@@ -52,10 +52,6 @@ describe('Changeset Client', () => {
 
       const expectedParsedChangesets = [
         {
-          packages: [],
-          summary: '',
-        },
-        {
           packages: [
             '@aws-amplify/data-schema-types',
             '@aws-amplify/data-schema',
@@ -71,7 +67,7 @@ describe('Changeset Client', () => {
 
       const result = await changesetClient.deleteAll();
 
-      expect(rm).toHaveBeenCalledTimes(3);
+      expect(rm).toHaveBeenCalledTimes(2);
       expect(result).toEqual(expectedParsedChangesets);
     });
   });

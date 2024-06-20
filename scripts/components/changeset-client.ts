@@ -45,12 +45,9 @@ export class ChangesetClient {
       .map((part) => part.trim())
       .filter(Boolean);
 
-    // header is undefined when processing an empty changeset
     const packages = header
-      ? header
-          .split('\n')
-          .map((line) => line.split(':')[0].trim().replace(/['"]/g, ''))
-      : [];
+      .split('\n')
+      .map((line) => line.split(':')[0].trim().replace(/['"]/g, ''));
 
     const summary = summaryLines.join(' ').trim();
 
