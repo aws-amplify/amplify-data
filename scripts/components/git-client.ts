@@ -93,7 +93,8 @@ export class GitClient {
   /**
    * Push to the remote
    */
-  push = async ({ force }: { force: boolean } = { force: false }) => {
+  // push = async ({ force }: { force: boolean } = { force: false }) => {
+  push = async () => {
     await this.configure();
 
     const currentBranch = await this.getCurrentBranch();
@@ -110,12 +111,15 @@ export class GitClient {
     //   options += ' --force';
     // }
 
-    await this.execWithIO('git', [
-      'push',
-      'origin',
-      currentBranch,
-      force ? '--force' : '',
-    ]);
+    await this
+      .execWithIO`git push origin revert-to-6f641aa5fdd77b77efa7c4e7fbd9e8a4cc414c09`;
+
+    // await this.execWithIO('git', [
+    //   'push',
+    //   'origin',
+    //   currentBranch,
+    //   force ? '--force' : '',
+    // ]);
   };
 
   fetchTags = async () => {
