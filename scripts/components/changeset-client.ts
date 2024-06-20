@@ -45,6 +45,7 @@ export class ChangesetClient {
       .map((part) => part.trim())
       .filter(Boolean);
 
+    // header is undefined when processing an empty changeset
     const packages = header
       ? header
           .split('\n')
