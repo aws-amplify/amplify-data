@@ -46,8 +46,10 @@ export class ChangesetClient {
       .filter(Boolean);
 
     const packages = header
-      .split('\n')
-      .map((line) => line.split(':')[0].trim().replace(/['"]/g, ''));
+      ? header
+          .split('\n')
+          .map((line) => line.split(':')[0].trim().replace(/['"]/g, ''))
+      : [];
 
     const summary = summaryLines.join(' ').trim();
 
