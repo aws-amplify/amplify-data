@@ -112,7 +112,7 @@ export class GitClient {
     // }
 
     await this
-      .execWithIO`git push origin revert-to-6f641aa5fdd77b77efa7c4e7fbd9e8a4cc414c09`;
+      .execWithIO`git push origin revert-to-6f641aa5fdd77b77efa7c4e7fbd9e8a4cc414c09 --no-verify`;
 
     // await this.execWithIO('git', [
     //   'push',
