@@ -1,5 +1,11 @@
 # @aws-amplify/data-schema-types
 
+## 1.1.0
+
+### Minor Changes
+
+- ba7802e: Support custom SSL certificates in SQL data sources
+
 ## 1.0.1
 
 ### Patch Changes
