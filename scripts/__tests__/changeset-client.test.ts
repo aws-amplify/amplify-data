@@ -48,6 +48,8 @@ describe('Changeset Client', () => {
 
   describe('deleteAll', () => {
     it('deletes all changeset markdown files and returns their parsed contents', async () => {
+      expect.assertions(2);
+
       const expectedParsedChangesets = [
         {
           packages: [
@@ -72,6 +74,8 @@ describe('Changeset Client', () => {
 
   describe('patch', () => {
     it('creates a new patch changeset with expected contents', async () => {
+      expect.assertions(3);
+
       const packages = [
         '@aws-amplify/data-schema-types',
         '@aws-amplify/data-schema',
