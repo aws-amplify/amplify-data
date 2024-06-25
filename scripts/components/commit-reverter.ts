@@ -86,7 +86,7 @@ const prBodyFromRevertedCommits = (
   let description = `This PR reverts the following commits:\n`;
 
   for (const { message, hash } of revertedCommits) {
-    const line = `* ${message} - ${hash}\n`;
+    const line = `* ${message.trim()} - ${hash.trim()}\n`;
     description += line;
   }
 

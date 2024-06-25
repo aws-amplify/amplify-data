@@ -3,6 +3,7 @@ import { join } from 'path';
 
 const CHANGESET_DIR_NAME = '.changeset';
 const PATCH = 'patch';
+const README_FILE = 'README.md';
 
 export type ParsedChangeset = {
   packages: string[];
@@ -70,7 +71,7 @@ export class ChangesetClient {
     const deletedChangesets: ParsedChangeset[] = [];
 
     for (const file of files) {
-      if (file.endsWith('.md')) {
+      if (file.endsWith('.md') && file !== README_FILE) {
         const filePath = join(this.changesetDir, file);
         const parsed = this.parse(await readFile(filePath, 'utf-8'));
         deletedChangesets.push(parsed);
