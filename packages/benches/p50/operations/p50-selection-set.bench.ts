@@ -3,9 +3,6 @@ import { a, ClientSchema } from '@aws-amplify/data-schema';
 import { Amplify } from 'aws-amplify';
 import { generateClient } from 'aws-amplify/api';
 
-console.log('test');
-console.log('test 2');
-
 const selectionSet = ['name'] as const;
 
 /**
