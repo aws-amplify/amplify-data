@@ -1,11 +1,5 @@
 # @aws-amplify/data-schema-types
 
-## 1.1.1
-
-### Patch Changes
-
-- 4d2ad3f: remove declarationMap config from tsconfig
-
 ## 1.1.0
 
 ### Minor Changes
