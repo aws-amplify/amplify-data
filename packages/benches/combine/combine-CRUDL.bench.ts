@@ -110,4 +110,4 @@ bench('combined SQL and DDB schema w client types', async () => {
     title: 'updated',
   });
   const _deletedBlog = await client.models.Blog.delete({ id: 'abc' });
-}).types([2128533, 'instantiations']);
+}).types([2133852, 'instantiations']);

@@ -1,6 +1,7 @@
 import { a, ClientSchema } from '@aws-amplify/data-schema';
-import { Expect, Equal } from '@aws-amplify/data-schema-types';
+import { Expect, Equal, Prettify } from '@aws-amplify/data-schema-types';
 import { generateClient, SelectionSet } from 'aws-amplify/api';
+import { ModelPath } from '@aws-amplify/data-schema/runtime';
 
 type Json = null | string | number | boolean | object | any[];
 
@@ -63,7 +64,7 @@ describe('Custom Selection Set', () => {
 
       type test = Expect<Equal<typeof posts.data, ExpectedType>>;
 
-      type WithUtil = SelectionSet<Schema['Post']['type'], typeof selSet>[];
+      type WithUtil = SelectionSet<Schema['Post'], typeof selSet>[];
 
       type test2 = Expect<Equal<WithUtil, ExpectedType>>;
     });
@@ -76,7 +77,7 @@ describe('Custom Selection Set', () => {
 
       type Post = Schema['Post']['type'];
 
-      type ExpectedType = SelectionSet<Post, ['id', 'title']>[];
+      type ExpectedType = SelectionSet<Schema['Post'], ['id', 'title']>[];
 
       type test = Expect<Equal<typeof posts.data, ExpectedType>>;
     });
@@ -181,7 +182,7 @@ describe('Custom Selection Set', () => {
       type Post = Schema['Post']['type'];
 
       type ExpectedType = SelectionSet<
-        Post,
+        Schema['Post'],
         ['id', 'title', 'description', 'createdAt', 'updatedAt', 'author.*']
       >[];
 
@@ -226,59 +227,94 @@ describe('Custom Selection Set', () => {
 
       type test = Expect<Equal<typeof posts.data, ExpectedType>>;
     });
+  });
+
+  describe('Deeply nested bi-directional hasMany relationships', () => {
+    const schema = a.schema({
+      Root: a.model({
+        name: a.string(),
+        children: a.hasMany('Level2', 'parentId'),
+      }),
+      Level2: a.model({
+        name: a.string(),
+        parent: a.belongsTo('Root', 'parentId'),
+        parentId: a.string(),
+        childrenOf2: a.hasMany('Level3', 'parentId'),
+      }),
+      Level3: a.model({
+        name: a.string(),
+        parent: a.belongsTo('Level2', 'parentId'),
+        parentId: a.string(),
+        childrenOf3: a.hasMany('Level4', 'parentId'),
+      }),
+      Level4: a.model({
+        name: a.string(),
+        parent: a.belongsTo('Level3', 'parentId'),
+        parentId: a.string(),
+        childrenOf4: a.hasMany('Level5', 'parentId'),
+      }),
+      Level5: a.model({
+        name: a.string(),
+        parent: a.belongsTo('Level4', 'parentId'),
+        parentId: a.string(),
+        childrenOf5: a.hasMany('Level6', 'parentId'),
+      }),
+      Level6: a.model({
+        name: a.string(),
+        parent: a.belongsTo('Level5', 'parentId'),
+        parentId: a.string(),
+      }),
+    });
+
+    type Schema = ClientSchema<typeof schema>;
 
     test('custom selection set path can go up to 6 levels deep', async () => {
       const client = generateClient<Schema>();
 
-      const posts = await client.models.Post.list({
+      const nodes = await client.models.Root.list({
         selectionSet: [
-          'id',
-          'comments.post.comments.post.comments.post.comments.*',
+          'name',
+          'children.childrenOf2.childrenOf3.childrenOf4.childrenOf5.name',
         ],
       });
 
       type ExpectedType2 = {
-        readonly id: string;
-        readonly comments: {
-          readonly post: {
-            readonly comments: {
-              readonly post: {
-                readonly comments: {
-                  readonly post: {
-                    readonly comments: {
-                      readonly content: string;
-                      readonly id: string;
-                      readonly postId: string | null;
-                      readonly createdAt: string;
-                      readonly updatedAt: string;
-                    }[];
-                  };
+        readonly name: string | null;
+        readonly children: {
+          readonly childrenOf2: {
+            readonly childrenOf3: {
+              readonly childrenOf4: {
+                readonly childrenOf5: {
+                  readonly name: string | null;
                 }[];
-              };
+              }[];
             }[];
-          };
+          }[];
         }[];
       }[];
 
-      type test = Expect<Equal<typeof posts.data, ExpectedType2>>;
+      type test = Expect<Equal<typeof nodes.data, ExpectedType2>>;
     });
 
     test('SelectionSet util return type matches actual', async () => {
       const client = generateClient<Schema>();
 
-      const posts = await client.models.Post.list({
+      const nodes = await client.models.Root.list({
         selectionSet: [
-          'id',
-          'comments.post.comments.post.comments.post.comments.*',
+          'name',
+          'children.childrenOf2.childrenOf3.childrenOf4.childrenOf5.name',
         ],
       });
 
       type ExpectedType = SelectionSet<
-        Schema['Post']['type'],
-        ['id', 'comments.post.comments.post.comments.post.*']
+        Schema['Root'],
+        [
+          'name',
+          'children.childrenOf2.childrenOf3.childrenOf4.childrenOf5.name',
+        ]
       >[];
 
-      type test = Expect<Equal<typeof posts.data, ExpectedType>>;
+      type test = Expect<Equal<typeof nodes.data, ExpectedType>>;
     });
   });
 
@@ -382,7 +418,7 @@ describe('Custom Selection Set', () => {
       });
 
       type ExpectedType = SelectionSet<
-        Schema['Blog']['type'],
+        Schema['Blog'],
         [
           'id',
           'updatedAt',
