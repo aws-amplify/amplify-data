@@ -150,9 +150,9 @@ export class GitClient {
       throw new Error('No commits found for provided hash');
     }
 
-    // Don't revert release commits; this would remove existing library versions from the Changelog
-    const commitHashesToRevert = await this.ignoreReleaseCommits(
-      commits.split('\n'),
+    const commitHashesToRevert = await Promise.all(
+      // Don't revert release commits; this would remove existing library versions from the Changelog
+      commits.split('\n').filter(this.ignoreReleaseCommits),
     );
 
     for (const commit of commitHashesToRevert) {
@@ -172,21 +172,13 @@ export class GitClient {
   };
 
   /**
-   * Filters out release commits
+   * Used as a filter expression to ignore release commits
    * @returns boolean
    */
-  private ignoreReleaseCommits = async (commitHashes: string[]) => {
-    const filteredCommits = [];
+  private ignoreReleaseCommits = async (commitHash: string) => {
+    const message = await this.getCommitMessageForHash(commitHash);
 
-    for (const commitHash of commitHashes) {
-      const message = await this.getCommitMessageForHash(commitHash);
-
-      if (!message.includes(RELEASE_COMMIT_MESSAGE)) {
-        filteredCommits.push(commitHash);
-      }
-    }
-
-    return filteredCommits;
+    return !message.includes(RELEASE_COMMIT_MESSAGE);
   };
 
   /**

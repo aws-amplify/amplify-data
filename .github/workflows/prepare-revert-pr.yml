@@ -6,6 +6,7 @@ on:
       commitHash:
         required: true
         type: string
+        default: HEAD
         description: |
           The commit hash that you want to restore the library to, i.e. the last known working commit. 
           All subsequent commits will be reverted in the generated PR.
@@ -14,19 +15,15 @@ jobs:
   prepare_revert_pr:
     runs-on: ubuntu-latest
     env:
-      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      GITHUB_TOKEN: ${{ secrets.GH_TOKEN_AMPLIFY_WRITE }}
       # mapping the inputs to these environment variables allows the @actions/core toolkit to pick up the inputs
       INPUT_COMMITHASH: ${{ inputs.commitHash }}
-    permissions:
-      # required to push to a remote branch and open a pull request
-      contents: write
-      pull-requests: write
     steps:
       - name: Checkout repository
         uses: actions/checkout@24cb9080177205b6e8c946b17badbe402adc938f # v3.4.0 https://github.com/actions/checkout/commit/24cb9080177205b6e8c946b17badbe402adc938f
         with:
           path: amplify-api-next
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.GH_TOKEN_AMPLIFY_WRITE }}
           # fetch full history so that we can properly lookup past releases
           fetch-depth: 0
       - name: Setup node and build the repository
