@@ -711,16 +711,6 @@ describe('Exceptions', () => {
 
     for (const [op, args] of TodoModelCases) {
       test(`in Model.${op}() throws cancellation error`, async () => {
-        const { generateClient } = mockedGenerateClient([
-          {
-            data: {
-              onCreateOrWhatever: {
-                id: 'some-id',
-              },
-            },
-          },
-        ]);
-
         const config = await buildAmplifyConfig(schema);
         Amplify.configure(config);
         const client = generateClient<Schema>();
