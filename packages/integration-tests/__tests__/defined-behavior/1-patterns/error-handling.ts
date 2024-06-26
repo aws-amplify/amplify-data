@@ -1,5 +1,6 @@
 import { a, ClientSchema } from '@aws-amplify/data-schema';
 import { Amplify } from 'aws-amplify';
+import { generateClient } from 'aws-amplify/api';
 import { buildAmplifyConfig, mockedGenerateClient } from '../../utils';
 import { GraphQLError } from 'graphql';
 
@@ -487,5 +488,249 @@ describe('CRUD error handling', () => {
       expect(data).toEqual([sampleTodo]);
       // #endregion assertions
     });
+  });
+});
+
+describe('Exceptions', () => {
+  const schema = a.schema({
+    Todo: a
+      .model({
+        content: a.string(),
+        description: a.string(),
+        done: a.boolean(),
+        priority: a.enum(['low', 'medium', 'high']),
+        notes: a.hasMany('Note', 'todoId'),
+        assignee: a.hasOne('Person', 'todoId'),
+      })
+      .authorization((allow) => allow.owner()),
+    Note: a
+      .model({
+        content: a.string(),
+        todoId: a.id(),
+        todo: a.belongsTo('Todo', 'todoId'),
+      })
+      .authorization((allow) => allow.owner()),
+    Person: a
+      .model({
+        name: a.string(),
+        todoId: a.id(),
+        todo: a.belongsTo('Todo', 'todoId'),
+      })
+      .authorization((allow) => allow.owner()),
+    completeTodo: a
+      .mutation()
+      .arguments({ todoId: a.string() })
+      .returns(a.boolean()),
+  });
+  type Schema = ClientSchema<typeof schema>;
+
+  describe('thrown from fetch()', () => {
+    const ERROR_MESSAGE = 'Network Error';
+
+    function mockFetchThrowsNetworkError(fetchSpy?: jest.SpyInstance) {
+      (fetchSpy || jest.spyOn(global, 'fetch')).mockImplementation(
+        async (...args: any) => {
+          throw new Error(ERROR_MESSAGE);
+        },
+      );
+    }
+
+    beforeEach(() => {
+      mockFetchThrowsNetworkError();
+    });
+
+    afterEach(() => {
+      jest.clearAllMocks();
+    });
+
+    const TodoModelCases = [
+      ['list', {}, []],
+      ['get', { id: 'some-id' }, null],
+      ['update', { id: 'some-id', content: 'some content' }, null],
+      ['delete', { id: 'some-id' }, null],
+    ] as const;
+
+    for (const [op, args, returns] of TodoModelCases) {
+      test(`in Model.${op}() returns \`{ data: ${JSON.stringify(returns)}, errors: [<fetch error>] }\``, async () => {
+        const config = await buildAmplifyConfig(schema);
+        Amplify.configure(config);
+        const client = generateClient<Schema>();
+
+        // @ts-ignore
+        const { data, errors } = await client.models.Todo[op](args);
+
+        expect(data).toEqual(returns);
+        expect(errors![0].message).toEqual(ERROR_MESSAGE);
+      });
+    }
+
+    test('in custom op returns `{ data: null, errors: [<fetch error>] }`', async () => {
+      const config = await buildAmplifyConfig(schema);
+      Amplify.configure(config);
+      const client = generateClient<Schema>();
+
+      const { data, errors } = await client.mutations.completeTodo({
+        todoId: 'some-id',
+      });
+
+      expect(data).toEqual(null);
+      expect(errors![0].message).toEqual(ERROR_MESSAGE);
+    });
+
+    test('in hasOne loader returns `{ data: null, errors: [<fetch error>] }`', async () => {
+      // set up mocks to create an *instantiated* object we can lazy-load from.
+      jest.clearAllMocks();
+      const fetchSpy = jest
+        .spyOn(global, 'fetch')
+        .mockImplementation(async (...args: any) => {
+          return new Response(
+            JSON.stringify({
+              data: {
+                createTodo: {
+                  id: 'some-id',
+                },
+              },
+            }),
+          );
+        });
+
+      const config = await buildAmplifyConfig(schema);
+      Amplify.configure(config);
+      const client = generateClient<Schema>();
+
+      const { data: todo } = await client.models.Todo.create({});
+
+      mockFetchThrowsNetworkError(fetchSpy);
+      const { data, errors } = await todo!.assignee();
+
+      expect(data).toEqual(null);
+      expect(errors![0].message).toEqual(ERROR_MESSAGE);
+    });
+
+    test('in hasMany loader returns `{ data: [], errors: [<fetch error>] }`', async () => {
+      // set up mocks to create an *instantiated* object we can lazy-load from.
+      jest.clearAllMocks();
+      const fetchSpy = jest
+        .spyOn(global, 'fetch')
+        .mockImplementation(async (...args: any) => {
+          return new Response(
+            JSON.stringify({
+              data: {
+                createTodo: {
+                  id: 'some-id',
+                },
+              },
+            }),
+          );
+        });
+
+      const config = await buildAmplifyConfig(schema);
+      Amplify.configure(config);
+      const client = generateClient<Schema>();
+
+      const { data: todo } = await client.models.Todo.create({});
+
+      mockFetchThrowsNetworkError(fetchSpy);
+      const { data, errors } = await todo!.notes();
+
+      expect(data).toEqual([]);
+      expect(errors![0].message).toEqual(ERROR_MESSAGE);
+    });
+
+    test('in belongsTo loader returns `{ data: null, errors: [<fetch error>] }`', async () => {
+      // set up mocks to create an *instantiated* object we can lazy-load from.
+      jest.clearAllMocks();
+      const fetchSpy = jest
+        .spyOn(global, 'fetch')
+        .mockImplementation(async (...args: any) => {
+          return new Response(
+            JSON.stringify({
+              data: {
+                createNote: {
+                  id: 'some-id',
+                  todoId: 'some-id',
+                },
+              },
+            }),
+          );
+        });
+
+      const config = await buildAmplifyConfig(schema);
+      Amplify.configure(config);
+      const client = generateClient<Schema>();
+
+      const { data: note } = await client.models.Note.create({
+        todoId: 'some-id',
+      });
+
+      mockFetchThrowsNetworkError(fetchSpy);
+      const { data, errors } = await note!.todo();
+
+      expect(data).toEqual(null);
+      expect(errors![0].message).toEqual(ERROR_MESSAGE);
+    });
+
+    // TODO: refer to Asana task to see which failure case ivaartem was specifically asking about.
+  });
+
+  // TODO: Deep dive on cancellation.
+  describe.only('Explicit cancellation results in an exception', () => {
+    function mockSleepingFetch() {
+      jest.spyOn(global, 'fetch').mockImplementation(async (input, init) => {
+        const abortSignal = init?.signal;
+        // This does indeed exist ...
+        console.log({ abortSignal });
+
+        return new Promise((_unsleep, reject) => {
+          if (abortSignal) {
+            if (abortSignal.aborted) reject(abortSignal.reason);
+            abortSignal.addEventListener('abort', (event) => {
+              // ... but, 'abort' is never firing. What am I not understanding?
+              console.log('aborted');
+              reject(event);
+            });
+          }
+        });
+      });
+    }
+
+    beforeEach(() => {
+      mockSleepingFetch();
+    });
+
+    afterEach(() => {
+      jest.clearAllMocks();
+    });
+
+    const TodoModelCases = [
+      ['list', {}],
+      ['get', { id: 'some-id' }],
+      ['update', { id: 'some-id', content: 'some content' }],
+      ['delete', { id: 'some-id' }],
+    ] as const;
+
+    for (const [op, args] of TodoModelCases) {
+      test(`in Model.${op}() throws cancellation error`, async () => {
+        const { generateClient } = mockedGenerateClient([
+          {
+            data: {
+              onCreateOrWhatever: {
+                id: 'some-id',
+              },
+            },
+          },
+        ]);
+
+        const config = await buildAmplifyConfig(schema);
+        Amplify.configure(config);
+        const client = generateClient<Schema>();
+
+        // @ts-ignore
+        const request = client.models.Todo[op](args);
+        client.cancel(request);
+
+        await expect(request).rejects.toThrow();
+      });
+    }
   });
 });

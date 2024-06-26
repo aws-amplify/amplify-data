@@ -14,6 +14,9 @@ import {
 import { Observable, Subscriber } from 'rxjs'; // eslint-disable-line
 import { Amplify } from 'aws-amplify';
 
+// TODO: Swap graphql method mocking with `fetch()` mocking.
+// Reason: Easier to mock any/all response types, error codes,
+// exceptions if we can control at the `fetch()` layer.
 const graphqlspy = jest.spyOn(GraphQLAPI as any, 'graphql');
 const _graphqlspy = jest.spyOn(GraphQLAPI as any, '_graphql');
 const _graphqlsubspy = jest.spyOn(GraphQLAPI as any, '_graphqlSubscribe');
