@@ -221,12 +221,22 @@ export type ModelPath<
 }[Depth extends -1 ? 'done' : 'recur'];
 
 export type SelectionSet<
-  Model extends ClientSchemaByEntityTypeBaseShape['models'][string],
+  Model,
   Path extends ReadonlyArray<ModelPath<FlatModel>>,
-  FlatModel extends Record<string, unknown> = Model['__meta']['flatModel'],
-> = WithOptionalsAsNullishOnly<
-  CustomSelectionSetReturnValue<FlatModel, Path[number]>
->;
+  FlatModel extends Record<
+    string,
+    unknown
+    // Remove conditional in next major version
+  > = Model extends ClientSchemaByEntityTypeBaseShape['models'][string]
+    ? Model['__meta']['flatModel']
+    : Record<string, any>,
+> =
+  // Remove conditional in next major version
+  Model extends ClientSchemaByEntityTypeBaseShape['models'][string]
+    ? WithOptionalsAsNullishOnly<
+        CustomSelectionSetReturnValue<FlatModel, Path[number]>
+      >
+    : any;
 // #endregion
 
 // #region Interfaces copied from `graphql` package
