@@ -1,5 +1,11 @@
 # @aws-amplify/data-schema
 
+## 1.3.3
+
+### Patch Changes
+
+- 634f87a: fix return types of create, update, delete operations on SSR clients
+
 ## 1.3.2
 
 ### Patch Changes
