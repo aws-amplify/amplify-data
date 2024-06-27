@@ -24,6 +24,11 @@ describe('CRUD error handling', () => {
     message: 'Not Authorized to access additionalInfo on type Todo',
   } as GraphQLError;
 
+  afterAll(() => {
+    jest.restoreAllMocks();
+    jest.resetModules();
+  });
+
   /**
    * The following tests demonstrate an error response with an empty `data`
    * result (e.g. `data: {}`).
@@ -543,6 +548,11 @@ describe('Exceptions', () => {
       jest.clearAllMocks();
     });
 
+    afterAll(() => {
+      jest.restoreAllMocks();
+      jest.resetModules();
+    });
+
     const TodoModelCases = [
       ['list', {}, []],
       ['get', { id: 'some-id' }, null],
@@ -704,6 +714,11 @@ describe('Exceptions', () => {
 
     afterEach(() => {
       jest.clearAllMocks();
+    });
+
+    afterAll(() => {
+      jest.restoreAllMocks();
+      jest.resetModules();
     });
 
     const TodoModelCases = [
