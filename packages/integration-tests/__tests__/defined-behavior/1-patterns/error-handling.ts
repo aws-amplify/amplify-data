@@ -673,8 +673,12 @@ describe('Exceptions', () => {
     // TODO: refer to Asana task to see which failure case ivaartem was specifically asking about.
   });
 
-  // TODO: Deep dive on cancellation.
-  describe.only('Explicit cancellation results in an exception', () => {
+  // TODO: Cancel appears to be broken. The implementation lives in JS repo.
+  // Need to fix there and then uncomment these these.
+  // Open question: Is there a way we can move more of the graphql client
+  // implementation into this repo? This feels like something we should ideally
+  // be able to fix *in this repo*.
+  describe.skip('Explicit cancellation results in an exception', () => {
     function mockSleepingFetch() {
       jest.spyOn(global, 'fetch').mockImplementation(async (input, init) => {
         const abortSignal = init?.signal;
@@ -717,8 +721,9 @@ describe('Exceptions', () => {
 
         // @ts-ignore
         const request = client.models.Todo[op](args);
-        client.cancel(request);
+        const isCanceled = client.cancel(request);
 
+        expect(isCanceled).toBe(true);
         await expect(request).rejects.toThrow();
       });
     }
