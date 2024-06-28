@@ -5,6 +5,7 @@ export interface ClientSchemaProperty {
     | 'customType'
     | 'customQuery'
     | 'customMutation'
-    | 'customSubscription';
+    | 'customSubscription'
+    | 'aiConversation';
   type: any;
 }

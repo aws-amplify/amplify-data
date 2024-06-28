@@ -3,6 +3,7 @@
 
 import { ClientExtensions } from './client';
 import {
+  generateConversationsProperty,
   generateCustomQueriesProperty,
   generateCustomMutationsProperty,
   generateCustomSubscriptionsProperty,
@@ -37,6 +38,11 @@ export function addSchemaToClient<T extends Record<any, any> = never>(
     getInternals,
   );
   (client as any).subscriptions = generateCustomSubscriptionsProperty(
+    client as any,
+    apiGraphqlConfig,
+    getInternals,
+  );
+  (client as any).conversations = generateConversationsProperty(
     client as any,
     apiGraphqlConfig,
     getInternals,

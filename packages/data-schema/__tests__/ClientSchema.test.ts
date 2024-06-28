@@ -1446,3 +1446,25 @@ describe('SQL Schema with sql statement references', () => {
     });
   });
 });
+
+describe('ai routes', () => {
+  test('conversations', () => {
+    const schema = a.schema({
+      ChatBot: a.conversation(),
+    });
+
+    type Schema = ClientSchema<typeof schema>;
+    type ActualChatBot = Prettify<Schema['ChatBot']>;
+
+    type Expected = {
+      __entityType: 'aiConversation';
+    };
+
+    type ActualChatBotInterface = Pick<ActualChatBot, keyof Expected>;
+
+    type test = Expect<Equal<ActualChatBotInterface, Expected>>;
+
+    const graphql = schema.transform().schema;
+    expect(graphql).toMatchSnapshot();
+  });
+});

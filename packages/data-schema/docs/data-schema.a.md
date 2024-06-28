@@ -52,6 +52,15 @@ The interface for merging up to 50 schemas into a single API.
 </td></tr>
 <tr><td>
 
+[conversation()](./data-schema.a.conversation.md)
+
+
+</td><td>
+
+
+</td></tr>
+<tr><td>
+
 [customType(fields)](./data-schema.a.customtype.md)
 
 
