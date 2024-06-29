@@ -4,6 +4,9 @@ inputs:
   is-prebuild:
     required: false
     default: false
+  force:
+    required: false
+    default: false
 runs:
   using: 'composite'
   steps:
@@ -24,9 +27,14 @@ runs:
           ${{ runner.os }}-build-artifacts-
       env:
         SEGMENT_DOWNLOAD_TIMEOUT_MINS: 2
+    - name: Force Install
+      if: inputs.force == 'true'
+      run: npm i --force
+      shell: bash
+      working-directory: ./amplify-api-next
     # TODO We should be able to skip yarn / bootstrap if we cache enough things. Leaving because skipping causes issues.
     - name: Install
-      if: inputs.is-prebuild != 'true' || steps.cache-build-artifacts.outputs.cache-hit != 'true'
+      if: inputs.force != 'true' && (inputs.is-prebuild != 'true' || steps.cache-build-artifacts.outputs.cache-hit != 'true')
       run: npm i
       shell: bash
       working-directory: ./amplify-api-next

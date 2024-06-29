@@ -562,7 +562,7 @@ type ModelTypesSSRCookies<
       authToken?: string;
       headers?: CustomHeaders;
     },
-  ) => SingularReturnValue<Model>;
+  ) => SingularReturnValue<Model['type']>;
   update: (
     model: Model['updateType'],
     options?: {
@@ -570,7 +570,7 @@ type ModelTypesSSRCookies<
       authToken?: string;
       headers?: CustomHeaders;
     },
-  ) => SingularReturnValue<Model>;
+  ) => SingularReturnValue<Model['type']>;
   delete: (
     identifier: Model['deleteType'],
     options?: {
@@ -578,7 +578,7 @@ type ModelTypesSSRCookies<
       authToken?: string;
       headers?: CustomHeaders;
     },
-  ) => SingularReturnValue<Model>;
+  ) => SingularReturnValue<Model['type']>;
   get<SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[]>(
     identifier: Model['identifier'],
     options?: {
@@ -615,7 +615,7 @@ type ModelTypesSSRRequest<
       authToken?: string;
       headers?: CustomHeaders;
     },
-  ) => SingularReturnValue<Model>;
+  ) => SingularReturnValue<Model['type']>;
   update: (
     contextSpec: any,
     model: Model['updateType'],
@@ -624,7 +624,7 @@ type ModelTypesSSRRequest<
       authToken?: string;
       headers?: CustomHeaders;
     },
-  ) => SingularReturnValue<Model>;
+  ) => SingularReturnValue<Model['type']>;
   delete: (
     contextSpec: any,
     identifier: Model['deleteType'],
@@ -633,7 +633,7 @@ type ModelTypesSSRRequest<
       authToken?: string;
       headers?: CustomHeaders;
     },
-  ) => SingularReturnValue<Model>;
+  ) => SingularReturnValue<Model['type']>;
   get<SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[]>(
     contextSpec: any,
     identifier: Model['identifier'],
