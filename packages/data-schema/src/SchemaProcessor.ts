@@ -1443,10 +1443,12 @@ function validateCustomOperations(
 
   if (
     typeDef.data.returnType === null &&
-    (opType === 'Query' || opType === 'Mutation')
+    (opType === 'Query' || opType === 'Mutation' || opType === 'Generation')
   ) {
+    const typeDescription =
+      opType === 'Generation' ? `${opType} route` : `Custom ${opType}`;
     throw new Error(
-      `Invalid Custom ${opType} definition. A Custom ${opType} must include a return type. ${typeName} has no return type specified.`,
+      `Invalid ${typeDescription} definition. A ${typeDescription} must include a return type. ${typeName} has no return type specified.`,
     );
   }
 
@@ -1625,12 +1627,18 @@ function transformCustomOperations(
   getRefType: ReturnType<typeof getRefTypeForSchema>,
 ) {
   const { typeName: opType, handlers } = typeDef.data;
+
   let jsFunctionForField: JsResolver | undefined = undefined;
 
   validateCustomOperations(typeDef, typeName, authRules, getRefType);
 
   if (isCustomHandler(handlers)) {
-    jsFunctionForField = handleCustom(handlers, opType, typeName);
+    jsFunctionForField = handleCustom(
+      handlers,
+      // a generation route is essentially a custom query under the hood
+      opType === 'Generation' ? 'Query' : opType,
+      typeName,
+    );
   }
 
   const isCustom = Boolean(jsFunctionForField);

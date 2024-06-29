@@ -27,6 +27,13 @@ type Query {
 
 exports[`ai routes conversations 1`] = `""`;
 
+exports[`ai routes generations 1`] = `
+"type Recipe @model @auth(rules: [{allow: public, provider: apiKey}])
+{
+  directions: [String]
+}"
+`;
+
 exports[`custom operations Add entities to SQL schema add custom type, enum, and custom query to generated SQL schema 1`] = `
 "type post @model(timestamps: null) @auth(rules: [{allow: private}])
 {

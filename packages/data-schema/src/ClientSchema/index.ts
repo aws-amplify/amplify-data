@@ -67,11 +67,12 @@ type ClientSchemaProperty<
             | 'queryCustomOperation'
             | 'mutationCustomOperation'
             | 'subscriptionCustomOperation'
+            | 'generationCustomOperation'
           >
         ? RemapCustomOperation<T, Metadata, IsRDS, T[K]>
         : T[K] extends Brand<'modelType'>
           ? RemapModel<T, Metadata, IsRDS, T[K], K>
-          : T[K] extends Brand<'aiConversation'>
+          : T[K] extends Brand<'conversationCustomOperation'>
             ? RemapAIRoute<T, T[K]>
             : never;
 
@@ -156,6 +157,7 @@ export type ClientSchemaByEntityTypeBaseShape = {
   mutations: Record<string, ClientCustomOperation<any, any>>;
   subscriptions: Record<string, ClientCustomOperation<any, any>>;
   conversations: Record<string, ClientConversation>;
+  generations: Record<string, ClientCustomOperation<any, any>>;
 };
 
 export type ClientSchemaByEntityType<T> = {
@@ -165,5 +167,6 @@ export type ClientSchemaByEntityType<T> = {
   queries: Select<T, { __entityType: 'customQuery' }>;
   mutations: Select<T, { __entityType: 'customMutation' }>;
   subscriptions: Select<T, { __entityType: 'customSubscription' }>;
-  conversations: Select<T, { __entityType: 'aiConversation' }>;
+  conversations: Select<T, { __entityType: 'customConversation' }>;
+  generations: Select<T, { __entityType: 'customGeneration' }>;
 };

@@ -810,6 +810,11 @@ describe('.for() modifier', () => {
     a.mutation().for();
   });
 
+  it('is unavailable on a.generation()', () => {
+    // @ts-expect-error .for() is not a valid modifier function of a.generation()
+    a.generation().for();
+  });
+
   it('is available only on a.subscription()', () => {
     a.subscription().for(a.ref('Model'));
   });

@@ -4,7 +4,7 @@
 import { Subscription } from 'rxjs';
 import { type Brand, brand } from '../util';
 
-const brandName = 'aiConversation';
+const brandName = 'conversationCustomOperation';
 
 type DocumentType =
   | null

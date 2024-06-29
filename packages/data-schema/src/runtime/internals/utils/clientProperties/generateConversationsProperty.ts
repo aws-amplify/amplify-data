@@ -19,16 +19,16 @@ export function generateConversationsProperty(
   apiGraphQLConfig: GraphQLProviderConfig['GraphQL'],
   getInternals: ClientInternalsGetter,
 ): Record<string, Conversation> {
-  const conversations: Record<string, Conversation> = {};
-
   const modelIntrospection: ModelIntrospectionSchema | undefined =
-    apiGraphQLConfig.modelIntrospection;
+    apiGraphQLConfig?.modelIntrospection;
 
   // conversations will be absent from model intro schema if no conversation routes
   // are present on the source schema.
   if (!modelIntrospection?.conversations) {
     return {};
   }
+
+  const conversations: Record<string, Conversation> = {};
 
   for (const conversation of Object.values(modelIntrospection.conversations)) {
     const { models } = conversation;

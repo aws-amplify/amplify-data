@@ -5,5 +5,5 @@ import { ClientSchemaProperty } from '../Core';
 
 export interface ClientConversation
   extends Pick<ClientSchemaProperty, '__entityType'> {
-  __entityType: 'aiConversation';
+  __entityType: 'customConversation';
 }

@@ -39,3 +39,60 @@ bench('schema with conversation, model and client types', () => {
 
   type _ = ClientSchema<typeof s>;
 }).types([4632, 'instantiations']);
+
+bench('schema with generation returning primitive type w/ ClientSchema', () => {
+  const s = a.schema({
+    generate: a
+      .generation()
+      .arguments({ inputContent: a.string().required() })
+      .returns(a.string().required())
+      .handler(a.handler.function('customFunction'))
+      .authorization((allow) => allow.publicApiKey()),
+  });
+
+  type _ = ClientSchema<typeof s>;
+}).types([12331, 'instantiations']);
+
+bench('schema with generation returning enum type w/ ClientSchema', () => {
+  const s = a.schema({
+    Status: a.enum(['Active', 'Inactive', 'Unknown']),
+    generate: a
+      .generation()
+      .arguments({ itemId: a.string().required() })
+      .returns(a.ref('Status').required())
+      .handler(a.handler.function('customFunction'))
+      .authorization((allow) => allow.publicApiKey()),
+  });
+
+  type _ = ClientSchema<typeof s>;
+}).types([12529, 'instantiations']);
+
+bench('schema with generation returning custom type w/ ClientSchema', () => {
+  const s = a.schema({
+    Recipe: a.customType({
+      result: a.string(),
+    }),
+    makeRecipe: a
+      .generation()
+      .arguments({ inputContent: a.string().required() })
+      .returns(a.ref('Recipe'))
+      .handler(a.handler.function('customFunction'))
+      .authorization((allow) => allow.publicApiKey()),
+  });
+  type _ = ClientSchema<typeof s>;
+}).types([12568, 'instantiations']);
+
+bench('schema with generation returning model w/ ClientSchema', () => {
+  const s = a.schema({
+    Recipe: a.model({
+      result: a.string(),
+    }),
+    makeRecipe: a
+      .generation()
+      .arguments({ modelId: a.string().required() })
+      .returns(a.ref('Recipe'))
+      .handler(a.handler.function('customFunction'))
+      .authorization((allow) => allow.publicApiKey()),
+  });
+  type _ = ClientSchema<typeof s>;
+}).types([12646, 'instantiations']);
