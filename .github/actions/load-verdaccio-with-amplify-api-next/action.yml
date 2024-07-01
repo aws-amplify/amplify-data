@@ -22,7 +22,7 @@ runs:
         NPM_REGISTRY: http://localhost:4873/
         NPM_USER: verdaccio
         NPM_PASS: verdaccio
-        NPM_EMAIL: verdaccio@amplify.js
+        NPM_EMAIL: verdaccio@amplifyapinext.js
       run: |
         npm i -g npm-cli-adduser
         npm-cli-adduser
@@ -35,7 +35,7 @@ runs:
         NPM_REGISTRY: http://localhost:4873/
         NPM_USER: verdaccio
         NPM_PASS: verdaccio
-        NPM_EMAIL: verdaccio@amplify.js
+        NPM_EMAIL: verdaccio@amplifyapinext.js
       run: |
         yarn config set registry $NPM_REGISTRY
         npm set registry $NPM_REGISTRY
