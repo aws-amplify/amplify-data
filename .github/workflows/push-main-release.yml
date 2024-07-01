@@ -28,9 +28,12 @@ jobs:
     needs:
       - prebuild
     uses: ./.github/workflows/callable-unit-tests.yml
-
+  e2e:
+    secrets: inherit
+    uses: ./.github/workflows/callable-release-verification.yml
   release:
     needs:
       - unit-tests
+      - e2e
     secrets: inherit
     uses: ./.github/workflows/callable-npm-publish-release.yml
