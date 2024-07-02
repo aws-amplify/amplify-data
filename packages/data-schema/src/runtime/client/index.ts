@@ -79,11 +79,15 @@ type ReturnValue<
  * This mapped type traverses the SelectionSetReturnValue result and the original FlatModel, restoring array types
  * that were flattened in DeepPickFromPath
  *
+ * Note: custom type field arrays are already handled correctly and don't need to be "restored", hence the `Result[K] extends Array<any>` check
+ *
  */
 type RestoreArrays<Result, FlatModel> = {
   [K in keyof Result]: K extends keyof FlatModel
     ? FlatModel[K] extends Array<any>
-      ? Array<RestoreArrays<Result[K], UnwrapArray<FlatModel[K]>>>
+      ? Result[K] extends Array<any>
+        ? Result[K]
+        : Array<RestoreArrays<Result[K], UnwrapArray<FlatModel[K]>>>
       : FlatModel[K] extends Record<string, any>
         ? RestoreArrays<Result[K], FlatModel[K]>
         : Result[K]

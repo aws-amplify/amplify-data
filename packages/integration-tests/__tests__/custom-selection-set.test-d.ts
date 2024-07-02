@@ -483,9 +483,20 @@ describe('Custom Selection Set', () => {
         }),
       }),
 
+      Post6: a.model({
+        title: a.string().required(),
+        description: a.string(),
+        meta: a.ref('Meta').required(),
+      }),
+
       Location: a.customType({
         lat: a.float(),
         long: a.float(),
+      }),
+
+      Meta: a.customType({
+        tags: a.string().array(),
+        requiredTags: a.string().required().array().required(),
       }),
     });
 
@@ -571,6 +582,27 @@ describe('Custom Selection Set', () => {
       }[];
 
       type _ = Expect<Equal<typeof posts, ExpectedType>>;
+    });
+
+    // https://github.com/aws-amplify/amplify-category-api/issues/2368 - number 4.
+    test('custom selection set on explicit non-nullable custom type with array fields', async () => {
+      const selSet = ['title', 'meta.tags', 'meta.requiredTags'] as const;
+
+      const { data: posts } = await client.models.Post6.list({
+        selectionSet: selSet,
+      });
+
+      type ActualType = typeof posts;
+
+      type ExpectedType = {
+        readonly title: string;
+        readonly meta: {
+          readonly tags: (string | null)[] | null;
+          readonly requiredTags: string[];
+        };
+      }[];
+
+      type _ = Expect<Equal<ActualType, ExpectedType>>;
     });
   });
 
