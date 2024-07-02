@@ -1,6 +1,6 @@
 import { SetTypeSubArg } from '@aws-amplify/data-schema-types';
 import { Brand, brand } from './util';
-import { InternalField, type BaseModelField } from './ModelField';
+import { InternalField, ModelFieldType, type BaseModelField } from './ModelField';
 import {
   AllowModifierForCustomOperation,
   Authorization,
@@ -10,10 +10,12 @@ import { RefType, InternalRef } from './RefType';
 import { EnumType } from './EnumType';
 import { CustomType } from './CustomType';
 import type {
+  AsyncFunctionHandler,
   CustomHandler,
   FunctionHandler,
   HandlerType as Handler,
 } from './Handler';
+import { brandSymbol } from './util/Brand';
 
 const queryBrand = 'queryCustomOperation';
 const mutationBrand = 'mutationCustomOperation';
@@ -32,7 +34,7 @@ type InternalSubscriptionSource = InternalRef;
 type CustomReturnType = RefType<any> | CustomType<any>;
 type InternalCustomArguments = Record<string, InternalField>;
 type InternalCustomReturnType = InternalRef;
-type HandlerInputType = FunctionHandler[] | CustomHandler[] | Handler;
+type HandlerInputType = FunctionHandler[] | CustomHandler[] | AsyncFunctionHandler[] | Handler;
 
 export const CustomOperationNames = [
   'Query',
@@ -96,7 +98,16 @@ export type CustomOperation<
     >;
     handler<H extends HandlerInputType>(
       handlers: H,
-    ): CustomOperation<T, K | 'handler', B>;
+    ): CustomOperation<
+      T,
+      // TODO: Condition should only apply if `AsyncFunctionHandler` is final handler in pipeline
+      H extends AsyncFunctionHandler
+      ? K | 'handler' | 'returns'
+      : K | 'handler',
+      B
+    >;
+
+
     for<Source extends SubscriptionSource>(
       source: Source | Source[],
     ): CustomOperation<
@@ -170,9 +181,18 @@ function _custom<
         return this;
       },
       handler(handlers: HandlerInputType) {
-        data.handlers = Array.isArray(handlers)
-          ? handlers
-          : ([handlers] as Handler[]);
+        // TOOD: Clean this up some.
+        if (Array.isArray(handlers)) {
+          if (handlers[handlers.length - 1][brandSymbol] === 'asyncFunctionHandler') {
+            data.returnType = eventInvocationResponse;
+          }
+          data.handlers = handlers
+        } else {
+          if (handlers[brandSymbol] === 'asyncFunctionHandler') {
+            data.returnType = eventInvocationResponse;
+          }
+          data.handlers = [handlers] as Handler[]
+        }
 
         return this;
       },
@@ -210,7 +230,7 @@ export type QueryCustomOperation = CustomOperation<
  *     .authorization(allow => [allow.publicApiKey()])
  *     // 3. set the function has the handler
  *     .handler(a.handler.function(echoHandler)),
- * 
+ *
  *   EchoResponse: a.customType({
  *     content: a.string(),
  *     executionDuration: a.float()
@@ -277,9 +297,9 @@ export type SubscriptionCustomOperation = CustomOperation<
  * // Subscribe to incoming messages
  * receive: a.subscription()
  *   // subscribes to the 'publish' mutation
- *   .for(a.ref('publish')) 
+ *   .for(a.ref('publish'))
  *   // subscription handler to set custom filters
- *   .handler(a.handler.custom({entry: './receive.js'})) 
+ *   .handler(a.handler.custom({entry: './receive.js'}))
  *   // authorization rules as to who can subscribe to the data
  *   .authorization(allow => [allow.publicApiKey()]),
  * @returns a custom subscription
@@ -297,3 +317,15 @@ export function subscription(): CustomOperation<
 > {
   return _custom('Subscription', subscriptionBrand);
 }
+
+const eventInvocationResponse = {
+  data: {
+    type: 'ref',
+    link: 'EventInvocationResponse',
+    valueRequired: false,
+    array: false,
+    arrayRequired: false,
+    mutationOperations: [],
+    authorization: [],
+  }
+};

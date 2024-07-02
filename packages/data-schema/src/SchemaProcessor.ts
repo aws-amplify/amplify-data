@@ -4,6 +4,7 @@ import {
   type InternalField,
   string,
   type BaseModelField,
+  ModelFieldType,
 } from './ModelField';
 import { type InternalRelationalField } from './ModelRelationalField';
 import type { InternalModel } from './ModelType';
@@ -34,9 +35,12 @@ import {
   type CustomHandler,
   type SqlReferenceHandler,
   FunctionHandler,
+  FunctionHandlerData,
+  AsyncFunctionHandler,
 } from './Handler';
 import * as os from 'os';
 import * as path from 'path';
+import { brandSymbol } from './util/Brand';
 
 type ScalarFieldDef = Exclude<InternalField['data'], { fieldType: 'model' }>;
 
@@ -252,33 +256,48 @@ function enumFieldToGql(enumName: string, secondaryIndexes: string[] = []) {
 }
 
 function transformFunctionHandler(
-  handlers: FunctionHandler[],
+  handlers: FunctionHandler[] | AsyncFunctionHandler[],
   functionFieldName: string,
 ): {
   gqlHandlerContent: string;
   lambdaFunctionDefinition: LambdaFunctionDefinition;
+  generatedResponseTypes: [string, any][];
 } {
   let gqlHandlerContent = '';
   const lambdaFunctionDefinition: LambdaFunctionDefinition = {};
-
+  const generatedResponseTypes: [string, any][] = [];
   handlers.forEach((handler, idx) => {
     const handlerData = getHandlerData(handler);
 
-    if (typeof handlerData === 'string') {
-      gqlHandlerContent += `@function(name: "${handlerData}") `;
-    } else if (typeof handlerData.getInstance === 'function') {
+    if (typeof handlerData.handler === 'string') {
+      gqlHandlerContent += `@function(name: "${handlerData.handler}") `;
+    } else if (typeof handlerData.handler.getInstance === 'function') {
       const fnName = `Fn${capitalize(functionFieldName)}${idx === 0 ? '' : `${idx + 1}`}`;
 
-      lambdaFunctionDefinition[fnName] = handlerData;
-      gqlHandlerContent += `@function(name: "${fnName}") `;
-    } else {
+      // TODO: We're setting this in multiple places to passs existing validation checks.
+      // Is that necessary? Or can we shuffle around some validation without issue?
+      // TODO: The `EventInvocationResponse` type should only be added to the schema if
+      // the async function is the final function handler in a pipeline.
+      if (handlerData.invocationType === 'Event') {
+        generatedResponseTypes.push(['EventInvocationResponse', eventInvocationResponseCustomType]);
+      }
+      lambdaFunctionDefinition[fnName] = handlerData.handler;
+
+      const invocationTypeArg = handlerData.invocationType === 'Event' ? ', invocationType: Event)' : ')'
+      gqlHandlerContent += `@function(name: "${fnName}"${invocationTypeArg} `;
+    }
+    else {
       throw new Error(
         `Invalid value specified for ${functionFieldName} handler.function(). Expected: defineFunction or string.`,
       );
     }
   });
 
-  return { gqlHandlerContent, lambdaFunctionDefinition };
+  return {
+    gqlHandlerContent,
+    lambdaFunctionDefinition,
+    generatedResponseTypes,
+  };
 }
 
 type CustomTypeAuthRules =
@@ -413,12 +432,14 @@ function customOperationToGql(
   let gqlHandlerContent = '';
   let lambdaFunctionDefinition: LambdaFunctionDefinition = {};
   let customSqlDataSourceStrategy: CustomSqlDataSourceStrategy | undefined;
+  let generatedResponseTypes: [string, any][] = []
 
-  if (isFunctionHandler(handlers)) {
-    ({ gqlHandlerContent, lambdaFunctionDefinition } = transformFunctionHandler(
+  if (isFunctionHandler(handlers) || isAsyncFunctionHandler(handlers)) {
+    ({ gqlHandlerContent, lambdaFunctionDefinition, generatedResponseTypes } = transformFunctionHandler(
       handlers,
       typeName,
     ));
+    implicitTypes.push(...generatedResponseTypes);
   } else if (databaseType === 'sql' && handler && brand === 'inlineSql') {
     gqlHandlerContent = `@sql(statement: ${escapeGraphQlString(
       String(getHandlerData(handler)),
@@ -1243,6 +1264,7 @@ const schemaPreprocessor = (
           mostRelevantAuthRules,
           databaseType,
           getRefType,
+          schema
         );
 
         topLevelTypes.push(...implicitTypes);
@@ -1445,9 +1467,14 @@ function validateCustomOperations(
     typeDef.data.returnType === null &&
     (opType === 'Query' || opType === 'Mutation')
   ) {
-    throw new Error(
-      `Invalid Custom ${opType} definition. A Custom ${opType} must include a return type. ${typeName} has no return type specified.`,
-    );
+    // TODO: There should be a more elegant and readable way to handle this check.
+    // Maybe it's not even necessary anymore since we're the setting returnType in the handler() method.
+    if (!handlers || handlers.length === 0 || handlers[handlers.length - 1][brandSymbol] !== 'asyncFunctionHandler') {
+      throw new Error(
+        `Invalid Custom ${opType} definition. A Custom ${opType} must include a return type. ${typeName} has no return type specified.`,
+      );
+    }
+
   }
 
   if (opType !== 'Subscription' && subscriptionSource.length > 0) {
@@ -1536,6 +1563,12 @@ const isFunctionHandler = (
   return Array.isArray(handler) && getBrand(handler[0]) === 'functionHandler';
 };
 
+const isAsyncFunctionHandler = (
+  handler: HandlerType[] | null,
+): handler is AsyncFunctionHandler[] => {
+  return Array.isArray(handler) && getBrand(handler[0]) === 'asyncFunctionHandler';
+}
+
 const normalizeDataSourceName = (
   dataSource: undefined | string | RefType<any, any, any>,
 ): string => {
@@ -1617,12 +1650,29 @@ const handleCustom = (
   return jsFn;
 };
 
+const eventInvocationResponseCustomType = {
+  data: {
+    fields: {
+      success: {
+        data: {
+          fieldType: ModelFieldType.Boolean,
+          required: true,
+          array: false,
+          arrayRequired: false,
+        }
+      }
+    },
+    type: 'customType'
+  }
+};
+
 function transformCustomOperations(
   typeDef: InternalCustom,
   typeName: string,
   authRules: Authorization<any, any, any>[],
   databaseType: DatabaseType,
   getRefType: ReturnType<typeof getRefTypeForSchema>,
+  schema: InternalSchema,
 ) {
   const { typeName: opType, handlers } = typeDef.data;
   let jsFunctionForField: JsResolver | undefined = undefined;
@@ -1634,6 +1684,15 @@ function transformCustomOperations(
   }
 
   const isCustom = Boolean(jsFunctionForField);
+
+  // TODO: We're adding the `EventInvocationResponse` in multiple places.
+  // Is this really necessary or can we shuffle around some validation ordering?
+  //
+  // If this stays here, update the condition to only add the type when necessary:
+  // async function is the final function in the chain.
+  if (isAsyncFunctionHandler(handlers)) {
+    schema.data.types['EventInvocationResponse'] = eventInvocationResponseCustomType;
+  }
 
   const {
     gqlField,

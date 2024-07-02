@@ -344,6 +344,17 @@ type Query {
 }"
 `;
 
+exports[`CustomOperation transform dynamo schema handlers a.handler.function defineFunction event invocation 1`] = `
+"type EventInvocationResponse @aws_cognito_user_pools
+{
+  success: Boolean!
+}
+
+type Query {
+  getPostDetails: EventInvocationResponse @function(name: "FnGetPostDetails", invocationType: Event) @auth(rules: [{allow: private}])
+}"
+`;
+
 exports[`CustomOperation transform dynamo schema handlers a.handler.function pipeline / mix 1`] = `
 "type GetPostDetailsReturnType @aws_cognito_user_pools
 {

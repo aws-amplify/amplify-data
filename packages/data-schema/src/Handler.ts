@@ -6,7 +6,8 @@ export type HandlerType =
   | InlineSqlHandler
   | SqlReferenceHandler
   | CustomHandler
-  | FunctionHandler;
+  | FunctionHandler
+  | AsyncFunctionHandler;
 
 const dataSymbol = Symbol('Data');
 
@@ -18,7 +19,8 @@ type AllHandlers =
   | InlineSqlHandler
   | SqlReferenceHandler
   | CustomHandler
-  | FunctionHandler;
+  | FunctionHandler
+  | AsyncFunctionHandler;
 
 export function getHandlerData<H extends AllHandlers>(
   handler: H,
@@ -93,7 +95,7 @@ export type CustomHandler = { [dataSymbol]: CustomHandlerData } & Brand<
 >;
 
 /**
- * Use a custom JavaScript resolver to handle a query, mutation, or subscription. 
+ * Use a custom JavaScript resolver to handle a query, mutation, or subscription.
  * @see {@link https://docs.amplify.aws/react/build-a-backend/data/custom-business-logic/#step-2---configure-custom-business-logic-handler-code}
  * @param customHandler `{ entry: "path-to-javascript-resolver-file.js", dataSource: "Data Source name added via "backend.data.add*DataSoruce(...)"}`
  * @returns A JavaScript resolver attached to the query, mutation, or subscription.
@@ -107,7 +109,7 @@ export type CustomHandler = { [dataSymbol]: CustomHandlerData } & Brand<
  *     allow.owner(),
  *     allow.authenticated().to(['read'])
  *   ]),
- * 
+ *
  *   likePost: a
  *     .mutation()
  *     .arguments({ postId: a.id() })
@@ -131,17 +133,28 @@ function custom(customHandler: CustomHandlerInput): CustomHandler {
 //#endregion
 
 //#region handler.function
-
-export type FunctionHandlerData = DefineFunction | string;
+export type FunctionInvocationType = 'RequestResponse' | 'Event';
+export type FunctionHandlerInput = DefineFunction | string
+export type FunctionHandlerData = { handler: FunctionHandlerInput, invocationType: 'RequestResponse' | 'Event' }
 
 const functionHandlerBrand = 'functionHandler';
 
+// TODO: Consolidate duplicate `invocationType` -- ideally in [dataSymbol]
 export type FunctionHandler = {
   [dataSymbol]: FunctionHandlerData;
+  async(): AsyncFunctionHandler;
+  invocationType: 'RequestResponse';
 } & Brand<typeof functionHandlerBrand>;
 
+const asyncFunctionHandlerBrand = 'asyncFunctionHandler';
+
+export type AsyncFunctionHandler = {
+  [dataSymbol]: FunctionHandlerData;
+  invocationType: 'Event';
+} & Brand<typeof asyncFunctionHandlerBrand>;
+
 /**
- * Use a function created via `defineFunction` to handle the custom query/mutation/subscription. In your function handler, 
+ * Use a function created via `defineFunction` to handle the custom query/mutation/subscription. In your function handler,
  * you can use the `Schema["YOUR_QUERY_OR_MUTATION_NAME"]["functionHandler"]` utility type to type the handler function.
  * @example
  * import {
@@ -150,18 +163,18 @@ export type FunctionHandler = {
  *   defineData,
  *   defineFunction // 1.Import "defineFunction" to create new functions
  * } from '@aws-amplify/backend';
- * 
+ *
  * // 2. define a function
  * const echoHandler = defineFunction({
  *   entry: './echo-handler/handler.ts'
  * })
- * 
+ *
  * const schema = a.schema({
  *   EchoResponse: a.customType({
  *     content: a.string(),
  *     executionDuration: a.float()
  *   }),
- * 
+ *
  *   echo: a
  *     .query()
  *     .arguments({ content: a.string() })
@@ -171,12 +184,33 @@ export type FunctionHandler = {
  *     .handler(a.handler.function(echoHandler))
  * });
  * @see {@link https://docs.amplify.aws/react/build-a-backend/data/custom-business-logic/}
- * @param fn A function created via `defineFunction`. Alternatively, you can pass in a "string" of the function name and pass 
+ * @param fn A function created via `defineFunction`. Alternatively, you can pass in a "string" of the function name and pass
  * in a corresponding value into the `functionMap` property of defineData.
  * @returns A handler for the query / mutation / subscription
  */
-function fcn(fn: FunctionHandlerData): FunctionHandler {
-  return { [dataSymbol]: fn, ...buildHandler(functionHandlerBrand) };
+function fcn(fn: FunctionHandlerInput): FunctionHandler {
+  const invocationType = 'RequestResponse'
+  return { [dataSymbol]: {
+    handler: fn,
+    invocationType
+  },
+    invocationType,
+    async() {
+      return _async(this);
+    },
+    ...buildHandler(functionHandlerBrand)
+  };
+}
+
+function _async(fnHandler: FunctionHandler): AsyncFunctionHandler {
+  return {
+    [dataSymbol]: {
+      handler: fnHandler[dataSymbol].handler,
+      invocationType: 'Event'
+    },
+    invocationType: 'Event',
+    ...buildHandler(asyncFunctionHandlerBrand)
+  }
 }
 
 //#endregion

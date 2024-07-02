@@ -614,6 +614,7 @@ describe('CustomOperation transform', () => {
               .returns(a.customType({}))
               .authorization((allow) => allow.publicApiKey())
               .handler([
+                // @ts-expect-error
                 a.handler.custom({
                   entry: './filename.js',
                   dataSource: 'CommentTable',
@@ -791,6 +792,26 @@ describe('CustomOperation transform', () => {
             FnGetPostDetails: fn1,
           });
         });
+
+        // TODO: Add test cases
+        // - pipeline async
+        // - mixed sync async
+        //  - ultimate async uses EventInvocationResponse
+        //  - ultimate non-async requires return type
+        // - TS error validation cases
+        test('defineFunction event invocation', () => {
+          const fn1 = defineFunctionStub({});
+          const s = a.schema({
+            getPostDetails: a
+              .query()
+              .arguments({})
+              .handler(a.handler.function(fn1).async())
+              .authorization((allow) => allow.authenticated())
+          });
+
+          const { schema, lambdaFunctions } = s.transform();
+          expect(schema).toMatchSnapshot();
+        })
 
         test('pipeline / mix', () => {
           const fn1 = defineFunctionStub({});
