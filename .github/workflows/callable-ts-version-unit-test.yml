@@ -22,6 +22,8 @@ jobs:
         run: npm i typescript@$VERSION
       - name: Setup node and build the repository
         uses: ./amplify-api-next/.github/actions/node-and-build
+        with:
+          force: true
       - name: Run tests
         working-directory: ./amplify-api-next
         run: npm run lint && npm run test
