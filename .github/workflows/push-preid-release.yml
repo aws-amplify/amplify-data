@@ -22,6 +22,10 @@ jobs:
         uses: ./amplify-api-next/.github/actions/node-and-build
         with:
           is-prebuild: true
+  e2e:
+    secrets: inherit
+    uses: ./.github/workflows/callable-release-verification.yml
+  # Move to `callable-release-verification`?
   unit-tests:
     needs:
       - prebuild
@@ -36,9 +40,9 @@ jobs:
         run: echo "preid=$(echo $BRANCH |  tr -cd '[:alnum:]_\-/.' | cut -d \/ -f 2)" >> $GITHUB_OUTPUT
     outputs:
       preid: ${{ steps.output_preid.outputs.preid }}
-
   preid-release:
     needs:
+      - e2e
       - unit-tests
       - parse-preid
     secrets: inherit
