@@ -76,7 +76,7 @@ jobs:
         uses: ./amplify-api-next/.github/actions/setup-samples-staging
         with:
           AMPLIFY_JS_SAMPLES_STAGING_READ: ${{ secrets.AMPLIFY_JS_SAMPLES_STAGING_READ }}
-      - name: Load Verdaccio with AmplifyJs
+      - name: Load Verdaccio with AmplifyApiNext
         # TODO:
         uses: ./amplify-api-next/.github/actions/load-verdaccio-with-amplify-api-next
       - name: Run cypress tests for ${{ inputs.test_name }} dev
