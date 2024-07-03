@@ -9,6 +9,8 @@ on:
   push:
     branches:
       - main
+      # temp:
+      - e2e-phase-1
 
 jobs:
   # the first 2 jobs will be redundant once we start using PRs into this repo (i.e. after the first release)
