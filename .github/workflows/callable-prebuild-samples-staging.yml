@@ -3,7 +3,7 @@ name: Prebuild AmplifyJsSamplesStaging
 on:
   workflow_call:
     secrets:
-      GH_TOKEN_STAGING_READ:
+      AMPLIFY_JS_SAMPLES_STAGING_READ:
         required: true
 jobs:
   pre-staging:
@@ -19,4 +19,4 @@ jobs:
         # TODO:
         uses: ./amplify-api-next/.github/actions/setup-samples-staging
         with:
-          GH_TOKEN_STAGING_READ: ${{ secrets.GH_TOKEN_STAGING_READ }}
+          AMPLIFY_JS_SAMPLES_STAGING_READ: ${{ secrets.AMPLIFY_JS_SAMPLES_STAGING_READ }}

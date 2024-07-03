@@ -75,7 +75,7 @@ jobs:
         # TODO:
         uses: ./amplify-api-next/.github/actions/setup-samples-staging
         with:
-          GH_TOKEN_STAGING_READ: ${{ secrets.GH_TOKEN_STAGING_READ }}
+          AMPLIFY_JS_SAMPLES_STAGING_READ: ${{ secrets.AMPLIFY_JS_SAMPLES_STAGING_READ }}
       - name: Load Verdaccio with AmplifyJs
         # TODO:
         uses: ./amplify-api-next/.github/actions/load-verdaccio-with-amplify-api-next
