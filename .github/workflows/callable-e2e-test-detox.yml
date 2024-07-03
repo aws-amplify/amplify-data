@@ -37,7 +37,7 @@ jobs:
           AMPLIFY_JS_SAMPLES_STAGING_READ: ${{ secrets.AMPLIFY_JS_SAMPLES_STAGING_READ }}
       - name: Load Verdaccio with amplify-api-next
         # TODO:
-        uses: ./amplify-api-next/.github/actions/load-verdaccio-with-amplify-js
+        uses: ./amplify-api-next/.github/actions/load-verdaccio-with-amplify-api-next
       - name: Yarn Install
         working-directory: ${{ inputs.working_directory }}
         run: |
