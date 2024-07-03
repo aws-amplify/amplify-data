@@ -1,5 +1,11 @@
 # @aws-amplify/data-schema
 
+## 1.3.4
+
+### Patch Changes
+
+- 193f285: custom selection set return value for custom type array fields
+
 ## 1.3.3
 
 ### Patch Changes
