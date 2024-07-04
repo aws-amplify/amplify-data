@@ -24,7 +24,9 @@ runs:
         NPM_PASS: verdaccio
         NPM_EMAIL: verdaccio@amplify.js
       run: |
+        echo "global install npm-cli-adduser------"
         npm i -g npm-cli-adduser
+        echo "execute command-----"
         npm-cli-adduser
         sleep 1
     - name: Configure registry and git
@@ -37,6 +39,7 @@ runs:
         NPM_PASS: verdaccio
         NPM_EMAIL: verdaccio@amplify.js
       run: |
+        echo "setting registry-----"
         yarn config set registry $NPM_REGISTRY
         npm set registry $NPM_REGISTRY
         git config --global user.email $NPM_EMAIL
