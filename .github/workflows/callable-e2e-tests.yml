@@ -17,14 +17,14 @@ jobs:
         id: load_config
         run: |
           echo "INTEG_CONFIG=$(cat .github/integ-config/integ-all.yml | yq '.tests' -o=json | jq -c .)" >> $GITHUB_OUTPUT
-          echo "INTEG_CONFIG_HEADLESS=$(cat .github/integ-config/integ-all-headless.yml | yq '.tests' -o=json | jq -c .)" >> $GITHUB_OUTPUT
-          echo "DETOX_INTEG_CONFIG=$(cat .github/integ-config/detox-integ-all.yml | yq -o=json | jq -c .)" >> $GITHUB_OUTPUT
+          # echo "INTEG_CONFIG_HEADLESS=$(cat .github/integ-config/integ-all-headless.yml | yq '.tests' -o=json | jq -c .)" >> $GITHUB_OUTPUT
+          # echo "DETOX_INTEG_CONFIG=$(cat .github/integ-config/detox-integ-all.yml | yq -o=json | jq -c .)" >> $GITHUB_OUTPUT
         # TODO:
         working-directory: ./amplify-api-next
     outputs:
       integ-config: ${{ steps.load_config.outputs.INTEG_CONFIG }}
-      integ-config-headless: ${{ steps.load_config.outputs.INTEG_CONFIG_HEADLESS }}
-      detox-integ-config: ${{ steps.load_config.outputs.DETOX_INTEG_CONFIG }}
+      # integ-config-headless: ${{ steps.load_config.outputs.INTEG_CONFIG_HEADLESS }}
+      # detox-integ-config: ${{ steps.load_config.outputs.DETOX_INTEG_CONFIG }}
 
   e2e-test-runner:
     name: E2E test runnner

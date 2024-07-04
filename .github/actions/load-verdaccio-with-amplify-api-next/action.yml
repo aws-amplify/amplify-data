@@ -22,7 +22,7 @@ runs:
         NPM_REGISTRY: http://localhost:4873/
         NPM_USER: verdaccio
         NPM_PASS: verdaccio
-        NPM_EMAIL: verdaccio@amplifyapinext.js
+        NPM_EMAIL: verdaccio@amplify.js
       run: |
         npm i -g npm-cli-adduser
         npm-cli-adduser
@@ -35,7 +35,7 @@ runs:
         NPM_REGISTRY: http://localhost:4873/
         NPM_USER: verdaccio
         NPM_PASS: verdaccio
-        NPM_EMAIL: verdaccio@amplifyapinext.js
+        NPM_EMAIL: verdaccio@amplify.js
       run: |
         yarn config set registry $NPM_REGISTRY
         npm set registry $NPM_REGISTRY
@@ -48,11 +48,11 @@ runs:
       # TODO:
       working-directory: ./amplify-api-next
       # TODO:
+      # yarn info @aws-amplify/data-schema@unstable description
+      # yarn info @aws-amplify/data-schema-types@unstable description
+      # npm info @aws-amplify/data-schema-types@unstable version
       run: |
         scripts/retry-yarn-script.sh -s publish:verdaccio -n 5 -r true
-        yarn info @aws-amplify/data-schema@unstable description
-        yarn info @aws-amplify/data-schema-types@unstable description
-        npm info @aws-amplify/data-schema-types@unstable version
     - name: Upload artifact
       uses: actions/upload-artifact@0b7f8abb1508181956e8e162db84b466c27e18ce # v3.1.2 https://github.com/actions/upload-artifact/commit/0b7f8abb1508181956e8e162db84b466c27e18ce
       if: failure()
