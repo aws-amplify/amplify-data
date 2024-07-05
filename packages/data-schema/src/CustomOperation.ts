@@ -18,11 +18,13 @@ import type {
 const queryBrand = 'queryCustomOperation';
 const mutationBrand = 'mutationCustomOperation';
 const subscriptionBrand = 'subscriptionCustomOperation';
+const generationBrand = 'generationCustomOperation';
 
 type CustomOperationBrand =
   | typeof queryBrand
   | typeof mutationBrand
-  | typeof subscriptionBrand;
+  | typeof subscriptionBrand
+  | typeof generationBrand;
 
 type CustomArguments = Record<string, BaseModelField | EnumType>;
 
@@ -38,6 +40,7 @@ export const CustomOperationNames = [
   'Query',
   'Mutation',
   'Subscription',
+  'Generation',
 ] as const;
 type CustomOperationName = (typeof CustomOperationNames)[number];
 
@@ -210,7 +213,7 @@ export type QueryCustomOperation = CustomOperation<
  *     .authorization(allow => [allow.publicApiKey()])
  *     // 3. set the function has the handler
  *     .handler(a.handler.function(echoHandler)),
- * 
+ *
  *   EchoResponse: a.customType({
  *     content: a.string(),
  *     executionDuration: a.float()
@@ -277,9 +280,9 @@ export type SubscriptionCustomOperation = CustomOperation<
  * // Subscribe to incoming messages
  * receive: a.subscription()
  *   // subscribes to the 'publish' mutation
- *   .for(a.ref('publish')) 
+ *   .for(a.ref('publish'))
  *   // subscription handler to set custom filters
- *   .handler(a.handler.custom({entry: './receive.js'})) 
+ *   .handler(a.handler.custom({entry: './receive.js'}))
  *   // authorization rules as to who can subscribe to the data
  *   .authorization(allow => [allow.publicApiKey()]),
  * @returns a custom subscription
@@ -296,4 +299,24 @@ export function subscription(): CustomOperation<
   typeof subscriptionBrand
 > {
   return _custom('Subscription', subscriptionBrand);
+}
+
+export type GenerationCustomOperation = CustomOperation<
+  CustomOperationParamShape,
+  any,
+  typeof generationBrand
+>;
+
+export function generation(): CustomOperation<
+  {
+    arguments: null;
+    returnType: null;
+    authorization: [];
+    typeName: 'Generation';
+    handlers: null;
+  },
+  'for',
+  typeof generationBrand
+> {
+  return _custom('Generation', generationBrand);
 }

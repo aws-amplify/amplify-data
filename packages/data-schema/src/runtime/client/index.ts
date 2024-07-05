@@ -714,7 +714,8 @@ export type CustomOperations<
   OperationDefs extends ClientSchemaByEntityTypeBaseShape[
     | 'queries'
     | 'mutations'
-    | 'subscriptions'],
+    | 'subscriptions'
+    | 'generations'],
   Context extends ContextType = 'CLIENT',
 > = {
   [OpName in keyof OperationDefs]: {
@@ -791,6 +792,7 @@ export type ClientExtensions<T extends Record<any, any> = never> = {
   mutations: CustomMutations<T, 'CLIENT'>;
   subscriptions: CustomSubscriptions<T, 'CLIENT'>;
   conversations: Conversations<T>;
+  generations: Generations<T>;
 };
 
 export type ClientExtensionsSSRRequest<T extends Record<any, any> = never> = {
@@ -813,3 +815,8 @@ export type Conversations<
 > = {
   [ConversationName in keyof Schema['conversations']]: Conversation;
 };
+
+export type Generations<
+  T extends Record<any, any>,
+  Schema extends ClientSchemaByEntityType<T> = ClientSchemaByEntityType<T>,
+> = CustomOperations<Schema['generations']>;

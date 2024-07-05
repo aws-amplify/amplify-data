@@ -21,7 +21,7 @@ import { ref } from './RefType';
 import { hasOne, hasMany, belongsTo } from './ModelRelationalField';
 import { customType } from './CustomType';
 import { enumType } from './EnumType';
-import { query, mutation, subscription } from './CustomOperation';
+import { query, mutation, subscription, generation } from './CustomOperation';
 import { handler } from './Handler';
 import { conversation } from './ai/ConversationType';
 
@@ -56,5 +56,6 @@ export {
   url,
   ipAddress,
   conversation,
+  generation,
   handler,
 };

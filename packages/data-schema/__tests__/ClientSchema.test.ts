@@ -1457,10 +1457,35 @@ describe('ai routes', () => {
     type ActualChatBot = Prettify<Schema['ChatBot']>;
 
     type Expected = {
-      __entityType: 'aiConversation';
+      __entityType: 'customConversation';
     };
 
     type ActualChatBotInterface = Pick<ActualChatBot, keyof Expected>;
+
+    type test = Expect<Equal<ActualChatBotInterface, Expected>>;
+
+    const graphql = schema.transform().schema;
+    expect(graphql).toMatchSnapshot();
+  });
+
+  test('generations', () => {
+    const schema = a.schema({
+      Recipe: a
+        .model({
+          directions: a.string().array(),
+        })
+        .authorization((allow) => allow.publicApiKey()),
+      makeRecipe: a.generation().returns(a.ref('Recipe')),
+    });
+
+    type Schema = ClientSchema<typeof schema>;
+    type ActualMakeRecipe = Prettify<Schema['makeRecipe']>;
+
+    type Expected = {
+      __entityType: 'customGeneration';
+    };
+
+    type ActualChatBotInterface = Pick<ActualMakeRecipe, keyof Expected>;
 
     type test = Expect<Equal<ActualChatBotInterface, Expected>>;
 

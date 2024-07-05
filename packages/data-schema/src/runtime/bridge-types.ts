@@ -88,6 +88,7 @@ export interface ModelIntrospectionSchema {
   mutations?: CustomOperations;
   subscriptions?: CustomOperations;
   conversations?: SchemaConversations;
+  generations?: SchemaGenerations;
 }
 
 /**
@@ -98,6 +99,7 @@ export type SchemaNonModels = Record<string, SchemaNonModel>;
 export type SchemaEnums = Record<string, SchemaEnum>;
 export type CustomOperations = Record<string, CustomOperation>;
 export type SchemaConversations = Record<string, SchemaConversation>;
+export type SchemaGenerations = Record<string, CustomOperation>;
 
 export interface SchemaConversation {
   name: string;

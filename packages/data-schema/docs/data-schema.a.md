@@ -127,6 +127,15 @@ A float scalar type following represented server-side as an IEEE 754 floating po
 </td></tr>
 <tr><td>
 
+[generation()](./data-schema.a.generation.md)
+
+
+</td><td>
+
+
+</td></tr>
+<tr><td>
+
 [hasMany(relatedModel, references)](./data-schema.a.hasmany.md)
 
 

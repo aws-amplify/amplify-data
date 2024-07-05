@@ -294,6 +294,22 @@ describe('CustomOperation transform', () => {
       expect(result).toMatchSnapshot();
     });
 
+    test('Generation route w/ no return should throw', () => {
+      const s = a.schema({
+        makeRecipe: a
+          .generation()
+          .arguments({
+            content: a.string(),
+          })
+          .authorization((allow) => [allow.publicApiKey()])
+          .handler(a.handler.function('someHandler')),
+      });
+
+      expect(() => s.transform()).toThrow(
+        'Invalid Generation route definition. A Generation route must include a return type',
+      );
+    });
+
     for (const returnType of [
       'string',
       'integer',

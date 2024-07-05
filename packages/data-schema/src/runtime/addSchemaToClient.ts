@@ -8,6 +8,7 @@ import {
   generateCustomMutationsProperty,
   generateCustomSubscriptionsProperty,
   generateEnumsProperty,
+  generateGenerationsProperty,
   generateModelsProperty,
 } from './internals';
 import {
@@ -43,6 +44,11 @@ export function addSchemaToClient<T extends Record<any, any> = never>(
     getInternals,
   );
   (client as any).conversations = generateConversationsProperty(
+    client as any,
+    apiGraphqlConfig,
+    getInternals,
+  );
+  (client as any).generations = generateGenerationsProperty(
     client as any,
     apiGraphqlConfig,
     getInternals,
