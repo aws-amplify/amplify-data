@@ -37,16 +37,8 @@ on:
       yarn_script:
         required: false
         type: string
-# TODO:
 env:
-  # TODO:
   AMPLIFY_DIR: /home/runner/work/amplify-api-next/amplify-api-next/amplify-api-next
-  # TODO:
-  # CYPRESS_GOOGLE_CLIENTID: ${{ secrets.CYPRESS_GOOGLE_CLIENTID }}
-  # TODO:
-  # CYPRESS_GOOGLE_CLIENT_SECRET: ${{ secrets.CYPRESS_GOOGLE_CLIENT_SECRET }}
-  # TODO:
-  # CYPRESS_GOOGLE_REFRESH_TOKEN: ${{ secrets.CYPRESS_GOOGLE_REFRESH_TOKEN }}
 
 jobs:
   e2e-test:
@@ -63,21 +55,16 @@ jobs:
 
     steps:
       - name: Checkout repository
-        # TODO:
         uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
         with:
-          # TODO:
           path: amplify-api-next
       - name: Setup node and build the repository
-        # TODO:
         uses: ./amplify-api-next/.github/actions/node-and-build
       - name: Setup samples staging repository
-        # TODO:
         uses: ./amplify-api-next/.github/actions/setup-samples-staging
         with:
           AMPLIFY_JS_SAMPLES_STAGING_READ: ${{ secrets.AMPLIFY_JS_SAMPLES_STAGING_READ }}
       - name: Load Verdaccio with AmplifyApiNext
-        # TODO:
         uses: ./amplify-api-next/.github/actions/load-verdaccio-with-amplify-api-next
       - name: Run cypress tests for ${{ inputs.test_name }} dev
         shell: bash
@@ -93,7 +80,6 @@ jobs:
           E2E_RETRY_COUNT: ${{ inputs.retry_count }}
           E2E_TEST_NAME: ${{ inputs.test_name }}
           E2E_YARN_SCRIPT: ${{ inputs.yarn_script }}
-        # TODO:
         run: |
           if [ -z "$E2E_YARN_SCRIPT" ]; then
             ../amplify-api-next/scripts/retry-yarn-script.sh -s \
@@ -125,7 +111,6 @@ jobs:
           E2E_RETRY_COUNT: ${{ inputs.retry_count }}
           E2E_TEST_NAME: ${{ inputs.test_name }}
           E2E_YARN_SCRIPT: ${{ inputs.yarn_script }}
-        # TODO:
         run: |
           if [ -z "$E2E_YARN_SCRIPT" ]; then
             ../amplify-api-next/scripts/retry-yarn-script.sh -s \

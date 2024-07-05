@@ -1,4 +1,3 @@
-# TODO: either move unit tests here, or rename this file
 name: Release Verification Tests
 
 on: workflow_call
@@ -22,9 +21,3 @@ jobs:
       - prebuild-samples-staging
     secrets: inherit
     uses: ./.github/workflows/callable-e2e-tests.yml
-  # TODO:
-  # Currently exists under `push-preid-release`. Move here?
-  # unit-tests:
-  #   needs:
-  #     - prebuild-ubuntu
-  #   uses: ./.github/workflows/callable-unit-tests.yml

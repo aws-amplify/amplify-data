@@ -22,21 +22,16 @@ jobs:
 
     steps:
       - name: Checkout repository
-        # TODO:
         uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
         with:
-          # TODO:
           path: amplify-api-next
       - name: Setup node and build the repository
-        # TODO:
         uses: ./amplify-api-next/.github/actions/node-and-build
       - name: Setup samples staging repository
-        # TODO:
         uses: ./amplify-api-next/.github/actions/setup-samples-staging
         with:
           AMPLIFY_JS_SAMPLES_STAGING_READ: ${{ secrets.AMPLIFY_JS_SAMPLES_STAGING_READ }}
       - name: Load Verdaccio with amplify-api-next
-        # TODO:
         uses: ./amplify-api-next/.github/actions/load-verdaccio-with-amplify-api-next
       - name: Yarn Install
         working-directory: ${{ inputs.working_directory }}
@@ -76,7 +71,6 @@ jobs:
         working-directory: ${{ inputs.working_directory }}
         shell: bash
       - name: Detox run
-        # TODO:
         run: |
           $GITHUB_WORKSPACE/amplify-api-next/scripts/retry-yarn-script.sh -s 'detox test -c ios.sim.debug -u' -n 3
         working-directory: ${{ inputs.working_directory }}

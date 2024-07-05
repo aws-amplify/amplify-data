@@ -1,5 +1,4 @@
 name: Load Verdaccio with amplify-api-next
-# TODO:
 description: Turn on Verdaccio and load up all of the amplify-api-next build artifacts
 
 runs:
@@ -31,7 +30,6 @@ runs:
         sleep 1
     - name: Configure registry and git
       shell: bash
-      # TODO:
       working-directory: ./amplify-api-next
       env:
         NPM_REGISTRY: http://localhost:4873/
@@ -48,12 +46,7 @@ runs:
         git --no-pager diff
     - name: Publish to verdaccio
       shell: bash
-      # TODO:
       working-directory: ./amplify-api-next
-      # TODO:
-      # yarn info @aws-amplify/data-schema@unstable description
-      # yarn info @aws-amplify/data-schema-types@unstable description
-      # npm info @aws-amplify/data-schema-types@unstable version
       run: |
         scripts/retry-yarn-script.sh -s publish:verdaccio -n 5 -r true
     - name: Upload artifact

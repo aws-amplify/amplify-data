@@ -8,10 +8,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        # TODO:
         uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
         with:
-          # TODO:
           path: amplify-api-next
       - name: Read integ config files
         id: load_config
@@ -19,11 +17,10 @@ jobs:
           echo "INTEG_CONFIG=$(cat .github/integ-config/integ-all.yml | yq '.tests' -o=json | jq -c .)" >> $GITHUB_OUTPUT
           # echo "INTEG_CONFIG_HEADLESS=$(cat .github/integ-config/integ-all-headless.yml | yq '.tests' -o=json | jq -c .)" >> $GITHUB_OUTPUT
           # echo "DETOX_INTEG_CONFIG=$(cat .github/integ-config/detox-integ-all.yml | yq -o=json | jq -c .)" >> $GITHUB_OUTPUT
-        # TODO:
         working-directory: ./amplify-api-next
     outputs:
       integ-config: ${{ steps.load_config.outputs.INTEG_CONFIG }}
-      # integ-config-headless: ${{ steps.load_config.outputs.INTEG_CONFIG_HEADLESS }}
+      # TODO: will add Detox + React Native support in next PR:
       # detox-integ-config: ${{ steps.load_config.outputs.DETOX_INTEG_CONFIG }}
 
   e2e-test-runner:
@@ -47,19 +44,3 @@ jobs:
       timeout_minutes: ${{ matrix.integ-config.timeout_minutes || 35 }}
       retry_count: ${{ matrix.integ-config.retry_count || 3 }}
       yarn_script: ${{ matrix.integ-config.yarn_script || '' }}
-
-  # TODO: add job for headless testing
-
-  # detox-e2e-test-runner:
-  #   name: E2E test runner
-  #   needs: e2e-prep
-  #   strategy:
-  #     matrix:
-  #       integ-config: ${{ fromJson(needs.e2e-prep.outputs.detox-integ-config) }}
-  #     fail-fast: false
-  #   secrets: inherit
-  #   uses: ./.github/workflows/callable-e2e-test-detox.yml
-  #   with:
-  #     test_name: ${{ matrix.integ-config.test_name }}
-  #     working_directory: ${{ matrix.integ-config.working_directory }}
-  #     timeout_minutes: ${{ matrix.integ-config.timeout_minutes || 45 }}
