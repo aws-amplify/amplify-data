@@ -25,7 +25,6 @@ jobs:
   e2e:
     secrets: inherit
     uses: ./.github/workflows/callable-release-verification.yml
-  # Move to `callable-release-verification`?
   unit-tests:
     needs:
       - prebuild

@@ -1,4 +1,4 @@
-name: Prebuild Amplify
+name: Prebuild amplify-api-next
 
 on:
   workflow_call:
