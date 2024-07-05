@@ -12,6 +12,8 @@ on:
       # of that branch (and corresponding `amplify-js-samples-staging` branch, if
       # testing sample / test changes) here:
       - main
+      # temp. testing alt `publish:verdaccio` script:
+      - e2e-phase-1-alt-publish
 
 jobs:
   # the first 2 jobs will be redundant once we start using PRs into this repo (i.e. after the first release)
