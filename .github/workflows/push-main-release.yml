@@ -12,7 +12,6 @@ on:
       # of that branch (and corresponding `amplify-js-samples-staging` branch, if
       # testing sample / test changes) here:
       - main
-      - e2e-phase-1-rn
 
 jobs:
   # the first 2 jobs will be redundant once we start using PRs into this repo (i.e. after the first release)
