@@ -5,6 +5,7 @@ runs:
   using: 'composite'
   steps:
     - name: Start verdaccio
+      # While / sleep are required here, as Verdaccio takes a minute to start:
       run: |
         npx verdaccio@5.25.0 &
         while ! nc -z localhost 4873; do
@@ -15,6 +16,9 @@ runs:
         # Run your commands after verdaccio is up and running
         echo "Verdaccio is up and running, proceeding with the script..."
       shell: bash
+    # TODO: we currently have Node pinned to version `18.20.2` for this to work.
+    # We either need to fix this, or find an alternative as this dep seems to
+    # be unmaintained.
     - name: Install and run npm-cli-login
       shell: bash
       env:
@@ -46,6 +50,8 @@ runs:
       working-directory: ./amplify-api-next
       run: |
         scripts/retry-yarn-script.sh -s publish:verdaccio -n 5 -r true
+        yarn info @aws-amplify/data-schema description
+        npm info @aws-amplify/data-schema version
     - name: Upload artifact
       uses: actions/upload-artifact@0b7f8abb1508181956e8e162db84b466c27e18ce # v3.1.2 https://github.com/actions/upload-artifact/commit/0b7f8abb1508181956e8e162db84b466c27e18ce
       if: failure()
