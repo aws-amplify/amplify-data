@@ -28,8 +28,8 @@
     "publish:release": "changeset version && changeset publish",
     "publish:preid": "changeset version --snapshot ${PREID_PREFIX} && changeset publish --tag ${PREID_PREFIX}",
     "publish:local": "npm_config_registry=http://localhost:4873/ npm run publish:release",
-    "publish:verdaccio1": "changeset version --snapshot unstable && changeset publish --tag unstable",
-    "publish:verdaccio": "changeset publish --no-git-tag --snapshot",
+    "publish:verdaccio": "changeset version --snapshot unstable && changeset publish --tag unstable",
+    "publish:verdaccio1": "changeset publish --no-git-tag --snapshot",
     "prepare": "husky"
   },
   "devDependencies": {
