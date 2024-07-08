@@ -10,10 +10,11 @@ on:
     branches:
       # NOTE: to run E2E tests against an `amplify-api-next` branch, add the name
       # of that branch (and corresponding `amplify-js-samples-staging` branch, if
-      # testing sample / test changes) here. 
-      # Must disable publishing to NPM prior to adding this branch to avoid 
+      # testing sample / test changes) here.
+      # Must disable publishing to NPM prior to adding this branch to avoid
       # publishing changes to `unstable`.
       - main
+      - e2e-phase-1-testing
 
 jobs:
   # the first 2 jobs will be redundant once we start using PRs into this repo (i.e. after the first release)
