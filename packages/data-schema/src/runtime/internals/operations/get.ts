@@ -97,51 +97,51 @@ async function _get(
   try {
     const headers = getCustomHeaders(client, getInternals, options?.headers);
 
-    const { data, extensions } = context
-      ? ((await (client as BaseSSRClient).graphql(
-          context,
-          {
-            ...auth,
-            query,
-            variables,
-          },
-          headers,
-        )) as GraphQLResult)
-      : ((await (client as BaseBrowserClient).graphql(
-          {
-            ...auth,
-            query,
-            variables,
-          },
-          headers,
-        )) as GraphQLResult);
+    // const { data, extensions } = context
+    //   ? ((await (client as BaseSSRClient).graphql(
+    //       context,
+    //       {
+    //         ...auth,
+    //         query,
+    //         variables,
+    //       },
+    //       headers,
+    //     )) as GraphQLResult)
+    //   : ((await (client as BaseBrowserClient).graphql(
+    //       {
+    //         ...auth,
+    //         query,
+    //         variables,
+    //       },
+    //       headers,
+    //     )) as GraphQLResult);
 
-    // flatten response
-    if (data) {
-      const [key] = Object.keys(data);
-      const flattenedResult = flattenItems(modelIntrospection, name, data[key]);
+    // // flatten response
+    // if (data) {
+    //   const [key] = Object.keys(data);
+    //   const flattenedResult = flattenItems(modelIntrospection, name, data[key]);
 
-      if (flattenedResult === null) {
-        return { data: null, extensions };
-      } else if (options?.selectionSet) {
-        return { data: flattenedResult, extensions };
-      } else {
-        // TODO: refactor to avoid destructuring here
-        const [initialized] = initializeModel(
-          client,
-          name,
-          [flattenedResult],
-          modelIntrospection,
-          auth.authMode,
-          auth.authToken,
-          !!context,
-        );
+    //   if (flattenedResult === null) {
+    //     return { data: null, extensions };
+    //   } else if (options?.selectionSet) {
+    //     return { data: flattenedResult, extensions };
+    //   } else {
+    //     // TODO: refactor to avoid destructuring here
+    //     const [initialized] = initializeModel(
+    //       client,
+    //       name,
+    //       [flattenedResult],
+    //       modelIntrospection,
+    //       auth.authMode,
+    //       auth.authToken,
+    //       !!context,
+    //     );
 
-        return { data: initialized, extensions };
-      }
-    } else {
-      return { data: null, extensions };
-    }
+    //     return { data: initialized, extensions };
+    //   }
+    // } else {
+    //   return { data: null, extensions };
+    // }
   } catch (error: any) {
     /**
      * The `data` type returned by `error` here could be:
