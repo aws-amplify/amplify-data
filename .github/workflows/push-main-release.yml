@@ -17,30 +17,11 @@ on:
       - e2e-phase-1-prebuild
 
 jobs:
-  # the first 2 jobs will be redundant once we start using PRs into this repo (i.e. after the first release)
-  # TODO: remove the 2 jobs
-  # Remove after verifying that we can indeed upgrade to this version:
-  # prebuild-ubuntu:
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: Checkout repository
-  #       uses: actions/checkout@24cb9080177205b6e8c946b17badbe402adc938f # v3.4.0 https://github.com/actions/checkout/commit/24cb9080177205b6e8c946b17badbe402adc938f
-  #       with:
-  #         path: amplify-api-next
-  #     - name: Setup node and build the repository
-  #       uses: ./amplify-api-next/.github/actions/node-and-build
-  #       with:
-  #         is-prebuild: true
-  # unit-tests:
-  #   needs:
-  #     - prebuild-ubuntu
-  #   uses: ./.github/workflows/callable-unit-tests.yml
-  release-verification:
+  release-verification-testing:
     secrets: inherit
     uses: ./.github/workflows/callable-release-verification.yml
   release:
     needs:
-      # - unit-tests
-      - release-verification
+      - release-verification-testing
     secrets: inherit
     uses: ./.github/workflows/callable-npm-publish-release.yml
