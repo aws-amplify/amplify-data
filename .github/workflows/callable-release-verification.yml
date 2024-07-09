@@ -7,6 +7,7 @@ jobs:
     uses: ./.github/workflows/callable-prebuild-amplify-api-next.yml
     with:
       runs_on: ubuntu-latest
+  # TODO: verify we can remove this:
   prebuild-macos:
     uses: ./.github/workflows/callable-prebuild-amplify-api-next.yml
     with:
@@ -14,6 +15,10 @@ jobs:
   prebuild-samples-staging:
     secrets: inherit
     uses: ./.github/workflows/callable-prebuild-samples-staging.yml
+  unit-tests:
+    needs:
+      - prebuild-ubuntu
+    uses: ./.github/workflows/callable-unit-tests.yml
   e2e:
     needs:
       - prebuild-macos
