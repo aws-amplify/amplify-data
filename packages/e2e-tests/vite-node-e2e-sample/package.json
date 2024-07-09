@@ -1,0 +1,28 @@
+{
+  "name": "node-e2e-sample",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "build": "npm install",
+    "node-e2e-test": "npx vite-node index.js"
+  },
+  "dependencies": {
+    "aws-amplify": "unstable",
+    "vite-node": "^1.6.0"
+  },
+  "devDependencies": {
+    "@aws-amplify/backend": "^1.0.3",
+    "@aws-amplify/backend-cli": "^1.0.4",
+    "@types/node": "^20",
+    "aws-cdk": "^2.147.1",
+    "aws-cdk-lib": "^2.147.1",
+    "constructs": "^10.3.0",
+    "es6-promise": "*",
+    "esbuild": "^0.20.2",
+    "eslint": "^8",
+    "eslint-config-next": "14.1.4",
+    "node-fetch": "*",
+    "tsx": "^4.15.7",
+    "typescript": "^5.5.2"
+  }
+}
