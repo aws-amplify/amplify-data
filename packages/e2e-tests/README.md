@@ -12,3 +12,6 @@ our functionality E2E.
 - `vite-node-e2e-sample`
   - uses `vite-node` to compile.
   - potential path for test a Vite config file, but without other Cypress, etc.
+- How we do it:
+  - shared backend for all E2E tests.
+  - 
