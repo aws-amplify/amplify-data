@@ -8,6 +8,11 @@ concurrency:
 on:
   push:
     branches:
+      # NOTE: to run E2E tests against an `amplify-api-next` branch, add the name
+      # of that branch (and corresponding `amplify-js-samples-staging` branch, if
+      # testing sample / test changes) here. 
+      # Must disable publishing to NPM prior to adding this branch to avoid 
+      # publishing changes to `unstable`.
       - main
 
 jobs:
@@ -28,9 +33,12 @@ jobs:
     needs:
       - prebuild
     uses: ./.github/workflows/callable-unit-tests.yml
-
+  e2e:
+    secrets: inherit
+    uses: ./.github/workflows/callable-release-verification.yml
   release:
     needs:
       - unit-tests
+      - e2e
     secrets: inherit
     uses: ./.github/workflows/callable-npm-publish-release.yml
