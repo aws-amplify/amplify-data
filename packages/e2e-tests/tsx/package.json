@@ -1,10 +1,12 @@
 {
-  "name": "node-e2e-sample",
+  "name": "tsx",
   "version": "1.0.0",
-  "main": "index.js",
+  "type": "module",
+  "main": "sample1.ts",
   "scripts": {
+    "clean": "rm -rf node_modules",
     "build": "npm install",
-    "sample1": "npx tsx ./sample1.ts"
+    "sample1": "npx tsx ./src/sample1.ts"
   },
   "dependencies": {
     "aws-amplify": "unstable"

@@ -1,5 +1,8 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
+# TODO: remove what's unnecessary
+
+
 # dependencies
 /node_modules
 /.pnp
@@ -29,3 +32,7 @@ yarn-error.log*
 
 # amplify
 .amplify
+
+# TODO:
+yarn.lock
+package-lock.json
