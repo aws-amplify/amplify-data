@@ -169,6 +169,14 @@ exports[`model auth rules can define owner auth with owner field spec 1`] = `
 }"
 `;
 
+exports[`model auth rules can define owner auth with owner field spec on a string-compatible field 1`] = `
+"type widget @model @auth(rules: [{allow: owner, ownerField: "authorId"}])
+{
+  title: String!
+  authorId: ID
+}"
+`;
+
 exports[`model auth rules can define private auth with no provider 1`] = `
 "type widget @model @auth(rules: [{allow: private}])
 {

@@ -116,6 +116,20 @@ describe('model auth rules', () => {
     expect(graphql).toMatchSnapshot();
   });
 
+  it('can define owner auth with owner field spec on a string-compatible field', () => {
+    const schema = a.schema({
+      widget: a
+        .model({
+          title: a.string().required(),
+          authorId: a.id(),
+        })
+        .authorization((allow) => allow.ownerDefinedIn('authorId')),
+    });
+
+    const graphql = schema.transform().schema;
+    expect(graphql).toMatchSnapshot();
+  });
+
   it(`can specify operations `, () => {
     const schema = a.schema({
       widget: a
