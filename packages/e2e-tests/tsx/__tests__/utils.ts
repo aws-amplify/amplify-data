@@ -22,11 +22,12 @@ const _testCase = (success: boolean): any =>
  * @param testCases
  * @param client
  */
-export async function runTestCases(client: any, testCases: any[]) {
+export async function runTestCases(testCases: any[]) {
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-expect-error
+  const client = global.client;
   for (const testCase of testCases) {
     test(`${testCase.label}`, async () => {
-      console.log('starting test case:', testCase.label);
-      console.log('is client here?', client);
       let result: any;
 
       try {
@@ -46,7 +47,7 @@ export async function runTestCases(client: any, testCases: any[]) {
 
 /**
  * TODO
- * @returns
+ * @returns API client
  */
 export async function configureAmplifyAndGenerateClient() {
   console.log('configuring Amplify and generating client..');
@@ -61,8 +62,12 @@ export async function configureAmplifyAndGenerateClient() {
  * TODO
  * @param client
  */
-export async function cleanup(client: any) {
+export async function cleanup() {
   console.log('starting cleanup..');
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-expect-error
+  const client = global.client;
+
   const { data: todos } = await client.models.Todo.list();
   console.log('todos to delete:', todos);
 

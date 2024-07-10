@@ -1,7 +1,5 @@
 import { testCases } from '../index';
-import { runTestCases } from './utils';
-
-let client: any;
+import { runTestCases, cleanup } from './utils';
 
 describe('API CRUD operations', () => {
   // TODO:
@@ -9,11 +7,10 @@ describe('API CRUD operations', () => {
   //   console.log('BEFORE ALL-----');
   //   client = await configureAmplifyAndGenerateClient();
   // });
-  // afterEach(async () => {
-  //   console.log('AFTER EACH-----');
-  //   await cleanup(client);
-  // });
-  runTestCases(client, testCases);
+  afterEach(async () => {
+    await cleanup();
+  });
+  runTestCases(testCases);
 });
 
 // TODO?
