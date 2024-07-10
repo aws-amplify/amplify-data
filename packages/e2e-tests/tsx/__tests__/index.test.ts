@@ -1,15 +1,20 @@
-import testCreate from '../index';
+import { testCases } from '../index';
+import { runTestCases } from './utils';
 
-// TODO: test for each CRUD operation:
+let client: any;
 
 describe('API CRUD operations', () => {
-  test('create', async () => {
-    const result = await testCreate();
-    // TODO:
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-expect-error
-    expect(result.content).toBe('test content');
-  });
+  // TODO:
+  // beforeAll(async () => {
+  //   console.log('BEFORE ALL-----');
+  //   client = await configureAmplifyAndGenerateClient();
+  // });
+  // afterEach(async () => {
+  //   console.log('AFTER EACH-----');
+  //   await cleanup(client);
+  // });
+  runTestCases(client, testCases);
 });
 
+// TODO?
 //  process.exit(1);

@@ -1,32 +1,27 @@
-import { Amplify } from 'aws-amplify';
-import { generateClient } from 'aws-amplify/data';
-import type { Schema } from './amplify/data/resource';
-import outputs from './amplify_outputs.json';
+import { configureAmplifyAndGenerateClient, cleanup } from './__tests__/utils';
 
-async function cleanup(client: any) {
-  // const { data: todos, errors } = await client.models.Todo.list();
-  const { data: todos } = await client.models.Todo.list();
+export const testCases = [
+  {
+    label: 'Create Todo',
+    action: async () => {
+      const client = await configureAmplifyAndGenerateClient();
+      const { data: newTodo, errors: createErrors } =
+        await client.models.Todo.create({
+          content: 'test content',
+        });
 
-  const deletePromises = todos?.map(async (todo: Schema['Todo']['type']) => {
-    await client.models.Todo.delete(todo);
-  });
+      if (createErrors) {
+        console.log('createErrors:', createErrors);
+        throw new Error(JSON.stringify(createErrors));
+      }
 
-  await Promise.all(deletePromises!);
-}
+      if (!newTodo) {
+        throw new Error('newTodo is undefined');
+      }
 
-export async function testCreate() {
-  Amplify.configure(outputs);
+      await cleanup(client);
 
-  const client = generateClient<Schema>();
-
-  const { data: newTodo, errors: createErrors } =
-    await client.models.Todo.create({
-      content: 'test content',
-    });
-
-  await cleanup(client);
-
-  return createErrors || newTodo;
-}
-
-export default testCreate;
+      return newTodo.content === 'test content';
+    },
+  },
+];

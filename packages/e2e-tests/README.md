@@ -14,4 +14,10 @@ our functionality E2E.
   - potential path for test a Vite config file, but without other Cypress, etc.
 - How we do it:
   - shared backend for all E2E tests.
-  - 
+  - Move jest deps + tests?
+
+# [WIP] How to add a new test:
+
+1. Create component
+2. Add test cases that follow this pattern and return a boolean
+3. Add spec that imports testCases and uses utils
