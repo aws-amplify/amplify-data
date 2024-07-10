@@ -54,7 +54,6 @@ export async function configureAmplifyAndGenerateClient() {
   Amplify.configure(outputs);
 
   const client = generateClient<Schema>();
-  console.log('client:', client);
   return client;
 }
 
