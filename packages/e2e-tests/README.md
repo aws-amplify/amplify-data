@@ -16,8 +16,12 @@ our functionality E2E.
   - shared backend for all E2E tests.
   - Move jest deps + tests?
 
-# [WIP] How to add a new test:
+## [WIP] How to add a new test:
 
 1. Create component
 2. Add test cases that follow this pattern and return a boolean
 3. Add spec that imports testCases and uses utils
+
+## [WIP] How to watch local changes and re-run tests:
+
+- At the root of the monorepo, run `npm run build:watch` (`npm run turbo watch` for now)

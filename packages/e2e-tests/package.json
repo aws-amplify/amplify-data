@@ -2,15 +2,14 @@
   "name": "tsx",
   "version": "1.0.0",
   "type": "module",
-  "main": "sample1.ts",
+  "main": "index.ts",
   "scripts": {
-    "clean": "rm -rf node_modules",
+    "clean": "rm -rf node_modules package-lock.json",
     "build": "npm install",
-    "sample1": "npx tsx ./src/sample1.ts",
     "test": "jest"
   },
   "dependencies": {
-    "aws-amplify": "unstable"
+    "aws-amplify": "*"
   },
   "devDependencies": {
     "@aws-amplify/backend": "^1.0.3",
