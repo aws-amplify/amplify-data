@@ -4,7 +4,7 @@ on: workflow_call
 
 jobs:
   e2e-prep:
-    name: Get required configs to run e2e tests
+    name: Get E2E test config
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository

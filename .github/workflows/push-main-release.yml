@@ -1,4 +1,4 @@
-name: Push - release from main to unstable
+name: Push - release from main to latest
 
 concurrency:
   # group name unique for push to push-main-release
@@ -10,33 +10,17 @@ on:
     branches:
       # NOTE: to run E2E tests against an `amplify-api-next` branch, add the name
       # of that branch (and corresponding `amplify-js-samples-staging` branch, if
-      # testing sample / test changes) here:
+      # testing sample / test changes) here.
+      # Must disable publishing to NPM prior to adding this branch to avoid
+      # accidentally publishing changes.
       - main
 
 jobs:
-  # the first 2 jobs will be redundant once we start using PRs into this repo (i.e. after the first release)
-  # TODO: remove the 2 jobs
-  prebuild:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@24cb9080177205b6e8c946b17badbe402adc938f # v3.4.0 https://github.com/actions/checkout/commit/24cb9080177205b6e8c946b17badbe402adc938f
-        with:
-          path: amplify-api-next
-      - name: Setup node and build the repository
-        uses: ./amplify-api-next/.github/actions/node-and-build
-        with:
-          is-prebuild: true
-  unit-tests:
-    needs:
-      - prebuild
-    uses: ./.github/workflows/callable-unit-tests.yml
-  e2e:
+  release-verification-testing:
     secrets: inherit
     uses: ./.github/workflows/callable-release-verification.yml
   release:
     needs:
-      - unit-tests
-      - e2e
+      - release-verification-testing
     secrets: inherit
     uses: ./.github/workflows/callable-npm-publish-release.yml
