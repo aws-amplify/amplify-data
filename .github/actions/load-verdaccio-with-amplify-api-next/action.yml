@@ -51,7 +51,7 @@ runs:
       shell: bash
       working-directory: ./amplify-api-next
       run: |
-        scripts/retry-yarn-script.sh -s publish:verdaccio -n 5 -r true
+        scripts/retry-yarn-script.sh -s publish:local -n 5 -r true
         npm info @aws-amplify/data-schema version
     - name: Upload artifact
       uses: actions/upload-artifact@0b7f8abb1508181956e8e162db84b466c27e18ce # v3.1.2 https://github.com/actions/upload-artifact/commit/0b7f8abb1508181956e8e162db84b466c27e18ce
