@@ -32,14 +32,14 @@ jobs:
           git config --global user.email $GITHUB_EMAIL
           git config --global user.name $GITHUB_USER
 
-      - name: Update lockfile with newly published version
-        working-directory: ./amplify-api-next
-        run: npm i
+      # - name: Update lockfile with newly published version
+      #   working-directory: ./amplify-api-next
+      #   run: npm i
 
-      - name: Commit version and changelog
-        working-directory: ./amplify-api-next
-        run: |
-          git add .
-          git commit -m "release: publish [ci skip]"
-          git push origin main
-          git push --follow-tags
+      # - name: Commit version and changelog
+      #   working-directory: ./amplify-api-next
+      #   run: |
+      #     git add .
+      #     git commit -m "release: publish [ci skip]"
+      #     git push origin main
+      #     git push --follow-tags

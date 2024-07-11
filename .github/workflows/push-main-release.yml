@@ -14,6 +14,7 @@ on:
       # Must disable publishing to NPM prior to adding this branch to avoid
       # accidentally publishing changes.
       - main
+      - e2e-phase-1-rn
 
 jobs:
   release-verification-testing:
