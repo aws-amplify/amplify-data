@@ -12,6 +12,10 @@ runs:
   steps:
     - name: Setup Node.js 18
       uses: actions/setup-node@64ed1c7eab4cce3362f8c340dee64e5eaeef8f7c # v3.6.0 https://github.com/actions/setup-node/commit/64ed1c7eab4cce3362f8c340dee64e5eaeef8f7c
+      # TODO: we currently have Node pinned to version `18.20.2` for `npm-cli-adduser` to work
+      # (See https://github.com/aws-amplify/amplify-js/pull/13450).
+      # We either need to fix this, or find an alternative as this dep seems to
+      # be unmaintained.
       with:
         node-version: 18.20.2
       env:

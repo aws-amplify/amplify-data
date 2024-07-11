@@ -7,7 +7,7 @@
 
 # usage example: 
 # ./retry-command.sh -s lint -n 5
-# ./retry-command.sh -s publish:verdaccio -n 3 -r true
+# ./retry-command.sh -s publish:local -n 3 -r true
 
 while getopts s:n:r: option
 do
@@ -24,7 +24,7 @@ n=0
 # loop until n > first param
 until [ "$n" -gt $N ]
 do
-	# $1 is the argument passed in, e.g. publish:verdaccio
+	# $1 is the argument passed in, e.g. publish:local
 	# if the publish command succeeds, `break` exits the loop
 	yarn $SCRIPT && break
 	

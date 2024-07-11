@@ -19,6 +19,8 @@ runs:
     # TODO: we currently have Node pinned to version `18.20.2` for this to work.
     # We either need to fix this, or find an alternative as this dep seems to
     # be unmaintained.
+    # "sleep" has been added here here because the "adduser" command completes
+    #     prior to the user being ready for access.
     - name: Install and run npm-cli-login
       shell: bash
       env:
@@ -49,8 +51,7 @@ runs:
       shell: bash
       working-directory: ./amplify-api-next
       run: |
-        scripts/retry-yarn-script.sh -s publish:verdaccio -n 5 -r true
-        yarn info @aws-amplify/data-schema description
+        scripts/retry-yarn-script.sh -s publish:local -n 5 -r true
         npm info @aws-amplify/data-schema version
     - name: Upload artifact
       uses: actions/upload-artifact@0b7f8abb1508181956e8e162db84b466c27e18ce # v3.1.2 https://github.com/actions/upload-artifact/commit/0b7f8abb1508181956e8e162db84b466c27e18ce
