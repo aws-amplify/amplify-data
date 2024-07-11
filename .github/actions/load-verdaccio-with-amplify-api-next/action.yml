@@ -19,6 +19,8 @@ runs:
     # TODO: we currently have Node pinned to version `18.20.2` for this to work.
     # We either need to fix this, or find an alternative as this dep seems to
     # be unmaintained.
+    # "sleep" has been added here here because the "adduser" command completes
+    #     prior to the user being ready for access.
     - name: Install and run npm-cli-login
       shell: bash
       env:
