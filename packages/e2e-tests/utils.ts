@@ -17,12 +17,17 @@ export const statuses = {
 const _testCase = (success: boolean): any =>
   success ? statuses.success : statuses.fail;
 
+export type TestCase = {
+  label: string;
+  action: (client: any) => Promise<boolean>;
+};
+
 /**
  *
  * @param testCases
  * @param client
  */
-export async function runTestCases(testCases: any[]) {
+export async function runTestCases(testCases: TestCase[]) {
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-expect-error
   const client = global.client;
@@ -39,7 +44,7 @@ export async function runTestCases(testCases: any[]) {
         result = _testCase(false);
       }
 
-      console.log(`Result of ${testCase.label}`, result.icon);
+      console.log(`${result.icon} ${testCase.label}:`);
       expect(result.label).toBe(statuses.success.label);
     });
   }

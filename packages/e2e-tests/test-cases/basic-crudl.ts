@@ -1,10 +1,10 @@
 export const testCases = [
   {
-    label: 'Create Todo',
+    label: 'Create',
     action: async (client: any) => {
       const { data: newTodo, errors: createErrors } =
         await client.models.Todo.create({
-          content: 'test content',
+          content: 'test create',
         });
 
       if (createErrors) {
@@ -16,11 +16,12 @@ export const testCases = [
         throw new Error('newTodo is undefined');
       }
 
-      return newTodo.content === 'test content';
+      // TODO: better assertion:
+      return newTodo.content === 'test create';
     },
   },
   {
-    label: 'Read Todo',
+    label: 'Read',
     action: async (client: any) => {
       const { errors: firstCreateErrors } = await client.models.Todo.create({
         content: 'todo1',
@@ -50,11 +51,44 @@ export const testCases = [
         throw new Error(JSON.stringify(readErrors));
       }
 
+      // TODO: better assertion:
       return getTodo.content === 'todo2';
     },
   },
   {
-    label: 'Update Todo',
+    label: 'Update',
+    action: async (client: any) => {
+      const { data: originalTodo, errors: createErrors } =
+        await client.models.Todo.create({
+          content: 'original content',
+        });
+
+      if (createErrors) {
+        console.log('createErrors:', createErrors);
+        throw new Error(JSON.stringify(createErrors));
+      }
+
+      if (!originalTodo) {
+        throw new Error('newTodo is undefined');
+      }
+
+      const { data: updatedTodo, errors: updateErrors } =
+        await client.models.Todo.update({
+          id: originalTodo.id,
+          content: 'test content',
+        });
+
+      if (updateErrors) {
+        console.log('updateErrors:', updateErrors);
+        throw new Error(JSON.stringify(updateErrors));
+      }
+
+      // TODO: better assertion:
+      return updatedTodo.content === 'test content';
+    },
+  },
+  {
+    label: 'Delete',
     action: async (client: any) => {
       const { data: newTodo, errors: createErrors } =
         await client.models.Todo.create({
@@ -70,7 +104,16 @@ export const testCases = [
         throw new Error('newTodo is undefined');
       }
 
-      return newTodo.content === 'test content';
+      const { data: deletedTodo, errors: deleteErrors } =
+        await client.models.Todo.delete(newTodo);
+
+      if (deleteErrors) {
+        console.log('deleteErrors:', createErrors);
+        throw new Error(JSON.stringify(createErrors));
+      }
+
+      // TODO: better assertion:
+      return deletedTodo.content === 'test content';
     },
   },
 ];
