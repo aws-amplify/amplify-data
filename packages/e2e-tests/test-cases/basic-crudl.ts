@@ -116,4 +116,24 @@ export const basicCRUDL = [
       return deletedTodo.content === 'test content';
     },
   },
+  {
+    label: 'List',
+    action: async (client: any) => {
+      await client.models.Todo.create({
+        content: 'todo1',
+      });
+
+      await client.models.Todo.create({
+        content: 'todo2',
+      });
+
+      await client.models.Todo.create({
+        content: 'todo3',
+      });
+
+      const { data: listTodos } = await client.models.Todo.list();
+
+      return listTodos.length === 3;
+    },
+  },
 ];
