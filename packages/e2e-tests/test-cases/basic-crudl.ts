@@ -1,7 +1,9 @@
-export const basicCRUDL = [
+import { TestCase } from '../utils';
+
+export const basicCRUDL: TestCase[] = [
   {
     label: 'Create',
-    action: async (client: any) => {
+    action: async (client) => {
       const { data: newTodo, errors: createErrors } =
         await client.models.Todo.create({
           content: 'test create',

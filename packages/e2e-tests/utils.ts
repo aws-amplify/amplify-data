@@ -17,9 +17,12 @@ export const statuses = {
 const _testCase = (success: boolean): any =>
   success ? statuses.success : statuses.fail;
 
+// TODO: use imported type from `aws-amplify/data` once it's fixed
+type Client = ReturnType<typeof configureAmplifyAndGenerateClient>;
+
 export type TestCase = {
   label: string;
-  action: (client: any) => Promise<boolean>;
+  action: (client: Client) => Promise<boolean>;
 };
 
 /**
@@ -29,9 +32,8 @@ export type TestCase = {
  * @param client
  */
 export async function runTestCases(testCases: TestCase[]) {
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-expect-error
-  const client = global.client;
+  const client = (global as any).client as Client;
+
   for (const testCase of testCases) {
     test(`${testCase.label}`, async () => {
       let result: any;
