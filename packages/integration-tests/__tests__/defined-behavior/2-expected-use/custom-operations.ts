@@ -21,7 +21,6 @@ describe('custom operations', () => {
   const dummyHandler = '' as any;
 
   const schema = a.schema({
-    Status: a.enum(['Active', 'Inactive', 'Unknown']),
     PhoneNumber: a
       .model({
         phoneNumber: a.string().required(),
@@ -72,14 +71,6 @@ describe('custom operations', () => {
         value: a.string(),
       })
       .returns(a.ref('EchoResult').array())
-      .handler(a.handler.function(dummyHandler))
-      .authorization((allow) => [allow.publicApiKey()]),
-    echoEnum: a
-      .query()
-      .arguments({
-        status: a.enum(['Active', 'Inactive', 'Unknown']),
-      })
-      .returns(a.ref('Status'))
       .handler(a.handler.function(dummyHandler))
       .authorization((allow) => [allow.publicApiKey()]),
   });
