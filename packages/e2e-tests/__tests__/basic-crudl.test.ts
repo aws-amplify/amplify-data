@@ -1,12 +1,10 @@
 import { basicCRUDL } from '../test-cases/basic-crudl';
-import { runTestCases } from '../utils';
+import { runTestCases, Client } from '../utils';
 import type { Schema } from '../amplify/data/resource';
 
 async function deleteAll() {
   console.log('starting cleanup..');
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-expect-error
-  const client = global.client;
+  const client = (global as any).client as Client;
 
   const { data: todos } = await client.models.Todo.list();
   console.log('todos to delete:', todos);

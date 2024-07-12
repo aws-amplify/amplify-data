@@ -11,6 +11,6 @@
     // Prevents `Type 'string' is not assignable to type 'string[]'`:
     "strict": true
   },
-  "include": ["./global.d.ts"],
+  // "include": ["./global.d.ts"],
   "exclude": ["node_modules"]
 }

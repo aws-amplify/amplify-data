@@ -11,22 +11,6 @@ functionality E2E.
 - Amplify is automatically configured prior to each test suite run
 - All test suites share a single Amplify backend
 
-## WIP Notes:
-
-~~- `tsx`~~
-~~- primary testing happens here.~~
-
-- `amplify-next-pages-template`
-  - a fork of the repo used in our Getting Started docs, uses Next.
-- `vite-node-e2e-sample`
-  - uses `vite-node` to compile.
-  - potential path for test a Vite config file, but without other Cypress, etc.
-- How we do it:
-  - shared backend for all E2E tests.
-  - Move jest deps + tests?
-- TODO:
-  - Audit dev deps in package.json
-
 ## [WIP] How to add a new test:
 
 1. Create a new file in the `./testCases` folder

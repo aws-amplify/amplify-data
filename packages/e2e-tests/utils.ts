@@ -18,7 +18,7 @@ const _testCase = (success: boolean): any =>
   success ? statuses.success : statuses.fail;
 
 // TODO: use imported type from `aws-amplify/data` once it's fixed
-type Client = ReturnType<typeof configureAmplifyAndGenerateClient>;
+export type Client = ReturnType<typeof configureAmplifyAndGenerateClient>;
 
 export type TestCase = {
   label: string;
