@@ -1,4 +1,4 @@
-export const testCases = [
+export const basicCRUDL = [
   {
     label: 'Create',
     action: async (client: any) => {

@@ -23,7 +23,8 @@ export type TestCase = {
 };
 
 /**
- *
+ * Given an array of test cases, runs each test case
+ * and asserts that the result is successful
  * @param testCases
  * @param client
  */
@@ -37,21 +38,19 @@ export async function runTestCases(testCases: TestCase[]) {
 
       try {
         const response = await testCase.action(client);
-        console.log('run test cases try result', response);
         result = _testCase(response);
       } catch (error) {
-        console.error('run test cases catch error:', error);
         result = _testCase(false);
       }
 
-      console.log(`${result.icon} ${testCase.label}:`);
+      console.log(`${result.icon} ${testCase.label}`);
       expect(result.label).toBe(statuses.success.label);
     });
   }
 }
 
 /**
- * TODO
+ * Configures Amplify and returns API client
  * @returns API client
  */
 export function configureAmplifyAndGenerateClient() {
@@ -61,27 +60,4 @@ export function configureAmplifyAndGenerateClient() {
   const client = generateClient<Schema>();
 
   return client;
-}
-
-/**
- * TODO
- * @param client
- */
-export async function cleanup() {
-  console.log('starting cleanup..');
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-expect-error
-  const client = global.client;
-
-  const { data: todos } = await client.models.Todo.list();
-  console.log('todos to delete:', todos);
-
-  const deletePromises = todos?.map(async (todo: Schema['Todo']['type']) => {
-    await client.models.Todo.delete(todo);
-  });
-
-  await Promise.all(deletePromises!);
-
-  const { data: listAfterDelete } = await client.models.Todo.list();
-  console.log('result of cleanup:', listAfterDelete);
 }
