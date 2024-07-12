@@ -397,14 +397,14 @@ function customOperationToGql(
   }
 
   if (Object.keys(fieldArgs).length > 0) {
-    const { gqlFields, implicitTypes } = processFields(
+    const { gqlFields, implicitTypes: implied } = processFields(
       typeName,
       fieldArgs,
       {},
       {},
     );
     callSignature += `(${gqlFields.join(', ')})`;
-    implicitTypes.push(...implicitTypes);
+    implicitTypes.push(...implied);
   }
 
   const handler = handlers && handlers[0];

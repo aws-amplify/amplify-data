@@ -1,11 +1,16 @@
 import { a, ClientSchema } from '@aws-amplify/data-schema';
 import { Amplify } from 'aws-amplify';
-import { type SelectionSet } from '@aws-amplify/data-schema-types';
+import type {
+  SelectionSet,
+  Expect,
+  Equal,
+} from '@aws-amplify/data-schema-types';
 import {
   buildAmplifyConfig,
   mockedGenerateClient,
   optionsAndHeaders,
   useState,
+  expectGraphqlMatches,
 } from '../../utils';
 
 describe('custom operations', () => {
@@ -16,6 +21,7 @@ describe('custom operations', () => {
   const dummyHandler = '' as any;
 
   const schema = a.schema({
+    Status: a.enum(['Active', 'Inactive', 'Unknown']),
     PhoneNumber: a
       .model({
         phoneNumber: a.string().required(),
@@ -66,6 +72,14 @@ describe('custom operations', () => {
         value: a.string(),
       })
       .returns(a.ref('EchoResult').array())
+      .handler(a.handler.function(dummyHandler))
+      .authorization((allow) => [allow.publicApiKey()]),
+    echoEnum: a
+      .query()
+      .arguments({
+        status: a.enum(['Active', 'Inactive', 'Unknown']),
+      })
+      .returns(a.ref('Status'))
       .handler(a.handler.function(dummyHandler))
       .authorization((allow) => [allow.publicApiKey()]),
   });
@@ -237,5 +251,96 @@ describe('custom operations', () => {
       }),
     );
     expect(optionsAndHeaders(spy)).toMatchSnapshot();
+  });
+
+  describe.only('with enum arguments', () => {
+    afterEach(() => {
+      jest.clearAllMocks();
+    });
+
+    const schema = a.schema({
+      Status: a.enum(['Active', 'Inactive', 'Unknown']),
+      echoEnum: a
+        .query()
+        .arguments({
+          status: a.enum(['Active', 'Inactive', 'Unknown']),
+        })
+        .returns(a.ref('Status'))
+        .handler(a.handler.function('name' as any))
+        .authorization((allow) => [allow.publicApiKey()]),
+    });
+
+    type Schema = ClientSchema<typeof schema>;
+
+    test(`appear with enums values in the ClientSchema['args']`, async () => {
+      type ExpectedArgs = {
+        status?: 'Active' | 'Inactive' | 'Unknown' | null | undefined;
+      };
+      type test = Expect<Equal<Schema['echoEnum']['args'], ExpectedArgs>>;
+    });
+
+    test.only('appear in the schema model', async () => {
+      /**
+       * Relevant invariants:
+       *
+       * 1. `echoEnum` must have arguments `(status: SOME_ENUM_TYPE_NAME)`
+       * 2. `SOME_ENUM_TYPE_NAME` must appear as an enum containing `Active, Inactive, Unknown`
+       */
+      expectGraphqlMatches(
+        schema.transform().schema,
+        `
+        enum Status {
+          Active,
+          Inactive,
+          Unknown
+        }
+
+        enum EchoEnumStatus {
+          Active,
+          Inactive,
+          Unknown
+        }
+
+        type Query {
+          echoEnum(status: EchoEnumStatus): Status @function(name: "name") @auth(rules: [{allow: public, provider: apiKey}])
+        }
+      `,
+      );
+    });
+
+    test('can be called with appropriate enum values', async () => {
+      const { spy, generateClient } = mockedGenerateClient([
+        {
+          data: { echoEnum: 'Active' },
+        },
+      ]);
+
+      const config = await buildAmplifyConfig(schema);
+      Amplify.configure(config);
+      const client = generateClient<Schema>();
+
+      type T = Schema['echoEnum']['args'];
+
+      const { data } = await client.queries.echoEnum({ status: 'Active' });
+      expect(optionsAndHeaders(spy)).toMatchSnapshot();
+      expect(data).toEqual('Active');
+    });
+
+    test('raise type errors when called with incorrect enum values', async () => {
+      const { spy, generateClient } = mockedGenerateClient([
+        {
+          data: { echoEnum: 'Active' },
+        },
+      ]);
+
+      const config = await buildAmplifyConfig(schema);
+      Amplify.configure(config);
+      const client = generateClient<Schema>();
+
+      type T = Schema['echoEnum']['args'];
+
+      // @ts-expect-error
+      const { data } = await client.queries.echoEnum({ status: 'BAD VALUE' });
+    });
   });
 });

@@ -401,3 +401,18 @@ export function expectSchemaModelExcludes({
     }
   }
 }
+
+export function expectGraphqlMatches(actual: string, expected: string) {
+  const actualNormalized = print(parse(actual));
+  const expectedNormalized = print(parse(expected));
+  if (actualNormalized !== expectedNormalized) {
+    console.error(
+      [
+        `Actual:\n${actual}`,
+        `Actual (normalized):\n${actualNormalized}`,
+        `Expected (normalized):\n${expectedNormalized}`,
+      ].join('\n\n'),
+    );
+    throw new Error('Actual and Expected graphql does not match.');
+  }
+}
