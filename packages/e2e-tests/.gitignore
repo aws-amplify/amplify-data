@@ -32,6 +32,3 @@ yarn-error.log*
 
 # amplify
 .amplify
-
-# TODO:
-yarn.lock

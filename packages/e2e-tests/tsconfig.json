@@ -8,9 +8,7 @@
     "rootDir": "./",
     // For importing `amplify_outputs.json`:
     "resolveJsonModule": true,
-    // Prevents `Type 'string' is not assignable to type 'string[]'`
-    // TODO: *should* this be necessary? Can also prevent with:
-    // "strictNullChecks": true
+    // Prevents `Type 'string' is not assignable to type 'string[]'`:
     "strict": true
   },
   "exclude": ["node_modules"]

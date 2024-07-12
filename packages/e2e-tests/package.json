@@ -9,11 +9,12 @@
     "test": "jest"
   },
   "dependencies": {
-    "aws-amplify": "*"
+    "aws-amplify": "unstable"
   },
   "devDependencies": {
     "@aws-amplify/backend": "^1.0.3",
     "@aws-amplify/backend-cli": "^1.0.4",
+    "@types/node": "20.8.3",
     "@tsd/typescript": "^5.5.3",
     "@types/jest": "^29.5.12",
     "aws-cdk": "^2.147.1",
@@ -22,6 +23,7 @@
     "jest-tsd": "^0.2.2",
     "ts-jest": "^29.2.0",
     "ts-node": "^10.9.2",
-    "typescript": "^5.5.2"
+    "typescript": "^5.5.2",
+    "tsx": "^4.8.2"
   }
 }
