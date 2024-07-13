@@ -17,6 +17,7 @@ functionality E2E.
 1. Create a new file in the `./testCases` folder
 2. Add test cases that follow this pattern and return a boolean
 3. Add spec that imports the new test cases, use existing utils
+4. Add to index
 
 ## [WIP] How to watch local changes and re-run tests:
 

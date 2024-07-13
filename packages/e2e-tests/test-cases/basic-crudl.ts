@@ -1,4 +1,4 @@
-import { TestCase, Client } from '../utils';
+import { TestCase, Client, configureAmplifyAndGenerateClient } from '../utils';
 import type { Schema } from '../amplify/data/resource';
 
 const deleteAll = async (client: Client) => {
@@ -18,6 +18,7 @@ const deleteAll = async (client: Client) => {
 export const basicCRUDL: TestCase[] = [
   {
     label: 'Create',
+    setup: async () => configureAmplifyAndGenerateClient(),
     action: async (client) => {
       const { data: newTodo, errors: createErrors } =
         await client.models.Todo.create({
@@ -40,6 +41,7 @@ export const basicCRUDL: TestCase[] = [
   },
   {
     label: 'Read',
+    setup: async () => configureAmplifyAndGenerateClient(),
     action: async (client: any) => {
       const { errors: firstCreateErrors } = await client.models.Todo.create({
         content: 'todo1',
@@ -76,6 +78,7 @@ export const basicCRUDL: TestCase[] = [
   },
   {
     label: 'Update',
+    setup: async () => configureAmplifyAndGenerateClient(),
     action: async (client: any) => {
       const { data: originalTodo, errors: createErrors } =
         await client.models.Todo.create({
@@ -109,6 +112,7 @@ export const basicCRUDL: TestCase[] = [
   },
   {
     label: 'Delete',
+    setup: async () => configureAmplifyAndGenerateClient(),
     action: async (client: any) => {
       const { data: newTodo, errors: createErrors } =
         await client.models.Todo.create({
@@ -139,6 +143,7 @@ export const basicCRUDL: TestCase[] = [
   },
   {
     label: 'List',
+    setup: async () => configureAmplifyAndGenerateClient(),
     action: async (client: any) => {
       await client.models.Todo.create({
         content: 'todo1',

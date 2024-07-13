@@ -18,10 +18,11 @@ const _testCase = (success: boolean): any =>
   success ? statuses.success : statuses.fail;
 
 // TODO: use imported type from `aws-amplify/data` once it's fixed
-export type Client = ReturnType<typeof configureAmplifyAndGenerateClient>;
+export type Client = ReturnType<typeof generateClient<Schema>>;
 
 export type TestCase = {
   label: string;
+  setup: () => Promise<Client>;
   action: (client: Client) => Promise<boolean>;
   cleanup: (client: Client) => Promise<void>;
 };
@@ -34,10 +35,12 @@ export type TestCase = {
  * @param client
  */
 export async function runTestCases(testCases: TestCase[]) {
-  const client = (global as any).client as Client;
-
+  // If folks prefer global approach:
+  // const client = (global as any).client as Client;
   for (const testCase of testCases) {
     test(`${testCase.label}`, async () => {
+      const client = await testCase.setup();
+
       let result: any;
 
       try {
