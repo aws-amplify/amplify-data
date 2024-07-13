@@ -13,7 +13,7 @@ import type {
   SchemaModel,
 } from '../../bridge-types';
 import { listFactory } from '../operations/list';
-import { convertItemToConversationMessage } from './convertItemToConversationMessage';
+import { pickConversationMessageProperties } from './pickConversationMessageProperties';
 
 export const createListMessagesFunction =
   (
@@ -32,10 +32,10 @@ export const createListMessagesFunction =
     ) as (args?: Record<string, any>) => ListReturnValue<ConversationMessage>;
     const { data, nextToken, errors } = await list({
       ...input,
-      filter: { sessionId: { eq: conversationId } },
+      filter: { conversationId: { eq: conversationId } },
     });
     return {
-      data: data.map((item: any) => convertItemToConversationMessage(item)),
+      data: data.map((item: any) => pickConversationMessageProperties(item)),
       nextToken,
       errors,
     };

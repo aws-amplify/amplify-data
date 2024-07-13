@@ -14,33 +14,40 @@ import { createOnMessageFunction } from './createOnMessageFunction';
 import { createSendMessageFunction } from './createSendMessageFunction';
 
 export const convertItemToConversation = (
-  conversation: any,
   client: BaseClient,
   modelIntrospection: ModelIntrospectionSchema,
+  conversationId: string,
   conversationRouteName: string,
   conversationMessageModel: SchemaModel,
   getInternals: ClientInternalsGetter,
-): Conversation => ({
-  id: conversation.id,
-  onMessage: createOnMessageFunction(
-    client as BaseBrowserClient,
-    modelIntrospection,
-    conversation.id,
-    conversationRouteName,
-    getInternals,
-  ),
-  sendMessage: createSendMessageFunction(
-    conversation,
-    client,
-    modelIntrospection,
-    conversationRouteName,
-    getInternals,
-  ),
-  listMessages: createListMessagesFunction(
-    client,
-    modelIntrospection,
-    conversation.id,
-    conversationMessageModel,
-    getInternals,
-  ),
-});
+): Conversation => {
+  if (!conversationId) {
+    throw new Error(
+      `An error occurred converting a ${conversationRouteName} conversation: Missing ID`,
+    );
+  }
+  return {
+    id: conversationId,
+    onMessage: createOnMessageFunction(
+      client as BaseBrowserClient,
+      modelIntrospection,
+      conversationId,
+      conversationRouteName,
+      getInternals,
+    ),
+    sendMessage: createSendMessageFunction(
+      client,
+      modelIntrospection,
+      conversationId,
+      conversationRouteName,
+      getInternals,
+    ),
+    listMessages: createListMessagesFunction(
+      client,
+      modelIntrospection,
+      conversationId,
+      conversationMessageModel,
+      getInternals,
+    ),
+  };
+};

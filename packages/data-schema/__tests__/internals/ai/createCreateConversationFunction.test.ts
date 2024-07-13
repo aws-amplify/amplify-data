@@ -25,7 +25,6 @@ describe('createCreateConversationFunction()', () => {
   const mockGet = jest.fn();
 
   beforeAll(async () => {
-    mockConvertItemToConversation.mockImplementation((data) => data);
     mockGet.mockReturnValue({ data: mockConversation });
     mockGetFactory.mockReturnValue(mockGet);
     createConversation = await createCreateConversationFunction(
@@ -44,7 +43,7 @@ describe('createCreateConversationFunction()', () => {
 
   describe('createConversation()', () => {
     it('creates a conversation', async () => {
-      const { data } = await createConversation();
+      await createConversation();
 
       expect(mockGetFactory).toHaveBeenCalledWith(
         {},
@@ -54,7 +53,14 @@ describe('createCreateConversationFunction()', () => {
         expect.any(Function),
       );
       expect(mockGet).toHaveBeenCalled();
-      expect(data).toBe(mockConversation);
+      expect(mockConvertItemToConversation).toHaveBeenCalledWith(
+        {},
+        {},
+        mockConversation.id,
+        mockConversationName,
+        {},
+        expect.any(Function),
+      );
     });
   });
 });

@@ -18,11 +18,11 @@ describe('createOnMessageFunction()', () => {
   const mockCreatedAt = '2024-06-27T00:00:00Z';
   const mockMessageId = 'message-id';
   const mockMessage = {
-    content: JSON.stringify(mockContent),
-    sessionId: mockConversationId,
+    content: mockContent,
+    conversationId: mockConversationId,
     createdAt: mockCreatedAt,
     id: mockMessageId,
-    sender: mockRole,
+    role: mockRole,
   };
   const mockConversationSchema = { message: { subscribe: {} } };
   const mockModelIntrospectionSchema = {
@@ -67,7 +67,7 @@ describe('createOnMessageFunction()', () => {
         expect.any(Function),
       );
       expect(mockCustomOp).toHaveBeenCalledWith({
-        sessionId: mockConversationId,
+        conversationId: mockConversationId,
       });
       expect(mockHandler).toHaveBeenCalledWith({
         content: mockContent,

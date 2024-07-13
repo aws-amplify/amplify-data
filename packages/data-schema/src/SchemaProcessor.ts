@@ -45,10 +45,11 @@ import {
 } from './Handler';
 import * as os from 'os';
 import * as path from 'path';
+import { brandName as conversationBrandName } from './ai/ConversationType';
 import {
-  brandName as conversationBrandName,
-  type ToolDefinition,
-} from './ai/ConversationType';
+  conversationTypes,
+  createConversationField,
+} from './ai/ConversationSchemaTypes';
 
 type ScalarFieldDef = Exclude<InternalField['data'], { fieldType: 'model' }>;
 
@@ -1222,8 +1223,7 @@ const schemaPreprocessor = (
   const customQueries = [];
   const customMutations = [];
   const customSubscriptions = [];
-
-  const conversationTypes: string[] = [];
+  let shouldAddConversationTypes = false;
 
   // Dict of auth rules to be applied to custom types
   // Inherited from the auth configured on the custom operations that return these custom types
@@ -1373,55 +1373,9 @@ const schemaPreprocessor = (
             break;
         }
       } else if (isConversationRoute(typeDef)) {
-        // TODO: sessionId --> conversationId
         // TODO: add inferenceConfiguration values to directive.
-        const { aiModel, systemPrompt, handler, tools } = typeDef;
-
-        const args: Record<string, string> = {
-          aiModel: aiModel.friendlyName,
-          systemPrompt,
-        };
-
-        if (handler) {
-          if (typeof handler === 'string') {
-            args['functionName'] = handler;
-          } else if (typeof handler.getInstance === 'function') {
-            args['functionName'] = `Fn${capitalize(typeName)}`;
-          }
-        }
-
-        const argsString = Object.entries(args)
-          .map(([key, value]) => `${key}: "${value}"`)
-          .join(', ');
-
-        const toolsString = tools?.length
-          ? `, tools: [${getConversationToolsString(tools)}]`
-          : '';
-
-        const conversationDirective = `@conversation(${argsString}${toolsString})`;
-
-        const conversationField = `${typeName}(sessionId: ID!, content: String): ConversationMessage ${conversationDirective}`;
-        customMutations.push(conversationField);
-
-        const conversationMessageFields = Object.entries({
-          id: 'ID!',
-          sessionId: 'ID!',
-          sender: 'ConversationMessageSender',
-          content: 'String',
-          context: 'AWSJSON',
-          uiComponents: '[AWSJSON]',
-          createdAt: 'AWSDateTime',
-          updatedAt: 'AWSDateTime',
-          owner: 'String',
-          assistantContent: 'String',
-        })
-          .map(([key, value]) => `${key}: ${value}`)
-          .join('\n  ');
-
-        conversationTypes.push(
-          `interface ConversationMessage {\n  ${conversationMessageFields}\n}`,
-          `enum ConversationMessageSender {\n  user\n  assistant\n}`,
-        );
+        customMutations.push(createConversationField(typeDef, typeName));
+        shouldAddConversationTypes = true;
       }
     } else if (staticSchema) {
       const fields = { ...typeDef.data.fields } as Record<
@@ -1531,7 +1485,9 @@ const schemaPreprocessor = (
   };
 
   gqlModels.push(...generateCustomOperationTypes(customOperations));
-  gqlModels.push(...conversationTypes);
+  if (shouldAddConversationTypes) {
+    gqlModels.push(...conversationTypes);
+  }
 
   const processedSchema = gqlModels.join('\n\n');
 
@@ -1543,17 +1499,6 @@ const schemaPreprocessor = (
     customSqlDataSourceStrategies,
   };
 };
-
-function getConversationToolsString(tools: ToolDefinition[]) {
-  return tools
-    .map(({ query, description }) => {
-      // TODO: find appropriate helper to narrow to drop `any` cast
-      // TODO: add validation for query / auth (cup) / etc
-      const queryName = (query as any).data.link as string;
-      return `{ name: "${queryName}", description: "${description}" }`;
-    })
-    .join(', ');
-}
 
 function validateCustomOperations(
   typeDef: InternalCustom,

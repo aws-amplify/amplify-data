@@ -26,7 +26,6 @@ describe('createListConversationsFunction()', () => {
   const mockList = jest.fn();
 
   beforeAll(async () => {
-    mockConvertItemToConversation.mockImplementation((data) => data);
     mockList.mockReturnValue({ data: [mockConversation, mockConversation2] });
     mocklistFactory.mockReturnValue(mockList);
     listConversations = await createListConversationsFunction(
@@ -45,7 +44,7 @@ describe('createListConversationsFunction()', () => {
 
   describe('listConversations()', () => {
     it('lists conversations', async () => {
-      const { data } = await listConversations();
+      await listConversations();
 
       expect(mocklistFactory).toHaveBeenCalledWith(
         {},
@@ -54,7 +53,22 @@ describe('createListConversationsFunction()', () => {
         expect.any(Function),
       );
       expect(mockList).toHaveBeenCalled();
-      expect(data).toStrictEqual([mockConversation, mockConversation2]);
+      expect(mockConvertItemToConversation).toHaveBeenCalledWith(
+        {},
+        {},
+        mockConversation.id,
+        mockConversationName,
+        {},
+        expect.any(Function),
+      );
+      expect(mockConvertItemToConversation).toHaveBeenCalledWith(
+        {},
+        {},
+        mockConversation2.id,
+        mockConversationName,
+        {},
+        expect.any(Function),
+      );
     });
 
     it('returns empty list if no conversations are found', async () => {

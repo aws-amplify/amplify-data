@@ -13,6 +13,7 @@ import {
   ListArgs,
   QueryArgs,
   ModelIntrospectionSchema,
+  CustomOperationArgument,
 } from '../../bridge-types';
 
 import { map } from 'rxjs';
@@ -40,6 +41,17 @@ type OpArgs =
   | [QueryArgs, CustomOperationOptions]
   // Client or SSR Cookies Client without Args defined
   | [CustomOperationOptions];
+
+function isConversationMessageOperation(operation: CustomOperation): boolean {
+  return (operation.type as any).model?.startsWith('ConversationMessage');
+}
+
+function getArgumentType(argument: CustomOperationArgument): string {
+  if (typeof argument.type === 'string') {
+    return argument.type;
+  }
+  return (argument.type as any).input as string;
+}
 
 /**
  * Type guard for checking whether a Custom Operation argument is a contextSpec object
@@ -229,11 +241,16 @@ function outerArguments(operation: CustomOperation): string {
   if (operation.arguments === undefined) {
     return '';
   }
+  const isConversationMessageArgument =
+    isConversationMessageOperation(operation);
   const args = Object.entries(operation.arguments)
-    .map(([k, v]) => {
-      const baseType = argumentBaseTypeString(v);
-      const finalType = v.isArray
-        ? `[${baseType}]${v.isArrayNullable ? '' : '!'}`
+    .map(([k, argument]) => {
+      const argumentType = isConversationMessageArgument
+        ? getArgumentType(argument)
+        : argument.type;
+      const baseType = `${argumentType}${argument.isRequired ? '!' : ''}`;
+      const finalType = argument.isArray
+        ? `[${baseType}]${argument.isArrayNullable ? '' : '!'}`
         : baseType;
 
       return `$${k}: ${finalType}`;

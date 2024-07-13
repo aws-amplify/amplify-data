@@ -25,13 +25,12 @@ describe('createGetConversationFunction()', () => {
   const mockGet = jest.fn();
 
   beforeAll(async () => {
-    mockConvertItemToConversation.mockImplementation((data) => data);
     mockGet.mockReturnValue({ data: mockConversation });
     mockGetFactory.mockReturnValue(mockGet);
     getConversation = await createGetConversationFunction(
       {} as BaseClient,
       {} as ModelIntrospectionSchema,
-      mockConversation.id,
+      mockConversationName,
       {} as SchemaModel,
       {} as SchemaModel,
       jest.fn(),
@@ -44,7 +43,7 @@ describe('createGetConversationFunction()', () => {
 
   describe('getConversation()', () => {
     it('gets a conversation', async () => {
-      const { data } = await getConversation({ id: mockConversation.id });
+      await getConversation({ id: mockConversation.id });
 
       expect(mockGetFactory).toHaveBeenCalledWith(
         {},
@@ -54,7 +53,14 @@ describe('createGetConversationFunction()', () => {
         expect.any(Function),
       );
       expect(mockGet).toHaveBeenCalledWith({ id: mockConversation.id });
-      expect(data).toBe(mockConversation);
+      expect(mockConvertItemToConversation).toHaveBeenCalledWith(
+        {},
+        {},
+        mockConversation.id,
+        mockConversationName,
+        {},
+        expect.any(Function),
+      );
     });
 
     it('returns null if not found', async () => {
