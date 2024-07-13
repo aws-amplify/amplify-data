@@ -9,11 +9,7 @@ The API and data model definition for Amplify Data. Pass in `{ <NAME>: a.model(.
 **Signature:**
 
 ```typescript
-schema: <Types extends ModelSchemaContents>(types: NonEmpty<Types>) => ModelSchema<{
-    types: Types;
-    authorization: [];
-    configuration: any;
-}, never>
+schema: <Types extends ModelSchemaContents>(types: NonEmpty<Types>) => SchemaReturnType<"dynamodb", Types>
 ```
 
 ## Parameters
@@ -53,7 +49,7 @@ The API and data model definition
 </tbody></table>
 **Returns:**
 
-ModelSchema&lt;{ types: Types; authorization: \[\]; configuration: any; }, never&gt;
+SchemaReturnType&lt;"dynamodb", Types&gt;
 
 An API and data model definition to be deployed with Amplify (Gen 2) experience (`processSchema(...)`<!-- -->) or with the Amplify Data CDK construct (`@aws-amplify/data-construct`<!-- -->)
 
