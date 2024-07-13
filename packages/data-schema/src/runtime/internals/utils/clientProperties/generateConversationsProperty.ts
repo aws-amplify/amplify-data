@@ -1,24 +1,22 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
+import { ConversationRoute } from '../../../../ai/ConversationType';
 import {
   BaseClient,
   ClientInternalsGetter,
   GraphQLProviderConfig,
   ModelIntrospectionSchema,
-  SchemaModel,
 } from '../../../bridge-types';
-
-import { listFactory } from '../../operations/list';
-import { Conversation } from '../../../../ai/ConversationType';
-import { createConversationSession } from '../../ai/createConversationSession';
-import { getSessionModelInstance } from '../../ai/getSessionModelInstance';
+import { createCreateConversationFunction } from '../../ai/createCreateConversationFunction';
+import { createGetConversationFunction } from '../../ai/createGetConversationFunction';
+import { createListConversationsFunction } from '../../ai/createListConversationsFunction';
 
 export function generateConversationsProperty(
   client: BaseClient,
   apiGraphQLConfig: GraphQLProviderConfig['GraphQL'],
   getInternals: ClientInternalsGetter,
-): Record<string, Conversation> {
+): Record<string, ConversationRoute> {
   const modelIntrospection: ModelIntrospectionSchema | undefined =
     apiGraphQLConfig?.modelIntrospection;
 
@@ -28,67 +26,64 @@ export function generateConversationsProperty(
     return {};
   }
 
-  const conversations: Record<string, Conversation> = {};
+  const conversations: Record<string, ConversationRoute> = {};
 
-  for (const conversation of Object.values(modelIntrospection.conversations)) {
-    const { models } = conversation;
-    let sessionModel: SchemaModel | undefined;
-    let messageModel: SchemaModel | undefined;
+  for (const {
+    name,
+    conversation,
+    message,
+    models,
+    nonModels,
+    enums,
+  } of Object.values(modelIntrospection.conversations)) {
+    const conversationModel = models[conversation.modelName];
+    const conversationMessageModel = models[message.modelName];
 
-    for (const key in models) {
-      if (key.startsWith('ConversationSession')) {
-        sessionModel = models[key];
-      }
-      if (key.startsWith('ConversationMessage')) {
-        messageModel = models[key];
-      }
-    }
-
-    if (!(sessionModel && messageModel)) {
+    if (!conversationModel || !conversationMessageModel) {
       return {};
     }
 
-    const startSession: Conversation['startSession'] = async (input) => {
-      const session = await getSessionModelInstance(
-        input,
-        client,
-        modelIntrospection,
-        sessionModel,
-        getInternals,
-      );
-
-      return createConversationSession(
-        session,
-        client,
-        modelIntrospection,
-        messageModel,
-        getInternals,
-      );
+    const conversationModelIntrospection: ModelIntrospectionSchema = {
+      ...modelIntrospection,
+      models: {
+        ...modelIntrospection.models,
+        ...models,
+      },
+      nonModels: {
+        ...modelIntrospection.nonModels,
+        ...nonModels,
+      },
+      enums: {
+        ...modelIntrospection.enums,
+        ...enums,
+      },
     };
 
-    const listSessions: Conversation['listSessions'] = async () => {
-      const list = listFactory(
+    conversations[name] = {
+      create: createCreateConversationFunction(
         client,
-        modelIntrospection,
-        sessionModel,
+        conversationModelIntrospection,
+        name,
+        conversationModel,
+        conversationMessageModel,
         getInternals,
-      ) as () => Promise<any>;
-      const { data } = await list();
-
-      return data.map((session: any) =>
-        createConversationSession(
-          session,
-          client,
-          modelIntrospection,
-          messageModel,
-          getInternals,
-        ),
-      );
-    };
-
-    conversations[conversation.name] = {
-      startSession,
-      listSessions,
+      ),
+      get: createGetConversationFunction(
+        client,
+        conversationModelIntrospection,
+        name,
+        conversationModel,
+        conversationMessageModel,
+        getInternals,
+      ),
+      list: createListConversationsFunction(
+        client,
+        conversationModelIntrospection,
+        name,
+        conversationModel,
+        conversationMessageModel,
+        getInternals,
+      ),
     };
   }
 

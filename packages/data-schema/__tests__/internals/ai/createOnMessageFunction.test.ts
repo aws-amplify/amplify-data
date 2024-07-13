@@ -1,66 +1,71 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-import { BaseClient } from '../../../src/runtime';
-import {
-  ModelIntrospectionSchema,
-  SchemaModel,
-} from '../../../src/runtime/bridge-types';
+import type { Conversation } from '../../../src/ai/ConversationType';
+import type { BaseClient } from '../../../src/runtime';
+import type { ModelIntrospectionSchema } from '../../../src/runtime/bridge-types';
 import { createOnMessageFunction } from '../../../src/runtime/internals/ai/createOnMessageFunction';
-import { subscriptionFactory } from '../../../src/runtime/internals/operations/subscription';
+import { customOpFactory } from '../../../src/runtime/internals/operations/custom';
 
-jest.mock('../../../src/runtime/internals/operations/subscription');
+jest.mock('../../../src/runtime/internals/operations/custom');
 
 describe('createOnMessageFunction()', () => {
-  const mockSession = { id: 'id', name: 'name' };
+  let onMessage: Conversation['onMessage'];
+  const mockConversationName = 'conversation-name';
+  const mockConversationId = 'conversation-id';
   const mockMessage = {
     content: JSON.stringify([{ text: 'foo' }]),
+    conversationId: mockConversationId,
     createdAt: '2024-06-27T00:00:00Z',
     id: 'message-id',
-    role: 'assistant',
-    sessionId: mockSession.id,
+    role: 'user',
   };
+  const mockConversationSchema = { message: { subscribe: {} } };
+  const mockModelIntrospectionSchema = {
+    conversations: { [mockConversationName]: mockConversationSchema },
+  } as unknown as ModelIntrospectionSchema;
   // assert mocks
-  const mockSubscriptionFactory = subscriptionFactory as jest.Mock;
+  const mockCustomOpFactory = customOpFactory as jest.Mock;
   // create mocks
-  const mockSubscription = jest.fn();
+  const mockCustomOp = jest.fn();
   const mockSubscribe = jest.fn();
   const mockHandler = jest.fn();
 
-  beforeAll(() => {
-    mockSubscription.mockReturnValue({ subscribe: mockSubscribe });
-    mockSubscriptionFactory.mockReturnValue(mockSubscription);
+  beforeAll(async () => {
+    mockCustomOp.mockReturnValue({ subscribe: mockSubscribe });
+    mockCustomOpFactory.mockReturnValue(mockCustomOp);
     mockSubscribe.mockImplementation((subscription) => {
       subscription(mockMessage);
     });
-  });
-
-  it('returns an onMessage function', () => {
-    const onMessage = createOnMessageFunction(
-      mockSession,
+    onMessage = await createOnMessageFunction(
       {} as BaseClient,
-      {} as ModelIntrospectionSchema,
-      {} as SchemaModel,
+      mockModelIntrospectionSchema,
+      mockConversationName,
       jest.fn(),
     );
+  });
 
+  it('returns a onMessage function', async () => {
     expect(onMessage).toBeDefined();
+  });
 
-    onMessage(mockHandler);
+  describe('onMessage()', () => {
+    it('triggers handler', async () => {
+      onMessage(mockHandler);
 
-    expect(mockSubscriptionFactory).toHaveBeenCalledWith(
-      {},
-      {},
-      {},
-      'ONCREATE',
-      expect.any(Function),
-    );
-    expect(mockSubscription).toHaveBeenCalledWith({
-      filter: { sessionId: { eq: mockSession.id } },
-    });
-    expect(mockHandler).toHaveBeenCalledWith({
-      ...mockMessage,
-      content: JSON.parse(mockMessage.content),
+      expect(mockCustomOpFactory).toHaveBeenCalledWith(
+        {},
+        mockModelIntrospectionSchema,
+        'subscription',
+        mockConversationSchema.message.subscribe,
+        false,
+        expect.any(Function),
+      );
+      expect(mockCustomOp).toHaveBeenCalled();
+      expect(mockHandler).toHaveBeenCalledWith({
+        ...mockMessage,
+        content: JSON.parse(mockMessage.content),
+      });
     });
   });
 });

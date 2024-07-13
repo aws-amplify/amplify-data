@@ -87,8 +87,8 @@ export interface ModelIntrospectionSchema {
   queries?: CustomOperations;
   mutations?: CustomOperations;
   subscriptions?: CustomOperations;
-  conversations?: SchemaConversations;
-  generations?: SchemaGenerations;
+  conversations?: SchemaConversationRoutes;
+  generations?: SchemaGenerationRoutes;
 }
 
 /**
@@ -98,13 +98,27 @@ export type SchemaModels = Record<string, SchemaModel>;
 export type SchemaNonModels = Record<string, SchemaNonModel>;
 export type SchemaEnums = Record<string, SchemaEnum>;
 export type CustomOperations = Record<string, CustomOperation>;
-export type SchemaConversations = Record<string, SchemaConversation>;
-export type SchemaGenerations = Record<string, CustomOperation>;
+export type SchemaConversationRoutes = Record<string, SchemaConversationRoute>;
+export type SchemaGenerationRoutes = Record<string, CustomOperation>;
 
-export interface SchemaConversation {
+export type SchemaConversationRoute = {
   name: string;
   models: SchemaModels;
-}
+  nonModels: SchemaNonModels;
+  enums: SchemaEnums;
+  conversation: SchemaConversation;
+  message: SchemaConversationMessage;
+};
+
+export type SchemaConversation = {
+  modelName: string;
+};
+
+export type SchemaConversationMessage = {
+  modelName: string;
+  subscribe: CustomOperation;
+  send: CustomOperation;
+};
 
 export interface SchemaModel {
   name: string;

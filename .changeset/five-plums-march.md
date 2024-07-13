@@ -2,4 +2,4 @@
 "@aws-amplify/data-schema": minor
 ---
 
-Add AI generation routes to client
+Add AI routes to client

@@ -75,15 +75,15 @@ bench('p50 conversation operations', async () => {
 
   const client = generateClient<Schema>();
 
-  const session = await client.conversations.ChatBot.startSession();
+  const { data: conversation } = await client.conversations.ChatBot.create();
 
-  await client.conversations.ChatBot.listSessions();
+  await client.conversations.ChatBot.list();
 
-  session.onMessage(() => {});
+  conversation?.onMessage(() => {});
 
-  await session.sendMessage({
+  await conversation?.sendMessage({
     content: [{ text: 'foo' }],
   });
 
-  await session.listMessages();
+  await conversation?.listMessages();
 }).types([13028, 'instantiations']);

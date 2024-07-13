@@ -3,7 +3,7 @@
 
 import type {
   Conversation,
-  ConversationMessage,
+  ConversationRoute,
 } from '../../../ai/ConversationType';
 import type { ListReturnValue } from '../../../runtime/client';
 import type {
@@ -13,29 +13,36 @@ import type {
   SchemaModel,
 } from '../../bridge-types';
 import { listFactory } from '../operations/list';
-import { convertItemToConversationMessage } from './convertItemToConversationMessage';
+import { convertItemToConversation } from './convertItemToConversation';
 
-export const createListMessagesFunction =
+export const createListConversationsFunction =
   (
     client: BaseClient,
     modelIntrospection: ModelIntrospectionSchema,
-    conversationId: string,
+    conversationRouteName: string,
+    conversationModel: SchemaModel,
     conversationMessageModel: SchemaModel,
     getInternals: ClientInternalsGetter,
-  ): Conversation['listMessages'] =>
+  ): ConversationRoute['list'] =>
   async (input) => {
     const list = listFactory(
       client,
       modelIntrospection,
-      conversationMessageModel,
+      conversationModel,
       getInternals,
-    ) as (args?: Record<string, any>) => ListReturnValue<ConversationMessage>;
-    const { data, nextToken, errors } = await list({
-      ...input,
-      filter: { conversationId: { eq: conversationId } },
-    });
+    ) as (args?: Record<string, any>) => ListReturnValue<Conversation>;
+    const { data, nextToken, errors } = await list(input);
     return {
-      data: data.map((item: any) => convertItemToConversationMessage(item)),
+      data: data.map((conversation: any) =>
+        convertItemToConversation(
+          conversation,
+          client,
+          modelIntrospection,
+          conversationRouteName,
+          conversationMessageModel,
+          getInternals,
+        ),
+      ),
       nextToken,
       errors,
     };
