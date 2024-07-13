@@ -1,4 +1,19 @@
-import { TestCase } from '../utils';
+import { TestCase, Client } from '../utils';
+import type { Schema } from '../amplify/data/resource';
+
+const deleteAll = async (client: Client) => {
+  const { data: todos } = await client.models.Todo.list();
+  console.log('todos to delete:', todos);
+
+  const deletePromises = todos?.map(async (todo: Schema['Todo']['type']) => {
+    await client.models.Todo.delete(todo);
+  });
+
+  await Promise.all(deletePromises!);
+
+  const { data: listAfterDelete } = await client.models.Todo.list();
+  console.log('result of cleanup:', listAfterDelete);
+};
 
 export const basicCRUDL: TestCase[] = [
   {
@@ -21,6 +36,7 @@ export const basicCRUDL: TestCase[] = [
       // TODO: better assertion:
       return newTodo.content === 'test create';
     },
+    cleanup: async (client) => await deleteAll(client),
   },
   {
     label: 'Read',
@@ -56,6 +72,7 @@ export const basicCRUDL: TestCase[] = [
       // TODO: better assertion:
       return getTodo.content === 'todo2';
     },
+    cleanup: async (client) => await deleteAll(client),
   },
   {
     label: 'Update',
@@ -88,6 +105,7 @@ export const basicCRUDL: TestCase[] = [
       // TODO: better assertion:
       return updatedTodo.content === 'test content';
     },
+    cleanup: async (client) => await deleteAll(client),
   },
   {
     label: 'Delete',
@@ -117,6 +135,7 @@ export const basicCRUDL: TestCase[] = [
       // TODO: better assertion:
       return deletedTodo.content === 'test content';
     },
+    cleanup: async (client) => await deleteAll(client),
   },
   {
     label: 'List',
@@ -137,5 +156,6 @@ export const basicCRUDL: TestCase[] = [
 
       return listTodos.length === 3;
     },
+    cleanup: async (client) => await deleteAll(client),
   },
 ];

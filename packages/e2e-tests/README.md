@@ -5,6 +5,7 @@ functionality E2E.
 
 ## How it works:
 
+- TODO/WIP: The point of structure is to eliminate the need for Jest setup/teardown, and to make it as easy as possible to add new tests by simply adding new test cases.
 - The code to be tested E2E exists in files in `test-cases`
   - Each test case has an `action` function that returns a boolean
   - Test utils pass the generated client to `action`

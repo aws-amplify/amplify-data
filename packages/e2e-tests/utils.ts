@@ -23,11 +23,13 @@ export type Client = ReturnType<typeof configureAmplifyAndGenerateClient>;
 export type TestCase = {
   label: string;
   action: (client: Client) => Promise<boolean>;
+  cleanup: (client: Client) => Promise<void>;
 };
 
 /**
  * Given an array of test cases, runs each test case
- * and asserts that the result is successful
+ * and asserts that the result is successful.
+ * Runs the test case cleanup function after each test case.
  * @param testCases
  * @param client
  */
@@ -46,6 +48,9 @@ export async function runTestCases(testCases: TestCase[]) {
       }
 
       console.log(`${result.icon} ${testCase.label}`);
+
+      await testCase.cleanup(client);
+
       expect(result.label).toBe(statuses.success.label);
     });
   }
