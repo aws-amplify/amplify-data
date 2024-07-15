@@ -244,11 +244,7 @@ describe('custom operations', () => {
     expect(optionsAndHeaders(spy)).toMatchSnapshot();
   });
 
-  describe.only('with enum arguments', () => {
-    afterEach(() => {
-      jest.clearAllMocks();
-    });
-
+  describe('with enum arguments', () => {
     const schema = a.schema({
       Status: a.enum(['Active', 'Inactive', 'Unknown']),
       echoEnum: a
@@ -270,7 +266,7 @@ describe('custom operations', () => {
       type test = Expect<Equal<Schema['echoEnum']['args'], ExpectedArgs>>;
     });
 
-    test.only('appear in the schema model', async () => {
+    test('appear in the schema model', async () => {
       /**
        * Relevant invariants:
        *
@@ -299,7 +295,31 @@ describe('custom operations', () => {
       );
     });
 
-    test('can be called with appropriate enum values', async () => {
+    test('produce operation-namespaced enums in the modelIntrospection schema', async () => {
+      const { modelIntrospection } = await buildAmplifyConfig(schema);
+      expect(modelIntrospection.enums.EchoEnumStatus).toEqual(
+        expect.objectContaining({
+          name: 'EchoEnumStatus',
+          values: ['Active', 'Inactive', 'Unknown'],
+        }),
+      );
+    });
+
+    test('produce query entries referring to the namespaced enum in the modelIntrospection schema', async () => {
+      const { modelIntrospection } = await buildAmplifyConfig(schema);
+      expect(modelIntrospection.queries.echoEnum.arguments).toEqual(
+        expect.objectContaining({
+          status: {
+            name: 'status',
+            isArray: false,
+            type: { enum: 'EchoEnumStatus' },
+            isRequired: false,
+          },
+        }),
+      );
+    });
+
+    test('can be called with valid enum values', async () => {
       const { spy, generateClient } = mockedGenerateClient([
         {
           data: { echoEnum: 'Active' },
@@ -309,15 +329,13 @@ describe('custom operations', () => {
       const config = await buildAmplifyConfig(schema);
       Amplify.configure(config);
       const client = generateClient<Schema>();
-
-      type T = Schema['echoEnum']['args'];
 
       const { data } = await client.queries.echoEnum({ status: 'Active' });
       expect(optionsAndHeaders(spy)).toMatchSnapshot();
       expect(data).toEqual('Active');
     });
 
-    test('raise type errors when called with incorrect enum values', async () => {
+    test('raise type errors when called with invalid enum values', async () => {
       const { spy, generateClient } = mockedGenerateClient([
         {
           data: { echoEnum: 'Active' },
@@ -327,8 +345,6 @@ describe('custom operations', () => {
       const config = await buildAmplifyConfig(schema);
       Amplify.configure(config);
       const client = generateClient<Schema>();
-
-      type T = Schema['echoEnum']['args'];
 
       // @ts-expect-error
       const { data } = await client.queries.echoEnum({ status: 'BAD VALUE' });

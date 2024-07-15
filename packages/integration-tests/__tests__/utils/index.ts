@@ -92,7 +92,7 @@ export function mockedGenerateClient(
 ) {
   const subs = {} as Record<string, Subscriber<any>>;
 
-  _graphqlspy.mockImplementation(async () => {
+  _graphqlspy.mockImplementation(async (amplify: any, options: any) => {
     const result = responses.shift();
 
     if (typeof result === 'function') {
@@ -402,6 +402,16 @@ export function expectSchemaModelExcludes({
   }
 }
 
+/**
+ * Performs a normalized comparison of actual and expected GraphQL strings.
+ *
+ * Normalizes the strings by parsing and re-printing each.
+ *
+ * Logs the strings and throws on mismatch.
+ *
+ * @param actual GraphQL string
+ * @param expected GraphQL string
+ */
 export function expectGraphqlMatches(actual: string, expected: string) {
   const actualNormalized = print(parse(actual));
   const expectedNormalized = print(parse(expected));
