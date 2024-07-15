@@ -92,7 +92,7 @@ export function mockedGenerateClient(
 ) {
   const subs = {} as Record<string, Subscriber<any>>;
 
-  _graphqlspy.mockImplementation(async (amplify: any, options: any) => {
+  _graphqlspy.mockImplementation(async (_amplify: any, _options: any) => {
     const result = responses.shift();
 
     if (typeof result === 'function') {
@@ -108,7 +108,7 @@ export function mockedGenerateClient(
     }
   });
 
-  _graphqlsubspy.mockImplementation((amplify: any, options: any) => {
+  _graphqlsubspy.mockImplementation((_amplify: any, options: any) => {
     const graphql = print(options.query);
     const operationMatch = graphql.match(/\s+(on(Create|Update|Delete)\w+)/);
     const operation = operationMatch?.[1];
