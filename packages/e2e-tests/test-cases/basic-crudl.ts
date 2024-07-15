@@ -1,5 +1,5 @@
 import { TestCase, Client, configureAmplifyAndGenerateClient } from '../utils';
-import type { Schema } from '../amplify/data/resource';
+import type { Schema } from '../amplify-backends/01-primary-e2e-backend/amplify/data/resource';
 
 const deleteAll = async (client: Client) => {
   const { data: todos } = await client.models.Todo.list();

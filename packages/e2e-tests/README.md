@@ -22,3 +22,7 @@ functionality E2E.
 ## [WIP] How to watch local changes and re-run tests:
 
 - At the root of the monorepo, run `npm run build:watch` (`npm run turbo watch` for now)
+
+## Adding a new backend
+
+- WIP/TODO - folder name corresponds to sandbox identifier. Includes `amplifyoutputs.json`.
