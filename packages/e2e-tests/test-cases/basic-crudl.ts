@@ -42,7 +42,7 @@ export const basicCRUDL: TestCase[] = [
   {
     label: 'Read',
     setup: async () => configureAmplifyAndGenerateClient(),
-    action: async (client: any) => {
+    action: async (client) => {
       const { errors: firstCreateErrors } = await client.models.Todo.create({
         content: 'todo1',
       });
@@ -62,6 +62,10 @@ export const basicCRUDL: TestCase[] = [
         throw new Error(JSON.stringify(secondCreateErrors));
       }
 
+      if (!secondNewTodo) {
+        throw new Error('secondNewTodo is undefined');
+      }
+
       // Get the first todo:
       const { data: getTodo, errors: readErrors } =
         await client.models.Todo.get({ id: secondNewTodo.id });
@@ -69,6 +73,10 @@ export const basicCRUDL: TestCase[] = [
       if (readErrors) {
         console.log('error getting todo:', readErrors);
         throw new Error(JSON.stringify(readErrors));
+      }
+
+      if (!getTodo) {
+        throw new Error('get todo is undefined');
       }
 
       // TODO: better assertion:
@@ -79,7 +87,7 @@ export const basicCRUDL: TestCase[] = [
   {
     label: 'Update',
     setup: async () => configureAmplifyAndGenerateClient(),
-    action: async (client: any) => {
+    action: async (client) => {
       const { data: originalTodo, errors: createErrors } =
         await client.models.Todo.create({
           content: 'original content',
@@ -105,6 +113,10 @@ export const basicCRUDL: TestCase[] = [
         throw new Error(JSON.stringify(updateErrors));
       }
 
+      if (!updatedTodo) {
+        throw new Error('updatedTodo is undefined');
+      }
+
       // TODO: better assertion:
       return updatedTodo.content === 'test content';
     },
@@ -113,7 +125,7 @@ export const basicCRUDL: TestCase[] = [
   {
     label: 'Delete',
     setup: async () => configureAmplifyAndGenerateClient(),
-    action: async (client: any) => {
+    action: async (client) => {
       const { data: newTodo, errors: createErrors } =
         await client.models.Todo.create({
           content: 'test content',
@@ -136,6 +148,10 @@ export const basicCRUDL: TestCase[] = [
         throw new Error(JSON.stringify(createErrors));
       }
 
+      if (!deletedTodo) {
+        throw new Error('deletedTodo is undefined');
+      }
+
       // TODO: better assertion:
       return deletedTodo.content === 'test content';
     },
@@ -144,7 +160,7 @@ export const basicCRUDL: TestCase[] = [
   {
     label: 'List',
     setup: async () => configureAmplifyAndGenerateClient(),
-    action: async (client: any) => {
+    action: async (client) => {
       await client.models.Todo.create({
         content: 'todo1',
       });
