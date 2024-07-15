@@ -46,7 +46,7 @@ const skGraphQlFieldTypeMap = {
   AWSDate: 'String',
   AWSTime: 'String',
   AWSDateTime: 'String',
-  AWSTimestamp: 'String',
+  AWSTimestamp: 'Int',
   AWSEmail: 'String',
   AWSPhone: 'String',
   AWSURL: 'String',
