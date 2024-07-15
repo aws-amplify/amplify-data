@@ -1,7 +1,7 @@
 import { Amplify } from 'aws-amplify';
 import { generateClient } from 'aws-amplify/data';
-import type { Schema } from './amplify-backends/01-primary-e2e-backend/amplify/data/resource';
-import outputs from './amplify-backends/01-primary-e2e-backend/amplify_outputs.json';
+import type { Schema } from './amplify/data/resource';
+import outputs from './amplify_outputs.json';
 
 export const statuses = {
   success: {

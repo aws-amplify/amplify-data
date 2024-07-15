@@ -7,25 +7,26 @@
   "type": "module",
   "scripts": {
     "clean": "rm -rf node_modules package-lock.json",
-    "build": "npm install",
-    "test": "jest"
-  },
-  "dependencies": {
-    "aws-amplify": "unstable"
+    "install:no-lock": "npm i --no-package-lock",
+    "test": "jest",
+    "sandbox-temp": "npx ampx sandbox --identifier temp1"
   },
   "devDependencies": {
-    "@aws-amplify/backend": "^1.0.3",
-    "@aws-amplify/backend-cli": "^1.0.4",
-    "@types/node": "20.8.3",
+    "aws-amplify": "unstable",
+    "@aws-amplify/backend": "^1.0.4",
+    "@aws-amplify/backend-cli": "^1.1.0",
     "@tsd/typescript": "^5.5.3",
     "@types/jest": "^29.5.12",
-    "aws-cdk": "^2.147.1",
-    "aws-cdk-lib": "^2.147.1",
+    "@types/node": "20.8.3",
+    "aws-cdk": "^2.149.0",
+    "aws-cdk-lib": "^2.149.0",
+    "constructs": "^10.3.0",
+    "esbuild": "^0.23.0",
     "jest": "^29.7.0",
     "jest-tsd": "^0.2.2",
     "ts-jest": "^29.2.0",
     "ts-node": "^10.9.2",
-    "typescript": "^5.5.2",
-    "tsx": "^4.8.2"
+    "tsx": "^4.16.2",
+    "typescript": "^5.5.3"
   }
 }

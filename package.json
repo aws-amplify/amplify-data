@@ -22,6 +22,7 @@
     "e2e:build": "npm run --prefix ./packages/e2e-tests build",
     "e2e:clean": "npm run --prefix ./packages/e2e-tests clean",
     "e2e:test": "npm run --prefix ./packages/e2e-tests test",
+    "e2e:sandbox": "npm run --prefix ./packages/e2e-tests sandbox-temp",
     "test": "turbo run test && npm run test:scripts",
     "test:scripts": "npx jest scripts/",
     "lint": "turbo run lint",
