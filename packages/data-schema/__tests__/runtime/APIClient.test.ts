@@ -860,8 +860,6 @@ describe('generateGraphQLDocument()', () => {
         return attribute.type === 'key';
       })?.properties;
 
-      console.log('INDEX PROPS:', indexProperties);
-
       if (!indexProperties) {
         fail('Test fixture contains incorrect schema for this test.');
       }
