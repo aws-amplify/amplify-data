@@ -3,7 +3,6 @@
   "compilerOptions": {
     "rootDir": "src",
     "declaration": true,
-    "declarationMap": true,
     "composite": true,
     "emitDeclarationOnly": true,
     "lib": ["dom", "es2019"]

@@ -79,11 +79,15 @@ type ReturnValue<
  * This mapped type traverses the SelectionSetReturnValue result and the original FlatModel, restoring array types
  * that were flattened in DeepPickFromPath
  *
+ * Note: custom type field arrays are already handled correctly and don't need to be "restored", hence the `Result[K] extends Array<any>` check
+ *
  */
 type RestoreArrays<Result, FlatModel> = {
   [K in keyof Result]: K extends keyof FlatModel
     ? FlatModel[K] extends Array<any>
-      ? Array<RestoreArrays<Result[K], UnwrapArray<FlatModel[K]>>>
+      ? Result[K] extends Array<any>
+        ? Result[K]
+        : Array<RestoreArrays<Result[K], UnwrapArray<FlatModel[K]>>>
       : FlatModel[K] extends Record<string, any>
         ? RestoreArrays<Result[K], FlatModel[K]>
         : Result[K]
@@ -562,7 +566,7 @@ type ModelTypesSSRCookies<
       authToken?: string;
       headers?: CustomHeaders;
     },
-  ) => SingularReturnValue<Model>;
+  ) => SingularReturnValue<Model['type']>;
   update: (
     model: Model['updateType'],
     options?: {
@@ -570,7 +574,7 @@ type ModelTypesSSRCookies<
       authToken?: string;
       headers?: CustomHeaders;
     },
-  ) => SingularReturnValue<Model>;
+  ) => SingularReturnValue<Model['type']>;
   delete: (
     identifier: Model['deleteType'],
     options?: {
@@ -578,7 +582,7 @@ type ModelTypesSSRCookies<
       authToken?: string;
       headers?: CustomHeaders;
     },
-  ) => SingularReturnValue<Model>;
+  ) => SingularReturnValue<Model['type']>;
   get<SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[]>(
     identifier: Model['identifier'],
     options?: {
@@ -615,7 +619,7 @@ type ModelTypesSSRRequest<
       authToken?: string;
       headers?: CustomHeaders;
     },
-  ) => SingularReturnValue<Model>;
+  ) => SingularReturnValue<Model['type']>;
   update: (
     contextSpec: any,
     model: Model['updateType'],
@@ -624,7 +628,7 @@ type ModelTypesSSRRequest<
       authToken?: string;
       headers?: CustomHeaders;
     },
-  ) => SingularReturnValue<Model>;
+  ) => SingularReturnValue<Model['type']>;
   delete: (
     contextSpec: any,
     identifier: Model['deleteType'],
@@ -633,7 +637,7 @@ type ModelTypesSSRRequest<
       authToken?: string;
       headers?: CustomHeaders;
     },
-  ) => SingularReturnValue<Model>;
+  ) => SingularReturnValue<Model['type']>;
   get<SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[]>(
     contextSpec: any,
     identifier: Model['identifier'],

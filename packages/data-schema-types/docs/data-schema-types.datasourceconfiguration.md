@@ -14,6 +14,7 @@ export type DataSourceConfiguration<DE extends DatasourceEngine = DatasourceEngi
     connectionUri: BackendSecret;
     vpcConfig?: VpcConfig;
     identifier?: string;
+    sslCert?: BackendSecret;
 };
 ```
 **References:** [DatasourceEngine](./data-schema-types.datasourceengine.md)

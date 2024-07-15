@@ -1,29 +1,22 @@
-name: Unit Tests
+name: Prebuild amplify-api-next
 
 on:
   workflow_call:
     inputs:
-      tsVersion:
+      runs_on:
         required: true
         type: string
+
 jobs:
-  unit_test:
-    name: Lint & Unit Tests
-    runs-on: ubuntu-latest
+  prebuild:
+    name: Prebuild on ${{ inputs.runs_on }}
+    runs-on: ${{ inputs.runs_on }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@24cb9080177205b6e8c946b17badbe402adc938f # v3.4.0 https://github.com/actions/checkout/commit/24cb9080177205b6e8c946b17badbe402adc938f
         with:
           path: amplify-api-next
-      - name: Install specific typescript version
-        env:
-          VERSION: ${{ inputs.tsVersion }}
-        working-directory: ./amplify-api-next
-        run: npm i typescript@$VERSION
       - name: Setup node and build the repository
         uses: ./amplify-api-next/.github/actions/node-and-build
         with:
-          force: true
-      - name: Run tests
-        working-directory: ./amplify-api-next
-        run: npm run lint && npm run test
+          is-prebuild: true
