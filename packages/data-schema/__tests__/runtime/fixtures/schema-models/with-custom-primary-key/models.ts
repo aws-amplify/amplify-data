@@ -1,5 +1,7 @@
 import { SchemaModel } from '../../../../../src/runtime/bridge-types';
 
+// TODO: add timestamp field and use it as the sort key
+
 export const userSchemaModel: SchemaModel = {
   name: 'User',
   fields: {

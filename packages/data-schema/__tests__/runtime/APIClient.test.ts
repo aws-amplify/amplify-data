@@ -842,6 +842,7 @@ describe('generateGraphQLDocument()', () => {
     const modelOperation = 'INDEX_QUERY';
     const getIndexMeta = (
       modelName: string,
+      indexName?: string,
     ): {
       queryField: string;
       pk: string;
@@ -849,7 +850,17 @@ describe('generateGraphQLDocument()', () => {
     } => {
       const indexProperties = modelIntroSchema.models[
         modelName
-      ].attributes?.find((attribute) => attribute.type === 'key')?.properties;
+      ].attributes?.find((attribute) => {
+        if (indexName) {
+          return (
+            attribute.type === 'key' && attribute.properties?.name === indexName
+          );
+        }
+
+        return attribute.type === 'key';
+      })?.properties;
+
+      console.log('INDEX PROPS:', indexProperties);
 
       if (!indexProperties) {
         fail('Test fixture contains incorrect schema for this test.');
@@ -887,9 +898,18 @@ describe('generateGraphQLDocument()', () => {
         getIndexMeta('RefEnumAsIndexSortKey'),
         { title: 'test' },
       ],
+      [
+        'SecondaryIndexModel',
+        '$timestamp: ModelIntKeyConditionInput',
+        getIndexMeta(
+          'SecondaryIndexModel',
+          'secondaryIndexModelsByDescriptionAndTimestamp',
+        ),
+        { description: 'test' },
+      ],
     ])(
       'generates document for model %p containing input type: %p',
-      (modelName, expectedEnumInputString, indexMeta, args) => {
+      (modelName, expectedSortKeyInputString, indexMeta, args) => {
         const document = generateGraphQLDocument(
           modelIntroSchema,
           modelName,
@@ -899,7 +919,7 @@ describe('generateGraphQLDocument()', () => {
         );
 
         expect(document).toEqual(
-          expect.stringContaining(expectedEnumInputString),
+          expect.stringContaining(expectedSortKeyInputString),
         );
       },
     );
