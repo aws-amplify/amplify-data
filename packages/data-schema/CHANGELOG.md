@@ -1,5 +1,11 @@
 # @aws-amplify/data-schema
 
+## 1.3.7
+
+### Patch Changes
+
+- 9b387bc: fix types and handling of enums in custom operation arguments
+
 ## 1.3.6
 
 ### Patch Changes
