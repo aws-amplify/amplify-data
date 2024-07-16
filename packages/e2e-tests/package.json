@@ -9,7 +9,7 @@
     "clean": "rm -rf node_modules package-lock.json",
     "install:no-lock": "npm i --no-package-lock",
     "test": "jest",
-    "sandbox-temp": "npx ampx sandbox --identifier temp1"
+    "sandbox": "npx ampx sandbox --identifier 01primary"
   },
   "devDependencies": {
     "aws-amplify": "unstable",
