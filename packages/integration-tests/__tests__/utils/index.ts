@@ -92,7 +92,7 @@ export function mockedGenerateClient(
 ) {
   const subs = {} as Record<string, Subscriber<any>>;
 
-  _graphqlspy.mockImplementation(async () => {
+  _graphqlspy.mockImplementation(async (_amplify: any, _options: any) => {
     const result = responses.shift();
 
     if (typeof result === 'function') {
@@ -108,7 +108,7 @@ export function mockedGenerateClient(
     }
   });
 
-  _graphqlsubspy.mockImplementation((amplify: any, options: any) => {
+  _graphqlsubspy.mockImplementation((_amplify: any, options: any) => {
     const graphql = print(options.query);
     const operationMatch = graphql.match(/\s+(on(Create|Update|Delete)\w+)/);
     const operation = operationMatch?.[1];
@@ -399,5 +399,30 @@ export function expectSchemaModelExcludes({
         }
       }
     }
+  }
+}
+
+/**
+ * Performs a normalized comparison of actual and expected GraphQL strings.
+ *
+ * Normalizes the strings by parsing and re-printing each.
+ *
+ * Logs the strings and throws on mismatch.
+ *
+ * @param actual GraphQL string
+ * @param expected GraphQL string
+ */
+export function expectGraphqlMatches(actual: string, expected: string) {
+  const actualNormalized = print(parse(actual));
+  const expectedNormalized = print(parse(expected));
+  if (actualNormalized !== expectedNormalized) {
+    console.error(
+      [
+        `Actual:\n${actual}`,
+        `Actual (normalized):\n${actualNormalized}`,
+        `Expected (normalized):\n${expectedNormalized}`,
+      ].join('\n\n'),
+    );
+    throw new Error('Actual and Expected graphql does not match.');
   }
 }

@@ -401,14 +401,14 @@ function customOperationToGql(
   }
 
   if (Object.keys(fieldArgs).length > 0) {
-    const { gqlFields, implicitTypes } = processFields(
+    const { gqlFields, implicitTypes: implied } = processFields(
       typeName,
       fieldArgs,
       {},
       {},
     );
     callSignature += `(${gqlFields.join(', ')})`;
-    implicitTypes.push(...implicitTypes);
+    implicitTypes.push(...implied);
   }
 
   const handler = handlers && handlers[0];
@@ -489,6 +489,34 @@ function escapeGraphQlString(str: string) {
 }
 
 /**
+ * AWS AppSync scalars that are stored as strings in the data source
+ */
+const stringFieldTypes = {
+  ID: true,
+  String: true,
+  AWSDate: true,
+  AWSTime: true,
+  AWSDateTime: true,
+  AWSEmail: true,
+  AWSPhone: true,
+  AWSURL: true,
+  AWSIPAddress: true,
+};
+
+/**
+ * Normalize string-compatible field types for comparison
+ */
+const normalizeStringFieldTypes = (
+  fieldType: ModelFieldType,
+): ModelFieldType => {
+  if (fieldType in stringFieldTypes) {
+    return ModelFieldType.String;
+  }
+
+  return fieldType;
+};
+
+/**
  * Tests whether two ModelField definitions are in conflict.
  *
  * This is a shallow check intended to catch conflicts between defined fields
@@ -500,15 +528,24 @@ function escapeGraphQlString(str: string) {
  * @returns
  */
 function areConflicting(left: BaseModelField, right: BaseModelField): boolean {
-  // These are the only props we care about for this comparison, because the others
+  const leftData = (left as InternalField).data;
+  const rightData = (right as InternalField).data;
+
+  // `array` and `fieldType` are the only props we care about for this comparison, because the others
   // (required, arrayRequired, etc) are not specified on auth or FK directives.
-  const relevantProps = ['array', 'fieldType'] as const;
-  for (const prop of relevantProps) {
-    if (
-      (left as InternalField).data[prop] !== (right as InternalField).data[prop]
-    ) {
-      return true;
-    }
+  if (leftData.array !== rightData.array) {
+    return true;
+  }
+
+  // Convert "string-compatible" field types to `String` for the sake of this comparison
+  //
+  // E.g. if a customer has an explicit a.id() field that they're referencing in an allow.ownerDefinedIn rule
+  // we treat ID and String as equivalent/non-conflicting
+  if (
+    normalizeStringFieldTypes(leftData.fieldType) !==
+    normalizeStringFieldTypes(rightData.fieldType)
+  ) {
+    return true;
   }
 
   return false;
