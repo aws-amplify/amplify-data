@@ -1,5 +1,11 @@
 # @aws-amplify/data-schema
 
+## 1.3.6
+
+### Patch Changes
+
+- 7175920: allow ownerDefinedIn to reference string-compatible field types
+
 ## 1.3.5
 
 ### Patch Changes
