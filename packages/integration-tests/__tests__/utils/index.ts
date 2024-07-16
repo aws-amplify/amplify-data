@@ -76,7 +76,7 @@ export async function buildAmplifyConfig(schema: {
  * Produces a `generateClient` function and associated spy that is pre-configured
  * to return the given list of responses in order.
  *
- * This helps facilitate a test structure where as much mocking as done ahead of
+ * This helps facilitate a test structure where as much mocking is done ahead of
  * time as possible, so that the test body can show "actual customer code" to the
  * greatest degree possible.
  *
@@ -132,7 +132,7 @@ export function mockedGenerateClient(
   function generateServerClientUsingReqRes<T extends Record<any, any>>(
     options: Parameters<typeof actualGenerateServerClientUsingReqRes>[0],
   ) {
-    return actualGenerateServerClientUsingReqRes(options);
+    return actualGenerateServerClientUsingReqRes<T>(options);
   }
 
   return {
