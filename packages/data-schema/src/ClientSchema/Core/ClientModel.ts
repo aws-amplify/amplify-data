@@ -5,7 +5,11 @@ import type {
 } from '../../ModelType';
 import type { ClientSchemaProperty } from './ClientSchemaProperty';
 import type { Authorization, ImpliedAuthFields } from '../../Authorization';
-import type { SchemaMetadata, ResolveFields } from '../utilities';
+import type {
+  SchemaMetadata,
+  ResolveFields,
+  FlatResolveFields,
+} from '../utilities';
 import type {
   IsEmptyStringOrNever,
   UnionToIntersection,
@@ -49,6 +53,11 @@ export interface ClientModel<
   secondaryIndexes: IndexQueryMethodsFromIR<Bag, T['secondaryIndexes'], K>;
   __meta: {
     listOptionsPkParams: ListOptionsPkParams<Bag, T>;
+    // retaining a reference to the un-resolved schema builder type;
+    // this retains generic arg metadata that can be referenced in transformations downstream
+    rawType: T;
+    // custom selection set-optimized type with limited depth and flattened relationships
+    flatModel: FlatClientFields<Bag, Metadata, false, T, K>;
   };
 }
 
@@ -58,6 +67,17 @@ type ClientFields<
   IsRDS extends boolean,
   T extends ModelTypeParamShape,
 > = ResolveFields<Bag, T['fields']> &
+  If<Not<IsRDS>, ImplicitIdentifier<T>> &
+  AuthFields<Metadata, T> &
+  Omit<SystemFields<IsRDS>, keyof ResolveFields<Bag, T['fields']>>;
+
+type FlatClientFields<
+  Bag extends Record<string, unknown>,
+  Metadata extends SchemaMetadata<any>,
+  IsRDS extends boolean,
+  T extends ModelTypeParamShape,
+  ModelName extends keyof Bag & string,
+> = FlatResolveFields<Bag, T['fields'], ModelName> &
   If<Not<IsRDS>, ImplicitIdentifier<T>> &
   AuthFields<Metadata, T> &
   Omit<SystemFields<IsRDS>, keyof ResolveFields<Bag, T['fields']>>;

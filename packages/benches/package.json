@@ -16,17 +16,18 @@
     "bench:p99": "npm run bench:directory p99",
     "bench:combine": "npm run bench:directory combine",
     "bench:all": "npm run bench:directory .",
-    "baseline": "npm run build:library && ./scripts/baseline-bench.sh",
+    "baseline": "npm run build:library && npm run cache:clear && ./scripts/baseline-bench.sh",
     "baseline:basic": "npm run baseline basic",
     "baseline:p50": "npm run baseline p50",
     "baseline:p99": "npm run baseline p99",
     "baseline:combine": "npm run baseline combine",
     "baseline:all": "npm run baseline .",
     "tsx": "tsx",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "cache:clear": "rm -rf .attest"
   },
   "devDependencies": {
-    "@arktype/attest": "^0.7.3",
+    "@arktype/attest": "^0.8.2",
     "@aws-amplify/data-schema": "*",
     "@aws-amplify/data-schema-types": "*"
   },

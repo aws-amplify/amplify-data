@@ -169,7 +169,7 @@ type DeepPickFromPath<
           : never;
 
 /**
- * Generates custom selection set type with up to 6 levels of nested fields
+ * Generates custom selection set path type with up to 6 levels of nested fields
  *
  * @returns string[] where each string is a field in the model
  * recurses over nested objects - such as relationships and custom types - generating a `field.*` type value to select all fields in that nested type,
@@ -224,75 +224,23 @@ export type ModelPath<
   // this is equivalent to the condition expr. in a for loop (e.g. `depth !== -1`)
 }[Depth extends -1 ? 'done' : 'recur'];
 
-/**
- * Flattens model instance type and unwraps async functions into resolved GraphQL shape
- * 
- * This type is used for generating the base shape for custom selection set input and its return value
- * Uses same pattern as above to limit recursion depth to maximum usable for selection set. 
- *
- * @example
- * ### Given
- * ```ts
- * Model = {
-    title: string;
-    comments: () => ListReturnValue<({
-        content: string;
-        readonly id: string;
-        readonly createdAt: string;
-        readonly updatedAt: string;
-    } | null | undefined)[]>;
-    readonly id: string;
-    readonly createdAt: string;
-    readonly updatedAt: string;
-    description?: string | ... 1 more ... | undefined;
-  }
- * ```
- * ### Returns
- * ```ts
- * {
-    title: string;
-    comments: {
-        content: string;
-        readonly id: string;
-        readonly createdAt: string;
-        readonly updatedAt: string;
-    }[];
-    readonly id: string;
-    readonly createdAt: string;
-    readonly updatedAt: string;
-    description: string | null | undefined;
-  }
- * 
- * ```
- */
-type ResolvedModel<
-  Model extends Record<string, unknown>,
-  Depth extends number = 7,
-  RecursionLoop extends number[] = [-1, 0, 1, 2, 3, 4, 5, 6],
-> = {
-  done: NonRelationalFields<Model>;
-  recur: {
-    [Field in keyof Model]: Model[Field] extends (
-      ...args: any
-    ) => ListReturnValue<infer M>
-      ? NonNullable<M> extends Record<string, any>
-        ? ResolvedModel<NonNullable<M>, RecursionLoop[Depth]>[]
-        : never
-      : Model[Field] extends (...args: any) => SingularReturnValue<infer M>
-        ? NonNullable<M> extends Record<string, any>
-          ? ResolvedModel<NonNullable<M>, RecursionLoop[Depth]>
-          : never
-        : Model[Field];
-  };
-}[Depth extends -1 ? 'done' : 'recur'];
-
 export type SelectionSet<
-  Model extends Record<string, unknown>,
+  Model,
   Path extends ReadonlyArray<ModelPath<FlatModel>>,
-  FlatModel extends Record<string, unknown> = ResolvedModel<Model>,
-> = WithOptionalsAsNullishOnly<
-  CustomSelectionSetReturnValue<FlatModel, Path[number]>
->;
+  FlatModel extends Record<
+    string,
+    unknown
+    // Remove conditional in next major version
+  > = Model extends ClientSchemaByEntityTypeBaseShape['models'][string]
+    ? Model['__meta']['flatModel']
+    : Record<string, any>,
+> =
+  // Remove conditional in next major version
+  Model extends ClientSchemaByEntityTypeBaseShape['models'][string]
+    ? WithOptionalsAsNullishOnly<
+        CustomSelectionSetReturnValue<FlatModel, Path[number]>
+      >
+    : any;
 // #endregion
 
 // #region Interfaces copied from `graphql` package
@@ -447,7 +395,7 @@ type IndexQueryMethods<
 type IndexQueryMethod<
   Model extends ClientSchemaByEntityTypeBaseShape['models'][string],
   Method extends ClientSecondaryIndexField,
-  FlatModel extends Record<string, unknown> = ResolvedModel<Model['type']>,
+  FlatModel extends Record<string, unknown> = Model['__meta']['flatModel'],
 > = <SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[]>(
   input: Method['input'],
   options?: {
@@ -464,7 +412,7 @@ type IndexQueryMethod<
 
 type ModelTypesClient<
   Model extends ClientSchemaByEntityTypeBaseShape['models'][string],
-  FlatModel extends Record<string, unknown> = ResolvedModel<Model['type']>,
+  FlatModel extends Record<string, unknown> = Model['__meta']['flatModel'],
 > = IndexQueryMethods<Model> & {
   create: (
     model: Model['createType'],
@@ -557,7 +505,7 @@ type ModelTypesClient<
 
 type ModelTypesSSRCookies<
   Model extends ClientSchemaByEntityTypeBaseShape['models'][string],
-  FlatModel extends Record<string, unknown> = ResolvedModel<Model['type']>,
+  FlatModel extends Record<string, unknown> = Model['__meta']['flatModel'],
 > = IndexQueryMethods<Model> & {
   create: (
     model: Model['createType'],
@@ -608,7 +556,7 @@ type ModelTypesSSRCookies<
 
 type ModelTypesSSRRequest<
   Model extends ClientSchemaByEntityTypeBaseShape['models'][string],
-  FlatModel extends Record<string, unknown> = ResolvedModel<Model['type']>,
+  FlatModel extends Record<string, unknown> = Model['__meta']['flatModel'],
 > = IndexQueryMethods<Model> & {
   create: (
     // TODO: actual type

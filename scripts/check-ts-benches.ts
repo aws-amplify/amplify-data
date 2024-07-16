@@ -74,6 +74,12 @@ async function runBenches(benchFilePaths: string[]) {
   return errors;
 }
 
+const REMEDIATION_INSTRUCTIONS = `
+If performance degradation is expected given the changes in this branch, run \`npm run baseline:benchmarks\` to baseline.
+
+Otherwise, please identify and optimize the type-level changes that are causing this performance regression.
+`;
+
 /**
  * Print failed bench filename and error message to console; fail script
  *
@@ -90,6 +96,8 @@ function processErrors(errors: BenchErrors) {
       console.error(err.message, '\n');
     }
 
-    throw new Error('TypeScript Benchmark Threshold Exceeded');
+    throw new Error(
+      `TypeScript Benchmark Threshold Exceeded\n${REMEDIATION_INSTRUCTIONS}`,
+    );
   }
 }
