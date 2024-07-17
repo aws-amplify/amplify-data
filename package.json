@@ -66,8 +66,5 @@
     "tsx": "^4.8.2",
     "turbo": "^1.10.14",
     "typescript": "^5.1.6"
-  },
-  "dependencies": {
-    "@aws-amplify/e2e-tests": "^1.0.0"
   }
 }
