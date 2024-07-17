@@ -18,11 +18,11 @@
     "check:type-perf": "tsx scripts/check-ts-benches.ts",
     "check:package-lock": "tsx scripts/check-package-lock.ts",
     "docs": "turbo run docs",
-    "e2e:temp": "npm install && npm run build && npm run e2e:install && npm run e2e:test",
-    "e2e:clean": "npm run --prefix ./packages/e2e-tests/node clean",
-    "e2e:install": "npm run --prefix ./packages/e2e-tests/node install:no-lock",
-    "e2e:test": "npm run --prefix ./packages/e2e-tests/node test",
-    "e2e:sandbox": "npm run --prefix ./packages/e2e-tests/node sandbox",
+    "e2e-node:temp": "npm install && npm run build && npm run e2e-node:install && npm run e2e-node:test",
+    "e2e-node:clean": "npm run --prefix ./packages/e2e-tests/node clean",
+    "e2e-node:install": "npm run --prefix ./packages/e2e-tests/node install:no-lock",
+    "e2e-node:test": "npm run --prefix ./packages/e2e-tests/node test",
+    "e2e-node:sandbox": "npm run --prefix ./packages/e2e-tests/node sandbox",
     "test": "turbo run test && npm run test:scripts",
     "test:scripts": "npx jest scripts/",
     "lint": "turbo run lint",
@@ -66,5 +66,8 @@
     "tsx": "^4.8.2",
     "turbo": "^1.10.14",
     "typescript": "^5.1.6"
+  },
+  "dependencies": {
+    "@aws-amplify/e2e-tests": "^1.0.0"
   }
 }
