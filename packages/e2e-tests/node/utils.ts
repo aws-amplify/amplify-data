@@ -3,6 +3,9 @@ import { generateClient } from 'aws-amplify/data';
 import type { Schema } from './amplify/data/resource';
 import outputs from './amplify_outputs.json';
 
+/**
+ * For better readability of test output:
+ */
 export const statuses = {
   success: {
     icon: '✅',
@@ -28,15 +31,12 @@ export type TestCase = {
 };
 
 /**
- * Given an array of test cases, runs each test case
- * and asserts that the result is successful.
+ * Given an array of test cases, runs each test case and asserts that the result
+ * is successful.
  * Runs the test case cleanup function after each test case.
- * @param testCases
- * @param client
+ * @param testCases - test cases to run
  */
 export async function runTestCases(testCases: TestCase[]) {
-  // If folks prefer global approach:
-  // const client = (global as any).client as Client;
   for (const testCase of testCases) {
     test(`${testCase.label}`, async () => {
       const client = await testCase.setup();

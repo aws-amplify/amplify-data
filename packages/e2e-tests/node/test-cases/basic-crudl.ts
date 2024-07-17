@@ -97,13 +97,13 @@ export const basicCRUDL: TestCase[] = [
       }
 
       if (!originalTodo) {
-        throw new Error('newTodo is undefined');
+        throw new Error('originalTodo is undefined');
       }
 
       const { data: updatedTodo, errors: updateErrors } =
         await client.models.Todo.update({
           id: originalTodo.id,
-          content: 'test content',
+          content: 'updated content',
         });
 
       if (updateErrors) {
@@ -115,7 +115,7 @@ export const basicCRUDL: TestCase[] = [
         throw new Error('updatedTodo is undefined');
       }
 
-      return updatedTodo.content === 'test content';
+      return updatedTodo.content === 'updated content';
     },
     cleanup: async (client) => await deleteAll(client),
   },

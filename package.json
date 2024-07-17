@@ -18,7 +18,6 @@
     "check:type-perf": "tsx scripts/check-ts-benches.ts",
     "check:package-lock": "tsx scripts/check-package-lock.ts",
     "docs": "turbo run docs",
-    "e2e-node:temp": "npm install && npm run build && npm run e2e-node:install && npm run e2e-node:test",
     "e2e-node:clean": "npm run --prefix ./packages/e2e-tests/node clean",
     "e2e-node:install": "npm run --prefix ./packages/e2e-tests/node install:no-lock",
     "e2e-node:test": "npm run --prefix ./packages/e2e-tests/node test",
