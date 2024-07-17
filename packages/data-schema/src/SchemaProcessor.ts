@@ -1078,6 +1078,29 @@ const extractFunctionSchemaAccess = (
   return { schemaAuth, functionSchemaAccess };
 };
 
+/**
+ * Searches a schema and all related schemas (through `.combine()`) for the given type by name.
+ *
+ * @param schema
+ * @param name
+ * @returns
+ */
+const findCombinedSchemaType = (
+  schema: InternalSchema,
+  name: string,
+): unknown | undefined => {
+  if (schema.context) {
+    for (const contextualSchema of schema.context.schemas) {
+      if (contextualSchema.data.types[name]) {
+        return contextualSchema.data.types[name];
+      }
+    }
+  } else {
+    return schema.data.types[name];
+  }
+  return undefined;
+};
+
 type GetRef =
   | {
       type: 'Model';
@@ -1096,12 +1119,12 @@ type GetRef =
  * Returns a closure for retrieving reference type and definition from schema
  */
 const getRefTypeForSchema = (schema: InternalSchema) => {
-  const getRefType = (source: string, target: string): GetRef => {
-    const typeDef = schema.data.types[source];
+  const getRefType = (modelName: string, sourceName: string): GetRef => {
+    const typeDef = findCombinedSchemaType(schema, modelName);
 
     if (typeDef === undefined) {
       throw new Error(
-        `Invalid ref. ${target} is referencing ${source} which is not defined in the schema`,
+        `Invalid ref. ${sourceName} is referring to ${modelName} which is not defined in the schema`,
       );
     }
 
@@ -1122,7 +1145,7 @@ const getRefTypeForSchema = (schema: InternalSchema) => {
     }
 
     throw new Error(
-      `Invalid ref. ${target} is referencing ${source} which is neither a Model, Custom Operation, Custom Type, or Enum`,
+      `Invalid ref. ${sourceName} is referring to ${modelName} which is neither a Model, Custom Operation, Custom Type, or Enum`,
     );
   };
 
@@ -1398,10 +1421,13 @@ const schemaPreprocessor = (
         );
       }
 
-      const getInternalModel = (source: string): InternalModel => {
-        const model = getRefType(source, '');
+      const getInternalModel = (
+        modelName: string,
+        sourceName: string = 'Self',
+      ): InternalModel => {
+        const model = getRefType(modelName, sourceName);
         if (!isInternalModel(model.def)) {
-          throw new Error(`Expected to find model type with name ${source}`);
+          throw new Error(`Expected to find model type with name ${modelName}`);
         }
         return model.def;
       };
@@ -1782,14 +1808,14 @@ function extractNestedCustomTypeNames(
 }
 
 /**
- * Validates that defined relationships conform to the followign rules.
+ * Validates that defined relationships conform to the following rules.
  * - relationships are bidirectional
  *   - hasOne has a belongsTo counterpart
  *   - hasMany has a belongsTo counterpart
  *   - belongsTo has either a hasOne or hasMany counterpart
  * - both sides of a relationship have identical `references` defined.
  * - the `references` match the primary key of the Primary model
- *   - references[0] is the primaryKey's paritionKey on the Primary model
+ *   - references[0] is the primaryKey's partitionKey on the Primary model
  *   - references[1...n] are the primaryKey's sortKey(s) on the Primary model
  *   - types match (id / string / number)
  * - the `references` are fields defined on the Related model
@@ -1802,7 +1828,10 @@ function extractNestedCustomTypeNames(
 function validateRelationships(
   typeName: string,
   record: Record<string, ModelField<any, any>>,
-  getInternalModel: (source: string) => InternalModel,
+  getInternalModel: (
+    modelName: string,
+    sourceModelName?: string,
+  ) => InternalModel,
 ) {
   for (const [name, field] of Object.entries(record)) {
     // If the field's type is not a model, there's no relationship
@@ -2085,11 +2114,15 @@ function getAssociatedConnectionField(
 function getModelRelationship(
   sourceModelName: string,
   sourceConnectionField: ConnectionField,
-  getInternalModel: (source: string) => InternalModel,
+  getInternalModel: (
+    modelName: string,
+    sourceModelName?: string,
+  ) => InternalModel,
 ): ModelRelationship {
-  const sourceModel = getInternalModel(sourceModelName);
+  const sourceModel = getInternalModel(sourceModelName, '__root__');
   const associatedModel = getInternalModel(
     sourceConnectionField.def.relatedModel,
+    sourceModelName,
   );
 
   const associatedConnectionField = getAssociatedConnectionField(
