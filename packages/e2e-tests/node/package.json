@@ -8,8 +8,7 @@
   "scripts": {
     "clean": "rm -rf node_modules package-lock.json",
     "install:no-lock": "npm i --no-package-lock",
-    "test": "jest",
-    "sandbox": "npx ampx sandbox --identifier 01primary"
+    "test": "jest"
   },
   "devDependencies": {
     "aws-amplify": "unstable",
