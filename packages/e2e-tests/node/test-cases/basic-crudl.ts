@@ -34,7 +34,6 @@ export const basicCRUDL: TestCase[] = [
         throw new Error('newTodo is undefined');
       }
 
-      // TODO: better assertion:
       return newTodo.content === 'test create';
     },
     cleanup: async (client) => await deleteAll(client),
@@ -79,7 +78,6 @@ export const basicCRUDL: TestCase[] = [
         throw new Error('get todo is undefined');
       }
 
-      // TODO: better assertion:
       return getTodo.content === 'todo2';
     },
     cleanup: async (client) => await deleteAll(client),
@@ -117,7 +115,6 @@ export const basicCRUDL: TestCase[] = [
         throw new Error('updatedTodo is undefined');
       }
 
-      // TODO: better assertion:
       return updatedTodo.content === 'test content';
     },
     cleanup: async (client) => await deleteAll(client),
@@ -152,7 +149,6 @@ export const basicCRUDL: TestCase[] = [
         throw new Error('deletedTodo is undefined');
       }
 
-      // TODO: better assertion:
       return deletedTodo.content === 'test content';
     },
     cleanup: async (client) => await deleteAll(client),
