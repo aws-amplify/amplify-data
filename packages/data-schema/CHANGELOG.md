@@ -1,5 +1,23 @@
 # @aws-amplify/data-schema
 
+## 1.3.7
+
+### Patch Changes
+
+- 9b387bc: fix types and handling of enums in custom operation arguments
+
+## 1.3.6
+
+### Patch Changes
+
+- 7175920: allow ownerDefinedIn to reference string-compatible field types
+
+## 1.3.5
+
+### Patch Changes
+
+- aeb07d5: Fix sort key input name for timestamp
+
 ## 1.3.4
 
 ### Patch Changes

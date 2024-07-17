@@ -6,6 +6,11 @@ exports[`CustomOperation transform dynamo schema Custom Mutation w required arg 
   title: String
 }
 
+enum LikePostReactionType {
+  :shipit:
+  :risitas:
+}
+
 type Mutation {
   likePost(postId: String!, reactionType: LikePostReactionType): Post 
 }"
