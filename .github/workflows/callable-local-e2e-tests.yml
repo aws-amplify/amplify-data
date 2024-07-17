@@ -13,9 +13,9 @@ jobs:
           path: amplify-api-next
       - name: Setup node and build the repository
         uses: ./amplify-api-next/.github/actions/node-and-build
-      - name: Build Node Sample
+      - name: Install Node Sample Dependencies
         working-directory: ./amplify-api-next
-        run: npm run e2e:build
+        run: npm run e2e-node:install
       - name: Run tests
         working-directory: ./amplify-api-next
-        run: npm run e2e:test
+        run: npm run e2e-node:test
