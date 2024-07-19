@@ -307,7 +307,7 @@ describe('schema generation with relationships', () => {
       );
     });
 
-    test('conflicting relational definition on primary model fails', () => {
+    test('conflicting relational definition on parent model fails', () => {
       const schema = a
         .schema({
           Team: a.model({
@@ -326,7 +326,7 @@ describe('schema generation with relationships', () => {
       );
     });
 
-    test('More identifiers on Primary than references defined fails', () => {
+    test('More identifiers on parent than references defined fails', () => {
       const schema = a
         .schema({
           Team: a
@@ -353,7 +353,7 @@ describe('schema generation with relationships', () => {
       );
     });
 
-    test('Fewer identifiers on Primary than references defined fails', () => {
+    test('Fewer identifiers on parent than references defined fails', () => {
       const schema = a
         .schema({
           Team: a
@@ -380,7 +380,7 @@ describe('schema generation with relationships', () => {
       );
     });
 
-    test('Multiple relational definition on primary model ', () => {
+    test('Multiple relational definition on parent model ', () => {
       const schema = a
         .schema({
           Team: a.model({
