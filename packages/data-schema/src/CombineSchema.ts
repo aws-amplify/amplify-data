@@ -35,8 +35,8 @@ function internalCombine<
     ...combinedSchemaBrand,
     schemas: schemas,
   };
-  for (const s of combined.schemas) {
-    s.context = combined;
+  for (const schema of combined.schemas) {
+    schema.context = combined;
   }
   return combined;
 }

@@ -345,9 +345,38 @@ describe('schema generation with relationships', () => {
         .authorization((allow) => [allow.publicApiKey()]);
 
       expect(() => schema.transform().schema).toThrowError(
-        `The identifiers defined on Team must match the reference fields defined on Member.\n` +
-          `2 identifiers defined on Team.\n` +
-          `1 reference fields found on Member`,
+        [
+          'The identifiers defined on Team must match the reference fields defined on Member.',
+          '2 identifiers defined on Team.',
+          '1 reference fields found on Member',
+        ].join('\n'),
+      );
+    });
+
+    test('Fewer identifiers on Primary than references defined fails', () => {
+      const schema = a
+        .schema({
+          Team: a
+            .model({
+              id: a.id().required(),
+              members: a.hasMany('Member', ['teamIdPart1', 'teamIdPart2']),
+              members2: a.hasMany('Member', ['teamIdPart1', 'teamIdPart2']),
+            })
+            .identifier(['id']),
+          Member: a.model({
+            teamIdPart1: a.id(),
+            teamIdPart2: a.id(),
+            team: a.belongsTo('Team', ['teamIdPart1', 'teamIdPart2']),
+          }),
+        })
+        .authorization((allow) => [allow.publicApiKey()]);
+
+      expect(() => schema.transform().schema).toThrowError(
+        [
+          'The identifiers defined on Team must match the reference fields defined on Member.',
+          '1 identifiers defined on Team.',
+          '2 reference fields found on Member',
+        ].join('\n'),
       );
     });
 
