@@ -2,6 +2,9 @@ import { Amplify } from 'aws-amplify';
 import { generateClient } from 'aws-amplify/data';
 import type { Schema } from './amplify/data/resource';
 import outputs from './amplify_outputs.json';
+// eslint-disable-next-line import/no-extraneous-dependencies
+import { WebSocket } from 'ws';
+import { ConsoleLogger } from 'aws-amplify/utils';
 
 /**
  * For better readability of test output:
@@ -63,8 +66,8 @@ export async function runTestCases(testCases: TestCase[]) {
  * Configures Amplify and returns API client
  * @returns API client
  */
-// TODO:
-export function configureAmplifyAndGenerateClient(ampflifyConfig =, clientConfig) {
+// TODO: add options params
+export function configureAmplifyAndGenerateClient() {
   console.log('configuring Amplify and generating client..');
   Amplify.configure(outputs);
 
@@ -79,4 +82,18 @@ export function configureAmplifyAndGenerateClient(ampflifyConfig =, clientConfig
 export async function pause(ms: number) {
   console.log('calling pause');
   return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+/**
+ * Enables debug logging for Amplify
+ */
+export function enableDebugLogging() {
+  ConsoleLogger.LOG_LEVEL = 'DEBUG';
+}
+
+/**
+ * TODO: description
+ */
+export function establishWebsocket() {
+  (global as any).WebSocket = WebSocket;
 }
