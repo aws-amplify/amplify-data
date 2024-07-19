@@ -1,5 +1,11 @@
 # @aws-amplify/data-schema
 
+## 1.3.8
+
+### Patch Changes
+
+- 6a5a69c: fix index query support with reqRes client
+
 ## 1.3.7
 
 ### Patch Changes

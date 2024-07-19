@@ -86,6 +86,7 @@ export function generateModelsProperty<T extends Record<any, any> = never>(
         model,
         idx,
         getInternals,
+        useContext,
       );
     }
   }
