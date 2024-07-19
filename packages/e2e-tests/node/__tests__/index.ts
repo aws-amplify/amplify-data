@@ -6,3 +6,15 @@ for (const testCaseSuite of testCaseSuites) {
     runTestCases(testCaseSuite.suite);
   });
 }
+
+
+/**
+ * let client;
+ * 
+ * before -> configure, generate
+ * 
+ * 
+ * test(
+ *  client.models.Todo.etc <--- `undefined`
+ * )
+ */

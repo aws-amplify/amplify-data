@@ -63,7 +63,8 @@ export async function runTestCases(testCases: TestCase[]) {
  * Configures Amplify and returns API client
  * @returns API client
  */
-export function configureAmplifyAndGenerateClient() {
+// TODO:
+export function configureAmplifyAndGenerateClient(ampflifyConfig =, clientConfig) {
   console.log('configuring Amplify and generating client..');
   Amplify.configure(outputs);
 
