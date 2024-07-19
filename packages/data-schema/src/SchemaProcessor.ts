@@ -1829,7 +1829,7 @@ function extractNestedCustomTypeNames(
  * @param record map of field name to {@link ModelField}
  * @param getInternalModel given a model name, return an {@link InternalModel}
  */
-export function validateRelationships(
+function validateRelationships(
   typeName: string,
   record: Record<string, ModelField<any, any>>,
   getInternalModel: (
