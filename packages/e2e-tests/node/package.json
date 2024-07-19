@@ -11,7 +11,6 @@
     "test": "jest"
   },
   "devDependencies": {
-    "aws-amplify": "unstable",
     "@aws-amplify/backend": "^1.0.4",
     "@aws-amplify/backend-cli": "^1.1.0",
     "@aws-amplify/data-schema": "*",
@@ -19,6 +18,7 @@
     "@tsd/typescript": "^5.5.3",
     "@types/jest": "^29.5.12",
     "@types/node": "20.8.3",
+    "aws-amplify": "unstable",
     "aws-cdk": "^2.149.0",
     "aws-cdk-lib": "^2.149.0",
     "constructs": "^10.3.0",
@@ -29,5 +29,8 @@
     "ts-node": "^10.9.2",
     "tsx": "^4.16.2",
     "typescript": "^5.5.3"
+  },
+  "dependencies": {
+    "websocket": "^1.0.35"
   }
 }

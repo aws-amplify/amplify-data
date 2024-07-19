@@ -55,7 +55,7 @@ export async function runTestCases(testCases: TestCase[]) {
       await testCase.cleanup(client);
 
       expect(result.label).toBe(statuses.success.label);
-    });
+    }, 20000);
   }
 }
 
@@ -70,4 +70,12 @@ export function configureAmplifyAndGenerateClient() {
   const client = generateClient<Schema>();
 
   return client;
+}
+
+/**
+ * Util for pausing test execution.
+ */
+export async function pause(ms: number) {
+  console.log('calling pause');
+  return new Promise((resolve) => setTimeout(resolve, ms));
 }
