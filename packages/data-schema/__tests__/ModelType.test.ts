@@ -391,10 +391,17 @@ describe('model auth rules', () => {
   it(`includes auth from related model fields`, () => {
     const schema = a
       .schema({
+        factory: a
+          .model({
+            name: a.string(),
+            widgets: a.hasMany('widget', ['factoryId']),
+          })
+          .authorization((allow) => [allow.publicApiKey()]),
         widget: a.model({
           id: a.id().required(),
+          factoryId: a.id(),
           parent: a
-            .belongsTo('widget', 'widgetId')
+            .belongsTo('factory', 'factoryId')
             .authorization((allow) =>
               allow.ownerDefinedIn('customOwner').to(['create', 'read']),
             ),
