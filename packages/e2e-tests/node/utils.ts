@@ -1,99 +1,56 @@
 import { Amplify } from 'aws-amplify';
 import { generateClient } from 'aws-amplify/data';
+import { Hub, ConsoleLogger } from 'aws-amplify/utils';
 import type { Schema } from './amplify/data/resource';
 import outputs from './amplify_outputs.json';
-// eslint-disable-next-line import/no-extraneous-dependencies
-import { WebSocket } from 'ws';
-import { ConsoleLogger } from 'aws-amplify/utils';
-
-/**
- * For better readability of test output:
- */
-export const statuses = {
-  success: {
-    icon: '✅',
-    label: 'Success',
-  },
-  fail: {
-    icon: '❌',
-    label: 'Fail',
-  },
-} as const;
-
-const _testCase = (success: boolean): any =>
-  success ? statuses.success : statuses.fail;
 
 // TODO: use imported type from `aws-amplify/data` once it's fixed
 export type Client = ReturnType<typeof generateClient<Schema>>;
 
-export type TestCase = {
-  label: string;
-  setup: () => Promise<Client>;
-  action: (client: Client) => Promise<boolean>;
-  cleanup: (client: Client) => Promise<void>;
+type ConfigureAmplifyAndGenerateClientParams = {
+  disableDebugLogging?: boolean;
+  amplifyOptions?: any;
+  apiClientOptions?: any;
 };
 
 /**
- * Given an array of test cases, runs each test case and asserts that the result
- * is successful.
- * Runs the test case cleanup function after each test case.
- * @param testCases - test cases to run
- */
-export async function runTestCases(testCases: TestCase[]) {
-  for (const testCase of testCases) {
-    test(`${testCase.label}`, async () => {
-      const client = await testCase.setup();
-
-      let result: any;
-
-      try {
-        const response = await testCase.action(client);
-        result = _testCase(response);
-      } catch (error) {
-        result = _testCase(false);
-      }
-
-      console.log(`${result.icon} ${testCase.label}`);
-
-      await testCase.cleanup(client);
-
-      expect(result.label).toBe(statuses.success.label);
-    }, 20000);
-  }
-}
-
-/**
  * Configures Amplify and returns API client
+ * @param disableDebugLogging - disables debug logging
+ * @param amplifyOptions - options to pass to Amplify.configure
+ * @param apiClientOptions - options to pass to generateClient
  * @returns API client
  */
-// TODO: add options params
-export function configureAmplifyAndGenerateClient() {
+export const configureAmplifyAndGenerateClient = ({
+  disableDebugLogging = false,
+  amplifyOptions = {},
+  apiClientOptions = {},
+}: ConfigureAmplifyAndGenerateClientParams): Client => {
   console.log('configuring Amplify and generating client..');
-  Amplify.configure(outputs);
+  Amplify.configure(outputs, amplifyOptions);
 
-  const client = generateClient<Schema>();
+  /**
+   * Debug logs are enabled by default to assist with CI failure debugging.
+   * Option to disable is included for local development, in the event that
+   * the debug logs are too verbose.
+   */
+  if (!disableDebugLogging) {
+    ConsoleLogger.LOG_LEVEL = 'DEBUG';
+
+    Hub.listen('core', (data: any) => {
+      if (data.payload.event === 'configure') {
+        console.log('API configuration details:', data.payload.data.API);
+      }
+    });
+  }
+
+  const client = generateClient<Schema>(apiClientOptions);
 
   return client;
-}
+};
 
 /**
  * Util for pausing test execution.
  */
 export async function pause(ms: number) {
-  console.log('calling pause');
   return new Promise((resolve) => setTimeout(resolve, ms));
-}
-
-/**
- * Enables debug logging for Amplify
- */
-export function enableDebugLogging() {
-  ConsoleLogger.LOG_LEVEL = 'DEBUG';
-}
-
-/**
- * TODO: description
- */
-export function establishWebsocket() {
-  (global as any).WebSocket = WebSocket;
 }
