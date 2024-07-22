@@ -1,4 +1,4 @@
-import { schema } from './ModelSchema';
+import { schema } from './builder/ModelSchema';
 import { combine } from './CombineSchema';
 import { model } from './ModelType';
 import {

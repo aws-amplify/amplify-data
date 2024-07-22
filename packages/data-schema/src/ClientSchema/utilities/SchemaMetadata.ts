@@ -1,5 +1,5 @@
 import { ImpliedAuthFields } from '../../Authorization';
-import { BaseSchema } from '../../ModelSchema';
+import { BaseSchema } from '../../builder/ModelSchema.internal';
 
 export interface SchemaMetadata<Schema extends BaseSchema<any, any>> {
   authFields: AuthFields<Schema>;

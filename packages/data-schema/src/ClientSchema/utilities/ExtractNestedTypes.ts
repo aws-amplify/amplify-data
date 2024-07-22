@@ -1,4 +1,4 @@
-import { ClientSchemaByEntityTypeBaseShape } from '..';
+import { ClientSchemaByEntityTypeBaseShape } from '../internal';
 import { UnionToIntersection } from '@aws-amplify/data-schema-types';
 
 export type ExtractNestedTypes<T extends ClientSchemaByEntityTypeBaseShape> =

@@ -12,29 +12,33 @@ import {
   SchemaModelType,
   AddRelationshipFieldsToModelTypeFields,
   type BaseModelType,
-} from './ModelType';
-import type { EnumType } from './EnumType';
-import type { CustomType, CustomTypeParamShape } from './CustomType';
+} from '../ModelType';
+import type { EnumType } from '../EnumType';
+import type { CustomType } from '../CustomType';
 import type {
-  CustomOperation,
-  CustomOperationParamShape,
   InternalCustom,
   MutationCustomOperation,
   QueryCustomOperation,
   SubscriptionCustomOperation,
-} from './CustomOperation';
-import { processSchema } from './SchemaProcessor';
-import { AllowModifier, SchemaAuthorization, allow } from './Authorization';
-import { Brand, brand, getBrand, RenameUsingTuples } from './util';
+} from '../CustomOperation';
+import { processSchema } from '../SchemaProcessor';
+import { AllowModifier, SchemaAuthorization, allow } from '../Authorization';
+import { Brand, brand, getBrand, RenameUsingTuples } from '../util';
 import {
   ModelRelationalField,
   ModelRelationalFieldParamShape,
-} from './ModelRelationalField';
+} from '../ModelRelationalField';
+import {
+  SchemaContent,
+  ModelSchemaParamShape,
+  BaseSchema,
+  ModelSchemaContents,
+} from './ModelSchema.internal';
 
-export { ModelType } from './ModelType';
-export { EnumType } from './EnumType';
-export { CustomType } from './CustomType';
-export { CustomOperation } from './CustomOperation';
+export { ModelType } from '../ModelType';
+export { EnumType } from '../EnumType';
+export { CustomType } from '../CustomType';
+export { CustomOperation } from '../CustomOperation';
 
 export const rdsSchemaBrandName = 'RDSSchema';
 export const rdsSchemaBrand = brand(rdsSchemaBrandName);
@@ -44,30 +48,16 @@ export const ddbSchemaBrandName = 'DDBSchema';
 const ddbSchemaBrand = brand(ddbSchemaBrandName);
 export type DDBSchemaBrand = Brand<typeof ddbSchemaBrandName>;
 
-type SchemaContent =
-  | BaseModelType
-  | CustomType<CustomTypeParamShape>
-  | EnumType
-  | CustomOperation<CustomOperationParamShape, any>;
-
 // The SQL-only `addToSchema` accepts all top-level entities, excepts models
 type AddToSchemaContent = Exclude<SchemaContent, BaseModelType>;
 type AddToSchemaContents = Record<string, AddToSchemaContent>;
 
 type NonEmpty<T> = keyof T extends never ? never : T;
 
-export type ModelSchemaContents = Record<string, SchemaContent>;
-
 type InternalSchemaModels = Record<
   string,
   InternalModel | EnumType | CustomType<any> | InternalCustom
 >;
-
-export type ModelSchemaParamShape = {
-  types: ModelSchemaContents;
-  authorization: SchemaAuthorization<any, any, any>[];
-  configuration: SchemaConfiguration<any, any>;
-};
 
 export type RDSModelSchemaParamShape = ModelSchemaParamShape;
 
@@ -77,19 +67,6 @@ export type InternalSchema = {
     authorization: SchemaAuthorization<any, any, any>[];
     configuration: SchemaConfiguration<any, any>;
   };
-};
-
-export type BaseSchema<
-  T extends ModelSchemaParamShape,
-  IsRDS extends boolean = false,
-> = {
-  data: T;
-  models: {
-    [TypeKey in keyof T['types']]: T['types'][TypeKey] extends BaseModelType
-      ? SchemaModelType<T['types'][TypeKey], TypeKey & string, IsRDS>
-      : never;
-  };
-  transform: () => DerivedApiDefinition;
 };
 
 export type GenericModelSchema<T extends ModelSchemaParamShape> =

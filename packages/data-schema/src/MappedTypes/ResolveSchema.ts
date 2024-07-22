@@ -1,5 +1,5 @@
 import type { ModelType } from '../ModelType';
-import type { GenericModelSchema } from '../ModelSchema';
+import type { GenericModelSchema } from '../builder/ModelSchema';
 import type {
   ModelRelationalField,
   ModelRelationshipTypes,

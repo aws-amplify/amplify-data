@@ -17,6 +17,9 @@
     "docs": "api-extractor run && api-documenter markdown --input-folder temp --output-folder docs",
     "docs:temp": "api-extractor run && api-documenter markdown --input-folder temp --output-folder temp/docs",
     "check:api": "rimraf temp && npm run docs:temp && node ../../scripts/shallow-dir-diff.js docs temp/docs",
+    "docs:full": "api-extractor run -c api-extractor.full.json && api-documenter markdown --input-folder temp-full --output-folder docs-full",
+    "docs:temp:full": "api-extractor run -c api-extractor.full.json && api-documenter markdown --input-folder temp-full --output-folder temp-full/docs",
+    "check:api:full": "rimraf temp-full && npm run docs:temp:full && node ../../scripts/shallow-dir-diff.js docs-full temp-full/docs",
     "lint": "eslint .",
     "test": "jest"
   },

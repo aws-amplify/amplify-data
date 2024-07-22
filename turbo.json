@@ -9,6 +9,7 @@
       "dependsOn": ["build"]
     },
     "check:api": {},
+    "check:api:base": {},
     "lint": {},
     "test": {
       "dependsOn": ["^test"]

@@ -1,4 +1,7 @@
-import { type CustomPathData, type InternalSchema } from './ModelSchema';
+import {
+  type CustomPathData,
+  type InternalSchema,
+} from './builder/ModelSchema';
 import {
   type ModelField,
   type InternalField,
