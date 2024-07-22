@@ -102,7 +102,7 @@ bench('p50 w/ client types', () => {
     .authorization((allow) => allow.publicApiKey());
 
   type _ = ClientSchema<typeof s>;
-}).types([10439, 'instantiations']);
+}).types([10453, 'instantiations']);
 
 bench('p50 combined schema w/ client types', () => {
   const s1 = a
@@ -157,4 +157,4 @@ bench('p50 combined schema w/ client types', () => {
 
   const s = a.combine([s1, s2]);
   type _ = ClientSchema<typeof s>;
-}).types([13849, 'instantiations']);
+}).types([13865, 'instantiations']);
