@@ -19,7 +19,7 @@ const deleteAll = async (client: Client) => {
 
 describe('Basic CRUDL', () => {
   beforeEach(() => {
-    client = configureAmplifyAndGenerateClient({});
+    client = configureAmplifyAndGenerateClient({ disableDebugLogging: true });
   });
   afterEach(async () => {
     await deleteAll(client);

@@ -21,3 +21,7 @@ This package contains automated tests for validating functionality E2E.
 3. Add your newly added test cases to `test-cases/index.ts`.
 4. New test cases will be automatically picked up by the test runner, and run
    in the pipeline (see `.github/workflows/callable-local-e2e-tests.yml`)
+
+## [TODO] Global cleanup
+
+Add a check to clean up potential orphaned records after all tests have run (see https://jestjs.io/docs/configuration#globalteardown-string).
