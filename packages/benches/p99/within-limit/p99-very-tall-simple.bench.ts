@@ -9149,4 +9149,4 @@ bench('1522 simple models with 1 field each w/ client types', () => {
     .authorization((allow) => allow.publicApiKey());
 
   type _ = ClientSchema<typeof s>;
-}).types([27769, 'instantiations']);
+}).types([27783, 'instantiations']);
