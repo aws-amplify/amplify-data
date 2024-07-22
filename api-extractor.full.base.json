@@ -1,0 +1,23 @@
+{
+  "extends": "./api-extractor.base.json",
+  "mainEntryPointFilePath": "<projectFolder>/dist/esm/index.internal.d.ts",
+  /**
+   * Configures how the doc model file (*.api.json) will be generated.
+   */
+   "docModel": {
+    "apiJsonFilePath": "<projectFolder>/temp-full/<unscopedPackageName>.api.json"
+  },
+  /**
+   * Configures how API Extractor reports error and warning messages produced during analysis.
+   *
+   * There are three sources of messages:  compiler messages, API Extractor messages, and TSDoc messages.
+   */
+   "messages": {
+    "extractorMessageReporting": {
+      "ae-forgotten-export": {
+        "addToApiReportFile": true,
+        "logLevel": "error"
+      }
+    }
+  }
+}

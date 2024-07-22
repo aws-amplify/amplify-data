@@ -98,6 +98,46 @@ Description
 </td></tr>
 <tr><td>
 
+[BackendSecret](./data-schema-types.backendsecret.md)
+
+
+</td><td>
+
+Importing the full objects from @<!-- -->aws-amplify/plugin-types more than doubles dev env runtime. This type replacement will contain the content for config without the negative side-effects. We may need to re-approach if customers interact with these programmatically to avoid forcing narrowing.
+
+
+</td></tr>
+<tr><td>
+
+[BooleanFilters](./data-schema-types.booleanfilters.md)
+
+
+</td><td>
+
+
+</td></tr>
+<tr><td>
+
+[ContextType](./data-schema-types.contexttype.md)
+
+
+</td><td>
+
+
+</td></tr>
+<tr><td>
+
+[CreateModelInput](./data-schema-types.createmodelinput.md)
+
+
+</td><td>
+
+All identifiers and fields used to create a model
+
+
+</td></tr>
+<tr><td>
+
 [CustomHeaders](./data-schema-types.customheaders.md)
 
 
@@ -110,6 +150,26 @@ Custom headers that can be passed either to the client or to individual model op
 <tr><td>
 
 [CustomMutations](./data-schema-types.custommutations.md)
+
+
+</td><td>
+
+
+</td></tr>
+<tr><td>
+
+[CustomOperationFnParams](./data-schema-types.customoperationfnparams.md)
+
+
+</td><td>
+
+Generates Custom Operations function params based on whether .arguments() were specified in the schema builder
+
+
+</td></tr>
+<tr><td>
+
+[CustomOperationMethodOptions](./data-schema-types.customoperationmethodoptions.md)
 
 
 </td><td>
@@ -131,6 +191,17 @@ Custom headers that can be passed either to the client or to individual model op
 
 
 </td><td>
+
+
+</td></tr>
+<tr><td>
+
+[CustomSelectionSetReturnValue](./data-schema-types.customselectionsetreturnvalue.md)
+
+
+</td><td>
+
+Generates flattened, readonly return type using specified custom sel. set
 
 
 </td></tr>
@@ -176,6 +247,17 @@ Custom headers that can be passed either to the client or to individual model op
 
 
 </td><td>
+
+
+</td></tr>
+<tr><td>
+
+[DeepPickFromPath](./data-schema-types.deeppickfrompath.md)
+
+
+</td><td>
+
+Picks object properties that match provided dot-separated Path
 
 
 </td></tr>
@@ -300,6 +382,33 @@ The utility type that is used to infer the type (interface) of the generated `cl
 </td></tr>
 <tr><td>
 
+[IfEquals](./data-schema-types.ifequals.md)
+
+
+</td><td>
+
+
+</td></tr>
+<tr><td>
+
+[IndexQueryMethodsFromIR](./data-schema-types.indexquerymethodsfromir.md)
+
+
+</td><td>
+
+
+</td></tr>
+<tr><td>
+
+[IndexQueryMethodSignature](./data-schema-types.indexquerymethodsignature.md)
+
+
+</td><td>
+
+
+</td></tr>
+<tr><td>
+
 [IsAny](./data-schema-types.isany.md)
 
 
@@ -381,6 +490,51 @@ The utility type that is used to infer the type (interface) of the generated `cl
 </td></tr>
 <tr><td>
 
+[LogicalFilters](./data-schema-types.logicalfilters.md)
+
+
+</td><td>
+
+
+</td></tr>
+<tr><td>
+
+[Model](./data-schema-types.model.md)
+
+
+</td><td>
+
+
+</td></tr>
+<tr><td>
+
+[ModelFilter](./data-schema-types.modelfilter.md)
+
+
+</td><td>
+
+
+</td></tr>
+<tr><td>
+
+[ModelIdentifier](./data-schema-types.modelidentifier.md)
+
+
+</td><td>
+
+
+</td></tr>
+<tr><td>
+
+[ModelMetaShape](./data-schema-types.modelmetashape.md)
+
+
+</td><td>
+
+
+</td></tr>
+<tr><td>
+
 [ModelPath](./data-schema-types.modelpath.md)
 
 
@@ -410,6 +564,55 @@ Generates custom selection set type with up to 6 levels of nested fields
 </td></tr>
 <tr><td>
 
+[ModelTypesClient](./data-schema-types.modeltypesclient.md)
+
+
+</td><td>
+
+
+</td></tr>
+<tr><td>
+
+[ModelTypesSSRCookies](./data-schema-types.modeltypesssrcookies.md)
+
+
+</td><td>
+
+
+</td></tr>
+<tr><td>
+
+[ModelTypesSSRRequest](./data-schema-types.modeltypesssrrequest.md)
+
+
+</td><td>
+
+
+</td></tr>
+<tr><td>
+
+[MutationInput](./data-schema-types.mutationinput.md)
+
+
+</td><td>
+
+All required fields and relational fields, exclude readonly fields
+
+
+</td></tr>
+<tr><td>
+
+[NonRelationalFields](./data-schema-types.nonrelationalfields.md)
+
+
+</td><td>
+
+Currently this omits any object-type fields. Update this when we add custom types/enums.
+
+
+</td></tr>
+<tr><td>
+
 [NotAny](./data-schema-types.notany.md)
 
 
@@ -420,6 +623,15 @@ Generates custom selection set type with up to 6 levels of nested fields
 <tr><td>
 
 [NotEqual](./data-schema-types.notequal.md)
+
+
+</td><td>
+
+
+</td></tr>
+<tr><td>
+
+[NumericFilter](./data-schema-types.numericfilter.md)
 
 
 </td><td>
@@ -455,6 +667,19 @@ Generates custom selection set type with up to 6 levels of nested fields
 </td></tr>
 <tr><td>
 
+[PathEntry](./data-schema-types.pathentry.md)
+
+
+</td><td>
+
+references IAmplifyGraphqlDefinition from: https://github.com/aws-amplify/amplify-category-api/blob/4c0ea253a0bae51f775383929ba4748593185bc1/packages/amplify-graphql-api-construct/src/types.ts\#L491-L503
+
+function slots is any'd for now. Will add actual type when we add support for this feature
+
+
+</td></tr>
+<tr><td>
+
 [Prettify](./data-schema-types.prettify.md)
 
 
@@ -470,6 +695,41 @@ Generates custom selection set type with up to 6 levels of nested fields
 </td><td>
 
 Request options that are passed to custom header functions. `method` and `headers` are not included in custom header functions passed to subscriptions.
+
+
+</td></tr>
+<tr><td>
+
+[ResolvedModel](./data-schema-types.resolvedmodel.md)
+
+
+</td><td>
+
+Flattens model instance type and unwraps async functions into resolved GraphQL shape
+
+This type is used for generating the base shape for custom selection set input and its return value Uses same pattern as above to limit recursion depth to maximum usable for selection set.
+
+
+</td></tr>
+<tr><td>
+
+[RestoreArrays](./data-schema-types.restorearrays.md)
+
+
+</td><td>
+
+This mapped type traverses the SelectionSetReturnValue result and the original FlatModel, restoring array types that were flattened in DeepPickFromPath
+
+
+</td></tr>
+<tr><td>
+
+[ReturnValue](./data-schema-types.returnvalue.md)
+
+
+</td><td>
+
+Selection set-aware CRUDL operation return value type
 
 
 </td></tr>
@@ -524,7 +784,38 @@ Replaces the value of a key in a complex generic type param
 </td></tr>
 <tr><td>
 
+[SizeFilter](./data-schema-types.sizefilter.md)
+
+
+</td><td>
+
+Filter options that can be used on fields where size checks are supported.
+
+
+</td></tr>
+<tr><td>
+
 [SqlStatementFolderEntry](./data-schema-types.sqlstatementfolderentry.md)
+
+
+</td><td>
+
+
+</td></tr>
+<tr><td>
+
+[StringFilter](./data-schema-types.stringfilter.md)
+
+
+</td><td>
+
+Filters options that can be used on string-like fields.
+
+
+</td></tr>
+<tr><td>
+
+[SubnetAZ](./data-schema-types.subnetaz.md)
 
 
 </td><td>
@@ -543,6 +834,24 @@ Replaces the value of a key in a complex generic type param
 <tr><td>
 
 [UnwrapArray](./data-schema-types.unwraparray.md)
+
+
+</td><td>
+
+
+</td></tr>
+<tr><td>
+
+[VpcConfig](./data-schema-types.vpcconfig.md)
+
+
+</td><td>
+
+
+</td></tr>
+<tr><td>
+
+[WritableKeys](./data-schema-types.writablekeys.md)
 
 
 </td><td>

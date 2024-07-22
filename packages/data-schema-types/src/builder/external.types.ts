@@ -5,6 +5,8 @@
  * function slots is any'd for now. Will add actual type when we add support for this feature
  */
 
+import { PathEntry, BackendSecret, VpcConfig } from './internal.types';
+
 export interface DerivedApiDefinition {
   /**
    * Return the schema definition as a graphql string, with amplify directives allowed.
@@ -35,8 +37,6 @@ export type DerivedModelSchema = {
 
   transform: () => DerivedApiDefinition;
 };
-
-type PathEntry = { relativePath: string; importLine: string };
 
 export type JsResolverEntry = string | PathEntry;
 
@@ -71,17 +71,6 @@ export type CustomSqlDataSourceStrategy = {
   entry?: JsResolverEntry;
 };
 
-type SubnetAZ = {
-  subnetId: string;
-  availabilityZone: string;
-};
-
-type VpcConfig = {
-  vpcId: string;
-  securityGroupIds: string[];
-  subnetAvailabilityZones: SubnetAZ[];
-};
-
 export type DataSourceConfiguration<
   DE extends DatasourceEngine = DatasourceEngine,
 > = DE extends 'dynamodb'
@@ -99,16 +88,4 @@ export type SchemaConfiguration<
   DC extends DataSourceConfiguration<DE> = DataSourceConfiguration<DE>,
 > = {
   database: DC;
-};
-
-/**
- * Importing the full objects from @aws-amplify/plugin-types
- * more than doubles dev env runtime. This type replacement
- * will contain the content for config without the negative
- * side-effects. We may need to re-approach if customers interact
- * with these programmatically to avoid forcing narrowing.
- */
-type BackendSecret = {
-  resolve: (scope: any, backendIdentifier: any) => any;
-  resolvePath: (backendIdentifier: any) => any;
 };

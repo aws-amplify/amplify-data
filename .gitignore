@@ -15,6 +15,7 @@ verdaccio-logs.txt
 .attest
 
 packages/*/temp
+packages/*/temp-full
 
 # rollup
 **/.rollup.cache
