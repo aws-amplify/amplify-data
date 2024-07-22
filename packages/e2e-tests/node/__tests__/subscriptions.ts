@@ -2,6 +2,7 @@ import {
   Client,
   configureAmplifyAndGenerateClient,
   establishWebsocket,
+  handleErrorsAndData,
   pause,
 } from '../utils';
 import type { Schema } from '../amplify/data/resource';
@@ -47,13 +48,15 @@ describe('Subscriptions', () => {
      */
     await pause(2000);
 
-    await client.models.Todo.create({
+    const firstCreateResponse = await client.models.Todo.create({
       content: 'first todo',
     });
+    handleErrorsAndData(firstCreateResponse, 'first todo create');
 
-    await client.models.Todo.create({
+    const secondCreateResponse = await client.models.Todo.create({
       content: 'second todo',
     });
+    handleErrorsAndData(secondCreateResponse, 'second todo create');
 
     /**
      * Need to wait for sub messages to be received before unsubscribing.
