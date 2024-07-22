@@ -7,8 +7,7 @@ import {
 import { Hub, ConsoleLogger } from 'aws-amplify/utils';
 import type { Schema } from './amplify/data/resource';
 import outputs from './amplify_outputs.json';
-// @ts-expect-error - TODO: investigate why this import is throwing an error
-// eslint-disable-next-line import/no-extraneous-dependencies
+// TODO: the dep exists, investigate why it's not being resolved:
 import { WebSocket } from 'ws';
 
 // TODO: use imported type from `aws-amplify/data` once it's fixed

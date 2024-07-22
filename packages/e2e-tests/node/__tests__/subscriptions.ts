@@ -32,35 +32,38 @@ describe('Subscriptions', () => {
   afterEach(async () => {
     await deleteAll(client);
   });
-  test('Create', async () => {
+  it('Create', async () => {
     const subResult: any[] = [];
 
-    await client.models.Todo.onCreate().subscribe({
+    const sub = client.models.Todo.onCreate().subscribe({
       next: (data) => subResult.push(data),
-      error: (error) => console.log('sub error', error),
+      error: (error) => new Error(JSON.stringify(error)),
     });
 
-    const { data: newTodo, errors: createErrors } =
-      await client.models.Todo.create({
-        content: 'test create',
-      });
-
-    if (createErrors) {
-      console.log('createErrors:', createErrors);
-      throw new Error(JSON.stringify(createErrors));
-    }
-
-    if (!newTodo) {
-      throw new Error('newTodo is undefined');
-    }
-
+    /**
+     * Need to wait for sub to be established before creating todos,
+     * or we'll miss the sub messages.
+     * TODO: find a better way to handle this.
+     */
     await pause(2000);
 
-    console.log('yo-------------------------', subResult);
-    console.log('yo-------------------------', subResult);
-    console.log('yo-------------------------', subResult);
+    await client.models.Todo.create({
+      content: 'first todo',
+    });
 
-    expect(newTodo.content).toBe('test create');
+    await client.models.Todo.create({
+      content: 'second todo',
+    });
+
+    /**
+     * Need to wait for sub messages to be received before unsubscribing.
+     */
+    await pause(500);
+
+    sub.unsubscribe();
+
+    expect(subResult[0]?.content).toBe('first todo');
+    expect(subResult[1]?.content).toBe('second todo');
   });
   //   test('Read', async () => {
   //     const { errors: firstCreateErrors } = await client.models.Todo.create({
