@@ -6,7 +6,7 @@ import {
   Authorization,
   allowForCustomOperations,
 } from './Authorization';
-import { RefType, InternalRef } from './RefType';
+import { RefType, InternalRef, RefTypeArgFactory } from './RefType';
 import { EnumType } from './EnumType';
 import { CustomType } from './CustomType';
 import type {
@@ -16,6 +16,8 @@ import type {
   HandlerType as Handler,
 } from './Handler';
 import { brandSymbol } from './util/Brand';
+import { BlobOptions } from 'buffer';
+import { ref } from './a';
 
 const queryBrand = 'queryCustomOperation';
 const mutationBrand = 'mutationCustomOperation';
@@ -99,7 +101,14 @@ export type CustomOperation<
     handler<H extends HandlerInputType>(
       handlers: H,
     ): CustomOperation<
-      T,
+      H extends AsyncFunctionHandler
+      ? SetTypeSubArg<
+          T,
+          'returnType',
+          RefType<RefTypeArgFactory<'EventInvocationResponse'>, never, undefined>
+          // EventInvocationResponseType
+        >
+      : T,
       // TODO: Condition should only apply if `AsyncFunctionHandler` is final handler in pipeline
       H extends AsyncFunctionHandler
       ? K | 'handler' | 'returns'
@@ -316,6 +325,27 @@ export function subscription(): CustomOperation<
   typeof subscriptionBrand
 > {
   return _custom('Subscription', subscriptionBrand);
+}
+
+
+// RefType<RefTypeArgFactory<'EventInvocationType'>, never, undefined>
+
+// type RefTypeArgFactory<Link extends string> = {
+//   type: 'ref';
+//   link: Link;
+//   valueRequired: false;
+//   array: false;
+//   arrayRequired: false;
+//   authorization: [];
+// };
+
+type EventInvocationResponseType = {
+  type: 'ref';
+  link: 'EventInvocationResponse';
+  valueRequired: false;
+  array: false;
+  arrayRequired: false;
+  authorization: [];
 }
 
 const eventInvocationResponse = {

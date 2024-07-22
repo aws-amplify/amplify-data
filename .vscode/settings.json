@@ -1,5 +1,8 @@
 {
   "files.associations": {
     "*.json": "jsonc"
+  },
+  "jest.runMode": {
+    "type": "on-demand"
   }
 }

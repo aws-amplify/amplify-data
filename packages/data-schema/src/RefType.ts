@@ -125,7 +125,7 @@ function _ref<T extends RefTypeParamShape>(link: T['link']) {
   return { ...builder, data } as InternalRef as RefType<T>;
 }
 
-type RefTypeArgFactory<Link extends string> = {
+export type RefTypeArgFactory<Link extends string> = {
   type: 'ref';
   link: Link;
   valueRequired: false;

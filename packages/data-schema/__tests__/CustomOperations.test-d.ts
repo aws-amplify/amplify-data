@@ -58,6 +58,20 @@ describe('custom operations return types', () => {
           .returns(a.ref('MyType').required()),
       });
 
+      // RefType<
+      //     SetTypeSubArg<
+      //         RefTypeArgFactory<
+      //           "MyType"
+      //         >,
+      //         "valueRequired",
+      //         true
+      //     >,
+      //     "required",
+      //     undefined
+      // >
+
+      // RefType<RefTypeArgFactory<"EventInvocationType">, never, undefined>>
+      // RefType<RefTypeArgFactory<"MyType">, never, undefined>
       type Schema = ClientSchema<typeof schema>;
 
       type ActualArgs = Prettify<Schema['aQuery']['args']>;
@@ -81,6 +95,65 @@ describe('custom operations return types', () => {
       type _T2 = Expect<Equal<ActualResult, ExpectedResult>>;
       type _T3 = Expect<Equal<ActualHandler, ExpectedFunctionHandler>>;
     });
+
+    it('produces async function handler types', () => {
+      const schema = a.schema({
+        // EventInvocationResponse: a.customType({
+        //   success: a.boolean().required()
+        // }),
+        aQuery: a
+          .query()
+          .handler(a.handler.function('someHandler').async())
+          .arguments({
+            input: a.string(),
+            content: a.string().required(),
+          })
+          // .returns(a.ref('EventInvocationType'))
+      });
+
+      type Schema = ClientSchema<typeof schema>;
+
+      type ActualArgs = Prettify<Schema['aQuery']['args']>;
+      type ActualResult = Prettify<Schema['aQuery']['returnType']>;
+      type ActualHandler = Schema['aQuery']['functionHandler'];
+
+      type ExpectedArgs = {
+        input?: string | null | undefined;
+        content: string;
+      };
+      type ExpectedResult = {
+        success: boolean
+      } | null | undefined;
+      type ExpectedFunctionHandler = AppSyncResolverHandler<
+        ActualArgs,
+        ActualResult
+      >;
+      type _T1 = Expect<Equal<ActualArgs, ExpectedArgs>>;
+      type _T2 = Expect<Equal<ActualResult, ExpectedResult>>;
+      type _T3 = Expect<Equal<ActualHandler, ExpectedFunctionHandler>>;
+    });
+  });
+
+  it('playground', () => {
+    const schema = a.schema({
+      EventInvocationResponse: a.customType({
+        success: a.boolean().required()
+      }),
+      aQuery: a
+        .query()
+        .handler(a.handler.function('someHandler'))
+        .arguments({
+          input: a.string(),
+          content: a.string().required(),
+        })
+        .returns(a.ref('EventInvocationResponse'))
+    });
+
+    type Schema = ClientSchema<typeof schema>;
+
+    type ActualArgs = Prettify<Schema['aQuery']['args']>;
+    type ActualResult = Prettify<Schema['aQuery']['returnType']>;
+    type ActualHandler = Schema['aQuery']['functionHandler'];
   });
 
   describe('when .ref() a nested custom types', () => {

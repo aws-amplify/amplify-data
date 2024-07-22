@@ -133,7 +133,6 @@ function custom(customHandler: CustomHandlerInput): CustomHandler {
 //#endregion
 
 //#region handler.function
-export type FunctionInvocationType = 'RequestResponse' | 'Event';
 export type FunctionHandlerInput = DefineFunction | string
 export type FunctionHandlerData = { handler: FunctionHandlerInput, invocationType: 'RequestResponse' | 'Event' }
 

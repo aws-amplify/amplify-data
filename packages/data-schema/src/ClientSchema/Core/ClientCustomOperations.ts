@@ -1,5 +1,5 @@
 import type { CustomOperationParamShape } from '../../CustomOperation';
-import type { BaseModelField } from '../../ModelField';
+import type { BaseModelField, ModelFieldType } from '../../ModelField';
 import type { RefType } from '../../RefType';
 import type { ResolveFieldRequirements } from '../../MappedTypes/ResolveFieldProperties';
 import type { AppSyncResolverHandler } from 'aws-lambda';
@@ -7,6 +7,7 @@ import type { CustomType } from '../../CustomType';
 import type { FieldTypesOfCustomType } from '../../MappedTypes/ResolveSchema';
 import type { ResolveRef } from '../utilities/ResolveRef';
 import { ClientSchemaProperty } from './ClientSchemaProperty';
+import { AsyncFunctionHandler } from '../../Handler';
 
 type CustomOperationSubType<Op extends CustomOperationParamShape> =
   `custom${Op['typeName']}`;
@@ -97,6 +98,26 @@ type Normalize<
   ? Exclude<RT, null | undefined>
   : RT;
 
+type EventInvocationResponseBag = {
+  'EventInvocationResponse': {
+    __entityType: 'customType',
+    type: '',
+    data: {
+      fields: {
+        success: {
+          data: {
+            fieldType: ModelFieldType.Boolean,
+            required: true,
+            array: false,
+            arrayRequired: false,
+          }
+        }
+      },
+      type: 'customType'
+    }
+  }
+}
+
 /**
  * Computes the return type from the `returnType` of a custom operation shape.
  *
@@ -110,7 +131,9 @@ type CustomOpReturnType<
   Shape['returnType'] extends RefType<infer RefShape, any, any>
     ? RefShape['link'] extends keyof RefBag
       ? ResolveRef<RefShape, RefBag>
-      : never
+      : Shape['handlers'] extends AsyncFunctionHandler
+        ? ResolveRef<RefShape, EventInvocationResponseBag>
+        : never
     : Shape['returnType'] extends BaseModelField<infer R>
       ? R
       : Shape['returnType'] extends CustomType<infer R>
