@@ -43,14 +43,28 @@ export const configureAmplifyAndGenerateClient = ({
     });
   }
 
-  const client = generateClient<Schema>(apiClientOptions);
-
-  return client;
+  return generateClient<Schema>(apiClientOptions);
 };
 
 /**
- * Util for pausing test execution.
+ * Util that takes model operation response and throws an error if errors
+ * are present, or if the data is undefined.
+ * @param response - model operation response
+ * @param operation - operation name
+ * @returns data from response
  */
-export async function pause(ms: number) {
-  return new Promise((resolve) => setTimeout(resolve, ms));
-}
+export const handleErrorsAndData = <T>(
+  response: { data?: T; errors?: any },
+  operation: string,
+): T => {
+  if (response.errors) {
+    console.log(`error on ${operation}:`, response.errors);
+    throw new Error(JSON.stringify(response.errors));
+  }
+
+  if (!response.data) {
+    throw new Error(`no response data for ${operation}`);
+  }
+
+  return response.data;
+};

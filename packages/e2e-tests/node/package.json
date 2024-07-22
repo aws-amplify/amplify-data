@@ -6,6 +6,7 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "e2e-node": "npm run install:no-lock && npm run test",
     "clean": "rm -rf node_modules package-lock.json",
     "install:no-lock": "npm i --no-package-lock",
     "test": "jest"
