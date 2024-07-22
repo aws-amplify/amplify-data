@@ -1,26 +1,23 @@
 # `amplify-api-next` E2E Tests
 
-This package contains automated tests for validating functionality E2E.
+This package contains automated tests for validating functionality E2E in Node.
 
 ## How it works:
 
-- Includes minimal Jest setup/teardown - less focus on test code, more focus on
-  the code to be tested.
-- Tested functionality exists under `test-cases`
-  - Each test case has an `action` function that returns a boolean. Test success
-    / failure is determined by this value.
-  - Test utils pass the generated client to `action`.
-  - Test cases include `setup` (executed before the test case) and `teardown`
-    (executed after the test case).
-- All test suites currently share a single Amplify backend.
+- All tests within `node` share a single "long-lived" Amplify backend (added to
+  the shared Cypress account).
+- Sample will use `amplify-js@unstable` and local versions of packages in this repo.
+- See [test utils](node/utils.ts) for helpers that configure Amplify, generate /
+  configure the API client, as well as for additional test utilities and types.
 
-## How to add a new test:
+## How to add a new test / test local changes:
 
-1. Create a new file under `test-cases`
-2. Test cases are typed - you'll know if you're not following the contract.
-3. Add your newly added test cases to `test-cases/index.ts`.
-4. New test cases will be automatically picked up by the test runner, and run
-   in the pipeline (see `.github/workflows/callable-local-e2e-tests.yml`)
+1. Create a new file under `__tests__`
+2. Use the helpers to configure Amplify and generate / configure the API client.
+3. To install dependencies / run the tests, either use the `e2e` scripts at
+   the root of the monorepo, or the scripts in the `e2e-tests` package. Both will
+   ensure that a `package-lock` file is not generated for this sample.
+4. [TODO] subscription testing (will be added with follow-up PR)
 
 ## [TODO] Global cleanup
 
