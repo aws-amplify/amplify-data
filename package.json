@@ -22,7 +22,6 @@
     "e2e-node:clean": "npm run --prefix ./packages/e2e-tests/node clean",
     "e2e-node:install": "npm run --prefix ./packages/e2e-tests/node install:no-lock",
     "e2e-node:test": "npm run --prefix ./packages/e2e-tests/node test",
-    "e2e-node:sandbox": "npm run --prefix ./packages/e2e-tests/node sandbox",
     "test": "turbo run test && npm run test:scripts",
     "test:scripts": "npx jest scripts/",
     "lint": "turbo run lint",
