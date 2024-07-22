@@ -21,4 +21,5 @@ This package contains automated tests for validating functionality E2E in Node.
 
 ## [TODO] Global cleanup
 
-Add a check to clean up potential orphaned records after all tests have run (see https://jestjs.io/docs/configuration#globalteardown-string).
+Add a check to clean up potential orphaned records after all tests have run
+(see https://jestjs.io/docs/configuration#globalteardown-string).
