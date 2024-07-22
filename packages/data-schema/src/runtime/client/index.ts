@@ -18,6 +18,9 @@ import type {
   StringFilter,
   NumericFilter,
   BooleanFilters,
+  SubscriptionStringFilter,
+  SubscriptionNumericFilter,
+  SubscriptionBooleanFilters,
 } from '../../util';
 import { AmplifyServer } from '../bridge-types';
 
@@ -409,14 +412,21 @@ type LogicalFilters<
 
 type ModelFilter<
   Model extends ClientSchemaByEntityTypeBaseShape['models'][string],
+  Subscription = false,
 > = LogicalFilters<Model> & {
   [K in keyof Model['type'] as Model['type'][K] extends LazyLoader<any, any>
     ? never
     : K]?: boolean extends Model['type'][K]
-    ? BooleanFilters
+    ? Subscription extends false
+      ? BooleanFilters
+      : SubscriptionBooleanFilters
     : number extends Model['type'][K]
-      ? NumericFilter
-      : StringFilter;
+      ? Subscription extends false
+        ? NumericFilter
+        : SubscriptionNumericFilter
+      : Subscription extends false
+        ? StringFilter
+        : SubscriptionStringFilter;
 };
 
 export type ModelSortDirection = 'ASC' | 'DESC';
