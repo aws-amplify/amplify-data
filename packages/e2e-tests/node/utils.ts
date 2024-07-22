@@ -1,8 +1,15 @@
 import { Amplify } from 'aws-amplify';
-import { generateClient } from 'aws-amplify/data';
+import {
+  CONNECTION_STATE_CHANGE,
+  ConnectionState,
+  generateClient,
+} from 'aws-amplify/data';
 import { Hub, ConsoleLogger } from 'aws-amplify/utils';
 import type { Schema } from './amplify/data/resource';
 import outputs from './amplify_outputs.json';
+// @ts-expect-error - TODO: investigate why this import is throwing an error
+// eslint-disable-next-line import/no-extraneous-dependencies
+import { WebSocket } from 'ws';
 
 // TODO: use imported type from `aws-amplify/data` once it's fixed
 export type Client = ReturnType<typeof generateClient<Schema>>;
@@ -54,3 +61,36 @@ export const configureAmplifyAndGenerateClient = ({
 export async function pause(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
+
+type EstablishWebsocketParams = {
+  disableConnectionStateLogging?: boolean;
+};
+
+/**
+ * Adds the WebSocket API globally.
+ * Subscriptions do not work in Node.js environment without the WebSocket API.
+ */
+export const establishWebsocket = ({
+  disableConnectionStateLogging = false,
+}: EstablishWebsocketParams): any => {
+  (global as any).WebSocket = WebSocket;
+
+  /**
+   * Debug logs are enabled by default to assist with CI failure debugging.
+   * Option to disable is included for local development, in the event that
+   * the debug logs are too verbose.
+   */
+  if (!disableConnectionStateLogging) {
+    // https://docs.amplify.aws/gen1/javascript/build-a-backend/graphqlapi/subscribe-data/#subscription-connection-status-updates
+    Hub.listen('api', (data: any) => {
+      const { payload } = data;
+      if (payload.event === CONNECTION_STATE_CHANGE) {
+        const connectionState = payload.data.connectionState as ConnectionState;
+        console.log(
+          'Connection state has changed. Connection state: ',
+          connectionState,
+        );
+      }
+    });
+  }
+};
