@@ -13,7 +13,7 @@ import type {
   Callback,
   Context,
 } from 'aws-lambda';
-import { configure } from '../src/builder/ModelSchema';
+import { configure } from '../src/ModelSchema';
 import { Nullable } from '../src/ModelField';
 
 describe('custom operations return types', () => {

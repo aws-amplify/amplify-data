@@ -1,5 +1,5 @@
 import { expectTypeTestsToPassAsync } from 'jest-tsd';
-import { configure } from '../src/builder/ModelSchema';
+import { configure } from '../src/ModelSchema';
 import { a } from '../src/index';
 
 // evaluates type defs in corresponding test-d.ts file
@@ -143,8 +143,8 @@ describe('RDSModelSchema', () => {
           }),
           models.Supplier.relationships({
             account: a.hasOne('Account', 'supplierIds'),
-          }),
-        ]);
+          })
+        ])
 
       expect(schema.transform().schema).toMatchSnapshot();
     });

@@ -6,7 +6,7 @@ import {
   SingularReturnValue,
 } from '../src/runtime';
 import { type ClientSchema, a } from '../src/index';
-import { configure } from '../src/builder/ModelSchema';
+import { configure } from '../src/ModelSchema';
 
 describe('RDSModelSchema', () => {
   const schema = configure({

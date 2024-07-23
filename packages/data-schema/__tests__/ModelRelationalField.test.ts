@@ -1,6 +1,6 @@
 import { a } from '../src/index';
 import { InternalRelationalField } from '../src/ModelRelationalField';
-import { configure } from '../src/builder/ModelSchema';
+import { configure } from '../src/ModelSchema';
 
 describe('relational field required modifier', () => {
   describe('belongsTo', () => {

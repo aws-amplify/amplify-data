@@ -1,6 +1,6 @@
 import { type ModelType, model } from '../src/ModelType';
 import { string, id } from '../src/ModelField';
-import { schema } from '../src/builder/ModelSchema';
+import { schema } from '../src/ModelSchema';
 import { configure } from '../src/internals';
 import { a } from '../src/index';
 
