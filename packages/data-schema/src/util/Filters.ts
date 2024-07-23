@@ -6,9 +6,12 @@
  */
 
 /**
- * Filters options that can be used on string-like fields.
+ * CRUDL Filters
+ *
+ * reference: https://github.com/aws-amplify/amplify-category-api/blob/a655e71115e0e8e3597b4c2ef1b2940a79fdcaa1/packages/amplify-graphql-model-transformer/src/definitions.ts
  */
 
+// Filter options that can be used on string-like fields (string, ID, AWSDateTime, etc.).
 export type StringFilter<T extends string = string> = {
   attributeExists?: boolean;
   beginsWith?: string;
@@ -24,6 +27,7 @@ export type StringFilter<T extends string = string> = {
   size?: SizeFilter;
 };
 
+// Filter options that can be used on numeric fields (int, float, AWSTimestamp).
 export type NumericFilter = {
   attributeExists?: boolean;
   between?: [number, number];
@@ -33,6 +37,12 @@ export type NumericFilter = {
   le?: number;
   lt?: number;
   ne?: number;
+};
+
+export type BooleanFilters = {
+  attributeExists?: boolean;
+  eq?: boolean;
+  ne?: boolean;
 };
 
 /**
@@ -48,8 +58,39 @@ export type SizeFilter = {
   ne?: number;
 };
 
-export type BooleanFilters = {
-  attributeExists?: boolean;
+/**
+ * Subscription Filters
+ *
+ * reference: https://github.com/aws-amplify/amplify-category-api/blob/a655e71115e0e8e3597b4c2ef1b2940a79fdcaa1/packages/amplify-graphql-model-transformer/src/definitions.ts
+ */
+export type SubscriptionStringFilter = {
+  beginsWith?: string;
+  between?: [string, string];
+  contains?: string;
+  eq?: string;
+  ge?: string;
+  gt?: string;
+  le?: string;
+  lt?: string;
+  ne?: string;
+  notContains?: string;
+  in?: string[];
+  notIn?: string[];
+};
+
+export type SubscriptionNumericFilter = {
+  between?: [number, number];
+  in?: number[];
+  notIn?: number[];
+  eq?: number;
+  ge?: number;
+  gt?: number;
+  le?: number;
+  lt?: number;
+  ne?: number;
+};
+
+export type SubscriptionBooleanFilters = {
   eq?: boolean;
   ne?: boolean;
 };
@@ -88,6 +129,9 @@ export type BooleanFilters = {
  *   beginsWith: {sk1: string; sk2: number};
  * }
  * ```
+ * 
+ * reference: https://github.com/aws-amplify/amplify-category-api/blob/a655e71115e0e8e3597b4c2ef1b2940a79fdcaa1/packages/graphql-transformer-common/src/dynamodbUtils.ts#L32-L36
+ * 
  * */
 export type ModelPrimaryCompositeKeyInput<
   SkIr extends Record<string, string | number>,
