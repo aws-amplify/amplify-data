@@ -511,10 +511,17 @@ exports[`model auth rules includes auth from fields 1`] = `
 `;
 
 exports[`model auth rules includes auth from related model fields 1`] = `
-"type widget @model @auth(rules: [{allow: owner, ownerField: "owner"}])
+"type factory @model @auth(rules: [{allow: public, provider: apiKey}])
+{
+  name: String
+  widgets: [widget] @hasMany(references: ["factoryId"])
+}
+
+type widget @model @auth(rules: [{allow: owner, ownerField: "owner"}])
 {
   id: ID! @primaryKey
-  parent: widget @belongsTo(references: ["widgetId"]) @auth(rules: [{allow: owner, operations: [create, read], ownerField: "customOwner"}])
+  factoryId: ID
+  parent: factory @belongsTo(references: ["factoryId"]) @auth(rules: [{allow: owner, operations: [create, read], ownerField: "customOwner"}])
 }"
 `;
 

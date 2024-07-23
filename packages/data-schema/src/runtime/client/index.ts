@@ -412,21 +412,34 @@ type LogicalFilters<
 
 type ModelFilter<
   Model extends ClientSchemaByEntityTypeBaseShape['models'][string],
-  Subscription = false,
 > = LogicalFilters<Model> & {
   [K in keyof Model['type'] as Model['type'][K] extends LazyLoader<any, any>
     ? never
     : K]?: boolean extends Model['type'][K]
-    ? Subscription extends false
-      ? BooleanFilters
-      : SubscriptionBooleanFilters
+    ? BooleanFilters
     : number extends Model['type'][K]
-      ? Subscription extends false
-        ? NumericFilter
-        : SubscriptionNumericFilter
-      : Subscription extends false
-        ? StringFilter
-        : SubscriptionStringFilter;
+      ? NumericFilter
+      : StringFilter;
+};
+
+type LogicalSubscriptionFilters<
+  Model extends ClientSchemaByEntityTypeBaseShape['models'][string],
+> = {
+  and?: ModelSubscriptionFilter<Model> | ModelSubscriptionFilter<Model>[];
+  or?: ModelSubscriptionFilter<Model> | ModelSubscriptionFilter<Model>[];
+  not?: ModelSubscriptionFilter<Model>;
+};
+
+type ModelSubscriptionFilter<
+  Model extends ClientSchemaByEntityTypeBaseShape['models'][string],
+> = LogicalSubscriptionFilters<Model> & {
+  [K in keyof Model['type'] as Model['type'][K] extends LazyLoader<any, any>
+    ? never
+    : K]?: boolean extends Model['type'][K]
+    ? SubscriptionBooleanFilters
+    : number extends Model['type'][K]
+      ? SubscriptionNumericFilter
+      : SubscriptionStringFilter;
 };
 
 export type ModelSortDirection = 'ASC' | 'DESC';
@@ -542,7 +555,7 @@ type ModelTypesClient<
   onCreate<
     SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[],
   >(options?: {
-    filter?: ModelFilter<Model>;
+    filter?: ModelSubscriptionFilter<Model>;
     selectionSet?: SelectionSet;
     authMode?: AuthMode;
     authToken?: string;
@@ -553,7 +566,7 @@ type ModelTypesClient<
   onUpdate<
     SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[],
   >(options?: {
-    filter?: ModelFilter<Model>;
+    filter?: ModelSubscriptionFilter<Model>;
     selectionSet?: SelectionSet;
     authMode?: AuthMode;
     authToken?: string;
@@ -564,7 +577,7 @@ type ModelTypesClient<
   onDelete<
     SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[],
   >(options?: {
-    filter?: ModelFilter<Model>;
+    filter?: ModelSubscriptionFilter<Model>;
     selectionSet?: SelectionSet;
     authMode?: AuthMode;
     authToken?: string;
