@@ -15,9 +15,9 @@ import type {
   HandlerType as Handler,
 } from './Handler';
 
-const queryBrand = 'queryCustomOperation';
-const mutationBrand = 'mutationCustomOperation';
-const subscriptionBrand = 'subscriptionCustomOperation';
+export const queryBrand = 'queryCustomOperation';
+export const mutationBrand = 'mutationCustomOperation';
+export const subscriptionBrand = 'subscriptionCustomOperation';
 
 type CustomOperationBrand =
   | typeof queryBrand
@@ -210,7 +210,7 @@ export type QueryCustomOperation = CustomOperation<
  *     .authorization(allow => [allow.publicApiKey()])
  *     // 3. set the function has the handler
  *     .handler(a.handler.function(echoHandler)),
- * 
+ *
  *   EchoResponse: a.customType({
  *     content: a.string(),
  *     executionDuration: a.float()
@@ -277,9 +277,9 @@ export type SubscriptionCustomOperation = CustomOperation<
  * // Subscribe to incoming messages
  * receive: a.subscription()
  *   // subscribes to the 'publish' mutation
- *   .for(a.ref('publish')) 
+ *   .for(a.ref('publish'))
  *   // subscription handler to set custom filters
- *   .handler(a.handler.custom({entry: './receive.js'})) 
+ *   .handler(a.handler.custom({entry: './receive.js'}))
  *   // authorization rules as to who can subscribe to the data
  *   .authorization(allow => [allow.publicApiKey()]),
  * @returns a custom subscription

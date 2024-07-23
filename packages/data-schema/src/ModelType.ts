@@ -26,10 +26,10 @@ import type {
 import type { brandSymbol } from './util/Brand.js';
 import type { methodKeyOf } from './util/usedMethods.js';
 
-const brandName = 'modelType';
+export const brandName = 'modelType';
 export type deferredRefResolvingPrefix = 'deferredRefResolving:';
 
-type ModelFields = Record<
+export type ModelFields = Record<
   string,
   | BaseModelField
   | ModelRelationalField<any, string, any, any>

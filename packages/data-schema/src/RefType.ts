@@ -3,7 +3,7 @@ import { Brand } from './util';
 import { AllowModifier, Authorization, allow } from './Authorization';
 import { __auth } from './ModelField';
 
-const brandName = 'ref';
+export const brandName = 'ref';
 
 type RefTypeData = {
   type: 'ref';
@@ -24,7 +24,7 @@ export type RefTypeParamShape = {
   authorization: Authorization<any, any, any>[];
 };
 
-type MutationOperations = 'create' | 'update' | 'delete';
+export type MutationOperations = 'create' | 'update' | 'delete';
 
 export type RefType<
   T extends RefTypeParamShape,
@@ -125,7 +125,7 @@ function _ref<T extends RefTypeParamShape>(link: T['link']) {
   return { ...builder, data } as InternalRef as RefType<T>;
 }
 
-type RefTypeArgFactory<Link extends string> = {
+export type RefTypeArgFactory<Link extends string> = {
   type: 'ref';
   link: Link;
   valueRequired: false;

@@ -34,7 +34,7 @@ export type InlineSqlHandler = { [dataSymbol]: string } & Brand<
   typeof inlineSqlBrand
 >;
 
-function inlineSql(sql: string): InlineSqlHandler {
+export function inlineSql(sql: string): InlineSqlHandler {
   return { [dataSymbol]: sql, ...buildHandler(inlineSqlBrand) };
 }
 
@@ -53,7 +53,7 @@ export type SqlReferenceHandler = {
   [dataSymbol]: SqlReferenceHandlerData;
 } & Brand<typeof sqlReferenceBrand>;
 
-function sqlReference(sqlFilePath: string): SqlReferenceHandler {
+export function sqlReference(sqlFilePath: string): SqlReferenceHandler {
   // used to determine caller directory in order to resolve relative path downstream
   const stack = new Error().stack;
   return {
@@ -93,7 +93,7 @@ export type CustomHandler = { [dataSymbol]: CustomHandlerData } & Brand<
 >;
 
 /**
- * Use a custom JavaScript resolver to handle a query, mutation, or subscription. 
+ * Use a custom JavaScript resolver to handle a query, mutation, or subscription.
  * @see {@link https://docs.amplify.aws/react/build-a-backend/data/custom-business-logic/#step-2---configure-custom-business-logic-handler-code}
  * @param customHandler `{ entry: "path-to-javascript-resolver-file.js", dataSource: "Data Source name added via "backend.data.add*DataSoruce(...)"}`
  * @returns A JavaScript resolver attached to the query, mutation, or subscription.
@@ -107,7 +107,7 @@ export type CustomHandler = { [dataSymbol]: CustomHandlerData } & Brand<
  *     allow.owner(),
  *     allow.authenticated().to(['read'])
  *   ]),
- * 
+ *
  *   likePost: a
  *     .mutation()
  *     .arguments({ postId: a.id() })
@@ -119,7 +119,7 @@ export type CustomHandler = { [dataSymbol]: CustomHandlerData } & Brand<
  *     }))
  * });
  */
-function custom(customHandler: CustomHandlerInput): CustomHandler {
+export function custom(customHandler: CustomHandlerInput): CustomHandler {
   // used to determine caller directory in order to resolve relative path downstream
   const stack = new Error().stack;
   return {
@@ -141,7 +141,7 @@ export type FunctionHandler = {
 } & Brand<typeof functionHandlerBrand>;
 
 /**
- * Use a function created via `defineFunction` to handle the custom query/mutation/subscription. In your function handler, 
+ * Use a function created via `defineFunction` to handle the custom query/mutation/subscription. In your function handler,
  * you can use the `Schema["YOUR_QUERY_OR_MUTATION_NAME"]["functionHandler"]` utility type to type the handler function.
  * @example
  * import {
@@ -150,18 +150,18 @@ export type FunctionHandler = {
  *   defineData,
  *   defineFunction // 1.Import "defineFunction" to create new functions
  * } from '@aws-amplify/backend';
- * 
+ *
  * // 2. define a function
  * const echoHandler = defineFunction({
  *   entry: './echo-handler/handler.ts'
  * })
- * 
+ *
  * const schema = a.schema({
  *   EchoResponse: a.customType({
  *     content: a.string(),
  *     executionDuration: a.float()
  *   }),
- * 
+ *
  *   echo: a
  *     .query()
  *     .arguments({ content: a.string() })
@@ -171,11 +171,11 @@ export type FunctionHandler = {
  *     .handler(a.handler.function(echoHandler))
  * });
  * @see {@link https://docs.amplify.aws/react/build-a-backend/data/custom-business-logic/}
- * @param fn A function created via `defineFunction`. Alternatively, you can pass in a "string" of the function name and pass 
+ * @param fn A function created via `defineFunction`. Alternatively, you can pass in a "string" of the function name and pass
  * in a corresponding value into the `functionMap` property of defineData.
  * @returns A handler for the query / mutation / subscription
  */
-function fcn(fn: FunctionHandlerData): FunctionHandler {
+export function fcn(fn: FunctionHandlerData): FunctionHandler {
   return { [dataSymbol]: fn, ...buildHandler(functionHandlerBrand) };
 }
 

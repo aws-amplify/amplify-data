@@ -31,7 +31,7 @@ export type ClientSchema<
       ? InternalCombinedSchema<Schema>
       : never;
 
-type InternalClientSchema<
+export type InternalClientSchema<
   CustomerSchema extends ModelSchemaContents | BaseSchema<any, any>,
   Metadata extends SchemaMetadata<any> = never,
   IsRDS extends boolean = never,
@@ -130,7 +130,7 @@ type CombinedClientSchemas<
  *
  * @internal @typeParam ClientSchemas - The tuple of client schemas to combine
  */
-type InternalCombinedSchema<
+export type InternalCombinedSchema<
   Combined extends CombinedModelSchema<any>,
   ClientSchemas extends [...any] = CombinedClientSchemas<Combined['schemas']>,
 > = SpreadTuple<{
