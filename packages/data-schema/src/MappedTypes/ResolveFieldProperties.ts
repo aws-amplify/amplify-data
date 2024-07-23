@@ -5,7 +5,7 @@ import type {
 import type { Authorization, ImpliedAuthFields } from '../Authorization';
 import type { ModelField } from '../ModelField';
 import type { ModelType, ModelTypeParamShape } from '../ModelType';
-import type { GenericModelSchema } from '../builder/ModelSchema';
+import type { GenericModelSchema } from '../ModelSchema';
 import type {
   ModelRelationalField,
   ModelRelationalFieldParamShape,

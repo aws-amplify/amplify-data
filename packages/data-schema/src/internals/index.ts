@@ -1,2 +1,2 @@
-export { configure } from '../builder/ModelSchema';
+export { configure } from '../ModelSchema';
 export type { AllowModifier } from '../Authorization';

@@ -11,7 +11,7 @@ import type { Observable } from 'rxjs';
 import type {
   ClientSchemaByEntityType,
   ClientSchemaByEntityTypeBaseShape,
-} from '../../ClientSchema/internal';
+} from '../../ClientSchema';
 import type { ExtractNestedTypes } from '../../ClientSchema/utilities/';
 import type {
   Select,

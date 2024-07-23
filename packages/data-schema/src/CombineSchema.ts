@@ -1,4 +1,4 @@
-import { GenericModelSchema } from './builder/ModelSchema';
+import { GenericModelSchema } from './ModelSchema';
 import { brand, Brand, IndexLimitUnion } from './util';
 
 const COMBINED_SCHEMA_LIMIT = 50;
