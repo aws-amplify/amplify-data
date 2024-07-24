@@ -13,32 +13,27 @@ import { WebSocket } from 'ws';
 export type Client = ReturnType<typeof generateClient<Schema>>;
 
 type ConfigureAmplifyAndGenerateClientParams = {
-  disableDebugLogging?: boolean;
+  enableDebugLogging?: boolean;
   amplifyOptions?: any;
   apiClientOptions?: any;
 };
 
 /**
  * Configures Amplify and returns API client
- * @param disableDebugLogging - disables debug logging
+ * @param enableDebugLogging - enables debug logging
  * @param amplifyOptions - options to pass to Amplify.configure
  * @param apiClientOptions - options to pass to generateClient
  * @returns API client
  */
 export const configureAmplifyAndGenerateClient = ({
-  disableDebugLogging = false,
+  enableDebugLogging = false,
   amplifyOptions = {},
   apiClientOptions = {},
 }: ConfigureAmplifyAndGenerateClientParams): Client => {
   console.log('configuring Amplify and generating client..');
   Amplify.configure(outputs, amplifyOptions);
 
-  /**
-   * Debug logs are enabled by default to assist with CI failure debugging.
-   * Option to disable is included for local development, in the event that
-   * the debug logs are too verbose.
-   */
-  if (!disableDebugLogging) {
+  if (enableDebugLogging) {
     ConsoleLogger.LOG_LEVEL = 'DEBUG';
 
     Hub.listen('core', (data: any) => {
@@ -52,7 +47,7 @@ export const configureAmplifyAndGenerateClient = ({
 };
 
 type EstablishWebsocketParams = {
-  disableConnectionStateLogging?: boolean;
+  enableConnectionStateLogging?: boolean;
 };
 
 /**
@@ -60,17 +55,12 @@ type EstablishWebsocketParams = {
  * Subscriptions do not work in Node.js environment without the WebSocket API.
  */
 export const establishWebsocket = ({
-  disableConnectionStateLogging = false,
-}: EstablishWebsocketParams): any => {
+  enableConnectionStateLogging = false,
+}: EstablishWebsocketParams): (() => void) => {
   (global as any).WebSocket = WebSocket;
 
-  /**
-   * Debug logs are enabled by default to assist with CI failure debugging.
-   * Option to disable is included for local development, in the event that
-   * the debug logs are too verbose.
-   */
-  if (!disableConnectionStateLogging) {
-    Hub.listen('api', (data: any) => {
+  if (enableConnectionStateLogging) {
+    return Hub.listen('api', (data: any) => {
       const { payload } = data;
       if (payload.event === CONNECTION_STATE_CHANGE) {
         const connectionState = payload.data.connectionState as ConnectionState;
@@ -81,6 +71,9 @@ export const establishWebsocket = ({
       }
     });
   }
+
+  // Return a no-op function if logging is disabled:
+  return () => {};
 };
 
 /**
