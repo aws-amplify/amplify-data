@@ -34,6 +34,10 @@ let subResult: any[] = [];
 
 describe('Subscriptions', () => {
   beforeAll(() => {
+    /**
+     * Adds the WebSocket API globally.
+     * Subscriptions do not work in Node.js environment without the WebSocket API.
+     */
     establishWebsocket({});
   });
   beforeEach(() => {
@@ -45,10 +49,12 @@ describe('Subscriptions', () => {
     await deleteAll(client);
   });
   it('Create', async () => {
+    const expectedNumberOfSubMsgs = 2;
+
     /**
      * We use a promise to wait for the correct number of sub messages to be
      * received.
-     * Jest times out after 5 seconds if the promise isn't resolved.
+     * Note: Jest times out after 5 seconds if the promise isn't resolved.
      */
     let resolveSubPromise: () => void;
     const subMsgsReceived = new Promise<void>((resolve) => {
@@ -58,7 +64,7 @@ describe('Subscriptions', () => {
     sub = client.models.Todo.onCreate().subscribe({
       next: (data) => {
         subResult.push(data);
-        if (subResult.length === 2) {
+        if (subResult.length === expectedNumberOfSubMsgs) {
           /**
            * Resolve the promise when second sub msg is received.
            * We resolve based on the number of sub messages, and not the content
@@ -92,8 +98,11 @@ describe('Subscriptions', () => {
 
     expect(subResult[0]?.content).toBe('first todo');
     expect(subResult[1]?.content).toBe('second todo');
+    expect(subResult.length).toBe(expectedNumberOfSubMsgs);
   });
   it('Update', async () => {
+    const expectedNumberOfSubMsgs = 1;
+
     /**
      * We use a promise to wait for the correct number of sub messages to be
      * received.
@@ -107,7 +116,7 @@ describe('Subscriptions', () => {
     sub = client.models.Todo.onUpdate().subscribe({
       next: (data) => {
         subResult.push(data);
-        if (subResult.length === 1) {
+        if (subResult.length === expectedNumberOfSubMsgs) {
           resolveSubPromise();
         }
       },
@@ -139,8 +148,11 @@ describe('Subscriptions', () => {
     await subMsgsReceived;
 
     expect(subResult[0]?.content).toBe('updated content');
+    expect(subResult.length).toBe(expectedNumberOfSubMsgs);
   });
   it('Delete', async () => {
+    const expectedNumberOfSubMsgs = 1;
+
     /**
      * We use a promise to wait for the correct number of sub messages to be
      * received.
@@ -154,7 +166,7 @@ describe('Subscriptions', () => {
     sub = client.models.Todo.onDelete().subscribe({
       next: (data) => {
         subResult.push(data);
-        if (subResult.length === 1) {
+        if (subResult.length === expectedNumberOfSubMsgs) {
           resolveSubPromise();
         }
       },
@@ -182,5 +194,6 @@ describe('Subscriptions', () => {
     await subMsgsReceived;
 
     expect(subResult[0]?.content).toBe('todo to delete');
+    expect(subResult.length).toBe(expectedNumberOfSubMsgs);
   });
 });

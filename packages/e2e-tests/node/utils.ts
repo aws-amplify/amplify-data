@@ -7,7 +7,6 @@ import {
 import { Hub, ConsoleLogger } from 'aws-amplify/utils';
 import type { Schema } from './amplify/data/resource';
 import outputs from './amplify_outputs.json';
-// TODO: the dep exists, investigate why it's not being resolved:
 import { WebSocket } from 'ws';
 
 // TODO: use imported type from `aws-amplify/data` once it's fixed
@@ -71,7 +70,6 @@ export const establishWebsocket = ({
    * the debug logs are too verbose.
    */
   if (!disableConnectionStateLogging) {
-    // https://docs.amplify.aws/gen1/javascript/build-a-backend/graphqlapi/subscribe-data/#subscription-connection-status-updates
     Hub.listen('api', (data: any) => {
       const { payload } = data;
       if (payload.event === CONNECTION_STATE_CHANGE) {
@@ -86,8 +84,8 @@ export const establishWebsocket = ({
 };
 
 /**
- * Util that takes a model operation response and throws an error if errors
- * are returned by the request, or if the data is undefined.
+ * Util that takes model operation response and throws an error if errors
+ * are present, or if the data is undefined.
  * @param response - model operation response
  * @param operation - operation name
  * @returns data from response
@@ -118,6 +116,7 @@ export const waitForSubscriptionAck = () =>
   new Promise<void>((resolve) => {
     const cancel = Hub.listen('api', (data: any) => {
       const { payload } = data;
+      // TODO: update once we add export:
       if (payload.event === 'Subscription ack') {
         console.log('Subscription ack received:', payload.data);
         // Stop listening for msgs once we receive the ack:
