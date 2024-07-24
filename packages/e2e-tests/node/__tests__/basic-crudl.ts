@@ -1,7 +1,7 @@
 import {
   Client,
   configureAmplifyAndGenerateClient,
-  handleErrorsAndData,
+  expectDataReturnWithoutErrors,
 } from '../utils';
 import type { Schema } from '../amplify/data/resource';
 
@@ -33,7 +33,7 @@ describe.skip('Basic CRUDL', () => {
       content: 'test create',
     });
 
-    const data = handleErrorsAndData(response, 'create');
+    const data = expectDataReturnWithoutErrors(response, 'create');
 
     expect(data?.content).toBe('test create');
   });
@@ -42,21 +42,24 @@ describe.skip('Basic CRUDL', () => {
       content: 'todo1',
     });
 
-    handleErrorsAndData(response, 'first create');
+    expectDataReturnWithoutErrors(response, 'first create');
 
     const secondResponse = await client.models.Todo.create({
       content: 'todo2',
     });
 
-    const secondTodo = handleErrorsAndData(secondResponse, 'second create');
+    const secondTodo = expectDataReturnWithoutErrors(
+      secondResponse,
+      'second create',
+    );
 
     // Get the first todo:
     const getResponse = await client.models.Todo.get({
-      // handleErrorsAndData will throw if this doesn't exist:
+      // expectDataReturnWithoutErrors will throw if this doesn't exist:
       id: secondTodo!.id,
     });
 
-    handleErrorsAndData(getResponse, 'create');
+    expectDataReturnWithoutErrors(getResponse, 'create');
 
     expect(getResponse.data?.content).toBe('todo2');
   });
@@ -65,17 +68,17 @@ describe.skip('Basic CRUDL', () => {
       content: 'original content',
     });
 
-    const firstTodo = handleErrorsAndData(createResponse, 'create');
+    const firstTodo = expectDataReturnWithoutErrors(createResponse, 'create');
 
     const updateResponse = await client.models.Todo.update({
-      // handleErrorsAndData will throw if this doesn't exist:
+      // expectDataReturnWithoutErrors will throw if this doesn't exist:
       id: firstTodo!.id,
       content: 'updated content',
     });
 
-    const updatedTodo = handleErrorsAndData(updateResponse, 'update');
+    const updatedTodo = expectDataReturnWithoutErrors(updateResponse, 'update');
 
-    // handleErrorsAndData will throw if this doesn't exist:
+    // expectDataReturnWithoutErrors will throw if this doesn't exist:
     expect(updatedTodo!.content).toBe('updated content');
   });
   test('Delete', async () => {
@@ -83,34 +86,34 @@ describe.skip('Basic CRUDL', () => {
       content: 'todo to delete',
     });
 
-    const createdTodo = handleErrorsAndData(createResponse, 'create');
+    const createdTodo = expectDataReturnWithoutErrors(createResponse, 'create');
 
-    // handleErrorsAndData will throw if this doesn't exist:
+    // expectDataReturnWithoutErrors will throw if this doesn't exist:
     const deleteResponse = await client.models.Todo.delete(createdTodo!);
 
-    const deletedTodo = handleErrorsAndData(deleteResponse, 'delete');
+    const deletedTodo = expectDataReturnWithoutErrors(deleteResponse, 'delete');
 
-    // handleErrorsAndData will throw if this doesn't exist:
+    // expectDataReturnWithoutErrors will throw if this doesn't exist:
     expect(deletedTodo!.content).toBe('todo to delete');
   });
   test('List', async () => {
     const firstCreateResponse = await client.models.Todo.create({
       content: 'todo1',
     });
-    handleErrorsAndData(firstCreateResponse, 'first create');
+    expectDataReturnWithoutErrors(firstCreateResponse, 'first create');
 
     const secondCreateResponse = await client.models.Todo.create({
       content: 'todo2',
     });
-    handleErrorsAndData(secondCreateResponse, 'second create');
+    expectDataReturnWithoutErrors(secondCreateResponse, 'second create');
 
     const thirdCreateResponse = await client.models.Todo.create({
       content: 'todo3',
     });
-    handleErrorsAndData(thirdCreateResponse, 'third create');
+    expectDataReturnWithoutErrors(thirdCreateResponse, 'third create');
 
     const listResponse = await client.models.Todo.list();
-    handleErrorsAndData(listResponse, 'list');
+    expectDataReturnWithoutErrors(listResponse, 'list');
 
     expect(listResponse.data.length).toBe(3);
   });

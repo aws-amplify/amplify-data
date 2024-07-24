@@ -43,6 +43,7 @@ export const configureAmplifyAndGenerateClient = ({
     ConsoleLogger.LOG_LEVEL = 'DEBUG';
 
     Hub.listen('core', (data: any) => {
+      console.log('CORE HUB-------------------------------', data);
       if (data.payload.event === 'configure') {
         console.log('API configuration details:', data.payload.data.API);
       }
@@ -85,6 +86,7 @@ export const establishWebsocket = ({
     // https://docs.amplify.aws/gen1/javascript/build-a-backend/graphqlapi/subscribe-data/#subscription-connection-status-updates
     Hub.listen('api', (data: any) => {
       const { payload } = data;
+      console.log('ALL API HUB-----------------', data);
       if (payload.event === CONNECTION_STATE_CHANGE) {
         const connectionState = payload.data.connectionState as ConnectionState;
         console.log(
@@ -96,7 +98,14 @@ export const establishWebsocket = ({
   }
 };
 
-export const handleErrorsAndData = <T>(
+/**
+ * Util that takes a model operation response and throws an error if errors
+ * are returned by the request, or if the data is undefined.
+ * @param response - model operation response
+ * @param operation - operation name
+ * @returns data from response
+ */
+export const expectDataReturnWithoutErrors = <T>(
   response: { data?: T; errors?: any },
   operation: string,
 ): T => {
@@ -111,3 +120,22 @@ export const handleErrorsAndData = <T>(
 
   return response.data;
 };
+
+/**
+ * Function that listens for "Subscription ack" event, and once it receives it,
+ * resolves.
+ * Jest will timeout if the test does not complete within the default timeout of
+ * 5 seconds, so no timeout handling is required.
+ */
+export const waitForSubscriptionAck = () =>
+  new Promise<void>((resolve) => {
+    const cancel = Hub.listen('api', (data: any) => {
+      const { payload } = data;
+      if (payload.event === 'Subscription ack') {
+        console.log('Subscription ack received:', payload.data);
+        // Stop listening for msgs once we receive the ack:
+        cancel();
+        resolve();
+      }
+    });
+  });

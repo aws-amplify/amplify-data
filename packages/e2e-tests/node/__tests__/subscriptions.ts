@@ -2,8 +2,8 @@ import {
   Client,
   configureAmplifyAndGenerateClient,
   establishWebsocket,
-  handleErrorsAndData,
-  pause,
+  expectDataReturnWithoutErrors,
+  waitForSubscriptionAck,
 } from '../utils';
 import type { Schema } from '../amplify/data/resource';
 
@@ -23,6 +23,9 @@ const deleteAll = async (client: Client) => {
   console.log('result of cleanup:', listAfterDelete);
 };
 
+let sub: any;
+let subResult: any[] = [];
+
 describe('Subscriptions', () => {
   beforeAll(() => {
     establishWebsocket({ disableConnectionStateLogging: true });
@@ -31,159 +34,147 @@ describe('Subscriptions', () => {
     client = configureAmplifyAndGenerateClient({ disableDebugLogging: true });
   });
   afterEach(async () => {
+    subResult = [];
+    sub.unsubscribe();
     await deleteAll(client);
   });
   it('Create', async () => {
-    const subResult: any[] = [];
+    /**
+     * We use a promise to wait for the correct number of sub messages to be
+     * received.
+     * Jest times out after 5 seconds if the promise isn't resolved.
+     */
+    let resolveSubPromise: () => void;
+    const subMsgsReceived = new Promise<void>((resolve) => {
+      resolveSubPromise = resolve;
+    });
 
-    const sub = client.models.Todo.onCreate().subscribe({
-      next: (data) => subResult.push(data),
+    sub = client.models.Todo.onCreate().subscribe({
+      next: (data) => {
+        subResult.push(data);
+        if (subResult.length === 2) {
+          /**
+           * Resolve the promise when second sub msg is received.
+           * We resolve based on the number of sub messages, and not the content
+           * of the sub msg, because we want to validate that we are receiving
+           * both messages.
+           */
+          resolveSubPromise();
+        }
+      },
       error: (error) => new Error(JSON.stringify(error)),
     });
 
     /**
-     * Need to wait for sub to be established before creating todos,
-     * or we'll miss the sub messages.
-     * TODO: find a better way to handle this.
+     * Need to wait for sub to be established before calling the API,
+     * otherwise we'll miss the sub messages.
      */
-    await pause(2000);
+    await waitForSubscriptionAck();
 
     const firstCreateResponse = await client.models.Todo.create({
       content: 'first todo',
     });
-    handleErrorsAndData(firstCreateResponse, 'first todo create');
+    expectDataReturnWithoutErrors(firstCreateResponse, 'first todo create');
 
     const secondCreateResponse = await client.models.Todo.create({
       content: 'second todo',
     });
-    handleErrorsAndData(secondCreateResponse, 'second todo create');
+    expectDataReturnWithoutErrors(secondCreateResponse, 'second todo create');
 
-    /**
-     * Need to wait for sub messages to be received before unsubscribing.
-     */
-    await pause(500);
-
-    sub.unsubscribe();
+    // Wait for sub messages to be received before making assertions
+    await subMsgsReceived;
 
     expect(subResult[0]?.content).toBe('first todo');
     expect(subResult[1]?.content).toBe('second todo');
   });
-  //   test('Read', async () => {
-  //     const { errors: firstCreateErrors } = await client.models.Todo.create({
-  //       content: 'todo1',
-  //     });
+  it('Update', async () => {
+    /**
+     * We use a promise to wait for the correct number of sub messages to be
+     * received.
+     * Jest times out after 5 seconds if the promise isn't resolved.
+     */
+    let resolveSubPromise: () => void;
+    const subMsgsReceived = new Promise<void>((resolve) => {
+      resolveSubPromise = resolve;
+    });
 
-  //     if (firstCreateErrors) {
-  //       console.log('error on create:', firstCreateErrors);
-  //       throw new Error(JSON.stringify(firstCreateErrors));
-  //     }
+    sub = client.models.Todo.onUpdate().subscribe({
+      next: (data) => {
+        subResult.push(data);
+        if (subResult.length === 1) {
+          resolveSubPromise();
+        }
+      },
+      error: (error) => new Error(JSON.stringify(error)),
+    });
 
-  //     const { data: secondNewTodo, errors: secondCreateErrors } =
-  //       await client.models.Todo.create({
-  //         content: 'todo2',
-  //       });
+    /**
+     * Need to wait for sub to be established before calling the API,
+     * otherwise we'll miss the sub messages.
+     */
+    await waitForSubscriptionAck();
 
-  //     if (secondCreateErrors) {
-  //       console.log('error on create:', firstCreateErrors);
-  //       throw new Error(JSON.stringify(secondCreateErrors));
-  //     }
+    const firstCreateResponse = await client.models.Todo.create({
+      content: 'first todo',
+    });
+    const firstTodo = expectDataReturnWithoutErrors(
+      firstCreateResponse,
+      'first todo create',
+    );
 
-  //     if (!secondNewTodo) {
-  //       throw new Error('secondNewTodo is undefined');
-  //     }
+    const updateResponse = await client.models.Todo.update({
+      // expectDataReturnWithoutErrors will throw if this doesn't exist:
+      id: firstTodo!.id,
+      content: 'updated content',
+    });
+    expectDataReturnWithoutErrors(updateResponse, 'update');
 
-  //     // Get the first todo:
-  //     const { data: getTodo, errors: readErrors } = await client.models.Todo.get({
-  //       id: secondNewTodo.id,
-  //     });
+    // Wait for sub messages to be received before making assertions
+    await subMsgsReceived;
 
-  //     if (readErrors) {
-  //       console.log('error getting todo:', readErrors);
-  //       throw new Error(JSON.stringify(readErrors));
-  //     }
+    expect(subResult[0]?.content).toBe('updated content');
+  });
+  it('Delete', async () => {
+    /**
+     * We use a promise to wait for the correct number of sub messages to be
+     * received.
+     * Jest times out after 5 seconds if the promise isn't resolved.
+     */
+    let resolveSubPromise: () => void;
+    const subMsgsReceived = new Promise<void>((resolve) => {
+      resolveSubPromise = resolve;
+    });
 
-  //     if (!getTodo) {
-  //       throw new Error('get todo is undefined');
-  //     }
+    sub = client.models.Todo.onDelete().subscribe({
+      next: (data) => {
+        subResult.push(data);
+        if (subResult.length === 1) {
+          resolveSubPromise();
+        }
+      },
+      error: (error) => new Error(JSON.stringify(error)),
+    });
 
-  //     expect(getTodo.content).toBe('todo2');
-  //   });
-  //   test('Update', async () => {
-  //     const { data: originalTodo, errors: createErrors } =
-  //       await client.models.Todo.create({
-  //         content: 'original content',
-  //       });
+    /**
+     * Need to wait for sub to be established before calling the API,
+     * otherwise we'll miss the sub messages.
+     */
+    await waitForSubscriptionAck();
 
-  //     if (createErrors) {
-  //       console.log('createErrors:', createErrors);
-  //       throw new Error(JSON.stringify(createErrors));
-  //     }
+    const createResponse = await client.models.Todo.create({
+      content: 'todo to delete',
+    });
 
-  //     if (!originalTodo) {
-  //       throw new Error('originalTodo is undefined');
-  //     }
+    const createdTodo = expectDataReturnWithoutErrors(createResponse, 'create');
 
-  //     const { data: updatedTodo, errors: updateErrors } =
-  //       await client.models.Todo.update({
-  //         id: originalTodo.id,
-  //         content: 'updated content',
-  //       });
+    // expectDataReturnWithoutErrors will throw if this doesn't exist:
+    const deleteResponse = await client.models.Todo.delete(createdTodo!);
 
-  //     if (updateErrors) {
-  //       console.log('updateErrors:', updateErrors);
-  //       throw new Error(JSON.stringify(updateErrors));
-  //     }
+    expectDataReturnWithoutErrors(deleteResponse, 'delete');
 
-  //     if (!updatedTodo) {
-  //       throw new Error('updatedTodo is undefined');
-  //     }
+    // Wait for sub messages to be received before making assertions
+    await subMsgsReceived;
 
-  //     expect(updatedTodo.content).toBe('updated content');
-  //   });
-  //   test('Delete', async () => {
-  //     const { data: newTodo, errors: createErrors } =
-  //       await client.models.Todo.create({
-  //         content: 'todo to delete',
-  //       });
-
-  //     if (createErrors) {
-  //       console.log('createErrors:', createErrors);
-  //       throw new Error(JSON.stringify(createErrors));
-  //     }
-
-  //     if (!newTodo) {
-  //       throw new Error('newTodo is undefined');
-  //     }
-
-  //     const { data: deletedTodo, errors: deleteErrors } =
-  //       await client.models.Todo.delete(newTodo);
-
-  //     if (deleteErrors) {
-  //       console.log('deleteErrors:', createErrors);
-  //       throw new Error(JSON.stringify(createErrors));
-  //     }
-
-  //     if (!deletedTodo) {
-  //       throw new Error('deletedTodo is undefined');
-  //     }
-
-  //     expect(deletedTodo.content).toBe('todo to delete');
-  //   });
-  //   test('List', async () => {
-  //     await client.models.Todo.create({
-  //       content: 'todo1',
-  //     });
-
-  //     await client.models.Todo.create({
-  //       content: 'todo2',
-  //     });
-
-  //     await client.models.Todo.create({
-  //       content: 'todo3',
-  //     });
-
-  //     const { data: listTodos } = await client.models.Todo.list();
-
-  //     expect(listTodos.length).toBe(3);
-  //   });
+    expect(subResult[0]?.content).toBe('todo to delete');
+  });
 });
