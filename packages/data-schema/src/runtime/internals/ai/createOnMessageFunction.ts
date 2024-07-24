@@ -14,6 +14,7 @@ export const createOnMessageFunction =
   (
     client: BaseClient,
     modelIntrospection: ModelIntrospectionSchema,
+    conversationId: string,
     conversationRouteName: string,
     getInternals: ClientInternalsGetter,
   ): Conversation['onMessage'] =>
@@ -32,12 +33,12 @@ export const createOnMessageFunction =
       subscribeSchema,
       false,
       getInternals,
-    ) as () => Observable<any>;
-    return subscribeOperation().subscribe(
-      ({ content, conversationId, createdAt, id, role }: any) => {
+    ) as (args?: Record<string, any>) => Observable<any>;
+    return subscribeOperation({ sessionId: conversationId }).subscribe(
+      ({ content, sessionId, createdAt, id, role }: any) => {
         handler({
           content: JSON.parse(content),
-          conversationId,
+          conversationId: sessionId,
           createdAt,
           id,
           role,

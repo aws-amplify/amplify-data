@@ -32,8 +32,9 @@ export const createListMessagesFunction =
     ) as (args?: Record<string, any>) => ListReturnValue<ConversationMessage>;
     const { data, nextToken, errors } = await list({
       ...input,
-      filter: { conversationId: { eq: conversationId } },
+      filter: { sessionId: { eq: conversationId } },
     });
+    console.log('🐶', data, errors);
     return {
       data: data.map((item: any) => convertItemToConversationMessage(item)),
       nextToken,

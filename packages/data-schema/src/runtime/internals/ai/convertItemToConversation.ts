@@ -25,6 +25,7 @@ export const convertItemToConversation = (
   onMessage: createOnMessageFunction(
     client as BaseBrowserClient,
     modelIntrospection,
+    conversation.id,
     conversationRouteName,
     getInternals,
   ),

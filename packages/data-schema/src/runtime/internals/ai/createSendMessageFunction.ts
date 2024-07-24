@@ -43,10 +43,11 @@ export const createSendMessageFunction =
     const { data, errors } = await sendOperation({
       // aiContext: JSON.stringify(aiContext),
       content: JSON.stringify(content),
-      conversationId: conversation.id,
+      sessionId: conversation.id,
       role: 'user',
       // uiComponents,
     });
+    console.log('🐶', data, errors);
     return {
       data: data ? convertItemToConversationMessage(data) : data,
       errors,
