@@ -1,7 +1,7 @@
-import { ClientSchemaProperty } from './ClientSchemaProperty';
+import { ClientSchemaPropertyType } from './ClientSchemaProperty';
 
 export interface ClientEnum<values extends readonly string[]>
-  extends ClientSchemaProperty {
+  extends ClientSchemaPropertyType {
   __entityType: 'enum';
   type: values[number];
 }

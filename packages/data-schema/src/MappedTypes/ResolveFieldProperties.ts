@@ -10,7 +10,7 @@ import type {
   ModelRelationalField,
   ModelRelationalFieldParamShape,
 } from '../ModelRelationalField';
-import type { PrimaryIndexIrShape } from '../util/';
+import type { PrimaryIndexIrBuilderShape } from '../util/';
 
 import type { ResolveSchema, SchemaTypes } from './ResolveSchema';
 import type { InjectImplicitModelFields } from './ImplicitFieldInjector';
@@ -32,7 +32,7 @@ export type ResolveFieldProperties<
   ResolvedSchema = ResolveSchema<Schema>,
   IdentifierMeta extends Record<
     string,
-    { identifier: PrimaryIndexIrShape }
+    { identifier: PrimaryIndexIrBuilderShape }
   > = ModelIdentifier<SchemaTypes<Schema>>,
   FieldsWithInjectedImplicitFields = InjectImplicitModelFields<
     ResolvedSchema,
@@ -180,7 +180,7 @@ type FilterFieldTypes<Schema> = {
   };
 };
 
-type ExtractNullableFieldsToOptionalFields<Fields> = Partial<{
+export type ExtractNullableFieldsToOptionalFields<Fields> = Partial<{
   [FieldProp in keyof Fields as null extends Fields[FieldProp]
     ? FieldProp
     : never]: null extends Fields[FieldProp] ? Fields[FieldProp] : never;
@@ -192,7 +192,7 @@ type MarkModelsNullableFieldsOptional<Schema> = {
   >;
 };
 
-type ExtractNonNullableFieldsToRequiredFields<Fields> = {
+export type ExtractNonNullableFieldsToRequiredFields<Fields> = {
   [FieldProp in keyof Fields as null extends Fields[FieldProp]
     ? never
     : FieldProp]: null extends Fields[FieldProp] ? never : Fields[FieldProp];
@@ -204,7 +204,7 @@ type MarkModelsNonNullableFieldsRequired<Schema> = {
   >;
 };
 
-type Intersection<
+export type Intersection<
   A = Record<never, never>,
   B = Record<never, never>,
   C = Record<never, never>,

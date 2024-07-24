@@ -7,9 +7,9 @@ import type { CustomType } from '../../CustomType';
 import type { FieldTypesOfCustomType } from '../../MappedTypes/ResolveSchema';
 import type { ResolveRef } from '../utilities/ResolveRef';
 import type { EnumType } from '../../EnumType';
-import { ClientSchemaProperty } from './ClientSchemaProperty';
+import { ClientSchemaPropertyType } from './ClientSchemaProperty';
 
-type CustomOperationSubType<Op extends CustomOperationParamShape> =
+export type CustomOperationSubType<Op extends CustomOperationParamShape> =
   `custom${Op['typeName']}`;
 
 /**
@@ -19,7 +19,7 @@ type CustomOperationSubType<Op extends CustomOperationParamShape> =
 export interface ClientCustomOperation<
   RefBag extends Record<any, any>,
   Op extends CustomOperationParamShape,
-> extends ClientSchemaProperty {
+> extends ClientSchemaPropertyType {
   __entityType: CustomOperationSubType<Op>;
   operationType: Op['typeName'];
 
@@ -76,7 +76,7 @@ export interface ClientCustomOperation<
 /**
  * Digs out custom operation arguments, mapped to the intended graphql types.
  */
-type CustomOpArguments<Shape extends CustomOperationParamShape> =
+export type CustomOpArguments<Shape extends CustomOperationParamShape> =
   Shape['arguments'] extends null
     ? never
     : ResolveFieldRequirements<{
@@ -93,7 +93,7 @@ type CustomOpArguments<Shape extends CustomOperationParamShape> =
  * Removes `null | undefined` from the return type if the operation is a subscription,
  * since subs don't fire on empty/non-existent values.
  */
-type Normalize<
+export type Normalize<
   Shape extends CustomOperationParamShape,
   RT,
 > = Shape['typeName'] extends 'Subscription'
@@ -105,7 +105,7 @@ type Normalize<
  *
  * This entails dereferencing refs and inferring graphql types from field-type defs.
  */
-type CustomOpReturnType<
+export type CustomOpReturnType<
   Shape extends CustomOperationParamShape,
   RefBag extends Record<string, any>,
 > = Normalize<
@@ -133,7 +133,7 @@ type CustomOpReturnType<
  *
  * (Custom handlers should not return lazy loaded fields -- they're *lazy loaded*.)
  */
-type LambdaReturnType<T> =
+export type LambdaReturnType<T> =
   T extends Array<infer RT>
     ? Array<LambdaReturnType<RT>>
     : T extends Record<string, any>

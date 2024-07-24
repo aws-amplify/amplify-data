@@ -1,24 +1,38 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
+import { Prettify } from '../util';
 import {
   ResolvedModel,
   CustomSelectionSetReturnValue,
-  ContextType,
   ModelTypesClient,
   ModelTypesSSRCookies,
-  ModelTypesSSRRequest,
-  CustomOperationFnParams,
+  ReturnValue,
+  CreateModelInput,
+  IndexQueryMethodsFromIR,
+  ModelFilter,
+  ModelIdentifier,
+  ModelMetaShape,
+  MutationInput,
+  WritableKeys,
 } from './internal.types';
 import {
+  AuthMode,
+  CustomHeaders,
+  ListReturnValue,
   ModelPath,
+  ModelSortDirection,
   ObservedReturnValue,
   SingularReturnValue,
 } from './shared.types';
 
+export { MutationInput, WritableKeys };
+
 import { __modelMeta__, ExtractModelMeta } from './symbol';
 
 export { __modelMeta__, ExtractModelMeta } from './symbol';
+
+export type ContextType = 'CLIENT' | 'COOKIES' | 'REQUEST';
 
 // #region Return Value Mapped Types
 
@@ -54,6 +68,22 @@ export type ModelTypes<
       : never
     : never;
 };
+
+export type CustomOperationMethodOptions = {
+  // selectionSet?: SelectionSet;
+  authMode?: AuthMode;
+  authToken?: string;
+  headers?: CustomHeaders;
+};
+
+/**
+ * Generates Custom Operations function params based on whether .arguments() were specified in the schema builder
+ */
+export type CustomOperationFnParams<
+  Args extends Record<string, unknown> | never,
+> = [Args] extends [never]
+  ? [CustomOperationMethodOptions?]
+  : [Args, CustomOperationMethodOptions?];
 
 export type CustomQueries<
   Schema extends Record<any, any>,
@@ -134,4 +164,62 @@ export type EnumTypes<
   [EnumName in keyof ModelMeta['enums']]: {
     values: () => Array<ModelMeta['enums'][EnumName]>;
   };
+};
+
+export type ModelTypesSSRRequest<
+  Model extends Record<string, unknown>,
+  ModelMeta extends ModelMetaShape,
+  FlatModel extends Record<string, unknown> = ResolvedModel<Model>,
+> = IndexQueryMethodsFromIR<ModelMeta['secondaryIndexes'], Model> & {
+  create: (
+    // TODO: actual type
+    contextSpec: any,
+    model: Prettify<CreateModelInput<Model, ModelMeta>>,
+    options?: {
+      authMode?: AuthMode;
+      authToken?: string;
+      headers?: CustomHeaders;
+    },
+  ) => SingularReturnValue<Model>;
+  update: (
+    contextSpec: any,
+    model: Prettify<ModelIdentifier<ModelMeta> & Partial<MutationInput<Model>>>,
+    options?: {
+      authMode?: AuthMode;
+      authToken?: string;
+      headers?: CustomHeaders;
+    },
+  ) => SingularReturnValue<Model>;
+  delete: (
+    contextSpec: any,
+    identifier: ModelIdentifier<ModelMeta>,
+    options?: {
+      authMode?: AuthMode;
+      authToken?: string;
+      headers?: CustomHeaders;
+    },
+  ) => SingularReturnValue<Model>;
+  get<SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[]>(
+    contextSpec: any,
+    identifier: ModelIdentifier<ModelMeta>,
+    options?: {
+      selectionSet?: SelectionSet;
+      authMode?: AuthMode;
+      authToken?: string;
+      headers?: CustomHeaders;
+    },
+  ): SingularReturnValue<Prettify<ReturnValue<Model, FlatModel, SelectionSet>>>;
+  list<SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[]>(
+    contextSpec: any,
+    options?: Partial<ModelIdentifier<ModelMeta>> & {
+      filter?: ModelFilter<Model>;
+      sortDirection?: ModelSortDirection;
+      limit?: number;
+      nextToken?: string | null;
+      selectionSet?: SelectionSet;
+      authMode?: AuthMode;
+      authToken?: string;
+      headers?: CustomHeaders;
+    },
+  ): ListReturnValue<Prettify<ReturnValue<Model, FlatModel, SelectionSet>>>;
 };

@@ -1,11 +1,11 @@
 import { SetTypeSubArg } from '@aws-amplify/data-schema-types';
 import { Brand } from './util';
 import { AllowModifier, Authorization, allow } from './Authorization';
-import { __auth } from './ModelField';
+import { __modelFieldAuth } from './ModelField';
 
-export const brandName = 'ref';
+export const refTypeBrandName = 'ref';
 
-type RefTypeData = {
+export type RefTypeData = {
   type: 'ref';
   link: string;
   valueRequired: boolean;
@@ -65,8 +65,8 @@ export type RefType<
   K
 > & {
   // This is a lie. This property is never set at runtime. It's just used to smuggle auth types through.
-  [__auth]?: Auth;
-} & Brand<typeof brandName>;
+  [__modelFieldAuth]?: Auth;
+} & Brand<typeof refTypeBrandName>;
 
 function brandedBuilder<T extends RefTypeParamShape>(
   builder: Record<keyof RefType<T> & string, any>,

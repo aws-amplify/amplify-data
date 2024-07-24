@@ -1,10 +1,11 @@
 import type { brandSymbol } from './util/Brand.js';
 
-type EnumTypeParamShape<values extends readonly string[] = readonly string[]> =
-  {
-    type: 'enum';
-    values: values;
-  };
+export type EnumTypeParamShape<
+  values extends readonly string[] = readonly string[],
+> = {
+  type: 'enum';
+  values: values;
+};
 
 export interface EnumType<values extends readonly string[] = readonly string[]>
   extends EnumTypeParamShape<values> {

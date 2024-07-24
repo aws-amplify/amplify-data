@@ -138,7 +138,7 @@ function omit<T extends object, O extends string>(
   return pruned;
 }
 
-function to<SELF extends Authorization<any, any, any>>(
+export function to<SELF extends Authorization<any, any, any>>(
   this: SELF,
   operations: Operation[],
 ) {
@@ -154,7 +154,7 @@ function to<SELF extends Authorization<any, any, any>>(
  * @param property A property of identity JWT.
  * @returns A copy of the Authorization object with the claim attached.
  */
-function identityClaim<SELF extends Authorization<any, any, any>>(
+export function identityClaim<SELF extends Authorization<any, any, any>>(
   this: SELF,
   property: string,
 ) {
@@ -162,7 +162,7 @@ function identityClaim<SELF extends Authorization<any, any, any>>(
   return omit(this, 'identityClaim');
 }
 
-function withClaimIn<SELF extends Authorization<any, any, any>>(
+export function withClaimIn<SELF extends Authorization<any, any, any>>(
   this: SELF,
   property: string,
 ) {
@@ -589,7 +589,7 @@ export const allowForCustomOperations = {
   },
 } as const;
 
-function resourceTo<SELF extends ResourceAuthorization>(
+export function resourceTo<SELF extends ResourceAuthorization>(
   this: SELF,
   operations: ResourceOperation[],
 ) {

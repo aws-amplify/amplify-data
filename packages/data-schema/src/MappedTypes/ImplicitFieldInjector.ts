@@ -1,4 +1,4 @@
-import type { PrimaryIndexIrShape } from '../util';
+import type { PrimaryIndexIrBuilderShape } from '../util';
 
 type DefaultIdentifierFields = {
   // implicit `id` is readonly because it's managed by the resolver; explicit `id` is writable
@@ -34,7 +34,7 @@ type GetModelFieldNames<FlatModel> =
  */
 type ImplicitFields<
   FlatModel,
-  Identifier extends PrimaryIndexIrShape,
+  Identifier extends PrimaryIndexIrBuilderShape,
   ModelFieldNames = GetModelFieldNames<FlatModel>,
 > = {
   [ImplicitField in keyof InitialImplicitFields<Identifier> as FieldExists<
@@ -50,7 +50,7 @@ type ImplicitFields<
  */
 type InjectDefaultFieldsForModel<
   FlatModel,
-  ModelIdentifier extends { identifier: PrimaryIndexIrShape },
+  ModelIdentifier extends { identifier: PrimaryIndexIrBuilderShape },
 > = FlatModel &
   ImplicitFields<
     FlatModel,
@@ -68,7 +68,10 @@ type InjectDefaultFieldsForModel<
  */
 export type InjectImplicitModelFields<
   FlattenedSchema,
-  IdentifierMeta extends Record<string, { identifier: PrimaryIndexIrShape }>,
+  IdentifierMeta extends Record<
+    string,
+    { identifier: PrimaryIndexIrBuilderShape }
+  >,
 > = {
   [ModelName in keyof FlattenedSchema]: InjectDefaultFieldsForModel<
     FlattenedSchema[ModelName],

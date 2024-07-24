@@ -1,37 +1,41 @@
-export { InternalClientSchema, InternalCombinedSchema } from './ClientSchema';
-export { GenericModelSchema } from './ModelSchema';
-export { CombinedModelSchema } from './CombineSchema';
+export * from '@aws-amplify/data-schema-types';
+
+export * from './ClientSchema';
+export * from './ModelSchema';
+export * from './CombineSchema';
+export * from './CustomOperation';
+export * from './CustomType';
+export * from './EnumType';
+export * from './Handler';
+export * from './ModelField';
+export * from './RefType';
+export * from './ModelType';
+export * from './MappedTypes/MapIndexes';
+export * from './ModelIndex';
+export * from './util';
+export * from './util/ObjectFromEntries';
+export * from './util/usedMethods';
+export * from './ModelRelationalField';
+export * from './Authorization';
+export * from './ClientSchema/Core';
+export * from './ClientSchema/Core/ClientModel';
+export * from './ClientSchema/Core/ClientCustomOperations';
+export * from './ClientSchema/Core/ClientSchemaProperty';
+export * from './ClientSchema/utilities';
 export {
-  CustomOperation,
-  queryBrand,
-  mutationBrand,
-  subscriptionBrand,
-} from './CustomOperation';
-export { CustomTypeFields, CustomType } from './CustomType';
-export { EnumType } from './EnumType';
-export { inlineSql, sqlReference, custom, fcn } from './Handler';
-export { ModelField } from './ModelField';
+  LazyLoader,
+  CustomHeaders,
+  AuthMode,
+  SingularReturnValue,
+  ListReturnValue,
+  RequestOptions,
+  GraphQLFormattedError,
+  SourceLocation,
+} from './runtime/client';
 export {
-  RefType,
-  RefTypeArgFactory,
-  MutationOperations,
-  RefTypeParamShape,
-  brandName as refTypeBrandName,
-} from './RefType';
-export {
-  ModelFields,
-  ModelType,
-  ModelDefaultIdentifier,
-  ExtractSecondaryIndexIRFields,
-  brandName as modelTypeBrandName,
-  UsableModelTypeKey,
-  ModelTypeParamShape,
-  deferredRefResolvingPrefix,
-} from './ModelType';
-export type {
-  SecondaryIndexToIR,
-  PrimaryIndexFieldsToIR,
-} from './MappedTypes/MapIndexes';
-export { type ModelIndexType } from './ModelIndex';
-export { type PrimaryIndexIrShape, type SecondaryIndexIrShape } from './util';
-export type { methodKeyOf } from './util/usedMethods';
+  ResolveFieldRequirements,
+  Intersection,
+  ExtractNonNullableFieldsToRequiredFields,
+  ExtractNullableFieldsToOptionalFields,
+} from './MappedTypes/ResolveFieldProperties';
+export { FieldTypesOfCustomType } from './MappedTypes/ResolveSchema';

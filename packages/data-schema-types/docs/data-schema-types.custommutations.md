@@ -9,5 +9,5 @@
 ```typescript
 export type CustomMutations<Schema extends Record<any, any>, Context extends ContextType = 'CLIENT', ModelMeta extends Record<any, any> = ExtractModelMeta<Schema>> = CustomOperations<Schema, 'Mutation', Context, ModelMeta>;
 ```
-**References:** [ExtractModelMeta](./data-schema-types.extractmodelmeta.md)<!-- -->, [CustomOperations](./data-schema-types.customoperations.md)
+**References:** [ContextType](./data-schema-types.contexttype.md)<!-- -->, [ExtractModelMeta](./data-schema-types.extractmodelmeta.md)<!-- -->, [CustomOperations](./data-schema-types.customoperations.md)
 

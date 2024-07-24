@@ -44,21 +44,21 @@ export const ddbSchemaBrandName = 'DDBSchema';
 const ddbSchemaBrand = brand(ddbSchemaBrandName);
 export type DDBSchemaBrand = Brand<typeof ddbSchemaBrandName>;
 
-type SchemaContent =
+export type SchemaContent =
   | BaseModelType
   | CustomType<CustomTypeParamShape>
   | EnumType
   | CustomOperation<CustomOperationParamShape, any>;
 
 // The SQL-only `addToSchema` accepts all top-level entities, excepts models
-type AddToSchemaContent = Exclude<SchemaContent, BaseModelType>;
-type AddToSchemaContents = Record<string, AddToSchemaContent>;
+export type AddToSchemaContent = Exclude<SchemaContent, BaseModelType>;
+export type AddToSchemaContents = Record<string, AddToSchemaContent>;
 
-type NonEmpty<T> = keyof T extends never ? never : T;
+export type NonEmpty<T> = keyof T extends never ? never : T;
 
 export type ModelSchemaContents = Record<string, SchemaContent>;
 
-type InternalSchemaModels = Record<
+export type InternalSchemaModels = Record<
   string,
   InternalModel | EnumType | CustomType<any> | InternalCustom
 >;
@@ -112,7 +112,7 @@ export type ModelSchema<
   BaseSchema<T> &
   DDBSchemaBrand;
 
-type RDSModelSchemaFunctions =
+export type RDSModelSchemaFunctions =
   | 'addToSchema'
   | 'addQueries'
   | 'addMutations'
@@ -123,11 +123,11 @@ type RDSModelSchemaFunctions =
   | 'renameModelFields'
   | 'renameModels';
 
-type OmitFromEach<Models, Modifier extends string> = {
+export type OmitFromEach<Models, Modifier extends string> = {
   [ModelName in keyof Models]: Omit<Models[ModelName], Modifier>;
 };
 
-type RelationshipTemplate = Record<
+export type RelationshipTemplate = Record<
   string,
   ModelRelationalField<ModelRelationalFieldParamShape, string, any, any>
 >;
@@ -231,7 +231,7 @@ export type RDSModelSchema<
  */
 export type ModelSchemaType = ModelSchema<ModelSchemaParamShape>;
 
-type ModelWithRelationships<
+export type ModelWithRelationships<
   Types extends Record<string, any>,
   Relationships extends ReadonlyArray<
     Record<string, RelationshipTemplate | undefined>
@@ -421,7 +421,7 @@ function _ddbSchema<
   } satisfies ModelSchema<any> as never;
 }
 
-type SchemaReturnType<
+export type SchemaReturnType<
   DE extends DatasourceEngine,
   Types extends ModelSchemaContents,
 > = DE extends 'dynamodb'

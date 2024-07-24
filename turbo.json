@@ -8,6 +8,9 @@
     "docs": {
       "dependsOn": ["build"]
     },
+    "docs:full": {
+      "dependsOn": ["build"]
+    },
     "check:api": {},
     "check:api:base": {},
     "lint": {},

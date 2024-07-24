@@ -1,7 +1,7 @@
 import type { SetTypeSubArg } from '@aws-amplify/data-schema-types';
 import {
-  type PrimaryIndexIrShape,
-  type SecondaryIndexIrShape,
+  type PrimaryIndexIrBuilderShape,
+  type SecondaryIndexIrBuilderShape,
   brand,
 } from './util';
 import type { InternalField, BaseModelField } from './ModelField';
@@ -26,7 +26,7 @@ import type {
 import type { brandSymbol } from './util/Brand.js';
 import type { methodKeyOf } from './util/usedMethods.js';
 
-export const brandName = 'modelType';
+export const modelTypeBrandName = 'modelType';
 export type deferredRefResolvingPrefix = 'deferredRefResolving:';
 
 export type ModelFields = Record<
@@ -38,19 +38,19 @@ export type ModelFields = Record<
   | CustomType<CustomTypeParamShape>
 >;
 
-type InternalModelFields = Record<
+export type InternalModelFields = Record<
   string,
   InternalField | InternalRelationalField
 >;
 
-type ModelData = {
+export type ModelData = {
   fields: ModelFields;
   identifier: ReadonlyArray<string>;
   secondaryIndexes: ReadonlyArray<ModelIndexType<any, any, any, any, any>>;
   authorization: Authorization<any, any, any>[];
 };
 
-type InternalModelData = ModelData & {
+export type InternalModelData = ModelData & {
   fields: InternalModelFields;
   identifier: ReadonlyArray<string>;
   secondaryIndexes: ReadonlyArray<InternalModelIndexType>;
@@ -60,8 +60,8 @@ type InternalModelData = ModelData & {
 
 export type ModelTypeParamShape = {
   fields: ModelFields;
-  identifier: PrimaryIndexIrShape;
-  secondaryIndexes: ReadonlyArray<SecondaryIndexIrShape>;
+  identifier: PrimaryIndexIrBuilderShape;
+  secondaryIndexes: ReadonlyArray<SecondaryIndexIrBuilderShape>;
   authorization: Authorization<any, any, any>[];
 };
 
@@ -206,12 +206,13 @@ export type ModelType<
   UsedMethod extends UsableModelTypeKey = never,
 > = Omit<
   {
-    [brandSymbol]: typeof brandName;
+    [brandSymbol]: typeof modelTypeBrandName;
     identifier<
       PrimaryIndexFields = ExtractSecondaryIndexIRFields<T, true>,
       PrimaryIndexPool extends string = keyof PrimaryIndexFields & string,
       const ID extends ReadonlyArray<PrimaryIndexPool> = readonly [],
-      const PrimaryIndexIR extends PrimaryIndexIrShape = PrimaryIndexFieldsToIR<
+      const PrimaryIndexIR extends
+        PrimaryIndexIrBuilderShape = PrimaryIndexFieldsToIR<
         ID,
         PrimaryIndexFields
       >,
@@ -322,7 +323,7 @@ function _model<T extends ModelTypeParamShape>(fields: T['fields']) {
 
       return this;
     },
-    ...brand(brandName),
+    ...brand(modelTypeBrandName),
   } as ModelType<T>;
 
   return {

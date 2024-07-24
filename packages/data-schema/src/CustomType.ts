@@ -21,15 +21,15 @@ export type CustomTypeFields = Record<
   | CustomType<CustomTypeParamShape>
 >;
 
-type InternalModelFields = Record<string, InternalField>;
+export type InternalCustomTypeModelFields = Record<string, InternalField>;
 
-type CustomTypeData = {
+export type CustomTypeData = {
   fields: CustomTypeFields;
   type: 'customType';
 };
 
-type InternalCustomTypeData = CustomTypeData & {
-  fields: InternalModelFields;
+export type InternalCustomTypeData = CustomTypeData & {
+  fields: InternalCustomTypeModelFields;
 };
 
 export type CustomTypeParamShape = {

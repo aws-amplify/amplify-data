@@ -22,7 +22,7 @@ import { UnionToIntersection } from '@aws-amplify/data-schema-types';
  * ]
  * ```
  */
-type EntriesToRecordTuple<T> = {
+export type EntriesToRecordTuple<T> = {
   [K in keyof T]: T[K] extends readonly [
     infer innerK extends string,
     infer innerT,

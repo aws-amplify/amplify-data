@@ -5,9 +5,9 @@ import { AllowModifier, Authorization, allow } from './Authorization';
 /**
  * Used to "attach" auth types to ModelField without exposing them on the builder.
  */
-export const __auth = Symbol('__auth');
+export const __modelRelationalFieldAuth = Symbol('__auth');
 
-const brandName = 'modelRelationalField';
+export const modelRelationalFieldBrandName = 'modelRelationalField';
 
 export enum ModelRelationshipTypes {
   hasOne = 'hasOne',
@@ -15,9 +15,9 @@ export enum ModelRelationshipTypes {
   belongsTo = 'belongsTo',
 }
 
-type RelationshipTypes = `${ModelRelationshipTypes}`;
+export type RelationshipTypes = `${ModelRelationshipTypes}`;
 
-type ModelRelationalFieldData = {
+export type ModelRelationalFieldData = {
   fieldType: 'model';
   type: ModelRelationshipTypes;
   relatedModel: string;
@@ -38,7 +38,7 @@ export type ModelRelationalFieldParamShape = {
   arrayRequired: boolean;
 };
 
-type ModelRelationalFieldFunctions<
+export type ModelRelationalFieldFunctions<
   T extends ModelRelationalFieldParamShape,
   // RM adds structural separation with ModelField; easier to identify it when mapping to ClientTypes
   RM extends string | symbol,
@@ -76,8 +76,8 @@ export type ModelRelationalField<
   Auth = undefined,
 > = Omit<ModelRelationalFieldFunctions<T, RM, K>, K> & {
   // This is a lie. This property is never set at runtime. It's just used to smuggle auth types through.
-  [__auth]?: Auth;
-} & Brand<typeof brandName>;
+  [__modelRelationalFieldAuth]?: Auth;
+} & Brand<typeof modelRelationalFieldBrandName>;
 
 /**
  * Internal representation of Model Field that exposes the `data` property.
@@ -235,7 +235,7 @@ export function hasOne<RM extends string>(
  *     team: a.belongsTo('Team', 'teamId'),
  *   })
  *   .authorization(allow => [allow.publicApiKey()]),
- * 
+ *
  *   Team: a.model({
  *     mantra: a.string().required(),
  *     // 3. Create a hasMany relationship with the reference field
@@ -268,8 +268,8 @@ export function hasMany<RM extends string>(
  * Use `belongsTo()` to create a field to query the related `hasOne()` or `hasMany()` relationship.
  * The belongsTo() method requires that a hasOne() or hasMany() relationship already exists from
  * parent to the related model.
- * 
- * @example 
+ *
+ * @example
  * // one-to-many relationship
  * const schema = a.schema({
  *   Member: a.model({
@@ -280,7 +280,7 @@ export function hasMany<RM extends string>(
  *     team: a.belongsTo('Team', 'teamId'),
  *   })
  *   .authorization(allow => [allow.publicApiKey()]),
- * 
+ *
  *   Team: a.model({
  *     mantra: a.string().required(),
  *     // 3. Create a hasMany relationship with the reference field

@@ -3,7 +3,7 @@ import type {
   ModelTypeParamShape,
   ModelDefaultIdentifier,
 } from '../../ModelType';
-import type { ClientSchemaProperty } from './ClientSchemaProperty';
+import type { ClientSchemaPropertyType } from './ClientSchemaProperty';
 import type { Authorization, ImpliedAuthFields } from '../../Authorization';
 import type { SchemaMetadata, ResolveFields } from '../utilities';
 import type {
@@ -21,8 +21,8 @@ import type {
   StringFilter,
   NumericFilter,
   ModelPrimaryCompositeKeyInput,
-  PrimaryIndexIrShape,
-  SecondaryIndexIrShape,
+  PrimaryIndexIrBuilderShape,
+  SecondaryIndexIrBuilderShape,
   KindaPretty,
 } from '../../util';
 
@@ -32,7 +32,7 @@ export interface ClientModel<
   IsRDS extends boolean,
   T extends ModelTypeParamShape,
   K extends keyof Bag & string,
-> extends ClientSchemaProperty {
+> extends ClientSchemaPropertyType {
   __entityType: 'model';
   // Adding prettify here breaks a bunch of things. Need to revisit Prettify impl.
   // Probably work investigating a sprinkling of shallow prettification around instead.
@@ -52,7 +52,7 @@ export interface ClientModel<
   };
 }
 
-type ClientFields<
+export type ClientFields<
   Bag extends Record<string, unknown>,
   Metadata extends SchemaMetadata<any>,
   IsRDS extends boolean,
@@ -62,7 +62,7 @@ type ClientFields<
   AuthFields<Metadata, T> &
   Omit<SystemFields<IsRDS>, keyof ResolveFields<Bag, T['fields']>>;
 
-type SystemFields<IsRDS extends boolean> = IsRDS extends false
+export type SystemFields<IsRDS extends boolean> = IsRDS extends false
   ? {
       readonly createdAt: string;
       readonly updatedAt: string;
@@ -70,7 +70,7 @@ type SystemFields<IsRDS extends boolean> = IsRDS extends false
   : object;
 
 // refs are not being resolved here ... yet.
-type ModelIdentifier<
+export type ModelIdentifier<
   Bag extends Record<string, unknown>,
   T extends ModelTypeParamShape,
 > = ResolveIdentifierFields<
@@ -87,24 +87,24 @@ type ModelIdentifier<
  * `readonly id: string` is being injected IF AND ONLY IF another `id` field is
  * not already present on the model.
  */
-type ImplicitIdentifier<T extends ModelTypeParamShape> =
+export type ImplicitIdentifier<T extends ModelTypeParamShape> =
   T['identifier']['pk'] extends ModelDefaultIdentifier['pk']
     ? 'id' extends keyof T['fields']
       ? unknown
       : ModelDefaultIdentifier['pk']
     : unknown;
 
-type ResolveIdentifierFields<Model, IdentifierFields> = {
+export type ResolveIdentifierFields<Model, IdentifierFields> = {
   [K in keyof IdentifierFields]: K extends keyof Model ? Model[K] : string;
 };
 
-type If<
+export type If<
   ConditionResult extends boolean,
   IfTrueValue,
   IfFalseValue = unknown,
 > = ConditionResult extends true ? IfTrueValue : IfFalseValue;
 
-type Not<T extends boolean> = T extends true ? false : true;
+export type Not<T extends boolean> = T extends true ? false : true;
 
 /**
  * Models with composite PKs defined are expected to contain the model's pk, sk, and sortDirection properties in the `options` param
@@ -119,7 +119,7 @@ export type ListOptionsPkParams<
   ? unknown
   : Prettify<Partial<IndexQueryInput<Bag, T['identifier']>>>;
 
-type AuthFields<
+export type AuthFields<
   SchemaMeta extends SchemaMetadata<any>,
   Model extends ModelTypeParamShape,
 > = (Model['authorization'][number] extends never
@@ -131,7 +131,7 @@ type AuthFields<
     : ImpliedAuthFields<Model['authorization'][number]>) &
   ImpliedAuthFieldsFromFields<Model>;
 
-type ImpliedAuthFieldsFromFields<T> = UnionToIntersection<
+export type ImpliedAuthFieldsFromFields<T> = UnionToIntersection<
   T extends ModelTypeParamShape
     ? T['fields'][keyof T['fields']] extends
         | ModelField<any, any, infer Auth>
@@ -144,7 +144,7 @@ type ImpliedAuthFieldsFromFields<T> = UnionToIntersection<
     : object
 >;
 
-type NestedTypes<
+export type NestedTypes<
   Bag extends Record<string, unknown>,
   T extends ModelTypeParamShape,
 > = {
@@ -162,14 +162,14 @@ type NestedTypes<
     : never;
 };
 
-type IndexQueryMethodsFromIR<
+export type IndexQueryMethodsFromIR<
   Bag extends Record<string, unknown>,
   Indexes,
   ModelName extends string,
   Res = unknown, // defaulting `unknown` because it gets absorbed in an intersection, e.g. `{a: 1} & unknown` => `{a: 1}`
 > = Indexes extends [
-  infer A extends SecondaryIndexIrShape,
-  ...infer B extends SecondaryIndexIrShape[],
+  infer A extends SecondaryIndexIrBuilderShape,
+  ...infer B extends SecondaryIndexIrBuilderShape[],
 ]
   ? IndexQueryMethodsFromIR<
       Bag,
@@ -179,9 +179,9 @@ type IndexQueryMethodsFromIR<
     >
   : Res;
 
-type IndexQueryMethodSignature<
+export type IndexQueryMethodSignature<
   Bag extends Record<string, unknown>,
-  Idx extends SecondaryIndexIrShape,
+  Idx extends SecondaryIndexIrBuilderShape,
   ModelName extends string,
 > = Record<
   IsEmptyStringOrNever<Idx['queryField']> extends false
@@ -200,7 +200,7 @@ type IndexQueryMethodSignature<
  */
 export type IndexQueryInput<
   Bag extends Record<string, unknown>,
-  Idx extends PrimaryIndexIrShape,
+  Idx extends PrimaryIndexIrBuilderShape,
 > = {
   [PKField in keyof Idx['pk']]: Idx['pk'][PKField] extends `${deferredRefResolvingPrefix}${infer R}`
     ? 'type' extends keyof Bag[R]
@@ -240,9 +240,9 @@ export type IndexQueryInput<
 /**
  * All required fields and relational fields, exclude readonly fields
  */
-type MutationInput<
+export type MutationInputInternal<
   Model extends ClientModel<any, any, any, any, any>,
-  WritableFields = Pick<Model['type'], WritableKeys<Model['type']>>,
+  WritableFields = Pick<Model['type'], WritableKeysInternal<Model['type']>>,
 > = WithNullablesAsOptionalRecursively<{
   [Prop in keyof WritableFields as WritableFields[Prop] extends (
     ...args: any
@@ -251,11 +251,11 @@ type MutationInput<
     : Prop]: WritableFields[Prop];
 }>;
 
-type IfEquals<X, Y, A = X, B = never> =
+export type IfEquals<X, Y, A = X, B = never> =
   (<T>() => T extends X ? 1 : 2) extends <T>() => T extends Y ? 1 : 2 ? A : B;
 
 // Excludes readonly fields from Record type
-type WritableKeys<T> = {
+export type WritableKeysInternal<T> = {
   [P in keyof T]-?: IfEquals<
     { [Q in P]: T[P] },
     { -readonly [Q in P]: T[P] },
@@ -263,11 +263,11 @@ type WritableKeys<T> = {
   >;
 }[keyof T];
 
-type MinusReadonly<T> = {
+export type MinusReadonly<T> = {
   -readonly [K in keyof T]: T[K];
 };
 
-type WithNullablesAsOptionalRecursively<T> = T extends
+export type WithNullablesAsOptionalRecursively<T> = T extends
   | Array<any>
   | ((...args: any) => any)
   ? T
@@ -286,11 +286,14 @@ type WithNullablesAsOptionalRecursively<T> = T extends
 /**
  * All identifiers and fields used to create a model
  */
-type CreateModelInput<Model extends ClientModel<any, any, any, any, any>> =
+export type CreateModelInput<
+  Model extends ClientModel<any, any, any, any, any>,
+> =
   Equal<MinusReadonly<Model['identifier']>, { id: string }> extends true
     ? Partial<MinusReadonly<Model['identifier']>> &
-        Omit<MutationInput<Model>, 'id'>
-    : MutationInput<Model>;
+        Omit<MutationInputInternal<Model>, 'id'>
+    : MutationInputInternal<Model>;
 
-type UpdateModelInput<Model extends ClientModel<any, any, any, any, any>> =
-  MinusReadonly<Model['identifier']> & Partial<MutationInput<Model>>;
+export type UpdateModelInput<
+  Model extends ClientModel<any, any, any, any, any>,
+> = MinusReadonly<Model['identifier']> & Partial<MutationInputInternal<Model>>;

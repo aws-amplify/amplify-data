@@ -3,13 +3,13 @@ import {
   type ExcludeEmpty,
 } from '@aws-amplify/data-schema-types';
 import { __modelMeta__ } from '../runtime/';
-import type { PrimaryIndexIrShape } from '../util';
+import type { PrimaryIndexIrBuilderShape } from '../util';
 import type { ModelType } from '../ModelType';
 import type { ModelRelationalFieldParamShape } from '../ModelRelationalField';
 
 export type ModelIdentifier<T> = {
   [Property in keyof T]: T[Property] extends ModelType<infer R, any>
-    ? R['identifier'] extends PrimaryIndexIrShape
+    ? R['identifier'] extends PrimaryIndexIrBuilderShape
       ? { identifier: R['identifier'] }
       : never
     : never;
@@ -26,7 +26,10 @@ export type ModelSecondaryIndexes<T> = {
 export type RelationalMetadata<
   ResolvedSchema,
   ResolvedFields extends Record<string, unknown>,
-  IdentifierMeta extends Record<string, { identifier: PrimaryIndexIrShape }>,
+  IdentifierMeta extends Record<
+    string,
+    { identifier: PrimaryIndexIrBuilderShape }
+  >,
 > = UnionToIntersection<
   ExcludeEmpty<
     {
@@ -78,12 +81,15 @@ export type RelationalMetadata<
 
 type ExtractModelIdentifier<
   ModelName,
-  IdentifierMeta extends Record<string, { identifier: PrimaryIndexIrShape }>,
+  IdentifierMeta extends Record<
+    string,
+    { identifier: PrimaryIndexIrBuilderShape }
+  >,
 > = ModelName extends keyof IdentifierMeta ? IdentifierMeta[ModelName] : never;
 
 type NormalizeInputFields<
   ModelFields,
-  IdentifierMeta extends { identifier: PrimaryIndexIrShape },
+  IdentifierMeta extends { identifier: PrimaryIndexIrBuilderShape },
   IdFields extends keyof ModelFields =
     | (keyof IdentifierMeta['identifier']['pk'] & keyof ModelFields)
     | (IdentifierMeta['identifier']['sk'] extends never

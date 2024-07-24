@@ -19,29 +19,29 @@ export const queryBrand = 'queryCustomOperation';
 export const mutationBrand = 'mutationCustomOperation';
 export const subscriptionBrand = 'subscriptionCustomOperation';
 
-type CustomOperationBrand =
+export type CustomOperationBrand =
   | typeof queryBrand
   | typeof mutationBrand
   | typeof subscriptionBrand;
 
-type CustomArguments = Record<string, BaseModelField | EnumType>;
+export type CustomArguments = Record<string, BaseModelField | EnumType>;
 
-type SubscriptionSource = RefType<any, any>;
-type InternalSubscriptionSource = InternalRef;
+export type SubscriptionSource = RefType<any, any>;
+export type InternalSubscriptionSource = InternalRef;
 
-type CustomReturnType = RefType<any> | CustomType<any>;
-type InternalCustomArguments = Record<string, InternalField>;
-type InternalCustomReturnType = InternalRef;
-type HandlerInputType = FunctionHandler[] | CustomHandler[] | Handler;
+export type CustomReturnType = RefType<any> | CustomType<any>;
+export type InternalCustomArguments = Record<string, InternalField>;
+export type InternalCustomReturnType = InternalRef;
+export type HandlerInputType = FunctionHandler[] | CustomHandler[] | Handler;
 
 export const CustomOperationNames = [
   'Query',
   'Mutation',
   'Subscription',
 ] as const;
-type CustomOperationName = (typeof CustomOperationNames)[number];
+export type CustomOperationName = (typeof CustomOperationNames)[number];
 
-type CustomData = {
+export type CustomData = {
   arguments: CustomArguments;
   returnType: CustomReturnType | null;
   authorization: Authorization<any, any, any>[];
@@ -50,7 +50,7 @@ type CustomData = {
   subscriptionSource: SubscriptionSource[];
 };
 
-type InternalCustomData = CustomData & {
+export type InternalCustomData = CustomData & {
   arguments: InternalCustomArguments;
   returnType: InternalCustomReturnType;
   subscriptionSource: InternalSubscriptionSource[];

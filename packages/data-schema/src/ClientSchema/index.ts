@@ -51,7 +51,7 @@ export type InternalClientSchema<
       >
     : never;
 
-type ClientSchemaProperty<
+export type ClientSchemaProperty<
   T extends ModelSchemaContents,
   Metadata extends SchemaMetadata<any>,
   IsRDS extends boolean,
@@ -71,10 +71,10 @@ type ClientSchemaProperty<
           ? RemapModel<T, Metadata, IsRDS, T[K], K>
           : never;
 
-type RemapEnum<_T extends ModelSchemaContents, E> =
+export type RemapEnum<_T extends ModelSchemaContents, E> =
   E extends EnumType<infer values> ? ClientEnum<values> : never;
 
-type RemapCustomType<
+export type RemapCustomType<
   T extends ModelSchemaContents,
   Metadata extends SchemaMetadata<any>,
   IsRDS extends boolean,
@@ -84,7 +84,7 @@ type RemapCustomType<
     ? ClientCustomType<InternalClientSchema<T, Metadata, IsRDS>, CT>
     : never;
 
-type RemapCustomOperation<
+export type RemapCustomOperation<
   T extends ModelSchemaContents,
   Metadata extends SchemaMetadata<any>,
   IsRDS extends boolean,
@@ -94,7 +94,7 @@ type RemapCustomOperation<
     ? ClientCustomOperation<InternalClientSchema<T, Metadata, IsRDS>, CO>
     : never;
 
-type RemapModel<
+export type RemapModel<
   T extends ModelSchemaContents,
   Metadata extends SchemaMetadata<any>,
   IsRDS extends boolean,
@@ -111,10 +111,10 @@ type RemapModel<
       >
     : never;
 
-type GetInternalClientSchema<Schema> =
+export type GetInternalClientSchema<Schema> =
   Schema extends GenericModelSchema<any> ? InternalClientSchema<Schema> : never;
 
-type CombinedClientSchemas<
+export type CombinedClientSchemas<
   Schemas extends CombinedModelSchema<any>['schemas'],
 > = {
   [Index in keyof Schemas]: Index extends CombinedSchemaIndexesUnion
@@ -128,7 +128,7 @@ type CombinedClientSchemas<
  *
  * @typeParam Combined - A container of multiple schemas
  *
- * @internal @typeParam ClientSchemas - The tuple of client schemas to combine
+ * @typeParam ClientSchemas - The tuple of client schemas to combine
  */
 export type InternalCombinedSchema<
   Combined extends CombinedModelSchema<any>,

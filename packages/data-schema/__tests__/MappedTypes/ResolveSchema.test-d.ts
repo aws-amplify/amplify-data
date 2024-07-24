@@ -3,7 +3,7 @@ import { a } from '../../src/index';
 import { ResolveSchema } from '../../src/MappedTypes/ResolveSchema';
 import type { RefType, RefTypeParamShape } from '../../src/RefType';
 import { Authorization } from '../../src/Authorization';
-import { Json, __auth } from '../../src/ModelField';
+import { Json, __modelFieldAuth } from '../../src/ModelField';
 
 describe('ResolveSchema Mapped Type', () => {
   test('Basic schema', () => {

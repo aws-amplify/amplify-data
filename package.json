@@ -19,6 +19,7 @@
     "check:type-perf": "tsx scripts/check-ts-benches.ts",
     "check:package-lock": "tsx scripts/check-package-lock.ts",
     "docs": "turbo run docs",
+    "docs:full": "turbo run docs:full",
     "test": "turbo run test && npm run test:scripts",
     "test:scripts": "npx jest scripts/",
     "lint": "turbo run lint",

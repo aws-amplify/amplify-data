@@ -1,6 +1,6 @@
 import { Brand, brand } from './util';
 
-const brandName = 'modelIndexType';
+export const modelIndexBrandName = 'modelIndexType';
 
 export type ModelIndexData = {
   partitionKey: string;
@@ -39,7 +39,7 @@ export type ModelIndexType<
   },
   K
 > &
-  Brand<typeof brandName>;
+  Brand<typeof modelIndexBrandName>;
 
 function _modelIndex<
   ModelFieldKeys extends string,
@@ -70,7 +70,7 @@ function _modelIndex<
 
       return this;
     },
-    ...brand(brandName),
+    ...brand(modelIndexBrandName),
   } as ModelIndexType<ModelFieldKeys, PK, SK, QueryField>;
 
   return { ...builder, data } as InternalModelIndexType as ModelIndexType<

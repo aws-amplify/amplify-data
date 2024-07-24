@@ -6,9 +6,9 @@ import type { brandSymbol } from './util/Brand.js';
 /**
  * Used to "attach" auth types to ModelField without exposing them on the builder.
  */
-export const __auth = Symbol('__auth');
+export const __modelFieldAuth = Symbol('__auth');
 
-const brandName = 'modelField';
+export const modelFieldBrandName = 'modelField';
 
 export enum ModelFieldType {
   Id = 'ID',
@@ -39,7 +39,7 @@ type FieldMeta = {
   lastInvokedMethod: null | methodKeyOf<ModelField>;
 };
 
-type FieldData = {
+export type FieldData = {
   fieldType: ModelFieldType;
   required: boolean;
   array: boolean;
@@ -48,7 +48,13 @@ type FieldData = {
   authorization: Authorization<any, any, any>[];
 };
 
-type ModelFieldTypeParamInner = string | number | boolean | Date | Json | null;
+export type ModelFieldTypeParamInner =
+  | string
+  | number
+  | boolean
+  | Date
+  | Json
+  | null;
 
 // A precise, recursive Json type blows the type calculation stack without installing
 // explicit `Json extends T ? short-circuit : ...` type checks all over the place.
@@ -92,8 +98,8 @@ export type ModelField<
 > = Omit<
   {
     // This is a lie. This property is never set at runtime. It's just used to smuggle auth types through.
-    [__auth]?: Auth;
-    [brandSymbol]: typeof brandName;
+    [__modelFieldAuth]?: Auth;
+    [brandSymbol]: typeof modelFieldBrandName;
 
     /**
      * Marks a field as required.
@@ -191,7 +197,7 @@ function _field<T extends ModelFieldTypeParamOuter>(fieldType: ModelFieldType) {
 
       return this;
     },
-    ...brand(brandName),
+    ...brand(modelFieldBrandName),
   } as ModelField<T>;
 
   // this double cast gives us a Subtyping Constraint i.e., hides `data` from the public API,

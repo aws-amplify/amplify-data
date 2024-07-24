@@ -14,7 +14,7 @@ function buildHandler<B extends string>(brandName: B): Brand<B> {
   return brand(brandName);
 }
 
-type AllHandlers =
+export type AllHandlers =
   | InlineSqlHandler
   | SqlReferenceHandler
   | CustomHandler
@@ -28,7 +28,7 @@ export function getHandlerData<H extends AllHandlers>(
 
 //#region handler.inlineSql
 
-const inlineSqlBrand = 'inlineSql';
+export const inlineSqlBrand = 'inlineSql';
 
 export type InlineSqlHandler = { [dataSymbol]: string } & Brand<
   typeof inlineSqlBrand
@@ -42,7 +42,7 @@ export function inlineSql(sql: string): InlineSqlHandler {
 
 //#region handler.sqlReference
 
-const sqlReferenceBrand = 'sqlReference';
+export const sqlReferenceBrand = 'sqlReference';
 
 export type SqlReferenceHandlerData = {
   entry: string;
@@ -66,7 +66,7 @@ export function sqlReference(sqlFilePath: string): SqlReferenceHandler {
 
 //#region handler.custom
 
-type CustomHandlerInput = {
+export type CustomHandlerInput = {
   /**
    * The data source used by the function.
    * Can reference a model in the schema with a.ref('ModelName') or any string data source name configured in your API
@@ -86,7 +86,7 @@ export type CustomHandlerData = CustomHandlerInput & {
   stack: string | undefined;
 };
 
-const customHandlerBrand = 'customHandler';
+export const customHandlerBrand = 'customHandler';
 
 export type CustomHandler = { [dataSymbol]: CustomHandlerData } & Brand<
   typeof customHandlerBrand
@@ -134,7 +134,7 @@ export function custom(customHandler: CustomHandlerInput): CustomHandler {
 
 export type FunctionHandlerData = DefineFunction | string;
 
-const functionHandlerBrand = 'functionHandler';
+export const functionHandlerBrand = 'functionHandler';
 
 export type FunctionHandler = {
   [dataSymbol]: FunctionHandlerData;

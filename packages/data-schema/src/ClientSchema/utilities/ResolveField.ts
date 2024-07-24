@@ -34,7 +34,7 @@ export type ResolveFields<Bag extends Record<string, any>, T> = ShallowPretty<
 // down the line *as-needed*. Performing this *here* is somehow essential to getting 2 unit
 // tests to pass, but hurts performance significantly. E.g., p50/operations/p50-prod-CRUDL.bench.ts
 // goes from `783705` to `1046408`.
-type ShallowPretty<T> = {
+export type ShallowPretty<T> = {
   [K in keyof T]: T[K];
 };
 
@@ -51,7 +51,7 @@ export type ResolveIndividualField<Bag extends Record<string, any>, T> =
             ? values[number] | null
             : never;
 
-type ResolveRelationship<
+export type ResolveRelationship<
   Bag extends Record<string, any>,
   RelationshipShape extends ModelRelationalFieldParamShape,
 > = LazyLoader<
@@ -61,7 +61,7 @@ type ResolveRelationship<
   RelationshipShape['array']
 >;
 
-type IsRequired<T> =
+export type IsRequired<T> =
   T extends BaseModelField<infer FieldShape>
     ? null extends FieldShape
       ? false
@@ -74,6 +74,6 @@ type IsRequired<T> =
           ? false
           : never;
 
-type IsRefRequired<T extends RefTypeParamShape> = T['array'] extends true
+export type IsRefRequired<T extends RefTypeParamShape> = T['array'] extends true
   ? T['arrayRequired']
   : T['valueRequired'];

@@ -1,6 +1,6 @@
 import { ModelIndexType } from '../ModelIndex';
 
-type ModelIndexTypeShape = ModelIndexType<any, any, any, any, any>;
+export type ModelIndexTypeShape = ModelIndexType<any, any, any, any, any>;
 
 export type PrimaryIndexFieldsToIR<
   IdxFields extends ReadonlyArray<string>,
@@ -24,14 +24,14 @@ export type PrimaryIndexFieldsToIR<
     }
   : never;
 
-type ArrayShift<Arr extends ReadonlyArray<any>> = Arr extends readonly [
+export type ArrayShift<Arr extends ReadonlyArray<any>> = Arr extends readonly [
   infer _Shift,
   ...infer Rest,
 ]
   ? Rest
   : never;
 
-type CompositeSkFieldName<
+export type CompositeSkFieldName<
   SK,
   Result extends string = '',
 > = SK extends readonly [infer A extends string, ...infer B extends string[]]
@@ -69,7 +69,10 @@ export type SecondaryIndexToIR<
  *
  * @remarks - the IR type alias is defined as SecondaryIndexIrShape in data-schema-types
  */
-type SingleIndexIrFromType<Idx extends ModelIndexTypeShape, ResolvedFields> =
+export type SingleIndexIrFromType<
+  Idx extends ModelIndexTypeShape,
+  ResolvedFields,
+> =
   Idx extends ModelIndexType<
     any,
     infer PK extends string,
@@ -103,7 +106,7 @@ type SingleIndexIrFromType<Idx extends ModelIndexTypeShape, ResolvedFields> =
  * @example
  * QueryFieldLabelFromTuple<['viewCount', 'createdAt'], 'Title'> => 'TitleAndViewCountAndCreatedAt'
  */
-type QueryFieldLabelFromTuple<
+export type QueryFieldLabelFromTuple<
   SK,
   StrStart extends string = '',
 > = SK extends readonly [infer A extends string, ...infer B extends string[]]
@@ -121,7 +124,7 @@ type QueryFieldLabelFromTuple<
  *   createdAt: string;
  * }
  */
-type ResolvedSortKeyFields<SK, ResolvedFields> = SK extends readonly [
+export type ResolvedSortKeyFields<SK, ResolvedFields> = SK extends readonly [
   infer A extends string,
   ...infer B extends string[],
 ]

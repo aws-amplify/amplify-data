@@ -11,5 +11,5 @@ export type ModelTypes<Schema extends Record<any, any>, Context extends ContextT
     [ModelName in Exclude<keyof Schema, keyof CustomOperations<Schema, 'Mutation' | 'Query' | 'Subscription', Context, ModelMeta>>]: ModelName extends string ? Schema[ModelName] extends Record<string, unknown> ? Context extends 'CLIENT' ? ModelTypesClient<Schema[ModelName], ModelMeta[ModelName]> : Context extends 'COOKIES' ? ModelTypesSSRCookies<Schema[ModelName], ModelMeta[ModelName]> : Context extends 'REQUEST' ? ModelTypesSSRRequest<Schema[ModelName], ModelMeta[ModelName]> : never : never : never;
 };
 ```
-**References:** [ExtractModelMeta](./data-schema-types.extractmodelmeta.md)<!-- -->, [CustomOperations](./data-schema-types.customoperations.md)
+**References:** [ContextType](./data-schema-types.contexttype.md)<!-- -->, [ExtractModelMeta](./data-schema-types.extractmodelmeta.md)<!-- -->, [CustomOperations](./data-schema-types.customoperations.md)<!-- -->, [ModelTypesSSRRequest](./data-schema-types.modeltypesssrrequest.md)
 

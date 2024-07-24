@@ -14,10 +14,10 @@
    */
    "messages": {
     "extractorMessageReporting": {
-      "ae-forgotten-export": {
-        "addToApiReportFile": true,
-        "logLevel": "error"
-      }
+      // "ae-forgotten-export": {
+      //   "addToApiReportFile": true,
+      //   "logLevel": "error"
+      // }
     }
   }
 }

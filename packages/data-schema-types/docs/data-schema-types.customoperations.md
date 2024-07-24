@@ -15,5 +15,5 @@ export type CustomOperations<Schema extends Record<any, any>, OperationType exte
     }[Context];
 };
 ```
-**References:** [ExtractModelMeta](./data-schema-types.extractmodelmeta.md)<!-- -->, [ObservedReturnValue](./data-schema-types.observedreturnvalue.md)<!-- -->, [SingularReturnValue](./data-schema-types.singularreturnvalue.md)
+**References:** [ContextType](./data-schema-types.contexttype.md)<!-- -->, [ExtractModelMeta](./data-schema-types.extractmodelmeta.md)<!-- -->, [CustomOperationFnParams](./data-schema-types.customoperationfnparams.md)<!-- -->, [ObservedReturnValue](./data-schema-types.observedreturnvalue.md)<!-- -->, [SingularReturnValue](./data-schema-types.singularreturnvalue.md)
 

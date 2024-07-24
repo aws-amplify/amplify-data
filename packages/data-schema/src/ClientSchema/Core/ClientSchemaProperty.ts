@@ -1,4 +1,4 @@
-export interface ClientSchemaProperty {
+export interface ClientSchemaPropertyType {
   __entityType:
     | 'model'
     | 'enum'

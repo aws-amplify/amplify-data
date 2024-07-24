@@ -98,6 +98,15 @@ Description
 </td></tr>
 <tr><td>
 
+[ContextType](./data-schema-types.contexttype.md)
+
+
+</td><td>
+
+
+</td></tr>
+<tr><td>
+
 [CustomHeaders](./data-schema-types.customheaders.md)
 
 
@@ -110,6 +119,26 @@ Custom headers that can be passed either to the client or to individual model op
 <tr><td>
 
 [CustomMutations](./data-schema-types.custommutations.md)
+
+
+</td><td>
+
+
+</td></tr>
+<tr><td>
+
+[CustomOperationFnParams](./data-schema-types.customoperationfnparams.md)
+
+
+</td><td>
+
+Generates Custom Operations function params based on whether .arguments() were specified in the schema builder
+
+
+</td></tr>
+<tr><td>
+
+[CustomOperationMethodOptions](./data-schema-types.customoperationmethodoptions.md)
 
 
 </td><td>
@@ -410,6 +439,26 @@ Generates custom selection set type with up to 6 levels of nested fields
 </td></tr>
 <tr><td>
 
+[ModelTypesSSRRequest](./data-schema-types.modeltypesssrrequest.md)
+
+
+</td><td>
+
+
+</td></tr>
+<tr><td>
+
+[MutationInput](./data-schema-types.mutationinput.md)
+
+
+</td><td>
+
+All required fields and relational fields, exclude readonly fields
+
+
+</td></tr>
+<tr><td>
+
 [NotAny](./data-schema-types.notany.md)
 
 
@@ -543,6 +592,15 @@ Replaces the value of a key in a complex generic type param
 <tr><td>
 
 [UnwrapArray](./data-schema-types.unwraparray.md)
+
+
+</td><td>
+
+
+</td></tr>
+<tr><td>
+
+[WritableKeys](./data-schema-types.writablekeys.md)
 
 
 </td><td>

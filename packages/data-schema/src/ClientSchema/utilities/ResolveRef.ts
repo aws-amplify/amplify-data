@@ -19,7 +19,7 @@ export type ResolveRef<
   >
 >;
 
-type ApplyRequiredness<
+export type ApplyRequiredness<
   Value,
   MakeRequired extends boolean,
 > = MakeRequired extends true ? Exclude<Value, null> : Value | null | undefined;
@@ -28,7 +28,7 @@ type ApplyRequiredness<
  * Converts the resolved RefType Value type into Array<> according to the
  * `array` and `arrayRequired` properties of the RefType
  */
-type ResolveRefValueArrayTraits<
+export type ResolveRefValueArrayTraits<
   Ref extends RefTypeParamShape,
   Value,
 > = Ref['array'] extends false
