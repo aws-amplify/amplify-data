@@ -23,15 +23,21 @@ const deleteAll = async (client: Client) => {
   console.log('result of cleanup:', listAfterDelete);
 };
 
+/**
+ * Subscription returned by the client.
+ * Set here so we can unsubscribe in `afterEach
+ */
 let sub: any;
+
+// For collecting subscriptions messages to assert against:
 let subResult: any[] = [];
 
 describe('Subscriptions', () => {
   beforeAll(() => {
-    establishWebsocket({ disableConnectionStateLogging: true });
+    establishWebsocket({});
   });
   beforeEach(() => {
-    client = configureAmplifyAndGenerateClient({ disableDebugLogging: true });
+    client = configureAmplifyAndGenerateClient({});
   });
   afterEach(async () => {
     subResult = [];

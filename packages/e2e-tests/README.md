@@ -23,20 +23,3 @@ This package contains automated tests for validating functionality E2E in Node.
 
 Add a check to clean up potential orphaned records after all tests have run
 (see https://jestjs.io/docs/configuration#globalteardown-string).
-
-## [Known Issue] Jest open handles warning
-
-Tests currently emit the following warning:
-
-```bash
-A worker process has failed to exit gracefully and has been force exited. This is likely caused by tests leaking due to improper teardown. Try running with --detectOpenHandles to find leaks. Active timers can also cause this, ensure that .unref() was called on them.
-```
-
-When running with `--detectOpenHandles`, the following is reported:
-
-\*Note: must use `try/catch` to actually detect, otherwise detection will simply hang.
-
-The problem is related to Amplify Core's `detectFramework` function. Node is
-not recognized (and not officially supported).
-
-TODO: Investigate / fix this issue.

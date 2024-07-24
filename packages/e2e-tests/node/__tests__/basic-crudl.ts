@@ -21,7 +21,7 @@ const deleteAll = async (client: Client) => {
   console.log('result of cleanup:', listAfterDelete);
 };
 
-describe.skip('Basic CRUDL', () => {
+describe('Basic CRUDL', () => {
   beforeEach(() => {
     client = configureAmplifyAndGenerateClient({});
   });

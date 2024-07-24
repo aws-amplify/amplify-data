@@ -43,7 +43,6 @@ export const configureAmplifyAndGenerateClient = ({
     ConsoleLogger.LOG_LEVEL = 'DEBUG';
 
     Hub.listen('core', (data: any) => {
-      console.log('CORE HUB-------------------------------', data);
       if (data.payload.event === 'configure') {
         console.log('API configuration details:', data.payload.data.API);
       }
@@ -52,17 +51,6 @@ export const configureAmplifyAndGenerateClient = ({
 
   return generateClient<Schema>(apiClientOptions);
 };
-
-/**
- * Util that takes model operation response and throws an error if errors
- * are present, or if the data is undefined.
- * @param response - model operation response
- * @param operation - operation name
- * @returns data from response
- */
-export async function pause(ms: number) {
-  return new Promise((resolve) => setTimeout(resolve, ms));
-}
 
 type EstablishWebsocketParams = {
   disableConnectionStateLogging?: boolean;
@@ -86,7 +74,6 @@ export const establishWebsocket = ({
     // https://docs.amplify.aws/gen1/javascript/build-a-backend/graphqlapi/subscribe-data/#subscription-connection-status-updates
     Hub.listen('api', (data: any) => {
       const { payload } = data;
-      console.log('ALL API HUB-----------------', data);
       if (payload.event === CONNECTION_STATE_CHANGE) {
         const connectionState = payload.data.connectionState as ConnectionState;
         console.log(
@@ -135,6 +122,7 @@ export const waitForSubscriptionAck = () =>
         console.log('Subscription ack received:', payload.data);
         // Stop listening for msgs once we receive the ack:
         cancel();
+        // Resolve so test execution can continue:
         resolve();
       }
     });
