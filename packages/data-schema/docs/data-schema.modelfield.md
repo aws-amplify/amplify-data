@@ -4,6 +4,8 @@
 
 ## ModelField type
 
+INTERNAL: This type is exported to allow users to compile declaration (\*.d.ts) files. Direct use of this type may result in changes that break you build across minor versions.
+
 Public API for the chainable builder methods exposed by Model Field. The type is narrowing e.g., after calling .array() it will be omitted from intellisense suggestions
 
 **Signature:**

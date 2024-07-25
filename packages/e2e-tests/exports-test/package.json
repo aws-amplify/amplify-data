@@ -6,11 +6,12 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "e2e": "npm run install:no-lock && npm run test",
+    "e2e": "npm run install:no-lock && npm run test && npm run confirm-declarations-built",
     "build:esm-cjs": "rollup -c rollup.config.mjs",
     "test": "rimraf dist && npm run build:esm-cjs",
     "clean": "rm -rf node_modules package-lock.json",
-    "install:no-lock": "npm i --no-package-lock"
+    "install:no-lock": "npm i --no-package-lock",
+    "confirm-declarations-built": "ls dist/esm/*.d.ts 2>/dev/null || (tput setaf 1 && echo 'declaration must be enabled in tsconfig.json for this test to be meaningful' && exit 1)"
   },
   "devDependencies": {
     "@aws-amplify/backend": "^1.0.4",

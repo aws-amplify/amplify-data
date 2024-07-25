@@ -101,6 +101,10 @@ export type BaseSchema<
 export type GenericModelSchema<T extends ModelSchemaParamShape> =
   BaseSchema<T> & Brand<typeof rdsSchemaBrandName | typeof ddbSchemaBrandName>;
 
+/**
+ * INTERNAL: This type is exported to allow users to compile declaration (*.d.ts) files.
+ * Direct use of this type may result in changes that break you build across minor versions.
+ */
 export type ModelSchema<
   T extends ModelSchemaParamShape,
   UsedMethods extends 'authorization' | 'relationships' = never,

@@ -65,6 +65,10 @@ export type CustomOperationParamShape = {
   handlers: Handler | null;
 };
 
+/**
+ * INTERNAL: This type is exported to allow users to compile declaration (*.d.ts) files.
+ * Direct use of this type may result in changes that break you build across minor versions.
+ */
 export type CustomOperation<
   T extends CustomOperationParamShape,
   K extends keyof CustomOperation<T> = never,
@@ -210,7 +214,7 @@ export type QueryCustomOperation = CustomOperation<
  *     .authorization(allow => [allow.publicApiKey()])
  *     // 3. set the function has the handler
  *     .handler(a.handler.function(echoHandler)),
- * 
+ *
  *   EchoResponse: a.customType({
  *     content: a.string(),
  *     executionDuration: a.float()
@@ -277,9 +281,9 @@ export type SubscriptionCustomOperation = CustomOperation<
  * // Subscribe to incoming messages
  * receive: a.subscription()
  *   // subscribes to the 'publish' mutation
- *   .for(a.ref('publish')) 
+ *   .for(a.ref('publish'))
  *   // subscription handler to set custom filters
- *   .handler(a.handler.custom({entry: './receive.js'})) 
+ *   .handler(a.handler.custom({entry: './receive.js'}))
  *   // authorization rules as to who can subscribe to the data
  *   .authorization(allow => [allow.publicApiKey()]),
  * @returns a custom subscription

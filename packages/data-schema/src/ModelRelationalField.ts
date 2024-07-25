@@ -9,6 +9,10 @@ export const __auth = Symbol('__auth');
 
 const brandName = 'modelRelationalField';
 
+/**
+ * INTERNAL: This type is exported to allow users to compile declaration (*.d.ts) files.
+ * Direct use of this type may result in changes that break you build across minor versions.
+ */
 export enum ModelRelationshipTypes {
   hasOne = 'hasOne',
   hasMany = 'hasMany',
@@ -68,6 +72,10 @@ type ModelRelationalFieldFunctions<
   ): ModelRelationalField<T, K | 'authorization', K, AuthRuleType>;
 };
 
+/**
+ * INTERNAL: This type is exported to allow users to compile declaration (*.d.ts) files.
+ * Direct use of this type may result in changes that break you build across minor versions.
+ */
 export type ModelRelationalField<
   T extends ModelRelationalFieldParamShape,
   // RM adds structural separation with ModelField; easier to identify it when mapping to ClientTypes
@@ -169,6 +177,10 @@ function _modelRelationalField<
   >;
 }
 
+/**
+ * INTERNAL: This type is exported to allow users to compile declaration (*.d.ts) files.
+ * Direct use of this type may result in changes that break you build across minor versions.
+ */
 export type ModelRelationalTypeArgFactory<
   RM extends string,
   RT extends RelationshipTypes,
@@ -235,7 +247,7 @@ export function hasOne<RM extends string>(
  *     team: a.belongsTo('Team', 'teamId'),
  *   })
  *   .authorization(allow => [allow.publicApiKey()]),
- * 
+ *
  *   Team: a.model({
  *     mantra: a.string().required(),
  *     // 3. Create a hasMany relationship with the reference field
@@ -268,8 +280,8 @@ export function hasMany<RM extends string>(
  * Use `belongsTo()` to create a field to query the related `hasOne()` or `hasMany()` relationship.
  * The belongsTo() method requires that a hasOne() or hasMany() relationship already exists from
  * parent to the related model.
- * 
- * @example 
+ *
+ * @example
  * // one-to-many relationship
  * const schema = a.schema({
  *   Member: a.model({
@@ -280,7 +292,7 @@ export function hasMany<RM extends string>(
  *     team: a.belongsTo('Team', 'teamId'),
  *   })
  *   .authorization(allow => [allow.publicApiKey()]),
- * 
+ *
  *   Team: a.model({
  *     mantra: a.string().required(),
  *     // 3. Create a hasMany relationship with the reference field

@@ -201,6 +201,10 @@ export type BaseModelType<T extends ModelTypeParamShape = ModelTypeParamShape> =
 
 export type UsableModelTypeKey = methodKeyOf<ModelType>;
 
+/**
+ * INTERNAL: This type is exported to allow users to compile declaration (*.d.ts) files.
+ * Direct use of this type may result in changes that break you build across minor versions.
+ */
 export type ModelType<
   T extends ModelTypeParamShape = ModelTypeParamShape,
   UsedMethod extends UsableModelTypeKey = never,
@@ -355,6 +359,10 @@ export const isSchemaModelType = (
   );
 };
 
+/**
+ * INTERNAL: This type is exported to allow users to compile declaration (*.d.ts) files.
+ * Direct use of this type may result in changes that break you build across minor versions.
+ */
 export type ModelDefaultIdentifier = {
   pk: { readonly id: string };
   sk: never;

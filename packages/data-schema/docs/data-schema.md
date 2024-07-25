@@ -24,6 +24,8 @@ Description
 
 </td><td>
 
+INTERNAL: This type is exported to allow users to compile declaration (\*.d.ts) files. Direct use of this type may result in changes that break you build across minor versions.
+
 
 </td></tr>
 </tbody></table>
@@ -47,6 +49,8 @@ Description
 
 
 </td><td>
+
+INTERNAL: This type is exported to allow users to compile declaration (\*.d.ts) files. Direct use of this type may result in changes that break you build across minor versions.
 
 
 </td></tr>
@@ -96,6 +100,8 @@ Description
 
 </td><td>
 
+INTERNAL: This type is exported to allow users to compile declaration (\*.d.ts) files. Direct use of this type may result in changes that break you build across minor versions.
+
 
 </td></tr>
 <tr><td>
@@ -114,6 +120,8 @@ Description
 
 </td><td>
 
+INTERNAL: This type is exported to allow users to compile declaration (\*.d.ts) files. Direct use of this type may result in changes that break you build across minor versions.
+
 
 </td></tr>
 <tr><td>
@@ -122,6 +130,8 @@ Description
 
 
 </td><td>
+
+INTERNAL: This type is exported to allow users to compile declaration (\*.d.ts) files. Direct use of this type may result in changes that break you build across minor versions.
 
 
 </td></tr>
@@ -132,6 +142,8 @@ Description
 
 </td><td>
 
+INTERNAL: This type is exported to allow users to compile declaration (\*.d.ts) files. Direct use of this type may result in changes that break you build across minor versions.
+
 
 </td></tr>
 <tr><td>
@@ -140,6 +152,8 @@ Description
 
 
 </td><td>
+
+INTERNAL: This type is exported to allow users to compile declaration (\*.d.ts) files. Direct use of this type may result in changes that break you build across minor versions.
 
 Public API for the chainable builder methods exposed by Model Field. The type is narrowing e.g., after calling .array() it will be omitted from intellisense suggestions
 
@@ -152,6 +166,8 @@ Public API for the chainable builder methods exposed by Model Field. The type is
 
 </td><td>
 
+INTERNAL: This type is exported to allow users to compile declaration (\*.d.ts) files. Direct use of this type may result in changes that break you build across minor versions.
+
 
 </td></tr>
 <tr><td>
@@ -160,6 +176,8 @@ Public API for the chainable builder methods exposed by Model Field. The type is
 
 
 </td><td>
+
+INTERNAL: This type is exported to allow users to compile declaration (\*.d.ts) files. Direct use of this type may result in changes that break you build across minor versions.
 
 
 </td></tr>
@@ -170,6 +188,8 @@ Public API for the chainable builder methods exposed by Model Field. The type is
 
 </td><td>
 
+INTERNAL: This type is exported to allow users to compile declaration (\*.d.ts) files. Direct use of this type may result in changes that break you build across minor versions.
+
 
 </td></tr>
 <tr><td>
@@ -178,6 +198,8 @@ Public API for the chainable builder methods exposed by Model Field. The type is
 
 
 </td><td>
+
+INTERNAL: This type is exported to allow users to compile declaration (\*.d.ts) files. Direct use of this type may result in changes that break you build across minor versions.
 
 
 </td></tr>
@@ -188,7 +210,7 @@ Public API for the chainable builder methods exposed by Model Field. The type is
 
 </td><td>
 
-Field type arg mutators
+INTERNAL: This type is exported to allow users to compile declaration (\*.d.ts) files. Direct use of this type may result in changes that break you build across minor versions. Field type arg mutators
 
 
 </td></tr>
@@ -198,6 +220,8 @@ Field type arg mutators
 
 
 </td><td>
+
+INTERNAL: This type is exported to allow users to compile declaration (\*.d.ts) files. Direct use of this type may result in changes that break you build across minor versions.
 
 
 </td></tr>

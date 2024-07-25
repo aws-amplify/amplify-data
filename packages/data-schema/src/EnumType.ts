@@ -6,6 +6,10 @@ type EnumTypeParamShape<values extends readonly string[] = readonly string[]> =
     values: values;
   };
 
+/**
+ * INTERNAL: This type is exported to allow users to compile declaration (*.d.ts) files.
+ * Direct use of this type may result in changes that break you build across minor versions.
+ */
 export interface EnumType<values extends readonly string[] = readonly string[]>
   extends EnumTypeParamShape<values> {
   [brandSymbol]: 'enum';
