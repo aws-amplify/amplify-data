@@ -35,20 +35,33 @@ describe('generateConversationsProperty()', () => {
   };
   const mockBaseMessageOperations = {
     message: {
-      list: {} as CustomOperation,
+      modelName: 'abc',
       send: {} as CustomOperation,
       subscribe: {} as CustomOperation,
     },
+    conversation: {
+      modelName: '123',
+    }
   };
   const mockConversations = {
+    name: 'mockConversation',
+    models: {},
+    nonModels: {},
+    enums: {},
     [mockConversationName]: {
       name: mockConversationName,
-      models: { ConversationModelMathBot: mockSchemaModel },
+      models: {
+        ConversationMathBot: mockSchemaModel,
+        ConversationMessageMathBot: mockSchemaModel
+      },
       ...mockBaseMessageOperations,
     },
     [mockConversationName2]: {
       name: mockConversationName2,
-      models: { ConversationModelScienceBot: mockSchemaModel2 },
+      models: {
+        ConversationScienceBot: mockSchemaModel2,
+        ConversationMessageScienceBot: mockSchemaModel2
+      },
       ...mockBaseMessageOperations,
     },
   };

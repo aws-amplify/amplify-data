@@ -3,16 +3,27 @@
 
 import { bench } from '@arktype/attest';
 import { a, ClientSchema } from '@aws-amplify/data-schema';
+import { Claude3Haiku, ConversationInput } from '../../data-schema/dist/esm/ai/ConversationType';
+
+const input: ConversationInput = {
+  aiModel: Claude3Haiku,
+  systemPrompt: 'Hello, world!',
+  inferenceConfiguration: {
+    topP: 1,
+    temperature: 1,
+    maxTokens: 1000
+  }
+}
 
 bench('schema with conversation', () => {
   a.schema({
-    Conversation: a.conversation(),
+    Conversation: a.conversation(input),
   });
 }).types([496, 'instantiations']);
 
 bench('schema with conversation and client types', () => {
   const s = a.schema({
-    Conversation: a.conversation(),
+    Conversation: a.conversation(input),
   });
 
   type _ = ClientSchema<typeof s>;
@@ -20,7 +31,7 @@ bench('schema with conversation and client types', () => {
 
 bench('schema with conversation and model', () => {
   a.schema({
-    Conversation: a.conversation(),
+    Conversation: a.conversation(input),
     Post: a.model({
       title: a.string().required(),
     }),
@@ -29,7 +40,7 @@ bench('schema with conversation and model', () => {
 
 bench('schema with conversation, model and client types', () => {
   const s = a.schema({
-    Conversation: a.conversation(),
+    Conversation: a.conversation(input),
     Post: a.model({
       title: a.string().required(),
       description: a.string(),

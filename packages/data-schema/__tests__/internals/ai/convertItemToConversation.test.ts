@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import type { BaseClient } from '../../../src/runtime';
-import type { ModelIntrospectionSchema } from '../../../src/runtime/bridge-types';
+import type { ModelIntrospectionSchema, SchemaModel } from '../../../src/runtime/bridge-types';
 import { convertItemToConversation } from '../../../src/runtime/internals/ai/convertItemToConversation';
 
 describe('convertItemToConversation()', () => {
@@ -15,7 +15,7 @@ describe('convertItemToConversation()', () => {
         {} as BaseClient,
         {} as ModelIntrospectionSchema,
         mockConversationName,
-        conversationMessageModel
+        {} as SchemaModel,
         jest.fn(),
       ),
     ).toStrictEqual({

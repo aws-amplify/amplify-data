@@ -3,7 +3,17 @@
 
 import { bench } from '@arktype/attest';
 import { a, ClientSchema } from '@aws-amplify/data-schema';
+import { ConversationInput, Claude3Haiku } from '../../../data-schema/dist/esm/ai/ConversationType';
 
+const input: ConversationInput = {
+  aiModel: Claude3Haiku,
+  systemPrompt: 'Hello, world!',
+  inferenceConfiguration: {
+    topP: 1,
+    temperature: 1,
+    maxTokens: 1000
+  }
+}
 /**
  * The following benchmarks are `p50.bench.ts` but with 2 conversation routes added to schemas.
  */
@@ -51,8 +61,8 @@ bench('p50 conversation', () => {
         allow.publicApiKey().to(['read']),
         allow.owner(),
       ]),
-    ChatBot: a.conversation(),
-    GossipBot: a.conversation(),
+    ChatBot: a.conversation(input),
+    GossipBot: a.conversation(input),
   }).authorization((allow) => allow.publicApiKey());
 }).types([8514, 'instantiations']);
 
@@ -101,8 +111,8 @@ bench('p50 conversation w/ client types', () => {
           allow.publicApiKey().to(['read']),
           allow.owner(),
         ]),
-      ChatBot: a.conversation(),
-      GossipBot: a.conversation(),
+      ChatBot: a.conversation(input),
+      GossipBot: a.conversation(input),
     })
     .authorization((allow) => allow.publicApiKey());
 
@@ -144,8 +154,8 @@ bench('p50 combined conversation w/ client types', () => {
           allow.publicApiKey().to(['read']),
           allow.owner(),
         ]),
-      ChatBot: a.conversation(),
-      GossipBot: a.conversation(),
+      ChatBot: a.conversation(input),
+      GossipBot: a.conversation(input),
     })
     .authorization((allow) => allow.publicApiKey());
 
@@ -160,8 +170,8 @@ bench('p50 combined conversation w/ client types', () => {
         employee: a.belongsTo('Employee', ['employeeId']),
       })
       .identifier(['todoId', 'name']),
-    ChatBot: a.conversation(),
-    GossipBot: a.conversation(),
+    ChatBot: a.conversation(input),
+    GossipBot: a.conversation(input),
   });
 
   const s = a.combine([s1, s2]);

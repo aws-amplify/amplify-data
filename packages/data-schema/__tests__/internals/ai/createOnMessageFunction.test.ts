@@ -40,6 +40,7 @@ describe('createOnMessageFunction()', () => {
     onMessage = await createOnMessageFunction(
       {} as BaseClient,
       mockModelIntrospectionSchema,
+      mockConversationId,
       mockConversationName,
       jest.fn(),
     );

@@ -34,6 +34,7 @@ describe('createListConversationsFunction()', () => {
       {} as ModelIntrospectionSchema,
       mockConversationName,
       {} as SchemaModel,
+      {} as SchemaModel,
       jest.fn(),
     );
   });

@@ -11,6 +11,8 @@ import { AuthMode, CustomHeaders, SingularReturnValue } from '../src/runtime';
 import { configure } from '../src/internals';
 import { Nullable } from '../src/ModelField';
 import { AppSyncResolverEvent, Callback, Context } from 'aws-lambda';
+import { Claude3Haiku } from '../src/ai/ConversationType';
+import { defineFunctionStub } from './utils';
 
 const fakeSecret = () => ({}) as any;
 
@@ -1449,8 +1451,9 @@ describe('SQL Schema with sql statement references', () => {
 
 describe('ai routes', () => {
   test('conversations', () => {
+    // const handler = defineFunctionStub({})
     const schema = a.schema({
-      ChatBot: a.conversation(),
+      ChatBot: a.conversation({ aiModel: Claude3Haiku, systemPrompt: 'Hello, world!', handler: 'foo' }),
     });
 
     type Schema = ClientSchema<typeof schema>;

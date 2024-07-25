@@ -31,7 +31,8 @@ describe('createGetConversationFunction()', () => {
     getConversation = await createGetConversationFunction(
       {} as BaseClient,
       {} as ModelIntrospectionSchema,
-      mockConversationName,
+      mockConversation.id,
+      {} as SchemaModel,
       {} as SchemaModel,
       jest.fn(),
     );

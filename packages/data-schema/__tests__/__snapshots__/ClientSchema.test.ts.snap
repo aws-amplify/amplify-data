@@ -25,7 +25,29 @@ type Query {
 }
 `;
 
-exports[`ai routes conversations 1`] = `""`;
+exports[`ai routes conversations 1`] = `
+"type Mutation {
+  ChatBot(sessionId: ID!, content: String): ConversationMessage @conversation(aiModel: "Claude3Haiku", systemPrompt: "Hello, world!", functionName: "foo")
+}
+
+interface ConversationMessage {
+  id: ID!
+  sessionId: ID!
+  sender: ConversationMessageSender
+  content: String
+  context: AWSJSON
+  uiComponents: [AWSJSON]
+  createdAt: AWSDateTime
+  updatedAt: AWSDateTime
+  owner: String
+  assistantContent: String
+}
+
+enum ConversationMessageSender {
+  user
+  assistant
+}"
+`;
 
 exports[`ai routes generations 1`] = `
 "type Recipe @model @auth(rules: [{allow: public, provider: apiKey}])

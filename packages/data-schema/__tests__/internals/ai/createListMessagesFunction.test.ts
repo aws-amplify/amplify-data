@@ -3,7 +3,7 @@
 
 import type { Conversation } from '../../../src/ai/ConversationType';
 import type { BaseClient } from '../../../src/runtime';
-import type { ModelIntrospectionSchema } from '../../../src/runtime/bridge-types';
+import type { ModelIntrospectionSchema, SchemaModel } from '../../../src/runtime/bridge-types';
 import { convertItemToConversationMessage } from '../../../src/runtime/internals/ai/convertItemToConversationMessage';
 import { createListMessagesFunction } from '../../../src/runtime/internals/ai/createListMessagesFunction';
 import { customOpFactory } from '../../../src/runtime/internals/operations/custom';
@@ -47,7 +47,8 @@ describe('createListMessagesFunction()', () => {
     listMessages = await createListMessagesFunction(
       {} as BaseClient,
       mockModelIntrospectionSchema,
-      mockConversationName,
+      mockConversationId,
+      {} as SchemaModel,
       jest.fn(),
     );
   });

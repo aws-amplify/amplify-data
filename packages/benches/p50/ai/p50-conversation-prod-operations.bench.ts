@@ -5,7 +5,17 @@ import { bench } from '@arktype/attest';
 import { a, ClientSchema } from '@aws-amplify/data-schema';
 import { Amplify } from 'aws-amplify';
 import { generateClient } from 'aws-amplify/api';
+import { ConversationInput, Claude3Haiku } from '../../../data-schema/dist/esm/ai/ConversationType';
 
+const input: ConversationInput = {
+  aiModel: Claude3Haiku,
+  systemPrompt: 'Hello, world!',
+  inferenceConfiguration: {
+    topP: 1,
+    temperature: 1,
+    maxTokens: 1000
+  }
+}
 /**
  * The following benchmarks are an extension of `p50-prod-conversation.bench.ts`.
  * Here we perform operations against a conversation route.
@@ -598,11 +608,11 @@ bench('prod p50 conversation operations', async () => {
           allow.authenticated('identityPool').to(['read']),
           allow.owner(),
         ]),
-      ChatBot: a.conversation(),
-      GossipBot: a.conversation(),
-      HaikuBot: a.conversation(),
-      MathBot: a.conversation(),
-      ScienceBot: a.conversation(),
+      ChatBot: a.conversation(input),
+      GossipBot: a.conversation(input),
+      HaikuBot: a.conversation(input),
+      MathBot: a.conversation(input),
+      ScienceBot: a.conversation(input),
       // [Global authorization rule]
     })
     .authorization((allow) => allow.publicApiKey());
