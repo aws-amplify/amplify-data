@@ -9,6 +9,7 @@ This package contains automated tests for validating functionality E2E in Node.
 - Sample will use `amplify-js@unstable` and local versions of packages in this repo.
 - See [test utils](node/utils.ts) for helpers that configure Amplify, generate /
   configure the API client, as well as for additional test utilities and types.
+- Tests are run with `--runInBand` to avoid conflicts with the shared backend.
 
 ## How to add a new test / test local changes:
 
@@ -23,3 +24,17 @@ This package contains automated tests for validating functionality E2E in Node.
 
 Add a check to clean up potential orphaned records after all tests have run
 (see https://jestjs.io/docs/configuration#globalteardown-string).
+
+## [Known Issue] Jest open handles warning
+
+Tests that use `Hub` currently emit the following warning when running the tests:
+
+```bash
+A worker process has failed to exit gracefully and has been force exited. This is likely caused by tests leaking due to improper teardown. Try running with --detectOpenHandles to find leaks. Active timers can also cause this, ensure that .unref() was called on them.
+```
+
+The problem seems to be related to Amplify Core's `detectFramework` function, and
+is likely due to the fact that we are running the tests in Node (which is not
+officially supported by `amplify-js`).
+
+TODO: Investigate and/or fix.

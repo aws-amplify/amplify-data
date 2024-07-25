@@ -56,11 +56,11 @@ type EstablishWebsocketParams = {
  */
 export const establishWebsocket = ({
   enableConnectionStateLogging = false,
-}: EstablishWebsocketParams): (() => void) => {
+}: EstablishWebsocketParams) => {
   (global as any).WebSocket = WebSocket;
 
   if (enableConnectionStateLogging) {
-    return Hub.listen('api', (data: any) => {
+    Hub.listen('api', (data: any) => {
       const { payload } = data;
       if (payload.event === CONNECTION_STATE_CHANGE) {
         const connectionState = payload.data.connectionState as ConnectionState;
@@ -71,9 +71,6 @@ export const establishWebsocket = ({
       }
     });
   }
-
-  // Return a no-op function if logging is disabled:
-  return () => {};
 };
 
 /**
@@ -107,7 +104,7 @@ export const expectDataReturnWithoutErrors = <T>(
  */
 export const waitForSubscriptionAck = () =>
   new Promise<void>((resolve) => {
-    const cancel = Hub.listen('api', (data: any) => {
+    const cancel = Hub.listen('api', async (data: any) => {
       const { payload } = data;
       // TODO: update once we add export:
       if (payload.event === 'Subscription ack') {

@@ -32,15 +32,13 @@ let sub: any;
 // For collecting subscriptions messages to assert against:
 let subResult: any[] = [];
 
-let hubListenerCancel: any;
-
 describe('Subscriptions', () => {
   beforeAll(() => {
     /**
      * Adds the WebSocket API globally.
      * Subscriptions do not work in Node.js environment without the WebSocket API.
      */
-    hubListenerCancel = establishWebsocket({});
+    establishWebsocket({});
   });
   beforeEach(() => {
     client = configureAmplifyAndGenerateClient({});
@@ -49,10 +47,6 @@ describe('Subscriptions', () => {
     subResult = [];
     sub.unsubscribe();
     await deleteAll(client);
-  });
-  afterAll(() => {
-    // Stop listening for connection state changes
-    hubListenerCancel();
   });
   it('Create', async () => {
     const expectedNumberOfSubMsgs = 2;
