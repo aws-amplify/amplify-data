@@ -137,6 +137,19 @@ INTERNAL: This type is exported to allow users to compile declaration (\*.d.ts) 
 </td></tr>
 <tr><td>
 
+[Json](./data-schema.json.md)
+
+
+</td><td>
+
+INTERNAL: This type is exported to allow users to compile declaration (\*.d.ts) files. Direct use of this type may result in changes that break you build across minor versions.
+
+A precise, recursive Json type blows the type calculation stack without installing explicit `Json extends T ? short-circuit : ...` type checks all over the place. We may take that on later. But, this is a good-enough approximation for now.
+
+
+</td></tr>
+<tr><td>
+
 [ModelDefaultIdentifier](./data-schema.modeldefaultidentifier.md)
 
 
