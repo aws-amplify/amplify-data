@@ -1,4 +1,4 @@
-import { type CustomPathData, type InternalSchema } from './ModelSchema';
+import { ConversationType, type CustomPathData, type InternalSchema } from './ModelSchema';
 import {
   type ModelField,
   type InternalField,
@@ -75,6 +75,13 @@ function isCustomType(
   data: any,
 ): data is { data: CustomType<CustomTypeParamShape> } {
   if (data?.data?.type === 'customType') {
+    return true;
+  }
+  return false;
+}
+
+function isConversationRoute(type: any): type is ConversationType {
+  if (type.kind === 'Conversation') {
     return true;
   }
   return false;
@@ -1143,6 +1150,8 @@ const schemaPreprocessor = (
   const customMutations = [];
   const customSubscriptions = [];
 
+  const conversationTypes: Record<string, string> = {};
+
   // Dict of auth rules to be applied to custom types
   // Inherited from the auth configured on the custom operations that return these custom types
   const customTypeInheritedAuthRules: Record<
@@ -1290,6 +1299,47 @@ const schemaPreprocessor = (
           default:
             break;
         }
+      } else if (isConversationRoute(typeDef)) {
+        // TODO: sessionId --> conversationId
+        // TODO: add inferenceConfiguration values to directive.
+        const args: Record<string, string> = {
+          aiModel: typeDef.aiModel.friendlyName,
+          systemPrompt: typeDef.systemPrompt,
+        };
+        if (typeDef.handler) {
+          if (typeof typeDef.handler === 'string') {
+            args['functionName'] = typeDef.handler
+          } else if (typeof typeDef.handler.getInstance === 'function') {
+            args['functionName'] = `Fn${capitalize(typeName)}`;
+          }
+        }
+
+        const argString = Object.entries(args).map(([key, value]) => `${key}: "${value}"`).join(', ');
+        const conversationDirective = `@conversation(${argString})`;
+
+        const conversationField = `${typeName}(sessionId: ID!, content: String): ConversationMessage ${conversationDirective}`;
+        customMutations.push(conversationField);
+
+        const conversationMessageFields = {
+          id: 'ID!',
+          sessionId: 'ID!',
+          sender: 'ConversationMessageSender',
+          content: 'String',
+          context: 'AWSJSON',
+          uiComponents: '[AWSJSON]',
+          createdAt: 'AWSDateTime',
+          updatedAt: 'AWSDateTime',
+          owner: 'String',
+          assistantContent: 'String'
+        }
+        const conversationMessageFieldsString = Object.entries(conversationMessageFields)
+          .map(([key, value]) => `${key}: ${value}`)
+          .join('\n  ');
+
+        conversationTypes['ConversationMessage'] = `interface ConversationMessage {\n  ${conversationMessageFieldsString}\n}`;
+
+        conversationTypes['ConversationMessageSender'] = `enum ConversationMessageSender {\n  user\n  assistant\n}`;
+
       }
     } else if (staticSchema) {
       const fields = { ...typeDef.data.fields } as Record<
@@ -1387,6 +1437,7 @@ const schemaPreprocessor = (
   };
 
   gqlModels.push(...generateCustomOperationTypes(customOperations));
+  gqlModels.push(...Object.values(conversationTypes));
 
   const processedSchema = gqlModels.join('\n\n');
 

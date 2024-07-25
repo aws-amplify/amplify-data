@@ -11,10 +11,17 @@ import type {
 } from '@aws-sdk/client-bedrock-runtime';
 import type { ListReturnValue, SingularReturnValue } from '../runtime/client';
 import { type Brand, brand } from '../util';
+import { DefineFunction } from '@aws-amplify/data-schema-types';
 
 const brandName = 'conversationCustomOperation';
 
-export interface ConversationType extends Brand<typeof brandName> {}
+export interface ConversationType extends Brand<typeof brandName> {
+  aiModel: BedrockModelId;
+  systemPrompt: string;
+  inferenceConfiguration: InferenceConfiguration;
+  handler?: DefineFunction | string;
+  kind: 'Conversation';
+}
 
 // Utility type for Omitting a common property across all members of a union
 type DistributiveOmit<T, K extends keyof T> = T extends any
@@ -128,12 +135,44 @@ type ToolUseStrategy<T extends Tools> =
       toolName: keyof T;
     };
 
-function _conversation() {
+function _conversation(input: ConversationInput): ConversationType {
   return {
     ...brand(brandName),
+    ...input,
+    kind: 'Conversation',
   } as ConversationType;
 }
 
-export function conversation() {
-  return _conversation();
+export function conversation(input: ConversationInput): ConversationType {
+  return _conversation(input);
 }
+
+export type ConversationInput = {
+  aiModel: BedrockModelId;
+  systemPrompt: string;
+  inferenceConfiguration?: InferenceConfiguration;
+  handler?: DefineFunction | string;
+};
+
+export type InferenceConfiguration = {
+  topP?: number;
+  temperature?: number;
+  maxTokens?: number;
+}
+
+export type BedrockModel = {
+  friendlyName: string;
+  resourcePath: string;
+};
+
+export const Claude3Haiku: BedrockModel = {
+  friendlyName: 'Claude3Haiku',
+  resourcePath: 'anthropic.claude-3-haiku-20240307-v1:0',
+};
+
+export const Claude3Sonnet: BedrockModel = {
+  friendlyName: 'Claude3Sonnet',
+  resourcePath: 'anthropic.claude-3-sonnet-20240229-v1:0'
+};
+
+export type BedrockModelId = typeof Claude3Sonnet | typeof Claude3Haiku
