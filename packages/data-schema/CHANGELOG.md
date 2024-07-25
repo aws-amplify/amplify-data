@@ -1,5 +1,11 @@
 # @aws-amplify/data-schema
 
+## 1.3.10
+
+### Patch Changes
+
+- f4a47cc: fix subscription filter input types
+
 ## 1.3.9
 
 ### Patch Changes
