@@ -1,6 +1,6 @@
 import { a, defineFunction } from '@aws-amplify/backend';
 
-const eff = defineFunction({
+const defFunc = defineFunction({
   entry: './handlers/test-handler.ts',
 });
 
@@ -11,8 +11,18 @@ export function buildMutation() {
       input: a.string(),
     })
     .returns(a.string())
-    .handler(a.handler.function(eff))
+    .handler(a.handler.function(defFunc))
     .authorization((allow) => [allow.authenticated()]);
+}
+
+export function buildQueryRequiredInputJsonOutput() {
+  return a
+    .query()
+    .arguments({
+      input: a.string().required(),
+    })
+    .returns(a.json())
+    .handler(a.handler.function(defFunc));
 }
 
 export function buildDefaultSchema() {
