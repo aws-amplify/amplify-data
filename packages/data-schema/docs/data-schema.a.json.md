@@ -13,7 +13,7 @@ export declare function json(): ModelField<Nullable<Json>>;
 ```
 **Returns:**
 
-ModelField&lt;Nullable&lt;Json&gt;&gt;
+[ModelField](./data-schema.modelfield.md)<!-- -->&lt;[Nullable](./data-schema.nullable.md)<!-- -->&lt;Json&gt;&gt;
 
 JSON field definition
 

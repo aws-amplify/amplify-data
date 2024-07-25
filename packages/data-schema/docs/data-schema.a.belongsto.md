@@ -65,7 +65,7 @@ the field(s) that should be used to reference the related model
 </tbody></table>
 **Returns:**
 
-ModelRelationalField&lt;ModelRelationalTypeArgFactory&lt;RM, ModelRelationshipTypes.belongsTo, false&gt;, RM, "required" \| "valueRequired", undefined&gt;
+[ModelRelationalField](./data-schema.modelrelationalfield.md)<!-- -->&lt;[ModelRelationalTypeArgFactory](./data-schema.modelrelationaltypeargfactory.md)<!-- -->&lt;RM, [ModelRelationshipTypes.belongsTo](./data-schema.modelrelationshiptypes.md)<!-- -->, false&gt;, RM, "required" \| "valueRequired", undefined&gt;
 
 a belong-to relationship definition
 

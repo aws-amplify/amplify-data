@@ -47,5 +47,5 @@ values
 </tbody></table>
 **Returns:**
 
-EnumType&lt;values&gt;
+[EnumType](./data-schema.enumtype.md)<!-- -->&lt;values&gt;
 

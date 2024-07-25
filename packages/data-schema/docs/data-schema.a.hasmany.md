@@ -65,7 +65,7 @@ the field(s) that should be used to reference the related model
 </tbody></table>
 **Returns:**
 
-ModelRelationalField&lt;ModelRelationalTypeArgFactory&lt;RM, ModelRelationshipTypes.hasMany, true&gt;, RM, "required", undefined&gt;
+[ModelRelationalField](./data-schema.modelrelationalfield.md)<!-- -->&lt;[ModelRelationalTypeArgFactory](./data-schema.modelrelationaltypeargfactory.md)<!-- -->&lt;RM, [ModelRelationshipTypes.hasMany](./data-schema.modelrelationshiptypes.md)<!-- -->, true&gt;, RM, "required", undefined&gt;
 
 a one-to-many relationship definition
 
