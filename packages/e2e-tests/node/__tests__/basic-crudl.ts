@@ -8,16 +8,18 @@ import type { Schema } from '../amplify/data/resource';
 let client: Client;
 
 const deleteAll = async (client: Client) => {
-  const { data: todos } = await client.models.Todo.list();
-  console.log('todos to delete:', todos);
+  const { data: crudlTestModels } = await client.models.CRUDLTestModel.list();
+  console.log('crudlTestModels to delete:', crudlTestModels);
 
-  const deletePromises = todos?.map(async (todo: Schema['Todo']['type']) => {
-    await client.models.Todo.delete(todo);
-  });
+  const deletePromises = crudlTestModels?.map(
+    async (crudlTestModel: Schema['CRUDLTestModel']['type']) => {
+      await client.models.CRUDLTestModel.delete(crudlTestModel);
+    },
+  );
 
   await Promise.all(deletePromises!);
 
-  const { data: listAfterDelete } = await client.models.Todo.list();
+  const { data: listAfterDelete } = await client.models.CRUDLTestModel.list();
   console.log('result of cleanup:', listAfterDelete);
 };
 
@@ -29,7 +31,7 @@ describe('Basic CRUDL', () => {
     await deleteAll(client);
   });
   test('Create', async () => {
-    const response = await client.models.Todo.create({
+    const response = await client.models.CRUDLTestModel.create({
       content: 'test create',
     });
 
@@ -38,81 +40,95 @@ describe('Basic CRUDL', () => {
     expect(data?.content).toBe('test create');
   });
   test('Read', async () => {
-    const response = await client.models.Todo.create({
-      content: 'todo1',
+    const response = await client.models.CRUDLTestModel.create({
+      content: 'crudlTestModel1',
     });
 
     expectDataReturnWithoutErrors(response, 'first create');
 
-    const secondResponse = await client.models.Todo.create({
-      content: 'todo2',
+    const secondResponse = await client.models.CRUDLTestModel.create({
+      content: 'crudlTestModel2',
     });
 
-    const secondTodo = expectDataReturnWithoutErrors(
+    const secondCRUDLTestModel = expectDataReturnWithoutErrors(
       secondResponse,
       'second create',
     );
 
-    // Get the first todo:
-    const getResponse = await client.models.Todo.get({
+    // Get the first crudlTestModel:
+    const getResponse = await client.models.CRUDLTestModel.get({
       // expectDataReturnWithoutErrors will throw if this doesn't exist:
-      id: secondTodo!.id,
+      id: secondCRUDLTestModel!.id,
     });
 
     expectDataReturnWithoutErrors(getResponse, 'create');
 
-    expect(getResponse.data?.content).toBe('todo2');
+    expect(getResponse.data?.content).toBe('crudlTestModel2');
   });
   test('Update', async () => {
-    const createResponse = await client.models.Todo.create({
+    const createResponse = await client.models.CRUDLTestModel.create({
       content: 'original content',
     });
 
-    const firstTodo = expectDataReturnWithoutErrors(createResponse, 'create');
+    const firstCRUDLTestModel = expectDataReturnWithoutErrors(
+      createResponse,
+      'create',
+    );
 
-    const updateResponse = await client.models.Todo.update({
+    const updateResponse = await client.models.CRUDLTestModel.update({
       // expectDataReturnWithoutErrors will throw if this doesn't exist:
-      id: firstTodo!.id,
+      id: firstCRUDLTestModel!.id,
       content: 'updated content',
     });
 
-    const updatedTodo = expectDataReturnWithoutErrors(updateResponse, 'update');
+    const updatedCRUDLTestModel = expectDataReturnWithoutErrors(
+      updateResponse,
+      'update',
+    );
 
     // expectDataReturnWithoutErrors will throw if this doesn't exist:
-    expect(updatedTodo!.content).toBe('updated content');
+    expect(updatedCRUDLTestModel!.content).toBe('updated content');
   });
   test('Delete', async () => {
-    const createResponse = await client.models.Todo.create({
-      content: 'todo to delete',
+    const createResponse = await client.models.CRUDLTestModel.create({
+      content: 'crudlTestModel to delete',
     });
 
-    const createdTodo = expectDataReturnWithoutErrors(createResponse, 'create');
+    const createdCRUDLTestModel = expectDataReturnWithoutErrors(
+      createResponse,
+      'create',
+    );
 
     // expectDataReturnWithoutErrors will throw if this doesn't exist:
-    const deleteResponse = await client.models.Todo.delete(createdTodo!);
+    const deleteResponse = await client.models.CRUDLTestModel.delete(
+      createdCRUDLTestModel!,
+    );
 
-    const deletedTodo = expectDataReturnWithoutErrors(deleteResponse, 'delete');
+    const deletedCRUDLTestModel = expectDataReturnWithoutErrors(
+      deleteResponse,
+      'delete',
+    );
 
     // expectDataReturnWithoutErrors will throw if this doesn't exist:
-    expect(deletedTodo!.content).toBe('todo to delete');
+    expect(deletedCRUDLTestModel!.content).toBe('crudlTestModel to delete');
   });
   test('List', async () => {
-    const firstCreateResponse = await client.models.Todo.create({
-      content: 'todo1',
+    const firstCreateResponse = await client.models.CRUDLTestModel.create({
+      content: 'crudlTestModel1',
     });
     expectDataReturnWithoutErrors(firstCreateResponse, 'first create');
 
-    const secondCreateResponse = await client.models.Todo.create({
-      content: 'todo2',
+    const secondCreateResponse = await client.models.CRUDLTestModel.create({
+      content: 'crudlTestModel2',
     });
     expectDataReturnWithoutErrors(secondCreateResponse, 'second create');
 
-    const thirdCreateResponse = await client.models.Todo.create({
-      content: 'todo3',
+    const thirdCreateResponse = await client.models.CRUDLTestModel.create({
+      content: 'crudlTestModel3',
     });
     expectDataReturnWithoutErrors(thirdCreateResponse, 'third create');
 
-    const listResponse = await client.models.Todo.list();
+    const listResponse = await client.models.CRUDLTestModel.list();
     expectDataReturnWithoutErrors(listResponse, 'list');
 
     expect(listResponse.data.length).toBe(3);

@@ -25,16 +25,18 @@ let sub: any;
 let subResult: any[] = [];
 
 const deleteAll = async (client: Client) => {
-  const { data: todos } = await client.models.Todo.list();
-  console.log('todos to delete:', todos);
+  const { data: subTestModels } = await client.models.SubTestModel.list();
+  console.log('subTestModels to delete:', subTestModels);
 
-  const deletePromises = todos?.map(async (todo: Schema['Todo']['type']) => {
-    await client.models.Todo.delete(todo);
-  });
+  const deletePromises = subTestModels?.map(
+    async (subTestModel: Schema['SubTestModel']['type']) => {
+      await client.models.SubTestModel.delete(subTestModel);
+    },
+  );
 
   await Promise.all(deletePromises!);
 
-  const { data: listAfterDelete } = await client.models.Todo.list();
+  const { data: listAfterDelete } = await client.models.SubTestModel.list();
   console.log('result of cleanup:', listAfterDelete);
 };
 
@@ -67,7 +69,7 @@ describe('Subscriptions', () => {
       resolveSubPromise = resolve;
     });
 
-    sub = client.models.Todo.onCreate().subscribe({
+    sub = client.models.SubTestModel.onCreate().subscribe({
       next: (data) => {
         subResult.push(data);
         if (subResult.length === expectedNumberOfSubMsgs) {
@@ -89,21 +91,27 @@ describe('Subscriptions', () => {
      */
     await waitForSubscriptionAck();
 
-    const firstCreateResponse = await client.models.Todo.create({
-      content: 'first todo',
+    const firstCreateResponse = await client.models.SubTestModel.create({
+      content: 'first subTestModel',
     });
-    expectDataReturnWithoutErrors(firstCreateResponse, 'first todo create');
+    expectDataReturnWithoutErrors(
+      firstCreateResponse,
+      'first subTestModel create',
+    );
 
-    const secondCreateResponse = await client.models.Todo.create({
-      content: 'second todo',
+    const secondCreateResponse = await client.models.SubTestModel.create({
+      content: 'second subTestModel',
     });
-    expectDataReturnWithoutErrors(secondCreateResponse, 'second todo create');
+    expectDataReturnWithoutErrors(
+      secondCreateResponse,
+      'second subTestModel create',
+    );
 
     // Wait for sub messages to be received before making assertions
     await subMsgsReceived;
 
-    expect(subResult[0]?.content).toBe('first todo');
-    expect(subResult[1]?.content).toBe('second todo');
+    expect(subResult[0]?.content).toBe('first subTestModel');
+    expect(subResult[1]?.content).toBe('second subTestModel');
     expect(subResult.length).toBe(expectedNumberOfSubMsgs);
   });
   it('Update', async () => {
@@ -118,7 +126,7 @@ describe('Subscriptions', () => {
       resolveSubPromise = resolve;
     });
 
-    sub = client.models.Todo.onUpdate().subscribe({
+    sub = client.models.SubTestModel.onUpdate().subscribe({
       next: (data) => {
         subResult.push(data);
         if (subResult.length === expectedNumberOfSubMsgs) {
@@ -134,24 +142,24 @@ describe('Subscriptions', () => {
      */
     await waitForSubscriptionAck();
 
-    const firstCreateResponse = await client.models.Todo.create({
-      content: 'first todo',
+    const firstCreateResponse = await client.models.SubTestModel.create({
+      content: 'first subTestModel',
     });
-    const firstTodo = expectDataReturnWithoutErrors(
+    const firstSubTestModel = expectDataReturnWithoutErrors(
       firstCreateResponse,
-      'first todo create',
+      'first subTestModel create',
     );
 
-    const firstUpdateResponse = await client.models.Todo.update({
+    const firstUpdateResponse = await client.models.SubTestModel.update({
       // expectDataReturnWithoutErrors will throw if this doesn't exist:
-      id: firstTodo!.id,
+      id: firstSubTestModel!.id,
       content: 'first update',
     });
     expectDataReturnWithoutErrors(firstUpdateResponse, 'first update');
 
-    const secondUpdateResponse = await client.models.Todo.update({
+    const secondUpdateResponse = await client.models.SubTestModel.update({
       // expectDataReturnWithoutErrors will throw if this doesn't exist:
-      id: firstTodo!.id,
+      id: firstSubTestModel!.id,
       content: 'final update',
     });
     expectDataReturnWithoutErrors(secondUpdateResponse, 'second update');
@@ -175,7 +183,7 @@ describe('Subscriptions', () => {
       resolveSubPromise = resolve;
     });
 
-    sub = client.models.Todo.onDelete().subscribe({
+    sub = client.models.SubTestModel.onDelete().subscribe({
       next: (data) => {
         subResult.push(data);
         if (subResult.length === expectedNumberOfSubMsgs) {
@@ -191,21 +199,26 @@ describe('Subscriptions', () => {
      */
     await waitForSubscriptionAck();
 
-    const createResponse = await client.models.Todo.create({
-      content: 'todo to delete',
+    const createResponse = await client.models.SubTestModel.create({
+      content: 'subTestModel to delete',
     });
 
-    const createdTodo = expectDataReturnWithoutErrors(createResponse, 'create');
+    const createdSubTestModel = expectDataReturnWithoutErrors(
+      createResponse,
+      'create',
+    );
 
     // expectDataReturnWithoutErrors will throw if this doesn't exist:
-    const deleteResponse = await client.models.Todo.delete(createdTodo!);
+    const deleteResponse = await client.models.SubTestModel.delete(
+      createdSubTestModel!,
+    );
 
     expectDataReturnWithoutErrors(deleteResponse, 'delete');
 
     // Wait for sub messages to be received before making assertions
     await subMsgsReceived;
 
-    expect(subResult[0]?.content).toBe('todo to delete');
+    expect(subResult[0]?.content).toBe('subTestModel to delete');
     expect(subResult.length).toBe(expectedNumberOfSubMsgs);
   });
   it(
@@ -228,24 +241,24 @@ describe('Subscriptions', () => {
       });
 
       // #region - Seed data for first snapshot:
-      const firstCreateResponse = await client.models.Todo.create({
-        content: 'seeded todo1',
+      const firstCreateResponse = await client.models.SubTestModel.create({
+        content: 'seeded subTestModel1',
       });
-      const firstTodo = expectDataReturnWithoutErrors(
+      const firstSubTestModel = expectDataReturnWithoutErrors(
         firstCreateResponse,
         'first create',
       );
 
-      const secondCreateResponse = await client.models.Todo.create({
-        content: 'seeded todo2',
+      const secondCreateResponse = await client.models.SubTestModel.create({
+        content: 'seeded subTestModel2',
       });
-      const secondTodo = expectDataReturnWithoutErrors(
+      const secondSubTestModel = expectDataReturnWithoutErrors(
         secondCreateResponse,
         'second create',
       );
       // #endregion
 
-      sub = client.models.Todo.observeQuery().subscribe({
+      sub = client.models.SubTestModel.observeQuery().subscribe({
         next: ({ items, isSynced }) => {
           if (isSynced) {
             subResult.push(JSON.parse(JSON.stringify(items)));
@@ -268,17 +281,17 @@ describe('Subscriptions', () => {
       await waitForSubscriptionAck();
 
       /**
-       * Wait for snapshot to be received before creating the next todo.
-       * Otherwise the first snapshot will contain the new todo, and we won't
-       * be able to assert that the snapshot contains the seeded todos.
+       * Wait for snapshot to be received before creating the next subTestModel.
+       * Otherwise the first snapshot will contain the new subTestModel, and we won't
+       * be able to assert that the snapshot contains the seeded subTestModels.
        */
       await snapshotReceived;
 
-      // Create a third todo to trigger a new sub message:
-      const thirdCreateResponse = await client.models.Todo.create({
-        content: 'created todo after sub established',
+      // Create a third subTestModel to trigger a new sub message:
+      const thirdCreateResponse = await client.models.SubTestModel.create({
+        content: 'created subTestModel after sub established',
       });
-      const thirdTodo = expectDataReturnWithoutErrors(
+      const thirdSubTestModel = expectDataReturnWithoutErrors(
         thirdCreateResponse,
         'third create',
       );
@@ -286,16 +299,16 @@ describe('Subscriptions', () => {
       // Wait for snapshot to be received before making assertions:
       await allSubMsgsReceived;
 
-      // Snapshot contains only the seeded todos:
+      // Snapshot contains only the seeded subTestModels:
       expect(subResult[0].length).toBe(2);
-      expect(subResult[0]).toContainEqual(firstTodo);
-      expect(subResult[0]).toContainEqual(secondTodo);
-      // Snapshot contains the seeded todos and the new todo
+      expect(subResult[0]).toContainEqual(firstSubTestModel);
+      expect(subResult[0]).toContainEqual(secondSubTestModel);
+      // Snapshot contains the seeded subTestModels and the new subTestModel
       expect(subResult[1].length).toBe(3);
-      expect(subResult[1]).toContainEqual(firstTodo);
-      expect(subResult[1]).toContainEqual(secondTodo);
-      expect(subResult[1]).toContainEqual(thirdTodo);
-      // We receive the initial snapshot, as well as the msg for the new todo:
+      expect(subResult[1]).toContainEqual(firstSubTestModel);
+      expect(subResult[1]).toContainEqual(secondSubTestModel);
+      expect(subResult[1]).toContainEqual(thirdSubTestModel);
+      // We receive the initial snapshot, as well as the msg for the new subTestModel:
       expect(subResult.length).toBe(2);
     },
     observeQueryTestTimeout,

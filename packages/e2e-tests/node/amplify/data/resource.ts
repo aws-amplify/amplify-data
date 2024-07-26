@@ -7,6 +7,16 @@ const schema = a.schema({
       isDone: a.boolean(),
     })
     .authorization((allow) => [allow.guest()]),
+  CRUDLTestModel: a
+    .model({
+      content: a.string(),
+    })
+    .authorization((allow) => [allow.guest()]),
+  SubTestModel: a
+    .model({
+      content: a.string(),
+    })
+    .authorization((allow) => [allow.guest()]),
 });
 
 export type Schema = ClientSchema<typeof schema>;
