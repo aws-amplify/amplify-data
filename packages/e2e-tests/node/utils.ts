@@ -46,7 +46,7 @@ export const configureAmplifyAndGenerateClient = ({
   return generateClient<Schema>(apiClientOptions);
 };
 
-type EstablishWebsocketParams = {
+type AddWebsocketPolyfillParams = {
   enableConnectionStateLogging?: boolean;
 };
 
@@ -54,9 +54,9 @@ type EstablishWebsocketParams = {
  * Adds the WebSocket API globally.
  * Subscriptions do not work in Node.js environment without the WebSocket API.
  */
-export const establishWebsocket = ({
+export const addWebsocketPolyfill = ({
   enableConnectionStateLogging = false,
-}: EstablishWebsocketParams) => {
+}: AddWebsocketPolyfillParams) => {
   (global as any).WebSocket = WebSocket;
 
   if (enableConnectionStateLogging) {
