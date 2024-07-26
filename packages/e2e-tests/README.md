@@ -9,7 +9,6 @@ This package contains automated tests for validating functionality E2E in Node.
 - Sample will use `amplify-js@unstable` and local versions of packages in this repo.
 - See [test utils](node/utils.ts) for helpers that configure Amplify, generate /
   configure the API client, as well as for additional test utilities and types.
-- Tests are run with `--runInBand` to avoid conflicts with the shared backend.
 
 ## How to add a new test / test local changes:
 
