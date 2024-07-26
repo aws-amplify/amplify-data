@@ -1302,20 +1302,38 @@ const schemaPreprocessor = (
       } else if (isConversationRoute(typeDef)) {
         // TODO: sessionId --> conversationId
         // TODO: add inferenceConfiguration values to directive.
+        const { aiModel, systemPrompt, handler, tools } = typeDef
+
         const args: Record<string, string> = {
-          aiModel: typeDef.aiModel.friendlyName,
-          systemPrompt: typeDef.systemPrompt,
+          aiModel: aiModel.friendlyName,
+          systemPrompt: systemPrompt,
         };
-        if (typeDef.handler) {
-          if (typeof typeDef.handler === 'string') {
-            args['functionName'] = typeDef.handler
-          } else if (typeof typeDef.handler.getInstance === 'function') {
+
+        if (handler) {
+          if (typeof handler === 'string') {
+            args['functionName'] = handler
+          } else if (typeof handler.getInstance === 'function') {
             args['functionName'] = `Fn${capitalize(typeName)}`;
           }
         }
-
         const argString = Object.entries(args).map(([key, value]) => `${key}: "${value}"`).join(', ');
-        const conversationDirective = `@conversation(${argString})`;
+
+        let toolString = '';
+        if (tools && tools.length !== 0) {
+          const toolDefinitions: Record<string, string> = {};
+
+          for (const { query, description } of tools) {
+            // TODO: find appropriate helper to narrow to drop `any` cast
+            // TODO: add validation for query / auth (cup) / etc
+            const queryName = (query as any).data.link as string;
+            toolDefinitions[queryName] = description;
+          }
+          toolString = ', tools: [' +
+            Object.entries(toolDefinitions).map(([name, description]) => `{ name: "${name}", description: "${description}" }`).join(', ')
+            + ']';
+        }
+
+        const conversationDirective = `@conversation(${argString + toolString})`;
 
         const conversationField = `${typeName}(sessionId: ID!, content: String): ConversationMessage ${conversationDirective}`;
         customMutations.push(conversationField);

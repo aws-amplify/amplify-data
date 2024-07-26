@@ -1451,9 +1451,30 @@ describe('SQL Schema with sql statement references', () => {
 
 describe('ai routes', () => {
   test('conversations', () => {
-    // const handler = defineFunctionStub({})
+    const handler = defineFunctionStub({})
     const schema = a.schema({
-      ChatBot: a.conversation({ aiModel: Claude3Haiku, systemPrompt: 'Hello, world!', handler: 'foo' }),
+      Profile: a.customType({
+        value: a.integer(), unit: a.string()
+      }),
+      myToolQuery: a.query()
+        .arguments({ a: a.integer(), b: a.string() })
+        .returns(a.ref('Profile'))
+        .authorization((allow) => allow.publicApiKey())
+        .handler(a.handler.function(handler)),
+
+      anotherToolQuery: a.query()
+        .returns(a.string())
+        .authorization((allow) => allow.publicApiKey())
+        .handler(a.handler.function(handler)),
+
+      ChatBot: a.conversation({
+        aiModel: Claude3Haiku,
+        systemPrompt: 'Hello, world!',
+        tools: [
+          { query: a.ref('myToolQuery'), description: 'does a thing' },
+          { query: a.ref('anotherToolQuery'), description: 'does a different thing' }
+        ]
+      }),
     });
 
     type Schema = ClientSchema<typeof schema>;

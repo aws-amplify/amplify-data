@@ -12,15 +12,17 @@ import type {
 import type { ListReturnValue, SingularReturnValue } from '../runtime/client';
 import { type Brand, brand } from '../util';
 import { DefineFunction } from '@aws-amplify/data-schema-types';
+import { RefType } from '../RefType';
 
 const brandName = 'conversationCustomOperation';
 
 export interface ConversationType extends Brand<typeof brandName> {
+  kind: 'Conversation';
   aiModel: BedrockModelId;
   systemPrompt: string;
   inferenceConfiguration: InferenceConfiguration;
   handler?: DefineFunction | string;
-  kind: 'Conversation';
+  tools?: ToolDefinition[];
 }
 
 // Utility type for Omitting a common property across all members of a union
@@ -147,10 +149,16 @@ export function conversation(input: ConversationInput): ConversationType {
   return _conversation(input);
 }
 
+export type ToolDefinition = {
+  query: RefType<any>;
+  description: string;
+};
+
 export type ConversationInput = {
   aiModel: BedrockModelId;
   systemPrompt: string;
   inferenceConfiguration?: InferenceConfiguration;
+  tools?: ToolDefinition[],
   handler?: DefineFunction | string;
 };
 

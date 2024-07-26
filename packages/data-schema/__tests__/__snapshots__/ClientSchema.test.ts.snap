@@ -26,8 +26,19 @@ type Query {
 `;
 
 exports[`ai routes conversations 1`] = `
-"type Mutation {
-  ChatBot(sessionId: ID!, content: String): ConversationMessage @conversation(aiModel: "Claude3Haiku", systemPrompt: "Hello, world!", functionName: "foo")
+"type Profile @aws_api_key
+{
+  value: Int
+  unit: String
+}
+
+type Mutation {
+  ChatBot(sessionId: ID!, content: String): ConversationMessage @conversation(aiModel: "Claude3Haiku", systemPrompt: "Hello, world!", tools: [{ name: "myToolQuery", description: "does a thing" }, { name: "anotherToolQuery", description: "does a different thing" }])
+}
+
+type Query {
+  myToolQuery(a: Int, b: String): Profile @function(name: "FnMyToolQuery") @auth(rules: [{allow: public, provider: apiKey}])
+  anotherToolQuery: String @function(name: "FnAnotherToolQuery") @auth(rules: [{allow: public, provider: apiKey}])
 }
 
 interface ConversationMessage {
