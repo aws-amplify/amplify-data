@@ -37,3 +37,8 @@ is likely due to the fact that we are running the tests in Node (which is not
 officially supported by `amplify-js`).
 
 TODO: Investigate and/or fix.
+
+## Sandbox testing:
+
+1. `await ampxCli`
+  - Factory function that returns a ProcessController for the Amplify Gen 2 Backend CLI
