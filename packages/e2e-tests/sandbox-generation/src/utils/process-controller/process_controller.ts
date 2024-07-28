@@ -59,17 +59,24 @@ export class ProcessController {
     }
 
     if (process.stdout) {
-      void execaProcess.pipeStdout?.(process.stdout);
+      // void execaProcess.pipeStdout?.(process.stdout);
+      // TODO:
+      void execaProcess.stdout?.pipe(process.stdout);
     }
 
     if (process.stderr) {
-      void execaProcess.pipeStderr?.(process.stderr);
+      // void execaProcess.pipeStderr?.(process.stderr);
+      // TODO:
+      void execaProcess.stderr?.pipe(process.stderr);
     }
 
     if (!execaProcess.stdout) {
       throw new Error('Child process does not have stdout stream');
     }
-    const reader = readline.createInterface(execaProcess.stdout);
+    // const reader = readline.createInterface(execaProcess.stdout);
+    // TODO:
+    // TODO: what's the difference??
+    const reader = readline.createInterface(process.stdout);
 
     for await (const line of reader) {
       const currentInteraction = interactionQueue[0];

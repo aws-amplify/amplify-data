@@ -46,7 +46,11 @@ TODO: Investigate and/or fix.
 
 - Factory function that returns a ProcessController for the Amplify Gen 2 Backend CLI
 
-### Build stuff 
+### Build stuff
+
+Problem using execa with Jest in Node. ESM import issue. Tried a few config options, but no luck. They don't use Jest, so no help here.
+
 - https://github.com/sindresorhus/execa/issues/465
 - https://jestjs.io/docs/ecmascript-modules
-- 
+
+Workaround is to use a newer version of execa than amplify-backend, but the usage needs some adjustments.

@@ -7,7 +7,8 @@ import os from 'os';
 import fs from 'fs/promises';
 
 import { killExecaProcess } from './execa_process_killer';
-import { ExecaChildProcess } from 'execa';
+// TODO:
+// import { ExecaChildProcess } from 'execa';
 import { CopyDefinition } from './types';
 
 export const CONTROL_C = '\x03';
@@ -54,7 +55,7 @@ export class PredicatedActionBuilder {
         str === CONTROL_C
           ? ActionType.KILL_PROCESS
           : ActionType.SEND_INPUT_TO_PROCESS,
-      action: async (execaProcess: ExecaChildProcess) => {
+      action: async (execaProcess: any) => {
         if (str === CONTROL_C) {
           await killExecaProcess(execaProcess);
         } else {
