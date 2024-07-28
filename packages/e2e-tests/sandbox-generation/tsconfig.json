@@ -1,15 +1,26 @@
 {
   "compilerOptions": {
-    // For default imports:
+    "lib": ["dom", "es2019", "es2020"],
+    "target": "es2020",
+    "allowJs": false,
+    "skipLibCheck": true,
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
+    "incremental": true,
     "esModuleInterop": true,
-    "target": "ES2022",
-    "module": "esnext",
-    "moduleResolution": "node",
-    "rootDir": "./",
-    // For importing `amplify_outputs.json`:
     "resolveJsonModule": true,
-    // Prevents `Type 'string' is not assignable to type 'string[]'`:
-    "strict": true
+    "noErrorTruncation": true, // prevents truncatation when hovering over type in VSCode
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "paths": {
+      // "@aws-amplify/data-schema-types": [
+      //   "./packages/data-schema-types/src/index.ts"
+      // ],
+      // "@aws-amplify/data-schema": ["./packages/data-schema/src/index.ts"],
+      // "@aws-amplify/data-schema/internals": [
+      //   "./packages/data-schema/src/internals/index.ts"
+      // ]
+    }
   },
-  "exclude": ["node_modules"]
+  "exclude": ["**/node_modules", "**/dist", "**/lib-esm", "**/*js"]
 }

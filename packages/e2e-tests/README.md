@@ -40,5 +40,13 @@ TODO: Investigate and/or fix.
 
 ## Sandbox testing:
 
+**Note: trimmed down to essentials (we aren't testing the CLI here)**
+
 1. `await ampxCli`
-  - Factory function that returns a ProcessController for the Amplify Gen 2 Backend CLI
+
+- Factory function that returns a ProcessController for the Amplify Gen 2 Backend CLI
+
+### Build stuff 
+- https://github.com/sindresorhus/execa/issues/465
+- https://jestjs.io/docs/ecmascript-modules
+- 

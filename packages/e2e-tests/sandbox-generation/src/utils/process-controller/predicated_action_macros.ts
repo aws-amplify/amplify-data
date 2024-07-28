@@ -1,6 +1,6 @@
-import { PredicatedActionBuilder } from './predicated_action_queue_builder.js';
-import { PlatformDeploymentThresholds } from '../test-project-setup/test_project_base.js';
-import { CopyDefinition } from './types.js';
+import { PredicatedActionBuilder } from './predicated_action_queue_builder';
+// import { PlatformDeploymentThresholds } from '../test-project-setup/test_project_base.js';
+import { CopyDefinition } from './types';
 
 /**
  * Convenience predicated actions that can be used to build up more complex CLI flows.
@@ -19,7 +19,7 @@ export const waitForSandboxDeploymentToPrintTotalTime = () =>
  */
 export const waitForConfigUpdateAfterDeployment = () =>
   new PredicatedActionBuilder().waitForLineIncludes(
-    'File written: amplify_outputs.json'
+    'File written: amplify_outputs.json',
   );
 
 /**
@@ -27,7 +27,7 @@ export const waitForConfigUpdateAfterDeployment = () =>
  */
 export const waitForSandboxToBecomeIdle = () =>
   new PredicatedActionBuilder().waitForLineIncludes(
-    'Watching for file changes...'
+    'Watching for file changes...',
   );
 
 /**
@@ -36,7 +36,7 @@ export const waitForSandboxToBecomeIdle = () =>
 export const confirmDeleteSandbox = () =>
   new PredicatedActionBuilder()
     .waitForLineIncludes(
-      'Are you sure you want to delete all the resources in your sandbox environment'
+      'Are you sure you want to delete all the resources in your sandbox environment',
     )
     .sendYes();
 
@@ -46,7 +46,7 @@ export const confirmDeleteSandbox = () =>
 export const rejectCleanupSandbox = () =>
   new PredicatedActionBuilder()
     .waitForLineIncludes(
-      'Would you like to delete all the resources in your sandbox environment'
+      'Would you like to delete all the resources in your sandbox environment',
     )
     .sendNo();
 
@@ -67,12 +67,12 @@ export const interruptSandbox = () => waitForSandboxToBecomeIdle().sendCtrlC();
  * Reusable predicated action: Wait for sandbox to finish deployment and assert that the deployment time is less
  * than the threshold.
  */
-export const ensureDeploymentTimeLessThan = (
-  platformThresholds: PlatformDeploymentThresholds
-) => {
-  return waitForSandboxDeploymentToPrintTotalTime().ensureDeploymentTimeLessThan(
-    process.platform.startsWith('win')
-      ? platformThresholds.onWindows
-      : platformThresholds.onOther
-  );
-};
+// export const ensureDeploymentTimeLessThan = (
+//   platformThresholds: PlatformDeploymentThresholds,
+// ) => {
+//   return waitForSandboxDeploymentToPrintTotalTime().ensureDeploymentTimeLessThan(
+//     process.platform.startsWith('win')
+//       ? platformThresholds.onWindows
+//       : platformThresholds.onOther,
+//   );
+// };

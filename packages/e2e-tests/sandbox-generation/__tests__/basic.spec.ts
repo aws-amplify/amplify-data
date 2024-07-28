@@ -3,29 +3,24 @@ import {
   // configureAmplifyAndGenerateClient,
   // expectDataReturnWithoutErrors,
 } from '../utils';
-import type { Schema } from '../amplify/data/resource';
-import { ampxCli } from '../utils/process-controller/process_controller.js';
+// import type { Schema } from '../amplify/data/resource';
+import { ampxCli } from '../src/utils/process-controller/process_controller';
 import {
   // confirmDeleteSandbox,
   interruptSandbox,
   rejectCleanupSandbox,
   waitForSandboxDeploymentToPrintTotalTime,
-} from '../utils/process-controller/predicated_action_macros.js';
-import {} from // CloudFormationClient,
-// DeleteStackCommand,
-'@aws-sdk/client-cloudformation';
+} from '../src/utils/process-controller/predicated_action_macros';
 
-let client: Client;
+// let client;
 
 const deleteAll = async (client: Client) => {
   const { data: crudlTestModels } = await client.models.CRUDLTestModel.list();
   console.log('crudlTestModels to delete:', crudlTestModels);
 
-  const deletePromises = crudlTestModels?.map(
-    async (crudlTestModel: Schema['CRUDLTestModel']['type']) => {
-      await client.models.CRUDLTestModel.delete(crudlTestModel);
-    },
-  );
+  const deletePromises = crudlTestModels?.map(async (crudlTestModel) => {
+    await client.models.CRUDLTestModel.delete(crudlTestModel);
+  });
 
   await Promise.all(deletePromises!);
 
@@ -54,9 +49,9 @@ describe('Basic CRUDL', () => {
   // beforeEach(() => {
   //   client = configureAmplifyAndGenerateClient({});
   // });
-  afterEach(async () => {
-    await deleteAll(client);
-  });
+  // afterEach(async () => {
+  //   await deleteAll(client);
+  // });
   test('start', async () => {
     const projectDirPath = '../';
     // await ampxCli(['sandbox'], projectDirPath, {

@@ -1,12 +1,12 @@
-import { Options, execa, execaSync } from 'execa';
 import readline from 'readline';
 import { PredicatedActionBuilder } from './predicated_action_queue_builder';
-import { ActionType } from './predicated_action.js';
+import { ActionType } from './predicated_action';
 import { killExecaProcess } from './execa_process_killer';
 import {
   type PackageManager,
   type PackageManagerExecutable,
 } from '../setup_package_manager';
+import { execa, execaSync } from 'execa';
 
 /**
  * Provides an abstractions for sending and receiving data on stdin/out of a child process
@@ -34,7 +34,8 @@ export class ProcessController {
   constructor(
     private readonly command: string,
     private readonly args: string[] = [],
-    private readonly options?: Pick<Options, 'cwd' | 'env'>,
+    // private readonly options?: Pick<Options, 'cwd' | 'env'>,
+    private readonly options?: any,
   ) {}
 
   do = (interactions: PredicatedActionBuilder) => {
