@@ -1,4 +1,3 @@
-import type { Equal, Expect, Prettify } from '@aws-amplify/data-schema-types';
 import { a, ClientSchema } from '@aws-amplify/data-schema';
 import { Amplify } from 'aws-amplify';
 import { buildAmplifyConfig, mockedGenerateClient } from '../../utils';

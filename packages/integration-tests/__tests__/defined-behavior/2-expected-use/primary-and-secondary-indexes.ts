@@ -599,10 +599,13 @@ describe('Secondary Indexes', () => {
         { data: { listModels: { items: [] } } },
       ]);
       const client = generateClient<Schema>();
-      await client.models.Model.listModelByGsiPkAndGsiSk1AndGsiSk2({
-        gsiPk: 'abc',
-        gsiSk1GsiSk2: { beginsWith: { gsiSk1: '...', gsiSk2: 0 } },
-      });
+      await client.models.Model.listModelByGsiPkAndGsiSk1AndGsiSk2(
+        {
+          gsiPk: 'abc',
+          gsiSk1GsiSk2: { beginsWith: { gsiSk1: '...', gsiSk2: 0 } },
+        },
+        { sortDirection: 'ASC' },
+      );
 
       const [[{ query, variables }]] = optionsAndHeaders(spy);
 
@@ -618,6 +621,7 @@ describe('Secondary Indexes', () => {
       expect(variables).toStrictEqual({
         gsiPk: 'abc',
         gsiSk1GsiSk2: { beginsWith: { gsiSk1: '...', gsiSk2: 0 } },
+        sortDirection: 'ASC',
       });
     });
   });
