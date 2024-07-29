@@ -1,6 +1,6 @@
-import { PredicatedActionBuilder } from './predicated_action_queue_builder.js';
+import { PredicatedActionBuilder } from './predicated_action_queue_builder';
 // import { PlatformDeploymentThresholds } from '../test-project-setup/test_project_base.js';
-import { CopyDefinition } from './types.js';
+import { CopyDefinition } from './types';
 
 /**
  * Convenience predicated actions that can be used to build up more complex CLI flows.

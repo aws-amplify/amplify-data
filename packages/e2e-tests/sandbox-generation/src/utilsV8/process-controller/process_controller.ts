@@ -1,12 +1,12 @@
 import { Options, execa, execaSync } from 'execa';
 import readline from 'readline';
-import { PredicatedActionBuilder } from './predicated_action_queue_builder.js';
-import { ActionType } from './predicated_action.js';
-import { killExecaProcess } from './execa_process_killer.js';
+import { PredicatedActionBuilder } from './predicated_action_queue_builder';
+import { ActionType } from './predicated_action';
+import { killExecaProcess } from './execa_process_killer';
 import {
   type PackageManager,
   type PackageManagerExecutable,
-} from '../setup_package_manager.js';
+} from '../setup_package_manager';
 
 /**
  * Provides an abstractions for sending and receiving data on stdin/out of a child process

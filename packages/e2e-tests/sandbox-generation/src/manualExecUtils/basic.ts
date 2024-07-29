@@ -16,10 +16,6 @@ import {
 
 const test = async () => {
   const projectDirPath = './';
-  // await ampxCli(['sandbox'], projectDirPath, {
-  //   env: environment,
-  // })
-  // TODO: env???
   // Factory function that returns a ProcessController for the Amplify Gen 2 Backend CLI
   await ampxCli(['sandbox', '--identifier', 'sandboxGenTest'], projectDirPath)
     // Reusable predicates: Wait for sandbox to finish and emit "File written: amplify_outputs.json"

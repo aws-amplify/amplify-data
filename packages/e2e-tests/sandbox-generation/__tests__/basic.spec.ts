@@ -1,66 +1,51 @@
-// import {
-//   Client,
-//   // configureAmplifyAndGenerateClient,
-//   // expectDataReturnWithoutErrors,
-// } from '../utils';
-// import type { Schema } from '../amplify/data/resource';
-import { ampxCli } from '../src/utils/process-controller/process_controller';
+import { ampxCli } from '../src/utilsV8/process-controller/process_controller';
 import {
-  // confirmDeleteSandbox,
+  confirmDeleteSandbox,
   interruptSandbox,
   rejectCleanupSandbox,
   waitForSandboxDeploymentToPrintTotalTime,
-} from '../src/utils/process-controller/predicated_action_macros';
+} from '../src/utilsV8/process-controller/predicated_action_macros';
 import fs from 'fs/promises';
+import {
+  Client,
+  configureAmplifyAndGenerateClient,
+  expectDataReturnWithoutErrors,
+} from '../../node/utils';
+import type { Schema } from '../amplify/data/resource';
+import { deleteTestDirectory } from '../src/utilsV8/setup_test_directory';
 
-// let client;
+let client: Client;
 
-// const deleteAll = async (client: Client) => {
-//   const { data: crudlTestModels } = await client.models.CRUDLTestModel.list();
-//   console.log('crudlTestModels to delete:', crudlTestModels);
+const deleteAll = async (client: Client) => {
+  const { data: crudlTestModels } = await client.models.CRUDLTestModel.list();
+  console.log('crudlTestModels to delete:', crudlTestModels);
 
-//   const deletePromises = crudlTestModels?.map(async (crudlTestModel) => {
-//     await client.models.CRUDLTestModel.delete(crudlTestModel);
-//   });
+  const deletePromises = crudlTestModels?.map(
+    async (crudlTestModel: Schema['CRUDLTestModel']['type']) => {
+      await client.models.CRUDLTestModel.delete(crudlTestModel);
+    },
+  );
 
-//   await Promise.all(deletePromises!);
+  await Promise.all(deletePromises!);
 
-//   const { data: listAfterDelete } = await client.models.CRUDLTestModel.list();
-//   console.log('result of cleanup:', listAfterDelete);
-// };
+  const { data: listAfterDelete } = await client.models.CRUDLTestModel.list();
+  console.log('result of cleanup:', listAfterDelete);
+};
 
-/**
- * Tear down the project.
- */
-// async function tearDown(backendIdentifier: any) {
-//   if (backendIdentifier.type === 'sandbox') {
-//     await ampxCli(['sandbox', 'delete'], this.projectDirPath)
-//       .do(confirmDeleteSandbox())
-//       .run();
-//   } else {
-//     await this.cfnClient.send(
-//       new DeleteStackCommand({
-//         StackName: BackendIdentifierConversions.toStackName(backendIdentifier),
-//       }),
-//     );
-//   }
-// }
+const sandboxGenTimeout: number = 15000;
+const sandboxCleanupTimeout: number = 8000;
 
-describe('Basic CRUDL', () => {
-  // beforeEach(() => {
-  //   client = configureAmplifyAndGenerateClient({});
-  // });
-  // afterEach(async () => {
-  //   await deleteAll(client);
-  // });
-  test('start', async () => {
-    const projectDirPath = '../';
-    // await ampxCli(['sandbox'], projectDirPath, {
-    //   env: environment,
-    // })
-    // TODO: env???
+describe('Basic CRUDL w/ Sandbox Gen', () => {
+  beforeAll(async () => {
+    console.log('generating sandbox..');
+    // packages/integration-tests/src/test-live-dependency-health-checks/health_checks.test.ts
+    // Ensure that the amplify_outputs.json file does not exist before running the test
+    // expect(clientConfigStats.isFile()).toBe(false);
+    // const start = Date.now();
+
+    const projectDirPath = './';
     // Factory function that returns a ProcessController for the Amplify Gen 2 Backend CLI
-    await ampxCli(['sandbox'], projectDirPath)
+    await ampxCli(['sandbox', '--identifier', 'sandboxGenTest'], projectDirPath)
       // Reusable predicates: Wait for sandbox to finish and emit "File written: amplify_outputs.json"
       .do(waitForSandboxDeploymentToPrintTotalTime())
       // Wait for sandbox to become idle and then quit it (CTRL-C)
@@ -70,17 +55,43 @@ describe('Basic CRUDL', () => {
       // Execute the sequence of actions queued on the process
       .run();
 
-    // packages/integration-tests/src/test-live-dependency-health-checks/health_checks.test.ts
+    // const end = Date.now();
+    // console.log(`Execution time--------: ${end - start} ms`);
+
     const clientConfigStats = await fs.stat('../amplify_outputs.json');
+    // Sandbox gen successfull:
     expect(clientConfigStats.isFile()).toBe(true);
+  }, sandboxGenTimeout);
+  beforeEach(() => {
+    client = configureAmplifyAndGenerateClient({});
+  });
+  afterEach(async () => {
+    await deleteAll(client);
+  });
+  test('Create', async () => {
+    const response = await client.models.CRUDLTestModel.create({
+      content: 'test create',
+    });
 
-    // const response = await client.models.CRUDLTestModel.create({
-    //   content: 'test create',
-    // });
+    const data = expectDataReturnWithoutErrors(response, 'create');
 
-    // const data = expectDataReturnWithoutErrors(response, 'create');
+    expect(data?.content).toBe('test create');
+  });
+  afterAll(async () => {
+    console.log('deleting sandbox..');
+    const projectDirPath = './';
 
-    // expect(data?.content).toBe('test create');
-    expect(true).toBe(true);
-  }, 120000);
+    // Factory function that returns a ProcessController for the Amplify Gen 2 Backend CLI
+    await ampxCli(['sandbox', 'delete'], projectDirPath)
+      // Reusable predicated action: Wait for sandbox delete to prompt to delete all the resource and respond with yes
+      .do(confirmDeleteSandbox())
+      // Execute the sequence of actions queued on the process
+      .run();
+
+    const outputsPath = './amplify_outputs.json';
+    await deleteTestDirectory(outputsPath);
+    
+    const amplifyPath = './.amplify';
+    await deleteTestDirectory(amplifyPath);
+  }, sandboxCleanupTimeout);
 });

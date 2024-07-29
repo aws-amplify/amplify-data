@@ -2,13 +2,13 @@ import {
   ActionType,
   PredicateType,
   PredicatedAction,
-} from './predicated_action.js';
+} from './predicated_action';
 import os from 'os';
 import fs from 'fs/promises';
 
-import { killExecaProcess } from './execa_process_killer.js';
+import { killExecaProcess } from './execa_process_killer';
 // import { ExecaChildProcess } from 'execa';
-import { CopyDefinition } from './types.js';
+import { CopyDefinition } from './types';
 
 export const CONTROL_C = '\x03';
 /**

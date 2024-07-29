@@ -1,10 +1,11 @@
-import { ExecaChildProcess, execa } from 'execa';
+// import { ExecaChildProcess, execa } from 'execa';
+import { execa } from 'execa';
 
 /**
  * Kills the given process (equivalent of sending CTRL-C)
  * @param processInstance an instance of execa child process
  */
-export const killExecaProcess = async (processInstance: ExecaChildProcess) => {
+export const killExecaProcess = async (processInstance: any) => {
   if (process.platform.startsWith('win')) {
     if (typeof processInstance.pid !== 'number') {
       throw new Error('Cannot kill the process that does not have pid');
