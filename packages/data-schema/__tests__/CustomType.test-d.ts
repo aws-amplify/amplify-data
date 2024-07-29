@@ -1,9 +1,13 @@
 import type { Equal, Expect } from '@aws-amplify/data-schema-types';
-import { type CustomType, customType } from '../src/CustomType';
-import { type ModelField, Nullable, string } from '../src/ModelField';
+import { type _Internal_CustomType, customType } from '../src/CustomType';
+import {
+  type _Internal_ModelField,
+  _Internal_Nullable,
+  string,
+} from '../src/ModelField';
 
 import { float } from '../src/a';
-import { EnumType, enumType } from '../src/EnumType';
+import { _Internal_EnumType, enumType } from '../src/EnumType';
 
 describe('CustomType', () => {
   test('Basic CustomType', () => {
@@ -12,10 +16,14 @@ describe('CustomType', () => {
       long: float(),
     });
 
-    type Expected = CustomType<{
+    type Expected = _Internal_CustomType<{
       fields: {
-        lat: ModelField<Nullable<number>, never, undefined>;
-        long: ModelField<Nullable<number>, never, undefined>;
+        lat: _Internal_ModelField<_Internal_Nullable<number>, never, undefined>;
+        long: _Internal_ModelField<
+          _Internal_Nullable<number>,
+          never,
+          undefined
+        >;
       };
     }>;
 
@@ -35,15 +43,19 @@ describe('CustomType', () => {
       }),
     });
 
-    type Expected = CustomType<{
+    type Expected = _Internal_CustomType<{
       fields: {
-        content: ModelField<string, 'required', undefined>;
-        meta: CustomType<{
+        content: _Internal_ModelField<string, 'required', undefined>;
+        meta: _Internal_CustomType<{
           fields: {
-            enumField: EnumType<readonly ['value1', 'value2']>;
-            deepMeta: CustomType<{
+            enumField: _Internal_EnumType<readonly ['value1', 'value2']>;
+            deepMeta: _Internal_CustomType<{
               fields: {
-                description: ModelField<string, 'required', undefined>;
+                description: _Internal_ModelField<
+                  string,
+                  'required',
+                  undefined
+                >;
               };
             }>;
           };

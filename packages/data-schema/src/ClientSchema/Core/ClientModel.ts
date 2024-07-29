@@ -1,10 +1,13 @@
 import type {
   deferredRefResolvingPrefix,
   ModelTypeParamShape,
-  ModelDefaultIdentifier,
+  _Internal_ModelDefaultIdentifier,
 } from '../../ModelType';
 import type { ClientSchemaProperty } from './ClientSchemaProperty';
-import type { Authorization, ImpliedAuthFields } from '../../Authorization';
+import type {
+  _Internal_Authorization,
+  ImpliedAuthFields,
+} from '../../Authorization';
 import type { SchemaMetadata, ResolveFields } from '../utilities';
 import type {
   IsEmptyStringOrNever,
@@ -12,11 +15,14 @@ import type {
   Equal,
   Prettify,
 } from '@aws-amplify/data-schema-types';
-import type { ModelField } from '../../ModelField';
-import type { ModelRelationalField } from '../../ModelRelationalField';
-import type { EnumType } from '../../EnumType';
-import type { CustomType, CustomTypeParamShape } from '../../CustomType';
-import type { RefType } from '../../RefType';
+import type { _Internal_ModelField } from '../../ModelField';
+import type { _Internal_ModelRelationalField } from '../../ModelRelationalField';
+import type { _Internal_EnumType } from '../../EnumType';
+import type {
+  _Internal_CustomType,
+  CustomTypeParamShape,
+} from '../../CustomType';
+import type { _Internal_RefType } from '../../RefType';
 import type {
   StringFilter,
   NumericFilter,
@@ -88,10 +94,10 @@ type ModelIdentifier<
  * not already present on the model.
  */
 type ImplicitIdentifier<T extends ModelTypeParamShape> =
-  T['identifier']['pk'] extends ModelDefaultIdentifier['pk']
+  T['identifier']['pk'] extends _Internal_ModelDefaultIdentifier['pk']
     ? 'id' extends keyof T['fields']
       ? unknown
-      : ModelDefaultIdentifier['pk']
+      : _Internal_ModelDefaultIdentifier['pk']
     : unknown;
 
 type ResolveIdentifierFields<Model, IdentifierFields> = {
@@ -134,10 +140,10 @@ type AuthFields<
 type ImpliedAuthFieldsFromFields<T> = UnionToIntersection<
   T extends ModelTypeParamShape
     ? T['fields'][keyof T['fields']] extends
-        | ModelField<any, any, infer Auth>
-        | ModelRelationalField<any, any, any, infer Auth>
-        | RefType<any, any, infer Auth>
-      ? Auth extends Authorization<any, any, any>
+        | _Internal_ModelField<any, any, infer Auth>
+        | _Internal_ModelRelationalField<any, any, any, infer Auth>
+        | _Internal_RefType<any, any, infer Auth>
+      ? Auth extends _Internal_Authorization<any, any, any>
         ? ImpliedAuthFields<Auth>
         : object
       : object
@@ -149,14 +155,16 @@ type NestedTypes<
   T extends ModelTypeParamShape,
 > = {
   [K in keyof T['fields'] as T['fields'][K] extends
-    | EnumType
-    | CustomType<CustomTypeParamShape>
+    | _Internal_EnumType
+    | _Internal_CustomType<CustomTypeParamShape>
     ? K
     : never]: K extends keyof Bag
     ? {
         // A little hackier than I'd like here.
         // Ideally, adapt ClientEnum and ClientCustomType to work with us here instead.
-        __entityType: T['fields'][K] extends EnumType ? 'enum' : 'customType';
+        __entityType: T['fields'][K] extends _Internal_EnumType
+          ? 'enum'
+          : 'customType';
         type: Exclude<Bag[K], null | undefined>;
       }
     : never;

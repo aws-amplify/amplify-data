@@ -1,7 +1,7 @@
 import type { Brand } from './util';
 import type { InternalField, BaseModelField } from './ModelField';
-import type { RefType } from './RefType';
-import type { EnumType } from './EnumType';
+import type { _Internal_RefType } from './RefType';
+import type { _Internal_EnumType } from './EnumType';
 
 /**
  * Custom Types
@@ -16,9 +16,9 @@ export type CustomTypeAllowedModifiers = 'authorization' | 'array' | 'required';
 type CustomTypeFields = Record<
   string,
   | BaseModelField
-  | RefType<any, any, any>
-  | EnumType
-  | CustomType<CustomTypeParamShape>
+  | _Internal_RefType<any, any, any>
+  | _Internal_EnumType
+  | _Internal_CustomType<CustomTypeParamShape>
 >;
 
 type InternalModelFields = Record<string, InternalField>;
@@ -37,17 +37,19 @@ export type CustomTypeParamShape = {
 };
 
 /**
- * INTERNAL: This type is exported to allow users to compile declaration (*.d.ts) files.
- * Direct use of this type may result in changes that break you build across minor versions.
+ * # INTERNAL
+ *
+ * Not intended to be consumed directly, as naming and factoring
+ * is subject to change.
  */
-export type CustomType<T extends CustomTypeParamShape> = T &
+export type _Internal_CustomType<T extends CustomTypeParamShape> = T &
   Brand<'customType'>;
 
 /**
  * Internal representation of CustomType that exposes the `data` property.
  * Used at buildtime.
  */
-export type InternalCustomType = CustomType<any> & {
+export type InternalCustomType = _Internal_CustomType<any> & {
   data: InternalCustomTypeData;
 };
 
@@ -57,7 +59,7 @@ function _customType<T extends CustomTypeParamShape>(fields: T['fields']) {
     type: 'customType',
   };
 
-  return { data } as InternalCustomType as CustomType<T>;
+  return { data } as InternalCustomType as _Internal_CustomType<T>;
 }
 
 /**
@@ -94,6 +96,6 @@ function _customType<T extends CustomTypeParamShape>(fields: T['fields']) {
  */
 export function customType<T extends CustomTypeFields>(
   fields: T,
-): CustomType<{ fields: T }> {
+): _Internal_CustomType<{ fields: T }> {
   return _customType(fields);
 }

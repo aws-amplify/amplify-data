@@ -1,16 +1,16 @@
-import type { ModelType } from '../ModelType';
+import type { _Internal_ModelType } from '../ModelType';
 import type { GenericModelSchema } from '../ModelSchema';
 import type {
-  ModelRelationalField,
-  ModelRelationshipTypes,
+  _Internal_ModelRelationalField,
+  _Internal_ModelRelationshipTypes,
   RelationTypeFunctionOmitMapping,
 } from '../ModelRelationalField';
 import type { BaseModelField } from '../ModelField';
-import type { CustomType, CustomTypeParamShape } from '../CustomType';
-import type { EnumType } from '../EnumType';
-import type { RefType, RefTypeParamShape } from '../RefType';
+import type { _Internal_CustomType, CustomTypeParamShape } from '../CustomType';
+import type { _Internal_EnumType } from '../EnumType';
+import type { _Internal_RefType, RefTypeParamShape } from '../RefType';
 import type {
-  CustomOperation,
+  _Internal_CustomOperation,
   CustomOperationParamShape,
 } from '../CustomOperation';
 
@@ -29,11 +29,11 @@ export type SchemaTypes<T> =
  */
 export type ModelTypes<Schema> = {
   [Model in keyof Schema as Schema[Model] extends
-    | EnumType
-    | CustomType<CustomTypeParamShape>
-    | CustomOperation<CustomOperationParamShape, any>
+    | _Internal_EnumType
+    | _Internal_CustomType<CustomTypeParamShape>
+    | _Internal_CustomOperation<CustomOperationParamShape, any>
     ? never
-    : Model]: Schema[Model] extends ModelType<infer R, any>
+    : Model]: Schema[Model] extends _Internal_ModelType<infer R, any>
     ? R['fields']
     : never;
 };
@@ -44,14 +44,14 @@ export type ModelTypes<Schema> = {
  */
 export type ModelAndCustomTypes<Schema> = {
   [Model in keyof Schema as Schema[Model] extends
-    | EnumType
-    | CustomOperation<CustomOperationParamShape, any>
+    | _Internal_EnumType
+    | _Internal_CustomOperation<CustomOperationParamShape, any>
     ? never
     : // TODO: This should use BaseModel, but seems to only work because it relies on
       // omitting extra methods
       Model]: Schema[Model] extends
-    | ModelType<any, any>
-    | CustomType<CustomTypeParamShape>
+    | _Internal_ModelType<any, any>
+    | _Internal_CustomType<CustomTypeParamShape>
     ? Schema[Model]
     : never;
 };
@@ -68,7 +68,7 @@ export type FieldTypes<T> = {
       infer R
     >
       ? R
-      : T[ModelProp][FieldProp] extends RefType<
+      : T[ModelProp][FieldProp] extends _Internal_RefType<
             infer R extends RefTypeParamShape,
             any,
             any
@@ -79,9 +79,9 @@ export type FieldTypes<T> = {
           : T[ModelProp][FieldProp] | null
         : // replace non-model types with Ref
           T[ModelProp][FieldProp] extends
-              | EnumType
-              | CustomType<CustomTypeParamShape>
-          ? RefType<{
+              | _Internal_EnumType
+              | _Internal_CustomType<CustomTypeParamShape>
+          ? _Internal_RefType<{
               link: `${Capitalize<ModelProp & string>}${Capitalize<
                 FieldProp & string
               >}`;
@@ -92,10 +92,10 @@ export type FieldTypes<T> = {
               authorization: [];
             }> | null
           : // resolve relational and model fields to the their first type arg
-            T[ModelProp][FieldProp] extends ModelRelationalField<
+            T[ModelProp][FieldProp] extends _Internal_ModelRelationalField<
                 infer R,
                 string,
-                RelationTypeFunctionOmitMapping<ModelRelationshipTypes>,
+                RelationTypeFunctionOmitMapping<_Internal_ModelRelationshipTypes>,
                 any
               >
             ? R
@@ -117,7 +117,7 @@ export type FieldTypesOfCustomType<T> = {
       infer R
     >
       ? R
-      : T[CustomTypeName][FieldProp] extends RefType<
+      : T[CustomTypeName][FieldProp] extends _Internal_RefType<
             infer R extends RefTypeParamShape,
             any,
             any
@@ -128,9 +128,9 @@ export type FieldTypesOfCustomType<T> = {
           : T[CustomTypeName][FieldProp] | null
         : // replace non-model types with Ref
           T[CustomTypeName][FieldProp] extends
-              | EnumType
-              | CustomType<CustomTypeParamShape>
-          ? RefType<{
+              | _Internal_EnumType
+              | _Internal_CustomType<CustomTypeParamShape>
+          ? _Internal_RefType<{
               link: `${Capitalize<CustomTypeName & string>}${Capitalize<
                 FieldProp & string
               >}`;

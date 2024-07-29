@@ -9,7 +9,7 @@ Use a custom query to define an API request that will retrieve backend data.
 **Signature:**
 
 ```typescript
-export declare function query(): CustomOperation<{
+export declare function query(): _Internal_CustomOperation<{
     arguments: null;
     returnType: null;
     authorization: [];
@@ -19,7 +19,7 @@ export declare function query(): CustomOperation<{
 ```
 **Returns:**
 
-[CustomOperation](./data-schema.customoperation.md)<!-- -->&lt;{ arguments: null; returnType: null; authorization: \[\]; typeName: 'Query'; handlers: null; }, 'for', typeof queryBrand&gt;
+[\_Internal\_CustomOperation](./data-schema._internal_customoperation.md)<!-- -->&lt;{ arguments: null; returnType: null; authorization: \[\]; typeName: 'Query'; handlers: null; }, 'for', typeof queryBrand&gt;
 
 a custom query
 

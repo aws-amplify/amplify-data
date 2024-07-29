@@ -9,11 +9,11 @@ An email scalar type that is represented server-side in the format `local-part@d
 **Signature:**
 
 ```typescript
-export declare function email(): ModelField<Nullable<string>>;
+export declare function email(): _Internal_ModelField<_Internal_Nullable<string>>;
 ```
 **Returns:**
 
-[ModelField](./data-schema.modelfield.md)<!-- -->&lt;[Nullable](./data-schema.nullable.md)<!-- -->&lt;string&gt;&gt;
+[\_Internal\_ModelField](./data-schema._internal_modelfield.md)<!-- -->&lt;[\_Internal\_Nullable](./data-schema._internal_nullable.md)<!-- -->&lt;string&gt;&gt;
 
 email field definition
 

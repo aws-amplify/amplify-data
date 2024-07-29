@@ -4,12 +4,14 @@
 
 ## EnumType interface
 
-INTERNAL: This type is exported to allow users to compile declaration (\*.d.ts) files. Direct use of this type may result in changes that break you build across minor versions.
+\# INTERNAL
+
+Not intended to be consumed directly, as naming and factoring is subject to change.
 
 **Signature:**
 
 ```typescript
-export interface EnumType<values extends readonly string[] = readonly string[]> extends EnumTypeParamShape<values> 
+export interface _Internal_EnumType<values extends readonly string[] = readonly string[]> extends EnumTypeParamShape<values> 
 ```
 **Extends:** EnumTypeParamShape&lt;values&gt;
 

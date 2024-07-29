@@ -1,5 +1,5 @@
 import type { Equal, Expect } from '@aws-amplify/data-schema-types';
-import { type EnumType, enumType } from '../src/EnumType';
+import { type _Internal_EnumType, enumType } from '../src/EnumType';
 import { a, type ClientSchema } from '../src/index';
 import type { ClientExtensions } from '../src/runtime';
 
@@ -7,7 +7,9 @@ describe('EnumType', () => {
   test('Happy case', () => {
     const accessLevel = enumType(['public', 'protected', 'private']);
 
-    type Expected = EnumType<readonly ['public', 'protected', 'private']>;
+    type Expected = _Internal_EnumType<
+      readonly ['public', 'protected', 'private']
+    >;
 
     type Result = typeof accessLevel;
 

@@ -7,7 +7,7 @@
 **Signature:**
 
 ```typescript
-export declare function ref<Value extends string, T extends Value>(link: T): RefType<RefTypeArgFactory<T>, never, undefined>;
+export declare function ref<Value extends string, T extends Value>(link: T): _Internal_RefType<RefTypeArgFactory<T>, never, undefined>;
 ```
 
 ## Parameters
@@ -45,5 +45,5 @@ T
 </tbody></table>
 **Returns:**
 
-[RefType](./data-schema.reftype.md)<!-- -->&lt;RefTypeArgFactory&lt;T&gt;, never, undefined&gt;
+[\_Internal\_RefType](./data-schema._internal_reftype.md)<!-- -->&lt;RefTypeArgFactory&lt;T&gt;, never, undefined&gt;
 

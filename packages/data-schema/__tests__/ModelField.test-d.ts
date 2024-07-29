@@ -1,6 +1,6 @@
 import type { Equal, Expect } from '@aws-amplify/data-schema-types';
 import {
-  type ModelField,
+  type _Internal_ModelField,
   type InternalField,
   string,
   id,
@@ -16,7 +16,7 @@ import {
   phone,
   url,
   ipAddress,
-  Json,
+  _Internal_Json,
   type BaseModelField,
 } from '../src/ModelField';
 
@@ -76,7 +76,7 @@ test('all basic scalar fields produce expected type args', () => {
     datetime: string;
     timestamp: number;
     email: string;
-    json: Json;
+    json: _Internal_Json;
     phone: string;
     url: string;
     ipAddress: string;

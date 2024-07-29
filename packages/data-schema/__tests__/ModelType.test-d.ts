@@ -1,12 +1,22 @@
 import type { Equal, Expect, Prettify } from '@aws-amplify/data-schema-types';
-import { type ModelType, type InternalModel, model } from '../src/ModelType';
+import {
+  type _Internal_ModelType,
+  type InternalModel,
+  model,
+} from '../src/ModelType';
 import { modelIndex } from '../src/ModelIndex';
-import { type ModelField, string, id, integer } from '../src/ModelField';
+import {
+  type _Internal_ModelField,
+  string,
+  id,
+  integer,
+} from '../src/ModelField';
 import { ref } from '../src/RefType';
 
 const a = { model, index: modelIndex };
 
-type GetModelTypeArg<T> = T extends ModelType<infer R, any> ? R : never;
+type GetModelTypeArg<T> =
+  T extends _Internal_ModelType<infer R, any> ? R : never;
 
 describe('InternalModel casting', () => {
   test('basic ModelType can be cast to InternalModel', () => {
@@ -54,7 +64,7 @@ describe('identifiers', () => {
 
     type ExpectedType = {
       fields: {
-        title: ModelField<string | null>;
+        title: _Internal_ModelField<string | null>;
       };
       identifier: {
         pk: {
@@ -79,7 +89,7 @@ describe('identifiers', () => {
 
     type ExpectedType = {
       fields: {
-        customId: ModelField<string, 'required'>;
+        customId: _Internal_ModelField<string, 'required'>;
       };
       identifier: {
         pk: {

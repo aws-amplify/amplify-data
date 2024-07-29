@@ -1,6 +1,6 @@
 import { SetTypeSubArg } from '@aws-amplify/data-schema-types';
 import { Brand } from './util';
-import { AllowModifier, Authorization, allow } from './Authorization';
+import { AllowModifier, _Internal_Authorization, allow } from './Authorization';
 import { __auth } from './ModelField';
 
 const brandName = 'ref';
@@ -12,7 +12,7 @@ type RefTypeData = {
   array: boolean;
   arrayRequired: boolean;
   mutationOperations: MutationOperations[];
-  authorization: Authorization<any, any, any>[];
+  authorization: _Internal_Authorization<any, any, any>[];
 };
 
 export type RefTypeParamShape = {
@@ -21,18 +21,20 @@ export type RefTypeParamShape = {
   valueRequired: boolean;
   array: boolean;
   arrayRequired: boolean;
-  authorization: Authorization<any, any, any>[];
+  authorization: _Internal_Authorization<any, any, any>[];
 };
 
 type MutationOperations = 'create' | 'update' | 'delete';
 
 /**
- * INTERNAL: This type is exported to allow users to compile declaration (*.d.ts) files.
- * Direct use of this type may result in changes that break you build across minor versions.
+ * # INTERNAL
+ *
+ * Not intended to be consumed directly, as naming and factoring
+ * is subject to change.
  */
-export type RefType<
+export type _Internal_RefType<
   T extends RefTypeParamShape,
-  K extends keyof RefType<T> = never,
+  K extends keyof _Internal_RefType<T> = never,
   Auth = undefined,
   // Branding the exported type allows us to detect it
   // nominally in our mapped types, ignoring structural overlap with other types
@@ -41,7 +43,7 @@ export type RefType<
     /**
      * Marks a field as required.
      */
-    required(): RefType<
+    required(): _Internal_RefType<
       SetTypeSubArg<
         T,
         T['array'] extends true ? 'arrayRequired' : 'valueRequired',
@@ -52,7 +54,7 @@ export type RefType<
     /**
      * Marks a field as an array of the specified ref type.
      */
-    array(): RefType<
+    array(): _Internal_RefType<
       SetTypeSubArg<T, 'array', true>,
       Exclude<K, 'required'> | 'array'
     >;
@@ -60,11 +62,13 @@ export type RefType<
      * Configures field-level authorization rules. Pass in an array of authorizations `(allow => allow.____)` to mix and match
      * multiple authorization rules for this field.
      */
-    authorization<AuthRuleType extends Authorization<any, any, any>>(
+    authorization<AuthRuleType extends _Internal_Authorization<any, any, any>>(
       callback: (allow: AllowModifier) => AuthRuleType | AuthRuleType[],
-    ): RefType<T, K | 'authorization', AuthRuleType>;
+    ): _Internal_RefType<T, K | 'authorization', AuthRuleType>;
 
-    mutations(operations: MutationOperations[]): RefType<T, K | 'mutations'>;
+    mutations(
+      operations: MutationOperations[],
+    ): _Internal_RefType<T, K | 'mutations'>;
   },
   K
 > & {
@@ -73,16 +77,16 @@ export type RefType<
 } & Brand<typeof brandName>;
 
 function brandedBuilder<T extends RefTypeParamShape>(
-  builder: Record<keyof RefType<T> & string, any>,
-): RefType<T> {
-  return builder as RefType<T>;
+  builder: Record<keyof _Internal_RefType<T> & string, any>,
+): _Internal_RefType<T> {
+  return builder as _Internal_RefType<T>;
 }
 
 /**
  * Internal representation of Ref that exposes the `data` property.
  * Used at buildtime.
  */
-export type InternalRef = RefType<RefTypeParamShape> & {
+export type InternalRef = _Internal_RefType<RefTypeParamShape> & {
   data: RefTypeData;
 };
 
@@ -97,7 +101,7 @@ function _ref<T extends RefTypeParamShape>(link: T['link']) {
     authorization: [],
   };
 
-  const builder: RefType<T> = brandedBuilder({
+  const builder: _Internal_RefType<T> = brandedBuilder({
     required() {
       if (data.array) {
         data.arrayRequired = true;
@@ -112,7 +116,7 @@ function _ref<T extends RefTypeParamShape>(link: T['link']) {
 
       return this;
     },
-    authorization<AuthRuleType extends Authorization<any, any, any>>(
+    authorization<AuthRuleType extends _Internal_Authorization<any, any, any>>(
       callback: (allow: AllowModifier) => AuthRuleType | AuthRuleType[],
     ) {
       const rules = callback(allow);
@@ -126,7 +130,7 @@ function _ref<T extends RefTypeParamShape>(link: T['link']) {
     },
   });
 
-  return { ...builder, data } as InternalRef as RefType<T>;
+  return { ...builder, data } as InternalRef as _Internal_RefType<T>;
 }
 
 type RefTypeArgFactory<Link extends string> = {

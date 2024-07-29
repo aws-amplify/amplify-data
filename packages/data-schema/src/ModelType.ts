@@ -6,14 +6,18 @@ import {
 } from './util';
 import type { InternalField, BaseModelField } from './ModelField';
 import type {
-  ModelRelationalField,
+  _Internal_ModelRelationalField,
   InternalRelationalField,
   ModelRelationalFieldParamShape,
 } from './ModelRelationalField';
-import { type AllowModifier, type Authorization, allow } from './Authorization';
-import type { RefType, RefTypeParamShape } from './RefType';
-import type { EnumType } from './EnumType';
-import type { CustomType, CustomTypeParamShape } from './CustomType';
+import {
+  type AllowModifier,
+  type _Internal_Authorization,
+  allow,
+} from './Authorization';
+import type { _Internal_RefType, RefTypeParamShape } from './RefType';
+import type { _Internal_EnumType } from './EnumType';
+import type { _Internal_CustomType, CustomTypeParamShape } from './CustomType';
 import {
   type ModelIndexType,
   type InternalModelIndexType,
@@ -32,10 +36,10 @@ export type deferredRefResolvingPrefix = 'deferredRefResolving:';
 type ModelFields = Record<
   string,
   | BaseModelField
-  | ModelRelationalField<any, string, any, any>
-  | RefType<any, any, any>
-  | EnumType
-  | CustomType<CustomTypeParamShape>
+  | _Internal_ModelRelationalField<any, string, any, any>
+  | _Internal_RefType<any, any, any>
+  | _Internal_EnumType
+  | _Internal_CustomType<CustomTypeParamShape>
 >;
 
 type InternalModelFields = Record<
@@ -47,14 +51,14 @@ type ModelData = {
   fields: ModelFields;
   identifier: ReadonlyArray<string>;
   secondaryIndexes: ReadonlyArray<ModelIndexType<any, any, any, any, any>>;
-  authorization: Authorization<any, any, any>[];
+  authorization: _Internal_Authorization<any, any, any>[];
 };
 
 type InternalModelData = ModelData & {
   fields: InternalModelFields;
   identifier: ReadonlyArray<string>;
   secondaryIndexes: ReadonlyArray<InternalModelIndexType>;
-  authorization: Authorization<any, any, any>[];
+  authorization: _Internal_Authorization<any, any, any>[];
   originalName?: string;
 };
 
@@ -62,7 +66,7 @@ export type ModelTypeParamShape = {
   fields: ModelFields;
   identifier: PrimaryIndexIrShape;
   secondaryIndexes: ReadonlyArray<SecondaryIndexIrShape>;
-  authorization: Authorization<any, any, any>[];
+  authorization: _Internal_Authorization<any, any, any>[];
 };
 
 /**
@@ -94,14 +98,14 @@ export type ExtractSecondaryIndexIRFields<
           : FieldProp
       : never
     : T['fields'][FieldProp] extends
-          | EnumType
-          | RefType<RefTypeParamShape, any, any>
+          | _Internal_EnumType
+          | _Internal_RefType<RefTypeParamShape, any, any>
       ? FieldProp
       : never]: T['fields'][FieldProp] extends BaseModelField<infer R>
     ? R
-    : T['fields'][FieldProp] extends EnumType<infer values>
+    : T['fields'][FieldProp] extends _Internal_EnumType<infer values>
       ? values[number]
-      : T['fields'][FieldProp] extends RefType<infer R, any, any>
+      : T['fields'][FieldProp] extends _Internal_RefType<infer R, any, any>
         ? `${deferredRefResolvingPrefix}${R['link']}`
         : never;
 };
@@ -141,10 +145,12 @@ type ExtractType<T extends ModelTypeParamShape> = {
 type ConflictingAuthRulesMap<T extends ModelTypeParamShape> = {
   [K in keyof ExtractType<T>]: K extends string
     ? string extends ExtractType<T>[K]
-      ? Authorization<any, K, true>
+      ? _Internal_Authorization<any, K, true>
       : string[] extends ExtractType<T>[K]
-        ? Authorization<any, K, false>
-        : Authorization<any, K, true> | Authorization<any, K, false>
+        ? _Internal_Authorization<any, K, false>
+        :
+            | _Internal_Authorization<any, K, true>
+            | _Internal_Authorization<any, K, false>
     : never;
 };
 
@@ -152,14 +158,19 @@ export type AddRelationshipFieldsToModelTypeFields<
   Model,
   RelationshipFields extends Record<
     string,
-    ModelRelationalField<ModelRelationalFieldParamShape, string, any, any>
+    _Internal_ModelRelationalField<
+      ModelRelationalFieldParamShape,
+      string,
+      any,
+      any
+    >
   >,
 > =
-  Model extends ModelType<
+  Model extends _Internal_ModelType<
     infer ModelParam extends ModelTypeParamShape,
     infer HiddenKeys
   >
-    ? ModelType<
+    ? _Internal_ModelType<
         SetTypeSubArg<
           ModelParam,
           'fields',
@@ -197,15 +208,17 @@ type _ConflictingAuthRules<T extends ModelTypeParamShape> =
   ConflictingAuthRulesMap<T>[keyof ConflictingAuthRulesMap<T>];
 
 export type BaseModelType<T extends ModelTypeParamShape = ModelTypeParamShape> =
-  ModelType<T, UsableModelTypeKey>;
+  _Internal_ModelType<T, UsableModelTypeKey>;
 
-export type UsableModelTypeKey = methodKeyOf<ModelType>;
+export type UsableModelTypeKey = methodKeyOf<_Internal_ModelType>;
 
 /**
- * INTERNAL: This type is exported to allow users to compile declaration (*.d.ts) files.
- * Direct use of this type may result in changes that break you build across minor versions.
+ * # INTERNAL
+ *
+ * Not intended to be consumed directly, as naming and factoring
+ * is subject to change.
  */
-export type ModelType<
+export type _Internal_ModelType<
   T extends ModelTypeParamShape = ModelTypeParamShape,
   UsedMethod extends UsableModelTypeKey = never,
 > = Omit<
@@ -221,7 +234,7 @@ export type ModelType<
       >,
     >(
       identifier: ID,
-    ): ModelType<
+    ): _Internal_ModelType<
       SetTypeSubArg<T, 'identifier', PrimaryIndexIR>,
       UsedMethod | 'identifier'
     >;
@@ -250,15 +263,15 @@ export type ModelType<
           ReadonlyArray<Exclude<SecondaryIndexPKPool, PK>>
         >,
       ) => Indexes,
-    ): ModelType<
+    ): _Internal_ModelType<
       SetTypeSubArg<T, 'secondaryIndexes', IndexesIR>,
       UsedMethod | 'secondaryIndexes'
     >;
-    authorization<AuthRuleType extends Authorization<any, any, any>>(
+    authorization<AuthRuleType extends _Internal_Authorization<any, any, any>>(
       callback: (
         allow: Omit<AllowModifier, 'resource'>,
       ) => AuthRuleType | AuthRuleType[],
-    ): ModelType<
+    ): _Internal_ModelType<
       SetTypeSubArg<T, 'authorization', AuthRuleType[]>,
       UsedMethod | 'authorization'
     >;
@@ -271,7 +284,10 @@ export type ModelType<
  * Used on the complete schema object.
  */
 export type SchemaModelType<
-  T extends BaseModelType = ModelType<ModelTypeParamShape, 'identifier'>,
+  T extends BaseModelType = _Internal_ModelType<
+    ModelTypeParamShape,
+    'identifier'
+  >,
   ModelName extends string = string,
   IsRDS extends boolean = false,
 > = IsRDS extends true
@@ -279,12 +295,12 @@ export type SchemaModelType<
       relationships<
         Param extends Record<
           string,
-          ModelRelationalField<any, string, any, any>
+          _Internal_ModelRelationalField<any, string, any, any>
         > = Record<never, never>,
       >(
         relationships: Param,
       ): Record<ModelName, Param>;
-      fields: T extends ModelType<infer R, any> ? R['fields'] : never;
+      fields: T extends _Internal_ModelType<infer R, any> ? R['fields'] : never;
     }
   : T;
 
@@ -293,7 +309,7 @@ export type SchemaModelType<
  * Used at buildtime.
  */
 export type InternalModel = SchemaModelType<
-  ModelType<ModelTypeParamShape>,
+  _Internal_ModelType<ModelTypeParamShape>,
   string,
   true
 > & {
@@ -327,7 +343,7 @@ function _model<T extends ModelTypeParamShape>(fields: T['fields']) {
       return this;
     },
     ...brand(brandName),
-  } as ModelType<T>;
+  } as _Internal_ModelType<T>;
 
   return {
     ...builder,
@@ -336,7 +352,7 @@ function _model<T extends ModelTypeParamShape>(fields: T['fields']) {
       data.fields = { ...data.fields, ...relationships };
     },
     fields: data.fields,
-  } as InternalModel as ModelType<T>;
+  } as InternalModel as _Internal_ModelType<T>;
 }
 
 /**
@@ -360,10 +376,12 @@ export const isSchemaModelType = (
 };
 
 /**
- * INTERNAL: This type is exported to allow users to compile declaration (*.d.ts) files.
- * Direct use of this type may result in changes that break you build across minor versions.
+ * # INTERNAL
+ *
+ * Not intended to be consumed directly, as naming and factoring
+ * is subject to change.
  */
-export type ModelDefaultIdentifier = {
+export type _Internal_ModelDefaultIdentifier = {
   pk: { readonly id: string };
   sk: never;
   compositeSk: never;
@@ -378,9 +396,9 @@ export type ModelDefaultIdentifier = {
  */
 export function model<T extends ModelFields>(
   fields: T,
-): ModelType<{
+): _Internal_ModelType<{
   fields: T;
-  identifier: ModelDefaultIdentifier;
+  identifier: _Internal_ModelDefaultIdentifier;
   secondaryIndexes: [];
   authorization: [];
 }> {

@@ -1,14 +1,14 @@
 import type { Equal, Expect } from '@aws-amplify/data-schema-types';
 import { a } from '../../src/index';
-import { RefType } from '../../src/RefType';
+import { _Internal_RefType } from '../../src/RefType';
 import {
   CustomOpShapes,
   CustomOpArguments,
 } from '../../src/ClientSchema/Core/ClientCustomOperations';
-import { CustomOperation } from '../../src/CustomOperation';
+import { _Internal_CustomOperation } from '../../src/CustomOperation';
 
-type Deref<T> = T extends RefType<infer S> ? S : never;
-type OpShape<T> = T extends CustomOperation<infer S, any> ? S : never;
+type Deref<T> = T extends _Internal_RefType<infer S> ? S : never;
+type OpShape<T> = T extends _Internal_CustomOperation<infer S, any> ? S : never;
 
 describe('Custom Operations mapper utils', () => {
   type Schema = {

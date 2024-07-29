@@ -9,7 +9,7 @@ Define a custom type. This type represents an inline, typed JSON object.
 **Signature:**
 
 ```typescript
-export declare function customType<T extends CustomTypeFields>(fields: T): CustomType<{
+export declare function customType<T extends CustomTypeFields>(fields: T): _Internal_CustomType<{
     fields: T;
 }>;
 ```
@@ -51,7 +51,7 @@ the fields to be added to the custom type
 </tbody></table>
 **Returns:**
 
-[CustomType](./data-schema.customtype.md)<!-- -->&lt;{ fields: T; }&gt;
+[\_Internal\_CustomType](./data-schema._internal_customtype.md)<!-- -->&lt;{ fields: T; }&gt;
 
 a custom type
 

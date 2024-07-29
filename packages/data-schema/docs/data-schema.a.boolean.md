@@ -9,11 +9,11 @@ A boolean scalar type that can be either true or false.
 **Signature:**
 
 ```typescript
-export declare function boolean(): ModelField<Nullable<boolean>>;
+export declare function boolean(): _Internal_ModelField<_Internal_Nullable<boolean>>;
 ```
 **Returns:**
 
-[ModelField](./data-schema.modelfield.md)<!-- -->&lt;[Nullable](./data-schema.nullable.md)<!-- -->&lt;boolean&gt;&gt;
+[\_Internal\_ModelField](./data-schema._internal_modelfield.md)<!-- -->&lt;[\_Internal\_Nullable](./data-schema._internal_nullable.md)<!-- -->&lt;boolean&gt;&gt;
 
 boolean field definition
 

@@ -2,7 +2,7 @@ import type { Prettify, Equal, Expect } from '@aws-amplify/data-schema-types';
 import { a } from '../../src/index';
 import type { ResolveFieldProperties } from '../../src/MappedTypes/ResolveFieldProperties';
 import type { ExtractNonModelTypes } from '../../src/MappedTypes/ExtractNonModelTypes';
-import type { Json } from '../../src/ModelField';
+import type { _Internal_Json } from '../../src/ModelField';
 import type { ResolveSchema } from '../../src/MappedTypes/ResolveSchema';
 
 describe('ResolveFieldProperties Mapped Type', () => {
@@ -28,7 +28,7 @@ describe('ResolveFieldProperties Mapped Type', () => {
         readonly id: string;
         readonly createdAt: string;
         readonly updatedAt: string;
-        metadata?: Json;
+        metadata?: _Internal_Json;
         title?: string | null | undefined;
       };
     };
@@ -67,7 +67,7 @@ describe('ResolveFieldProperties Mapped Type', () => {
       readonly createdAt: string;
       readonly updatedAt: string;
       title: string;
-      metadata?: Json;
+      metadata?: _Internal_Json;
       location?:
         | {
             lat?: number | null;
@@ -252,7 +252,7 @@ describe('ResolveFieldProperties Mapped Type', () => {
       readonly createdAt: string;
       readonly updatedAt: string;
       title: string;
-      metadata?: Json | null | undefined;
+      metadata?: _Internal_Json | null | undefined;
       location: {
         lat?: number | null | undefined;
         long?: number | null | undefined;

@@ -1,9 +1,9 @@
 import type { Prettify, Equal, Expect } from '@aws-amplify/data-schema-types';
 import { a } from '../../src/index';
 import { ResolveSchema } from '../../src/MappedTypes/ResolveSchema';
-import type { RefType, RefTypeParamShape } from '../../src/RefType';
-import { Authorization } from '../../src/Authorization';
-import { Json, __auth } from '../../src/ModelField';
+import type { _Internal_RefType, RefTypeParamShape } from '../../src/RefType';
+import { _Internal_Authorization } from '../../src/Authorization';
+import { _Internal_Json, __auth } from '../../src/ModelField';
 
 describe('ResolveSchema Mapped Type', () => {
   test('Basic schema', () => {
@@ -19,7 +19,7 @@ describe('ResolveSchema Mapped Type', () => {
     type Expected = {
       Post: {
         title: string | null;
-        metadata: Json;
+        metadata: _Internal_Json;
       };
     };
 
@@ -46,8 +46,8 @@ describe('ResolveSchema Mapped Type', () => {
     type Expected = {
       Post: {
         title: string | null;
-        metadata: Json;
-        location: RefType<{
+        metadata: _Internal_Json;
+        location: _Internal_RefType<{
           link: 'Location';
           type: 'ref';
           valueRequired: false;
@@ -81,8 +81,8 @@ describe('ResolveSchema Mapped Type', () => {
     type Expected = {
       Post: {
         title: string | null;
-        metadata: Json;
-        location: RefType<
+        metadata: _Internal_Json;
+        location: _Internal_RefType<
           {
             link: 'Location';
             type: 'ref';
@@ -117,8 +117,8 @@ describe('ResolveSchema Mapped Type', () => {
     type Expected = {
       Post: {
         title: string | null;
-        metadata: Json;
-        location: RefType<{
+        metadata: _Internal_Json;
+        location: _Internal_RefType<{
           link: 'Location';
           type: 'ref';
           valueRequired: false;
@@ -147,8 +147,8 @@ describe('ResolveSchema Mapped Type', () => {
     type Expected = {
       Post: {
         title: string | null;
-        metadata: Json;
-        privacy: RefType<{
+        metadata: _Internal_Json;
+        privacy: _Internal_RefType<{
           link: 'PrivacySetting';
           type: 'ref';
           valueRequired: false;
@@ -176,8 +176,8 @@ describe('ResolveSchema Mapped Type', () => {
     type Expected = {
       Post: {
         title: string | null;
-        metadata: Json;
-        privacy: RefType<{
+        metadata: _Internal_Json;
+        privacy: _Internal_RefType<{
           link: 'PrivacySetting';
           type: 'ref';
           valueRequired: false;

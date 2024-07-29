@@ -1,6 +1,6 @@
 import { SetTypeSubArg } from '@aws-amplify/data-schema-types';
 import { Brand } from './util';
-import { AllowModifier, Authorization, allow } from './Authorization';
+import { AllowModifier, _Internal_Authorization, allow } from './Authorization';
 
 /**
  * Used to "attach" auth types to ModelField without exposing them on the builder.
@@ -10,26 +10,28 @@ export const __auth = Symbol('__auth');
 const brandName = 'modelRelationalField';
 
 /**
- * INTERNAL: This type is exported to allow users to compile declaration (*.d.ts) files.
- * Direct use of this type may result in changes that break you build across minor versions.
+ * # INTERNAL
+ *
+ * Not intended to be consumed directly, as naming and factoring
+ * is subject to change.
  */
-export enum ModelRelationshipTypes {
+export enum _Internal_ModelRelationshipTypes {
   hasOne = 'hasOne',
   hasMany = 'hasMany',
   belongsTo = 'belongsTo',
 }
 
-type RelationshipTypes = `${ModelRelationshipTypes}`;
+type RelationshipTypes = `${_Internal_ModelRelationshipTypes}`;
 
 type ModelRelationalFieldData = {
   fieldType: 'model';
-  type: ModelRelationshipTypes;
+  type: _Internal_ModelRelationshipTypes;
   relatedModel: string;
   array: boolean;
   valueRequired: boolean;
   arrayRequired: boolean;
   references: string[];
-  authorization: Authorization<any, any, any>[];
+  authorization: _Internal_Authorization<any, any, any>[];
 };
 
 export type ModelRelationalFieldParamShape = {
@@ -46,19 +48,19 @@ type ModelRelationalFieldFunctions<
   T extends ModelRelationalFieldParamShape,
   // RM adds structural separation with ModelField; easier to identify it when mapping to ClientTypes
   RM extends string | symbol,
-  K extends keyof ModelRelationalField<T, RM> = never,
+  K extends keyof _Internal_ModelRelationalField<T, RM> = never,
 > = {
   /**
    * When set, it requires the value of the relationship type to be required.
    */
-  valueRequired(): ModelRelationalField<
+  valueRequired(): _Internal_ModelRelationalField<
     SetTypeSubArg<T, 'valueRequired', true>,
     K | 'valueRequired'
   >;
   /**
    * When set, it requires the relationship to always return a value
    */
-  required(): ModelRelationalField<
+  required(): _Internal_ModelRelationalField<
     // The RM generic cannot be "required" since no such field exists
     SetTypeSubArg<T, 'arrayRequired', true>,
     K | 'required'
@@ -67,20 +69,22 @@ type ModelRelationalFieldFunctions<
    * Configures field-level authorization rules. Pass in an array of authorizations `(allow => allow.____)` to mix and match
    * multiple authorization rules for this field.
    */
-  authorization<AuthRuleType extends Authorization<any, any, any>>(
+  authorization<AuthRuleType extends _Internal_Authorization<any, any, any>>(
     callback: (allow: AllowModifier) => AuthRuleType | AuthRuleType[],
-  ): ModelRelationalField<T, K | 'authorization', K, AuthRuleType>;
+  ): _Internal_ModelRelationalField<T, K | 'authorization', K, AuthRuleType>;
 };
 
 /**
- * INTERNAL: This type is exported to allow users to compile declaration (*.d.ts) files.
- * Direct use of this type may result in changes that break you build across minor versions.
+ * # INTERNAL
+ *
+ * Not intended to be consumed directly, as naming and factoring
+ * is subject to change.
  */
-export type ModelRelationalField<
+export type _Internal_ModelRelationalField<
   T extends ModelRelationalFieldParamShape,
   // RM adds structural separation with ModelField; easier to identify it when mapping to ClientTypes
   RM extends string | symbol,
-  K extends keyof ModelRelationalField<T, RM> = never,
+  K extends keyof _Internal_ModelRelationalField<T, RM> = never,
   Auth = undefined,
 > = Omit<ModelRelationalFieldFunctions<T, RM, K>, K> & {
   // This is a lie. This property is never set at runtime. It's just used to smuggle auth types through.
@@ -91,7 +95,7 @@ export type ModelRelationalField<
  * Internal representation of Model Field that exposes the `data` property.
  * Used at buildtime.
  */
-export type InternalRelationalField = ModelRelationalField<
+export type InternalRelationalField = _Internal_ModelRelationalField<
   ModelRelationalFieldParamShape,
   string,
   never
@@ -106,7 +110,7 @@ const relationalModifiers = [
 ] as const;
 
 const relationModifierMap: Record<
-  `${ModelRelationshipTypes}`,
+  `${_Internal_ModelRelationshipTypes}`,
   (typeof relationalModifiers)[number][]
 > = {
   belongsTo: ['authorization'],
@@ -115,19 +119,19 @@ const relationModifierMap: Record<
 };
 
 export type RelationTypeFunctionOmitMapping<
-  Type extends ModelRelationshipTypes,
-> = Type extends ModelRelationshipTypes.belongsTo
+  Type extends _Internal_ModelRelationshipTypes,
+> = Type extends _Internal_ModelRelationshipTypes.belongsTo
   ? 'required' | 'valueRequired'
-  : Type extends ModelRelationshipTypes.hasMany
+  : Type extends _Internal_ModelRelationshipTypes.hasMany
     ? 'required'
-    : Type extends ModelRelationshipTypes.hasOne
+    : Type extends _Internal_ModelRelationshipTypes.hasOne
       ? 'valueRequired'
       : never;
 
 function _modelRelationalField<
   T extends ModelRelationalFieldParamShape,
   RelatedModel extends string,
-  RT extends ModelRelationshipTypes,
+  RT extends _Internal_ModelRelationshipTypes,
 >(type: RT, relatedModel: RelatedModel, references: string[]) {
   const data: ModelRelationalFieldData = {
     relatedModel,
@@ -158,7 +162,7 @@ function _modelRelationalField<
 
       return this;
     },
-  } as ModelRelationalField<T, RelatedModel>;
+  } as _Internal_ModelRelationalField<T, RelatedModel>;
 
   const builder = Object.fromEntries(
     relationModifierMap[type].map((key) => [
@@ -170,7 +174,7 @@ function _modelRelationalField<
   return {
     ...builder,
     data,
-  } as InternalRelationalField as ModelRelationalField<
+  } as InternalRelationalField as _Internal_ModelRelationalField<
     T,
     RelatedModel,
     RelationTypeFunctionOmitMapping<typeof type>
@@ -178,10 +182,12 @@ function _modelRelationalField<
 }
 
 /**
- * INTERNAL: This type is exported to allow users to compile declaration (*.d.ts) files.
- * Direct use of this type may result in changes that break you build across minor versions.
+ * # INTERNAL
+ *
+ * Not intended to be consumed directly, as naming and factoring
+ * is subject to change.
  */
-export type ModelRelationalTypeArgFactory<
+export type _Internal_ModelRelationalTypeArgFactory<
   RM extends string,
   RT extends RelationshipTypes,
   IsArray extends boolean,
@@ -225,11 +231,15 @@ export function hasOne<RM extends string>(
   references: string | string[],
 ) {
   return _modelRelationalField<
-    ModelRelationalTypeArgFactory<RM, ModelRelationshipTypes.hasOne, false>,
+    _Internal_ModelRelationalTypeArgFactory<
+      RM,
+      _Internal_ModelRelationshipTypes.hasOne,
+      false
+    >,
     RM,
-    ModelRelationshipTypes.hasOne
+    _Internal_ModelRelationshipTypes.hasOne
   >(
-    ModelRelationshipTypes.hasOne,
+    _Internal_ModelRelationshipTypes.hasOne,
     relatedModel,
     Array.isArray(references) ? references : [references],
   );
@@ -266,11 +276,15 @@ export function hasMany<RM extends string>(
   references: string | string[],
 ) {
   return _modelRelationalField<
-    ModelRelationalTypeArgFactory<RM, ModelRelationshipTypes.hasMany, true>,
+    _Internal_ModelRelationalTypeArgFactory<
+      RM,
+      _Internal_ModelRelationshipTypes.hasMany,
+      true
+    >,
     RM,
-    ModelRelationshipTypes.hasMany
+    _Internal_ModelRelationshipTypes.hasMany
   >(
-    ModelRelationshipTypes.hasMany,
+    _Internal_ModelRelationshipTypes.hasMany,
     relatedModel,
     Array.isArray(references) ? references : [references],
   );
@@ -328,11 +342,15 @@ export function belongsTo<RM extends string>(
   references: string | string[],
 ) {
   return _modelRelationalField<
-    ModelRelationalTypeArgFactory<RM, ModelRelationshipTypes.belongsTo, false>,
+    _Internal_ModelRelationalTypeArgFactory<
+      RM,
+      _Internal_ModelRelationshipTypes.belongsTo,
+      false
+    >,
     RM,
-    ModelRelationshipTypes.belongsTo
+    _Internal_ModelRelationshipTypes.belongsTo
   >(
-    ModelRelationshipTypes.belongsTo,
+    _Internal_ModelRelationshipTypes.belongsTo,
     relatedModel,
     Array.isArray(references) ? references : [references],
   );

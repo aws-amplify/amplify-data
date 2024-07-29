@@ -19,12 +19,14 @@ Description
 </th></tr></thead>
 <tbody><tr><td>
 
-[ModelRelationshipTypes](./data-schema.modelrelationshiptypes.md)
+[\_Internal\_ModelRelationshipTypes](./data-schema._internal_modelrelationshiptypes.md)
 
 
 </td><td>
 
-INTERNAL: This type is exported to allow users to compile declaration (\*.d.ts) files. Direct use of this type may result in changes that break you build across minor versions.
+\# INTERNAL
+
+Not intended to be consumed directly, as naming and factoring is subject to change.
 
 
 </td></tr>
@@ -50,7 +52,9 @@ Description
 
 </td><td>
 
-INTERNAL: This type is exported to allow users to compile declaration (\*.d.ts) files. Direct use of this type may result in changes that break you build across minor versions.
+\# INTERNAL
+
+Not intended to be consumed directly, as naming and factoring is subject to change.
 
 
 </td></tr>
@@ -95,12 +99,163 @@ Description
 </th></tr></thead>
 <tbody><tr><td>
 
-[Authorization](./data-schema.authorization.md)
+[\_Internal\_Authorization](./data-schema._internal_authorization.md)
 
 
 </td><td>
 
-INTERNAL: This type is exported to allow users to compile declaration (\*.d.ts) files. Direct use of this type may result in changes that break you build across minor versions.
+\# INTERNAL
+
+Not intended to be consumed directly, as naming and factoring is subject to change.
+
+
+</td></tr>
+<tr><td>
+
+[\_Internal\_CustomOperation](./data-schema._internal_customoperation.md)
+
+
+</td><td>
+
+\# INTERNAL
+
+Not intended to be consumed directly, as naming and factoring is subject to change.
+
+
+</td></tr>
+<tr><td>
+
+[\_Internal\_CustomType](./data-schema._internal_customtype.md)
+
+
+</td><td>
+
+\# INTERNAL
+
+Not intended to be consumed directly, as naming and factoring is subject to change.
+
+
+</td></tr>
+<tr><td>
+
+[\_Internal\_Json](./data-schema._internal_json.md)
+
+
+</td><td>
+
+\# INTERNAL
+
+Not intended to be consumed directly, as naming and factoring is subject to change.
+
+A precise, recursive Json type blows the type calculation stack without installing explicit `Json extends T ? short-circuit : ...` type checks all over the place. We may take that on later. But, this is a good-enough approximation for now.
+
+
+</td></tr>
+<tr><td>
+
+[\_Internal\_ModelDefaultIdentifier](./data-schema._internal_modeldefaultidentifier.md)
+
+
+</td><td>
+
+\# INTERNAL
+
+Not intended to be consumed directly, as naming and factoring is subject to change.
+
+
+</td></tr>
+<tr><td>
+
+[\_Internal\_ModelField](./data-schema._internal_modelfield.md)
+
+
+</td><td>
+
+\# INTERNAL
+
+Not intended to be consumed directly, as naming and factoring is subject to change.
+
+Public API for the chainable builder methods exposed by Model Field. The type is narrowing e.g., after calling .array() it will be omitted from intellisense suggestions
+
+
+</td></tr>
+<tr><td>
+
+[\_Internal\_ModelRelationalField](./data-schema._internal_modelrelationalfield.md)
+
+
+</td><td>
+
+\# INTERNAL
+
+Not intended to be consumed directly, as naming and factoring is subject to change.
+
+
+</td></tr>
+<tr><td>
+
+[\_Internal\_ModelRelationalTypeArgFactory](./data-schema._internal_modelrelationaltypeargfactory.md)
+
+
+</td><td>
+
+\# INTERNAL
+
+Not intended to be consumed directly, as naming and factoring is subject to change.
+
+
+</td></tr>
+<tr><td>
+
+[\_Internal\_ModelSchema](./data-schema._internal_modelschema.md)
+
+
+</td><td>
+
+\# INTERNAL
+
+Not intended to be consumed directly, as naming and factoring is subject to change.
+
+
+</td></tr>
+<tr><td>
+
+[\_Internal\_ModelType](./data-schema._internal_modeltype.md)
+
+
+</td><td>
+
+\# INTERNAL
+
+Not intended to be consumed directly, as naming and factoring is subject to change.
+
+
+</td></tr>
+<tr><td>
+
+[\_Internal\_Nullable](./data-schema._internal_nullable.md)
+
+
+</td><td>
+
+\# INTERNAL
+
+Not intended to be consumed directly, as naming and factoring is subject to change.
+
+Field type arg mutators
+
+
+</td></tr>
+<tr><td>
+
+[\_Internal\_RefType](./data-schema._internal_reftype.md)
+
+
+</td><td>
+
+\# INTERNAL
+
+Not intended to be consumed directly, as naming and factoring is subject to change.
 
 
 </td></tr>
@@ -110,131 +265,6 @@ INTERNAL: This type is exported to allow users to compile declaration (\*.d.ts) 
 
 
 </td><td>
-
-
-</td></tr>
-<tr><td>
-
-[CustomOperation](./data-schema.customoperation.md)
-
-
-</td><td>
-
-INTERNAL: This type is exported to allow users to compile declaration (\*.d.ts) files. Direct use of this type may result in changes that break you build across minor versions.
-
-
-</td></tr>
-<tr><td>
-
-[CustomType](./data-schema.customtype.md)
-
-
-</td><td>
-
-INTERNAL: This type is exported to allow users to compile declaration (\*.d.ts) files. Direct use of this type may result in changes that break you build across minor versions.
-
-
-</td></tr>
-<tr><td>
-
-[Json](./data-schema.json.md)
-
-
-</td><td>
-
-INTERNAL: This type is exported to allow users to compile declaration (\*.d.ts) files. Direct use of this type may result in changes that break you build across minor versions.
-
-A precise, recursive Json type blows the type calculation stack without installing explicit `Json extends T ? short-circuit : ...` type checks all over the place. We may take that on later. But, this is a good-enough approximation for now.
-
-
-</td></tr>
-<tr><td>
-
-[ModelDefaultIdentifier](./data-schema.modeldefaultidentifier.md)
-
-
-</td><td>
-
-INTERNAL: This type is exported to allow users to compile declaration (\*.d.ts) files. Direct use of this type may result in changes that break you build across minor versions.
-
-
-</td></tr>
-<tr><td>
-
-[ModelField](./data-schema.modelfield.md)
-
-
-</td><td>
-
-INTERNAL: This type is exported to allow users to compile declaration (\*.d.ts) files. Direct use of this type may result in changes that break you build across minor versions.
-
-Public API for the chainable builder methods exposed by Model Field. The type is narrowing e.g., after calling .array() it will be omitted from intellisense suggestions
-
-
-</td></tr>
-<tr><td>
-
-[ModelRelationalField](./data-schema.modelrelationalfield.md)
-
-
-</td><td>
-
-INTERNAL: This type is exported to allow users to compile declaration (\*.d.ts) files. Direct use of this type may result in changes that break you build across minor versions.
-
-
-</td></tr>
-<tr><td>
-
-[ModelRelationalTypeArgFactory](./data-schema.modelrelationaltypeargfactory.md)
-
-
-</td><td>
-
-INTERNAL: This type is exported to allow users to compile declaration (\*.d.ts) files. Direct use of this type may result in changes that break you build across minor versions.
-
-
-</td></tr>
-<tr><td>
-
-[ModelSchema](./data-schema.modelschema.md)
-
-
-</td><td>
-
-INTERNAL: This type is exported to allow users to compile declaration (\*.d.ts) files. Direct use of this type may result in changes that break you build across minor versions.
-
-
-</td></tr>
-<tr><td>
-
-[ModelType](./data-schema.modeltype.md)
-
-
-</td><td>
-
-INTERNAL: This type is exported to allow users to compile declaration (\*.d.ts) files. Direct use of this type may result in changes that break you build across minor versions.
-
-
-</td></tr>
-<tr><td>
-
-[Nullable](./data-schema.nullable.md)
-
-
-</td><td>
-
-INTERNAL: This type is exported to allow users to compile declaration (\*.d.ts) files. Direct use of this type may result in changes that break you build across minor versions. Field type arg mutators
-
-
-</td></tr>
-<tr><td>
-
-[RefType](./data-schema.reftype.md)
-
-
-</td><td>
-
-INTERNAL: This type is exported to allow users to compile declaration (\*.d.ts) files. Direct use of this type may result in changes that break you build across minor versions.
 
 
 </td></tr>

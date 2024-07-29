@@ -9,7 +9,7 @@ Create a one-directional one-to-many relationship between two models using the `
 **Signature:**
 
 ```typescript
-export declare function hasMany<RM extends string>(relatedModel: RM, references: string | string[]): ModelRelationalField<ModelRelationalTypeArgFactory<RM, ModelRelationshipTypes.hasMany, true>, RM, "required", undefined>;
+export declare function hasMany<RM extends string>(relatedModel: RM, references: string | string[]): _Internal_ModelRelationalField<_Internal_ModelRelationalTypeArgFactory<RM, _Internal_ModelRelationshipTypes.hasMany, true>, RM, "required", undefined>;
 ```
 
 ## Parameters
@@ -65,7 +65,7 @@ the field(s) that should be used to reference the related model
 </tbody></table>
 **Returns:**
 
-[ModelRelationalField](./data-schema.modelrelationalfield.md)<!-- -->&lt;[ModelRelationalTypeArgFactory](./data-schema.modelrelationaltypeargfactory.md)<!-- -->&lt;RM, [ModelRelationshipTypes.hasMany](./data-schema.modelrelationshiptypes.md)<!-- -->, true&gt;, RM, "required", undefined&gt;
+[\_Internal\_ModelRelationalField](./data-schema._internal_modelrelationalfield.md)<!-- -->&lt;[\_Internal\_ModelRelationalTypeArgFactory](./data-schema._internal_modelrelationaltypeargfactory.md)<!-- -->&lt;RM, [\_Internal\_ModelRelationshipTypes.hasMany](./data-schema._internal_modelrelationshiptypes.md)<!-- -->, true&gt;, RM, "required", undefined&gt;
 
 a one-to-many relationship definition
 

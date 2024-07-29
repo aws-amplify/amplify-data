@@ -2,12 +2,15 @@ import type {
   UnionToIntersection,
   LazyLoader,
 } from '@aws-amplify/data-schema-types';
-import type { Authorization, ImpliedAuthFields } from '../Authorization';
-import type { ModelField } from '../ModelField';
-import type { ModelType, ModelTypeParamShape } from '../ModelType';
+import type {
+  _Internal_Authorization,
+  ImpliedAuthFields,
+} from '../Authorization';
+import type { _Internal_ModelField } from '../ModelField';
+import type { _Internal_ModelType, ModelTypeParamShape } from '../ModelType';
 import type { GenericModelSchema } from '../ModelSchema';
 import type {
-  ModelRelationalField,
+  _Internal_ModelRelationalField,
   ModelRelationalFieldParamShape,
 } from '../ModelRelationalField';
 import type { PrimaryIndexIrShape } from '../util/';
@@ -15,14 +18,14 @@ import type { PrimaryIndexIrShape } from '../util/';
 import type { ResolveSchema, SchemaTypes } from './ResolveSchema';
 import type { InjectImplicitModelFields } from './ImplicitFieldInjector';
 import type { ModelIdentifier } from './ModelMetadata';
-import type { RefType, RefTypeParamShape } from '../RefType';
+import type { _Internal_RefType, RefTypeParamShape } from '../RefType';
 
 import type { NonModelTypesShape } from './ExtractNonModelTypes';
 
-import type { CustomType, CustomTypeParamShape } from '../CustomType';
-import type { EnumType } from '../EnumType';
+import type { _Internal_CustomType, CustomTypeParamShape } from '../CustomType';
+import type { _Internal_EnumType } from '../EnumType';
 import type {
-  CustomOperation,
+  _Internal_CustomOperation,
   CustomOperationParamShape,
 } from '../CustomOperation';
 
@@ -131,7 +134,7 @@ export type ResolveRefsOfCustomType<
   NonModelTypes extends NonModelTypesShape,
   T,
 > = {
-  [Prop in keyof T]: T[Prop] extends RefType<
+  [Prop in keyof T]: T[Prop] extends _Internal_RefType<
     infer R extends RefTypeParamShape,
     any,
     any
@@ -153,7 +156,7 @@ type ResolveModelsRelationalAndRefFields<
   Flat extends boolean = false,
 > = {
   [ModelProp in keyof Schema]: {
-    [FieldProp in keyof Schema[ModelProp]]: Schema[ModelProp][FieldProp] extends RefType<
+    [FieldProp in keyof Schema[ModelProp]]: Schema[ModelProp][FieldProp] extends _Internal_RefType<
       infer R extends RefTypeParamShape,
       any,
       any
@@ -214,16 +217,16 @@ type Intersection<
 // TODO: this should probably happen in InjectImplicitModelFields instead. Keeping here for now to reduce refactor
 // blast radius
 export type ModelImpliedAuthFields<Schema extends GenericModelSchema<any>> = {
-  [ModelKey in keyof Schema['data']['types'] as Schema['data']['types'][ModelKey] extends EnumType
+  [ModelKey in keyof Schema['data']['types'] as Schema['data']['types'][ModelKey] extends _Internal_EnumType
     ? never
-    : Schema['data']['types'][ModelKey] extends CustomType<CustomTypeParamShape>
+    : Schema['data']['types'][ModelKey] extends _Internal_CustomType<CustomTypeParamShape>
       ? never
-      : Schema['data']['types'][ModelKey] extends CustomOperation<
+      : Schema['data']['types'][ModelKey] extends _Internal_CustomOperation<
             CustomOperationParamShape,
             any
           >
         ? never
-        : ModelKey]: Schema['data']['types'][ModelKey] extends ModelType<
+        : ModelKey]: Schema['data']['types'][ModelKey] extends _Internal_ModelType<
     infer Model,
     any
   >
@@ -244,10 +247,10 @@ type AllAuthFieldsForModel<
 type ImpliedAuthFieldsFromFields<T> = UnionToIntersection<
   T extends ModelTypeParamShape
     ? T['fields'][keyof T['fields']] extends
-        | ModelField<any, any, infer Auth>
-        | ModelRelationalField<any, any, any, infer Auth>
-        | RefType<any, any, infer Auth>
-      ? Auth extends Authorization<any, any, any>
+        | _Internal_ModelField<any, any, infer Auth>
+        | _Internal_ModelRelationalField<any, any, any, infer Auth>
+        | _Internal_RefType<any, any, infer Auth>
+      ? Auth extends _Internal_Authorization<any, any, any>
         ? ImpliedAuthFields<Auth>
         : object
       : object
