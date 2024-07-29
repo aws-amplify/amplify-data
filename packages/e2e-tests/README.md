@@ -54,3 +54,13 @@ Problem using execa with Jest in Node. ESM import issue. Tried a few config opti
 - https://jestjs.io/docs/ecmascript-modules
 
 Workaround is to use a newer version of execa than amplify-backend, but the usage needs some adjustments.
+
+`NODE_OPTIONS="$NODE_OPTIONS --experimental-vm-modules" npx jest`
+
+or
+
+`npx tsx ./test.ts`
+
+or (TODO):
+
+`npx tsx --test ./fileName.test.ts --test-reporter spec`

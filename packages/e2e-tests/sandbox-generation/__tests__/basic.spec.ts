@@ -1,8 +1,8 @@
-import {
-  Client,
-  // configureAmplifyAndGenerateClient,
-  // expectDataReturnWithoutErrors,
-} from '../utils';
+// import {
+//   Client,
+//   // configureAmplifyAndGenerateClient,
+//   // expectDataReturnWithoutErrors,
+// } from '../utils';
 // import type { Schema } from '../amplify/data/resource';
 import { ampxCli } from '../src/utils/process-controller/process_controller';
 import {
@@ -11,22 +11,23 @@ import {
   rejectCleanupSandbox,
   waitForSandboxDeploymentToPrintTotalTime,
 } from '../src/utils/process-controller/predicated_action_macros';
+import fs from 'fs/promises';
 
 // let client;
 
-const deleteAll = async (client: Client) => {
-  const { data: crudlTestModels } = await client.models.CRUDLTestModel.list();
-  console.log('crudlTestModels to delete:', crudlTestModels);
+// const deleteAll = async (client: Client) => {
+//   const { data: crudlTestModels } = await client.models.CRUDLTestModel.list();
+//   console.log('crudlTestModels to delete:', crudlTestModels);
 
-  const deletePromises = crudlTestModels?.map(async (crudlTestModel) => {
-    await client.models.CRUDLTestModel.delete(crudlTestModel);
-  });
+//   const deletePromises = crudlTestModels?.map(async (crudlTestModel) => {
+//     await client.models.CRUDLTestModel.delete(crudlTestModel);
+//   });
 
-  await Promise.all(deletePromises!);
+//   await Promise.all(deletePromises!);
 
-  const { data: listAfterDelete } = await client.models.CRUDLTestModel.list();
-  console.log('result of cleanup:', listAfterDelete);
-};
+//   const { data: listAfterDelete } = await client.models.CRUDLTestModel.list();
+//   console.log('result of cleanup:', listAfterDelete);
+// };
 
 /**
  * Tear down the project.
@@ -69,6 +70,10 @@ describe('Basic CRUDL', () => {
       // Execute the sequence of actions queued on the process
       .run();
 
+    // packages/integration-tests/src/test-live-dependency-health-checks/health_checks.test.ts
+    const clientConfigStats = await fs.stat('../amplify_outputs.json');
+    expect(clientConfigStats.isFile()).toBe(true);
+
     // const response = await client.models.CRUDLTestModel.create({
     //   content: 'test create',
     // });
@@ -77,5 +82,5 @@ describe('Basic CRUDL', () => {
 
     // expect(data?.content).toBe('test create');
     expect(true).toBe(true);
-  });
+  }, 120000);
 });

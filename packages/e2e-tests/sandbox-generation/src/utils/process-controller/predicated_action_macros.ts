@@ -11,57 +11,70 @@ import { CopyDefinition } from './types';
 /**
  * Reusable predicates: Wait for sandbox to finish and emit "✨  Total time: xx.xxs"
  */
-export const waitForSandboxDeploymentToPrintTotalTime = () =>
-  new PredicatedActionBuilder().waitForLineIncludes('Total time');
+export const waitForSandboxDeploymentToPrintTotalTime = () => {
+  console.log('waitForSandboxDeploymentToPrintTotalTime-----------');
+  return new PredicatedActionBuilder().waitForLineIncludes('Total time');
+};
 
 /**
  * Reusable predicates: Wait for sandbox to finish and emit "File written: amplify_outputs.json"
  */
-export const waitForConfigUpdateAfterDeployment = () =>
-  new PredicatedActionBuilder().waitForLineIncludes(
+export const waitForConfigUpdateAfterDeployment = () => {
+  console.log('waitForConfigUpdateAfterDeployment-------------');
+  return new PredicatedActionBuilder().waitForLineIncludes(
     'File written: amplify_outputs.json',
   );
+};
 
 /**
  * Reusable predicates: Wait for sandbox to become idle and emit "Watching for file changes..."
  */
-export const waitForSandboxToBecomeIdle = () =>
-  new PredicatedActionBuilder().waitForLineIncludes(
+export const waitForSandboxToBecomeIdle = () => {
+  console.log('waitForSandboxToBecomeIdle-------------');
+  return new PredicatedActionBuilder().waitForLineIncludes(
     'Watching for file changes...',
   );
+};
 
 /**
  * Reusable predicated action: Wait for sandbox delete to prompt to delete all the resource and respond with yes
  */
-export const confirmDeleteSandbox = () =>
-  new PredicatedActionBuilder()
+export const confirmDeleteSandbox = () => {
+  console.log('confirmDeleteSandbox-------------');
+  return new PredicatedActionBuilder()
     .waitForLineIncludes(
       'Are you sure you want to delete all the resources in your sandbox environment',
     )
     .sendYes();
-
+};
 /**
  * Reusable predicated action: Wait for sandbox to prompt on quitting to delete all the resource and respond with no
  */
-export const rejectCleanupSandbox = () =>
-  new PredicatedActionBuilder()
+export const rejectCleanupSandbox = () => {
+  console.log('rejectCleanupSandbox-------------');
+  return new PredicatedActionBuilder()
     .waitForLineIncludes(
       'Would you like to delete all the resources in your sandbox environment',
     )
     .sendNo();
+};
 
 /**
  * Reusable predicated action: Wait for sandbox to become idle,
  * then perform the specified file replacements in the backend code which will trigger sandbox again
  */
 export const replaceFiles = (replacements: CopyDefinition[]) => {
+  console.log('replaceFiles-------------');
   return waitForSandboxToBecomeIdle().replaceFiles(replacements);
 };
 
 /**
  * Reusable predicated action: Wait for sandbox to become idle and then quit it (CTRL-C)
  */
-export const interruptSandbox = () => waitForSandboxToBecomeIdle().sendCtrlC();
+export const interruptSandbox = () => {
+  console.log('interruptSandbox-------------');
+  return waitForSandboxToBecomeIdle().sendCtrlC();
+};
 
 /**
  * Reusable predicated action: Wait for sandbox to finish deployment and assert that the deployment time is less

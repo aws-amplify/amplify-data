@@ -30,6 +30,10 @@ export class PredicatedActionBuilder {
    * Add a new predicated action to the queue with a predicate that matches a given string
    */
   waitForLineIncludes = (str: string) => {
+    console.log('what for line includes-----------------');
+    console.log('what for line includes-----------------');
+    console.log('what for line includes-----------------');
+    console.log('what for line includes-----------------');
     this.predicatedActionQueue.push({
       ifThis: {
         predicateType: PredicateType.MATCHES_STRING_PREDICATE,
@@ -50,6 +54,7 @@ export class PredicatedActionBuilder {
    * Update the last predicated action to send str to the running process with no newline
    */
   send = (str: string) => {
+    console.log('send (str)---------', str);
     this.getLastPredicatedAction().then = {
       actionType:
         str === CONTROL_C
@@ -119,6 +124,7 @@ export class PredicatedActionBuilder {
    * Send line with a newline at the end
    */
   sendLine = (line: string) => {
+    console.log('send line:', line);
     this.send(`${line}${os.EOL}`);
     return this;
   };
@@ -135,6 +141,7 @@ export class PredicatedActionBuilder {
    * Send `Y\n`
    */
   sendYes = () => {
+    console.log('send yes------------------');
     this.sendLine('Y');
     return this;
   };
@@ -143,6 +150,7 @@ export class PredicatedActionBuilder {
    * Send SIGINT to the child process
    */
   sendCtrlC = () => {
+    console.log('sendCtrlC------------------');
     this.send(CONTROL_C);
     return this;
   };
@@ -155,6 +163,7 @@ export class PredicatedActionBuilder {
   };
 
   getLastPredicatedAction = () => {
+    console.log('get last predicate action-------------------');
     if (this.predicatedActionQueue.length === 0) {
       throw new Error('Must have a predicate to execute the action');
     }
