@@ -47,5 +47,5 @@ values
 </tbody></table>
 **Returns:**
 
-[\_Internal\_EnumType](./data-schema.enumtype.md)<!-- -->&lt;values&gt;
+[\_Internal\_EnumType](./data-schema._internal_enumtype.md)<!-- -->&lt;values&gt;
 

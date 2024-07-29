@@ -47,7 +47,7 @@ Description
 </th></tr></thead>
 <tbody><tr><td>
 
-[EnumType](./data-schema.enumtype.md)
+[\_Internal\_EnumType](./data-schema._internal_enumtype.md)
 
 
 </td><td>

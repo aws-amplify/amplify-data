@@ -24,4 +24,4 @@ export type {
   _Internal_ModelRelationshipTypes,
   _Internal_ModelRelationalTypeArgFactory,
 } from './ModelRelationalField';
-export type { _Internal_EnumType as EnumType } from './EnumType';
+export type { _Internal_EnumType } from './EnumType';
