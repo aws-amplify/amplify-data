@@ -1,6 +1,5 @@
 import { existsSync } from 'fs';
 import fs from 'fs/promises';
-
 /**
  * Delete a test directory or file:
  */

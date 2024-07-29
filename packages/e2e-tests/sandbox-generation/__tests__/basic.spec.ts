@@ -38,6 +38,10 @@ const sandboxCleanupTimeout: number = 8000;
 describe('Basic CRUDL w/ Sandbox Gen', () => {
   beforeAll(async () => {
     console.log('generating sandbox..');
+    // packages/integration-tests/src/test-live-dependency-health-checks/health_checks.test.ts
+    // Ensure that the amplify_outputs.json file does not exist before running the test
+    // expect(clientConfigStats.isFile()).toBe(false);
+    // const start = Date.now();
 
     const projectDirPath = './';
     // Factory function that returns a ProcessController for the Amplify Gen 2 Backend CLI
@@ -50,6 +54,9 @@ describe('Basic CRUDL w/ Sandbox Gen', () => {
       .do(rejectCleanupSandbox())
       // Execute the sequence of actions queued on the process
       .run();
+
+    // const end = Date.now();
+    // console.log(`Execution time--------: ${end - start} ms`);
 
     const clientConfigStats = await fs.stat('../amplify_outputs.json');
     // Sandbox gen successfull:
@@ -83,7 +90,7 @@ describe('Basic CRUDL w/ Sandbox Gen', () => {
 
     const outputsPath = './amplify_outputs.json';
     await deleteTestDirectory(outputsPath);
-
+    
     const amplifyPath = './.amplify';
     await deleteTestDirectory(amplifyPath);
   }, sandboxCleanupTimeout);

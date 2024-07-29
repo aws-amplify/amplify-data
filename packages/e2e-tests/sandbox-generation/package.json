@@ -9,9 +9,7 @@
     "e2e-node": "npm run install:no-lock && npm run test",
     "clean": "rm -rf node_modules package-lock.json",
     "install:no-lock": "npm i --no-package-lock",
-    "test": "jest",
-    "local-dev-util:sandbox-clean": "npx tsx ./src/manualExecUtils/cleanup.ts",
-    "local-dev-util:dir-clean": "npx tsx ./src/manualExecUtils/deleteFile.ts"
+    "test": "jest"
   },
   "devDependencies": {
     "@aws-amplify/backend": "^1.0.4",
