@@ -4,14 +4,14 @@
 //   // expectDataReturnWithoutErrors,
 // } from './utils';
 // import type { Schema } from '../amplify/data/resource';
-import { ampxCli } from './src/utilsV8/process-controller/process_controller';
+import { ampxCli } from '../utilsV8/process-controller/process_controller';
 import {
   // confirmDeleteSandbox,
   // interruptSandbox,
   // rejectCleanupSandbox,
   // waitForSandboxDeploymentToPrintTotalTime,
   confirmDeleteSandbox,
-} from './src/utilsV8/process-controller/predicated_action_macros';
+} from '../utilsV8/process-controller/predicated_action_macros';
 // import fs from 'fs/promises';
 
 // const test = async () => {
@@ -34,8 +34,12 @@ import {
 
 const cleanup = async () => {
   const projectDirPath = './';
+
+  // Factory function that returns a ProcessController for the Amplify Gen 2 Backend CLI
   await ampxCli(['sandbox', 'delete'], projectDirPath)
+    // Reusable predicated action: Wait for sandbox delete to prompt to delete all the resource and respond with yes
     .do(confirmDeleteSandbox())
+    // Execute the sequence of actions queued on the process
     .run();
 };
 

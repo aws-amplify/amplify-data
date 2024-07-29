@@ -34,7 +34,7 @@ export class ProcessController {
   constructor(
     private readonly command: string,
     private readonly args: string[] = [],
-    private readonly options?: Pick<Options, 'cwd' | 'env'>
+    private readonly options?: Pick<Options, 'cwd' | 'env'>,
   ) {}
 
   do = (interactions: PredicatedActionBuilder) => {
@@ -117,13 +117,16 @@ export class ProcessController {
 
 /**
  * Factory function that returns a ProcessController for the Amplify Gen 2 Backend CLI
+ * @param args - Arguments to pass to the CLI (i.e. ['sandbox', '--profile', 'my-profile', '--identifier', 'newId'])
+ * @param dir - Directory to run the CLI in (should be root of the sample app)
+ * @param options - Optional arguments to pass to the CLI
  */
 export const ampxCli = (
   args: string[] = [],
   dir: string,
   options?: {
     env?: Record<string, string>;
-  }
+  },
 ): ProcessController => {
   // TODO This is a workaround to lookup locally installed binary as seen by npx
   // We're using binary directly because signals (Ctrl+C) don't propagate
@@ -149,7 +152,7 @@ export const cdkCli = (
   dir: string,
   options?: {
     env?: Record<string, string>;
-  }
+  },
 ): ProcessController => {
   // We're using binary directly because cdk init doesn't seem to work.
   // See: https://github.com/aws/aws-cdk/issues/1694 (workaround from there didn't work).
@@ -174,7 +177,7 @@ export const runWithPackageManager = (
   dir: string,
   options?: {
     env?: Record<string, string>;
-  }
+  },
 ): ProcessController => {
   let packageManagerBinary: PackageManagerExecutable;
   switch (packageManager) {
@@ -209,7 +212,7 @@ export const runPackageManager = (
   dir: string,
   options?: {
     env?: Record<string, string>;
-  }
+  },
 ): ProcessController => {
   const packageManagerExecutable = packageManager.startsWith('yarn')
     ? 'yarn'
