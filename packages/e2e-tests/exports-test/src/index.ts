@@ -1,5 +1,4 @@
 import { a, defineFunction } from '@aws-amplify/backend';
-import {} from '@aws-amplify/data-schema';
 
 const defFunc = defineFunction({
   entry: './handlers/test-handler.ts',
