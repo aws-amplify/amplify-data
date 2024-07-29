@@ -32,11 +32,13 @@ const deleteAll = async (client: Client) => {
   console.log('result of cleanup:', listAfterDelete);
 };
 
-const sandboxGenTimeout: number = 15000;
-const sandboxCleanupTimeout: number = 8000;
+const sandboxGenTimeout: number = 60000;
+const sandboxCleanupTimeout: number = 30000;
 
 describe('Basic CRUDL w/ Sandbox Gen', () => {
   beforeAll(async () => {
+    console.log('generating sandbox..');
+    console.log('generating sandbox..');
     console.log('generating sandbox..');
 
     const projectDirPath = './';
@@ -52,6 +54,11 @@ describe('Basic CRUDL w/ Sandbox Gen', () => {
       .run();
 
     const clientConfigStats = await fs.stat('../amplify_outputs.json');
+    console.log('clientConfigStats---------------------:', clientConfigStats);
+    console.log('clientConfigStats:', clientConfigStats);
+    console.log('clientConfigStats:', clientConfigStats);
+    console.log('clientConfigStats:', clientConfigStats);
+    console.log('clientConfigStats:', clientConfigStats);
     // Sandbox gen successfull:
     expect(clientConfigStats.isFile()).toBe(true);
   }, sandboxGenTimeout);

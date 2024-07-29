@@ -38,7 +38,9 @@ officially supported by `amplify-js`).
 
 TODO: Investigate and/or fix.
 
-## Sandbox testing:
+## Sandbox tests:
+
+- TODO: explain.
 
 **Note: trimmed down to essentials (we aren't testing the CLI here)**
 

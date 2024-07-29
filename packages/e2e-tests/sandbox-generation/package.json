@@ -10,6 +10,7 @@
     "clean": "rm -rf node_modules package-lock.json",
     "install:no-lock": "npm i --no-package-lock",
     "test": "jest",
+    "local-dev-util:new-sandbox": "npx tsx ./src/manualExecUtils/new-sandbox.ts",
     "local-dev-util:sandbox-clean": "npx tsx ./src/manualExecUtils/cleanup.ts",
     "local-dev-util:dir-clean": "npx tsx ./src/manualExecUtils/deleteFile.ts"
   },
