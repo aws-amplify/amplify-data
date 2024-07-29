@@ -4,14 +4,14 @@
 //   // expectDataReturnWithoutErrors,
 // } from './utils';
 // import type { Schema } from '../amplify/data/resource';
-import { ampxCli } from './src/utils/process-controller/process_controller';
+import { ampxCli } from './src/utilsV8/process-controller/process_controller';
 import {
   // confirmDeleteSandbox,
   // interruptSandbox,
   // rejectCleanupSandbox,
   // waitForSandboxDeploymentToPrintTotalTime,
   confirmDeleteSandbox,
-} from './src/utils/process-controller/predicated_action_macros';
+} from './src/utilsV8/process-controller/predicated_action_macros';
 // import fs from 'fs/promises';
 
 // const test = async () => {
@@ -41,4 +41,4 @@ const cleanup = async () => {
 
 // test();
 
-cleanup();
+await cleanup();
