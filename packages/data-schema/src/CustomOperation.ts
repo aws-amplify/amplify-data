@@ -36,7 +36,7 @@ type InternalSubscriptionSource = InternalRef;
 type CustomReturnType = RefType<any> | CustomType<any>;
 type InternalCustomArguments = Record<string, InternalField>;
 type InternalCustomReturnType = InternalRef;
-type HandlerInputType = FunctionHandler[] | CustomHandler[] | AsyncFunctionHandler[] | Handler;
+type HandlerInputType = FunctionHandler[] | CustomHandler[] | AsyncFunctionHandler[] | (FunctionHandler | AsyncFunctionHandler)[] | Handler;
 
 export const CustomOperationNames = [
   'Query',
