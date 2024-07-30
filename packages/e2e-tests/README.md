@@ -64,3 +64,8 @@ or
 or (TODO):
 
 `npx tsx --test ./fileName.test.ts --test-reporter spec`
+
+### Local dev scripts:
+
+- When working on utils, it's useful to be able to gen a new sandbox, delete a 
+sandbox, or delete locally generated files. 
