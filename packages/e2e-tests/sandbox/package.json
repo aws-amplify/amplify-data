@@ -1,5 +1,5 @@
 {
-  "name": "@aws-amplify/e2e-tests",
+  "name": "@aws-amplify/e2e-sandbox-tests",
   "version": "1.0.0",
   "license": "Apache-2.0",
   "description": "",

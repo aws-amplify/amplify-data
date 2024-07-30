@@ -11,7 +11,7 @@ import {
   configureAmplifyAndGenerateClient,
   expectDataReturnWithoutErrors,
 } from '../../node/utils';
-import type { Schema } from '../backends/00-basic-todo/amplify/data/resource';
+import type { Schema } from '../amplify-backends/00-basic-todo/amplify/data/resource';
 import { deleteTestDirectory } from '../utils/setup_test_directory';
 import path from 'path';
 
@@ -37,18 +37,18 @@ const deleteAll = async (client: Client) => {
 const sandboxTimeout: number = 60000;
 
 // Location of generated Amplify backend for this test:
-const projectDirPath = './backends/00-basic-todo';
+const projectDirPath = './amplify-backends/01-p50';
 
 const outputsFileName = 'amplify_outputs.json';
 
 const outputsPath = path.join(projectDirPath, outputsFileName);
 
-describe('Sandbox gen + runtime testing of basic Todo schema', () => {
+describe('Sandbox gen + runtime testing of p50 schema', () => {
   beforeAll(async () => {
     console.log('Generating sandbox..');
 
     // Factory function that returns a ProcessController for the Amplify Gen 2 Backend CLI
-    await ampxCli(['sandbox', '--identifier', 'sandboxTodo'], projectDirPath)
+    await ampxCli(['sandbox', '--identifier', 'sandboxP50'], projectDirPath)
       // Reusable predicates: Wait for sandbox to finish and emit "File written: amplify_outputs.json"
       .do(waitForSandboxDeploymentToPrintTotalTime())
       // Wait for sandbox to become idle and then quit it (CTRL-C)
@@ -71,7 +71,7 @@ describe('Sandbox gen + runtime testing of basic Todo schema', () => {
     await deleteAll(client);
   });
   test('Create', async () => {
-    const response = await client.models.Todo.create({
+    const response = await client.models.CRUDLTestModel.create({
       content: 'test create',
     });
 
