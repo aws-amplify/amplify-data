@@ -619,7 +619,6 @@ describe('CustomOperation transform', () => {
                   entry: './filename.js',
                   dataSource: 'CommentTable',
                 }),
-                // @ts-expect-error
                 a.handler.function('myFn'),
               ]),
           });
@@ -794,10 +793,10 @@ describe('CustomOperation transform', () => {
         });
 
         // TODO: Add test cases
-        // - pipeline async
-        // - mixed sync async
-        //  - ultimate async uses EventInvocationResponse
-        //  - ultimate non-async requires return type
+        // - pipeline async (done)
+        // - mixed sync async (done)
+        //  - ultimate async uses EventInvocationResponse (done)
+        //  - ultimate non-async requires return type (done)
         // - TS error validation cases
         test('defineFunction event invocation', () => {
           const fn1 = defineFunctionStub({});
@@ -806,6 +805,58 @@ describe('CustomOperation transform', () => {
               .query()
               .arguments({})
               .handler(a.handler.function(fn1).async())
+              .authorization((allow) => allow.authenticated())
+          });
+
+          const { schema, lambdaFunctions } = s.transform();
+          expect(schema).toMatchSnapshot();
+        })
+
+        test('defineFunction sync - async', () => {
+          const fn1 = defineFunctionStub({});
+          const s = a.schema({
+            getPostDetails: a
+              .query()
+              .arguments({})
+              .handler([
+                a.handler.function(fn1),
+                a.handler.function(fn1).async(),
+              ])
+              .authorization((allow) => allow.authenticated())
+          });
+
+          const { schema, lambdaFunctions } = s.transform();
+          expect(schema).toMatchSnapshot();
+        })
+
+        test('defineFunction async - async', () => {
+          const fn1 = defineFunctionStub({});
+          const s = a.schema({
+            getPostDetails: a
+              .query()
+              .arguments({})
+              .handler([
+                a.handler.function(fn1).async(),
+                a.handler.function(fn1).async(),
+              ])
+              .authorization((allow) => allow.authenticated())
+          });
+
+          const { schema, lambdaFunctions } = s.transform();
+          expect(schema).toMatchSnapshot();
+        })
+
+        test('defineFunction async - sync', () => {
+          const fn1 = defineFunctionStub({});
+          const s = a.schema({
+            getPostDetails: a
+              .query()
+              .arguments({})
+              .handler([
+                a.handler.function(fn1).async(),
+                a.handler.function(fn1),
+              ])
+              .returns(a.customType({}))
               .authorization((allow) => allow.authenticated())
           });
 

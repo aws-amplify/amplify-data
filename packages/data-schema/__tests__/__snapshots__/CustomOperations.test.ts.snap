@@ -344,6 +344,28 @@ type Query {
 }"
 `;
 
+exports[`CustomOperation transform dynamo schema handlers a.handler.function defineFunction async - async 1`] = `
+"type EventInvocationResponse @aws_cognito_user_pools
+{
+  success: Boolean!
+}
+
+type Query {
+  getPostDetails: EventInvocationResponse @function(name: "FnGetPostDetails", invocationType: Event) @function(name: "FnGetPostDetails2", invocationType: Event) @auth(rules: [{allow: private}])
+}"
+`;
+
+exports[`CustomOperation transform dynamo schema handlers a.handler.function defineFunction async - sync 1`] = `
+"type GetPostDetailsReturnType @aws_cognito_user_pools
+{
+  
+}
+
+type Query {
+  getPostDetails: GetPostDetailsReturnType @function(name: "FnGetPostDetails", invocationType: Event) @function(name: "FnGetPostDetails2") @auth(rules: [{allow: private}])
+}"
+`;
+
 exports[`CustomOperation transform dynamo schema handlers a.handler.function defineFunction event invocation 1`] = `
 "type EventInvocationResponse @aws_cognito_user_pools
 {
@@ -352,6 +374,17 @@ exports[`CustomOperation transform dynamo schema handlers a.handler.function def
 
 type Query {
   getPostDetails: EventInvocationResponse @function(name: "FnGetPostDetails", invocationType: Event) @auth(rules: [{allow: private}])
+}"
+`;
+
+exports[`CustomOperation transform dynamo schema handlers a.handler.function defineFunction sync - async 1`] = `
+"type EventInvocationResponse @aws_cognito_user_pools
+{
+  success: Boolean!
+}
+
+type Query {
+  getPostDetails: EventInvocationResponse @function(name: "FnGetPostDetails") @function(name: "FnGetPostDetails2", invocationType: Event) @auth(rules: [{allow: private}])
 }"
 `;
 
