@@ -44,6 +44,25 @@ const schema = a
         allow.publicApiKey().to(['read']),
         allow.owner(),
       ]),
+    Cart: a
+      .model({
+        items: a.string().required().array(),
+        customerId: a.id(),
+        customer: a.belongsTo('Customer', 'customerId'),
+      })
+      .authorization((allow) => [
+        allow.publicApiKey().to(['read']),
+        allow.owner(),
+      ]),
+    Customer: a
+      .model({
+        name: a.string(),
+        activeCart: a.hasOne('Cart', 'customerId'),
+      })
+      .authorization((allow) => [
+        allow.publicApiKey().to(['read']),
+        allow.owner(),
+      ]),
   })
   .authorization((allow) => allow.publicApiKey());
 

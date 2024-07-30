@@ -6,6 +6,9 @@ import fs from 'fs/promises';
  */
 export const deleteTestDirectory = async (pathName: string | URL) => {
   if (existsSync(pathName)) {
+    console.log(`Path exists, deleting ${pathName}`);
     await fs.rm(pathName, { recursive: true, force: true });
+  } else {
+    throw new Error(`Path to delete does not exist: ${pathName}`);
   }
 };

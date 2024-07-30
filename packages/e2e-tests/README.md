@@ -40,13 +40,11 @@ TODO: Investigate and/or fix.
 
 ## Sandbox testing:
 
-**Note: trimmed down to essentials (we aren't testing the CLI here)**
+## How it works:
 
-1. `await ampxCli`
+## How to add a new test / test local changes:
 
-- Factory function that returns a ProcessController for the Amplify Gen 2 Backend CLI
-
-### Build stuff
+## [TODO/Follow-up] Using execa with Jest in Node
 
 Problem using execa with Jest in Node. ESM import issue. Tried a few config options, but no luck. They don't use Jest, so no help here.
 
@@ -60,12 +58,3 @@ Workaround is to use a newer version of execa than amplify-backend, but the usag
 or
 
 `npx tsx ./test.ts`
-
-or (TODO):
-
-`npx tsx --test ./fileName.test.ts --test-reporter spec`
-
-### Local dev scripts:
-
-- When working on utils, it's useful to be able to gen a new sandbox, delete a 
-sandbox, or delete locally generated files. 
