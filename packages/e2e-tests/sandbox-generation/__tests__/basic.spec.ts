@@ -5,7 +5,7 @@ import {
   rejectCleanupSandbox,
   waitForSandboxDeploymentToPrintTotalTime,
 } from '../utils/process-controller/predicated_action_macros';
-// import fs from 'fs/promises';
+import fs from 'fs/promises';
 import {
   Client,
   configureAmplifyAndGenerateClient,
@@ -39,6 +39,10 @@ const sandboxTimeout: number = 60000;
 // Location of generated Amplify backend for this test:
 const projectDirPath = './backends/00-basic-todo';
 
+const outputsFileName = 'amplify_outputs.json';
+
+const outputsPath = path.join(projectDirPath, outputsFileName);
+
 describe('Basic CRUDL w/ Sandbox Gen', () => {
   beforeAll(async () => {
     console.log('Generating sandbox..');
@@ -54,11 +58,11 @@ describe('Basic CRUDL w/ Sandbox Gen', () => {
       // Execute the sequence of actions queued on the process
       .run();
 
-    // const clientConfigStats = await fs.stat('../amplify_outputs.json');
+    const clientConfigStats = await fs.stat(outputsPath);
 
-    // if (!clientConfigStats.isFile()) {
-    //   throw new Error('amplify_outputs.json not found');
-    // }
+    if (!clientConfigStats.isFile()) {
+      throw new Error('amplify_outputs.json not found');
+    }
   }, sandboxTimeout);
   beforeEach(() => {
     client = configureAmplifyAndGenerateClient({});
@@ -79,21 +83,15 @@ describe('Basic CRUDL w/ Sandbox Gen', () => {
     console.log('deleting sandbox..');
 
     // Factory function that returns a ProcessController for the Amplify Gen 2 Backend CLI
-    // await ampxCli(['sandbox', 'delete'], projectDirPath)
     await ampxCli(['sandbox', 'delete'], projectDirPath)
       // Reusable predicated action: Wait for sandbox delete to prompt to delete all the resource and respond with yes
       .do(confirmDeleteSandbox())
       // Execute the sequence of actions queued on the process
       .run();
 
-    const fileName = 'amplify_outputs.json';
-
-    const outputsPath = path.join(projectDirPath, fileName);
-    // const outputsPath = './amplify_outputs.json';
     await deleteTestDirectory(outputsPath);
 
     const amplifyPath = path.join(projectDirPath, '.amplify');
-    // const amplifyPath = './.amplify';
     await deleteTestDirectory(amplifyPath);
   }, sandboxTimeout);
 });
