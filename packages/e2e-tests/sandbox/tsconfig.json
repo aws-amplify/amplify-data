@@ -13,5 +13,6 @@
     "module": "esnext",
     "moduleResolution": "bundler"
   },
-  "exclude": ["**/node_modules", "**/dist", "**/lib-esm", "**/*js"]
+  "exclude": ["**/node_modules", "**/dist", "**/lib-esm", "**/*js"],
+  "include": ["packages/e2e-tests/**/*.ts", "packages/e2e-tests/common/**/*.ts"]
 }

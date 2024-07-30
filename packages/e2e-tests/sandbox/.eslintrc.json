@@ -6,7 +6,6 @@
   "extends": [
     "eslint:recommended",
     "plugin:@typescript-eslint/recommended",
-    // "plugin:jsdoc/recommended-typescript-error",
     "prettier"
   ],
   "parser": "@typescript-eslint/parser",
@@ -35,5 +34,12 @@
         "caughtErrorsIgnorePattern": "^_"
       }
     ]
+  },
+  "settings": {
+    "import/resolver": {
+      "node": {
+        "paths": ["packages/e2e-tests"]
+      }
+    }
   }
 }

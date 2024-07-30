@@ -1,14 +1,14 @@
 import { Amplify } from 'aws-amplify';
 import { generateClient } from 'aws-amplify/data';
-import { expectDataReturnWithoutErrors } from '../utils/runtimeUtils';
+import { expectDataReturnWithoutErrors } from '../../common/utils';
 import type { Schema } from '../amplify-backends/00-basic-todo/amplify/data/resource';
-// import outputs from '../amplify-backends/00-basic-todo/amplify_outputs.json';
 import { deploySandbox, sandboxTimeout, teardownSandbox } from '../utils/';
-import fs from 'fs/promises';
-import path from 'path';
+import { getGeneratedOutputs } from '../utils/outputsUtils';
+
+const sandboxDir = '00-basic-todo';
 
 // Location of generated Amplify backend for this test:
-const projectDirPath = './amplify-backends/00-basic-todo';
+const projectDirPath = `./amplify-backends/${sandboxDir}`;
 
 const sandboxIdentifier = 'basicTodo';
 
@@ -18,10 +18,10 @@ type Client = ReturnType<typeof generateClient<Schema>>;
 let client: Client;
 
 const deleteAll = async (client: Client) => {
-  const { data: crudlTestModels } = await client.models.Todo.list();
-  console.log('crudlTestModels to delete:', crudlTestModels);
+  const { data: todos } = await client.models.Todo.list();
+  console.log('todos to delete:', todos);
 
-  const deletePromises = crudlTestModels?.map(
+  const deletePromises = todos?.map(
     async (crudlTestModel: Schema['Todo']['type']) => {
       await client.models.Todo.delete(crudlTestModel);
     },
@@ -35,58 +35,21 @@ const deleteAll = async (client: Client) => {
 
 describe('Sandbox gen + runtime testing of basic Todo schema', () => {
   beforeAll(async () => {
+    // Deploy the sandbox
     const response = await deploySandbox(projectDirPath, sandboxIdentifier);
 
     if ('errors' in response) {
-      console.log('errors----------');
-      console.log('errors----------');
-      console.log('errors----------');
       throw response.errors;
     }
   }, sandboxTimeout);
   beforeEach(async () => {
-    console.log('before each----------------');
-    console.log('before each----------------');
-    console.log('before each----------------');
-    console.log('before each----------------');
-    console.log('before each----------------');
-    // client = configureAmplifyAndGenerateClient({});
-    // Wait until the file is generated
-    const outputsFileName = 'amplify_outputs.json';
-    const filePath = path.join(
-      '../amplify-backends/00-basic-todo/',
-      outputsFileName,
-    );
+    const { result, errors } = await getGeneratedOutputs(sandboxDir);
 
-    console.log('Waiting for file path to be generated??:', filePath);
-    console.log('Waiting for file path to be generated??:', filePath);
-    console.log('Waiting for file path to be generated??:', filePath);
-
-    // while (!fs.existsSync(filePath)) {
-    //   console.log('while----');
-    //   console.log('while----');
-    //   console.log('while----');
-    //   console.log('while----');
-    //   await new Promise((resolve) => setTimeout(resolve, 100)); // Wait for 100ms before checking again
-    // }
-
-    async function pause(ms: number) {
-      return new Promise((unsleep) => setTimeout(unsleep, ms));
+    if (errors) {
+      throw errors;
     }
 
-    await pause(5000);
-
-    const clientConfigStats = await fs.stat(filePath);
-    console.log('clientConfigStats!!!!!!!!:', clientConfigStats.isFile());
-
-    // Dynamically require the file
-    const outputs = await import(filePath);
-    console.log('got here--------------------');
-    console.log('got here--------------------');
-    console.log('got here--------------------');
-    console.log('got here--------------------');
-    console.log(outputs);
-    Amplify.configure(outputs);
+    Amplify.configure(result);
     client = generateClient<Schema>();
   });
   afterEach(async () => {
@@ -103,7 +66,6 @@ describe('Sandbox gen + runtime testing of basic Todo schema', () => {
     expect(data?.content).toBe('test create');
   });
   afterAll(async () => {
-    // await teardownSandbox(projectDirPath, sandboxIdentifier);
     await teardownSandbox(projectDirPath);
   }, sandboxTimeout);
 });

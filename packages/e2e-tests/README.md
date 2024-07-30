@@ -42,11 +42,15 @@ TODO: Investigate and/or fix.
 
 ## How it works:
 
+- TODO
+
 ## How to add a new test / test local changes:
+
+- TODO
 
 ## [TODO/Follow-up] Using execa with Jest in Node
 
-Problem using execa with Jest in Node. ESM import issue. Tried a few config options, but no luck. They don't use Jest, so no help here.
+Problem using `execa` with Jest in Node. ESM import issue. Tried a few config options, but no luck. They don't use Jest, so no help here.
 
 - https://github.com/sindresorhus/execa/issues/465
 - https://jestjs.io/docs/ecmascript-modules
