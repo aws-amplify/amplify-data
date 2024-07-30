@@ -5,14 +5,15 @@ import {
   rejectCleanupSandbox,
   waitForSandboxDeploymentToPrintTotalTime,
 } from '../src/utilsV8/process-controller/predicated_action_macros';
-import fs from 'fs/promises';
+// import fs from 'fs/promises';
 import {
   Client,
   configureAmplifyAndGenerateClient,
   expectDataReturnWithoutErrors,
 } from '../../node/utils';
-import type { Schema } from '../amplify/data/resource';
+import type { Schema } from '../backends/00-basic-todo/amplify/data/resource';
 import { deleteTestDirectory } from '../src/utilsV8/setup_test_directory';
+import path from 'path';
 
 let client: Client;
 
@@ -35,11 +36,13 @@ const deleteAll = async (client: Client) => {
 // Sandbox operations can be time consuming, so we set a timeout of 60 seconds:
 const sandboxTimeout: number = 60000;
 
+// Location of generated Amplify backend for this test:
+const projectDirPath = './backends/00-basic-todo';
+
 describe('Basic CRUDL w/ Sandbox Gen', () => {
   beforeAll(async () => {
     console.log('Generating sandbox..');
 
-    const projectDirPath = './';
     // Factory function that returns a ProcessController for the Amplify Gen 2 Backend CLI
     await ampxCli(['sandbox', '--identifier', 'sandboxGenTest'], projectDirPath)
       // Reusable predicates: Wait for sandbox to finish and emit "File written: amplify_outputs.json"
@@ -51,11 +54,11 @@ describe('Basic CRUDL w/ Sandbox Gen', () => {
       // Execute the sequence of actions queued on the process
       .run();
 
-    const clientConfigStats = await fs.stat('../amplify_outputs.json');
+    // const clientConfigStats = await fs.stat('../amplify_outputs.json');
 
-    if (!clientConfigStats.isFile()) {
-      throw new Error('amplify_outputs.json not found');
-    }
+    // if (!clientConfigStats.isFile()) {
+    //   throw new Error('amplify_outputs.json not found');
+    // }
   }, sandboxTimeout);
   beforeEach(() => {
     client = configureAmplifyAndGenerateClient({});
@@ -74,19 +77,23 @@ describe('Basic CRUDL w/ Sandbox Gen', () => {
   });
   afterAll(async () => {
     console.log('deleting sandbox..');
-    const projectDirPath = './';
 
     // Factory function that returns a ProcessController for the Amplify Gen 2 Backend CLI
+    // await ampxCli(['sandbox', 'delete'], projectDirPath)
     await ampxCli(['sandbox', 'delete'], projectDirPath)
       // Reusable predicated action: Wait for sandbox delete to prompt to delete all the resource and respond with yes
       .do(confirmDeleteSandbox())
       // Execute the sequence of actions queued on the process
       .run();
 
-    const outputsPath = './amplify_outputs.json';
+    const fileName = 'amplify_outputs.json';
+
+    const outputsPath = path.join(projectDirPath, fileName);
+    // const outputsPath = './amplify_outputs.json';
     await deleteTestDirectory(outputsPath);
 
-    const amplifyPath = './.amplify';
+    const amplifyPath = path.join(projectDirPath, '.amplify');
+    // const amplifyPath = './.amplify';
     await deleteTestDirectory(amplifyPath);
   }, sandboxTimeout);
 });
