@@ -1,4 +1,4 @@
-import { deleteTestDirectory } from '../utilsV8/setup_test_directory';
+import { deleteTestDirectory } from '../../utils/setup_test_directory';
 
 const cleanup = async () => {
   const outputsPath = './amplify_outputs.json';

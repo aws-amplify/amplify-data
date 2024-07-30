@@ -1,10 +1,10 @@
-import { ampxCli } from '../src/utilsV8/process-controller/process_controller';
+import { ampxCli } from '../utils/process-controller/process_controller';
 import {
   confirmDeleteSandbox,
   interruptSandbox,
   rejectCleanupSandbox,
   waitForSandboxDeploymentToPrintTotalTime,
-} from '../src/utilsV8/process-controller/predicated_action_macros';
+} from '../utils/process-controller/predicated_action_macros';
 // import fs from 'fs/promises';
 import {
   Client,
@@ -12,7 +12,7 @@ import {
   expectDataReturnWithoutErrors,
 } from '../../node/utils';
 import type { Schema } from '../backends/00-basic-todo/amplify/data/resource';
-import { deleteTestDirectory } from '../src/utilsV8/setup_test_directory';
+import { deleteTestDirectory } from '../utils/setup_test_directory';
 import path from 'path';
 
 let client: Client;
