@@ -26,7 +26,7 @@ import {
 } from '@aws-amplify/data-schema-types';
 import type { InternalRef, RefType } from './RefType';
 import type { EnumType } from './EnumType';
-import type { CustomType, CustomTypeParamShape } from './CustomType';
+import { type CustomType, type CustomTypeParamShape } from './CustomType';
 import { type InternalCustom, CustomOperationNames } from './CustomOperation';
 import { Brand, getBrand } from './util';
 import {
@@ -35,8 +35,7 @@ import {
   type CustomHandler,
   type SqlReferenceHandler,
   FunctionHandler,
-  FunctionHandlerData,
-  AsyncFunctionHandler,
+  AsyncFunctionHandler
 } from './Handler';
 import * as os from 'os';
 import * as path from 'path';
@@ -256,7 +255,7 @@ function enumFieldToGql(enumName: string, secondaryIndexes: string[] = []) {
 }
 
 function transformFunctionHandler(
-  handlers: FunctionHandler[] | AsyncFunctionHandler[],
+  handlers: (FunctionHandler | AsyncFunctionHandler)[],
   functionFieldName: string,
 ): {
   gqlHandlerContent: string;
@@ -266,6 +265,9 @@ function transformFunctionHandler(
   let gqlHandlerContent = '';
   const lambdaFunctionDefinition: LambdaFunctionDefinition = {};
   const generatedResponseTypes: [string, any][] = [];
+  if (finalHandlerIsAsyncFunctionHandler(handlers)) {
+    generatedResponseTypes.push(['EventInvocationResponse', eventInvocationResponseCustomType]);
+  }
   handlers.forEach((handler, idx) => {
     const handlerData = getHandlerData(handler);
 
@@ -273,16 +275,7 @@ function transformFunctionHandler(
       gqlHandlerContent += `@function(name: "${handlerData.handler}") `;
     } else if (typeof handlerData.handler.getInstance === 'function') {
       const fnName = `Fn${capitalize(functionFieldName)}${idx === 0 ? '' : `${idx + 1}`}`;
-
-      // TODO: We're setting this in multiple places to passs existing validation checks.
-      // Is that necessary? Or can we shuffle around some validation without issue?
-      // TODO: The `EventInvocationResponse` type should only be added to the schema if
-      // the async function is the final function handler in a pipeline.
-      if (handlerData.invocationType === 'Event') {
-        generatedResponseTypes.push(['EventInvocationResponse', eventInvocationResponseCustomType]);
-      }
       lambdaFunctionDefinition[fnName] = handlerData.handler;
-
       const invocationTypeArg = handlerData.invocationType === 'Event' ? ', invocationType: Event)' : ')'
       gqlHandlerContent += `@function(name: "${fnName}"${invocationTypeArg} `;
     }
@@ -434,7 +427,7 @@ function customOperationToGql(
   let customSqlDataSourceStrategy: CustomSqlDataSourceStrategy | undefined;
   let generatedResponseTypes: [string, any][] = []
 
-  if (isFunctionHandler(handlers) || isAsyncFunctionHandler(handlers)) {
+  if (isFunctionHandler(handlers)) {
     ({ gqlHandlerContent, lambdaFunctionDefinition, generatedResponseTypes } = transformFunctionHandler(
       handlers,
       typeName,
@@ -1454,12 +1447,16 @@ function validateCustomOperations(
     }
 
     if (configuredHandlers.size > 1) {
-      const configuredHandlersStr = JSON.stringify(
-        Array.from(configuredHandlers),
-      );
-      throw new Error(
-        `Field handlers must be of the same type. ${typeName} has been configured with ${configuredHandlersStr}`,
-      );
+      configuredHandlers.delete('asyncFunctionHandler');
+      configuredHandlers.delete('functionHandler');
+      if (configuredHandlers.size > 0) {
+        const configuredHandlersStr = JSON.stringify(
+          Array.from(configuredHandlers),
+        );
+        throw new Error(
+          `Field handlers must be of the same type. ${typeName} has been configured with ${configuredHandlersStr}`,
+        );
+      }
     }
   }
 
@@ -1559,14 +1556,22 @@ const isCustomHandler = (
 
 const isFunctionHandler = (
   handler: HandlerType[] | null,
-): handler is FunctionHandler[] => {
-  return Array.isArray(handler) && getBrand(handler[0]) === 'functionHandler';
+): handler is (FunctionHandler | AsyncFunctionHandler)[] => {
+  if (!Array.isArray(handler)) { return false; }
+  const handlerBrands = new Set(handler.map((h) => getBrand(h)));
+  const functionHandlerBrands = ['functionHandler', 'asyncFunctionHandler'];
+  for (const handlerBrand of handlerBrands) {
+    if (!functionHandlerBrands.includes(handlerBrand)) {
+      return false;
+    }
+  }
+  return true;
 };
 
-const isAsyncFunctionHandler = (
+const finalHandlerIsAsyncFunctionHandler = (
   handler: HandlerType[] | null,
 ): handler is AsyncFunctionHandler[] => {
-  return Array.isArray(handler) && getBrand(handler[0]) === 'asyncFunctionHandler';
+  return Array.isArray(handler) && getBrand(handler[handler.length - 1]) === 'asyncFunctionHandler';
 }
 
 const normalizeDataSourceName = (
@@ -1690,7 +1695,7 @@ function transformCustomOperations(
   //
   // If this stays here, update the condition to only add the type when necessary:
   // async function is the final function in the chain.
-  if (isAsyncFunctionHandler(handlers)) {
+  if (finalHandlerIsAsyncFunctionHandler(handlers)) {
     schema.data.types['EventInvocationResponse'] = eventInvocationResponseCustomType;
   }
 
