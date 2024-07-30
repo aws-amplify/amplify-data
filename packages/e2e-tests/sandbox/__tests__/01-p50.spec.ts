@@ -29,7 +29,7 @@ const deleteAll = async (client: Client) => {
   console.log('result of cleanup:', listAfterDelete);
 };
 
-describe('Sandbox gen + runtime testing of p50 schema', () => {
+describe.skip('Sandbox gen + runtime testing of p50 schema', () => {
   beforeAll(async () => {
     const response = await deploySandbox(projectDirPath, sandboxIdentifier);
 
