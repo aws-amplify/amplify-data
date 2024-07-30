@@ -14,11 +14,12 @@
   "devDependencies": {
     "@aws-amplify/backend": "^1.0.4",
     "@aws-amplify/backend-cli": "^1.1.0",
-    "@aws-amplify/data-schema": "*",
-    "@aws-amplify/data-schema-types": "*",
+    "@aws-amplify/data-schema": "file:../../../node_modules/@aws-amplify/data-schema",
+    "@aws-amplify/data-schema-types": "file:../../../node_modules/@aws-amplify/data-schema-types",
     "@tsd/typescript": "^5.5.3",
     "@types/jest": "^29.5.12",
     "@types/node": "20.8.3",
+    "@types/ws": "^8.5.11",
     "aws-amplify": "unstable",
     "aws-cdk": "^2.149.0",
     "aws-cdk-lib": "^2.149.0",
@@ -29,6 +30,7 @@
     "ts-jest": "^29.2.0",
     "ts-node": "^10.9.2",
     "tsx": "^4.16.2",
-    "typescript": "^5.5.3"
+    "typescript": "^5.5.3",
+    "ws": "^8.18.0"
   }
 }
