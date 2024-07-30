@@ -1,5 +1,3 @@
-// import { ExecaChildProcess } from 'execa';
-
 /**
  * Type of actions a user can take with their app.
  */

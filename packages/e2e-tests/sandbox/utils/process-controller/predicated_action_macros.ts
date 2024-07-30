@@ -1,11 +1,7 @@
 import { PredicatedActionBuilder } from './predicated_action_queue_builder';
-// import { PlatformDeploymentThresholds } from '../test-project-setup/test_project_base.js';
-import { CopyDefinition } from './types';
 
 /**
  * Convenience predicated actions that can be used to build up more complex CLI flows.
- * By composing flows from reusable macros we will hopefully avoid the situation in the
- * classic CLI E2E tests where changing one CLI prompt requires updates to 97742 different E2E prompts
  */
 
 /**
@@ -51,26 +47,6 @@ export const rejectCleanupSandbox = () =>
     .sendNo();
 
 /**
- * Reusable predicated action: Wait for sandbox to become idle,
- * then perform the specified file replacements in the backend code which will trigger sandbox again
- */
-export const replaceFiles = (replacements: CopyDefinition[]) => {
-  return waitForSandboxToBecomeIdle().replaceFiles(replacements);
-};
-
-/**
  * Reusable predicated action: Wait for sandbox to become idle and then quit it (CTRL-C)
  */
 export const interruptSandbox = () => waitForSandboxToBecomeIdle().sendCtrlC();
-
-/**
- * Reusable predicated action: Wait for sandbox to finish deployment and assert that the deployment time is less
- * than the threshold.
- */
-export const ensureDeploymentTimeLessThan = (platformThresholds: any) => {
-  return waitForSandboxDeploymentToPrintTotalTime().ensureDeploymentTimeLessThan(
-    process.platform.startsWith('win')
-      ? platformThresholds.onWindows
-      : platformThresholds.onOther,
-  );
-};

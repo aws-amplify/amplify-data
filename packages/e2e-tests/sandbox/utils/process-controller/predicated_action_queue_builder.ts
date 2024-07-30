@@ -4,13 +4,10 @@ import {
   PredicatedAction,
 } from './predicated_action';
 import os from 'os';
-import fs from 'fs/promises';
-
 import { killExecaProcess } from './execa_process_killer';
-// import { ExecaChildProcess } from 'execa';
-import { CopyDefinition } from './types';
 
 export const CONTROL_C = '\x03';
+
 /**
  * Builder for a queue of Actions
  */
@@ -59,55 +56,6 @@ export class PredicatedActionBuilder {
           await killExecaProcess(execaProcess);
         } else {
           execaProcess.stdin?.write(str);
-        }
-      },
-    };
-    return this;
-  };
-
-  /**
-   * Update the last predicated action to update backend code by copying files from
-   * `from` location to `to` location.
-   */
-  replaceFiles = (replacements: CopyDefinition[]) => {
-    this.getLastPredicatedAction().then = {
-      actionType: ActionType.UPDATE_FILE_CONTENT,
-      action: async () => {
-        for (const { source, destination } of replacements) {
-          await fs.cp(source, destination, {
-            recursive: true,
-          });
-        }
-      },
-    };
-    return this;
-  };
-
-  /**
-   * Update the last predicated action to validate that the deployment time is less than the one specified
-   */
-  ensureDeploymentTimeLessThan = (seconds: number) => {
-    this.getLastPredicatedAction().then = {
-      actionType: ActionType.ASSERT_ON_PROCESS_OUTPUT,
-      action: (strWithDeploymentTime: string) => {
-        // the time can be in fractional or whole seconds. 24.3, 24, 24.22 etc.
-        const regex = /^✨ {2}Total time: (\d*\.*\d*)s.*$/;
-        const deploymentTime = strWithDeploymentTime.match(regex);
-        if (
-          deploymentTime &&
-          deploymentTime.length > 1 &&
-          !isNaN(+deploymentTime[1])
-        ) {
-          if (+deploymentTime[1] <= seconds) {
-            return;
-          }
-          throw new Error(
-            `Deployment time ${+deploymentTime[1]} seconds is higher than the threshold of ${seconds}`,
-          );
-        } else {
-          throw new Error(
-            `Could not determine the deployment time. String was ${strWithDeploymentTime}`,
-          );
         }
       },
     };
