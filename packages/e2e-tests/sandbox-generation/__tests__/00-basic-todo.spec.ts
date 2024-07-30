@@ -43,12 +43,12 @@ const outputsFileName = 'amplify_outputs.json';
 
 const outputsPath = path.join(projectDirPath, outputsFileName);
 
-describe('Basic CRUDL w/ Sandbox Gen', () => {
+describe('Sandbox gen + runtime testing of basic Todo schema', () => {
   beforeAll(async () => {
     console.log('Generating sandbox..');
 
     // Factory function that returns a ProcessController for the Amplify Gen 2 Backend CLI
-    await ampxCli(['sandbox', '--identifier', 'sandboxGenTest'], projectDirPath)
+    await ampxCli(['sandbox', '--identifier', 'sandboxTodo'], projectDirPath)
       // Reusable predicates: Wait for sandbox to finish and emit "File written: amplify_outputs.json"
       .do(waitForSandboxDeploymentToPrintTotalTime())
       // Wait for sandbox to become idle and then quit it (CTRL-C)
@@ -71,7 +71,7 @@ describe('Basic CRUDL w/ Sandbox Gen', () => {
     await deleteAll(client);
   });
   test('Create', async () => {
-    const response = await client.models.CRUDLTestModel.create({
+    const response = await client.models.Todo.create({
       content: 'test create',
     });
 
