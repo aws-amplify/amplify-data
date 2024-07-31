@@ -102,3 +102,23 @@ exports[`custom operations primitive type result 1`] = `
   ],
 ]
 `;
+
+exports[`custom operations solo async handler 1`] = `
+[
+  [
+    {
+      "authMode": undefined,
+      "authToken": undefined,
+      "query": "
+    query($value: String) {
+      soloAsync(value: $value) {success}
+    }
+  ",
+      "variables": {
+        "value": "hello, world!",
+      },
+    },
+    {},
+  ],
+]
+`;

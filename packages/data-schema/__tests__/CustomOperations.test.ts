@@ -810,6 +810,9 @@ describe('CustomOperation transform', () => {
 
           const { schema, lambdaFunctions } = s.transform();
           expect(schema).toMatchSnapshot();
+          expect(lambdaFunctions).toMatchObject({
+            FnGetPostDetails: fn1,
+          });
         })
 
         test('defineFunction sync - async', () => {
@@ -827,23 +830,48 @@ describe('CustomOperation transform', () => {
 
           const { schema, lambdaFunctions } = s.transform();
           expect(schema).toMatchSnapshot();
+          expect(lambdaFunctions).toMatchObject({
+            FnGetPostDetails: fn1,
+          });
         })
 
-        test('defineFunction async - async', () => {
+        test('defineFunction sync - async with returns generates type errors', () => {
           const fn1 = defineFunctionStub({});
           const s = a.schema({
             getPostDetails: a
               .query()
               .arguments({})
               .handler([
+                a.handler.function(fn1),
                 a.handler.function(fn1).async(),
+              ])
+              .authorization((allow) => allow.authenticated())
+              // @ts-expect-error
+              .returns({ })
+          });
+        })
+
+        test('defineFunction async - async', () => {
+          const fn1 = defineFunctionStub({});
+          const fn2 = defineFunctionStub({});
+
+          const s = a.schema({
+            getPostDetails: a
+              .query()
+              .arguments({})
+              .handler([
                 a.handler.function(fn1).async(),
+                a.handler.function(fn2).async(),
               ])
               .authorization((allow) => allow.authenticated())
           });
 
           const { schema, lambdaFunctions } = s.transform();
           expect(schema).toMatchSnapshot();
+          expect(lambdaFunctions).toMatchObject({
+            FnGetPostDetails: fn1,
+            FnGetPostDetails2: fn2,
+          });
         })
 
         test('defineFunction async - sync', () => {

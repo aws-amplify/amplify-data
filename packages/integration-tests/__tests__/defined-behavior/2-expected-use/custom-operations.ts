@@ -68,6 +68,13 @@ describe('custom operations', () => {
       .returns(a.ref('EchoResult').array())
       .handler(a.handler.function(dummyHandler))
       .authorization((allow) => [allow.publicApiKey()]),
+    soloAsync: a
+      .query()
+      .arguments({
+        value: a.string(),
+      })
+      .handler(a.handler.function(dummyHandler).async())
+      .authorization((allow) => [allow.publicApiKey()]),
   });
 
   type Schema = ClientSchema<typeof schema>;
@@ -236,6 +243,34 @@ describe('custom operations', () => {
         updatedAt: '2024-05-17T22:16:17.712Z',
       }),
     );
+    expect(optionsAndHeaders(spy)).toMatchSnapshot();
+  });
+
+  test('solo async handler', async () => {
+    const { spy, generateClient } = mockedGenerateClient([
+      {
+        data: {
+          soloAsync: {
+            success: true
+          }
+        }
+      }
+    ]);
+
+    const config = await buildAmplifyConfig(schema);
+    Amplify.configure(config);
+
+    const client = generateClient<Schema>();
+
+    const { data } = await client.queries.soloAsync({
+      value: 'hello, world!'
+    });
+
+    expect(data).toEqual(
+      expect.objectContaining({
+        success: true,
+      })
+    )
     expect(optionsAndHeaders(spy)).toMatchSnapshot();
   });
 });

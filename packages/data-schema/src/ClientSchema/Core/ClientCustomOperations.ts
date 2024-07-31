@@ -1,4 +1,4 @@
-import type { CustomOperationParamShape } from '../../CustomOperation';
+import type { CustomOperationParamShape, UltimateFunctionHandlerAsyncType } from '../../CustomOperation';
 import type { BaseModelField, ModelFieldType } from '../../ModelField';
 import type { RefType } from '../../RefType';
 import type { ResolveFieldRequirements } from '../../MappedTypes/ResolveFieldProperties';
@@ -36,7 +36,13 @@ export interface ClientCustomOperation<
    */
   functionHandler: AppSyncResolverHandler<
     CustomOpArguments<Op>,
-    LambdaReturnType<CustomOpReturnType<Op, RefBag>>
+    // If the final handler is an async function, the Schema['fieldname']['functionhandler']
+    // should have a return type of `void`. This only applies to `functionHandler` and not
+    // `returnType` because `returnType` determines the type returned by the mutation / query
+    // in the data client.
+    Op['handlers'] extends UltimateFunctionHandlerAsyncType
+    ? void
+    : LambdaReturnType<CustomOpReturnType<Op, RefBag>>
   >;
 
   /**
