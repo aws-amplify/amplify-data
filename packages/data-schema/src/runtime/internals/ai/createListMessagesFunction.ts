@@ -34,7 +34,6 @@ export const createListMessagesFunction =
       ...input,
       filter: { sessionId: { eq: conversationId } },
     });
-    console.log('🐶', data, errors);
     return {
       data: data.map((item: any) => convertItemToConversationMessage(item)),
       nextToken,

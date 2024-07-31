@@ -22,8 +22,7 @@ export const createSendMessageFunction =
     conversationRouteName: string,
     getInternals: ClientInternalsGetter,
   ): Conversation['sendMessage'] =>
-  // ({ aiContext, content, uiComponents }) => {
-  async ({ content }) => {
+  async ({ aiContext, content, toolConfiguration }) => {
     const { conversations } = modelIntrospection;
     // Safe guard for standalone function. When called as part of client generation, this should never be falsy.
     if (!conversations) {
@@ -41,13 +40,11 @@ export const createSendMessageFunction =
       args?: Record<string, any>,
     ) => SingularReturnValue<ConversationMessage>;
     const { data, errors } = await sendOperation({
-      // aiContext: JSON.stringify(aiContext),
+      aiContext: JSON.stringify(aiContext),
       content: JSON.stringify(content),
       sessionId: conversation.id,
-      role: 'user',
-      // uiComponents,
+      toolConfiguration,
     });
-    console.log('🐶', data, errors);
     return {
       data: data ? convertItemToConversationMessage(data) : data,
       errors,
