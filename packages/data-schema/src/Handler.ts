@@ -138,18 +138,49 @@ export type FunctionHandlerData = { handler: FunctionHandlerInput, invocationTyp
 
 const functionHandlerBrand = 'functionHandler';
 
-// TODO: Consolidate duplicate `invocationType` -- ideally in [dataSymbol]
 export type FunctionHandler = {
   [dataSymbol]: FunctionHandlerData;
+  /**
+   * Use `async()` to have this function handler invoked asynchronously.
+   * If an `async()` function is only handler or the final handler in a pipeline, the return type of this
+   * custom query / mutation is `{ success: boolean }`.
+   * @example
+   * import {
+   *   type ClientSchema,
+   *   a,
+  *   defineData,
+   *   defineFunction // 1.Import "defineFunction" to create new functions
+   * } from '@aws-amplify/backend';
+   *
+   * // 2. define a function
+   * const echoHandler = defineFunction({
+   *   entry: './echo-handler/handler.ts'
+   * })
+   *
+   * const schema = a.schema({
+   *   EchoResponse: a.customType({
+   *     content: a.string(),
+   *     executionDuration: a.float()
+   *   }),
+   *
+   *   echo: a
+   *     .query()
+   *     .arguments({ content: a.string() })
+   *     .returns(a.ref('EchoResponse'))
+   *     .authorization(allow => [allow.publicApiKey()])
+   *     // 3. set the function has the handler
+   *     .handler(a.handler.function(echoHandler).async())
+   *
+   * @see {@link https://docs.amplify.aws/react/build-a-backend/data/INSERT_PATH_WHEN_READY}
+   * @returns A function handler for query / mutation that is asynchronously invoked.
+   */
   async(): AsyncFunctionHandler;
-  invocationType: 'RequestResponse';
 } & Brand<typeof functionHandlerBrand>;
 
 const asyncFunctionHandlerBrand = 'asyncFunctionHandler';
 
 export type AsyncFunctionHandler = {
   [dataSymbol]: FunctionHandlerData;
-  invocationType: 'Event';
 } & Brand<typeof asyncFunctionHandlerBrand>;
 
 /**
@@ -188,12 +219,10 @@ export type AsyncFunctionHandler = {
  * @returns A handler for the query / mutation / subscription
  */
 function fcn(fn: FunctionHandlerInput): FunctionHandler {
-  const invocationType = 'RequestResponse'
   return { [dataSymbol]: {
     handler: fn,
-    invocationType
+    invocationType: 'RequestResponse',
   },
-    invocationType,
     async() {
       return _async(this);
     },
@@ -205,11 +234,10 @@ function _async(fnHandler: FunctionHandler): AsyncFunctionHandler {
   return {
     [dataSymbol]: {
       handler: fnHandler[dataSymbol].handler,
-      invocationType: 'Event'
+      invocationType: 'Event',
     },
-    invocationType: 'Event',
     ...buildHandler(asyncFunctionHandlerBrand)
-  }
+  };
 }
 
 //#endregion

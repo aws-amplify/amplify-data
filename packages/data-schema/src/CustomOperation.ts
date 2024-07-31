@@ -1,6 +1,6 @@
 import { SetTypeSubArg } from '@aws-amplify/data-schema-types';
 import { Brand, brand } from './util';
-import { InternalField, ModelField, type BaseModelField } from './ModelField';
+import { InternalField, ModelField, ModelFieldType, type BaseModelField } from './ModelField';
 import {
   AllowModifierForCustomOperation,
   Authorization,
@@ -184,17 +184,12 @@ function _custom<
         return this;
       },
       handler(handlers: HandlerInputType) {
-        // TOOD: Clean this up some.
-        if (Array.isArray(handlers)) {
-          if (handlers[handlers.length - 1][brandSymbol] === 'asyncFunctionHandler') {
-            data.returnType = eventInvocationResponse;
-          }
-          data.handlers = handlers
-        } else {
-          if (handlers[brandSymbol] === 'asyncFunctionHandler') {
-            data.returnType = eventInvocationResponse;
-          }
-          data.handlers = [handlers] as Handler[]
+        data.handlers = Array.isArray(handlers)
+          ? handlers
+          : [handlers] as Handler[];
+
+        if (lastHandlerIsAsyncFunction(handlers)) {
+          data.returnType = eventInvocationResponse;
         }
 
         return this;
@@ -351,4 +346,11 @@ const eventInvocationResponse = {
     authorization: [],
   }
 };
+
+function lastHandlerIsAsyncFunction(handlers: HandlerInputType): boolean {
+  const lastHandlerBrandSymbol = Array.isArray(handlers)
+    ? handlers[handlers.length - 1][brandSymbol]
+    : handlers[brandSymbol]
+  return lastHandlerBrandSymbol === 'asyncFunctionHandler';
+}
 // #endregion async Lambda function related types

@@ -137,9 +137,7 @@ type CustomOpReturnType<
   Shape['returnType'] extends RefType<infer RefShape, any, any>
     ? RefShape['link'] extends keyof RefBag
       ? ResolveRef<RefShape, RefBag>
-      : Shape['handlers'] extends AsyncFunctionHandler
-        ? ResolveRef<RefShape, EventInvocationResponseBag>
-        : never
+      : never
     : Shape['returnType'] extends BaseModelField<infer R>
       ? R
       : Shape['returnType'] extends CustomType<infer R>

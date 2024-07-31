@@ -1,5 +1,45 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`custom operations async async 1`] = `
+[
+  [
+    {
+      "authMode": undefined,
+      "authToken": undefined,
+      "query": "
+    query($value: String) {
+      asyncAsync(value: $value) {success}
+    }
+  ",
+      "variables": {
+        "value": "hello, world!",
+      },
+    },
+    {},
+  ],
+]
+`;
+
+exports[`custom operations async sync 1`] = `
+[
+  [
+    {
+      "authMode": undefined,
+      "authToken": undefined,
+      "query": "
+    query($value: String) {
+      asyncSync(value: $value) {result}
+    }
+  ",
+      "variables": {
+        "value": "hello, world!",
+      },
+    },
+    {},
+  ],
+]
+`;
+
 exports[`custom operations custom type array result 1`] = `
 [
   [
@@ -112,6 +152,46 @@ exports[`custom operations solo async handler 1`] = `
       "query": "
     query($value: String) {
       soloAsync(value: $value) {success}
+    }
+  ",
+      "variables": {
+        "value": "hello, world!",
+      },
+    },
+    {},
+  ],
+]
+`;
+
+exports[`custom operations sync async 1`] = `
+[
+  [
+    {
+      "authMode": undefined,
+      "authToken": undefined,
+      "query": "
+    query($value: String) {
+      syncAsync(value: $value) {success}
+    }
+  ",
+      "variables": {
+        "value": "hello, world!",
+      },
+    },
+    {},
+  ],
+]
+`;
+
+exports[`custom operations sync sync 1`] = `
+[
+  [
+    {
+      "authMode": undefined,
+      "authToken": undefined,
+      "query": "
+    query($value: String) {
+      syncSync(value: $value) {result}
     }
   ",
       "variables": {

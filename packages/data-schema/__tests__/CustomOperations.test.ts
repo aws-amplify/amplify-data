@@ -792,12 +792,6 @@ describe('CustomOperation transform', () => {
           });
         });
 
-        // TODO: Add test cases
-        // - pipeline async (done)
-        // - mixed sync async (done)
-        //  - ultimate async uses EventInvocationResponse (done)
-        //  - ultimate non-async requires return type (done)
-        // - TS error validation cases
         test('defineFunction event invocation', () => {
           const fn1 = defineFunctionStub({});
           const s = a.schema({

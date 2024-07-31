@@ -26,7 +26,7 @@ import {
 } from '@aws-amplify/data-schema-types';
 import type { InternalRef, RefType } from './RefType';
 import type { EnumType } from './EnumType';
-import { type CustomType, type CustomTypeParamShape } from './CustomType';
+import type { CustomType, CustomTypeParamShape } from './CustomType';
 import { type InternalCustom, CustomOperationNames } from './CustomOperation';
 import { Brand, getBrand } from './util';
 import {
@@ -1557,15 +1557,7 @@ const isCustomHandler = (
 const isFunctionHandler = (
   handler: HandlerType[] | null,
 ): handler is (FunctionHandler | AsyncFunctionHandler)[] => {
-  if (!Array.isArray(handler)) { return false; }
-  const handlerBrands = new Set(handler.map((h) => getBrand(h)));
-  const functionHandlerBrands = ['functionHandler', 'asyncFunctionHandler'];
-  for (const handlerBrand of handlerBrands) {
-    if (!functionHandlerBrands.includes(handlerBrand)) {
-      return false;
-    }
-  }
-  return true;
+  return Array.isArray(handler) && ['functionHandler', 'asyncFunctionHandler'].includes(getBrand(handler[0]));
 };
 
 const finalHandlerIsAsyncFunctionHandler = (
@@ -1692,9 +1684,6 @@ function transformCustomOperations(
 
   // TODO: We're adding the `EventInvocationResponse` in multiple places.
   // Is this really necessary or can we shuffle around some validation ordering?
-  //
-  // If this stays here, update the condition to only add the type when necessary:
-  // async function is the final function in the chain.
   if (finalHandlerIsAsyncFunctionHandler(handlers)) {
     schema.data.types['EventInvocationResponse'] = eventInvocationResponseCustomType;
   }

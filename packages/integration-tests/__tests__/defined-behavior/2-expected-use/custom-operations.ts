@@ -75,6 +75,48 @@ describe('custom operations', () => {
       })
       .handler(a.handler.function(dummyHandler).async())
       .authorization((allow) => [allow.publicApiKey()]),
+    asyncSync: a
+      .query()
+      .arguments({
+        value: a.string(),
+      })
+      .handler([
+        a.handler.function(dummyHandler).async(),
+        a.handler.function(dummyHandler),
+      ])
+      .returns(a.ref('EchoResult'))
+      .authorization((allow) => [allow.publicApiKey()]),
+    syncAsync: a
+      .query()
+      .arguments({
+        value: a.string(),
+      })
+      .handler([
+        a.handler.function(dummyHandler),
+        a.handler.function(dummyHandler).async(),
+      ])
+      .authorization((allow) => [allow.publicApiKey()]),
+    syncSync: a
+      .query()
+      .arguments({
+        value: a.string(),
+      })
+      .handler([
+        a.handler.function(dummyHandler),
+        a.handler.function(dummyHandler),
+      ])
+      .returns(a.ref('EchoResult'))
+      .authorization((allow) => [allow.publicApiKey()]),
+    asyncAsync: a
+      .query()
+      .arguments({
+        value: a.string(),
+      })
+      .handler([
+        a.handler.function(dummyHandler).async(),
+        a.handler.function(dummyHandler).async(),
+      ])
+      .authorization((allow) => [allow.publicApiKey()]),
   });
 
   type Schema = ClientSchema<typeof schema>;
@@ -263,6 +305,114 @@ describe('custom operations', () => {
     const client = generateClient<Schema>();
 
     const { data } = await client.queries.soloAsync({
+      value: 'hello, world!'
+    });
+
+    expect(data).toEqual(
+      expect.objectContaining({
+        success: true,
+      })
+    )
+    expect(optionsAndHeaders(spy)).toMatchSnapshot();
+  });
+
+  test('async sync', async () => {
+    const { spy, generateClient } = mockedGenerateClient([
+      {
+        data: {
+          asyncSync: {
+            result: 'custom type echo result',
+          },
+        },
+      },
+    ]);
+
+    const config = await buildAmplifyConfig(schema);
+    Amplify.configure(config);
+
+    const client = generateClient<Schema>();
+
+    const { data } = await client.queries.asyncSync({
+      value: 'hello, world!'
+    });
+
+    expect(data).toEqual({
+      result: 'custom type echo result',
+    });
+    expect(optionsAndHeaders(spy)).toMatchSnapshot();
+  });
+
+  test('sync sync', async () => {
+    const { spy, generateClient } = mockedGenerateClient([
+      {
+        data: {
+          syncSync: {
+            result: 'custom type echo result',
+          },
+        },
+      },
+    ]);
+
+    const config = await buildAmplifyConfig(schema);
+    Amplify.configure(config);
+
+    const client = generateClient<Schema>();
+
+    const { data } = await client.queries.syncSync({
+      value: 'hello, world!'
+    });
+
+    expect(data).toEqual({
+      result: 'custom type echo result',
+    });
+    expect(optionsAndHeaders(spy)).toMatchSnapshot();
+  });
+
+  test('sync async', async () => {
+    const { spy, generateClient } = mockedGenerateClient([
+      {
+        data: {
+          syncAsync: {
+            success: true
+          }
+        }
+      }
+    ]);
+
+    const config = await buildAmplifyConfig(schema);
+    Amplify.configure(config);
+
+    const client = generateClient<Schema>();
+
+    const { data } = await client.queries.syncAsync({
+      value: 'hello, world!'
+    });
+
+    expect(data).toEqual(
+      expect.objectContaining({
+        success: true,
+      })
+    )
+    expect(optionsAndHeaders(spy)).toMatchSnapshot();
+  });
+
+  test('async async', async () => {
+    const { spy, generateClient } = mockedGenerateClient([
+      {
+        data: {
+          asyncAsync: {
+            success: true
+          }
+        }
+      }
+    ]);
+
+    const config = await buildAmplifyConfig(schema);
+    Amplify.configure(config);
+
+    const client = generateClient<Schema>();
+
+    const { data } = await client.queries.asyncAsync({
       value: 'hello, world!'
     });
 
