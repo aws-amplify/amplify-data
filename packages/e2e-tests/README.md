@@ -65,9 +65,9 @@ Test setup / execution is structured as follows:
 2. Add a corresponding test file under `__tests__`.
 3. Use the utils to run the process controller.
 
-## Using `execa` with Jest
+## Using Execa with Jest
 
 Execa is the primary dependency used to run CLI commands in the process
 controller, and it is a pure ES module. Unlike `amplify-backend`, which uses the
-Node test runner, we use Jest, which results in [this issue](https://github.com/sindresorhus/execa/issues/465).
+Node test runner, our tests are written in Jest. This results in [this issue](https://github.com/sindresorhus/execa/issues/465).
 The workaround is to use Jest's [experimental support for ECMAScript Modules](https://jestjs.io/docs/ecmascript-modules). There is a backlog item to investigate other potential solutions.
