@@ -2,14 +2,14 @@ import {
   Client,
   configureAmplifyAndGenerateClient,
   addWebsocketPolyfill,
-  expectDataReturnWithoutErrors,
   waitForSubscriptionAck,
 } from '../utils';
+import { expectDataReturnWithoutErrors } from '../../common';
 import type { Schema } from '../amplify/data/resource';
 
 /**
- * Jest times out after 5 seconds if the promises aren't resolved, but the
- * `observeQuery` test sometimes takes longer than 5 seconds to complete.
+ * Jest times out after 6 seconds if the promises aren't resolved, but the
+ * `observeQuery` test sometimes takes longer than 6 seconds to complete.
  */
 const observeQueryTestTimeout: number = 6000;
 

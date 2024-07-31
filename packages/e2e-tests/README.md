@@ -37,3 +37,37 @@ is likely due to the fact that we are running the tests in Node (which is not
 officially supported by `amplify-js`).
 
 TODO: Investigate and/or fix.
+
+## Sandbox testing:
+
+All tests within the `sandbox` directory deploy a new sandbox for each test run.
+
+## How it works:
+
+CLI commands are managed by the process controller. The process controller is
+responsible for executing CLI commands, and listening for output from the CLI.
+Test setup / execution is structured as follows:
+
+1. Each test has a corresponding project directory with a particular backend
+   config in `amplify-backends`
+2. Sandbox is deployed within the corresponding project directory, generating
+   `amplify_outputs.json`.
+3. Once it is determined that `amplify_outputs.json` is generated, we configure
+   Amplify and generate / configure the API client.
+4. Tests are executed.
+5. Sandbox is torn down after the tests are complete. `.amplify/` and
+   `amplify_outputs.json` are deleted.
+
+## How to add a new test:
+
+1. Add a new project directory under `amplify-backends`. Must also contain a
+   basic `package.json`.
+2. Add a corresponding test file under `__tests__`.
+3. Use the utils to generate / teardown the sandbox withthe process controller.
+
+## Using Execa with Jest
+
+Execa is the primary dependency used to run CLI commands in the process
+controller, and it is a pure ES module. Unlike `amplify-backend`, which uses the
+Node test runner, our tests are written in Jest. This results in [this issue](https://github.com/sindresorhus/execa/issues/465).
+The workaround is to use Jest's [experimental support for ECMAScript Modules](https://jestjs.io/docs/ecmascript-modules). There is a backlog item to investigate other potential solutions.
