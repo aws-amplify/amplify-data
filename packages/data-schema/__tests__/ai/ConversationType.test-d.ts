@@ -3,21 +3,21 @@
 
 import type { Equal, Expect } from '@aws-amplify/data-schema-types';
 import {
-  Claude3Haiku,
-  ConversationInput,
-  type ConversationType,
+  claude3Haiku,
   conversation,
+  type ConversationInput,
+  type ConversationType,
 } from '../../src/ai/ConversationType';
 
 const input: ConversationInput = {
-  aiModel: Claude3Haiku,
+  aiModel: claude3Haiku,
   systemPrompt: 'Hello, world!',
   inferenceConfiguration: {
     topP: 1,
     temperature: 1,
-    maxTokens: 1000
-  }
-}
+    maxTokens: 1000,
+  },
+};
 
 describe('ConversationType', () => {
   test('Happy case', () => {

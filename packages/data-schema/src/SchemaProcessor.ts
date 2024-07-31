@@ -41,7 +41,10 @@ import {
 } from './Handler';
 import * as os from 'os';
 import * as path from 'path';
-import type { ToolDefinition } from './ai/ConversationType';
+import {
+  brandName as conversationBrandName,
+  type ToolDefinition,
+} from './ai/ConversationType';
 
 type ScalarFieldDef = Exclude<InternalField['data'], { fieldType: 'model' }>;
 
@@ -86,7 +89,7 @@ function isCustomType(
 }
 
 function isConversationRoute(type: any): type is ConversationType {
-  return type.kind === 'Conversation';
+  return getBrand(type) === conversationBrandName;
 }
 
 function isCustomOperation(type: any): type is InternalCustom {

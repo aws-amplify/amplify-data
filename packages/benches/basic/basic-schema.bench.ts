@@ -1,5 +1,5 @@
 import { bench } from '@arktype/attest';
-import { a, ClientSchema } from '@aws-amplify/data-schema';
+import { a, type ClientSchema } from '@aws-amplify/data-schema';
 
 bench('basic schema', () => {
   a.schema({

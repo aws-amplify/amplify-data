@@ -2,18 +2,21 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { bench } from '@arktype/attest';
-import { a, ClientSchema } from '@aws-amplify/data-schema';
-import { ConversationInput, Claude3Haiku } from '../../../data-schema/dist/esm/ai/ConversationType';
+import { a, type ClientSchema } from '@aws-amplify/data-schema';
+import {
+  claude3Haiku,
+  type ConversationInput,
+} from '../../../data-schema/dist/esm/ai/ConversationType';
 
 const input: ConversationInput = {
-  aiModel: Claude3Haiku,
+  aiModel: claude3Haiku,
   systemPrompt: 'Hello, world!',
   inferenceConfiguration: {
     topP: 1,
     temperature: 1,
-    maxTokens: 1000
-  }
-}
+    maxTokens: 1000,
+  },
+};
 /**
  * The following benchmarks are `p50-prod.bench.ts` but with 5 conversation routes added to schemas.
  */

@@ -24,6 +24,7 @@ import { enumType } from './EnumType';
 import { query, mutation, subscription, generation } from './CustomOperation';
 import { handler } from './Handler';
 import { conversation } from './ai/ConversationType';
+import { aiModel } from './ai/AiModelType';
 
 // We are re-exporting with this pattern to make the JSDoc happy.
 // Otherwise the JSDoc wouldn't consistently show up as a customer types
@@ -57,5 +58,6 @@ export {
   ipAddress,
   conversation,
   generation,
+  aiModel,
   handler,
 };

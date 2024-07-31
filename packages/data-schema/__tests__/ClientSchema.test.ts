@@ -11,7 +11,7 @@ import { AuthMode, CustomHeaders, SingularReturnValue } from '../src/runtime';
 import { configure } from '../src/internals';
 import { Nullable } from '../src/ModelField';
 import { AppSyncResolverEvent, Callback, Context } from 'aws-lambda';
-import { Claude3Haiku } from '../src/ai/ConversationType';
+import { claude3Haiku } from '../src/ai/ConversationType';
 import { defineFunctionStub } from './utils';
 
 const fakeSecret = () => ({}) as any;
@@ -1451,29 +1451,35 @@ describe('SQL Schema with sql statement references', () => {
 
 describe('ai routes', () => {
   test('conversations', () => {
-    const handler = defineFunctionStub({})
+    const handler = defineFunctionStub({});
     const schema = a.schema({
       Profile: a.customType({
-        value: a.integer(), unit: a.string()
+        value: a.integer(),
+        unit: a.string(),
       }),
-      myToolQuery: a.query()
+      myToolQuery: a
+        .query()
         .arguments({ a: a.integer(), b: a.string() })
         .returns(a.ref('Profile'))
         .authorization((allow) => allow.publicApiKey())
         .handler(a.handler.function(handler)),
 
-      anotherToolQuery: a.query()
+      anotherToolQuery: a
+        .query()
         .returns(a.string())
         .authorization((allow) => allow.publicApiKey())
         .handler(a.handler.function(handler)),
 
       ChatBot: a.conversation({
-        aiModel: Claude3Haiku,
+        aiModel: claude3Haiku,
         systemPrompt: 'Hello, world!',
         tools: [
           { query: a.ref('myToolQuery'), description: 'does a thing' },
-          { query: a.ref('anotherToolQuery'), description: 'does a different thing' }
-        ]
+          {
+            query: a.ref('anotherToolQuery'),
+            description: 'does a different thing',
+          },
+        ],
       }),
     });
 
