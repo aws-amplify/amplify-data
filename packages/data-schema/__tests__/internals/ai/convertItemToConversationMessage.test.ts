@@ -5,17 +5,22 @@ import { convertItemToConversationMessage } from '../../../src/runtime/internals
 
 describe('convertItemToConversationMessage()', () => {
   const mockContent = [{ text: 'foo' }];
+  const mockConversationId = 'conversation-id';
+  const mockRole = 'assistant';
   const mockMessageItem = {
     content: JSON.stringify(mockContent),
-    conversationId: 'conversation-id',
+    sessionId: mockConversationId,
     createdAt: '2024-07-16T00:00:00Z',
     id: 'message-id',
-    role: 'assistant',
+    sender: mockRole,
   };
   it('returns a conversation', () => {
     expect(convertItemToConversationMessage(mockMessageItem)).toStrictEqual({
-      ...mockMessageItem,
       content: mockContent,
+      conversationId: mockConversationId,
+      createdAt: '2024-07-16T00:00:00Z',
+      id: 'message-id',
+      role: mockRole,
     });
   });
 });

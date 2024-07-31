@@ -7,7 +7,10 @@ import type {
   GraphQLProviderConfig,
   SchemaModel,
 } from '../../src/runtime/bridge-types';
-import type { ConversationRoute } from '../../src/ai/ConversationType';
+import {
+  conversation,
+  type ConversationRoute,
+} from '../../src/ai/ConversationType';
 import { createCreateConversationFunction } from '../../src/runtime/internals/ai/createCreateConversationFunction';
 import { createGetConversationFunction } from '../../src/runtime/internals/ai/createGetConversationFunction';
 import { createListConversationsFunction } from '../../src/runtime/internals/ai/createListConversationsFunction';
@@ -17,53 +20,75 @@ jest.mock('../../src/runtime/internals/ai/createCreateConversationFunction');
 jest.mock('../../src/runtime/internals/ai/createGetConversationFunction');
 jest.mock('../../src/runtime/internals/ai/createListConversationsFunction');
 
+interface ConversationRouteMockDataModel {
+  name: string;
+  model: SchemaModel;
+}
+interface ConversationRouteMockData {
+  name: string;
+  conversationModel: ConversationRouteMockDataModel;
+  messageModel: ConversationRouteMockDataModel;
+}
+
+const getSchemaConversation = (data: ConversationRouteMockData) => ({
+  [data.name]: {
+    name: data.name,
+    models: {
+      [data.conversationModel.name]: data.conversationModel.model,
+      [data.messageModel.name]: data.messageModel.model,
+    },
+    nonModels: {},
+    enums: {},
+    conversation: {
+      modelName: data.conversationModel.name,
+    },
+    message: {
+      modelName: data.messageModel.name,
+      subscribe: {} as CustomOperation,
+      send: {} as CustomOperation,
+    },
+  },
+});
+
 describe('generateConversationsProperty()', () => {
   const mockConversation = { id: 'conversation-id' };
-  const mockConversationName = 'mathBot';
-  const mockConversationName2 = 'scienceBot';
-  const mockSchemaModel = {} as SchemaModel;
-  const mockSchemaModel2 = {} as SchemaModel;
   const mockBaseAPIGraphQLConfig = {
     endpoint: 'endpoint',
     defaultAuthMode: 'identityPool',
   } as GraphQLProviderConfig['GraphQL'];
   const mockBaseModelIntrospection = {
     version: 1,
-    models: {},
+    models: {
+      existingModel: {} as SchemaModel,
+    },
     nonModels: {},
     enums: {},
   };
-  const mockBaseMessageOperations = {
-    message: {
-      modelName: 'abc',
-      send: {} as CustomOperation,
-      subscribe: {} as CustomOperation,
+  const mathBotMockData: ConversationRouteMockData = {
+    name: 'mathBot',
+    conversationModel: {
+      name: 'ConversationMathBot',
+      model: {} as SchemaModel,
     },
-    conversation: {
-      modelName: '123',
-    }
+    messageModel: {
+      name: 'ConversationMessageMathBot',
+      model: {} as SchemaModel,
+    },
+  };
+  const scienceBotMockData: ConversationRouteMockData = {
+    name: 'scienceBot',
+    conversationModel: {
+      name: 'ConversationScienceBot',
+      model: {} as SchemaModel,
+    },
+    messageModel: {
+      name: 'ConversationMessageScienceBot',
+      model: {} as SchemaModel,
+    },
   };
   const mockConversations = {
-    name: 'mockConversation',
-    models: {},
-    nonModels: {},
-    enums: {},
-    [mockConversationName]: {
-      name: mockConversationName,
-      models: {
-        ConversationMathBot: mockSchemaModel,
-        ConversationMessageMathBot: mockSchemaModel
-      },
-      ...mockBaseMessageOperations,
-    },
-    [mockConversationName2]: {
-      name: mockConversationName2,
-      models: {
-        ConversationScienceBot: mockSchemaModel2,
-        ConversationMessageScienceBot: mockSchemaModel2
-      },
-      ...mockBaseMessageOperations,
-    },
+    ...getSchemaConversation(mathBotMockData),
+    ...getSchemaConversation(scienceBotMockData),
   };
   // assert mocks
   const mockCreateCreateConversationFunction =
@@ -134,12 +159,12 @@ describe('generateConversationsProperty()', () => {
 
     it('returns expected `conversations` object', async () => {
       expect(conversations).toStrictEqual({
-        [mockConversationName]: {
+        [mathBotMockData.name]: {
           create: expect.any(Function),
           get: expect.any(Function),
           list: expect.any(Function),
         },
-        [mockConversationName2]: {
+        [scienceBotMockData.name]: {
           create: expect.any(Function),
           get: expect.any(Function),
           list: expect.any(Function),
@@ -148,17 +173,39 @@ describe('generateConversationsProperty()', () => {
 
       const expected = [
         {},
-        mockModelIntrospection,
-        mockConversationName,
-        mockSchemaModel,
+        {
+          ...mockModelIntrospection,
+          // expect that the introspection passed during operation construction has conversation models moved to root
+          models: {
+            ...mockModelIntrospection.models,
+            [mathBotMockData.conversationModel.name]:
+              mathBotMockData.conversationModel.model,
+            [mathBotMockData.messageModel.name]:
+              mathBotMockData.messageModel.model,
+          },
+        },
+        mathBotMockData.name,
+        mathBotMockData.conversationModel.model,
+        mathBotMockData.messageModel.model,
         expect.any(Function),
       ];
 
       const expected2 = [
         {},
-        mockModelIntrospection,
-        mockConversationName2,
-        mockSchemaModel2,
+        {
+          ...mockModelIntrospection,
+          // expect that the introspection passed during operation construction has conversation models moved to root
+          models: {
+            ...mockModelIntrospection.models,
+            [scienceBotMockData.conversationModel.name]:
+              scienceBotMockData.conversationModel.model,
+            [scienceBotMockData.messageModel.name]:
+              scienceBotMockData.messageModel.model,
+          },
+        },
+        scienceBotMockData.name,
+        scienceBotMockData.conversationModel.model,
+        scienceBotMockData.messageModel.model,
         expect.any(Function),
       ];
 

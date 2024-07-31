@@ -14,6 +14,16 @@ jest.mock('../../../src/runtime/internals/operations/custom');
 describe('createSendMessageFunction()', () => {
   let sendMessage: Conversation['sendMessage'];
   const mockContent = [{ text: 'foo' }];
+  const mockAiContext = { location: 'Seattle, WA' };
+  const mockToolConfiguration = {
+    tools: {
+      myTool: {
+        inputSchema: {
+          json: {},
+        },
+      },
+    },
+  };
   const mockConversationName = 'conversation-name';
   const mockConversationId = 'conversation-id';
   const mockConversation = { id: mockConversationId };
@@ -54,7 +64,11 @@ describe('createSendMessageFunction()', () => {
 
   describe('sendMessage()', () => {
     it('sends a message', async () => {
-      const { data } = await sendMessage({ content: mockContent });
+      const { data } = await sendMessage({
+        aiContext: mockAiContext,
+        content: mockContent,
+        toolConfiguration: mockToolConfiguration,
+      });
 
       expect(mockCustomOpFactory).toHaveBeenCalledWith(
         {},
@@ -64,7 +78,12 @@ describe('createSendMessageFunction()', () => {
         false,
         expect.any(Function),
       );
-      expect(mockCustomOp).toHaveBeenCalled();
+      expect(mockCustomOp).toHaveBeenCalledWith({
+        aiContext: JSON.stringify(mockAiContext),
+        content: JSON.stringify(mockContent),
+        sessionId: mockConversationId,
+        toolConfiguration: mockToolConfiguration,
+      });
       expect(data).toBe(mockMessage);
     });
   });

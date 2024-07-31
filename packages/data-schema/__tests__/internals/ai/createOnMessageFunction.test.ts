@@ -13,12 +13,16 @@ describe('createOnMessageFunction()', () => {
   let onMessage: Conversation['onMessage'];
   const mockConversationName = 'conversation-name';
   const mockConversationId = 'conversation-id';
+  const mockContent = [{ text: 'foo' }];
+  const mockRole = 'user';
+  const mockCreatedAt = '2024-06-27T00:00:00Z';
+  const mockMessageId = 'message-id';
   const mockMessage = {
-    content: JSON.stringify([{ text: 'foo' }]),
-    conversationId: mockConversationId,
-    createdAt: '2024-06-27T00:00:00Z',
-    id: 'message-id',
-    role: 'user',
+    content: JSON.stringify(mockContent),
+    sessionId: mockConversationId,
+    createdAt: mockCreatedAt,
+    id: mockMessageId,
+    sender: mockRole,
   };
   const mockConversationSchema = { message: { subscribe: {} } };
   const mockModelIntrospectionSchema = {
@@ -62,10 +66,15 @@ describe('createOnMessageFunction()', () => {
         false,
         expect.any(Function),
       );
-      expect(mockCustomOp).toHaveBeenCalled();
+      expect(mockCustomOp).toHaveBeenCalledWith({
+        sessionId: mockConversationId,
+      });
       expect(mockHandler).toHaveBeenCalledWith({
-        ...mockMessage,
-        content: JSON.parse(mockMessage.content),
+        content: mockContent,
+        conversationId: mockConversationId,
+        createdAt: mockCreatedAt,
+        id: mockMessageId,
+        role: mockRole,
       });
     });
   });

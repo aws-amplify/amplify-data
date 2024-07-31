@@ -3,13 +3,16 @@
 
 import type { Conversation } from '../../../src/ai/ConversationType';
 import type { BaseClient } from '../../../src/runtime';
-import type { ModelIntrospectionSchema, SchemaModel } from '../../../src/runtime/bridge-types';
+import type {
+  ModelIntrospectionSchema,
+  SchemaModel,
+} from '../../../src/runtime/bridge-types';
 import { convertItemToConversationMessage } from '../../../src/runtime/internals/ai/convertItemToConversationMessage';
 import { createListMessagesFunction } from '../../../src/runtime/internals/ai/createListMessagesFunction';
-import { customOpFactory } from '../../../src/runtime/internals/operations/custom';
+import { listFactory } from '../../../src/runtime/internals/operations/list';
 
 jest.mock('../../../src/runtime/internals/ai/convertItemToConversationMessage');
-jest.mock('../../../src/runtime/internals/operations/custom');
+jest.mock('../../../src/runtime/internals/operations/list');
 
 describe('createListMessagesFunction()', () => {
   let listMessages: Conversation['listMessages'];
@@ -29,21 +32,20 @@ describe('createListMessagesFunction()', () => {
     id: 'message-id-2',
     role: 'assistant',
   };
-  const mockConversationSchema = { message: { list: {} } };
   const mockModelIntrospectionSchema = {
-    conversations: { [mockConversationName]: mockConversationSchema },
+    conversations: { [mockConversationName]: {} },
   } as unknown as ModelIntrospectionSchema;
   // assert mocks
-  const mockCustomOpFactory = customOpFactory as jest.Mock;
+  const mockListFactory = listFactory as jest.Mock;
   const mockConvertItemToConversationMessage =
     convertItemToConversationMessage as jest.Mock;
   // create mocks
-  const mockCustomOp = jest.fn();
+  const mockList = jest.fn();
 
   beforeAll(async () => {
     mockConvertItemToConversationMessage.mockImplementation((data) => data);
-    mockCustomOp.mockReturnValue({ data: [mockMessage, mockMessage2] });
-    mockCustomOpFactory.mockReturnValue(mockCustomOp);
+    mockList.mockReturnValue({ data: [mockMessage, mockMessage2] });
+    mockListFactory.mockReturnValue(mockList);
     listMessages = await createListMessagesFunction(
       {} as BaseClient,
       mockModelIntrospectionSchema,
@@ -61,20 +63,18 @@ describe('createListMessagesFunction()', () => {
     it('lists messages', async () => {
       const { data } = await listMessages();
 
-      expect(mockCustomOpFactory).toHaveBeenCalledWith(
+      expect(mockListFactory).toHaveBeenCalledWith(
         {},
         mockModelIntrospectionSchema,
-        'query',
-        mockConversationSchema.message.list,
-        false,
+        {},
         expect.any(Function),
       );
-      expect(mockCustomOp).toHaveBeenCalled();
+      expect(mockList).toHaveBeenCalled();
       expect(data).toStrictEqual([mockMessage, mockMessage2]);
     });
 
     it('returns empty list if no messages are found', async () => {
-      mockCustomOp.mockReturnValue({ data: [] });
+      mockList.mockReturnValue({ data: [] });
 
       const { data } = await listMessages();
       expect(data).toStrictEqual([]);

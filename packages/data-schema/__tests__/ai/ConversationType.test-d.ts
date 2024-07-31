@@ -2,15 +2,15 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import type { Equal, Expect } from '@aws-amplify/data-schema-types';
+import { claude3Haiku } from '../../src/ai/AiModelType';
 import {
-  claude3Haiku,
   conversation,
   type ConversationInput,
   type ConversationType,
 } from '../../src/ai/ConversationType';
 
 const input: ConversationInput = {
-  aiModel: claude3Haiku,
+  aiModel: claude3Haiku(),
   systemPrompt: 'Hello, world!',
   inferenceConfiguration: {
     topP: 1,

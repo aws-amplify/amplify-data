@@ -35,13 +35,13 @@ export const createOnMessageFunction =
       getInternals,
     ) as (args?: Record<string, any>) => Observable<any>;
     return subscribeOperation({ sessionId: conversationId }).subscribe(
-      ({ content, sessionId, createdAt, id, role }: any) => {
+      ({ content, sessionId, createdAt, id, sender }: any) => {
         handler({
           content: JSON.parse(content),
           conversationId: sessionId,
           createdAt,
           id,
-          role,
+          role: sender,
         });
       },
     );
