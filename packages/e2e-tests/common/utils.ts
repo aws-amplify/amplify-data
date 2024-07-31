@@ -1,5 +1,5 @@
 /**
- * Util that takes model operation response and throws an error if errors
+ * Util that takes a model operation response and throws an error if errors
  * are present, or if the data is undefined.
  * @param response - model operation response
  * @param operation - operation name
