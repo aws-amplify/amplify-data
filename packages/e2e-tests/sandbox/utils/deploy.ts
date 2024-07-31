@@ -9,6 +9,11 @@ import path from 'path';
 
 const outputsFileName = 'amplify_outputs.json';
 
+/**
+ * Though this function could throw the error itself and not return anything, a
+ * response type with `success` or `errors` is used to keep any kind of assertion
+ * behavior in the test code itself, and not in a util.
+ */
 type DeploySandboxResponse = Promise<{ success: boolean } | { errors: Error }>;
 
 /**
