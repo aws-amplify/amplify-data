@@ -3,13 +3,13 @@
 
 export const convertItemToConversationMessage = ({
   content,
-  conversationId,
   createdAt,
   id,
+  sessionId,
   sender,
 }: any) => ({
   content: JSON.parse(content),
-  conversationId,
+  conversationId: sessionId,
   createdAt,
   id,
   role: sender,
