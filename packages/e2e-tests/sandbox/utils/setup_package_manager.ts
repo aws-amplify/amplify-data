@@ -1,4 +1,4 @@
-// https://github.com/aws-amplify/amplify-backend/blob/main/packages/integration-tests/src/setup_package_manager.ts
+// See: https://github.com/aws-amplify/amplify-backend/blob/main/packages/integration-tests/src/setup_package_manager.ts
 
 import { execa } from 'execa';
 import * as fsp from 'fs/promises';

@@ -63,7 +63,7 @@ Test setup / execution is structured as follows:
 1. Add a new project directory under `amplify-backends`. Must also contain a
    basic `package.json`.
 2. Add a corresponding test file under `__tests__`.
-3. Use the utils to generate / teardown the sandbox with the process controller.
+3. Use the utils to generate / teardown the sandbox withthe process controller.
 
 ## Using Execa with Jest
 
