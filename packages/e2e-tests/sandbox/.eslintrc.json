@@ -15,11 +15,7 @@
     "sourceType": "module",
     "project": ["tsconfig.json"]
   },
-  "plugins": [
-    "@typescript-eslint",
-    // "jsdoc",
-    "import"
-  ],
+  "plugins": ["@typescript-eslint", "import"],
   "ignorePatterns": ["**/*.js", "**/*.d.ts"],
   "rules": {
     "no-duplicate-imports": "error",

@@ -54,16 +54,16 @@ Test setup / execution is structured as follows:
    `amplify_outputs.json`.
 3. Once it is determined that `amplify_outputs.json` is generated, we configure
    Amplify and generate / configure the API client.
-4. Perform model operations.
-5. Sandbox is torn down after the test is complete the `.amplify` directory and
+4. Tests are executed.
+5. Sandbox is torn down after the tests are complete. `.amplify/` and
    `amplify_outputs.json` are deleted.
 
-## How to add a new test / test local changes:
+## How to add a new test:
 
-1. Add a new project directory under `amplify-backends`. Must contain a basic
-   `package.json`.
+1. Add a new project directory under `amplify-backends`. Must also contain a
+   basic `package.json`.
 2. Add a corresponding test file under `__tests__`.
-3. Use the utils to run the process controller.
+3. Use the utils to generate / teardown the sandbox with the process controller.
 
 ## Using Execa with Jest
 

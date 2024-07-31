@@ -11,7 +11,6 @@ export const killExecaProcess = async (processInstance: any) => {
     }
     // Wait X milliseconds before sending kill in hopes of draining the node event queue
     await new Promise((resolve) => setTimeout(resolve, 1500));
-    // // eslint-disable-next-line spellcheck/spell-checker
     await execa('taskkill', ['/pid', `${processInstance.pid}`, '/f', '/t']);
   } else {
     processInstance.kill('SIGINT');
