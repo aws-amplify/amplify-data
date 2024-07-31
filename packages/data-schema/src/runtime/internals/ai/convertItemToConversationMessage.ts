@@ -6,11 +6,11 @@ export const convertItemToConversationMessage = ({
   conversationId,
   createdAt,
   id,
-  role,
+  sender,
 }: any) => ({
   content: JSON.parse(content),
   conversationId,
   createdAt,
   id,
-  role,
+  role: sender,
 });
