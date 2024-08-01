@@ -52,7 +52,7 @@ The interface for merging up to 50 schemas into a single API.
 </td></tr>
 <tr><td>
 
-[conversation()](./data-schema.a.conversation.md)
+[conversation(input)](./data-schema.a.conversation.md)
 
 
 </td><td>
@@ -335,6 +335,15 @@ Description
 
 </th></tr></thead>
 <tbody><tr><td>
+
+[aiModel](./data-schema.a.aimodel.md)
+
+
+</td><td>
+
+
+</td></tr>
+<tr><td>
 
 [handler](./data-schema.a.handler.md)
 
