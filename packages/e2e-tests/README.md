@@ -58,6 +58,26 @@ Test setup / execution is structured as follows:
 5. Sandbox is torn down after the tests are complete. `.amplify/` and
    `amplify_outputs.json` are deleted.
 
+### CI AWS Credentials:
+
+Since we deploying a fresh sandbox on each test run, we need AWS credentials accessible to the GitHub Actions workflow. Below is an overview of the setup:
+
+- We follow the recommended integration to get AWS account credentials: https://w.amazon.com/bin/view/Open_Source/GitHub/Actions.
+   - Uses the [GitHub Actions OIDC integration](https://docs.github.com/en/actions/deployment/security-hardening-your-deployments/configuring-openid-connect-in-amazon-web-services). 
+   - We use the [aws-actions/configure-aws-credentials](https://github.com/aws-actions/configure-aws-credentials#assuming-a-role) to obtain credentials from the IAM OIDC provider.
+
+- The CLI commands pick up credentials using the default credential provider which resolves to the env vars that the `configure-aws-credentials` GitHub Action sets [here](https://github.com/aws-amplify/amplify-backend/blob/f5eeb67d840a194ffeeb585bfa0ba9468c1f6cda/.github/workflows/health_checks.yml#L213-L217)
+
+- Separately, we have an AWS profile that contains additional test harness permissions which is configured [here](https://github.com/aws-amplify/amplify-backend/blob/f5eeb67d840a194ffeeb585bfa0ba9468c1f6cda/.github/workflows/health_checks.yml#L207-L212) and then gets loaded into various clients eg [here](https://github.com/aws-amplify/amplify-backend/blob/f5eeb67d840a194ffeeb585bfa0ba9468c1f6cda/packages/integration-tests/src/test-project-setup/cdk/test_cdk_project_creator.ts#L30)
+
+More information about backend team’s e2e credentials here: https://quip-amazon.com/MzORADiHsLYf/amplify-backend-Repo-Ops-and-Internal-Dev-Workflows#temp:C:fHXb6180a4842dd485fa8902abf3
+
+#### Other credential implementation details:
+
+The CLI commands pick up credentials using the default credential provider which resolves to the env vars that the configure-aws-credentials GH action sets here.
+
+Separately, they have an AWS profile that contains additional test harness permissions which is configured here and then gets loaded into various clients eg here.
+
 ## How to add a new test:
 
 1. Add a new project directory under `amplify-backends`. Must also contain a
