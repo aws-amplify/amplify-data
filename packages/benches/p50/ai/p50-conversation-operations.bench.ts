@@ -5,11 +5,9 @@ import { bench } from '@arktype/attest';
 import { a, type ClientSchema } from '@aws-amplify/data-schema';
 import { Amplify } from 'aws-amplify';
 import { generateClient } from 'aws-amplify/api';
-import { claude3Haiku } from '../../../data-schema/dist/esm/ai/AiModelType';
-import type { ConversationInput } from '../../../data-schema/dist/esm/ai/ConversationType';
 
-const input: ConversationInput = {
-  aiModel: claude3Haiku(),
+const input = {
+  aiModel: a.aiModel.anthropic.claude3Haiku(),
   systemPrompt: 'Hello, world!',
   inferenceConfiguration: {
     topP: 1,
@@ -17,6 +15,7 @@ const input: ConversationInput = {
     maxTokens: 1000,
   },
 };
+
 /**
  * The following benchmarks are an extension of `p50-conversation.bench.ts`.
  * Here we perform operations against a conversation route.
