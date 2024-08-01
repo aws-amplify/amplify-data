@@ -4,6 +4,16 @@
 import { bench } from '@arktype/attest';
 import { a, ClientSchema } from '@aws-amplify/data-schema';
 
+const input = {
+  aiModel: a.aiModel.anthropic.claude3Haiku(),
+  systemPrompt: 'Hello, world!',
+  inferenceConfiguration: {
+    topP: 1,
+    temperature: 1,
+    maxTokens: 1000,
+  },
+};
+
 bench('100 conversations', () => {
   a.schema({
     Conversation0: a.conversation(input),
