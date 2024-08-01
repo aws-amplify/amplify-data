@@ -1,5 +1,6 @@
 import type { DefineFunction } from '@aws-amplify/data-schema-types';
 import { Brand, brand } from './util';
+import type { brandSymbol } from './util/Brand.js';
 import { RefType } from './RefType';
 
 export type HandlerType =
@@ -32,9 +33,10 @@ export function getHandlerData<H extends AllHandlers>(
 
 const inlineSqlBrand = 'inlineSql';
 
-export type InlineSqlHandler = { [dataSymbol]: string } & Brand<
-  typeof inlineSqlBrand
->;
+export type InlineSqlHandler = {
+  [dataSymbol]: string;
+  [brandSymbol]: typeof inlineSqlBrand;
+};
 
 function inlineSql(sql: string): InlineSqlHandler {
   return { [dataSymbol]: sql, ...buildHandler(inlineSqlBrand) };
@@ -53,7 +55,8 @@ export type SqlReferenceHandlerData = {
 
 export type SqlReferenceHandler = {
   [dataSymbol]: SqlReferenceHandlerData;
-} & Brand<typeof sqlReferenceBrand>;
+  [brandSymbol]: typeof sqlReferenceBrand;
+};
 
 function sqlReference(sqlFilePath: string): SqlReferenceHandler {
   // used to determine caller directory in order to resolve relative path downstream
@@ -90,9 +93,10 @@ export type CustomHandlerData = CustomHandlerInput & {
 
 const customHandlerBrand = 'customHandler';
 
-export type CustomHandler = { [dataSymbol]: CustomHandlerData } & Brand<
-  typeof customHandlerBrand
->;
+export type CustomHandler = {
+  [dataSymbol]: CustomHandlerData;
+  [brandSymbol]: typeof customHandlerBrand;
+};
 
 /**
  * Use a custom JavaScript resolver to handle a query, mutation, or subscription.
@@ -133,8 +137,11 @@ function custom(customHandler: CustomHandlerInput): CustomHandler {
 //#endregion
 
 //#region handler.function
-export type FunctionHandlerInput = DefineFunction | string
-export type FunctionHandlerData = { handler: FunctionHandlerInput, invocationType: 'RequestResponse' | 'Event' }
+export type FunctionHandlerInput = DefineFunction | string;
+export type FunctionHandlerData = {
+  handler: FunctionHandlerInput;
+  invocationType: 'RequestResponse' | 'Event';
+};
 
 const functionHandlerBrand = 'functionHandler';
 
@@ -148,7 +155,7 @@ export type FunctionHandler = {
    * import {
    *   type ClientSchema,
    *   a,
-  *   defineData,
+   *   defineData,
    *   defineFunction // 1.Import "defineFunction" to create new functions
    * } from '@aws-amplify/backend';
    *
@@ -175,13 +182,15 @@ export type FunctionHandler = {
    * @returns A function handler for query / mutation that is asynchronously invoked.
    */
   async(): AsyncFunctionHandler;
-} & Brand<typeof functionHandlerBrand>;
+  [brandSymbol]: typeof functionHandlerBrand;
+};
 
 const asyncFunctionHandlerBrand = 'asyncFunctionHandler';
 
 export type AsyncFunctionHandler = {
   [dataSymbol]: FunctionHandlerData;
-} & Brand<typeof asyncFunctionHandlerBrand>;
+  [brandSymbol]: typeof asyncFunctionHandlerBrand;
+};
 
 /**
  * Use a function created via `defineFunction` to handle the custom query/mutation/subscription. In your function handler,
@@ -219,14 +228,15 @@ export type AsyncFunctionHandler = {
  * @returns A handler for the query / mutation / subscription
  */
 function fcn(fn: FunctionHandlerInput): FunctionHandler {
-  return { [dataSymbol]: {
-    handler: fn,
-    invocationType: 'RequestResponse',
-  },
+  return {
+    [dataSymbol]: {
+      handler: fn,
+      invocationType: 'RequestResponse',
+    },
     async() {
       return _async(this);
     },
-    ...buildHandler(functionHandlerBrand)
+    ...buildHandler(functionHandlerBrand),
   };
 }
 
@@ -236,7 +246,7 @@ function _async(fnHandler: FunctionHandler): AsyncFunctionHandler {
       handler: fnHandler[dataSymbol].handler,
       invocationType: 'Event',
     },
-    ...buildHandler(asyncFunctionHandlerBrand)
+    ...buildHandler(asyncFunctionHandlerBrand),
   };
 }
 
