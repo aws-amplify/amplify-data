@@ -7,7 +7,6 @@ import {
   optionsAndHeaders,
   useState,
 } from '../../utils';
-import { Prettify } from '@aws-amplify/data-schema-types';
 
 describe('Read application data', () => {
   // https://docs.amplify.aws/gen2/build-a-backend/data/query-data/

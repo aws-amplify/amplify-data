@@ -1,8 +1,5 @@
-import {
-  Client,
-  configureAmplifyAndGenerateClient,
-  expectDataReturnWithoutErrors,
-} from '../utils';
+import { Client, configureAmplifyAndGenerateClient } from '../utils';
+import { expectDataReturnWithoutErrors } from '../../common';
 import type { Schema } from '../amplify/data/resource';
 
 let client: Client;

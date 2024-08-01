@@ -1,0 +1,18 @@
+{
+  "compilerOptions": {
+    "lib": ["dom", "es2019", "es2020"],
+    "target": "es2020",
+    "allowJs": false,
+    "skipLibCheck": true,
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
+    "incremental": true,
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
+    "noErrorTruncation": true,
+    "module": "esnext",
+    "moduleResolution": "bundler"
+  },
+  "exclude": ["**/node_modules", "**/*js"],
+  "include": ["packages/e2e-tests/**/*.ts", "packages/e2e-tests/common/**/*.ts"]
+}

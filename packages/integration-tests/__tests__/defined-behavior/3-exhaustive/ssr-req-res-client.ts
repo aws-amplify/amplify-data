@@ -1,6 +1,10 @@
 import { a, ClientSchema } from '@aws-amplify/data-schema';
 import { Amplify } from 'aws-amplify';
-import { buildAmplifyConfig, mockedGenerateClient } from '../../utils';
+import {
+  buildAmplifyConfig,
+  mockedGenerateClient,
+  optionsAndHeaders,
+} from '../../utils';
 
 /* eslint-disable import/no-extraneous-dependencies */
 import { GraphQLAPI } from '@aws-amplify/api-graphql';
@@ -36,6 +40,11 @@ describe('something', () => {
         parentId: a.id(),
         parent: a.belongsTo('Parent', 'parentId'),
       }),
+      myQuery: a
+        .query()
+        .arguments({ id: a.string() })
+        .returns(a.customType({ success: a.boolean() }))
+        .handler(a.handler.function('MyFn')),
     })
     .authorization((allow) => [allow.publicApiKey()]);
 
@@ -67,6 +76,15 @@ describe('something', () => {
             {
               id: 'some-id',
               name: 'something',
+            },
+          ],
+        },
+      },
+      {
+        data: {
+          myQuery: [
+            {
+              success: true,
             },
           ],
         },
@@ -104,6 +122,8 @@ describe('something', () => {
       { name: 'bob' },
     );
 
+    await client.queries.myQuery(mockContextSpec, { id: 'a1' });
+
     const calls = spy.mock.calls;
 
     expect(calls[0]).toEqual([
@@ -131,5 +151,16 @@ describe('something', () => {
       }),
       {},
     ]);
+
+    expect(calls[3]).toEqual([
+      Amplify,
+      expect.objectContaining({
+        query: expect.stringContaining('myQuery'),
+        variables: { id: 'a1' },
+      }),
+      {},
+    ]);
+
+    expect(optionsAndHeaders(spy)).toMatchSnapshot();
   });
 });
