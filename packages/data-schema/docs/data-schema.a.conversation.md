@@ -7,8 +7,42 @@
 **Signature:**
 
 ```typescript
-export declare function conversation(): ConversationType;
+export declare function conversation(input: ConversationInput): ConversationType;
 ```
+
+## Parameters
+
+<table><thead><tr><th>
+
+Parameter
+
+
+</th><th>
+
+Type
+
+
+</th><th>
+
+Description
+
+
+</th></tr></thead>
+<tbody><tr><td>
+
+input
+
+
+</td><td>
+
+ConversationInput
+
+
+</td><td>
+
+
+</td></tr>
+</tbody></table>
 **Returns:**
 
 ConversationType

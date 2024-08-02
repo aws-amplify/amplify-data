@@ -1,59 +1,113 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-import {
+import type {
   BaseClient,
+  CustomOperation,
   GraphQLProviderConfig,
   SchemaModel,
 } from '../../src/runtime/bridge-types';
-import { createConversationSession } from '../../src/runtime/internals/ai/createConversationSession';
-import { getSessionModelInstance } from '../../src/runtime/internals/ai/getSessionModelInstance';
+import {
+  conversation,
+  type ConversationRoute,
+} from '../../src/ai/ConversationType';
+import { createCreateConversationFunction } from '../../src/runtime/internals/ai/createCreateConversationFunction';
+import { createGetConversationFunction } from '../../src/runtime/internals/ai/createGetConversationFunction';
+import { createListConversationsFunction } from '../../src/runtime/internals/ai/createListConversationsFunction';
 import { generateConversationsProperty } from '../../src/runtime/internals/utils/clientProperties/generateConversationsProperty';
-import { listFactory } from '../../src/runtime/internals/operations/list';
 
-jest.mock('../../src/runtime/internals/ai/createConversationSession');
-jest.mock('../../src/runtime/internals/ai/getSessionModelInstance');
-jest.mock('../../src/runtime/internals/operations/list');
+jest.mock('../../src/runtime/internals/ai/createCreateConversationFunction');
+jest.mock('../../src/runtime/internals/ai/createGetConversationFunction');
+jest.mock('../../src/runtime/internals/ai/createListConversationsFunction');
+
+interface ConversationRouteMockDataModel {
+  name: string;
+  model: SchemaModel;
+}
+interface ConversationRouteMockData {
+  name: string;
+  conversationModel: ConversationRouteMockDataModel;
+  messageModel: ConversationRouteMockDataModel;
+}
+
+const getSchemaConversation = (data: ConversationRouteMockData) => ({
+  [data.name]: {
+    name: data.name,
+    models: {
+      [data.conversationModel.name]: data.conversationModel.model,
+      [data.messageModel.name]: data.messageModel.model,
+    },
+    nonModels: {},
+    enums: {},
+    conversation: {
+      modelName: data.conversationModel.name,
+    },
+    message: {
+      modelName: data.messageModel.name,
+      subscribe: {} as CustomOperation,
+      send: {} as CustomOperation,
+    },
+  },
+});
 
 describe('generateConversationsProperty()', () => {
-  const mockSession = { id: 'id', name: 'name' };
-  const mockSession2 = { id: 'id-2', name: 'name-2' };
+  const mockConversation = { id: 'conversation-id' };
   const mockBaseAPIGraphQLConfig = {
     endpoint: 'endpoint',
     defaultAuthMode: 'identityPool',
   } as GraphQLProviderConfig['GraphQL'];
   const mockBaseModelIntrospection = {
     version: 1,
-    models: {},
+    models: {
+      existingModel: {} as SchemaModel,
+    },
     nonModels: {},
     enums: {},
   };
-  const mockConversations = {
-    mathBot: {
-      name: 'mathBot',
-      models: {
-        ConversationSessionMathBot: {} as SchemaModel,
-        ConversationMessageMathBot: {} as SchemaModel,
-      },
+  const mathBotMockData: ConversationRouteMockData = {
+    name: 'mathBot',
+    conversationModel: {
+      name: 'ConversationMathBot',
+      model: {} as SchemaModel,
     },
-    scienceBot: {
-      name: 'scienceBot',
-      models: {
-        ConversationSessionScienceBot: {} as SchemaModel,
-        ConversationMessageScienceBot: {} as SchemaModel,
-      },
+    messageModel: {
+      name: 'ConversationMessageMathBot',
+      model: {} as SchemaModel,
     },
   };
+  const scienceBotMockData: ConversationRouteMockData = {
+    name: 'scienceBot',
+    conversationModel: {
+      name: 'ConversationScienceBot',
+      model: {} as SchemaModel,
+    },
+    messageModel: {
+      name: 'ConversationMessageScienceBot',
+      model: {} as SchemaModel,
+    },
+  };
+  const mockConversations = {
+    ...getSchemaConversation(mathBotMockData),
+    ...getSchemaConversation(scienceBotMockData),
+  };
   // assert mocks
-  const mockCreateConversationSession = createConversationSession as jest.Mock;
-  const mockGetSessionModelInstance = getSessionModelInstance as jest.Mock;
-  const mockListFactory = listFactory as jest.Mock;
+  const mockCreateCreateConversationFunction =
+    createCreateConversationFunction as jest.Mock;
+  const mockCreateGetConversationFunction =
+    createGetConversationFunction as jest.Mock;
+  const mockCreateListConversationsFunction =
+    createListConversationsFunction as jest.Mock;
   // create mocks
-  const mockList = jest.fn();
+  const mockCreateConversation = jest.fn();
+  const mockGetConversation = jest.fn();
+  const mockListConversation = jest.fn();
 
   beforeAll(() => {
-    mockList.mockReturnValue({ data: [mockSession, mockSession2] });
-    mockListFactory.mockReturnValue(mockList);
+    mockCreateCreateConversationFunction.mockReturnValue(
+      mockCreateConversation,
+    );
+    mockCreateGetConversationFunction.mockReturnValue(mockGetConversation);
+    mockCreateListConversationsFunction.mockReturnValue(mockListConversation);
   });
 
   afterEach(() => {
@@ -84,112 +138,121 @@ describe('generateConversationsProperty()', () => {
     expect(Object.keys(conversations)).toHaveLength(0);
   });
 
-  it('returns expected `conversations` object', async () => {
-    mockGetSessionModelInstance.mockReturnValue(mockSession);
+  describe('non-empty cases', () => {
+    let conversations: Record<string, ConversationRoute>;
+    const mockModelIntrospection = {
+      ...mockBaseModelIntrospection,
+      conversations: mockConversations,
+    };
     const mockAPIGraphQLConfig = {
       ...mockBaseAPIGraphQLConfig,
-      modelIntrospection: {
-        ...mockBaseModelIntrospection,
-        conversations: mockConversations,
-      },
+      modelIntrospection: mockModelIntrospection,
     } as GraphQLProviderConfig['GraphQL'];
 
-    const conversations = generateConversationsProperty(
-      {} as BaseClient,
-      mockAPIGraphQLConfig,
-      jest.fn(),
-    );
-
-    expect(conversations).toStrictEqual({
-      mathBot: {
-        startSession: expect.any(Function),
-        listSessions: expect.any(Function),
-      },
-      scienceBot: {
-        startSession: expect.any(Function),
-        listSessions: expect.any(Function),
-      },
+    beforeAll(() => {
+      conversations = generateConversationsProperty(
+        {} as BaseClient,
+        mockAPIGraphQLConfig,
+        jest.fn(),
+      );
     });
-  });
 
-  it('can start a session', async () => {
-    mockGetSessionModelInstance.mockReturnValue(mockSession);
-    const mockModelIntrospection = {
-      ...mockBaseModelIntrospection,
-      conversations: mockConversations,
-    };
-    const mockAPIGraphQLConfig = {
-      ...mockBaseAPIGraphQLConfig,
-      modelIntrospection: mockModelIntrospection,
-    } as GraphQLProviderConfig['GraphQL'];
+    it('returns expected `conversations` object', async () => {
+      expect(conversations).toStrictEqual({
+        [mathBotMockData.name]: {
+          create: expect.any(Function),
+          get: expect.any(Function),
+          list: expect.any(Function),
+        },
+        [scienceBotMockData.name]: {
+          create: expect.any(Function),
+          get: expect.any(Function),
+          list: expect.any(Function),
+        },
+      });
 
-    const { mathBot } = generateConversationsProperty(
-      {} as BaseClient,
-      mockAPIGraphQLConfig,
-      jest.fn(),
-    );
+      const expected = [
+        {},
+        {
+          ...mockModelIntrospection,
+          // expect that the introspection passed during operation construction has conversation models moved to root
+          models: {
+            ...mockModelIntrospection.models,
+            [mathBotMockData.conversationModel.name]:
+              mathBotMockData.conversationModel.model,
+            [mathBotMockData.messageModel.name]:
+              mathBotMockData.messageModel.model,
+          },
+        },
+        mathBotMockData.name,
+        mathBotMockData.conversationModel.model,
+        mathBotMockData.messageModel.model,
+        expect.any(Function),
+      ];
 
-    const startSessionInput = { name: 'name' };
-    await mathBot.startSession(startSessionInput);
+      const expected2 = [
+        {},
+        {
+          ...mockModelIntrospection,
+          // expect that the introspection passed during operation construction has conversation models moved to root
+          models: {
+            ...mockModelIntrospection.models,
+            [scienceBotMockData.conversationModel.name]:
+              scienceBotMockData.conversationModel.model,
+            [scienceBotMockData.messageModel.name]:
+              scienceBotMockData.messageModel.model,
+          },
+        },
+        scienceBotMockData.name,
+        scienceBotMockData.conversationModel.model,
+        scienceBotMockData.messageModel.model,
+        expect.any(Function),
+      ];
 
-    expect(mockGetSessionModelInstance).toHaveBeenCalledWith(
-      startSessionInput,
-      {},
-      mockModelIntrospection,
-      {},
-      expect.any(Function),
-    );
-    expect(mockCreateConversationSession).toHaveBeenCalledWith(
-      mockSession,
-      {},
-      mockModelIntrospection,
-      {},
-      expect.any(Function),
-    );
-  });
+      expect(mockCreateCreateConversationFunction).toHaveBeenCalledWith(
+        ...expected,
+      );
+      expect(mockCreateCreateConversationFunction).toHaveBeenCalledWith(
+        ...expected2,
+      );
+      expect(mockCreateGetConversationFunction).toHaveBeenCalledWith(
+        ...expected,
+      );
+      expect(mockCreateGetConversationFunction).toHaveBeenCalledWith(
+        ...expected2,
+      );
+      expect(mockCreateListConversationsFunction).toHaveBeenCalledWith(
+        ...expected,
+      );
+      expect(mockCreateListConversationsFunction).toHaveBeenCalledWith(
+        ...expected2,
+      );
+    });
 
-  it('can list sessions', async () => {
-    mockGetSessionModelInstance.mockReturnValue(mockSession);
-    const mockModelIntrospection = {
-      ...mockBaseModelIntrospection,
-      conversations: mockConversations,
-    };
-    const mockAPIGraphQLConfig = {
-      ...mockBaseAPIGraphQLConfig,
-      modelIntrospection: mockModelIntrospection,
-    } as GraphQLProviderConfig['GraphQL'];
+    it('can create a conversation', async () => {
+      const { mathBot } = conversations;
 
-    const { scienceBot } = generateConversationsProperty(
-      {} as BaseClient,
-      mockAPIGraphQLConfig,
-      jest.fn(),
-    );
+      await mathBot.create();
 
-    const sessions = await scienceBot.listSessions();
+      expect(mockCreateConversation).toHaveBeenCalled();
+    });
 
-    expect(mockListFactory).toHaveBeenCalledWith(
-      {},
-      mockModelIntrospection,
-      {},
-      expect.any(Function),
-    );
-    expect(mockList).toHaveBeenCalled();
-    expect(mockCreateConversationSession).toHaveBeenNthCalledWith(
-      1,
-      mockSession,
-      {},
-      mockModelIntrospection,
-      {},
-      expect.any(Function),
-    );
-    expect(mockCreateConversationSession).toHaveBeenNthCalledWith(
-      2,
-      mockSession2,
-      {},
-      mockModelIntrospection,
-      {},
-      expect.any(Function),
-    );
-    expect(sessions).toHaveLength(2);
+    it('can get a conversation', async () => {
+      const { mathBot } = conversations;
+
+      await mathBot.get({ id: mockConversation.id });
+
+      expect(mockGetConversation).toHaveBeenCalledWith({
+        id: mockConversation.id,
+      });
+    });
+
+    it('can list conversations', async () => {
+      const { mathBot } = conversations;
+
+      await mathBot.list();
+
+      expect(mockListConversation).toHaveBeenCalled();
+    });
   });
 });

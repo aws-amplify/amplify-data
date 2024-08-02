@@ -2,10 +2,19 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { bench } from '@arktype/attest';
-import { a, ClientSchema } from '@aws-amplify/data-schema';
+import { a, type ClientSchema } from '@aws-amplify/data-schema';
 import { Amplify } from 'aws-amplify';
 import { generateClient } from 'aws-amplify/api';
 
+const input = {
+  aiModel: a.aiModel.anthropic.claude3Haiku(),
+  systemPrompt: 'Hello, world!',
+  inferenceConfiguration: {
+    topP: 1,
+    temperature: 1,
+    maxTokens: 1000,
+  },
+};
 /**
  * The following benchmarks are an extension of `p50-prod-conversation.bench.ts`.
  * Here we perform operations against a conversation route.
@@ -598,11 +607,11 @@ bench('prod p50 conversation operations', async () => {
           allow.authenticated('identityPool').to(['read']),
           allow.owner(),
         ]),
-      ChatBot: a.conversation(),
-      GossipBot: a.conversation(),
-      HaikuBot: a.conversation(),
-      MathBot: a.conversation(),
-      ScienceBot: a.conversation(),
+      ChatBot: a.conversation(input),
+      GossipBot: a.conversation(input),
+      HaikuBot: a.conversation(input),
+      MathBot: a.conversation(input),
+      ScienceBot: a.conversation(input),
       // [Global authorization rule]
     })
     .authorization((allow) => allow.publicApiKey());
@@ -622,15 +631,15 @@ bench('prod p50 conversation operations', async () => {
 
   const client = generateClient<Schema>();
 
-  const session = await client.conversations.ChatBot.startSession();
+  const { data: conversation } = await client.conversations.ChatBot.create();
 
-  await client.conversations.ChatBot.listSessions();
+  await client.conversations.ChatBot.list();
 
-  session.onMessage(() => {});
+  conversation?.onMessage(() => {});
 
-  await session.sendMessage({
+  await conversation?.sendMessage({
     content: [{ text: 'foo' }],
   });
 
-  await session.listMessages();
+  await conversation?.listMessages();
 }).types([35375, 'instantiations']);

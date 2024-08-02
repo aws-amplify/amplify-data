@@ -19,7 +19,7 @@ import type {
   NumericFilter,
   BooleanFilters,
 } from '../../util';
-import { Conversation } from '../../ai/ConversationType';
+import { ConversationRoute } from '../../ai/ConversationType';
 
 // temporarily export symbols from `data-schema-types` because in case part of the
 // problem with the runtime -> data-schema migration comes down to a mismatch
@@ -791,7 +791,7 @@ export type ClientExtensions<T extends Record<any, any> = never> = {
   queries: CustomQueries<T, 'CLIENT'>;
   mutations: CustomMutations<T, 'CLIENT'>;
   subscriptions: CustomSubscriptions<T, 'CLIENT'>;
-  conversations: Conversations<T>;
+  conversations: ConversationRoutes<T>;
   generations: Generations<T>;
 };
 
@@ -809,11 +809,11 @@ export type ClientExtensionsSSRCookies<T extends Record<any, any> = never> = {
   mutations: CustomMutations<T, 'COOKIES'>;
 };
 
-export type Conversations<
+export type ConversationRoutes<
   T extends Record<any, any>,
   Schema extends ClientSchemaByEntityType<T> = ClientSchemaByEntityType<T>,
 > = {
-  [ConversationName in keyof Schema['conversations']]: Conversation;
+  [ConversationName in keyof Schema['conversations']]: ConversationRoute;
 };
 
 export type Generations<

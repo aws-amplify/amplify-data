@@ -2,8 +2,17 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { bench } from '@arktype/attest';
-import { a, ClientSchema } from '@aws-amplify/data-schema';
+import { a, type ClientSchema } from '@aws-amplify/data-schema';
 
+const input = {
+  aiModel: a.aiModel.anthropic.claude3Haiku(),
+  systemPrompt: 'Hello, world!',
+  inferenceConfiguration: {
+    topP: 1,
+    temperature: 1,
+    maxTokens: 1000,
+  },
+};
 /**
  * The following benchmarks are `p50-prod.bench.ts` but with 5 conversation routes added to schemas.
  */
@@ -594,11 +603,11 @@ bench('prod p50 conversation', () => {
         allow.authenticated('identityPool').to(['read']),
         allow.owner(),
       ]),
-    ChatBot: a.conversation(),
-    GossipBot: a.conversation(),
-    HaikuBot: a.conversation(),
-    MathBot: a.conversation(),
-    ScienceBot: a.conversation(),
+    ChatBot: a.conversation(input),
+    GossipBot: a.conversation(input),
+    HaikuBot: a.conversation(input),
+    MathBot: a.conversation(input),
+    ScienceBot: a.conversation(input),
     // [Global authorization rule]
   }).authorization((allow) => allow.publicApiKey());
 }).types([20837, 'instantiations']);
@@ -1188,11 +1197,11 @@ bench('prod p50 conversation w/ client types', () => {
           allow.authenticated('identityPool').to(['read']),
           allow.owner(),
         ]),
-      ChatBot: a.conversation(),
-      GossipBot: a.conversation(),
-      HaikuBot: a.conversation(),
-      MathBot: a.conversation(),
-      ScienceBot: a.conversation(),
+      ChatBot: a.conversation(input),
+      GossipBot: a.conversation(input),
+      HaikuBot: a.conversation(input),
+      MathBot: a.conversation(input),
+      ScienceBot: a.conversation(input),
       // [Global authorization rule]
     })
     .authorization((allow) => allow.publicApiKey());
@@ -1785,11 +1794,11 @@ bench('prod p50 conversation combined w/ client types', () => {
           allow.authenticated('identityPool').to(['read']),
           allow.owner(),
         ]),
-      ChatBot: a.conversation(),
-      GossipBot: a.conversation(),
-      HaikuBot: a.conversation(),
-      MathBot: a.conversation(),
-      ScienceBot: a.conversation(),
+      ChatBot: a.conversation(input),
+      GossipBot: a.conversation(input),
+      HaikuBot: a.conversation(input),
+      MathBot: a.conversation(input),
+      ScienceBot: a.conversation(input),
       // [Global authorization rule]
     })
     .authorization((allow) => allow.publicApiKey());

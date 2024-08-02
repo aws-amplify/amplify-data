@@ -1,50 +1,47 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-import type { Subscription } from 'rxjs';
-import {
-  BaseBrowserClient,
+import type { Observable, Subscription } from 'rxjs';
+import type { Conversation } from '../../../ai/ConversationType';
+import type {
   BaseClient,
   ClientInternalsGetter,
   ModelIntrospectionSchema,
-  SchemaModel,
 } from '../../bridge-types';
-import { subscriptionFactory } from '../operations/subscription';
-import type {
-  ConversationMessageModel,
-  ConversationSession,
-} from '../../../ai/ConversationType';
+import { customOpFactory } from '../operations/custom';
 
 export const createOnMessageFunction =
   (
-    session: any,
     client: BaseClient,
     modelIntrospection: ModelIntrospectionSchema,
-    messageModel: SchemaModel,
+    conversationId: string,
+    conversationRouteName: string,
     getInternals: ClientInternalsGetter,
-  ): ConversationSession['onMessage'] =>
+  ): Conversation['onMessage'] =>
   (handler): Subscription => {
-    const filter = { sessionId: { eq: session.id } };
-    return subscriptionFactory(
-      client as BaseBrowserClient,
+    const { conversations } = modelIntrospection;
+    // Safe guard for standalone function. When called as part of client generation, this should never be falsy.
+    if (!conversations) {
+      return {} as Subscription;
+    }
+    const subscribeSchema =
+      conversations[conversationRouteName].message.subscribe;
+    const subscribeOperation = customOpFactory(
+      client,
       modelIntrospection,
-      messageModel,
-      'ONCREATE',
+      'subscription',
+      subscribeSchema,
+      false,
       getInternals,
-    )({ filter }).subscribe(
-      ({
-        content,
-        createdAt,
-        id,
-        role,
-        sessionId,
-      }: ConversationMessageModel) => {
+    ) as (args?: Record<string, any>) => Observable<any>;
+    return subscribeOperation({ sessionId: conversationId }).subscribe(
+      ({ content, sessionId, createdAt, id, sender }: any) => {
         handler({
           content: JSON.parse(content),
+          conversationId: sessionId,
           createdAt,
           id,
-          role,
-          sessionId,
+          role: sender,
         });
       },
     );
