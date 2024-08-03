@@ -14,25 +14,26 @@ jobs:
       - name: Setup node and build the repository
         uses: ./amplify-api-next/.github/actions/node-and-build
       # Separately, the backend team has an AWS profile that contains additional
-      # test harness permissions which is configured here:
-      - name: Configure test tooling credentials
-        uses: ./.github/actions/setup_profile
-        with:
-          role-to-assume: ${{ secrets.E2E_TOOLING_ROLE_ARN }}
-          aws-region: us-west-2
-          profile-name: e2e-tooling
+      # test harness permissions which is configured here. However, we likely do
+      # not need this, but keeping here as we may need for cleanup:
+      # - name: Configure test tooling credentials
+      #   uses: ./.github/actions/setup_profile
+      #   with:
+      #     role-to-assume: ${{ secrets.E2E_TOOLING_ROLE_ARN }}
+      #     aws-region: us-west-2
+      #     profile-name: e2e-tooling
       # The CLI commands pick up credentials using the default credential provider
       # which resolves to the env vars that the `configure-aws-credentials` GitHub Action sets here:
       # This is loaded into various clients here: https://github.com/aws-amplify/amplify-backend/blob/f5eeb67d840a194ffeeb585bfa0ba9468c1f6cda/packages/integration-tests/src/test-project-setup/cdk/test_cdk_project_creator.ts#L30
-      - name: Configure test execution credentials
+      - name: Configure AWS test execution credentials
         uses: aws-actions/configure-aws-credentials@e3dd6a429d7300a6a4c196c26e071d42e0343502 # version 4.0.2
         with:
-          role-to-assume: ${{ secrets.E2E_RUNNER_ROLE_ARN }}
+          role-to-assume: ${{ secrets.SANDBOX_E2E_RUNNER_ROLE_ARN }}
           aws-region: us-west-2
       # - name: Configure AWS Credentials
       #   uses: aws-actions/configure-aws-credentials@04b98b3f9e85f563fb061be8751a0352327246b0 # version 3.0.1
       #   with:
-      #     role-to-assume: ${{ secrets.E2E_RUNNER_ROLE_ARN }}
+      #     role-to-assume: ${{ secrets.SANDBOX_E2E_RUNNER_ROLE_ARN }}
       #     aws-region: us-west-2
       - name: Install Node Sample Dependencies
         working-directory: ./amplify-api-next
