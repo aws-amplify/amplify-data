@@ -192,6 +192,21 @@ function hasStringField<Field extends string>(
 }
 
 /**
+ * @param argDef A single argument definition from a custom operation
+ * @returns A string naming the base type including the `!` if the arg is required.
+ */
+function argumentBaseTypeString(
+  argDef: Exclude<CustomOperation['arguments'], undefined>[number],
+) {
+  const requiredFlag = argDef.isRequired ? '!' : '';
+  if (argDef.type instanceof Object && 'enum' in argDef.type) {
+    return argDef.type.enum + requiredFlag;
+  } else {
+    return argDef.type + requiredFlag;
+  }
+}
+
+/**
  * Generates "outer" arguments string for a custom operation. For example,
  * in this operation:
  *
@@ -216,7 +231,7 @@ function outerArguments(operation: CustomOperation): string {
   }
   const args = Object.entries(operation.arguments)
     .map(([k, v]) => {
-      const baseType = v.type + (v.isRequired ? '!' : '');
+      const baseType = argumentBaseTypeString(v);
       const finalType = v.isArray
         ? `[${baseType}]${v.isArrayNullable ? '' : '!'}`
         : baseType;
@@ -261,7 +276,7 @@ function innerArguments(operation: CustomOperation): string {
 /**
  * Generates the selection set string for a custom operation. This is slightly
  * different than the selection set generation for models. If the custom op returns
- * a primitive or enum types, it doen't require a selection set at all.
+ * a primitive or enum types, it doesn't require a selection set at all.
  *
  * E.g., the graphql might look like this:
  *

@@ -511,7 +511,7 @@ describe('CustomOperation transform', () => {
           .authorization((allow) => allow.publicApiKey());
 
         expect(() => s.transform()).toThrow(
-          'Invalid ref. onLikePost is referencing Post which is not defined in the schema',
+          'Invalid ref. onLikePost is referring to Post which is not defined in the schema',
         );
       });
 

@@ -22,6 +22,13 @@ const schema = a.schema({
 export type Schema = ClientSchema<typeof schema>;
 ```
 
+## In-repository E2E tests
+
+See the [e2e-tests README](packages/e2e-tests/README.md) for more information.
+
+Additionally, these tests can be run directly from the root of this repository
+(see the relevant E2E scripts in the [package.json](package.json)).
+
 ## Security
 
 See [CONTRIBUTING](CONTRIBUTING.md#security-issue-notifications) for more information.

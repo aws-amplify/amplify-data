@@ -102,3 +102,23 @@ exports[`custom operations primitive type result 1`] = `
   ],
 ]
 `;
+
+exports[`custom operations with enum arguments can be called with valid enum values 1`] = `
+[
+  [
+    {
+      "authMode": undefined,
+      "authToken": undefined,
+      "query": "
+    query($status: EchoEnumStatus) {
+      echoEnum(status: $status) 
+    }
+  ",
+      "variables": {
+        "status": "Active",
+      },
+    },
+    {},
+  ],
+]
+`;

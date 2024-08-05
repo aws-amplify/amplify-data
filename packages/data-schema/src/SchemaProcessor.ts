@@ -8,8 +8,12 @@ import {
   type InternalField,
   string,
   type BaseModelField,
+  ModelFieldType,
 } from './ModelField';
-import { type InternalRelationalField } from './ModelRelationalField';
+import {
+  ModelRelationshipTypes,
+  type InternalRelationalField,
+} from './ModelRelationalField';
 import type { InternalModel } from './ModelType';
 import type { InternalModelIndexType } from './ModelIndex';
 import {
@@ -409,14 +413,14 @@ function customOperationToGql(
   }
 
   if (Object.keys(fieldArgs).length > 0) {
-    const { gqlFields, implicitTypes } = processFields(
+    const { gqlFields, implicitTypes: implied } = processFields(
       typeName,
       fieldArgs,
       {},
       {},
     );
     callSignature += `(${gqlFields.join(', ')})`;
-    implicitTypes.push(...implicitTypes);
+    implicitTypes.push(...implied);
   }
 
   const handler = handlers && handlers[0];
@@ -497,6 +501,34 @@ function escapeGraphQlString(str: string) {
 }
 
 /**
+ * AWS AppSync scalars that are stored as strings in the data source
+ */
+const stringFieldTypes = {
+  ID: true,
+  String: true,
+  AWSDate: true,
+  AWSTime: true,
+  AWSDateTime: true,
+  AWSEmail: true,
+  AWSPhone: true,
+  AWSURL: true,
+  AWSIPAddress: true,
+};
+
+/**
+ * Normalize string-compatible field types for comparison
+ */
+const normalizeStringFieldTypes = (
+  fieldType: ModelFieldType,
+): ModelFieldType => {
+  if (fieldType in stringFieldTypes) {
+    return ModelFieldType.String;
+  }
+
+  return fieldType;
+};
+
+/**
  * Tests whether two ModelField definitions are in conflict.
  *
  * This is a shallow check intended to catch conflicts between defined fields
@@ -508,15 +540,24 @@ function escapeGraphQlString(str: string) {
  * @returns
  */
 function areConflicting(left: BaseModelField, right: BaseModelField): boolean {
-  // These are the only props we care about for this comparison, because the others
+  const leftData = (left as InternalField).data;
+  const rightData = (right as InternalField).data;
+
+  // `array` and `fieldType` are the only props we care about for this comparison, because the others
   // (required, arrayRequired, etc) are not specified on auth or FK directives.
-  const relevantProps = ['array', 'fieldType'] as const;
-  for (const prop of relevantProps) {
-    if (
-      (left as InternalField).data[prop] !== (right as InternalField).data[prop]
-    ) {
-      return true;
-    }
+  if (leftData.array !== rightData.array) {
+    return true;
+  }
+
+  // Convert "string-compatible" field types to `String` for the sake of this comparison
+  //
+  // E.g. if a customer has an explicit a.id() field that they're referencing in an allow.ownerDefinedIn rule
+  // we treat ID and String as equivalent/non-conflicting
+  if (
+    normalizeStringFieldTypes(leftData.fieldType) !==
+    normalizeStringFieldTypes(rightData.fieldType)
+  ) {
+    return true;
   }
 
   return false;
@@ -1049,6 +1090,29 @@ const extractFunctionSchemaAccess = (
   return { schemaAuth, functionSchemaAccess };
 };
 
+/**
+ * Searches a schema and all related schemas (through `.combine()`) for the given type by name.
+ *
+ * @param schema
+ * @param name
+ * @returns
+ */
+const findCombinedSchemaType = (
+  schema: InternalSchema,
+  name: string,
+): unknown | undefined => {
+  if (schema.context) {
+    for (const contextualSchema of schema.context.schemas) {
+      if (contextualSchema.data.types[name]) {
+        return contextualSchema.data.types[name];
+      }
+    }
+  } else {
+    return schema.data.types[name];
+  }
+  return undefined;
+};
+
 type GetRef =
   | {
       type: 'Model';
@@ -1067,12 +1131,14 @@ type GetRef =
  * Returns a closure for retrieving reference type and definition from schema
  */
 const getRefTypeForSchema = (schema: InternalSchema) => {
-  const getRefType = (source: string, target: string): GetRef => {
-    const typeDef = schema.data.types[source];
+  const getRefType = (name: string, referrerName?: string): GetRef => {
+    const typeDef = findCombinedSchemaType(schema, name);
 
     if (typeDef === undefined) {
       throw new Error(
-        `Invalid ref. ${target} is referencing ${source} which is not defined in the schema`,
+        referrerName
+          ? `Invalid ref. ${referrerName} is referring to ${name} which is not defined in the schema`
+          : `Invalid ref. ${name} is not defined in the schema`,
       );
     }
 
@@ -1093,7 +1159,9 @@ const getRefTypeForSchema = (schema: InternalSchema) => {
     }
 
     throw new Error(
-      `Invalid ref. ${target} is referencing ${source} which is neither a Model, Custom Operation, Custom Type, or Enum`,
+      referrerName
+        ? `Invalid ref. ${referrerName} is referring to ${name} which is neither a Model, Custom Operation, Custom Type, or Enum`
+        : `Invalid ref. ${name} is neither a Model, Custom Operation, Custom Type, or Enum`,
     );
   };
 
@@ -1420,6 +1488,18 @@ const schemaPreprocessor = (
           `Model \`${typeName}\` is missing authorization rules. Add global rules to the schema or ensure every model has its own rules.`,
         );
       }
+
+      const getInternalModel = (
+        modelName: string,
+        sourceName?: string,
+      ): InternalModel => {
+        const model = getRefType(modelName, sourceName);
+        if (!isInternalModel(model.def)) {
+          throw new Error(`Expected to find model type with name ${modelName}`);
+        }
+        return model.def;
+      };
+      validateRelationships(typeName, fields, getInternalModel);
 
       const fieldLevelAuthRules = processFieldLevelAuthRules(
         fields,
@@ -1813,6 +1893,375 @@ function extractNestedCustomTypeNames(
   );
 
   return nestedCustomTypeNames;
+}
+
+/**
+ * Validates that defined relationships conform to the following rules.
+ * - relationships are bidirectional
+ *   - hasOne has a belongsTo counterpart
+ *   - hasMany has a belongsTo counterpart
+ *   - belongsTo has either a hasOne or hasMany counterpart
+ * - both sides of a relationship have identical `references` defined.
+ * - the `references` match the primary key of the parent model
+ *   - references[0] is the primaryKey's partitionKey on the parent model
+ *   - references[1...n] are the primaryKey's sortKey(s) on the parent model
+ *   - types match (id / string / number)
+ * - the `references` are fields defined on the child model
+ *   - field names match the named `references` arguments
+ *   - child model references fields types match those of the parent model's primaryKey
+ * @param typeName source model's type name.
+ * @param record map of field name to {@link ModelField}
+ * @param getInternalModel given a model name, return an {@link InternalModel}
+ */
+function validateRelationships(
+  typeName: string,
+  record: Record<string, ModelField<any, any>>,
+  getInternalModel: (
+    modelName: string,
+    referringModelName?: string,
+  ) => InternalModel,
+) {
+  for (const [name, field] of Object.entries(record)) {
+    // If the field's type is not a model, there's no relationship
+    // to evaluate and we can skip this iteration.
+    if (!isModelField(field)) {
+      continue;
+    }
+
+    // Create a structure representing the relationship for validation.
+    const relationship = getModelRelationship(
+      typeName,
+      { name: name, def: field.data },
+      getInternalModel,
+    );
+
+    // Validate that the references defined in the relationship follow the
+    // relational definition rules.
+    validateRelationalReferences(relationship);
+  }
+}
+
+/**
+ * Helper function that describes the relationship of a given connection field for use in logging or error messages.
+ *
+ * `Parent.child: Child @hasMany(references: ['parentId'])`
+ * -- or --
+ * `Child.parent: Parent @belongsTo(references: ['parentId'])`
+ * @param sourceField The {@link ConnectionField} to describe.
+ * @param sourceModelName The name of the model within which the sourceField is defined.
+ * @returns a 'string' describing the relationship
+ */
+function describeConnectFieldRelationship(
+  sourceField: ConnectionField,
+  sourceModelName: string,
+): string {
+  const associatedTypeDescription = sourceField.def.array
+    ? `[${sourceField.def.relatedModel}]`
+    : sourceField.def.relatedModel;
+  const referencesDescription =
+    sourceField.def.references
+      .reduce(
+        (description, reference) => description + `'${reference}', `,
+        'references: [',
+      )
+      .slice(0, -2) + ']';
+  return `${sourceModelName}.${sourceField.name}: ${associatedTypeDescription} @${sourceField.def.type}(${referencesDescription})`;
+}
+
+/**
+ * Validates that the types of child model's reference fields match the types of the parent model's identifier fields.
+ * @param relationship The {@link ModelRelationship} to validate.
+ */
+function validateRelationalReferences(relationship: ModelRelationship) {
+  const {
+    parent,
+    parentConnectionField,
+    child,
+    childConnectionField,
+    references,
+  } = relationship;
+  const parentIdentifiers = getIndentifierTypes(parent);
+
+  const childReferenceTypes: ModelFieldType[] = [];
+  // Iterate through the model schema defined 'references' to find each matching field on the Related model.
+  // If a field by that name is not found, throw a validate error.
+  // Accumulate the ModelFieldType for each reference field to validate matching types below.
+  for (const reference of references) {
+    const relatedReferenceType = child.data.fields[reference]?.data
+      .fieldType as ModelFieldType;
+    // reference field on related type with name passed to references not found. Time to throw a validation error.
+    if (!relatedReferenceType) {
+      const errorMessage =
+        `reference field '${reference}' must be defined on ${parentConnectionField.def.relatedModel}. ` +
+        describeConnectFieldRelationship(
+          parentConnectionField,
+          childConnectionField.def.relatedModel,
+        ) +
+        ' <-> ' +
+        describeConnectFieldRelationship(
+          childConnectionField,
+          parentConnectionField.def.relatedModel,
+        );
+      throw new Error(errorMessage);
+    }
+    childReferenceTypes.push(relatedReferenceType);
+  }
+
+  if (parentIdentifiers.length !== childReferenceTypes.length) {
+    throw new Error(
+      `The identifiers defined on ${childConnectionField.def.relatedModel} must match the reference fields defined on ${parentConnectionField.def.relatedModel}.\n` +
+        `${parentIdentifiers.length} identifiers defined on ${childConnectionField.def.relatedModel}.\n` +
+        `${childReferenceTypes.length} reference fields found on ${parentConnectionField.def.relatedModel}`,
+    );
+  }
+
+  const matchingModelFieldType = (
+    a: ModelFieldType,
+    b: ModelFieldType,
+  ): boolean => {
+    // `String` and `Id` are considered equal types for when comparing
+    // the child model's references fields with their counterparts within
+    // the parent model's identifier (parent key) fields.
+    const matching = [ModelFieldType.Id, ModelFieldType.String];
+    return a === b || (matching.includes(a) && matching.includes(b));
+  };
+
+  // Zip pairs of child model's reference field with corresponding parent model's identifier field.
+  // Confirm that the types match. If they don't, throw a validation error.
+  parentIdentifiers
+    .map((identifier, index) => [identifier, childReferenceTypes[index]])
+    .forEach(([parent, child]) => {
+      if (!matchingModelFieldType(parent, child)) {
+        throw new Error('Validate Error: types do not match');
+      }
+    });
+}
+
+/**
+ * Internal convenience type that contains the name of the connection field along with
+ * its {@link ModelFieldDef}.
+ */
+type ConnectionField = {
+  name: string;
+  def: ModelFieldDef;
+};
+
+/**
+ * An internal representation of a model relationship used by validation functions.
+ * Use {@link getModelRelationship} to create this.
+ * See {@link validateRelationalReferences} for validation example.
+ */
+type ModelRelationship = {
+  /**
+   * The model that is referred to by the child.
+   */
+  parent: InternalModel;
+
+  /**
+   * The field on the parent into which the child model(s) is/are populated.
+   */
+  parentConnectionField: ConnectionField;
+
+  /**
+   * The model that refers to the parent.
+   */
+  child: InternalModel;
+
+  /**
+   * The field on the child into which the parent is loaded.
+   */
+  childConnectionField: ConnectionField;
+
+  /**
+   * The field names on the child that refer to the parent's PK.
+   *
+   * Both sides of the relationship must identify these "references" fields which
+   * names the child FK fields. So, regardless of which side of the relationship
+   * is explored, if the relationship definition is valid, these fields will be
+   * the same.
+   */
+  references: string[];
+};
+
+/**
+ * Relationship definitions require bi-directionality.
+ * Use this to generate a `ModelRelationshipTypes[]` containing acceptable counterparts on the
+ * associated model.
+ *
+ * Given {@link ModelRelationshipTypes.hasOne} or {@link ModelRelationshipTypes.hasOne} returns [{@link ModelRelationshipTypes.belongsTo}]
+ * Given {@link ModelRelationshipTypes.belongsTo} returns [{@link ModelRelationshipTypes.hasOne}, {@link ModelRelationshipTypes.belongsTo}]
+ *
+ * @param relationshipType {@link ModelRelationshipTypes} defined on source model's connection field.
+ * @returns possible counterpart {@link ModelRelationshipTypes} as `ModelRelationshipTypes[]`
+ */
+function associatedRelationshipTypes(
+  relationshipType: ModelRelationshipTypes,
+): ModelRelationshipTypes[] {
+  switch (relationshipType) {
+    case ModelRelationshipTypes.hasOne:
+    case ModelRelationshipTypes.hasMany:
+      return [ModelRelationshipTypes.belongsTo];
+    case ModelRelationshipTypes.belongsTo:
+      return [ModelRelationshipTypes.hasOne, ModelRelationshipTypes.hasMany];
+    default:
+      return []; // TODO: Remove this case on types are updated.
+  }
+}
+
+/**
+ * Retrieves the types of the identifiers defined on a model.
+ *
+ * Note: if a field by the name `id` isn't found in the {@link InternalModel},
+ * this assumes an implicitly generated identifier is used with the type.
+ *
+ * This function does not validate that a corresponding field exists for each of the
+ * identifiers because this validation happens at compile time.
+ * @param model {@link InternalModel} from which to retrieve identifier types.
+ * @returns Array of {@link ModelFieldType} of the model's identifiers found.
+ */
+function getIndentifierTypes(model: InternalModel): ModelFieldType[] {
+  return model.data.identifier.flatMap((fieldName) => {
+    const field = model.data.fields[fieldName];
+    if (field) {
+      return [field.data.fieldType as ModelFieldType];
+    } else if (fieldName === 'id') {
+      // implicity generated ID
+      return [ModelFieldType.Id];
+    }
+    return [];
+  });
+}
+
+/**
+ * Given a relationship definition within a source model (`sourceModelName`, `sourceConnectionField`) and
+ * the associated model (`associatedModel`), this finds the connection field for the relationship defined on the
+ * associated model. Invalid states, such a 0 or >1 matching connection fields result in an error.
+ * @param sourceModelName
+ * @param sourceConnectionField
+ * @param associatedModel
+ * @returns
+ */
+function getAssociatedConnectionField(
+  sourceModelName: string,
+  sourceConnectionField: ConnectionField,
+  associatedModel: InternalModel,
+): ConnectionField {
+  const associatedRelationshipOptions = associatedRelationshipTypes(
+    sourceConnectionField.def.type,
+  );
+  // Iterate through the associated model's fields to find the associated connection field for the relationship defined on the source model.
+  const associatedConnectionFieldCandidates = Object.entries(
+    associatedModel.data.fields,
+  ).filter(([_key, connectionField]) => {
+    // If the field isn't a model, it's not part of the relationship definition -- ignore the field.
+    if (!isModelField(connectionField)) {
+      return false;
+    }
+
+    // In order to find that associated connection field, we need to do some validation that we'll depend on further downstream.
+    // 1. Field type matches the source model's type.
+    // 2. A valid counterpart relational modifier is defined on the field. See `associatedRelationshipTypes` for more information.
+    // 3. The reference arguments provided to the field match (element count + string comparison) references passed to the source connection field.
+    return (
+      connectionField.data.relatedModel === sourceModelName &&
+      associatedRelationshipOptions.includes(connectionField.data.type) &&
+      connectionField.data.references.length ===
+        sourceConnectionField.def.references.length &&
+      connectionField.data.references.every(
+        (value, index) => value === sourceConnectionField.def.references[index],
+      )
+    );
+  });
+
+  // We should have found exactly one connection field candidate. If that's not the case, we need to throw a validation error.
+  if (associatedConnectionFieldCandidates.length != 1) {
+    // const associatedModelDescription = sourceConnectionField.def.array
+    // ? `[${sourceConnectionField.def.relatedModel}]`
+    // : sourceConnectionField.def.relatedModel
+    const sourceConnectionFieldDescription = describeConnectFieldRelationship(
+      sourceConnectionField,
+      sourceModelName,
+    ); // `${sourceModelName}.${sourceConnectionField.name}: ${associatedModelDescription} @${sourceConnectionField.def.type}(references: [${sourceConnectionField.def.references}])`
+    const errorMessage =
+      associatedConnectionFieldCandidates.length === 0
+        ? `Unable to find associated relationship definition in ${sourceConnectionField.def.relatedModel}`
+        : `Found multiple relationship associations with ${associatedConnectionFieldCandidates.map((field) => `${sourceConnectionField.def.relatedModel}.${field[0]}`).join(', ')}`;
+    throw new Error(`${errorMessage} for ${sourceConnectionFieldDescription}`);
+  }
+
+  const associatedConnectionField = associatedConnectionFieldCandidates[0];
+  if (!isModelField(associatedConnectionField[1])) {
+    // This shouldn't happen because we've validated that it's a model field above.
+    // However it's necessary to narrow the type.
+    // const associatedModelDescription = sourceConnectionField.def.array
+    // ? `[${sourceConnectionField.def.relatedModel}]`
+    // : sourceConnectionField.def.relatedModel
+    const sourceConnectionFieldDescription = describeConnectFieldRelationship(
+      sourceConnectionField,
+      sourceModelName,
+    );
+    const errorMessage = `Cannot find counterpart to relationship defintion for ${sourceConnectionFieldDescription}`;
+    throw new Error(errorMessage);
+  }
+
+  return {
+    name: associatedConnectionField[0],
+    def: associatedConnectionField[1].data,
+  };
+}
+
+/**
+ * Given either side of a relationship (source), this retrieves the other side (related)
+ * and packages the information neatly into a {@link ModelRelationship} for validation purposes.
+ *
+ * @param sourceModelName
+ * @param sourceConnectionField
+ * @param getInternalModel
+ * @returns a {@link ModelRelationship}
+ */
+function getModelRelationship(
+  sourceModelName: string,
+  sourceModelConnectionField: ConnectionField,
+  getInternalModel: (
+    modelName: string,
+    referringModelName?: string,
+  ) => InternalModel,
+): ModelRelationship {
+  const sourceModel = getInternalModel(sourceModelName, sourceModelName);
+  const associatedModel = getInternalModel(
+    sourceModelConnectionField.def.relatedModel,
+    sourceModelName,
+  );
+
+  const relatedModelConnectionField = getAssociatedConnectionField(
+    sourceModelName,
+    sourceModelConnectionField,
+    associatedModel,
+  );
+
+  switch (sourceModelConnectionField.def.type) {
+    case ModelRelationshipTypes.hasOne:
+    case ModelRelationshipTypes.hasMany:
+      return {
+        parent: sourceModel,
+        parentConnectionField: sourceModelConnectionField,
+        child: associatedModel,
+        childConnectionField: relatedModelConnectionField,
+        references: sourceModelConnectionField.def.references,
+      };
+    case ModelRelationshipTypes.belongsTo:
+      return {
+        parent: associatedModel,
+        parentConnectionField: relatedModelConnectionField,
+        child: sourceModel,
+        childConnectionField: sourceModelConnectionField,
+        references: sourceModelConnectionField.def.references,
+      };
+    default:
+      throw new Error(
+        `"${sourceModelConnectionField.def.type}" is not a valid relationship type.`,
+      );
+  }
 }
 
 /**
