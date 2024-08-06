@@ -6,6 +6,10 @@ jobs:
   sandbox_test:
     name: Sandbox E2E Tests
     runs-on: ubuntu-latest
+    permissions:
+      # these permissions are required for the configure-aws-credentials action to get a JWT from GitHub
+      id-token: write
+      contents: read
     steps:
       - name: Checkout repository
         uses: actions/checkout@24cb9080177205b6e8c946b17badbe402adc938f # v3.4.0 https://github.com/actions/checkout/commit/24cb9080177205b6e8c946b17badbe402adc938f
