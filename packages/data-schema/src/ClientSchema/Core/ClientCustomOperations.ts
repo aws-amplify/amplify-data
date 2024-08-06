@@ -1,4 +1,7 @@
-import type { CustomOperationParamShape, UltimateFunctionHandlerAsyncType } from '../../CustomOperation';
+import type {
+  CustomOperationParamShape,
+  UltimateFunctionHandlerAsyncType,
+} from '../../CustomOperation';
 import type { BaseModelField, ModelFieldType } from '../../ModelField';
 import type { RefType } from '../../RefType';
 import type { ResolveFieldRequirements } from '../../MappedTypes/ResolveFieldProperties';
@@ -7,7 +10,6 @@ import type { CustomType } from '../../CustomType';
 import type { FieldTypesOfCustomType } from '../../MappedTypes/ResolveSchema';
 import type { ResolveRef } from '../utilities/ResolveRef';
 import { ClientSchemaProperty } from './ClientSchemaProperty';
-import { AsyncFunctionHandler } from '../../Handler';
 
 type CustomOperationSubType<Op extends CustomOperationParamShape> =
   `custom${Op['typeName']}`;
@@ -41,8 +43,8 @@ export interface ClientCustomOperation<
     // `returnType` because `returnType` determines the type returned by the mutation / query
     // in the data client.
     Op['handlers'] extends UltimateFunctionHandlerAsyncType
-    ? void
-    : LambdaReturnType<CustomOpReturnType<Op, RefBag>>
+      ? void
+      : LambdaReturnType<CustomOpReturnType<Op, RefBag>>
   >;
 
   /**
@@ -104,25 +106,25 @@ type Normalize<
   ? Exclude<RT, null | undefined>
   : RT;
 
-type EventInvocationResponseBag = {
-  'EventInvocationResponse': {
-    __entityType: 'customType',
-    type: '',
+type _EventInvocationResponseBag = {
+  EventInvocationResponse: {
+    __entityType: 'customType';
+    type: '';
     data: {
       fields: {
         success: {
           data: {
-            fieldType: ModelFieldType.Boolean,
-            required: true,
-            array: false,
-            arrayRequired: false,
-          }
-        }
-      },
-      type: 'customType'
-    }
-  }
-}
+            fieldType: ModelFieldType.Boolean;
+            required: true;
+            array: false;
+            arrayRequired: false;
+          };
+        };
+      };
+      type: 'customType';
+    };
+  };
+};
 
 /**
  * Computes the return type from the `returnType` of a custom operation shape.

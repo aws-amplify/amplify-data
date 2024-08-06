@@ -1,6 +1,6 @@
 import { SetTypeSubArg } from '@aws-amplify/data-schema-types';
 import { Brand, brand } from './util';
-import { InternalField, ModelField, ModelFieldType, type BaseModelField } from './ModelField';
+import { InternalField, ModelField, type BaseModelField } from './ModelField';
 import {
   AllowModifierForCustomOperation,
   Authorization,
@@ -27,17 +27,31 @@ type CustomOperationBrand =
   | typeof subscriptionBrand;
 
 type CustomArguments = Record<string, BaseModelField | EnumType>;
-
 type SubscriptionSource = RefType<any, any>;
 type InternalSubscriptionSource = InternalRef;
-
 type CustomReturnType = RefType<any> | CustomType<any>;
 type InternalCustomArguments = Record<string, InternalField>;
 type InternalCustomReturnType = InternalRef;
-type HandlerInputType = FunctionHandler[] | CustomHandler[] | AsyncFunctionHandler[] | HeterogeneousFunctionHandlerWithLastAsync | HeteregenousFunctionHandlerType | Handler;
-type HeteregenousFunctionHandlerType = (FunctionHandler | AsyncFunctionHandler)[];
-type HeterogeneousFunctionHandlerWithLastAsync = [...HeteregenousFunctionHandlerType, AsyncFunctionHandler];
-export type UltimateFunctionHandlerAsyncType = AsyncFunctionHandler | AsyncFunctionHandler[] | HeterogeneousFunctionHandlerWithLastAsync;
+type HandlerInputType =
+  | FunctionHandler[]
+  | CustomHandler[]
+  | AsyncFunctionHandler[]
+  | HeterogeneousFunctionHandlerWithLastAsync
+  | HeterogeneousFunctionHandlerType
+  | Handler;
+type HeterogeneousFunctionHandlerType = (
+  | FunctionHandler
+  | AsyncFunctionHandler
+)[];
+type HeterogeneousFunctionHandlerWithLastAsync = [
+  ...HeterogeneousFunctionHandlerType,
+  AsyncFunctionHandler,
+];
+
+export type UltimateFunctionHandlerAsyncType =
+  | AsyncFunctionHandler
+  | AsyncFunctionHandler[]
+  | HeterogeneousFunctionHandlerWithLastAsync;
 
 export const CustomOperationNames = [
   'Query',
@@ -101,15 +115,13 @@ export type CustomOperation<
     >;
     handler<H extends HandlerInputType>(
       handlers: H,
-    ): CustomOperation<
-      H extends UltimateFunctionHandlerAsyncType
-        ? AsyncFunctionCustomOperation<T>
-        : T,
-      H extends UltimateFunctionHandlerAsyncType
-        ? K | 'handler' | 'returns'
-        : K | 'handler',
-      B
-    >;
+    ): [H] extends [UltimateFunctionHandlerAsyncType]
+      ? CustomOperation<
+          AsyncFunctionCustomOperation<T>,
+          K | 'handler' | 'returns',
+          B
+        >
+      : CustomOperation<T, K | 'handler', B>;
 
     for<Source extends SubscriptionSource>(
       source: Source | Source[],
@@ -186,7 +198,7 @@ function _custom<
       handler(handlers: HandlerInputType) {
         data.handlers = Array.isArray(handlers)
           ? handlers
-          : [handlers] as Handler[];
+          : ([handlers] as Handler[]);
 
         if (lastHandlerIsAsyncFunction(handlers)) {
           data.returnType = eventInvocationResponse;
@@ -317,23 +329,18 @@ export function subscription(): CustomOperation<
 }
 
 // #region async Lambda function related types
-type AsyncFunctionCustomOperation<T extends CustomOperationParamShape> = SetTypeSubArg<
+type AsyncFunctionCustomOperation<T extends CustomOperationParamShape> =
   SetTypeSubArg<
-    T,
-    'returnType',
-    EventInvocationResponseCustomType
-  >,
-  'handlers',
-  AsyncFunctionHandler
->
+    SetTypeSubArg<T, 'returnType', EventInvocationResponseCustomType>,
+    'handlers',
+    AsyncFunctionHandler
+  >;
 
-type EventInvocationResponseCustomType = CustomType<
-  {
-    fields: {
-      success: ModelField<boolean, "required", undefined>;
-    };
-  }
->
+type EventInvocationResponseCustomType = CustomType<{
+  fields: {
+    success: ModelField<boolean, 'required', undefined>;
+  };
+}>;
 
 const eventInvocationResponse = {
   data: {
@@ -344,13 +351,13 @@ const eventInvocationResponse = {
     arrayRequired: false,
     mutationOperations: [],
     authorization: [],
-  }
+  },
 };
 
 function lastHandlerIsAsyncFunction(handlers: HandlerInputType): boolean {
   const lastHandlerBrandSymbol = Array.isArray(handlers)
     ? handlers[handlers.length - 1][brandSymbol]
-    : handlers[brandSymbol]
+    : handlers[brandSymbol];
   return lastHandlerBrandSymbol === 'asyncFunctionHandler';
 }
 // #endregion async Lambda function related types
