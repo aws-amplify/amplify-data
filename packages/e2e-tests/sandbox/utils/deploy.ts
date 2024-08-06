@@ -30,19 +30,19 @@ export const deploySandbox = async (
 ): DeploySandboxResponse => {
   console.log('Deploying sandbox..');
 
-  const initializeNpm = async () => {
-    console.log('initialize npm-------------');
-    const { stdout } = await execa('npm', ['config', 'get', 'cache']);
-    console.log('stdout--------', stdout);
-    const npxCacheLocation = path.join(stdout.toString().trim(), '_npx');
-    console.log('npxCacheLocation--------', npxCacheLocation);
-    if (existsSync(npxCacheLocation)) {
-      console.log('exists---------');
-      await fs.rm(npxCacheLocation, { recursive: true });
-    }
-  };
+  // const initializeNpm = async () => {
+  //   console.log('initialize npm-------------');
+  //   const { stdout } = await execa('npm', ['config', 'get', 'cache']);
+  //   console.log('stdout--------', stdout);
+  //   const npxCacheLocation = path.join(stdout.toString().trim(), '_npx');
+  //   console.log('npxCacheLocation--------', npxCacheLocation);
+  //   if (existsSync(npxCacheLocation)) {
+  //     console.log('exists---------');
+  //     await fs.rm(npxCacheLocation, { recursive: true });
+  //   }
+  // };
 
-  await initializeNpm();
+  // await initializeNpm();
 
   // Factory function that returns a ProcessController for the Amplify Gen 2 Backend CLI:
   await ampxCli(

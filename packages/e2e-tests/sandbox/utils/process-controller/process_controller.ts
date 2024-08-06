@@ -130,7 +130,12 @@ export const ampxCli = (
 ): ProcessController => {
   console.log('ampxCLI');
   console.log(args);
-  
+  console.log('dir-------------');
+  const testpwd = execaSync('pwd').stdout.trim();
+  console.log('test pwd--------', testpwd);
+  const testls = execaSync('ls', ['-la']).stdout.trim();
+  console.log('test ls--------', testls);
+
   // TODO This is a workaround to lookup locally installed binary as seen by npx
   // We're using binary directly because signals (Ctrl+C) don't propagate
   // to child processes without TTY emulator.
