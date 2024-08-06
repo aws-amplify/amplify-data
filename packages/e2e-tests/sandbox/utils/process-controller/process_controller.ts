@@ -130,11 +130,15 @@ export const ampxCli = (
 ): ProcessController => {
   console.log('ampxCLI');
   console.log(args);
-  console.log('dir-------------');
+  console.log('dir-------------', dir);
+  console.log('dir-------------', dir);
+  console.log('dir-------------', dir);
   const testpwd = execaSync('pwd').stdout.trim();
   console.log('test pwd--------', testpwd);
-  const testls = execaSync('ls', ['-la']).stdout.trim();
+  const testls = execaSync('ls', ['-a']).stdout.trim();
   console.log('test ls--------', testls);
+  const testmodules = execaSync('ls', ['-a', './node_modules']).stdout.trim();
+  console.log('test modules--------', testmodules);
 
   // TODO This is a workaround to lookup locally installed binary as seen by npx
   // We're using binary directly because signals (Ctrl+C) don't propagate
