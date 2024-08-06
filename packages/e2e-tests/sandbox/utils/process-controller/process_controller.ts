@@ -128,6 +128,9 @@ export const ampxCli = (
     env?: Record<string, string>;
   },
 ): ProcessController => {
+  console.log('ampxCLI');
+  console.log(args);
+  
   // TODO This is a workaround to lookup locally installed binary as seen by npx
   // We're using binary directly because signals (Ctrl+C) don't propagate
   // to child processes without TTY emulator.

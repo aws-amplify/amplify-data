@@ -25,6 +25,7 @@ jobs:
     uses: ./.github/workflows/callable-prebuild-amplify-api-next.yml
     with:
       runs_on: ubuntu-latest
+  # Only works at top level: https://github.com/orgs/community/discussions/76409
   sandbox_test:
     name: Sandbox E2E Tests
     needs: prebuild-ubuntu
