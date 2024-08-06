@@ -163,7 +163,7 @@ export type CustomOperationArguments = Record<string, CustomOperationArgument>;
 
 export interface CustomOperationArgument {
   name: string;
-  type: FieldType;
+  type: InputFieldType;
   isArray: boolean;
   isRequired: boolean;
   isArrayNullable?: boolean;
@@ -208,7 +208,15 @@ export interface NonModelFieldType {
   nonModel: string;
 }
 
-export type FieldType =
+export interface EnumType {
+  enum: string;
+}
+
+export interface InputType {
+  input: string;
+}
+
+type ScalarType =
   | 'ID'
   | 'String'
   | 'Int'
@@ -222,10 +230,16 @@ export type FieldType =
   | 'AWSIPAddress'
   | 'Boolean'
   | 'AWSJSON'
-  | 'AWSPhone'
-  | { enum: string }
+  | 'AWSPhone';
+
+export type FieldType =
+  | ScalarType
+  | EnumType
   | ModelFieldType
   | NonModelFieldType;
+
+export type InputFieldType = ScalarType | EnumType | InputType;
+
 export type FieldAttribute = ModelAttribute;
 
 /**

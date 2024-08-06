@@ -14,6 +14,9 @@ import {
   QueryArgs,
   ModelIntrospectionSchema,
   CustomOperationArgument,
+  InputFieldType,
+  EnumType,
+  InputType,
 } from '../../bridge-types';
 
 import { map } from 'rxjs';
@@ -41,17 +44,6 @@ type OpArgs =
   | [QueryArgs, CustomOperationOptions]
   // Client or SSR Cookies Client without Args defined
   | [CustomOperationOptions];
-
-function isConversationMessageOperation(operation: CustomOperation): boolean {
-  return (operation.type as any).model?.startsWith('ConversationMessage');
-}
-
-function getArgumentType(argument: CustomOperationArgument): string {
-  if (typeof argument.type === 'string') {
-    return argument.type;
-  }
-  return (argument.type as any).input as string;
-}
 
 /**
  * Type guard for checking whether a Custom Operation argument is a contextSpec object
@@ -203,19 +195,27 @@ function hasStringField<Field extends string>(
   return typeof o[field] === 'string';
 }
 
+function isEnumType(type: InputFieldType): type is EnumType {
+  return type instanceof Object && 'enum' in type;
+}
+
+function isInputType(type: InputFieldType): type is InputType {
+  return type instanceof Object && 'input' in type;
+}
+
 /**
  * @param argDef A single argument definition from a custom operation
  * @returns A string naming the base type including the `!` if the arg is required.
  */
-function argumentBaseTypeString(
-  argDef: Exclude<CustomOperation['arguments'], undefined>[number],
-) {
-  const requiredFlag = argDef.isRequired ? '!' : '';
-  if (argDef.type instanceof Object && 'enum' in argDef.type) {
-    return argDef.type.enum + requiredFlag;
-  } else {
-    return argDef.type + requiredFlag;
+function argumentBaseTypeString({ type, isRequired }: CustomOperationArgument) {
+  const requiredFlag = isRequired ? '!' : '';
+  if (isEnumType(type)) {
+    return `${type.enum}${requiredFlag}`;
   }
+  if (isInputType(type)) {
+    return `${type.input}${requiredFlag}`;
+  }
+  return `${type}${requiredFlag}`;
 }
 
 /**
@@ -241,14 +241,9 @@ function outerArguments(operation: CustomOperation): string {
   if (operation.arguments === undefined) {
     return '';
   }
-  const isConversationMessageArgument =
-    isConversationMessageOperation(operation);
   const args = Object.entries(operation.arguments)
     .map(([k, argument]) => {
-      const argumentType = isConversationMessageArgument
-        ? getArgumentType(argument)
-        : argument.type;
-      const baseType = `${argumentType}${argument.isRequired ? '!' : ''}`;
+      const baseType = argumentBaseTypeString(argument);
       const finalType = argument.isArray
         ? `[${baseType}]${argument.isArrayNullable ? '' : '!'}`
         : baseType;
