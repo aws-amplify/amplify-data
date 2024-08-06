@@ -1,0 +1,56 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Subscribe to real-time events subscription options 1`] = `
+[
+  [
+    [
+      {
+        "__typename": "Todo",
+        "content": "some content",
+        "createdAt": "2024-03-01T18:05:44.536Z",
+        "description": "something something",
+        "done": false,
+        "id": "some-id-1",
+        "owner": "some-body",
+        "priority": "high",
+        "updatedAt": "2024-03-01T19:05:44.536Z",
+      },
+    ],
+  ],
+]
+`;
+
+exports[`Subscribe to real-time events subscription options 2`] = `
+[
+  [
+    {
+      "authMode": undefined,
+      "query": "subscription ($filter: ModelSubscriptionTodoFilterInput) {
+  onCreateTodo(filter: $filter) {
+    id
+    content
+    description
+    done
+    priority
+    createdAt
+    updatedAt
+    owner
+  }
+}
+",
+      "variables": {
+        "filter": {
+          "priority": {
+            "in": [
+              "low",
+              "medium",
+              "high",
+            ],
+          },
+        },
+      },
+    },
+    {},
+  ],
+]
+`;

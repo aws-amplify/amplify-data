@@ -80,6 +80,9 @@ export type InternalSchema = {
     authorization: SchemaAuthorization<any, any, any>[];
     configuration: SchemaConfiguration<any, any>;
   };
+  context?: {
+    schemas: InternalSchema[];
+  };
 };
 
 export type BaseSchema<
@@ -93,6 +96,9 @@ export type BaseSchema<
       : never;
   };
   transform: () => DerivedApiDefinition;
+  context?: {
+    schemas: GenericModelSchema<any>[];
+  };
 };
 
 export type GenericModelSchema<T extends ModelSchemaParamShape> =
@@ -318,7 +324,10 @@ function _rdsSchema<
     data,
     models,
     transform(): DerivedApiDefinition {
-      const internalSchema: InternalSchema = { data } as InternalSchema;
+      const internalSchema: InternalSchema = {
+        data,
+        context: this.context,
+      } as InternalSchema;
 
       return processSchema({ schema: internalSchema });
     },
@@ -409,7 +418,10 @@ function _ddbSchema<
   return {
     data,
     transform(): DerivedApiDefinition {
-      const internalSchema = { data };
+      const internalSchema = {
+        data,
+        context: this.context,
+      };
 
       return processSchema({ schema: internalSchema });
     },

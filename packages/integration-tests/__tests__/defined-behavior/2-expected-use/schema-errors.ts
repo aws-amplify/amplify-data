@@ -11,7 +11,7 @@ describe('validated on execution', () => {
       }),
     });
 
-    expect(schema.transform).toThrow('missing authorization rules');
+    expect(() => schema.transform()).toThrow('missing authorization rules');
   });
 
   /**

@@ -1,5 +1,53 @@
 # @aws-amplify/data-schema
 
+## 1.3.10
+
+### Patch Changes
+
+- f4a47cc: fix subscription filter input types
+
+## 1.3.9
+
+### Patch Changes
+
+- 43c3163: add relationship validation in schema processor
+
+## 1.3.8
+
+### Patch Changes
+
+- 6a5a69c: fix index query support with reqRes client
+
+## 1.3.7
+
+### Patch Changes
+
+- 9b387bc: fix types and handling of enums in custom operation arguments
+
+## 1.3.6
+
+### Patch Changes
+
+- 7175920: allow ownerDefinedIn to reference string-compatible field types
+
+## 1.3.5
+
+### Patch Changes
+
+- aeb07d5: Fix sort key input name for timestamp
+
+## 1.3.4
+
+### Patch Changes
+
+- 193f285: custom selection set return value for custom type array fields
+
+## 1.3.3
+
+### Patch Changes
+
+- 634f87a: fix return types of create, update, delete operations on SSR clients
+
 ## 1.3.2
 
 ### Patch Changes

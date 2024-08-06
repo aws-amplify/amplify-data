@@ -116,6 +116,47 @@ describe('model auth rules', () => {
     expect(graphql).toMatchSnapshot();
   });
 
+  it('can define owner auth with owner field spec on a string-compatible field', () => {
+    const schema = a.schema({
+      widget: a
+        .model({
+          title: a.string().required(),
+          authorId: a.id(),
+        })
+        .authorization((allow) => allow.ownerDefinedIn('authorId')),
+    });
+
+    const graphql = schema.transform().schema;
+    expect(graphql).toMatchSnapshot();
+  });
+
+  it('can define multiple owner auth with owner field spec on a string-compatible array field', () => {
+    const schema = a.schema({
+      widget: a
+        .model({
+          title: a.string().required(),
+          authorId: a.id().array(),
+        })
+        .authorization((allow) => allow.ownersDefinedIn('authorId')),
+    });
+
+    const graphql = schema.transform().schema;
+    expect(graphql).toMatchSnapshot();
+  });
+
+  it('owner auth with owner field spec on a non-string field throws', () => {
+    const schema = a.schema({
+      widget: a
+        .model({
+          title: a.string().required(),
+          authorId: a.integer(),
+        })
+        .authorization((allow) => allow.ownerDefinedIn('authorId')),
+    });
+
+    expect(() => schema.transform().schema).toThrow();
+  });
+
   it(`can specify operations `, () => {
     const schema = a.schema({
       widget: a
@@ -350,10 +391,17 @@ describe('model auth rules', () => {
   it(`includes auth from related model fields`, () => {
     const schema = a
       .schema({
+        factory: a
+          .model({
+            name: a.string(),
+            widgets: a.hasMany('widget', ['factoryId']),
+          })
+          .authorization((allow) => [allow.publicApiKey()]),
         widget: a.model({
           id: a.id().required(),
+          factoryId: a.id(),
           parent: a
-            .belongsTo('widget', 'widgetId')
+            .belongsTo('factory', 'factoryId')
             .authorization((allow) =>
               allow.ownerDefinedIn('customOwner').to(['create', 'read']),
             ),

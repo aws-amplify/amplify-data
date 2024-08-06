@@ -155,6 +155,14 @@ exports[`model auth rules can define custom auth rule for operations update 1`] 
 }"
 `;
 
+exports[`model auth rules can define multiple owner auth with owner field spec on a string-compatible array field 1`] = `
+"type widget @model @auth(rules: [{allow: owner, ownerField: "authorId"}])
+{
+  title: String!
+  authorId: [ID]
+}"
+`;
+
 exports[`model auth rules can define owner auth with no provider 1`] = `
 "type widget @model @auth(rules: [{allow: owner, ownerField: "owner"}])
 {
@@ -166,6 +174,14 @@ exports[`model auth rules can define owner auth with owner field spec 1`] = `
 "type widget @model @auth(rules: [{allow: owner, ownerField: "title"}])
 {
   title: String!
+}"
+`;
+
+exports[`model auth rules can define owner auth with owner field spec on a string-compatible field 1`] = `
+"type widget @model @auth(rules: [{allow: owner, ownerField: "authorId"}])
+{
+  title: String!
+  authorId: ID
 }"
 `;
 
@@ -495,10 +511,17 @@ exports[`model auth rules includes auth from fields 1`] = `
 `;
 
 exports[`model auth rules includes auth from related model fields 1`] = `
-"type widget @model @auth(rules: [{allow: owner, ownerField: "owner"}])
+"type factory @model @auth(rules: [{allow: public, provider: apiKey}])
+{
+  name: String
+  widgets: [widget] @hasMany(references: ["factoryId"])
+}
+
+type widget @model @auth(rules: [{allow: owner, ownerField: "owner"}])
 {
   id: ID! @primaryKey
-  parent: widget @belongsTo(references: ["widgetId"]) @auth(rules: [{allow: owner, operations: [create, read], ownerField: "customOwner"}])
+  factoryId: ID
+  parent: factory @belongsTo(references: ["factoryId"]) @auth(rules: [{allow: owner, operations: [create, read], ownerField: "customOwner"}])
 }"
 `;
 
