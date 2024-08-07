@@ -141,14 +141,16 @@ export const ampxCli = (
     // We're using binary directly because signals (Ctrl+C) don't propagate
     // to child processes without TTY emulator.
     // See: https://github.com/aws-amplify/amplify-backend/issues/582
-    const command = execaSync('npx', ['which', 'ampx'], {
-      cwd: dir,
-    }).stdout.trim();
-    console.log('ampx command path:', command);
+    // const command = execaSync('npx', ['which', 'ampx'], {
+    //   cwd: dir,
+    // }).stdout.trim();
+    // console.log('ampx command path:', command);
 
-    if (!command) {
-      throw new Error('Unable to locate the ampx bin path');
-    }
+    // if (!command) {
+    //   throw new Error('Unable to locate the ampx bin path');
+    // }
+    const command = './node_modules/.bin/ampx';
+
     return new ProcessController(command, args, {
       cwd: dir,
       env: options?.env,
@@ -171,12 +173,14 @@ export const cdkCli = (
 ): ProcessController => {
   // We're using binary directly because cdk init doesn't seem to work.
   // See: https://github.com/aws/aws-cdk/issues/1694 (workaround from there didn't work).
-  const command = execaSync('npx', ['which', 'cdk'], {
-    cwd: dir,
-  }).stdout.trim();
-  if (!command) {
-    throw new Error('Unable to locate cdk binary');
-  }
+  // const command = execaSync('npx', ['which', 'cdk'], {
+  //   cwd: dir,
+  // }).stdout.trim();
+  // if (!command) {
+  //   throw new Error('Unable to locate cdk binary');
+  // }
+
+  const command = './node_modules/.bin/ampx';
   return new ProcessController(command, args, {
     cwd: dir,
     env: options?.env,

@@ -48,7 +48,8 @@ jobs:
           aws-region: us-west-2
       - name: Install Sandbox E2E Dependencies
         working-directory: ./amplify-api-next
-        run: npm run e2e-sandbox:install
+        run: npm run e2e-sandbox:install-lock
+        # run: npm run e2e-sandbox:install
       - name: Test npx
         working-directory: ./amplify-api-next/packages/e2e-tests/sandbox/amplify-backends/01-p50
         run: |

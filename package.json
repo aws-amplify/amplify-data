@@ -27,6 +27,7 @@
     "e2e-sandbox": "npm run --prefix ./packages/e2e-tests/sandbox e2e-sandbox",
     "e2e-sandbox:clean": "npm run --prefix ./packages/e2e-tests/sandbox clean",
     "e2e-sandbox:install": "npm run --prefix ./packages/e2e-tests/sandbox install:no-lock",
+    "e2e-sandbox:install-lock": "npm run --prefix ./packages/e2e-tests/sandbox install:no-lock",
     "e2e-sandbox:test": "npm run --prefix ./packages/e2e-tests/sandbox test",
     "test": "turbo run test && npm run test:scripts",
     "test:scripts": "npx jest scripts/",
