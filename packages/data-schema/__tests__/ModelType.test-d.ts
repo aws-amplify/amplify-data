@@ -65,6 +65,7 @@ describe('identifiers', () => {
       };
       secondaryIndexes: [];
       authorization: [];
+      disabledOperations: [];
     };
 
     type test = Expect<Equal<MT, ExpectedType>>;
@@ -90,6 +91,7 @@ describe('identifiers', () => {
       };
       secondaryIndexes: [];
       authorization: [];
+      disabledOperations: [];
     };
 
     type test = Expect<Equal<MT, ExpectedType>>;

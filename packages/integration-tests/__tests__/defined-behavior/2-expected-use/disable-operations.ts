@@ -33,7 +33,18 @@ describe('disable model operations', () => {
   type Schema = ClientSchema<typeof schema>;
 
   test('disabled methods are undefined in the client types', async () => {
-    const { generateClient } = mockedGenerateClient([]);
+    const { generateClient } = mockedGenerateClient([
+      {
+        data: {
+          getPost: {},
+        },
+      },
+      {
+        data: {
+          listPosts: {},
+        },
+      },
+    ]);
     const config = await buildAmplifyConfig(schema);
     Amplify.configure(config);
     const client = generateClient<Schema>();
