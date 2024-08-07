@@ -12,13 +12,13 @@ import type {
   ModelIntrospectionSchema,
 } from '../../bridge-types';
 import { customOpFactory } from '../operations/custom';
-import { convertItemToConversationMessage } from './convertItemToConversationMessage';
+import { pickConversationMessageProperties } from './pickConversationMessageProperties';
 
 export const createSendMessageFunction =
   (
-    conversation: any,
     client: BaseClient,
     modelIntrospection: ModelIntrospectionSchema,
+    conversationId: string,
     conversationRouteName: string,
     getInternals: ClientInternalsGetter,
   ): Conversation['sendMessage'] =>
@@ -41,12 +41,12 @@ export const createSendMessageFunction =
     ) => SingularReturnValue<ConversationMessage>;
     const { data, errors } = await sendOperation({
       aiContext: JSON.stringify(aiContext),
-      content: JSON.stringify(content),
-      sessionId: conversation.id,
+      content,
+      conversationId,
       toolConfiguration,
     });
     return {
-      data: data ? convertItemToConversationMessage(data) : data,
+      data: data ? pickConversationMessageProperties(data) : data,
       errors,
     };
   };

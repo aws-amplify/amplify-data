@@ -1,10 +1,7 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-import type {
-  Conversation,
-  ConversationRoute,
-} from '../../../ai/ConversationType';
+import type { ConversationRoute } from '../../../ai/ConversationType';
 import type { SingularReturnValue } from '../../../runtime/client';
 import type {
   BaseClient,
@@ -31,13 +28,13 @@ export const createCreateConversationFunction =
       conversationModel,
       'CREATE',
       getInternals,
-    ) as () => SingularReturnValue<Conversation>;
+    ) as () => SingularReturnValue<Record<string, any>>;
     const { data, errors } = await get();
     return {
       data: convertItemToConversation(
-        data,
         client,
         modelIntrospection,
+        data?.id,
         conversationRouteName,
         conversationMessageModel,
         getInternals,

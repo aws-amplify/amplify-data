@@ -1,10 +1,7 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-import type {
-  Conversation,
-  ConversationRoute,
-} from '../../../ai/ConversationType';
+import type { ConversationRoute } from '../../../ai/ConversationType';
 import type { ListReturnValue } from '../../../runtime/client';
 import type {
   BaseClient,
@@ -30,19 +27,19 @@ export const createListConversationsFunction =
       modelIntrospection,
       conversationModel,
       getInternals,
-    ) as (args?: Record<string, any>) => ListReturnValue<Conversation>;
+    ) as (args?: Record<string, any>) => ListReturnValue<Record<string, any>>;
     const { data, nextToken, errors } = await list(input);
     return {
-      data: data.map((conversation: any) =>
-        convertItemToConversation(
-          conversation,
+      data: data.map((datum: Record<string, any>) => {
+        return convertItemToConversation(
           client,
           modelIntrospection,
+          datum.id,
           conversationRouteName,
           conversationMessageModel,
           getInternals,
-        ),
-      ),
+        );
+      }),
       nextToken,
       errors,
     };

@@ -33,7 +33,7 @@ exports[`ai routes conversations 1`] = `
 }
 
 type Mutation {
-  ChatBot(sessionId: ID!, content: String): ConversationMessage @conversation(aiModel: "Claude3Haiku", systemPrompt: "Hello, world!", tools: [{ name: "myToolQuery", description: "does a thing" }, { name: "anotherToolQuery", description: "does a different thing" }])
+  ChatBot(conversationId: ID!, content: [ContentBlockInput], aiContext: AWSJSON): ConversationMessage @conversation(aiModel: "Claude3Haiku", systemPrompt: "Hello, world!", tools: [{ name: "myToolQuery", description: "does a thing" }, { name: "anotherToolQuery", description: "does a different thing" }]) @aws_cognito_user_pools
 }
 
 type Query {
@@ -41,22 +41,127 @@ type Query {
   anotherToolQuery: String @function(name: "FnAnotherToolQuery") @auth(rules: [{allow: public, provider: apiKey}])
 }
 
+enum ConversationParticipantRole {
+  user
+  assistant
+}
+
 interface ConversationMessage {
   id: ID!
-  sessionId: ID!
-  sender: ConversationMessageSender
-  content: String
+  conversationId: ID!
+  role: ConversationParticipantRole
+  content: [ContentBlock]
   context: AWSJSON
   uiComponents: [AWSJSON]
   createdAt: AWSDateTime
   updatedAt: AWSDateTime
   owner: String
-  assistantContent: String
 }
 
-enum ConversationMessageSender {
-  user
-  assistant
+input DocumentBlockSourceInput {
+  bytes: String
+}
+
+input DocumentBlockInput {
+  format: String!
+  name: String!
+  source: DocumentBlockSourceInput!
+}
+
+input ImageBlockSourceInput {
+  bytes: String
+}
+
+input ImageBlockInput {
+  format: String!
+  source: ImageBlockSourceInput!
+}
+
+input ToolResultContentBlockInput {
+  document: DocumentBlockInput
+  image: ImageBlockInput
+  json: AWSJSON
+  text: String
+}
+
+input ToolResultBlockInput {
+  content: [ToolResultContentBlockInput!]!
+  toolUseId: String!
+  status: String
+}
+
+type DocumentBlockSource {
+  bytes: String
+}
+
+
+type DocumentBlock {
+  format: String!
+  name: String!
+  source: DocumentBlockSource!
+}
+
+type ImageBlock {
+  format: String!
+  source: ImageBlockSource!
+}
+
+type ImageBlockSource {
+  bytes: String
+}
+
+type ToolUseBlock {
+  toolUseId: String!
+  name: String!
+  input: AWSJSON!
+}
+
+type ToolResultContentBlock {
+  document: DocumentBlock
+  image: ImageBlock
+  json: AWSJSON
+  text: String
+}
+
+type ToolResultBlock {
+  content: [ToolResultContentBlock!]!
+  toolUseId: String!
+  status: String
+}
+
+type ContentBlockText {
+  text: String
+}
+
+type ContentBlockImage {
+  image: ImageBlock
+}
+
+type ContentBlockDocument {
+  document: DocumentBlock
+}
+
+type ContentBlockToolUse {
+  toolUse: ToolUseBlock
+}
+
+type ContentBlockToolResult {
+  toolResult: ToolResultBlock
+}
+
+input ContentBlockInput {
+  text: String
+  document: DocumentBlockInput
+  image: ImageBlockInput
+  toolResult: ToolResultBlockInput
+}
+
+type ContentBlock {
+  text: String
+  document: DocumentBlock
+  image: ImageBlock
+  toolResult: ToolResultBlock
+  toolUse: ToolUseBlock
 }"
 `;
 

@@ -4,11 +4,13 @@
 import type { Conversation } from '../../../src/ai/ConversationType';
 import type { BaseClient } from '../../../src/runtime';
 import type { ModelIntrospectionSchema } from '../../../src/runtime/bridge-types';
-import { convertItemToConversationMessage } from '../../../src/runtime/internals/ai/convertItemToConversationMessage';
+import { pickConversationMessageProperties } from '../../../src/runtime/internals/ai/pickConversationMessageProperties';
 import { createSendMessageFunction } from '../../../src/runtime/internals/ai/createSendMessageFunction';
 import { customOpFactory } from '../../../src/runtime/internals/operations/custom';
 
-jest.mock('../../../src/runtime/internals/ai/convertItemToConversationMessage');
+jest.mock(
+  '../../../src/runtime/internals/ai/pickConversationMessageProperties',
+);
 jest.mock('../../../src/runtime/internals/operations/custom');
 
 describe('createSendMessageFunction()', () => {
@@ -26,9 +28,8 @@ describe('createSendMessageFunction()', () => {
   };
   const mockConversationName = 'conversation-name';
   const mockConversationId = 'conversation-id';
-  const mockConversation = { id: mockConversationId };
   const mockMessage = {
-    content: JSON.stringify([{ text: 'foo' }]),
+    content: [{ text: 'foo' }],
     conversationId: mockConversationId,
     createdAt: '2024-06-27T00:00:00Z',
     id: 'message-id',
@@ -40,19 +41,19 @@ describe('createSendMessageFunction()', () => {
   } as unknown as ModelIntrospectionSchema;
   // assert mocks
   const mockCustomOpFactory = customOpFactory as jest.Mock;
-  const mockConvertItemToConversationMessage =
-    convertItemToConversationMessage as jest.Mock;
+  const mockpickConversationMessageProperties =
+    pickConversationMessageProperties as jest.Mock;
   // create mocks
   const mockCustomOp = jest.fn();
 
   beforeAll(async () => {
-    mockConvertItemToConversationMessage.mockImplementation((data) => data);
+    mockpickConversationMessageProperties.mockImplementation((data) => data);
     mockCustomOp.mockReturnValue({ data: mockMessage });
     mockCustomOpFactory.mockReturnValue(mockCustomOp);
     sendMessage = await createSendMessageFunction(
-      mockConversation,
       {} as BaseClient,
       mockModelIntrospectionSchema,
+      mockConversationId,
       mockConversationName,
       jest.fn(),
     );
@@ -80,8 +81,8 @@ describe('createSendMessageFunction()', () => {
       );
       expect(mockCustomOp).toHaveBeenCalledWith({
         aiContext: JSON.stringify(mockAiContext),
-        content: JSON.stringify(mockContent),
-        sessionId: mockConversationId,
+        content: mockContent,
+        conversationId: mockConversationId,
         toolConfiguration: mockToolConfiguration,
       });
       expect(data).toBe(mockMessage);

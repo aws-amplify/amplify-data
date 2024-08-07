@@ -1,16 +1,16 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-export const convertItemToConversationMessage = ({
+export const pickConversationMessageProperties = ({
   content,
   createdAt,
   id,
-  sessionId,
-  sender,
+  conversationId,
+  role,
 }: any) => ({
-  content: JSON.parse(content),
-  conversationId: sessionId,
+  content,
+  conversationId,
   createdAt,
   id,
-  role: sender,
+  role,
 });
