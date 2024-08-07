@@ -146,10 +146,19 @@ export const ampxCli = (
     // }).stdout.trim();
     // console.log('ampx command path:', command);
 
+    // console.log('THIS PATH LOCALLY------------------------------', command);
+    // console.log('THIS PATH LOCALLY------------------------------', command);
+    // console.log('THIS PATH LOCALLY------------------------------', command);
+    // console.log('THIS PATH LOCALLY------------------------------', command);
+    // console.log('THIS PATH LOCALLY------------------------------', command);
+    // console.log('THIS PATH LOCALLY------------------------------', command);
+
     // if (!command) {
     //   throw new Error('Unable to locate the ampx bin path');
     // }
-    const command = './node_modules/.bin/ampx';
+    // TODO:
+    const command =
+      '/home/runner/work/amplify-api-next/amplify-api-next/amplify-api-next/packages/e2e-tests/sandbox/node_modules/.bin/ampx';
 
     return new ProcessController(command, args, {
       cwd: dir,
