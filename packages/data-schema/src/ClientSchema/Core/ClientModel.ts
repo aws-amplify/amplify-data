@@ -2,6 +2,7 @@ import type {
   deferredRefResolvingPrefix,
   ModelTypeParamShape,
   ModelDefaultIdentifier,
+  DisableOperationsOptions,
 } from '../../ModelType';
 import type { ClientSchemaProperty } from './ClientSchemaProperty';
 import type { Authorization, ImpliedAuthFields } from '../../Authorization';
@@ -24,6 +25,7 @@ import type {
   PrimaryIndexIrShape,
   SecondaryIndexIrShape,
   KindaPretty,
+  Includes,
 } from '../../util';
 
 export interface ClientModel<
@@ -49,8 +51,15 @@ export interface ClientModel<
   secondaryIndexes: IndexQueryMethodsFromIR<Bag, T['secondaryIndexes'], K>;
   __meta: {
     listOptionsPkParams: ListOptionsPkParams<Bag, T>;
+    disabledOperations: DisabledOpsToMap<T['disabledOperations']>;
   };
 }
+
+type DisabledOpsToMap<Ops extends ReadonlyArray<DisableOperationsOptions>> = {
+  queries: Includes<Ops, 'queries'>;
+  mutations: Includes<Ops, 'mutations'>;
+  subscriptions: Includes<Ops, 'subscriptions'>;
+};
 
 type ClientFields<
   Bag extends Record<string, unknown>,

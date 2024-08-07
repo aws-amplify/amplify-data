@@ -43,11 +43,17 @@ type InternalModelFields = Record<
   InternalField | InternalRelationalField
 >;
 
+export type DisableOperationsOptions =
+  | 'queries'
+  | 'mutations'
+  | 'subscriptions';
+
 type ModelData = {
   fields: ModelFields;
   identifier: ReadonlyArray<string>;
   secondaryIndexes: ReadonlyArray<ModelIndexType<any, any, any, any, any>>;
   authorization: Authorization<any, any, any>[];
+  disabledOperations: ReadonlyArray<DisableOperationsOptions>;
 };
 
 type InternalModelData = ModelData & {
@@ -55,6 +61,7 @@ type InternalModelData = ModelData & {
   identifier: ReadonlyArray<string>;
   secondaryIndexes: ReadonlyArray<InternalModelIndexType>;
   authorization: Authorization<any, any, any>[];
+  disabledOperations: ReadonlyArray<DisableOperationsOptions>;
   originalName?: string;
 };
 
@@ -63,6 +70,7 @@ export type ModelTypeParamShape = {
   identifier: PrimaryIndexIrShape;
   secondaryIndexes: ReadonlyArray<SecondaryIndexIrShape>;
   authorization: Authorization<any, any, any>[];
+  disabledOperations: ReadonlyArray<DisableOperationsOptions>;
 };
 
 /**
@@ -250,6 +258,14 @@ export type ModelType<
       SetTypeSubArg<T, 'secondaryIndexes', IndexesIR>,
       UsedMethod | 'secondaryIndexes'
     >;
+    disableOperations<
+      const Ops extends ReadonlyArray<DisableOperationsOptions>,
+    >(
+      ops: Ops,
+    ): ModelType<
+      SetTypeSubArg<T, 'disabledOperations', Ops>,
+      UsedMethod | 'disableOperations'
+    >;
     authorization<AuthRuleType extends Authorization<any, any, any>>(
       callback: (
         allow: Omit<AllowModifier, 'resource'>,
@@ -302,6 +318,7 @@ function _model<T extends ModelTypeParamShape>(fields: T['fields']) {
     identifier: ['id'],
     secondaryIndexes: [],
     authorization: [],
+    disabledOperations: [],
   };
 
   const builder = {
@@ -312,6 +329,11 @@ function _model<T extends ModelTypeParamShape>(fields: T['fields']) {
     },
     secondaryIndexes(callback) {
       data.secondaryIndexes = callback(modelIndex);
+
+      return this;
+    },
+    disableOperations(ops) {
+      data.disabledOperations = ops;
 
       return this;
     },
@@ -375,6 +397,7 @@ export function model<T extends ModelFields>(
   identifier: ModelDefaultIdentifier;
   secondaryIndexes: [];
   authorization: [];
+  disabledOperations: [];
 }> {
   return _model(fields);
 }
