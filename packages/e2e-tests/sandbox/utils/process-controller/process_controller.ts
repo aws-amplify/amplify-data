@@ -154,7 +154,7 @@ export const ampxCli = (
       env: options?.env,
     });
   } catch (error) {
-    console.error('Error locating ampx:', error.message);
+    console.error('ERROR RETRIEVING AMPX COMMAND PATH:', error);
     throw error;
   }
 };
