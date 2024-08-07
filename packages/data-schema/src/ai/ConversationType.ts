@@ -2,60 +2,18 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import type { Subscription } from 'rxjs';
-import type {
-  ContentBlock,
-  ImageBlock,
-  ImageSource,
-  ToolResultContentBlock,
-  ToolSpecification,
-} from '@aws-sdk/client-bedrock-runtime';
 import type { DefineFunction } from '@aws-amplify/data-schema-types';
 import type { ListReturnValue, SingularReturnValue } from '../runtime/client';
 import { type Brand, brand } from '../util';
 import type { RefType } from '../RefType';
 import { AiModel } from './AiModelType';
+import {
+  ConversationMessageContent,
+  ConversationSendMessageInputContent,
+} from './types/ConversationMessageContent';
+import { ToolConfiguration } from './types/ToolConfiguration';
 
 export const brandName = 'conversationCustomOperation';
-
-// Utility type for Omitting a common property across all members of a union
-type DistributiveOmit<T, K extends keyof T> = T extends any
-  ? Omit<T, K>
-  : never;
-
-// Pared down Bedrock content types
-interface SupportedImageBlock extends Omit<ImageBlock, 'source'> {
-  source: Omit<ImageSource.BytesMember, '$unknown'>;
-}
-
-interface SupportedToolResultContentBlockImageMember
-  extends Omit<ToolResultContentBlock.ImageMember, 'image'> {
-  image: SupportedImageBlock;
-}
-
-type SupportedToolResultContentBlockMembers = DistributiveOmit<
-  | ToolResultContentBlock.TextMember
-  | ToolResultContentBlock.JsonMember
-  | SupportedToolResultContentBlockImageMember,
-  '$unknown' | 'document'
->;
-
-interface SupportedToolResultContentBlock
-  extends Omit<ContentBlock.ToolResultMember, 'toolResult'> {
-  toolResult: SupportedToolResultContentBlockMembers;
-}
-
-interface SupportedContentBlockImageMember
-  extends Omit<ContentBlock.ImageMember, 'image'> {
-  image: SupportedImageBlock;
-}
-
-type ConversationMessageContent = DistributiveOmit<
-  | ContentBlock.TextMember
-  | ContentBlock.ToolUseMember
-  | SupportedContentBlockImageMember
-  | SupportedToolResultContentBlock,
-  '$unknown' | 'document' | 'guardContent'
->;
 
 // conversation message types
 export interface ConversationMessage {
@@ -64,13 +22,6 @@ export interface ConversationMessage {
   createdAt: string;
   id: string;
   role: 'user' | 'assistant';
-}
-
-// client tool types
-type Tool = Omit<ToolSpecification, 'name'>;
-
-interface ToolConfiguration {
-  tools: Record<NonNullable<ToolSpecification['name']>, Tool>;
 }
 
 // conversation route types
@@ -91,10 +42,7 @@ export interface ConversationRoute {
 
 // conversation types
 interface ConversationSendMessageInput {
-  content: DistributiveOmit<
-    Exclude<ConversationMessageContent, ContentBlock.ToolUseMember>,
-    'toolUse'
-  >[];
+  content: ConversationSendMessageInputContent[];
   aiContext?: string | Record<string, any>;
   toolConfiguration?: ToolConfiguration;
 }
