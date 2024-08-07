@@ -53,6 +53,9 @@ jobs:
         working-directory: ./amplify-api-next/packages/e2e-tests/sandbox/amplify-backends/01-p50
         run: |
           npx --version
+      - name: Test .bin
+        working-directory: ./amplify-api-next/packages/e2e-tests/sandbox
+        run: |
           ls -la ./node_modules/.bin
       - name: Test npx ampx
         working-directory: ./amplify-api-next/packages/e2e-tests/sandbox/amplify-backends/01-p50
