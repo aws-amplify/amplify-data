@@ -128,13 +128,9 @@ export const ampxCli = (
     env?: Record<string, string>;
   },
 ): ProcessController => {
-  console.log('ampxCLI');
-  console.log(args);
-  console.log('dir-------------', dir);
+  console.log('dir-------------------------', dir);
   const testpwd = execaSync('pwd').stdout.trim();
-  console.log('test pwd--------', testpwd);
-  const testls = execaSync('ls', ['-a']).stdout.trim();
-  console.log('test ls--------', testls);
+  console.log('test pwd--------------------', testpwd);
 
   try {
     // TODO This is a workaround to lookup locally installed binary as seen by npx
@@ -145,13 +141,6 @@ export const ampxCli = (
     //   cwd: dir,
     // }).stdout.trim();
     // console.log('ampx command path:', command);
-
-    // console.log('THIS PATH LOCALLY------------------------------', command);
-    // console.log('THIS PATH LOCALLY------------------------------', command);
-    // console.log('THIS PATH LOCALLY------------------------------', command);
-    // console.log('THIS PATH LOCALLY------------------------------', command);
-    // console.log('THIS PATH LOCALLY------------------------------', command);
-    // console.log('THIS PATH LOCALLY------------------------------', command);
 
     // if (!command) {
     //   throw new Error('Unable to locate the ampx bin path');
@@ -182,14 +171,13 @@ export const cdkCli = (
 ): ProcessController => {
   // We're using binary directly because cdk init doesn't seem to work.
   // See: https://github.com/aws/aws-cdk/issues/1694 (workaround from there didn't work).
-  // const command = execaSync('npx', ['which', 'cdk'], {
-  //   cwd: dir,
-  // }).stdout.trim();
-  // if (!command) {
-  //   throw new Error('Unable to locate cdk binary');
-  // }
+  const command = execaSync('npx', ['which', 'cdk'], {
+    cwd: dir,
+  }).stdout.trim();
+  if (!command) {
+    throw new Error('Unable to locate cdk binary');
+  }
 
-  const command = './node_modules/.bin/ampx';
   return new ProcessController(command, args, {
     cwd: dir,
     env: options?.env,
