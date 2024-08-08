@@ -7,7 +7,7 @@ interface ToolJsonInputSchema {
   json: DocumentType;
 }
 
-interface ToolSpecification {
+export interface ToolSpecification {
   name: string;
   inputSchema: ToolJsonInputSchema;
   description?: string;

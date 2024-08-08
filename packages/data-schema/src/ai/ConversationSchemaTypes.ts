@@ -31,7 +31,7 @@ export const createConversationField = (
 
   const conversationDirective = `@conversation(${argsString}${toolsString})`;
 
-  return `${typeName}(conversationId: ID!, content: [ContentBlockInput], aiContext: AWSJSON): ConversationMessage ${conversationDirective} @aws_cognito_user_pools`;
+  return `${typeName}(conversationId: ID!, content: [ContentBlockInput], aiContext: AWSJSON, toolConfiguration: ToolConfigurationInput): ConversationMessage ${conversationDirective} @aws_cognito_user_pools`;
 };
 
 const isRef = (query: unknown): query is { data: InternalRef['data'] } =>
@@ -60,8 +60,8 @@ const ConversationMessage = `interface ConversationMessage {
   conversationId: ID!
   role: ConversationParticipantRole
   content: [ContentBlock]
-  context: AWSJSON
-  uiComponents: [AWSJSON]
+  aiContext: AWSJSON
+  toolConfiguration: ToolConfiguration
   createdAt: AWSDateTime
   updatedAt: AWSDateTime
   owner: String
@@ -118,6 +118,12 @@ const ImageBlockSource = `type ImageBlockSource {
   bytes: String
 }`;
 
+const ToolUseBlockInput = `input ToolUseBlockInput {
+  toolUseId: String!
+  name: String!
+  input: AWSJSON!
+}`;
+
 const ToolUseBlock = `type ToolUseBlock {
   toolUseId: String!
   name: String!
@@ -162,6 +168,7 @@ const ContentBlockInput = `input ContentBlockInput {
   document: DocumentBlockInput
   image: ImageBlockInput
   toolResult: ToolResultBlockInput
+  toolUse: ToolUseBlockInput
 }`;
 
 const ContentBlock = `type ContentBlock {
@@ -172,6 +179,43 @@ const ContentBlock = `type ContentBlock {
   toolUse: ToolUseBlock
 }`;
 
+const ToolConfigurationInput = `input ToolConfigurationInput {
+  tools: [ToolInput]
+}`;
+
+const ToolInput = `input ToolInput {
+  toolSpec: ToolSpecificationInput
+}`;
+
+const ToolSpecificationInput = `input ToolSpecificationInput {
+  name: String!
+  description: String
+  inputSchema: ToolInputSchemaInput!
+}`;
+
+const ToolInputSchemaInput = `input ToolInputSchemaInput {
+  json: AWSJSON
+}`;
+
+const ToolConfiguration = `type ToolConfiguration {
+  tools: [Tool]
+}`;
+
+const Tool = `type Tool {
+  toolSpec: ToolSpecification
+}`;
+
+const ToolSpecification = `type ToolSpecification {
+  name: String!
+  description: String
+  inputSchema: ToolInputSchema!
+}`;
+
+const ToolInputSchema = `type ToolInputSchema {
+  json: AWSJSON
+}`;
+
+
 export const conversationTypes: string[] = [
   ConversationParticipantRole,
   ConversationMessage,
@@ -179,6 +223,7 @@ export const conversationTypes: string[] = [
   DocumentBlockInput,
   ImageBlockSourceInput,
   ImageBlockInput,
+  ToolUseBlockInput,
   ToolResultContentBlockInput,
   ToolResultBlockInput,
   DocumentBlockSource,
@@ -195,4 +240,12 @@ export const conversationTypes: string[] = [
   ContentBlockToolResult,
   ContentBlockInput,
   ContentBlock,
+  ToolConfigurationInput,
+  ToolInput,
+  ToolSpecificationInput,
+  ToolInputSchemaInput,
+  ToolConfiguration,
+  Tool,
+  ToolSpecification,
+  ToolInputSchema,
 ];

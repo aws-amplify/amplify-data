@@ -13,6 +13,7 @@ import type {
 } from '../../bridge-types';
 import { customOpFactory } from '../operations/custom';
 import { pickConversationMessageProperties } from './pickConversationMessageProperties';
+import { Tool, ToolSpecification } from '../../../ai/types/ToolConfiguration';
 
 export const createSendMessageFunction =
   (
@@ -24,6 +25,10 @@ export const createSendMessageFunction =
   ): Conversation['sendMessage'] =>
   async ({ aiContext, content, toolConfiguration }) => {
     const { conversations } = modelIntrospection;
+
+    const tools: { toolSpec: ToolSpecification }[] = toolConfiguration?.tools
+      ? Object.entries(toolConfiguration.tools).map(convertToolForGql)
+      : [];
     // Safe guard for standalone function. When called as part of client generation, this should never be falsy.
     if (!conversations) {
       return {} as SingularReturnValue<ConversationMessage>;
@@ -43,10 +48,23 @@ export const createSendMessageFunction =
       aiContext: JSON.stringify(aiContext),
       content,
       conversationId,
-      toolConfiguration,
+      toolConfiguration: { tools },
     });
     return {
       data: data ? pickConversationMessageProperties(data) : data,
       errors,
     };
   };
+
+  function convertToolForGql(value: [string, Tool]) {
+    const [name, tool] = value;
+    return {
+      toolSpec: {
+        name,
+        description: tool.description,
+        inputSchema: {
+          json: JSON.stringify(tool.inputSchema?.json)
+        }
+      }
+    };
+  }
