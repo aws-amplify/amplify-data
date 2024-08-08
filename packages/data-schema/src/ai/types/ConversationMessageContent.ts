@@ -3,32 +3,32 @@
 
 import { ImageBlock, ToolResultBlock, ToolUseBlock } from './contentBlocks';
 
-interface ConversationMessageTextContent {
+export interface ConversationMessageTextContent {
   text: string;
   image?: never;
   toolUse?: never;
   toolResult?: never;
 }
 
-interface ConversationMessageImageContent {
+export interface ConversationMessageImageContent {
   text?: never;
   image: ImageBlock;
   toolUse?: never;
   toolResult?: never;
 }
 
-interface ConversationMessageToolUseContent {
+export interface ConversationMessageToolUseContent {
   text?: never;
   image?: never;
   toolUse: ToolUseBlock;
   toolResult?: never;
 }
 
-interface ConversationMessageToolResultContent {
+export interface ConversationMessageToolResultContent {
   text?: never;
   image?: never;
   toolUse?: never;
-  toolResult?: ToolResultBlock;
+  toolResult: ToolResultBlock;
 }
 
 export type ConversationMessageContent =

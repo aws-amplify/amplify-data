@@ -1,14 +1,16 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-export const pickConversationMessageProperties = ({
+import { deserializeContent } from './conversationMessageDeserializers';
+
+export const convertItemToConversationMessage = ({
   content,
   createdAt,
   id,
   conversationId,
   role,
 }: any) => ({
-  content,
+  content: deserializeContent(content),
   conversationId,
   createdAt,
   id,

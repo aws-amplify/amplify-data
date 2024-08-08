@@ -4,19 +4,19 @@
 import type { DocumentType } from '../../runtime/bridge-types';
 import { ImageBlock } from './contentBlocks';
 
-interface ToolResultTextContent {
+export interface ToolResultTextContent {
   text: string;
   image?: never;
   json?: never;
 }
 
-interface ToolResultImageContent {
+export interface ToolResultImageContent {
   text?: never;
   image: ImageBlock;
   json?: never;
 }
 
-interface ToolResultJsonContent {
+export interface ToolResultJsonContent {
   text?: never;
   image?: never;
   json: DocumentType;

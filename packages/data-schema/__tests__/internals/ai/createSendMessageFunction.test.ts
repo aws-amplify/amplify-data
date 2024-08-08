@@ -4,27 +4,45 @@
 import type { Conversation } from '../../../src/ai/ConversationType';
 import type { BaseClient } from '../../../src/runtime';
 import type { ModelIntrospectionSchema } from '../../../src/runtime/bridge-types';
-import { pickConversationMessageProperties } from '../../../src/runtime/internals/ai/pickConversationMessageProperties';
+import { convertItemToConversationMessage } from '../../../src/runtime/internals/ai/convertItemToConversationMessage';
 import { createSendMessageFunction } from '../../../src/runtime/internals/ai/createSendMessageFunction';
 import { customOpFactory } from '../../../src/runtime/internals/operations/custom';
+import {
+  serializeAiContext,
+  serializeContent,
+  serializeToolConfiguration,
+} from '../../../src/runtime/internals/ai/conversationMessageSerializers';
 
-jest.mock(
-  '../../../src/runtime/internals/ai/pickConversationMessageProperties',
-);
+jest.mock('../../../src/runtime/internals/ai/conversationMessageSerializers');
+jest.mock('../../../src/runtime/internals/ai/convertItemToConversationMessage');
 jest.mock('../../../src/runtime/internals/operations/custom');
 
 describe('createSendMessageFunction()', () => {
   let sendMessage: Conversation['sendMessage'];
   const mockContent = [{ text: 'foo' }];
   const mockAiContext = { location: 'Seattle, WA' };
+  const mockSerializedAiContext = JSON.stringify(mockAiContext);
+  const mockToolName = 'myTool';
   const mockToolConfiguration = {
     tools: {
-      myTool: {
+      [mockToolName]: {
         inputSchema: {
           json: {},
         },
       },
     },
+  };
+  const mockSerializedToolConfiguration = {
+    tools: [
+      {
+        toolSpec: {
+          name: mockToolName,
+          inputSchema: {
+            json: JSON.stringify({}),
+          },
+        },
+      },
+    ],
   };
   const mockConversationName = 'conversation-name';
   const mockConversationId = 'conversation-id';
@@ -41,15 +59,24 @@ describe('createSendMessageFunction()', () => {
   } as unknown as ModelIntrospectionSchema;
   // assert mocks
   const mockCustomOpFactory = customOpFactory as jest.Mock;
-  const mockpickConversationMessageProperties =
-    pickConversationMessageProperties as jest.Mock;
+  const mockConvertItemToConversationMessage =
+    convertItemToConversationMessage as jest.Mock;
+  const mockSerializeAiContext = serializeAiContext as jest.Mock;
+  const mockSerializeContent = serializeContent as jest.Mock;
+  const mockSerializeToolConfiguration =
+    serializeToolConfiguration as jest.Mock;
   // create mocks
   const mockCustomOp = jest.fn();
 
   beforeAll(async () => {
-    mockpickConversationMessageProperties.mockImplementation((data) => data);
+    mockConvertItemToConversationMessage.mockImplementation((data) => data);
     mockCustomOp.mockReturnValue({ data: mockMessage });
     mockCustomOpFactory.mockReturnValue(mockCustomOp);
+    mockSerializeAiContext.mockReturnValue(mockSerializedAiContext);
+    mockSerializeContent.mockImplementation((content) => content);
+    mockSerializeToolConfiguration.mockReturnValue(
+      mockSerializedToolConfiguration,
+    );
     sendMessage = await createSendMessageFunction(
       {} as BaseClient,
       mockModelIntrospectionSchema,
@@ -57,6 +84,10 @@ describe('createSendMessageFunction()', () => {
       mockConversationName,
       jest.fn(),
     );
+  });
+
+  afterEach(() => {
+    jest.clearAllMocks();
   });
 
   it('returns a sendMessage function', async () => {
@@ -79,11 +110,36 @@ describe('createSendMessageFunction()', () => {
         false,
         expect.any(Function),
       );
+      expect(mockSerializeAiContext).toHaveBeenCalledWith(mockAiContext);
+      expect(mockSerializeContent).toHaveBeenCalledWith(mockContent);
+      expect(mockSerializeToolConfiguration).toHaveBeenCalledWith(
+        mockToolConfiguration,
+      );
       expect(mockCustomOp).toHaveBeenCalledWith({
-        aiContext: JSON.stringify(mockAiContext),
+        aiContext: mockSerializedAiContext,
         content: mockContent,
         conversationId: mockConversationId,
-        toolConfiguration: mockToolConfiguration,
+        toolConfiguration: mockSerializedToolConfiguration,
+      });
+      expect(data).toBe(mockMessage);
+    });
+
+    it('does not send optional properties if undefined', async () => {
+      const { data } = await sendMessage({ content: mockContent });
+
+      expect(mockCustomOpFactory).toHaveBeenCalledWith(
+        {},
+        mockModelIntrospectionSchema,
+        'mutation',
+        mockConversationSchema.message.send,
+        false,
+        expect.any(Function),
+      );
+      expect(mockSerializeAiContext).not.toHaveBeenCalled();
+      expect(mockSerializeToolConfiguration).not.toHaveBeenCalled();
+      expect(mockCustomOp).toHaveBeenCalledWith({
+        content: mockContent,
+        conversationId: mockConversationId,
       });
       expect(data).toBe(mockMessage);
     });

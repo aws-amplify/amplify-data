@@ -33,7 +33,7 @@ exports[`ai routes conversations 1`] = `
 }
 
 type Mutation {
-  ChatBot(conversationId: ID!, content: [ContentBlockInput], aiContext: AWSJSON): ConversationMessage @conversation(aiModel: "Claude3Haiku", systemPrompt: "Hello, world!", tools: [{ name: "myToolQuery", description: "does a thing" }, { name: "anotherToolQuery", description: "does a different thing" }]) @aws_cognito_user_pools
+  ChatBot(conversationId: ID!, content: [ContentBlockInput], aiContext: AWSJSON, toolConfiguration: ToolConfigurationInput): ConversationMessage @conversation(aiModel: "Claude3Haiku", systemPrompt: "Hello, world!", tools: [{ name: "myToolQuery", description: "does a thing" }, { name: "anotherToolQuery", description: "does a different thing" }]) @aws_cognito_user_pools
 }
 
 type Query {
@@ -51,8 +51,8 @@ interface ConversationMessage {
   conversationId: ID!
   role: ConversationParticipantRole
   content: [ContentBlock]
-  context: AWSJSON
-  uiComponents: [AWSJSON]
+  aiContext: AWSJSON
+  toolConfiguration: ToolConfiguration
   createdAt: AWSDateTime
   updatedAt: AWSDateTime
   owner: String
@@ -75,6 +75,12 @@ input ImageBlockSourceInput {
 input ImageBlockInput {
   format: String!
   source: ImageBlockSourceInput!
+}
+
+input ToolUseBlockInput {
+  toolUseId: String!
+  name: String!
+  input: AWSJSON!
 }
 
 input ToolResultContentBlockInput {
@@ -154,6 +160,7 @@ input ContentBlockInput {
   document: DocumentBlockInput
   image: ImageBlockInput
   toolResult: ToolResultBlockInput
+  toolUse: ToolUseBlockInput
 }
 
 type ContentBlock {
@@ -162,6 +169,42 @@ type ContentBlock {
   image: ImageBlock
   toolResult: ToolResultBlock
   toolUse: ToolUseBlock
+}
+
+input ToolConfigurationInput {
+  tools: [ToolInput]
+}
+
+input ToolInput {
+  toolSpec: ToolSpecificationInput
+}
+
+input ToolSpecificationInput {
+  name: String!
+  description: String
+  inputSchema: ToolInputSchemaInput!
+}
+
+input ToolInputSchemaInput {
+  json: AWSJSON
+}
+
+type ToolConfiguration {
+  tools: [Tool]
+}
+
+type Tool {
+  toolSpec: ToolSpecification
+}
+
+type ToolSpecification {
+  name: String!
+  description: String
+  inputSchema: ToolInputSchema!
+}
+
+type ToolInputSchema {
+  json: AWSJSON
 }"
 `;
 

@@ -7,13 +7,11 @@ import type {
   ModelIntrospectionSchema,
   SchemaModel,
 } from '../../../src/runtime/bridge-types';
-import { pickConversationMessageProperties } from '../../../src/runtime/internals/ai/pickConversationMessageProperties';
+import { convertItemToConversationMessage } from '../../../src/runtime/internals/ai/convertItemToConversationMessage';
 import { createListMessagesFunction } from '../../../src/runtime/internals/ai/createListMessagesFunction';
 import { listFactory } from '../../../src/runtime/internals/operations/list';
 
-jest.mock(
-  '../../../src/runtime/internals/ai/pickConversationMessageProperties',
-);
+jest.mock('../../../src/runtime/internals/ai/convertItemToConversationMessage');
 jest.mock('../../../src/runtime/internals/operations/list');
 
 describe('createListMessagesFunction()', () => {
@@ -39,13 +37,13 @@ describe('createListMessagesFunction()', () => {
   } as unknown as ModelIntrospectionSchema;
   // assert mocks
   const mockListFactory = listFactory as jest.Mock;
-  const mockpickConversationMessageProperties =
-    pickConversationMessageProperties as jest.Mock;
+  const mockConvertItemToConversationMessage =
+    convertItemToConversationMessage as jest.Mock;
   // create mocks
   const mockList = jest.fn();
 
   beforeAll(async () => {
-    mockpickConversationMessageProperties.mockImplementation((data) => data);
+    mockConvertItemToConversationMessage.mockImplementation((data) => data);
     mockList.mockReturnValue({ data: [mockMessage, mockMessage2] });
     mockListFactory.mockReturnValue(mockList);
     listMessages = await createListMessagesFunction(
@@ -55,6 +53,10 @@ describe('createListMessagesFunction()', () => {
       {} as SchemaModel,
       jest.fn(),
     );
+  });
+
+  afterEach(() => {
+    jest.clearAllMocks();
   });
 
   it('returns a listMessages function', async () => {
