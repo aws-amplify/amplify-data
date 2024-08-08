@@ -13,8 +13,8 @@
     "test-in-band": "NODE_OPTIONS=\"$NODE_OPTIONS --experimental-vm-modules\" npx jest --run-in-band"
   },
   "devDependencies": {
-    "@aws-amplify/backend": "latest",
-    "@aws-amplify/backend-cli": "latest",
+    "@aws-amplify/backend": "test",
+    "@aws-amplify/backend-cli": "test",
     "@aws-amplify/data-schema": "file:../../../node_modules/@aws-amplify/data-schema",
     "@aws-amplify/data-schema-types": "file:../../../node_modules/@aws-amplify/data-schema-types",
     "@aws-sdk/client-cloudformation": "^3.465.0",
