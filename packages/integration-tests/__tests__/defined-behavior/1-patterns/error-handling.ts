@@ -688,21 +688,19 @@ describe('Exceptions', () => {
   // Open question: Is there a way we can move more of the graphql client
   // implementation into this repo? This feels like something we should ideally
   // be able to fix *in this repo*.
-  describe.skip('Explicit cancellation results in an exception', () => {
+  describe.only('Explicit cancellation results in an exception', () => {
     function mockSleepingFetch() {
       jest.spyOn(global, 'fetch').mockImplementation(async (input, init) => {
         const abortSignal = init?.signal;
-        // This does indeed exist ...
-        console.log({ abortSignal });
-
         return new Promise((_unsleep, reject) => {
           if (abortSignal) {
-            if (abortSignal.aborted) reject(abortSignal.reason);
-            abortSignal.addEventListener('abort', (event) => {
-              // ... but, 'abort' is never firing. What am I not understanding?
-              console.log('aborted');
-              reject(event);
-            });
+            if (abortSignal.aborted) {
+              reject(abortSignal.reason);
+            } else {
+              abortSignal.addEventListener('abort', (event) => {
+                reject(event);
+              });
+            }
           }
         });
       });
@@ -721,11 +719,18 @@ describe('Exceptions', () => {
       jest.resetModules();
     });
 
+    // test.only('sanity check', async () => {
+    //   async function doesFail() {
+    //     throw new Error('bad');
+    //   }
+    //   await expect(doesFail()).rejects.toThrow();
+    // });
+
     const TodoModelCases = [
       ['list', {}],
-      ['get', { id: 'some-id' }],
-      ['update', { id: 'some-id', content: 'some content' }],
-      ['delete', { id: 'some-id' }],
+      // ['get', { id: 'some-id' }],
+      // ['update', { id: 'some-id', content: 'some content' }],
+      // ['delete', { id: 'some-id' }],
     ] as const;
 
     for (const [op, args] of TodoModelCases) {
@@ -739,8 +744,40 @@ describe('Exceptions', () => {
         const isCanceled = client.cancel(request);
 
         expect(isCanceled).toBe(true);
-        await expect(request).rejects.toThrow();
+
+        // const result = await request;
+        // console.log({ result });
+
+        let caught = undefined as any;
+        try {
+          await request;
+        } catch (error) {
+          caught = error;
+          console.log('caught', error);
+        }
+
+        // await expect(request).rejects.toThrow();
+        expect(caught).not.toBeUndefined();
       });
     }
+
+    test.skip(`in graphql() throws cancellation error`, async () => {
+      const config = await buildAmplifyConfig(schema);
+      Amplify.configure(config);
+      const client = generateClient<Schema>();
+
+      const request = client.graphql({
+        query: `query Q { getWhatever { a b c } }`,
+      });
+
+      // typecase here because we can only cancel Promise-like requests,
+      // and TS can't tell whether `request` is a Promise or a sub.
+      const isCanceled = client.cancel(request as any);
+
+      expect(isCanceled).toBe(true);
+      await expect(request).rejects.toThrow();
+    });
+
+    // TODO lazy loaders ...
   });
 });

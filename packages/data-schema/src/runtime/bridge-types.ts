@@ -374,10 +374,10 @@ export type BaseSSRClient = {
 export type GraphQLMethod = (
   options: GraphQLOptions,
   additionalHeaders?: CustomHeaders | undefined,
-) => GraphQLResult | GraphqlSubscriptionResult;
+) => Promise<GraphQLResult> | GraphqlSubscriptionResult;
 
 export type GraphQLMethodSSR = (
   contextSpec: AmplifyServer.ContextSpec,
   options: GraphQLOptions,
   additionalHeaders?: CustomHeaders | undefined,
-) => GraphQLResult | GraphqlSubscriptionResult;
+) => Promise<GraphQLResult> | GraphqlSubscriptionResult;

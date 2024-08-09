@@ -10,6 +10,7 @@ import {
   generateCustomQueriesProperty,
   generateCustomMutationsProperty,
   generateEnumsProperty,
+  upgradeClientCancellation,
 } from './internals';
 import { generateModelsProperty as generateModelsPropertyServer } from './internals/server';
 import { BaseClient, ClientInternalsGetter } from './bridge-types';
@@ -24,6 +25,7 @@ export function addSchemaToClientWithInstance<T extends Record<any, any>>(
   const apiGraphqlConfig = params.config?.API?.GraphQL;
 
   if (isApiGraphQLConfig(apiGraphqlConfig)) {
+    upgradeClientCancellation(client);
     (client as any).models = generateModelsPropertyServer<T>(
       client as any,
       params,
