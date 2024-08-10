@@ -20,7 +20,6 @@ export const getGeneratedOutputs = async (sandboxDir: string) => {
 
   // Check that the file exists:
   try {
-    console.log('file path:----------', filePath);
     const clientConfigStats = await fs.stat(filePath);
 
     // `true` if the file exists:

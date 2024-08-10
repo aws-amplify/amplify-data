@@ -51,20 +51,6 @@ jobs:
       - name: Install Sandbox E2E Dependencies
         working-directory: ./amplify-api-next
         run: npm run e2e-sandbox:install
-      - name: Test npx
-        working-directory: ./amplify-api-next/packages/e2e-tests/sandbox/amplify-backends/01-p50
-        run: |
-          npx --version
-      - name: Test .bin
-        working-directory: ./amplify-api-next/packages/e2e-tests/sandbox
-        run: |
-          ls -la ./node_modules/.bin
-      - name: Test npx ampx
-        working-directory: ./amplify-api-next/packages/e2e-tests/sandbox/amplify-backends/01-p50
-        run: |
-          npx which ampx
-      - name: Check Node version
-        run: node --version
       - name: Run E2E sandbox tests
         working-directory: ./amplify-api-next
         run: npm run e2e-sandbox:test

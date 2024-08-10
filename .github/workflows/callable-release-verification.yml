@@ -2,7 +2,6 @@ name: Release Verification Tests
 
 on: workflow_call
 
-# temp (for testing CI run):
 jobs:
   prebuild-ubuntu:
     uses: ./.github/workflows/callable-prebuild-amplify-api-next.yml
@@ -19,7 +18,6 @@ jobs:
     needs:
       - prebuild-ubuntu
     uses: ./.github/workflows/callable-local-e2e-tests.yml
-  # temp (for testing CI run):
   e2e:
     needs:
       - prebuild-ubuntu
