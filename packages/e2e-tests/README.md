@@ -58,36 +58,24 @@ Test setup / execution is structured as follows:
 5. Sandbox is torn down after the tests are complete. `.amplify/` and
    `amplify_outputs.json` are deleted.
 
-## [WIP] CI AWS Credentials:
+## CI AWS Credentials:
 
-AWS credentials are required to deploy / teardown sandboxes. Below is an overview of the setup:
-
-- We follow the recommended integration to get AWS account credentials: https://w.amazon.com/bin/view/Open_Source/GitHub/Actions.
-
-  - Uses the [GitHub Actions OIDC integration](https://docs.github.com/en/actions/deployment/security-hardening-your-deployments/configuring-openid-connect-in-amazon-web-services).
-  - We use the [aws-actions/configure-aws-credentials](https://github.com/aws-actions/configure-aws-credentials#assuming-a-role) to obtain credentials from the IAM OIDC provider.
-
-- The CLI commands pick up credentials using the default credential provider which resolves to the env vars that the `configure-aws-credentials` GitHub Action sets.
+We follow the recommended OS approach to get AWS account credentials: https://w.amazon.com/bin/view/Open_Source/GitHub/Actions.
+Specifically, we use the [aws-actions/configure-aws-credentials](https://github.com/aws-actions/configure-aws-credentials#assuming-a-role) GH Action to obtain credentials from
+the IAM OIDC provider.
 
 ### IAM trust policy restrictions for OIDC provider:
 
-- Currently, the trust policy for the OIDC provider is set to only allow execution of the `main` branch on `amplify-api-next`, since this branch contains appropriate restrictions to limit E2E runs (i.e. test runs only occur when an approved PR has been merged to `main`).
+Currently, the trust policy for the OIDC provider is set to only allow execution
+of the `main` branch on `amplify-api-next`, since this branch contains appropriate
+restrictions to limit E2E runs (test runs only occur when an approved PR has
+been merged to `main`).
 
-If we want to extend this policy to allow us to run tests on other branches, we could update the `Trust Relationship` configuration of the IAM role to be restricted to a repository environment, instead.
+If we want to extend this policy to allow us to run tests on other branches, we
+could update the `Trust Relationship` configuration of the IAM role to be
+restricted to a repository environment, instead.
 
-To view identify provider: Console > IAM > Identity providers.
-
-### How this differs from backend:
-
-In the event we need to include more permissive policies for more fine-grained control of our sandbox setup / teardown, here is a brief overview of how the backend team handles this:
-
-- Separately, they have an AWS profile that contains additional test harness permissions which is configured [here](https://github.com/aws-amplify/amplify-backend/blob/f5eeb67d840a194ffeeb585bfa0ba9468c1f6cda/.github/workflows/health_checks.yml#L207-L212) and then gets loaded into various clients eg [here](https://github.com/aws-amplify/amplify-backend/blob/f5eeb67d840a194ffeeb585bfa0ba9468c1f6cda/packages/integration-tests/src/test-project-setup/cdk/test_cdk_project_creator.ts#L30)
-- Short summary is that we want all npx ampx command to use a role that only has AmplifyBackendDeployFullAccess policy, so we can catch if we introduce anything that would require change of that policy.
-- However, our test code requires more permissions (for setup or cleanup). That’s why we use different set of credentials for that which might have more permissive policies.
-- See [this PR](https://github.com/aws-amplify/amplify-backend/pull/768) for more details and implementation.
-- For more information about backend team’s e2e credentials here: https://quip-amazon.com/MzORADiHsLYf/amplify-backend-Repo-Ops-and-Internal-Dev-Workflows#temp:C:fHXb6180a4842dd485fa8902abf3
-
-- Since we are not testing sandbox functionality directly, and are only concerned with the schema builder, this fine-grained access is unncessary. Explaining here for context.
+To view identify provider details in the console, see: `Console > IAM > Identity Providers`
 
 ### Resources:
 
