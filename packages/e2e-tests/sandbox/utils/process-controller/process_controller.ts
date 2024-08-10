@@ -128,37 +128,17 @@ export const ampxCli = (
     env?: Record<string, string>;
   },
 ): ProcessController => {
-  console.log('dir-------------------------', dir);
-  const testpwd = execaSync('pwd').stdout.trim();
-  console.log('test pwd--------------------', testpwd);
+  // TODO This is a workaround to lookup locally installed binary as seen by npx
+  // We're using binary directly because signals (Ctrl+C) don't propagate
+  // to child processes without TTY emulator.
+  // See: https://github.com/aws-amplify/amplify-backend/issues/582
+  const rootDir = execaSync('pwd').stdout.trim();
+  const command = `${rootDir}/node_modules/.bin/ampx`;
 
-  try {
-    // TODO This is a workaround to lookup locally installed binary as seen by npx
-    // We're using binary directly because signals (Ctrl+C) don't propagate
-    // to child processes without TTY emulator.
-    // See: https://github.com/aws-amplify/amplify-backend/issues/582
-    const commandLast = execaSync('npx', ['which', 'ampx'], {
-      cwd: dir,
-    }).stdout.trim();
-
-    console.log('ampx command path:', commandLast);
-    // console.log('ampx command path:', command);
-
-    // if (!command) {
-    //   throw new Error('Unable to locate the ampx bin path');
-    // }
-    // TODO:
-    const command =
-      '/home/runner/work/amplify-api-next/amplify-api-next/amplify-api-next/packages/e2e-tests/sandbox/node_modules/.bin/ampx';
-
-    return new ProcessController(command, args, {
-      cwd: dir,
-      env: options?.env,
-    });
-  } catch (error) {
-    console.error('ERROR RETRIEVING AMPX COMMAND PATH:', error);
-    throw error;
-  }
+  return new ProcessController(command, args, {
+    cwd: dir,
+    env: options?.env,
+  });
 };
 
 /**
