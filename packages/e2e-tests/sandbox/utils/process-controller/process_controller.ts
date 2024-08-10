@@ -137,9 +137,11 @@ export const ampxCli = (
     // We're using binary directly because signals (Ctrl+C) don't propagate
     // to child processes without TTY emulator.
     // See: https://github.com/aws-amplify/amplify-backend/issues/582
-    // const command = execaSync('npx', ['which', 'ampx'], {
-    //   cwd: dir,
-    // }).stdout.trim();
+    const commandLast = execaSync('npx', ['which', 'ampx'], {
+      cwd: dir,
+    }).stdout.trim();
+
+    console.log('ampx command path:', commandLast);
     // console.log('ampx command path:', command);
 
     // if (!command) {
