@@ -1502,17 +1502,21 @@ describe('ai routes', () => {
     const schema = a.schema({
       Recipe: a
         .model({
-          directions: a.string().array(),
+          ingredients: a.string().array(),
+          directions: a.string(),
         })
         .authorization((allow) => allow.publicApiKey()),
-      makeRecipe: a.generation().returns(a.ref('Recipe')),
+      makeRecipe: a.generation({
+        aiModel: a.aiModel.anthropic.claude3Haiku(),
+        systemPrompt: 'Hello, world!'
+      }).returns(a.ref('Recipe')),
     });
 
     type Schema = ClientSchema<typeof schema>;
     type ActualMakeRecipe = Prettify<Schema['makeRecipe']>;
 
     type Expected = {
-      __entityType: 'customGeneration';
+      __entityType: 'customQuery';
     };
 
     type ActualChatBotInterface = Pick<ActualMakeRecipe, keyof Expected>;

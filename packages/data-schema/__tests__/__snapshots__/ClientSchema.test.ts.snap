@@ -211,7 +211,12 @@ type ToolInputSchema {
 exports[`ai routes generations 1`] = `
 "type Recipe @model @auth(rules: [{allow: public, provider: apiKey}])
 {
-  directions: [String]
+  ingredients: [String]
+  directions: String
+}
+
+type Query {
+  makeRecipe: Recipe @generation(aiModel: "Claude3Haiku", systemPrompt: "Hello, world!") 
 }"
 `;
 

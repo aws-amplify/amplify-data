@@ -297,12 +297,14 @@ describe('CustomOperation transform', () => {
     test('Generation route w/ no return should throw', () => {
       const s = a.schema({
         makeRecipe: a
-          .generation()
+          .generation({
+            aiModel: a.aiModel.anthropic.claude3Haiku(),
+            systemPrompt: 'Hello, world!'
+          })
           .arguments({
             content: a.string(),
           })
           .authorization((allow) => [allow.publicApiKey()])
-          .handler(a.handler.function('someHandler')),
       });
 
       expect(() => s.transform()).toThrow(
