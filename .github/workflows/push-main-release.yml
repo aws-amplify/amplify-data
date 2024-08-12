@@ -57,9 +57,9 @@ jobs:
   release-verification-testing:
     secrets: inherit
     uses: ./.github/workflows/callable-release-verification.yml
-  # release:
-  #   needs:
-  #     - release-verification-testing
-  #     - sandbox_test
-  #   secrets: inherit
-  #   uses: ./.github/workflows/callable-npm-publish-release.yml
+  release:
+    needs:
+      - release-verification-testing
+      - sandbox_test
+    secrets: inherit
+    uses: ./.github/workflows/callable-npm-publish-release.yml
