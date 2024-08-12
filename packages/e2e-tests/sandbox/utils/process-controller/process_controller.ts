@@ -135,6 +135,10 @@ export const ampxCli = (
   const rootDir = execaSync('pwd').stdout.trim();
   const command = `${rootDir}/node_modules/.bin/ampx`;
 
+  if (!command) {
+    throw new Error('Unable to locate the ampx bin path');
+  }
+
   return new ProcessController(command, args, {
     cwd: dir,
     env: options?.env,
