@@ -90,12 +90,6 @@ To view identify provider details in the console, see: `Console > IAM > Identity
 2. Add a corresponding test file under `__tests__`.
 3. Use the utils to generate / teardown the sandbox withthe process controller.
 
-## Job to destroy orphaned sandboxes
-
-- Backend team uses this https://github.com/aws-amplify/amplify-backend/blob/main/scripts/cleanup_e2e_resources.ts to destroy orphaned sandboxes.
-- This is run in the e2e test account here https://github.com/aws-amplify/amplify-backend/actions/workflows/e2e_resource_cleanup.yml
-- It can also be used to purge resources from personal AWS accounts.
-
 ## Using Execa with Jest
 
 Execa is the primary dependency used to run CLI commands in the process
