@@ -20,12 +20,12 @@ jobs:
     uses: ./.github/workflows/callable-prebuild-amplify-api-next.yml
     with:
       runs_on: ubuntu-latest
-  # TODO: This step is included at the top level as a workround (i.e. not in a
+  # This step is included at the top level as a workround (i.e. not in a
   # nested workflow). See: https://github.com/orgs/community/discussions/76409.
   # The `configure-aws-credentials` GH Action is unable to retrieve the JWT
-  # token when run from a nested workflow. Find a workaround or alternative so
-  # that this can be included in a nested workflow
-  # (e.g. `callable-sandbox-e2e-tests.yml`).
+  # token when run from a nested workflow.
+  # TODO: Find a workaround or alternative so that this can be included in a
+  # nested workflow (e.g. `callable-sandbox-e2e-tests.yml`).
   sandbox_test:
     name: Sandbox E2E Tests
     needs: prebuild-ubuntu
