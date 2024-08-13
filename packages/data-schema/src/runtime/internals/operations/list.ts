@@ -102,8 +102,8 @@ function _list(
             headers,
           ) as Promise<GraphQLResult>);
 
-      extendCancellability(basePromise, resultPromise);
-      const { data, extensions } = await basePromise;
+      const extendedPromise = extendCancellability(basePromise, resultPromise);
+      const { data, extensions } = await extendedPromise;
 
       // flatten response
       if (data !== undefined) {
@@ -215,7 +215,6 @@ function _list(
         }
       } else {
         // `data` is `null` or an empty object:
-        console.log('HERE WE ARE!');
         return handleListGraphQlError(error);
       }
     }

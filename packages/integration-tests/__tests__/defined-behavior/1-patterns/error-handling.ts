@@ -690,15 +690,15 @@ describe('Exceptions', () => {
   // be able to fix *in this repo*.
   describe.only('Explicit cancellation results in an exception', () => {
     function mockSleepingFetch() {
-      jest.spyOn(global, 'fetch').mockImplementation(async (input, init) => {
+      jest.spyOn(global, 'fetch').mockImplementation((input, init) => {
         const abortSignal = init?.signal;
-        return new Promise((_unsleep, reject) => {
+        return new Promise((_resolve, reject) => {
           if (abortSignal) {
             if (abortSignal.aborted) {
               reject(abortSignal.reason);
             } else {
               abortSignal.addEventListener('abort', (event) => {
-                reject(event);
+                reject(abortSignal.reason);
               });
             }
           }
@@ -719,49 +719,7 @@ describe('Exceptions', () => {
       jest.resetModules();
     });
 
-    // test.only('sanity check', async () => {
-    //   async function doesFail() {
-    //     throw new Error('bad');
-    //   }
-    //   await expect(doesFail()).rejects.toThrow();
-    // });
-
-    const TodoModelCases = [
-      ['list', {}],
-      // ['get', { id: 'some-id' }],
-      // ['update', { id: 'some-id', content: 'some content' }],
-      // ['delete', { id: 'some-id' }],
-    ] as const;
-
-    for (const [op, args] of TodoModelCases) {
-      test(`in Model.${op}() throws cancellation error`, async () => {
-        const config = await buildAmplifyConfig(schema);
-        Amplify.configure(config);
-        const client = generateClient<Schema>();
-
-        // @ts-ignore
-        const request = client.models.Todo[op](args);
-        const isCanceled = client.cancel(request);
-
-        expect(isCanceled).toBe(true);
-
-        // const result = await request;
-        // console.log({ result });
-
-        let caught = undefined as any;
-        try {
-          await request;
-        } catch (error) {
-          caught = error;
-          console.log('caught', error);
-        }
-
-        // await expect(request).rejects.toThrow();
-        expect(caught).not.toBeUndefined();
-      });
-    }
-
-    test.skip(`in graphql() throws cancellation error`, async () => {
+    test(`following graphql()`, async () => {
       const config = await buildAmplifyConfig(schema);
       Amplify.configure(config);
       const client = generateClient<Schema>();
@@ -770,12 +728,56 @@ describe('Exceptions', () => {
         query: `query Q { getWhatever { a b c } }`,
       });
 
-      // typecase here because we can only cancel Promise-like requests,
-      // and TS can't tell whether `request` is a Promise or a sub.
-      const isCanceled = client.cancel(request as any);
+      if (!(request instanceof Promise)) throw new Error();
+      const isCanceled = client.cancel(request);
 
       expect(isCanceled).toBe(true);
-      await expect(request).rejects.toThrow();
+      await expect(request).rejects.toThrow('AbortError');
+    });
+
+    const TodoModelCases = [
+      ['list', {}],
+      ['get', { id: 'some-id' }],
+      ['update', { id: 'some-id', content: 'some content' }],
+      ['delete', { id: 'some-id' }],
+    ] as const;
+
+    describe('when cancel is immediate', () => {
+      for (const [op, args] of TodoModelCases) {
+        test(`following Model.${op}()`, async () => {
+          const config = await buildAmplifyConfig(schema);
+          Amplify.configure(config);
+          const client = generateClient<Schema>();
+
+          // TS just can't tell whether args matches the op in the loop.
+          const request = client.models.Todo[op](args as any);
+          const isCanceled = client.cancel(request);
+
+          expect(isCanceled).toBe(true);
+          await expect(request).rejects.toThrow('AbortError');
+        });
+      }
+    });
+
+    describe('when cancel is delayed', () => {
+      for (const [op, args] of TodoModelCases) {
+        test(`following Model.${op}()`, async () => {
+          const config = await buildAmplifyConfig(schema);
+          Amplify.configure(config);
+          const client = generateClient<Schema>();
+
+          // TS just can't tell whether args matches the op in the loop.
+          const request = client.models.Todo[op](args as any);
+
+          // the delay
+          await new Promise((unsleep) => setTimeout(unsleep, 1));
+
+          const isCanceled = client.cancel(request);
+
+          expect(isCanceled).toBe(true);
+          await expect(request).rejects.toThrow('AbortError');
+        });
+      }
     });
 
     // TODO lazy loaders ...

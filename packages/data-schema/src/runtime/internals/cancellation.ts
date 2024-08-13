@@ -11,15 +11,17 @@ import { BaseClient } from '../bridge-types';
  * the value and repeats the check. If not, it will perform the underlying
  * cancel operation.
  */
-const promiseMap = new Map<Promise<any>, Promise<any>>();
+const promiseMap = new WeakMap<Promise<any>, Promise<any>>();
 
-export function extendCancellability(
-  existingCancellablePromise: Promise<any>,
+export function extendCancellability<T>(
+  existingCancellablePromise: Promise<T>,
   newPromiseToRegister: Promise<any>,
-) {
+): Promise<T> {
   promiseMap.set(newPromiseToRegister, existingCancellablePromise);
-  newPromiseToRegister.then(() => promiseMap.delete(newPromiseToRegister));
-  newPromiseToRegister.catch(() => promiseMap.delete(newPromiseToRegister));
+
+  return existingCancellablePromise.finally(() =>
+    promiseMap.delete(newPromiseToRegister),
+  );
 }
 
 /**

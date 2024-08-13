@@ -35,62 +35,10 @@ export function handleSingularGraphQlError(error: any) {
 }
 
 /**
- * Handle errors for list return types (list and index query operations)
+ *
+ * @param resolver
+ * @returns
  */
-export function handleListGraphQlErrorAsPromise(
-  error: any,
-  resolve: (arg: any) => any,
-  reject: (arg: any) => any,
-) {
-  if (error?.errors) {
-    // graphql errors pass through
-    resolve({
-      ...error,
-      data: [],
-    });
-  } else {
-    // non-graphql errors are re-thrown
-    reject(error);
-  }
-}
-
-/**
- * Handle errors for singular return types (create, get, update, delete operations)
- */
-export function handleSingularGraphQlErrorAsPromise(
-  error: any,
-  resolve: (arg: any) => any,
-  reject: (arg: any) => any,
-) {
-  if (error.errors) {
-    // graphql errors pass through
-    resolve({
-      ...error,
-      data: null,
-    });
-  } else {
-    // non-graphql errors are re-thrown
-    reject(error);
-  }
-}
-
-export function selfAwarePromise<T>(
-  resolver: (
-    resolve: (value: T) => void,
-    reject: (reason?: any) => void,
-    promise: Promise<T>,
-  ) => any,
-): Promise<T> {
-  let resolve: (value: T) => void;
-  let reject: (reason?: any) => void;
-  const resultPromise = new Promise<T>((res, rej) => {
-    resolve = res;
-    reject = rej;
-  });
-  resolver(resolve!, reject!, resultPromise);
-  return resultPromise;
-}
-
 export function selfAwareAsync<T>(
   resolver: (promise: Promise<T>) => Promise<T>,
 ): Promise<T> {
@@ -103,9 +51,10 @@ export function selfAwareAsync<T>(
   });
 
   resolver(resultPromise)
-    .then((result) => resolve(result))
+    .then((result) => {
+      resolve(result);
+    })
     .catch((error) => {
-      console.log('intermediate catch here', error);
       reject(error);
     });
 
