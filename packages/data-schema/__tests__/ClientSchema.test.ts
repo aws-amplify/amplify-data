@@ -1506,17 +1506,19 @@ describe('ai routes', () => {
           directions: a.string(),
         })
         .authorization((allow) => allow.publicApiKey()),
-      makeRecipe: a.generation({
-        aiModel: a.aiModel.anthropic.claude3Haiku(),
-        systemPrompt: 'Hello, world!'
-      }).returns(a.ref('Recipe')),
+      makeRecipe: a
+        .generation({
+          aiModel: a.aiModel.anthropic.claude3Haiku(),
+          systemPrompt: 'Hello, world!',
+        })
+        .returns(a.ref('Recipe')),
     });
 
     type Schema = ClientSchema<typeof schema>;
     type ActualMakeRecipe = Prettify<Schema['makeRecipe']>;
 
     type Expected = {
-      __entityType: 'customQuery';
+      __entityType: 'customGeneration';
     };
 
     type ActualChatBotInterface = Pick<ActualMakeRecipe, keyof Expected>;

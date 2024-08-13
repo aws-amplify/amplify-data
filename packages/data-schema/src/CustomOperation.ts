@@ -14,15 +14,14 @@ import type {
   FunctionHandler,
   HandlerType as Handler,
 } from './Handler';
-import { AiModel } from './ai/AiModelType';
-import { InferenceConfiguration } from './ai/ConversationType';
+import { AiModel, InferenceConfiguration } from './ai/AiModelType';
 
 const queryBrand = 'queryCustomOperation';
 const mutationBrand = 'mutationCustomOperation';
 const subscriptionBrand = 'subscriptionCustomOperation';
 const generationBrand = 'generationCustomOperation';
 
-export type CustomOperationBrand =
+type CustomOperationBrand =
   | typeof queryBrand
   | typeof mutationBrand
   | typeof subscriptionBrand
@@ -42,6 +41,7 @@ export const CustomOperationNames = [
   'Query',
   'Mutation',
   'Subscription',
+  'Generation',
 ] as const;
 type CustomOperationName = (typeof CustomOperationNames)[number];
 
@@ -52,6 +52,7 @@ type CustomData = {
   typeName: CustomOperationName;
   handlers: Handler[] | null;
   subscriptionSource: SubscriptionSource[];
+  generationInput?: GenerationInput;
 };
 
 type InternalCustomData = CustomData & {
@@ -138,17 +139,10 @@ export type InternalCustom<B extends CustomOperationBrand = any> =
     data: InternalCustomData;
   };
 
-export type InternalGenerationCustom<B extends CustomOperationBrand = 'generationCustomOperation'> =
-  CustomOperation<any, never, B> & {
-    data: InternalCustomData & {
-      generationInput: GenerationInput;
-    };
-  };
-
 function _custom<
   T extends CustomOperationParamShape,
   B extends CustomOperationBrand,
->(typeName: CustomOperationName, brand: B) {
+>(typeName: CustomOperationName, brand: B, generationInput?: GenerationInput) {
   const data: CustomData = {
     arguments: {},
     returnType: null,
@@ -156,6 +150,7 @@ function _custom<
     typeName: typeName,
     handlers: null,
     subscriptionSource: [],
+    generationInput,
   };
 
   const builder = brandedBuilder<T>(
@@ -181,6 +176,10 @@ function _custom<
         return this;
       },
       handler(handlers: HandlerInputType) {
+        if (generationInput) {
+          return this;
+        }
+
         data.handlers = Array.isArray(handlers)
           ? handlers
           : ([handlers] as Handler[]);
@@ -188,6 +187,10 @@ function _custom<
         return this;
       },
       for(source: SubscriptionSource | SubscriptionSource[]) {
+        if (generationInput) {
+          return this;
+        }
+
         data.subscriptionSource = Array.isArray(source) ? source : [source];
 
         return this;
@@ -309,120 +312,23 @@ export function subscription(): CustomOperation<
   return _custom('Subscription', subscriptionBrand);
 }
 
-// export type GenerationCustomOperation = CustomOperation<
-//   CustomOperationParamShape,
-//   any,
-//   typeof generationBrand
-// >;
-
-
-// export function generation(): CustomOperation<
-//   {
-//     arguments: null;
-//     returnType: null;
-//     authorization: [];
-//     typeName: 'Query';
-//     handlers: null;
-//   },
-//   'for' | 'handler',
-//   typeof generationBrand
-// > {
-//   return _custom('Query', generationBrand);
-// }
-
-
-// export const brandName = 'generationCustomOperation';
-
-export interface GenerationType
-  extends Brand<typeof generationBrand>,
-  GenerationInput { }
-
 export interface GenerationInput {
   aiModel: AiModel;
   systemPrompt: string;
   inferenceConfiguration?: InferenceConfiguration;
 }
 
-// function _generation(input: GenerationInput): GenerationInput {
-//   return { ...brand(brandName), ...input };
-// }
-
-
 export function generation(input: GenerationInput): CustomOperation<
-{
-  arguments: null;
-  returnType: null;
-  authorization: [];
-  typeName: 'Query';
-  handlers: null;
-  generationInput: null;
-},
-'for' | 'handler',
-typeof generationBrand
+  {
+    arguments: null;
+    returnType: null;
+    authorization: [];
+    typeName: 'Generation';
+    handlers: null;
+    generationInput: null;
+  },
+  'for' | 'handler',
+  typeof generationBrand
 > {
-  return __custom('Query', generationBrand, input);
-}
-
-export type GenerationOperationParamShape = CustomOperationParamShape & {
-  generationInput: GenerationInput
-};
-type GenerationCustomData = CustomData & {
-  generationInput: GenerationInput;
-};
-
-function __custom<
-  T extends GenerationOperationParamShape,
-  B extends CustomOperationBrand,
->(
-  typeName: CustomOperationName,
-  brand: B,
-  generationInput: GenerationInput,
-) {
-  const data: GenerationCustomData = {
-    arguments: {},
-    returnType: null,
-    authorization: [],
-    typeName: typeName,
-    handlers: null,
-    subscriptionSource: [],
-    generationInput,
-  };
-
-  const builder = brandedBuilder<T>(
-    {
-      arguments(args: CustomArguments) {
-        data.arguments = args;
-
-        return this;
-      },
-      returns(returnType: CustomReturnType) {
-        data.returnType = returnType;
-
-        return this;
-      },
-      authorization<AuthRuleType extends Authorization<any, any, any>>(
-        callback: (
-          allow: AllowModifierForCustomOperation,
-        ) => AuthRuleType | AuthRuleType[],
-      ) {
-        const rules = callback(allowForCustomOperations);
-        data.authorization = Array.isArray(rules) ? rules : [rules];
-
-        return this;
-      },
-      handler(handlers: HandlerInputType) {
-        return this;
-      },
-      for(source: SubscriptionSource | SubscriptionSource[]) {
-        return this;
-      },
-    },
-    brand,
-  );
-
-  return { ...builder, data } as InternalGenerationCustom<B> as CustomOperation<
-    T,
-    never,
-    B
-  >;
+  return _custom('Generation', generationBrand, input);
 }

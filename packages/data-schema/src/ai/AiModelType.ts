@@ -8,6 +8,12 @@ export interface AiModel {
   resourcePath: string;
 }
 
+export interface InferenceConfiguration {
+  topP?: number;
+  temperature?: number;
+  maxTokens?: number;
+}
+
 export function claude3Haiku(): AiModel {
   return {
     friendlyName: 'Claude3Haiku',

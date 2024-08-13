@@ -294,21 +294,42 @@ describe('CustomOperation transform', () => {
       expect(result).toMatchSnapshot();
     });
 
+    test('Generation route does not require a handler even when auth is defined', () => {
+      const s = a.schema({
+        Recipe: a.customType({
+          ingredients: a.string().array(),
+        }),
+        makeRecipe: a
+          .generation({
+            aiModel: a.aiModel.anthropic.claude3Haiku(),
+            systemPrompt: 'Hello, world!',
+          })
+          .arguments({
+            content: a.string(),
+          })
+          .returns(a.ref('Recipe'))
+          .authorization((allow) => allow.publicApiKey()),
+      });
+
+      const result = s.transform().schema;
+
+      expect(result).toMatchSnapshot();
+    });
+
     test('Generation route w/ no return should throw', () => {
       const s = a.schema({
         makeRecipe: a
           .generation({
             aiModel: a.aiModel.anthropic.claude3Haiku(),
-            systemPrompt: 'Hello, world!'
+            systemPrompt: 'Hello, world!',
           })
           .arguments({
             content: a.string(),
-          })
-          .authorization((allow) => [allow.publicApiKey()])
+          }),
       });
 
       expect(() => s.transform()).toThrow(
-        'Invalid Generation route definition. A Generation route must include a return type',
+        'Invalid Generation Route definition. A Generation Route must include a return type',
       );
     });
 

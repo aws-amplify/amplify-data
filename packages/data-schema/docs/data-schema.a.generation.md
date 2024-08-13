@@ -7,15 +7,50 @@
 **Signature:**
 
 ```typescript
-export declare function generation(): CustomOperation<{
+export declare function generation(input: GenerationInput): CustomOperation<{
     arguments: null;
     returnType: null;
     authorization: [];
     typeName: 'Generation';
     handlers: null;
-}, 'for', typeof generationBrand>;
+    generationInput: null;
+}, 'for' | 'handler', typeof generationBrand>;
 ```
+
+## Parameters
+
+<table><thead><tr><th>
+
+Parameter
+
+
+</th><th>
+
+Type
+
+
+</th><th>
+
+Description
+
+
+</th></tr></thead>
+<tbody><tr><td>
+
+input
+
+
+</td><td>
+
+GenerationInput
+
+
+</td><td>
+
+
+</td></tr>
+</tbody></table>
 **Returns:**
 
-CustomOperation&lt;{ arguments: null; returnType: null; authorization: \[\]; typeName: 'Generation'; handlers: null; }, 'for', typeof generationBrand&gt;
+CustomOperation&lt;{ arguments: null; returnType: null; authorization: \[\]; typeName: 'Generation'; handlers: null; generationInput: null; }, 'for' \| 'handler', typeof generationBrand&gt;
 
