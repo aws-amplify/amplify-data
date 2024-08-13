@@ -58,6 +58,31 @@ Test setup / execution is structured as follows:
 5. Sandbox is torn down after the tests are complete. `.amplify/` and
    `amplify_outputs.json` are deleted.
 
+## CI AWS Credentials:
+
+We follow the recommended OS approach to get AWS account credentials: https://w.amazon.com/bin/view/Open_Source/GitHub/Actions.
+Specifically, we use the [aws-actions/configure-aws-credentials](https://github.com/aws-actions/configure-aws-credentials#assuming-a-role) GH Action to obtain credentials from
+the IAM OIDC provider.
+
+### IAM trust policy restrictions for OIDC provider:
+
+Currently, the trust policy for the OIDC provider is set to only allow execution
+of the `main` branch on `amplify-api-next`, since this branch contains appropriate
+restrictions to limit E2E runs (test runs only occur when an approved PR has
+been merged to `main`).
+
+If we want to extend this policy to allow us to run tests on other branches, we
+could update the `Trust Relationship` configuration of the IAM role to be
+restricted to a repository environment, instead.
+
+To view identify provider details in the console, see: `Console > IAM > Identity Providers`
+
+### Resources:
+
+- https://w.amazon.com/bin/view/Open_Source/GitHub/Actions
+- https://docs.github.com/en/actions/deployment/security-hardening-your-deployments/configuring-openid-connect-in-amazon-web-services
+- https://github.com/aws-actions/configure-aws-credentials
+
 ## How to add a new test:
 
 1. Add a new project directory under `amplify-backends`. Must also contain a

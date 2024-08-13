@@ -26,3 +26,7 @@ dist-ssr
 # amplify
 .amplify
 **/amplify_outputs.json
+
+# Lock files
+package-lock.json
+yarn.lock
