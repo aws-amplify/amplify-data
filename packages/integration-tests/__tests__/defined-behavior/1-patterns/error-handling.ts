@@ -738,6 +738,7 @@ describe('Exceptions', () => {
     const TodoModelCases = [
       ['list', {}],
       ['get', { id: 'some-id' }],
+      ['create', { id: 'some-id', content: 'some content' }],
       ['update', { id: 'some-id', content: 'some content' }],
       ['delete', { id: 'some-id' }],
     ] as const;
