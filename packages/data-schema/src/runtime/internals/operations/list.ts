@@ -22,7 +22,8 @@ import {
   initializeModel,
 } from '../APIClient';
 
-import { handleListGraphQlError, selfAwareAsync } from './utils';
+import { handleListGraphQlError } from './utils';
+import { selfAwareAsync } from '../../utils';
 
 import { extendCancellability } from '../cancellation';
 

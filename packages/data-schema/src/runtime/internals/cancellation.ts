@@ -19,9 +19,9 @@ export function extendCancellability<T>(
 ): Promise<T> {
   promiseMap.set(newPromiseToRegister, existingCancellablePromise);
 
-  return existingCancellablePromise.finally(() =>
-    promiseMap.delete(newPromiseToRegister),
-  );
+  return existingCancellablePromise.finally(() => {
+    promiseMap.delete(newPromiseToRegister);
+  });
 }
 
 /**
