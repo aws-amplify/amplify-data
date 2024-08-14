@@ -507,6 +507,7 @@ describe('Exceptions', () => {
         notes: a.hasMany('Note', 'todoId'),
         assignee: a.hasOne('Person', 'todoId'),
       })
+      .secondaryIndexes((index) => [index('priority').sortKeys(['content'])])
       .authorization((allow) => allow.owner()),
     Note: a
       .model({
@@ -775,6 +776,21 @@ describe('Exceptions', () => {
           await expect(request).rejects.toThrow('AbortError');
         });
 
+        test(`an index query`, async () => {
+          const config = await buildAmplifyConfig(schema);
+          Amplify.configure(config);
+          const client = generateClient<Schema>();
+
+          const request = client.models.Todo.listTodoByPriorityAndContent({
+            priority: 'high',
+          });
+          if (delay) await pause();
+          const isCanceled = client.cancel(request);
+
+          expect(isCanceled).toBe(true);
+          await expect(request).rejects.toThrow('AbortError');
+        });
+
         test(`a belongsTo lazy loader`, async () => {
           // set up mocks to create an *instantiated* object we can lazy-load from.
           jest.clearAllMocks();
@@ -874,8 +890,6 @@ describe('Exceptions', () => {
           await expect(request).rejects.toThrow('AbortError');
         });
       });
-
-      // TODO indexquery
     }
   });
 });
