@@ -9,11 +9,11 @@ A phone number scalar type thas is stored as a string server-side. Phone numbers
 **Signature:**
 
 ```typescript
-export declare function phone(): _Internal_ModelField<_Internal_Nullable<string>>;
+export declare function phone(): ModelField<Nullable<string>>;
 ```
 **Returns:**
 
-[\_Internal\_ModelField](./data-schema._internal_modelfield.md)<!-- -->&lt;[\_Internal\_Nullable](./data-schema._internal_nullable.md)<!-- -->&lt;string&gt;&gt;
+[ModelField](./data-schema.modelfield.md)<!-- -->&lt;[Nullable](./data-schema.nullable.md)<!-- -->&lt;string&gt;&gt;
 
 phone number field definition
 

@@ -9,7 +9,7 @@ import {
 } from '@aws-amplify/data-schema-types';
 import { AuthMode, CustomHeaders, SingularReturnValue } from '../src/runtime';
 import { configure } from '../src/internals';
-import { _Internal_Nullable } from '../src/ModelField';
+import { Nullable } from '../src/ModelField';
 import { AppSyncResolverEvent, Callback, Context } from 'aws-lambda';
 
 const fakeSecret = () => ({}) as any;
@@ -647,14 +647,14 @@ describe('custom operations', () => {
         context: Context,
         callback: Callback<
           | {
-              resultContent?: _Internal_Nullable<string> | undefined;
+              resultContent?: Nullable<string> | undefined;
             }
           | null
           | undefined
         >,
       ) => void | Promise<
         | {
-            resultContent?: _Internal_Nullable<string> | undefined;
+            resultContent?: Nullable<string> | undefined;
           }
         | null
         | undefined
@@ -664,13 +664,13 @@ describe('custom operations', () => {
       };
       returnType:
         | {
-            resultContent?: _Internal_Nullable<string> | undefined;
+            resultContent?: Nullable<string> | undefined;
           }
         | null
         | undefined;
       type:
         | {
-            resultContent?: _Internal_Nullable<string> | undefined;
+            resultContent?: Nullable<string> | undefined;
           }
         | null
         | undefined;
@@ -877,7 +877,7 @@ describe('custom operations', () => {
             | undefined,
         ) => SingularReturnValue<{
           id: string;
-          title?: _Internal_Nullable<string> | undefined;
+          title?: Nullable<string> | undefined;
         } | null>;
         // doesn't imply id field
         // doesn't imply timestamp fields
@@ -1102,14 +1102,14 @@ describe('custom operations', () => {
             context: Context,
             callback: Callback<
               | {
-                  resultContent?: _Internal_Nullable<string> | undefined;
+                  resultContent?: Nullable<string> | undefined;
                 }
               | null
               | undefined
             >,
           ) => void | Promise<
             | {
-                resultContent?: _Internal_Nullable<string> | undefined;
+                resultContent?: Nullable<string> | undefined;
               }
             | null
             | undefined
@@ -1119,13 +1119,13 @@ describe('custom operations', () => {
           };
           returnType:
             | {
-                resultContent?: _Internal_Nullable<string> | undefined;
+                resultContent?: Nullable<string> | undefined;
               }
             | null
             | undefined;
           type:
             | {
-                resultContent?: _Internal_Nullable<string> | undefined;
+                resultContent?: Nullable<string> | undefined;
               }
             | null
             | undefined;

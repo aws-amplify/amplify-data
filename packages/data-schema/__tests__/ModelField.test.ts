@@ -1,14 +1,11 @@
 import { expectTypeTestsToPassAsync } from 'jest-tsd';
 import { a } from '../src/index';
-import { _Internal_ModelField, InternalField, __auth } from '../src/ModelField';
+import { ModelField, InternalField, __auth } from '../src/ModelField';
 import {
-  _Internal_ModelRelationalField,
+  ModelRelationalField,
   InternalRelationalField,
 } from '../src/ModelRelationalField';
-import {
-  _Internal_Authorization,
-  ImpliedAuthFields,
-} from '../src/Authorization';
+import { Authorization, ImpliedAuthFields } from '../src/Authorization';
 
 // evaluates type defs in corresponding test-d.ts file
 it('should not produce static type errors', async () => {
@@ -27,8 +24,8 @@ describe('field level auth', () => {
       ]);
 
     type ExpectedAuthFields =
-      typeof field extends _Internal_ModelField<any, any, infer Auth>
-        ? Auth extends _Internal_Authorization<any, any, any>
+      typeof field extends ModelField<any, any, infer Auth>
+        ? Auth extends Authorization<any, any, any>
           ? ImpliedAuthFields<Auth>
           : never
         : never;
@@ -53,13 +50,8 @@ describe('field level auth', () => {
       ]);
 
     type ExpectedAuthFields =
-      typeof field extends _Internal_ModelRelationalField<
-        any,
-        any,
-        any,
-        infer Auth
-      >
-        ? Auth extends _Internal_Authorization<any, any, any>
+      typeof field extends ModelRelationalField<any, any, any, infer Auth>
+        ? Auth extends Authorization<any, any, any>
           ? ImpliedAuthFields<Auth>
           : never
         : never;

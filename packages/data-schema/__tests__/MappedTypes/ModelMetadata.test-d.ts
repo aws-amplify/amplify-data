@@ -13,7 +13,7 @@ import {
   RelationalMetadata,
   ModelSecondaryIndexes,
 } from '../../src/MappedTypes/ModelMetadata';
-import { _Internal_Json, _Internal_Nullable } from '../../src/ModelField';
+import { Json, Nullable } from '../../src/ModelField';
 
 describe('ModelIdentifier', () => {
   test('Default identifier', () => {
@@ -301,7 +301,7 @@ describe('RelationalMetadata', () => {
                 readonly createdAt?: string | undefined;
                 readonly updatedAt?: string | undefined;
                 title?: string | null | undefined;
-                metadata?: _Internal_Json | null | undefined;
+                metadata?: Json | null | undefined;
                 comments?: ResolvedFields['Post']['comments'];
               }
             | undefined;
@@ -555,7 +555,7 @@ describe('RelationalMetadata', () => {
         relationalInputFields: {
           post?:
             | {
-                title?: _Internal_Nullable<string> | undefined;
+                title?: Nullable<string> | undefined;
                 readonly createdAt?: string | undefined;
                 readonly updatedAt?: string | undefined;
                 author?: ResolvedFields['Post']['author'];

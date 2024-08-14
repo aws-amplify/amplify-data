@@ -1,12 +1,12 @@
 import type { UnionToIntersection } from '@aws-amplify/data-schema-types';
-import type { _Internal_CustomType, CustomTypeParamShape } from '../CustomType';
-import type { _Internal_EnumType } from '../EnumType';
+import type { CustomType, CustomTypeParamShape } from '../CustomType';
+import type { EnumType } from '../EnumType';
 import type {
   SchemaTypes,
   ModelAndCustomTypes,
   FieldTypesOfCustomType,
 } from './ResolveSchema';
-import type { _Internal_ModelType, ModelTypeParamShape } from '../ModelType';
+import type { ModelType, ModelTypeParamShape } from '../ModelType';
 
 export type NonModelTypesShape = {
   enums: Record<string, any>;
@@ -55,20 +55,20 @@ export type ExtractAndFlattenImplicitNonModelTypesFromFields<
   {
     // loop through the fields - omit the field that's not a non-model type
     [FieldProp in keyof Fields as Fields[FieldProp] extends
-      | _Internal_EnumType
-      | _Internal_CustomType<CustomTypeParamShape>
+      | EnumType
+      | CustomType<CustomTypeParamShape>
       ? FieldProp
       : never]: (
       x: NonNullable<Fields[FieldProp]> extends infer FieldType
         ? // if the filed is a enum extract it as is
-          FieldType extends _Internal_EnumType
+          FieldType extends EnumType
           ? {
               [Key in `${ParentTypeName}${Capitalize<
                 FieldProp & string
               >}`]: Fields[FieldProp];
             }
           : // if the field is a CustomType
-            FieldType extends _Internal_CustomType<
+            FieldType extends CustomType<
                 infer CustomTypeShape extends CustomTypeParamShape
               >
             ? // recursively extract to the Nested CustomType, and return the
@@ -100,7 +100,7 @@ export type ExtractImplicitNonModelTypes<
   Targets = ModelAndCustomTypes<SchemaTypes<Schema>>,
 > = UnionToIntersection<
   {
-    [Model in keyof Targets]: Targets[Model] extends _Internal_CustomType<
+    [Model in keyof Targets]: Targets[Model] extends CustomType<
       // if the target is a CustomType
       infer R extends CustomTypeParamShape
     >
@@ -110,7 +110,7 @@ export type ExtractImplicitNonModelTypes<
           R['fields']
         > & { [key in Model]: Targets[Model] }
       : // if the target is a ModelType
-        Targets[Model] extends _Internal_ModelType<
+        Targets[Model] extends ModelType<
             infer R extends ModelTypeParamShape,
             any
           >
@@ -130,16 +130,16 @@ type ResolveNonModelTypes<
   ResolvedSchema = SchemaTypes<Schema> & Extracted,
 > = {
   enums: {
-    [Model in keyof ResolvedSchema as ResolvedSchema[Model] extends _Internal_EnumType
+    [Model in keyof ResolvedSchema as ResolvedSchema[Model] extends EnumType
       ? Model
-      : never]: ResolvedSchema[Model] extends _Internal_EnumType<infer values>
+      : never]: ResolvedSchema[Model] extends EnumType<infer values>
       ? values[number]
       : never;
   };
   customTypes: {
-    [Model in keyof ResolvedSchema as ResolvedSchema[Model] extends _Internal_CustomType<CustomTypeParamShape>
+    [Model in keyof ResolvedSchema as ResolvedSchema[Model] extends CustomType<CustomTypeParamShape>
       ? Model
-      : never]: ResolvedSchema[Model] extends _Internal_CustomType<
+      : never]: ResolvedSchema[Model] extends CustomType<
       infer R extends CustomTypeParamShape
     >
       ? R['fields']

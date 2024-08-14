@@ -9,11 +9,11 @@ An integer scalar type with a supported value range between -(2^31) and 2^31-1.
 **Signature:**
 
 ```typescript
-export declare function integer(): _Internal_ModelField<_Internal_Nullable<number>>;
+export declare function integer(): ModelField<Nullable<number>>;
 ```
 **Returns:**
 
-[\_Internal\_ModelField](./data-schema._internal_modelfield.md)<!-- -->&lt;[\_Internal\_Nullable](./data-schema._internal_nullable.md)<!-- -->&lt;number&gt;&gt;
+[ModelField](./data-schema.modelfield.md)<!-- -->&lt;[Nullable](./data-schema.nullable.md)<!-- -->&lt;number&gt;&gt;
 
 integer field definition
 

@@ -1,4 +1,4 @@
-import { type _Internal_ModelType, model } from '../src/ModelType';
+import { type ModelType, model } from '../src/ModelType';
 import { string, id } from '../src/ModelField';
 import { schema } from '../src/ModelSchema';
 import { configure } from '../src/internals';

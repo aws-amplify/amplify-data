@@ -1,7 +1,7 @@
 import type { Brand } from './util';
 import type { InternalField, BaseModelField } from './ModelField';
-import type { _Internal_RefType } from './RefType';
-import type { _Internal_EnumType } from './EnumType';
+import type { RefType } from './RefType';
+import type { EnumType } from './EnumType';
 
 /**
  * Custom Types
@@ -16,9 +16,9 @@ export type CustomTypeAllowedModifiers = 'authorization' | 'array' | 'required';
 type CustomTypeFields = Record<
   string,
   | BaseModelField
-  | _Internal_RefType<any, any, any>
-  | _Internal_EnumType
-  | _Internal_CustomType<CustomTypeParamShape>
+  | RefType<any, any, any>
+  | EnumType
+  | CustomType<CustomTypeParamShape>
 >;
 
 type InternalModelFields = Record<string, InternalField>;
@@ -37,19 +37,18 @@ export type CustomTypeParamShape = {
 };
 
 /**
- * # INTERNAL
+ * Custom type container
  *
- * Not intended to be consumed directly, as naming and factoring
- * is subject to change.
+ * @param T - The shape of the custom type container
  */
-export type _Internal_CustomType<T extends CustomTypeParamShape> = T &
+export type CustomType<T extends CustomTypeParamShape> = T &
   Brand<'customType'>;
 
 /**
  * Internal representation of CustomType that exposes the `data` property.
  * Used at buildtime.
  */
-export type InternalCustomType = _Internal_CustomType<any> & {
+export type InternalCustomType = CustomType<any> & {
   data: InternalCustomTypeData;
 };
 
@@ -59,7 +58,7 @@ function _customType<T extends CustomTypeParamShape>(fields: T['fields']) {
     type: 'customType',
   };
 
-  return { data } as InternalCustomType as _Internal_CustomType<T>;
+  return { data } as InternalCustomType as CustomType<T>;
 }
 
 /**
@@ -96,6 +95,6 @@ function _customType<T extends CustomTypeParamShape>(fields: T['fields']) {
  */
 export function customType<T extends CustomTypeFields>(
   fields: T,
-): _Internal_CustomType<{ fields: T }> {
+): CustomType<{ fields: T }> {
   return _customType(fields);
 }

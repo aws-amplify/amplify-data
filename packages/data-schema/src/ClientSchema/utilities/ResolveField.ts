@@ -1,11 +1,11 @@
 import { BaseModelField } from '../../ModelField';
 import {
-  _Internal_ModelRelationalField,
+  ModelRelationalField,
   ModelRelationalFieldParamShape,
 } from '../../ModelRelationalField';
-import { _Internal_EnumType } from '../../EnumType';
-import { _Internal_CustomType } from '../../CustomType';
-import { _Internal_RefType, RefTypeParamShape } from '../../RefType';
+import { EnumType } from '../../EnumType';
+import { CustomType } from '../../CustomType';
+import { RefType, RefTypeParamShape } from '../../RefType';
 import { ResolveRef } from './ResolveRef';
 import { LazyLoader } from '../../runtime';
 
@@ -41,18 +41,13 @@ type ShallowPretty<T> = {
 export type ResolveIndividualField<Bag extends Record<string, any>, T> =
   T extends BaseModelField<infer FieldShape>
     ? FieldShape
-    : T extends _Internal_RefType<infer RefShape, any, any>
+    : T extends RefType<infer RefShape, any, any>
       ? ResolveRef<RefShape, Bag>
-      : T extends _Internal_ModelRelationalField<
-            infer RelationshipShape,
-            any,
-            any,
-            any
-          >
+      : T extends ModelRelationalField<infer RelationshipShape, any, any, any>
         ? ResolveRelationship<Bag, RelationshipShape>
-        : T extends _Internal_CustomType<infer CT>
+        : T extends CustomType<infer CT>
           ? ResolveFields<Bag, CT['fields']> | null
-          : T extends _Internal_EnumType<infer values>
+          : T extends EnumType<infer values>
             ? values[number] | null
             : never;
 
@@ -71,11 +66,11 @@ type IsRequired<T> =
     ? null extends FieldShape
       ? false
       : true
-    : T extends _Internal_RefType<infer RefShape, any, any>
+    : T extends RefType<infer RefShape, any, any>
       ? IsRefRequired<RefShape>
-      : T extends _Internal_ModelRelationalField<any, any, any, any>
+      : T extends ModelRelationalField<any, any, any, any>
         ? true
-        : T extends _Internal_CustomType<any> | _Internal_EnumType<any>
+        : T extends CustomType<any> | EnumType<any>
           ? false
           : never;
 

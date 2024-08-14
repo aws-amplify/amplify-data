@@ -9,9 +9,9 @@ A data model that creates a matching Amazon DynamoDB table and provides create, 
 **Signature:**
 
 ```typescript
-export declare function model<T extends ModelFields>(fields: T): _Internal_ModelType<{
+export declare function model<T extends ModelFields>(fields: T): ModelType<{
     fields: T;
-    identifier: _Internal_ModelDefaultIdentifier;
+    identifier: ModelDefaultIdentifier;
     secondaryIndexes: [];
     authorization: [];
 }>;
@@ -54,7 +54,7 @@ database table fields. Supports scalar types and relationship types.
 </tbody></table>
 **Returns:**
 
-[\_Internal\_ModelType](./data-schema._internal_modeltype.md)<!-- -->&lt;{ fields: T; identifier: [\_Internal\_ModelDefaultIdentifier](./data-schema._internal_modeldefaultidentifier.md)<!-- -->; secondaryIndexes: \[\]; authorization: \[\]; }&gt;
+[ModelType](./data-schema.modeltype.md)<!-- -->&lt;{ fields: T; identifier: [ModelDefaultIdentifier](./data-schema.modeldefaultidentifier.md)<!-- -->; secondaryIndexes: \[\]; authorization: \[\]; }&gt;
 
 a data model definition
 

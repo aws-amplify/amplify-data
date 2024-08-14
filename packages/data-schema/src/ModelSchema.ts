@@ -13,10 +13,10 @@ import {
   AddRelationshipFieldsToModelTypeFields,
   type BaseModelType,
 } from './ModelType';
-import type { _Internal_EnumType } from './EnumType';
-import type { _Internal_CustomType, CustomTypeParamShape } from './CustomType';
+import type { EnumType } from './EnumType';
+import type { CustomType, CustomTypeParamShape } from './CustomType';
 import type {
-  _Internal_CustomOperation,
+  CustomOperation,
   CustomOperationParamShape,
   InternalCustom,
   MutationCustomOperation,
@@ -27,14 +27,14 @@ import { processSchema } from './SchemaProcessor';
 import { AllowModifier, SchemaAuthorization, allow } from './Authorization';
 import { Brand, brand, getBrand, RenameUsingTuples } from './util';
 import {
-  _Internal_ModelRelationalField,
+  ModelRelationalField,
   ModelRelationalFieldParamShape,
 } from './ModelRelationalField';
 
-export { _Internal_ModelType as ModelType } from './ModelType';
-export { _Internal_EnumType as EnumType } from './EnumType';
-export { _Internal_CustomType as CustomType } from './CustomType';
-export { _Internal_CustomOperation as CustomOperation } from './CustomOperation';
+export { ModelType as ModelType } from './ModelType';
+export { EnumType as EnumType } from './EnumType';
+export { CustomType as CustomType } from './CustomType';
+export { CustomOperation as CustomOperation } from './CustomOperation';
 
 export const rdsSchemaBrandName = 'RDSSchema';
 export const rdsSchemaBrand = brand(rdsSchemaBrandName);
@@ -46,9 +46,9 @@ export type DDBSchemaBrand = Brand<typeof ddbSchemaBrandName>;
 
 type SchemaContent =
   | BaseModelType
-  | _Internal_CustomType<CustomTypeParamShape>
-  | _Internal_EnumType
-  | _Internal_CustomOperation<CustomOperationParamShape, any>;
+  | CustomType<CustomTypeParamShape>
+  | EnumType
+  | CustomOperation<CustomOperationParamShape, any>;
 
 // The SQL-only `addToSchema` accepts all top-level entities, excepts models
 type AddToSchemaContent = Exclude<SchemaContent, BaseModelType>;
@@ -60,10 +60,7 @@ export type ModelSchemaContents = Record<string, SchemaContent>;
 
 type InternalSchemaModels = Record<
   string,
-  | InternalModel
-  | _Internal_EnumType
-  | _Internal_CustomType<any>
-  | InternalCustom
+  InternalModel | EnumType | CustomType<any> | InternalCustom
 >;
 
 export type ModelSchemaParamShape = {
@@ -105,19 +102,19 @@ export type GenericModelSchema<T extends ModelSchemaParamShape> =
   BaseSchema<T> & Brand<typeof rdsSchemaBrandName | typeof ddbSchemaBrandName>;
 
 /**
- * # INTERNAL
+ * Model schema definition interface
  *
- * Not intended to be consumed directly, as naming and factoring
- * is subject to change.
+ * @param T - The shape of the model schema
+ * @param UsedMethods - The method keys already defined
  */
-export type _Internal_ModelSchema<
+export type ModelSchema<
   T extends ModelSchemaParamShape,
   UsedMethods extends 'authorization' | 'relationships' = never,
 > = Omit<
   {
     authorization: <AuthRules extends SchemaAuthorization<any, any, any>>(
       callback: (allow: AllowModifier) => AuthRules | AuthRules[],
-    ) => _Internal_ModelSchema<
+    ) => ModelSchema<
       SetTypeSubArg<T, 'authorization', AuthRules[]>,
       UsedMethods | 'authorization'
     >;
@@ -144,12 +141,7 @@ type OmitFromEach<Models, Modifier extends string> = {
 
 type RelationshipTemplate = Record<
   string,
-  _Internal_ModelRelationalField<
-    ModelRelationalFieldParamShape,
-    string,
-    any,
-    any
-  >
+  ModelRelationalField<ModelRelationalFieldParamShape, string, any, any>
 >;
 
 export type RDSModelSchema<
@@ -249,7 +241,7 @@ export type RDSModelSchema<
 /**
  * Amplify API Next Model Schema shape
  */
-export type ModelSchemaType = _Internal_ModelSchema<ModelSchemaParamShape>;
+export type ModelSchemaType = ModelSchema<ModelSchemaParamShape>;
 
 type ModelWithRelationships<
   Types extends Record<string, any>,
@@ -263,12 +255,7 @@ type ModelWithRelationships<
 > = ModelName extends keyof RelationshipMap
   ? RelationshipMap[ModelName] extends Record<
       string,
-      _Internal_ModelRelationalField<
-        ModelRelationalFieldParamShape,
-        string,
-        any,
-        any
-      >
+      ModelRelationalField<ModelRelationalFieldParamShape, string, any, any>
     >
     ? AddRelationshipFieldsToModelTypeFields<
         Types[ModelName],
@@ -425,7 +412,7 @@ function _rdsSchema<
 function _ddbSchema<
   T extends ModelSchemaParamShape,
   DSC extends SchemaConfiguration<any, any>,
->(types: T['types'], config: DSC): _Internal_ModelSchema<T> {
+>(types: T['types'], config: DSC): ModelSchema<T> {
   const data: ModelSchemaParamShape = {
     types,
     authorization: [],
@@ -449,14 +436,14 @@ function _ddbSchema<
     },
     models: filterSchemaModelTypes(data.types),
     ...ddbSchemaBrand,
-  } satisfies _Internal_ModelSchema<any> as never;
+  } satisfies ModelSchema<any> as never;
 }
 
 type SchemaReturnType<
   DE extends DatasourceEngine,
   Types extends ModelSchemaContents,
 > = DE extends 'dynamodb'
-  ? _Internal_ModelSchema<{
+  ? ModelSchema<{
       types: Types;
       authorization: [];
       configuration: any;

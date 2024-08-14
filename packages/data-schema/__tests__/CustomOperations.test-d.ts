@@ -14,7 +14,7 @@ import type {
   Context,
 } from 'aws-lambda';
 import { configure } from '../src/ModelSchema';
-import { _Internal_Nullable } from '../src/ModelField';
+import { Nullable } from '../src/ModelField';
 
 describe('custom operations return types', () => {
   describe('when .ref() a basic custom type', () => {
@@ -549,7 +549,7 @@ describe('RDS custom operations - current DX', () => {
       functionHandler: (
         event: AppSyncResolverEvent<
           {
-            postId?: _Internal_Nullable<string> | undefined;
+            postId?: Nullable<string> | undefined;
             content: string;
           },
           Record<string, any> | null
@@ -557,31 +557,31 @@ describe('RDS custom operations - current DX', () => {
         context: Context,
         callback: Callback<
           | {
-              title?: _Internal_Nullable<string> | undefined;
+              title?: Nullable<string> | undefined;
             }
           | null
           | undefined
         >,
       ) => void | Promise<
         | {
-            title?: _Internal_Nullable<string> | undefined;
+            title?: Nullable<string> | undefined;
           }
         | null
         | undefined
       >;
       args: {
-        postId?: _Internal_Nullable<string> | undefined;
+        postId?: Nullable<string> | undefined;
         content: string;
       };
       returnType:
         | {
-            title?: _Internal_Nullable<string> | undefined;
+            title?: Nullable<string> | undefined;
           }
         | null
         | undefined;
       type:
         | {
-            title?: _Internal_Nullable<string> | undefined;
+            title?: Nullable<string> | undefined;
           }
         | null
         | undefined;
@@ -595,14 +595,14 @@ describe('RDS custom operations - current DX', () => {
         context: Context,
         callback: Callback<
           | {
-              title?: _Internal_Nullable<string> | undefined;
+              title?: Nullable<string> | undefined;
             }
           | null
           | undefined
         >,
       ) => void | Promise<
         | {
-            title?: _Internal_Nullable<string> | undefined;
+            title?: Nullable<string> | undefined;
           }
         | null
         | undefined
@@ -610,13 +610,13 @@ describe('RDS custom operations - current DX', () => {
       args: never;
       returnType:
         | {
-            title?: _Internal_Nullable<string> | undefined;
+            title?: Nullable<string> | undefined;
           }
         | null
         | undefined;
       type:
         | {
-            title?: _Internal_Nullable<string> | undefined;
+            title?: Nullable<string> | undefined;
           }
         | null
         | undefined;
@@ -629,17 +629,17 @@ describe('RDS custom operations - current DX', () => {
         event: AppSyncResolverEvent<never, Record<string, any> | null>,
         context: Context,
         callback: Callback<{
-          title?: _Internal_Nullable<string> | undefined;
+          title?: Nullable<string> | undefined;
         }>,
       ) => void | Promise<{
-        title?: _Internal_Nullable<string> | undefined;
+        title?: Nullable<string> | undefined;
       }>;
       args: never;
       returnType: {
-        title?: _Internal_Nullable<string> | undefined;
+        title?: Nullable<string> | undefined;
       };
       type: {
-        title?: _Internal_Nullable<string> | undefined;
+        title?: Nullable<string> | undefined;
       };
     };
 
@@ -697,7 +697,7 @@ describe('RDS custom operations - deprecated DX', () => {
       functionHandler: (
         event: AppSyncResolverEvent<
           {
-            postId?: _Internal_Nullable<string> | undefined;
+            postId?: Nullable<string> | undefined;
             content: string;
           },
           Record<string, any> | null
@@ -705,31 +705,31 @@ describe('RDS custom operations - deprecated DX', () => {
         context: Context,
         callback: Callback<
           | {
-              title?: _Internal_Nullable<string> | undefined;
+              title?: Nullable<string> | undefined;
             }
           | null
           | undefined
         >,
       ) => void | Promise<
         | {
-            title?: _Internal_Nullable<string> | undefined;
+            title?: Nullable<string> | undefined;
           }
         | null
         | undefined
       >;
       args: {
-        postId?: _Internal_Nullable<string> | undefined;
+        postId?: Nullable<string> | undefined;
         content: string;
       };
       returnType:
         | {
-            title?: _Internal_Nullable<string> | undefined;
+            title?: Nullable<string> | undefined;
           }
         | null
         | undefined;
       type:
         | {
-            title?: _Internal_Nullable<string> | undefined;
+            title?: Nullable<string> | undefined;
           }
         | null
         | undefined;
@@ -743,14 +743,14 @@ describe('RDS custom operations - deprecated DX', () => {
         context: Context,
         callback: Callback<
           | {
-              title?: _Internal_Nullable<string> | undefined;
+              title?: Nullable<string> | undefined;
             }
           | null
           | undefined
         >,
       ) => void | Promise<
         | {
-            title?: _Internal_Nullable<string> | undefined;
+            title?: Nullable<string> | undefined;
           }
         | null
         | undefined
@@ -758,13 +758,13 @@ describe('RDS custom operations - deprecated DX', () => {
       args: never;
       returnType:
         | {
-            title?: _Internal_Nullable<string> | undefined;
+            title?: Nullable<string> | undefined;
           }
         | null
         | undefined;
       type:
         | {
-            title?: _Internal_Nullable<string> | undefined;
+            title?: Nullable<string> | undefined;
           }
         | null
         | undefined;
@@ -777,17 +777,17 @@ describe('RDS custom operations - deprecated DX', () => {
         event: AppSyncResolverEvent<never, Record<string, any> | null>,
         context: Context,
         callback: Callback<{
-          title?: _Internal_Nullable<string> | undefined;
+          title?: Nullable<string> | undefined;
         }>,
       ) => void | Promise<{
-        title?: _Internal_Nullable<string> | undefined;
+        title?: Nullable<string> | undefined;
       }>;
       args: never;
       returnType: {
-        title?: _Internal_Nullable<string> | undefined;
+        title?: Nullable<string> | undefined;
       };
       type: {
-        title?: _Internal_Nullable<string> | undefined;
+        title?: Nullable<string> | undefined;
       };
     };
 

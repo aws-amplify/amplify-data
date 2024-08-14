@@ -9,11 +9,11 @@ A URL scalar type as defined by RFC 1738. For example, https://www.amazon.com/dp
 **Signature:**
 
 ```typescript
-export declare function url(): _Internal_ModelField<_Internal_Nullable<string>>;
+export declare function url(): ModelField<Nullable<string>>;
 ```
 **Returns:**
 
-[\_Internal\_ModelField](./data-schema._internal_modelfield.md)<!-- -->&lt;[\_Internal\_Nullable](./data-schema._internal_nullable.md)<!-- -->&lt;string&gt;&gt;
+[ModelField](./data-schema.modelfield.md)<!-- -->&lt;[Nullable](./data-schema.nullable.md)<!-- -->&lt;string&gt;&gt;
 
 URL field definition
 

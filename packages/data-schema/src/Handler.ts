@@ -1,6 +1,6 @@
 import type { DefineFunction } from '@aws-amplify/data-schema-types';
 import { Brand, brand } from './util';
-import { _Internal_RefType } from './RefType';
+import { RefType } from './RefType';
 
 export type HandlerType =
   | InlineSqlHandler
@@ -74,7 +74,7 @@ type CustomHandlerInput = {
    * Defaults to 'NONE_DS'
    *
    */
-  dataSource?: string | _Internal_RefType<any>;
+  dataSource?: string | RefType<any>;
   /**
    * The path to the file that contains the function entry point.
    * If this is a relative path, it is computed relative to the file where this handler is defined

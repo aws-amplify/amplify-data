@@ -16,7 +16,6 @@ This error tells you which file has a missing export, but not which specific exp
 1. Add `export * from './FileName'` to the [library index](packages/data-schema/src/index.ts) and run `npm run build && npm run test` to confirm that this fixes the error.
 1. Now review the `exports` from `./FileName`, replacing the `*` with a list of all of the exported types `export type { ... } from './FileName';`
 1. With all exports re-exported, `npm run build && npm run test` should fix the test application. Experiment removing imports and rerunning this test command until you have the minimum set of required exports to resolve the build issue under test.
-1. Rename each export type, prefixing the type name with `_Internal_`
 1. For each type exposed by your change, add the following comment above the type definition:
 
 ```ts

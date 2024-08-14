@@ -9,7 +9,7 @@ The API and data model definition for Amplify Data. Pass in `{ <NAME>: a.model(.
 **Signature:**
 
 ```typescript
-schema: <Types extends ModelSchemaContents>(types: NonEmpty<Types>) => _Internal_ModelSchema<{
+schema: <Types extends ModelSchemaContents>(types: NonEmpty<Types>) => ModelSchema<{
     types: Types;
     authorization: [];
     configuration: any;
@@ -53,7 +53,7 @@ The API and data model definition
 </tbody></table>
 **Returns:**
 
-[\_Internal\_ModelSchema](./data-schema._internal_modelschema.md)<!-- -->&lt;{ types: Types; authorization: \[\]; configuration: any; }, never&gt;
+[ModelSchema](./data-schema.modelschema.md)<!-- -->&lt;{ types: Types; authorization: \[\]; configuration: any; }, never&gt;
 
 An API and data model definition to be deployed with Amplify (Gen 2) experience (`processSchema(...)`<!-- -->) or with the Amplify Data CDK construct (`@aws-amplify/data-construct`<!-- -->)
 

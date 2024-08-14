@@ -3,12 +3,12 @@ import { Brand, brand } from './util';
 import { InternalField, type BaseModelField } from './ModelField';
 import {
   AllowModifierForCustomOperation,
-  _Internal_Authorization,
+  Authorization,
   allowForCustomOperations,
 } from './Authorization';
-import { _Internal_RefType, InternalRef } from './RefType';
-import { _Internal_EnumType } from './EnumType';
-import { _Internal_CustomType } from './CustomType';
+import { RefType, InternalRef } from './RefType';
+import { EnumType } from './EnumType';
+import { CustomType } from './CustomType';
 import type {
   CustomHandler,
   FunctionHandler,
@@ -24,12 +24,12 @@ type CustomOperationBrand =
   | typeof mutationBrand
   | typeof subscriptionBrand;
 
-type CustomArguments = Record<string, BaseModelField | _Internal_EnumType>;
+type CustomArguments = Record<string, BaseModelField | EnumType>;
 
-type SubscriptionSource = _Internal_RefType<any, any>;
+type SubscriptionSource = RefType<any, any>;
 type InternalSubscriptionSource = InternalRef;
 
-type CustomReturnType = _Internal_RefType<any> | _Internal_CustomType<any>;
+type CustomReturnType = RefType<any> | CustomType<any>;
 type InternalCustomArguments = Record<string, InternalField>;
 type InternalCustomReturnType = InternalRef;
 type HandlerInputType = FunctionHandler[] | CustomHandler[] | Handler;
@@ -44,7 +44,7 @@ type CustomOperationName = (typeof CustomOperationNames)[number];
 type CustomData = {
   arguments: CustomArguments;
   returnType: CustomReturnType | null;
-  authorization: _Internal_Authorization<any, any, any>[];
+  authorization: Authorization<any, any, any>[];
   typeName: CustomOperationName;
   handlers: Handler[] | null;
   subscriptionSource: SubscriptionSource[];
@@ -54,58 +54,59 @@ type InternalCustomData = CustomData & {
   arguments: InternalCustomArguments;
   returnType: InternalCustomReturnType;
   subscriptionSource: InternalSubscriptionSource[];
-  authorization: _Internal_Authorization<any, any, any>[];
+  authorization: Authorization<any, any, any>[];
 };
 
 export type CustomOperationParamShape = {
   arguments: CustomArguments | null;
   returnType: CustomReturnType | null;
-  authorization: _Internal_Authorization<any, any, any>[];
+  authorization: Authorization<any, any, any>[];
   typeName: CustomOperationName;
   handlers: Handler | null;
 };
 
 /**
- * # INTERNAL
+ * Custom operation definition interface
  *
- * Not intended to be consumed directly, as naming and factoring
- * is subject to change.
+ * @param T - The shape of the custom operation
+ * @param K - The keys already defined from the custom operation
+ * @param B - The brand of the custom operation
  */
-export type _Internal_CustomOperation<
+export type CustomOperation<
   T extends CustomOperationParamShape,
-  K extends keyof _Internal_CustomOperation<T> = never,
+  K extends keyof CustomOperation<T> = never,
   B extends CustomOperationBrand = CustomOperationBrand,
 > = Omit<
   {
     arguments<Arguments extends CustomArguments>(
       args: Arguments,
-    ): _Internal_CustomOperation<
+    ): CustomOperation<
       SetTypeSubArg<T, 'arguments', Arguments>,
       K | 'arguments',
       B
     >;
     returns<ReturnType extends CustomReturnType>(
       returnType: ReturnType,
-    ): _Internal_CustomOperation<
+    ): CustomOperation<
       SetTypeSubArg<T, 'returnType', ReturnType>,
       K | 'returns',
       B
     >;
-    authorization<AuthRuleType extends _Internal_Authorization<any, any, any>>(
+    authorization<AuthRuleType extends Authorization<any, any, any>>(
       callback: (
         allow: AllowModifierForCustomOperation,
       ) => AuthRuleType | AuthRuleType[],
-    ): _Internal_CustomOperation<
+    ): CustomOperation<
       SetTypeSubArg<T, 'authorization', AuthRuleType[]>,
       K | 'authorization',
       B
     >;
     handler<H extends HandlerInputType>(
       handlers: H,
-    ): _Internal_CustomOperation<T, K | 'handler', B>;
+    ): CustomOperation<T, K | 'handler', B>;
     for<Source extends SubscriptionSource>(
       source: Source | Source[],
-    ): _Internal_CustomOperation<
+    ): CustomOperation<
       T['typeName'] extends 'Subscription'
         ? SetTypeSubArg<
             T,
@@ -125,9 +126,9 @@ export type _Internal_CustomOperation<
   Brand<B>;
 
 function brandedBuilder<T extends CustomOperationParamShape>(
-  builder: Record<keyof _Internal_CustomOperation<T> & string, any>,
+  builder: Record<keyof CustomOperation<T> & string, any>,
   brandValue: CustomOperationBrand,
-): _Internal_CustomOperation<T, never, typeof brandValue> {
+): CustomOperation<T, never, typeof brandValue> {
   return { ...builder, ...brand(brandValue) };
 }
 
@@ -136,7 +137,7 @@ function brandedBuilder<T extends CustomOperationParamShape>(
  * Used at buildtime.
  */
 export type InternalCustom<B extends CustomOperationBrand = any> =
-  _Internal_CustomOperation<any, never, B> & {
+  CustomOperation<any, never, B> & {
     data: InternalCustomData;
   };
 
@@ -165,9 +166,7 @@ function _custom<
 
         return this;
       },
-      authorization<
-        AuthRuleType extends _Internal_Authorization<any, any, any>,
-      >(
+      authorization<AuthRuleType extends Authorization<any, any, any>>(
         callback: (
           allow: AllowModifierForCustomOperation,
         ) => AuthRuleType | AuthRuleType[],
@@ -193,14 +192,14 @@ function _custom<
     brand,
   );
 
-  return { ...builder, data } as InternalCustom<B> as _Internal_CustomOperation<
+  return { ...builder, data } as InternalCustom<B> as CustomOperation<
     T,
     never,
     B
   >;
 }
 
-export type QueryCustomOperation = _Internal_CustomOperation<
+export type QueryCustomOperation = CustomOperation<
   CustomOperationParamShape,
   any,
   typeof queryBrand
@@ -226,7 +225,7 @@ export type QueryCustomOperation = _Internal_CustomOperation<
  * });
  * @returns a custom query
  */
-export function query(): _Internal_CustomOperation<
+export function query(): CustomOperation<
   {
     arguments: null;
     returnType: null;
@@ -240,7 +239,7 @@ export function query(): _Internal_CustomOperation<
   return _custom('Query', queryBrand);
 }
 
-export type MutationCustomOperation = _Internal_CustomOperation<
+export type MutationCustomOperation = CustomOperation<
   CustomOperationParamShape,
   any,
   typeof mutationBrand
@@ -258,7 +257,7 @@ export type MutationCustomOperation = _Internal_CustomOperation<
  *   .handler(a.handler.function(echoHandler))
  * @returns a custom mutation
  */
-export function mutation(): _Internal_CustomOperation<
+export function mutation(): CustomOperation<
   {
     arguments: null;
     returnType: null;
@@ -272,7 +271,7 @@ export function mutation(): _Internal_CustomOperation<
   return _custom('Mutation', mutationBrand);
 }
 
-export type SubscriptionCustomOperation = _Internal_CustomOperation<
+export type SubscriptionCustomOperation = CustomOperation<
   CustomOperationParamShape,
   any,
   typeof subscriptionBrand
@@ -292,7 +291,7 @@ export type SubscriptionCustomOperation = _Internal_CustomOperation<
  *   .authorization(allow => [allow.publicApiKey()]),
  * @returns a custom subscription
  */
-export function subscription(): _Internal_CustomOperation<
+export function subscription(): CustomOperation<
   {
     arguments: null;
     returnType: null;

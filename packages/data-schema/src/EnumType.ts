@@ -7,14 +7,12 @@ type EnumTypeParamShape<values extends readonly string[] = readonly string[]> =
   };
 
 /**
- * # INTERNAL
+ * Enum type definition content
  *
- * Not intended to be consumed directly, as naming and factoring
- * is subject to change.
+ * @param values - The values of the enum
  */
-export interface _Internal_EnumType<
-  values extends readonly string[] = readonly string[],
-> extends EnumTypeParamShape<values> {
+export interface EnumType<values extends readonly string[] = readonly string[]>
+  extends EnumTypeParamShape<values> {
   [brandSymbol]: 'enum';
 }
 
@@ -24,7 +22,7 @@ function _enum<values extends readonly string[]>(values: values) {
     values,
   };
 
-  return data as _Internal_EnumType<values>;
+  return data as EnumType<values>;
 }
 
 /**

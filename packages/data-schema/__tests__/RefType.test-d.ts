@@ -1,8 +1,7 @@
 import type { Equal, Expect } from '@aws-amplify/data-schema-types';
-import { type _Internal_RefType, ref } from '../src/RefType';
+import { type RefType, ref } from '../src/RefType';
 
-type GetRefTypeParams<T> =
-  T extends _Internal_RefType<infer R, any, any> ? R : never;
+type GetRefTypeParams<T> = T extends RefType<infer R, any, any> ? R : never;
 
 describe('RefType', () => {
   test('no modifier applied', () => {

@@ -90,7 +90,7 @@ export type SchemaAuthorization<
   AuthField extends string | undefined,
   AuthFieldPlurality extends boolean,
 > =
-  | _Internal_Authorization<AuthStrategy, AuthField, AuthFieldPlurality>
+  | Authorization<AuthStrategy, AuthField, AuthFieldPlurality>
   | ResourceAuthorization;
 
 export type ResourceAuthorization = {
@@ -104,12 +104,13 @@ export type ResourceAuthorizationData = {
 };
 
 /**
- * # INTERNAL
+ * Container for authorization schema definition content.
  *
- * Not intended to be consumed directly, as naming and factoring
- * is subject to change.
+ * @param AuthStrategy The auth strategy to use.
+ * @param AuthField The field to use for owner authorization.
+ * @param AuthFieldPlurality Whether the field is plural or singular.
  */
-export type _Internal_Authorization<
+export type Authorization<
   AuthStrategy extends Strategy,
   AuthField extends string | undefined,
   AuthFieldPlurality extends boolean,
@@ -144,7 +145,7 @@ function omit<T extends object, O extends string>(
   return pruned;
 }
 
-function to<SELF extends _Internal_Authorization<any, any, any>>(
+function to<SELF extends Authorization<any, any, any>>(
   this: SELF,
   operations: Operation[],
 ) {
@@ -160,7 +161,7 @@ function to<SELF extends _Internal_Authorization<any, any, any>>(
  * @param property A property of identity JWT.
  * @returns A copy of the Authorization object with the claim attached.
  */
-function identityClaim<SELF extends _Internal_Authorization<any, any, any>>(
+function identityClaim<SELF extends Authorization<any, any, any>>(
   this: SELF,
   property: string,
 ) {
@@ -168,7 +169,7 @@ function identityClaim<SELF extends _Internal_Authorization<any, any, any>>(
   return omit(this, 'identityClaim');
 }
 
-function withClaimIn<SELF extends _Internal_Authorization<any, any, any>>(
+function withClaimIn<SELF extends Authorization<any, any, any>>(
   this: SELF,
   property: string,
 ) {
@@ -191,11 +192,9 @@ function authData<
   isMulti extends boolean = false,
   Builders extends object = object,
 >(
-  defaults: Partial<
-    _Internal_Authorization<Strat, Field, isMulti>[typeof __data]
-  >,
+  defaults: Partial<Authorization<Strat, Field, isMulti>[typeof __data]>,
   builderMethods: Builders,
-): _Internal_Authorization<Strat, Field, isMulti> & Builders {
+): Authorization<Strat, Field, isMulti> & Builders {
   return {
     [__data]: {
       strategy: 'public',
@@ -641,8 +640,8 @@ function resourceAuthData<Builders extends object = object>(
  * }
  * ```
  */
-export type ImpliedAuthField<T extends _Internal_Authorization<any, any, any>> =
-  T extends _Internal_Authorization<infer _Strat, infer Field, infer isMulti>
+export type ImpliedAuthField<T extends Authorization<any, any, any>> =
+  T extends Authorization<infer _Strat, infer Field, infer isMulti>
     ? Field extends undefined
       ? never
       : Field extends string
@@ -673,14 +672,12 @@ export type ImpliedAuthField<T extends _Internal_Authorization<any, any, any>> =
  * }
  * ```
  */
-export type ImpliedAuthFields<
-  T extends _Internal_Authorization<any, any, any>,
-> =
+export type ImpliedAuthFields<T extends Authorization<any, any, any>> =
   ImpliedAuthField<T> extends never
     ? never
     : UnionToIntersection<ImpliedAuthField<T>>;
 
-export const accessData = <T extends _Internal_Authorization<any, any, any>>(
+export const accessData = <T extends Authorization<any, any, any>>(
   authorization: T,
 ) => authorization[__data];
 

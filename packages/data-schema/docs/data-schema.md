@@ -19,14 +19,12 @@ Description
 </th></tr></thead>
 <tbody><tr><td>
 
-[\_Internal\_ModelRelationshipTypes](./data-schema._internal_modelrelationshiptypes.md)
+[ModelRelationshipTypes](./data-schema.modelrelationshiptypes.md)
 
 
 </td><td>
 
-\# INTERNAL
-
-Not intended to be consumed directly, as naming and factoring is subject to change.
+Model relationship types
 
 
 </td></tr>
@@ -47,14 +45,12 @@ Description
 </th></tr></thead>
 <tbody><tr><td>
 
-[\_Internal\_EnumType](./data-schema._internal_enumtype.md)
+[EnumType](./data-schema.enumtype.md)
 
 
 </td><td>
 
-\# INTERNAL
-
-Not intended to be consumed directly, as naming and factoring is subject to change.
+Enum type definition content
 
 
 </td></tr>
@@ -99,163 +95,12 @@ Description
 </th></tr></thead>
 <tbody><tr><td>
 
-[\_Internal\_Authorization](./data-schema._internal_authorization.md)
+[Authorization](./data-schema.authorization.md)
 
 
 </td><td>
 
-\# INTERNAL
-
-Not intended to be consumed directly, as naming and factoring is subject to change.
-
-
-</td></tr>
-<tr><td>
-
-[\_Internal\_CustomOperation](./data-schema._internal_customoperation.md)
-
-
-</td><td>
-
-\# INTERNAL
-
-Not intended to be consumed directly, as naming and factoring is subject to change.
-
-
-</td></tr>
-<tr><td>
-
-[\_Internal\_CustomType](./data-schema._internal_customtype.md)
-
-
-</td><td>
-
-\# INTERNAL
-
-Not intended to be consumed directly, as naming and factoring is subject to change.
-
-
-</td></tr>
-<tr><td>
-
-[\_Internal\_Json](./data-schema._internal_json.md)
-
-
-</td><td>
-
-\# INTERNAL
-
-Not intended to be consumed directly, as naming and factoring is subject to change.
-
-A precise, recursive Json type blows the type calculation stack without installing explicit `Json extends T ? short-circuit : ...` type checks all over the place. We may take that on later. But, this is a good-enough approximation for now.
-
-
-</td></tr>
-<tr><td>
-
-[\_Internal\_ModelDefaultIdentifier](./data-schema._internal_modeldefaultidentifier.md)
-
-
-</td><td>
-
-\# INTERNAL
-
-Not intended to be consumed directly, as naming and factoring is subject to change.
-
-
-</td></tr>
-<tr><td>
-
-[\_Internal\_ModelField](./data-schema._internal_modelfield.md)
-
-
-</td><td>
-
-\# INTERNAL
-
-Not intended to be consumed directly, as naming and factoring is subject to change.
-
-Public API for the chainable builder methods exposed by Model Field. The type is narrowing e.g., after calling .array() it will be omitted from intellisense suggestions
-
-
-</td></tr>
-<tr><td>
-
-[\_Internal\_ModelRelationalField](./data-schema._internal_modelrelationalfield.md)
-
-
-</td><td>
-
-\# INTERNAL
-
-Not intended to be consumed directly, as naming and factoring is subject to change.
-
-
-</td></tr>
-<tr><td>
-
-[\_Internal\_ModelRelationalTypeArgFactory](./data-schema._internal_modelrelationaltypeargfactory.md)
-
-
-</td><td>
-
-\# INTERNAL
-
-Not intended to be consumed directly, as naming and factoring is subject to change.
-
-
-</td></tr>
-<tr><td>
-
-[\_Internal\_ModelSchema](./data-schema._internal_modelschema.md)
-
-
-</td><td>
-
-\# INTERNAL
-
-Not intended to be consumed directly, as naming and factoring is subject to change.
-
-
-</td></tr>
-<tr><td>
-
-[\_Internal\_ModelType](./data-schema._internal_modeltype.md)
-
-
-</td><td>
-
-\# INTERNAL
-
-Not intended to be consumed directly, as naming and factoring is subject to change.
-
-
-</td></tr>
-<tr><td>
-
-[\_Internal\_Nullable](./data-schema._internal_nullable.md)
-
-
-</td><td>
-
-\# INTERNAL
-
-Not intended to be consumed directly, as naming and factoring is subject to change.
-
-Field type arg mutators
-
-
-</td></tr>
-<tr><td>
-
-[\_Internal\_RefType](./data-schema._internal_reftype.md)
-
-
-</td><td>
-
-\# INTERNAL
-
-Not intended to be consumed directly, as naming and factoring is subject to change.
+Container for authorization schema definition content.
 
 
 </td></tr>
@@ -265,6 +110,127 @@ Not intended to be consumed directly, as naming and factoring is subject to chan
 
 
 </td><td>
+
+
+</td></tr>
+<tr><td>
+
+[CustomOperation](./data-schema.customoperation.md)
+
+
+</td><td>
+
+Custom operation definition interface
+
+
+</td></tr>
+<tr><td>
+
+[CustomType](./data-schema.customtype.md)
+
+
+</td><td>
+
+Custom type container
+
+
+</td></tr>
+<tr><td>
+
+[Json](./data-schema.json.md)
+
+
+</td><td>
+
+A precise, recursive Json type blows the type calculation stack without installing explicit `Json extends T ? short-circuit : ...` type checks all over the place. We may take that on later. But, this is a good-enough approximation for now.
+
+
+</td></tr>
+<tr><td>
+
+[ModelDefaultIdentifier](./data-schema.modeldefaultidentifier.md)
+
+
+</td><td>
+
+Model default identifier
+
+
+</td></tr>
+<tr><td>
+
+[ModelField](./data-schema.modelfield.md)
+
+
+</td><td>
+
+Public API for the chainable builder methods exposed by Model Field. The type is narrowing e.g., after calling .array() it will be omitted from intellisense suggestions
+
+
+</td></tr>
+<tr><td>
+
+[ModelRelationalField](./data-schema.modelrelationalfield.md)
+
+
+</td><td>
+
+Model relational field definition interface
+
+
+</td></tr>
+<tr><td>
+
+[ModelRelationalTypeArgFactory](./data-schema.modelrelationaltypeargfactory.md)
+
+
+</td><td>
+
+Model relational type definition content
+
+
+</td></tr>
+<tr><td>
+
+[ModelSchema](./data-schema.modelschema.md)
+
+
+</td><td>
+
+Model schema definition interface
+
+
+</td></tr>
+<tr><td>
+
+[ModelType](./data-schema.modeltype.md)
+
+
+</td><td>
+
+Model type definition interface
+
+
+</td></tr>
+<tr><td>
+
+[Nullable](./data-schema.nullable.md)
+
+
+</td><td>
+
+Field type arg mutators
+
+
+</td></tr>
+<tr><td>
+
+[RefType](./data-schema.reftype.md)
+
+
+</td><td>
+
+Reference type definition interface
 
 
 </td></tr>

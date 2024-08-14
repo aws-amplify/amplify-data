@@ -4,11 +4,11 @@ import {
 } from '@aws-amplify/data-schema-types';
 import { __modelMeta__ } from '../runtime/';
 import type { PrimaryIndexIrShape } from '../util';
-import type { _Internal_ModelType } from '../ModelType';
+import type { ModelType } from '../ModelType';
 import type { ModelRelationalFieldParamShape } from '../ModelRelationalField';
 
 export type ModelIdentifier<T> = {
-  [Property in keyof T]: T[Property] extends _Internal_ModelType<infer R, any>
+  [Property in keyof T]: T[Property] extends ModelType<infer R, any>
     ? R['identifier'] extends PrimaryIndexIrShape
       ? { identifier: R['identifier'] }
       : never
@@ -16,7 +16,7 @@ export type ModelIdentifier<T> = {
 };
 
 export type ModelSecondaryIndexes<T> = {
-  [Property in keyof T]: T[Property] extends _Internal_ModelType<infer R, any>
+  [Property in keyof T]: T[Property] extends ModelType<infer R, any>
     ? R['secondaryIndexes'] extends any[]
       ? { secondaryIndexes: R['secondaryIndexes'] }
       : never

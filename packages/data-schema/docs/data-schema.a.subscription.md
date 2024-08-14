@@ -9,7 +9,7 @@ Define a custom subscription to receive an event when a mutation is triggered
 **Signature:**
 
 ```typescript
-export declare function subscription(): _Internal_CustomOperation<{
+export declare function subscription(): CustomOperation<{
     arguments: null;
     returnType: null;
     authorization: [];
@@ -19,7 +19,7 @@ export declare function subscription(): _Internal_CustomOperation<{
 ```
 **Returns:**
 
-[\_Internal\_CustomOperation](./data-schema._internal_customoperation.md)<!-- -->&lt;{ arguments: null; returnType: null; authorization: \[\]; typeName: 'Subscription'; handlers: null; }, 'returns', typeof subscriptionBrand&gt;
+[CustomOperation](./data-schema.customoperation.md)<!-- -->&lt;{ arguments: null; returnType: null; authorization: \[\]; typeName: 'Subscription'; handlers: null; }, 'returns', typeof subscriptionBrand&gt;
 
 a custom subscription
 

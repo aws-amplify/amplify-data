@@ -1,19 +1,19 @@
 import { type CustomPathData, type InternalSchema } from './ModelSchema';
 import {
-  type _Internal_ModelField,
+  type ModelField,
   type InternalField,
   string,
   type BaseModelField,
   ModelFieldType,
 } from './ModelField';
 import {
-  _Internal_ModelRelationshipTypes,
+  ModelRelationshipTypes,
   type InternalRelationalField,
 } from './ModelRelationalField';
 import type { InternalModel } from './ModelType';
 import type { InternalModelIndexType } from './ModelIndex';
 import {
-  type _Internal_Authorization,
+  type Authorization,
   type ResourceAuthorization,
   type SchemaAuthorization,
   accessData,
@@ -27,9 +27,9 @@ import {
   LambdaFunctionDefinition,
   CustomSqlDataSourceStrategy,
 } from '@aws-amplify/data-schema-types';
-import type { InternalRef, _Internal_RefType } from './RefType';
-import type { _Internal_EnumType } from './EnumType';
-import type { _Internal_CustomType, CustomTypeParamShape } from './CustomType';
+import type { InternalRef, RefType } from './RefType';
+import type { EnumType } from './EnumType';
+import type { CustomType, CustomTypeParamShape } from './CustomType';
 import { type InternalCustom, CustomOperationNames } from './CustomOperation';
 import { Brand, getBrand } from './util';
 import {
@@ -68,7 +68,7 @@ function isInternalModel(model: unknown): model is InternalModel {
   return false;
 }
 
-function isEnumType(data: any): data is _Internal_EnumType {
+function isEnumType(data: any): data is EnumType {
   if (data?.type === 'enum') {
     return true;
   }
@@ -77,7 +77,7 @@ function isEnumType(data: any): data is _Internal_EnumType {
 
 function isCustomType(
   data: any,
-): data is { data: _Internal_CustomType<CustomTypeParamShape> } {
+): data is { data: CustomType<CustomTypeParamShape> } {
   if (data?.data?.type === 'customType') {
     return true;
   }
@@ -108,8 +108,8 @@ function isModelField(field: any): field is { data: ModelFieldDef } {
 }
 
 function dataSourceIsRef(
-  dataSource: string | _Internal_RefType<any, any, any>,
-): dataSource is _Internal_RefType<any, any, any> {
+  dataSource: string | RefType<any, any, any>,
+): dataSource is RefType<any, any, any> {
   return (
     typeof dataSource !== 'string' &&
     (dataSource as InternalRef)?.data &&
@@ -288,14 +288,14 @@ function transformFunctionHandler(
 type CustomTypeAuthRules =
   | {
       typeName: string;
-      authRules: _Internal_Authorization<any, any, any>[];
+      authRules: Authorization<any, any, any>[];
     }
   | undefined;
 
 function customOperationToGql(
   typeName: string,
   typeDef: InternalCustom,
-  authorization: _Internal_Authorization<any, any, any>[],
+  authorization: Authorization<any, any, any>[],
   isCustom = false,
   databaseType: DatabaseType,
   getRefType: ReturnType<typeof getRefTypeForSchema>,
@@ -662,9 +662,7 @@ function validateRefUseCases(
  * @param authorization A list of authorization rules.
  * @returns
  */
-function calculateAuth(
-  authorization: _Internal_Authorization<any, any, any>[],
-) {
+function calculateAuth(authorization: Authorization<any, any, any>[]) {
   const authFields: Record<string, BaseModelField> = {};
   const rules: string[] = [];
 
@@ -799,7 +797,7 @@ function getAppSyncAuthDirectiveFromRule(rule: AuthRule): string {
 }
 
 function mapToNativeAppSyncAuthDirectives(
-  authorization: _Internal_Authorization<any, any, any>[],
+  authorization: Authorization<any, any, any>[],
   isCustomHandler: boolean,
 ) {
   const rules = new Set<string>();
@@ -958,7 +956,7 @@ const secondaryIndexDefaultQueryField = (
 const transformedSecondaryIndexesForModel = (
   modelName: string,
   secondaryIndexes: readonly InternalModelIndexType[],
-  modelFields: Record<string, _Internal_ModelField<any, any>>,
+  modelFields: Record<string, ModelField<any, any>>,
   getRefType: ReturnType<typeof getRefTypeForSchema>,
 ): TransformedSecondaryIndexes => {
   const indexDirectiveWithAttributes = (
@@ -1052,10 +1050,10 @@ const ruleIsResourceAuth = (
 const extractFunctionSchemaAccess = (
   authRules: SchemaAuthorization<any, any, any>[],
 ): {
-  schemaAuth: _Internal_Authorization<any, any, any>[];
+  schemaAuth: Authorization<any, any, any>[];
   functionSchemaAccess: FunctionSchemaAccess[];
 } => {
-  const schemaAuth: _Internal_Authorization<any, any, any>[] = [];
+  const schemaAuth: Authorization<any, any, any>[] = [];
   const functionSchemaAccess: FunctionSchemaAccess[] = [];
   const defaultActions: ['query', 'mutate', 'listen'] = [
     'query',
@@ -1112,10 +1110,10 @@ type GetRef =
   | {
       type: 'CustomType';
       def: {
-        data: _Internal_CustomType<CustomTypeParamShape>;
+        data: CustomType<CustomTypeParamShape>;
       };
     }
-  | { type: 'Enum'; def: _Internal_EnumType<any> };
+  | { type: 'Enum'; def: EnumType<any> };
 
 /**
  * Returns a closure for retrieving reference type and definition from schema
@@ -1184,7 +1182,7 @@ const sortTopLevelTypes = (topLevelTypes: [string, any][]) => {
  * Builds up dictionary of Custom Type name - array of inherited auth rules
  */
 const mergeCustomTypeAuthRules = (
-  existing: Record<string, _Internal_Authorization<any, any, any>[]>,
+  existing: Record<string, Authorization<any, any, any>[]>,
   added: CustomTypeAuthRules,
 ) => {
   if (!added) return;
@@ -1217,7 +1215,7 @@ const schemaPreprocessor = (
   // Inherited from the auth configured on the custom operations that return these custom types
   const customTypeInheritedAuthRules: Record<
     string,
-    _Internal_Authorization<any, any, any>[]
+    Authorization<any, any, any>[]
   > = {};
 
   const jsFunctions: JsResolver[] = [];
@@ -1240,7 +1238,7 @@ const schemaPreprocessor = (
   const getRefType = getRefTypeForSchema(schema);
 
   for (const [typeName, typeDef] of topLevelTypes) {
-    const mostRelevantAuthRules: _Internal_Authorization<any, any, any>[] =
+    const mostRelevantAuthRules: Authorization<any, any, any>[] =
       typeDef.data?.authorization?.length > 0
         ? typeDef.data.authorization
         : schemaAuth;
@@ -1484,7 +1482,7 @@ const schemaPreprocessor = (
 function validateCustomOperations(
   typeDef: InternalCustom,
   typeName: string,
-  authRules: _Internal_Authorization<any, any, any>[],
+  authRules: Authorization<any, any, any>[],
   getRefType: ReturnType<typeof getRefTypeForSchema>,
 ) {
   const { handlers, typeName: opType, subscriptionSource } = typeDef.data;
@@ -1619,7 +1617,7 @@ const isFunctionHandler = (
 };
 
 const normalizeDataSourceName = (
-  dataSource: undefined | string | _Internal_RefType<any, any, any>,
+  dataSource: undefined | string | RefType<any, any, any>,
 ): string => {
   // default data source
   const noneDataSourceName = 'NONE_DS';
@@ -1702,7 +1700,7 @@ const handleCustom = (
 function transformCustomOperations(
   typeDef: InternalCustom,
   typeName: string,
-  authRules: _Internal_Authorization<any, any, any>[],
+  authRules: Authorization<any, any, any>[],
   databaseType: DatabaseType,
   getRefType: ReturnType<typeof getRefTypeForSchema>,
 ) {
@@ -1828,12 +1826,12 @@ function extractNestedCustomTypeNames(
  *   - field names match the named `references` arguments
  *   - child model references fields types match those of the parent model's primaryKey
  * @param typeName source model's type name.
- * @param record map of field name to {@link _Internal_ModelField}
+ * @param record map of field name to {@link ModelField}
  * @param getInternalModel given a model name, return an {@link InternalModel}
  */
 function validateRelationships(
   typeName: string,
-  record: Record<string, _Internal_ModelField<any, any>>,
+  record: Record<string, ModelField<any, any>>,
   getInternalModel: (
     modelName: string,
     referringModelName?: string,
@@ -2006,24 +2004,21 @@ type ModelRelationship = {
  * Use this to generate a `ModelRelationshipTypes[]` containing acceptable counterparts on the
  * associated model.
  *
- * Given {@link _Internal_ModelRelationshipTypes.hasOne} or {@link _Internal_ModelRelationshipTypes.hasOne} returns [{@link _Internal_ModelRelationshipTypes.belongsTo}]
- * Given {@link _Internal_ModelRelationshipTypes.belongsTo} returns [{@link _Internal_ModelRelationshipTypes.hasOne}, {@link _Internal_ModelRelationshipTypes.belongsTo}]
+ * Given {@link ModelRelationshipTypes.hasOne} or {@link ModelRelationshipTypes.hasOne} returns [{@link ModelRelationshipTypes.belongsTo}]
+ * Given {@link ModelRelationshipTypes.belongsTo} returns [{@link ModelRelationshipTypes.hasOne}, {@link ModelRelationshipTypes.belongsTo}]
  *
- * @param relationshipType {@link _Internal_ModelRelationshipTypes} defined on source model's connection field.
- * @returns possible counterpart {@link _Internal_ModelRelationshipTypes} as `ModelRelationshipTypes[]`
+ * @param relationshipType {@link ModelRelationshipTypes} defined on source model's connection field.
+ * @returns possible counterpart {@link ModelRelationshipTypes} as `ModelRelationshipTypes[]`
  */
 function associatedRelationshipTypes(
-  relationshipType: _Internal_ModelRelationshipTypes,
-): _Internal_ModelRelationshipTypes[] {
+  relationshipType: ModelRelationshipTypes,
+): ModelRelationshipTypes[] {
   switch (relationshipType) {
-    case _Internal_ModelRelationshipTypes.hasOne:
-    case _Internal_ModelRelationshipTypes.hasMany:
-      return [_Internal_ModelRelationshipTypes.belongsTo];
-    case _Internal_ModelRelationshipTypes.belongsTo:
-      return [
-        _Internal_ModelRelationshipTypes.hasOne,
-        _Internal_ModelRelationshipTypes.hasMany,
-      ];
+    case ModelRelationshipTypes.hasOne:
+    case ModelRelationshipTypes.hasMany:
+      return [ModelRelationshipTypes.belongsTo];
+    case ModelRelationshipTypes.belongsTo:
+      return [ModelRelationshipTypes.hasOne, ModelRelationshipTypes.hasMany];
     default:
       return []; // TODO: Remove this case on types are updated.
   }
@@ -2161,8 +2156,8 @@ function getModelRelationship(
   );
 
   switch (sourceModelConnectionField.def.type) {
-    case _Internal_ModelRelationshipTypes.hasOne:
-    case _Internal_ModelRelationshipTypes.hasMany:
+    case ModelRelationshipTypes.hasOne:
+    case ModelRelationshipTypes.hasMany:
       return {
         parent: sourceModel,
         parentConnectionField: sourceModelConnectionField,
@@ -2170,7 +2165,7 @@ function getModelRelationship(
         childConnectionField: relatedModelConnectionField,
         references: sourceModelConnectionField.def.references,
       };
-    case _Internal_ModelRelationshipTypes.belongsTo:
+    case ModelRelationshipTypes.belongsTo:
       return {
         parent: associatedModel,
         parentConnectionField: relatedModelConnectionField,

@@ -1,12 +1,12 @@
 import type { CustomOperationParamShape } from '../../CustomOperation';
 import type { BaseModelField } from '../../ModelField';
-import type { _Internal_RefType } from '../../RefType';
+import type { RefType } from '../../RefType';
 import type { ResolveFieldRequirements } from '../../MappedTypes/ResolveFieldProperties';
 import type { AppSyncResolverHandler } from 'aws-lambda';
-import type { _Internal_CustomType } from '../../CustomType';
+import type { CustomType } from '../../CustomType';
 import type { FieldTypesOfCustomType } from '../../MappedTypes/ResolveSchema';
 import type { ResolveRef } from '../utilities/ResolveRef';
-import type { _Internal_EnumType } from '../../EnumType';
+import type { EnumType } from '../../EnumType';
 import { ClientSchemaProperty } from './ClientSchemaProperty';
 
 type CustomOperationSubType<Op extends CustomOperationParamShape> =
@@ -84,9 +84,7 @@ type CustomOpArguments<Shape extends CustomOperationParamShape> =
           infer R
         >
           ? R
-          : Shape['arguments'][FieldName] extends _Internal_EnumType<
-                infer Values
-              >
+          : Shape['arguments'][FieldName] extends EnumType<infer Values>
             ? Values[number] | null
             : never;
       }>;
@@ -112,13 +110,13 @@ type CustomOpReturnType<
   RefBag extends Record<string, any>,
 > = Normalize<
   Shape,
-  Shape['returnType'] extends _Internal_RefType<infer RefShape, any, any>
+  Shape['returnType'] extends RefType<infer RefShape, any, any>
     ? RefShape['link'] extends keyof RefBag
       ? ResolveRef<RefShape, RefBag>
       : never
     : Shape['returnType'] extends BaseModelField<infer R>
       ? R
-      : Shape['returnType'] extends _Internal_CustomType<infer R>
+      : Shape['returnType'] extends CustomType<infer R>
         ?
             | ResolveFieldRequirements<
                 FieldTypesOfCustomType<{
