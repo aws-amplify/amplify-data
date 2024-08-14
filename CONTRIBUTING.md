@@ -65,8 +65,6 @@ To clear the proxy package cache run `npm run clean:npm-proxy`. This will stop t
 
 To start the npm proxy without immediately publishing, run `npm run start:npm-proxy`.
 
-To publish a snapshot to an already running npm proxy run `npm run publish:snapshot:local latest`
-
 ## Code of Conduct
 
 This project has adopted the [Amazon Open Source Code of Conduct](https://aws.github.io/code-of-conduct).
