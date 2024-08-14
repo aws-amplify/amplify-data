@@ -69,7 +69,7 @@ export type CustomOperationParamShape = {
  * Custom operation definition interface
  *
  * @param T - The shape of the custom operation
- * @param K - The keys already defined from the custom operation
+ * @param K - The keys already defined
  * @param B - The brand of the custom operation
  */
 export type CustomOperation<
