@@ -38,6 +38,10 @@ describe('createListConversationsFunction()', () => {
     );
   });
 
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
+
   it('returns a listConversations function', async () => {
     expect(listConversations).toBeDefined();
   });

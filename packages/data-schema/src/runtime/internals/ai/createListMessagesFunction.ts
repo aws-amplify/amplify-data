@@ -13,7 +13,7 @@ import type {
   SchemaModel,
 } from '../../bridge-types';
 import { listFactory } from '../operations/list';
-import { pickConversationMessageProperties } from './pickConversationMessageProperties';
+import { convertItemToConversationMessage } from './convertItemToConversationMessage';
 
 export const createListMessagesFunction =
   (
@@ -35,7 +35,7 @@ export const createListMessagesFunction =
       filter: { conversationId: { eq: conversationId } },
     });
     return {
-      data: data.map((item: any) => pickConversationMessageProperties(item)),
+      data: data.map((item: any) => convertItemToConversationMessage(item)),
       nextToken,
       errors,
     };

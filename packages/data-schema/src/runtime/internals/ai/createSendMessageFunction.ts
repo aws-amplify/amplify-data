@@ -12,7 +12,12 @@ import type {
   ModelIntrospectionSchema,
 } from '../../bridge-types';
 import { customOpFactory } from '../operations/custom';
-import { pickConversationMessageProperties } from './pickConversationMessageProperties';
+import { convertItemToConversationMessage } from './convertItemToConversationMessage';
+import {
+  serializeAiContext,
+  serializeContent,
+  serializeToolConfiguration,
+} from './conversationMessageSerializers';
 
 export const createSendMessageFunction =
   (
@@ -24,6 +29,7 @@ export const createSendMessageFunction =
   ): Conversation['sendMessage'] =>
   async ({ aiContext, content, toolConfiguration }) => {
     const { conversations } = modelIntrospection;
+
     // Safe guard for standalone function. When called as part of client generation, this should never be falsy.
     if (!conversations) {
       return {} as SingularReturnValue<ConversationMessage>;
@@ -40,13 +46,15 @@ export const createSendMessageFunction =
       args?: Record<string, any>,
     ) => SingularReturnValue<ConversationMessage>;
     const { data, errors } = await sendOperation({
-      aiContext: JSON.stringify(aiContext),
-      content,
       conversationId,
-      toolConfiguration,
+      content: serializeContent(content),
+      ...(aiContext && { aiContext: serializeAiContext(aiContext) }),
+      ...(toolConfiguration && {
+        toolConfiguration: serializeToolConfiguration(toolConfiguration),
+      }),
     });
     return {
-      data: data ? pickConversationMessageProperties(data) : data,
+      data: data ? convertItemToConversationMessage(data) : data,
       errors,
     };
   };

@@ -9,7 +9,7 @@ import type {
   ModelIntrospectionSchema,
 } from '../../bridge-types';
 import { customOpFactory } from '../operations/custom';
-import { pickConversationMessageProperties } from './pickConversationMessageProperties';
+import { convertItemToConversationMessage } from './convertItemToConversationMessage';
 
 export const createOnMessageFunction =
   (
@@ -36,6 +36,6 @@ export const createOnMessageFunction =
       getInternals,
     ) as (args?: Record<string, any>) => Observable<any>;
     return subscribeOperation({ conversationId }).subscribe((data) => {
-      handler(pickConversationMessageProperties(data));
+      handler(convertItemToConversationMessage(data));
     });
   };

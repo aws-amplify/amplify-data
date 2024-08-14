@@ -7,13 +7,10 @@ interface ToolJsonInputSchema {
   json: DocumentType;
 }
 
-interface ToolSpecification {
-  name: string;
+export interface Tool {
   inputSchema: ToolJsonInputSchema;
   description?: string;
 }
-
-export type Tool = Omit<ToolSpecification, 'name'>;
 
 export interface ToolConfiguration {
   tools: Record<string, Tool>;

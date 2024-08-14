@@ -37,6 +37,10 @@ describe('createGetConversationFunction()', () => {
     );
   });
 
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
+
   it('returns a getConversation function', async () => {
     expect(getConversation).toBeDefined();
   });

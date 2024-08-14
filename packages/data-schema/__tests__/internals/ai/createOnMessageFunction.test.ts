@@ -4,9 +4,11 @@
 import type { Conversation } from '../../../src/ai/ConversationType';
 import type { BaseClient } from '../../../src/runtime';
 import type { ModelIntrospectionSchema } from '../../../src/runtime/bridge-types';
+import { convertItemToConversationMessage } from '../../../src/runtime/internals/ai/convertItemToConversationMessage';
 import { createOnMessageFunction } from '../../../src/runtime/internals/ai/createOnMessageFunction';
 import { customOpFactory } from '../../../src/runtime/internals/operations/custom';
 
+jest.mock('../../../src/runtime/internals/ai/convertItemToConversationMessage');
 jest.mock('../../../src/runtime/internals/operations/custom');
 
 describe('createOnMessageFunction()', () => {
@@ -30,12 +32,15 @@ describe('createOnMessageFunction()', () => {
   } as unknown as ModelIntrospectionSchema;
   // assert mocks
   const mockCustomOpFactory = customOpFactory as jest.Mock;
+  const mockConvertItemToConversationMessage =
+    convertItemToConversationMessage as jest.Mock;
   // create mocks
   const mockCustomOp = jest.fn();
   const mockSubscribe = jest.fn();
   const mockHandler = jest.fn();
 
   beforeAll(async () => {
+    mockConvertItemToConversationMessage.mockImplementation((data) => data);
     mockCustomOp.mockReturnValue({ subscribe: mockSubscribe });
     mockCustomOpFactory.mockReturnValue(mockCustomOp);
     mockSubscribe.mockImplementation((subscription) => {
@@ -50,12 +55,23 @@ describe('createOnMessageFunction()', () => {
     );
   });
 
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
+
   it('returns a onMessage function', async () => {
     expect(onMessage).toBeDefined();
   });
 
   describe('onMessage()', () => {
     it('triggers handler', async () => {
+      const expectedData = {
+        content: mockContent,
+        conversationId: mockConversationId,
+        createdAt: mockCreatedAt,
+        id: mockMessageId,
+        role: mockRole,
+      };
       onMessage(mockHandler);
 
       expect(mockCustomOpFactory).toHaveBeenCalledWith(
@@ -69,13 +85,10 @@ describe('createOnMessageFunction()', () => {
       expect(mockCustomOp).toHaveBeenCalledWith({
         conversationId: mockConversationId,
       });
-      expect(mockHandler).toHaveBeenCalledWith({
-        content: mockContent,
-        conversationId: mockConversationId,
-        createdAt: mockCreatedAt,
-        id: mockMessageId,
-        role: mockRole,
-      });
+      expect(mockConvertItemToConversationMessage).toHaveBeenCalledWith(
+        expectedData,
+      );
+      expect(mockHandler).toHaveBeenCalledWith(expectedData);
     });
   });
 });
