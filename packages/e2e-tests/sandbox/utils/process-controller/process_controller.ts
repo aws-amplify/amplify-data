@@ -128,16 +128,23 @@ export const ampxCli = (
     env?: Record<string, string>;
   },
 ): ProcessController => {
-  // TODO This is a workaround to lookup locally installed binary as seen by npx
-  // We're using binary directly because signals (Ctrl+C) don't propagate
-  // to child processes without TTY emulator.
-  // See: https://github.com/aws-amplify/amplify-backend/issues/582
-  const command = execaSync('npx', ['which', 'ampx'], {
-    cwd: dir,
-  }).stdout.trim();
+  /**
+   * TODO This is a workaround to lookup locally installed binary as seen by npx
+   * We're using binary directly because signals (Ctrl+C) don't propagate
+   * to child processes without TTY emulator.
+   * See: https://github.com/aws-amplify/amplify-backend/issues/582
+   *
+   * Additionally, `npx which ampx` doesn't work as expected in CI with the way
+   * our directory structure is set up, so we're using `pwd` to get the local
+   * directory to find the Amplify executable.
+   */
+  const rootDir = execaSync('pwd').stdout.trim();
+  const command = `${rootDir}/node_modules/.bin/ampx`;
+
   if (!command) {
     throw new Error('Unable to locate the ampx bin path');
   }
+
   return new ProcessController(command, args, {
     cwd: dir,
     env: options?.env,
@@ -162,6 +169,7 @@ export const cdkCli = (
   if (!command) {
     throw new Error('Unable to locate cdk binary');
   }
+
   return new ProcessController(command, args, {
     cwd: dir,
     env: options?.env,
