@@ -42,6 +42,31 @@ GitHub provides additional document on [forking a repository](https://help.githu
 
 Looking at the existing issues is a great way to find something to contribute on. As our projects, by default, use the default GitHub issue labels (enhancement/bug/duplicate/help wanted/invalid/question/wontfix), looking at any 'help wanted' issues is a great place to start.
 
+### Other helpful scripts
+
+`npm run baseline:benchmarks` will let you know if your changes are passing typescript benchmark limits
+
+`npm run vend` will start a local npm proxy and publish the local packages to this proxy so they can be installed / used as if they were published on npm
+
+`npm run e2e` will run the E2E test suite.
+
+### Publishing packages locally
+
+Publishing packages locally allows you to install local package changes as if they were published to NPM. This can be useful for testing or demo scenarios.
+
+To set up a local npm proxy and publish the current local state to the proxy, run `npm run vend`.
+This will start a local npm proxy using [Verdaccio](https://verdaccio.org/) and run `changeset version` and `changeset publish`.
+
+This will also point your local npm config to the local npm proxy. At this point you can npm install any packages in the repo and it will pull from the local proxy instead of directly from npm.
+
+To stop the local server and reset your npm registry run `npm run stop:npm-proxy`.
+
+To clear the proxy package cache run `npm run clean:npm-proxy`. This will stop the local proxy and remove all packages you have published.
+
+To start the npm proxy without immediately publishing, run `npm run start:npm-proxy`.
+
+To publish a snapshot to an already running npm proxy run `npm run publish:snapshot:local latest`
+
 ## Code of Conduct
 
 This project has adopted the [Amazon Open Source Code of Conduct](https://aws.github.io/code-of-conduct).
