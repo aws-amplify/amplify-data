@@ -1,0 +1,357 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Specify a custom field type Explicit definition client runtime create 1`] = `
+[
+  [
+    {
+      "authMode": undefined,
+      "authToken": undefined,
+      "query": "mutation($input: CreatePostInput!) { createPost(input: $input) { id location { lat long } content createdAt updatedAt } }",
+      "variables": {
+        "input": {
+          "content": "hello",
+          "location": {
+            "lat": 3,
+            "long": 4,
+          },
+        },
+      },
+    },
+    {},
+  ],
+]
+`;
+
+exports[`Specify a custom field type Explicit definition client runtime delete 1`] = `
+[
+  [
+    {
+      "authMode": undefined,
+      "authToken": undefined,
+      "query": "mutation($input: DeletePostInput!) { deletePost(input: $input) { id location { lat long } content createdAt updatedAt } }",
+      "variables": {
+        "input": {
+          "id": "some-id",
+        },
+      },
+    },
+    {},
+  ],
+]
+`;
+
+exports[`Specify a custom field type Explicit definition client runtime get 1`] = `
+[
+  [
+    {
+      "authMode": undefined,
+      "authToken": undefined,
+      "query": "query($id: ID!) { getPost(id: $id) { id location { lat long } content createdAt updatedAt } }",
+      "variables": {
+        "id": "some-id",
+      },
+    },
+    {},
+  ],
+]
+`;
+
+exports[`Specify a custom field type Explicit definition client runtime list 1`] = `
+[
+  [
+    {
+      "authMode": undefined,
+      "authToken": undefined,
+      "query": "query($filter: ModelPostFilterInput,$limit: Int,$nextToken: String) { listPosts(filter: $filter,limit: $limit,nextToken: $nextToken) { items { id location { lat long } content createdAt updatedAt } nextToken __typename } }",
+      "variables": {},
+    },
+    {},
+  ],
+]
+`;
+
+exports[`Specify a custom field type Explicit definition client runtime update 1`] = `
+[
+  [
+    {
+      "authMode": undefined,
+      "authToken": undefined,
+      "query": "mutation($input: UpdatePostInput!) { updatePost(input: $input) { id location { lat long } content createdAt updatedAt } }",
+      "variables": {
+        "input": {
+          "id": "some-id",
+          "location": {
+            "lat": 5,
+            "long": 6,
+          },
+        },
+      },
+    },
+    {},
+  ],
+]
+`;
+
+exports[`Specify a custom field type Inline definition client runtime create 1`] = `
+[
+  [
+    {
+      "authMode": undefined,
+      "authToken": undefined,
+      "query": "mutation($input: CreatePostInput!) { createPost(input: $input) { id location { lat long } content createdAt updatedAt } }",
+      "variables": {
+        "input": {
+          "content": "hello",
+          "location": {
+            "lat": 3,
+            "long": 4,
+          },
+        },
+      },
+    },
+    {},
+  ],
+]
+`;
+
+exports[`Specify a custom field type Inline definition client runtime delete 1`] = `
+[
+  [
+    {
+      "authMode": undefined,
+      "authToken": undefined,
+      "query": "mutation($input: DeletePostInput!) { deletePost(input: $input) { id location { lat long } content createdAt updatedAt } }",
+      "variables": {
+        "input": {
+          "id": "some-id",
+        },
+      },
+    },
+    {},
+  ],
+]
+`;
+
+exports[`Specify a custom field type Inline definition client runtime get 1`] = `
+[
+  [
+    {
+      "authMode": undefined,
+      "authToken": undefined,
+      "query": "query($id: ID!) { getPost(id: $id) { id location { lat long } content createdAt updatedAt } }",
+      "variables": {
+        "id": "some-id",
+      },
+    },
+    {},
+  ],
+]
+`;
+
+exports[`Specify a custom field type Inline definition client runtime list 1`] = `
+[
+  [
+    {
+      "authMode": undefined,
+      "authToken": undefined,
+      "query": "query($filter: ModelPostFilterInput,$limit: Int,$nextToken: String) { listPosts(filter: $filter,limit: $limit,nextToken: $nextToken) { items { id location { lat long } content createdAt updatedAt } nextToken __typename } }",
+      "variables": {},
+    },
+    {},
+  ],
+]
+`;
+
+exports[`Specify a custom field type Inline definition client runtime update 1`] = `
+[
+  [
+    {
+      "authMode": undefined,
+      "authToken": undefined,
+      "query": "mutation($input: UpdatePostInput!) { updatePost(input: $input) { id location { lat long } content createdAt updatedAt } }",
+      "variables": {
+        "input": {
+          "id": "some-id",
+          "location": {
+            "lat": 5,
+            "long": 6,
+          },
+        },
+      },
+    },
+    {},
+  ],
+]
+`;
+
+exports[`Specify an enum field type Explicit definition client runtime create 1`] = `
+[
+  [
+    {
+      "authMode": undefined,
+      "authToken": undefined,
+      "query": "mutation($input: CreatePostInput!) { createPost(input: $input) { id privacySetting content createdAt updatedAt } }",
+      "variables": {
+        "input": {
+          "content": "hello",
+          "privacySetting": "PRIVATE",
+        },
+      },
+    },
+    {},
+  ],
+]
+`;
+
+exports[`Specify an enum field type Explicit definition client runtime delete 1`] = `
+[
+  [
+    {
+      "authMode": undefined,
+      "authToken": undefined,
+      "query": "mutation($input: DeletePostInput!) { deletePost(input: $input) { id privacySetting content createdAt updatedAt } }",
+      "variables": {
+        "input": {
+          "id": "some-id",
+        },
+      },
+    },
+    {},
+  ],
+]
+`;
+
+exports[`Specify an enum field type Explicit definition client runtime get 1`] = `
+[
+  [
+    {
+      "authMode": undefined,
+      "authToken": undefined,
+      "query": "query($id: ID!) { getPost(id: $id) { id privacySetting content createdAt updatedAt } }",
+      "variables": {
+        "id": "some-id",
+      },
+    },
+    {},
+  ],
+]
+`;
+
+exports[`Specify an enum field type Explicit definition client runtime list 1`] = `
+[
+  [
+    {
+      "authMode": undefined,
+      "authToken": undefined,
+      "query": "query($filter: ModelPostFilterInput,$limit: Int,$nextToken: String) { listPosts(filter: $filter,limit: $limit,nextToken: $nextToken) { items { id privacySetting content createdAt updatedAt } nextToken __typename } }",
+      "variables": {},
+    },
+    {},
+  ],
+]
+`;
+
+exports[`Specify an enum field type Explicit definition client runtime update 1`] = `
+[
+  [
+    {
+      "authMode": undefined,
+      "authToken": undefined,
+      "query": "mutation($input: UpdatePostInput!) { updatePost(input: $input) { id privacySetting content createdAt updatedAt } }",
+      "variables": {
+        "input": {
+          "id": "some-id",
+          "privacySetting": "FRIENDS_ONLY",
+        },
+      },
+    },
+    {},
+  ],
+]
+`;
+
+exports[`Specify an enum field type Inline definition client runtime create 1`] = `
+[
+  [
+    {
+      "authMode": undefined,
+      "authToken": undefined,
+      "query": "mutation($input: CreatePostInput!) { createPost(input: $input) { id privacySetting content createdAt updatedAt } }",
+      "variables": {
+        "input": {
+          "content": "hello",
+          "privacySetting": "PRIVATE",
+        },
+      },
+    },
+    {},
+  ],
+]
+`;
+
+exports[`Specify an enum field type Inline definition client runtime delete 1`] = `
+[
+  [
+    {
+      "authMode": undefined,
+      "authToken": undefined,
+      "query": "mutation($input: DeletePostInput!) { deletePost(input: $input) { id privacySetting content createdAt updatedAt } }",
+      "variables": {
+        "input": {
+          "id": "some-id",
+        },
+      },
+    },
+    {},
+  ],
+]
+`;
+
+exports[`Specify an enum field type Inline definition client runtime get 1`] = `
+[
+  [
+    {
+      "authMode": undefined,
+      "authToken": undefined,
+      "query": "query($id: ID!) { getPost(id: $id) { id privacySetting content createdAt updatedAt } }",
+      "variables": {
+        "id": "some-id",
+      },
+    },
+    {},
+  ],
+]
+`;
+
+exports[`Specify an enum field type Inline definition client runtime list 1`] = `
+[
+  [
+    {
+      "authMode": undefined,
+      "authToken": undefined,
+      "query": "query($filter: ModelPostFilterInput,$limit: Int,$nextToken: String) { listPosts(filter: $filter,limit: $limit,nextToken: $nextToken) { items { id privacySetting content createdAt updatedAt } nextToken __typename } }",
+      "variables": {},
+    },
+    {},
+  ],
+]
+`;
+
+exports[`Specify an enum field type Inline definition client runtime update 1`] = `
+[
+  [
+    {
+      "authMode": undefined,
+      "authToken": undefined,
+      "query": "mutation($input: UpdatePostInput!) { updatePost(input: $input) { id privacySetting content createdAt updatedAt } }",
+      "variables": {
+        "input": {
+          "id": "some-id",
+          "privacySetting": "FRIENDS_ONLY",
+        },
+      },
+    },
+    {},
+  ],
+]
+`;

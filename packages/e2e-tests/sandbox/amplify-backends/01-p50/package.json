@@ -1,0 +1,7 @@
+{
+  "name": "p50",
+  "description": "Amplify backend for a p50 schema",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module"
+}
