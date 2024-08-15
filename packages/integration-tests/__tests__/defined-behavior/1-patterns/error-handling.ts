@@ -684,7 +684,7 @@ describe('Exceptions', () => {
     // TODO: refer to Asana task to see which failure case ivaartem was specifically asking about.
   });
 
-  describe.only('Explicit cancellation results in an AbortError', () => {
+  describe('Explicit cancellation results in an AbortError', () => {
     function mockSleepingFetch(fetchSpy?: jest.SpyInstance) {
       (fetchSpy || jest.spyOn(global, 'fetch')).mockImplementation(
         (input, init) => {
