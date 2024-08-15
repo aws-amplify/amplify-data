@@ -14,6 +14,10 @@ jobs:
     needs:
       - prebuild-ubuntu
     uses: ./.github/workflows/callable-unit-tests.yml
+  local-e2e:
+    needs:
+      - prebuild-ubuntu
+    uses: ./.github/workflows/callable-local-e2e-tests.yml
   e2e:
     needs:
       - prebuild-ubuntu

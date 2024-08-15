@@ -1,5 +1,17 @@
 # @aws-amplify/data-schema
 
+## 1.3.10
+
+### Patch Changes
+
+- f4a47cc: fix subscription filter input types
+
+## 1.3.9
+
+### Patch Changes
+
+- 43c3163: add relationship validation in schema processor
+
 ## 1.3.8
 
 ### Patch Changes

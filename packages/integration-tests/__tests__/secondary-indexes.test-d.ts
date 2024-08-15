@@ -156,6 +156,13 @@ describe('secondary indexes / index queries', () => {
         // @ts-expect-error
         nonexistent: { gt: 3 },
       });
+
+      // Unsupported operator for key condition
+      client.models.Post.myCustomIdx({
+        description: 'abc',
+        // @ts-expect-error
+        updatedAtViewCount: { beginsWith: 'xyz' },
+      });
     });
 
     test('Return type', async () => {
