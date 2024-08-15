@@ -14,6 +14,7 @@ import type {
   FunctionHandler,
   HandlerType as Handler,
 } from './Handler';
+import { AiModel, InferenceConfiguration } from './ai/AiModelType';
 
 const queryBrand = 'queryCustomOperation';
 const mutationBrand = 'mutationCustomOperation';
@@ -51,6 +52,7 @@ type CustomData = {
   typeName: CustomOperationName;
   handlers: Handler[] | null;
   subscriptionSource: SubscriptionSource[];
+  input?: CustomOperationInput;
 };
 
 type InternalCustomData = CustomData & {
@@ -60,12 +62,15 @@ type InternalCustomData = CustomData & {
   authorization: Authorization<any, any, any>[];
 };
 
+export type CustomOperationInput = GenerationInput;
+
 export type CustomOperationParamShape = {
   arguments: CustomArguments | null;
   returnType: CustomReturnType | null;
   authorization: Authorization<any, any, any>[];
   typeName: CustomOperationName;
   handlers: Handler | null;
+  input?: CustomOperationInput;
 };
 
 export type CustomOperation<
@@ -140,7 +145,7 @@ export type InternalCustom<B extends CustomOperationBrand = any> =
 function _custom<
   T extends CustomOperationParamShape,
   B extends CustomOperationBrand,
->(typeName: CustomOperationName, brand: B) {
+>(typeName: CustomOperationName, brand: B, input?: T['input']) {
   const data: CustomData = {
     arguments: {},
     returnType: null,
@@ -148,6 +153,7 @@ function _custom<
     typeName: typeName,
     handlers: null,
     subscriptionSource: [],
+    input,
   };
 
   const builder = brandedBuilder<T>(
@@ -301,22 +307,23 @@ export function subscription(): CustomOperation<
   return _custom('Subscription', subscriptionBrand);
 }
 
-export type GenerationCustomOperation = CustomOperation<
-  CustomOperationParamShape,
-  any,
-  typeof generationBrand
->;
+export interface GenerationInput {
+  aiModel: AiModel;
+  systemPrompt: string;
+  inferenceConfiguration?: InferenceConfiguration;
+}
 
-export function generation(): CustomOperation<
+export function generation(input: GenerationInput): CustomOperation<
   {
     arguments: null;
     returnType: null;
     authorization: [];
     typeName: 'Generation';
     handlers: null;
+    input: GenerationInput;
   },
-  'for',
+  'for' | 'handler',
   typeof generationBrand
 > {
-  return _custom('Generation', generationBrand);
+  return _custom('Generation', generationBrand, input);
 }

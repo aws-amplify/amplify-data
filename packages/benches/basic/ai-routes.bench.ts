@@ -53,10 +53,12 @@ bench('schema with conversation, model and client types', () => {
 bench('schema with generation returning primitive type w/ ClientSchema', () => {
   const s = a.schema({
     generate: a
-      .generation()
+      .generation({
+        aiModel: a.aiModel.anthropic.claude3Haiku(),
+        systemPrompt: 'Hello, world!'
+      })
       .arguments({ inputContent: a.string().required() })
       .returns(a.string().required())
-      .handler(a.handler.function('customFunction'))
       .authorization((allow) => allow.publicApiKey()),
   });
 
@@ -67,10 +69,12 @@ bench('schema with generation returning enum type w/ ClientSchema', () => {
   const s = a.schema({
     Status: a.enum(['Active', 'Inactive', 'Unknown']),
     generate: a
-      .generation()
+      .generation({
+        aiModel: a.aiModel.anthropic.claude3Haiku(),
+        systemPrompt: 'Hello, world!'
+      })
       .arguments({ itemId: a.string().required() })
       .returns(a.ref('Status').required())
-      .handler(a.handler.function('customFunction'))
       .authorization((allow) => allow.publicApiKey()),
   });
 
@@ -83,10 +87,12 @@ bench('schema with generation returning custom type w/ ClientSchema', () => {
       result: a.string(),
     }),
     makeRecipe: a
-      .generation()
+      .generation({
+        aiModel: a.aiModel.anthropic.claude3Haiku(),
+        systemPrompt: 'Hello, world!'
+      })
       .arguments({ inputContent: a.string().required() })
       .returns(a.ref('Recipe'))
-      .handler(a.handler.function('customFunction'))
       .authorization((allow) => allow.publicApiKey()),
   });
   type _ = ClientSchema<typeof s>;
@@ -98,10 +104,12 @@ bench('schema with generation returning model w/ ClientSchema', () => {
       result: a.string(),
     }),
     makeRecipe: a
-      .generation()
+      .generation({
+        aiModel: a.aiModel.anthropic.claude3Haiku(),
+        systemPrompt: 'Hello, world!'
+      })
       .arguments({ modelId: a.string().required() })
       .returns(a.ref('Recipe'))
-      .handler(a.handler.function('customFunction'))
       .authorization((allow) => allow.publicApiKey()),
   });
   type _ = ClientSchema<typeof s>;

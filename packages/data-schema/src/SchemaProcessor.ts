@@ -34,7 +34,12 @@ import {
 import type { InternalRef, RefType } from './RefType';
 import type { EnumType } from './EnumType';
 import type { CustomType, CustomTypeParamShape } from './CustomType';
-import { type InternalCustom, CustomOperationNames } from './CustomOperation';
+import {
+  type InternalCustom,
+  type CustomOperationInput,
+  type GenerationInput,
+  CustomOperationNames,
+} from './CustomOperation';
 import { Brand, getBrand } from './util';
 import {
   getHandlerData,
@@ -95,6 +100,12 @@ function isCustomType(
 
 function isConversationRoute(type: any): type is ConversationType {
   return getBrand(type) === conversationBrandName;
+}
+
+function isGenerationInput(
+  input?: CustomOperationInput,
+): input is GenerationInput {
+  return Boolean(input?.aiModel && input?.systemPrompt);
 }
 
 function isCustomOperation(type: any): type is InternalCustom {
@@ -482,7 +493,19 @@ function customOperationToGql(
     gqlHandlerContent += `@aws_subscribe(mutations: ["${subscriptionSources}"]) `;
   }
 
+  if (opType === 'Generation') {
+    if (!isGenerationInput(typeDef.data.input)) {
+      throw new Error(
+        `Invalid Generation Route definition. A Generation Route must include a valid input. ${typeName} has an invalid or no input defined.`,
+      );
+    }
+    const { aiModel, systemPrompt } = typeDef.data.input;
+    // TODO: , inferenceConfiguration: ${inferenceConfiguration}
+    gqlHandlerContent += `@generation(aiModel: "${aiModel.friendlyName}", systemPrompt: "${systemPrompt}") `;
+  }
+
   const gqlField = `${callSignature}: ${returnTypeName} ${gqlHandlerContent}${authString}`;
+
   return {
     gqlField,
     implicitTypes: implicitTypes,
@@ -1310,6 +1333,8 @@ const schemaPreprocessor = (
         const model = `type ${typeName} ${customAuth}\n{\n  ${joined}\n}`;
         gqlModels.push(model);
       } else if (isCustomOperation(typeDef)) {
+        // TODO: add generation route logic.
+
         const { typeName: opType } = typeDef.data;
 
         const {
@@ -1361,6 +1386,7 @@ const schemaPreprocessor = (
 
         switch (opType) {
           case 'Query':
+          case 'Generation':
             customQueries.push(gqlField);
             break;
           case 'Mutation':
@@ -1512,8 +1538,9 @@ function validateCustomOperations(
   const authConfigured = authRules.length > 0;
 
   if (
-    (authConfigured && !handlerConfigured) ||
-    (handlerConfigured && !authConfigured)
+    opType !== 'Generation' &&
+    ((authConfigured && !handlerConfigured) ||
+      (handlerConfigured && !authConfigured))
   ) {
     // Deploying a custom operation with auth and no handler reference OR
     // with a handler reference but no auth
@@ -1547,7 +1574,7 @@ function validateCustomOperations(
     (opType === 'Query' || opType === 'Mutation' || opType === 'Generation')
   ) {
     const typeDescription =
-      opType === 'Generation' ? `${opType} route` : `Custom ${opType}`;
+      opType === 'Generation' ? 'Generation Route' : `Custom ${opType}`;
     throw new Error(
       `Invalid ${typeDescription} definition. A ${typeDescription} must include a return type. ${typeName} has no return type specified.`,
     );
@@ -1736,8 +1763,8 @@ function transformCustomOperations(
   if (isCustomHandler(handlers)) {
     jsFunctionForField = handleCustom(
       handlers,
-      // a generation route is essentially a custom query under the hood
-      opType === 'Generation' ? 'Query' : opType,
+      // Generation routes should not have handlers
+      opType as Exclude<typeof opType, 'Generation'>,
       typeName,
     );
   }

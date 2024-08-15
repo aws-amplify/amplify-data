@@ -166,6 +166,17 @@ type Query {
 }"
 `;
 
+exports[`CustomOperation transform dynamo schema Generation route does not require a handler even when auth is defined 1`] = `
+"type Recipe @aws_api_key
+{
+  ingredients: [String]
+}
+
+type Query {
+  makeRecipe(content: String): Recipe @generation(aiModel: "Claude3Haiku", systemPrompt: "Hello, world!") @auth(rules: [{allow: public, provider: apiKey}])
+}"
+`;
+
 exports[`CustomOperation transform dynamo schema Schema w model, custom query, mutation, and subscription 1`] = `
 "type Post @model @auth(rules: [{allow: public, provider: apiKey}])
 {
