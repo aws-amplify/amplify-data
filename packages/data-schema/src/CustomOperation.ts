@@ -52,7 +52,7 @@ type CustomData = {
   typeName: CustomOperationName;
   handlers: Handler[] | null;
   subscriptionSource: SubscriptionSource[];
-  generationInput?: GenerationInput;
+  input?: CustomOperationInput;
 };
 
 type InternalCustomData = CustomData & {
@@ -62,12 +62,15 @@ type InternalCustomData = CustomData & {
   authorization: Authorization<any, any, any>[];
 };
 
+export type CustomOperationInput = GenerationInput;
+
 export type CustomOperationParamShape = {
   arguments: CustomArguments | null;
   returnType: CustomReturnType | null;
   authorization: Authorization<any, any, any>[];
   typeName: CustomOperationName;
   handlers: Handler | null;
+  input?: CustomOperationInput;
 };
 
 export type CustomOperation<
@@ -142,7 +145,7 @@ export type InternalCustom<B extends CustomOperationBrand = any> =
 function _custom<
   T extends CustomOperationParamShape,
   B extends CustomOperationBrand,
->(typeName: CustomOperationName, brand: B, generationInput?: GenerationInput) {
+>(typeName: CustomOperationName, brand: B, input?: T['input']) {
   const data: CustomData = {
     arguments: {},
     returnType: null,
@@ -150,7 +153,7 @@ function _custom<
     typeName: typeName,
     handlers: null,
     subscriptionSource: [],
-    generationInput,
+    input,
   };
 
   const builder = brandedBuilder<T>(
@@ -176,10 +179,6 @@ function _custom<
         return this;
       },
       handler(handlers: HandlerInputType) {
-        if (generationInput) {
-          return this;
-        }
-
         data.handlers = Array.isArray(handlers)
           ? handlers
           : ([handlers] as Handler[]);
@@ -187,10 +186,6 @@ function _custom<
         return this;
       },
       for(source: SubscriptionSource | SubscriptionSource[]) {
-        if (generationInput) {
-          return this;
-        }
-
         data.subscriptionSource = Array.isArray(source) ? source : [source];
 
         return this;
@@ -325,7 +320,7 @@ export function generation(input: GenerationInput): CustomOperation<
     authorization: [];
     typeName: 'Generation';
     handlers: null;
-    generationInput: null;
+    input: GenerationInput;
   },
   'for' | 'handler',
   typeof generationBrand

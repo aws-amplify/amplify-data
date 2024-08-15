@@ -34,7 +34,12 @@ import {
 import type { InternalRef, RefType } from './RefType';
 import type { EnumType } from './EnumType';
 import type { CustomType, CustomTypeParamShape } from './CustomType';
-import { type InternalCustom, CustomOperationNames } from './CustomOperation';
+import {
+  type InternalCustom,
+  type CustomOperationInput,
+  type GenerationInput,
+  CustomOperationNames,
+} from './CustomOperation';
 import { Brand, getBrand } from './util';
 import {
   getHandlerData,
@@ -95,6 +100,12 @@ function isCustomType(
 
 function isConversationRoute(type: any): type is ConversationType {
   return getBrand(type) === conversationBrandName;
+}
+
+function isGenerationInput(
+  input?: CustomOperationInput,
+): input is GenerationInput {
+  return Boolean(input?.aiModel && input?.systemPrompt);
 }
 
 function isCustomOperation(type: any): type is InternalCustom {
@@ -483,13 +494,12 @@ function customOperationToGql(
   }
 
   if (opType === 'Generation') {
-    if (!typeDef.data.generationInput) {
-      // This should never happen IF types are enforced by the customer application
+    if (!isGenerationInput(typeDef.data.input)) {
       throw new Error(
-        `Invalid Generation Route definition. A Generation Route must include an input. ${typeName} has no input defined.`,
+        `Invalid Generation Route definition. A Generation Route must include a valid input. ${typeName} has an invalid or no input defined.`,
       );
     }
-    const { aiModel, systemPrompt } = typeDef.data.generationInput;
+    const { aiModel, systemPrompt } = typeDef.data.input;
     // TODO: , inferenceConfiguration: ${inferenceConfiguration}
     gqlHandlerContent += `@generation(aiModel: "${aiModel.friendlyName}", systemPrompt: "${systemPrompt}") `;
   }

@@ -13,7 +13,7 @@ export declare function generation(input: GenerationInput): CustomOperation<{
     authorization: [];
     typeName: 'Generation';
     handlers: null;
-    generationInput: null;
+    input: GenerationInput;
 }, 'for' | 'handler', typeof generationBrand>;
 ```
 
@@ -52,5 +52,5 @@ GenerationInput
 </tbody></table>
 **Returns:**
 
-CustomOperation&lt;{ arguments: null; returnType: null; authorization: \[\]; typeName: 'Generation'; handlers: null; generationInput: null; }, 'for' \| 'handler', typeof generationBrand&gt;
+CustomOperation&lt;{ arguments: null; returnType: null; authorization: \[\]; typeName: 'Generation'; handlers: null; input: GenerationInput; }, 'for' \| 'handler', typeof generationBrand&gt;
 
