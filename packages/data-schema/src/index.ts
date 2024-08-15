@@ -4,17 +4,3 @@ import { ClientSchema } from './ClientSchema';
 export { a };
 
 export type { ClientSchema };
-
-export type { Authorization } from './Authorization';
-export type { CustomOperation } from './CustomOperation';
-export type { ModelField, Nullable, Json } from './ModelField';
-export type { ModelSchema } from './ModelSchema';
-export type { ModelType, ModelDefaultIdentifier } from './ModelType';
-export type { RefType } from './RefType';
-export type { CustomType } from './CustomType';
-export type {
-  ModelRelationalField,
-  ModelRelationshipTypes,
-  ModelRelationalTypeArgFactory,
-} from './ModelRelationalField';
-export type { EnumType } from './EnumType';
