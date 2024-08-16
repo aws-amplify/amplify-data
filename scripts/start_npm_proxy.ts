@@ -16,7 +16,12 @@ const STARTUP_TIMEOUT_MS = 10000;
 if (existsSync(LOG_FILE)) {
   await unlink(LOG_FILE);
 }
-// start the server in a detached process
+/**
+ * start the server in a detached process
+ *
+ * Template string parameters are escaped automatically by execa. For details:
+ * https://github.com/sindresorhus/execa/blob/HEAD/docs/escaping.md
+ */
 await execaCommand(`verdaccio -c verdaccio.config.yaml &>${LOG_FILE} &`, {
   shell: 'bash',
 });
@@ -28,18 +33,22 @@ const npmProxyLogs = await readFile(LOG_FILE, 'utf-8');
 
 if (npmProxyLogs.includes('EADDRINUSE')) {
   throw new Error(
-    'Failed to start npm proxy. Port is already in use. Do you need to run `npm run stop:npm-proxy` first?'
+    'Failed to start npm proxy. Port is already in use. Do you need to run `npm run stop:npm-proxy` first?',
   );
 }
 
 // when the server is ready a line like "http address - http://localhost:4873/ - verdaccio/5.24.1" is printed
 if (!npmProxyLogs.includes('http address')) {
   throw new Error(
-    `Failed to start npm proxy within the timeout. Check the logs in ${LOG_FILE}`
+    `Failed to start npm proxy within the timeout. Check the logs in ${LOG_FILE}`,
   );
 }
 
 console.log(`Local npm proxy running at ${EXPECTED_URL}.`);
 
+/**
+ * Template string parameters are escaped automatically by execa. For details:
+ * https://github.com/sindresorhus/execa/blob/HEAD/docs/escaping.md
+ */
 await execa('npm', ['config', 'set', 'registry', EXPECTED_URL]);
 console.log(`Set npm registry to ${EXPECTED_URL}`);

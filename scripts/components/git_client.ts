@@ -26,6 +26,10 @@ export class GitClient {
    * Defaults to the process cwd.
    */
   constructor(cwd?: string) {
+    /*
+     * Template string parameters are escaped automatically by execa. For details:
+     * https://github.com/sindresorhus/execa/blob/HEAD/docs/escaping.md
+     */
     this.exec = chainableExeca({ cwd });
     this.execWithIO = this.exec({ stdio: 'inherit' });
     this.gitignorePath = cwd ? path.join(cwd, '.gitignore') : '.gitignore';
