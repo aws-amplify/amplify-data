@@ -500,12 +500,14 @@ function customOperationToGql(
       );
     }
     const { aiModel, systemPrompt, inferenceConfiguration } = typeDef.data.input;
-    // TODO: , inferenceConfiguration: ${inferenceConfiguration}
 
-    const inferenceConfig = inferenceConfiguration && Object.keys(inferenceConfiguration).length > 0
-    ? `, inferenceConfiguration: { ${Object.entries(inferenceConfiguration).map(([key, value]) => `${key}: ${value}`).join(', ')} }`
-    : '';
-    gqlHandlerContent += `@generation(aiModel: "${aiModel.friendlyName}", systemPrompt: "${systemPrompt}"${inferenceConfig}) `;
+    const inferenceConfigurationEntries = Object.entries(inferenceConfiguration ?? {});
+    const inferenceConfigurationGql = inferenceConfigurationEntries.length > 0
+      ? `, inferenceConfiguration: { ${inferenceConfigurationEntries
+        .map(([key, value]) => `${key}: ${value}`)
+        .join(', ')} }`
+      : '';
+    gqlHandlerContent += `@generation(aiModel: "${aiModel.friendlyName}", systemPrompt: "${systemPrompt}"${inferenceConfigurationGql}) `;
   }
 
   const gqlField = `${callSignature}: ${returnTypeName} ${gqlHandlerContent}${authString}`;
