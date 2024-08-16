@@ -316,6 +316,75 @@ describe('CustomOperation transform', () => {
       expect(result).toMatchSnapshot();
     });
 
+    test('Generation route should create directive with inference configuration', () => {
+      const s = a.schema({
+        Recipe: a.customType({
+          ingredients: a.string().array(),
+        }),
+        makeRecipe: a
+          .generation({
+            aiModel: a.aiModel.anthropic.claude3Haiku(),
+            systemPrompt: 'Hello, world!',
+            inferenceConfiguration: {
+              temperature: 0.5,
+              maxTokens: 100,
+              topP: 1,
+            },
+          })
+          .arguments({
+            content: a.string(),
+          })
+          .returns(a.ref('Recipe'))
+          .authorization((allow) => allow.publicApiKey()),
+      });
+
+      const result = s.transform().schema;
+
+      expect(result).toMatchSnapshot();
+    });
+
+    test('Generation route with empty inference configuration should not pass argument along to directive', () => {
+      const s = a.schema({
+        makeRecipe: a
+          .generation({
+            aiModel: a.aiModel.anthropic.claude3Haiku(),
+            systemPrompt: 'Hello, world!',
+            inferenceConfiguration: {},
+          })
+          .arguments({
+            content: a.string(),
+          })
+          .returns(a.string())
+          .authorization((allow) => allow.publicApiKey()),
+      });
+
+      const result = s.transform().schema;
+
+      expect(result).toMatchSnapshot();
+    });
+
+    test('Generation route with subset of inference configuration should create directive arg', () => {
+      const s = a.schema({
+        makeRecipe: a
+          .generation({
+            aiModel: a.aiModel.anthropic.claude3Haiku(),
+            systemPrompt: 'Hello, world!',
+            inferenceConfiguration: {
+              temperature: 0.5,
+            },
+          })
+          .arguments({
+            content: a.string(),
+          })
+          .returns(a.string())
+          .authorization((allow) => allow.publicApiKey()),
+      });
+
+      const result = s.transform().schema;
+
+      expect(result).toMatchSnapshot();
+    });
+
     test('Generation route w/ no return should throw', () => {
       const s = a.schema({
         makeRecipe: a

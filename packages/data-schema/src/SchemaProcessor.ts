@@ -499,9 +499,13 @@ function customOperationToGql(
         `Invalid Generation Route definition. A Generation Route must include a valid input. ${typeName} has an invalid or no input defined.`,
       );
     }
-    const { aiModel, systemPrompt } = typeDef.data.input;
+    const { aiModel, systemPrompt, inferenceConfiguration } = typeDef.data.input;
     // TODO: , inferenceConfiguration: ${inferenceConfiguration}
-    gqlHandlerContent += `@generation(aiModel: "${aiModel.friendlyName}", systemPrompt: "${systemPrompt}") `;
+
+    const inferenceConfig = inferenceConfiguration && Object.keys(inferenceConfiguration).length > 0
+    ? `, inferenceConfiguration: { ${Object.entries(inferenceConfiguration).map(([key, value]) => `${key}: ${value}`).join(', ')} }`
+    : '';
+    gqlHandlerContent += `@generation(aiModel: "${aiModel.friendlyName}", systemPrompt: "${systemPrompt}"${inferenceConfig}) `;
   }
 
   const gqlField = `${callSignature}: ${returnTypeName} ${gqlHandlerContent}${authString}`;
