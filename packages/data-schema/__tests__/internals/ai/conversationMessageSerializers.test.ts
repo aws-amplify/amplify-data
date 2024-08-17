@@ -39,16 +39,30 @@ describe('conversationMessageSerializers', () => {
   const mockTimeTool = {
     description: 'Get current time',
     inputSchema: {
-      json: { properties: { timeZone: 'string' } },
+      json: {
+        type: 'object',
+        properties: {
+          timeZone: {
+            type: 'string',
+          },
+        },
+      },
     },
-  };
+  } as const;
   const mockWeatherToolName = 'currentWeather';
   const mockWeatherTool = {
     description: 'Get current weather',
     inputSchema: {
-      json: { properties: { location: 'Seattle, WA' } },
+      json: {
+        type: 'object',
+        properties: {
+          location: {
+            type: 'string',
+          },
+        },
+      },
     },
-  };
+  } as const;
   const mockToolConfiguration = {
     tools: {
       [mockTimeToolName]: mockTimeTool,

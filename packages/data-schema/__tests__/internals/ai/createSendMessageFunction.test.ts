@@ -27,11 +27,18 @@ describe('createSendMessageFunction()', () => {
     tools: {
       [mockToolName]: {
         inputSchema: {
-          json: {},
+          json: {
+            type: 'object',
+            properties: {
+              foo: {
+                type: 'string',
+              },
+            },
+          },
         },
       },
     },
-  };
+  } as const;
   const mockSerializedToolConfiguration = {
     tools: [
       {

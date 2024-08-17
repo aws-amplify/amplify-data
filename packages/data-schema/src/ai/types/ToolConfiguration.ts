@@ -1,10 +1,17 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-import type { DocumentType } from '../../runtime/bridge-types';
+import type { JSONSchema4 } from 'json-schema';
+
+interface ObjectTypedJSONSchema4 extends JSONSchema4 {
+  type: 'object';
+}
 
 interface ToolJsonInputSchema {
-  json: DocumentType;
+  /**
+   * The schema for the tool. The top level schema type must be object.
+   */
+  json: ObjectTypedJSONSchema4;
 }
 
 export interface Tool {
