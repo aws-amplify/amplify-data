@@ -1,4 +1,4 @@
-import { deploySandbox } from './deploy';
+import { deploySandbox, deploySandboxWatch } from './deploy';
 import { teardownSandbox } from './teardown';
 
 /**
@@ -10,4 +10,5 @@ export const sandboxTimeout: number = 600000;
 export const outputsFileName = 'amplify_outputs.json';
 
 export { deploySandbox };
+export { deploySandboxWatch };
 export { teardownSandbox };
