@@ -56,6 +56,10 @@ async function runBenches(benchFilePaths: string[]) {
   await Promise.all(
     benchFilePaths.map(async (file) => {
       try {
+        /**
+         * Template string parameters are escaped automatically by execa. For details:
+         * https://github.com/sindresorhus/execa/blob/HEAD/docs/escaping.md
+         */
         await execa('npx', [
           'tsx',
           file,
