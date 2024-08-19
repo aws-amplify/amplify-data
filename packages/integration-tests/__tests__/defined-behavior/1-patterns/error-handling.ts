@@ -686,27 +686,26 @@ describe('Exceptions', () => {
 
   describe('Explicit cancellation results in an AbortError', () => {
     function mockSleepingFetch(fetchSpy?: jest.SpyInstance) {
-      (fetchSpy || jest.spyOn(global, 'fetch')).mockImplementation(
-        (input, init) => {
-          const abortSignal = init?.signal;
-          return new Promise((_resolve, reject) => {
-            if (abortSignal) {
-              if (abortSignal.aborted) {
-                reject(abortSignal.reason);
-              } else {
-                abortSignal.addEventListener('abort', (event) => {
+      return new Promise<void>((fetchStarted) => {
+        (fetchSpy || jest.spyOn(global, 'fetch')).mockImplementation(
+          (input, init) => {
+            const abortSignal = init?.signal;
+            return new Promise((_resolve, reject) => {
+              if (abortSignal) {
+                if (abortSignal.aborted) {
                   reject(abortSignal.reason);
-                });
+                } else {
+                  abortSignal.addEventListener('abort', (event) => {
+                    reject(abortSignal.reason);
+                  });
+                }
               }
-            }
-          });
-        },
-      );
+              fetchStarted();
+            });
+          },
+        );
+      });
     }
-
-    beforeEach(() => {
-      mockSleepingFetch();
-    });
 
     afterEach(() => {
       jest.clearAllMocks();
@@ -716,10 +715,6 @@ describe('Exceptions', () => {
       jest.restoreAllMocks();
       jest.resetModules();
     });
-
-    async function pause(ms = 1) {
-      return new Promise((unsleep) => setTimeout(unsleep, ms));
-    }
 
     const TodoModelCases = [
       ['list', {}],
@@ -732,6 +727,7 @@ describe('Exceptions', () => {
     for (const delay of [true, false]) {
       describe(`when cancel ${delay ? 'is delayed after' : 'immediately follows'}`, () => {
         test(`graphql()`, async () => {
+          const fetchStarted = mockSleepingFetch();
           const config = await buildAmplifyConfig(schema);
           Amplify.configure(config);
           const client = generateClient<Schema>();
@@ -739,7 +735,7 @@ describe('Exceptions', () => {
           const request = client.graphql({
             query: `query Q { getWhatever { a b c } }`,
           });
-          if (delay) await pause();
+          if (delay) await fetchStarted;
           if (!(request instanceof Promise)) throw new Error();
           const isCanceled = client.cancel(request);
 
@@ -749,13 +745,14 @@ describe('Exceptions', () => {
 
         for (const [op, args] of TodoModelCases) {
           test(`Model.${op}()`, async () => {
+            const fetchStarted = mockSleepingFetch();
             const config = await buildAmplifyConfig(schema);
             Amplify.configure(config);
             const client = generateClient<Schema>();
 
             // TS just can't tell whether args matches the op in the loop.
             const request = client.models.Todo[op](args as any);
-            if (delay) await pause();
+            if (delay) await fetchStarted;
             const isCanceled = client.cancel(request);
 
             expect(isCanceled).toBe(true);
@@ -764,12 +761,13 @@ describe('Exceptions', () => {
         }
 
         test(`a custom operation`, async () => {
+          const fetchStarted = mockSleepingFetch();
           const config = await buildAmplifyConfig(schema);
           Amplify.configure(config);
           const client = generateClient<Schema>();
 
           const request = client.mutations.completeTodo({ todoId: '123' });
-          if (delay) await pause();
+          if (delay) await fetchStarted;
           const isCanceled = client.cancel(request);
 
           expect(isCanceled).toBe(true);
@@ -777,6 +775,7 @@ describe('Exceptions', () => {
         });
 
         test(`an index query`, async () => {
+          const fetchStarted = mockSleepingFetch();
           const config = await buildAmplifyConfig(schema);
           Amplify.configure(config);
           const client = generateClient<Schema>();
@@ -784,7 +783,7 @@ describe('Exceptions', () => {
           const request = client.models.Todo.listTodoByPriorityAndContent({
             priority: 'high',
           });
-          if (delay) await pause();
+          if (delay) await fetchStarted;
           const isCanceled = client.cancel(request);
 
           expect(isCanceled).toBe(true);
@@ -817,9 +816,9 @@ describe('Exceptions', () => {
             todoId: 'some-id',
           });
 
-          mockSleepingFetch(fetchSpy);
+          const fetchStarted = mockSleepingFetch();
           const request = note!.todo();
-          if (delay) await pause();
+          if (delay) await fetchStarted;
           const isCanceled = client.cancel(request);
 
           expect(isCanceled).toEqual(true);
@@ -849,9 +848,9 @@ describe('Exceptions', () => {
 
           const { data: todo } = await client.models.Todo.create({});
 
-          mockSleepingFetch(fetchSpy);
+          const fetchStarted = mockSleepingFetch();
           const request = todo!.assignee();
-          if (delay) await pause();
+          if (delay) await fetchStarted;
           const isCanceled = client.cancel(request);
 
           expect(isCanceled).toEqual(true);
@@ -881,9 +880,9 @@ describe('Exceptions', () => {
 
           const { data: todo } = await client.models.Todo.create({});
 
-          mockSleepingFetch(fetchSpy);
+          const fetchStarted = mockSleepingFetch();
           const request = todo!.notes();
-          if (delay) await pause();
+          if (delay) await fetchStarted;
           const isCanceled = client.cancel(request);
 
           expect(isCanceled).toEqual(true);
