@@ -1,12 +1,12 @@
 # Cancellation
 
-The Amplify library generally supports canceling service requests after they've been issued, but prior to their completion. This is done on a best-effort basis using the [`AbortController`](https://developer.mozilla.org/en-US/docs/Web/API/AbortController) mechanism. For modeled operations (operations that are generated attached to the client based on the customer schema), there is some added complexity.
+The Amplify library supports canceling in-flight service requests after they've been issued. This is done in a best-effort manner internally using an [`AbortController`](https://developer.mozilla.org/en-US/docs/Web/API/AbortController) provided to `fetch()`. (Cancelling an already-issued mutation, for example, is never **guaranteed** to prevent the mutation.) For modeled operations (operations that are generated attached to the client based on the customer schema), there is some added complexity.
 
-This document provides an *overview* of how the core cancellation works and how it has been extended to modeled operations.
+This document provides an high level overview of how the core cancellation works and how it has been extended to modeled operations.
 
 ### Basic `graphql()` Cancellation Support
 
-High level overview of how "core" cancellation works. Strictly speaking, there's an additional layer of mapping between GraphQL category and REST category. But, for the sake of simplicity, we can think of it like this:
+Here's the high level overview of how the core cancellation mechanisms works. Strictly speaking, there's an additional layer of mapping between GraphQL category and REST category. But, for the sake of simplicity and from the perspective of `@aws-amplify/data-schema`, we can think of it like this:
 
 ```mermaid
 sequenceDiagram
@@ -37,9 +37,11 @@ sequenceDiagram
     App -->> App : Promise A throws
 ```
 
-### Default (Broken) State for Modeled 
+### The "Gap" in Modeled Operations
 
-Without some additional mapping, modeled operations are not cancelable as desired. Again, simplifying the REST layer out of our conceptual model, here's the flow: 
+Modeled operations (e.g., `client.Todo.list()`) are not inherently cancellable by the simple virtue of using `client.graphql()` under the hood. This is due to the layers of response processing needed by modeled operations, which ultimately results in the customer-facing `Promise` being distinct from the original, underlying, "cancellable" `Promise`.
+
+Again, simplifying the REST layer out of our conceptual model, here's gap in the flow: 
 
 ```mermaid
 sequenceDiagram
@@ -69,24 +71,13 @@ sequenceDiagram
     client.cancel -->> App : false (failure)
 ```
 
-TLDR; the `cancel()` operation recognizes the `Promise` from `.graphql()`, but the `Promise` that modeled operations hand back to customer code is *not* that same `Promise`!
+**TLDR:** The underlying `client.cancel()` operation will recognize a `Promise` from `client.graphql()`, but the `Promise` returned from modeled operations is a completely new and distinct `Promise`! So `client.cancel()` has no idea what to do with it ***by default***.
 
 ### The Solution
 
-We will "register" the newly created `Promise` from modeled operations (`Promise C`) and "monkey patch" `client.cancel()` so that it can find the original `AbortController`. And, we will add further testing to ensure that cancellation of core `graphql()` operations are not negatively impacted.
+We create a map from the newly created `Promise` in inside the modeled operations (`Promise C`) and "monkey patch" `client.cancel()` so that it first looks for a mapping before forwarding the `Promise` to the internal `cancel()`. To ensure our monkey patch doesn't interfere with core cancellation behavior, we have also explicitly added testing for cancellation of the core `graphql()` operations.
 
-Things we considered:
-
-1. **The mapping from `Promise` to `AbortController` is *well-encapsulated* in the API REST category.** There is no existing way to add promises to the map. Exposing the map or controls to add to the map would increase the public surface area of the GraphQL and REST categories.
-2. **Mapping *additional* `Promise`-es to the original `AbortController` would make cleanup more complex.** When the "base Promise" is created, it registers a cleanup callback that looks for itself and removes itself from the `cancellationMap`. If we add more promises to this map, the cleanup gets more complicated.
-3. **`api-graphql` depends on `data-schema` (instead of the other way around).** Any new functionality we expose via `api-graphql` for `data-schema` cannot be imported directly by `data-schema`. It must either be *injected*, or it must be exposed or invoked via a new *optional* arguments or methods.
-4. **Performing this mapping in `data-schema` requires an update to `client.cancel()`**. The existing `client.cancel()` comes from `api-graphql` and will have no knowledge of any new mapping from `data-schema`. It could be updated to accept the additional `cancellationMap` (optionally). Or, `data-schema` could "monkey patch" `.cancel()` to perform the mapping when it's available. The former solution scores better on "hackiness", but requires updates to two packages, requiring customers to pull updates to *both* packages.
-5. **We can "Monkey Patch" `client.cancel()`, but it "feels hacky".** I believe this is "mitigated" by the fact that `generateClient` already constructs the `client` "progressively" using imported "extender" functions from `data-schema`. The design is intended to segregate core graphql category functionality from modeled graphql functionality. 
-6. **The "Monkey Patching" solution is the only obvious two-way door solution.** The other solutions augment the public surface area of the library, potentially creating new contracts we must then maintain. "Monkey Patching" feels a little "dirty", but since it doesn't change the library surface area, it provides a relatively simple solution that allows migration to the other solutions down the line if needed.
-
-#### Option 1 - "Monkey Do Patch!" (The Currently Implemented Option)
-
-The current solution creates a new mapping entirely in the `data-schema` package and "monkey patches" the `client.cancel()` method to leverage this intermediate mapping. This leads to a flow that looks like this:
+With the mapping, modeled operations now look like this (still simplified):
 
 ```mermaid
 sequenceDiagram
@@ -124,18 +115,86 @@ sequenceDiagram
     App -->> App : Promise C throws
 ```
 
-The primary risk introduced with this approach:
+When the app attempts to cancel a `Promise` from a modeled operation, `client.cancel()` sees the `Promise` in the map, finds the original/core `Promise`, and cancels *that* `Promise`.
 
-1. **Potential interference with core `client.cancel()` behavior.** This is mitigated by explicitly including testing for base behavior in our `defined-behavior` tests. (Layer of testing that requires Admin/PM approval to change.)
+## Important Patterns and Utilities
 
-#### Option 2 - "Monkey do lots of work!"
+A few of the mechanistic details to help facilitate this promise mapping.
 
-In this option, we would need to explore patterns for `api-graphql` to expose the `extendCancellability()` method (probably as a `client` method) for `data-schema` to probe for and use when-present. This would keep the bulk of the new logic inside the *core* client implementation.
+### `extendCancellability`
 
-It would make more work for us, as we'd have to stage more PR's (three to four) to roll the feature out. But, it would provide "first class core support" for any future library that needs to wrap `client.graphql()` to extend cancellability. (Zero customers are asking for this, FWIW.)
+This function maps one `Promise` to another and returns an "extended" version of the base `Promise`. When using the utility, use the return value as if it were the original base `Promise`. This will better ensure there is no "danging" `Promise` that will spew async errors into in runtime. E.g.,
 
-Some more POC work would need to be done, as this broad option is a little more open-ended.
+```ts
+const extendedPromise = extendCancellability(basePromise, resultPromise);
+const { data, extensions } = await extendedPromise;
+```
 
-#### Option 3 - "Monkeys meet in the middle."
+In theory, with this utility, you should be able to create an arbitrarily deep chain of promises. `client.cancel()` will start walking the map until it either:
 
-We could update the core `client.cancel()` method *only* to optionally receive a list of maps between "customer facing" promises and base `graphql` promises. The cleanup story gets a little messy here. The `data-schema` package would still be required to create its own mapping between promises, but it would then depend on the `client.cancel()` implementation from `api-graphql` to traverse the map. If `client.cancel()` is "old", cancellation should simply fail (returning `false`) as it does today.
+1. Finds a cycle and throws an exception &mdash; *A bug if it happens!*
+1. Finds the leaf `Promise` (or `undefined`) and forward what it finds to the *original/core* `cancel()`.
+
+See [`extendCancellability`](./packages/data-schema/src/runtime/internals/cancellation.ts).
+
+### Promise Chains
+
+In order to map the `Promise` we hand back to application-space to the original, cancellable `Promise`, we need to follow **two patterns**.
+
+#### 1) Avoid `async functions`'s.
+
+When we create an `async function` and return a `Promise` from that function, the internally returned `Promise` does **not** get directly returned externally. You can try it out [here](https://www.typescriptlang.org/play/?#code/MYewdgziA2CmB0w4EMBOAKAlAbgFC7gBcACASzDFlQAVUQBbUiWALmOTAE89kJOxgxAGYBXAYVLhi9ZAGtYtBk1hZiAb1zEtZClUWNmxALzFKAd2L7l6VUYB86gL45N21LEIjUYHZRp0DWDxHXFBIEhARQj0A5WNpOQVY5iw8UPAoOHhoEABzdHI-K0MjUuJI6P8lZhwgA):
+
+```ts
+let innerPromise: any;
+async function makePromise() {
+    innerPromise = Promise.resolve('ok');
+    return innerPromise;
+}
+const outerPromise = makePromise();
+
+console.log(innerPromise === outerPromise); // false
+
+innerPromise.then((m: string) => console.log(m)); // ok
+outerPromise.then((m: string) => console.log(m)); // ok
+```
+
+To solve this, every "async" function that needs to return a "cancellable" `Promise` must *avoid* using the `async` keyword between the creation of the "cancellable" `Promise` and the public surface.
+
+If you remove `async` from the code above, TS still recognizes the return value as a `Promise`, but no longer creates an additional `Promise` layer.
+
+#### 2) Use Self-Aware Promises
+
+The resolver code for the `Promise` we intend to be cancellable needs to "know" about the `Promise`. Your typical `Promise` construction isn't self-aware:
+
+```ts
+function makePromise() {
+    const p = new Promise(resolve => {
+        console.log(p);
+        resolve();
+    });
+    return p;
+};
+
+const x = makePromise();
+//        ^
+//        |
+//        +-- ReferenceError: Cannot access 'p' before initialization
+```
+
+A typical "trick" to get around this is to "export" the `resolve` and `reject` functions and handle them *outside* the `Promise` body. But, this can make the code harder to trace through without introducing some additional "ceremonious" `async` boilerplate to facilitate `await`-ing when it's more convenient and grokkable to do so.
+
+To make this easier, a `selfAwareAsync` utility function has been added that encapsulates this ceremony. It accepts an `async` function whose first parameter is the `Promise` it will return.
+
+```ts
+function makePromise() {
+    return selfAwareAsync(async resultPromise => {
+        const corePromise = doStuff();
+        const extendedCorePromise = extendCancellability(corePromise, resultPromise);
+        const itIsTotallyFineNowTo = await otherThings();
+        return 'all done';
+    });
+}
+```
+
+See [`selfAwareAsync`](./packages/data-schema/src/runtime/utils/selfAwareAsync.ts).

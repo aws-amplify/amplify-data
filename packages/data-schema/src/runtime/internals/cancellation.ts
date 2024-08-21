@@ -38,15 +38,20 @@ export function upgradeClientCancellation(client: BaseClient) {
     promise: Promise<any>,
     message?: string | undefined,
   ): boolean {
-    // cycles "shouldn't" occur if our implementation is sound. but, we're guarding
-    // against cycles both in case our logic is *not* sound in any way and in case
-    // the cancellability-promise-chaining logic is ever exposed in the public API.
     const visited = new Set<Promise<any>>();
-    let targetPromise = promise;
-    while (promiseMap.has(targetPromise) && !visited.has(targetPromise)) {
+    let targetPromise: Promise<any> | undefined = promise;
+
+    while (targetPromise && promiseMap.has(targetPromise)) {
+      if (visited.has(targetPromise))
+        throw new Error(
+          'A cycle was detected in the modeled graphql cancellation chain. This is a bug. Please report it!',
+        );
       visited.add(targetPromise);
-      targetPromise = promiseMap.get(targetPromise)!;
+      targetPromise = promiseMap.get(targetPromise);
     }
-    return innerCancel(targetPromise, message);
+
+    // call `innerCancel` with `targetPromise!` to defer to existing implementation
+    // on how to handle `null | undefined` or otherwise "non-cancellable" objects.
+    return innerCancel(targetPromise!, message);
   };
 }
