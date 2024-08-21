@@ -123,17 +123,17 @@ A few of the mechanistic details to help facilitate this promise mapping.
 
 ### `extendCancellability`
 
-This function maps one `Promise` to another and returns an "extended" version of the base `Promise`. When using the utility, use the return value as if it were the original base `Promise`. This will better ensure there is no "danging" `Promise` that will spew async errors into in runtime. E.g.,
+This function maps one `Promise` to another and returns an extended version of the base `Promise` ("extended" to perform mapping cleanup on resolution). When using the utility, use the return value as if it were the original base `Promise`. This will better ensure that async errors will not spew uncaught into in runtime. E.g.,
 
 ```ts
 const extendedPromise = extendCancellability(basePromise, resultPromise);
 const { data, extensions } = await extendedPromise;
 ```
 
-In theory, with this utility, you should be able to create an arbitrarily deep chain of promises. `client.cancel()` will start walking the map until it either:
+In theory, with this utility, you should be able to create an arbitrarily deep chain of promises. `client.cancel()` will walk the chain until it either:
 
 1. Finds a cycle and throws an exception &mdash; *A bug if it happens!*
-1. Finds the leaf `Promise` (or `undefined`) and forward what it finds to the *original/core* `cancel()`.
+1. Finds the leaf `Promise` and forward what it finds to the *original/core* `cancel()`.
 
 See [`extendCancellability`](./packages/data-schema/src/runtime/internals/cancellation.ts).
 
