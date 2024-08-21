@@ -141,7 +141,7 @@ See [`extendCancellability`](./packages/data-schema/src/runtime/internals/cancel
 
 In order to map the `Promise` we hand back to application-space to the original, cancellable `Promise`, we need to follow **two patterns**.
 
-#### 1) Avoid `async functions`'s.
+#### 1) Avoid Intermediate/Obfuscating `async` Functions
 
 When we create an `async function` and return a `Promise` from that function, the internally returned `Promise` does **not** get directly returned externally. You can try it out [here](https://www.typescriptlang.org/play/?#code/MYewdgziA2CmB0w4EMBOAKAlAbgFC7gBcACASzDFlQAVUQBbUiWALmOTAE89kJOxgxAGYBXAYVLhi9ZAGtYtBk1hZiAb1zEtZClUWNmxALzFKAd2L7l6VUYB86gL45N21LEIjUYHZRp0DWDxHXFBIEhARQj0A5WNpOQVY5iw8UPAoOHhoEABzdHI-K0MjUuJI6P8lZhwgA):
 
