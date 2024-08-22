@@ -53,3 +53,37 @@ export const deploySandbox = async (
     return { success: true };
   }
 };
+
+/**
+ * Util for deploying a sandbox in watch mode
+ * @param amplifyBackendPath - location of Amplify backend for this test
+ * @param sandboxIdentifier - identifier for the sandbox
+ * @returns {Promise<{ success: boolean } | { errors: Error }>}
+ */
+export const deploySandboxWatch = async (
+  amplifyBackendPath: string,
+  sandboxIdentifier: string,
+): DeploySandboxResponse => {
+  console.log('Deploying sandbox..');
+
+  // Factory function that returns a ProcessController for the Amplify Gen 2 Backend CLI:
+  await ampxCli(
+    ['sandbox', '--identifier', `${sandboxIdentifier}`],
+    amplifyBackendPath,
+  )
+    // Reusable predicates: Wait for sandbox to finish and emit "File written: amplify_outputs.json"
+    .do(waitForSandboxDeploymentToPrintTotalTime())
+    // Execute the sequence of actions queued on the process
+    .run();
+
+  const outputsPath = path.join(amplifyBackendPath, outputsFileName);
+
+  const clientConfigStats = await fs.stat(outputsPath);
+
+  // Verify that `amplify_outputs.json` was generated:
+  if (!clientConfigStats.isFile()) {
+    return { errors: new Error('amplify_outputs.json not found') };
+  } else {
+    return { success: true };
+  }
+};
