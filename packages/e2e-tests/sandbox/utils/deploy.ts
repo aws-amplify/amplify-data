@@ -55,7 +55,7 @@ export const deploySandbox = async (
 };
 
 /**
- * Util for deploying a sandbox
+ * Util for deploying a sandbox in watch mode
  * @param amplifyBackendPath - location of Amplify backend for this test
  * @param sandboxIdentifier - identifier for the sandbox
  * @returns {Promise<{ success: boolean } | { errors: Error }>}

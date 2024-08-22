@@ -1,7 +1,0 @@
-{
-  "name": "basic-todo",
-  "description": "Amplify backend for a simple Todo model",
-  "version": "1.0.0",
-  "private": true,
-  "type": "module"
-}
