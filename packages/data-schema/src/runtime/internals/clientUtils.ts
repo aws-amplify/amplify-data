@@ -79,15 +79,17 @@ export const excludeDisabledOps = (
       } else if (value instanceof Object) {
         // fine-grained, e.g. "mutations": { "delete": null }
         disabledOps.push(...Object.keys(value));
-
-        // observeQuery only exists on the client side. It's unusable without `list`
-        if ('list' in Object.keys(value)) {
-          disabledOps.push('observe_query');
-        }
       }
     }
   }
 
+  // observeQuery only exists on the client side, so can't be explicitly disabled via schema builder.
+  // It's unusable without `list`
+  if (disabledOps.includes('list')) {
+    disabledOps.push('observe_query');
+  }
+
+  // graphQLOperationsInfo keys are in SCREAMING_SNAKE_CASE
   const disabledOpsUpper = disabledOps.map((op) => op.toUpperCase());
 
   const filteredGraphQLOperations = Object.fromEntries(
@@ -95,8 +97,6 @@ export const excludeDisabledOps = (
       ([key]) => !disabledOpsUpper.includes(key),
     ),
   );
-
-  console.log('EXCLUDE', modelName, filteredGraphQLOperations);
 
   return filteredGraphQLOperations;
 };
