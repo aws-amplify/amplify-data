@@ -45,7 +45,7 @@ export function generateModelsProperty<T extends Record<any, any> = never>(
     'ONCREATE',
     'ONUPDATE',
     'ONDELETE',
-    'OBSERVE_QUERY',
+    'OBSERVEQUERY',
   ];
 
   for (const model of Object.values(modelIntrospection.models)) {

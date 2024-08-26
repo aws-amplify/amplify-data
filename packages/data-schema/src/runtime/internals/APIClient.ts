@@ -476,7 +476,7 @@ export const graphQLOperationsInfo = {
   ONCREATE: { operationPrefix: 'onCreate', usePlural: false },
   ONUPDATE: { operationPrefix: 'onUpdate', usePlural: false },
   ONDELETE: { operationPrefix: 'onDelete', usePlural: false },
-  OBSERVE_QUERY: { operationPrefix: 'observeQuery', usePlural: false },
+  OBSERVEQUERY: { operationPrefix: 'observeQuery', usePlural: false },
 } as const;
 export type ModelOperation = keyof typeof graphQLOperationsInfo;
 
@@ -1078,7 +1078,7 @@ export function generateGraphQLDocument(
       graphQLOperationType ?? (graphQLOperationType = 'subscription');
       graphQLSelectionSet ?? (graphQLSelectionSet = selectionSetFields);
       break;
-    case 'OBSERVE_QUERY':
+    case 'OBSERVEQUERY':
     default:
       throw new Error(
         'Internal error: Attempted to generate graphql document for observeQuery. Please report this error.',
@@ -1225,7 +1225,7 @@ export function buildGraphQLVariables(
         variables = { filter: arg.filter };
       }
       break;
-    case 'OBSERVE_QUERY':
+    case 'OBSERVEQUERY':
       throw new Error(
         'Internal error: Attempted to build variables for observeQuery. Please report this error.',
       );

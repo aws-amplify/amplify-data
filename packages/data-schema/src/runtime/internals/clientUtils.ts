@@ -60,7 +60,7 @@ export const excludeDisabledOps = (
   );
 
   const coarseToFineDict: Record<string, string[]> = {
-    queries: ['list', 'get', 'observe_query'],
+    queries: ['list', 'get', 'observeQuery'],
     mutations: ['create', 'update', 'delete'],
     subscriptions: ['onCreate', 'onUpdate', 'onDelete'],
   };
@@ -86,10 +86,10 @@ export const excludeDisabledOps = (
   // observeQuery only exists on the client side, so can't be explicitly disabled via schema builder.
   // It's unusable without `list`
   if (disabledOps.includes('list')) {
-    disabledOps.push('observe_query');
+    disabledOps.push('observeQuery');
   }
 
-  // graphQLOperationsInfo keys are in SCREAMING_SNAKE_CASE
+  // graphQLOperationsInfo keys are in caps
   const disabledOpsUpper = disabledOps.map((op) => op.toUpperCase());
 
   const filteredGraphQLOperations = Object.fromEntries(

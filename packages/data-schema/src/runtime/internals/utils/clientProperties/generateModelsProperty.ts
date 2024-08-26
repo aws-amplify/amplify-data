@@ -61,7 +61,7 @@ export function generateModelsProperty<T extends Record<any, any> = never>(
           operation,
           getInternals,
         );
-      } else if (operation === 'OBSERVE_QUERY') {
+      } else if (operation === 'OBSERVEQUERY') {
         models[name][operationPrefix] = observeQueryFactory(models, model);
       } else {
         models[name][operationPrefix] = getFactory(

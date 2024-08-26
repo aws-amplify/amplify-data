@@ -1,5 +1,5 @@
 ---
-"@aws-amplify/data-schema": patch
+'@aws-amplify/data-schema': minor
 ---
 
 add model .disableOperations() modifier

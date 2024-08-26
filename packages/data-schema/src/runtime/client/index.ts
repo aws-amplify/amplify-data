@@ -504,12 +504,6 @@ type IndexQueryMethod<
       },
     ) => ListReturnValue<Prettify<ReturnValue<Model, FlatModel, SelectionSet>>>;
 
-// type BothFalse<T extends boolean, U extends boolean> = T extends false
-//   ? U extends false
-//     ? true
-//     : false
-//   : false;
-
 type ModelTypesClient<
   Model extends ClientSchemaByEntityTypeBaseShape['models'][string],
   FlatModel extends Record<string, unknown> = ResolvedModel<Model['type']>,
