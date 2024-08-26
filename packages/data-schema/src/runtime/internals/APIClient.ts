@@ -21,7 +21,8 @@ import {
 } from '../bridge-types';
 
 import { CustomHeaders } from '../client';
-import { resolveOwnerFields, capitalize } from '../utils';
+import { resolveOwnerFields, capitalize, selfAwareAsync } from '../utils';
+import { extendCancellability } from './cancellation';
 
 import type { IndexMeta } from './operations/indexQuery';
 
@@ -344,13 +345,20 @@ export function initializeModel(
                 options?: LazyLoadOptions,
               ) => {
                 if (record[parentPk]) {
-                  return relatedList(contextSpec, {
-                    filter: { and: hasManyFilter },
-                    limit: options?.limit,
-                    nextToken: options?.nextToken,
-                    authMode: options?.authMode || authMode,
-                    authToken: options?.authToken || authToken,
-                  }).then(mapResult);
+                  return selfAwareAsync(async (resultPromise) => {
+                    const basePromise = relatedList(contextSpec, {
+                      filter: { and: hasManyFilter },
+                      limit: options?.limit,
+                      nextToken: options?.nextToken,
+                      authMode: options?.authMode || authMode,
+                      authToken: options?.authToken || authToken,
+                    });
+                    const extendedBase = extendCancellability(
+                      basePromise,
+                      resultPromise,
+                    );
+                    return mapResult((await extendedBase) as any);
+                  });
                 }
 
                 return [];
@@ -360,13 +368,20 @@ export function initializeModel(
                 options?: LazyLoadOptions,
               ) => {
                 if (record[parentPk]) {
-                  return relatedList({
-                    filter: { and: hasManyFilter },
-                    limit: options?.limit,
-                    nextToken: options?.nextToken,
-                    authMode: options?.authMode || authMode,
-                    authToken: options?.authToken || authToken,
-                  }).then(mapResult);
+                  return selfAwareAsync(async (resultPromise) => {
+                    const basePromise = relatedList({
+                      filter: { and: hasManyFilter },
+                      limit: options?.limit,
+                      nextToken: options?.nextToken,
+                      authMode: options?.authMode || authMode,
+                      authToken: options?.authToken || authToken,
+                    });
+                    const extendedBase = extendCancellability(
+                      basePromise,
+                      resultPromise,
+                    );
+                    return mapResult((await extendedBase) as any);
+                  });
                 }
 
                 return [];
@@ -397,13 +412,20 @@ export function initializeModel(
               options?: LazyLoadOptions,
             ) => {
               if (record[parentPk]) {
-                return relatedList(contextSpec, {
-                  filter: { and: hasManyFilter },
-                  limit: options?.limit,
-                  nextToken: options?.nextToken,
-                  authMode: options?.authMode || authMode,
-                  authToken: options?.authToken || authToken,
-                }).then(mapResult);
+                return selfAwareAsync(async (resultPromise) => {
+                  const basePromise = relatedList(contextSpec, {
+                    filter: { and: hasManyFilter },
+                    limit: options?.limit,
+                    nextToken: options?.nextToken,
+                    authMode: options?.authMode || authMode,
+                    authToken: options?.authToken || authToken,
+                  });
+                  const extendedBase = extendCancellability(
+                    basePromise,
+                    resultPromise,
+                  );
+                  return mapResult((await extendedBase) as any);
+                });
               }
 
               return [];
@@ -413,13 +435,20 @@ export function initializeModel(
               options?: LazyLoadOptions,
             ) => {
               if (record[parentPk]) {
-                return relatedList({
-                  filter: { and: hasManyFilter },
-                  limit: options?.limit,
-                  nextToken: options?.nextToken,
-                  authMode: options?.authMode || authMode,
-                  authToken: options?.authToken || authToken,
-                }).then(mapResult);
+                return selfAwareAsync(async (resultPromise) => {
+                  const basePromise = relatedList({
+                    filter: { and: hasManyFilter },
+                    limit: options?.limit,
+                    nextToken: options?.nextToken,
+                    authMode: options?.authMode || authMode,
+                    authToken: options?.authToken || authToken,
+                  });
+                  const extendedBase = extendCancellability(
+                    basePromise,
+                    resultPromise,
+                  );
+                  return mapResult((await extendedBase) as any);
+                });
               }
 
               return [];
