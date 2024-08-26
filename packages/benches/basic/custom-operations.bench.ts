@@ -36,7 +36,7 @@ bench('custom op returning primitive types; schema only', () => {
       .handler(a.handler.function('echoFunction'))
       .authorization((allow) => allow.publicApiKey()),
   });
-}).types([10454, 'instantiations']);
+}).types([13553, 'instantiations']);
 
 bench('custom op returning primitive types; schema + ClientSchema', () => {
   const schema = a.schema({
@@ -51,7 +51,7 @@ bench('custom op returning primitive types; schema + ClientSchema', () => {
   });
 
   type _Schema = ClientSchema<typeof schema>;
-}).types([12342, 'instantiations']);
+}).types([15427, 'instantiations']);
 
 bench(
   'custom op returning primitive types; schema + ClientSchema + client types',
@@ -70,7 +70,7 @@ bench(
     type Schema = ClientSchema<typeof schema>;
     const _client = generateClient<Schema>();
   },
-).types([12619, 'instantiations']);
+).types([15704, 'instantiations']);
 
 bench('custom op returning an enum; schema only', () => {
   const _schema = a.schema({
@@ -84,7 +84,7 @@ bench('custom op returning an enum; schema only', () => {
       .handler(a.handler.function('echoFunction'))
       .authorization((allow) => allow.publicApiKey()),
   });
-}).types([10653, 'instantiations']);
+}).types([13752, 'instantiations']);
 
 bench('custom op returning an enum; schema + ClientSchema', () => {
   const schema = a.schema({
@@ -100,7 +100,7 @@ bench('custom op returning an enum; schema + ClientSchema', () => {
   });
 
   type _Schema = ClientSchema<typeof schema>;
-}).types([12540, 'instantiations']);
+}).types([15625, 'instantiations']);
 
 bench(
   'custom op returning an enum; schema + ClientSchema + client types',
@@ -120,7 +120,7 @@ bench(
     type Schema = ClientSchema<typeof schema>;
     const _client = generateClient<Schema>();
   },
-).types([12835, 'instantiations']);
+).types([15920, 'instantiations']);
 
 bench('custom op returning custom type; schema only', () => {
   const _schema = a.schema({
@@ -136,7 +136,7 @@ bench('custom op returning custom type; schema only', () => {
       .handler(a.handler.function('echoFunction'))
       .authorization((allow) => allow.publicApiKey()),
   });
-}).types([10692, 'instantiations']);
+}).types([13791, 'instantiations']);
 
 bench('custom op returning custom type; schema + ClientSchema', () => {
   const schema = a.schema({
@@ -153,7 +153,7 @@ bench('custom op returning custom type; schema + ClientSchema', () => {
       .authorization((allow) => allow.publicApiKey()),
   });
   type _Schema = ClientSchema<typeof schema>;
-}).types([12579, 'instantiations']);
+}).types([15664, 'instantiations']);
 
 bench(
   'custom op returning custom type; schema + ClientSchema + client types',
@@ -174,7 +174,7 @@ bench(
     type Schema = ClientSchema<typeof schema>;
     const _client = generateClient<Schema>();
   },
-).types([12874, 'instantiations']);
+).types([15959, 'instantiations']);
 
 bench('custom op returning model; schema only', () => {
   const _schema = a.schema({
@@ -190,7 +190,7 @@ bench('custom op returning model; schema only', () => {
       .handler(a.handler.function('echoFunction'))
       .authorization((allow) => allow.publicApiKey()),
   });
-}).types([10770, 'instantiations']);
+}).types([13869, 'instantiations']);
 
 bench('custom op returning model; schema + ClientSchema', () => {
   const schema = a.schema({
@@ -207,7 +207,7 @@ bench('custom op returning model; schema + ClientSchema', () => {
       .authorization((allow) => allow.publicApiKey()),
   });
   type _Schema = ClientSchema<typeof schema>;
-}).types([12657, 'instantiations']);
+}).types([15742, 'instantiations']);
 
 bench('custom op returning model; schema + ClientSchema + client types', () => {
   const schema = a.schema({
@@ -225,4 +225,4 @@ bench('custom op returning model; schema + ClientSchema + client types', () => {
   });
   type Schema = ClientSchema<typeof schema>;
   const _client = generateClient<Schema>();
-}).types([12952, 'instantiations']);
+}).types([16037, 'instantiations']);

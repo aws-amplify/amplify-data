@@ -25,7 +25,6 @@ import type {
   PrimaryIndexIrShape,
   SecondaryIndexIrShape,
   KindaPretty,
-  Includes,
 } from '../../util';
 
 export interface ClientModel<
@@ -55,10 +54,31 @@ export interface ClientModel<
   };
 }
 
+/**
+ * Creates a map of disabled operations, expanding coarse-grained ops into fine-grained ones
+ * The map is used in runtime/client/index.ts to Omit any disabled ops from the data-client types
+ *
+ * @example
+ * a.model({...}).disableOperations(['update', 'subscriptions'])
+ * Returns
+ * {
+ *   update: true;
+ *   onCreate: true;
+ *   onUpdate: true;
+ *   onDelete: true;
+ *   observeQuery: true;
+ * }
+ */
 type DisabledOpsToMap<Ops extends ReadonlyArray<DisableOperationsOptions>> = {
-  queries: Includes<Ops, 'queries'>;
-  mutations: Includes<Ops, 'mutations'>;
-  subscriptions: Includes<Ops, 'subscriptions'>;
+  [Op in Ops[number] as Op extends 'queries'
+    ? 'list' | 'get' | 'observeQuery'
+    : Op extends 'mutations'
+      ? 'create' | 'update' | 'delete'
+      : Op extends 'subscriptions'
+        ? 'onCreate' | 'onUpdate' | 'onDelete' | 'observeQuery'
+        : Op extends 'list'
+          ? 'list' | 'observeQuery'
+          : Op]: true;
 };
 
 type ClientFields<

@@ -4,7 +4,6 @@ export { KindaPretty } from './KindaPretty';
 export { ObjectFromEntries } from './ObjectFromEntries';
 export { SpreadTuple } from './SpreadTuple';
 export { Select } from './Select';
-export { Includes } from './Includes';
 export type * from './Filters';
 export type * from './IndexShapes';
 export type * from './Rename';

@@ -46,7 +46,15 @@ type InternalModelFields = Record<
 export type DisableOperationsOptions =
   | 'queries'
   | 'mutations'
-  | 'subscriptions';
+  | 'subscriptions'
+  | 'list'
+  | 'get'
+  | 'create'
+  | 'update'
+  | 'delete'
+  | 'onCreate'
+  | 'onUpdate'
+  | 'onDelete';
 
 type ModelData = {
   fields: ModelFields;
