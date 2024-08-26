@@ -80,6 +80,18 @@ export function generateModelsProperty<T extends Record<any, any> = never>(
       }
     });
 
+    // If .list() has been disabled in the schema builder, we still need
+    // an internal list on the model for the async getters
+    // This method is absent from client types and only accessed in APIClient.ts
+    if (!models[name].list) {
+      models[name]['#list'] = listFactory(
+        client,
+        modelIntrospection,
+        model,
+        getInternals,
+      );
+    }
+
     const secondaryIdxs = getSecondaryIndexesFromSchemaModel(model);
 
     for (const idx of secondaryIdxs) {

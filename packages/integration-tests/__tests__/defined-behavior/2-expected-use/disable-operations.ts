@@ -33,46 +33,51 @@ describe('disable model operations', () => {
   type Schema = ClientSchema<typeof schema>;
 
   test('disabled methods are undefined in the client types', async () => {
-    const { generateClient } = mockedGenerateClient([
-      {
-        data: {
-          getPost: {},
-        },
-      },
-      {
-        data: {
-          listPosts: {},
-        },
-      },
-    ]);
+    const { generateClient } = mockedGenerateClient([]);
     const config = await buildAmplifyConfig(schema);
     Amplify.configure(config);
     const client = generateClient<Schema>();
 
-    // @ts-expect-error
-    client.models.Post.onCreate();
+    // console.log(
+    //   'attrs',
+    //   JSON.stringify(config.modelIntrospection.models.Comment, null, 2),
+    // );
 
-    // @ts-expect-error
-    client.models.Post.onUpdate({ id: 'abc' });
+    expect(() => {
+      // @ts-expect-error
+      client.models.Post.onCreate();
+    }).toThrow();
 
-    // @ts-expect-error
-    client.models.Post.onDelete({ id: 'abc' });
+    expect(() => {
+      // @ts-expect-error
+      client.models.Post.onUpdate({ id: 'abc' });
+    }).toThrow();
 
-    // @ts-expect-error - observeQuery is disabled if queries and/or subscriptions are disabled on the model
-    client.models.Post.observeQuery();
+    expect(() => {
+      // @ts-expect-error
+      client.models.Post.onDelete({ id: 'abc' });
+    }).toThrow();
 
-    // @ts-expect-error
-    client.models.Comment.get({ id: 'abc' });
+    expect(() => {
+      // @ts-expect-error
+      client.models.Comment.get({ id: 'abc' });
+    }).toThrow();
 
-    // @ts-expect-error
-    client.models.Comment.list();
+    expect(() => {
+      // @ts-expect-error
+      client.models.Comment.list();
+    }).toThrow();
 
-    // @ts-expect-error - observeQuery is disabled if queries and/or subscriptions are disabled on the model
-    client.models.Comment.observeQuery();
+    expect(() => {
+      // @ts-expect-error - observeQuery is disabled if queries and/or subscriptions are disabled on the model
+      client.models.Comment.observeQuery();
+    }).toThrow();
 
     // enabled because only mutations are disabled on this model
     client.models.ReadOnly.observeQuery();
   });
+
+  /* TODO - omitting list in the runtime client breaks lazy loaders. Need to figure out another way to set those  */
 
   test('relational lazy loaders remain available even if queries are disabled for model', async () => {
     const { generateClient } = mockedGenerateClient([

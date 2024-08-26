@@ -333,21 +333,24 @@ export function initializeModel(
               },
             );
 
+            // If `list` was disabled in the schema builder, use internal #list method
+            const relatedList =
+              (client as any).models[relatedModelName].list ??
+              (client as any).models[relatedModelName]['#list'];
+
             if (context) {
               initializedRelationalFields[fieldName] = (
                 contextSpec: AmplifyServer.ContextSpec,
                 options?: LazyLoadOptions,
               ) => {
                 if (record[parentPk]) {
-                  return (client as any).models[relatedModelName]
-                    .list(contextSpec, {
-                      filter: { and: hasManyFilter },
-                      limit: options?.limit,
-                      nextToken: options?.nextToken,
-                      authMode: options?.authMode || authMode,
-                      authToken: options?.authToken || authToken,
-                    })
-                    .then(mapResult);
+                  return relatedList(contextSpec, {
+                    filter: { and: hasManyFilter },
+                    limit: options?.limit,
+                    nextToken: options?.nextToken,
+                    authMode: options?.authMode || authMode,
+                    authToken: options?.authToken || authToken,
+                  }).then(mapResult);
                 }
 
                 return [];
@@ -357,15 +360,13 @@ export function initializeModel(
                 options?: LazyLoadOptions,
               ) => {
                 if (record[parentPk]) {
-                  return (client as any).models[relatedModelName]
-                    .list({
-                      filter: { and: hasManyFilter },
-                      limit: options?.limit,
-                      nextToken: options?.nextToken,
-                      authMode: options?.authMode || authMode,
-                      authToken: options?.authToken || authToken,
-                    })
-                    .then(mapResult);
+                  return relatedList({
+                    filter: { and: hasManyFilter },
+                    limit: options?.limit,
+                    nextToken: options?.nextToken,
+                    authMode: options?.authMode || authMode,
+                    authToken: options?.authToken || authToken,
+                  }).then(mapResult);
                 }
 
                 return [];
@@ -385,21 +386,24 @@ export function initializeModel(
             },
           );
 
+          // If `list` was disabled in the schema builder, use internal #list method
+          const relatedList =
+            (client as any).models[relatedModelName].list ??
+            (client as any).models[relatedModelName]['#list'];
+
           if (context) {
             initializedRelationalFields[fieldName] = (
               contextSpec: AmplifyServer.ContextSpec,
               options?: LazyLoadOptions,
             ) => {
               if (record[parentPk]) {
-                return (client as any).models[relatedModelName]
-                  .list(contextSpec, {
-                    filter: { and: hasManyFilter },
-                    limit: options?.limit,
-                    nextToken: options?.nextToken,
-                    authMode: options?.authMode || authMode,
-                    authToken: options?.authToken || authToken,
-                  })
-                  .then(mapResult);
+                return relatedList(contextSpec, {
+                  filter: { and: hasManyFilter },
+                  limit: options?.limit,
+                  nextToken: options?.nextToken,
+                  authMode: options?.authMode || authMode,
+                  authToken: options?.authToken || authToken,
+                }).then(mapResult);
               }
 
               return [];
@@ -409,15 +413,13 @@ export function initializeModel(
               options?: LazyLoadOptions,
             ) => {
               if (record[parentPk]) {
-                return (client as any).models[relatedModelName]
-                  .list({
-                    filter: { and: hasManyFilter },
-                    limit: options?.limit,
-                    nextToken: options?.nextToken,
-                    authMode: options?.authMode || authMode,
-                    authToken: options?.authToken || authToken,
-                  })
-                  .then(mapResult);
+                return relatedList({
+                  filter: { and: hasManyFilter },
+                  limit: options?.limit,
+                  nextToken: options?.nextToken,
+                  authMode: options?.authMode || authMode,
+                  authToken: options?.authToken || authToken,
+                }).then(mapResult);
               }
 
               return [];
@@ -437,7 +439,7 @@ export function initializeModel(
 
 export const graphQLOperationsInfo = {
   CREATE: { operationPrefix: 'create', usePlural: false },
-  READ: { operationPrefix: 'get', usePlural: false },
+  GET: { operationPrefix: 'get', usePlural: false },
   UPDATE: { operationPrefix: 'update', usePlural: false },
   DELETE: { operationPrefix: 'delete', usePlural: false },
   LIST: { operationPrefix: 'list', usePlural: true },
@@ -999,7 +1001,7 @@ export function generateGraphQLDocument(
       graphQLOperationType ?? (graphQLOperationType = 'mutation');
     // TODO(Eslint): this this case clause correct without the break statement?
     // eslint-disable-next-line no-fallthrough
-    case 'READ':
+    case 'GET':
       graphQLArguments ?? (graphQLArguments = getPkArgs);
       graphQLSelectionSet ?? (graphQLSelectionSet = selectionSetFields);
     // TODO(Eslint): this this case clause correct without the break statement?
@@ -1120,7 +1122,7 @@ export function buildGraphQLVariables(
           : {},
       };
       break;
-    case 'READ':
+    case 'GET':
     case 'DELETE':
       // only identifiers are sent
       if (arg) {

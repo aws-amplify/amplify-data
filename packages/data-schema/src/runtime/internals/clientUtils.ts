@@ -1,6 +1,5 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
-
 import type {
   ModelAttribute,
   SchemaModel,
@@ -61,7 +60,7 @@ export const excludeDisabledOps = (
   );
 
   const coarseToFineDict: Record<string, string[]> = {
-    queries: ['list', 'get', 'observeQuery'],
+    queries: ['list', 'get', 'observe_query'],
     mutations: ['create', 'update', 'delete'],
     subscriptions: ['onCreate', 'onUpdate', 'onDelete'],
   };
@@ -83,7 +82,7 @@ export const excludeDisabledOps = (
 
         // observeQuery only exists on the client side. It's unusable without `list`
         if ('list' in Object.keys(value)) {
-          disabledOps.push('observeQuery');
+          disabledOps.push('observe_query');
         }
       }
     }
@@ -91,9 +90,13 @@ export const excludeDisabledOps = (
 
   const disabledOpsUpper = disabledOps.map((op) => op.toUpperCase());
 
-  return Object.fromEntries(
+  const filteredGraphQLOperations = Object.fromEntries(
     Object.entries(graphQLOperationsInfo).filter(
       ([key]) => !disabledOpsUpper.includes(key),
     ),
   );
+
+  console.log('EXCLUDE', modelName, filteredGraphQLOperations);
+
+  return filteredGraphQLOperations;
 };
