@@ -38,23 +38,18 @@ export const getSecondaryIndexesFromSchemaModel = (model: SchemaModel) => {
 };
 
 /**
- *
+ * returns graphQLOperationsInfo, but filters out operations that were disabled via model().disableOperations([...])
  */
 export const excludeDisabledOps = (
   mis: ModelIntrospectionSchema,
   modelName: string,
 ) => {
-  /* Example model attributes in MIS 
-  {
+  /* Example model attributes in MIS {
     "type": "model",
     "properties": {
       "subscriptions": null,
-      "mutations": {
-        "delete": null
-      }
-    }
-  }
-  */
+      "mutations": { "delete": null }
+    } }*/
   const modelAttrs = mis.models[modelName].attributes?.find(
     (attr) => attr.type === 'model',
   );

@@ -21,7 +21,12 @@ import {
 } from '../bridge-types';
 
 import { CustomHeaders } from '../client';
-import { resolveOwnerFields, capitalize, selfAwareAsync } from '../utils';
+import {
+  resolveOwnerFields,
+  capitalize,
+  selfAwareAsync,
+  internalListSymbol,
+} from '../utils';
 import { extendCancellability } from './cancellation';
 
 import type { IndexMeta } from './operations/indexQuery';
@@ -334,10 +339,10 @@ export function initializeModel(
               },
             );
 
-            // If `list` was disabled in the schema builder, use internal #list method
+            // If `list` was disabled in the schema builder, use internal list method
             const relatedList =
               (client as any).models[relatedModelName].list ??
-              (client as any).models[relatedModelName]['#list'];
+              (client as any).models[relatedModelName][internalListSymbol];
 
             if (context) {
               initializedRelationalFields[fieldName] = (
@@ -401,10 +406,10 @@ export function initializeModel(
             },
           );
 
-          // If `list` was disabled in the schema builder, use internal #list method
+          // If `list` was disabled in the schema builder, use internal list method
           const relatedList =
             (client as any).models[relatedModelName].list ??
-            (client as any).models[relatedModelName]['#list'];
+            (client as any).models[relatedModelName][internalListSymbol];
 
           if (context) {
             initializedRelationalFields[fieldName] = (
