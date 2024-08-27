@@ -16,7 +16,7 @@ import {
   getSecondaryIndexesFromSchemaModel,
   excludeDisabledOps,
 } from '../clientUtils';
-import { internalListSymbol } from '../../utils';
+import { internalListSymbol, internalGetSymbol } from '../../utils';
 
 export function generateModelsProperty<T extends Record<any, any> = never>(
   client: BaseClient,
@@ -89,6 +89,17 @@ export function generateModelsProperty<T extends Record<any, any> = never>(
         client,
         modelIntrospection,
         model,
+        getInternals,
+      );
+    }
+
+    // Same thing as ^ for get
+    if (!models[name].get) {
+      models[name][internalGetSymbol] = getFactory(
+        client,
+        modelIntrospection,
+        model,
+        'GET',
         getInternals,
       );
     }

@@ -6,4 +6,4 @@ export { findIndexByFields } from './findIndexByFields';
 export { resolveOwnerFields } from './resolveOwnerFields';
 export { capitalize } from './stringTransformation';
 export { selfAwareAsync } from './selfAwareAsync';
-export { internalListSymbol } from './internalListSymbol';
+export { internalListSymbol, internalGetSymbol } from './internalMethodSymbol';

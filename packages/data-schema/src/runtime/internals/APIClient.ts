@@ -26,6 +26,7 @@ import {
   capitalize,
   selfAwareAsync,
   internalListSymbol,
+  internalGetSymbol,
 } from '../utils';
 import { extendCancellability } from './cancellation';
 
@@ -201,6 +202,7 @@ export function initializeModel(
   authToken: string | undefined,
   context = false,
 ): any[] {
+  console.log('initializing model', modelName);
   const introModel = modelIntrospection.models[modelName];
   const introModelFields = introModel.fields;
 
@@ -252,13 +254,17 @@ export function initializeModel(
             {},
           );
 
+          const relatedGet =
+            (client as any).models[relatedModelName].get ??
+            (client as any).models[relatedModelName][internalGetSymbol];
+
           if (context) {
             initializedRelationalFields[fieldName] = (
               contextSpec: AmplifyServer.ContextSpec,
               options?: LazyLoadOptions,
             ) => {
               if (record[targetNames[0]]) {
-                return (client as any).models[relatedModelName].get(
+                return relatedGet(
                   contextSpec,
                   {
                     [relatedModelPKFieldName]: record[targetNames[0]],
@@ -278,7 +284,7 @@ export function initializeModel(
               options?: LazyLoadOptions,
             ) => {
               if (record[targetNames[0]]) {
-                return (client as any).models[relatedModelName].get(
+                return relatedGet(
                   {
                     [relatedModelPKFieldName]: record[targetNames[0]],
                     ...sortKeyValues,
