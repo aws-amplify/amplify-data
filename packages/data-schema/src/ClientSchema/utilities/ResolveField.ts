@@ -51,15 +51,31 @@ export type ResolveIndividualField<Bag extends Record<string, any>, T> =
             ? values[number] | null
             : never;
 
+/**
+ * Resolves to never if the related model has disabled list or get ops for hasOne/hasMany or belongsTo respectively
+ */
 type ResolveRelationship<
   Bag extends Record<string, any>,
   RelationshipShape extends ModelRelationalFieldParamShape,
-> = LazyLoader<
-  RelationshipShape['valueRequired'] extends true
-    ? Bag[RelationshipShape['relatedModel']]['type']
-    : Bag[RelationshipShape['relatedModel']]['type'] | null,
-  RelationshipShape['array']
->;
+> = RelationshipShape['relationshipType'] extends 'hasOne' | 'hasMany'
+  ? // relational getters depend on `list` being enabled on the related model
+    'list' extends keyof Bag[RelationshipShape['relatedModel']]['__meta']['disabledOperations']
+    ? never
+    : LazyLoader<
+        RelationshipShape['valueRequired'] extends true
+          ? Bag[RelationshipShape['relatedModel']]['type']
+          : Bag[RelationshipShape['relatedModel']]['type'] | null,
+        RelationshipShape['array']
+      >
+  : // belongsTo
+    'get' extends keyof Bag[RelationshipShape['relatedModel']]['__meta']['disabledOperations']
+    ? never
+    : LazyLoader<
+        RelationshipShape['valueRequired'] extends true
+          ? Bag[RelationshipShape['relatedModel']]['type']
+          : Bag[RelationshipShape['relatedModel']]['type'] | null,
+        RelationshipShape['array']
+      >;
 
 type IsRequired<T> =
   T extends BaseModelField<infer FieldShape>

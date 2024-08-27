@@ -71,15 +71,13 @@ describe('lazy loaders edges', () => {
       const { generateClient } = mockedGenerateClient([
         {
           data: {
-            listParent: [
-              {
-                __typeName: 'Parent',
-                id: 'parent-id',
-                name: 'Some Parent',
-                updatedAt: '2024-03-01T19:05:44.536Z',
-                createdAt: '2024-03-01T18:05:44.536Z',
-              },
-            ],
+            getParent: {
+              __typeName: 'Parent',
+              id: 'parent-id',
+              name: 'Some Parent',
+              updatedAt: '2024-03-01T19:05:44.536Z',
+              createdAt: '2024-03-01T18:05:44.536Z',
+            },
           },
         },
         {
@@ -92,12 +90,9 @@ describe('lazy loaders edges', () => {
       Amplify.configure(config);
       const client = generateClient<Schema>();
 
-      const {
-        data: [parent],
-      } = await client.models.Parent.list();
-      // {
-      //   id: 'parent-id',
-      // });
+      const { data: parent } = await client.models.Parent.get({
+        id: 'parent-id',
+      });
       const { data: lazyLoaded } = await parent!.child();
 
       expect(lazyLoaded).toEqual(null);

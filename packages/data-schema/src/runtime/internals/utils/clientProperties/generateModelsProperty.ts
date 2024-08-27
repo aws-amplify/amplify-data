@@ -19,7 +19,6 @@ import {
   getSecondaryIndexesFromSchemaModel,
   excludeDisabledOps,
 } from '../../clientUtils';
-import { internalListSymbol, internalGetSymbol } from '../../../utils';
 
 export function generateModelsProperty<T extends Record<any, any> = never>(
   client: BaseClient,
@@ -74,29 +73,6 @@ export function generateModelsProperty<T extends Record<any, any> = never>(
         );
       }
     });
-
-    // If .list() has been disabled in the schema builder, we still need
-    // an internal list on the model for the async getters
-    // This method is absent from client types and only accessed in APIClient.ts
-    if (!models[name].list) {
-      models[name][internalListSymbol] = listFactory(
-        client,
-        modelIntrospection,
-        model,
-        getInternals,
-      );
-    }
-
-    // Same thing as ^ for get
-    if (!models[name].get) {
-      models[name][internalGetSymbol] = getFactory(
-        client,
-        modelIntrospection,
-        model,
-        'GET',
-        getInternals,
-      );
-    }
 
     const secondaryIdxs = getSecondaryIndexesFromSchemaModel(model);
 

@@ -21,13 +21,7 @@ import {
 } from '../bridge-types';
 
 import { CustomHeaders } from '../client';
-import {
-  resolveOwnerFields,
-  capitalize,
-  selfAwareAsync,
-  internalListSymbol,
-  internalGetSymbol,
-} from '../utils';
+import { resolveOwnerFields, capitalize, selfAwareAsync } from '../utils';
 import { extendCancellability } from './cancellation';
 
 import type { IndexMeta } from './operations/indexQuery';
@@ -202,7 +196,6 @@ export function initializeModel(
   authToken: string | undefined,
   context = false,
 ): any[] {
-  console.log('initializing model', modelName);
   const introModel = modelIntrospection.models[modelName];
   const introModelFields = introModel.fields;
 
@@ -254,9 +247,10 @@ export function initializeModel(
             {},
           );
 
-          const relatedGet =
-            (client as any).models[relatedModelName].get ??
-            (client as any).models[relatedModelName][internalGetSymbol];
+          // if get is disabled on the related model
+          if ((client as any).models[relatedModelName].get === undefined) {
+            break;
+          }
 
           if (context) {
             initializedRelationalFields[fieldName] = (
@@ -264,7 +258,7 @@ export function initializeModel(
               options?: LazyLoadOptions,
             ) => {
               if (record[targetNames[0]]) {
-                return relatedGet(
+                return (client as any).models[relatedModelName].get(
                   contextSpec,
                   {
                     [relatedModelPKFieldName]: record[targetNames[0]],
@@ -284,7 +278,7 @@ export function initializeModel(
               options?: LazyLoadOptions,
             ) => {
               if (record[targetNames[0]]) {
-                return relatedGet(
+                return (client as any).models[relatedModelName].get(
                   {
                     [relatedModelPKFieldName]: record[targetNames[0]],
                     ...sortKeyValues,
@@ -345,10 +339,10 @@ export function initializeModel(
               },
             );
 
-            // If `list` was disabled in the schema builder, use internal list method
-            const relatedList =
-              (client as any).models[relatedModelName].list ??
-              (client as any).models[relatedModelName][internalListSymbol];
+            // if list is disabled on the related model
+            if ((client as any).models[relatedModelName].list === undefined) {
+              break;
+            }
 
             if (context) {
               initializedRelationalFields[fieldName] = (
@@ -357,7 +351,9 @@ export function initializeModel(
               ) => {
                 if (record[parentPk]) {
                   return selfAwareAsync(async (resultPromise) => {
-                    const basePromise = relatedList(contextSpec, {
+                    const basePromise = (client as any).models[
+                      relatedModelName
+                    ].list(contextSpec, {
                       filter: { and: hasManyFilter },
                       limit: options?.limit,
                       nextToken: options?.nextToken,
@@ -380,7 +376,9 @@ export function initializeModel(
               ) => {
                 if (record[parentPk]) {
                   return selfAwareAsync(async (resultPromise) => {
-                    const basePromise = relatedList({
+                    const basePromise = (client as any).models[
+                      relatedModelName
+                    ].list({
                       filter: { and: hasManyFilter },
                       limit: options?.limit,
                       nextToken: options?.nextToken,
@@ -412,10 +410,10 @@ export function initializeModel(
             },
           );
 
-          // If `list` was disabled in the schema builder, use internal list method
-          const relatedList =
-            (client as any).models[relatedModelName].list ??
-            (client as any).models[relatedModelName][internalListSymbol];
+          // if list is disabled on the related model
+          if ((client as any).models[relatedModelName].list === undefined) {
+            break;
+          }
 
           if (context) {
             initializedRelationalFields[fieldName] = (
@@ -424,7 +422,9 @@ export function initializeModel(
             ) => {
               if (record[parentPk]) {
                 return selfAwareAsync(async (resultPromise) => {
-                  const basePromise = relatedList(contextSpec, {
+                  const basePromise = (client as any).models[
+                    relatedModelName
+                  ].list(contextSpec, {
                     filter: { and: hasManyFilter },
                     limit: options?.limit,
                     nextToken: options?.nextToken,
@@ -447,7 +447,9 @@ export function initializeModel(
             ) => {
               if (record[parentPk]) {
                 return selfAwareAsync(async (resultPromise) => {
-                  const basePromise = relatedList({
+                  const basePromise = (client as any).models[
+                    relatedModelName
+                  ].list({
                     filter: { and: hasManyFilter },
                     limit: options?.limit,
                     nextToken: options?.nextToken,
