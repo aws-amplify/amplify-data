@@ -36,7 +36,7 @@ describe('AI Generation Routes', () => {
         const { generateClient } = mockedGenerateClient([{ data: null }]);
         const client = generateClient<Schema>();
 
-        // The `chatBot` type can be taken from the `Schema`, which can then be
+        // The `makeRecipe` type can be taken from the `Schema`, which can then be
         // used to "type" a variable and receive the `data` from a `create`()`
         type MakeRecipeArgs = Schema['makeRecipe']['args'];
         type MakeRecipeReturnType = Schema['makeRecipe']['returnType'];
