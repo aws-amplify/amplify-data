@@ -1,6 +1,10 @@
 import { a, ClientSchema } from '@aws-amplify/data-schema';
 import { Amplify } from 'aws-amplify';
-import { buildAmplifyConfig, mockedGenerateClient } from '../../utils';
+import {
+  buildAmplifyConfig,
+  mockedGenerateClient,
+  optionsAndHeaders,
+} from '../../utils';
 
 describe('AI Generation Routes', () => {
   // data/resource.ts
@@ -21,33 +25,41 @@ describe('AI Generation Routes', () => {
   });
   type Schema = ClientSchema<typeof schema>;
 
-  beforeEach(async () => {
-    const config = await buildAmplifyConfig(schema);
-    Amplify.configure(config);
-  });
-
   afterEach(() => {
     jest.clearAllMocks();
   });
 
-  describe(`['GenerationName']`, () => {
-    describe(`['type']`, () => {
-      test(`matches result 'data' property`, async () => {
-        const { generateClient } = mockedGenerateClient([{ data: null }]);
-        const client = generateClient<Schema>();
+  describe('Generations', () => {
+    test('Run a generation', async () => {
+      // #region mocking
+      const sampleRecipe = {
+        directions: 'Air fry bacon. Scramble eggs.',
+      };
+      const { spy, generateClient } = mockedGenerateClient([
+        {
+          data: {
+            makeRecipe: sampleRecipe,
+          },
+        },
+      ]);
+      // simulated amplifyconfiguration.json
+      const config = await buildAmplifyConfig(schema);
+      // #endregion mocking
 
-        // The `makeRecipe` type can be taken from the `Schema`, which can then be
-        // used to "type" a variable and receive the `data` from a `create`()`
-        type MakeRecipeArgs = Schema['makeRecipe']['args'];
-        type MakeRecipeReturnType = Schema['makeRecipe']['returnType'];
+      // #region api call
+      // App.tsx
+      Amplify.configure(config);
+      const client = generateClient<Schema>();
+      // run generation
+      const { data: recipe, errors: makeRecipeErrors } =
+        await client.generations.makeRecipe({ ingredients: ['bacon', 'eggs'] });
+      // #endregion api call
 
-        const args: MakeRecipeArgs = { ingredients: ['bacon', 'eggs'] };
-        // @ts-expect-error
-        const badArgs: MakeRecipeArgs = { ingredients: 'toothpaste' };
-
-        const result = await client.generations.makeRecipe(args);
-        const _recipe: MakeRecipeReturnType = result.data!;
-      });
+      // #region assertions
+      expect(optionsAndHeaders(spy)).toMatchSnapshot();
+      expect(makeRecipeErrors).toBeUndefined();
+      expect(recipe).toStrictEqual(sampleRecipe);
+      // #endregion assertions
     });
   });
 });
