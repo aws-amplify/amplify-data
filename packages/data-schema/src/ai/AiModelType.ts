@@ -14,6 +14,11 @@ export interface InferenceConfiguration {
   maxTokens?: number;
 }
 
+/**
+ * @experimental
+ *
+ * Anthropic Claude 3 Haiku
+ */
 export function claude3Haiku(): AiModel {
   return {
     friendlyName: 'Claude3Haiku',
@@ -21,6 +26,11 @@ export function claude3Haiku(): AiModel {
   };
 }
 
+/**
+ * @experimental
+ *
+ * Anthropic Claude 3 Sonnet
+ */
 export function claude3Sonnet(): AiModel {
   return {
     friendlyName: 'Claude3Sonnet',

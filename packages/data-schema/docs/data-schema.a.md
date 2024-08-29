@@ -57,6 +57,8 @@ The interface for merging up to 50 schemas into a single API.
 
 </td><td>
 
+Define an AI conversation route enabling multi-turn conversation APIs for interacting with specified AI model.
+
 
 </td></tr>
 <tr><td>
@@ -131,6 +133,8 @@ A float scalar type following represented server-side as an IEEE 754 floating po
 
 
 </td><td>
+
+Define an AI generation route for single request-response interaction with specified AI model.
 
 
 </td></tr>

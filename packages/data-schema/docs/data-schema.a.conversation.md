@@ -4,6 +4,8 @@
 
 ## a.conversation() function
 
+Define an AI conversation route enabling multi-turn conversation APIs for interacting with specified AI model.
+
 **Signature:**
 
 ```typescript
@@ -46,4 +48,10 @@ ConversationInput
 **Returns:**
 
 ConversationType
+
+a conversation route definition
+
+## Example
+
+realtorChat: a .conversation(<!-- -->{ aiModel: { friendlyName, resourcePath }<!-- -->, systemPrompt: 'You are a helpful real estate assisstant', }<!-- -->)
 
