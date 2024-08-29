@@ -507,7 +507,7 @@ function customOperationToGql(
         .map(([key, value]) => `${key}: ${value}`)
         .join(', ')} }`
       : '';
-    gqlHandlerContent += `@generation(aiModel: "${aiModel.friendlyName}", systemPrompt: "${systemPrompt}"${inferenceConfigurationGql}) `;
+    gqlHandlerContent += `@generation(aiModel: "${aiModel.resourcePath}", systemPrompt: "${systemPrompt}"${inferenceConfigurationGql}) `;
   }
 
   const gqlField = `${callSignature}: ${returnTypeName} ${gqlHandlerContent}${authString}`;

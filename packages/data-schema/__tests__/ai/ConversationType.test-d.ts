@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import type { Equal, Expect } from '@aws-amplify/data-schema-types';
-import { claude3Haiku } from '../../src/ai/AiModelType';
+import { claude3Haiku } from '../../src/ai/supportedModels/anthropic';
 import {
   conversation,
   type ConversationInput,
