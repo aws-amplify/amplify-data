@@ -9,7 +9,7 @@ export const createConversationField = (
   const { aiModel, systemPrompt, handler, tools } = typeDef;
 
   const args: Record<string, string> = {
-    aiModel: aiModel.friendlyName,
+    aiModel: aiModel.resourcePath,
     systemPrompt,
   };
 

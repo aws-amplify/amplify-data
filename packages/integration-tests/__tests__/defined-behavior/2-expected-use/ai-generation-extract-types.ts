@@ -11,7 +11,7 @@ describe('AI Generation Routes', () => {
 
     makeRecipe: a
       .generation({
-        aiModel: a.aiModel.anthropic.claude3Haiku(),
+        aiModel: a.ai.model.claude3Haiku(),
         systemPrompt: 'You are a helpful receipe generator.',
       })
       .arguments({

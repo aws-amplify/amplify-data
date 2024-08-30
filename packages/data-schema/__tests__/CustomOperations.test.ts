@@ -301,7 +301,7 @@ describe('CustomOperation transform', () => {
         }),
         makeRecipe: a
           .generation({
-            aiModel: a.aiModel.anthropic.claude3Haiku(),
+            aiModel: a.ai.model.claude3Haiku(),
             systemPrompt: 'Hello, world!',
           })
           .arguments({
@@ -323,7 +323,7 @@ describe('CustomOperation transform', () => {
         }),
         makeRecipe: a
           .generation({
-            aiModel: a.aiModel.anthropic.claude3Haiku(),
+            aiModel: a.ai.model.claude3Haiku(),
             systemPrompt: 'Hello, world!',
             inferenceConfiguration: {
               temperature: 0.5,
@@ -347,7 +347,7 @@ describe('CustomOperation transform', () => {
       const s = a.schema({
         makeRecipe: a
           .generation({
-            aiModel: a.aiModel.anthropic.claude3Haiku(),
+            aiModel: a.ai.model.claude3Haiku(),
             systemPrompt: 'Hello, world!',
             inferenceConfiguration: {},
           })
@@ -367,7 +367,7 @@ describe('CustomOperation transform', () => {
       const s = a.schema({
         makeRecipe: a
           .generation({
-            aiModel: a.aiModel.anthropic.claude3Haiku(),
+            aiModel: a.ai.model.claude3Haiku(),
             systemPrompt: 'Hello, world!',
             inferenceConfiguration: {
               temperature: 0.5,
@@ -389,7 +389,7 @@ describe('CustomOperation transform', () => {
       const s = a.schema({
         makeRecipe: a
           .generation({
-            aiModel: a.aiModel.anthropic.claude3Haiku(),
+            aiModel: a.ai.model.claude3Haiku(),
             systemPrompt: 'Hello, world!',
           })
           .arguments({

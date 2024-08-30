@@ -53,5 +53,5 @@ a conversation route definition
 
 ## Example
 
-realtorChat: a.conversation(<!-- -->{ aiModel: { friendlyName, resourcePath }<!-- -->, systemPrompt: 'You are a helpful real estate assistant', }<!-- -->)
+realtorChat: a.conversation(<!-- -->{ aiModel: { resourcePath }<!-- -->, systemPrompt: 'You are a helpful real estate assistant', }<!-- -->)
 

@@ -60,5 +60,5 @@ a generation route definition
 
 ## Example
 
-makeRecipe: a.generation(<!-- -->{ aiModel: { friendlyName, resourcePath }<!-- -->, systemPrompt: 'Please make a recipe from the provided ingredients', }<!-- -->) .arguments(<!-- -->{ ingredients: a.string().array() }<!-- -->) .returns(a.ref("Recipe"))
+makeRecipe: a.generation(<!-- -->{ aiModel: { resourcePath }<!-- -->, systemPrompt: 'Please make a recipe from the provided ingredients', }<!-- -->) .arguments(<!-- -->{ ingredients: a.string().array() }<!-- -->) .returns(a.ref("Recipe"))
 

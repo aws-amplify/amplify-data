@@ -14,7 +14,7 @@ import type {
   FunctionHandler,
   HandlerType as Handler,
 } from './Handler';
-import { AiModel, InferenceConfiguration } from './ai/AiModelType';
+import { AiModel, InferenceConfiguration } from './ai/ModelType';
 
 const queryBrand = 'queryCustomOperation';
 const mutationBrand = 'mutationCustomOperation';
@@ -319,7 +319,7 @@ export interface GenerationInput {
  * Define an AI generation route for single request-response interaction with specified AI model.
  * @example
  * makeRecipe: a.generation({
- *   aiModel: { friendlyName, resourcePath },
+ *   aiModel: { resourcePath },
  *   systemPrompt: 'Please make a recipe from the provided ingredients',
  * })
  *   .arguments({ ingredients: a.string().array() })

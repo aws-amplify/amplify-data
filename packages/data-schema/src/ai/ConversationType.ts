@@ -6,7 +6,7 @@ import type { DefineFunction } from '@aws-amplify/data-schema-types';
 import type { ListReturnValue, SingularReturnValue } from '../runtime/client';
 import { type Brand, brand } from '../util';
 import type { RefType } from '../RefType';
-import { AiModel, InferenceConfiguration } from './AiModelType';
+import { AiModel, InferenceConfiguration } from './ModelType';
 import {
   ConversationMessageContent,
   ConversationSendMessageInputContent,
@@ -123,8 +123,8 @@ function _conversation(input: ConversationInput): ConversationType {
  * Define an AI conversation route which enables multi-turn conversation APIs for interacting with specified AI model.
  * @example
  * realtorChat: a.conversation({
- *    aiModel: { friendlyName, resourcePath },
- *    systemPrompt: 'You are a helpful real estate assistant',
+ *   aiModel: { resourcePath },
+ *   systemPrompt: 'You are a helpful real estate assistant',
  * })
  * @returns a conversation route definition
  */

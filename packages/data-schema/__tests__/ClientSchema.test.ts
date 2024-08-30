@@ -11,7 +11,6 @@ import { AuthMode, CustomHeaders, SingularReturnValue } from '../src/runtime';
 import { configure } from '../src/internals';
 import { Nullable } from '../src/ModelField';
 import { AppSyncResolverEvent, Callback, Context } from 'aws-lambda';
-import { claude3Haiku } from '../src/ai/AiModelType';
 import { defineFunctionStub } from './utils';
 
 const fakeSecret = () => ({}) as any;
@@ -1471,7 +1470,7 @@ describe('ai routes', () => {
         .handler(a.handler.function(handler)),
 
       ChatBot: a.conversation({
-        aiModel: claude3Haiku(),
+        aiModel: a.ai.model.claude3Haiku(),
         systemPrompt: 'Hello, world!',
         tools: [
           { query: a.ref('myToolQuery'), description: 'does a thing' },
@@ -1508,7 +1507,7 @@ describe('ai routes', () => {
         .authorization((allow) => allow.publicApiKey()),
       makeRecipe: a
         .generation({
-          aiModel: a.aiModel.anthropic.claude3Haiku(),
+          aiModel: a.ai.model.claude3Haiku(),
           systemPrompt: 'Hello, world!',
         })
         .returns(a.ref('Recipe')),

@@ -5,7 +5,7 @@ import { bench } from '@arktype/attest';
 import { a, ClientSchema } from '@aws-amplify/data-schema';
 
 const input = {
-  aiModel: a.aiModel.anthropic.claude3Haiku(),
+  aiModel: a.ai.model.claude3Haiku(),
   systemPrompt: 'Hello, world!',
   inferenceConfiguration: {
     topP: 1,

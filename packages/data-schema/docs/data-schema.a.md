@@ -340,7 +340,7 @@ Description
 </th></tr></thead>
 <tbody><tr><td>
 
-[aiModel](./data-schema.a.aimodel.md)
+[ai](./data-schema.a.ai.md)
 
 
 </td><td>

@@ -7,7 +7,7 @@ import { Amplify } from 'aws-amplify';
 import { generateClient } from 'aws-amplify/api';
 
 const input = {
-  aiModel: a.aiModel.anthropic.claude3Haiku(),
+  aiModel: a.ai.model.claude3Haiku(),
   systemPrompt: 'Hello, world!',
   inferenceConfiguration: {
     topP: 1,
