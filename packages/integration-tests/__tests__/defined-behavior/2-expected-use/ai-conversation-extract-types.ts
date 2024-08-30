@@ -7,7 +7,7 @@ describe('AI Conversation Routes', () => {
   // data/resource.ts
   const schema = a.schema({
     chatBot: a.conversation({
-      aiModel: a.ai.model.claude3Haiku(),
+      aiModel: a.ai.model('Claude 3 Haiku'),
       systemPrompt: 'You are a helpful chatbot.',
     }),
   });

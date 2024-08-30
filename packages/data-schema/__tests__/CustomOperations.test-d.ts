@@ -812,7 +812,7 @@ describe('.for() modifier', () => {
 
   it('is unavailable on a.generation()', () => {
     a.generation({
-      aiModel: a.ai.model.claude3Haiku(),
+      aiModel: a.ai.model('Claude 3 Haiku'),
       systemPrompt: 'Hello, world!',
       // @ts-expect-error .for() is not a valid modifier function of a.generation()
     }).for();

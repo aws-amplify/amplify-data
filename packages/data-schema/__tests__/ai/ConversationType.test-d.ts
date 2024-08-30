@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import type { Equal, Expect } from '@aws-amplify/data-schema-types';
-import { claude3Haiku } from '../../src/ai/supportedModels/anthropic';
+import { model } from '../../src/ai/ModelType';
 import {
   conversation,
   type ConversationInput,
@@ -10,7 +10,7 @@ import {
 } from '../../src/ai/ConversationType';
 
 const input: ConversationInput = {
-  aiModel: claude3Haiku(),
+  aiModel: model('Claude 3 Haiku'),
   systemPrompt: 'Hello, world!',
   inferenceConfiguration: {
     topP: 1,

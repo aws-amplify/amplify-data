@@ -5,7 +5,7 @@ import { bench } from '@arktype/attest';
 import { a, type ClientSchema } from '@aws-amplify/data-schema';
 
 const input = {
-  aiModel: a.ai.model.claude3Haiku(),
+  aiModel: a.ai.model('Claude 3 Haiku'),
   systemPrompt: 'Hello, world!',
   inferenceConfiguration: {
     topP: 1,
@@ -54,7 +54,7 @@ bench('schema with generation returning primitive type w/ ClientSchema', () => {
   const s = a.schema({
     generate: a
       .generation({
-        aiModel: a.ai.model.claude3Haiku(),
+        aiModel: a.ai.model('Claude 3 Haiku'),
         systemPrompt: 'Hello, world!',
       })
       .arguments({ inputContent: a.string().required() })
@@ -70,7 +70,7 @@ bench('schema with generation returning enum type w/ ClientSchema', () => {
     Status: a.enum(['Active', 'Inactive', 'Unknown']),
     generate: a
       .generation({
-        aiModel: a.ai.model.claude3Haiku(),
+        aiModel: a.ai.model('Claude 3 Haiku'),
         systemPrompt: 'Hello, world!',
       })
       .arguments({ itemId: a.string().required() })
@@ -88,7 +88,7 @@ bench('schema with generation returning custom type w/ ClientSchema', () => {
     }),
     makeRecipe: a
       .generation({
-        aiModel: a.ai.model.claude3Haiku(),
+        aiModel: a.ai.model('Claude 3 Haiku'),
         systemPrompt: 'Hello, world!',
       })
       .arguments({ inputContent: a.string().required() })
@@ -105,7 +105,7 @@ bench('schema with generation returning model w/ ClientSchema', () => {
     }),
     makeRecipe: a
       .generation({
-        aiModel: a.ai.model.claude3Haiku(),
+        aiModel: a.ai.model('Claude 3 Haiku'),
         systemPrompt: 'Hello, world!',
       })
       .arguments({ modelId: a.string().required() })

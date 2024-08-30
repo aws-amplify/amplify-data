@@ -8,19 +8,6 @@
 
 ```typescript
 ai: {
-    model: {
-        claude3Haiku: typeof import("./ai/supportedModels/anthropic").claude3Haiku;
-        claude3Opus: typeof import("./ai/supportedModels/anthropic").claude3Opus;
-        claude3Sonnet: typeof import("./ai/supportedModels/anthropic").claude3Sonnet;
-        claude3_5Sonnet: typeof import("./ai/supportedModels/anthropic").claude3_5Sonnet;
-        commandR: typeof import("./ai/supportedModels/cohere").commandR;
-        commandRPlus: typeof import("./ai/supportedModels/cohere").commandRPlus;
-        llama3_18BInstruct: typeof import("./ai/supportedModels/meta").llama3_18BInstruct;
-        llama3_170BInstruct: typeof import("./ai/supportedModels/meta").llama3_170BInstruct;
-        llama3_1405BInstruct: typeof import("./ai/supportedModels/meta").llama3_1405BInstruct;
-        mistralLarge: typeof import("./ai/supportedModels/mistralAi").mistralLarge;
-        mistralLarge2: typeof import("./ai/supportedModels/mistralAi").mistralLarge2;
-        mistralSmall: typeof import("./ai/supportedModels/mistralAi").mistralSmall;
-    };
+    model: typeof aiModel;
 }
 ```
