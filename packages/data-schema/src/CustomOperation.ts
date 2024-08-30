@@ -313,6 +313,19 @@ export interface GenerationInput {
   inferenceConfiguration?: InferenceConfiguration;
 }
 
+/**
+ * @experimental
+ *
+ * Define an AI generation route for single request-response interaction with specified AI model.
+ * @example
+ * makeRecipe: a.generation({
+ *   aiModel: { friendlyName, resourcePath },
+ *   systemPrompt: 'Please make a recipe from the provided ingredients',
+ * })
+ *   .arguments({ ingredients: a.string().array() })
+ *   .returns(a.ref("Recipe"))
+ * @returns a generation route definition
+ */
 export function generation(input: GenerationInput): CustomOperation<
   {
     arguments: null;

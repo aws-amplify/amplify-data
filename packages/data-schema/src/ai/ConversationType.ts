@@ -35,8 +35,23 @@ interface ConversationRouteListInput {
 }
 
 export interface ConversationRoute {
+  /**
+   * @experimental
+   *
+   * Creates a {@link Conversation} from the current conversation route.
+   */
   create: () => SingularReturnValue<Conversation>;
+  /**
+   * @experimental
+   *
+   * Gets an existing {@link Conversation} based on ID.
+   */
   get: (input: ConversationRouteGetInput) => SingularReturnValue<Conversation>;
+  /**
+   * @experimental
+   *
+   * Lists all existing {@link Conversation}s on the current conversation route.
+   */
   list: (input?: ConversationRouteListInput) => ListReturnValue<Conversation>;
 }
 
@@ -56,12 +71,27 @@ type ConversationOnMessageHandler = (message: ConversationMessage) => void;
 
 export interface Conversation {
   id: string;
+  /**
+   * @experimental
+   *
+   * Sends a message to the current conversation.
+   */
   sendMessage: (
     input: ConversationSendMessageInput,
   ) => SingularReturnValue<ConversationMessage>;
+  /**
+   * @experimental
+   *
+   * Lists all existing messages for the current conversation.
+   */
   listMessages: (
     input?: ConversationListMessagesInput,
   ) => ListReturnValue<ConversationMessage>;
+  /**
+   * @experimental
+   *
+   * Subscribes to new messages on the current conversation.
+   */
   onMessage: (handler: ConversationOnMessageHandler) => Subscription;
 }
 
@@ -87,6 +117,17 @@ function _conversation(input: ConversationInput): ConversationType {
   return { ...brand(brandName), ...input };
 }
 
+/**
+ * @experimental
+ *
+ * Define an AI conversation route which enables multi-turn conversation APIs for interacting with specified AI model.
+ * @example
+ * realtorChat: a.conversation({
+ *    aiModel: { friendlyName, resourcePath },
+ *    systemPrompt: 'You are a helpful real estate assistant',
+ * })
+ * @returns a conversation route definition
+ */
 export function conversation(input: ConversationInput): ConversationType {
   return _conversation(input);
 }

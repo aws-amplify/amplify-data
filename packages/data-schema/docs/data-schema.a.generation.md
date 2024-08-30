@@ -4,6 +4,8 @@
 
 ## a.generation() function
 
+Define an AI generation route for single request-response interaction with specified AI model.
+
 **Signature:**
 
 ```typescript
@@ -53,4 +55,10 @@ GenerationInput
 **Returns:**
 
 CustomOperation&lt;{ arguments: null; returnType: null; authorization: \[\]; typeName: 'Generation'; handlers: null; input: GenerationInput; }, 'for' \| 'handler', typeof generationBrand&gt;
+
+a generation route definition
+
+## Example
+
+makeRecipe: a.generation(<!-- -->{ aiModel: { friendlyName, resourcePath }<!-- -->, systemPrompt: 'Please make a recipe from the provided ingredients', }<!-- -->) .arguments(<!-- -->{ ingredients: a.string().array() }<!-- -->) .returns(a.ref("Recipe"))
 
