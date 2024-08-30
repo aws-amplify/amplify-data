@@ -120,13 +120,12 @@ function _conversation(input: ConversationInput): ConversationType {
 /**
  * @experimental
  *
- * Define an AI conversation route enabling multi-turn conversation APIs for interacting with specified AI model.
+ * Define an AI conversation route which enables multi-turn conversation APIs for interacting with specified AI model.
  * @example
- * realtorChat: a
- *   .conversation({
- *      aiModel: { friendlyName, resourcePath },
- *      systemPrompt: 'You are a helpful real estate assisstant',
- *   })
+ * realtorChat: a.conversation({
+ *    aiModel: { friendlyName, resourcePath },
+ *    systemPrompt: 'You are a helpful real estate assistant',
+ * })
  * @returns a conversation route definition
  */
 export function conversation(input: ConversationInput): ConversationType {

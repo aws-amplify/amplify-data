@@ -4,7 +4,7 @@
 
 ## a.conversation() function
 
-Define an AI conversation route enabling multi-turn conversation APIs for interacting with specified AI model.
+Define an AI conversation route which enables multi-turn conversation APIs for interacting with specified AI model.
 
 **Signature:**
 
@@ -53,5 +53,5 @@ a conversation route definition
 
 ## Example
 
-realtorChat: a .conversation(<!-- -->{ aiModel: { friendlyName, resourcePath }<!-- -->, systemPrompt: 'You are a helpful real estate assisstant', }<!-- -->)
+realtorChat: a.conversation(<!-- -->{ aiModel: { friendlyName, resourcePath }<!-- -->, systemPrompt: 'You are a helpful real estate assistant', }<!-- -->)
 

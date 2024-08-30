@@ -57,7 +57,7 @@ The interface for merging up to 50 schemas into a single API.
 
 </td><td>
 
-Define an AI conversation route enabling multi-turn conversation APIs for interacting with specified AI model.
+Define an AI conversation route which enables multi-turn conversation APIs for interacting with specified AI model.
 
 
 </td></tr>
