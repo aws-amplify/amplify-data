@@ -7,7 +7,7 @@ import {
   subOptionsAndHeaders,
   useState,
   pause,
-} from '../../utils';
+} from '../../../utils';
 
 const sampleTodo = {
   __typename: 'Todo',

@@ -4,7 +4,7 @@ import {
   buildAmplifyConfig,
   mockedGenerateClient,
   optionsAndHeaders,
-} from '../../utils';
+} from '../../../utils';
 
 const sampleTodo = {
   __typename: 'Todo',

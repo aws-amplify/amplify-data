@@ -6,7 +6,7 @@ import {
   mockedGenerateClient,
   optionsAndHeaders,
   useState,
-} from '../../utils';
+} from '../../../utils';
 
 describe('Modeling relationships', () => {
   afterEach(() => {

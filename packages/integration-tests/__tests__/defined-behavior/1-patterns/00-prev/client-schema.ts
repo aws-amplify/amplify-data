@@ -1,6 +1,6 @@
 import { a, ClientSchema } from '@aws-amplify/data-schema';
 import { Amplify } from 'aws-amplify';
-import { buildAmplifyConfig, mockedGenerateClient } from '../../utils';
+import { buildAmplifyConfig, mockedGenerateClient } from '../../../utils';
 
 describe('ClientSchema', () => {
   afterEach(() => {

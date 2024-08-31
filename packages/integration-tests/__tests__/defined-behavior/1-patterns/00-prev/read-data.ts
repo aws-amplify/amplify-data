@@ -6,7 +6,7 @@ import {
   mockedGenerateClient,
   optionsAndHeaders,
   useState,
-} from '../../utils';
+} from '../../../utils';
 
 describe('Read application data', () => {
   // https://docs.amplify.aws/gen2/build-a-backend/data/query-data/
