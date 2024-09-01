@@ -5,7 +5,7 @@ import {
   buildAmplifyConfig,
   mockedGenerateClient,
   optionsAndHeaders,
-} from '../../../utils';
+} from '../../../../utils';
 
 describe('Specify a custom field type', () => {
   // https://docs.amplify.aws/react/build-a-backend/data/data-modeling/add-fields/#specify-a-custom-field-type

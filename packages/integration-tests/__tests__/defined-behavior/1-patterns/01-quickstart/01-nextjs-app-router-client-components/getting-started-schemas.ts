@@ -1,5 +1,5 @@
 import { a, ClientSchema } from '@aws-amplify/data-schema';
-import { buildAmplifyConfig } from '../../../utils';
+import { buildAmplifyConfig } from '../../../../utils';
 
 describe('getting started guides', () => {
   test('Todo schema', async () => {
