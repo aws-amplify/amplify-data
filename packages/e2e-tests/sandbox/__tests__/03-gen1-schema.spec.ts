@@ -1,40 +1,33 @@
 import { Amplify } from 'aws-amplify';
 import { generateClient } from 'aws-amplify/data';
 import { expectDataReturnWithoutErrors } from '../../common/utils';
-import type { Schema } from '../amplify-backends/01-p50/amplify/data/resource';
-import { deploySandbox, sandboxTimeout, teardownSandbox } from '../utils/';
+import { deploySandbox, sandboxTimeout, teardownSandbox } from '../utils';
 import { getGeneratedOutputs } from '../utils/outputsUtils';
 
-const sandboxDir = '01-p50';
+const sandboxDir = '03-gen1-schema';
 
 // Location of generated Amplify backend for this test:
 const projectDirPath = `./amplify-backends/${sandboxDir}`;
 
-const sandboxIdentifier = 'p50';
+const sandboxIdentifier = 'gen1-schema';
 
-// TODO: use imported type from `aws-amplify/data` once it's fixed
-type Client = ReturnType<typeof generateClient<Schema>>;
+let client: any;
 
-let client: Client;
-
-const deleteAll = async (client: Client) => {
-  const { data: crudlTestModels } = await client.models.Todo.list();
+const deleteAll = async (client: any) => {
+  const { data: crudlTestModels } = await client.models.Customer.list();
   console.log('crudlTestModels to delete:', crudlTestModels);
 
-  const deletePromises = crudlTestModels?.map(
-    async (todo: Schema['Todo']['type']) => {
-      await client.models.Todo.delete(todo);
-    },
-  );
+  const deletePromises = crudlTestModels?.map(async (customer: any) => {
+    await client.models.Customer.delete(customer);
+  });
 
   await Promise.all(deletePromises!);
 
-  const { data: listAfterDelete } = await client.models.Todo.list();
+  const { data: listAfterDelete } = await client.models.Customer.list();
   console.log('result of cleanup:', listAfterDelete);
 };
 
-// TEMP: testing gen1 schema
-describe.skip('Sandbox gen + runtime testing of p50 schema', () => {
+describe('Sandbox gen + runtime testing of Gen 1 schema', () => {
   beforeAll(async () => {
     // Deploy the sandbox
     const response = await deploySandbox(projectDirPath, sandboxIdentifier);
@@ -51,21 +44,20 @@ describe.skip('Sandbox gen + runtime testing of p50 schema', () => {
     }
 
     Amplify.configure(result);
-    client = generateClient<Schema>();
+    client = generateClient();
   });
   afterEach(async () => {
     await deleteAll(client);
   });
-  // TODO: add more model operations
   test('Create', async () => {
-    const response = await client.models.Todo.create({
-      todoId: `${Date.now()}`,
-      name: `test create`,
+    const response = await client.models.Customer.create({
+      content: 'test create',
+      isDone: true,
     });
 
-    const data = expectDataReturnWithoutErrors(response, 'create');
+    const data: any = expectDataReturnWithoutErrors(response, 'create');
 
-    expect(data?.name).toBe('test create');
+    expect(data.content).toBe('test create');
   });
   afterAll(async () => {
     await teardownSandbox(projectDirPath);

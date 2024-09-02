@@ -1,1 +1,3 @@
-Tested [E2E](https://github.com/aws-amplify/amplify-js-samples-staging/blob/main/cypress/integration/api/optimistic-ui.spec.ts)
+[Docs](https://docs.amplify.aws/react/build-a-backend/data/working-with-files/)
+
+TODO: add or reference existing tests
