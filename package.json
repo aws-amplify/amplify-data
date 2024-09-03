@@ -37,7 +37,7 @@
     "prepare": "husky",
     "publish:release": "changeset version && changeset publish",
     "publish:preid": "changeset version --snapshot ${PREID_PREFIX} && changeset publish --tag ${PREID_PREFIX}",
-    "publish:local": "npm_config_registry=http://localhost:4873/ npm run publish:release",
+    "publish:local": "tsx scripts/publish_local.ts",
     "start:npm-proxy": "tsx scripts/start_npm_proxy.ts",
     "stop:npm-proxy": "tsx scripts/stop_npm_proxy.ts",
     "test": "turbo run test && npm run test:scripts",
