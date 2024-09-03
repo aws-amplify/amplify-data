@@ -14,16 +14,16 @@ const sandboxIdentifier = 'gen1-schema';
 let client: any;
 
 const deleteAll = async (client: any) => {
-  const { data: crudlTestModels } = await client.models.Customer.list();
+  const { data: crudlTestModels } = await client.models.Todo.list();
   console.log('crudlTestModels to delete:', crudlTestModels);
 
-  const deletePromises = crudlTestModels?.map(async (customer: any) => {
-    await client.models.Customer.delete(customer);
+  const deletePromises = crudlTestModels?.map(async (todo: any) => {
+    await client.models.Todo.delete(todo);
   });
 
   await Promise.all(deletePromises!);
 
-  const { data: listAfterDelete } = await client.models.Customer.list();
+  const { data: listAfterDelete } = await client.models.Todo.list();
   console.log('result of cleanup:', listAfterDelete);
 };
 
@@ -50,7 +50,7 @@ describe('Sandbox gen + runtime testing of Gen 1 schema', () => {
     await deleteAll(client);
   });
   test('Create', async () => {
-    const response = await client.models.Customer.create({
+    const response = await client.models.Todo.create({
       content: 'test create',
       isDone: true,
     });

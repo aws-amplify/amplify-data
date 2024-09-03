@@ -1,8 +1,7 @@
 import { defineData } from '@aws-amplify/backend';
 
-// const schema = /* GraphQL */ `
-const schema = `
-  type Todo @model @auth(rules: [{ allow: owner }]) {
+const schema = /* GraphQL */ `
+  type Todo @model @auth(rules: [{ allow: public }]) {
     content: String
     isDone: Boolean
   }
