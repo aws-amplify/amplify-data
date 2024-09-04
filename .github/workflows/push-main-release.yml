@@ -17,10 +17,11 @@ on:
       - fix-detox-sample
 
 jobs:
-  prebuild-ubuntu:
-    uses: ./.github/workflows/callable-prebuild-amplify-api-next.yml
-    with:
-      runs_on: ubuntu-latest
+  # TEMP:
+  # prebuild-ubuntu:
+  #   uses: ./.github/workflows/callable-prebuild-amplify-api-next.yml
+  #   with:
+  #     runs_on: ubuntu-latest
   # This step is included at the top level as a workround (i.e. not in a
   # nested workflow). See: https://github.com/orgs/community/discussions/76409.
   # The `configure-aws-credentials` GH Action is unable to retrieve the JWT
