@@ -57,25 +57,29 @@ export type ResolveIndividualField<Bag extends Record<string, any>, T> =
 type ResolveRelationship<
   Bag extends Record<string, any>,
   RelationshipShape extends ModelRelationalFieldParamShape,
-> = RelationshipShape['relationshipType'] extends 'hasOne' | 'hasMany'
-  ? // relational getters depend on `list` being enabled on the related model
-    'list' extends keyof Bag[RelationshipShape['relatedModel']]['__meta']['disabledOperations']
-    ? never
-    : LazyLoader<
+> = DependentLazyLoaderOpIsAvailable<Bag, RelationshipShape> extends true
+    ? LazyLoader<
         RelationshipShape['valueRequired'] extends true
           ? Bag[RelationshipShape['relatedModel']]['type']
           : Bag[RelationshipShape['relatedModel']]['type'] | null,
         RelationshipShape['array']
       >
-  : // belongsTo
+    : never
+;
+
+type DependentLazyLoaderOpIsAvailable<
+  Bag extends Record<string, any>,
+  RelationshipShape extends ModelRelationalFieldParamShape,
+> = RelationshipShape['relationshipType'] extends 'hasOne' | 'hasMany'
+  ? // hasOne and hasMany depend on `list`
+    'list' extends keyof Bag[RelationshipShape['relatedModel']]['__meta']['disabledOperations']
+    ? false
+    : true
+  : // the relationship is a belongsTo, which depends on `get`
     'get' extends keyof Bag[RelationshipShape['relatedModel']]['__meta']['disabledOperations']
-    ? never
-    : LazyLoader<
-        RelationshipShape['valueRequired'] extends true
-          ? Bag[RelationshipShape['relatedModel']]['type']
-          : Bag[RelationshipShape['relatedModel']]['type'] | null,
-        RelationshipShape['array']
-      >;
+    ? false
+    : true
+;
 
 type IsRequired<T> =
   T extends BaseModelField<infer FieldShape>
