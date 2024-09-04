@@ -1,9 +1,12 @@
 import { InternalRef } from '../RefType';
 import { capitalize } from '../runtime/utils';
-import type { ConversationType, ToolDefinition } from './ConversationType';
+import type {
+  InternalConversationType,
+  ToolDefinition,
+} from './ConversationType';
 
 export const createConversationField = (
-  typeDef: ConversationType,
+  typeDef: InternalConversationType,
   typeName: string,
 ): string => {
   const { aiModel, systemPrompt, handler, tools } = typeDef;
@@ -214,7 +217,6 @@ const ToolSpecification = `type ToolSpecification {
 const ToolInputSchema = `type ToolInputSchema {
   json: AWSJSON
 }`;
-
 
 export const conversationTypes: string[] = [
   ConversationParticipantRole,
