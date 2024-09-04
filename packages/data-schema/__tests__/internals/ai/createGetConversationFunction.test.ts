@@ -53,7 +53,7 @@ describe('createGetConversationFunction()', () => {
         {},
         {},
         {},
-        'READ',
+        'GET',
         expect.any(Function),
       );
       expect(mockGet).toHaveBeenCalledWith({ id: mockConversation.id });
