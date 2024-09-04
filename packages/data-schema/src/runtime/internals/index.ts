@@ -12,3 +12,4 @@ export { generateModelsProperty } from './utils/clientProperties/generateModelsP
 export { isGraphQLResponseWithErrors } from './utils/runtimeTypeGuards/isGraphQLResponseWithErrors';
 export { isApiGraphQLConfig } from './utils/runtimeTypeGuards/isApiGraphQLProviderConfig';
 export { isConfigureEventWithResourceConfig } from './utils/runtimeTypeGuards/isConfigureEventWithResourceConfig';
+export { upgradeClientCancellation } from './cancellation';

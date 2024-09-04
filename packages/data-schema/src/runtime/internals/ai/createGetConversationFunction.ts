@@ -26,7 +26,7 @@ export const createGetConversationFunction =
       client,
       modelIntrospection,
       conversationModel,
-      'READ',
+      'GET',
       getInternals,
     ) as (
       args?: Record<string, any>,

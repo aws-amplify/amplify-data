@@ -14,7 +14,7 @@ import {
   ModelRelationshipTypes,
   type InternalRelationalField,
 } from './ModelRelationalField';
-import type { InternalModel } from './ModelType';
+import type { InternalModel, DisableOperationsOptions } from './ModelType';
 import type { InternalModelIndexType } from './ModelIndex';
 import {
   type Authorization,
@@ -1505,7 +1505,13 @@ const schemaPreprocessor = (
 
       const joined = gqlFields.join('\n  ');
 
-      const model = `type ${typeName} @model ${authString}\n{\n  ${joined}\n}`;
+      const modelAttrs = modelAttributesFromDisabledOps(
+        typeDef.data.disabledOperations,
+      );
+
+      const modelDirective = modelAttrs ? `@model(${modelAttrs})` : '@model';
+
+      const model = `type ${typeName} ${modelDirective} ${authString}\n{\n  ${joined}\n}`;
       gqlModels.push(model);
     }
   }
@@ -2240,6 +2246,75 @@ function getModelRelationship(
         `"${sourceModelConnectionField.def.type}" is not a valid relationship type.`,
       );
   }
+}
+
+/**
+ *
+ * @param disabledOps
+ * @returns sanitized string @model directive attribute; can be passed in as-is
+ *
+ * @example
+ * ```ts
+ * const disabledOps = ["subscriptions", "create"];
+ * ```
+ * returns
+ * ```
+ * subscriptions:null,mutations:{create:null}
+ * ```
+ */
+function modelAttributesFromDisabledOps(
+  disabledOps: ReadonlyArray<DisableOperationsOptions>,
+) {
+  const fineCoarseMap: Record<string, string> = {
+    onCreate: 'subscriptions',
+    onUpdate: 'subscriptions',
+    onDelete: 'subscriptions',
+    create: 'mutations',
+    update: 'mutations',
+    delete: 'mutations',
+    list: 'queries',
+    get: 'queries',
+  };
+
+  const coarseGrainedOps = ['queries', 'mutations', 'subscriptions'];
+
+  const coarseFirstSorted = disabledOps
+    // disabledOps is readOnly; create a copy w/ slice
+    .slice()
+    .sort((a: DisableOperationsOptions, b: DisableOperationsOptions) => {
+      if (coarseGrainedOps.includes(a) && !coarseGrainedOps.includes(b)) {
+        return -1;
+      }
+
+      if (!coarseGrainedOps.includes(a) && coarseGrainedOps.includes(b)) {
+        return 1;
+      }
+
+      return 0;
+    });
+
+  const modelAttrs: Record<string, null | Record<string, null>> = {};
+
+  for (const op of coarseFirstSorted) {
+    if (coarseGrainedOps.includes(op)) {
+      modelAttrs[op] = null;
+      continue;
+    }
+
+    const coarseOp = fineCoarseMap[op];
+
+    if (modelAttrs[coarseOp] !== null) {
+      modelAttrs[coarseOp] = modelAttrs[coarseOp] || {};
+
+      modelAttrs[coarseOp]![op] = null;
+    }
+  }
+
+  const modelAttrsStr = JSON.stringify(modelAttrs)
+    .replace(/"/g, '') // remove quotes
+    .slice(1, -1); // drop outer curlies {}
+
+  return modelAttrsStr;
 }
 
 /**

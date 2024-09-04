@@ -1,0 +1,52 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`something happy path type and mocked runtime tests 1`] = `
+[
+  [
+    {
+      "authMode": undefined,
+      "authToken": undefined,
+      "query": "query($id: ID!) { getStandaloneModel(id: $id) { id name createdAt updatedAt } }",
+      "variables": {
+        "id": "something",
+      },
+    },
+    {},
+  ],
+  [
+    {
+      "authMode": undefined,
+      "authToken": undefined,
+      "query": "query($filter: ModelStandaloneModelFilterInput,$limit: Int,$nextToken: String) { listStandaloneModels(filter: $filter,limit: $limit,nextToken: $nextToken) { items { id name createdAt updatedAt } nextToken __typename } }",
+      "variables": {},
+    },
+    {},
+  ],
+  [
+    {
+      "authMode": undefined,
+      "authToken": undefined,
+      "query": "query($name: String!,$filter: ModelStandaloneModelFilterInput,$sortDirection: ModelSortDirection,$limit: Int,$nextToken: String) { listStandaloneModelByName(name: $name,filter: $filter,sortDirection: $sortDirection,limit: $limit,nextToken: $nextToken) { items { id name createdAt updatedAt } nextToken __typename } }",
+      "variables": {
+        "name": "bob",
+      },
+    },
+    {},
+  ],
+  [
+    {
+      "authMode": undefined,
+      "authToken": undefined,
+      "query": "
+    query($id: String) {
+      myQuery(id: $id) {success}
+    }
+  ",
+      "variables": {
+        "id": "a1",
+      },
+    },
+    {},
+  ],
+]
+`;
