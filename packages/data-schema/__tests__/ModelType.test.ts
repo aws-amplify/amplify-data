@@ -786,3 +786,114 @@ describe('secondary indexes', () => {
     expect(schema.transform().schema).toMatchSnapshot();
   });
 });
+
+describe('disableOperations', () => {
+  it('passes expected @model attributes for coarse-grained disable op', () => {
+    const schema = a
+      .schema({
+        widget: a
+          .model({
+            title: a.string().required(),
+          })
+          .disableOperations(['mutations', 'subscriptions']),
+      })
+      .authorization((allow) => allow.publicApiKey());
+
+    expect(schema.transform().schema).toMatchSnapshot();
+  });
+
+  it('passes expected @model attributes for fine-grained disable op', () => {
+    const schema = a
+      .schema({
+        widget: a
+          .model({
+            title: a.string().required(),
+          })
+          .disableOperations([
+            'get',
+            'update',
+            'delete',
+            'onUpdate',
+            'onDelete',
+          ]),
+      })
+      .authorization((allow) => allow.publicApiKey());
+
+    expect(schema.transform().schema).toMatchSnapshot();
+  });
+
+  it('coarse grained op takes precedence over fine-grained', () => {
+    const schema = a
+      .schema({
+        widget: a
+          .model({
+            title: a.string().required(),
+          })
+          .disableOperations(['update', 'delete', 'mutations']),
+      })
+      .authorization((allow) => allow.publicApiKey());
+
+    expect(schema.transform().schema).toMatchSnapshot();
+  });
+
+  it('dupes are ignored', () => {
+    const schema = a
+      .schema({
+        widget: a
+          .model({
+            title: a.string().required(),
+          })
+          .disableOperations([
+            'update',
+            'delete',
+            'mutations',
+            'update',
+            'delete',
+            'mutations',
+            'update',
+            'delete',
+            'mutations',
+          ]),
+      })
+      .authorization((allow) => allow.publicApiKey());
+
+    expect(schema.transform().schema).toMatchSnapshot();
+  });
+
+  it('exhaustive coarse-grained', () => {
+    const schema = a
+      .schema({
+        widget: a
+          .model({
+            title: a.string().required(),
+          })
+          .disableOperations(['queries', 'mutations', 'subscriptions']),
+      })
+      .authorization((allow) => allow.publicApiKey());
+
+    expect(schema.transform().schema).toMatchSnapshot();
+  });
+
+  it('exhaustive fine-grained', () => {
+    const schema = a
+      .schema({
+        widget: a
+          .model({
+            title: a.string().required(),
+          })
+          .disableOperations([
+            'get',
+            'list',
+            'create',
+            'update',
+            'delete',
+            'onCreate',
+            'onUpdate',
+            'onDelete',
+          ]),
+      })
+      .authorization((allow) => allow.publicApiKey());
+
+    expect(schema.transform().schema).toMatchSnapshot();
+  });
+});

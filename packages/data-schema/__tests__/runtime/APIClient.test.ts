@@ -809,13 +809,13 @@ describe('generateGraphQLDocument()', () => {
     };
 
     test.each([
-      ['READ', 'User', '$userId: ID!'],
+      ['GET', 'User', '$userId: ID!'],
       [
-        'READ',
+        'GET',
         'Product',
         '$sku: String!,$factoryId: String!,$warehouseId: String!',
       ],
-      ['READ', 'person', 'getPerson'],
+      ['GET', 'person', 'getPerson'],
       ['LIST', 'person', 'listPeople'],
       ['LIST', 'person', '$filter: ModelPersonFilterInput'],
       ['CREATE', 'person', '$input: CreatePersonInput!'],

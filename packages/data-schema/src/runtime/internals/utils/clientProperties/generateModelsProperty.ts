@@ -9,13 +9,16 @@ import {
   ModelIntrospectionSchema,
 } from '../../../bridge-types';
 
-import { ModelOperation, graphQLOperationsInfo } from '../../APIClient';
+import { ModelOperation } from '../../APIClient';
 import { listFactory } from '../../operations/list';
 import { indexQueryFactory } from '../../operations/indexQuery';
 import { getFactory } from '../../operations/get';
 import { subscriptionFactory } from '../../operations/subscription';
 import { observeQueryFactory } from '../../operations/observeQuery';
-import { getSecondaryIndexesFromSchemaModel } from '../../clientUtils';
+import {
+  getSecondaryIndexesFromSchemaModel,
+  excludeDisabledOps,
+} from '../../clientUtils';
 
 export function generateModelsProperty<T extends Record<any, any> = never>(
   client: BaseClient,
@@ -38,38 +41,38 @@ export function generateModelsProperty<T extends Record<any, any> = never>(
 
     models[name] = {} as Record<string, any>;
 
-    Object.entries(graphQLOperationsInfo).forEach(
-      ([key, { operationPrefix }]) => {
-        const operation = key as ModelOperation;
+    const enabledModelOps = excludeDisabledOps(modelIntrospection, name);
 
-        if (operation === 'LIST') {
-          models[name][operationPrefix] = listFactory(
-            client,
-            modelIntrospection,
-            model,
-            getInternals,
-          );
-        } else if (SUBSCRIPTION_OPS.includes(operation)) {
-          models[name][operationPrefix] = subscriptionFactory(
-            client as BaseBrowserClient,
-            modelIntrospection,
-            model,
-            operation,
-            getInternals,
-          );
-        } else if (operation === 'OBSERVE_QUERY') {
-          models[name][operationPrefix] = observeQueryFactory(models, model);
-        } else {
-          models[name][operationPrefix] = getFactory(
-            client,
-            modelIntrospection,
-            model,
-            operation,
-            getInternals,
-          );
-        }
-      },
-    );
+    Object.entries(enabledModelOps).forEach(([key, { operationPrefix }]) => {
+      const operation = key as ModelOperation;
+
+      if (operation === 'LIST') {
+        models[name][operationPrefix] = listFactory(
+          client,
+          modelIntrospection,
+          model,
+          getInternals,
+        );
+      } else if (SUBSCRIPTION_OPS.includes(operation)) {
+        models[name][operationPrefix] = subscriptionFactory(
+          client as BaseBrowserClient,
+          modelIntrospection,
+          model,
+          operation,
+          getInternals,
+        );
+      } else if (operation === 'OBSERVEQUERY') {
+        models[name][operationPrefix] = observeQueryFactory(models, model);
+      } else {
+        models[name][operationPrefix] = getFactory(
+          client,
+          modelIntrospection,
+          model,
+          operation,
+          getInternals,
+        );
+      }
+    });
 
     const secondaryIdxs = getSecondaryIndexesFromSchemaModel(model);
 
