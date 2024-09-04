@@ -14,6 +14,7 @@ export declare function model<T extends ModelFields>(fields: T): ModelType<{
     identifier: ModelDefaultIdentifier;
     secondaryIndexes: [];
     authorization: [];
+    disabledOperations: [];
 }>;
 ```
 
@@ -54,7 +55,7 @@ database table fields. Supports scalar types and relationship types.
 </tbody></table>
 **Returns:**
 
-ModelType&lt;{ fields: T; identifier: ModelDefaultIdentifier; secondaryIndexes: \[\]; authorization: \[\]; }&gt;
+ModelType&lt;{ fields: T; identifier: ModelDefaultIdentifier; secondaryIndexes: \[\]; authorization: \[\]; disabledOperations: \[\]; }&gt;
 
 a data model definition
 

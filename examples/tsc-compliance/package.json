@@ -12,6 +12,10 @@
     "@aws-amplify/data-schema": "*",
     "aws-amplify": "*",
     "aws-cdk-lib": "^2.127.0"
+    
+  },
+  "devDependencies": {
+    "@types/node": "^20.16.2"
   },
   "keywords": [],
   "author": "",

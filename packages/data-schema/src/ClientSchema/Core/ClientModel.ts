@@ -2,6 +2,7 @@ import type {
   deferredRefResolvingPrefix,
   ModelTypeParamShape,
   ModelDefaultIdentifier,
+  DisableOperationsOptions,
 } from '../../ModelType';
 import type { ClientSchemaProperty } from './ClientSchemaProperty';
 import type { Authorization, ImpliedAuthFields } from '../../Authorization';
@@ -49,8 +50,36 @@ export interface ClientModel<
   secondaryIndexes: IndexQueryMethodsFromIR<Bag, T['secondaryIndexes'], K>;
   __meta: {
     listOptionsPkParams: ListOptionsPkParams<Bag, T>;
+    disabledOperations: DisabledOpsToMap<T['disabledOperations']>;
   };
 }
+
+/**
+ * Creates a map of disabled operations, expanding coarse-grained ops into fine-grained ones
+ * The map is used in runtime/client/index.ts to Omit any disabled ops from the data-client types
+ *
+ * @example
+ * a.model({...}).disableOperations(['update', 'subscriptions'])
+ * Returns
+ * {
+ *   update: true;
+ *   onCreate: true;
+ *   onUpdate: true;
+ *   onDelete: true;
+ *   observeQuery: true;
+ * }
+ */
+type DisabledOpsToMap<Ops extends ReadonlyArray<DisableOperationsOptions>> = {
+  [Op in Ops[number] as Op extends 'queries'
+    ? 'list' | 'get' | 'observeQuery'
+    : Op extends 'mutations'
+      ? 'create' | 'update' | 'delete'
+      : Op extends 'subscriptions'
+        ? 'onCreate' | 'onUpdate' | 'onDelete' | 'observeQuery'
+        : Op extends 'list'
+          ? 'list' | 'observeQuery'
+          : Op]: true;
+};
 
 type ClientFields<
   Bag extends Record<string, unknown>,

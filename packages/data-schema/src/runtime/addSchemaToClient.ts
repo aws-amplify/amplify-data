@@ -10,6 +10,7 @@ import {
   generateEnumsProperty,
   generateGenerationsProperty,
   generateModelsProperty,
+  upgradeClientCancellation,
 } from './internals';
 import {
   BaseClient,
@@ -22,6 +23,7 @@ export function addSchemaToClient<T extends Record<any, any> = never>(
   apiGraphqlConfig: GraphQLProviderConfig['GraphQL'],
   getInternals: ClientInternalsGetter,
 ): BaseClient & ClientExtensions<T> {
+  upgradeClientCancellation(client);
   (client as any).models = generateModelsProperty<T>(
     client as any,
     apiGraphqlConfig,
