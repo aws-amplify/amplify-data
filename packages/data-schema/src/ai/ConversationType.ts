@@ -109,9 +109,11 @@ export interface ConversationInput {
   handler?: DefineFunction | string;
 }
 
-export interface ConversationType
-  extends Brand<typeof brandName>,
+export interface InternalConversationType
+  extends ConversationType,
     ConversationInput {}
+
+export interface ConversationType extends Brand<typeof brandName> {}
 
 function _conversation(input: ConversationInput): ConversationType {
   return { ...brand(brandName), ...input };

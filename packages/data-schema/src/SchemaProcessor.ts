@@ -1,8 +1,4 @@
-import type {
-  ConversationType,
-  CustomPathData,
-  InternalSchema,
-} from './ModelSchema';
+import type { CustomPathData, InternalSchema } from './ModelSchema';
 import {
   type ModelField,
   type InternalField,
@@ -50,7 +46,10 @@ import {
 } from './Handler';
 import * as os from 'os';
 import * as path from 'path';
-import { brandName as conversationBrandName } from './ai/ConversationType';
+import {
+  brandName as conversationBrandName,
+  type InternalConversationType,
+} from './ai/ConversationType';
 import {
   conversationTypes,
   createConversationField,
@@ -98,7 +97,7 @@ function isCustomType(
   return false;
 }
 
-function isConversationRoute(type: any): type is ConversationType {
+function isConversationRoute(type: any): type is InternalConversationType {
   return getBrand(type) === conversationBrandName;
 }
 
@@ -499,14 +498,18 @@ function customOperationToGql(
         `Invalid Generation Route definition. A Generation Route must include a valid input. ${typeName} has an invalid or no input defined.`,
       );
     }
-    const { aiModel, systemPrompt, inferenceConfiguration } = typeDef.data.input;
+    const { aiModel, systemPrompt, inferenceConfiguration } =
+      typeDef.data.input;
 
-    const inferenceConfigurationEntries = Object.entries(inferenceConfiguration ?? {});
-    const inferenceConfigurationGql = inferenceConfigurationEntries.length > 0
-      ? `, inferenceConfiguration: { ${inferenceConfigurationEntries
-        .map(([key, value]) => `${key}: ${value}`)
-        .join(', ')} }`
-      : '';
+    const inferenceConfigurationEntries = Object.entries(
+      inferenceConfiguration ?? {},
+    );
+    const inferenceConfigurationGql =
+      inferenceConfigurationEntries.length > 0
+        ? `, inferenceConfiguration: { ${inferenceConfigurationEntries
+            .map(([key, value]) => `${key}: ${value}`)
+            .join(', ')} }`
+        : '';
     gqlHandlerContent += `@generation(aiModel: "${aiModel.resourcePath}", systemPrompt: "${systemPrompt}"${inferenceConfigurationGql}) `;
   }
 
