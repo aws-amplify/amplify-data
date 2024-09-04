@@ -1,5 +1,15 @@
 # @aws-amplify/data-schema
 
+## 1.4.0
+
+### Minor Changes
+
+- 27a0cec: add model .disableOperations() modifier
+
+### Patch Changes
+
+- 2a144f8: fixed cancel behavior for modeled operations
+
 ## 1.3.10
 
 ### Patch Changes
