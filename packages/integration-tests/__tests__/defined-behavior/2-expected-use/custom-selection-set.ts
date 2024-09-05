@@ -10,7 +10,7 @@ import {
 } from '../../utils';
 import { Expect, Equal } from '@aws-amplify/data-schema-types';
 
-describe('custom selection sets', () => {
+describe('providing a custom selection set', () => {
   const schema = a
     .schema({
       Todo: a.model({
@@ -118,11 +118,12 @@ describe('custom selection sets', () => {
   async function getMockedClient(
     operationName: string,
     selectionSet: readonly string[],
+    mockedResult: object = { ...sampleTodo },
   ) {
     const { spy, generateClient } = mockedGenerateClient([
       {
         data: {
-          [operationName]: { ...sampleTodo },
+          [operationName]: mockedResult,
         },
       },
     ]);
@@ -136,7 +137,7 @@ describe('custom selection sets', () => {
     jest.clearAllMocks();
   });
 
-  describe('in `get` operations', () => {
+  describe('to `get` operations', () => {
     async function mockedOperation() {
       const { client, spy } = await getMockedClient('getTodo', selectionSet);
       const { data } = await client.models.Todo.get(
@@ -157,7 +158,6 @@ describe('custom selection sets', () => {
 
     test('returns only the selected fields, without lazy loaders', async () => {
       const { data } = await mockedOperation();
-      console.log('get todo data', { data });
       expect(data).toEqual(sampleTodoFinalResult);
     });
 
@@ -168,9 +168,11 @@ describe('custom selection sets', () => {
   });
 
   // TODO: FIX ... we're not actually testing a list response here.
-  describe('in `list` operations', () => {
+  describe('to `list` operations', () => {
     async function mockedOperation() {
-      const { client, spy } = await getMockedClient('listTodos', selectionSet);
+      const { client, spy } = await getMockedClient('listTodos', selectionSet, {
+        items: [sampleTodo],
+      });
       const { data } = await client.models.Todo.list({
         selectionSet,
       });
@@ -184,7 +186,7 @@ describe('custom selection sets', () => {
 
     test('returns only the selected fields, without lazy loaders', async () => {
       const { data } = await mockedOperation();
-      expect(data).toEqual(sampleTodoFinalResult);
+      expect(data).toEqual([sampleTodoFinalResult]);
     });
 
     test('has a matching return type', async () => {
@@ -195,7 +197,7 @@ describe('custom selection sets', () => {
     });
   });
 
-  describe('in `create` operations', () => {
+  describe('to `create` operations', () => {
     async function mockedOperation() {
       const { client, spy } = await getMockedClient('createTodo', selectionSet);
       const { data } = await client.models.Todo.create(
@@ -225,7 +227,7 @@ describe('custom selection sets', () => {
     });
   });
 
-  describe('in `update` operations', () => {
+  describe('to `update` operations', () => {
     async function mockedOperation() {
       const { client, spy } = await getMockedClient(
         'createUpdate',
@@ -258,7 +260,7 @@ describe('custom selection sets', () => {
     });
   });
 
-  describe('in `delete` operations', () => {
+  describe('to `delete` operations', () => {
     async function mockedOperation() {
       const { client, spy } = await getMockedClient('deleteTodo', selectionSet);
       const { data } = await client.models.Todo.delete(
