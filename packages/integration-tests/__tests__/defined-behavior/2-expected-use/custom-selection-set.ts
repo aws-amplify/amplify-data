@@ -40,16 +40,26 @@ describe('custom selection sets', () => {
     details: {
       content: 'some details content',
     },
-    steps: [
-      {
-        id: 'step-id-123',
-        todoId: 'some-id',
-        description: 'first step',
-        owner: 'harry-f-potter',
-        createdAt: '2024-09-05T16:04:32.404Z',
-        updatedAt: '2024-09-05T16:04:32.404Z',
-      },
-    ],
+    steps: {
+      items: [
+        {
+          id: 'step-id-123',
+          todoId: 'some-id',
+          description: 'first step',
+          owner: 'harry-f-potter',
+          createdAt: '2024-09-05T16:04:32.404Z',
+          updatedAt: '2024-09-05T16:04:32.404Z',
+        },
+      ],
+    },
+  };
+
+  /**
+   * The sample todo, transformed to remove the `items` array as customers see it.
+   */
+  const sampleTodoFinalResult = {
+    ...sampleTodo,
+    steps: [...sampleTodo.steps.items],
   };
 
   const selectionSet = [
@@ -148,7 +158,7 @@ describe('custom selection sets', () => {
     test('returns only the selected fields, without lazy loaders', async () => {
       const { data } = await mockedOperation();
       console.log('get todo data', { data });
-      expect(data).toEqual(sampleTodo);
+      expect(data).toEqual(sampleTodoFinalResult);
     });
 
     test('has a matching return type', async () => {
@@ -174,7 +184,7 @@ describe('custom selection sets', () => {
 
     test('returns only the selected fields, without lazy loaders', async () => {
       const { data } = await mockedOperation();
-      expect(data).toEqual(sampleTodo);
+      expect(data).toEqual(sampleTodoFinalResult);
     });
 
     test('has a matching return type', async () => {
@@ -206,7 +216,7 @@ describe('custom selection sets', () => {
 
     test('returns only the selected fields, without lazy loaders', async () => {
       const { data } = await mockedOperation();
-      expect(data).toEqual(sampleTodo);
+      expect(data).toEqual(sampleTodoFinalResult);
     });
 
     test('has a matching return type', async () => {
@@ -239,7 +249,7 @@ describe('custom selection sets', () => {
 
     test('returns only the selected fields, without lazy loaders', async () => {
       const { data } = await mockedOperation();
-      expect(data).toEqual(sampleTodo);
+      expect(data).toEqual(sampleTodoFinalResult);
     });
 
     test('has a matching return type', async () => {
@@ -269,7 +279,7 @@ describe('custom selection sets', () => {
 
     test('returns only the selected fields, without lazy loaders', async () => {
       const { data } = await mockedOperation();
-      expect(data).toEqual(sampleTodo);
+      expect(data).toEqual(sampleTodoFinalResult);
     });
 
     test('has a matching return type', async () => {
