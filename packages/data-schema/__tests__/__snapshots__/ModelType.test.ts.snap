@@ -1,5 +1,47 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`disableOperations coarse grained op takes precedence over fine-grained 1`] = `
+"type widget @model(mutations:null) @auth(rules: [{allow: public, provider: apiKey}])
+{
+  title: String!
+}"
+`;
+
+exports[`disableOperations dupes are ignored 1`] = `
+"type widget @model(mutations:null) @auth(rules: [{allow: public, provider: apiKey}])
+{
+  title: String!
+}"
+`;
+
+exports[`disableOperations exhaustive coarse-grained 1`] = `
+"type widget @model(queries:null,mutations:null,subscriptions:null) @auth(rules: [{allow: public, provider: apiKey}])
+{
+  title: String!
+}"
+`;
+
+exports[`disableOperations exhaustive fine-grained 1`] = `
+"type widget @model(queries:{get:null,list:null},mutations:{create:null,update:null,delete:null},subscriptions:{onCreate:null,onUpdate:null,onDelete:null}) @auth(rules: [{allow: public, provider: apiKey}])
+{
+  title: String!
+}"
+`;
+
+exports[`disableOperations passes expected @model attributes for coarse-grained disable op 1`] = `
+"type widget @model(mutations:null,subscriptions:null) @auth(rules: [{allow: public, provider: apiKey}])
+{
+  title: String!
+}"
+`;
+
+exports[`disableOperations passes expected @model attributes for fine-grained disable op 1`] = `
+"type widget @model(queries:{get:null},mutations:{update:null,delete:null},subscriptions:{onUpdate:null,onDelete:null}) @auth(rules: [{allow: public, provider: apiKey}])
+{
+  title: String!
+}"
+`;
+
 exports[`model auth rules can chain off of inField rules 1`] = `
 "type widget @model @auth(rules: [{allow: owner, operations: [create, read], ownerField: "customOwnerField"}])
 {
