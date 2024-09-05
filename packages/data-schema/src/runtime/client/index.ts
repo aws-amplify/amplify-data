@@ -508,6 +508,7 @@ type ModelTypesClient<
   Model extends ClientSchemaByEntityTypeBaseShape['models'][string],
   FlatModel extends Record<string, unknown> = ResolvedModel<Model['type']>,
 > = IndexQueryMethods<Model> &
+  // Omit any disabled operations
   Omit<
     {
       create<
@@ -622,6 +623,7 @@ type ModelTypesSSRCookies<
   Model extends ClientSchemaByEntityTypeBaseShape['models'][string],
   FlatModel extends Record<string, unknown> = ResolvedModel<Model['type']>,
 > = IndexQueryMethods<Model> &
+  // Omit any disabled operations
   Omit<
     {
       create<
@@ -694,6 +696,7 @@ type ModelTypesSSRRequest<
   Model extends ClientSchemaByEntityTypeBaseShape['models'][string],
   FlatModel extends Record<string, unknown> = ResolvedModel<Model['type']>,
 > = IndexQueryMethods<Model, 'REQUEST'> &
+  // Omit any disabled operations
   Omit<
     {
       create<
