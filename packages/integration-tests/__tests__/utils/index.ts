@@ -266,6 +266,18 @@ export function expectSelectionSetNotContains(
   expect(fields.every((f) => !selectionSet.includes(f))).toBe(true);
 }
 
+export function expectSelectionSetEquals(
+  spy: jest.SpyInstance,
+  fields: readonly string[],
+  requestIndex = 0,
+) {
+  const [options] = optionsAndHeaders(spy)[requestIndex];
+  const { query } = options;
+  const { selectionSet } = parseQuery(query);
+  expect(fields.every((f) => selectionSet.includes(f))).toBe(true);
+  expect(selectionSet.every((f) => fields.includes(f))).toBe(true);
+}
+
 export function expectVariables(
   spy: jest.SpyInstance,
   expectedVariables: Record<string, any>,
