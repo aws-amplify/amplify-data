@@ -12,45 +12,98 @@ import { Expect, Equal } from '@aws-amplify/data-schema-types';
 
 const sampleTodo = {
   id: 'some-id',
-  content: 'some content',
   description: 'something something',
-  owner: 'some-body',
-  done: false,
-  updatedAt: '2024-03-01T19:05:44.536Z',
-  createdAt: '2024-03-01T18:05:44.536Z',
+  details: {
+    content: 'some details content',
+  },
+  steps: [
+    {
+      id: 'step-id-123',
+      todoId: 'some-id',
+      description: 'first step',
+      owner: 'harry-f-potter',
+      createdAt: '2024-09-05T16:04:32.404Z',
+      updatedAt: '2024-09-05T16:04:32.404Z',
+    },
+  ],
 };
 
-function makeSampleTodo<T extends (keyof typeof sampleTodo)[]>(
-  fields: T,
-): Pick<typeof sampleTodo, T[number]> {
-  return Object.fromEntries(
-    Object.entries(sampleTodo).filter(([k, v]) => fields.includes(k as any)),
-  ) as any;
-}
-
-describe('custom selection sets are reflected in the graphql and return only non-lazy/eagerly loaded fields', () => {
-  const schema = a.schema({
-    Todo: a
-      .model({
-        content: a.string(),
+describe('custom selection', () => {
+  const schema = a
+    .schema({
+      Todo: a.model({
         description: a.string(),
+        details: a.hasOne('Details', ['todoId']),
+        steps: a.hasMany('Step', ['todoId']),
         done: a.boolean(),
         priority: a.enum(['low', 'medium', 'high']),
-      })
-      .authorization((allow) => [
-        allow.owner(),
-        allow.publicApiKey().to(['read']),
-      ]),
-  });
+      }),
+      Details: a.model({
+        content: a.string(),
+        todoId: a.id(),
+        todo: a.belongsTo('Todo', ['todoId']),
+      }),
+      Step: a.model({
+        description: a.string().required(),
+        todoId: a.id().required(),
+        todo: a.belongsTo('Todo', ['todoId']),
+      }),
+    })
+    .authorization((allow) => [allow.owner()]);
   type Schema = ClientSchema<typeof schema>;
+
+  const selectionSet = [
+    'id',
+    'description',
+    'details.content',
+    'steps.*',
+  ] as const;
+
+  const expectedSelectionSet = `
+    id
+    description
+    details {
+      content
+    }
+    steps {
+      items {
+        id description todoId createdAt updatedAt owner
+      }
+    }
+  `;
+
+  const expectedListSelectionSet = `
+    items {
+      id
+      description
+      details {
+        content
+      }
+      steps {
+        items {
+          id description todoId createdAt updatedAt owner
+        }
+      }
+    }
+    nextToken
+    __typename
+  `;
 
   type ExpectedTodoType = {
     readonly id: string;
-    readonly content: string | null;
     readonly description: string | null;
+    readonly details: {
+      readonly content: string | null;
+    };
+    readonly steps: {
+      readonly description: string;
+      readonly todoId: string;
+      readonly id: string;
+      readonly owner: string | null;
+      readonly updatedAt: string;
+      readonly createdAt: string;
+    }[];
   } | null;
-
-  const selectionSet = ['id', 'content', 'description'] as const;
 
   async function getMockedClient(
     operationName: string,
@@ -59,7 +112,7 @@ describe('custom selection sets are reflected in the graphql and return only non
     const { spy, generateClient } = mockedGenerateClient([
       {
         data: {
-          [operationName]: makeSampleTodo([...selectionSet] as any), // type doesn't matter here.
+          [operationName]: { ...sampleTodo },
         },
       },
     ]);
@@ -73,6 +126,36 @@ describe('custom selection sets are reflected in the graphql and return only non
     jest.clearAllMocks();
   });
 
+  describe('in `get` operations', () => {
+    async function mockedGetOperation() {
+      const { client, spy } = await getMockedClient('createTodo', selectionSet);
+      const { data } = await client.models.Todo.get(
+        {
+          id: 'something',
+        },
+        {
+          selectionSet,
+        },
+      );
+      return { data, spy };
+    }
+
+    test('is reflected in the graphql selection set', async () => {
+      const { spy } = await mockedGetOperation();
+      expectSelectionSetEquals(spy, expectedSelectionSet);
+    });
+
+    test('returns only the selected fields, without lazy loaders', async () => {
+      const { data } = await mockedGetOperation();
+      expect(data).toEqual(sampleTodo);
+    });
+
+    test('has a matching return type', async () => {
+      const { data } = await mockedGetOperation();
+      type _test = Expect<Equal<typeof data, ExpectedTodoType>>;
+    });
+  });
+
   test('get', async () => {
     const { client, spy } = await getMockedClient('createTodo', selectionSet);
     const { data } = await client.models.Todo.get(
@@ -84,7 +167,7 @@ describe('custom selection sets are reflected in the graphql and return only non
       },
     );
     type _test = Expect<Equal<typeof data, ExpectedTodoType>>;
-    expectSelectionSetEquals(spy, selectionSet);
+    expectSelectionSetEquals(spy, expectedSelectionSet);
   });
 
   test('list', async () => {
@@ -93,7 +176,7 @@ describe('custom selection sets are reflected in the graphql and return only non
       selectionSet,
     });
     type _test = Expect<Equal<typeof data, Exclude<ExpectedTodoType, null>[]>>;
-    expectSelectionSetEquals(spy, selectionSet);
+    expectSelectionSetEquals(spy, expectedListSelectionSet);
   });
 
   test('for create', async () => {
@@ -107,7 +190,7 @@ describe('custom selection sets are reflected in the graphql and return only non
       },
     );
     type _test = Expect<Equal<typeof data, ExpectedTodoType>>;
-    expectSelectionSetEquals(spy, selectionSet);
+    expectSelectionSetEquals(spy, expectedSelectionSet);
   });
 
   test('update', async () => {
@@ -121,7 +204,7 @@ describe('custom selection sets are reflected in the graphql and return only non
       },
     );
     type _test = Expect<Equal<typeof data, ExpectedTodoType>>;
-    expectSelectionSetEquals(spy, selectionSet);
+    expectSelectionSetEquals(spy, expectedSelectionSet);
   });
 
   test('delete', async () => {
@@ -135,6 +218,6 @@ describe('custom selection sets are reflected in the graphql and return only non
       },
     );
     type _test = Expect<Equal<typeof data, ExpectedTodoType>>;
-    expectSelectionSetEquals(spy, selectionSet);
+    expectSelectionSetEquals(spy, expectedSelectionSet);
   });
 });
