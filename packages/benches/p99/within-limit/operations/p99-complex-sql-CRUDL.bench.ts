@@ -377,4 +377,4 @@ bench('complex SQL', async () => {
   const { data: _listedAssignments } = await client.models.Assignment.list();
 
   const { data: _lazyLoadedContract } = await createdAssignment!.contract();
-}).types([8079714, 'instantiations']);
+}).types([8107908, 'instantiations']);

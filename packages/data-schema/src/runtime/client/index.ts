@@ -512,31 +512,45 @@ type ModelTypesClient<
   // Omit any disabled operations
   Omit<
     {
-      create: (
+      create<
+        SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[],
+      >(
         model: Model['createType'],
         options?: {
+          selectionSet?: SelectionSet;
           authMode?: AuthMode;
           authToken?: string;
           headers?: CustomHeaders;
         },
-      ) => SingularReturnValue<Model['type']>;
-      update: (
+      ): SingularReturnValue<
+        Prettify<ReturnValue<Model, FlatModel, SelectionSet>>
+      >;
+      update<
+        SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[],
+      >(
         model: Model['updateType'],
         options?: {
+          selectionSet?: SelectionSet;
           authMode?: AuthMode;
           authToken?: string;
           headers?: CustomHeaders;
         },
-      ) => SingularReturnValue<Model['type']>;
-      delete: (
+      ): SingularReturnValue<
+        Prettify<ReturnValue<Model, FlatModel, SelectionSet>>
+      >;
+      delete<
+        SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[],
+      >(
         identifier: Model['deleteType'],
         options?: {
+          selectionSet?: SelectionSet;
           authMode?: AuthMode;
           authToken?: string;
           headers?: CustomHeaders;
         },
-      ) => SingularReturnValue<Model['type']>;
-
+      ): SingularReturnValue<
+        Prettify<ReturnValue<Model, FlatModel, SelectionSet>>
+      >;
       get<SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[]>(
         identifier: Model['identifier'],
         options?: {
@@ -559,7 +573,6 @@ type ModelTypesClient<
           headers?: CustomHeaders;
         },
       ): ListReturnValue<Prettify<ReturnValue<Model, FlatModel, SelectionSet>>>;
-
       onCreate<
         SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[],
       >(options?: {
@@ -611,33 +624,48 @@ type ModelTypesSSRCookies<
   Model extends ClientSchemaByEntityTypeBaseShape['models'][string],
   FlatModel extends Record<string, unknown> = ResolvedModel<Model['type']>,
 > = IndexQueryMethods<Model> &
+  // Omit any disabled operations
   Omit<
     {
-      create: (
+      create<
+        SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[],
+      >(
         model: Model['createType'],
         options?: {
+          selectionSet?: SelectionSet;
           authMode?: AuthMode;
           authToken?: string;
           headers?: CustomHeaders;
         },
-      ) => SingularReturnValue<Model['type']>;
-      update: (
+      ): SingularReturnValue<
+        Prettify<ReturnValue<Model, FlatModel, SelectionSet>>
+      >;
+      update<
+        SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[],
+      >(
         model: Model['updateType'],
         options?: {
+          selectionSet?: SelectionSet;
           authMode?: AuthMode;
           authToken?: string;
           headers?: CustomHeaders;
         },
-      ) => SingularReturnValue<Model['type']>;
-      delete: (
+      ): SingularReturnValue<
+        Prettify<ReturnValue<Model, FlatModel, SelectionSet>>
+      >;
+      delete<
+        SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[],
+      >(
         identifier: Model['deleteType'],
         options?: {
+          selectionSet?: SelectionSet;
           authMode?: AuthMode;
           authToken?: string;
           headers?: CustomHeaders;
         },
-      ) => SingularReturnValue<Model['type']>;
-
+      ): SingularReturnValue<
+        Prettify<ReturnValue<Model, FlatModel, SelectionSet>>
+      >;
       get<SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[]>(
         identifier: Model['identifier'],
         options?: {
@@ -669,36 +697,51 @@ type ModelTypesSSRRequest<
   Model extends ClientSchemaByEntityTypeBaseShape['models'][string],
   FlatModel extends Record<string, unknown> = ResolvedModel<Model['type']>,
 > = IndexQueryMethods<Model, 'REQUEST'> &
+  // Omit any disabled operations
   Omit<
     {
-      create: (
+      create<
+        SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[],
+      >(
         contextSpec: AmplifyServer.ContextSpec,
         model: Model['createType'],
         options?: {
+          selectionSet?: SelectionSet;
           authMode?: AuthMode;
           authToken?: string;
           headers?: CustomHeaders;
         },
-      ) => SingularReturnValue<Model['type']>;
-      update: (
+      ): SingularReturnValue<
+        Prettify<ReturnValue<Model, FlatModel, SelectionSet>>
+      >;
+      update<
+        SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[],
+      >(
         contextSpec: AmplifyServer.ContextSpec,
         model: Model['updateType'],
         options?: {
+          selectionSet?: SelectionSet;
           authMode?: AuthMode;
           authToken?: string;
           headers?: CustomHeaders;
         },
-      ) => SingularReturnValue<Model['type']>;
-      delete: (
+      ): SingularReturnValue<
+        Prettify<ReturnValue<Model, FlatModel, SelectionSet>>
+      >;
+      delete<
+        SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[],
+      >(
         contextSpec: AmplifyServer.ContextSpec,
         identifier: Model['deleteType'],
         options?: {
+          selectionSet?: SelectionSet;
           authMode?: AuthMode;
           authToken?: string;
           headers?: CustomHeaders;
         },
-      ) => SingularReturnValue<Model['type']>;
-
+      ): SingularReturnValue<
+        Prettify<ReturnValue<Model, FlatModel, SelectionSet>>
+      >;
       get<SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[]>(
         contextSpec: AmplifyServer.ContextSpec,
         identifier: Model['identifier'],
