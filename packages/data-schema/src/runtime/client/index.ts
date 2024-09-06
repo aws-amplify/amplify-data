@@ -8,6 +8,7 @@ import {
   __modelMeta__,
 } from '@aws-amplify/data-schema-types';
 import type { Observable } from 'rxjs';
+import type { ConversationRoute } from '../../ai/ConversationType';
 import type {
   ClientSchemaByEntityType,
   ClientSchemaByEntityTypeBaseShape,
@@ -824,7 +825,8 @@ export type CustomOperations<
   OperationDefs extends ClientSchemaByEntityTypeBaseShape[
     | 'queries'
     | 'mutations'
-    | 'subscriptions'],
+    | 'subscriptions'
+    | 'generations'],
   Context extends ContextType = 'CLIENT',
 > = {
   [OpName in keyof OperationDefs]: {
@@ -900,6 +902,8 @@ export type ClientExtensions<T extends Record<any, any> = never> = {
   queries: CustomQueries<T, 'CLIENT'>;
   mutations: CustomMutations<T, 'CLIENT'>;
   subscriptions: CustomSubscriptions<T, 'CLIENT'>;
+  conversations: ConversationRoutes<T>;
+  generations: Generations<T>;
 };
 
 export type ClientExtensionsSSRRequest<T extends Record<any, any> = never> = {
@@ -915,3 +919,15 @@ export type ClientExtensionsSSRCookies<T extends Record<any, any> = never> = {
   queries: CustomQueries<T, 'COOKIES'>;
   mutations: CustomMutations<T, 'COOKIES'>;
 };
+
+export type ConversationRoutes<
+  T extends Record<any, any>,
+  Schema extends ClientSchemaByEntityType<T> = ClientSchemaByEntityType<T>,
+> = {
+  [ConversationName in keyof Schema['conversations']]: ConversationRoute;
+};
+
+export type Generations<
+  T extends Record<any, any>,
+  Schema extends ClientSchemaByEntityType<T> = ClientSchemaByEntityType<T>,
+> = CustomOperations<Schema['generations']>;
