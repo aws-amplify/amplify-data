@@ -287,13 +287,11 @@ describe('providing a custom selection set', () => {
   });
 
   describe.only('to `onCreate` operations', () => {
-    const backgroundSubs = [] as Subscription[];
+    let backgroundSub = null as Subscription | null;
 
     afterEach(() => {
-      while (backgroundSubs.length > 0) {
-        const sub = backgroundSubs.pop();
-        sub?.unsubscribe();
-      }
+      backgroundSub?.unsubscribe();
+      backgroundSub = null;
     });
 
     async function mockedSub() {
@@ -306,20 +304,18 @@ describe('providing a custom selection set', () => {
 
     test('is reflected in the graphql selection set', async () => {
       const { observable, spy } = await mockedSub();
-      backgroundSubs.push(observable.subscribe());
+      backgroundSub = observable.subscribe();
       expectSelectionSetEquals(spy, expectedSelectionSet);
     });
 
     test('returns only the selected fields, without lazy loaders', async () => {
       const { observable, subs } = await mockedSub();
       const data = await new Promise((resolve) => {
-        backgroundSubs.push(
-          observable.subscribe({
-            next(item) {
-              resolve(item);
-            },
-          }),
-        );
+        backgroundSub = observable.subscribe({
+          next(item) {
+            resolve(item);
+          },
+        });
         subs.onCreateTodo.next({
           data: {
             onCreateTodo: sampleTodo,
@@ -331,15 +327,13 @@ describe('providing a custom selection set', () => {
 
     test('has a matching `next()` item type', async () => {
       const { observable } = await mockedSub();
-      backgroundSubs.push(
-        observable.subscribe({
-          next(item) {
-            type _test = Expect<
-              Equal<typeof item, Exclude<ExpectedTodoType, null>>
-            >;
-          },
-        }),
-      );
+      backgroundSub = observable.subscribe({
+        next(item) {
+          type _test = Expect<
+            Equal<typeof item, Exclude<ExpectedTodoType, null>>
+          >;
+        },
+      });
     });
   });
 });
