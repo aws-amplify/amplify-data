@@ -9,6 +9,7 @@ import {
   expectSelectionSetEquals,
 } from '../../utils';
 import { Expect, Equal } from '@aws-amplify/data-schema-types';
+import { Subscription } from 'rxjs';
 
 describe('providing a custom selection set', () => {
   const schema = a
@@ -117,10 +118,9 @@ describe('providing a custom selection set', () => {
 
   async function getMockedClient(
     operationName: string,
-    selectionSet: readonly string[],
     mockedResult: object = { ...sampleTodo },
   ) {
-    const { spy, generateClient } = mockedGenerateClient([
+    const { subs, spy, generateClient } = mockedGenerateClient([
       {
         data: {
           [operationName]: mockedResult,
@@ -130,7 +130,7 @@ describe('providing a custom selection set', () => {
     const config = await buildAmplifyConfig(schema);
     Amplify.configure(config);
     const client = generateClient<Schema>();
-    return { client, spy };
+    return { client, spy, subs };
   }
 
   afterEach(() => {
@@ -139,7 +139,7 @@ describe('providing a custom selection set', () => {
 
   describe('to `get` operations', () => {
     async function mockedOperation() {
-      const { client, spy } = await getMockedClient('getTodo', selectionSet);
+      const { client, spy } = await getMockedClient('getTodo');
       const { data } = await client.models.Todo.get(
         {
           id: 'something',
@@ -167,10 +167,9 @@ describe('providing a custom selection set', () => {
     });
   });
 
-  // TODO: FIX ... we're not actually testing a list response here.
   describe('to `list` operations', () => {
     async function mockedOperation() {
-      const { client, spy } = await getMockedClient('listTodos', selectionSet, {
+      const { client, spy } = await getMockedClient('listTodos', {
         items: [sampleTodo],
       });
       const { data } = await client.models.Todo.list({
@@ -199,7 +198,7 @@ describe('providing a custom selection set', () => {
 
   describe('to `create` operations', () => {
     async function mockedOperation() {
-      const { client, spy } = await getMockedClient('createTodo', selectionSet);
+      const { client, spy } = await getMockedClient('createTodo');
       const { data } = await client.models.Todo.create(
         {
           id: 'something',
@@ -229,10 +228,7 @@ describe('providing a custom selection set', () => {
 
   describe('to `update` operations', () => {
     async function mockedOperation() {
-      const { client, spy } = await getMockedClient(
-        'createUpdate',
-        selectionSet,
-      );
+      const { client, spy } = await getMockedClient('createUpdate');
       const { data } = await client.models.Todo.update(
         {
           id: 'something',
@@ -262,7 +258,7 @@ describe('providing a custom selection set', () => {
 
   describe('to `delete` operations', () => {
     async function mockedOperation() {
-      const { client, spy } = await getMockedClient('deleteTodo', selectionSet);
+      const { client, spy } = await getMockedClient('deleteTodo');
       const { data } = await client.models.Todo.delete(
         {
           id: 'something',
@@ -287,6 +283,63 @@ describe('providing a custom selection set', () => {
     test('has a matching return type', async () => {
       const { data } = await mockedOperation();
       type _test = Expect<Equal<typeof data, ExpectedTodoType>>;
+    });
+  });
+
+  describe.only('to `onCreate` operations', () => {
+    const backgroundSubs = [] as Subscription[];
+
+    afterEach(() => {
+      while (backgroundSubs.length > 0) {
+        const sub = backgroundSubs.pop();
+        sub?.unsubscribe();
+      }
+    });
+
+    async function mockedSub() {
+      const { subs, spy, client } = await getMockedClient('onCreateTodo');
+      const observable = client.models.Todo.onCreate({
+        selectionSet,
+      });
+      return { observable, spy, subs };
+    }
+
+    test('is reflected in the graphql selection set', async () => {
+      const { observable, spy } = await mockedSub();
+      backgroundSubs.push(observable.subscribe());
+      expectSelectionSetEquals(spy, expectedSelectionSet);
+    });
+
+    test('returns only the selected fields, without lazy loaders', async () => {
+      const { observable, subs } = await mockedSub();
+      const data = await new Promise((resolve) => {
+        backgroundSubs.push(
+          observable.subscribe({
+            next(item) {
+              resolve(item);
+            },
+          }),
+        );
+        subs.onCreateTodo.next({
+          data: {
+            onCreateTodo: sampleTodo,
+          },
+        });
+      });
+      expect(data).toEqual(sampleTodoFinalResult);
+    });
+
+    test('has a matching `next()` item type', async () => {
+      const { observable } = await mockedSub();
+      backgroundSubs.push(
+        observable.subscribe({
+          next(item) {
+            type _test = Expect<
+              Equal<typeof item, Exclude<ExpectedTodoType, null>>
+            >;
+          },
+        }),
+      );
     });
   });
 });
