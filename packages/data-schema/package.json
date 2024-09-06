@@ -1,6 +1,6 @@
 {
   "name": "@aws-amplify/data-schema",
-  "version": "1.4.0",
+  "version": "1.5.0",
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
@@ -51,7 +51,9 @@
   },
   "dependencies": {
     "@aws-amplify/data-schema-types": "*",
+    "@smithy/util-base64": "^3.0.0",
     "@types/aws-lambda": "^8.10.134",
+    "@types/json-schema": "^7.0.15",
     "rxjs": "^7.8.1"
   },
   "devDependencies": {

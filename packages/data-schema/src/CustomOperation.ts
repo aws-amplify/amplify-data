@@ -14,15 +14,18 @@ import type {
   FunctionHandler,
   HandlerType as Handler,
 } from './Handler';
+import { AiModel, InferenceConfiguration } from './ai/ModelType';
 
 const queryBrand = 'queryCustomOperation';
 const mutationBrand = 'mutationCustomOperation';
 const subscriptionBrand = 'subscriptionCustomOperation';
+const generationBrand = 'generationCustomOperation';
 
 type CustomOperationBrand =
   | typeof queryBrand
   | typeof mutationBrand
-  | typeof subscriptionBrand;
+  | typeof subscriptionBrand
+  | typeof generationBrand;
 
 type CustomArguments = Record<string, BaseModelField | EnumType>;
 
@@ -38,6 +41,7 @@ export const CustomOperationNames = [
   'Query',
   'Mutation',
   'Subscription',
+  'Generation',
 ] as const;
 type CustomOperationName = (typeof CustomOperationNames)[number];
 
@@ -48,6 +52,7 @@ type CustomData = {
   typeName: CustomOperationName;
   handlers: Handler[] | null;
   subscriptionSource: SubscriptionSource[];
+  input?: CustomOperationInput;
 };
 
 type InternalCustomData = CustomData & {
@@ -57,12 +62,15 @@ type InternalCustomData = CustomData & {
   authorization: Authorization<any, any, any>[];
 };
 
+export type CustomOperationInput = GenerationInput;
+
 export type CustomOperationParamShape = {
   arguments: CustomArguments | null;
   returnType: CustomReturnType | null;
   authorization: Authorization<any, any, any>[];
   typeName: CustomOperationName;
   handlers: Handler | null;
+  input?: CustomOperationInput;
 };
 
 export type CustomOperation<
@@ -137,7 +145,7 @@ export type InternalCustom<B extends CustomOperationBrand = any> =
 function _custom<
   T extends CustomOperationParamShape,
   B extends CustomOperationBrand,
->(typeName: CustomOperationName, brand: B) {
+>(typeName: CustomOperationName, brand: B, input?: T['input']) {
   const data: CustomData = {
     arguments: {},
     returnType: null,
@@ -145,6 +153,7 @@ function _custom<
     typeName: typeName,
     handlers: null,
     subscriptionSource: [],
+    input,
   };
 
   const builder = brandedBuilder<T>(
@@ -210,7 +219,7 @@ export type QueryCustomOperation = CustomOperation<
  *     .authorization(allow => [allow.publicApiKey()])
  *     // 3. set the function has the handler
  *     .handler(a.handler.function(echoHandler)),
- * 
+ *
  *   EchoResponse: a.customType({
  *     content: a.string(),
  *     executionDuration: a.float()
@@ -277,9 +286,9 @@ export type SubscriptionCustomOperation = CustomOperation<
  * // Subscribe to incoming messages
  * receive: a.subscription()
  *   // subscribes to the 'publish' mutation
- *   .for(a.ref('publish')) 
+ *   .for(a.ref('publish'))
  *   // subscription handler to set custom filters
- *   .handler(a.handler.custom({entry: './receive.js'})) 
+ *   .handler(a.handler.custom({entry: './receive.js'}))
  *   // authorization rules as to who can subscribe to the data
  *   .authorization(allow => [allow.publicApiKey()]),
  * @returns a custom subscription
@@ -296,4 +305,38 @@ export function subscription(): CustomOperation<
   typeof subscriptionBrand
 > {
   return _custom('Subscription', subscriptionBrand);
+}
+
+export interface GenerationInput {
+  aiModel: AiModel;
+  systemPrompt: string;
+  inferenceConfiguration?: InferenceConfiguration;
+}
+
+/**
+ * @experimental
+ *
+ * Define an AI generation route for single request-response interaction with specified AI model.
+ * @example
+ * makeRecipe: a.generation({
+ *   aiModel: { resourcePath },
+ *   systemPrompt: 'Please make a recipe from the provided ingredients',
+ * })
+ *   .arguments({ ingredients: a.string().array() })
+ *   .returns(a.ref("Recipe"))
+ * @returns a generation route definition
+ */
+export function generation(input: GenerationInput): CustomOperation<
+  {
+    arguments: null;
+    returnType: null;
+    authorization: [];
+    typeName: 'Generation';
+    handlers: null;
+    input: GenerationInput;
+  },
+  'for' | 'handler',
+  typeof generationBrand
+> {
+  return _custom('Generation', generationBrand, input);
 }

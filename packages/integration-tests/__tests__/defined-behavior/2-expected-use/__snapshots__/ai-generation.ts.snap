@@ -1,0 +1,24 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`AI Generation Routes Generations Run a generation 1`] = `
+[
+  [
+    {
+      "authMode": undefined,
+      "authToken": undefined,
+      "query": "
+    query($ingredients: [String]) {
+      makeRecipe(ingredients: $ingredients) {directions}
+    }
+  ",
+      "variables": {
+        "ingredients": [
+          "bacon",
+          "eggs",
+        ],
+      },
+    },
+    {},
+  ],
+]
+`;

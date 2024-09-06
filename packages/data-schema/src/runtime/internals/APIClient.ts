@@ -248,7 +248,7 @@ export function initializeModel(
           );
 
           // if get is disabled on the related model
-          if ((client as any).models[relatedModelName].get === undefined) {
+          if ((client as any).models[relatedModelName]?.get === undefined) {
             break;
           }
 
@@ -340,7 +340,7 @@ export function initializeModel(
             );
 
             // if list is disabled on the related model
-            if ((client as any).models[relatedModelName].list === undefined) {
+            if ((client as any).models[relatedModelName]?.list === undefined) {
               break;
             }
 
@@ -411,7 +411,7 @@ export function initializeModel(
           );
 
           // if list is disabled on the related model
-          if ((client as any).models[relatedModelName].list === undefined) {
+          if ((client as any).models[relatedModelName]?.list === undefined) {
             break;
           }
 
@@ -1242,7 +1242,6 @@ export function buildGraphQLVariables(
       throw new Error(
         'Internal error: Attempted to build variables for observeQuery. Please report this error.',
       );
-      break;
     default: {
       const exhaustiveCheck: never = operation;
       throw new Error(`Unhandled operation case: ${exhaustiveCheck}`);
