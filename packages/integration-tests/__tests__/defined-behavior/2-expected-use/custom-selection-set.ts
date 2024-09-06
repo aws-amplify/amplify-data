@@ -286,7 +286,7 @@ describe('providing a custom selection set', () => {
     });
   });
 
-  describe.only('to `onCreate` operations', () => {
+  describe('to `onCreate` operations', () => {
     let backgroundSub = null as Subscription | null;
 
     afterEach(() => {
@@ -337,7 +337,7 @@ describe('providing a custom selection set', () => {
     });
   });
 
-  describe.only('to `onUpdate` operations', () => {
+  describe('to `onUpdate` operations', () => {
     let backgroundSub = null as Subscription | null;
 
     afterEach(() => {
@@ -388,7 +388,7 @@ describe('providing a custom selection set', () => {
     });
   });
 
-  describe.only('to `onDelete` operations', () => {
+  describe('to `onDelete` operations', () => {
     let backgroundSub = null as Subscription | null;
 
     afterEach(() => {
@@ -433,6 +433,89 @@ describe('providing a custom selection set', () => {
         next(item) {
           type _test = Expect<
             Equal<typeof item, Exclude<ExpectedTodoType, null>>
+          >;
+        },
+      });
+    });
+  });
+
+  describe('to `observeQuery` operations', () => {
+    let backgroundSub = null as Subscription | null;
+
+    afterEach(() => {
+      backgroundSub?.unsubscribe();
+      backgroundSub = null;
+    });
+
+    async function mockedSub() {
+      const { subs, spy, client } = await getMockedClient('listTodos', {
+        items: [sampleTodo],
+      });
+      const observable = client.models.Todo.observeQuery({
+        filter: { createdAt: { gt: '' } },
+        selectionSet: [...selectionSet],
+      });
+      return { observable, spy, subs };
+    }
+
+    test('is reflected in the graphql selection sets for the base query and all composite subs', async () => {
+      const { observable, spy } = await mockedSub();
+      backgroundSub = observable.subscribe();
+
+      // `onCreate`, `onUpdate`, and `onDelete` occur first, and their selection set
+      // align with get and mutation type requests.
+      for (const requestIndex of [0, 1, 2]) {
+        expectSelectionSetEquals(spy, expectedSelectionSet, requestIndex);
+      }
+
+      // the list query to populate initial results *after* subs are established
+      // is a list - type selection set.
+      expectSelectionSetEquals(spy, expectedListSelectionSet, 3);
+    });
+
+    test('returns only the selected fields on the initial query results', async () => {
+      const { observable } = await mockedSub();
+      const data = await new Promise((resolve) => {
+        backgroundSub = observable.subscribe({
+          next({ items }) {
+            resolve(items[0]);
+          },
+        });
+      });
+      expect(data).toEqual(sampleTodoFinalResult);
+    });
+
+    test('returns only the selected fields on subsequent updates', async () => {
+      const { observable, subs } = await mockedSub();
+      const data = await new Promise((resolve) => {
+        backgroundSub = observable.subscribe({
+          next({ items }) {
+            if (items[0].description === 'updated') {
+              resolve(items[0]);
+            }
+          },
+        });
+        subs.onUpdateTodo.next({
+          data: {
+            onUpdateTodo: {
+              ...sampleTodo,
+              description: 'updated',
+            },
+          },
+        });
+      });
+      expect(data).toEqual({
+        ...sampleTodoFinalResult,
+        description: 'updated',
+      });
+    });
+
+    test('has a matching `items` type', async () => {
+      const { observable } = await mockedSub();
+      backgroundSub = observable.subscribe({
+        next({ items }) {
+          type _test = Expect<
+            Equal<(typeof items)[0], Exclude<ExpectedTodoType, null>>
           >;
         },
       });
