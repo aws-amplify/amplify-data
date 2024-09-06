@@ -208,6 +208,7 @@ export function findSingularName(pluralName: string): string {
 }
 
 export function parseQuery(query: string | DocumentNode) {
+  // the types inferred from `parse` appear to just be wrong. they do not align with the actual AST.
   const q: any =
     typeof query === 'string'
       ? parse(query).definitions[0]
@@ -241,7 +242,62 @@ export function parseQuery(query: string | DocumentNode) {
         )
       : selections?.selectionSet?.selections?.map((i: any) => i.name.value);
 
-  return { operation, selection, type, table, selectionSet };
+  const selectionSetString: string = selectionSetFromAST(
+    selections?.selectionSet?.selections,
+  );
+
+  return {
+    operation,
+    selection,
+    type,
+    table,
+    selectionSet,
+    selectionSetString,
+  };
+}
+
+function selectionSetFromAST(selections: any) {
+  const fields = [] as any;
+  for (const s of selections || []) {
+    if (s.selectionSet) {
+      fields.push(
+        `${s.name.value} { ${selectionSetFromAST(s.selectionSet.selections)} }`,
+      );
+    } else {
+      fields.push(s.name.value);
+    }
+  }
+  return fields.join(' ');
+}
+
+/**
+ * Condenses spacing/trimming of a selection set specified as a graphql string, but
+ * does *not* normalize field ordering and does not *add* spacing. E.g.,
+ *
+ * ```plain
+ *  id
+ *  description
+ *  details {
+ *    content
+ *  }
+ *  steps {
+ *    items {
+ *      id description todoId
+ *    }
+ *  }
+ * ```
+ *
+ * Becomes:
+ *
+ * ```plain
+ * id description details { content } steps { items { id description todoId } }
+ * ```
+ *
+ * @param selectionSet Selection set as a graphql string
+ * @returns
+ */
+export function condenseSelectionSet(selectionSet: string) {
+  return selectionSet.replace(/[\s\r\n]+/g, ' ').trim();
 }
 
 export function expectSelectionSetContains(
@@ -264,6 +320,17 @@ export function expectSelectionSetNotContains(
   const { query } = options;
   const { selectionSet } = parseQuery(query);
   expect(fields.every((f) => !selectionSet.includes(f))).toBe(true);
+}
+
+export function expectSelectionSetEquals(
+  spy: jest.SpyInstance,
+  selectionSet: string,
+  requestIndex = 0,
+) {
+  const [options] = optionsAndHeaders(spy)[requestIndex];
+  const { query } = options;
+  const { selectionSetString } = parseQuery(query);
+  expect(selectionSetString).toEqual(condenseSelectionSet(selectionSet));
 }
 
 export function expectVariables(
