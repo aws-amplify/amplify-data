@@ -1,5 +1,11 @@
 # @aws-amplify/data-schema
 
+## 1.5.0
+
+### Minor Changes
+
+- 6028bf7: Add AI routes to client
+
 ## 1.4.1
 
 ### Patch Changes
