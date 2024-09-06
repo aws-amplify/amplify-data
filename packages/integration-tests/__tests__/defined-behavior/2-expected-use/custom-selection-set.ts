@@ -336,4 +336,106 @@ describe('providing a custom selection set', () => {
       });
     });
   });
+
+  describe.only('to `onUpdate` operations', () => {
+    let backgroundSub = null as Subscription | null;
+
+    afterEach(() => {
+      backgroundSub?.unsubscribe();
+      backgroundSub = null;
+    });
+
+    async function mockedSub() {
+      const { subs, spy, client } = await getMockedClient('onUpdateTodo');
+      const observable = client.models.Todo.onUpdate({
+        selectionSet,
+      });
+      return { observable, spy, subs };
+    }
+
+    test('is reflected in the graphql selection set', async () => {
+      const { observable, spy } = await mockedSub();
+      backgroundSub = observable.subscribe();
+      expectSelectionSetEquals(spy, expectedSelectionSet);
+    });
+
+    test('returns only the selected fields, without lazy loaders', async () => {
+      const { observable, subs } = await mockedSub();
+      const data = await new Promise((resolve) => {
+        backgroundSub = observable.subscribe({
+          next(item) {
+            resolve(item);
+          },
+        });
+        subs.onUpdateTodo.next({
+          data: {
+            onUpdateTodo: sampleTodo,
+          },
+        });
+      });
+      expect(data).toEqual(sampleTodoFinalResult);
+    });
+
+    test('has a matching `next()` item type', async () => {
+      const { observable } = await mockedSub();
+      backgroundSub = observable.subscribe({
+        next(item) {
+          type _test = Expect<
+            Equal<typeof item, Exclude<ExpectedTodoType, null>>
+          >;
+        },
+      });
+    });
+  });
+
+  describe.only('to `onDelete` operations', () => {
+    let backgroundSub = null as Subscription | null;
+
+    afterEach(() => {
+      backgroundSub?.unsubscribe();
+      backgroundSub = null;
+    });
+
+    async function mockedSub() {
+      const { subs, spy, client } = await getMockedClient('onDeleteTodo');
+      const observable = client.models.Todo.onDelete({
+        selectionSet,
+      });
+      return { observable, spy, subs };
+    }
+
+    test('is reflected in the graphql selection set', async () => {
+      const { observable, spy } = await mockedSub();
+      backgroundSub = observable.subscribe();
+      expectSelectionSetEquals(spy, expectedSelectionSet);
+    });
+
+    test('returns only the selected fields, without lazy loaders', async () => {
+      const { observable, subs } = await mockedSub();
+      const data = await new Promise((resolve) => {
+        backgroundSub = observable.subscribe({
+          next(item) {
+            resolve(item);
+          },
+        });
+        subs.onDeleteTodo.next({
+          data: {
+            onDeleteTodo: sampleTodo,
+          },
+        });
+      });
+      expect(data).toEqual(sampleTodoFinalResult);
+    });
+
+    test('has a matching `next()` item type', async () => {
+      const { observable } = await mockedSub();
+      backgroundSub = observable.subscribe({
+        next(item) {
+          type _test = Expect<
+            Equal<typeof item, Exclude<ExpectedTodoType, null>>
+          >;
+        },
+      });
+    });
+  });
 });
