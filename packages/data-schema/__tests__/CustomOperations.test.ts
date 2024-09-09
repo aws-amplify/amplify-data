@@ -294,6 +294,114 @@ describe('CustomOperation transform', () => {
       expect(result).toMatchSnapshot();
     });
 
+    test('Generation route does not require a handler even when auth is defined', () => {
+      const s = a.schema({
+        Recipe: a.customType({
+          ingredients: a.string().array(),
+        }),
+        makeRecipe: a
+          .generation({
+            aiModel: a.ai.model('Claude 3 Haiku'),
+            systemPrompt: 'Hello, world!',
+          })
+          .arguments({
+            content: a.string(),
+          })
+          .returns(a.ref('Recipe'))
+          .authorization((allow) => allow.publicApiKey()),
+      });
+
+      const result = s.transform().schema;
+
+      expect(result).toMatchSnapshot();
+    });
+
+    test('Generation route should create directive with inference configuration', () => {
+      const s = a.schema({
+        Recipe: a.customType({
+          ingredients: a.string().array(),
+        }),
+        makeRecipe: a
+          .generation({
+            aiModel: a.ai.model('Claude 3 Haiku'),
+            systemPrompt: 'Hello, world!',
+            inferenceConfiguration: {
+              temperature: 0.5,
+              maxTokens: 100,
+              topP: 1,
+            },
+          })
+          .arguments({
+            content: a.string(),
+          })
+          .returns(a.ref('Recipe'))
+          .authorization((allow) => allow.publicApiKey()),
+      });
+
+      const result = s.transform().schema;
+
+      expect(result).toMatchSnapshot();
+    });
+
+    test('Generation route with empty inference configuration should not pass argument along to directive', () => {
+      const s = a.schema({
+        makeRecipe: a
+          .generation({
+            aiModel: a.ai.model('Claude 3 Haiku'),
+            systemPrompt: 'Hello, world!',
+            inferenceConfiguration: {},
+          })
+          .arguments({
+            content: a.string(),
+          })
+          .returns(a.string())
+          .authorization((allow) => allow.publicApiKey()),
+      });
+
+      const result = s.transform().schema;
+
+      expect(result).toMatchSnapshot();
+    });
+
+    test('Generation route with subset of inference configuration should create directive arg', () => {
+      const s = a.schema({
+        makeRecipe: a
+          .generation({
+            aiModel: a.ai.model('Claude 3 Haiku'),
+            systemPrompt: 'Hello, world!',
+            inferenceConfiguration: {
+              temperature: 0.5,
+            },
+          })
+          .arguments({
+            content: a.string(),
+          })
+          .returns(a.string())
+          .authorization((allow) => allow.publicApiKey()),
+      });
+
+      const result = s.transform().schema;
+
+      expect(result).toMatchSnapshot();
+    });
+
+    test('Generation route w/ no return should throw', () => {
+      const s = a.schema({
+        makeRecipe: a
+          .generation({
+            aiModel: a.ai.model('Claude 3 Haiku'),
+            systemPrompt: 'Hello, world!',
+          })
+          .arguments({
+            content: a.string(),
+          }),
+      });
+
+      expect(() => s.transform()).toThrow(
+        'Invalid Generation Route definition. A Generation Route must include a return type',
+      );
+    });
+
     for (const returnType of [
       'string',
       'integer',
@@ -495,7 +603,7 @@ describe('CustomOperation transform', () => {
           .authorization((allow) => allow.publicApiKey());
 
         expect(() => s.transform()).toThrow(
-          'Invalid ref. onLikePost is referencing Post which is not defined in the schema',
+          'Invalid ref. onLikePost is referring to Post which is not defined in the schema',
         );
       });
 

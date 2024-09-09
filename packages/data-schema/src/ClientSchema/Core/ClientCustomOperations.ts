@@ -9,6 +9,7 @@ import type { AppSyncResolverHandler } from 'aws-lambda';
 import type { CustomType } from '../../CustomType';
 import type { FieldTypesOfCustomType } from '../../MappedTypes/ResolveSchema';
 import type { ResolveRef } from '../utilities/ResolveRef';
+import type { EnumType } from '../../EnumType';
 import { ClientSchemaProperty } from './ClientSchemaProperty';
 
 type CustomOperationSubType<Op extends CustomOperationParamShape> =
@@ -92,7 +93,9 @@ type CustomOpArguments<Shape extends CustomOperationParamShape> =
           infer R
         >
           ? R
-          : never;
+          : Shape['arguments'][FieldName] extends EnumType<infer Values>
+            ? Values[number] | null
+            : never;
       }>;
 
 /**

@@ -116,6 +116,47 @@ describe('model auth rules', () => {
     expect(graphql).toMatchSnapshot();
   });
 
+  it('can define owner auth with owner field spec on a string-compatible field', () => {
+    const schema = a.schema({
+      widget: a
+        .model({
+          title: a.string().required(),
+          authorId: a.id(),
+        })
+        .authorization((allow) => allow.ownerDefinedIn('authorId')),
+    });
+
+    const graphql = schema.transform().schema;
+    expect(graphql).toMatchSnapshot();
+  });
+
+  it('can define multiple owner auth with owner field spec on a string-compatible array field', () => {
+    const schema = a.schema({
+      widget: a
+        .model({
+          title: a.string().required(),
+          authorId: a.id().array(),
+        })
+        .authorization((allow) => allow.ownersDefinedIn('authorId')),
+    });
+
+    const graphql = schema.transform().schema;
+    expect(graphql).toMatchSnapshot();
+  });
+
+  it('owner auth with owner field spec on a non-string field throws', () => {
+    const schema = a.schema({
+      widget: a
+        .model({
+          title: a.string().required(),
+          authorId: a.integer(),
+        })
+        .authorization((allow) => allow.ownerDefinedIn('authorId')),
+    });
+
+    expect(() => schema.transform().schema).toThrow();
+  });
+
   it(`can specify operations `, () => {
     const schema = a.schema({
       widget: a
@@ -350,10 +391,17 @@ describe('model auth rules', () => {
   it(`includes auth from related model fields`, () => {
     const schema = a
       .schema({
+        factory: a
+          .model({
+            name: a.string(),
+            widgets: a.hasMany('widget', ['factoryId']),
+          })
+          .authorization((allow) => [allow.publicApiKey()]),
         widget: a.model({
           id: a.id().required(),
+          factoryId: a.id(),
           parent: a
-            .belongsTo('widget', 'widgetId')
+            .belongsTo('factory', 'factoryId')
             .authorization((allow) =>
               allow.ownerDefinedIn('customOwner').to(['create', 'read']),
             ),
@@ -731,6 +779,117 @@ describe('secondary indexes', () => {
             index('timestamp')
               .sortKeys(['description'])
               .queryField('byTimeStampDesc'),
+          ]),
+      })
+      .authorization((allow) => allow.publicApiKey());
+
+    expect(schema.transform().schema).toMatchSnapshot();
+  });
+});
+
+describe('disableOperations', () => {
+  it('passes expected @model attributes for coarse-grained disable op', () => {
+    const schema = a
+      .schema({
+        widget: a
+          .model({
+            title: a.string().required(),
+          })
+          .disableOperations(['mutations', 'subscriptions']),
+      })
+      .authorization((allow) => allow.publicApiKey());
+
+    expect(schema.transform().schema).toMatchSnapshot();
+  });
+
+  it('passes expected @model attributes for fine-grained disable op', () => {
+    const schema = a
+      .schema({
+        widget: a
+          .model({
+            title: a.string().required(),
+          })
+          .disableOperations([
+            'get',
+            'update',
+            'delete',
+            'onUpdate',
+            'onDelete',
+          ]),
+      })
+      .authorization((allow) => allow.publicApiKey());
+
+    expect(schema.transform().schema).toMatchSnapshot();
+  });
+
+  it('coarse grained op takes precedence over fine-grained', () => {
+    const schema = a
+      .schema({
+        widget: a
+          .model({
+            title: a.string().required(),
+          })
+          .disableOperations(['update', 'delete', 'mutations']),
+      })
+      .authorization((allow) => allow.publicApiKey());
+
+    expect(schema.transform().schema).toMatchSnapshot();
+  });
+
+  it('dupes are ignored', () => {
+    const schema = a
+      .schema({
+        widget: a
+          .model({
+            title: a.string().required(),
+          })
+          .disableOperations([
+            'update',
+            'delete',
+            'mutations',
+            'update',
+            'delete',
+            'mutations',
+            'update',
+            'delete',
+            'mutations',
+          ]),
+      })
+      .authorization((allow) => allow.publicApiKey());
+
+    expect(schema.transform().schema).toMatchSnapshot();
+  });
+
+  it('exhaustive coarse-grained', () => {
+    const schema = a
+      .schema({
+        widget: a
+          .model({
+            title: a.string().required(),
+          })
+          .disableOperations(['queries', 'mutations', 'subscriptions']),
+      })
+      .authorization((allow) => allow.publicApiKey());
+
+    expect(schema.transform().schema).toMatchSnapshot();
+  });
+
+  it('exhaustive fine-grained', () => {
+    const schema = a
+      .schema({
+        widget: a
+          .model({
+            title: a.string().required(),
+          })
+          .disableOperations([
+            'get',
+            'list',
+            'create',
+            'update',
+            'delete',
+            'onCreate',
+            'onUpdate',
+            'onDelete',
           ]),
       })
       .authorization((allow) => allow.publicApiKey());

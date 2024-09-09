@@ -44,7 +44,7 @@ export class CommitReverter {
     const { pullRequestUrl: prUrl } = await this.githubClient.createPullRequest(
       {
         head: revertBranch,
-        title: `Reverting to ${commitHashMessage}`,
+        title: revertCommitMessage,
         body: prBodyFromRevertedCommits(revertedCommits),
       },
     );
@@ -86,7 +86,7 @@ const prBodyFromRevertedCommits = (
   let description = `This PR reverts the following commits:\n`;
 
   for (const { message, hash } of revertedCommits) {
-    const line = `* ${message} - ${hash}\n`;
+    const line = `* ${message.trim()} - ${hash.trim()}\n`;
     description += line;
   }
 

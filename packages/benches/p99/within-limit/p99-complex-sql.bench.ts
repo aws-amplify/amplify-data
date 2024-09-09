@@ -345,4 +345,4 @@ bench('complex SQL', async () => {
     ]);
 
   type _Schema = ClientSchema<typeof sqlSchema>;
-}).types([41814, 'instantiations']);
+}).types([42593, 'instantiations']);

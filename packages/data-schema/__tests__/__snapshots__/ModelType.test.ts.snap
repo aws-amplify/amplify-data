@@ -1,5 +1,47 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`disableOperations coarse grained op takes precedence over fine-grained 1`] = `
+"type widget @model(mutations:null) @auth(rules: [{allow: public, provider: apiKey}])
+{
+  title: String!
+}"
+`;
+
+exports[`disableOperations dupes are ignored 1`] = `
+"type widget @model(mutations:null) @auth(rules: [{allow: public, provider: apiKey}])
+{
+  title: String!
+}"
+`;
+
+exports[`disableOperations exhaustive coarse-grained 1`] = `
+"type widget @model(queries:null,mutations:null,subscriptions:null) @auth(rules: [{allow: public, provider: apiKey}])
+{
+  title: String!
+}"
+`;
+
+exports[`disableOperations exhaustive fine-grained 1`] = `
+"type widget @model(queries:{get:null,list:null},mutations:{create:null,update:null,delete:null},subscriptions:{onCreate:null,onUpdate:null,onDelete:null}) @auth(rules: [{allow: public, provider: apiKey}])
+{
+  title: String!
+}"
+`;
+
+exports[`disableOperations passes expected @model attributes for coarse-grained disable op 1`] = `
+"type widget @model(mutations:null,subscriptions:null) @auth(rules: [{allow: public, provider: apiKey}])
+{
+  title: String!
+}"
+`;
+
+exports[`disableOperations passes expected @model attributes for fine-grained disable op 1`] = `
+"type widget @model(queries:{get:null},mutations:{update:null,delete:null},subscriptions:{onUpdate:null,onDelete:null}) @auth(rules: [{allow: public, provider: apiKey}])
+{
+  title: String!
+}"
+`;
+
 exports[`model auth rules can chain off of inField rules 1`] = `
 "type widget @model @auth(rules: [{allow: owner, operations: [create, read], ownerField: "customOwnerField"}])
 {
@@ -155,6 +197,14 @@ exports[`model auth rules can define custom auth rule for operations update 1`] 
 }"
 `;
 
+exports[`model auth rules can define multiple owner auth with owner field spec on a string-compatible array field 1`] = `
+"type widget @model @auth(rules: [{allow: owner, ownerField: "authorId"}])
+{
+  title: String!
+  authorId: [ID]
+}"
+`;
+
 exports[`model auth rules can define owner auth with no provider 1`] = `
 "type widget @model @auth(rules: [{allow: owner, ownerField: "owner"}])
 {
@@ -166,6 +216,14 @@ exports[`model auth rules can define owner auth with owner field spec 1`] = `
 "type widget @model @auth(rules: [{allow: owner, ownerField: "title"}])
 {
   title: String!
+}"
+`;
+
+exports[`model auth rules can define owner auth with owner field spec on a string-compatible field 1`] = `
+"type widget @model @auth(rules: [{allow: owner, ownerField: "authorId"}])
+{
+  title: String!
+  authorId: ID
 }"
 `;
 
@@ -495,10 +553,17 @@ exports[`model auth rules includes auth from fields 1`] = `
 `;
 
 exports[`model auth rules includes auth from related model fields 1`] = `
-"type widget @model @auth(rules: [{allow: owner, ownerField: "owner"}])
+"type factory @model @auth(rules: [{allow: public, provider: apiKey}])
+{
+  name: String
+  widgets: [widget] @hasMany(references: ["factoryId"])
+}
+
+type widget @model @auth(rules: [{allow: owner, ownerField: "owner"}])
 {
   id: ID! @primaryKey
-  parent: widget @belongsTo(references: ["widgetId"]) @auth(rules: [{allow: owner, operations: [create, read], ownerField: "customOwner"}])
+  factoryId: ID
+  parent: factory @belongsTo(references: ["factoryId"]) @auth(rules: [{allow: owner, operations: [create, read], ownerField: "customOwner"}])
 }"
 `;
 

@@ -1009,6 +1009,13 @@ const amplifyConfig = {
             isRequired: false,
             attributes: [],
           },
+          timestamp: {
+            name: 'timestamp',
+            isArray: false,
+            type: 'AWSTimestamp',
+            isRequired: false,
+            attributes: [],
+          },
           createdAt: {
             name: 'createdAt',
             isArray: false,
@@ -1051,6 +1058,14 @@ const amplifyConfig = {
               name: 'secondaryIndexModelsByDescriptionAndViewCount',
               queryField: 'listByDescriptionAndViewCount',
               fields: ['description', 'viewCount'],
+            },
+          },
+          {
+            type: 'key',
+            properties: {
+              name: 'secondaryIndexModelsByDescriptionAndTimestamp',
+              queryField: 'listByDescriptionAndTimestamp',
+              fields: ['description', 'timestamp'],
             },
           },
           {

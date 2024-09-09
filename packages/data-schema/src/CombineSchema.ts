@@ -31,10 +31,14 @@ function internalCombine<
   SchemasTuple extends [...Schema],
 >(schemas: SchemasTuple): CombinedModelSchema<Schema> {
   validateDuplicateTypeNames(schemas);
-  return {
+  const combined = {
     ...combinedSchemaBrand,
     schemas: schemas,
   };
+  for (const schema of combined.schemas) {
+    schema.context = combined;
+  }
+  return combined;
 }
 
 function validateDuplicateTypeNames<Schema extends GenericModelSchema<any>[]>(

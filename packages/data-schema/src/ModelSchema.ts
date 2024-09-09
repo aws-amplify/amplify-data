@@ -30,11 +30,13 @@ import {
   ModelRelationalField,
   ModelRelationalFieldParamShape,
 } from './ModelRelationalField';
+import { ConversationType } from './ai/ConversationType';
 
 export { ModelType } from './ModelType';
 export { EnumType } from './EnumType';
 export { CustomType } from './CustomType';
 export { CustomOperation } from './CustomOperation';
+export { ConversationType } from './ai/ConversationType';
 
 export const rdsSchemaBrandName = 'RDSSchema';
 export const rdsSchemaBrand = brand(rdsSchemaBrandName);
@@ -48,7 +50,8 @@ type SchemaContent =
   | BaseModelType
   | CustomType<CustomTypeParamShape>
   | EnumType
-  | CustomOperation<CustomOperationParamShape, any>;
+  | CustomOperation<CustomOperationParamShape, any>
+  | ConversationType;
 
 // The SQL-only `addToSchema` accepts all top-level entities, excepts models
 type AddToSchemaContent = Exclude<SchemaContent, BaseModelType>;
@@ -77,6 +80,9 @@ export type InternalSchema = {
     authorization: SchemaAuthorization<any, any, any>[];
     configuration: SchemaConfiguration<any, any>;
   };
+  context?: {
+    schemas: InternalSchema[];
+  };
 };
 
 export type BaseSchema<
@@ -90,6 +96,9 @@ export type BaseSchema<
       : never;
   };
   transform: () => DerivedApiDefinition;
+  context?: {
+    schemas: GenericModelSchema<any>[];
+  };
 };
 
 export type GenericModelSchema<T extends ModelSchemaParamShape> =
@@ -315,7 +324,10 @@ function _rdsSchema<
     data,
     models,
     transform(): DerivedApiDefinition {
-      const internalSchema: InternalSchema = { data } as InternalSchema;
+      const internalSchema: InternalSchema = {
+        data,
+        context: this.context,
+      } as InternalSchema;
 
       return processSchema({ schema: internalSchema });
     },
@@ -406,7 +418,10 @@ function _ddbSchema<
   return {
     data,
     transform(): DerivedApiDefinition {
-      const internalSchema = { data };
+      const internalSchema = {
+        data,
+        context: this.context,
+      };
 
       return processSchema({ schema: internalSchema });
     },

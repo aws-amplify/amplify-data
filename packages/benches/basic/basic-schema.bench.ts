@@ -1,5 +1,5 @@
 import { bench } from '@arktype/attest';
-import { a, ClientSchema } from '@aws-amplify/data-schema';
+import { a, type ClientSchema } from '@aws-amplify/data-schema';
 
 bench('basic schema', () => {
   a.schema({
@@ -7,7 +7,7 @@ bench('basic schema', () => {
       title: a.string().required(),
     }),
   });
-}).types([2405, 'instantiations']);
+}).types([2434, 'instantiations']);
 
 bench('basic schema w client types', () => {
   const s = a.schema({
@@ -19,4 +19,4 @@ bench('basic schema w client types', () => {
   });
 
   type _ = ClientSchema<typeof s>;
-}).types([4622, 'instantiations']);
+}).types([5106, 'instantiations']);

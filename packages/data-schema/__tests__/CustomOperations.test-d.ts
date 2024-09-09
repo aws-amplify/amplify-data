@@ -846,6 +846,14 @@ describe('.for() modifier', () => {
     a.mutation().for();
   });
 
+  it('is unavailable on a.generation()', () => {
+    a.generation({
+      aiModel: a.ai.model('Claude 3 Haiku'),
+      systemPrompt: 'Hello, world!',
+      // @ts-expect-error .for() is not a valid modifier function of a.generation()
+    }).for();
+  });
+
   it('is available only on a.subscription()', () => {
     a.subscription().for(a.ref('Model'));
   });

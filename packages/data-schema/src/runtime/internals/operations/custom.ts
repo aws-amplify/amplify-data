@@ -13,6 +13,10 @@ import {
   ListArgs,
   QueryArgs,
   ModelIntrospectionSchema,
+  CustomOperationArgument,
+  InputFieldType,
+  EnumType,
+  InputType,
 } from '../../bridge-types';
 
 import { map } from 'rxjs';
@@ -27,6 +31,9 @@ import {
 } from '../APIClient';
 
 import { handleSingularGraphQlError } from './utils';
+import { selfAwareAsync } from '../../utils';
+
+import { extendCancellability } from '../cancellation';
 
 type CustomOperationOptions = AuthModeParams & ListArgs;
 
@@ -191,6 +198,29 @@ function hasStringField<Field extends string>(
   return typeof o[field] === 'string';
 }
 
+function isEnumType(type: InputFieldType): type is EnumType {
+  return type instanceof Object && 'enum' in type;
+}
+
+function isInputType(type: InputFieldType): type is InputType {
+  return type instanceof Object && 'input' in type;
+}
+
+/**
+ * @param argDef A single argument definition from a custom operation
+ * @returns A string naming the base type including the `!` if the arg is required.
+ */
+function argumentBaseTypeString({ type, isRequired }: CustomOperationArgument) {
+  const requiredFlag = isRequired ? '!' : '';
+  if (isEnumType(type)) {
+    return `${type.enum}${requiredFlag}`;
+  }
+  if (isInputType(type)) {
+    return `${type.input}${requiredFlag}`;
+  }
+  return `${type}${requiredFlag}`;
+}
+
 /**
  * Generates "outer" arguments string for a custom operation. For example,
  * in this operation:
@@ -215,10 +245,10 @@ function outerArguments(operation: CustomOperation): string {
     return '';
   }
   const args = Object.entries(operation.arguments)
-    .map(([k, v]) => {
-      const baseType = v.type + (v.isRequired ? '!' : '');
-      const finalType = v.isArray
-        ? `[${baseType}]${v.isArrayNullable ? '' : '!'}`
+    .map(([k, argument]) => {
+      const baseType = argumentBaseTypeString(argument);
+      const finalType = argument.isArray
+        ? `[${baseType}]${argument.isArrayNullable ? '' : '!'}`
         : baseType;
 
       return `$${k}: ${finalType}`;
@@ -261,7 +291,7 @@ function innerArguments(operation: CustomOperation): string {
 /**
  * Generates the selection set string for a custom operation. This is slightly
  * different than the selection set generation for models. If the custom op returns
- * a primitive or enum types, it doen't require a selection set at all.
+ * a primitive or enum types, it doesn't require a selection set at all.
  *
  * E.g., the graphql might look like this:
  *
@@ -345,7 +375,7 @@ function operationVariables(
  * @param context SSR context if relevant.
  * @returns Result from the graphql request, model-instantiated when relevant.
  */
-async function _op(
+function _op(
   client: BaseClient,
   modelIntrospection: ModelIntrospectionSchema,
   operationType: 'query' | 'mutation',
@@ -355,114 +385,63 @@ async function _op(
   options?: AuthModeParams & ListArgs,
   context?: AmplifyServer.ContextSpec,
 ) {
-  const { name: operationName } = operation;
-  const auth = authModeParams(client, getInternals, options);
-  const headers = getCustomHeaders(client, getInternals, options?.headers);
-  const outerArgsString = outerArguments(operation);
-  const innerArgsString = innerArguments(operation);
-  const selectionSet = operationSelectionSet(modelIntrospection, operation);
+  return selfAwareAsync(async (resultPromise) => {
+    const { name: operationName } = operation;
+    const auth = authModeParams(client, getInternals, options);
+    const headers = getCustomHeaders(client, getInternals, options?.headers);
+    const outerArgsString = outerArguments(operation);
+    const innerArgsString = innerArguments(operation);
+    const selectionSet = operationSelectionSet(modelIntrospection, operation);
 
-  const returnTypeModelName = hasStringField(operation.type, 'model')
-    ? operation.type.model
-    : undefined;
+    const returnTypeModelName = hasStringField(operation.type, 'model')
+      ? operation.type.model
+      : undefined;
 
-  const query = `
+    const query = `
     ${operationType.toLocaleLowerCase()}${outerArgsString} {
       ${operationName}${innerArgsString} ${selectionSet}
     }
   `;
 
-  const variables = operationVariables(operation, args);
+    const variables = operationVariables(operation, args);
 
-  try {
-    const { data, extensions } = context
-      ? ((await (client as BaseSSRClient).graphql(
-          context,
-          {
-            ...auth,
-            query,
-            variables,
-          },
-          headers,
-        )) as GraphQLResult)
-      : ((await (client as BaseBrowserClient).graphql(
-          {
-            ...auth,
-            query,
-            variables,
-          },
-          headers,
-        )) as GraphQLResult);
+    try {
+      const basePromise = context
+        ? ((client as BaseSSRClient).graphql(
+            context,
+            {
+              ...auth,
+              query,
+              variables,
+            },
+            headers,
+          ) as Promise<GraphQLResult>)
+        : ((client as BaseBrowserClient).graphql(
+            {
+              ...auth,
+              query,
+              variables,
+            },
+            headers,
+          ) as Promise<GraphQLResult>);
 
-    // flatten response
-    if (data) {
-      const [key] = Object.keys(data);
+      const extendedPromise = extendCancellability(basePromise, resultPromise);
+      const { data, extensions } = await extendedPromise;
 
-      const isArrayResult = Array.isArray(data[key]);
+      // flatten response
+      if (data) {
+        const [key] = Object.keys(data);
 
-      // TODO: when adding support for custom selection set, flattening will need
-      // to occur recursively. For now, it's expected that related models are not
-      // present in the result. Only FK's are present. Any related model properties
-      // should be replaced with lazy loaders under the current implementation.
-      const flattenedResult = isArrayResult
-        ? data[key].filter((x: any) => x)
-        : data[key];
+        const isArrayResult = Array.isArray(data[key]);
 
-      // TODO: custom selection set. current selection set is default selection set only
-      // custom selection set requires data-schema-type + runtime updates above.
-      const initialized = returnTypeModelName
-        ? initializeModel(
-            client,
-            returnTypeModelName,
-            isArrayResult ? flattenedResult : [flattenedResult],
-            modelIntrospection,
-            auth.authMode,
-            auth.authToken,
-            !!context,
-          )
-        : flattenedResult;
+        // TODO: when adding support for custom selection set, flattening will need
+        // to occur recursively. For now, it's expected that related models are not
+        // present in the result. Only FK's are present. Any related model properties
+        // should be replaced with lazy loaders under the current implementation.
+        const flattenedResult = isArrayResult
+          ? data[key].filter((x: any) => x)
+          : data[key];
 
-      return {
-        data:
-          !isArrayResult && Array.isArray(initialized)
-            ? initialized.shift()
-            : initialized,
-        extensions,
-      };
-    } else {
-      return { data: null, extensions };
-    }
-  } catch (error: any) {
-    /**
-     * The `data` type returned by `error` here could be:
-     * 1) `null`
-     * 2) an empty object
-     * 3) "populated" but with a `null` value `{ getPost: null }`
-     * 4) an actual record `{ getPost: { id: '1', title: 'Hello, World!' } }`
-     */
-    const { data, errors } = error;
-
-    /**
-     * `data` is not `null`, and is not an empty object:
-     */
-    if (data && Object.keys(data).length !== 0 && errors) {
-      const [key] = Object.keys(data);
-
-      const isArrayResult = Array.isArray(data[key]);
-
-      // TODO: when adding support for custom selection set, flattening will need
-      // to occur recursively. For now, it's expected that related models are not
-      // present in the result. Only FK's are present. Any related model properties
-      // should be replaced with lazy loaders under the current implementation.
-      const flattenedResult = isArrayResult
-        ? data[key].filter((x: any) => x)
-        : data[key];
-
-      /**
-       * `flattenedResult` could be `null` here (e.g. `data: { getPost: null }`)
-       * if `flattenedResult`, result is an actual record:
-       */
-      if (flattenedResult) {
         // TODO: custom selection set. current selection set is default selection set only
         // custom selection set requires data-schema-type + runtime updates above.
         const initialized = returnTypeModelName
@@ -482,17 +461,73 @@ async function _op(
             !isArrayResult && Array.isArray(initialized)
               ? initialized.shift()
               : initialized,
-          errors,
+          extensions,
         };
       } else {
-        // was `data: { getPost: null }`)
+        return { data: null, extensions };
+      }
+    } catch (error: any) {
+      /**
+       * The `data` type returned by `error` here could be:
+       * 1) `null`
+       * 2) an empty object
+       * 3) "populated" but with a `null` value `{ getPost: null }`
+       * 4) an actual record `{ getPost: { id: '1', title: 'Hello, World!' } }`
+       */
+      const { data, errors } = error;
+
+      /**
+       * `data` is not `null`, and is not an empty object:
+       */
+      if (data && Object.keys(data).length !== 0 && errors) {
+        const [key] = Object.keys(data);
+
+        const isArrayResult = Array.isArray(data[key]);
+
+        // TODO: when adding support for custom selection set, flattening will need
+        // to occur recursively. For now, it's expected that related models are not
+        // present in the result. Only FK's are present. Any related model properties
+        // should be replaced with lazy loaders under the current implementation.
+        const flattenedResult = isArrayResult
+          ? data[key].filter((x: any) => x)
+          : data[key];
+
+        /**
+         * `flattenedResult` could be `null` here (e.g. `data: { getPost: null }`)
+         * if `flattenedResult`, result is an actual record:
+         */
+        if (flattenedResult) {
+          // TODO: custom selection set. current selection set is default selection set only
+          // custom selection set requires data-schema-type + runtime updates above.
+          const initialized = returnTypeModelName
+            ? initializeModel(
+                client,
+                returnTypeModelName,
+                isArrayResult ? flattenedResult : [flattenedResult],
+                modelIntrospection,
+                auth.authMode,
+                auth.authToken,
+                !!context,
+              )
+            : flattenedResult;
+
+          return {
+            data:
+              !isArrayResult && Array.isArray(initialized)
+                ? initialized.shift()
+                : initialized,
+            errors,
+          };
+        } else {
+          // was `data: { getPost: null }`)
+          return handleSingularGraphQlError(error);
+        }
+      } else {
+        // `data` is `null`:
         return handleSingularGraphQlError(error);
       }
-    } else {
-      // `data` is `null`:
-      return handleSingularGraphQlError(error);
     }
-  }
+  });
 }
 
 /**

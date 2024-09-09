@@ -89,7 +89,7 @@ describe('SchemaProcessor validation against secondary indexes', () => {
     });
 
     expect(() => schema.transform()).toThrow(
-      'Invalid ref. Todo is referencing TodoStatus which is not defined in the schema',
+      'Invalid ref. Todo is referring to TodoStatus which is not defined in the schema',
     );
   });
 
@@ -106,7 +106,7 @@ describe('SchemaProcessor validation against secondary indexes', () => {
     });
 
     expect(() => schema.transform()).toThrow(
-      'Invalid ref. Todo is referencing TodoStatus which is not defined in the schema',
+      'Invalid ref. Todo is referring to TodoStatus which is not defined in the schema',
     );
   });
 

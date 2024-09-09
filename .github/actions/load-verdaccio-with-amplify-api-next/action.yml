@@ -1,0 +1,27 @@
+name: Load Verdaccio with amplify-api-next
+description: Turn on Verdaccio and load up all of the amplify-api-next build artifacts
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Start verdaccio
+      # While / sleep are required here, as Verdaccio takes a minute to start:
+      run: |
+        npm run vend
+        while ! nc -z localhost 4873; do
+          echo "Verdaccio not running yet"
+          sleep 1
+        done
+
+        # Run your commands after verdaccio is up and running
+        echo "Verdaccio is up and running, proceeding with the script..."
+      shell: bash
+      working-directory: ./amplify-api-next
+    - name: Upload artifact
+      uses: actions/upload-artifact@0b7f8abb1508181956e8e162db84b466c27e18ce # v3.1.2 https://github.com/actions/upload-artifact/commit/0b7f8abb1508181956e8e162db84b466c27e18ce
+      if: failure()
+      with:
+        name: ${{ inputs.test_name }}-npm-log
+        if-no-files-found: ignore
+        path: /Users/runner/.npm/_logs/
+        retention-days: 3

@@ -1,5 +1,5 @@
 import { a, ClientSchema } from '@aws-amplify/data-schema';
-import { Expect, Equal, Prettify } from '@aws-amplify/data-schema-types';
+import { Expect, Equal } from '@aws-amplify/data-schema-types';
 import { __modelMeta__ } from '@aws-amplify/data-schema/runtime';
 import { generateClient } from 'aws-amplify/api';
 
@@ -133,39 +133,45 @@ describe('Basic operations', () => {
       const createClient = generateClient<CreateSchema>();
 
       test('id is optional when omitted', () => {
-        type CreateParamsActual = Parameters<
-          typeof createClient.models.ImplicitId.create
-        >[0];
         type CreateParamsExpected = {
           id?: string | undefined;
           content?: string | null | undefined;
           metadata?: Json | undefined;
         };
-        type test = Expect<Equal<CreateParamsExpected, CreateParamsActual>>;
+        type Expected = (input: CreateParamsExpected, options: any) => any;
+
+        type Actual = typeof createClient.models.ImplicitId.create;
+
+        type ActualExtendsExpected = Actual extends Expected ? true : false;
+        type test = Expect<Equal<ActualExtendsExpected, true>>;
       });
 
       test('id is optional when required', () => {
-        type CreateParamsActual = Parameters<
-          typeof createClient.models.RequiredId.create
-        >[0];
         type CreateParamsExpected = {
           id?: string | undefined;
           content?: string | null | undefined;
           metadata?: Json | undefined;
         };
-        type test = Expect<Equal<CreateParamsExpected, CreateParamsActual>>;
+        type Expected = (input: CreateParamsExpected, options: any) => any;
+
+        type Actual = typeof createClient.models.RequiredId.create;
+
+        type ActualExtendsExpected = Actual extends Expected ? true : false;
+        type test = Expect<Equal<ActualExtendsExpected, true>>;
       });
 
       test('custom pk is required when custom pk is defined and required', () => {
-        type CreateParamsActual = Parameters<
-          typeof createClient.models.CustomPk.create
-        >[0];
         type CreateParamsExpected = {
           custom: string;
           content?: string | null | undefined;
           metadata?: Json | undefined;
         };
-        type test = Expect<Equal<CreateParamsExpected, CreateParamsActual>>;
+        type Expected = (input: CreateParamsExpected, options: any) => any;
+
+        type Actual = typeof createClient.models.CustomPk.create;
+
+        type ActualExtendsExpected = Actual extends Expected ? true : false;
+        type test = Expect<Equal<ActualExtendsExpected, true>>;
       });
     });
   });

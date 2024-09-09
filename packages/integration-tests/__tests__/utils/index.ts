@@ -76,7 +76,7 @@ export async function buildAmplifyConfig(schema: {
  * Produces a `generateClient` function and associated spy that is pre-configured
  * to return the given list of responses in order.
  *
- * This helps facilitate a test structure where as much mocking as done ahead of
+ * This helps facilitate a test structure where as much mocking is done ahead of
  * time as possible, so that the test body can show "actual customer code" to the
  * greatest degree possible.
  *
@@ -92,7 +92,7 @@ export function mockedGenerateClient(
 ) {
   const subs = {} as Record<string, Subscriber<any>>;
 
-  _graphqlspy.mockImplementation(async () => {
+  _graphqlspy.mockImplementation(async (_amplify: any, _options: any) => {
     const result = responses.shift();
 
     if (typeof result === 'function') {
@@ -108,7 +108,7 @@ export function mockedGenerateClient(
     }
   });
 
-  _graphqlsubspy.mockImplementation((amplify: any, options: any) => {
+  _graphqlsubspy.mockImplementation((_amplify: any, options: any) => {
     const graphql = print(options.query);
     const operationMatch = graphql.match(/\s+(on(Create|Update|Delete)\w+)/);
     const operation = operationMatch?.[1];
@@ -132,7 +132,7 @@ export function mockedGenerateClient(
   function generateServerClientUsingReqRes<T extends Record<any, any>>(
     options: Parameters<typeof actualGenerateServerClientUsingReqRes>[0],
   ) {
-    return actualGenerateServerClientUsingReqRes(options);
+    return actualGenerateServerClientUsingReqRes<T>(options);
   }
 
   return {
@@ -208,6 +208,7 @@ export function findSingularName(pluralName: string): string {
 }
 
 export function parseQuery(query: string | DocumentNode) {
+  // the types inferred from `parse` appear to just be wrong. they do not align with the actual AST.
   const q: any =
     typeof query === 'string'
       ? parse(query).definitions[0]
@@ -241,7 +242,62 @@ export function parseQuery(query: string | DocumentNode) {
         )
       : selections?.selectionSet?.selections?.map((i: any) => i.name.value);
 
-  return { operation, selection, type, table, selectionSet };
+  const selectionSetString: string = selectionSetFromAST(
+    selections?.selectionSet?.selections,
+  );
+
+  return {
+    operation,
+    selection,
+    type,
+    table,
+    selectionSet,
+    selectionSetString,
+  };
+}
+
+function selectionSetFromAST(selections: any) {
+  const fields = [] as any;
+  for (const s of selections || []) {
+    if (s.selectionSet) {
+      fields.push(
+        `${s.name.value} { ${selectionSetFromAST(s.selectionSet.selections)} }`,
+      );
+    } else {
+      fields.push(s.name.value);
+    }
+  }
+  return fields.join(' ');
+}
+
+/**
+ * Condenses spacing/trimming of a selection set specified as a graphql string, but
+ * does *not* normalize field ordering and does not *add* spacing. E.g.,
+ *
+ * ```plain
+ *  id
+ *  description
+ *  details {
+ *    content
+ *  }
+ *  steps {
+ *    items {
+ *      id description todoId
+ *    }
+ *  }
+ * ```
+ *
+ * Becomes:
+ *
+ * ```plain
+ * id description details { content } steps { items { id description todoId } }
+ * ```
+ *
+ * @param selectionSet Selection set as a graphql string
+ * @returns
+ */
+export function condenseSelectionSet(selectionSet: string) {
+  return selectionSet.replace(/[\s\r\n]+/g, ' ').trim();
 }
 
 export function expectSelectionSetContains(
@@ -264,6 +320,17 @@ export function expectSelectionSetNotContains(
   const { query } = options;
   const { selectionSet } = parseQuery(query);
   expect(fields.every((f) => !selectionSet.includes(f))).toBe(true);
+}
+
+export function expectSelectionSetEquals(
+  spy: jest.SpyInstance,
+  selectionSet: string,
+  requestIndex = 0,
+) {
+  const [options] = optionsAndHeaders(spy)[requestIndex];
+  const { query } = options;
+  const { selectionSetString } = parseQuery(query);
+  expect(selectionSetString).toEqual(condenseSelectionSet(selectionSet));
 }
 
 export function expectVariables(
@@ -399,5 +466,30 @@ export function expectSchemaModelExcludes({
         }
       }
     }
+  }
+}
+
+/**
+ * Performs a normalized comparison of actual and expected GraphQL strings.
+ *
+ * Normalizes the strings by parsing and re-printing each.
+ *
+ * Logs the strings and throws on mismatch.
+ *
+ * @param actual GraphQL string
+ * @param expected GraphQL string
+ */
+export function expectGraphqlMatches(actual: string, expected: string) {
+  const actualNormalized = print(parse(actual));
+  const expectedNormalized = print(parse(expected));
+  if (actualNormalized !== expectedNormalized) {
+    console.error(
+      [
+        `Actual:\n${actual}`,
+        `Actual (normalized):\n${actualNormalized}`,
+        `Expected (normalized):\n${expectedNormalized}`,
+      ].join('\n\n'),
+    );
+    throw new Error('Actual and Expected graphql does not match.');
   }
 }

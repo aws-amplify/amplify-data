@@ -8,11 +8,14 @@ import {
   ServerClientGenerationParams,
 } from '../../bridge-types';
 
-import { ModelOperation, graphQLOperationsInfo } from '../APIClient';
+import { ModelOperation } from '../APIClient';
 import { listFactory } from '../operations/list';
 import { indexQueryFactory } from '../operations/indexQuery';
 import { getFactory } from '../operations/get';
-import { getSecondaryIndexesFromSchemaModel } from '../clientUtils';
+import {
+  getSecondaryIndexesFromSchemaModel,
+  excludeDisabledOps,
+} from '../clientUtils';
 
 export function generateModelsProperty<T extends Record<any, any> = never>(
   client: BaseClient,
@@ -42,40 +45,40 @@ export function generateModelsProperty<T extends Record<any, any> = never>(
     'ONCREATE',
     'ONUPDATE',
     'ONDELETE',
-    'OBSERVE_QUERY',
+    'OBSERVEQUERY',
   ];
 
   for (const model of Object.values(modelIntrospection.models)) {
     const { name } = model;
     models[name] = {} as Record<string, any>;
 
-    Object.entries(graphQLOperationsInfo).forEach(
-      ([key, { operationPrefix }]) => {
-        const operation = key as ModelOperation;
+    const enabledModelOps = excludeDisabledOps(modelIntrospection, name);
 
-        // subscriptions are not supported in SSR
-        if (SSR_UNSUPORTED_OPS.includes(operation)) return;
+    Object.entries(enabledModelOps).forEach(([key, { operationPrefix }]) => {
+      const operation = key as ModelOperation;
 
-        if (operation === 'LIST') {
-          models[name][operationPrefix] = listFactory(
-            client,
-            modelIntrospection,
-            model,
-            getInternals,
-            useContext,
-          );
-        } else {
-          models[name][operationPrefix] = getFactory(
-            client,
-            modelIntrospection,
-            model,
-            operation,
-            getInternals,
-            useContext,
-          );
-        }
-      },
-    );
+      // subscriptions are not supported in SSR
+      if (SSR_UNSUPORTED_OPS.includes(operation)) return;
+
+      if (operation === 'LIST') {
+        models[name][operationPrefix] = listFactory(
+          client,
+          modelIntrospection,
+          model,
+          getInternals,
+          useContext,
+        );
+      } else {
+        models[name][operationPrefix] = getFactory(
+          client,
+          modelIntrospection,
+          model,
+          operation,
+          getInternals,
+          useContext,
+        );
+      }
+    });
 
     const secondaryIdxs = getSecondaryIndexesFromSchemaModel(model);
 
@@ -86,6 +89,7 @@ export function generateModelsProperty<T extends Record<any, any> = never>(
         model,
         idx,
         getInternals,
+        useContext,
       );
     }
   }
