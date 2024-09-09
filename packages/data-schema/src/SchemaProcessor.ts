@@ -1281,13 +1281,17 @@ const schemaPreprocessor = (
 
   const staticSchema = databaseType === 'sql';
 
+  // If the schema contains a custom operation with an async lambda handler,
+  // we need to add the EventInvocationResponse custom type to the schema.
+  // This is done here so that:
+  // - it only happens once per schema
+  // - downstream validation based on `getRefTypeForSchema` finds the EventInvocationResponse type
   const containsAsyncLambdaCustomOperation = Object.entries(schema.data.types).find(([_, typeDef]) => {
     return isCustomOperation(typeDef)
     && finalHandlerIsAsyncFunctionHandler(typeDef.data.handlers);
   });
 
   if (containsAsyncLambdaCustomOperation) {
-    console.log('containsAsyncLambdaCustomOperation', containsAsyncLambdaCustomOperation);
     schema.data.types['EventInvocationResponse'] = eventInvocationResponseCustomType;
   }
 
