@@ -1379,7 +1379,6 @@ const schemaPreprocessor = (
           mostRelevantAuthRules,
           databaseType,
           getRefType,
-          schema
         );
 
         topLevelTypes.push(...implicitTypes);
@@ -1819,7 +1818,6 @@ function transformCustomOperations(
   authRules: Authorization<any, any, any>[],
   databaseType: DatabaseType,
   getRefType: ReturnType<typeof getRefTypeForSchema>,
-  schema: InternalSchema,
 ) {
   const { typeName: opType, handlers } = typeDef.data;
 
@@ -1837,7 +1835,6 @@ function transformCustomOperations(
   }
 
   const isCustom = Boolean(jsFunctionForField);
-
 
   const {
     gqlField,
