@@ -144,7 +144,6 @@ exports[`custom operations primitive type result 1`] = `
 `;
 
 exports[`custom operations solo async handler 1`] = `
-exports[`custom operations with enum arguments can be called with valid enum values 1`] = `
 [
   [
     {
@@ -197,8 +196,22 @@ exports[`custom operations sync sync 1`] = `
   ",
       "variables": {
         "value": "hello, world!",
+      },
+    },
+    {},
+  ],
+]
+`;
+
+exports[`custom operations with enum arguments can be called with valid enum values 1`] = `
+[
+  [
+    {
+      "authMode": undefined,
+      "authToken": undefined,
+      "query": "
     query($status: EchoEnumStatus) {
-      echoEnum(status: $status)
+      echoEnum(status: $status) 
     }
   ",
       "variables": {

@@ -427,6 +427,8 @@ describe('custom operations', () => {
       })
     )
     expect(optionsAndHeaders(spy)).toMatchSnapshot();
+  });
+
   describe('with enum arguments', () => {
     const schema = a.schema({
       Status: a.enum(['Active', 'Inactive', 'Unknown']),
