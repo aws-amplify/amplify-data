@@ -78,11 +78,5 @@
     "turbo": "^1.10.14",
     "typescript": "^5.1.6",
     "verdaccio": "^5.24.1"
-  },
-  "dependencies": {
-    "@aws-amplify/appsync-modelgen-plugin": "^2.12.4-raven.0"
-  },
-  "overrides": {
-    "@aws-amplify/appsync-modelgen-plugin": "^2.12.4-raven.0"
   }
 }
