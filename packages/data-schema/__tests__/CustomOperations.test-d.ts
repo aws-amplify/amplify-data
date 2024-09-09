@@ -15,6 +15,7 @@ import type {
 } from 'aws-lambda';
 import { configure } from '../src/ModelSchema';
 import { Nullable } from '../src/ModelField';
+import { defineFunctionStub } from './utils';
 
 describe('custom operations return types', () => {
   describe('when .ref() a basic custom type', () => {
@@ -77,6 +78,41 @@ describe('custom operations return types', () => {
         ActualResult
       >;
 
+      type _T1 = Expect<Equal<ActualArgs, ExpectedArgs>>;
+      type _T2 = Expect<Equal<ActualResult, ExpectedResult>>;
+      type _T3 = Expect<Equal<ActualHandler, ExpectedFunctionHandler>>;
+    });
+
+    it('produces async function handler types', () => {
+      const handler = defineFunctionStub({})
+      const schema = a.schema({
+        aQuery: a
+          .query()
+          .handler(a.handler.function(handler).async())
+          .arguments({
+            input: a.string(),
+            content: a.string().required(),
+          })
+      });
+
+      type Schema = ClientSchema<typeof schema>;
+
+      type ActualArgs = Prettify<Schema['aQuery']['args']>;
+      type ActualResult = Prettify<Schema['aQuery']['returnType']>;
+
+      type ActualHandler = Schema['aQuery']['functionHandler'];
+
+      type ExpectedArgs = {
+        input?: string | null | undefined;
+        content: string;
+      };
+      type ExpectedResult = {
+        success: boolean;
+      } | null;
+      type ExpectedFunctionHandler = AppSyncResolverHandler<
+        ActualArgs,
+        void
+      >;
       type _T1 = Expect<Equal<ActualArgs, ExpectedArgs>>;
       type _T2 = Expect<Equal<ActualResult, ExpectedResult>>;
       type _T3 = Expect<Equal<ActualHandler, ExpectedFunctionHandler>>;
