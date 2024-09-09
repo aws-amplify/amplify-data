@@ -286,14 +286,10 @@ function transformFunctionHandler(
 ): {
   gqlHandlerContent: string;
   lambdaFunctionDefinition: LambdaFunctionDefinition;
-  generatedResponseTypes: [string, any][];
 } {
   let gqlHandlerContent = '';
   const lambdaFunctionDefinition: LambdaFunctionDefinition = {};
-  const generatedResponseTypes: [string, any][] = [];
-  if (finalHandlerIsAsyncFunctionHandler(handlers)) {
-    generatedResponseTypes.push(['EventInvocationResponse', eventInvocationResponseCustomType]);
-  }
+
   handlers.forEach((handler, idx) => {
     const handlerData = getHandlerData(handler);
 
@@ -315,7 +311,6 @@ function transformFunctionHandler(
   return {
     gqlHandlerContent,
     lambdaFunctionDefinition,
-    generatedResponseTypes,
   };
 }
 
@@ -451,14 +446,12 @@ function customOperationToGql(
   let gqlHandlerContent = '';
   let lambdaFunctionDefinition: LambdaFunctionDefinition = {};
   let customSqlDataSourceStrategy: CustomSqlDataSourceStrategy | undefined;
-  let generatedResponseTypes: [string, any][] = []
 
   if (isFunctionHandler(handlers)) {
-    ({ gqlHandlerContent, lambdaFunctionDefinition, generatedResponseTypes } = transformFunctionHandler(
+    ({ gqlHandlerContent, lambdaFunctionDefinition } = transformFunctionHandler(
       handlers,
       typeName,
     ));
-    implicitTypes.push(...generatedResponseTypes);
   } else if (databaseType === 'sql' && handler && brand === 'inlineSql') {
     gqlHandlerContent = `@sql(statement: ${escapeGraphQlString(
       String(getHandlerData(handler)),
@@ -1288,6 +1281,16 @@ const schemaPreprocessor = (
 
   const staticSchema = databaseType === 'sql';
 
+  const containsAsyncLambdaCustomOperation = Object.entries(schema.data.types).find(([_, typeDef]) => {
+    return isCustomOperation(typeDef)
+    && finalHandlerIsAsyncFunctionHandler(typeDef.data.handlers);
+  });
+
+  if (containsAsyncLambdaCustomOperation) {
+    console.log('containsAsyncLambdaCustomOperation', containsAsyncLambdaCustomOperation);
+    schema.data.types['EventInvocationResponse'] = eventInvocationResponseCustomType;
+  }
+
   const topLevelTypes = sortTopLevelTypes(Object.entries(schema.data.types));
 
   const { schemaAuth, functionSchemaAccess } = extractFunctionSchemaAccess(
@@ -1831,11 +1834,6 @@ function transformCustomOperations(
 
   const isCustom = Boolean(jsFunctionForField);
 
-  // TODO: We're adding the `EventInvocationResponse` in multiple places.
-  // Is this really necessary or can we shuffle around some validation ordering?
-  if (finalHandlerIsAsyncFunctionHandler(handlers)) {
-    schema.data.types['EventInvocationResponse'] = eventInvocationResponseCustomType;
-  }
 
   const {
     gqlField,
