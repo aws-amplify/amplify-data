@@ -131,7 +131,7 @@ exports[`custom operations primitive type result 1`] = `
       "authToken": undefined,
       "query": "
     query($value: String) {
-      echo(value: $value)
+      echo(value: $value) 
     }
   ",
       "variables": {

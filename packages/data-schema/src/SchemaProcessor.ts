@@ -1609,16 +1609,12 @@ function validateCustomOperations(
     // TODO: There should be a more elegant and readable way to handle this check.
     // Maybe it's not even necessary anymore since we're the setting returnType in the handler() method.
     if (!handlers || handlers.length === 0 || handlers[handlers.length - 1][brandSymbol] !== 'asyncFunctionHandler') {
+      const typeDescription =
+        opType === 'Generation' ? 'Generation Route' : `Custom ${opType}`;
       throw new Error(
-        `Invalid Custom ${opType} definition. A Custom ${opType} must include a return type. ${typeName} has no return type specified.`,
+        `Invalid ${typeDescription} definition. A ${typeDescription} must include a return type. ${typeName} has no return type specified.`,
       );
     }
-
-    const typeDescription =
-      opType === 'Generation' ? 'Generation Route' : `Custom ${opType}`;
-    throw new Error(
-      `Invalid ${typeDescription} definition. A ${typeDescription} must include a return type. ${typeName} has no return type specified.`,
-    );
   }
 
   if (opType !== 'Subscription' && subscriptionSource.length > 0) {
