@@ -1,4 +1,4 @@
-import { type CustomPathData, type InternalSchema } from './ModelSchema';
+import type { CustomPathData, InternalSchema } from './ModelSchema';
 import {
   type ModelField,
   type InternalField,
@@ -10,7 +10,7 @@ import {
   ModelRelationshipTypes,
   type InternalRelationalField,
 } from './ModelRelationalField';
-import type { InternalModel } from './ModelType';
+import type { InternalModel, DisableOperationsOptions } from './ModelType';
 import type { InternalModelIndexType } from './ModelIndex';
 import {
   type Authorization,
@@ -30,17 +30,30 @@ import {
 import type { InternalRef, RefType } from './RefType';
 import type { EnumType } from './EnumType';
 import type { CustomType, CustomTypeParamShape } from './CustomType';
-import { type InternalCustom, CustomOperationNames } from './CustomOperation';
+import {
+  type InternalCustom,
+  type CustomOperationInput,
+  type GenerationInput,
+  CustomOperationNames,
+} from './CustomOperation';
 import { Brand, getBrand } from './util';
 import {
   getHandlerData,
   type HandlerType,
   type CustomHandler,
   type SqlReferenceHandler,
-  FunctionHandler,
+  type FunctionHandler,
 } from './Handler';
 import * as os from 'os';
 import * as path from 'path';
+import {
+  brandName as conversationBrandName,
+  type InternalConversationType,
+} from './ai/ConversationType';
+import {
+  conversationTypes,
+  createConversationField,
+} from './ai/ConversationSchemaTypes';
 
 type ScalarFieldDef = Exclude<InternalField['data'], { fieldType: 'model' }>;
 
@@ -82,6 +95,16 @@ function isCustomType(
     return true;
   }
   return false;
+}
+
+function isConversationRoute(type: any): type is InternalConversationType {
+  return getBrand(type) === conversationBrandName;
+}
+
+function isGenerationInput(
+  input?: CustomOperationInput,
+): input is GenerationInput {
+  return Boolean(input?.aiModel && input?.systemPrompt);
 }
 
 function isCustomOperation(type: any): type is InternalCustom {
@@ -469,7 +492,29 @@ function customOperationToGql(
     gqlHandlerContent += `@aws_subscribe(mutations: ["${subscriptionSources}"]) `;
   }
 
+  if (opType === 'Generation') {
+    if (!isGenerationInput(typeDef.data.input)) {
+      throw new Error(
+        `Invalid Generation Route definition. A Generation Route must include a valid input. ${typeName} has an invalid or no input defined.`,
+      );
+    }
+    const { aiModel, systemPrompt, inferenceConfiguration } =
+      typeDef.data.input;
+
+    const inferenceConfigurationEntries = Object.entries(
+      inferenceConfiguration ?? {},
+    );
+    const inferenceConfigurationGql =
+      inferenceConfigurationEntries.length > 0
+        ? `, inferenceConfiguration: { ${inferenceConfigurationEntries
+            .map(([key, value]) => `${key}: ${value}`)
+            .join(', ')} }`
+        : '';
+    gqlHandlerContent += `@generation(aiModel: "${aiModel.resourcePath}", systemPrompt: "${systemPrompt}"${inferenceConfigurationGql}) `;
+  }
+
   const gqlField = `${callSignature}: ${returnTypeName} ${gqlHandlerContent}${authString}`;
+
   return {
     gqlField,
     implicitTypes: implicitTypes,
@@ -1210,6 +1255,7 @@ const schemaPreprocessor = (
   const customQueries = [];
   const customMutations = [];
   const customSubscriptions = [];
+  let shouldAddConversationTypes = false;
 
   // Dict of auth rules to be applied to custom types
   // Inherited from the auth configured on the custom operations that return these custom types
@@ -1296,6 +1342,8 @@ const schemaPreprocessor = (
         const model = `type ${typeName} ${customAuth}\n{\n  ${joined}\n}`;
         gqlModels.push(model);
       } else if (isCustomOperation(typeDef)) {
+        // TODO: add generation route logic.
+
         const { typeName: opType } = typeDef.data;
 
         const {
@@ -1347,6 +1395,7 @@ const schemaPreprocessor = (
 
         switch (opType) {
           case 'Query':
+          case 'Generation':
             customQueries.push(gqlField);
             break;
           case 'Mutation':
@@ -1358,6 +1407,10 @@ const schemaPreprocessor = (
           default:
             break;
         }
+      } else if (isConversationRoute(typeDef)) {
+        // TODO: add inferenceConfiguration values to directive.
+        customMutations.push(createConversationField(typeDef, typeName));
+        shouldAddConversationTypes = true;
       }
     } else if (staticSchema) {
       const fields = { ...typeDef.data.fields } as Record<
@@ -1455,7 +1508,13 @@ const schemaPreprocessor = (
 
       const joined = gqlFields.join('\n  ');
 
-      const model = `type ${typeName} @model ${authString}\n{\n  ${joined}\n}`;
+      const modelAttrs = modelAttributesFromDisabledOps(
+        typeDef.data.disabledOperations,
+      );
+
+      const modelDirective = modelAttrs ? `@model(${modelAttrs})` : '@model';
+
+      const model = `type ${typeName} ${modelDirective} ${authString}\n{\n  ${joined}\n}`;
       gqlModels.push(model);
     }
   }
@@ -1467,6 +1526,9 @@ const schemaPreprocessor = (
   };
 
   gqlModels.push(...generateCustomOperationTypes(customOperations));
+  if (shouldAddConversationTypes) {
+    gqlModels.push(...conversationTypes);
+  }
 
   const processedSchema = gqlModels.join('\n\n');
 
@@ -1491,8 +1553,9 @@ function validateCustomOperations(
   const authConfigured = authRules.length > 0;
 
   if (
-    (authConfigured && !handlerConfigured) ||
-    (handlerConfigured && !authConfigured)
+    opType !== 'Generation' &&
+    ((authConfigured && !handlerConfigured) ||
+      (handlerConfigured && !authConfigured))
   ) {
     // Deploying a custom operation with auth and no handler reference OR
     // with a handler reference but no auth
@@ -1523,10 +1586,12 @@ function validateCustomOperations(
 
   if (
     typeDef.data.returnType === null &&
-    (opType === 'Query' || opType === 'Mutation')
+    (opType === 'Query' || opType === 'Mutation' || opType === 'Generation')
   ) {
+    const typeDescription =
+      opType === 'Generation' ? 'Generation Route' : `Custom ${opType}`;
     throw new Error(
-      `Invalid Custom ${opType} definition. A Custom ${opType} must include a return type. ${typeName} has no return type specified.`,
+      `Invalid ${typeDescription} definition. A ${typeDescription} must include a return type. ${typeName} has no return type specified.`,
     );
   }
 
@@ -1705,12 +1770,18 @@ function transformCustomOperations(
   getRefType: ReturnType<typeof getRefTypeForSchema>,
 ) {
   const { typeName: opType, handlers } = typeDef.data;
+
   let jsFunctionForField: JsResolver | undefined = undefined;
 
   validateCustomOperations(typeDef, typeName, authRules, getRefType);
 
   if (isCustomHandler(handlers)) {
-    jsFunctionForField = handleCustom(handlers, opType, typeName);
+    jsFunctionForField = handleCustom(
+      handlers,
+      // Generation routes should not have handlers
+      opType as Exclude<typeof opType, 'Generation'>,
+      typeName,
+    );
   }
 
   const isCustom = Boolean(jsFunctionForField);
@@ -2178,6 +2249,75 @@ function getModelRelationship(
         `"${sourceModelConnectionField.def.type}" is not a valid relationship type.`,
       );
   }
+}
+
+/**
+ *
+ * @param disabledOps
+ * @returns sanitized string @model directive attribute; can be passed in as-is
+ *
+ * @example
+ * ```ts
+ * const disabledOps = ["subscriptions", "create"];
+ * ```
+ * returns
+ * ```
+ * subscriptions:null,mutations:{create:null}
+ * ```
+ */
+function modelAttributesFromDisabledOps(
+  disabledOps: ReadonlyArray<DisableOperationsOptions>,
+) {
+  const fineCoarseMap: Record<string, string> = {
+    onCreate: 'subscriptions',
+    onUpdate: 'subscriptions',
+    onDelete: 'subscriptions',
+    create: 'mutations',
+    update: 'mutations',
+    delete: 'mutations',
+    list: 'queries',
+    get: 'queries',
+  };
+
+  const coarseGrainedOps = ['queries', 'mutations', 'subscriptions'];
+
+  const coarseFirstSorted = disabledOps
+    // disabledOps is readOnly; create a copy w/ slice
+    .slice()
+    .sort((a: DisableOperationsOptions, b: DisableOperationsOptions) => {
+      if (coarseGrainedOps.includes(a) && !coarseGrainedOps.includes(b)) {
+        return -1;
+      }
+
+      if (!coarseGrainedOps.includes(a) && coarseGrainedOps.includes(b)) {
+        return 1;
+      }
+
+      return 0;
+    });
+
+  const modelAttrs: Record<string, null | Record<string, null>> = {};
+
+  for (const op of coarseFirstSorted) {
+    if (coarseGrainedOps.includes(op)) {
+      modelAttrs[op] = null;
+      continue;
+    }
+
+    const coarseOp = fineCoarseMap[op];
+
+    if (modelAttrs[coarseOp] !== null) {
+      modelAttrs[coarseOp] = modelAttrs[coarseOp] || {};
+
+      modelAttrs[coarseOp]![op] = null;
+    }
+  }
+
+  const modelAttrsStr = JSON.stringify(modelAttrs)
+    .replace(/"/g, '') // remove quotes
+    .slice(1, -1); // drop outer curlies {}
+
+  return modelAttrsStr;
 }
 
 /**

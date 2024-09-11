@@ -5,6 +5,8 @@ export {
   generateCustomQueriesProperty,
   generateCustomSubscriptionsProperty,
 } from './generateCustomOperationsProperty';
+export { generateConversationsProperty } from './utils/clientProperties/generateConversationsProperty';
+export { generateGenerationsProperty } from './utils/clientProperties/generateGenerationsProperty';
 export { generateEnumsProperty } from './utils/clientProperties/generateEnumsProperty';
 export { generateModelsProperty } from './utils/clientProperties/generateModelsProperty';
 export { isGraphQLResponseWithErrors } from './utils/runtimeTypeGuards/isGraphQLResponseWithErrors';

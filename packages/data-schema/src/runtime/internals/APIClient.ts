@@ -247,6 +247,11 @@ export function initializeModel(
             {},
           );
 
+          // if get is disabled on the related model
+          if ((client as any).models[relatedModelName]?.get === undefined) {
+            break;
+          }
+
           if (context) {
             initializedRelationalFields[fieldName] = (
               contextSpec: AmplifyServer.ContextSpec,
@@ -334,6 +339,11 @@ export function initializeModel(
               },
             );
 
+            // if list is disabled on the related model
+            if ((client as any).models[relatedModelName]?.list === undefined) {
+              break;
+            }
+
             if (context) {
               initializedRelationalFields[fieldName] = (
                 contextSpec: AmplifyServer.ContextSpec,
@@ -399,6 +409,11 @@ export function initializeModel(
               return { [field]: { eq: record[parentSK[idx - 1]] } };
             },
           );
+
+          // if list is disabled on the related model
+          if ((client as any).models[relatedModelName]?.list === undefined) {
+            break;
+          }
 
           if (context) {
             initializedRelationalFields[fieldName] = (
@@ -466,7 +481,7 @@ export function initializeModel(
 
 export const graphQLOperationsInfo = {
   CREATE: { operationPrefix: 'create', usePlural: false },
-  READ: { operationPrefix: 'get', usePlural: false },
+  GET: { operationPrefix: 'get', usePlural: false },
   UPDATE: { operationPrefix: 'update', usePlural: false },
   DELETE: { operationPrefix: 'delete', usePlural: false },
   LIST: { operationPrefix: 'list', usePlural: true },
@@ -474,7 +489,7 @@ export const graphQLOperationsInfo = {
   ONCREATE: { operationPrefix: 'onCreate', usePlural: false },
   ONUPDATE: { operationPrefix: 'onUpdate', usePlural: false },
   ONDELETE: { operationPrefix: 'onDelete', usePlural: false },
-  OBSERVE_QUERY: { operationPrefix: 'observeQuery', usePlural: false },
+  OBSERVEQUERY: { operationPrefix: 'observeQuery', usePlural: false },
 } as const;
 export type ModelOperation = keyof typeof graphQLOperationsInfo;
 
@@ -1028,7 +1043,7 @@ export function generateGraphQLDocument(
       graphQLOperationType ?? (graphQLOperationType = 'mutation');
     // TODO(Eslint): this this case clause correct without the break statement?
     // eslint-disable-next-line no-fallthrough
-    case 'READ':
+    case 'GET':
       graphQLArguments ?? (graphQLArguments = getPkArgs);
       graphQLSelectionSet ?? (graphQLSelectionSet = selectionSetFields);
     // TODO(Eslint): this this case clause correct without the break statement?
@@ -1076,7 +1091,7 @@ export function generateGraphQLDocument(
       graphQLOperationType ?? (graphQLOperationType = 'subscription');
       graphQLSelectionSet ?? (graphQLSelectionSet = selectionSetFields);
       break;
-    case 'OBSERVE_QUERY':
+    case 'OBSERVEQUERY':
     default:
       throw new Error(
         'Internal error: Attempted to generate graphql document for observeQuery. Please report this error.',
@@ -1149,7 +1164,7 @@ export function buildGraphQLVariables(
           : {},
       };
       break;
-    case 'READ':
+    case 'GET':
     case 'DELETE':
       // only identifiers are sent
       if (arg) {
@@ -1223,11 +1238,10 @@ export function buildGraphQLVariables(
         variables = { filter: arg.filter };
       }
       break;
-    case 'OBSERVE_QUERY':
+    case 'OBSERVEQUERY':
       throw new Error(
         'Internal error: Attempted to build variables for observeQuery. Please report this error.',
       );
-      break;
     default: {
       const exhaustiveCheck: never = operation;
       throw new Error(`Unhandled operation case: ${exhaustiveCheck}`);

@@ -11,6 +11,7 @@ import { AuthMode, CustomHeaders, SingularReturnValue } from '../src/runtime';
 import { configure } from '../src/internals';
 import { Nullable } from '../src/ModelField';
 import { AppSyncResolverEvent, Callback, Context } from 'aws-lambda';
+import { defineFunctionStub } from './utils';
 
 const fakeSecret = () => ({}) as any;
 
@@ -1444,5 +1445,86 @@ describe('SQL Schema with sql statement references', () => {
         importLine: expect.stringContaining('__tests__'),
       },
     });
+  });
+});
+
+describe('ai routes', () => {
+  test('conversations', () => {
+    const handler = defineFunctionStub({});
+    const schema = a.schema({
+      Profile: a.customType({
+        value: a.integer(),
+        unit: a.string(),
+      }),
+      myToolQuery: a
+        .query()
+        .arguments({ a: a.integer(), b: a.string() })
+        .returns(a.ref('Profile'))
+        .authorization((allow) => allow.publicApiKey())
+        .handler(a.handler.function(handler)),
+
+      anotherToolQuery: a
+        .query()
+        .returns(a.string())
+        .authorization((allow) => allow.publicApiKey())
+        .handler(a.handler.function(handler)),
+
+      ChatBot: a.conversation({
+        aiModel: a.ai.model('Claude 3 Haiku'),
+        systemPrompt: 'Hello, world!',
+        tools: [
+          { query: a.ref('myToolQuery'), description: 'does a thing' },
+          {
+            query: a.ref('anotherToolQuery'),
+            description: 'does a different thing',
+          },
+        ],
+      }),
+    });
+
+    type Schema = ClientSchema<typeof schema>;
+    type ActualChatBot = Prettify<Schema['ChatBot']>;
+
+    type Expected = {
+      __entityType: 'customConversation';
+    };
+
+    type ActualChatBotInterface = Pick<ActualChatBot, keyof Expected>;
+
+    type test = Expect<Equal<ActualChatBotInterface, Expected>>;
+
+    const graphql = schema.transform().schema;
+    expect(graphql).toMatchSnapshot();
+  });
+
+  test('generations', () => {
+    const schema = a.schema({
+      Recipe: a
+        .model({
+          ingredients: a.string().array(),
+          directions: a.string(),
+        })
+        .authorization((allow) => allow.publicApiKey()),
+      makeRecipe: a
+        .generation({
+          aiModel: a.ai.model('Claude 3 Haiku'),
+          systemPrompt: 'Hello, world!',
+        })
+        .returns(a.ref('Recipe')),
+    });
+
+    type Schema = ClientSchema<typeof schema>;
+    type ActualMakeRecipe = Prettify<Schema['makeRecipe']>;
+
+    type Expected = {
+      __entityType: 'customGeneration';
+    };
+
+    type ActualChatBotInterface = Pick<ActualMakeRecipe, keyof Expected>;
+
+    type test = Expect<Equal<ActualChatBotInterface, Expected>>;
+
+    const graphql = schema.transform().schema;
+    expect(graphql).toMatchSnapshot();
   });
 });

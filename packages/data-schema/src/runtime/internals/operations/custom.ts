@@ -13,6 +13,10 @@ import {
   ListArgs,
   QueryArgs,
   ModelIntrospectionSchema,
+  CustomOperationArgument,
+  InputFieldType,
+  EnumType,
+  InputType,
 } from '../../bridge-types';
 
 import { map } from 'rxjs';
@@ -194,19 +198,27 @@ function hasStringField<Field extends string>(
   return typeof o[field] === 'string';
 }
 
+function isEnumType(type: InputFieldType): type is EnumType {
+  return type instanceof Object && 'enum' in type;
+}
+
+function isInputType(type: InputFieldType): type is InputType {
+  return type instanceof Object && 'input' in type;
+}
+
 /**
  * @param argDef A single argument definition from a custom operation
  * @returns A string naming the base type including the `!` if the arg is required.
  */
-function argumentBaseTypeString(
-  argDef: Exclude<CustomOperation['arguments'], undefined>[number],
-) {
-  const requiredFlag = argDef.isRequired ? '!' : '';
-  if (argDef.type instanceof Object && 'enum' in argDef.type) {
-    return argDef.type.enum + requiredFlag;
-  } else {
-    return argDef.type + requiredFlag;
+function argumentBaseTypeString({ type, isRequired }: CustomOperationArgument) {
+  const requiredFlag = isRequired ? '!' : '';
+  if (isEnumType(type)) {
+    return `${type.enum}${requiredFlag}`;
   }
+  if (isInputType(type)) {
+    return `${type.input}${requiredFlag}`;
+  }
+  return `${type}${requiredFlag}`;
 }
 
 /**
@@ -233,10 +245,10 @@ function outerArguments(operation: CustomOperation): string {
     return '';
   }
   const args = Object.entries(operation.arguments)
-    .map(([k, v]) => {
-      const baseType = argumentBaseTypeString(v);
-      const finalType = v.isArray
-        ? `[${baseType}]${v.isArrayNullable ? '' : '!'}`
+    .map(([k, argument]) => {
+      const baseType = argumentBaseTypeString(argument);
+      const finalType = argument.isArray
+        ? `[${baseType}]${argument.isArrayNullable ? '' : '!'}`
         : baseType;
 
       return `$${k}: ${finalType}`;

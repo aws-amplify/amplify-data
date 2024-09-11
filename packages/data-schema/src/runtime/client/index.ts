@@ -8,6 +8,7 @@ import {
   __modelMeta__,
 } from '@aws-amplify/data-schema-types';
 import type { Observable } from 'rxjs';
+import type { ConversationRoute } from '../../ai/ConversationType';
 import type {
   ClientSchemaByEntityType,
   ClientSchemaByEntityTypeBaseShape,
@@ -507,202 +508,268 @@ type IndexQueryMethod<
 type ModelTypesClient<
   Model extends ClientSchemaByEntityTypeBaseShape['models'][string],
   FlatModel extends Record<string, unknown> = ResolvedModel<Model['type']>,
-> = IndexQueryMethods<Model> & {
-  create: (
-    model: Model['createType'],
-    options?: {
-      authMode?: AuthMode;
-      authToken?: string;
-      headers?: CustomHeaders;
+> = IndexQueryMethods<Model> &
+  // Omit any disabled operations
+  Omit<
+    {
+      create<
+        SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[],
+      >(
+        model: Model['createType'],
+        options?: {
+          selectionSet?: SelectionSet;
+          authMode?: AuthMode;
+          authToken?: string;
+          headers?: CustomHeaders;
+        },
+      ): SingularReturnValue<
+        Prettify<ReturnValue<Model, FlatModel, SelectionSet>>
+      >;
+      update<
+        SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[],
+      >(
+        model: Model['updateType'],
+        options?: {
+          selectionSet?: SelectionSet;
+          authMode?: AuthMode;
+          authToken?: string;
+          headers?: CustomHeaders;
+        },
+      ): SingularReturnValue<
+        Prettify<ReturnValue<Model, FlatModel, SelectionSet>>
+      >;
+      delete<
+        SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[],
+      >(
+        identifier: Model['deleteType'],
+        options?: {
+          selectionSet?: SelectionSet;
+          authMode?: AuthMode;
+          authToken?: string;
+          headers?: CustomHeaders;
+        },
+      ): SingularReturnValue<
+        Prettify<ReturnValue<Model, FlatModel, SelectionSet>>
+      >;
+      get<SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[]>(
+        identifier: Model['identifier'],
+        options?: {
+          selectionSet?: SelectionSet;
+          authMode?: AuthMode;
+          authToken?: string;
+          headers?: CustomHeaders;
+        },
+      ): SingularReturnValue<
+        Prettify<ReturnValue<Model, FlatModel, SelectionSet>>
+      >;
+      list<SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[]>(
+        options?: ListCpkOptions<Model> & {
+          filter?: ModelFilter<Model>;
+          limit?: number;
+          nextToken?: string | null;
+          selectionSet?: SelectionSet;
+          authMode?: AuthMode;
+          authToken?: string;
+          headers?: CustomHeaders;
+        },
+      ): ListReturnValue<Prettify<ReturnValue<Model, FlatModel, SelectionSet>>>;
+      onCreate<
+        SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[],
+      >(options?: {
+        filter?: ModelSubscriptionFilter<Model>;
+        selectionSet?: SelectionSet;
+        authMode?: AuthMode;
+        authToken?: string;
+        headers?: CustomHeaders;
+      }): ObservedReturnValue<
+        Prettify<ReturnValue<Model, FlatModel, SelectionSet>>
+      >;
+      onUpdate<
+        SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[],
+      >(options?: {
+        filter?: ModelSubscriptionFilter<Model>;
+        selectionSet?: SelectionSet;
+        authMode?: AuthMode;
+        authToken?: string;
+        headers?: CustomHeaders;
+      }): ObservedReturnValue<
+        Prettify<ReturnValue<Model, FlatModel, SelectionSet>>
+      >;
+      onDelete<
+        SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[],
+      >(options?: {
+        filter?: ModelSubscriptionFilter<Model>;
+        selectionSet?: SelectionSet;
+        authMode?: AuthMode;
+        authToken?: string;
+        headers?: CustomHeaders;
+      }): ObservedReturnValue<
+        Prettify<ReturnValue<Model, FlatModel, SelectionSet>>
+      >;
+      observeQuery<
+        SelectionSet extends ModelPath<FlatModel>[] = never[],
+      >(options?: {
+        filter?: ModelFilter<Model>;
+        selectionSet?: SelectionSet;
+        authMode?: AuthMode;
+        authToken?: string;
+      }): ObserveQueryReturnValue<
+        Prettify<ReturnValue<Model, FlatModel, SelectionSet>>
+      >;
     },
-  ) => SingularReturnValue<Model['type']>;
-  update: (
-    model: Model['updateType'],
-    options?: {
-      authMode?: AuthMode;
-      authToken?: string;
-      headers?: CustomHeaders;
-    },
-  ) => SingularReturnValue<Model['type']>;
-  delete: (
-    identifier: Model['deleteType'],
-    options?: {
-      authMode?: AuthMode;
-      authToken?: string;
-      headers?: CustomHeaders;
-    },
-  ) => SingularReturnValue<Model['type']>;
-  get<SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[]>(
-    identifier: Model['identifier'],
-    options?: {
-      selectionSet?: SelectionSet;
-      authMode?: AuthMode;
-      authToken?: string;
-      headers?: CustomHeaders;
-    },
-  ): SingularReturnValue<Prettify<ReturnValue<Model, FlatModel, SelectionSet>>>;
-  list<SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[]>(
-    options?: ListCpkOptions<Model> & {
-      filter?: ModelFilter<Model>;
-      limit?: number;
-      nextToken?: string | null;
-      selectionSet?: SelectionSet;
-      authMode?: AuthMode;
-      authToken?: string;
-      headers?: CustomHeaders;
-    },
-  ): ListReturnValue<Prettify<ReturnValue<Model, FlatModel, SelectionSet>>>;
-  onCreate<
-    SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[],
-  >(options?: {
-    filter?: ModelSubscriptionFilter<Model>;
-    selectionSet?: SelectionSet;
-    authMode?: AuthMode;
-    authToken?: string;
-    headers?: CustomHeaders;
-  }): ObservedReturnValue<
-    Prettify<ReturnValue<Model, FlatModel, SelectionSet>>
+    keyof Model['__meta']['disabledOperations']
   >;
-  onUpdate<
-    SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[],
-  >(options?: {
-    filter?: ModelSubscriptionFilter<Model>;
-    selectionSet?: SelectionSet;
-    authMode?: AuthMode;
-    authToken?: string;
-    headers?: CustomHeaders;
-  }): ObservedReturnValue<
-    Prettify<ReturnValue<Model, FlatModel, SelectionSet>>
-  >;
-  onDelete<
-    SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[],
-  >(options?: {
-    filter?: ModelSubscriptionFilter<Model>;
-    selectionSet?: SelectionSet;
-    authMode?: AuthMode;
-    authToken?: string;
-    headers?: CustomHeaders;
-  }): ObservedReturnValue<
-    Prettify<ReturnValue<Model, FlatModel, SelectionSet>>
-  >;
-  observeQuery<
-    SelectionSet extends ModelPath<FlatModel>[] = never[],
-  >(options?: {
-    filter?: ModelFilter<Model>;
-    selectionSet?: SelectionSet;
-    authMode?: AuthMode;
-    authToken?: string;
-  }): ObserveQueryReturnValue<
-    Prettify<ReturnValue<Model, FlatModel, SelectionSet>>
-  >;
-};
 
 type ModelTypesSSRCookies<
   Model extends ClientSchemaByEntityTypeBaseShape['models'][string],
   FlatModel extends Record<string, unknown> = ResolvedModel<Model['type']>,
-> = IndexQueryMethods<Model> & {
-  create: (
-    model: Model['createType'],
-    options?: {
-      authMode?: AuthMode;
-      authToken?: string;
-      headers?: CustomHeaders;
+> = IndexQueryMethods<Model> &
+  // Omit any disabled operations
+  Omit<
+    {
+      create<
+        SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[],
+      >(
+        model: Model['createType'],
+        options?: {
+          selectionSet?: SelectionSet;
+          authMode?: AuthMode;
+          authToken?: string;
+          headers?: CustomHeaders;
+        },
+      ): SingularReturnValue<
+        Prettify<ReturnValue<Model, FlatModel, SelectionSet>>
+      >;
+      update<
+        SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[],
+      >(
+        model: Model['updateType'],
+        options?: {
+          selectionSet?: SelectionSet;
+          authMode?: AuthMode;
+          authToken?: string;
+          headers?: CustomHeaders;
+        },
+      ): SingularReturnValue<
+        Prettify<ReturnValue<Model, FlatModel, SelectionSet>>
+      >;
+      delete<
+        SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[],
+      >(
+        identifier: Model['deleteType'],
+        options?: {
+          selectionSet?: SelectionSet;
+          authMode?: AuthMode;
+          authToken?: string;
+          headers?: CustomHeaders;
+        },
+      ): SingularReturnValue<
+        Prettify<ReturnValue<Model, FlatModel, SelectionSet>>
+      >;
+      get<SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[]>(
+        identifier: Model['identifier'],
+        options?: {
+          selectionSet?: SelectionSet;
+          authMode?: AuthMode;
+          authToken?: string;
+          headers?: CustomHeaders;
+        },
+      ): SingularReturnValue<
+        Prettify<ReturnValue<Model, FlatModel, SelectionSet>>
+      >;
+      list<SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[]>(
+        options?: ListCpkOptions<Model> & {
+          filter?: ModelFilter<Model>;
+          sortDirection?: ModelSortDirection;
+          limit?: number;
+          nextToken?: string | null;
+          selectionSet?: SelectionSet;
+          authMode?: AuthMode;
+          authToken?: string;
+          headers?: CustomHeaders;
+        },
+      ): ListReturnValue<Prettify<ReturnValue<Model, FlatModel, SelectionSet>>>;
     },
-  ) => SingularReturnValue<Model['type']>;
-  update: (
-    model: Model['updateType'],
-    options?: {
-      authMode?: AuthMode;
-      authToken?: string;
-      headers?: CustomHeaders;
-    },
-  ) => SingularReturnValue<Model['type']>;
-  delete: (
-    identifier: Model['deleteType'],
-    options?: {
-      authMode?: AuthMode;
-      authToken?: string;
-      headers?: CustomHeaders;
-    },
-  ) => SingularReturnValue<Model['type']>;
-  get<SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[]>(
-    identifier: Model['identifier'],
-    options?: {
-      selectionSet?: SelectionSet;
-      authMode?: AuthMode;
-      authToken?: string;
-      headers?: CustomHeaders;
-    },
-  ): SingularReturnValue<Prettify<ReturnValue<Model, FlatModel, SelectionSet>>>;
-  list<SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[]>(
-    options?: ListCpkOptions<Model> & {
-      filter?: ModelFilter<Model>;
-      sortDirection?: ModelSortDirection;
-      limit?: number;
-      nextToken?: string | null;
-      selectionSet?: SelectionSet;
-      authMode?: AuthMode;
-      authToken?: string;
-      headers?: CustomHeaders;
-    },
-  ): ListReturnValue<Prettify<ReturnValue<Model, FlatModel, SelectionSet>>>;
-};
+    keyof Model['__meta']['disabledOperations']
+  >;
 
 type ModelTypesSSRRequest<
   Model extends ClientSchemaByEntityTypeBaseShape['models'][string],
   FlatModel extends Record<string, unknown> = ResolvedModel<Model['type']>,
-> = IndexQueryMethods<Model, 'REQUEST'> & {
-  create: (
-    contextSpec: AmplifyServer.ContextSpec,
-    model: Model['createType'],
-    options?: {
-      authMode?: AuthMode;
-      authToken?: string;
-      headers?: CustomHeaders;
+> = IndexQueryMethods<Model, 'REQUEST'> &
+  // Omit any disabled operations
+  Omit<
+    {
+      create<
+        SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[],
+      >(
+        contextSpec: AmplifyServer.ContextSpec,
+        model: Model['createType'],
+        options?: {
+          selectionSet?: SelectionSet;
+          authMode?: AuthMode;
+          authToken?: string;
+          headers?: CustomHeaders;
+        },
+      ): SingularReturnValue<
+        Prettify<ReturnValue<Model, FlatModel, SelectionSet>>
+      >;
+      update<
+        SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[],
+      >(
+        contextSpec: AmplifyServer.ContextSpec,
+        model: Model['updateType'],
+        options?: {
+          selectionSet?: SelectionSet;
+          authMode?: AuthMode;
+          authToken?: string;
+          headers?: CustomHeaders;
+        },
+      ): SingularReturnValue<
+        Prettify<ReturnValue<Model, FlatModel, SelectionSet>>
+      >;
+      delete<
+        SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[],
+      >(
+        contextSpec: AmplifyServer.ContextSpec,
+        identifier: Model['deleteType'],
+        options?: {
+          selectionSet?: SelectionSet;
+          authMode?: AuthMode;
+          authToken?: string;
+          headers?: CustomHeaders;
+        },
+      ): SingularReturnValue<
+        Prettify<ReturnValue<Model, FlatModel, SelectionSet>>
+      >;
+      get<SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[]>(
+        contextSpec: AmplifyServer.ContextSpec,
+        identifier: Model['identifier'],
+        options?: {
+          selectionSet?: SelectionSet;
+          authMode?: AuthMode;
+          authToken?: string;
+          headers?: CustomHeaders;
+        },
+      ): SingularReturnValue<
+        Prettify<ReturnValue<Model, FlatModel, SelectionSet>>
+      >;
+      list<SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[]>(
+        contextSpec: AmplifyServer.ContextSpec,
+        options?: ListCpkOptions<Model> & {
+          filter?: ModelFilter<Model>;
+          sortDirection?: ModelSortDirection;
+          limit?: number;
+          nextToken?: string | null;
+          selectionSet?: SelectionSet;
+          authMode?: AuthMode;
+          authToken?: string;
+          headers?: CustomHeaders;
+        },
+      ): ListReturnValue<Prettify<ReturnValue<Model, FlatModel, SelectionSet>>>;
     },
-  ) => SingularReturnValue<Model['type']>;
-  update: (
-    contextSpec: AmplifyServer.ContextSpec,
-    model: Model['updateType'],
-    options?: {
-      authMode?: AuthMode;
-      authToken?: string;
-      headers?: CustomHeaders;
-    },
-  ) => SingularReturnValue<Model['type']>;
-  delete: (
-    contextSpec: AmplifyServer.ContextSpec,
-    identifier: Model['deleteType'],
-    options?: {
-      authMode?: AuthMode;
-      authToken?: string;
-      headers?: CustomHeaders;
-    },
-  ) => SingularReturnValue<Model['type']>;
-  get<SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[]>(
-    contextSpec: AmplifyServer.ContextSpec,
-    identifier: Model['identifier'],
-    options?: {
-      selectionSet?: SelectionSet;
-      authMode?: AuthMode;
-      authToken?: string;
-      headers?: CustomHeaders;
-    },
-  ): SingularReturnValue<Prettify<ReturnValue<Model, FlatModel, SelectionSet>>>;
-  list<SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[]>(
-    contextSpec: AmplifyServer.ContextSpec,
-    options?: ListCpkOptions<Model> & {
-      filter?: ModelFilter<Model>;
-      sortDirection?: ModelSortDirection;
-      limit?: number;
-      nextToken?: string | null;
-      selectionSet?: SelectionSet;
-      authMode?: AuthMode;
-      authToken?: string;
-      headers?: CustomHeaders;
-    },
-  ): ListReturnValue<Prettify<ReturnValue<Model, FlatModel, SelectionSet>>>;
-};
+    keyof Model['__meta']['disabledOperations']
+  >;
 
 type ContextType = 'CLIENT' | 'COOKIES' | 'REQUEST';
 
@@ -758,7 +825,8 @@ export type CustomOperations<
   OperationDefs extends ClientSchemaByEntityTypeBaseShape[
     | 'queries'
     | 'mutations'
-    | 'subscriptions'],
+    | 'subscriptions'
+    | 'generations'],
   Context extends ContextType = 'CLIENT',
 > = {
   [OpName in keyof OperationDefs]: {
@@ -834,6 +902,8 @@ export type ClientExtensions<T extends Record<any, any> = never> = {
   queries: CustomQueries<T, 'CLIENT'>;
   mutations: CustomMutations<T, 'CLIENT'>;
   subscriptions: CustomSubscriptions<T, 'CLIENT'>;
+  conversations: ConversationRoutes<T>;
+  generations: Generations<T>;
 };
 
 export type ClientExtensionsSSRRequest<T extends Record<any, any> = never> = {
@@ -849,3 +919,15 @@ export type ClientExtensionsSSRCookies<T extends Record<any, any> = never> = {
   queries: CustomQueries<T, 'COOKIES'>;
   mutations: CustomMutations<T, 'COOKIES'>;
 };
+
+export type ConversationRoutes<
+  T extends Record<any, any>,
+  Schema extends ClientSchemaByEntityType<T> = ClientSchemaByEntityType<T>,
+> = {
+  [ConversationName in keyof Schema['conversations']]: ConversationRoute;
+};
+
+export type Generations<
+  T extends Record<any, any>,
+  Schema extends ClientSchemaByEntityType<T> = ClientSchemaByEntityType<T>,
+> = CustomOperations<Schema['generations']>;
