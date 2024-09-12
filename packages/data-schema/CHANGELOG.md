@@ -1,5 +1,11 @@
 # @aws-amplify/data-schema
 
+## 1.5.1
+
+### Patch Changes
+
+- b7400b1: fixes result parsing for observeQuery, onCreate, onUpdate, and onDelete operations
+
 ## 1.5.0
 
 ### Minor Changes
