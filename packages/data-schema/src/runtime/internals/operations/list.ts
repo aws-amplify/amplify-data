@@ -11,6 +11,7 @@ import {
   ListArgs,
   ModelIntrospectionSchema,
   SchemaModel,
+  CustomUserAgentDetails,
 } from '../../bridge-types';
 
 import {
@@ -33,6 +34,7 @@ export function listFactory(
   model: SchemaModel,
   getInternals: ClientInternalsGetter,
   context = false,
+  customUserAgentDetails?: CustomUserAgentDetails,
 ) {
   const listWithContext = (
     contextSpec: AmplifyServer.ContextSpec,
@@ -45,11 +47,20 @@ export function listFactory(
       getInternals,
       args,
       contextSpec,
+      customUserAgentDetails,
     );
   };
 
   const list = (args?: Record<string, any>) => {
-    return _list(client, modelIntrospection, model, getInternals, args);
+    return _list(
+      client,
+      modelIntrospection,
+      model,
+      getInternals,
+      args,
+      undefined,
+      customUserAgentDetails,
+    );
   };
 
   return context ? listWithContext : list;
@@ -62,6 +73,7 @@ function _list(
   getInternals: ClientInternalsGetter,
   args?: ListArgs & AuthModeParams,
   contextSpec?: AmplifyServer.ContextSpec,
+  customUserAgentDetails?: CustomUserAgentDetails,
 ) {
   return selfAwareAsync(async (resultPromise) => {
     const { name } = model;
@@ -101,6 +113,7 @@ function _list(
               variables,
             },
             headers,
+            customUserAgentDetails,
           ) as Promise<GraphQLResult>);
 
       const extendedPromise = extendCancellability(basePromise, resultPromise);

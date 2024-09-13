@@ -18,6 +18,10 @@ import {
   serializeContent,
   serializeToolConfiguration,
 } from './conversationMessageSerializers';
+import {
+  AiAction,
+  getCustomUserAgentDetails,
+} from './getCustomUserAgentDetails';
 
 export const createSendMessageFunction =
   (
@@ -42,6 +46,7 @@ export const createSendMessageFunction =
       sendSchema,
       false,
       getInternals,
+      getCustomUserAgentDetails(AiAction.SendMessage),
     ) as (
       args?: Record<string, any>,
     ) => SingularReturnValue<ConversationMessage>;

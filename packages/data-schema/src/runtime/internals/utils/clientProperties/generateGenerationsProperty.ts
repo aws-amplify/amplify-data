@@ -8,6 +8,10 @@ import {
   ModelIntrospectionSchema,
 } from '../../../bridge-types';
 import { CustomQueries } from '../../../client';
+import {
+  AiAction,
+  getCustomUserAgentDetails,
+} from '../../ai/getCustomUserAgentDetails';
 import { customOpFactory } from '../../operations/custom';
 
 export function generateGenerationsProperty<T extends Record<any, any>>(
@@ -34,6 +38,7 @@ export function generateGenerationsProperty<T extends Record<any, any>>(
       generation,
       false,
       getInternals,
+      getCustomUserAgentDetails(AiAction.Generation),
     );
   }
 

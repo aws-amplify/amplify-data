@@ -17,6 +17,7 @@ import {
   InputFieldType,
   EnumType,
   InputType,
+  CustomUserAgentDetails,
 } from '../../bridge-types';
 
 import { map } from 'rxjs';
@@ -120,6 +121,7 @@ export function customOpFactory(
   operation: CustomOperation,
   useContext: boolean,
   getInternals: ClientInternalsGetter,
+  customUserAgentDetails?: CustomUserAgentDetails,
 ) {
   // .arguments() are defined for the custom operation in the schema builder
   // and are present in the model introspection schema
@@ -159,6 +161,7 @@ export function customOpFactory(
         getInternals,
         arg,
         options,
+        customUserAgentDetails,
       );
     }
 
@@ -171,6 +174,7 @@ export function customOpFactory(
       arg,
       options,
       contextSpec,
+      customUserAgentDetails,
     );
   };
 
@@ -384,6 +388,7 @@ function _op(
   args?: QueryArgs,
   options?: AuthModeParams & ListArgs,
   context?: AmplifyServer.ContextSpec,
+  customUserAgentDetails?: CustomUserAgentDetails,
 ) {
   return selfAwareAsync(async (resultPromise) => {
     const { name: operationName } = operation;
@@ -423,6 +428,7 @@ function _op(
               variables,
             },
             headers,
+            customUserAgentDetails,
           ) as Promise<GraphQLResult>);
 
       const extendedPromise = extendCancellability(basePromise, resultPromise);
@@ -548,6 +554,7 @@ function _opSubscription(
   getInternals: ClientInternalsGetter,
   args?: QueryArgs,
   options?: AuthModeParams & ListArgs,
+  customUserAgentDetails?: CustomUserAgentDetails,
 ) {
   const operationType = 'subscription';
   const { name: operationName } = operation;
@@ -576,6 +583,7 @@ function _opSubscription(
       variables,
     },
     headers,
+    customUserAgentDetails,
   ) as GraphqlSubscriptionResult;
 
   return observable.pipe(

@@ -13,6 +13,7 @@ import {
   ModelIntrospectionSchema,
   SchemaModel,
   QueryArgs,
+  CustomUserAgentDetails,
 } from '../../bridge-types';
 
 import {
@@ -37,6 +38,7 @@ export function getFactory(
   operation: ModelOperation,
   getInternals: ClientInternalsGetter,
   useContext = false,
+  customUserAgentDetails?: CustomUserAgentDetails,
 ) {
   const getWithContext = (
     contextSpec: AmplifyServer.ContextSpec & GraphQLOptions,
@@ -52,6 +54,7 @@ export function getFactory(
       operation,
       getInternals,
       contextSpec,
+      customUserAgentDetails,
     );
   };
 
@@ -64,6 +67,8 @@ export function getFactory(
       options,
       operation,
       getInternals,
+      undefined,
+      customUserAgentDetails,
     );
   };
 
@@ -79,6 +84,7 @@ function _get(
   operation: ModelOperation,
   getInternals: ClientInternalsGetter,
   context?: AmplifyServer.ContextSpec,
+  customUserAgentDetails?: CustomUserAgentDetails,
 ) {
   return selfAwareAsync(async (resultPromise) => {
     const { name } = model;
@@ -118,6 +124,7 @@ function _get(
               variables,
             },
             headers,
+            customUserAgentDetails,
           ) as Promise<GraphQLResult>);
 
       const extendedPromise = extendCancellability(basePromise, resultPromise);
