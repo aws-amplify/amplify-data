@@ -4,7 +4,7 @@ import jsdom from 'jsdom';
 import * as prettier from 'prettier';
 
 type PageCodeBlocks = Record<string, NamedCodeBlocks>;
-type NamedCodeBlocks = Record<string, { code: string; hash: string }>;
+type NamedCodeBlocks = { name: string; code: string; hash: string }[];
 
 async function getHTMLDocument(url: string) {
   const data = await fetch(url).then((result) => result.text());
@@ -12,8 +12,20 @@ async function getHTMLDocument(url: string) {
   return dom.window.document;
 }
 
+/**
+ * Produces a short (truncated) hash string with a *pretty low* chance of collision.
+ *
+ * Intended to identify code snippets and detect changes. **Not intended for any
+ * cryptographic or security purposes.**
+ *
+ * @param data The string to hash.
+ * @returns A 16 character hexadecimal string.
+ */
 function generateHash(data: string): string {
-  return createHash('sha256').update(data, 'utf-8').digest('hex');
+  return createHash('sha256')
+    .update(data, 'utf-8')
+    .digest('hex')
+    .substring(0, 16); // 64 bits of collision resistance
 }
 
 function codeblockFilename(element: HTMLElement) {
@@ -71,41 +83,57 @@ async function format(tag: HTMLPreElement, verbose = false) {
 }
 
 async function getPageCodeBlocks(doc: Document): Promise<NamedCodeBlocks> {
-  const results: NamedCodeBlocks = {};
+  const results: NamedCodeBlocks = [];
 
   for (const pre of doc.getElementsByTagName('pre')) {
-    const snippetName = codeblockFilename(pre);
-    if (!isTS(snippetName)) continue;
+    const name = codeblockFilename(pre);
+    // if (!isTS(name)) continue;
     const code = await format(pre);
     const hash = generateHash(code);
-    results[snippetName] = { code, hash };
+    results.push({ name, code, hash });
   }
 
   return results;
 }
 
-async function getAll(urls: string[]): Promise<PageCodeBlocks> {
-  const results: PageCodeBlocks = {};
-
+async function fetchDocuments(
+  urls: string[],
+): Promise<Record<string, Document>> {
+  const results: Record<string, Document> = {};
   for (const url of urls) {
     console.log(`processing ${url}`);
-    const dom = await getHTMLDocument(url);
-    results[url] = await getPageCodeBlocks(dom);
+    results[url] = await getHTMLDocument(url);
   }
-
   return results;
 }
 
-async function findPages() {
-  const sitemapURL = 'https://docs.amplify.aws/sitemap.xml';
+async function extractCodeBlocks(
+  docs: Record<string, Document>,
+): Promise<PageCodeBlocks> {
+  const results: PageCodeBlocks = {};
+  for (const [url, dom] of Object.entries(docs)) {
+    results[url] = await getPageCodeBlocks(dom);
+  }
+  return results;
+}
+
+async function discoverPages({
+  sitemapURL = 'https://docs.amplify.aws/sitemap.xml',
+  filter = 'react/build-a-backend/data/',
+}: {
+  sitemapURL?: string;
+  filter?: string;
+} = {}) {
   const locTags = (await getHTMLDocument(sitemapURL)).getElementsByTagName(
     'loc',
   );
-  return [...locTags]
-    .map((t) => t.innerHTML)
-    .filter((h) => h.includes('react/build-a-backend/data/'));
+  return [...locTags].map((t) => t.innerHTML).filter((h) => h.includes(filter));
 }
 
-const urls = await findPages();
-const results = await getAll(urls);
-console.log(JSON.stringify(results, null, 2));
+export async function fetchSnippets() {
+  const urls = await discoverPages();
+  const docs = await fetchDocuments(urls);
+  return extractCodeBlocks(docs);
+}
+
+console.log(await fetchSnippets());
