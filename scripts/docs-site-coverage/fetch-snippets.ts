@@ -4,7 +4,14 @@ import jsdom from 'jsdom';
 import * as prettier from 'prettier';
 
 type PageCodeBlocks = Record<string, NamedCodeBlocks>;
-type NamedCodeBlocks = { name: string; code: string; hash: string }[];
+type NamedCodeBlock = { name: string; code: string; hash: string };
+type NamedCodeBlocks = NamedCodeBlock[];
+export type CodeSnippet = {
+  path: string;
+  name: string;
+  code: string;
+  hash: string;
+};
 
 async function getHTMLDocument(url: string) {
   const data = await fetch(url).then((result) => result.text());
@@ -130,10 +137,28 @@ async function discoverPages({
   return [...locTags].map((t) => t.innerHTML).filter((h) => h.includes(filter));
 }
 
-export async function fetchSnippets() {
+async function fetchSnippets() {
   const urls = await discoverPages();
   const docs = await fetchDocuments(urls);
   return extractCodeBlocks(docs);
+}
+
+export async function buildSnippetMap(): Promise<
+  Record<string, CodeSnippet[]>
+> {
+  const map: Record<string, CodeSnippet[]> = {};
+  const snippetsByUrl = await fetchSnippets();
+  for (const [path, snippets] of Object.entries(snippetsByUrl)) {
+    for (const snippet of snippets) {
+      if (!map[snippet.hash]) map[snippet.hash] = [];
+      map[snippet.hash].push({
+        ...snippet,
+        path,
+      });
+    }
+  }
+
+  return map;
 }
 
 console.log(await fetchSnippets());

@@ -8,19 +8,24 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const TEST_DIRECTORY = `${__dirname}/../../packages/integration-tests/__tests__/defined-behavior`;
 
-type Region = {
+export type Region = {
   path: string;
   start: number;
   end: number;
-  annotation: string;
+  annotation?: string;
 };
 
 type RegionMarker = {
   type: 'start' | 'end';
   lineNumber: number;
-  annotation: string;
+  annotation?: string;
   line: string;
 };
+
+/**
+ * Map of code snippet hashes to integ test region code.
+ */
+export type RegionMap = Record<string, Region[]>;
 
 async function listDefinedBehaviorTestFiles() {
   return glob.glob(`${TEST_DIRECTORY}/**/*.ts`);
@@ -33,17 +38,18 @@ async function getAnnotatedRegionMarkers(
   const lines = data.split('\n');
   const markers: RegionMarker[] = [];
 
-  for (const [lineNumber, line] of lines.entries()) {
-    const startRegion = line.trim().match(/\/\/\s+#region\s+(.+)$/);
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i];
+    const lineNumber = i + 1;
+    const startRegion = line.trim().match(/\/\/\s+#region\s*(.*)$/);
     if (startRegion) {
       const annotation = startRegion[1];
       markers.push({ line, annotation, lineNumber, type: 'start' });
     }
 
-    const endRegion = line.trim().match(/\/\/\s+#endregion\s+(.+)$/);
+    const endRegion = line.trim().match(/\/\/\s+#endregion/);
     if (endRegion) {
-      const annotation = endRegion[1];
-      markers.push({ line, annotation, lineNumber, type: 'end' });
+      markers.push({ line, lineNumber, type: 'end' });
     }
   }
 
@@ -51,40 +57,72 @@ async function getAnnotatedRegionMarkers(
 }
 
 async function getRegions(path: string): Promise<Region[]> {
+  /**
+   * To be used as a stack for matching pairs. Hence, should contain only
+   * START markers.
+   */
+  const startMarkers: RegionMarker[] = [];
   const regions: Region[] = [];
-  const markerStack: RegionMarker[] = [];
 
   for (const marker of await getAnnotatedRegionMarkers(path)) {
     if (marker.type === 'start') {
-      markerStack.push(marker);
+      startMarkers.push(marker);
     } else {
-      if (
-        marker.annotation === markerStack[markerStack.length - 1]?.annotation
-      ) {
-        const startMarker = markerStack.pop();
+      const endMarker = marker; // just aliasing for later clarity.
+      if (startMarkers.length > 0) {
+        const startMarker = startMarkers.pop();
         regions.push({
-          annotation: marker.annotation,
+          annotation: startMarker!.annotation,
           start: startMarker!.lineNumber,
-          end: marker.lineNumber,
+          end: endMarker.lineNumber,
           path,
         });
       } else {
-        console.error(`Unexpected region end: ${JSON.stringify(marker)}`);
+        console.error(
+          `Unexpected "${endMarker.lineNumber}" at ${path}:${endMarker.line}`,
+        );
       }
     }
   }
 
-  if (markerStack.length > 0) {
-    console.error(
-      `Unmatched region starts: ${JSON.stringify(markerStack, null, 2)}`,
-    );
+  for (const marker of startMarkers) {
+    console.error(`Unmatched "${marker.lineNumber}" at ${path}:${marker.line}`);
   }
 
   return regions;
 }
 
-const paths = await listDefinedBehaviorTestFiles();
-for (const path of paths) {
-  const regions = await getRegions(path);
-  if (regions.length > 0) console.log(path, regions);
+function extractHashes(region: Region): string[] {
+  return (
+    region.annotation
+      ?.trim()
+      .toLowerCase()
+      .match(/covers\s+([0-9a-f])+\s*$/)?.[1] || ''
+  ).split(/,\s+/);
+}
+
+function convertToRegionMap(regions: Region[]): RegionMap {
+  const map: RegionMap = {};
+
+  for (const region of regions) {
+    for (const hash of extractHashes(region)) {
+      if (!map[hash]) map[hash] = [];
+      map[hash].push(region);
+    }
+  }
+
+  return map;
+}
+
+async function findAllRegions(): Promise<Region[]> {
+  let regions: Region[] = [];
+  const paths = await listDefinedBehaviorTestFiles();
+  for (const path of paths) {
+    regions = regions.concat(await getRegions(path));
+  }
+  return regions;
+}
+
+export async function buildRegionMap(): Promise<RegionMap> {
+  return convertToRegionMap(await findAllRegions());
 }

@@ -17,7 +17,7 @@
     "build:clean": "turbo run clean && rimraf node_modules && npm run delete-cache",
     "check": "npm run build && npm run test && npm run lint && npm run check:api && npm run check:type-perf",
     "check:api": "turbo run check:api",
-    "check:docs-site-coverage": "tsx scripts/docs-site-coverage/fetch-snippets.ts",
+    "check:docs-site-coverage": "tsx scripts/docs-site-coverage/run.ts",
     "check:type-perf": "tsx scripts/check-ts-benches.ts",
     "check:package-lock": "tsx scripts/check-package-lock.ts",
     "clean": "turbo run clean",
