@@ -38,9 +38,8 @@ async function getAnnotatedRegionMarkers(
   const lines = data.split('\n');
   const markers: RegionMarker[] = [];
 
-  for (let i = 0; i < lines.length; i++) {
-    const line = lines[i];
-    const lineNumber = i + 1;
+  for (const [zeroBasedLineNumber, line] of lines.entries()) {
+    const lineNumber = zeroBasedLineNumber + 1;
     const startRegion = line.trim().match(/\/\/\s+#region\s*(.*)$/);
     if (startRegion) {
       const annotation = startRegion[1];
@@ -79,26 +78,24 @@ async function getRegions(path: string): Promise<Region[]> {
         });
       } else {
         console.error(
-          `Unexpected "${endMarker.lineNumber}" at ${path}:${endMarker.line}`,
+          `Unexpected "${endMarker.line}" at ${path}:${endMarker.lineNumber}`,
         );
       }
     }
   }
 
   for (const marker of startMarkers) {
-    console.error(`Unmatched "${marker.lineNumber}" at ${path}:${marker.line}`);
+    console.error(`Unmatched "${marker.line}" at ${path}:${marker.lineNumber}`);
   }
 
   return regions;
 }
 
 function extractHashes(region: Region): string[] {
-  return (
-    region.annotation
-      ?.trim()
-      .toLowerCase()
-      .match(/covers\s+([0-9a-f])+\s*$/)?.[1] || ''
-  ).split(/,\s+/);
+  const normalizedAnnotation = region.annotation?.trim().toLowerCase() || '';
+  const match = normalizedAnnotation.match(/covers\s+([0-9a-f, ]+)/);
+  const hashes = match?.[1].split(/,\s+/) || [];
+  return hashes;
 }
 
 function convertToRegionMap(regions: Region[]): RegionMap {
@@ -106,8 +103,10 @@ function convertToRegionMap(regions: Region[]): RegionMap {
 
   for (const region of regions) {
     for (const hash of extractHashes(region)) {
-      if (!map[hash]) map[hash] = [];
-      map[hash].push(region);
+      if (hash) {
+        if (!map[hash]) map[hash] = [];
+        map[hash].push(region);
+      }
     }
   }
 

@@ -161,4 +161,4 @@ export async function buildSnippetMap(): Promise<
   return map;
 }
 
-console.log(await fetchSnippets());
+// console.log(await fetchSnippets());

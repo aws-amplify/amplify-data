@@ -61,6 +61,7 @@ describe('Result parsing edge cases', () => {
       });
 
       test('of type `SomeCustomType[]`', async () => {
+        // #region mocking
         const schema = a
           .schema({
             SomeCustomType: a.customType({
@@ -194,6 +195,7 @@ describe('Result parsing edge cases', () => {
       });
 
       test('of type `SomeCustomType[]`', async () => {
+        // #region mocking
         const schema = a
           .schema({
             SomeCustomType: a.customType({
@@ -226,7 +228,9 @@ describe('Result parsing edge cases', () => {
         const client = generateClient<Schema>();
         // #endregion mocking
 
+        // #region covers 1234af, 456bc
         const { data: carts } = await client.models.Cart.list();
+        // #endregion
 
         // #region assertions
         expect(carts[0]).toEqual(expect.objectContaining(expectedCart));
