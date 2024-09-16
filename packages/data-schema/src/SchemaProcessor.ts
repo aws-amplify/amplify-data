@@ -42,10 +42,12 @@ import {
   type HandlerType,
   type CustomHandler,
   type SqlReferenceHandler,
-  type FunctionHandler,
+  FunctionHandler,
+  AsyncFunctionHandler
 } from './Handler';
 import * as os from 'os';
 import * as path from 'path';
+import { brandSymbol } from './util/Brand';
 import {
   brandName as conversationBrandName,
   type InternalConversationType,
@@ -279,7 +281,7 @@ function enumFieldToGql(enumName: string, secondaryIndexes: string[] = []) {
 }
 
 function transformFunctionHandler(
-  handlers: FunctionHandler[],
+  handlers: (FunctionHandler | AsyncFunctionHandler)[],
   functionFieldName: string,
 ): {
   gqlHandlerContent: string;
@@ -291,21 +293,25 @@ function transformFunctionHandler(
   handlers.forEach((handler, idx) => {
     const handlerData = getHandlerData(handler);
 
-    if (typeof handlerData === 'string') {
-      gqlHandlerContent += `@function(name: "${handlerData}") `;
-    } else if (typeof handlerData.getInstance === 'function') {
+    if (typeof handlerData.handler === 'string') {
+      gqlHandlerContent += `@function(name: "${handlerData.handler}") `;
+    } else if (typeof handlerData.handler.getInstance === 'function') {
       const fnName = `Fn${capitalize(functionFieldName)}${idx === 0 ? '' : `${idx + 1}`}`;
-
-      lambdaFunctionDefinition[fnName] = handlerData;
-      gqlHandlerContent += `@function(name: "${fnName}") `;
-    } else {
+      lambdaFunctionDefinition[fnName] = handlerData.handler;
+      const invocationTypeArg = handlerData.invocationType === 'Event' ? ', invocationType: Event)' : ')'
+      gqlHandlerContent += `@function(name: "${fnName}"${invocationTypeArg} `;
+    }
+    else {
       throw new Error(
         `Invalid value specified for ${functionFieldName} handler.function(). Expected: defineFunction or string.`,
       );
     }
   });
 
-  return { gqlHandlerContent, lambdaFunctionDefinition };
+  return {
+    gqlHandlerContent,
+    lambdaFunctionDefinition,
+  };
 }
 
 type CustomTypeAuthRules =
@@ -1275,6 +1281,20 @@ const schemaPreprocessor = (
 
   const staticSchema = databaseType === 'sql';
 
+  // If the schema contains a custom operation with an async lambda handler,
+  // we need to add the EventInvocationResponse custom type to the schema.
+  // This is done here so that:
+  // - it only happens once per schema
+  // - downstream validation based on `getRefTypeForSchema` finds the EventInvocationResponse type
+  const containsAsyncLambdaCustomOperation = Object.entries(schema.data.types).find(([_, typeDef]) => {
+    return isCustomOperation(typeDef)
+    && finalHandlerIsAsyncFunctionHandler(typeDef.data.handlers);
+  });
+
+  if (containsAsyncLambdaCustomOperation) {
+    schema.data.types['EventInvocationResponse'] = eventInvocationResponseCustomType;
+  }
+
   const topLevelTypes = sortTopLevelTypes(Object.entries(schema.data.types));
 
   const { schemaAuth, functionSchemaAccess } = extractFunctionSchemaAccess(
@@ -1575,12 +1595,16 @@ function validateCustomOperations(
     }
 
     if (configuredHandlers.size > 1) {
-      const configuredHandlersStr = JSON.stringify(
-        Array.from(configuredHandlers),
-      );
-      throw new Error(
-        `Field handlers must be of the same type. ${typeName} has been configured with ${configuredHandlersStr}`,
-      );
+      configuredHandlers.delete('asyncFunctionHandler');
+      configuredHandlers.delete('functionHandler');
+      if (configuredHandlers.size > 0) {
+        const configuredHandlersStr = JSON.stringify(
+          Array.from(configuredHandlers),
+        );
+        throw new Error(
+          `Field handlers must be of the same type. ${typeName} has been configured with ${configuredHandlersStr}`,
+        );
+      }
     }
   }
 
@@ -1588,11 +1612,15 @@ function validateCustomOperations(
     typeDef.data.returnType === null &&
     (opType === 'Query' || opType === 'Mutation' || opType === 'Generation')
   ) {
-    const typeDescription =
-      opType === 'Generation' ? 'Generation Route' : `Custom ${opType}`;
-    throw new Error(
-      `Invalid ${typeDescription} definition. A ${typeDescription} must include a return type. ${typeName} has no return type specified.`,
-    );
+    // TODO: There should be a more elegant and readable way to handle this check.
+    // Maybe it's not even necessary anymore since we're the setting returnType in the handler() method.
+    if (!handlers || handlers.length === 0 || handlers[handlers.length - 1][brandSymbol] !== 'asyncFunctionHandler') {
+      const typeDescription =
+        opType === 'Generation' ? 'Generation Route' : `Custom ${opType}`;
+      throw new Error(
+        `Invalid ${typeDescription} definition. A ${typeDescription} must include a return type. ${typeName} has no return type specified.`,
+      );
+    }
   }
 
   if (opType !== 'Subscription' && subscriptionSource.length > 0) {
@@ -1677,9 +1705,15 @@ const isCustomHandler = (
 
 const isFunctionHandler = (
   handler: HandlerType[] | null,
-): handler is FunctionHandler[] => {
-  return Array.isArray(handler) && getBrand(handler[0]) === 'functionHandler';
+): handler is (FunctionHandler | AsyncFunctionHandler)[] => {
+  return Array.isArray(handler) && ['functionHandler', 'asyncFunctionHandler'].includes(getBrand(handler[0]));
 };
+
+const finalHandlerIsAsyncFunctionHandler = (
+  handler: HandlerType[] | null,
+): handler is AsyncFunctionHandler[] => {
+  return Array.isArray(handler) && getBrand(handler[handler.length - 1]) === 'asyncFunctionHandler';
+}
 
 const normalizeDataSourceName = (
   dataSource: undefined | string | RefType<any, any, any>,
@@ -1760,6 +1794,22 @@ const handleCustom = (
   };
 
   return jsFn;
+};
+
+const eventInvocationResponseCustomType = {
+  data: {
+    fields: {
+      success: {
+        data: {
+          fieldType: ModelFieldType.Boolean,
+          required: true,
+          array: false,
+          arrayRequired: false,
+        }
+      }
+    },
+    type: 'customType'
+  }
 };
 
 function transformCustomOperations(
