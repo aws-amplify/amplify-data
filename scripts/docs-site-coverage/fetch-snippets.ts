@@ -129,6 +129,8 @@ async function extractCodeBlocks(
 
 async function discoverPages({
   sitemapURL = 'https://docs.amplify.aws/sitemap.xml',
+
+  // TODO: should be a deny list, not an allow list
   filter = 'react/build-a-backend/data/',
 }: {
   sitemapURL?: string;

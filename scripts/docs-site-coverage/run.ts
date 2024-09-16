@@ -18,6 +18,8 @@ const report = new CoverageReport(
   await buildRegionMap(),
 );
 
+// TODO: split this into passing and failing sections
+// TODO: fill out orphaned integs section
 writeFileSync(REPORT_PATH, report.toMarkdown());
 execSync(`code ${REPORT_PATH}`);
 
