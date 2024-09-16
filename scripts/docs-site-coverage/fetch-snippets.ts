@@ -6,12 +6,15 @@ import * as prettier from 'prettier';
 type PageCodeBlocks = Record<string, NamedCodeBlocks>;
 type NamedCodeBlock = { name: string; code: string; hash: string };
 type NamedCodeBlocks = NamedCodeBlock[];
+
 export type CodeSnippet = {
   path: string;
   name: string;
   code: string;
   hash: string;
 };
+
+export type CodeSnippetMap = Record<string, CodeSnippet[]>;
 
 async function getHTMLDocument(url: string) {
   const data = await fetch(url).then((result) => result.text());
@@ -143,10 +146,8 @@ async function fetchSnippets() {
   return extractCodeBlocks(docs);
 }
 
-export async function buildSnippetMap(): Promise<
-  Record<string, CodeSnippet[]>
-> {
-  const map: Record<string, CodeSnippet[]> = {};
+export async function buildSnippetMap(): Promise<CodeSnippetMap> {
+  const map: CodeSnippetMap = {};
   const snippetsByUrl = await fetchSnippets();
   for (const [path, snippets] of Object.entries(snippetsByUrl)) {
     for (const snippet of snippets) {
