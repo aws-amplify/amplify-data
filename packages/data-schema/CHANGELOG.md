@@ -1,5 +1,11 @@
 # @aws-amplify/data-schema
 
+## 1.6.0
+
+### Minor Changes
+
+- adf9f6e: add support for async lambda function handlers
+
 ## 1.5.1
 
 ### Patch Changes

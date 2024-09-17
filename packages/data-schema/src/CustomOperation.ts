@@ -1,6 +1,6 @@
 import { SetTypeSubArg } from '@aws-amplify/data-schema-types';
 import { Brand, brand } from './util';
-import { InternalField, type BaseModelField } from './ModelField';
+import { InternalField, ModelField, type BaseModelField } from './ModelField';
 import {
   AllowModifierForCustomOperation,
   Authorization,
@@ -10,10 +10,12 @@ import { RefType, InternalRef } from './RefType';
 import { EnumType } from './EnumType';
 import { CustomType } from './CustomType';
 import type {
+  AsyncFunctionHandler,
   CustomHandler,
   FunctionHandler,
   HandlerType as Handler,
 } from './Handler';
+import { brandSymbol } from './util/Brand';
 import { AiModel, InferenceConfiguration } from './ai/ModelType';
 
 const queryBrand = 'queryCustomOperation';
@@ -28,14 +30,31 @@ type CustomOperationBrand =
   | typeof generationBrand;
 
 type CustomArguments = Record<string, BaseModelField | EnumType>;
-
 type SubscriptionSource = RefType<any, any>;
 type InternalSubscriptionSource = InternalRef;
-
 type CustomReturnType = RefType<any> | CustomType<any>;
 type InternalCustomArguments = Record<string, InternalField>;
 type InternalCustomReturnType = InternalRef;
-type HandlerInputType = FunctionHandler[] | CustomHandler[] | Handler;
+type HandlerInputType =
+  | FunctionHandler[]
+  | CustomHandler[]
+  | AsyncFunctionHandler[]
+  | HeterogeneousFunctionHandlerWithLastAsync
+  | HeterogeneousFunctionHandlerType
+  | Handler;
+type HeterogeneousFunctionHandlerType = (
+  | FunctionHandler
+  | AsyncFunctionHandler
+)[];
+type HeterogeneousFunctionHandlerWithLastAsync = [
+  ...HeterogeneousFunctionHandlerType,
+  AsyncFunctionHandler,
+];
+
+export type UltimateFunctionHandlerAsyncType =
+  | AsyncFunctionHandler
+  | AsyncFunctionHandler[]
+  | HeterogeneousFunctionHandlerWithLastAsync;
 
 export const CustomOperationNames = [
   'Query',
@@ -104,7 +123,14 @@ export type CustomOperation<
     >;
     handler<H extends HandlerInputType>(
       handlers: H,
-    ): CustomOperation<T, K | 'handler', B>;
+    ): [H] extends [UltimateFunctionHandlerAsyncType]
+      ? CustomOperation<
+          AsyncFunctionCustomOperation<T>,
+          K | 'handler' | 'returns',
+          B
+        >
+      : CustomOperation<T, K | 'handler', B>;
+
     for<Source extends SubscriptionSource>(
       source: Source | Source[],
     ): CustomOperation<
@@ -182,6 +208,10 @@ function _custom<
         data.handlers = Array.isArray(handlers)
           ? handlers
           : ([handlers] as Handler[]);
+
+        if (lastHandlerIsAsyncFunction(handlers)) {
+          data.returnType = eventInvocationResponse;
+        }
 
         return this;
       },
@@ -307,6 +337,39 @@ export function subscription(): CustomOperation<
   return _custom('Subscription', subscriptionBrand);
 }
 
+// #region async Lambda function related types
+type AsyncFunctionCustomOperation<T extends CustomOperationParamShape> =
+  SetTypeSubArg<
+    SetTypeSubArg<T, 'returnType', EventInvocationResponseCustomType>,
+    'handlers',
+    AsyncFunctionHandler
+  >;
+
+type EventInvocationResponseCustomType = CustomType<{
+  fields: {
+    success: ModelField<boolean, 'required', undefined>;
+  };
+}>;
+
+const eventInvocationResponse = {
+  data: {
+    type: 'ref',
+    link: 'EventInvocationResponse',
+    valueRequired: false,
+    array: false,
+    arrayRequired: false,
+    mutationOperations: [],
+    authorization: [],
+  },
+};
+
+function lastHandlerIsAsyncFunction(handlers: HandlerInputType): boolean {
+  const lastHandlerBrandSymbol = Array.isArray(handlers)
+    ? handlers[handlers.length - 1][brandSymbol]
+    : handlers[brandSymbol];
+  return lastHandlerBrandSymbol === 'asyncFunctionHandler';
+}
+// #endregion async Lambda function related types
 export interface GenerationInput {
   aiModel: AiModel;
   systemPrompt: string;
