@@ -20,6 +20,8 @@ jobs:
         uses: ./amplify-api-next/.github/actions/node-and-build
         with:
           is-prebuild: true
+  check-dependencies:
+    uses: ./.github/workflows/callable-dependency-review.yml
   unit-tests:
     needs:
       - prebuild
