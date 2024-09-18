@@ -283,5 +283,109 @@ describe('Result parsing edge cases', () => {
         // #endregion assertions
       });
     });
+    describe('custom operations', () => {
+      test('of type `Ref` accepts undefined', async () => {
+        // #region mocking
+        console.log('asd');
+        const schema = a
+          .schema({
+            Cart: a.model({
+              id: a.id().required(),
+            }),
+            opTest: a
+              .query()
+              .arguments({})
+              .returns(a.ref('Cart'))
+              .handler(a.handler.function('opTest')),
+          })
+          .authorization((allow) => [allow.publicApiKey()]);
+        type Schema = ClientSchema<typeof schema>;
+
+        const { spy, generateClient } = mockedGenerateClient([
+          { data: { opTest: undefined } },
+        ]);
+        const config = await buildAmplifyConfig(schema);
+        Amplify.configure(config);
+        const client = generateClient<Schema>();
+        // #endregion mocking
+
+        const { data: value } = await client.queries.opTest({});
+        // #region assertions
+        expect(value).toBe(undefined);
+
+        // #endregion assertions
+      });
+
+      test('of type `Ref` accepts null', async () => {
+        // #region mocking
+        console.log('asd');
+        const schema = a
+          .schema({
+            Cart: a.model({
+              id: a.id().required(),
+            }),
+            opTest: a
+              .query()
+              .arguments({})
+              .returns(a.ref('Cart'))
+              .handler(a.handler.function('opTest')),
+          })
+          .authorization((allow) => [allow.publicApiKey()]);
+        type Schema = ClientSchema<typeof schema>;
+
+        const { spy, generateClient } = mockedGenerateClient([
+          { data: { opTest: null } },
+        ]);
+        const config = await buildAmplifyConfig(schema);
+        Amplify.configure(config);
+        const client = generateClient<Schema>();
+        // #endregion mocking
+
+        const { data: value } = await client.queries.opTest({});
+        // #region assertions
+        expect(value).toBe(null);
+
+        // #endregion assertions
+      });
+
+      test('of type `Ref` accepts null for an object with a hasMany relationship', async () => {
+        // #region mocking
+        console.log('asd');
+        const schema = a
+          .schema({
+            Cart: a.model({
+              id: a.id().required(),
+              items: a.hasMany('CartItem', 'cartId'),
+            }),
+            CartItem: a.model({
+              name: a.string(),
+              price: a.float(),
+              cartId: a.id().required(),
+              cart: a.belongsTo('Cart', 'cartId'),
+            }),
+            opTest: a
+              .query()
+              .arguments({})
+              .returns(a.ref('Cart'))
+              .handler(a.handler.function('opTest')),
+          })
+          .authorization((allow) => [allow.publicApiKey()]);
+        type Schema = ClientSchema<typeof schema>;
+
+        const { spy, generateClient } = mockedGenerateClient([
+          { data: { opTest: null } },
+        ]);
+        const config = await buildAmplifyConfig(schema);
+        Amplify.configure(config);
+        const client = generateClient<Schema>();
+        // #endregion mocking
+
+        const { data: value } = await client.queries.opTest({});
+        // #region assertions
+        expect(value).toBe(null);
+
+        // #endregion assertions
+      });
+    });
   });
 });
