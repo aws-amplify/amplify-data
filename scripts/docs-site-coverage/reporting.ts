@@ -1,5 +1,9 @@
+import { writeFileSync } from 'fs';
+import { execSync } from 'child_process';
+import { relative } from 'path';
 import type { CodeSnippet, CodeSnippetMap } from './fetch-snippets';
-import type { Region, RegionMap } from './find-integs';
+import { Region, RegionMap } from './find-integs';
+import type { Config } from './config-type';
 
 export class SnippetStatus {
   constructor(
@@ -14,7 +18,7 @@ export class SnippetStatus {
 
 export class CoverageStatus {
   constructor(
-    public region: Region,
+    public region: Region & { hash: string },
     public snippets: CodeSnippet[],
   ) {}
 
@@ -23,10 +27,31 @@ export class CoverageStatus {
   }
 }
 
+type CoverageReportInit = {
+  config: Config;
+  buildSnippetMap: (config: Config) => Promise<CodeSnippetMap>;
+  buildRegionMap: (config: Config) => Promise<RegionMap>;
+};
+
+export class CoverageReporter {
+  constructor(private inits: CoverageReportInit) {}
+
+  async report() {
+    const snippets = await this.inits.buildSnippetMap(this.inits.config);
+    const coverage = await this.inits.buildRegionMap(this.inits.config);
+    return new CoverageReport(
+      snippets,
+      coverage,
+      this.inits.config.outputDirectory,
+    );
+  }
+}
+
 export class CoverageReport {
   constructor(
     public snippets: CodeSnippetMap,
     public coverage: RegionMap,
+    public reportPath: string,
   ) {}
 
   get allSnippetStatuses(): SnippetStatus[] {
@@ -43,7 +68,9 @@ export class CoverageReport {
     const all: CoverageStatus[] = [];
     for (const [hash, linkedRegions] of Object.entries(this.coverage)) {
       for (const region of linkedRegions) {
-        all.push(new CoverageStatus(region, this.snippets[hash] || []));
+        all.push(
+          new CoverageStatus({ ...region, hash }, this.snippets[hash] || []),
+        );
       }
     }
     return all;
@@ -65,10 +92,14 @@ export class CoverageReport {
    * Test coverage regions that claim to be covering a snippet, but for which
    * the snippet identifier (hash) doesn't actually exist in the snippets.
    */
-  get orphanedRegions(): Region[] {
+  get orphanedRegions(): (Region & { hash: string })[] {
     return this.allCoverageStatuses
       .filter((c) => c.isOrphaned)
       .map((c) => c.region);
+  }
+
+  relativePath(path: string) {
+    return relative(this.reportPath, path);
   }
 
   /**
@@ -82,6 +113,10 @@ export class CoverageReport {
 
     return `#### [${path}](${path})
 
+    ##### \`${name || 'Unnamed Snippet'}\`
+
+    ~~~\n${code}\n~~~
+
     | | |
     | -- | -- |
     | Hash | \`${hash}\` |
@@ -90,12 +125,6 @@ export class CoverageReport {
     ##### Covering Regions
 
     ${refs || '- *None*'}
-
-    ##### \`${name || 'Unnamed Snippet'}\`
-
-    ~~~
-    ${code}
-    ~~~
 
     ---
     `.replace(/^ {4}/gm, ''); // dedent 4
@@ -106,45 +135,94 @@ export class CoverageReport {
    *
    * @param region The region to format
    */
-  formatTestRegion(_region: Region): string {
-    return 'Regin Not yet implemented';
+  formatTestRegion(region: Region & { hash: string }): string {
+    const link = `${this.relativePath(region.path)}#${region.start}`;
+    return `#### [${region.hash}](${link})
+
+    ##### [\`${link}\`](${link})
+
+    ~~~\n${region.code}\n~~~
+
+    ---
+    `.replace(/^ {4}/gm, ''); // dedent 4
   }
 
   formatRegionReferences(hash: string): string {
     const regions = this.coverage[hash] || [];
     return regions
       .map((r) => {
-        const link = `${r.path}:${r.start}:${r.end}`;
+        const link = `${this.relativePath(r.path)}#${r.start}`;
         return `- [${link}](${link})`;
       })
       .join('\n');
   }
 
-  toMarkdown() {
-    return `# Docs Coverage Report
+  /**
+   * @param open Open the summary file using `code <filename>` when done.
+   */
+  write(open: boolean) {
+    const SUMMARY_PATH = `${this.reportPath}/summary.md`;
+    const GAPS_REPORT_PATH = `${this.reportPath}/gaps-report.md`;
+    const ORPHANS_REPORT_PATH = `${this.reportPath}/orphans-report.md`;
+    const DETAILS_REPORT_PATH = `${this.reportPath}/coverage-details.md`;
 
-    ## Uncovered Docs Snippets
+    writeFileSync(
+      SUMMARY_PATH,
+      `# Docs Coverage Report
 
-    ${this.uncoveredSnippets
-      .map((s) => this.formatSnippet(s))
-      .join('\n')
-      .trim()}
+      | Report | Records |
+      | -- | -- |
+      | [Docs Snippet Gaps](${this.relativePath(GAPS_REPORT_PATH)}) | ${this.uncoveredSnippets.length} |
+      | [Orphaned Integ Tets](${this.relativePath(ORPHANS_REPORT_PATH)}) | ${this.orphanedRegions.length} |
+      | [Coverage Details](${this.relativePath(DETAILS_REPORT_PATH)}) | ${this.coveredSnippets.length} |
+      `.replace(/^ {6}/gm, ''),
+    ); // dedent 6
 
-    ## Orphaned Integ Tests
+    writeFileSync(
+      GAPS_REPORT_PATH,
+      `[<- Back to summary](${this.relativePath(SUMMARY_PATH)})
 
-    ${this.orphanedRegions
-      .map((r) => this.formatTestRegion(r))
-      .join('\n')
-      .trim()}
+      # Uncovered Docs Snippets
 
-    ---
+      ${this.uncoveredSnippets
+        .map((s) => this.formatSnippet(s))
+        .join('\n')
+        .trim()}
 
-    ## Covered Docs Snippets
+      [<- Back to summary](${this.relativePath(SUMMARY_PATH)})
+      `.replace(/^ {6}/gm, ''),
+    ); // dedent 6
 
-    ${this.coveredSnippets
-      .map((s) => this.formatSnippet(s))
-      .join('\n')
-      .trim()}
-    `.replace(/^ {4}/gm, ''); // dedent 4
+    writeFileSync(
+      ORPHANS_REPORT_PATH,
+      `[<- Back to summary](${this.relativePath(SUMMARY_PATH)})
+
+      # Orphaned Integ Tests
+
+      ${this.orphanedRegions
+        .map((r) => this.formatTestRegion(r))
+        .join('\n')
+        .trim()}
+
+      [<- Back to summary](${this.relativePath(SUMMARY_PATH)})
+      `.replace(/^ {6}/gm, ''),
+    ); // dedent 6
+
+    writeFileSync(
+      DETAILS_REPORT_PATH,
+      `[<- Back to summary](${this.relativePath(SUMMARY_PATH)})
+
+      # Covered Docs Snippets
+
+      ${this.coveredSnippets
+        .map((s) => this.formatSnippet(s))
+        .join('\n')
+        .trim()}
+
+      [<- Back to summary](${this.relativePath(SUMMARY_PATH)})
+      `.replace(/^ {6}/gm, ''), // dedent 4
+    );
+
+    if (open) execSync(`code ${SUMMARY_PATH}`);
   }
 }

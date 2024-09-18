@@ -1,22 +1,18 @@
 import { readFileSync } from 'fs';
-import path from 'path';
-import { fileURLToPath } from 'url';
 import { glob } from 'glob';
-
-// Not defined by default in module scope, I guess ...
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-const TEST_DIRECTORY = `${__dirname}/../../packages/integration-tests/__tests__/defined-behavior`;
+import type { Config } from './config-type';
 
 export type Region = {
   path: string;
   start: number;
   end: number;
+  code: string;
   annotation?: string;
 };
 
 type RegionMarker = {
   type: 'start' | 'end';
+  data: string;
   lineNumber: number;
   annotation?: string;
   line: string;
@@ -27,8 +23,8 @@ type RegionMarker = {
  */
 export type RegionMap = Record<string, Region[]>;
 
-async function listDefinedBehaviorTestFiles() {
-  return glob.glob(`${TEST_DIRECTORY}/**/*.ts`);
+async function listDefinedBehaviorTestFiles(config: Config) {
+  return glob.glob(`${config.testsDirectory}/**/*.ts`);
 }
 
 async function getAnnotatedRegionMarkers(
@@ -43,12 +39,12 @@ async function getAnnotatedRegionMarkers(
     const startRegion = line.trim().match(/\/\/\s+#region\s*(.*)$/);
     if (startRegion) {
       const annotation = startRegion[1];
-      markers.push({ line, annotation, lineNumber, type: 'start' });
+      markers.push({ data, line, annotation, lineNumber, type: 'start' });
     }
 
     const endRegion = line.trim().match(/\/\/\s+#endregion/);
     if (endRegion) {
-      markers.push({ line, lineNumber, type: 'end' });
+      markers.push({ data, line, lineNumber, type: 'end' });
     }
   }
 
@@ -57,8 +53,7 @@ async function getAnnotatedRegionMarkers(
 
 async function getRegions(path: string): Promise<Region[]> {
   /**
-   * To be used as a stack for matching pairs. Hence, should contain only
-   * START markers.
+   * A stack for matching region open/close pairs.
    */
   const startMarkers: RegionMarker[] = [];
   const regions: Region[] = [];
@@ -70,11 +65,17 @@ async function getRegions(path: string): Promise<Region[]> {
       const endMarker = marker; // just aliasing for later clarity.
       if (startMarkers.length > 0) {
         const startMarker = startMarkers.pop();
+        const code =
+          startMarker?.data
+            .split('\n')
+            .slice(startMarker.lineNumber - 1, endMarker.lineNumber)
+            .join('\n') || 'ERROR EXTRACTING CODE!';
         regions.push({
           annotation: startMarker!.annotation,
           start: startMarker!.lineNumber,
           end: endMarker.lineNumber,
           path,
+          code,
         });
       } else {
         console.error(
@@ -113,15 +114,15 @@ function convertToRegionMap(regions: Region[]): RegionMap {
   return map;
 }
 
-async function findAllRegions(): Promise<Region[]> {
+async function findAllRegions(config: Config): Promise<Region[]> {
   let regions: Region[] = [];
-  const paths = await listDefinedBehaviorTestFiles();
+  const paths = await listDefinedBehaviorTestFiles(config);
   for (const path of paths) {
     regions = regions.concat(await getRegions(path));
   }
   return regions;
 }
 
-export async function buildRegionMap(): Promise<RegionMap> {
-  return convertToRegionMap(await findAllRegions());
+export async function buildRegionMap(config: Config): Promise<RegionMap> {
+  return convertToRegionMap(await findAllRegions(config));
 }

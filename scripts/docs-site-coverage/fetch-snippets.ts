@@ -2,6 +2,7 @@ import { createHash } from 'crypto';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import jsdom from 'jsdom';
 import * as prettier from 'prettier';
+import type { Config } from './config-type';
 
 type PageCodeBlocks = Record<string, NamedCodeBlocks>;
 type NamedCodeBlock = { name: string; code: string; hash: string };
@@ -44,11 +45,6 @@ function codeblockFilename(element: HTMLElement) {
   return filename;
 }
 
-function isTS(snippetName: string) {
-  const [_, ext] = snippetName.split('.');
-  return ['ts', 'tsx'].includes(ext);
-}
-
 /**
  * Converts HTML to text, preserving semantic newlines for block-level
  * elements.
@@ -57,8 +53,6 @@ function innerTextPreservingNewlines(node: Node) {
   let result = '';
 
   if (node.nodeType == node.TEXT_NODE && node.nodeValue) {
-    // Replace repeated spaces, newlines, and tabs with a single space.
-    // result = node.nodeValue.replace(/\s+/g, " ");
     result = node.nodeValue;
   } else {
     for (let i = 0, j = node.childNodes.length; i < j; i++) {
@@ -71,7 +65,7 @@ function innerTextPreservingNewlines(node: Node) {
     }
   }
 
-  return result;
+  return result.replaceAll('Copy highlighted code example', '');
 }
 
 /**
@@ -97,7 +91,6 @@ async function getPageCodeBlocks(doc: Document): Promise<NamedCodeBlocks> {
 
   for (const pre of doc.getElementsByTagName('pre')) {
     const name = codeblockFilename(pre);
-    // if (!isTS(name)) continue;
     const code = await format(pre);
     const hash = generateHash(code);
     results.push({ name, code, hash });
@@ -127,30 +120,22 @@ async function extractCodeBlocks(
   return results;
 }
 
-async function discoverPages({
-  sitemapURL = 'https://docs.amplify.aws/sitemap.xml',
-
-  // TODO: should be a deny list, not an allow list
-  filter = 'react/build-a-backend/data/',
-}: {
-  sitemapURL?: string;
-  filter?: string;
-} = {}) {
-  const locTags = (await getHTMLDocument(sitemapURL)).getElementsByTagName(
+async function discoverPages({ sitemapUrl, sitemapFilter }: Config) {
+  const locTags = (await getHTMLDocument(sitemapUrl)).getElementsByTagName(
     'loc',
   );
-  return [...locTags].map((t) => t.innerHTML).filter((h) => h.includes(filter));
+  return [...locTags].map((t) => t.innerHTML).filter(sitemapFilter);
 }
 
-async function fetchSnippets() {
-  const urls = await discoverPages();
+async function fetchSnippets(urls: string[]) {
   const docs = await fetchDocuments(urls);
   return extractCodeBlocks(docs);
 }
 
-export async function buildSnippetMap(): Promise<CodeSnippetMap> {
+export async function buildSnippetMap(config: Config): Promise<CodeSnippetMap> {
   const map: CodeSnippetMap = {};
-  const snippetsByUrl = await fetchSnippets();
+  const urls = await discoverPages(config);
+  const snippetsByUrl = await fetchSnippets(urls);
   for (const [path, snippets] of Object.entries(snippetsByUrl)) {
     for (const snippet of snippets) {
       if (!map[snippet.hash]) map[snippet.hash] = [];
@@ -163,5 +148,3 @@ export async function buildSnippetMap(): Promise<CodeSnippetMap> {
 
   return map;
 }
-
-// console.log(await fetchSnippets());
