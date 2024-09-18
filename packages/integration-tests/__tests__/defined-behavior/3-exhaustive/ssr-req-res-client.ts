@@ -24,7 +24,6 @@ describe('something', () => {
     jest.resetAllMocks();
   });
 
-  // #region ABC
   const schema = a
     .schema({
       StandaloneModel: a
@@ -50,8 +49,6 @@ describe('something', () => {
     .authorization((allow) => [allow.publicApiKey()]);
 
   type Schema = ClientSchema<typeof schema>;
-
-  // #endregion ABC
 
   test('happy path type and mocked runtime tests', async () => {
     const { spy, generateServerClientUsingReqRes } = mockedGenerateClient([
