@@ -1,5 +1,11 @@
 # @aws-amplify/data-schema
 
+## 1.6.1
+
+### Patch Changes
+
+- 79e8873: fix: Custom operation Ref return works with null/undefined responses
+
 ## 1.6.0
 
 ### Minor Changes
