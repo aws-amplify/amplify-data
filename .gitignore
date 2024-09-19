@@ -20,4 +20,3 @@ packages/*/temp
 # rollup
 **/.rollup.cache
 **/buildMeta
-coverages
