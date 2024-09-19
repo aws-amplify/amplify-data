@@ -26,7 +26,7 @@
     "lint": "eslint ."
   },
   "devDependencies": {
-    "@arktype/attest": "^0.7.3",
+    "@arktype/attest": "^0.18.4",
     "@aws-amplify/data-schema": "*",
     "@aws-amplify/data-schema-types": "*"
   },
