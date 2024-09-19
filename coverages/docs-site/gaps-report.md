@@ -6,7 +6,7 @@
 
 ##### `Unnamed Snippet`
 
-~~~
+```
 import { type Schema } from "@/amplify/data/resource";
 import { generateServerClientUsingCookies } from "@aws-amplify/adapter-nextjs/data";
 import outputs from "@/amplify_outputs.json";
@@ -17,16 +17,16 @@ export const cookieBasedClient = generateServerClientUsingCookies<Schema>({
   cookies,
 });
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `3c5526f4c791ccdb` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `3c5526f4c791ccdb` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -34,7 +34,7 @@ export const cookieBasedClient = generateServerClientUsingCookies<Schema>({
 
 ##### `Unnamed Snippet`
 
-~~~
+```
 import { type Schema } from "@/amplify/data/resource";
 import { generateServerClientUsingCookies } from "@aws-amplify/adapter-nextjs/data";
 import outputs from "@/amplify_outputs.json";
@@ -53,16 +53,16 @@ return todos;
   }
 };
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `a141a840aa01929c` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `a141a840aa01929c` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -70,7 +70,7 @@ return todos;
 
 ##### `Unnamed Snippet`
 
-~~~
+```
 import { type Schema } from "@/amplify/data/resource";
 import type { NextApiRequest, NextApiResponse } from "next";
 import {
@@ -98,16 +98,16 @@ operation: async (contextSpec) => {
   response.status(200).json({ todos });
 }
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `b92d612b55a6ab9f` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `b92d612b55a6ab9f` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -115,7 +115,7 @@ operation: async (contextSpec) => {
 
 ##### `Unnamed Snippet`
 
-~~~
+```
 import { type ClientSchema, a, defineData } from "@aws-amplify/backend";
 import { schema as generatedSqlSchema } from "./schema.sql";
 
@@ -145,16 +145,16 @@ export const data = defineData({
   schema: combinedSchema,
 });
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `36f544daf9ca0bc2` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `36f544daf9ca0bc2` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -162,7 +162,7 @@ export const data = defineData({
 
 ##### `Unnamed Snippet`
 
-~~~
+```
 // Add an authorization rule to the schema
 const sqlSchema = generatedSqlSchema.setAuthorization((models) => [
   // Model-level authorization rules
@@ -178,16 +178,16 @@ allow.guest(),
   ]),
 ]);
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `8ae1c7b151eacfde` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `8ae1c7b151eacfde` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -195,19 +195,19 @@ allow.guest(),
 
 ##### `Unnamed Snippet`
 
-~~~
+```
 const { data: events } = await client.models.event.list();
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `d9dc661c8e8c0dd4` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `d9dc661c8e8c0dd4` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -215,7 +215,7 @@ const { data: events } = await client.models.event.list();
 
 ##### `Unnamed Snippet`
 
-~~~
+```
 // Rename models or fields to be more idiomatic for frontend code
 const sqlSchema = generatedSqlSchema
   .authorization((allow) => allow.guest())
@@ -225,16 +225,16 @@ const sqlSchema = generatedSqlSchema
 //        ^^^^^^ renamed data model name
   ]);
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `748c6c140a7867a7` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `748c6c140a7867a7` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -242,7 +242,7 @@ const sqlSchema = generatedSqlSchema
 
 ##### `Unnamed Snippet`
 
-~~~
+```
 const sqlSchema = generatedSqlSchema
   .authorization((allow) => allow.guest())
   .setRelationships((models) => [
@@ -254,16 +254,16 @@ models.Comment.relationships({
 }),
   ]);
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `4ac6eb92952f0637` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `4ac6eb92952f0637` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -271,7 +271,7 @@ models.Comment.relationships({
 
 ##### `Unnamed Snippet`
 
-~~~
+```
 // Add custom mutations or queries that execute SQL statements
 const sqlSchema = generatedSqlSchema
   .authorization((allow) => allow.guest())
@@ -304,16 +304,16 @@ EventWithDecodedCoord: a.customType({
 }),
   });
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `5071d6595a7426a2` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `5071d6595a7426a2` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -321,7 +321,7 @@ EventWithDecodedCoord: a.customType({
 
 ##### `Unnamed Snippet`
 
-~~~
+```
 const sqlSchema = generatedSqlSchema
   .authorization((allow) => allow.guest())
   .addToSchema({
@@ -338,16 +338,16 @@ createNewLocationWithLongLat: a
   .handler(a.handler.sqlReference("./createNewLocationWithLongLat.sql")),
   });
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `26ed39c38206c91e` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `26ed39c38206c91e` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -355,20 +355,20 @@ createNewLocationWithLongLat: a
 
 ##### `createNewLocationWithLongLat.sql`
 
-~~~
+```
 INSERT INTO locations (name, address, geom)
 VALUES (:name, :address, ST_GEOMFROMTEXT(CONCAT('POINT (', :long, ' ', :lat, ')'), 4326));
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `62da717f535147ae` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `62da717f535147ae` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -376,20 +376,20 @@ VALUES (:name, :address, ST_GEOMFROMTEXT(CONCAT('POINT (', :long, ' ', :lat, ')'
 
 ##### `createNewLocationWithLongLat.sql`
 
-~~~
+```
 INSERT INTO locations (name, address, geom)
 VALUES (:name, :address, ST_SetSRID(ST_MakePoint(:long, :lat), 4326))
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `34cb4b8726c31609` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `34cb4b8726c31609` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -397,7 +397,7 @@ VALUES (:name, :address, ST_SetSRID(ST_MakePoint(:long, :lat), 4326))
 
 ##### `Unnamed Snippet`
 
-~~~
+```
 getPostBySlug: a.query()
   .arguments({
 slug: a.string().required(),
@@ -411,16 +411,16 @@ WHERE slug = :slug;
 `),
   );
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `f36866db1e6435b0` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `f36866db1e6435b0` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -428,7 +428,7 @@ WHERE slug = :slug;
 
 ##### `amplify/data/resource.ts`
 
-~~~
+```
 import { type ClientSchema, a, defineData } from "@aws-amplify/backend";
 
 const schema = a.schema({
@@ -461,16 +461,16 @@ apiKeyAuthorizationMode: {
   },
 });
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `a19235ddde928883` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `a19235ddde928883` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -478,7 +478,7 @@ apiKeyAuthorizationMode: {
 
 ##### `amplify/backend.ts`
 
-~~~
+```
 import { defineBackend } from "@aws-amplify/backend";
 import { auth } from "./auth/resource";
 import { data } from "./data/resource";
@@ -502,16 +502,16 @@ backend.data.addDynamoDbDataSource(
   externalTable,
 );
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `162d8b8ed28fe6ce` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `162d8b8ed28fe6ce` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -519,7 +519,7 @@ backend.data.addDynamoDbDataSource(
 
 ##### `amplify/data/resource.ts`
 
-~~~
+```
 import { type ClientSchema, a, defineData } from "@aws-amplify/backend";
 
 const schema = a.schema({
@@ -563,16 +563,16 @@ apiKeyAuthorizationMode: {
   },
 });
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `82af3812a4845b9f` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `82af3812a4845b9f` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -580,7 +580,7 @@ apiKeyAuthorizationMode: {
 
 ##### `amplify/data/resource.ts`
 
-~~~
+```
 import { type ClientSchema, a, defineData } from "@aws-amplify/backend";
 
 const schema = a.schema({
@@ -618,16 +618,16 @@ apiKeyAuthorizationMode: {
   },
 });
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `cc413eca4d74c0c0` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `cc413eca4d74c0c0` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -635,7 +635,7 @@ apiKeyAuthorizationMode: {
 
 ##### `amplify/data/resource.ts`
 
-~~~
+```
 import { type ClientSchema, a, defineData } from "@aws-amplify/backend";
 
 const schema = a.schema({
@@ -680,16 +680,16 @@ apiKeyAuthorizationMode: {
   },
 });
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `514c919cbbf2741d` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `514c919cbbf2741d` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -697,7 +697,7 @@ apiKeyAuthorizationMode: {
 
 ##### `amplify/data/resource.ts`
 
-~~~
+```
 import { type ClientSchema, a, defineData } from "@aws-amplify/backend";
 
 const schema = a.schema({
@@ -735,16 +735,16 @@ apiKeyAuthorizationMode: {
   },
 });
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `7511ba489422cbaa` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `7511ba489422cbaa` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -752,7 +752,7 @@ apiKeyAuthorizationMode: {
 
 ##### `amplify/data/addPost.js`
 
-~~~
+```
 import { util } from "@aws-appsync/utils";
 import * as ddb from "@aws-appsync/utils/dynamodb";
 
@@ -766,16 +766,16 @@ export function response(ctx) {
   return ctx.result;
 }
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `78d0e40a38210ca2` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `78d0e40a38210ca2` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -783,7 +783,7 @@ export function response(ctx) {
 
 ##### `amplify/data/getPost.js`
 
-~~~
+```
 import * as ddb from "@aws-appsync/utils/dynamodb";
 
 export function request(ctx) {
@@ -792,16 +792,16 @@ export function request(ctx) {
 
 export const response = (ctx) => ctx.result;
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `852c18d3beb6e876` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `852c18d3beb6e876` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -809,7 +809,7 @@ export const response = (ctx) => ctx.result;
 
 ##### `amplify/data/updatePost.js`
 
-~~~
+```
 import { util } from "@aws-appsync/utils";
 import * as ddb from "@aws-appsync/utils/dynamodb";
 
@@ -835,16 +835,16 @@ util.appendError(error.message, error.type);
   return result;
 }
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `01edcc7a4e9a3ad1` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `01edcc7a4e9a3ad1` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -852,7 +852,7 @@ util.appendError(error.message, error.type);
 
 ##### `amplify/data/deletePost.js`
 
-~~~
+```
 import { util } from "@aws-appsync/utils";
 import * as ddb from "@aws-appsync/utils/dynamodb";
 
@@ -877,16 +877,16 @@ util.appendError(error.message, error.type);
   return result;
 }
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `333eae9033374c42` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `333eae9033374c42` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -894,23 +894,23 @@ util.appendError(error.message, error.type);
 
 ##### `App.tsx`
 
-~~~
+```
 const { data, errors } = await client.mutations.addPost({
   title: "My Post",
   content: "My Content",
   author: "Chris",
 });
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `e2421a40800acfac` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `e2421a40800acfac` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -918,23 +918,23 @@ const { data, errors } = await client.mutations.addPost({
 
 ##### `App.tsx`
 
-~~~
+```
 const { data, errors } = await client.mutations.addPost({
   title: "My Post",
   content: "My Content",
   author: "Chris",
 });
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `e2421a40800acfac` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `e2421a40800acfac` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -942,21 +942,21 @@ const { data, errors } = await client.mutations.addPost({
 
 ##### `App.tsx`
 
-~~~
+```
 const { data, errors } = await client.queries.getPost({
   id: "<post-id>",
 });
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `8c001c6c1cc91d00` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `8c001c6c1cc91d00` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -964,21 +964,21 @@ const { data, errors } = await client.queries.getPost({
 
 ##### `App.tsx`
 
-~~~
+```
 const { data, errors } = await client.queries.getPost({
   id: "<post-id>",
 });
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `8c001c6c1cc91d00` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `8c001c6c1cc91d00` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -986,23 +986,23 @@ const { data, errors } = await client.queries.getPost({
 
 ##### `App.tsx`
 
-~~~
+```
 const { data, errors } = await client.mutations.updatePost({
   id: "<post-id>",
   title: "An Updated Post",
   expectedVersion: 1,
 });
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `f5328ca32d825139` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `f5328ca32d825139` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -1010,21 +1010,21 @@ const { data, errors } = await client.mutations.updatePost({
 
 ##### `App.tsx`
 
-~~~
+```
 const { data, errors } = await client.mutations.deletePost({
   id: "<post-id>",
 });
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `0eefd1ef7277ba0d` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `0eefd1ef7277ba0d` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -1032,21 +1032,21 @@ const { data, errors } = await client.mutations.deletePost({
 
 ##### `App.tsx`
 
-~~~
+```
 const { data, errors } = await client.mutations.deletePost({
   id: "<post-id>",
 });
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `0eefd1ef7277ba0d` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `0eefd1ef7277ba0d` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -1054,7 +1054,7 @@ const { data, errors } = await client.mutations.deletePost({
 
 ##### `Unnamed Snippet`
 
-~~~
+```
 export function request(ctx) {
   const { foo, bar } = ctx.args;
   return {
@@ -1064,16 +1064,16 @@ consistentRead: true,
   };
 }
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `c2ad4a885704896a` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `c2ad4a885704896a` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -1081,7 +1081,7 @@ consistentRead: true,
 
 ##### `Unnamed Snippet`
 
-~~~
+```
 import { util } from "@aws-appsync/utils";
 export function request(ctx) {
   const { foo, bar, ...values } = ctx.args;
@@ -1092,16 +1092,16 @@ attributeValues: util.dynamodb.toMapValues(values),
   };
 }
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `ac99ec3cff825ff6` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `ac99ec3cff825ff6` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -1109,7 +1109,7 @@ attributeValues: util.dynamodb.toMapValues(values),
 
 ##### `Unnamed Snippet`
 
-~~~
+```
 import { util } from "@aws-appsync/utils";
 export function request(ctx) {
   const { id } = ctx.args;
@@ -1124,16 +1124,16 @@ update: {
   };
 }
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `4bab2c16fe96a51a` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `4bab2c16fe96a51a` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -1141,7 +1141,7 @@ update: {
 
 ##### `Unnamed Snippet`
 
-~~~
+```
 import { util } from "@aws-appsync/utils";
 export function request(ctx) {
   return {
@@ -1150,16 +1150,16 @@ key: util.dynamodb.toMapValues({ id: ctx.args.id }),
   };
 }
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `6f631e2f7615de93` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `6f631e2f7615de93` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -1167,7 +1167,7 @@ key: util.dynamodb.toMapValues({ id: ctx.args.id }),
 
 ##### `Unnamed Snippet`
 
-~~~
+```
 import { util } from "@aws-appsync/utils";
 
 export function request(ctx) {
@@ -1182,16 +1182,16 @@ index: "owner-index",
   };
 }
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `aa9fb179a14c1f5a` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `aa9fb179a14c1f5a` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -1199,21 +1199,21 @@ index: "owner-index",
 
 ##### `Unnamed Snippet`
 
-~~~
+```
 export function request(ctx) {
   return { operation: "Scan" };
 }
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `e2c67cc113847600` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `e2c67cc113847600` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -1221,22 +1221,22 @@ export function request(ctx) {
 
 ##### `Unnamed Snippet`
 
-~~~
+```
 export function request(ctx) {
   const { nextToken, lastSync } = ctx.args;
   return { operation: "Sync", limit: 100, nextToken, lastSync };
 }
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `87f694f7341ed37b` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `87f694f7341ed37b` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -1244,7 +1244,7 @@ export function request(ctx) {
 
 ##### `Unnamed Snippet`
 
-~~~
+```
 import { util } from "@aws-appsync/utils";
 
 export function request(ctx) {
@@ -1258,16 +1258,16 @@ tables: {
   };
 }
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `332fbbbfedb89bba` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `332fbbbfedb89bba` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -1275,7 +1275,7 @@ tables: {
 
 ##### `Unnamed Snippet`
 
-~~~
+```
 import { util } from "@aws-appsync/utils";
 
 export function request(ctx) {
@@ -1289,16 +1289,16 @@ tables: {
   };
 }
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `f0a5a683fa5c31f7` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `f0a5a683fa5c31f7` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -1306,7 +1306,7 @@ tables: {
 
 ##### `Unnamed Snippet`
 
-~~~
+```
 import { util } from "@aws-appsync/utils";
 
 export function request(ctx) {
@@ -1320,16 +1320,16 @@ tables: {
   };
 }
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `5b35643d0deead1d` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `5b35643d0deead1d` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -1337,7 +1337,7 @@ tables: {
 
 ##### `Unnamed Snippet`
 
-~~~
+```
 import { util } from "@aws-appsync/utils";
 
 export function request(ctx) {
@@ -1357,16 +1357,16 @@ transactItems: [
   };
 }
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `5d3066384580c8a5` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `5d3066384580c8a5` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -1374,7 +1374,7 @@ transactItems: [
 
 ##### `Unnamed Snippet`
 
-~~~
+```
 import { util } from "@aws-appsync/utils";
 
 export function request(ctx) {
@@ -1405,16 +1405,16 @@ expressionValues: util.dynamodb.toMapValues({ ":name": authorName }),
   };
 }
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `f27b22d02f00052c` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `f27b22d02f00052c` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -1422,19 +1422,19 @@ expressionValues: util.dynamodb.toMapValues({ ":name": authorName }),
 
 ##### `Terminal`
 
-~~~
+```
 npm add @aws-sdk/client-rekognition
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `db746639848e0a89` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `db746639848e0a89` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -1442,23 +1442,23 @@ npm add @aws-sdk/client-rekognition
 
 ##### `amplify/storage/resource.ts`
 
-~~~
+```
 import { defineStorage } from "@aws-amplify/backend";
 
 export const storage = defineStorage({
   name: "predictions_gen2",
 });
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `a043adb860e7a842` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `a043adb860e7a842` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -1466,23 +1466,23 @@ export const storage = defineStorage({
 
 ##### `amplify/storage/resource.ts`
 
-~~~
+```
 import { defineStorage } from "@aws-amplify/backend";
 
 export const storage = defineStorage({
   name: "predictions_gen2",
 });
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `a043adb860e7a842` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `a043adb860e7a842` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -1490,7 +1490,7 @@ export const storage = defineStorage({
 
 ##### `amplify/backend.ts`
 
-~~~
+```
 import { defineBackend } from "@aws-amplify/backend";
 import { auth } from "./auth/resource";
 import { data } from "./data/resource";
@@ -1533,16 +1533,16 @@ backend.storage.resources.bucket.grantReadWrite(
   rekognitionDataSource.grantPrincipal,
 );
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `dd7bcc3731acb6d0` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `dd7bcc3731acb6d0` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -1550,7 +1550,7 @@ backend.storage.resources.bucket.grantReadWrite(
 
 ##### `amplify/data/identifyText.ts`
 
-~~~
+```
 export function request(ctx) {
   return {
 method: "POST",
@@ -1580,16 +1580,16 @@ export function response(ctx) {
 .trim();
 }
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `e93e201396687ac8` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `e93e201396687ac8` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -1597,7 +1597,7 @@ export function response(ctx) {
 
 ##### `amplify/data/resource.ts`
 
-~~~
+```
 import { type ClientSchema, a, defineData } from "@aws-amplify/backend";
 
 const schema = a.schema({
@@ -1628,16 +1628,16 @@ apiKeyAuthorizationMode: {
   },
 });
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `b81c707fc1695eb1` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `b81c707fc1695eb1` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -1645,7 +1645,7 @@ apiKeyAuthorizationMode: {
 
 ##### `amplify/storage/resource.ts`
 
-~~~
+```
 import { defineStorage } from "@aws-amplify/backend";
 
 export const storage = defineStorage({
@@ -1655,16 +1655,16 @@ export const storage = defineStorage({
   }),
 });
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `85d2795e6ccb1296` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `85d2795e6ccb1296` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -1672,22 +1672,22 @@ export const storage = defineStorage({
 
 ##### `main.tsx`
 
-~~~
+```
 import { Amplify } from "aws-amplify";
 import outputs from "../amplify_outputs.json";
 
 Amplify.configure(outputs);
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `898189587ea17dac` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `898189587ea17dac` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -1695,22 +1695,22 @@ Amplify.configure(outputs);
 
 ##### `main.tsx`
 
-~~~
+```
 import { Amplify } from "aws-amplify";
 import outputs from "../amplify_outputs.json";
 
 Amplify.configure(outputs);
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `898189587ea17dac` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `898189587ea17dac` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -1718,22 +1718,22 @@ Amplify.configure(outputs);
 
 ##### `main.tsx`
 
-~~~
+```
 import { Amplify } from "aws-amplify";
 import outputs from "../amplify_outputs.json";
 
 Amplify.configure(outputs);
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `898189587ea17dac` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `898189587ea17dac` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -1741,22 +1741,22 @@ Amplify.configure(outputs);
 
 ##### `Unnamed Snippet`
 
-~~~
+```
 import { Amplify } from "aws-amplify";
 import outputs from "../amplify_outputs.json";
 
 Amplify.configure(outputs);
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `898189587ea17dac` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `898189587ea17dac` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -1764,22 +1764,22 @@ Amplify.configure(outputs);
 
 ##### `src/main.tsx`
 
-~~~
+```
 import { Amplify } from "aws-amplify";
 import outputs from "../amplify_outputs.json";
 
 Amplify.configure(outputs);
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `898189587ea17dac` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `898189587ea17dac` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -1787,7 +1787,7 @@ Amplify.configure(outputs);
 
 ##### `App.tsx`
 
-~~~
+```
 import { type ChangeEvent, useState } from "react";
 import { generateClient } from "aws-amplify/api";
 import { uploadData } from "aws-amplify/storage";
@@ -1850,16 +1850,16 @@ setTextData(data);
 
 export default App;
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `cae12f526b62efc6` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `cae12f526b62efc6` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -1867,19 +1867,19 @@ export default App;
 
 ##### `Terminal`
 
-~~~
+```
 npm add @aws-sdk/client-translate
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `866e7a4da60b689f` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `866e7a4da60b689f` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -1887,7 +1887,7 @@ npm add @aws-sdk/client-translate
 
 ##### `amplify/backend.ts`
 
-~~~
+```
 import { defineBackend } from "@aws-amplify/backend";
 import { auth } from "./auth/resource";
 import { data } from "./data/resource";
@@ -1919,16 +1919,16 @@ resources: ["*"],
   }),
 );
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `c413a6f4bbb777ac` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `c413a6f4bbb777ac` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -1936,7 +1936,7 @@ resources: ["*"],
 
 ##### `amplify/data/translate.js`
 
-~~~
+```
 export function request(ctx) {
   return {
 method: "POST",
@@ -1959,16 +1959,16 @@ export function response(ctx) {
   return JSON.parse(ctx.result.body).TranslatedText;
 }
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `c824b7f789a5b258` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `c824b7f789a5b258` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -1976,7 +1976,7 @@ export function response(ctx) {
 
 ##### `amplify/data/resource.ts`
 
-~~~
+```
 import { type ClientSchema, a, defineData } from "@aws-amplify/backend";
 
 const schema = a.schema({
@@ -2009,16 +2009,16 @@ apiKeyAuthorizationMode: {
   },
 });
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `40af1d5454d7a4a4` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `40af1d5454d7a4a4` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -2026,7 +2026,7 @@ apiKeyAuthorizationMode: {
 
 ##### `Unnamed Snippet`
 
-~~~
+```
 import { generateClient } from "aws-amplify/data";
 import { type Schema } from "../amplify/data/resource";
 
@@ -2038,16 +2038,16 @@ const { data } = await client.queries.translate({
   text: "Hello World!",
 });
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `81e213bec681832b` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `81e213bec681832b` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -2055,7 +2055,7 @@ const { data } = await client.queries.translate({
 
 ##### `amplify/backend.ts`
 
-~~~
+```
 import { defineBackend } from "@aws-amplify/backend";
 import { auth } from "./auth/resource";
 import { data, MODEL_ID, generateHaikuFunction } from "./data/resource";
@@ -2075,16 +2075,16 @@ resources: [`arn:aws:bedrock:*::foundation-model/${MODEL_ID}`],
   }),
 );
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `1008539ad82da723` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `1008539ad82da723` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -2092,7 +2092,7 @@ resources: [`arn:aws:bedrock:*::foundation-model/${MODEL_ID}`],
 
 ##### `amplify/backend.ts`
 
-~~~
+```
 import { defineBackend } from "@aws-amplify/backend";
 import { auth } from "./auth/resource";
 import { data } from "./data/resource";
@@ -2131,16 +2131,16 @@ backend.data.resources.cfnResources.cfnGraphqlApi.environmentVariables = {
   MODEL_ID,
 };
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `6f99fa643c27dcea` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `6f99fa643c27dcea` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -2148,7 +2148,7 @@ backend.data.resources.cfnResources.cfnGraphqlApi.environmentVariables = {
 
 ##### `amplify/data/resource.ts`
 
-~~~
+```
 import {
   type ClientSchema,
   a,
@@ -2186,16 +2186,16 @@ apiKeyAuthorizationMode: {
   },
 });
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `b9d1d222318eb979` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `b9d1d222318eb979` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -2203,7 +2203,7 @@ apiKeyAuthorizationMode: {
 
 ##### `amplify/data/resource.ts`
 
-~~~
+```
 import { type ClientSchema, a, defineData } from "@aws-amplify/backend";
 
 const schema = a.schema({
@@ -2232,16 +2232,16 @@ apiKeyAuthorizationMode: {
   },
 });
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `f0d45d7747bca578` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `f0d45d7747bca578` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -2249,7 +2249,7 @@ apiKeyAuthorizationMode: {
 
 ##### `amplify/data/generateHaiku.ts`
 
-~~~
+```
 import type { Schema } from "./resource";
 import {
   BedrockRuntimeClient,
@@ -2302,16 +2302,16 @@ content: [
   return data.content[0].text;
 };
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `e600f7456a31a935` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `e600f7456a31a935` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -2319,7 +2319,7 @@ content: [
 
 ##### `amplify/data/generateHaiku.js`
 
-~~~
+```
 export function request(ctx) {
   // Define a system prompt to give the model a persona
   const system =
@@ -2364,16 +2364,16 @@ export function response(ctx) {
   return haiku;
 }
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `cbe2dc17aef258b0` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `cbe2dc17aef258b0` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -2381,21 +2381,21 @@ export function response(ctx) {
 
 ##### `App.tsx`
 
-~~~
+```
 const { data, errors } = await client.queries.generateHaiku({
   prompt: "Frank Herbert's Dune",
 });
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `52d66c7ca199349d` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `52d66c7ca199349d` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -2403,7 +2403,7 @@ const { data, errors } = await client.queries.generateHaiku({
 
 ##### `App.tsx`
 
-~~~
+```
 import { FormEvent, useState } from "react";
 
 import { generateClient } from "aws-amplify/api";
@@ -2458,16 +2458,16 @@ if (!errors) {
   );
 }
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `c90ccefcb690e15b` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `c90ccefcb690e15b` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -2475,19 +2475,19 @@ if (!errors) {
 
 ##### `Terminal`
 
-~~~
+```
 npm add @aws-sdk/client-polly
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `cbe3464e3ab1b8d6` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `cbe3464e3ab1b8d6` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -2495,7 +2495,7 @@ npm add @aws-sdk/client-polly
 
 ##### `amplify/backend.ts`
 
-~~~
+```
 import { defineBackend } from "@aws-amplify/backend";
 import { auth } from "./auth/resource";
 import { data, convertTextToSpeech } from "./data/resource";
@@ -2517,16 +2517,16 @@ resources: ["*"],
   }),
 );
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `059b08381cc3873c` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `059b08381cc3873c` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -2534,7 +2534,7 @@ resources: ["*"],
 
 ##### `amplify/data/convertTextToSpeech.ts`
 
-~~~
+```
 import { Schema } from "./resource";
 import {
   PollyClient,
@@ -2567,16 +2567,16 @@ result.SynthesisTask?.OutputUri?.replace(
   );
 };
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `b46626c46832e9ff` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `b46626c46832e9ff` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -2584,7 +2584,7 @@ result.SynthesisTask?.OutputUri?.replace(
 
 ##### `amplify/data/resource.ts`
 
-~~~
+```
 import {
   type ClientSchema,
   a,
@@ -2625,16 +2625,16 @@ apiKeyAuthorizationMode: {
   },
 });
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `5b8929bd948f9263` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `5b8929bd948f9263` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -2642,7 +2642,7 @@ apiKeyAuthorizationMode: {
 
 ##### `amplify/storage/resource.ts`
 
-~~~
+```
 import { defineStorage } from "@aws-amplify/backend";
 import { convertTextToSpeech } from "../data/resource";
 
@@ -2656,16 +2656,16 @@ export const storage = defineStorage({
   }),
 });
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `8afad9fd1d529ce1` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `8afad9fd1d529ce1` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -2673,7 +2673,7 @@ export const storage = defineStorage({
 
 ##### `App.tsx`
 
-~~~
+```
 import "./App.css";
 import { generateClient } from "aws-amplify/api";
 import type { Schema } from "../amplify/data/resource";
@@ -2722,16 +2722,16 @@ setSrc(res.url.toString());
 
 export default App;
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `9469ad173d3b73ca` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `9469ad173d3b73ca` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -2739,7 +2739,7 @@ export default App;
 
 ##### `amplify/data/resource.ts`
 
-~~~
+```
 import { type ClientSchema, a, defineData } from "@aws-amplify/backend";
 
 const schema = a.schema({
@@ -2768,16 +2768,16 @@ apiKeyAuthorizationMode: {
   },
 });
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `63f7e87bfcda28ee` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `63f7e87bfcda28ee` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -2785,7 +2785,7 @@ apiKeyAuthorizationMode: {
 
 ##### `amplify/backend.ts`
 
-~~~
+```
 import { defineBackend } from "@aws-amplify/backend";
 import { auth } from "./auth/resource";
 import { data } from "./data/resource";
@@ -2887,16 +2887,16 @@ message: "<message>",
   ],
 });
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `e9b07c00017b6864` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `e9b07c00017b6864` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -2904,7 +2904,7 @@ message: "<message>",
 
 ##### `amplify/data/resource.ts`
 
-~~~
+```
 import { type ClientSchema, a, defineData } from "@aws-amplify/backend";
 
 const schema = a.schema({
@@ -2968,16 +2968,16 @@ apiKeyAuthorizationMode: {
   },
 });
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `8f8869419729e9d6` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `8f8869419729e9d6` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -2985,7 +2985,7 @@ apiKeyAuthorizationMode: {
 
 ##### `amplify/data/onOrderStatusChange.js`
 
-~~~
+```
 export function request(ctx) {
   return {
 payload: {},
@@ -2994,16 +2994,16 @@ payload: {},
 
 export function response(ctx) {}
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `d28c7ba9ea568301` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `d28c7ba9ea568301` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -3011,7 +3011,7 @@ export function response(ctx) {}
 
 ##### `amplify/data/publishOrderToEventBridge.js`
 
-~~~
+```
 export function request(ctx) {
   return {
 operation: "PutEvents",
@@ -3029,16 +3029,16 @@ export function response(ctx) {
   return ctx.args;
 }
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `bee1d61c5fc55b23` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `bee1d61c5fc55b23` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -3046,7 +3046,7 @@ export function response(ctx) {
 
 ##### `amplify/data/publishOrderFromEventBridge.js`
 
-~~~
+```
 export function request(ctx) {
   return {
 payload: ctx.arguments,
@@ -3057,16 +3057,16 @@ export function response(ctx) {
   return ctx.arguments;
 }
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `c52b82246c57ac1f` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `c52b82246c57ac1f` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -3074,23 +3074,23 @@ export function response(ctx) {
 
 ##### `App.tsx`
 
-~~~
+```
 await client.mutations.publishOrderToEventBridge({
   orderId: "12345",
   status: "SHIPPED",
   message: "Order has been shipped",
 });
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `7b0f27cf36fd005c` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `7b0f27cf36fd005c` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -3098,7 +3098,7 @@ await client.mutations.publishOrderToEventBridge({
 
 ##### `App.tsx`
 
-~~~
+```
 // Subscribe to the mutations triggered by the EventBridge rule
 const sub = client.subscriptions.onOrderStatusChange().subscribe({
   next: (data) => {
@@ -3111,16 +3111,16 @@ console.log(data);
 // Clean up subscription
 sub.unsubscribe();
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `3c38c8153f1bba58` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `3c38c8153f1bba58` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -3128,7 +3128,7 @@ sub.unsubscribe();
 
 ##### `amplify/data/resource.ts`
 
-~~~
+```
 import { type ClientSchema, a, defineData } from "@aws-amplify/backend";
 
 const schema = a.schema({
@@ -3156,16 +3156,16 @@ apiKeyAuthorizationMode: {
   },
 });
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `d4a9edbd787c42a9` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `d4a9edbd787c42a9` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -3173,7 +3173,7 @@ apiKeyAuthorizationMode: {
 
 ##### `amplify/backend.ts`
 
-~~~
+```
 import { defineBackend } from "@aws-amplify/backend";
 import { auth } from "./auth/resource";
 import { data } from "./data/resource";
@@ -3188,16 +3188,16 @@ const httpDataSource = backend.data.addHttpDataSource(
   "https://www.example.com",
 );
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `61d95d9d8b84721a` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `61d95d9d8b84721a` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -3205,7 +3205,7 @@ const httpDataSource = backend.data.addHttpDataSource(
 
 ##### `amplify/data/resource.ts`
 
-~~~
+```
 import { type ClientSchema, a, defineData } from "@aws-amplify/backend";
 
 const schema = a.schema({
@@ -3243,16 +3243,16 @@ apiKeyAuthorizationMode: {
   },
 });
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `51f55c11c111f5f6` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `51f55c11c111f5f6` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -3260,7 +3260,7 @@ apiKeyAuthorizationMode: {
 
 ##### `amplify/data/resource.ts`
 
-~~~
+```
 import { type ClientSchema, a, defineData } from "@aws-amplify/backend";
 
 const schema = a.schema({
@@ -3294,16 +3294,16 @@ apiKeyAuthorizationMode: {
   },
 });
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `69971cfbd80f236f` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `69971cfbd80f236f` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -3311,7 +3311,7 @@ apiKeyAuthorizationMode: {
 
 ##### `amplify/data/resource.ts`
 
-~~~
+```
 import { type ClientSchema, a, defineData } from "@aws-amplify/backend";
 
 const schema = a.schema({
@@ -3350,16 +3350,16 @@ apiKeyAuthorizationMode: {
   },
 });
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `ac60f58446239a86` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `ac60f58446239a86` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -3367,7 +3367,7 @@ apiKeyAuthorizationMode: {
 
 ##### `amplify/data/resource.ts`
 
-~~~
+```
 import { type ClientSchema, a, defineData } from "@aws-amplify/backend";
 
 const schema = a.schema({
@@ -3401,16 +3401,16 @@ apiKeyAuthorizationMode: {
   },
 });
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `14260040162c808a` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `14260040162c808a` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -3418,7 +3418,7 @@ apiKeyAuthorizationMode: {
 
 ##### `amplify/data/addPost.js`
 
-~~~
+```
 import { util } from "@aws-appsync/utils";
 
 export function request(ctx) {
@@ -3449,16 +3449,16 @@ return util.appendError(ctx.result.body, "ctx.result.statusCode");
   }
 }
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `3f15393d6b74ef97` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `3f15393d6b74ef97` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -3466,7 +3466,7 @@ return util.appendError(ctx.result.body, "ctx.result.statusCode");
 
 ##### `amplify/data/getPost.js`
 
-~~~
+```
 import { util } from "@aws-appsync/utils";
 
 export function request(ctx) {
@@ -3492,16 +3492,16 @@ return util.appendError(ctx.result.body, "ctx.result.statusCode");
   }
 }
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `70f5446fe7fb2a8b` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `70f5446fe7fb2a8b` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -3509,7 +3509,7 @@ return util.appendError(ctx.result.body, "ctx.result.statusCode");
 
 ##### `amplify/data/updatePost.js`
 
-~~~
+```
 import { util } from "@aws-appsync/utils";
 
 export function request(ctx) {
@@ -3540,16 +3540,16 @@ return util.appendError(ctx.result.body, "ctx.result.statusCode");
   }
 }
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `047316efba4e5444` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `047316efba4e5444` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -3557,7 +3557,7 @@ return util.appendError(ctx.result.body, "ctx.result.statusCode");
 
 ##### `amplify/data/deletePost.js`
 
-~~~
+```
 import { util } from "@aws-appsync/utils";
 
 export function request(ctx) {
@@ -3583,16 +3583,16 @@ return util.appendError(ctx.result.body, "ctx.result.statusCode");
   }
 }
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `a3d8554efda4da61` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `a3d8554efda4da61` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -3600,22 +3600,22 @@ return util.appendError(ctx.result.body, "ctx.result.statusCode");
 
 ##### `App.tsx`
 
-~~~
+```
 const { data, errors } = await client.mutations.updatePost({
   id: "<post-id>",
   title: "An Updated Post",
 });
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `dcf98fc5c5e0514b` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `dcf98fc5c5e0514b` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -3623,7 +3623,7 @@ const { data, errors } = await client.mutations.updatePost({
 
 ##### `amplify/data/resource.ts`
 
-~~~
+```
 import { type ClientSchema, a, defineData } from "@aws-amplify/backend";
 
 const schema = a.schema({
@@ -3648,16 +3648,16 @@ apiKeyAuthorizationMode: {
   },
 });
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `7232741075ac9a15` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `7232741075ac9a15` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -3665,7 +3665,7 @@ apiKeyAuthorizationMode: {
 
 ##### `amplify/backend.ts`
 
-~~~
+```
 import { defineBackend } from "@aws-amplify/backend";
 import { auth } from "./auth/resource";
 import { data } from "./data/resource";
@@ -3691,16 +3691,16 @@ const tableArn = backend.data.resources.tables["Todo"].tableArn;
 // Get the DynamoDB table name
 const tableName = backend.data.resources.tables["Todo"].tableName;
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `bb35bdd46b7971d7` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `bb35bdd46b7971d7` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -3708,7 +3708,7 @@ const tableName = backend.data.resources.tables["Todo"].tableName;
 
 ##### `amplify/backend.ts`
 
-~~~
+```
 import { defineBackend } from "@aws-amplify/backend";
 import { auth } from "./auth/resource";
 import { data } from "./data/resource";
@@ -3742,16 +3742,16 @@ enabled: true,
   },
 });
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `8354d1d65db14803` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `8354d1d65db14803` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -3759,7 +3759,7 @@ enabled: true,
 
 ##### `amplify/storage/resource.ts`
 
-~~~
+```
 import { defineStorage } from "@aws-amplify/backend";
 
 export const storage = defineStorage({
@@ -3769,16 +3769,16 @@ export const storage = defineStorage({
   }),
 });
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `8fb723fa5214c0fc` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `8fb723fa5214c0fc` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -3786,7 +3786,7 @@ export const storage = defineStorage({
 
 ##### `amplify/backend.ts`
 
-~~~
+```
 import { defineBackend } from "@aws-amplify/backend";
 import { auth } from "./auth/resource";
 import { data } from "./data/resource";
@@ -3897,16 +3897,16 @@ managedPolicies: [
   },
 );
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `4b1b576c9c3ec7c7` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `4b1b576c9c3ec7c7` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -3914,7 +3914,7 @@ managedPolicies: [
 
 ##### `amplify/backend.ts`
 
-~~~
+```
 import { defineBackend } from "@aws-amplify/backend";
 import { auth } from "./auth/resource";
 import { data } from "./data/resource";
@@ -4048,16 +4048,16 @@ properties: {
   },
 };
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `c4a088f13f0aa0c6` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `c4a088f13f0aa0c6` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -4065,7 +4065,7 @@ properties: {
 
 ##### `amplify/backend.ts`
 
-~~~
+```
 import { defineBackend } from "@aws-amplify/backend";
 import { auth } from "./auth/resource";
 import { data } from "./data/resource";
@@ -4238,16 +4238,16 @@ sts_role_arn: "${openSearchIntegrationPipelineRole.roleArn}"
 region: "${region}"
 `;
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `404e714f1ab48643` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `404e714f1ab48643` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -4255,7 +4255,7 @@ region: "${region}"
 
 ##### `amplify/backend.ts`
 
-~~~
+```
 import { defineBackend } from "@aws-amplify/backend";
 import { auth } from "./auth/resource";
 import { data } from "./data/resource";
@@ -4454,16 +4454,16 @@ logPublishingOptions: {
   },
 );
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `3d16597aaa312cfc` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `3d16597aaa312cfc` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -4471,23 +4471,23 @@ logPublishingOptions: {
 
 ##### `amplify/backend.ts`
 
-~~~
+```
 // Add OpenSearch data source
 const osDataSource = backend.data.addOpenSearchDataSource(
   "osDataSource",
   openSearchDomain,
 );
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `73fa3092c82ab57b` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `73fa3092c82ab57b` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -4495,7 +4495,7 @@ const osDataSource = backend.data.addOpenSearchDataSource(
 
 ##### `amplify/data/searchTodoResolver.js`
 
-~~~
+```
 import { util } from "@aws-appsync/utils";
 
 /**
@@ -4524,16 +4524,16 @@ util.error(ctx.error.message, ctx.error.type);
   return ctx.result.hits.hits.map((hit) => hit._source);
 }
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `687bb0ef861889da` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `687bb0ef861889da` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -4541,7 +4541,7 @@ util.error(ctx.error.message, ctx.error.type);
 
 ##### `amplify/data/resource.ts`
 
-~~~
+```
 const schema = a.schema({
   Todo: a
 .model({
@@ -4563,16 +4563,16 @@ const schema = a.schema({
 ),
 });
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `d4394d9ad36ac2df` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `d4394d9ad36ac2df` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -4580,7 +4580,7 @@ const schema = a.schema({
 
 ##### `amplify/data/resource.ts`
 
-~~~
+```
 import {
   type ClientSchema,
   a,
@@ -4617,16 +4617,16 @@ lambdaAuthorizationMode: {
   },
 });
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `9cc76371f93ceb4b` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `9cc76371f93ceb4b` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -4634,7 +4634,7 @@ lambdaAuthorizationMode: {
 
 ##### `Unnamed Snippet`
 
-~~~
+```
 import { generateClient } from "aws-amplify/data";
 import type { Schema } from "../amplify/data/resource"; // Path to your backend resource definition
 
@@ -4649,16 +4649,16 @@ authMode: "lambda",
   },
 );
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `f1c468dfd69b0c4a` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `f1c468dfd69b0c4a` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -4666,7 +4666,7 @@ authMode: "lambda",
 
 ##### `Unnamed Snippet`
 
-~~~
+```
 // amplify/data/custom-authorizer.ts
 
 // This is sample code. Update this to suite your needs
@@ -4704,16 +4704,16 @@ ttlOverride: 300,
   return response;
 };
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `7979ac575fb5c105` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `7979ac575fb5c105` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -4721,7 +4721,7 @@ ttlOverride: 300,
 
 ##### `Unnamed Snippet`
 
-~~~
+```
 {
 "authorizationToken": "ExampleAuthToken123123123", # Authorization token specified by client
 "requestContext": {
@@ -4734,16 +4734,16 @@ ttlOverride: 300,
 }
 }
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `bf33ce519615bf57` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `bf33ce519615bf57` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -4751,7 +4751,7 @@ ttlOverride: 300,
 
 ##### `Unnamed Snippet`
 
-~~~
+```
 {
   // required
   "isAuthorized": true, // if "false" then an UnauthorizedException is raised, access is denied
@@ -4762,16 +4762,16 @@ ttlOverride: 300,
   "ttlOverride": 10 // The number of seconds that the response should be cached for. Overrides default specified in "amplify update api"
 }
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `1638c78777796c97` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `1638c78777796c97` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -4779,7 +4779,7 @@ ttlOverride: 300,
 
 ##### `amplify/data/resource.ts`
 
-~~~
+```
 import { a, defineData, type ClientSchema } from "@aws-amplify/backend";
 
 const schema = a.schema({
@@ -4800,16 +4800,16 @@ export type Schema = ClientSchema<typeof schema>;
 
 export const data = defineData({ schema });
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `97e7b3e58b77c840` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `97e7b3e58b77c840` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -4817,7 +4817,7 @@ export const data = defineData({ schema });
 
 ##### `Unnamed Snippet`
 
-~~~
+```
 import { generateClient } from 'aws-amplify/data';
 import type { Schema } from '../amplify/data/resource'; // Path to your backend resource definition
 
@@ -4833,16 +4833,16 @@ authMode: 'userPool',
   }
 );
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `89231235f277e013` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `89231235f277e013` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -4850,7 +4850,7 @@ authMode: 'userPool',
 
 ##### `amplify/data/resource.ts`
 
-~~~
+```
 import {
   a,
   defineData,
@@ -4877,16 +4877,16 @@ export const data = defineData({
   schema,
 });
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `06faca1d4de6d812` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `06faca1d4de6d812` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -4894,7 +4894,7 @@ export const data = defineData({
 
 ##### `Unnamed Snippet`
 
-~~~
+```
 const schema = a
   .schema({
 Todo: a.model({
@@ -4906,16 +4906,16 @@ Todo: a.model({
 allow.resource(functionWithDataAccess).to(["query", "listen"]),
   ]); // allow query and subscription operations but not mutations
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `a23fa5edeff73d65` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `a23fa5edeff73d65` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -4923,7 +4923,7 @@ allow.resource(functionWithDataAccess).to(["query", "listen"]),
 
 ##### `amplify/functions/data-access.ts`
 
-~~~
+```
 import { Amplify } from 'aws-amplify';
 import { generateClient } from 'aws-amplify/data';
 import { Schema } from '../data/resource';
@@ -4964,16 +4964,16 @@ export const handler = async (event) => {
   // your function code goes here
 }
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `71dbe766650761ef` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `71dbe766650761ef` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -4981,19 +4981,19 @@ export const handler = async (event) => {
 
 ##### `Terminal`
 
-~~~
+```
 npx ampx generate graphql-client-code --out <path-function-handler-dir>/graphql
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `e91221e30934954b` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `e91221e30934954b` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -5001,7 +5001,7 @@ npx ampx generate graphql-client-code --out <path-function-handler-dir>/graphql
 
 ##### `amplify/functions/data-access.ts`
 
-~~~
+```
 const client = generateClient<Schema>();
 
 export const handler = async (event) => {
@@ -5022,16 +5022,16 @@ query: listTodos,
   return event;
 };
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `dbf5abada7203d58` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `dbf5abada7203d58` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -5039,7 +5039,7 @@ query: listTodos,
 
 ##### `amplify/data/resource.ts`
 
-~~~
+```
 const schema = a.schema({
   Todo: a
 .model({
@@ -5049,16 +5049,16 @@ const schema = a.schema({
 .authorization((allow) => [allow.ownersDefinedIn("owners")]),
 });
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `c11708f5a31a500d` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `c11708f5a31a500d` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -5066,7 +5066,7 @@ const schema = a.schema({
 
 ##### `Unnamed Snippet`
 
-~~~
+```
 import { generateClient } from "aws-amplify/data";
 import type { Schema } from "../amplify/data/resource"; // Path to your backend resource definition
 
@@ -5082,16 +5082,16 @@ authMode: "userPool",
   },
 );
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `a4e33f3ee41a3d19` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `a4e33f3ee41a3d19` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -5099,7 +5099,7 @@ authMode: "userPool",
 
 ##### `Unnamed Snippet`
 
-~~~
+```
 await client.models.Todo.update(
   {
 id: newTodo.id,
@@ -5110,16 +5110,16 @@ authMode: "userPool",
   },
 );
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `27d103ec9928e5ee` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `27d103ec9928e5ee` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -5127,7 +5127,7 @@ authMode: "userPool",
 
 ##### `Unnamed Snippet`
 
-~~~
+```
 const schema = a.schema({
   Todo: a
 .model({
@@ -5137,16 +5137,16 @@ const schema = a.schema({
 .authorization((allow) => [allow.ownersDefinedIn("authors")]),
 });
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `e980f738c085ac2f` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `e980f738c085ac2f` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -5154,7 +5154,7 @@ const schema = a.schema({
 
 ##### `amplify/data/resource.ts`
 
-~~~
+```
 const schema = a.schema({
   Todo: a
 .model({
@@ -5163,16 +5163,16 @@ const schema = a.schema({
 .authorization((allow) => [allow.publicApiKey()]),
 });
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `21cf216d105e1ece` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `21cf216d105e1ece` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -5180,7 +5180,7 @@ const schema = a.schema({
 
 ##### `Unnamed Snippet`
 
-~~~
+```
 import { generateClient } from "aws-amplify/data";
 import type { Schema } from "../amplify/data/resource"; // Path to your backend resource definition
 
@@ -5195,16 +5195,16 @@ authMode: "apiKey",
   },
 );
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `c8110784c3c7df69` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `c8110784c3c7df69` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -5212,7 +5212,7 @@ authMode: "apiKey",
 
 ##### `amplify/data/resource.ts`
 
-~~~
+```
 const schema = a.schema({
   Todo: a
 .model({
@@ -5221,16 +5221,16 @@ const schema = a.schema({
 .authorization((allow) => [allow.guest()]),
 });
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `02802ed51338dc5f` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `02802ed51338dc5f` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -5238,7 +5238,7 @@ const schema = a.schema({
 
 ##### `src/App.tsx`
 
-~~~
+```
 import { Amplify } from "aws-amplify";
 import outputs from "../amplify_outputs.json";
 
@@ -5254,16 +5254,16 @@ Cognito: {
   },
 });
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `638c91685ddf6aad` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `638c91685ddf6aad` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -5271,7 +5271,7 @@ Cognito: {
 
 ##### `src/App.tsx`
 
-~~~
+```
 import { generateClient } from "aws-amplify/data";
 import type { Schema } from "../amplify/data/resource"; // Path to your backend resource definition
 
@@ -5286,16 +5286,16 @@ authMode: "identityPool",
   },
 );
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `75bbbc970e89b3dc` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `75bbbc970e89b3dc` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -5303,7 +5303,7 @@ authMode: "identityPool",
 
 ##### `Unnamed Snippet`
 
-~~~
+```
 import { generateClient } from "aws-amplify/data";
 import type { Schema } from "../amplify/data/resource"; // Path to your backend resource definition
 
@@ -5318,16 +5318,16 @@ authMode: "identityPool",
   },
 );
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `75bbbc970e89b3dc` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `75bbbc970e89b3dc` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -5335,7 +5335,7 @@ authMode: "identityPool",
 
 ##### `amplify/data/resource.ts`
 
-~~~
+```
 const schema = a.schema({
   Todo: a
 .model({
@@ -5344,16 +5344,16 @@ const schema = a.schema({
 .authorization((allow) => [allow.authenticated()]),
 });
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `9b0106fa74c7ae17` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `9b0106fa74c7ae17` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -5361,7 +5361,7 @@ const schema = a.schema({
 
 ##### `Unnamed Snippet`
 
-~~~
+```
 import { generateClient } from "aws-amplify/data";
 import type { Schema } from "../amplify/data/resource"; // Path to your backend resource definition
 
@@ -5376,16 +5376,16 @@ authMode: "userPool",
   },
 );
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `b73cd93b7f81ba2a` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `b73cd93b7f81ba2a` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -5393,7 +5393,7 @@ authMode: "userPool",
 
 ##### `Unnamed Snippet`
 
-~~~
+```
 import { generateClient } from "aws-amplify/data";
 import type { Schema } from "../amplify/data/resource"; // Path to your backend resource definition
 
@@ -5408,16 +5408,16 @@ authMode: "userPool",
   },
 );
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `b73cd93b7f81ba2a` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `b73cd93b7f81ba2a` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -5425,7 +5425,7 @@ authMode: "userPool",
 
 ##### `amplify/data/resource.ts`
 
-~~~
+```
 const schema = a.schema({
   Todo: a
 .model({
@@ -5434,16 +5434,16 @@ const schema = a.schema({
 .authorization((allow) => [allow.authenticated("identityPool")]),
 });
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `b9b26cd28edf59b6` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `b9b26cd28edf59b6` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -5451,7 +5451,7 @@ const schema = a.schema({
 
 ##### `amplify/data/resource.ts`
 
-~~~
+```
 // amplify/data/resource.ts
 import { a, defineData, type ClientSchema } from "@aws-amplify/backend";
 
@@ -5483,16 +5483,16 @@ oidcAuthorizationMode: {
   },
 });
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `69256d377eecea21` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `69256d377eecea21` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -5500,7 +5500,7 @@ oidcAuthorizationMode: {
 
 ##### `Unnamed Snippet`
 
-~~~
+```
 import { generateClient } from "aws-amplify/data";
 import type { Schema } from "../amplify/data/resource"; // Path to your backend resource definition
 
@@ -5510,16 +5510,16 @@ const { errors, data: todos } = await client.models.Todo.list({
   authMode: "oidc",
 });
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `565011bb938244a7` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `565011bb938244a7` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -5527,7 +5527,7 @@ const { errors, data: todos } = await client.models.Todo.list({
 
 ##### `amplify/data/resource.ts`
 
-~~~
+```
 // allow one specific group
 const schema = a.schema({
   Salary: a
@@ -5538,16 +5538,16 @@ const schema = a.schema({
 .authorization((allow) => [allow.group("Admin")]),
 });
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `3558bb1b245a4672` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `3558bb1b245a4672` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -5555,7 +5555,7 @@ const schema = a.schema({
 
 ##### `Unnamed Snippet`
 
-~~~
+```
 import { generateClient } from "aws-amplify/data";
 import type { Schema } from "../amplify/data/resource"; // Path to your backend resource definition
 
@@ -5572,16 +5572,16 @@ authMode: "userPool",
   },
 );
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `573fd6a09fd9031f` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `573fd6a09fd9031f` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -5589,7 +5589,7 @@ authMode: "userPool",
 
 ##### `Unnamed Snippet`
 
-~~~
+```
 // allow multiple specific groups
 const schema = a.schema({
   Salary: a
@@ -5600,16 +5600,16 @@ const schema = a.schema({
 .authorization((allow) => [allow.groups(["Admin", "Leadership"])]),
 });
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `17dfb540da28c8b0` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `17dfb540da28c8b0` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -5617,7 +5617,7 @@ const schema = a.schema({
 
 ##### `Unnamed Snippet`
 
-~~~
+```
 // Dynamic group authorization with multiple groups
 const schema = a.schema({
   Post: a
@@ -5628,16 +5628,16 @@ const schema = a.schema({
 .authorization((allow) => [allow.groupsDefinedIn("groups")]),
 });
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `bf7dbedd18de6bb0` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `bf7dbedd18de6bb0` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -5645,7 +5645,7 @@ const schema = a.schema({
 
 ##### `Unnamed Snippet`
 
-~~~
+```
 // Dynamic group authorization with a single group
 const schema = a.schema({
   Post: a
@@ -5656,16 +5656,16 @@ const schema = a.schema({
 .authorization((allow) => [allow.groupDefinedIn("group")]),
 });
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `d1d464b81fe796a2` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `d1d464b81fe796a2` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -5673,7 +5673,7 @@ const schema = a.schema({
 
 ##### `amplify/data/resource.ts`
 
-~~~
+```
 // The "owner" of a Todo is allowed to create, read, update, and delete their own todos
 const schema = a.schema({
   Todo: a
@@ -5683,16 +5683,16 @@ const schema = a.schema({
 .authorization((allow) => [allow.owner()]),
 });
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `c235455cb03a5496` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `c235455cb03a5496` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -5700,7 +5700,7 @@ const schema = a.schema({
 
 ##### `amplify/data/resource.ts`
 
-~~~
+```
 // The "owner" of a Todo record is only allowed to create, read, and update it.
 // The "owner" of a Todo record is denied to delete it.
 const schema = a.schema({
@@ -5711,16 +5711,16 @@ const schema = a.schema({
 .authorization((allow) => [allow.owner().to(["create", "read", "update"])]),
 });
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `4d68a311e1ae39ec` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `4d68a311e1ae39ec` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -5728,7 +5728,7 @@ const schema = a.schema({
 
 ##### `Unnamed Snippet`
 
-~~~
+```
 const schema = a.schema({
   Todo: a
 .model({
@@ -5740,16 +5740,16 @@ const schema = a.schema({
 .authorization((allow) => [allow.owner()]),
 });
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `82938d1493598d00` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `82938d1493598d00` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -5757,7 +5757,7 @@ const schema = a.schema({
 
 ##### `Unnamed Snippet`
 
-~~~
+```
 const schema = a.schema({
   Todo: a
 .model({
@@ -5767,16 +5767,16 @@ const schema = a.schema({
 .authorization((allow) => [allow.ownerDefinedIn("author")]),
 });
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `f726c21f04df30d2` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `f726c21f04df30d2` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -5784,7 +5784,7 @@ const schema = a.schema({
 
 ##### `Unnamed Snippet`
 
-~~~
+```
 const schema = a.schema({
   Post: a
 .model({
@@ -5799,16 +5799,16 @@ const schema = a.schema({
 ]),
 });
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `e2f15d81cee3ec1a` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `e2f15d81cee3ec1a` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -5816,7 +5816,7 @@ const schema = a.schema({
 
 ##### `Unnamed Snippet`
 
-~~~
+```
 const schema = a
   .schema({
 // Because no model-level authorization rule is present
@@ -5837,16 +5837,16 @@ Notes: a
   })
   .authorization((allow) => [allow.publicApiKey()]);
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `76ed8e59fffd0aac` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `76ed8e59fffd0aac` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -5854,7 +5854,7 @@ Notes: a
 
 ##### `Unnamed Snippet`
 
-~~~
+```
 const schema = a.schema({
   Post: a
 .model({
@@ -5870,16 +5870,16 @@ const schema = a.schema({
 ]),
 });
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `2194b55334d745ad` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `2194b55334d745ad` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -5887,7 +5887,7 @@ const schema = a.schema({
 
 ##### `Unnamed Snippet`
 
-~~~
+```
 const schema = a.schema({
   Employee: a
 .model({
@@ -5906,16 +5906,16 @@ const schema = a.schema({
 ]),
 });
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `714da914aa4034ef` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `714da914aa4034ef` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -5923,7 +5923,7 @@ const schema = a.schema({
 
 ##### `Unnamed Snippet`
 
-~~~
+```
 const schema = a.schema({
   // ...
   listCustomType: a
@@ -5951,16 +5951,16 @@ const schema = a.schema({
 ]),
 });
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `5e987afe82e5a1ff` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `5e987afe82e5a1ff` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -5968,7 +5968,7 @@ const schema = a.schema({
 
 ##### `Unnamed Snippet`
 
-~~~
+```
 const schema = a.schema({
   Post: a
 .model({
@@ -5978,16 +5978,16 @@ const schema = a.schema({
 .authorization((allow) => [allow.guest().to(["read"]), allow.owner()]),
 });
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `d51a9297b3d57373` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `d51a9297b3d57373` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -5995,7 +5995,7 @@ const schema = a.schema({
 
 ##### `Unnamed Snippet`
 
-~~~
+```
 import { generateClient } from "aws-amplify/data";
 import type { Schema } from "@/amplify/data/resource"; // Path to your backend resource definition
 
@@ -6014,16 +6014,16 @@ const { data: listPostsResult, errors } = await client.models.Post.list({
   authMode: "identityPool",
 });
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `ba61062287418137` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `ba61062287418137` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -6031,7 +6031,7 @@ const { data: listPostsResult, errors } = await client.models.Post.list({
 
 ##### `amplify/data/resource.ts`
 
-~~~
+```
 export const schema = a.schema({
   Customer: a
 .model({
@@ -6043,16 +6043,16 @@ export const schema = a.schema({
 .authorization((allow) => [allow.publicApiKey()]),
 });
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `22ba8c0684be1400` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `22ba8c0684be1400` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -6060,7 +6060,7 @@ export const schema = a.schema({
 
 ##### `src/App.tsx`
 
-~~~
+```
 import { type Schema } from "../amplify/data/resource";
 import { generateClient } from "aws-amplify/data";
 
@@ -6071,16 +6071,16 @@ const { data, errors } =
 accountRepresentativeId: "YOUR_REP_ID",
   });
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `00052f6a61b4a992` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `00052f6a61b4a992` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -6088,7 +6088,7 @@ accountRepresentativeId: "YOUR_REP_ID",
 
 ##### `amplify/data/resource.ts`
 
-~~~
+```
 export const schema = a.schema({
   Customer: a
 .model({
@@ -6102,16 +6102,16 @@ export const schema = a.schema({
 .authorization((allow) => [allow.owner()]),
 });
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `956e34083f456707` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `956e34083f456707` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -6119,7 +6119,7 @@ export const schema = a.schema({
 
 ##### `src/App.tsx`
 
-~~~
+```
 const { data, errors } =
   await client.models.Customer.listCustomerByAccountRepresentativeIdAndName({
 accountRepresentativeId: "YOUR_REP_ID",
@@ -6128,16 +6128,16 @@ name: {
 },
   });
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `d839094b3650525c` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `d839094b3650525c` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -6145,7 +6145,7 @@ name: {
 
 ##### `amplify/data/resource.ts`
 
-~~~
+```
 const schema = a.schema({
   Customer: a
 .model({
@@ -6159,16 +6159,16 @@ const schema = a.schema({
 .authorization((allow) => [allow.owner()]),
 });
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `1b750f5a650f2978` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `1b750f5a650f2978` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -6176,21 +6176,21 @@ const schema = a.schema({
 
 ##### `src/App.tsx`
 
-~~~
+```
 const { data, errors } = await client.models.Customer.listByRep({
   accountRepresentativeId: "YOUR_REP_ID",
 });
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `4df128e1af50d457` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `4df128e1af50d457` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -6198,7 +6198,7 @@ const { data, errors } = await client.models.Customer.listByRep({
 
 ##### `amplify/data/resource.ts`
 
-~~~
+```
 const schema = a.schema({
   Customer: a
 .model({
@@ -6212,16 +6212,16 @@ const schema = a.schema({
 .authorization((allow) => [allow.owner()]),
 });
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `295dee0505f4abd0` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `295dee0505f4abd0` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -6229,7 +6229,7 @@ const schema = a.schema({
 
 ##### `Unnamed Snippet`
 
-~~~
+```
 const schema = a.schema({
   Todo: a
 .model({
@@ -6239,16 +6239,16 @@ const schema = a.schema({
 .authorization((allow) => [allow.publicApiKey()]),
 });
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `93fbc94ef4f108d8` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `93fbc94ef4f108d8` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -6256,7 +6256,7 @@ const schema = a.schema({
 
 ##### `Unnamed Snippet`
 
-~~~
+```
 const client = generateClient<Schema>();
 
 const todo = await client.models.Todo.create({
@@ -6265,16 +6265,16 @@ const todo = await client.models.Todo.create({
 });
 console.log(`New Todo created: ${todo.id}`); // New Todo created: 5DB6B4CC-CD41-49F5-9844-57C0AB506B69
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `95716a52d6270a63` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `95716a52d6270a63` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -6282,7 +6282,7 @@ console.log(`New Todo created: ${todo.id}`); // New Todo created: 5DB6B4CC-CD41-
 
 ##### `Unnamed Snippet`
 
-~~~
+```
 const schema = a.schema({
   Todo: a
 .model({
@@ -6294,16 +6294,16 @@ const schema = a.schema({
 .authorization((allow) => [allow.publicApiKey()]),
 });
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `d619a12c5b9f68b2` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `d619a12c5b9f68b2` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -6311,7 +6311,7 @@ const schema = a.schema({
 
 ##### `Unnamed Snippet`
 
-~~~
+```
 const client = generateClient<Schema>();
 
 const { data: todo, errors } = await client.models.Todo.create({
@@ -6321,16 +6321,16 @@ const { data: todo, errors } = await client.models.Todo.create({
 });
 console.log(`New Todo created: ${todo.todoId}`); // New Todo created: MyUniqueTodoId
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `6ffb6c45060a39f9` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `6ffb6c45060a39f9` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -6338,7 +6338,7 @@ console.log(`New Todo created: ${todo.todoId}`); // New Todo created: MyUniqueTo
 
 ##### `Unnamed Snippet`
 
-~~~
+```
 const schema = a.schema({
   StoreBranch: a
 .model({
@@ -6354,16 +6354,16 @@ const schema = a.schema({
 .authorization((allow) => [allow.publicApiKey()]),
 });
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `dc84893fe413f132` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `dc84893fe413f132` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -6371,7 +6371,7 @@ const schema = a.schema({
 
 ##### `Unnamed Snippet`
 
-~~~
+```
 const client = generateClient<Schema>();
 
 const branch = await client.models.StoreBranch.get({
@@ -6379,16 +6379,16 @@ const branch = await client.models.StoreBranch.get({
   name: "Downtown",
 }); // All identifier fields are required when retrieving an item
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `7a1fb3aa2c192ea3` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `7a1fb3aa2c192ea3` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -6396,7 +6396,7 @@ const branch = await client.models.StoreBranch.get({
 
 ##### `Unnamed Snippet`
 
-~~~
+```
 import { type ClientSchema, a, defineData } from "@aws-amplify/backend";
 
 const schema = a
@@ -6443,16 +6443,16 @@ apiKeyAuthorizationMode: {
   },
 });
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `1f807200986a702a` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `1f807200986a702a` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -6460,7 +6460,7 @@ apiKeyAuthorizationMode: {
 
 ##### `amplify/data/resource.ts`
 
-~~~
+```
 import { defineData } from "@aws-amplify/backend";
 
 const schema = /* GraphQL */ `
@@ -6480,16 +6480,16 @@ apiKeyAuthorizationMode: {
   },
 });
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `18d9bf46eea33c9b` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `18d9bf46eea33c9b` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -6497,7 +6497,7 @@ apiKeyAuthorizationMode: {
 
 ##### `amplify/data/resource.ts`
 
-~~~
+```
 import { type ClientSchema, a, defineData } from "@aws-amplify/backend";
 
 const schema = a.schema({
@@ -6542,16 +6542,16 @@ export const data = defineData({
   schema,
 });
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `3f22d1115fdd0bd7` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `3f22d1115fdd0bd7` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -6559,7 +6559,7 @@ export const data = defineData({
 
 ##### `amplify/data/publish.js`
 
-~~~
+```
 // This handler simply passes through the arguments of the mutation through as the result
 export function request() {
   return {};
@@ -6572,16 +6572,16 @@ export function response(ctx) {
   return ctx.args;
 }
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `a8da17bf52779423` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `a8da17bf52779423` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -6589,7 +6589,7 @@ export function response(ctx) {
 
 ##### `amplify/data/receive.js`
 
-~~~
+```
 export function request() {
   return {};
 }
@@ -6598,16 +6598,16 @@ export const response = (ctx) => {
   return ctx.result;
 };
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `0c92d3e251c14dd8` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `0c92d3e251c14dd8` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -6615,7 +6615,7 @@ export const response = (ctx) => {
 
 ##### `Unnamed Snippet`
 
-~~~
+```
 import { generateClient } from "aws-amplify/data";
 import type { Schema } from "../amplify/data/resource";
 
@@ -6627,16 +6627,16 @@ console.log(event);
   },
 });
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `71c0932ed659436e` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `71c0932ed659436e` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -6644,22 +6644,22 @@ console.log(event);
 
 ##### `Unnamed Snippet`
 
-~~~
+```
 client.mutations.publish({
   channelName: "world",
   content: "My first message!",
 });
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `13b68e9e7816b879` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `13b68e9e7816b879` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -6667,19 +6667,19 @@ client.mutations.publish({
 
 ##### `Unnamed Snippet`
 
-~~~
+```
 sub.unsubscribe();
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `18118a741cc48da5` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `18118a741cc48da5` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -6687,7 +6687,7 @@ sub.unsubscribe();
 
 ##### `amplify/data/resource.ts`
 
-~~~
+```
 import { type ClientSchema, a, defineData } from "@aws-amplify/backend";
 
 const schema = a.schema({
@@ -6726,16 +6726,16 @@ export const data = defineData({
   schema,
 });
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `3a761e0e4260590a` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `3a761e0e4260590a` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -6743,7 +6743,7 @@ export const data = defineData({
 
 ##### `Unnamed Snippet`
 
-~~~
+```
 import { util, extensions } from "@aws-appsync/utils";
 
 // Subscription handlers must return a `null` payload on the request
@@ -6766,16 +6766,16 @@ channelName: {
   return null;
 }
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `86525827632442c0` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `86525827632442c0` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -6783,7 +6783,7 @@ channelName: {
 
 ##### `Unnamed Snippet`
 
-~~~
+```
 import { defineBackend } from "@aws-amplify/backend";
 import { data } from "./data/resource";
 
@@ -6799,16 +6799,16 @@ table.pointInTimeRecoveryEnabled = true;
   },
 );
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `ff73e9e8bc4d231c` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `ff73e9e8bc4d231c` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -6816,7 +6816,7 @@ table.pointInTimeRecoveryEnabled = true;
 
 ##### `Unnamed Snippet`
 
-~~~
+```
 import { defineBackend } from "@aws-amplify/backend";
 import { data } from "./data/resource";
 
@@ -6828,16 +6828,16 @@ const dataResources = backend.data.resources;
 
 dataResources.cfnResources.cfnGraphqlApi.xrayEnabled = true;
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `aa8e04a6a0f517cc` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `aa8e04a6a0f517cc` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -6845,7 +6845,7 @@ dataResources.cfnResources.cfnGraphqlApi.xrayEnabled = true;
 
 ##### `Unnamed Snippet`
 
-~~~
+```
 import { defineBackend } from "@aws-amplify/backend";
 import { data } from "./data/resource";
 
@@ -6860,16 +6860,16 @@ dataResources.cfnResources.amplifyDynamoDbTables["Todo"].timeToLiveAttribute = {
   enabled: true,
 };
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `f80c2100ba23a11b` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `f80c2100ba23a11b` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -6877,7 +6877,7 @@ dataResources.cfnResources.amplifyDynamoDbTables["Todo"].timeToLiveAttribute = {
 
 ##### `Unnamed Snippet`
 
-~~~
+```
 import { defineBackend } from "@aws-amplify/backend";
 import { data } from "./data/resource";
 import { BillingMode } from "aws-cdk-lib/aws-dynamodb";
@@ -6890,16 +6890,16 @@ const dataResources = backend.data.resources;
 dataResources.cfnResources.amplifyDynamoDbTables["Todo"].billingMode =
   BillingMode.PAY_PER_REQUEST;
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `af89dbfebfd5de7c` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `af89dbfebfd5de7c` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -6907,7 +6907,7 @@ dataResources.cfnResources.amplifyDynamoDbTables["Todo"].billingMode =
 
 ##### `Unnamed Snippet`
 
-~~~
+```
 import { defineBackend } from "@aws-amplify/backend";
 import { data } from "./data/resource";
 
@@ -6923,16 +6923,16 @@ readCapacityUnits: 5,
 writeCapacityUnits: 5,
   };
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `1ba844bb9738379e` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `1ba844bb9738379e` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -6940,7 +6940,7 @@ writeCapacityUnits: 5,
 
 ##### `Unnamed Snippet`
 
-~~~
+```
 import { defineBackend } from "@aws-amplify/backend";
 import { data } from "./data/resource";
 
@@ -6954,16 +6954,16 @@ dataResources.cfnResources.amplifyDynamoDbTables[
   "Todo"
 ].pointInTimeRecoveryEnabled = true;
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `4acf111e12150874` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `4acf111e12150874` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -6971,19 +6971,19 @@ dataResources.cfnResources.amplifyDynamoDbTables[
 
 ##### `Terminal`
 
-~~~
+```
 npm add --save-dev @types/aws-lambda
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `859a0bc7ceb3d153` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `859a0bc7ceb3d153` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -6991,19 +6991,19 @@ npm add --save-dev @types/aws-lambda
 
 ##### `Terminal`
 
-~~~
+```
 npm add --save-dev @types/aws-lambda
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `859a0bc7ceb3d153` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `859a0bc7ceb3d153` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -7011,19 +7011,19 @@ npm add --save-dev @types/aws-lambda
 
 ##### `Terminal`
 
-~~~
+```
 npm add --save-dev @types/aws-lambda
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `859a0bc7ceb3d153` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `859a0bc7ceb3d153` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -7031,19 +7031,19 @@ npm add --save-dev @types/aws-lambda
 
 ##### `Terminal`
 
-~~~
+```
 npm add --save-dev @types/aws-lambda
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `859a0bc7ceb3d153` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `859a0bc7ceb3d153` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -7051,19 +7051,19 @@ npm add --save-dev @types/aws-lambda
 
 ##### `Terminal`
 
-~~~
+```
 npm add --save-dev @types/aws-lambda
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `859a0bc7ceb3d153` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `859a0bc7ceb3d153` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -7071,7 +7071,7 @@ npm add --save-dev @types/aws-lambda
 
 ##### `amplify/data/resource.ts`
 
-~~~
+```
 import { type ClientSchema, a, defineData } from "@aws-amplify/backend";
 import { postConfirmation } from "../auth/post-confirmation/resource";
 
@@ -7097,16 +7097,16 @@ apiKeyAuthorizationMode: {
   },
 });
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `f2fd0d9df88405a2` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `f2fd0d9df88405a2` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -7114,23 +7114,23 @@ apiKeyAuthorizationMode: {
 
 ##### `amplify/auth/post-confirmation/resource.ts`
 
-~~~
+```
 import { defineFunction } from "@aws-amplify/backend";
 
 export const postConfirmation = defineFunction({
   name: "post-confirmation",
 });
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `8b9530b61f2b2da4` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `8b9530b61f2b2da4` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -7138,19 +7138,19 @@ export const postConfirmation = defineFunction({
 
 ##### `Terminal`
 
-~~~
+```
 npx ampx generate graphql-client-code --out <path-to-post-confirmation-handler-dir>/graphql
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `c6c70644fbaf72c0` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `c6c70644fbaf72c0` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -7158,7 +7158,7 @@ npx ampx generate graphql-client-code --out <path-to-post-confirmation-handler-d
 
 ##### `amplify/auth/post-confirmation/handler.ts`
 
-~~~
+```
 import type { PostConfirmationTriggerHandler } from "aws-lambda";
 import { type Schema } from "../../data/resource";
 import { Amplify } from "aws-amplify";
@@ -7212,16 +7212,16 @@ variables: {
   return event;
 };
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `98f9c783075cf76e` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `98f9c783075cf76e` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -7229,7 +7229,7 @@ variables: {
 
 ##### `amplify/auth/resource.ts`
 
-~~~
+```
 import { defineAuth } from "@aws-amplify/backend";
 import { postConfirmation } from "./post-confirmation/resource";
 
@@ -7242,16 +7242,16 @@ postConfirmation,
   },
 });
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `0241a55956ce0589` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `0241a55956ce0589` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -7259,23 +7259,23 @@ postConfirmation,
 
 ##### `amplify/auth/create-auth-challenge/resource.ts`
 
-~~~
+```
 import { defineFunction } from "@aws-amplify/backend";
 
 export const createAuthChallenge = defineFunction({
   name: "create-auth-challenge",
 });
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `a3e090a743d04a5f` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `a3e090a743d04a5f` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -7283,23 +7283,23 @@ export const createAuthChallenge = defineFunction({
 
 ##### `amplify/auth/create-auth-challenge/resource.ts`
 
-~~~
+```
 import { defineFunction } from "@aws-amplify/backend";
 
 export const createAuthChallenge = defineFunction({
   name: "create-auth-challenge",
 });
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `a3e090a743d04a5f` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `a3e090a743d04a5f` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -7307,7 +7307,7 @@ export const createAuthChallenge = defineFunction({
 
 ##### `amplify/auth/create-auth-challenge/handler.ts`
 
-~~~
+```
 import type { CreateAuthChallengeTriggerHandler } from "aws-lambda";
 
 export const handler: CreateAuthChallengeTriggerHandler = async (event) => {
@@ -7328,16 +7328,16 @@ event.response.privateChallengeParameters.answer = challengeCode;
   return event;
 };
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `40aa58cbc423c8e3` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `40aa58cbc423c8e3` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -7345,23 +7345,23 @@ event.response.privateChallengeParameters.answer = challengeCode;
 
 ##### `amplify/auth/define-auth-challenge/resource.ts`
 
-~~~
+```
 import { defineFunction } from "@aws-amplify/backend";
 
 export const defineAuthChallenge = defineFunction({
   name: "define-auth-challenge",
 });
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `02beb77eace696f3` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `02beb77eace696f3` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -7369,23 +7369,23 @@ export const defineAuthChallenge = defineFunction({
 
 ##### `amplify/auth/define-auth-challenge/resource.ts`
 
-~~~
+```
 import { defineFunction } from "@aws-amplify/backend";
 
 export const defineAuthChallenge = defineFunction({
   name: "define-auth-challenge",
 });
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `02beb77eace696f3` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `02beb77eace696f3` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -7393,7 +7393,7 @@ export const defineAuthChallenge = defineFunction({
 
 ##### `amplify/auth/define-auth-challenge/handler.ts`
 
-~~~
+```
 import type { DefineAuthChallengeTriggerHandler } from "aws-lambda";
 
 export const handler: DefineAuthChallengeTriggerHandler = async (event) => {
@@ -7424,16 +7424,16 @@ event.response.failAuthentication = true;
   return event;
 };
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `74b493084dedc9b3` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `74b493084dedc9b3` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -7441,7 +7441,7 @@ event.response.failAuthentication = true;
 
 ##### `amplify/auth/define-auth-challenge/handler.ts`
 
-~~~
+```
 import type { DefineAuthChallengeTriggerHandler } from "aws-lambda";
 
 export const handler: DefineAuthChallengeTriggerHandler = async (event) => {
@@ -7486,16 +7486,16 @@ event.response.failAuthentication = true;
   return event;
 };
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `a3dec3c66d5195fd` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `a3dec3c66d5195fd` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -7503,23 +7503,23 @@ event.response.failAuthentication = true;
 
 ##### `amplify/auth/verify-auth-challenge-response/resource.ts`
 
-~~~
+```
 import { defineFunction, secret } from "@aws-amplify/backend";
 
 export const verifyAuthChallengeResponse = defineFunction({
   name: "verify-auth-challenge-response",
 });
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `ce4044d78084f67a` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `ce4044d78084f67a` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -7527,7 +7527,7 @@ export const verifyAuthChallengeResponse = defineFunction({
 
 ##### `amplify/auth/verify-auth-challenge-response/handler.ts`
 
-~~~
+```
 import type { VerifyAuthChallengeResponseTriggerHandler } from "aws-lambda";
 
 export const handler: VerifyAuthChallengeResponseTriggerHandler = async (
@@ -7537,16 +7537,16 @@ export const handler: VerifyAuthChallengeResponseTriggerHandler = async (
   return event;
 };
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `3861b7461a8951c5` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `3861b7461a8951c5` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -7554,7 +7554,7 @@ export const handler: VerifyAuthChallengeResponseTriggerHandler = async (
 
 ##### `amplify/auth/resource.ts`
 
-~~~
+```
 import { defineAuth } from "@aws-amplify/backend";
 import { createAuthChallenge } from "./create-auth-challenge/resource";
 import { defineAuthChallenge } from "./define-auth-challenge/resource";
@@ -7575,16 +7575,16 @@ verifyAuthChallengeResponse,
   },
 });
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `14ad131b8716bb9b` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `14ad131b8716bb9b` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -7592,7 +7592,7 @@ verifyAuthChallengeResponse,
 
 ##### `amplify/auth/resource.ts`
 
-~~~
+```
 import { defineAuth } from "@aws-amplify/backend";
 import { createAuthChallenge } from "./create-auth-challenge/resource";
 import { defineAuthChallenge } from "./define-auth-challenge/resource";
@@ -7613,16 +7613,16 @@ verifyAuthChallengeResponse,
   },
 });
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `14ad131b8716bb9b` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `14ad131b8716bb9b` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -7630,23 +7630,23 @@ verifyAuthChallengeResponse,
 
 ##### `amplify/auth/custom-message/resource.ts`
 
-~~~
+```
 import { defineFunction } from "@aws-amplify/backend";
 
 export const customMessage = defineFunction({
   name: "custom-message",
 });
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `b9f42270438de5a4` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `b9f42270438de5a4` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -7654,7 +7654,7 @@ export const customMessage = defineFunction({
 
 ##### `amplify/auth/custom-message/handler.ts`
 
-~~~
+```
 import type { CustomMessageTriggerHandler } from "aws-lambda";
 
 export const handler: CustomMessageTriggerHandler = async (event) => {
@@ -7672,16 +7672,16 @@ if (locale === "en") {
   return event;
 };
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `94344039cff6638a` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `94344039cff6638a` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -7689,7 +7689,7 @@ if (locale === "en") {
 
 ##### `amplify/auth/resource.ts`
 
-~~~
+```
 import { defineAuth } from "@aws-amplify/backend";
 import { customMessage } from "./custom-message/resource";
 
@@ -7700,16 +7700,16 @@ customMessage,
   },
 });
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `9475e9c0f178a185` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `9475e9c0f178a185` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -7717,19 +7717,19 @@ customMessage,
 
 ##### `Terminal`
 
-~~~
+```
 npm add --save-dev @aws-lambda-powertools/logger @types/aws-lambda
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `e083d0c2dbcc4af0` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `e083d0c2dbcc4af0` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -7737,23 +7737,23 @@ npm add --save-dev @aws-lambda-powertools/logger @types/aws-lambda
 
 ##### `amplify/functions/dynamoDB-function/resource.ts`
 
-~~~
+```
 import { defineFunction } from "@aws-amplify/backend";
 
 export const myDynamoDBFunction = defineFunction({
   name: "dynamoDB-function",
 });
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `21cd0df008404d02` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `21cd0df008404d02` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -7761,7 +7761,7 @@ export const myDynamoDBFunction = defineFunction({
 
 ##### `amplify/functions/dynamoDB-function/handler.ts`
 
-~~~
+```
 import type { DynamoDBStreamHandler } from "aws-lambda";
 import { Logger } from "@aws-lambda-powertools/logger";
 
@@ -7787,16 +7787,16 @@ batchItemFailures: [],
   };
 };
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `9c30e650d7a58bed` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `9c30e650d7a58bed` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -7804,7 +7804,7 @@ batchItemFailures: [],
 
 ##### `amplify/backend.ts`
 
-~~~
+```
 import { defineBackend } from "@aws-amplify/backend";
 import { Stack } from "aws-cdk-lib";
 import { Policy, PolicyStatement, Effect } from "aws-cdk-lib/aws-iam";
@@ -7852,16 +7852,16 @@ startingPosition: StartingPosition.LATEST,
 
 mapping.node.addDependency(policy);
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `c1748580a80e9b2c` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `c1748580a80e9b2c` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -7869,7 +7869,7 @@ mapping.node.addDependency(policy);
 
 ##### `amplify/auth/pre-sign-up/resource.ts`
 
-~~~
+```
 import { defineFunction } from "@aws-amplify/backend";
 
 export const preSignUp = defineFunction({
@@ -7880,16 +7880,16 @@ ALLOW_DOMAIN: "amazon.com",
   },
 });
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `4df2be1b1be59111` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `4df2be1b1be59111` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -7897,7 +7897,7 @@ ALLOW_DOMAIN: "amazon.com",
 
 ##### `amplify/auth/pre-sign-up/handler.ts`
 
-~~~
+```
 import type { PreSignUpTriggerHandler } from "aws-lambda";
 import { env } from "$amplify/env/pre-sign-up";
 
@@ -7911,16 +7911,16 @@ throw new Error("Invalid email domain");
   return event;
 };
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `6c5a21475b7e7a44` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `6c5a21475b7e7a44` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -7928,7 +7928,7 @@ throw new Error("Invalid email domain");
 
 ##### `amplify/auth/resource.ts`
 
-~~~
+```
 import { defineAuth } from "@aws-amplify/backend";
 import { preSignUp } from "./pre-sign-up/resource";
 
@@ -7939,16 +7939,16 @@ preSignUp,
   },
 });
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `b723d71fb646496c` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `b723d71fb646496c` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -7956,7 +7956,7 @@ preSignUp,
 
 ##### `amplify/auth/resource.ts`
 
-~~~
+```
 import { defineAuth } from "@aws-amplify/backend";
 import { preSignUp } from "./pre-sign-up/resource";
 
@@ -7967,16 +7967,16 @@ preSignUp,
   },
 });
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `b723d71fb646496c` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `b723d71fb646496c` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -7984,7 +7984,7 @@ preSignUp,
 
 ##### `amplify/auth/create-auth-challenge/handler.ts`
 
-~~~
+```
 import type { CreateAuthChallengeTriggerHandler } from "aws-lambda";
 
 export const handler: CreateAuthChallengeTriggerHandler = async (event) => {
@@ -8004,16 +8004,16 @@ response.challengeMetadata = "CAPTCHA_CHALLENGE";
   return event;
 };
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `f3ede51911261aeb` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `f3ede51911261aeb` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -8021,7 +8021,7 @@ response.challengeMetadata = "CAPTCHA_CHALLENGE";
 
 ##### `amplify/auth/define-auth-challenge/handler.ts`
 
-~~~
+```
 import type { DefineAuthChallengeTriggerHandler } from "aws-lambda";
 
 export const handler: DefineAuthChallengeTriggerHandler = async (event) => {
@@ -8058,16 +8058,16 @@ response.failAuthentication = false;
   return event;
 };
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `220e3234773e3f60` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `220e3234773e3f60` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -8075,19 +8075,19 @@ response.failAuthentication = false;
 
 ##### `Terminal`
 
-~~~
+```
 npx ampx sandbox secret set GOOGLE_RECAPTCHA_SECRET_KEY
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `12b6510fc4e3f672` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `12b6510fc4e3f672` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -8095,7 +8095,7 @@ npx ampx sandbox secret set GOOGLE_RECAPTCHA_SECRET_KEY
 
 ##### `amplify/auth/verify-auth-challenge-response/resource.ts`
 
-~~~
+```
 import { defineFunction, secret } from "@aws-amplify/backend";
 
 export const verifyAuthChallengeResponse = defineFunction({
@@ -8105,16 +8105,16 @@ GOOGLE_RECAPTCHA_SECRET_KEY: secret("GOOGLE_RECAPTCHA_SECRET_KEY"),
   },
 });
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `5f0f8a2ff5b509af` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `5f0f8a2ff5b509af` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -8122,7 +8122,7 @@ GOOGLE_RECAPTCHA_SECRET_KEY: secret("GOOGLE_RECAPTCHA_SECRET_KEY"),
 
 ##### `amplify/auth/verify-auth-challenge-response/handler.ts`
 
-~~~
+```
 import type { VerifyAuthChallengeResponseTriggerHandler } from "aws-lambda";
 import { env } from "$amplify/env/verify-auth-challenge-response";
 
@@ -8177,16 +8177,16 @@ throw new Error("Verification failed", { cause: result["error-codes"] });
   return event;
 };
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `a278e2c6359ca317` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `a278e2c6359ca317` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -8194,19 +8194,19 @@ throw new Error("Verification failed", { cause: result["error-codes"] });
 
 ##### `Terminal`
 
-~~~
+```
 npm add --save @types/aws-lambda
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `1b374687de452eb3` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `1b374687de452eb3` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -8214,7 +8214,7 @@ npm add --save @types/aws-lambda
 
 ##### `amplify/storage/resource.ts`
 
-~~~
+```
 import { defineFunction, defineStorage } from "@aws-amplify/backend";
 
 export const storage = defineStorage({
@@ -8226,16 +8226,16 @@ onUpload: defineFunction({
   },
 });
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `a1c51652375ff7aa` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `a1c51652375ff7aa` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -8243,7 +8243,7 @@ onUpload: defineFunction({
 
 ##### `amplify/storage/on-upload-handler.ts`
 
-~~~
+```
 import type { S3Handler } from "aws-lambda";
 
 export const handler: S3Handler = async (event) => {
@@ -8251,16 +8251,16 @@ export const handler: S3Handler = async (event) => {
   console.log(`Upload handler invoked for objects [${objectKeys.join(", ")}]`);
 };
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `1da9411beef016a2` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `1da9411beef016a2` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -8268,23 +8268,23 @@ export const handler: S3Handler = async (event) => {
 
 ##### `amplify/auth/pre-token-generation/resource.ts`
 
-~~~
+```
 import { defineFunction } from "@aws-amplify/backend";
 
 export const preTokenGeneration = defineFunction({
   name: "pre-token-generation",
 });
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `1aac0bf493e838ce` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `1aac0bf493e838ce` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -8292,7 +8292,7 @@ export const preTokenGeneration = defineFunction({
 
 ##### `amplify/auth/pre-token-generation/handler.ts`
 
-~~~
+```
 import type { PreTokenGenerationTriggerHandler } from "aws-lambda";
 
 export const handler: PreTokenGenerationTriggerHandler = async (event) => {
@@ -8311,16 +8311,16 @@ claimsOverrideDetails: {
   return event;
 };
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `a91e9b3ef170f773` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `a91e9b3ef170f773` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -8328,7 +8328,7 @@ claimsOverrideDetails: {
 
 ##### `amplify/auth/resource.ts`
 
-~~~
+```
 import { defineAuth } from "@aws-amplify/backend";
 import { preTokenGeneration } from "./pre-token-generation/resource";
 
@@ -8341,16 +8341,16 @@ preTokenGeneration,
   },
 });
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `19f4c132710a5756` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `19f4c132710a5756` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -8358,7 +8358,7 @@ preTokenGeneration,
 
 ##### `Unnamed Snippet`
 
-~~~
+```
 {
   "cognito:groups": [
 "amplify_group_1"
@@ -8371,16 +8371,16 @@ preTokenGeneration,
   "aud": "...",
 }
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `602ae7b01aff8352` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `602ae7b01aff8352` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -8388,23 +8388,23 @@ preTokenGeneration,
 
 ##### `amplify/auth/pre-sign-up/resource.ts`
 
-~~~
+```
 import { defineFunction } from "@aws-amplify/backend";
 
 export const preSignUp = defineFunction({
   name: "pre-sign-up",
 });
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `a1c0bf89b3049524` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `a1c0bf89b3049524` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -8412,7 +8412,7 @@ export const preSignUp = defineFunction({
 
 ##### `amplify/auth/pre-sign-up/handler.ts`
 
-~~~
+```
 import type { PreSignUpTriggerHandler } from "aws-lambda";
 
 function isOlderThan(date: Date, age: number) {
@@ -8432,16 +8432,16 @@ throw new Error("You must be 13 years or older to use this site");
   return event;
 };
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `70b553df14441114` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `70b553df14441114` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -8449,19 +8449,19 @@ throw new Error("You must be 13 years or older to use this site");
 
 ##### `Terminal`
 
-~~~
+```
 npm add --save-dev @aws-sdk/client-cognito-identity-provider @types/aws-lambda
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `0a23d15d6d404548` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `0a23d15d6d404548` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -8469,7 +8469,7 @@ npm add --save-dev @aws-sdk/client-cognito-identity-provider @types/aws-lambda
 
 ##### `amplify/auth/post-confirmation/resource.ts`
 
-~~~
+```
 import { defineFunction } from "@aws-amplify/backend";
 
 export const postConfirmation = defineFunction({
@@ -8480,16 +8480,16 @@ GROUP_NAME: "EVERYONE",
   },
 });
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `313f2159dfd10f36` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `313f2159dfd10f36` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -8497,7 +8497,7 @@ GROUP_NAME: "EVERYONE",
 
 ##### `amplify/auth/resource.ts`
 
-~~~
+```
 import { defineAuth } from "@aws-amplify/backend";
 import { postConfirmation } from "./post-confirmation/resource";
 
@@ -8512,16 +8512,16 @@ postConfirmation,
   access: (allow) => [allow.resource(postConfirmation).to(["addUserToGroup"])],
 });
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `a33e0d803731568b` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `a33e0d803731568b` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -8529,7 +8529,7 @@ postConfirmation,
 
 ##### `amplify/auth/post-confirmation/handler.ts`
 
-~~~
+```
 import type { PostConfirmationTriggerHandler } from "aws-lambda";
 import {
   CognitoIdentityProviderClient,
@@ -8551,16 +8551,16 @@ UserPoolId: event.userPoolId,
   return event;
 };
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `c6ed8737a194d963` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `c6ed8737a194d963` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -8568,7 +8568,7 @@ UserPoolId: event.userPoolId,
 
 ##### `amplify/functions/say-hello/resource.ts`
 
-~~~
+```
 import { defineFunction } from "@aws-amplify/backend";
 
 export const sayHello = defineFunction({
@@ -8577,16 +8577,16 @@ NAME: "World",
   },
 });
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `2c96b809a658d6fc` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `2c96b809a658d6fc` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -8594,7 +8594,7 @@ NAME: "World",
 
 ##### `amplify/functions/say-hello/resource.ts`
 
-~~~
+```
 export const sayHello = defineFunction({
   environment: {
 NAME: "World",
@@ -8602,16 +8602,16 @@ API_ENDPOINT: process.env.API_ENDPOINT,
   },
 });
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `fa6a5002ce0303b1` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `fa6a5002ce0303b1` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -8619,7 +8619,7 @@ API_ENDPOINT: process.env.API_ENDPOINT,
 
 ##### `amplify/functions/say-hello/handler.ts`
 
-~~~
+```
 import { env } from "$amplify/env/say-hello"; // the import is '$amplify/env/<function-name>'
 
 export const handler = async (event) => {
@@ -8627,16 +8627,16 @@ export const handler = async (event) => {
   return `Hello, ${env.NAME}!`;
 };
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `d8864be05ad1014e` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `d8864be05ad1014e` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -8644,7 +8644,7 @@ export const handler = async (event) => {
 
 ##### `amplify/tsconfig.json`
 
-~~~
+```
 {
   "compilerOptions": {
 "paths": {
@@ -8653,16 +8653,16 @@ export const handler = async (event) => {
   }
 }
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `5763fd6929aa55fe` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `5763fd6929aa55fe` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -8670,7 +8670,7 @@ export const handler = async (event) => {
 
 ##### `amplify/functions/say-hello/resource.ts`
 
-~~~
+```
 import { defineFunction } from "@aws-amplify/backend";
 
 export const sayHello = defineFunction({
@@ -8680,16 +8680,16 @@ NAME: "World",
   },
 });
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `c2c60dde955a48c4` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `c2c60dde955a48c4` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -8697,19 +8697,19 @@ NAME: "World",
 
 ##### `Unnamed Snippet`
 
-~~~
+```
 .amplify/generated/env/say-hello.ts
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `0db8868b6b6b4159` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `0db8868b6b6b4159` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -8717,7 +8717,7 @@ NAME: "World",
 
 ##### `amplify/functions/say-hello/handler.ts`
 
-~~~
+```
 import { env } from "$amplify/env/say-hello";
 
 export const handler = async (event) => {
@@ -8725,16 +8725,16 @@ export const handler = async (event) => {
   return `Hello, ${env.NAME}!`;
 };
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `2b26fc1940aea483` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `2b26fc1940aea483` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -8742,7 +8742,7 @@ export const handler = async (event) => {
 
 ##### `amplify/functions/say-hello/resource.ts`
 
-~~~
+```
 import { defineFunction, secret } from "@aws-amplify/backend";
 
 export const sayHello = defineFunction({
@@ -8753,16 +8753,16 @@ API_KEY: secret("MY_API_KEY"), // this assumes you created a secret named "MY_AP
   },
 });
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `ca8b3f2fb9c7f8b7` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `ca8b3f2fb9c7f8b7` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -8770,7 +8770,7 @@ API_KEY: secret("MY_API_KEY"), // this assumes you created a secret named "MY_AP
 
 ##### `amplify/functions/say-hello/handler.ts`
 
-~~~
+```
 import { env } from "$amplify/env/say-hello";
 
 export const handler = async (event) => {
@@ -8784,16 +8784,16 @@ headers: {
   return `Hello, ${env.NAME}!`;
 };
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `78c76e0bca2d358d` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `78c76e0bca2d358d` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -8801,22 +8801,22 @@ headers: {
 
 ##### `amplify/functions/my-demo-function/resource.ts`
 
-~~~
+```
 export const myDemoFunction = defineFunction({
   entry: "./demo-function-handler.ts",
   name: "overrideName", // explicitly set the name to override the default naming behavior
 });
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `e096b9f54c2de0fb` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `e096b9f54c2de0fb` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -8824,21 +8824,21 @@ export const myDemoFunction = defineFunction({
 
 ##### `amplify/functions/my-demo-function/resource.ts`
 
-~~~
+```
 export const myDemoFunction = defineFunction({
   timeoutSeconds: 60, // 1 minute timeout
 });
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `9ddcadbec076fffb` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `9ddcadbec076fffb` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -8846,21 +8846,21 @@ export const myDemoFunction = defineFunction({
 
 ##### `amplify/functions/my-demo-function/resource.ts`
 
-~~~
+```
 export const myDemoFunction = defineFunction({
   memoryMB: 256, // allocate 256 MB of memory to the function.
 });
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `f296449660a68062` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `f296449660a68062` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -8868,21 +8868,21 @@ export const myDemoFunction = defineFunction({
 
 ##### `amplify/functions/my-demo-function/resource.ts`
 
-~~~
+```
 export const myDemoFunction = defineFunction({
   runtime: 20, // use Node 20
 });
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `c750380bfe065319` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `c750380bfe065319` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -8890,21 +8890,21 @@ export const myDemoFunction = defineFunction({
 
 ##### `amplify/functions/my-demo-function/resource.ts`
 
-~~~
+```
 export const myDemoFunction = defineFunction({
   entry: "./path/to/handler.ts", // this path should either be absolute or relative to the current file
 });
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `968447ad26e96e85` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `968447ad26e96e85` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -8912,7 +8912,7 @@ export const myDemoFunction = defineFunction({
 
 ##### `amplify/storage/resource.ts`
 
-~~~
+```
 import { defineStorage } from "@aws-amplify/backend";
 import { generateMonthlyReports } from "../functions/generate-monthly-reports/resource";
 
@@ -8925,16 +8925,16 @@ export const storage = defineStorage({
   }),
 });
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `0d24121ec15795f1` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `0d24121ec15795f1` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -8942,7 +8942,7 @@ export const storage = defineStorage({
 
 ##### `amplify/functions/generate-monthly-reports/handler.ts`
 
-~~~
+```
 import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
 import { env } from "$amplify/env/generate-monthly-reports";
 
@@ -8958,16 +8958,16 @@ Body: new Blob([""], { type: "text/csv;charset=utf-8;" }),
   await s3Client.send(command);
 };
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `99258be1f75a8f39` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `99258be1f75a8f39` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -8975,7 +8975,7 @@ Body: new Blob([""], { type: "text/csv;charset=utf-8;" }),
 
 ##### `amplify/backend.ts`
 
-~~~
+```
 import { defineBackend } from "@aws-amplify/backend";
 import * as iam from "aws-cdk-lib/aws-iam";
 import * as sns from "aws-cdk-lib/aws-sns";
@@ -9000,16 +9000,16 @@ const statement = new iam.PolicyStatement({
 
 weeklyDigestLambda.addToRolePolicy(statement);
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `762565227d0cd347` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `762565227d0cd347` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -9017,7 +9017,7 @@ weeklyDigestLambda.addToRolePolicy(statement);
 
 ##### `amplify/backend.ts`
 
-~~~
+```
 import { defineBackend } from "@aws-amplify/backend";
 import * as iam from "aws-cdk-lib/aws-iam";
 import * as sns from "aws-cdk-lib/aws-sns";
@@ -9036,16 +9036,16 @@ const topic = new sns.Topic(topicStack, "Topic", {
 
 topic.grantPublish(weeklyDigestLambda);
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `a3c8effc91ad348c` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `a3c8effc91ad348c` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -9053,7 +9053,7 @@ topic.grantPublish(weeklyDigestLambda);
 
 ##### `amplify/backend.ts`
 
-~~~
+```
 import { defineBackend } from "@aws-amplify/backend";
 import { myFunction } from "./functions/my-function";
 
@@ -9067,16 +9067,16 @@ backend.myFunction.resources;
 // where the Lambda function can be found on
 backend.myFunction.resources.lambda;
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `2e3dc17cabd45c14` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `2e3dc17cabd45c14` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -9084,7 +9084,7 @@ backend.myFunction.resources.lambda;
 
 ##### `amplify/jobs/weekly-digest/resource.ts`
 
-~~~
+```
 import { defineFunction } from "@aws-amplify/backend";
 
 export const weeklyDigest = defineFunction({
@@ -9092,16 +9092,16 @@ export const weeklyDigest = defineFunction({
   schedule: "every week",
 });
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `de15993cea5f1fa1` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `de15993cea5f1fa1` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -9109,7 +9109,7 @@ export const weeklyDigest = defineFunction({
 
 ##### `amplify/jobs/weekly-digest/handler.ts`
 
-~~~
+```
 import type { EventBridgeHandler } from "aws-lambda";
 
 export const handler: EventBridgeHandler<
@@ -9120,16 +9120,16 @@ export const handler: EventBridgeHandler<
   console.log("event", JSON.stringify(event, null, 2));
 };
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `749a0dacab70e531` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `749a0dacab70e531` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -9137,19 +9137,19 @@ export const handler: EventBridgeHandler<
 
 ##### `Terminal`
 
-~~~
+```
 npm install --save-dev @types/aws-lambda
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `2ce7799b01b50156` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `2ce7799b01b50156` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -9157,7 +9157,7 @@ npm install --save-dev @types/aws-lambda
 
 ##### `amplify/jobs/generate-report/resource.ts`
 
-~~~
+```
 import { defineFunction } from "@aws-amplify/backend";
 
 export const generateReport = defineFunction({
@@ -9165,16 +9165,16 @@ export const generateReport = defineFunction({
   schedule: ["every week", "every month", "every year"],
 });
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `e33a2a8f247d9dc0` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `e33a2a8f247d9dc0` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -9182,7 +9182,7 @@ export const generateReport = defineFunction({
 
 ##### `amplify/jobs/drink-some-water/resource.ts`
 
-~~~
+```
 import { defineFunction } from "@aws-amplify/backend";
 
 export const drinkSomeWater = defineFunction({
@@ -9190,16 +9190,16 @@ export const drinkSomeWater = defineFunction({
   schedule: "every 1h",
 });
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `e82c8604acfdfe11` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `e82c8604acfdfe11` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -9207,7 +9207,7 @@ export const drinkSomeWater = defineFunction({
 
 ##### `amplify/jobs/drink-some-water/resource.ts`
 
-~~~
+```
 import { defineFunction } from "@aws-amplify/backend";
 
 export const drinkSomeWater = defineFunction({
@@ -9215,16 +9215,16 @@ export const drinkSomeWater = defineFunction({
   schedule: "every 1h",
 });
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `e82c8604acfdfe11` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `e82c8604acfdfe11` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -9232,7 +9232,7 @@ export const drinkSomeWater = defineFunction({
 
 ##### `amplify/jobs/remind-me/resource.ts`
 
-~~~
+```
 import { defineFunction } from "@aws-amplify/backend";
 
 export const remindMe = defineFunction({
@@ -9251,16 +9251,16 @@ export const remindMe = defineFunction({
   ],
 });
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `74e7e7b219d58ae9` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `74e7e7b219d58ae9` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -9268,7 +9268,7 @@ export const remindMe = defineFunction({
 
 ##### `amplify/jobs/remind-me/resource.ts`
 
-~~~
+```
 import { defineFunction } from "@aws-amplify/backend";
 
 export const remindMe = defineFunction({
@@ -9281,16 +9281,16 @@ export const remindMe = defineFunction({
   ],
 });
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `dffab3e54f80fdbb` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `dffab3e54f80fdbb` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -9298,19 +9298,19 @@ export const remindMe = defineFunction({
 
 ##### `Terminal`
 
-~~~
+```
 npx ampx sandbox --stream-function-logs
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `33f9097052947ee1` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `33f9097052947ee1` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -9318,19 +9318,19 @@ npx ampx sandbox --stream-function-logs
 
 ##### `Terminal`
 
-~~~
+```
 npx ampx sandbox --stream-function-logs --logs-filter auth
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `14db1ad6078cc1c5` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `14db1ad6078cc1c5` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -9338,7 +9338,7 @@ npx ampx sandbox --stream-function-logs --logs-filter auth
 
 ##### `Terminal`
 
-~~~
+```
 > npx ampx sandbox --stream-function-logs --logs-filter auth
 ...
 
@@ -9364,16 +9364,16 @@ File written: amplify_outputs.json
 [auth-post-authentication] 3:38:42 PM END RequestId: 60c1d680-ea24-4a8b-93de-02d085859140
 [auth-post-authentication] 3:38:42 PM REPORT RequestId: 60c1d680-ea24-4a8b-93de-02d085859140	Duration: 4.61 ms	Billed Duration: 5 ms	Memory Size: 512 MB	Max Memory Used: 68 MB	Init Duration: 172.66 ms
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `ce51bced5be61da3` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `ce51bced5be61da3` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -9381,19 +9381,19 @@ File written: amplify_outputs.json
 
 ##### `Terminal`
 
-~~~
+```
 npx ampx sandbox --stream-function-logs --logs-out-file sandbox.log
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `db3ab66f8ffdd6e0` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `db3ab66f8ffdd6e0` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -9401,19 +9401,19 @@ npx ampx sandbox --stream-function-logs --logs-out-file sandbox.log
 
 ##### `Terminal`
 
-~~~
+```
 npx ampx sandbox --stream-function-logs --logs-filter auth --logs-out-file sandbox-auth.log
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `c37fd7aefe79328f` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `c37fd7aefe79328f` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -9421,20 +9421,20 @@ npx ampx sandbox --stream-function-logs --logs-filter auth --logs-out-file sandb
 
 ##### `Amplify`
 
-~~~
+```
 Build error!
 Stack [CDKToolkit] already exists
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `f1c032a775d03468` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `f1c032a775d03468` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -9442,19 +9442,19 @@ Stack [CDKToolkit] already exists
 
 ##### `AWS`
 
-~~~
+```
 cdk bootstrap aws://$(aws sts get-caller-identity --query Account --output text)/$AWS_REGION
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `9e5d9cb2a6231fc6` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `9e5d9cb2a6231fc6` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -9462,19 +9462,19 @@ cdk bootstrap aws://$(aws sts get-caller-identity --query Account --output text)
 
 ##### `Terminal`
 
-~~~
+```
 npx aws-cdk@latest bootstrap aws://<your-aws-account-id>/<your-aws-region>
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `97199b06e17859c9` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `97199b06e17859c9` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -9482,7 +9482,7 @@ npx aws-cdk@latest bootstrap aws://<your-aws-account-id>/<your-aws-region>
 
 ##### `amplify.yml`
 
-~~~
+```
 version: 1
 backend:
 phases:
@@ -9502,11 +9502,11 @@ phases:
                 ;;
             pr-*)
                 echo "Deploying pull request branch..."
-                npx ampx generate outputs --branch dev --app-id $AWS_APP_ID 
+                npx ampx generate outputs --branch dev --app-id $AWS_APP_ID
                 ;;
             *)
                 echo "Deploying to staging branch..."
-                npx ampx generate outputs --branch staging --app-id $AWS_APP_ID 
+                npx ampx generate outputs --branch staging --app-id $AWS_APP_ID
                 ;;
         esac
 frontend:
@@ -9524,16 +9524,16 @@ cache:
   - .npm/**/*
   - node_modules/**/*
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `1c884bd4ed6b07e6` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `1c884bd4ed6b07e6` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -9541,7 +9541,7 @@ cache:
 
 ##### `Terminal`
 
-~~~
+```
 npx ampx sandbox secret set foo
 ? Enter secret value: ###
 Done!
@@ -9550,16 +9550,16 @@ Done!
 ? Enter secret value: ###
 Done!
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `1877f2be69c8f496` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `1877f2be69c8f496` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -9567,7 +9567,7 @@ Done!
 
 ##### `Unnamed Snippet`
 
-~~~
+```
 import { defineAuth, secret } from "@aws-amplify/backend";
 
 export const auth = defineAuth({
@@ -9582,16 +9582,16 @@ externalProviders: {
   },
 });
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `57a89d85904e35df` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `57a89d85904e35df` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -9599,7 +9599,7 @@ externalProviders: {
 
 ##### `Unnamed Snippet`
 
-~~~
+```
 import { defineAuth, secret } from "@aws-amplify/backend";
 
 export const auth = defineAuth({
@@ -9614,16 +9614,16 @@ externalProviders: {
   },
 });
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `57a89d85904e35df` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `57a89d85904e35df` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -9631,19 +9631,19 @@ externalProviders: {
 
 ##### `Terminal`
 
-~~~
+```
 npx ampx sandbox secret remove foo
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `891a804e7948f947` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `891a804e7948f947` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -9651,19 +9651,19 @@ npx ampx sandbox secret remove foo
 
 ##### `Unnamed Snippet`
 
-~~~
+```
 npx ampx sandbox secret remove foo
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `891a804e7948f947` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `891a804e7948f947` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -9671,22 +9671,22 @@ npx ampx sandbox secret remove foo
 
 ##### `amplify.yml`
 
-~~~
+```
 build:
   commands:
 - echo "REACT_APP_TEST_VARIABLE=$REACT_APP_TEST_VARIABLE" >> .env
 - npm run build
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `89f1b18d54b81799` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `89f1b18d54b81799` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -9694,19 +9694,19 @@ build:
 
 ##### `Unnamed Snippet`
 
-~~~
+```
 console.log("REACT_APP_TEST_VARIABLE", process.env.REACT_APP_TEST_VARIABLE);
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `a1db81993e18ae6a` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `a1db81993e18ae6a` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -9714,7 +9714,7 @@ console.log("REACT_APP_TEST_VARIABLE", process.env.REACT_APP_TEST_VARIABLE);
 
 ##### `amplify.yml`
 
-~~~
+```
 version: 1
 backend:
 phases:
@@ -9756,16 +9756,16 @@ cache:
   - .npm/**/*
   - node_modules/**/*
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `9aaa4b8e97b82ac0` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `9aaa4b8e97b82ac0` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -9773,7 +9773,7 @@ cache:
 
 ##### `Terminal`
 
-~~~
+```
 // This environment variable is required to run the pipeline-deploy command in a non Amplify CI environment
 - Run: export CI=1
 
@@ -9786,16 +9786,16 @@ cache:
 // Trigger frontend build using incoming webhooks
 - Run: if [ $AWS_BRANCH = "main" ]; then curl -X POST -d {} "`webhookUrl`&operation=startbuild" -H "Content-Type:application/json"; fi
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `8245f9493b30aad6` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `8245f9493b30aad6` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -9803,7 +9803,7 @@ cache:
 
 ##### `Unnamed Snippet`
 
-~~~
+```
 Actions:
   Build_82:
 # Identifies the action. Do not modify this value.
@@ -9825,16 +9825,16 @@ Configuration:
     - Run: npm ci
     - Run: npx ampx pipeline-deploy --branch $BRANCH_NAME --app-id $AMPLIFY_APP_ID
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `1c7a464e7f2880f6` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `1c7a464e7f2880f6` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -9842,7 +9842,7 @@ Configuration:
 
 ##### `Unnamed Snippet`
 
-~~~
+```
 Configuration:
   # Required - Steps are sequential instructions that run shell commands
   Steps:
@@ -9853,16 +9853,16 @@ Configuration:
   "https://webhooks.amplify.us-west-2.amazonaws.com/prod/webhooks?id=WEBHOOK-ID&token=TOKEN&operation=startbuild"
   -H "Content-Type:application/json"; fi
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `49fa8f67ebb20de3` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `49fa8f67ebb20de3` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -9870,7 +9870,7 @@ Configuration:
 
 ##### `Unnamed Snippet`
 
-~~~
+```
 const schema = a.schema({
   Chat: a.model({
 name: a.string(),
@@ -9883,16 +9883,16 @@ chatId: a.id(),
   }),
 });
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `821a39b70747c164` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `821a39b70747c164` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -9900,7 +9900,7 @@ chatId: a.id(),
 
 ##### `Unnamed Snippet`
 
-~~~
+```
 // generate your data client using the Schema from your backend
 const client = generateClient<Schema>();
 
@@ -9912,16 +9912,16 @@ const { errors, data: newMessage } = await client.models.Message.create({
   text: "My message text",
 });
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `b9d80a938dc6ed37` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `b9d80a938dc6ed37` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -9929,7 +9929,7 @@ const { errors, data: newMessage } = await client.models.Message.create({
 
 ##### `amplify/auth/resource.ts`
 
-~~~
+```
 export const auth = defineAuth({
   loginWith: {
 email: {
@@ -9938,16 +9938,16 @@ email: {
   },
 });
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `a37b0e8fc70f7954` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `a37b0e8fc70f7954` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -9955,7 +9955,7 @@ email: {
 
 ##### `Unnamed Snippet`
 
-~~~
+```
 import { withAuthenticator } from "@aws-amplify/ui-react";
 
 function App({ signOut, user }) {
@@ -9969,16 +9969,16 @@ function App({ signOut, user }) {
 
 export default withAuthenticator(App);
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `278fc5fceaa75c35` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `278fc5fceaa75c35` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -9986,7 +9986,7 @@ export default withAuthenticator(App);
 
 ##### `Unnamed Snippet`
 
-~~~
+```
 import { CfnOutput, Stack, StackProps } from "aws-cdk-lib";
 import * as locations from "aws-cdk-lib/aws-location";
 import { Construct } from "constructs";
@@ -10011,16 +10011,16 @@ new CfnOutput(this, "mapArn", {
   }
 }
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `3a46e2923a54b214` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `3a46e2923a54b214` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -10028,7 +10028,7 @@ new CfnOutput(this, "mapArn", {
 
 ##### `Unnamed Snippet`
 
-~~~
+```
 import { Backend } from "@aws-amplify/backend";
 import { auth } from "./auth/resource";
 import { data } from "./data/resource";
@@ -10045,16 +10045,16 @@ new LocationMapStack(
   {},
 );
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `507842e09e0f3a5c` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `507842e09e0f3a5c` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -10062,7 +10062,7 @@ new LocationMapStack(
 
 ##### `amplify/backend.ts`
 
-~~~
+```
 import { defineBackend } from "@aws-amplify/backend";
 import { auth } from "./auth/resource";
 import { data } from "./data/resource";
@@ -10079,16 +10079,16 @@ bucket_name: "my-externally-managed-bucket",
   },
 });
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `e4c107cd31dcc7b7` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `e4c107cd31dcc7b7` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -10096,22 +10096,22 @@ bucket_name: "my-externally-managed-bucket",
 
 ##### `src/index.ts`
 
-~~~
+```
 import { Amplify } from "aws-amplify";
 import outputs from "@/amplify_outputs.json";
 
 Amplify.configure(outputs);
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `96184488681b162e` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `96184488681b162e` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -10119,7 +10119,7 @@ Amplify.configure(outputs);
 
 ##### `amplify/backend.ts`
 
-~~~
+```
 import { defineBackend } from "@aws-amplify/backend";
 import { auth } from "./auth/resource";
 import { data } from "./data/resource";
@@ -10137,16 +10137,16 @@ api_name: "restApiName",
   },
 });
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `ecab0f33dfa4d382` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `ecab0f33dfa4d382` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -10154,7 +10154,7 @@ api_name: "restApiName",
 
 ##### `src/index.ts`
 
-~~~
+```
 import { Amplify } from "aws-amplify";
 import outputs from "@/amplify_outputs.json";
 
@@ -10172,16 +10172,16 @@ REST: {
   },
 });
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `e294b9ce19c1ac38` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `e294b9ce19c1ac38` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -10189,7 +10189,7 @@ REST: {
 
 ##### `Unnamed Snippet`
 
-~~~
+```
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://amplify.aws/2024-02/outputs-schema.json",
@@ -10638,16 +10638,16 @@ REST: {
 }
   }
 }
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `f26dc9ec37d0cfd2` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `f26dc9ec37d0cfd2` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -10655,7 +10655,7 @@ REST: {
 
 ##### `amplify/data/resource.ts`
 
-~~~
+```
 import { a, defineData, type ClientSchema } from "@aws-amplify/backend";
 
 const schema = a.schema({});
@@ -10665,16 +10665,16 @@ export const data = defineData({
   schema,
 });
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `b497a376ca20c1f5` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `b497a376ca20c1f5` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -10682,7 +10682,7 @@ export const data = defineData({
 
 ##### `nuxt-amplify-gen2/plugins/01.amplify-apis.client.ts`
 
-~~~
+```
 import {
   fetchAuthSession,
   fetchUserAttributes,
@@ -10728,16 +10728,16 @@ GraphQL: {
   },
 });
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `cb5ac279a4f54149` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `cb5ac279a4f54149` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -10745,7 +10745,7 @@ GraphQL: {
 
 ##### `nuxt-amplify-gen2/plugins/01.amplify-apis.server.ts`
 
-~~~
+```
 import type { CookieRef } from "nuxt/app";
 import {
   createKeyValueStorageFromCookieStorageAdapter,
@@ -10963,16 +10963,16 @@ GraphQL: {
   },
 });
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `61be5ecc2b85a7e6` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `61be5ecc2b85a7e6` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -10980,7 +10980,7 @@ GraphQL: {
 
 ##### `nuxt-amplify-gen2/app.vue`
 
-~~~
+```
 <script setup lang="ts">
 import { Authenticator } from '@aws-amplify/ui-vue';
 import '@aws-amplify/ui-vue/styles.css';
@@ -11021,16 +11021,16 @@ onMounted(() => {
   </Authenticator>
 </template>
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `bd1771c2b15c6283` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `bd1771c2b15c6283` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -11038,7 +11038,7 @@ onMounted(() => {
 
 ##### `nuxt-amplify-gen2/server/utils/amplifyUtils.ts`
 
-~~~
+```
 import type { H3Event, EventHandlerRequest } from "h3";
 import {
   createKeyValueStorageFromCookieStorageAdapter,
@@ -11118,16 +11118,16 @@ operation,
   );
 };
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `b69a0709fb18f82d` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `b69a0709fb18f82d` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -11135,7 +11135,7 @@ operation,
 
 ##### `nuxt-amplify-gen2/server/api/current-user.ts`
 
-~~~
+```
 import { getCurrentUser } from "aws-amplify/auth/server";
 import { runAmplifyApi } from "~/server/utils/amplifyUtils";
 
@@ -11147,16 +11147,16 @@ getCurrentUser(contextSpec),
   return user;
 });
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `9c6d35de6c41c090` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `9c6d35de6c41c090` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -11164,7 +11164,7 @@ getCurrentUser(contextSpec),
 
 ##### `Unnamed Snippet`
 
-~~~
+```
 import { type ClientSchema, a, defineData } from "@aws-amplify/backend";
 
 const schema = a.schema({
@@ -11193,16 +11193,16 @@ export const data = defineData({
   schema,
 });
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `d9c0f0f657dbbe8a` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `d9c0f0f657dbbe8a` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -11210,7 +11210,7 @@ export const data = defineData({
 
 ##### `Unnamed Snippet`
 
-~~~
+```
 import { type ClientSchema, a, defineData } from "@aws-amplify/backend";
 
 const schema = a.schema({
@@ -11240,16 +11240,16 @@ export const data = defineData({
   schema,
 });
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `e394d9c98b1a1f8d` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `e394d9c98b1a1f8d` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -11257,7 +11257,7 @@ export const data = defineData({
 
 ##### `amplify/data/echo-handler/handler.ts`
 
-~~~
+```
 import type { Schema } from "../resource";
 
 export const handler: Schema["echo"]["functionHandler"] = async (
@@ -11271,16 +11271,16 @@ executionDuration: performance.now() - start,
   };
 };
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `584adc09feb4d383` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `584adc09feb4d383` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -11288,7 +11288,7 @@ executionDuration: performance.now() - start,
 
 ##### `amplify/data/resource.ts`
 
-~~~
+```
 import {
   type ClientSchema,
   a,
@@ -11328,16 +11328,16 @@ apiKeyAuthorizationMode: {
   },
 });
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `20ac9f34c6a87da3` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `20ac9f34c6a87da3` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -11345,7 +11345,7 @@ apiKeyAuthorizationMode: {
 
 ##### `amplify/data/resource.ts`
 
-~~~
+```
 import { type ClientSchema, a, defineData } from "@aws-amplify/backend";
 
 const schema = a.schema({
@@ -11386,16 +11386,16 @@ apiKeyAuthorizationMode: {
   },
 });
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `2d2c115e89269264` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `2d2c115e89269264` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -11403,7 +11403,7 @@ apiKeyAuthorizationMode: {
 
 ##### `amplify/data/increment-like.js`
 
-~~~
+```
 import { util } from "@aws-appsync/utils";
 
 export function request(ctx) {
@@ -11421,16 +11421,16 @@ export function response(ctx) {
   return ctx.result;
 }
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `b8bef9853eb46bd0` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `b8bef9853eb46bd0` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -11438,7 +11438,7 @@ export function response(ctx) {
 
 ##### `amplify/backend.ts`
 
-~~~
+```
 import * as dynamoDb from "aws-cdk-lib/aws-dynamodb";
 import { defineBackend } from "@aws-amplify/backend";
 import { auth } from "./auth/resource";
@@ -11459,16 +11459,16 @@ const externalTable = dynamoDb.Table.fromTableName(
 
 backend.data.addDynamoDbDataSource("ExternalTableDataSource", externalTable);
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `fedff4bb36109427` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `fedff4bb36109427` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -11476,7 +11476,7 @@ backend.data.addDynamoDbDataSource("ExternalTableDataSource", externalTable);
 
 ##### `amplify/data/resource.ts`
 
-~~~
+```
 import { type ClientSchema, a, defineData } from "@aws-amplify/backend";
 
 const schema = a.schema({
@@ -11517,16 +11517,16 @@ apiKeyAuthorizationMode: {
   },
 });
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `37dddc093610e7b1` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `37dddc093610e7b1` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -11534,21 +11534,21 @@ apiKeyAuthorizationMode: {
 
 ##### `Unnamed Snippet`
 
-~~~
+```
 const { data, errors } = await client.queries.echo({
   content: "hello world!!!",
 });
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `ffefd700b1e323c9` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `ffefd700b1e323c9` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -11556,21 +11556,21 @@ const { data, errors } = await client.queries.echo({
 
 ##### `Unnamed Snippet`
 
-~~~
+```
 const { data, errors } = await client.mutations.likePost({
   postId: "hello",
 });
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `cb7710cc0dc02bd3` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `cb7710cc0dc02bd3` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -11578,7 +11578,7 @@ const { data, errors } = await client.mutations.likePost({
 
 ##### `amplify/data/resource.ts`
 
-~~~
+```
 const signUpForNewsletter = defineFunction({
   entry: "./sign-up-for-newsletter/handler.ts",
 });
@@ -11593,16 +11593,16 @@ const schema = a.schema({
 .authorization((allow) => allow.guest()),
 });
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `418f1d6bf659c185` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `418f1d6bf659c185` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -11610,7 +11610,7 @@ const schema = a.schema({
 
 ##### `Unnamed Snippet`
 
-~~~
+```
 a.schema({
   Post: a.model({
 location: a.customType({
@@ -11621,16 +11621,16 @@ content: a.string(),
   }),
 });
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `43905c308842f472` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `43905c308842f472` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -11638,7 +11638,7 @@ content: a.string(),
 
 ##### `Unnamed Snippet`
 
-~~~
+```
 a.schema({
   Location: a.customType({
 lat: a.float(),
@@ -11655,16 +11655,16 @@ lastKnownLocation: a.ref("Location"),
   }),
 });
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `f888c3d166c2cecc` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `f888c3d166c2cecc` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -11672,7 +11672,7 @@ lastKnownLocation: a.ref("Location"),
 
 ##### `Unnamed Snippet`
 
-~~~
+```
 const { data: newPost, errors } = await client.models.Post.create({
   location: {
 lat: 48.837006,
@@ -11682,16 +11682,16 @@ long: 8.28245,
 
 console.log(newPost?.location?.lat, newPost?.location?.long);
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `230bf27a1eb5947d` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `230bf27a1eb5947d` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -11699,7 +11699,7 @@ console.log(newPost?.location?.lat, newPost?.location?.long);
 
 ##### `Unnamed Snippet`
 
-~~~
+```
 a.schema({
   Post: a.model({
 privacySetting: a.enum(["PRIVATE", "FRIENDS_ONLY", "PUBLIC"]),
@@ -11707,16 +11707,16 @@ content: a.string(),
   }),
 });
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `820795dcb914b7d6` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `820795dcb914b7d6` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -11724,7 +11724,7 @@ content: a.string(),
 
 ##### `Unnamed Snippet`
 
-~~~
+```
 a.schema({
   PrivacySetting: a.enum(["PRIVATE", "FRIENDS_ONLY", "PUBLIC"]),
 
@@ -11738,16 +11738,16 @@ privacySetting: a.ref("PrivacySetting"),
   }),
 });
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `3285944c721301a5` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `3285944c721301a5` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -11755,7 +11755,7 @@ privacySetting: a.ref("PrivacySetting"),
 
 ##### `Unnamed Snippet`
 
-~~~
+```
 client.models.Post.create({
   content: "hello",
   // WORKS - value auto-completed
@@ -11765,16 +11765,16 @@ client.models.Post.create({
   privacySetting: "NOT_PUBLIC",
 });
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `53b6683a37d9bc50` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `53b6683a37d9bc50` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -11782,20 +11782,20 @@ client.models.Post.create({
 
 ##### `Unnamed Snippet`
 
-~~~
+```
 const availableSettings = client.enums.PrivacySetting.values();
 // availableSettings returns ["PRIVATE", "FRIENDS_ONLY", "PUBLIC"]
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `1f73a4fff6b93118` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `1f73a4fff6b93118` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -11803,23 +11803,23 @@ const availableSettings = client.enums.PrivacySetting.values();
 
 ##### `Unnamed Snippet`
 
-~~~
+```
 const schema = a.schema({
   Todo: a.model({
 content: a.string().required(),
   }),
 });
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `cdf4d0b665542edb` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `cdf4d0b665542edb` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -11827,7 +11827,7 @@ content: a.string().required(),
 
 ##### `Unnamed Snippet`
 
-~~~
+```
 const schema = a.schema({
   Todo: a.model({
 content: a.string().required(),
@@ -11835,16 +11835,16 @@ notes: a.string().array(),
   }),
 });
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `dc3c19f2f62eb37c` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `dc3c19f2f62eb37c` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -11852,23 +11852,23 @@ notes: a.string().array(),
 
 ##### `Unnamed Snippet`
 
-~~~
+```
 const schema = a.schema({
   Todo: a.model({
 content: a.string().default("My new Todo"),
   }),
 });
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `9f1c692ef6b1f458` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `9f1c692ef6b1f458` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -11876,7 +11876,7 @@ content: a.string().default("My new Todo"),
 
 ##### `Unnamed Snippet`
 
-~~~
+```
 const schema = a.schema({
   Member: a
 .model({
@@ -11898,16 +11898,16 @@ const schema = a.schema({
 .authorization((allow) => [allow.publicApiKey()]),
 });
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `df45cee6e4cb42c5` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `df45cee6e4cb42c5` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -11915,7 +11915,7 @@ const schema = a.schema({
 
 ##### `Unnamed Snippet`
 
-~~~
+```
 const { data: team } = await client.models.Team.create({
   mantra: "Go Frontend!",
 });
@@ -11925,16 +11925,16 @@ const { data: member } = await client.models.Member.create({
   teamId: team.id,
 });
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `dc7d0a1a6d72510a` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `dc7d0a1a6d72510a` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -11942,7 +11942,7 @@ const { data: member } = await client.models.Member.create({
 
 ##### `Unnamed Snippet`
 
-~~~
+```
 const { data: newTeam } = await client.models.Team.create({
   mantra: "Go Fullstack",
 });
@@ -11952,16 +11952,16 @@ await client.models.Member.update({
   teamId: newTeam.id,
 });
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `06214f3775b02364` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `06214f3775b02364` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -11969,22 +11969,22 @@ await client.models.Member.update({
 
 ##### `Unnamed Snippet`
 
-~~~
+```
 await client.models.Member.update({
   id: "MY_MEMBER_ID",
   teamId: null,
 });
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `f2ae6e917b0bc1b2` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `f2ae6e917b0bc1b2` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -11992,23 +11992,23 @@ await client.models.Member.update({
 
 ##### `Unnamed Snippet`
 
-~~~
+```
 const { data: team } = await client.models.Team.get({ id: "MY_TEAM_ID" });
 
 const { data: members } = await team.members();
 
 members.forEach((member) => console.log(member.id));
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `b02d88e15c6256e8` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `b02d88e15c6256e8` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -12016,7 +12016,7 @@ members.forEach((member) => console.log(member.id));
 
 ##### `Unnamed Snippet`
 
-~~~
+```
 const { data: teamWithMembers } = await client.models.Team.get(
   { id: "MY_TEAM_ID" },
   { selectionSet: ["id", "members.*"] },
@@ -12024,16 +12024,16 @@ const { data: teamWithMembers } = await client.models.Team.get(
 
 teamWithMembers.members.forEach((member) => console.log(member.id));
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `ae43c44bff14af30` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `ae43c44bff14af30` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -12041,7 +12041,7 @@ teamWithMembers.members.forEach((member) => console.log(member.id));
 
 ##### `Unnamed Snippet`
 
-~~~
+```
 const schema = a.schema({
   Cart: a.model({
 items: a.string().required().array(),
@@ -12058,16 +12058,16 @@ activeCart: a.hasOne("Cart", "customerId"),
   }),
 });
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `6c5b797209223c96` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `6c5b797209223c96` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -12075,7 +12075,7 @@ activeCart: a.hasOne("Cart", "customerId"),
 
 ##### `Unnamed Snippet`
 
-~~~
+```
 const { data: customer, errors } = await client.models.Customer.create({
   name: "Rene",
 });
@@ -12085,16 +12085,16 @@ const { data: cart } = await client.models.Cart.create({
   customerId: customer?.id,
 });
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `c866224db025011b` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `c866224db025011b` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -12102,7 +12102,7 @@ const { data: cart } = await client.models.Cart.create({
 
 ##### `Unnamed Snippet`
 
-~~~
+```
 const { data: newCustomer } = await client.models.Customer.create({
   name: "Ian",
 });
@@ -12112,16 +12112,16 @@ await client.models.Cart.update({
   customerId: newCustomer?.id,
 });
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `33c181d03567d778` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `33c181d03567d778` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -12129,22 +12129,22 @@ await client.models.Cart.update({
 
 ##### `Unnamed Snippet`
 
-~~~
+```
 await client.models.Cart.update({
   id: project.id,
   customerId: null,
 });
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `01f88137bf80d2f9` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `01f88137bf80d2f9` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -12152,20 +12152,20 @@ await client.models.Cart.update({
 
 ##### `Unnamed Snippet`
 
-~~~
+```
 const { data: cart } = await client.models.Cart.get({ id: "MY_CART_ID" });
 const { data: customer } = await cart.customer();
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `c5f4e8bcdb208fdd` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `c5f4e8bcdb208fdd` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -12173,7 +12173,7 @@ const { data: customer } = await cart.customer();
 
 ##### `Unnamed Snippet`
 
-~~~
+```
 const { data: cart } = await client.models.Cart.get(
   { id: "MY_CART_ID" },
   { selectionSet: ["id", "customer.*"] },
@@ -12181,16 +12181,16 @@ const { data: cart } = await client.models.Cart.get(
 
 console.log(cart.customer.id);
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `edb23d7db6fb10cb` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `edb23d7db6fb10cb` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -12198,7 +12198,7 @@ console.log(cart.customer.id);
 
 ##### `Unnamed Snippet`
 
-~~~
+```
 const schema = a
   .schema({
 PostTag: a.model({
@@ -12228,16 +12228,16 @@ Tag: a.model({
   })
   .authorization((allow) => [allow.publicApiKey()]);
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `5fc48807eeb6242d` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `5fc48807eeb6242d` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -12245,7 +12245,7 @@ Tag: a.model({
 
 ##### `Unnamed Snippet`
 
-~~~
+```
 const schema = a
   .schema({
 Post: a.model({
@@ -12264,16 +12264,16 @@ Person: a.model({
   })
   .authorization((allow) => [allow.publicApiKey()]);
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `e571f5db22f9a3e9` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `e571f5db22f9a3e9` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -12281,7 +12281,7 @@ Person: a.model({
 
 ##### `Unnamed Snippet`
 
-~~~
+```
 const client = generateClient<Schema>();
 
 const { data: post } = await client.models.Post.get({ id: "SOME_POST_ID" });
@@ -12289,16 +12289,16 @@ const { data: post } = await client.models.Post.get({ id: "SOME_POST_ID" });
 const { data: author } = await post?.author();
 const { data: editor } = await post?.editor();
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `3ff516f1c240d2e3` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `3ff516f1c240d2e3` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -12306,7 +12306,7 @@ const { data: editor } = await post?.editor();
 
 ##### `Unnamed Snippet`
 
-~~~
+```
 const schema = a
   .schema({
 Post: a.model({
@@ -12330,16 +12330,16 @@ Person: a
   })
   .authorization((allow) => [allow.publicApiKey()]);
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `f9a22fa228ec8309` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `f9a22fa228ec8309` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -12347,7 +12347,7 @@ Person: a
 
 ##### `Unnamed Snippet`
 
-~~~
+```
 const schema = a.schema({
   Post: a.model({
 title: a.string().required(),
@@ -12368,16 +12368,16 @@ authoredPosts: a.hasMany("Post", "authorId"),
   }),
 });
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `129f8c5aae309b52` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `129f8c5aae309b52` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -12385,7 +12385,7 @@ authoredPosts: a.hasMany("Post", "authorId"),
 
 ##### `Unnamed Snippet`
 
-~~~
+```
 import { generateClient } from "aws-amplify/data";
 import type { Schema } from "../amplify/data/resource"; // Path to your backend resource definition
 
@@ -12397,16 +12397,16 @@ const fetchTodos = async () => {
   const { data: todos, errors } = await client.models.Todo.list();
 };
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `074ff31ac8fcd4d4` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `074ff31ac8fcd4d4` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -12414,7 +12414,7 @@ const fetchTodos = async () => {
 
 ##### `Unnamed Snippet`
 
-~~~
+```
 import { generateClient } from "aws-amplify/data";
 
 /**
@@ -12428,16 +12428,16 @@ const fetchTodos = async () => {
   const { data: todos, errors } = await client.models.Todo.list();
 };
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `ab5b1a4b0db8b096` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `ab5b1a4b0db8b096` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -12445,7 +12445,7 @@ const fetchTodos = async () => {
 
 ##### `Unnamed Snippet`
 
-~~~
+```
 import { generateClient } from "aws-amplify/data";
 import type { Schema } from "../amplify/data/resource"; // Path to your backend resource definition
 
@@ -12453,16 +12453,16 @@ const client = generateClient<Schema>({
   authMode: "apiKey",
 });
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `214c31dd2206bfca` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `214c31dd2206bfca` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -12470,7 +12470,7 @@ const client = generateClient<Schema>({
 
 ##### `Unnamed Snippet`
 
-~~~
+```
 import { generateClient } from "aws-amplify/data";
 import type { Schema } from "../amplify/data/resource"; // Path to your backend resource definition
 
@@ -12478,16 +12478,16 @@ const client = generateClient<Schema>({
   authMode: "userPool",
 });
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `92f1e6d948bb2f1e` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `92f1e6d948bb2f1e` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -12495,7 +12495,7 @@ const client = generateClient<Schema>({
 
 ##### `Unnamed Snippet`
 
-~~~
+```
 import { generateClient } from "aws-amplify/data";
 import type { Schema } from "../amplify/data/resource"; // Path to your backend resource definition
 
@@ -12503,16 +12503,16 @@ const client = generateClient<Schema>({
   authMode: "identityPool",
 });
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `b7b5ef648a737b54` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `b7b5ef648a737b54` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -12520,7 +12520,7 @@ const client = generateClient<Schema>({
 
 ##### `Unnamed Snippet`
 
-~~~
+```
 import { generateClient } from "aws-amplify/data";
 import type { Schema } from "../amplify/data/resource"; // Path to your backend resource definition
 
@@ -12528,16 +12528,16 @@ const client = generateClient<Schema>({
   authMode: "oidc",
 });
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `2fcbfbd338e2b642` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `2fcbfbd338e2b642` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -12545,7 +12545,7 @@ const client = generateClient<Schema>({
 
 ##### `Unnamed Snippet`
 
-~~~
+```
 import { generateClient } from "aws-amplify/data";
 import type { Schema } from "../amplify/data/resource"; // Path to your backend resource definition
 
@@ -12557,16 +12557,16 @@ const client = generateClient<Schema>({
   authToken: lambdaAuthToken,
 });
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `bd051f6474d8be69` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `bd051f6474d8be69` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -12574,21 +12574,21 @@ const client = generateClient<Schema>({
 
 ##### `Unnamed Snippet`
 
-~~~
+```
 const { data: todos, errors } = await client.models.Todo.list({
   authMode: "apiKey",
 });
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `f836602769f99712` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `f836602769f99712` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -12596,21 +12596,21 @@ const { data: todos, errors } = await client.models.Todo.list({
 
 ##### `Unnamed Snippet`
 
-~~~
+```
 const { data: todos, errors } = await client.models.Todo.list({
   authMode: "userPool",
 });
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `de5a11b2edead530` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `de5a11b2edead530` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -12618,21 +12618,21 @@ const { data: todos, errors } = await client.models.Todo.list({
 
 ##### `Unnamed Snippet`
 
-~~~
+```
 const { data: todos, errors } = await client.models.Todo.list({
   authMode: "identityPool",
 });
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `7f181ae9db749fd0` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `7f181ae9db749fd0` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -12640,21 +12640,21 @@ const { data: todos, errors } = await client.models.Todo.list({
 
 ##### `Unnamed Snippet`
 
-~~~
+```
 const { data: todos, errors } = await client.models.Todo.list({
   authMode: "oidc",
 });
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `274e791981c46dd6` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `274e791981c46dd6` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -12662,7 +12662,7 @@ const { data: todos, errors } = await client.models.Todo.list({
 
 ##### `Unnamed Snippet`
 
-~~~
+```
 const getAuthToken = () => "myAuthToken";
 const lambdaAuthToken = getAuthToken();
 
@@ -12671,16 +12671,16 @@ const { data: todos, errors } = await client.models.Todo.list({
   authToken: lambdaAuthToken,
 });
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `ac808f107270b120` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `ac808f107270b120` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -12688,7 +12688,7 @@ const { data: todos, errors } = await client.models.Todo.list({
 
 ##### `Unnamed Snippet`
 
-~~~
+```
 import type { Schema } from "../amplify/data/resource";
 import { generateClient } from "aws-amplify/data";
 
@@ -12698,16 +12698,16 @@ const client = generateClient<Schema>({
   },
 });
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `486ccc64ea1f256b` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `486ccc64ea1f256b` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -12715,7 +12715,7 @@ const client = generateClient<Schema>({
 
 ##### `Unnamed Snippet`
 
-~~~
+```
 // same way for all CRUDL: .create, .get, .update, .delete, .list, .observeQuery
 const { data: blog, errors } = await client.models.Blog.get(
   { id: "myBlogId" },
@@ -12726,16 +12726,16 @@ headers: {
   },
 );
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `3d9cf7dde513d92c` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `3d9cf7dde513d92c` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -12743,7 +12743,7 @@ headers: {
 
 ##### `Unnamed Snippet`
 
-~~~
+```
 import type { Schema } from "../amplify/data/resource";
 import { generateClient } from "aws-amplify/data";
 
@@ -12766,16 +12766,16 @@ return {
   },
 });
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `139f78578144d99f` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `139f78578144d99f` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -12783,7 +12783,7 @@ return {
 
 ##### `Unnamed Snippet`
 
-~~~
+```
 // same way for all CRUDL: .create, .get, .update, .delete, .list, .observeQuery
 const res = await client.models.Blog.get(
   { id: "myBlogId" },
@@ -12807,16 +12807,16 @@ headers: async (requestOptions) => {
   },
 );
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `6d4cd9b69d769785` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `6d4cd9b69d769785` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -12824,7 +12824,7 @@ headers: async (requestOptions) => {
 
 ##### `Unnamed Snippet`
 
-~~~
+```
 import { generateClient } from "aws-amplify/data";
 import { type Schema } from "../amplify/data/resource";
 
@@ -12835,16 +12835,16 @@ const { errors, data: newTodo } = await client.models.Todo.create({
   isDone: true,
 });
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `526c23ab1a272548` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `526c23ab1a272548` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -12852,7 +12852,7 @@ const { errors, data: newTodo } = await client.models.Todo.create({
 
 ##### `Unnamed Snippet`
 
-~~~
+```
 import { generateClient } from "aws-amplify/data";
 import { type Schema } from "../amplify/data/resource";
 
@@ -12865,16 +12865,16 @@ const todo = {
 
 const { data: updatedTodo, errors } = await client.models.Todo.update(todo);
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `704cbd0a4efed24a` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `704cbd0a4efed24a` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -12882,7 +12882,7 @@ const { data: updatedTodo, errors } = await client.models.Todo.update(todo);
 
 ##### `Unnamed Snippet`
 
-~~~
+```
 import { generateClient } from "aws-amplify/data";
 import { type Schema } from "../amplify/data/resource";
 
@@ -12895,16 +12895,16 @@ const toBeDeletedTodo = {
 const { data: deletedTodo, errors } =
   await client.models.Todo.delete(toBeDeletedTodo);
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `a0aebe5c8b5a2797` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `a0aebe5c8b5a2797` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -12912,7 +12912,7 @@ const { data: deletedTodo, errors } =
 
 ##### `Unnamed Snippet`
 
-~~~
+```
 import { generateClient } from "aws-amplify/data";
 import { type Schema } from "../amplify/data/resource";
 
@@ -12928,16 +12928,16 @@ authMode: "apiKey",
   },
 );
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `4729d3f005811c37` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `4729d3f005811c37` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -12945,7 +12945,7 @@ authMode: "apiKey",
 
 ##### `Unnamed Snippet`
 
-~~~
+```
 const promise = client.models.Todo.create({ content: "New Todo " });
 //  ^ Note: we're not awaiting the request, we're returning the promise
 
@@ -12965,16 +12965,16 @@ console.log(error.message); // "my message for cancellation"
 // To cancel the above request
 client.cancel(promise, "my message for cancellation");
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `7788520a09a949aa` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `7788520a09a949aa` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -12982,7 +12982,7 @@ client.cancel(promise, "my message for cancellation");
 
 ##### `Unnamed Snippet`
 
-~~~
+```
 async function makeAPICall() {
   return client.models.Todo.create({ content: "New Todo" });
 }
@@ -12991,16 +12991,16 @@ const promise = makeAPICall();
 // The following will NOT cancel the request.
 client.cancel(promise, "my error message");
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `93ed69df71688b6d` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `93ed69df71688b6d` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -13008,7 +13008,7 @@ client.cancel(promise, "my error message");
 
 ##### `Unnamed Snippet`
 
-~~~
+```
 import { generateClient } from "aws-amplify/data";
 import { type Schema } from "@/amplify/data/resource";
 
@@ -13022,16 +13022,16 @@ const { data: todo, errors } = await client.models.Todo.get({
   id: "...",
 });
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `d802e473c55f60ff` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `d802e473c55f60ff` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -13039,7 +13039,7 @@ const { data: todo, errors } = await client.models.Todo.get({
 
 ##### `Unnamed Snippet`
 
-~~~
+```
 import { generateClient } from "aws-amplify/data";
 import { type Schema } from "@/amplify/data/resource";
 
@@ -13049,16 +13049,16 @@ const { errors, data: todos } = await client.models.Todo.list({
   authMode: "apiKey",
 });
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `27083fbf217f4594` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `27083fbf217f4594` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -13066,7 +13066,7 @@ const { errors, data: todos } = await client.models.Todo.list({
 
 ##### `Unnamed Snippet`
 
-~~~
+```
 import { generateClient } from "aws-amplify/data";
 import { type Schema } from "@/amplify/data/resource";
 
@@ -13080,16 +13080,16 @@ content: {
   },
 });
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `b7a13dcc42cc0f2b` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `b7a13dcc42cc0f2b` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -13097,7 +13097,7 @@ content: {
 
 ##### `Unnamed Snippet`
 
-~~~
+```
 import { generateClient } from "aws-amplify/data";
 import { type Schema } from "@/amplify/data/resource";
 
@@ -13116,16 +13116,16 @@ or: [
   },
 });
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `805e7a16e0b5b803` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `805e7a16e0b5b803` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -13133,7 +13133,7 @@ or: [
 
 ##### `Unnamed Snippet`
 
-~~~
+```
 import { generateClient } from "aws-amplify/data";
 import { type Schema } from "@/amplify/data/resource";
 
@@ -13148,16 +13148,16 @@ const {
   nextToken: "eyJ2ZXJzaW9uejE1a2...", // previous nextToken
 });
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `6cac5a92233f7f71` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `6cac5a92233f7f71` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -13165,7 +13165,7 @@ const {
 
 ##### `Unnamed Snippet`
 
-~~~
+```
 import * as React from "react";
 import { Pagination } from "@aws-amplify/ui-react";
 
@@ -13202,16 +13202,16 @@ setCurrentPageIndex(currentPageIndex + 1);
   );
 };
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `af99c7c3ce818ba9` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `af99c7c3ce818ba9` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -13219,7 +13219,7 @@ setCurrentPageIndex(currentPageIndex + 1);
 
 ##### `Unnamed Snippet`
 
-~~~
+```
 // same way for all CRUDL: .create, .get, .update, .delete, .list, .observeQuery
 const { data: blogWithSubsetOfData, errors } = await client.models.Blog.get(
   { id: blog.id },
@@ -13228,16 +13228,16 @@ selectionSet: ["author.email", "posts.*"],
   },
 );
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `c5a9d7a5cdc10664` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `c5a9d7a5cdc10664` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -13245,23 +13245,23 @@ selectionSet: ["author.email", "posts.*"],
 
 ##### `Unnamed Snippet`
 
-~~~
+```
 import { type Schema } from "@/amplify/data/resource";
 
 type Post = Schema["Post"]["type"];
 
 const [posts, setPosts] = useState<Post[]>([]);
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `4c106be9c8e3749e` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `4c106be9c8e3749e` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -13269,7 +13269,7 @@ const [posts, setPosts] = useState<Post[]>([]);
 
 ##### `Unnamed Snippet`
 
-~~~
+```
 import type { SelectionSet } from "aws-amplify/data";
 import type { Schema } from "../amplify/data/resource";
 
@@ -13289,16 +13289,16 @@ selectionSet,
   setPosts(postsWithComments);
 };
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `594df1fdc5fc0b68` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `594df1fdc5fc0b68` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -13306,7 +13306,7 @@ selectionSet,
 
 ##### `Unnamed Snippet`
 
-~~~
+```
 const promise = client.models.Todo.list();
 //  ^ Note: we're not awaiting the request, we're returning the promise
 
@@ -13325,16 +13325,16 @@ console.log(error.message); // "my message for cancellation"
 // To cancel the above request
 client.cancel(promise, "my message for cancellation");
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `e84aa109193880d4` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `e84aa109193880d4` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -13342,7 +13342,7 @@ client.cancel(promise, "my message for cancellation");
 
 ##### `Unnamed Snippet`
 
-~~~
+```
 async function makeAPICall() {
   return client.models.Todo.list();
 }
@@ -13351,16 +13351,16 @@ const promise = makeAPICall();
 // The following will NOT cancel the request.
 client.cancel(promise, "my error message");
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `5b7af56d08383ae9` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `5b7af56d08383ae9` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -13368,20 +13368,20 @@ client.cancel(promise, "my error message");
 
 ##### `Terminal`
 
-~~~
+```
 # Install TanStack Query
 npm i @tanstack/react-query @tanstack/react-query-devtools
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `4e3da2e6f7092d2c` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `4e3da2e6f7092d2c` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -13389,7 +13389,7 @@ npm i @tanstack/react-query @tanstack/react-query-devtools
 
 ##### `amplify/data/resource.ts`
 
-~~~
+```
 const schema = a.schema({
   RealEstateProperty: a
 .model({
@@ -13408,16 +13408,16 @@ defaultAuthorizationMode: "iam",
   },
 });
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `dbb4c22d4f36c962` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `dbb4c22d4f36c962` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -13425,7 +13425,7 @@ defaultAuthorizationMode: "iam",
 
 ##### `src/main.tsx`
 
-~~~
+```
 import React from "react";
 import ReactDOM from "react-dom/client";
 import App from "./App.tsx";
@@ -13448,16 +13448,16 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
   </React.StrictMode>,
 );
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `bd73d70c34cc832c` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `bd73d70c34cc832c` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -13465,7 +13465,7 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
 
 ##### `src/App.tsx`
 
-~~~
+```
 import type { Schema } from "../amplify/data/resource";
 import { generateClient } from "aws-amplify/data";
 import { useQuery } from "@tanstack/react-query";
@@ -13493,16 +13493,16 @@ queryFn: async () => {
   // return ...
 }
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `0d73bcd54827e0ec` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `0d73bcd54827e0ec` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -13510,7 +13510,7 @@ queryFn: async () => {
 
 ##### `Unnamed Snippet`
 
-~~~
+```
 import { generateClient } from "aws-amplify/api";
 import type { Schema } from "../amplify/data/resource";
 import { useQueryClient, useMutation } from "@tanstack/react-query";
@@ -13570,16 +13570,16 @@ onSettled: () => {
   // return ...
 }
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `ec4b53720e5434bb` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `ec4b53720e5434bb` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -13587,7 +13587,7 @@ onSettled: () => {
 
 ##### `Unnamed Snippet`
 
-~~~
+```
 import { generateClient } from "aws-amplify/data";
 import type { Schema } from "../amplify/data/resource";
 import { useQuery } from "@tanstack/react-query";
@@ -13616,16 +13616,16 @@ queryFn: async () => {
   });
 }
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `8bb7e8634af3b304` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `8bb7e8634af3b304` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -13633,7 +13633,7 @@ queryFn: async () => {
 
 ##### `src/App.tsx`
 
-~~~
+```
 import { generateClient } from "aws-amplify/data";
 import type { Schema } from "../amplify/data/resource";
 import { useQueryClient, useMutation } from "@tanstack/react-query";
@@ -13718,16 +13718,16 @@ queryKey: ["realEstateProperties"],
   });
 }
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `5527db08ca1ee1bb` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `5527db08ca1ee1bb` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -13735,7 +13735,7 @@ queryKey: ["realEstateProperties"],
 
 ##### `src/App.tsx`
 
-~~~
+```
 import { generateClient } from "aws-amplify/data";
 import type { Schema } from "../amplify/data/resource";
 import { useQueryClient, useMutation } from "@tanstack/react-query";
@@ -13806,16 +13806,16 @@ queryKey: ["realEstateProperties"],
   });
 }
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `74b0b5f0ccd6d7dd` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `74b0b5f0ccd6d7dd` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -13823,22 +13823,22 @@ queryKey: ["realEstateProperties"],
 
 ##### `Unnamed Snippet`
 
-~~~
+```
 function GlobalLoadingIndicator() {
   const isFetching = useIsFetching();
   return isFetching ? <div style={styles.globalLoadingIndicator}></div> : null;
 }
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `8126f5215dc69347` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `8126f5215dc69347` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -13846,7 +13846,7 @@ function GlobalLoadingIndicator() {
 
 ##### `Unnamed Snippet`
 
-~~~
+```
 <>
   {updateMutation.isError && updateMutation.error instanceof Error ? (
 <div>An error occurred: {updateMutation.error.message}</div>
@@ -13866,16 +13866,16 @@ Update Address
   </button>
 </>;
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `be047723724475e7` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `be047723724475e7` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -13883,7 +13883,7 @@ Update Address
 
 ##### `src/main.tsx`
 
-~~~
+```
 import React from "react";
 import ReactDOM from "react-dom/client";
 import App from "./App.tsx";
@@ -13906,16 +13906,16 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
   </React.StrictMode>,
 );
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `5a0aff3caf6ca3be` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `5a0aff3caf6ca3be` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -13923,7 +13923,7 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
 
 ##### `src/App.tsx`
 
-~~~
+```
 import { generateClient } from "aws-amplify/data";
 import type { Schema } from "../amplify/data/resource";
 import "./App.css";
@@ -14371,16 +14371,16 @@ listStyleType: "none",
   },
 } as const;
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `c229fca239cbad11` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `c229fca239cbad11` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -14388,7 +14388,7 @@ listStyleType: "none",
 
 ##### `Unnamed Snippet`
 
-~~~
+```
 import { useState, useEffect } from "react";
 import { generateClient } from "aws-amplify/data";
 import type { Schema } from "../amplify/data/resource";
@@ -14418,16 +14418,16 @@ return () => sub.unsubscribe();
   );
 }
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `19bebafef196be7c` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `19bebafef196be7c` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -14435,7 +14435,7 @@ return () => sub.unsubscribe();
 
 ##### `Unnamed Snippet`
 
-~~~
+```
 // Defining your selection set `as const` ensures the types
 // propagate through to the response objects.
 const selectionSet = ['title', 'author', 'posts.*'] as const;
@@ -14458,16 +14458,16 @@ const { data } = await client.models.Blog.update({
   selectionSet: [...selectionSet]
 });
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `ceec33b4e66930a2` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `ceec33b4e66930a2` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -14475,7 +14475,7 @@ const { data } = await client.models.Blog.update({
 
 ##### `Unnamed Snippet`
 
-~~~
+```
 // Notice how we're fetching a few `Blog` details, but mostly using
 // the selection set to grab all the related posts.
 const selectionSet = ['title', 'author', 'posts.*'] as const;
@@ -14489,16 +14489,16 @@ handle(data.items)
   }
 });
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `211161dff2eb4646` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `211161dff2eb4646` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -14506,7 +14506,7 @@ handle(data.items)
 
 ##### `Unnamed Snippet`
 
-~~~
+```
 async function addPostToBlog(
   post: Schema["Post"]["createType"],
   blog: Schema["Blog"]["type"],
@@ -14530,16 +14530,16 @@ blogId: blog.id,
   );
 }
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `92b382c0ac2298ec` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `92b382c0ac2298ec` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -14547,7 +14547,7 @@ blogId: blog.id,
 
 ##### `Unnamed Snippet`
 
-~~~
+```
 import { generateClient } from "aws-amplify/data";
 import type { Schema } from "../amplify/data/resource";
 
@@ -14576,16 +14576,16 @@ createSub.unsubscribe();
 updateSub.unsubscribe();
 deleteSub.unsubscribe();
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `837a78504eebfe1e` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `837a78504eebfe1e` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -14593,7 +14593,7 @@ deleteSub.unsubscribe();
 
 ##### `Unnamed Snippet`
 
-~~~
+```
 import { generateClient } from "aws-amplify/data";
 import type { Schema } from "../amplify/data/resource";
 
@@ -14610,16 +14610,16 @@ content: {
   error: (error) => console.warn(error),
 });
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `dd37adfa68dc80a8` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `dd37adfa68dc80a8` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -14627,7 +14627,7 @@ content: {
 
 ##### `Unnamed Snippet`
 
-~~~
+```
 import { CONNECTION_STATE_CHANGE, ConnectionState } from "aws-amplify/data";
 import { Hub } from "aws-amplify/utils";
 
@@ -14639,16 +14639,16 @@ console.log(connectionState);
   }
 });
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `3d50d3d345883f3f` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `3d50d3d345883f3f` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -14656,7 +14656,7 @@ console.log(connectionState);
 
 ##### `Unnamed Snippet`
 
-~~~
+```
 import { generateClient, CONNECTION_STATE_CHANGE, ConnectionState } from 'aws-amplify/data'
 import { Hub } from 'aws-amplify/utils'
 import { Schema } from '../amplify/data/resource';
@@ -14700,16 +14700,16 @@ const cleanupSubscriptions = () => {
   deleteSub.unsubscribe();
 }
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `ccefe4830defbe18` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `ccefe4830defbe18` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -14717,20 +14717,20 @@ const cleanupSubscriptions = () => {
 
 ##### `Unnamed Snippet`
 
-~~~
+```
 // Stop receiving data updates from the subscription
 sub.unsubscribe();
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `982a132bf936968c` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `982a132bf936968c` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -14738,7 +14738,7 @@ sub.unsubscribe();
 
 ##### `amplify/data/resource.ts`
 
-~~~
+```
 import { a, defineData, type ClientSchema } from "@aws-amplify/backend";
 
 const schema = a.schema({
@@ -14762,16 +14762,16 @@ apiKeyAuthorizationMode: { expiresInDays: 30 },
   },
 });
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `7a897658524a2d0b` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `7a897658524a2d0b` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -14779,19 +14779,19 @@ apiKeyAuthorizationMode: { expiresInDays: 30 },
 
 ##### `Terminal`
 
-~~~
+```
 npm add aws-amplify
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `1759cbd7cc5e4599` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `1759cbd7cc5e4599` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -14799,7 +14799,7 @@ npm add aws-amplify
 
 ##### `src/TodoList.tsx`
 
-~~~
+```
 import type { Schema } from "../amplify/data/resource";
 import { generateClient } from "aws-amplify/data";
 
@@ -14820,16 +14820,16 @@ await client.models.Todo.create({
   );
 }
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `2f36362b325fd6f9` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `2f36362b325fd6f9` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -14837,7 +14837,7 @@ await client.models.Todo.create({
 
 ##### `src/TodoList.tsx`
 
-~~~
+```
 import { useState, useEffect } from "react";
 import type { Schema } from "../amplify/data/resource";
 import { generateClient } from "aws-amplify/data";
@@ -14877,16 +14877,16 @@ fetchTodos();
   );
 }
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `c18fb667c9efe229` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `c18fb667c9efe229` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -14894,7 +14894,7 @@ fetchTodos();
 
 ##### `src/App.tsx`
 
-~~~
+```
 import type { Schema } from "../amplify/data/resource";
 import { useState, useEffect } from "react";
 import { generateClient } from "aws-amplify/data";
@@ -14935,16 +14935,16 @@ await client.models.Todo.create({
   );
 }
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `c4e9900baed037f1` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `c4e9900baed037f1` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -14952,7 +14952,7 @@ await client.models.Todo.create({
 
 ##### `amplify/data/resource.ts`
 
-~~~
+```
 import { type ClientSchema, a, defineData } from "@aws-amplify/backend";
 
 const schema = a.schema({
@@ -14978,16 +14978,16 @@ apiKeyAuthorizationMode: {
   },
 });
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `3bcf491dc036739b` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `3bcf491dc036739b` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -14995,7 +14995,7 @@ apiKeyAuthorizationMode: {
 
 ##### `amplify/storage/resource.ts`
 
-~~~
+```
 import { defineStorage } from "@aws-amplify/backend";
 
 export const storage = defineStorage({
@@ -15005,16 +15005,16 @@ export const storage = defineStorage({
   }),
 });
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `6679822de1d0953f` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `6679822de1d0953f` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -15022,7 +15022,7 @@ export const storage = defineStorage({
 
 ##### `amplify/backend.ts`
 
-~~~
+```
 import { defineBackend } from "@aws-amplify/backend";
 import { auth } from "./auth/resource";
 import { data } from "./data/resource";
@@ -15034,16 +15034,16 @@ export const backend = defineBackend({
   storage,
 });
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `1368a6d0f77630fd` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `1368a6d0f77630fd` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -15051,7 +15051,7 @@ export const backend = defineBackend({
 
 ##### `src/App.tsx`
 
-~~~
+```
 import { generateClient } from "aws-amplify/api";
 import { uploadData, getUrl } from "aws-amplify/storage";
 import type { Schema } from "../amplify/data/resource";
@@ -15095,16 +15095,16 @@ if (!updatedSong.coverArtPath) return;
 // Retrieve the file's signed URL:
 const signedURL = await getUrl({ path: updatedSong.coverArtPath });
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `029aeb50b55f5f09` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `029aeb50b55f5f09` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -15112,7 +15112,7 @@ const signedURL = await getUrl({ path: updatedSong.coverArtPath });
 
 ##### `src/App.tsx`
 
-~~~
+```
 import { generateClient } from "aws-amplify/api";
 import { uploadData, getUrl } from "aws-amplify/storage";
 import type { Schema } from "../amplify/data/resource";
@@ -15147,16 +15147,16 @@ if (!updatedSong?.coverArtPath) return;
 // Retrieve the file's signed URL:
 const signedURL = await getUrl({ path: updatedSong.coverArtPath });
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `a5c47b142daa7dbd` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `a5c47b142daa7dbd` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -15164,7 +15164,7 @@ const signedURL = await getUrl({ path: updatedSong.coverArtPath });
 
 ##### `src/App.tsx`
 
-~~~
+```
 import { generateClient } from "aws-amplify/api";
 import { getUrl } from "aws-amplify/storage";
 import type { Schema } from "../amplify/data/resource";
@@ -15186,16 +15186,16 @@ if (!song?.coverArtPath) return;
 // Retrieve the signed URL:
 const signedURL = await getUrl({ path: song.coverArtPath });
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `2e56e96cc6a6b8fb` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `2e56e96cc6a6b8fb` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -15203,7 +15203,7 @@ const signedURL = await getUrl({ path: song.coverArtPath });
 
 ##### `src/App.tsx`
 
-~~~
+```
 import { generateClient } from "aws-amplify/api";
 import type { Schema } from "../amplify/data/resource";
 
@@ -15226,16 +15226,16 @@ const updatedSong = await client.models.Song.update({
   coverArtPath: null,
 });
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `a40d2f553ca941bf` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `a40d2f553ca941bf` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -15243,7 +15243,7 @@ const updatedSong = await client.models.Song.update({
 
 ##### `src/App.tsx`
 
-~~~
+```
 import { generateClient } from "aws-amplify/api";
 import { remove } from "aws-amplify/storage";
 import type { Schema } from "../amplify/data/resource";
@@ -15269,16 +15269,16 @@ const updatedSong = await client.models.Song.update({
 // Delete the file from S3:
 await remove({ path: song.coverArtPath });
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `94503f216a88c5dd` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `94503f216a88c5dd` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -15286,7 +15286,7 @@ await remove({ path: song.coverArtPath });
 
 ##### `src/App.tsx`
 
-~~~
+```
 import { generateClient } from "aws-amplify/api";
 import { remove } from "aws-amplify/storage";
 import type { Schema } from "../amplify/data/resource";
@@ -15309,16 +15309,16 @@ await remove({ path: song.coverArtPath });
 // Delete the record from the API:
 await client.models.Song.delete({ id: song.id });
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `41626ca14e050c9f` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `41626ca14e050c9f` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -15326,7 +15326,7 @@ await client.models.Song.delete({ id: song.id });
 
 ##### `amplify/data/resource.ts`
 
-~~~
+```
 const schema = a.schema({
   PhotoAlbum: a
 .model({
@@ -15337,16 +15337,16 @@ const schema = a.schema({
 .authorization((allow) => [allow.publicApiKey()]),
 });
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `f401c7fceb6e060e` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `f401c7fceb6e060e` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -15354,7 +15354,7 @@ const schema = a.schema({
 
 ##### `src/App.tsx`
 
-~~~
+```
 import { generateClient } from "aws-amplify/api";
 import { uploadData, getUrl } from "aws-amplify/storage";
 import type { Schema } from "../amplify/data/resource";
@@ -15411,16 +15411,16 @@ async (path) => await getUrl({ path: path! }),
   ),
 );
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `0c37acb6ac67ddb6` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `0c37acb6ac67ddb6` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -15428,7 +15428,7 @@ async (path) => await getUrl({ path: path! }),
 
 ##### `src/App.tsx`
 
-~~~
+```
 import { generateClient } from "aws-amplify/api";
 import { uploadData, getUrl } from "aws-amplify/storage";
 import type { Schema } from "../amplify/data/resource";
@@ -15483,16 +15483,16 @@ async (path) => await getUrl({ path: path! }),
   ),
 );
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `bf7c47146a1f7b61` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `bf7c47146a1f7b61` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -15500,7 +15500,7 @@ async (path) => await getUrl({ path: path! }),
 
 ##### `src/App.tsx`
 
-~~~
+```
 import { generateClient } from "aws-amplify/api";
 import { uploadData, getUrl } from "aws-amplify/storage";
 import type { Schema } from "../amplify/data/resource";
@@ -15557,16 +15557,16 @@ async (path) => await getUrl({ path: path! }),
   ),
 );
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `af889ca92491fe0b` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `af889ca92491fe0b` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -15574,7 +15574,7 @@ async (path) => await getUrl({ path: path! }),
 
 ##### `src/App.tsx`
 
-~~~
+```
 async function getImagesForPhotoAlbum() {
   import { generateClient } from "aws-amplify/api";
   import { uploadData, getUrl } from "aws-amplify/storage";
@@ -15604,16 +15604,16 @@ photoAlbum.imagePaths.map(async (imagePath) => {
   );
 }
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `4fdf4d5d37bed3a9` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `4fdf4d5d37bed3a9` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -15621,7 +15621,7 @@ photoAlbum.imagePaths.map(async (imagePath) => {
 
 ##### `src/App.tsx`
 
-~~~
+```
 import { generateClient } from "aws-amplify/api";
 import type { Schema } from "../amplify/data/resource";
 
@@ -15644,16 +15644,16 @@ const updatedPhotoAlbum = await client.models.PhotoAlbum.update({
   imagePaths: null,
 });
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `fe8b7733d3c4a338` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `fe8b7733d3c4a338` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -15661,7 +15661,7 @@ const updatedPhotoAlbum = await client.models.PhotoAlbum.update({
 
 ##### `src/App.tsx`
 
-~~~
+```
 import { generateClient } from "aws-amplify/api";
 import { remove } from "aws-amplify/storage";
 import type { Schema } from "../amplify/data/resource";
@@ -15696,16 +15696,16 @@ await remove({ path: imagePath });
   }),
 );
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `815d4373de20c7b5` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `815d4373de20c7b5` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -15713,7 +15713,7 @@ await remove({ path: imagePath });
 
 ##### `src/App.tsx`
 
-~~~
+```
 import { generateClient } from "aws-amplify/api";
 import { remove } from "aws-amplify/storage";
 import type { Schema } from "../amplify/data/resource";
@@ -15747,16 +15747,16 @@ await remove({ path: imagePath });
   }),
 );
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `2fccce5d41438e41` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `2fccce5d41438e41` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -15764,7 +15764,7 @@ await remove({ path: imagePath });
 
 ##### `src/App.tsx`
 
-~~~
+```
 import "./App.css";
 import { generateClient } from "aws-amplify/api";
 import { uploadData, getUrl, remove } from "aws-amplify/storage";
@@ -16038,16 +16038,16 @@ Sign out
 
 export default withAuthenticator(App);
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `5d3534d04eccf558` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `5d3534d04eccf558` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -16055,7 +16055,7 @@ export default withAuthenticator(App);
 
 ##### `src/App.tsx`
 
-~~~
+```
 import "./App.css";
 import { generateClient } from "aws-amplify/api";
 import { uploadData, getUrl, remove } from "aws-amplify/storage";
@@ -16574,16 +16574,16 @@ currentImages.map((url, idx) => {
 
 export default withAuthenticator(App);
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `2aa2fbfd92b49cdf` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `2aa2fbfd92b49cdf` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -16591,19 +16591,19 @@ export default withAuthenticator(App);
 
 ##### `Terminal`
 
-~~~
+```
 npm add @aws-lambda-powertools/logger @types/aws-lambda
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `971716d4c93fe3b6` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `971716d4c93fe3b6` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -16611,23 +16611,23 @@ npm add @aws-lambda-powertools/logger @types/aws-lambda
 
 ##### `amplify/functions/kinesis-function/resource.ts`
 
-~~~
+```
 import { defineFunction } from "@aws-amplify/backend";
 
 export const myKinesisFunction = defineFunction({
   name: "kinesis-function",
 });
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `8f81a185041222d2` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `8f81a185041222d2` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -16635,7 +16635,7 @@ export const myKinesisFunction = defineFunction({
 
 ##### `amplify/functions/kinesis-function/handler.ts`
 
-~~~
+```
 import type {
   KinesisStreamBatchResponse,
   KinesisStreamHandler,
@@ -16681,16 +16681,16 @@ async function getRecordDataAsync(
   return data;
 }
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `39fa4e3a9d6197d9` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `39fa4e3a9d6197d9` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -16698,7 +16698,7 @@ async function getRecordDataAsync(
 
 ##### `amplify/backend.ts`
 
-~~~
+```
 import { defineBackend } from "@aws-amplify/backend";
 import { Stream } from "aws-cdk-lib/aws-kinesis";
 import { StartingPosition } from "aws-cdk-lib/aws-lambda";
@@ -16727,16 +16727,16 @@ const eventSource = new KinesisEventSource(kinesisStream, {
 
 backend.myKinesisFunction.resources.lambda.addEventSource(eventSource);
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `839e597bc631f205` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `839e597bc631f205` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -16744,7 +16744,7 @@ backend.myKinesisFunction.resources.lambda.addEventSource(eventSource);
 
 ##### `amplify/functions/say-hello/resource.ts`
 
-~~~
+```
 import { defineFunction } from "@aws-amplify/backend";
 
 export const sayHello = defineFunction({
@@ -16754,16 +16754,16 @@ export const sayHello = defineFunction({
   entry: "./handler.ts",
 });
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `7f6cf64d79fd0683` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `7f6cf64d79fd0683` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -16771,7 +16771,7 @@ export const sayHello = defineFunction({
 
 ##### `amplify/functions/say-hello/handler.ts`
 
-~~~
+```
 import type { Handler } from "aws-lambda";
 
 export const handler: Handler = async (event, context) => {
@@ -16779,16 +16779,16 @@ export const handler: Handler = async (event, context) => {
   return "Hello, World!";
 };
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `937259d927dccabc` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `937259d927dccabc` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -16796,7 +16796,7 @@ export const handler: Handler = async (event, context) => {
 
 ##### `amplify/backend.ts`
 
-~~~
+```
 import { defineBackend } from "@aws-amplify/backend";
 import { sayHello } from "./functions/say-hello/resource";
 
@@ -16804,16 +16804,16 @@ defineBackend({
   sayHello,
 });
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `1ac3057102a272e1` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `1ac3057102a272e1` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -16821,7 +16821,7 @@ defineBackend({
 
 ##### `amplify/data/resource.ts`
 
-~~~
+```
 import { type ClientSchema, a, defineData } from "@aws-amplify/backend";
 import { sayHello } from "../functions/say-hello/resource";
 
@@ -16844,16 +16844,16 @@ defaultAuthorizationMode: "iam",
   },
 });
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `ffcef2e09d7f1abe` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `ffcef2e09d7f1abe` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -16861,7 +16861,7 @@ defaultAuthorizationMode: "iam",
 
 ##### `amplify/functions/say-hello/handler.ts`
 
-~~~
+```
 import type { Schema } from "../../data/resource";
 
 export const handler: Schema["sayHello"]["functionHandler"] = async (event) => {
@@ -16871,16 +16871,16 @@ export const handler: Schema["sayHello"]["functionHandler"] = async (event) => {
   return `Hello, ${name}!`;
 };
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `8f38a781d49b259d` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `8f38a781d49b259d` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -16888,7 +16888,7 @@ export const handler: Schema["sayHello"]["functionHandler"] = async (event) => {
 
 ##### `src/main.ts`
 
-~~~
+```
 import type { Schema } from "./amplify/data/resource";
 import { Amplify } from "aws-amplify";
 import { generateClient } from "aws-amplify/api";
@@ -16902,16 +16902,16 @@ client.queries.sayHello({
   name: "Amplify",
 });
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `fde03d3112494569` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `fde03d3112494569` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -16919,21 +16919,21 @@ client.queries.sayHello({
 
 ##### `tsconfig.json`
 
-~~~
+```
 {
   "exclude": ["amplify/**/*"]
 }
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `9f5432bf9c0150d4` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `9f5432bf9c0150d4` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -16941,7 +16941,7 @@ client.queries.sayHello({
 
 ##### `package.json`
 
-~~~
+```
 {
   "name": "my-backend",
   "private": true,
@@ -16951,16 +16951,16 @@ client.queries.sayHello({
   }
 }
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `20eb39b36497e0a9` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `20eb39b36497e0a9` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -16968,19 +16968,19 @@ client.queries.sayHello({
 
 ##### `Terminal`
 
-~~~
+```
 npm add aws-amplify @aws-amplify/adapter-nextjs
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `8689eafef8e07e47` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `8689eafef8e07e47` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -16988,7 +16988,7 @@ npm add aws-amplify @aws-amplify/adapter-nextjs
 
 ##### `Unnamed Snippet`
 
-~~~
+```
 import { createServerRunner } from "@aws-amplify/adapter-nextjs";
 import outputs from "@/amplify_outputs.json";
 
@@ -16996,16 +16996,16 @@ export const { runWithAmplifyServerContext } = createServerRunner({
   config: outputs,
 });
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `bf2e41aba91ab1d5` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `bf2e41aba91ab1d5` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -17013,7 +17013,7 @@ export const { runWithAmplifyServerContext } = createServerRunner({
 
 ##### `Unnamed Snippet`
 
-~~~
+```
 "use client";
 
 import outputs from "@/amplify_outputs.json";
@@ -17031,16 +17031,16 @@ export default function RootLayoutThatConfiguresAmplifyOnTheClient({
   return children;
 }
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `3baa0ac91eb98ddc` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `3baa0ac91eb98ddc` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -17048,7 +17048,7 @@ export default function RootLayoutThatConfiguresAmplifyOnTheClient({
 
 ##### `Unnamed Snippet`
 
-~~~
+```
 "use client";
 
 import { Amplify } from "aws-amplify";
@@ -17060,16 +17060,16 @@ export default function ConfigureAmplifyClientSide() {
   return null;
 }
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `f219aab938f63266` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `f219aab938f63266` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -17077,7 +17077,7 @@ export default function ConfigureAmplifyClientSide() {
 
 ##### `Unnamed Snippet`
 
-~~~
+```
 import ConfigureAmplifyClientSide from "@/components/ConfigureAmplifyClientSide";
 import "./globals.css";
 
@@ -17105,16 +17105,16 @@ export default function RootLayout({
   );
 }
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `cbb6f8c4879ba10d` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `cbb6f8c4879ba10d` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -17122,7 +17122,7 @@ export default function RootLayout({
 
 ##### `Unnamed Snippet`
 
-~~~
+```
 import { fetchAuthSession } from "aws-amplify/auth/server";
 import { NextRequest, NextResponse } from "next/server";
 import { runWithAmplifyServerContext } from "@/utils/amplifyServerUtils";
@@ -17166,16 +17166,16 @@ export const config = {
   ],
 };
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `10c6492fd438d91e` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `10c6492fd438d91e` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -17183,7 +17183,7 @@ export const config = {
 
 ##### `next.config.js`
 
-~~~
+```
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   experimental: {
@@ -17191,16 +17191,16 @@ serverComponentsExternalPackages: ["@aws-crypto"],
   },
 };
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `557d8255f490c784` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `557d8255f490c784` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -17208,7 +17208,7 @@ serverComponentsExternalPackages: ["@aws-crypto"],
 
 ##### `Unnamed Snippet`
 
-~~~
+```
 import { cookies } from "next/headers";
 import { getCurrentUser } from "aws-amplify/auth/server";
 import { runWithAmplifyServerContext } from "@/utils/amplifyServerUtils";
@@ -17235,16 +17235,16 @@ return <p>Something went wrong...</p>;
   }
 }
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `78c26838ef9c22f4` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `78c26838ef9c22f4` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -17252,7 +17252,7 @@ return <p>Something went wrong...</p>;
 
 ##### `Unnamed Snippet`
 
-~~~
+```
 import { getUrl } from "aws-amplify/storage/server";
 import Image from "next/image";
 import { runWithAmplifyServerContext } from "@/utils/amplifyServerUtils";
@@ -17284,16 +17284,16 @@ return <p>Something went wrong...</p>;
   }
 }
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `557ac1e38174bddd` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `557ac1e38174bddd` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -17301,7 +17301,7 @@ return <p>Something went wrong...</p>;
 
 ##### `Unnamed Snippet`
 
-~~~
+```
 import { getCurrentUser } from "aws-amplify/auth/server";
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
@@ -17316,16 +17316,16 @@ operation: (contextSpec) => getCurrentUser(contextSpec),
   return NextResponse.json({ user });
 }
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `3580536425fbfa26` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `3580536425fbfa26` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -17333,7 +17333,7 @@ operation: (contextSpec) => getCurrentUser(contextSpec),
 
 ##### `Unnamed Snippet`
 
-~~~
+```
 export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
   const currentUser = await runWithAmplifyServerContext({
 nextServerContext: { request: req, response: res },
@@ -17343,16 +17343,16 @@ operation: (contextSpec) => getCurrentUser(contextSpec),
   return { props: { currentUser } };
 };
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `c485918a99f92f58` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `c485918a99f92f58` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -17360,7 +17360,7 @@ operation: (contextSpec) => getCurrentUser(contextSpec),
 
 ##### `Unnamed Snippet`
 
-~~~
+```
 export async function getStaticProps() {
   const splashUrl = await runWithAmplifyServerContext({
 nextServerContext: null,
@@ -17373,16 +17373,16 @@ revalidate: (splashUrl.expiresAt.getTime() - Date.now()) / 1000, // in seconds
   };
 }
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `ee0e7701ec29a7a3` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `ee0e7701ec29a7a3` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -17390,7 +17390,7 @@ revalidate: (splashUrl.expiresAt.getTime() - Date.now()) / 1000, // in seconds
 
 ##### `Unnamed Snippet`
 
-~~~
+```
 ├── apps/
 │   ├── admin-dashboard/
 │   │   ├── next.config.mjs
@@ -17410,16 +17410,16 @@ revalidate: (splashUrl.expiresAt.getTime() - Date.now()) / 1000, // in seconds
     └── tsconfig.json
 └── package.json
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `24ba8fa46ca0b5dc` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `24ba8fa46ca0b5dc` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -17427,19 +17427,19 @@ revalidate: (splashUrl.expiresAt.getTime() - Date.now()) / 1000, // in seconds
 
 ##### `Terminal`
 
-~~~
+```
 npx ampx generate outputs --branch main --app-id BACKEND-APP-ID
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `08fd21f5eafe9848` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `08fd21f5eafe9848` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -17447,19 +17447,19 @@ npx ampx generate outputs --branch main --app-id BACKEND-APP-ID
 
 ##### `Terminal`
 
-~~~
+```
 npx ampx generate outputs --branch main --app-id BACKEND-APP-ID
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `08fd21f5eafe9848` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `08fd21f5eafe9848` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -17467,7 +17467,7 @@ npx ampx generate outputs --branch main --app-id BACKEND-APP-ID
 
 ##### `tsconfig.json`
 
-~~~
+```
 {
   "compilerOptions": {
 "paths": {
@@ -17476,16 +17476,16 @@ npx ampx generate outputs --branch main --app-id BACKEND-APP-ID
   }
 }
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `be4357236b96055a` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `be4357236b96055a` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -17493,7 +17493,7 @@ npx ampx generate outputs --branch main --app-id BACKEND-APP-ID
 
 ##### `apps/admin-dashboard/page.tsx`
 
-~~~
+```
 import { generateClient } from "aws-amplify/data";
 import type { Schema } from "@/data-schema";
 
@@ -17506,16 +17506,16 @@ isDone: false,
   });
 };
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `3137a2b60aedf773` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `3137a2b60aedf773` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -17523,7 +17523,7 @@ isDone: false,
 
 ##### `apps/admin-dashboard/page.tsx`
 
-~~~
+```
 import { generateClient } from "aws-amplify/data";
 import type { Schema } from "@/data-schema";
 
@@ -17536,16 +17536,16 @@ isDone: false,
   });
 };
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `3137a2b60aedf773` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `3137a2b60aedf773` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -17553,19 +17553,19 @@ isDone: false,
 
 ##### `Terminal`
 
-~~~
+```
 npm create next-app@14 -- multi-repo-example --typescript --eslint --no-app --no-src-dir --no-tailwind --import-alias '@/*'
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `9e86939baa24d516` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `9e86939baa24d516` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -17573,20 +17573,20 @@ npm create next-app@14 -- multi-repo-example --typescript --eslint --no-app --no
 
 ##### `Terminal`
 
-~~~
+```
 cd multi-repo-example
 npm add @aws-amplify/backend-cli aws-amplify @aws-amplify/ui-react
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `a96f0f3bf3b26739` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `a96f0f3bf3b26739` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -17594,19 +17594,19 @@ npm add @aws-amplify/backend-cli aws-amplify @aws-amplify/ui-react
 
 ##### `Terminal`
 
-~~~
+```
 npx ampx generate outputs --branch main --app-id <your-backend-app-id>
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `7665aa8c85d9a3b4` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `7665aa8c85d9a3b4` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -17614,7 +17614,7 @@ npx ampx generate outputs --branch main --app-id <your-backend-app-id>
 
 ##### `pages/_app.tsx`
 
-~~~
+```
 import { withAuthenticator } from "@aws-amplify/ui-react";
 import { Amplify } from "aws-amplify";
 import outputs from "@/amplify_outputs.json";
@@ -17631,16 +17631,16 @@ function App({ Component, pageProps }: AppProps) {
 
 export default withAuthenticator(App);
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `39c8cf957000e6ac` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `39c8cf957000e6ac` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -17648,7 +17648,7 @@ export default withAuthenticator(App);
 
 ##### `Unnamed Snippet`
 
-~~~
+```
 version: 1
 backend:
   phases:
@@ -17671,16 +17671,16 @@ paths:
   - .npm/**/*
   - node_modules/**/*
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `c151f94686992927` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `c151f94686992927` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -17688,7 +17688,7 @@ paths:
 
 ##### `amplify.yml`
 
-~~~
+```
 version: 1
 backend:
   phases:
@@ -17710,16 +17710,16 @@ files:
 paths:
   - node_modules/**/*
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `1f61d10d39fa9a83` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `1f61d10d39fa9a83` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -17727,7 +17727,7 @@ paths:
 
 ##### `tsconfig.json`
 
-~~~
+```
 {
   "compilerOptions": {
 "paths": {
@@ -17736,16 +17736,16 @@ paths:
   }
 }
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `c74ee7916c8ae999` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `c74ee7916c8ae999` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -17753,7 +17753,7 @@ paths:
 
 ##### `Terminal`
 
-~~~
+```
 git checkout -b feature/A
 
 ## make some edits to your code
@@ -17762,16 +17762,16 @@ git commit --am "New data model to track comments for todos added"
 
 git push origin feature/A
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `91330c3134e7aa91` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `91330c3134e7aa91` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -17779,19 +17779,19 @@ git push origin feature/A
 
 ##### `Terminal`
 
-~~~
+```
 npx ampx generate outputs --app-id <your-amplify-app-id> --branch <your-git-branch-name> --out-dir <path/to/config>
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `86876fc0d71196f7` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `86876fc0d71196f7` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -17799,7 +17799,7 @@ npx ampx generate outputs --app-id <your-amplify-app-id> --branch <your-git-bran
 
 ##### `Unnamed Snippet`
 
-~~~
+```
 npx ampx sandbox secret set foo
 ? Enter secret value: ###
 Done!
@@ -17808,16 +17808,16 @@ npx ampx sandbox secret set bar
 ? Enter secret value: ###
 Done!
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `177325bd7103d995` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `177325bd7103d995` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -17825,21 +17825,21 @@ Done!
 
 ##### `Unnamed Snippet`
 
-~~~
+```
 npx ampx sandbox secret list
  - foo
  - bar
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `9e94e7e14cde9252` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `9e94e7e14cde9252` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -17847,23 +17847,23 @@ npx ampx sandbox secret list
 
 ##### `Unnamed Snippet`
 
-~~~
+```
 npx ampx sandbox secret get foo
 name: foo
 version: 1
 value: abc123
 lastUpdated: Mon Nov 13 2023 22:19:12 GMT-0800 (Pacific Standard Time)
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `9cf830d5a5340ca0` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `9cf830d5a5340ca0` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -17871,19 +17871,19 @@ lastUpdated: Mon Nov 13 2023 22:19:12 GMT-0800 (Pacific Standard Time)
 
 ##### `Unnamed Snippet`
 
-~~~
+```
 npx ampx sandbox secret set foo --profile work
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `cc09b88bc8ecbeec` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `cc09b88bc8ecbeec` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -17891,19 +17891,19 @@ npx ampx sandbox secret set foo --profile work
 
 ##### `Unnamed Snippet`
 
-~~~
+```
 npx ampx sandbox --identifier feature1sandbox
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `83d31f061c8eaf8b` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `83d31f061c8eaf8b` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -17911,19 +17911,19 @@ npx ampx sandbox --identifier feature1sandbox
 
 ##### `Unnamed Snippet`
 
-~~~
+```
 npx ampx sandbox --identifier feature2sandbox
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `84b833ec4343dc7d` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `84b833ec4343dc7d` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -17931,19 +17931,19 @@ npx ampx sandbox --identifier feature2sandbox
 
 ##### `Unnamed Snippet`
 
-~~~
+```
 npx ampx sandbox --identifier feature1sandbox secret set baz
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `a08360d3543e0fee` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `a08360d3543e0fee` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -17951,19 +17951,19 @@ npx ampx sandbox --identifier feature1sandbox secret set baz
 
 ##### `Terminal`
 
-~~~
+```
 npx ampx sandbox --outputs-out-dir ./path/to/config --outputs-format ["json", "dart"]
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `e1d0dea68bca6848` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `e1d0dea68bca6848` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -17971,19 +17971,19 @@ npx ampx sandbox --outputs-out-dir ./path/to/config --outputs-format ["json", "d
 
 ##### `Unnamed Snippet`
 
-~~~
+```
 npx ampx generate outputs --app-id <your-amplify-app-id> --branch main --format ["json", "dart"] --out-dir ./path/to/config
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `7874ae3a5848eda9` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `7874ae3a5848eda9` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -17991,19 +17991,19 @@ npx ampx generate outputs --app-id <your-amplify-app-id> --branch main --format 
 
 ##### `Terminal`
 
-~~~
+```
 npx ampx generate outputs --app-id <app-id> --branch main
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `0c0d50bd53d09ce1` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `0c0d50bd53d09ce1` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -18011,20 +18011,20 @@ npx ampx generate outputs --app-id <app-id> --branch main
 
 ##### `Unnamed Snippet`
 
-~~~
+```
 npx ampx generate graphql-client-code
 --format [choices: "modelgen", "graphql-codegen", "introspection"]
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `28167ac180eae7dd` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `28167ac180eae7dd` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -18032,7 +18032,7 @@ npx ampx generate graphql-client-code
 
 ##### `Unnamed Snippet`
 
-~~~
+```
 ├── amplify/ # Folder containing your Amplify backend configuration
 │   ├── auth/ # Definition for your auth backend
 │   │   └── resource.tsx
@@ -18047,16 +18047,16 @@ npx ampx generate graphql-client-code
 ├── package.json
 └── tsconfig.json
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `ca66fb122174b9cc` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `ca66fb122174b9cc` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -18064,20 +18064,20 @@ npx ampx generate graphql-client-code
 
 ##### `Terminal`
 
-~~~
+```
 git clone https://github.com/<github-user>/amplify-vite-react-template.git
 cd amplify-vite-react-template && npm install
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `ed16cc50ccab928b` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `ed16cc50ccab928b` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -18085,23 +18085,23 @@ cd amplify-vite-react-template && npm install
 
 ##### `Unnamed Snippet`
 
-~~~
+```
 ├── amplify
 ├── src
 ├── amplify_outputs.json <== backend outputs file
 ├── package.json
 └── tsconfig.json
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `008dc549768a46b2` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `008dc549768a46b2` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -18109,7 +18109,7 @@ cd amplify-vite-react-template && npm install
 
 ##### `src/App.tsx`
 
-~~~
+```
 function App() {
   // ...
   function deleteTodo(id: string) {
@@ -18138,16 +18138,16 @@ Review next step of this tutorial.
   );
 }
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `14bd2ab04fd722de` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `14bd2ab04fd722de` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -18155,19 +18155,19 @@ Review next step of this tutorial.
 
 ##### `Terminal`
 
-~~~
+```
 npm run dev
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `29238ffc8ab45ff8` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `29238ffc8ab45ff8` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -18175,7 +18175,7 @@ npm run dev
 
 ##### `src/App.tsx`
 
-~~~
+```
 import { Authenticator } from "@aws-amplify/ui-react";
 import "@aws-amplify/ui-react/styles.css";
 // ... other imports
@@ -18194,16 +18194,16 @@ function App() {
   );
 }
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `3774e58f1afbc0d2` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `3774e58f1afbc0d2` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -18211,20 +18211,20 @@ function App() {
 
 ##### `Terminal`
 
-~~~
+```
 git commit -am "added authenticator"
 git push
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `f3e938672d9247e5` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `f3e938672d9247e5` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -18232,7 +18232,7 @@ git push
 
 ##### `amplify/data/resource.ts`
 
-~~~
+```
 import { type ClientSchema, a, defineData } from "@aws-amplify/backend";
 
 const schema = a.schema({
@@ -18254,16 +18254,16 @@ defaultAuthorizationMode: "userPool",
   },
 });
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `832caa416eda81d3` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `832caa416eda81d3` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -18271,7 +18271,7 @@ defaultAuthorizationMode: "userPool",
 
 ##### `src/App.tsx`
 
-~~~
+```
 // ... imports
 
 function App() {
@@ -18288,16 +18288,16 @@ function App() {
   );
 }
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `a0636891d1ba0ef2` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `a0636891d1ba0ef2` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -18305,20 +18305,20 @@ function App() {
 
 ##### `Terminal`
 
-~~~
+```
 git commit -am "added per-user data isolation"
 git push
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `c16d632aa0af79e6` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `c16d632aa0af79e6` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -18326,7 +18326,7 @@ git push
 
 ##### `amplify/backend.ts`
 
-~~~
+```
 import * as sns from "aws-cdk-lib/aws-sns";
 import * as sqs from "aws-cdk-lib/aws-sqs";
 import { defineBackend } from "@aws-amplify/backend";
@@ -18343,16 +18343,16 @@ const customResourceStack = backend.createStack("MyCustomResources");
 new sqs.Queue(customResourceStack, "CustomQueue");
 new sns.Topic(customResourceStack, "CustomTopic");
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `193a2a390fb5a565` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `193a2a390fb5a565` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
@@ -18360,7 +18360,7 @@ new sns.Topic(customResourceStack, "CustomTopic");
 
 ##### `amplify/backend.ts`
 
-~~~
+```
 import * as sns from "aws-cdk-lib/aws-sns";
 import * as sqs from "aws-cdk-lib/aws-sqs";
 import { defineBackend } from "@aws-amplify/backend";
@@ -18377,16 +18377,16 @@ const customResourceStack = backend.createStack("MyCustomResources");
 new sqs.Queue(customResourceStack, "CustomQueue");
 new sns.Topic(customResourceStack, "CustomTopic");
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `fe8797e13aaa1221` |
-| Covered | ❌ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `fe8797e13aaa1221` |
+| Covered | ❌                 |
 
 ##### Covering Regions
 
-- *None*
+- _None_
 
 ---
 
