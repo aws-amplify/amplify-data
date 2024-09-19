@@ -61,6 +61,7 @@ describe('Result parsing edge cases', () => {
       });
 
       test('of type `SomeCustomType[]`', async () => {
+        // #region mocking
         const schema = a
           .schema({
             SomeCustomType: a.customType({
@@ -194,6 +195,7 @@ describe('Result parsing edge cases', () => {
       });
 
       test('of type `SomeCustomType[]`', async () => {
+        // #region mocking
         const schema = a
           .schema({
             SomeCustomType: a.customType({
