@@ -204,8 +204,10 @@ export function initializeModel(
     .map(([fieldName]) => fieldName);
 
   return result.map((record) => {
+    if (record === null || record === undefined) {
+      return record;
+    }
     const initializedRelationalFields: Record<string, any> = {};
-
     for (const fieldName of modelFields) {
       const modelField = introModelFields[fieldName];
       const modelFieldType = modelField?.type as ModelFieldType;
