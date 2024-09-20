@@ -7,7 +7,6 @@ import {
   BaseBrowserClient,
   BaseSSRClient,
   ClientInternalsGetter,
-  GraphQLOptions,
   GraphQLResult,
   INTERNAL_USER_AGENT_OVERRIDE,
   ListArgs,
@@ -42,16 +41,12 @@ export function listFactory(
     contextSpec: AmplifyServer.ContextSpec,
     args?: ListArgs,
   ) => {
-    const argsWithOverride = customUserAgentDetails
-      ? { ...args, [INTERNAL_USER_AGENT_OVERRIDE]: customUserAgentDetails }
-      : args;
-
     return _list(
       client,
       modelIntrospection,
       model,
       getInternals,
-      argsWithOverride,
+      args,
       contextSpec,
     );
   };
@@ -79,11 +74,9 @@ function _list(
   modelIntrospection: ModelIntrospectionSchema,
   model: SchemaModel,
   getInternals: ClientInternalsGetter,
-  args?: ListArgs &
-    AuthModeParams & {
-      [INTERNAL_USER_AGENT_OVERRIDE]?: CustomUserAgentDetails;
-    },
+  args?: ListArgs & AuthModeParams,
   contextSpec?: AmplifyServer.ContextSpec,
+  customUserAgentDetails?: CustomUserAgentDetails,
 ) {
   return selfAwareAsync(async (resultPromise) => {
     const { name } = model;
@@ -104,28 +97,28 @@ function _list(
     const auth = authModeParams(client, getInternals, args);
     const headers = getCustomHeaders(client, getInternals, args?.headers);
 
-    const graphqlOptions: GraphQLOptions & {
-      [INTERNAL_USER_AGENT_OVERRIDE]?: CustomUserAgentDetails;
-    } = {
-      ...auth,
-      query,
-      variables,
-    };
-
-    if (args && INTERNAL_USER_AGENT_OVERRIDE in args) {
-      graphqlOptions[INTERNAL_USER_AGENT_OVERRIDE] =
-        args[INTERNAL_USER_AGENT_OVERRIDE];
-    }
+    const userAgentOverride = customUserAgentDetails
+      ? { [INTERNAL_USER_AGENT_OVERRIDE]: customUserAgentDetails }
+      : {};
 
     try {
       const basePromise = contextSpec
         ? ((client as BaseSSRClient).graphql(
             contextSpec,
-            graphqlOptions,
+            {
+              ...auth,
+              query,
+              variables,
+            },
             headers,
           ) as Promise<GraphQLResult>)
         : ((client as BaseBrowserClient).graphql(
-            graphqlOptions,
+            {
+              ...auth,
+              query,
+              variables,
+              ...userAgentOverride,
+            },
             headers,
           ) as Promise<GraphQLResult>);
 

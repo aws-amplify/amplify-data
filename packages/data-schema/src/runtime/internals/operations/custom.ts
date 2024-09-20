@@ -8,7 +8,6 @@ import {
   BaseSSRClient,
   ClientInternalsGetter,
   CustomOperation,
-  GraphQLOptions,
   GraphQLResult,
   GraphqlSubscriptionResult,
   INTERNAL_USER_AGENT_OVERRIDE,
@@ -39,10 +38,6 @@ import { selfAwareAsync } from '../../utils';
 import { extendCancellability } from '../cancellation';
 
 type CustomOperationOptions = AuthModeParams & ListArgs;
-
-type GraphQLOptionsWithOverride = GraphQLOptions & {
-  [INTERNAL_USER_AGENT_OVERRIDE]?: CustomUserAgentDetails;
-};
 
 // these are the 4 possible sets of arguments custom operations methods can receive
 type OpArgs =
@@ -137,10 +132,6 @@ export function customOpFactory(
     // options is always the last argument
     const options = args[args.length - 1] as CustomOperationOptions;
 
-    const userAgentOverride = customUserAgentDetails
-      ? { [INTERNAL_USER_AGENT_OVERRIDE]: customUserAgentDetails }
-      : {};
-
     let contextSpec: AmplifyServer.ContextSpec | undefined;
     let arg: QueryArgs | undefined;
 
@@ -170,7 +161,8 @@ export function customOpFactory(
         operation,
         getInternals,
         arg,
-        { ...options, ...userAgentOverride },
+        options,
+        customUserAgentDetails,
       );
     }
 
@@ -181,8 +173,9 @@ export function customOpFactory(
       operation,
       getInternals,
       arg,
-      { ...options, ...userAgentOverride },
+      options,
       contextSpec,
+      customUserAgentDetails,
     );
   };
 
@@ -394,9 +387,9 @@ function _op(
   operation: CustomOperation,
   getInternals: ClientInternalsGetter,
   args?: QueryArgs,
-  options?: AuthModeParams &
-    ListArgs & { [INTERNAL_USER_AGENT_OVERRIDE]?: CustomUserAgentDetails },
+  options?: AuthModeParams & ListArgs,
   context?: AmplifyServer.ContextSpec,
+  customUserAgentDetails?: CustomUserAgentDetails,
 ) {
   return selfAwareAsync(async (resultPromise) => {
     const { name: operationName } = operation;
@@ -418,26 +411,28 @@ function _op(
 
     const variables = operationVariables(operation, args);
 
-    const graphqlOptions: GraphQLOptionsWithOverride = {
-      ...auth,
-      query,
-      variables,
-    };
-
-    if (options && INTERNAL_USER_AGENT_OVERRIDE in options) {
-      graphqlOptions[INTERNAL_USER_AGENT_OVERRIDE] =
-        options[INTERNAL_USER_AGENT_OVERRIDE];
-    }
+    const userAgentOverride = customUserAgentDetails
+      ? { [INTERNAL_USER_AGENT_OVERRIDE]: customUserAgentDetails }
+      : {};
 
     try {
       const basePromise = context
         ? ((client as BaseSSRClient).graphql(
             context,
-            graphqlOptions,
+            {
+              ...auth,
+              query,
+              variables,
+            },
             headers,
           ) as Promise<GraphQLResult>)
         : ((client as BaseBrowserClient).graphql(
-            graphqlOptions,
+            {
+              ...auth,
+              query,
+              variables,
+              ...userAgentOverride,
+            },
             headers,
           ) as Promise<GraphQLResult>);
 
@@ -563,8 +558,8 @@ function _opSubscription(
   operation: CustomOperation,
   getInternals: ClientInternalsGetter,
   args?: QueryArgs,
-  options?: AuthModeParams &
-    ListArgs & { [INTERNAL_USER_AGENT_OVERRIDE]?: CustomUserAgentDetails },
+  options?: AuthModeParams & ListArgs,
+  customUserAgentDetails?: CustomUserAgentDetails,
 ) {
   const operationType = 'subscription';
   const { name: operationName } = operation;
@@ -586,19 +581,17 @@ function _opSubscription(
 
   const variables = operationVariables(operation, args);
 
-  const graphqlOptions: GraphQLOptionsWithOverride = {
-    ...auth,
-    query,
-    variables,
-  };
-
-  if (options && INTERNAL_USER_AGENT_OVERRIDE in options) {
-    graphqlOptions[INTERNAL_USER_AGENT_OVERRIDE] =
-      options[INTERNAL_USER_AGENT_OVERRIDE];
-  }
+  const userAgentOverride = customUserAgentDetails
+    ? { [INTERNAL_USER_AGENT_OVERRIDE]: customUserAgentDetails }
+    : {};
 
   const observable = client.graphql(
-    graphqlOptions,
+    {
+      ...auth,
+      query,
+      variables,
+      ...userAgentOverride,
+    },
     headers,
   ) as GraphqlSubscriptionResult;
 

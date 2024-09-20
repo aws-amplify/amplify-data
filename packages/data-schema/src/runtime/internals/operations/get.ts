@@ -46,38 +46,30 @@ export function getFactory(
     arg?: any,
     options?: any,
   ) => {
-    const optionsWithOverride = customUserAgentDetails
-      ? { ...options, [INTERNAL_USER_AGENT_OVERRIDE]: customUserAgentDetails }
-      : options;
-
     return _get(
       client,
       modelIntrospection,
       model,
       arg,
-      optionsWithOverride,
+      options,
       operation,
       getInternals,
       contextSpec,
-      // customUserAgentDetails,
+      customUserAgentDetails,
     );
   };
 
   const get = (arg?: any, options?: any) => {
-    const optionsWithOverride = customUserAgentDetails
-      ? { ...options, [INTERNAL_USER_AGENT_OVERRIDE]: customUserAgentDetails }
-      : options;
-
     return _get(
       client,
       modelIntrospection,
       model,
       arg,
-      optionsWithOverride,
+      options,
       operation,
       getInternals,
       undefined,
-      // customUserAgentDetails,
+      customUserAgentDetails,
     );
   };
 
@@ -89,11 +81,11 @@ function _get(
   modelIntrospection: ModelIntrospectionSchema,
   model: SchemaModel,
   arg: QueryArgs,
-  options: AuthModeParams &
-    ListArgs & { [INTERNAL_USER_AGENT_OVERRIDE]?: CustomUserAgentDetails },
+  options: AuthModeParams & ListArgs,
   operation: ModelOperation,
   getInternals: ClientInternalsGetter,
   context?: AmplifyServer.ContextSpec,
+  customUserAgentDetails?: CustomUserAgentDetails,
 ) {
   return selfAwareAsync(async (resultPromise) => {
     const { name } = model;
@@ -114,28 +106,28 @@ function _get(
     const auth = authModeParams(client, getInternals, options);
     const headers = getCustomHeaders(client, getInternals, options?.headers);
 
-    const graphqlOptions: GraphQLOptions & {
-      [INTERNAL_USER_AGENT_OVERRIDE]?: CustomUserAgentDetails;
-    } = {
-      ...auth,
-      query,
-      variables,
-    };
-
-    if (INTERNAL_USER_AGENT_OVERRIDE in options) {
-      graphqlOptions[INTERNAL_USER_AGENT_OVERRIDE] =
-        options[INTERNAL_USER_AGENT_OVERRIDE];
-    }
+    const userAgentOverride = customUserAgentDetails
+      ? { [INTERNAL_USER_AGENT_OVERRIDE]: customUserAgentDetails }
+      : {};
 
     try {
       const basePromise = context
         ? ((client as BaseSSRClient).graphql(
             context,
-            graphqlOptions,
+            {
+              ...auth,
+              query,
+              variables,
+            },
             headers,
           ) as Promise<GraphQLResult>)
         : ((client as BaseBrowserClient).graphql(
-            graphqlOptions,
+            {
+              ...auth,
+              query,
+              variables,
+              ...userAgentOverride,
+            },
             headers,
           ) as Promise<GraphQLResult>);
 
