@@ -46,7 +46,7 @@ export const createSendMessageFunction =
       getInternals,
       {
         category: Category.AI,
-        action: AiAction.SendMessage
+        action: AiAction.SendMessage,
       },
     ) as (
       args?: Record<string, any>,

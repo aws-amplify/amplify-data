@@ -36,9 +36,7 @@ export const createOnMessageFunction =
       subscribeSchema,
       false,
       getInternals,
-      {category: Category.AI,
-        action: AiAction.OnMessage
-      },
+      { category: Category.AI, action: AiAction.OnMessage },
     ) as (args?: Record<string, any>) => Observable<any>;
     return subscribeOperation({ conversationId }).subscribe((data) => {
       handler(convertItemToConversationMessage(data));

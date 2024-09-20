@@ -38,7 +38,7 @@ export function generateGenerationsProperty<T extends Record<any, any>>(
       getInternals,
       {
         category: Category.AI,
-        action: AiAction.Generation
+        action: AiAction.Generation,
       },
     );
   }

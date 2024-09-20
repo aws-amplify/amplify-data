@@ -394,7 +394,8 @@ function _op(
   operation: CustomOperation,
   getInternals: ClientInternalsGetter,
   args?: QueryArgs,
-  options?: AuthModeParams & ListArgs & { [INTERNAL_USER_AGENT_OVERRIDE]?: CustomUserAgentDetails },
+  options?: AuthModeParams &
+    ListArgs & { [INTERNAL_USER_AGENT_OVERRIDE]?: CustomUserAgentDetails },
   context?: AmplifyServer.ContextSpec,
 ) {
   return selfAwareAsync(async (resultPromise) => {
@@ -424,7 +425,8 @@ function _op(
     };
 
     if (options && INTERNAL_USER_AGENT_OVERRIDE in options) {
-      graphqlOptions[INTERNAL_USER_AGENT_OVERRIDE] = options[INTERNAL_USER_AGENT_OVERRIDE];
+      graphqlOptions[INTERNAL_USER_AGENT_OVERRIDE] =
+        options[INTERNAL_USER_AGENT_OVERRIDE];
     }
 
     try {
@@ -435,7 +437,7 @@ function _op(
             headers,
           ) as Promise<GraphQLResult>)
         : ((client as BaseBrowserClient).graphql(
-          graphqlOptions,
+            graphqlOptions,
             headers,
           ) as Promise<GraphQLResult>);
 
@@ -561,7 +563,8 @@ function _opSubscription(
   operation: CustomOperation,
   getInternals: ClientInternalsGetter,
   args?: QueryArgs,
-  options?: AuthModeParams & ListArgs & { [INTERNAL_USER_AGENT_OVERRIDE]?: CustomUserAgentDetails },
+  options?: AuthModeParams &
+    ListArgs & { [INTERNAL_USER_AGENT_OVERRIDE]?: CustomUserAgentDetails },
 ) {
   const operationType = 'subscription';
   const { name: operationName } = operation;
@@ -590,7 +593,8 @@ function _opSubscription(
   };
 
   if (options && INTERNAL_USER_AGENT_OVERRIDE in options) {
-    graphqlOptions[INTERNAL_USER_AGENT_OVERRIDE] = options[INTERNAL_USER_AGENT_OVERRIDE];
+    graphqlOptions[INTERNAL_USER_AGENT_OVERRIDE] =
+      options[INTERNAL_USER_AGENT_OVERRIDE];
   }
 
   const observable = client.graphql(

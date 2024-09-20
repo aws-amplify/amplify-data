@@ -34,7 +34,7 @@ export const createListMessagesFunction =
       false,
       {
         category: Category.AI,
-        action: AiAction.ListMessages
+        action: AiAction.ListMessages,
       },
     ) as (args?: Record<string, any>) => ListReturnValue<ConversationMessage>;
     const { data, nextToken, errors } = await list({
