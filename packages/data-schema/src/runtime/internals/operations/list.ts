@@ -7,6 +7,7 @@ import {
   BaseBrowserClient,
   BaseSSRClient,
   ClientInternalsGetter,
+  GraphQLOptions,
   GraphQLResult,
   ListArgs,
   ModelIntrospectionSchema,
@@ -28,6 +29,8 @@ import { selfAwareAsync } from '../../utils';
 
 import { extendCancellability } from '../cancellation';
 
+import { INTERNAL_USER_AGENT_OVERRIDE } from '@aws-amplify/core/internals/utils';
+
 export function listFactory(
   client: BaseClient,
   modelIntrospection: ModelIntrospectionSchema,
@@ -40,26 +43,32 @@ export function listFactory(
     contextSpec: AmplifyServer.ContextSpec,
     args?: ListArgs,
   ) => {
+    const argsWithOverride = customUserAgentDetails
+      ? { ...args, [INTERNAL_USER_AGENT_OVERRIDE]: customUserAgentDetails }
+      : args;
+
     return _list(
       client,
       modelIntrospection,
       model,
       getInternals,
-      args,
+      argsWithOverride,
       contextSpec,
-      customUserAgentDetails,
     );
   };
 
   const list = (args?: Record<string, any>) => {
+    const argsWithOverride = customUserAgentDetails
+      ? { ...args, [INTERNAL_USER_AGENT_OVERRIDE]: customUserAgentDetails }
+      : args;
+
     return _list(
       client,
       modelIntrospection,
       model,
       getInternals,
-      args,
+      argsWithOverride,
       undefined,
-      customUserAgentDetails,
     );
   };
 
@@ -71,9 +80,11 @@ function _list(
   modelIntrospection: ModelIntrospectionSchema,
   model: SchemaModel,
   getInternals: ClientInternalsGetter,
-  args?: ListArgs & AuthModeParams,
+  args?: ListArgs &
+    AuthModeParams & {
+      [INTERNAL_USER_AGENT_OVERRIDE]?: CustomUserAgentDetails;
+    },
   contextSpec?: AmplifyServer.ContextSpec,
-  customUserAgentDetails?: CustomUserAgentDetails,
 ) {
   return selfAwareAsync(async (resultPromise) => {
     const { name } = model;
@@ -92,28 +103,31 @@ function _list(
     );
 
     const auth = authModeParams(client, getInternals, args);
+    const headers = getCustomHeaders(client, getInternals, args?.headers);
+
+    const graphqlOptions: GraphQLOptions & {
+      [INTERNAL_USER_AGENT_OVERRIDE]?: CustomUserAgentDetails;
+    } = {
+      ...auth,
+      query,
+      variables,
+    };
+
+    if (args && INTERNAL_USER_AGENT_OVERRIDE in args) {
+      graphqlOptions[INTERNAL_USER_AGENT_OVERRIDE] =
+        args[INTERNAL_USER_AGENT_OVERRIDE];
+    }
 
     try {
-      const headers = getCustomHeaders(client, getInternals, args?.headers);
-
       const basePromise = contextSpec
         ? ((client as BaseSSRClient).graphql(
             contextSpec,
-            {
-              ...auth,
-              query,
-              variables,
-            },
+            graphqlOptions,
             headers,
           ) as Promise<GraphQLResult>)
         : ((client as BaseBrowserClient).graphql(
-            {
-              ...auth,
-              query,
-              variables,
-            },
+            graphqlOptions,
             headers,
-            customUserAgentDetails,
           ) as Promise<GraphQLResult>);
 
       const extendedPromise = extendCancellability(basePromise, resultPromise);

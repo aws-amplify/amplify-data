@@ -8,6 +8,7 @@ import {
   BaseSSRClient,
   ClientInternalsGetter,
   CustomOperation,
+  GraphQLOptions,
   GraphQLResult,
   GraphqlSubscriptionResult,
   ListArgs,
@@ -36,7 +37,13 @@ import { selfAwareAsync } from '../../utils';
 
 import { extendCancellability } from '../cancellation';
 
+import { INTERNAL_USER_AGENT_OVERRIDE } from '@aws-amplify/core/internals/utils';
+
 type CustomOperationOptions = AuthModeParams & ListArgs;
+
+type GraphQLOptionsWithOverride = GraphQLOptions & {
+  [INTERNAL_USER_AGENT_OVERRIDE]?: CustomUserAgentDetails;
+};
 
 // these are the 4 possible sets of arguments custom operations methods can receive
 type OpArgs =
@@ -131,6 +138,10 @@ export function customOpFactory(
     // options is always the last argument
     const options = args[args.length - 1] as CustomOperationOptions;
 
+    const userAgentOverride = customUserAgentDetails
+      ? { [INTERNAL_USER_AGENT_OVERRIDE]: customUserAgentDetails }
+      : {};
+
     let contextSpec: AmplifyServer.ContextSpec | undefined;
     let arg: QueryArgs | undefined;
 
@@ -160,8 +171,7 @@ export function customOpFactory(
         operation,
         getInternals,
         arg,
-        options,
-        customUserAgentDetails,
+        { ...options, ...userAgentOverride },
       );
     }
 
@@ -172,9 +182,8 @@ export function customOpFactory(
       operation,
       getInternals,
       arg,
-      options,
+      { ...options, ...userAgentOverride },
       contextSpec,
-      customUserAgentDetails,
     );
   };
 
@@ -386,9 +395,8 @@ function _op(
   operation: CustomOperation,
   getInternals: ClientInternalsGetter,
   args?: QueryArgs,
-  options?: AuthModeParams & ListArgs,
+  options?: AuthModeParams & ListArgs & { [INTERNAL_USER_AGENT_OVERRIDE]?: CustomUserAgentDetails },
   context?: AmplifyServer.ContextSpec,
-  customUserAgentDetails?: CustomUserAgentDetails,
 ) {
   return selfAwareAsync(async (resultPromise) => {
     const { name: operationName } = operation;
@@ -410,25 +418,26 @@ function _op(
 
     const variables = operationVariables(operation, args);
 
+    const graphqlOptions: GraphQLOptionsWithOverride = {
+      ...auth,
+      query,
+      variables,
+    };
+
+    if (options && INTERNAL_USER_AGENT_OVERRIDE in options) {
+      graphqlOptions[INTERNAL_USER_AGENT_OVERRIDE] = options[INTERNAL_USER_AGENT_OVERRIDE];
+    }
+
     try {
       const basePromise = context
         ? ((client as BaseSSRClient).graphql(
             context,
-            {
-              ...auth,
-              query,
-              variables,
-            },
+            graphqlOptions,
             headers,
           ) as Promise<GraphQLResult>)
         : ((client as BaseBrowserClient).graphql(
-            {
-              ...auth,
-              query,
-              variables,
-            },
+          graphqlOptions,
             headers,
-            customUserAgentDetails,
           ) as Promise<GraphQLResult>);
 
       const extendedPromise = extendCancellability(basePromise, resultPromise);
@@ -553,8 +562,7 @@ function _opSubscription(
   operation: CustomOperation,
   getInternals: ClientInternalsGetter,
   args?: QueryArgs,
-  options?: AuthModeParams & ListArgs,
-  customUserAgentDetails?: CustomUserAgentDetails,
+  options?: AuthModeParams & ListArgs & { [INTERNAL_USER_AGENT_OVERRIDE]?: CustomUserAgentDetails },
 ) {
   const operationType = 'subscription';
   const { name: operationName } = operation;
@@ -576,14 +584,19 @@ function _opSubscription(
 
   const variables = operationVariables(operation, args);
 
+  const graphqlOptions: GraphQLOptionsWithOverride = {
+    ...auth,
+    query,
+    variables,
+  };
+
+  if (options && INTERNAL_USER_AGENT_OVERRIDE in options) {
+    graphqlOptions[INTERNAL_USER_AGENT_OVERRIDE] = options[INTERNAL_USER_AGENT_OVERRIDE];
+  }
+
   const observable = client.graphql(
-    {
-      ...auth,
-      query,
-      variables,
-    },
+    graphqlOptions,
     headers,
-    customUserAgentDetails,
   ) as GraphqlSubscriptionResult;
 
   return observable.pipe(
