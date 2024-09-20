@@ -11,6 +11,7 @@ import {
   GraphQLOptions,
   GraphQLResult,
   GraphqlSubscriptionResult,
+  INTERNAL_USER_AGENT_OVERRIDE,
   ListArgs,
   QueryArgs,
   ModelIntrospectionSchema,
@@ -36,8 +37,6 @@ import { handleSingularGraphQlError } from './utils';
 import { selfAwareAsync } from '../../utils';
 
 import { extendCancellability } from '../cancellation';
-
-import { INTERNAL_USER_AGENT_OVERRIDE } from '@aws-amplify/core/internals/utils';
 
 type CustomOperationOptions = AuthModeParams & ListArgs;
 

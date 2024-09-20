@@ -3,17 +3,15 @@
 
 import type { Observable, Subscription } from 'rxjs';
 import type { Conversation } from '../../../ai/ConversationType';
-import type {
+import {
+  AiAction,
   BaseClient,
+  Category,
   ClientInternalsGetter,
   ModelIntrospectionSchema,
 } from '../../bridge-types';
 import { customOpFactory } from '../operations/custom';
 import { convertItemToConversationMessage } from './convertItemToConversationMessage';
-import {
-  AiAction,
-  getCustomUserAgentDetails,
-} from './getCustomUserAgentDetails';
 
 export const createOnMessageFunction =
   (
@@ -38,7 +36,9 @@ export const createOnMessageFunction =
       subscribeSchema,
       false,
       getInternals,
-      getCustomUserAgentDetails(AiAction.OnMessage),
+      {category: Category.AI,
+        action: AiAction.OnMessage
+      },
     ) as (args?: Record<string, any>) => Observable<any>;
     return subscribeOperation({ conversationId }).subscribe((data) => {
       handler(convertItemToConversationMessage(data));

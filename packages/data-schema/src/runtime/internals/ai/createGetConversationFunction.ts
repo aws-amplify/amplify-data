@@ -3,18 +3,16 @@
 
 import type { ConversationRoute } from '../../../ai/ConversationType';
 import type { SingularReturnValue } from '../../../runtime/client';
-import type {
+import {
+  AiAction,
   BaseClient,
+  Category,
   ClientInternalsGetter,
   ModelIntrospectionSchema,
   SchemaModel,
 } from '../../bridge-types';
 import { getFactory } from '../operations/get';
 import { convertItemToConversation } from './convertItemToConversation';
-import {
-  AiAction,
-  getCustomUserAgentDetails,
-} from './getCustomUserAgentDetails';
 
 export const createGetConversationFunction =
   (
@@ -33,7 +31,10 @@ export const createGetConversationFunction =
       'GET',
       getInternals,
       false,
-      getCustomUserAgentDetails(AiAction.GetConversation),
+      {
+        category: Category.AI,
+        action: AiAction.GetConversation,
+      },
     ) as (
       args?: Record<string, any>,
     ) => SingularReturnValue<Record<string, any>>;

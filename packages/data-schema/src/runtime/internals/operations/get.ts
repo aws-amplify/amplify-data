@@ -9,6 +9,7 @@ import {
   ClientInternalsGetter,
   GraphQLOptions,
   GraphQLResult,
+  INTERNAL_USER_AGENT_OVERRIDE,
   ListArgs,
   ModelIntrospectionSchema,
   SchemaModel,
@@ -30,8 +31,6 @@ import { handleSingularGraphQlError } from './utils';
 import { selfAwareAsync } from '../../utils';
 
 import { extendCancellability } from '../cancellation';
-
-import { INTERNAL_USER_AGENT_OVERRIDE } from '@aws-amplify/core/internals/utils';
 
 export function getFactory(
   client: BaseClient,

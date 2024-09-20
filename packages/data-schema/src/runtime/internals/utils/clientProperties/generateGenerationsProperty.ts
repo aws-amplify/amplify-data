@@ -2,16 +2,14 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import {
+  AiAction,
   BaseClient,
+  Category,
   ClientInternalsGetter,
   GraphQLProviderConfig,
   ModelIntrospectionSchema,
 } from '../../../bridge-types';
 import { CustomQueries } from '../../../client';
-import {
-  AiAction,
-  getCustomUserAgentDetails,
-} from '../../ai/getCustomUserAgentDetails';
 import { customOpFactory } from '../../operations/custom';
 
 export function generateGenerationsProperty<T extends Record<any, any>>(
@@ -38,7 +36,10 @@ export function generateGenerationsProperty<T extends Record<any, any>>(
       generation,
       false,
       getInternals,
-      getCustomUserAgentDetails(AiAction.Generation),
+      {
+        category: Category.AI,
+        action: AiAction.Generation
+      },
     );
   }
 
