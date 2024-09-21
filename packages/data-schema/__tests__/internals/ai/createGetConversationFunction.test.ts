@@ -55,6 +55,8 @@ describe('createGetConversationFunction()', () => {
         {},
         'GET',
         expect.any(Function),
+        false,
+        { action: '2', category: 'ai' },
       );
       expect(mockGet).toHaveBeenCalledWith({ id: mockConversation.id });
       expect(mockConvertItemToConversation).toHaveBeenCalledWith(

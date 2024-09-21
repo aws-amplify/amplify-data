@@ -48,21 +48,19 @@ export function listFactory(
       getInternals,
       args,
       contextSpec,
+      customUserAgentDetails,
     );
   };
 
   const list = (args?: Record<string, any>) => {
-    const argsWithOverride = customUserAgentDetails
-      ? { ...args, [INTERNAL_USER_AGENT_OVERRIDE]: customUserAgentDetails }
-      : args;
-
     return _list(
       client,
       modelIntrospection,
       model,
       getInternals,
-      argsWithOverride,
+      args,
       undefined,
+      customUserAgentDetails
     );
   };
 
