@@ -2,6 +2,626 @@
 
 # Uncovered Docs Snippets
 
+#### [https://docs.amplify.aws/react/reference/amplify_outputs/](https://docs.amplify.aws/react/reference/amplify_outputs/)
+
+##### `amplify/backend.ts`
+
+~~~
+import { defineBackend } from "@aws-amplify/backend";
+import { auth } from "./auth/resource";
+import { data } from "./data/resource";
+
+const backend = defineBackend({
+  auth,
+  data,
+});
+
+backend.addOutput({
+  storage: {
+aws_region: "us-east-1",
+bucket_name: "my-externally-managed-bucket",
+  },
+});
+
+~~~
+
+| | |
+| -- | -- |
+| Hash | `e4c107cd31dcc7b7` |
+| Covered | ❌ |
+
+##### Covering Regions
+
+- *None*
+
+---
+
+#### [https://docs.amplify.aws/react/reference/amplify_outputs/](https://docs.amplify.aws/react/reference/amplify_outputs/)
+
+##### `src/index.ts`
+
+~~~
+import { Amplify } from "aws-amplify";
+import outputs from "@/amplify_outputs.json";
+
+Amplify.configure(outputs);
+
+~~~
+
+| | |
+| -- | -- |
+| Hash | `96184488681b162e` |
+| Covered | ❌ |
+
+##### Covering Regions
+
+- *None*
+
+---
+
+#### [https://docs.amplify.aws/react/reference/amplify_outputs/](https://docs.amplify.aws/react/reference/amplify_outputs/)
+
+##### `amplify/backend.ts`
+
+~~~
+import { defineBackend } from "@aws-amplify/backend";
+import { auth } from "./auth/resource";
+import { data } from "./data/resource";
+
+const backend = defineBackend({
+  auth,
+  data,
+});
+
+backend.addOutput({
+  custom: {
+api_id: "restAPIId",
+api_endpoint: "https://api.example.com",
+api_name: "restApiName",
+  },
+});
+
+~~~
+
+| | |
+| -- | -- |
+| Hash | `ecab0f33dfa4d382` |
+| Covered | ❌ |
+
+##### Covering Regions
+
+- *None*
+
+---
+
+#### [https://docs.amplify.aws/react/reference/amplify_outputs/](https://docs.amplify.aws/react/reference/amplify_outputs/)
+
+##### `src/index.ts`
+
+~~~
+import { Amplify } from "aws-amplify";
+import outputs from "@/amplify_outputs.json";
+
+Amplify.configure(outputs);
+const currentConfig = Amplify.getConfig();
+Amplify.configure({
+  ...currentConfig,
+  API: {
+REST: {
+  [outputs.custom.api_name]: {
+    endpoint: outputs.custom.api_endpoint,
+    region: "us-east-1",
+  },
+},
+  },
+});
+
+~~~
+
+| | |
+| -- | -- |
+| Hash | `e294b9ce19c1ac38` |
+| Covered | ❌ |
+
+##### Covering Regions
+
+- *None*
+
+---
+
+#### [https://docs.amplify.aws/react/reference/amplify_outputs/](https://docs.amplify.aws/react/reference/amplify_outputs/)
+
+##### `Unnamed Snippet`
+
+~~~
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://amplify.aws/2024-02/outputs-schema.json",
+  "title": "AWS Amplify Backend Outputs",
+  "description": "Config format for Amplify Gen 2 client libraries to communicate with backend services.",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+"$schema": {
+  "description": "JSON schema",
+  "type": "string"
+},
+"version": {
+  "description": "Version of this schema",
+  "const": "1"
+},
+"analytics": {
+  "description": "Outputs manually specified by developers for use with frontend library",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "amazon_pinpoint": {
+"type": "object",
+"additionalProperties": false,
+"properties": {
+  "aws_region": {
+    "description": "AWS Region of Amazon Pinpoint resources",
+    "$ref": "#/$defs/aws_region"
+  },
+  "app_id": {
+    "type": "string"
+  }
+},
+"required": [
+  "aws_region",
+  "app_id"
+]
+    }
+  }
+},
+"auth": {
+  "description": "Outputs generated from defineAuth",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "aws_region": {
+"description": "AWS Region of Amazon Cognito resources",
+"$ref": "#/$defs/aws_region"
+    },
+    "user_pool_id": {
+"description": "Cognito User Pool ID",
+"type": "string"
+    },
+    "user_pool_client_id": {
+"description": "Cognito User Pool Client ID",
+"type": "string"
+    },
+    "identity_pool_id": {
+"description": "Cognito Identity Pool ID",
+"type": "string"
+    },
+    "password_policy": {
+"description": "Cognito User Pool password policy",
+"type": "object",
+"additionalProperties": false,
+"properties": {
+  "min_length": {
+    "type": "integer",
+    "minimum": 6,
+    "maximum": 99
+  },
+  "require_numbers": {
+    "type": "boolean"
+  },
+  "require_lowercase": {
+    "type": "boolean"
+  },
+  "require_uppercase": {
+    "type": "boolean"
+  },
+  "require_symbols": {
+    "type": "boolean"
+  }
+}
+    },
+    "oauth": {
+"type": "object",
+"additionalProperties": false,
+"properties": {
+  "identity_providers": {
+    "description": "Identity providers set on Cognito User Pool",
+    "type": "array",
+    "items": {
+      "type": "string",
+      "enum": [
+        "GOOGLE",
+        "FACEBOOK",
+        "LOGIN_WITH_AMAZON",
+        "SIGN_IN_WITH_APPLE"
+      ]
+    },
+    "minItems": 0,
+    "uniqueItems": true
+  },
+  "domain": {
+    "description": "Domain used for identity providers",
+    "type": "string"
+  },
+  "scopes": {
+    "type": "array",
+    "items": {
+      "type": "string"
+    },
+    "minItems": 0,
+    "uniqueItems": true
+  },
+  "redirect_sign_in_uri": {
+    "description": "URIs used to redirect after signing in using an identity provider",
+    "type": "array",
+    "items": {
+      "type": "string"
+    },
+    "minItems": 1,
+    "uniqueItems": true
+  },
+  "redirect_sign_out_uri": {
+    "description": "URIs used to redirect after signing out",
+    "type": "array",
+    "items": {
+      "type": "string"
+    },
+    "minItems": 1,
+    "uniqueItems": true
+  },
+  "response_type": {
+    "type": "string",
+    "enum": [
+      "code",
+      "token"
+    ]
+  }
+},
+"required": [
+  "identity_providers",
+  "domain",
+  "scopes",
+  "redirect_sign_in_uri",
+  "redirect_sign_out_uri",
+  "response_type"
+]
+    },
+    "standard_required_attributes": {
+"description": "Cognito User Pool standard attributes required for signup",
+"type": "array",
+"items": {
+  "$ref": "#/$defs/amazon_cognito_standard_attributes"
+},
+"minItems": 0,
+"uniqueItems": true
+    },
+    "username_attributes": {
+"description": "Cognito User Pool username attributes",
+"type": "array",
+"items": {
+  "type": "string",
+  "enum": [
+    "email",
+    "phone_number",
+    "username"
+  ]
+},
+"minItems": 1,
+"uniqueItems": true
+    },
+    "user_verification_types": {
+"type": "array",
+"items": {
+  "type": "string",
+  "enum": [
+    "email",
+    "phone_number"
+  ]
+}
+    },
+    "unauthenticated_identities_enabled": {
+"type": "boolean",
+"default": true
+    },
+    "mfa_configuration": {
+"type": "string",
+"enum": [
+  "NONE",
+  "OPTIONAL",
+  "REQUIRED"
+]
+    },
+    "mfa_methods": {
+"type": "array",
+"items": {
+  "enum": [
+    "SMS",
+    "TOTP"
+  ]
+}
+    }
+  },
+  "required": [
+    "aws_region",
+    "user_pool_id",
+    "user_pool_client_id"
+  ]
+},
+"data": {
+  "description": "Outputs generated from defineData",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "aws_region": {
+"$ref": "#/$defs/aws_region"
+    },
+    "url": {
+"description": "AppSync endpoint URL",
+"type": "string"
+    },
+    "model_introspection": {
+"description": "generated model introspection schema for use with generateClient",
+"type": "object"
+    },
+    "api_key": {
+"type": "string"
+    },
+    "default_authorization_type": {
+"$ref": "#/$defs/aws_appsync_authorization_type"
+    },
+    "authorization_types": {
+"type": "array",
+"items": {
+  "$ref": "#/$defs/aws_appsync_authorization_type"
+}
+    }
+  },
+  "required": [
+    "aws_region",
+    "url",
+    "default_authorization_type",
+    "authorization_types"
+  ]
+},
+"geo": {
+  "description": "Outputs manually specified by developers for use with frontend library",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "aws_region": {
+"description": "AWS Region of Amazon Location Service resources",
+"$ref": "#/$defs/aws_region"
+    },
+    "maps": {
+"description": "Maps from Amazon Location Service",
+"type": "object",
+"additionalProperties": false,
+"properties": {
+  "items": {
+    "type": "object",
+    "additionalProperties": false,
+    "propertyNames": {
+      "description": "Amazon Location Service Map name",
+      "type": "string"
+    },
+    "patternProperties": {
+      ".*": {
+        "$ref": "#/$defs/amazon_location_service_config"
+      }
+    }
+  },
+  "default": {
+    "type": "string"
+  }
+},
+"required": [
+  "items",
+  "default"
+]
+    },
+    "search_indices": {
+"description": "Location search (search by places, addresses, coordinates)",
+"type": "object",
+"additionalProperties": false,
+"properties": {
+  "items": {
+    "type": "array",
+    "uniqueItems": true,
+    "minItems": 1,
+    "items": {
+      "description": "Actual search name",
+      "type": "string"
+    }
+  },
+  "default": {
+    "type": "string"
+  }
+},
+"required": [
+  "items",
+  "default"
+]
+    },
+    "geofence_collections": {
+"description": "Geofencing (visualize virtual perimeters)",
+"type": "object",
+"additionalProperties": false,
+"properties": {
+  "items": {
+    "type": "array",
+    "uniqueItems": true,
+    "minItems": 1,
+    "items": {
+      "description": "Geofence name",
+      "type": "string"
+    }
+  },
+  "default": {
+    "type": "string"
+  }
+},
+"required": [
+  "items",
+  "default"
+]
+    }
+  },
+  "required": [
+    "aws_region"
+  ]
+},
+"notifications": {
+  "type": "object",
+  "description": "Outputs manually specified by developers for use with frontend library",
+  "additionalProperties": false,
+  "properties": {
+    "aws_region": {
+"$ref": "#/$defs/aws_region"
+    },
+    "amazon_pinpoint_app_id": {
+"type": "string"
+    },
+    "channels": {
+"type": "array",
+"items": {
+  "$ref": "#/$defs/amazon_pinpoint_channels"
+},
+"minItems": 1,
+"uniqueItems": true
+    }
+  },
+  "required": [
+    "aws_region",
+    "amazon_pinpoint_app_id",
+    "channels"
+  ]
+},
+"storage": {
+  "type": "object",
+  "description": "Outputs generated from defineStorage",
+  "additionalProperties": false,
+  "properties": {
+    "aws_region": {
+"$ref": "#/$defs/aws_region"
+    },
+    "bucket_name": {
+"type": "string"
+    }
+  },
+  "required": [
+    "aws_region",
+    "bucket_name"
+  ]
+},
+"custom": {
+  "description": "Outputs generated from backend.addOutput({ custom: <config> })",
+  "type": "object"
+}
+  },
+  "required": [
+"version"
+  ],
+  "$defs": {
+"aws_region": {
+  "type": "string"
+},
+"amazon_cognito_standard_attributes": {
+  "description": "Amazon Cognito standard attributes for users -- https://docs.aws.amazon.com/cognito/latest/developerguide/user-pool-settings-attributes.html",
+  "type": "string",
+  "enum": [
+    "address",
+    "birthdate",
+    "email",
+    "family_name",
+    "gender",
+    "given_name",
+    "locale",
+    "middle_name",
+    "name",
+    "nickname",
+    "phone_number",
+    "picture",
+    "preferred_username",
+    "profile",
+    "sub",
+    "updated_at",
+    "website",
+    "zoneinfo"
+  ]
+},
+"aws_appsync_authorization_type": {
+  "description": "List of supported auth types for AWS AppSync",
+  "type": "string",
+  "enum": [
+    "AMAZON_COGNITO_USER_POOLS",
+    "API_KEY",
+    "AWS_IAM",
+    "AWS_LAMBDA",
+    "OPENID_CONNECT"
+  ]
+},
+"amazon_location_service_config": {
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "style": {
+"description": "Map style",
+"type": "string"
+    }
+  }
+},
+"amazon_pinpoint_channels": {
+  "description": "supported channels for Amazon Pinpoint",
+  "type": "string",
+  "enum": [
+    "IN_APP_MESSAGING",
+    "FCM",
+    "APNS",
+    "EMAIL",
+    "SMS"
+  ]
+}
+  }
+}
+~~~
+
+| | |
+| -- | -- |
+| Hash | `f26dc9ec37d0cfd2` |
+| Covered | ❌ |
+
+##### Covering Regions
+
+- *None*
+
+---
+
+#### [https://docs.amplify.aws/react/start/manual-installation/](https://docs.amplify.aws/react/start/manual-installation/)
+
+##### `amplify/data/resource.ts`
+
+~~~
+import { a, defineData, type ClientSchema } from "@aws-amplify/backend";
+
+const schema = a.schema({});
+
+export type Schema = ClientSchema<typeof schema>;
+export const data = defineData({
+  schema,
+});
+
+~~~
+
+| | |
+| -- | -- |
+| Hash | `b497a376ca20c1f5` |
+| Covered | ❌ |
+
+##### Covering Regions
+
+- *None*
+
+---
+
 #### [https://docs.amplify.aws/react/build-a-backend/data/connect-from-server-runtime/nextjs-server-runtime/](https://docs.amplify.aws/react/build-a-backend/data/connect-from-server-runtime/nextjs-server-runtime/)
 
 ##### `Unnamed Snippet`
@@ -103,319 +723,6 @@ operation: async (contextSpec) => {
 | | |
 | -- | -- |
 | Hash | `b92d612b55a6ab9f` |
-| Covered | ❌ |
-
-##### Covering Regions
-
-- *None*
-
----
-
-#### [https://docs.amplify.aws/react/build-a-backend/data/connect-to-existing-data-sources/connect-postgres-mysql-database/](https://docs.amplify.aws/react/build-a-backend/data/connect-to-existing-data-sources/connect-postgres-mysql-database/)
-
-##### `Unnamed Snippet`
-
-~~~
-import { type ClientSchema, a, defineData } from "@aws-amplify/backend";
-import { schema as generatedSqlSchema } from "./schema.sql";
-
-// Add a global authorization rule
-const sqlSchema = generatedSqlSchema.authorization((allow) => allow.guest());
-
-// Relational database sources can coexist with DynamoDB tables managed by Amplify.
-const schema = a.schema({
-  Todo: a
-.model({
-  content: a.string(),
-})
-.authorization((allow) => [allow.guest()]),
-});
-
-// Use the a.combine() operator to stitch together the models backed by DynamoDB
-// and the models backed by Postgres or MySQL databases.
-const combinedSchema = a.combine([schema, sqlSchema]);
-
-// Don't forget to update your client types to take into account the types from
-// both schemas.
-export type Schema = ClientSchema<typeof combinedSchema>;
-
-export const data = defineData({
-  // Update the data definition to use the combined schema, instead of just
-  // your DynamoDB-backed schema
-  schema: combinedSchema,
-});
-
-~~~
-
-| | |
-| -- | -- |
-| Hash | `36f544daf9ca0bc2` |
-| Covered | ❌ |
-
-##### Covering Regions
-
-- *None*
-
----
-
-#### [https://docs.amplify.aws/react/build-a-backend/data/connect-to-existing-data-sources/connect-postgres-mysql-database/](https://docs.amplify.aws/react/build-a-backend/data/connect-to-existing-data-sources/connect-postgres-mysql-database/)
-
-##### `Unnamed Snippet`
-
-~~~
-// Add an authorization rule to the schema
-const sqlSchema = generatedSqlSchema.setAuthorization((models) => [
-  // Model-level authorization rules
-  models.event.authorization((allow) => [allow.publicApiKey()]),
-  // Field-level authorization rules
-  models.event.fields.id.authorization((allow) => [
-allow.publicApiKey(),
-allow.guest(),
-  ]),
-  models.event.fields.created_at.authorization((allow) => [
-allow.publicApiKey(),
-allow.guest(),
-  ]),
-]);
-
-~~~
-
-| | |
-| -- | -- |
-| Hash | `8ae1c7b151eacfde` |
-| Covered | ❌ |
-
-##### Covering Regions
-
-- *None*
-
----
-
-#### [https://docs.amplify.aws/react/build-a-backend/data/connect-to-existing-data-sources/connect-postgres-mysql-database/](https://docs.amplify.aws/react/build-a-backend/data/connect-to-existing-data-sources/connect-postgres-mysql-database/)
-
-##### `Unnamed Snippet`
-
-~~~
-const { data: events } = await client.models.event.list();
-
-~~~
-
-| | |
-| -- | -- |
-| Hash | `d9dc661c8e8c0dd4` |
-| Covered | ❌ |
-
-##### Covering Regions
-
-- *None*
-
----
-
-#### [https://docs.amplify.aws/react/build-a-backend/data/connect-to-existing-data-sources/connect-postgres-mysql-database/](https://docs.amplify.aws/react/build-a-backend/data/connect-to-existing-data-sources/connect-postgres-mysql-database/)
-
-##### `Unnamed Snippet`
-
-~~~
-// Rename models or fields to be more idiomatic for frontend code
-const sqlSchema = generatedSqlSchema
-  .authorization((allow) => allow.guest())
-  .renameModels(() => [
-//⌄⌄⌄⌄⌄ existing model name based on table name
-["event", "Event"],
-//        ^^^^^^ renamed data model name
-  ]);
-
-~~~
-
-| | |
-| -- | -- |
-| Hash | `748c6c140a7867a7` |
-| Covered | ❌ |
-
-##### Covering Regions
-
-- *None*
-
----
-
-#### [https://docs.amplify.aws/react/build-a-backend/data/connect-to-existing-data-sources/connect-postgres-mysql-database/](https://docs.amplify.aws/react/build-a-backend/data/connect-to-existing-data-sources/connect-postgres-mysql-database/)
-
-##### `Unnamed Snippet`
-
-~~~
-const sqlSchema = generatedSqlSchema
-  .authorization((allow) => allow.guest())
-  .setRelationships((models) => [
-models.Note.relationships({
-  comments: a.hasMany("Comment", "note_id"),
-}),
-models.Comment.relationships({
-  note: a.belongsTo("Note", "note_id"),
-}),
-  ]);
-
-~~~
-
-| | |
-| -- | -- |
-| Hash | `4ac6eb92952f0637` |
-| Covered | ❌ |
-
-##### Covering Regions
-
-- *None*
-
----
-
-#### [https://docs.amplify.aws/react/build-a-backend/data/connect-to-existing-data-sources/connect-postgres-mysql-database/](https://docs.amplify.aws/react/build-a-backend/data/connect-to-existing-data-sources/connect-postgres-mysql-database/)
-
-##### `Unnamed Snippet`
-
-~~~
-// Add custom mutations or queries that execute SQL statements
-const sqlSchema = generatedSqlSchema
-  .authorization((allow) => allow.guest())
-  .addToSchema({
-listEventsWithDecodedLatLong: a
-  .query()
-  // reference custom types added to the schema
-  .returns(a.ref("EventWithDecodedCoord").array())
-  .handler(
-    a.handler.inlineSql(
-`SELECT
-  id,
-  name,
-  address,
-  ST_X(geom) AS longitude,
-  ST_Y(geom) AS latitude
-FROM locations;`,
-    ),
-  )
-  .authorization((allow) => [allow.guest()]),
-
-// Define custom types to provide end-to-end typed results
-// for custom queries / mutations
-EventWithDecodedCoord: a.customType({
-  id: a.integer(),
-  name: a.string(),
-  address: a.string(),
-  longitude: a.float(),
-  latitude: a.float(),
-}),
-  });
-
-~~~
-
-| | |
-| -- | -- |
-| Hash | `5071d6595a7426a2` |
-| Covered | ❌ |
-
-##### Covering Regions
-
-- *None*
-
----
-
-#### [https://docs.amplify.aws/react/build-a-backend/data/connect-to-existing-data-sources/connect-postgres-mysql-database/](https://docs.amplify.aws/react/build-a-backend/data/connect-to-existing-data-sources/connect-postgres-mysql-database/)
-
-##### `Unnamed Snippet`
-
-~~~
-const sqlSchema = generatedSqlSchema
-  .authorization((allow) => allow.guest())
-  .addToSchema({
-createNewLocationWithLongLat: a
-  .mutation()
-  .arguments({
-    lat: a.float().required(),
-    long: a.float().required(),
-    name: a.string().required(),
-    address: a.string().required(),
-  })
-  .returns(a.json().array())
-  .authorization((allow) => allow.authenticated())
-  .handler(a.handler.sqlReference("./createNewLocationWithLongLat.sql")),
-  });
-
-~~~
-
-| | |
-| -- | -- |
-| Hash | `26ed39c38206c91e` |
-| Covered | ❌ |
-
-##### Covering Regions
-
-- *None*
-
----
-
-#### [https://docs.amplify.aws/react/build-a-backend/data/connect-to-existing-data-sources/connect-postgres-mysql-database/](https://docs.amplify.aws/react/build-a-backend/data/connect-to-existing-data-sources/connect-postgres-mysql-database/)
-
-##### `createNewLocationWithLongLat.sql`
-
-~~~
-INSERT INTO locations (name, address, geom)
-VALUES (:name, :address, ST_GEOMFROMTEXT(CONCAT('POINT (', :long, ' ', :lat, ')'), 4326));
-
-~~~
-
-| | |
-| -- | -- |
-| Hash | `62da717f535147ae` |
-| Covered | ❌ |
-
-##### Covering Regions
-
-- *None*
-
----
-
-#### [https://docs.amplify.aws/react/build-a-backend/data/connect-to-existing-data-sources/connect-postgres-mysql-database/](https://docs.amplify.aws/react/build-a-backend/data/connect-to-existing-data-sources/connect-postgres-mysql-database/)
-
-##### `createNewLocationWithLongLat.sql`
-
-~~~
-INSERT INTO locations (name, address, geom)
-VALUES (:name, :address, ST_SetSRID(ST_MakePoint(:long, :lat), 4326))
-
-~~~
-
-| | |
-| -- | -- |
-| Hash | `34cb4b8726c31609` |
-| Covered | ❌ |
-
-##### Covering Regions
-
-- *None*
-
----
-
-#### [https://docs.amplify.aws/react/build-a-backend/data/connect-to-existing-data-sources/connect-postgres-mysql-database/](https://docs.amplify.aws/react/build-a-backend/data/connect-to-existing-data-sources/connect-postgres-mysql-database/)
-
-##### `Unnamed Snippet`
-
-~~~
-getPostBySlug: a.query()
-  .arguments({
-slug: a.string().required(),
-  })
-  .returns(a.ref("Post").array())
-  .handler(
-a.handler.inlineSql(`
-SELECT id, title, slug, content, created_at, updated_at
-FROM posts
-WHERE slug = :slug;
-`),
-  );
-
-~~~
-
-| | |
-| -- | -- |
-| Hash | `f36866db1e6435b0` |
 | Covered | ❌ |
 
 ##### Covering Regions
@@ -1418,18 +1725,456 @@ expressionValues: util.dynamodb.toMapValues({ ":name": authorName }),
 
 ---
 
-#### [https://docs.amplify.aws/react/build-a-backend/data/custom-business-logic/connect-amazon-rekognition/](https://docs.amplify.aws/react/build-a-backend/data/custom-business-logic/connect-amazon-rekognition/)
+#### [https://docs.amplify.aws/react/build-a-backend/data/connect-to-existing-data-sources/connect-postgres-mysql-database/](https://docs.amplify.aws/react/build-a-backend/data/connect-to-existing-data-sources/connect-postgres-mysql-database/)
 
-##### `Terminal`
+##### `Unnamed Snippet`
 
 ~~~
-npm add @aws-sdk/client-rekognition
+npx ampx sandbox secret set SQL_CONNECTION_STRING
 
 ~~~
 
 | | |
 | -- | -- |
-| Hash | `db746639848e0a89` |
+| Hash | `c51525983af82763` |
+| Covered | ❌ |
+
+##### Covering Regions
+
+- *None*
+
+---
+
+#### [https://docs.amplify.aws/react/build-a-backend/data/connect-to-existing-data-sources/connect-postgres-mysql-database/](https://docs.amplify.aws/react/build-a-backend/data/connect-to-existing-data-sources/connect-postgres-mysql-database/)
+
+##### `Unnamed Snippet`
+
+~~~
+mysql://user:password@hostname:port/db-name
+
+~~~
+
+| | |
+| -- | -- |
+| Hash | `28870705b76cb2ef` |
+| Covered | ❌ |
+
+##### Covering Regions
+
+- *None*
+
+---
+
+#### [https://docs.amplify.aws/react/build-a-backend/data/connect-to-existing-data-sources/connect-postgres-mysql-database/](https://docs.amplify.aws/react/build-a-backend/data/connect-to-existing-data-sources/connect-postgres-mysql-database/)
+
+##### `Unnamed Snippet`
+
+~~~
+postgres://user:password@hostname:port/db-name
+
+~~~
+
+| | |
+| -- | -- |
+| Hash | `635b91f7a060cdf5` |
+| Covered | ❌ |
+
+##### Covering Regions
+
+- *None*
+
+---
+
+#### [https://docs.amplify.aws/react/build-a-backend/data/connect-to-existing-data-sources/connect-postgres-mysql-database/](https://docs.amplify.aws/react/build-a-backend/data/connect-to-existing-data-sources/connect-postgres-mysql-database/)
+
+##### `Unnamed Snippet`
+
+~~~
+npx ampx generate schema-from-database --connection-uri-secret SQL_CONNECTION_STRING --out amplify/data/schema.sql.ts
+
+~~~
+
+| | |
+| -- | -- |
+| Hash | `7d93bdb952442e03` |
+| Covered | ❌ |
+
+##### Covering Regions
+
+- *None*
+
+---
+
+#### [https://docs.amplify.aws/react/build-a-backend/data/connect-to-existing-data-sources/connect-postgres-mysql-database/](https://docs.amplify.aws/react/build-a-backend/data/connect-to-existing-data-sources/connect-postgres-mysql-database/)
+
+##### `Terminal`
+
+~~~
+npx ampx sandbox secret set CUSTOM_SSL_CERT < /path/to/custom/ssl/public-ca-cert.pem
+npx ampx generate schema-from-database --connection-uri-secret SQL_CONNECTION_STRING --ssl-cert-secret CUSTOM_SSL_CERT --out amplify/data/schema.sql.ts
+
+~~~
+
+| | |
+| -- | -- |
+| Hash | `4945f33e55d33118` |
+| Covered | ❌ |
+
+##### Covering Regions
+
+- *None*
+
+---
+
+#### [https://docs.amplify.aws/react/build-a-backend/data/connect-to-existing-data-sources/connect-postgres-mysql-database/](https://docs.amplify.aws/react/build-a-backend/data/connect-to-existing-data-sources/connect-postgres-mysql-database/)
+
+##### `Unnamed Snippet`
+
+~~~
+import { type ClientSchema, a, defineData } from "@aws-amplify/backend";
+import { schema as generatedSqlSchema } from "./schema.sql";
+
+// Add a global authorization rule
+const sqlSchema = generatedSqlSchema.authorization((allow) => allow.guest());
+
+// Relational database sources can coexist with DynamoDB tables managed by Amplify.
+const schema = a.schema({
+  Todo: a
+.model({
+  content: a.string(),
+})
+.authorization((allow) => [allow.guest()]),
+});
+
+// Use the a.combine() operator to stitch together the models backed by DynamoDB
+// and the models backed by Postgres or MySQL databases.
+const combinedSchema = a.combine([schema, sqlSchema]);
+
+// Don't forget to update your client types to take into account the types from
+// both schemas.
+export type Schema = ClientSchema<typeof combinedSchema>;
+
+export const data = defineData({
+  // Update the data definition to use the combined schema, instead of just
+  // your DynamoDB-backed schema
+  schema: combinedSchema,
+});
+
+~~~
+
+| | |
+| -- | -- |
+| Hash | `36f544daf9ca0bc2` |
+| Covered | ❌ |
+
+##### Covering Regions
+
+- *None*
+
+---
+
+#### [https://docs.amplify.aws/react/build-a-backend/data/connect-to-existing-data-sources/connect-postgres-mysql-database/](https://docs.amplify.aws/react/build-a-backend/data/connect-to-existing-data-sources/connect-postgres-mysql-database/)
+
+##### `Unnamed Snippet`
+
+~~~
+// Add an authorization rule to the schema
+const sqlSchema = generatedSqlSchema.setAuthorization((models) => [
+  // Model-level authorization rules
+  models.event.authorization((allow) => [allow.publicApiKey()]),
+  // Field-level authorization rules
+  models.event.fields.id.authorization((allow) => [
+allow.publicApiKey(),
+allow.guest(),
+  ]),
+  models.event.fields.created_at.authorization((allow) => [
+allow.publicApiKey(),
+allow.guest(),
+  ]),
+]);
+
+~~~
+
+| | |
+| -- | -- |
+| Hash | `8ae1c7b151eacfde` |
+| Covered | ❌ |
+
+##### Covering Regions
+
+- *None*
+
+---
+
+#### [https://docs.amplify.aws/react/build-a-backend/data/connect-to-existing-data-sources/connect-postgres-mysql-database/](https://docs.amplify.aws/react/build-a-backend/data/connect-to-existing-data-sources/connect-postgres-mysql-database/)
+
+##### `Unnamed Snippet`
+
+~~~
+const { data: events } = await client.models.event.list();
+
+~~~
+
+| | |
+| -- | -- |
+| Hash | `d9dc661c8e8c0dd4` |
+| Covered | ❌ |
+
+##### Covering Regions
+
+- *None*
+
+---
+
+#### [https://docs.amplify.aws/react/build-a-backend/data/connect-to-existing-data-sources/connect-postgres-mysql-database/](https://docs.amplify.aws/react/build-a-backend/data/connect-to-existing-data-sources/connect-postgres-mysql-database/)
+
+##### `Unnamed Snippet`
+
+~~~
+// Rename models or fields to be more idiomatic for frontend code
+const sqlSchema = generatedSqlSchema
+  .authorization((allow) => allow.guest())
+  .renameModels(() => [
+//⌄⌄⌄⌄⌄ existing model name based on table name
+["event", "Event"],
+//        ^^^^^^ renamed data model name
+  ]);
+
+~~~
+
+| | |
+| -- | -- |
+| Hash | `748c6c140a7867a7` |
+| Covered | ❌ |
+
+##### Covering Regions
+
+- *None*
+
+---
+
+#### [https://docs.amplify.aws/react/build-a-backend/data/connect-to-existing-data-sources/connect-postgres-mysql-database/](https://docs.amplify.aws/react/build-a-backend/data/connect-to-existing-data-sources/connect-postgres-mysql-database/)
+
+##### `Unnamed Snippet`
+
+~~~
+const sqlSchema = generatedSqlSchema
+  .authorization((allow) => allow.guest())
+  .setRelationships((models) => [
+models.Note.relationships({
+  comments: a.hasMany("Comment", "note_id"),
+}),
+models.Comment.relationships({
+  note: a.belongsTo("Note", "note_id"),
+}),
+  ]);
+
+~~~
+
+| | |
+| -- | -- |
+| Hash | `4ac6eb92952f0637` |
+| Covered | ❌ |
+
+##### Covering Regions
+
+- *None*
+
+---
+
+#### [https://docs.amplify.aws/react/build-a-backend/data/connect-to-existing-data-sources/connect-postgres-mysql-database/](https://docs.amplify.aws/react/build-a-backend/data/connect-to-existing-data-sources/connect-postgres-mysql-database/)
+
+##### `Unnamed Snippet`
+
+~~~
+// Add custom mutations or queries that execute SQL statements
+const sqlSchema = generatedSqlSchema
+  .authorization((allow) => allow.guest())
+  .addToSchema({
+listEventsWithDecodedLatLong: a
+  .query()
+  // reference custom types added to the schema
+  .returns(a.ref("EventWithDecodedCoord").array())
+  .handler(
+    a.handler.inlineSql(
+`SELECT
+  id,
+  name,
+  address,
+  ST_X(geom) AS longitude,
+  ST_Y(geom) AS latitude
+FROM locations;`,
+    ),
+  )
+  .authorization((allow) => [allow.guest()]),
+
+// Define custom types to provide end-to-end typed results
+// for custom queries / mutations
+EventWithDecodedCoord: a.customType({
+  id: a.integer(),
+  name: a.string(),
+  address: a.string(),
+  longitude: a.float(),
+  latitude: a.float(),
+}),
+  });
+
+~~~
+
+| | |
+| -- | -- |
+| Hash | `5071d6595a7426a2` |
+| Covered | ❌ |
+
+##### Covering Regions
+
+- *None*
+
+---
+
+#### [https://docs.amplify.aws/react/build-a-backend/data/connect-to-existing-data-sources/connect-postgres-mysql-database/](https://docs.amplify.aws/react/build-a-backend/data/connect-to-existing-data-sources/connect-postgres-mysql-database/)
+
+##### `Unnamed Snippet`
+
+~~~
+const sqlSchema = generatedSqlSchema
+  .authorization((allow) => allow.guest())
+  .addToSchema({
+createNewLocationWithLongLat: a
+  .mutation()
+  .arguments({
+    lat: a.float().required(),
+    long: a.float().required(),
+    name: a.string().required(),
+    address: a.string().required(),
+  })
+  .returns(a.json().array())
+  .authorization((allow) => allow.authenticated())
+  .handler(a.handler.sqlReference("./createNewLocationWithLongLat.sql")),
+  });
+
+~~~
+
+| | |
+| -- | -- |
+| Hash | `26ed39c38206c91e` |
+| Covered | ❌ |
+
+##### Covering Regions
+
+- *None*
+
+---
+
+#### [https://docs.amplify.aws/react/build-a-backend/data/connect-to-existing-data-sources/connect-postgres-mysql-database/](https://docs.amplify.aws/react/build-a-backend/data/connect-to-existing-data-sources/connect-postgres-mysql-database/)
+
+##### `createNewLocationWithLongLat.sql`
+
+~~~
+INSERT INTO locations (name, address, geom)
+VALUES (:name, :address, ST_GEOMFROMTEXT(CONCAT('POINT (', :long, ' ', :lat, ')'), 4326));
+
+~~~
+
+| | |
+| -- | -- |
+| Hash | `62da717f535147ae` |
+| Covered | ❌ |
+
+##### Covering Regions
+
+- *None*
+
+---
+
+#### [https://docs.amplify.aws/react/build-a-backend/data/connect-to-existing-data-sources/connect-postgres-mysql-database/](https://docs.amplify.aws/react/build-a-backend/data/connect-to-existing-data-sources/connect-postgres-mysql-database/)
+
+##### `createNewLocationWithLongLat.sql`
+
+~~~
+INSERT INTO locations (name, address, geom)
+VALUES (:name, :address, ST_SetSRID(ST_MakePoint(:long, :lat), 4326))
+
+~~~
+
+| | |
+| -- | -- |
+| Hash | `34cb4b8726c31609` |
+| Covered | ❌ |
+
+##### Covering Regions
+
+- *None*
+
+---
+
+#### [https://docs.amplify.aws/react/build-a-backend/data/connect-to-existing-data-sources/connect-postgres-mysql-database/](https://docs.amplify.aws/react/build-a-backend/data/connect-to-existing-data-sources/connect-postgres-mysql-database/)
+
+##### `Unnamed Snippet`
+
+~~~
+getPostBySlug: a.query()
+  .arguments({
+slug: a.string().required(),
+  })
+  .returns(a.ref("Post").array())
+  .handler(
+a.handler.inlineSql(`
+SELECT id, title, slug, content, created_at, updated_at
+FROM posts
+WHERE slug = :slug;
+`),
+  );
+
+~~~
+
+| | |
+| -- | -- |
+| Hash | `f36866db1e6435b0` |
+| Covered | ❌ |
+
+##### Covering Regions
+
+- *None*
+
+---
+
+#### [https://docs.amplify.aws/react/build-a-backend/data/custom-business-logic/connect-amazon-polly/](https://docs.amplify.aws/react/build-a-backend/data/custom-business-logic/connect-amazon-polly/)
+
+##### `Terminal`
+
+~~~
+npm add @aws-sdk/client-polly
+
+~~~
+
+| | |
+| -- | -- |
+| Hash | `cbe3464e3ab1b8d6` |
+| Covered | ❌ |
+
+##### Covering Regions
+
+- *None*
+
+---
+
+#### [https://docs.amplify.aws/react/build-a-backend/data/custom-business-logic/connect-amazon-polly/](https://docs.amplify.aws/react/build-a-backend/data/custom-business-logic/connect-amazon-polly/)
+
+##### `amplify/storage/resource.ts`
+
+~~~
+import { defineStorage } from "@aws-amplify/backend";
+
+export const storage = defineStorage({
+  name: "predictions_gen2",
+});
+
+~~~
+
+| | |
+| -- | -- |
+| Hash | `a043adb860e7a842` |
 | Covered | ❌ |
 
 ##### Covering Regions
@@ -1464,20 +2209,563 @@ export const storage = defineStorage({
 
 #### [https://docs.amplify.aws/react/build-a-backend/data/custom-business-logic/connect-amazon-polly/](https://docs.amplify.aws/react/build-a-backend/data/custom-business-logic/connect-amazon-polly/)
 
-##### `amplify/storage/resource.ts`
+##### `amplify/backend.ts`
 
 ~~~
-import { defineStorage } from "@aws-amplify/backend";
+import { defineBackend } from "@aws-amplify/backend";
+import { auth } from "./auth/resource";
+import { data, convertTextToSpeech } from "./data/resource";
+import { Stack } from "aws-cdk-lib";
+import { PolicyStatement } from "aws-cdk-lib/aws-iam";
+import { storage } from "./storage/resource";
 
-export const storage = defineStorage({
-  name: "predictions_gen2",
+const backend = defineBackend({
+  auth,
+  data,
+  storage,
+  convertTextToSpeech,
+});
+
+backend.convertTextToSpeech.resources.lambda.addToRolePolicy(
+  new PolicyStatement({
+actions: ["polly:StartSpeechSynthesisTask"],
+resources: ["*"],
+  }),
+);
+
+~~~
+
+| | |
+| -- | -- |
+| Hash | `059b08381cc3873c` |
+| Covered | ❌ |
+
+##### Covering Regions
+
+- *None*
+
+---
+
+#### [https://docs.amplify.aws/react/build-a-backend/data/custom-business-logic/connect-amazon-polly/](https://docs.amplify.aws/react/build-a-backend/data/custom-business-logic/connect-amazon-polly/)
+
+##### `amplify/data/convertTextToSpeech.ts`
+
+~~~
+import { Schema } from "./resource";
+import {
+  PollyClient,
+  StartSpeechSynthesisTaskCommand,
+} from "@aws-sdk/client-polly";
+import { env } from "$amplify/env/convertTextToSpeech";
+
+export const handler: Schema["convertTextToSpeech"]["functionHandler"] = async (
+  event,
+) => {
+  const client = new PollyClient();
+  const task = new StartSpeechSynthesisTaskCommand({
+OutputFormat: "mp3",
+SampleRate: "8000",
+Text: event.arguments.text,
+TextType: "text",
+VoiceId: "Amy",
+OutputS3BucketName: env.PREDICTIONS_GEN_2_BUCKET_NAME,
+OutputS3KeyPrefix: "public/",
+  });
+  const result = await client.send(task);
+
+  return (
+result.SynthesisTask?.OutputUri?.replace(
+  "https://s3.us-east-1.amazonaws.com/" +
+    env.PREDICTIONS_GEN_2_BUCKET_NAME +
+    "/public/",
+  "",
+) ?? ""
+  );
+};
+
+~~~
+
+| | |
+| -- | -- |
+| Hash | `b46626c46832e9ff` |
+| Covered | ❌ |
+
+##### Covering Regions
+
+- *None*
+
+---
+
+#### [https://docs.amplify.aws/react/build-a-backend/data/custom-business-logic/connect-amazon-polly/](https://docs.amplify.aws/react/build-a-backend/data/custom-business-logic/connect-amazon-polly/)
+
+##### `amplify/data/resource.ts`
+
+~~~
+import {
+  type ClientSchema,
+  a,
+  defineData,
+  defineFunction,
+} from "@aws-amplify/backend";
+
+export const convertTextToSpeech = defineFunction({
+  entry: "./convertTextToSpeech.ts",
+});
+
+const schema = a.schema({
+  Todo: a
+.model({
+  content: a.string(),
+})
+.authorization((allow) => [allow.publicApiKey()]),
+  convertTextToSpeech: a
+.mutation()
+.arguments({
+  text: a.string().required(),
+})
+.returns(a.string().required())
+.authorization((allow) => [allow.publicApiKey()])
+.handler(a.handler.function(convertTextToSpeech)),
+});
+
+export type Schema = ClientSchema<typeof schema>;
+
+export const data = defineData({
+  schema,
+  authorizationModes: {
+defaultAuthorizationMode: "apiKey",
+// API Key is used for allow.publicApiKey() rules
+apiKeyAuthorizationMode: {
+  expiresInDays: 30,
+},
+  },
 });
 
 ~~~
 
 | | |
 | -- | -- |
-| Hash | `a043adb860e7a842` |
+| Hash | `5b8929bd948f9263` |
+| Covered | ❌ |
+
+##### Covering Regions
+
+- *None*
+
+---
+
+#### [https://docs.amplify.aws/react/build-a-backend/data/custom-business-logic/connect-amazon-polly/](https://docs.amplify.aws/react/build-a-backend/data/custom-business-logic/connect-amazon-polly/)
+
+##### `amplify/storage/resource.ts`
+
+~~~
+import { defineStorage } from "@aws-amplify/backend";
+import { convertTextToSpeech } from "../data/resource";
+
+export const storage = defineStorage({
+  name: "predictions_gen2",
+  access: (allow) => ({
+"public/*": [
+  allow.resource(convertTextToSpeech).to(["write"]),
+  allow.guest.to(["read", "write"]),
+],
+  }),
+});
+
+~~~
+
+| | |
+| -- | -- |
+| Hash | `8afad9fd1d529ce1` |
+| Covered | ❌ |
+
+##### Covering Regions
+
+- *None*
+
+---
+
+#### [https://docs.amplify.aws/react/build-a-backend/data/custom-business-logic/connect-amazon-polly/](https://docs.amplify.aws/react/build-a-backend/data/custom-business-logic/connect-amazon-polly/)
+
+##### `main.tsx`
+
+~~~
+import { Amplify } from "aws-amplify";
+import outputs from "../amplify_outputs.json";
+
+Amplify.configure(outputs);
+
+~~~
+
+| | |
+| -- | -- |
+| Hash | `898189587ea17dac` |
+| Covered | ❌ |
+
+##### Covering Regions
+
+- *None*
+
+---
+
+#### [https://docs.amplify.aws/react/build-a-backend/data/custom-business-logic/connect-amazon-translate/](https://docs.amplify.aws/react/build-a-backend/data/custom-business-logic/connect-amazon-translate/)
+
+##### `main.tsx`
+
+~~~
+import { Amplify } from "aws-amplify";
+import outputs from "../amplify_outputs.json";
+
+Amplify.configure(outputs);
+
+~~~
+
+| | |
+| -- | -- |
+| Hash | `898189587ea17dac` |
+| Covered | ❌ |
+
+##### Covering Regions
+
+- *None*
+
+---
+
+#### [https://docs.amplify.aws/react/build-a-backend/data/custom-business-logic/connect-amazon-rekognition/](https://docs.amplify.aws/react/build-a-backend/data/custom-business-logic/connect-amazon-rekognition/)
+
+##### `main.tsx`
+
+~~~
+import { Amplify } from "aws-amplify";
+import outputs from "../amplify_outputs.json";
+
+Amplify.configure(outputs);
+
+~~~
+
+| | |
+| -- | -- |
+| Hash | `898189587ea17dac` |
+| Covered | ❌ |
+
+##### Covering Regions
+
+- *None*
+
+---
+
+#### [https://docs.amplify.aws/react/build-a-backend/data/connect-to-API/](https://docs.amplify.aws/react/build-a-backend/data/connect-to-API/)
+
+##### `Unnamed Snippet`
+
+~~~
+import { Amplify } from "aws-amplify";
+import outputs from "../amplify_outputs.json";
+
+Amplify.configure(outputs);
+
+~~~
+
+| | |
+| -- | -- |
+| Hash | `898189587ea17dac` |
+| Covered | ❌ |
+
+##### Covering Regions
+
+- *None*
+
+---
+
+#### [https://docs.amplify.aws/react/build-a-backend/data/set-up-data/](https://docs.amplify.aws/react/build-a-backend/data/set-up-data/)
+
+##### `src/main.tsx`
+
+~~~
+import { Amplify } from "aws-amplify";
+import outputs from "../amplify_outputs.json";
+
+Amplify.configure(outputs);
+
+~~~
+
+| | |
+| -- | -- |
+| Hash | `898189587ea17dac` |
+| Covered | ❌ |
+
+##### Covering Regions
+
+- *None*
+
+---
+
+#### [https://docs.amplify.aws/react/build-a-backend/data/custom-business-logic/connect-amazon-polly/](https://docs.amplify.aws/react/build-a-backend/data/custom-business-logic/connect-amazon-polly/)
+
+##### `App.tsx`
+
+~~~
+import "./App.css";
+import { generateClient } from "aws-amplify/api";
+import type { Schema } from "../amplify/data/resource";
+import { getUrl } from "aws-amplify/storage";
+import { useState } from "react";
+
+const client = generateClient<Schema>();
+
+type PollyReturnType = Schema["convertTextToSpeech"]["returnType"];
+
+function App() {
+  const [src, setSrc] = useState("");
+  const [file, setFile] = useState<PollyReturnType>("");
+  return (
+<div className="flex flex-col">
+  <button
+    onClick={async () => {
+const { data, errors } = await client.mutations.convertTextToSpeech({
+  text: "Hello World!",
+});
+
+if (!errors && data) {
+  setFile(data);
+} else {
+  console.log(errors);
+}
+    }}
+  >
+    Synth
+  </button>
+  <button
+    onClick={async () => {
+const res = await getUrl({
+  path: "public/" + file,
+});
+
+setSrc(res.url.toString());
+    }}
+  >
+    Fetch audio
+  </button>
+  <a href={src}>Get audio file</a>
+</div>
+  );
+}
+
+export default App;
+
+~~~
+
+| | |
+| -- | -- |
+| Hash | `9469ad173d3b73ca` |
+| Covered | ❌ |
+
+##### Covering Regions
+
+- *None*
+
+---
+
+#### [https://docs.amplify.aws/react/build-a-backend/data/custom-business-logic/connect-amazon-translate/](https://docs.amplify.aws/react/build-a-backend/data/custom-business-logic/connect-amazon-translate/)
+
+##### `Terminal`
+
+~~~
+npm add @aws-sdk/client-translate
+
+~~~
+
+| | |
+| -- | -- |
+| Hash | `866e7a4da60b689f` |
+| Covered | ❌ |
+
+##### Covering Regions
+
+- *None*
+
+---
+
+#### [https://docs.amplify.aws/react/build-a-backend/data/custom-business-logic/connect-amazon-translate/](https://docs.amplify.aws/react/build-a-backend/data/custom-business-logic/connect-amazon-translate/)
+
+##### `amplify/backend.ts`
+
+~~~
+import { defineBackend } from "@aws-amplify/backend";
+import { auth } from "./auth/resource";
+import { data } from "./data/resource";
+import { Stack } from "aws-cdk-lib";
+import { PolicyStatement } from "aws-cdk-lib/aws-iam";
+
+const backend = defineBackend({
+  auth,
+  data,
+});
+
+const dataStack = Stack.of(backend.data);
+
+const translateDataSource = backend.data.addHttpDataSource(
+  "TranslateDataSource",
+  `https://translate.${dataStack.region}.amazonaws.com`,
+  {
+authorizationConfig: {
+  signingRegion: dataStack.region,
+  signingServiceName: "translate",
+},
+  },
+);
+
+translateDataSource.grantPrincipal.addToPrincipalPolicy(
+  new PolicyStatement({
+actions: ["translate:TranslateText"],
+resources: ["*"],
+  }),
+);
+
+~~~
+
+| | |
+| -- | -- |
+| Hash | `c413a6f4bbb777ac` |
+| Covered | ❌ |
+
+##### Covering Regions
+
+- *None*
+
+---
+
+#### [https://docs.amplify.aws/react/build-a-backend/data/custom-business-logic/connect-amazon-translate/](https://docs.amplify.aws/react/build-a-backend/data/custom-business-logic/connect-amazon-translate/)
+
+##### `amplify/data/translate.js`
+
+~~~
+export function request(ctx) {
+  return {
+method: "POST",
+resourcePath: "/",
+params: {
+  body: {
+    SourceLanguageCode: ctx.arguments.sourceLanguage,
+    TargetLanguageCode: ctx.arguments.targetLanguage,
+    Text: ctx.arguments.text,
+  },
+  headers: {
+    "Content-Type": "application/x-amz-json-1.1",
+    "X-Amz-Target": "AWSShineFrontendService_20170701.TranslateText",
+  },
+},
+  };
+}
+
+export function response(ctx) {
+  return JSON.parse(ctx.result.body).TranslatedText;
+}
+
+~~~
+
+| | |
+| -- | -- |
+| Hash | `c824b7f789a5b258` |
+| Covered | ❌ |
+
+##### Covering Regions
+
+- *None*
+
+---
+
+#### [https://docs.amplify.aws/react/build-a-backend/data/custom-business-logic/connect-amazon-translate/](https://docs.amplify.aws/react/build-a-backend/data/custom-business-logic/connect-amazon-translate/)
+
+##### `amplify/data/resource.ts`
+
+~~~
+import { type ClientSchema, a, defineData } from "@aws-amplify/backend";
+
+const schema = a.schema({
+  translate: a
+.query()
+.arguments({
+  sourceLanguage: a.string().required(),
+  targetLanguage: a.string().required(),
+  text: a.string().required(),
+})
+.returns(a.string())
+.authorization((allow) => [allow.publicApiKey()])
+.handler(
+  a.handler.custom({
+    dataSource: "TranslateDataSource",
+    entry: "./translate.js",
+  }),
+),
+});
+
+export type Schema = ClientSchema<typeof schema>;
+
+export const data = defineData({
+  schema,
+  authorizationModes: {
+defaultAuthorizationMode: "apiKey",
+apiKeyAuthorizationMode: {
+  expiresInDays: 30,
+},
+  },
+});
+
+~~~
+
+| | |
+| -- | -- |
+| Hash | `40af1d5454d7a4a4` |
+| Covered | ❌ |
+
+##### Covering Regions
+
+- *None*
+
+---
+
+#### [https://docs.amplify.aws/react/build-a-backend/data/custom-business-logic/connect-amazon-translate/](https://docs.amplify.aws/react/build-a-backend/data/custom-business-logic/connect-amazon-translate/)
+
+##### `Unnamed Snippet`
+
+~~~
+import { generateClient } from "aws-amplify/data";
+import { type Schema } from "../amplify/data/resource";
+
+const client = generateClient<Schema>();
+
+const { data } = await client.queries.translate({
+  sourceLanguage: "en",
+  targetLanguage: "es",
+  text: "Hello World!",
+});
+
+~~~
+
+| | |
+| -- | -- |
+| Hash | `81e213bec681832b` |
+| Covered | ❌ |
+
+##### Covering Regions
+
+- *None*
+
+---
+
+#### [https://docs.amplify.aws/react/build-a-backend/data/custom-business-logic/connect-amazon-rekognition/](https://docs.amplify.aws/react/build-a-backend/data/custom-business-logic/connect-amazon-rekognition/)
+
+##### `Terminal`
+
+~~~
+npm add @aws-sdk/client-rekognition
+
+~~~
+
+| | |
+| -- | -- |
+| Hash | `db746639848e0a89` |
 | Covered | ❌ |
 
 ##### Covering Regions
@@ -1670,121 +2958,6 @@ export const storage = defineStorage({
 
 #### [https://docs.amplify.aws/react/build-a-backend/data/custom-business-logic/connect-amazon-rekognition/](https://docs.amplify.aws/react/build-a-backend/data/custom-business-logic/connect-amazon-rekognition/)
 
-##### `main.tsx`
-
-~~~
-import { Amplify } from "aws-amplify";
-import outputs from "../amplify_outputs.json";
-
-Amplify.configure(outputs);
-
-~~~
-
-| | |
-| -- | -- |
-| Hash | `898189587ea17dac` |
-| Covered | ❌ |
-
-##### Covering Regions
-
-- *None*
-
----
-
-#### [https://docs.amplify.aws/react/build-a-backend/data/custom-business-logic/connect-amazon-translate/](https://docs.amplify.aws/react/build-a-backend/data/custom-business-logic/connect-amazon-translate/)
-
-##### `main.tsx`
-
-~~~
-import { Amplify } from "aws-amplify";
-import outputs from "../amplify_outputs.json";
-
-Amplify.configure(outputs);
-
-~~~
-
-| | |
-| -- | -- |
-| Hash | `898189587ea17dac` |
-| Covered | ❌ |
-
-##### Covering Regions
-
-- *None*
-
----
-
-#### [https://docs.amplify.aws/react/build-a-backend/data/custom-business-logic/connect-amazon-polly/](https://docs.amplify.aws/react/build-a-backend/data/custom-business-logic/connect-amazon-polly/)
-
-##### `main.tsx`
-
-~~~
-import { Amplify } from "aws-amplify";
-import outputs from "../amplify_outputs.json";
-
-Amplify.configure(outputs);
-
-~~~
-
-| | |
-| -- | -- |
-| Hash | `898189587ea17dac` |
-| Covered | ❌ |
-
-##### Covering Regions
-
-- *None*
-
----
-
-#### [https://docs.amplify.aws/react/build-a-backend/data/connect-to-API/](https://docs.amplify.aws/react/build-a-backend/data/connect-to-API/)
-
-##### `Unnamed Snippet`
-
-~~~
-import { Amplify } from "aws-amplify";
-import outputs from "../amplify_outputs.json";
-
-Amplify.configure(outputs);
-
-~~~
-
-| | |
-| -- | -- |
-| Hash | `898189587ea17dac` |
-| Covered | ❌ |
-
-##### Covering Regions
-
-- *None*
-
----
-
-#### [https://docs.amplify.aws/react/build-a-backend/data/set-up-data/](https://docs.amplify.aws/react/build-a-backend/data/set-up-data/)
-
-##### `src/main.tsx`
-
-~~~
-import { Amplify } from "aws-amplify";
-import outputs from "../amplify_outputs.json";
-
-Amplify.configure(outputs);
-
-~~~
-
-| | |
-| -- | -- |
-| Hash | `898189587ea17dac` |
-| Covered | ❌ |
-
-##### Covering Regions
-
-- *None*
-
----
-
-#### [https://docs.amplify.aws/react/build-a-backend/data/custom-business-logic/connect-amazon-rekognition/](https://docs.amplify.aws/react/build-a-backend/data/custom-business-logic/connect-amazon-rekognition/)
-
 ##### `App.tsx`
 
 ~~~
@@ -1855,194 +3028,6 @@ export default App;
 | | |
 | -- | -- |
 | Hash | `cae12f526b62efc6` |
-| Covered | ❌ |
-
-##### Covering Regions
-
-- *None*
-
----
-
-#### [https://docs.amplify.aws/react/build-a-backend/data/custom-business-logic/connect-amazon-translate/](https://docs.amplify.aws/react/build-a-backend/data/custom-business-logic/connect-amazon-translate/)
-
-##### `Terminal`
-
-~~~
-npm add @aws-sdk/client-translate
-
-~~~
-
-| | |
-| -- | -- |
-| Hash | `866e7a4da60b689f` |
-| Covered | ❌ |
-
-##### Covering Regions
-
-- *None*
-
----
-
-#### [https://docs.amplify.aws/react/build-a-backend/data/custom-business-logic/connect-amazon-translate/](https://docs.amplify.aws/react/build-a-backend/data/custom-business-logic/connect-amazon-translate/)
-
-##### `amplify/backend.ts`
-
-~~~
-import { defineBackend } from "@aws-amplify/backend";
-import { auth } from "./auth/resource";
-import { data } from "./data/resource";
-import { Stack } from "aws-cdk-lib";
-import { PolicyStatement } from "aws-cdk-lib/aws-iam";
-
-const backend = defineBackend({
-  auth,
-  data,
-});
-
-const dataStack = Stack.of(backend.data);
-
-const translateDataSource = backend.data.addHttpDataSource(
-  "TranslateDataSource",
-  `https://translate.${dataStack.region}.amazonaws.com`,
-  {
-authorizationConfig: {
-  signingRegion: dataStack.region,
-  signingServiceName: "translate",
-},
-  },
-);
-
-translateDataSource.grantPrincipal.addToPrincipalPolicy(
-  new PolicyStatement({
-actions: ["translate:TranslateText"],
-resources: ["*"],
-  }),
-);
-
-~~~
-
-| | |
-| -- | -- |
-| Hash | `c413a6f4bbb777ac` |
-| Covered | ❌ |
-
-##### Covering Regions
-
-- *None*
-
----
-
-#### [https://docs.amplify.aws/react/build-a-backend/data/custom-business-logic/connect-amazon-translate/](https://docs.amplify.aws/react/build-a-backend/data/custom-business-logic/connect-amazon-translate/)
-
-##### `amplify/data/translate.js`
-
-~~~
-export function request(ctx) {
-  return {
-method: "POST",
-resourcePath: "/",
-params: {
-  body: {
-    SourceLanguageCode: ctx.arguments.sourceLanguage,
-    TargetLanguageCode: ctx.arguments.targetLanguage,
-    Text: ctx.arguments.text,
-  },
-  headers: {
-    "Content-Type": "application/x-amz-json-1.1",
-    "X-Amz-Target": "AWSShineFrontendService_20170701.TranslateText",
-  },
-},
-  };
-}
-
-export function response(ctx) {
-  return JSON.parse(ctx.result.body).TranslatedText;
-}
-
-~~~
-
-| | |
-| -- | -- |
-| Hash | `c824b7f789a5b258` |
-| Covered | ❌ |
-
-##### Covering Regions
-
-- *None*
-
----
-
-#### [https://docs.amplify.aws/react/build-a-backend/data/custom-business-logic/connect-amazon-translate/](https://docs.amplify.aws/react/build-a-backend/data/custom-business-logic/connect-amazon-translate/)
-
-##### `amplify/data/resource.ts`
-
-~~~
-import { type ClientSchema, a, defineData } from "@aws-amplify/backend";
-
-const schema = a.schema({
-  translate: a
-.query()
-.arguments({
-  sourceLanguage: a.string().required(),
-  targetLanguage: a.string().required(),
-  text: a.string().required(),
-})
-.returns(a.string())
-.authorization((allow) => [allow.publicApiKey()])
-.handler(
-  a.handler.custom({
-    dataSource: "TranslateDataSource",
-    entry: "./translate.js",
-  }),
-),
-});
-
-export type Schema = ClientSchema<typeof schema>;
-
-export const data = defineData({
-  schema,
-  authorizationModes: {
-defaultAuthorizationMode: "apiKey",
-apiKeyAuthorizationMode: {
-  expiresInDays: 30,
-},
-  },
-});
-
-~~~
-
-| | |
-| -- | -- |
-| Hash | `40af1d5454d7a4a4` |
-| Covered | ❌ |
-
-##### Covering Regions
-
-- *None*
-
----
-
-#### [https://docs.amplify.aws/react/build-a-backend/data/custom-business-logic/connect-amazon-translate/](https://docs.amplify.aws/react/build-a-backend/data/custom-business-logic/connect-amazon-translate/)
-
-##### `Unnamed Snippet`
-
-~~~
-import { generateClient } from "aws-amplify/data";
-import { type Schema } from "../amplify/data/resource";
-
-const client = generateClient<Schema>();
-
-const { data } = await client.queries.translate({
-  sourceLanguage: "en",
-  targetLanguage: "es",
-  text: "Hello World!",
-});
-
-~~~
-
-| | |
-| -- | -- |
-| Hash | `81e213bec681832b` |
 | Covered | ❌ |
 
 ##### Covering Regions
@@ -2471,270 +3456,6 @@ if (!errors) {
 
 ---
 
-#### [https://docs.amplify.aws/react/build-a-backend/data/custom-business-logic/connect-amazon-polly/](https://docs.amplify.aws/react/build-a-backend/data/custom-business-logic/connect-amazon-polly/)
-
-##### `Terminal`
-
-~~~
-npm add @aws-sdk/client-polly
-
-~~~
-
-| | |
-| -- | -- |
-| Hash | `cbe3464e3ab1b8d6` |
-| Covered | ❌ |
-
-##### Covering Regions
-
-- *None*
-
----
-
-#### [https://docs.amplify.aws/react/build-a-backend/data/custom-business-logic/connect-amazon-polly/](https://docs.amplify.aws/react/build-a-backend/data/custom-business-logic/connect-amazon-polly/)
-
-##### `amplify/backend.ts`
-
-~~~
-import { defineBackend } from "@aws-amplify/backend";
-import { auth } from "./auth/resource";
-import { data, convertTextToSpeech } from "./data/resource";
-import { Stack } from "aws-cdk-lib";
-import { PolicyStatement } from "aws-cdk-lib/aws-iam";
-import { storage } from "./storage/resource";
-
-const backend = defineBackend({
-  auth,
-  data,
-  storage,
-  convertTextToSpeech,
-});
-
-backend.convertTextToSpeech.resources.lambda.addToRolePolicy(
-  new PolicyStatement({
-actions: ["polly:StartSpeechSynthesisTask"],
-resources: ["*"],
-  }),
-);
-
-~~~
-
-| | |
-| -- | -- |
-| Hash | `059b08381cc3873c` |
-| Covered | ❌ |
-
-##### Covering Regions
-
-- *None*
-
----
-
-#### [https://docs.amplify.aws/react/build-a-backend/data/custom-business-logic/connect-amazon-polly/](https://docs.amplify.aws/react/build-a-backend/data/custom-business-logic/connect-amazon-polly/)
-
-##### `amplify/data/convertTextToSpeech.ts`
-
-~~~
-import { Schema } from "./resource";
-import {
-  PollyClient,
-  StartSpeechSynthesisTaskCommand,
-} from "@aws-sdk/client-polly";
-import { env } from "$amplify/env/convertTextToSpeech";
-
-export const handler: Schema["convertTextToSpeech"]["functionHandler"] = async (
-  event,
-) => {
-  const client = new PollyClient();
-  const task = new StartSpeechSynthesisTaskCommand({
-OutputFormat: "mp3",
-SampleRate: "8000",
-Text: event.arguments.text,
-TextType: "text",
-VoiceId: "Amy",
-OutputS3BucketName: env.PREDICTIONS_GEN_2_BUCKET_NAME,
-OutputS3KeyPrefix: "public/",
-  });
-  const result = await client.send(task);
-
-  return (
-result.SynthesisTask?.OutputUri?.replace(
-  "https://s3.us-east-1.amazonaws.com/" +
-    env.PREDICTIONS_GEN_2_BUCKET_NAME +
-    "/public/",
-  "",
-) ?? ""
-  );
-};
-
-~~~
-
-| | |
-| -- | -- |
-| Hash | `b46626c46832e9ff` |
-| Covered | ❌ |
-
-##### Covering Regions
-
-- *None*
-
----
-
-#### [https://docs.amplify.aws/react/build-a-backend/data/custom-business-logic/connect-amazon-polly/](https://docs.amplify.aws/react/build-a-backend/data/custom-business-logic/connect-amazon-polly/)
-
-##### `amplify/data/resource.ts`
-
-~~~
-import {
-  type ClientSchema,
-  a,
-  defineData,
-  defineFunction,
-} from "@aws-amplify/backend";
-
-export const convertTextToSpeech = defineFunction({
-  entry: "./convertTextToSpeech.ts",
-});
-
-const schema = a.schema({
-  Todo: a
-.model({
-  content: a.string(),
-})
-.authorization((allow) => [allow.publicApiKey()]),
-  convertTextToSpeech: a
-.mutation()
-.arguments({
-  text: a.string().required(),
-})
-.returns(a.string().required())
-.authorization((allow) => [allow.publicApiKey()])
-.handler(a.handler.function(convertTextToSpeech)),
-});
-
-export type Schema = ClientSchema<typeof schema>;
-
-export const data = defineData({
-  schema,
-  authorizationModes: {
-defaultAuthorizationMode: "apiKey",
-// API Key is used for allow.publicApiKey() rules
-apiKeyAuthorizationMode: {
-  expiresInDays: 30,
-},
-  },
-});
-
-~~~
-
-| | |
-| -- | -- |
-| Hash | `5b8929bd948f9263` |
-| Covered | ❌ |
-
-##### Covering Regions
-
-- *None*
-
----
-
-#### [https://docs.amplify.aws/react/build-a-backend/data/custom-business-logic/connect-amazon-polly/](https://docs.amplify.aws/react/build-a-backend/data/custom-business-logic/connect-amazon-polly/)
-
-##### `amplify/storage/resource.ts`
-
-~~~
-import { defineStorage } from "@aws-amplify/backend";
-import { convertTextToSpeech } from "../data/resource";
-
-export const storage = defineStorage({
-  name: "predictions_gen2",
-  access: (allow) => ({
-"public/*": [
-  allow.resource(convertTextToSpeech).to(["write"]),
-  allow.guest.to(["read", "write"]),
-],
-  }),
-});
-
-~~~
-
-| | |
-| -- | -- |
-| Hash | `8afad9fd1d529ce1` |
-| Covered | ❌ |
-
-##### Covering Regions
-
-- *None*
-
----
-
-#### [https://docs.amplify.aws/react/build-a-backend/data/custom-business-logic/connect-amazon-polly/](https://docs.amplify.aws/react/build-a-backend/data/custom-business-logic/connect-amazon-polly/)
-
-##### `App.tsx`
-
-~~~
-import "./App.css";
-import { generateClient } from "aws-amplify/api";
-import type { Schema } from "../amplify/data/resource";
-import { getUrl } from "aws-amplify/storage";
-import { useState } from "react";
-
-const client = generateClient<Schema>();
-
-type PollyReturnType = Schema["convertTextToSpeech"]["returnType"];
-
-function App() {
-  const [src, setSrc] = useState("");
-  const [file, setFile] = useState<PollyReturnType>("");
-  return (
-<div className="flex flex-col">
-  <button
-    onClick={async () => {
-const { data, errors } = await client.mutations.convertTextToSpeech({
-  text: "Hello World!",
-});
-
-if (!errors && data) {
-  setFile(data);
-} else {
-  console.log(errors);
-}
-    }}
-  >
-    Synth
-  </button>
-  <button
-    onClick={async () => {
-const res = await getUrl({
-  path: "public/" + file,
-});
-
-setSrc(res.url.toString());
-    }}
-  >
-    Fetch audio
-  </button>
-  <a href={src}>Get audio file</a>
-</div>
-  );
-}
-
-export default App;
-
-~~~
-
-| | |
-| -- | -- |
-| Hash | `9469ad173d3b73ca` |
-| Covered | ❌ |
-
-##### Covering Regions
-
-- *None*
-
----
-
 #### [https://docs.amplify.aws/react/build-a-backend/data/custom-business-logic/connect-eventbridge-datasource/](https://docs.amplify.aws/react/build-a-backend/data/custom-business-logic/connect-eventbridge-datasource/)
 
 ##### `amplify/data/resource.ts`
@@ -3116,501 +3837,6 @@ sub.unsubscribe();
 | | |
 | -- | -- |
 | Hash | `3c38c8153f1bba58` |
-| Covered | ❌ |
-
-##### Covering Regions
-
-- *None*
-
----
-
-#### [https://docs.amplify.aws/react/build-a-backend/data/custom-business-logic/connect-http-datasource/](https://docs.amplify.aws/react/build-a-backend/data/custom-business-logic/connect-http-datasource/)
-
-##### `amplify/data/resource.ts`
-
-~~~
-import { type ClientSchema, a, defineData } from "@aws-amplify/backend";
-
-const schema = a.schema({
-  Todo: a
-.model({
-  content: a.string(),
-})
-.authorization((allow) => [allow.publicApiKey()]),
-  Post: a.customType({
-title: a.string(),
-content: a.string(),
-author: a.string().required(),
-  }),
-});
-
-export type Schema = ClientSchema<typeof schema>;
-
-export const data = defineData({
-  schema,
-  authorizationModes: {
-defaultAuthorizationMode: "apiKey",
-apiKeyAuthorizationMode: {
-  expiresInDays: 30,
-},
-  },
-});
-
-~~~
-
-| | |
-| -- | -- |
-| Hash | `d4a9edbd787c42a9` |
-| Covered | ❌ |
-
-##### Covering Regions
-
-- *None*
-
----
-
-#### [https://docs.amplify.aws/react/build-a-backend/data/custom-business-logic/connect-http-datasource/](https://docs.amplify.aws/react/build-a-backend/data/custom-business-logic/connect-http-datasource/)
-
-##### `amplify/backend.ts`
-
-~~~
-import { defineBackend } from "@aws-amplify/backend";
-import { auth } from "./auth/resource";
-import { data } from "./data/resource";
-
-const backend = defineBackend({
-  auth,
-  data,
-});
-
-const httpDataSource = backend.data.addHttpDataSource(
-  "HttpDataSource",
-  "https://www.example.com",
-);
-
-~~~
-
-| | |
-| -- | -- |
-| Hash | `61d95d9d8b84721a` |
-| Covered | ❌ |
-
-##### Covering Regions
-
-- *None*
-
----
-
-#### [https://docs.amplify.aws/react/build-a-backend/data/custom-business-logic/connect-http-datasource/](https://docs.amplify.aws/react/build-a-backend/data/custom-business-logic/connect-http-datasource/)
-
-##### `amplify/data/resource.ts`
-
-~~~
-import { type ClientSchema, a, defineData } from "@aws-amplify/backend";
-
-const schema = a.schema({
-  Post: a.customType({
-title: a.string(),
-content: a.string(),
-author: a.string().required(),
-  }),
-  addPost: a
-.mutation()
-.arguments({
-  title: a.string(),
-  content: a.string(),
-  author: a.string().required(),
-})
-.returns(a.ref("Post"))
-.authorization((allow) => [allow.publicApiKey()])
-.handler(
-  a.handler.custom({
-    dataSource: "HttpDataSource",
-    entry: "./addPost.js",
-  }),
-),
-});
-
-export type Schema = ClientSchema<typeof schema>;
-
-export const data = defineData({
-  schema,
-  authorizationModes: {
-defaultAuthorizationMode: "apiKey",
-apiKeyAuthorizationMode: {
-  expiresInDays: 30,
-},
-  },
-});
-
-~~~
-
-| | |
-| -- | -- |
-| Hash | `51f55c11c111f5f6` |
-| Covered | ❌ |
-
-##### Covering Regions
-
-- *None*
-
----
-
-#### [https://docs.amplify.aws/react/build-a-backend/data/custom-business-logic/connect-http-datasource/](https://docs.amplify.aws/react/build-a-backend/data/custom-business-logic/connect-http-datasource/)
-
-##### `amplify/data/resource.ts`
-
-~~~
-import { type ClientSchema, a, defineData } from "@aws-amplify/backend";
-
-const schema = a.schema({
-  Post: a.customType({
-title: a.string(),
-content: a.string(),
-author: a.string().required(),
-  }),
-  getPost: a
-.query()
-.arguments({ id: a.id().required() })
-.returns(a.ref("Post"))
-.authorization((allow) => [allow.publicApiKey()])
-.handler(
-  a.handler.custom({
-    dataSource: "HttpDataSource",
-    entry: "./getPost.js",
-  }),
-),
-});
-
-export type Schema = ClientSchema<typeof schema>;
-
-export const data = defineData({
-  schema,
-  authorizationModes: {
-defaultAuthorizationMode: "apiKey",
-apiKeyAuthorizationMode: {
-  expiresInDays: 30,
-},
-  },
-});
-
-~~~
-
-| | |
-| -- | -- |
-| Hash | `69971cfbd80f236f` |
-| Covered | ❌ |
-
-##### Covering Regions
-
-- *None*
-
----
-
-#### [https://docs.amplify.aws/react/build-a-backend/data/custom-business-logic/connect-http-datasource/](https://docs.amplify.aws/react/build-a-backend/data/custom-business-logic/connect-http-datasource/)
-
-##### `amplify/data/resource.ts`
-
-~~~
-import { type ClientSchema, a, defineData } from "@aws-amplify/backend";
-
-const schema = a.schema({
-  Post: a.customType({
-title: a.string(),
-content: a.string(),
-author: a.string().required(),
-  }),
-  updatePost: a
-.mutation()
-.arguments({
-  id: a.id().required(),
-  title: a.string(),
-  content: a.string(),
-  author: a.string(),
-})
-.returns(a.ref("Post"))
-.authorization((allow) => [allow.publicApiKey()])
-.handler(
-  a.handler.custom({
-    dataSource: "HttpDataSource",
-    entry: "./updatePost.js",
-  }),
-),
-});
-
-export type Schema = ClientSchema<typeof schema>;
-
-export const data = defineData({
-  schema,
-  authorizationModes: {
-defaultAuthorizationMode: "apiKey",
-apiKeyAuthorizationMode: {
-  expiresInDays: 30,
-},
-  },
-});
-
-~~~
-
-| | |
-| -- | -- |
-| Hash | `ac60f58446239a86` |
-| Covered | ❌ |
-
-##### Covering Regions
-
-- *None*
-
----
-
-#### [https://docs.amplify.aws/react/build-a-backend/data/custom-business-logic/connect-http-datasource/](https://docs.amplify.aws/react/build-a-backend/data/custom-business-logic/connect-http-datasource/)
-
-##### `amplify/data/resource.ts`
-
-~~~
-import { type ClientSchema, a, defineData } from "@aws-amplify/backend";
-
-const schema = a.schema({
-  Post: a.customType({
-title: a.string(),
-content: a.string(),
-author: a.string().required(),
-  }),
-  deletePost: a
-.mutation()
-.arguments({ id: a.id().required() })
-.returns(a.ref("Post"))
-.authorization((allow) => [allow.publicApiKey()])
-.handler(
-  a.handler.custom({
-    dataSource: "HttpDataSource",
-    entry: "./deletePost.js",
-  }),
-),
-});
-
-export type Schema = ClientSchema<typeof schema>;
-
-export const data = defineData({
-  schema,
-  authorizationModes: {
-defaultAuthorizationMode: "apiKey",
-apiKeyAuthorizationMode: {
-  expiresInDays: 30,
-},
-  },
-});
-
-~~~
-
-| | |
-| -- | -- |
-| Hash | `14260040162c808a` |
-| Covered | ❌ |
-
-##### Covering Regions
-
-- *None*
-
----
-
-#### [https://docs.amplify.aws/react/build-a-backend/data/custom-business-logic/connect-http-datasource/](https://docs.amplify.aws/react/build-a-backend/data/custom-business-logic/connect-http-datasource/)
-
-##### `amplify/data/addPost.js`
-
-~~~
-import { util } from "@aws-appsync/utils";
-
-export function request(ctx) {
-  return {
-method: "POST",
-resourcePath: "/post",
-params: {
-  headers: {
-    "Content-Type": "application/json",
-  },
-  body: {
-    title: ctx.arguments.title,
-    content: ctx.arguments.content,
-    author: ctx.arguments.author,
-  },
-},
-  };
-}
-
-export function response(ctx) {
-  if (ctx.error) {
-return util.error(ctx.error.message, ctx.error.type);
-  }
-  if (ctx.result.statusCode == 200) {
-return JSON.parse(ctx.result.body).data;
-  } else {
-return util.appendError(ctx.result.body, "ctx.result.statusCode");
-  }
-}
-
-~~~
-
-| | |
-| -- | -- |
-| Hash | `3f15393d6b74ef97` |
-| Covered | ❌ |
-
-##### Covering Regions
-
-- *None*
-
----
-
-#### [https://docs.amplify.aws/react/build-a-backend/data/custom-business-logic/connect-http-datasource/](https://docs.amplify.aws/react/build-a-backend/data/custom-business-logic/connect-http-datasource/)
-
-##### `amplify/data/getPost.js`
-
-~~~
-import { util } from "@aws-appsync/utils";
-
-export function request(ctx) {
-  return {
-method: "GET",
-resourcePath: "/posts/" + ctx.arguments.id,
-params: {
-  headers: {
-    "Content-Type": "application/json",
-  },
-},
-  };
-}
-
-export function response(ctx) {
-  if (ctx.error) {
-return util.error(ctx.error.message, ctx.error.type);
-  }
-  if (ctx.result.statusCode == 200) {
-return JSON.parse(ctx.result.body).data;
-  } else {
-return util.appendError(ctx.result.body, "ctx.result.statusCode");
-  }
-}
-
-~~~
-
-| | |
-| -- | -- |
-| Hash | `70f5446fe7fb2a8b` |
-| Covered | ❌ |
-
-##### Covering Regions
-
-- *None*
-
----
-
-#### [https://docs.amplify.aws/react/build-a-backend/data/custom-business-logic/connect-http-datasource/](https://docs.amplify.aws/react/build-a-backend/data/custom-business-logic/connect-http-datasource/)
-
-##### `amplify/data/updatePost.js`
-
-~~~
-import { util } from "@aws-appsync/utils";
-
-export function request(ctx) {
-  return {
-method: "POST",
-resourcePath: "/posts/" + ctx.arguments.id,
-params: {
-  headers: {
-    "Content-Type": "application/json",
-  },
-  body: {
-    title: ctx.arguments.title,
-    content: ctx.arguments.content,
-    author: ctx.arguments.author,
-  },
-},
-  };
-}
-
-export function response(ctx) {
-  if (ctx.error) {
-return util.error(ctx.error.message, ctx.error.type);
-  }
-  if (ctx.result.statusCode == 200) {
-return JSON.parse(ctx.result.body).data;
-  } else {
-return util.appendError(ctx.result.body, "ctx.result.statusCode");
-  }
-}
-
-~~~
-
-| | |
-| -- | -- |
-| Hash | `047316efba4e5444` |
-| Covered | ❌ |
-
-##### Covering Regions
-
-- *None*
-
----
-
-#### [https://docs.amplify.aws/react/build-a-backend/data/custom-business-logic/connect-http-datasource/](https://docs.amplify.aws/react/build-a-backend/data/custom-business-logic/connect-http-datasource/)
-
-##### `amplify/data/deletePost.js`
-
-~~~
-import { util } from "@aws-appsync/utils";
-
-export function request(ctx) {
-  return {
-method: "DELETE",
-resourcePath: "/posts/" + ctx.arguments.id,
-params: {
-  headers: {
-    "Content-Type": "application/json",
-  },
-},
-  };
-}
-
-export function response(ctx) {
-  if (ctx.error) {
-return util.error(ctx.error.message, ctx.error.type);
-  }
-  if (ctx.result.statusCode == 200) {
-return JSON.parse(ctx.result.body).data;
-  } else {
-return util.appendError(ctx.result.body, "ctx.result.statusCode");
-  }
-}
-
-~~~
-
-| | |
-| -- | -- |
-| Hash | `a3d8554efda4da61` |
-| Covered | ❌ |
-
-##### Covering Regions
-
-- *None*
-
----
-
-#### [https://docs.amplify.aws/react/build-a-backend/data/custom-business-logic/connect-http-datasource/](https://docs.amplify.aws/react/build-a-backend/data/custom-business-logic/connect-http-datasource/)
-
-##### `App.tsx`
-
-~~~
-const { data, errors } = await client.mutations.updatePost({
-  id: "<post-id>",
-  title: "An Updated Post",
-});
-
-~~~
-
-| | |
-| -- | -- |
-| Hash | `dcf98fc5c5e0514b` |
 | Covered | ❌ |
 
 ##### Covering Regions
@@ -4576,6 +4802,572 @@ const schema = a.schema({
 
 ---
 
+#### [https://docs.amplify.aws/react/build-a-backend/data/custom-business-logic/connect-http-datasource/](https://docs.amplify.aws/react/build-a-backend/data/custom-business-logic/connect-http-datasource/)
+
+##### `amplify/data/resource.ts`
+
+~~~
+import { type ClientSchema, a, defineData } from "@aws-amplify/backend";
+
+const schema = a.schema({
+  Todo: a
+.model({
+  content: a.string(),
+})
+.authorization((allow) => [allow.publicApiKey()]),
+  Post: a.customType({
+title: a.string(),
+content: a.string(),
+author: a.string().required(),
+  }),
+});
+
+export type Schema = ClientSchema<typeof schema>;
+
+export const data = defineData({
+  schema,
+  authorizationModes: {
+defaultAuthorizationMode: "apiKey",
+apiKeyAuthorizationMode: {
+  expiresInDays: 30,
+},
+  },
+});
+
+~~~
+
+| | |
+| -- | -- |
+| Hash | `d4a9edbd787c42a9` |
+| Covered | ❌ |
+
+##### Covering Regions
+
+- *None*
+
+---
+
+#### [https://docs.amplify.aws/react/build-a-backend/data/custom-business-logic/connect-http-datasource/](https://docs.amplify.aws/react/build-a-backend/data/custom-business-logic/connect-http-datasource/)
+
+##### `amplify/backend.ts`
+
+~~~
+import { defineBackend } from "@aws-amplify/backend";
+import { auth } from "./auth/resource";
+import { data } from "./data/resource";
+
+const backend = defineBackend({
+  auth,
+  data,
+});
+
+const httpDataSource = backend.data.addHttpDataSource(
+  "HttpDataSource",
+  "https://www.example.com",
+);
+
+~~~
+
+| | |
+| -- | -- |
+| Hash | `61d95d9d8b84721a` |
+| Covered | ❌ |
+
+##### Covering Regions
+
+- *None*
+
+---
+
+#### [https://docs.amplify.aws/react/build-a-backend/data/custom-business-logic/connect-http-datasource/](https://docs.amplify.aws/react/build-a-backend/data/custom-business-logic/connect-http-datasource/)
+
+##### `amplify/data/resource.ts`
+
+~~~
+import { type ClientSchema, a, defineData } from "@aws-amplify/backend";
+
+const schema = a.schema({
+  Post: a.customType({
+title: a.string(),
+content: a.string(),
+author: a.string().required(),
+  }),
+  addPost: a
+.mutation()
+.arguments({
+  title: a.string(),
+  content: a.string(),
+  author: a.string().required(),
+})
+.returns(a.ref("Post"))
+.authorization((allow) => [allow.publicApiKey()])
+.handler(
+  a.handler.custom({
+    dataSource: "HttpDataSource",
+    entry: "./addPost.js",
+  }),
+),
+});
+
+export type Schema = ClientSchema<typeof schema>;
+
+export const data = defineData({
+  schema,
+  authorizationModes: {
+defaultAuthorizationMode: "apiKey",
+apiKeyAuthorizationMode: {
+  expiresInDays: 30,
+},
+  },
+});
+
+~~~
+
+| | |
+| -- | -- |
+| Hash | `51f55c11c111f5f6` |
+| Covered | ❌ |
+
+##### Covering Regions
+
+- *None*
+
+---
+
+#### [https://docs.amplify.aws/react/build-a-backend/data/custom-business-logic/connect-http-datasource/](https://docs.amplify.aws/react/build-a-backend/data/custom-business-logic/connect-http-datasource/)
+
+##### `amplify/data/resource.ts`
+
+~~~
+import { type ClientSchema, a, defineData } from "@aws-amplify/backend";
+
+const schema = a.schema({
+  Post: a.customType({
+title: a.string(),
+content: a.string(),
+author: a.string().required(),
+  }),
+  getPost: a
+.query()
+.arguments({ id: a.id().required() })
+.returns(a.ref("Post"))
+.authorization((allow) => [allow.publicApiKey()])
+.handler(
+  a.handler.custom({
+    dataSource: "HttpDataSource",
+    entry: "./getPost.js",
+  }),
+),
+});
+
+export type Schema = ClientSchema<typeof schema>;
+
+export const data = defineData({
+  schema,
+  authorizationModes: {
+defaultAuthorizationMode: "apiKey",
+apiKeyAuthorizationMode: {
+  expiresInDays: 30,
+},
+  },
+});
+
+~~~
+
+| | |
+| -- | -- |
+| Hash | `69971cfbd80f236f` |
+| Covered | ❌ |
+
+##### Covering Regions
+
+- *None*
+
+---
+
+#### [https://docs.amplify.aws/react/build-a-backend/data/custom-business-logic/connect-http-datasource/](https://docs.amplify.aws/react/build-a-backend/data/custom-business-logic/connect-http-datasource/)
+
+##### `amplify/data/resource.ts`
+
+~~~
+import { type ClientSchema, a, defineData } from "@aws-amplify/backend";
+
+const schema = a.schema({
+  Post: a.customType({
+title: a.string(),
+content: a.string(),
+author: a.string().required(),
+  }),
+  updatePost: a
+.mutation()
+.arguments({
+  id: a.id().required(),
+  title: a.string(),
+  content: a.string(),
+  author: a.string(),
+})
+.returns(a.ref("Post"))
+.authorization((allow) => [allow.publicApiKey()])
+.handler(
+  a.handler.custom({
+    dataSource: "HttpDataSource",
+    entry: "./updatePost.js",
+  }),
+),
+});
+
+export type Schema = ClientSchema<typeof schema>;
+
+export const data = defineData({
+  schema,
+  authorizationModes: {
+defaultAuthorizationMode: "apiKey",
+apiKeyAuthorizationMode: {
+  expiresInDays: 30,
+},
+  },
+});
+
+~~~
+
+| | |
+| -- | -- |
+| Hash | `ac60f58446239a86` |
+| Covered | ❌ |
+
+##### Covering Regions
+
+- *None*
+
+---
+
+#### [https://docs.amplify.aws/react/build-a-backend/data/custom-business-logic/connect-http-datasource/](https://docs.amplify.aws/react/build-a-backend/data/custom-business-logic/connect-http-datasource/)
+
+##### `amplify/data/resource.ts`
+
+~~~
+import { type ClientSchema, a, defineData } from "@aws-amplify/backend";
+
+const schema = a.schema({
+  Post: a.customType({
+title: a.string(),
+content: a.string(),
+author: a.string().required(),
+  }),
+  deletePost: a
+.mutation()
+.arguments({ id: a.id().required() })
+.returns(a.ref("Post"))
+.authorization((allow) => [allow.publicApiKey()])
+.handler(
+  a.handler.custom({
+    dataSource: "HttpDataSource",
+    entry: "./deletePost.js",
+  }),
+),
+});
+
+export type Schema = ClientSchema<typeof schema>;
+
+export const data = defineData({
+  schema,
+  authorizationModes: {
+defaultAuthorizationMode: "apiKey",
+apiKeyAuthorizationMode: {
+  expiresInDays: 30,
+},
+  },
+});
+
+~~~
+
+| | |
+| -- | -- |
+| Hash | `14260040162c808a` |
+| Covered | ❌ |
+
+##### Covering Regions
+
+- *None*
+
+---
+
+#### [https://docs.amplify.aws/react/build-a-backend/data/custom-business-logic/connect-http-datasource/](https://docs.amplify.aws/react/build-a-backend/data/custom-business-logic/connect-http-datasource/)
+
+##### `amplify/data/addPost.js`
+
+~~~
+import { util } from "@aws-appsync/utils";
+
+export function request(ctx) {
+  return {
+method: "POST",
+resourcePath: "/post",
+params: {
+  headers: {
+    "Content-Type": "application/json",
+  },
+  body: {
+    title: ctx.arguments.title,
+    content: ctx.arguments.content,
+    author: ctx.arguments.author,
+  },
+},
+  };
+}
+
+export function response(ctx) {
+  if (ctx.error) {
+return util.error(ctx.error.message, ctx.error.type);
+  }
+  if (ctx.result.statusCode == 200) {
+return JSON.parse(ctx.result.body).data;
+  } else {
+return util.appendError(ctx.result.body, "ctx.result.statusCode");
+  }
+}
+
+~~~
+
+| | |
+| -- | -- |
+| Hash | `3f15393d6b74ef97` |
+| Covered | ❌ |
+
+##### Covering Regions
+
+- *None*
+
+---
+
+#### [https://docs.amplify.aws/react/build-a-backend/data/custom-business-logic/connect-http-datasource/](https://docs.amplify.aws/react/build-a-backend/data/custom-business-logic/connect-http-datasource/)
+
+##### `amplify/data/getPost.js`
+
+~~~
+import { util } from "@aws-appsync/utils";
+
+export function request(ctx) {
+  return {
+method: "GET",
+resourcePath: "/posts/" + ctx.arguments.id,
+params: {
+  headers: {
+    "Content-Type": "application/json",
+  },
+},
+  };
+}
+
+export function response(ctx) {
+  if (ctx.error) {
+return util.error(ctx.error.message, ctx.error.type);
+  }
+  if (ctx.result.statusCode == 200) {
+return JSON.parse(ctx.result.body).data;
+  } else {
+return util.appendError(ctx.result.body, "ctx.result.statusCode");
+  }
+}
+
+~~~
+
+| | |
+| -- | -- |
+| Hash | `70f5446fe7fb2a8b` |
+| Covered | ❌ |
+
+##### Covering Regions
+
+- *None*
+
+---
+
+#### [https://docs.amplify.aws/react/build-a-backend/data/custom-business-logic/connect-http-datasource/](https://docs.amplify.aws/react/build-a-backend/data/custom-business-logic/connect-http-datasource/)
+
+##### `amplify/data/updatePost.js`
+
+~~~
+import { util } from "@aws-appsync/utils";
+
+export function request(ctx) {
+  return {
+method: "POST",
+resourcePath: "/posts/" + ctx.arguments.id,
+params: {
+  headers: {
+    "Content-Type": "application/json",
+  },
+  body: {
+    title: ctx.arguments.title,
+    content: ctx.arguments.content,
+    author: ctx.arguments.author,
+  },
+},
+  };
+}
+
+export function response(ctx) {
+  if (ctx.error) {
+return util.error(ctx.error.message, ctx.error.type);
+  }
+  if (ctx.result.statusCode == 200) {
+return JSON.parse(ctx.result.body).data;
+  } else {
+return util.appendError(ctx.result.body, "ctx.result.statusCode");
+  }
+}
+
+~~~
+
+| | |
+| -- | -- |
+| Hash | `047316efba4e5444` |
+| Covered | ❌ |
+
+##### Covering Regions
+
+- *None*
+
+---
+
+#### [https://docs.amplify.aws/react/build-a-backend/data/custom-business-logic/connect-http-datasource/](https://docs.amplify.aws/react/build-a-backend/data/custom-business-logic/connect-http-datasource/)
+
+##### `amplify/data/deletePost.js`
+
+~~~
+import { util } from "@aws-appsync/utils";
+
+export function request(ctx) {
+  return {
+method: "DELETE",
+resourcePath: "/posts/" + ctx.arguments.id,
+params: {
+  headers: {
+    "Content-Type": "application/json",
+  },
+},
+  };
+}
+
+export function response(ctx) {
+  if (ctx.error) {
+return util.error(ctx.error.message, ctx.error.type);
+  }
+  if (ctx.result.statusCode == 200) {
+return JSON.parse(ctx.result.body).data;
+  } else {
+return util.appendError(ctx.result.body, "ctx.result.statusCode");
+  }
+}
+
+~~~
+
+| | |
+| -- | -- |
+| Hash | `a3d8554efda4da61` |
+| Covered | ❌ |
+
+##### Covering Regions
+
+- *None*
+
+---
+
+#### [https://docs.amplify.aws/react/build-a-backend/data/custom-business-logic/connect-http-datasource/](https://docs.amplify.aws/react/build-a-backend/data/custom-business-logic/connect-http-datasource/)
+
+##### `App.tsx`
+
+~~~
+const { data, errors } = await client.mutations.updatePost({
+  id: "<post-id>",
+  title: "An Updated Post",
+});
+
+~~~
+
+| | |
+| -- | -- |
+| Hash | `dcf98fc5c5e0514b` |
+| Covered | ❌ |
+
+##### Covering Regions
+
+- *None*
+
+---
+
+#### [https://docs.amplify.aws/react/build-a-backend/data/customize-authz/configure-custom-identity-and-group-claim/](https://docs.amplify.aws/react/build-a-backend/data/customize-authz/configure-custom-identity-and-group-claim/)
+
+##### `amplify/data/resource.ts`
+
+~~~
+import { a, defineData, type ClientSchema } from "@aws-amplify/backend";
+
+const schema = a.schema({
+  Post: a
+.model({
+  id: a.id(),
+  owner: a.string(),
+  postname: a.string(),
+  content: a.string(),
+})
+.authorization((allow) => [
+  allow.owner().identityClaim("user_id"),
+  allow.groups(["Moderator"]).withClaimIn("user_groups"),
+]),
+});
+
+export type Schema = ClientSchema<typeof schema>;
+
+export const data = defineData({ schema });
+
+~~~
+
+| | |
+| -- | -- |
+| Hash | `97e7b3e58b77c840` |
+| Covered | ❌ |
+
+##### Covering Regions
+
+- *None*
+
+---
+
+#### [https://docs.amplify.aws/react/build-a-backend/data/customize-authz/configure-custom-identity-and-group-claim/](https://docs.amplify.aws/react/build-a-backend/data/customize-authz/configure-custom-identity-and-group-claim/)
+
+##### `Unnamed Snippet`
+
+~~~
+import { generateClient } from 'aws-amplify/data';
+import type { Schema } from '../amplify/data/resource'; // Path to your backend resource definition
+
+const client = generateClient<Schema>();
+
+const { errors, data: newTodo } = await client.models.Todo.create(
+  {
+postname: 'My New Post'
+content: 'My post content',
+  },
+  {
+authMode: 'userPool',
+  }
+);
+
+~~~
+
+| | |
+| -- | -- |
+| Hash | `89231235f277e013` |
+| Covered | ❌ |
+
+##### Covering Regions
+
+- *None*
+
+---
+
 #### [https://docs.amplify.aws/react/build-a-backend/data/customize-authz/custom-data-access-patterns/](https://docs.amplify.aws/react/build-a-backend/data/customize-authz/custom-data-access-patterns/)
 
 ##### `amplify/data/resource.ts`
@@ -4775,77 +5567,6 @@ ttlOverride: 300,
 
 ---
 
-#### [https://docs.amplify.aws/react/build-a-backend/data/customize-authz/configure-custom-identity-and-group-claim/](https://docs.amplify.aws/react/build-a-backend/data/customize-authz/configure-custom-identity-and-group-claim/)
-
-##### `amplify/data/resource.ts`
-
-~~~
-import { a, defineData, type ClientSchema } from "@aws-amplify/backend";
-
-const schema = a.schema({
-  Post: a
-.model({
-  id: a.id(),
-  owner: a.string(),
-  postname: a.string(),
-  content: a.string(),
-})
-.authorization((allow) => [
-  allow.owner().identityClaim("user_id"),
-  allow.groups(["Moderator"]).withClaimIn("user_groups"),
-]),
-});
-
-export type Schema = ClientSchema<typeof schema>;
-
-export const data = defineData({ schema });
-
-~~~
-
-| | |
-| -- | -- |
-| Hash | `97e7b3e58b77c840` |
-| Covered | ❌ |
-
-##### Covering Regions
-
-- *None*
-
----
-
-#### [https://docs.amplify.aws/react/build-a-backend/data/customize-authz/configure-custom-identity-and-group-claim/](https://docs.amplify.aws/react/build-a-backend/data/customize-authz/configure-custom-identity-and-group-claim/)
-
-##### `Unnamed Snippet`
-
-~~~
-import { generateClient } from 'aws-amplify/data';
-import type { Schema } from '../amplify/data/resource'; // Path to your backend resource definition
-
-const client = generateClient<Schema>();
-
-const { errors, data: newTodo } = await client.models.Todo.create(
-  {
-postname: 'My New Post'
-content: 'My post content',
-  },
-  {
-authMode: 'userPool',
-  }
-);
-
-~~~
-
-| | |
-| -- | -- |
-| Hash | `89231235f277e013` |
-| Covered | ❌ |
-
-##### Covering Regions
-
-- *None*
-
----
-
 #### [https://docs.amplify.aws/react/build-a-backend/data/customize-authz/grant-lambda-function-access-to-api/](https://docs.amplify.aws/react/build-a-backend/data/customize-authz/grant-lambda-function-access-to-api/)
 
 ##### `amplify/data/resource.ts`
@@ -5035,6 +5756,181 @@ query: listTodos,
 
 ---
 
+#### [https://docs.amplify.aws/react/build-a-backend/data/customize-authz/per-user-per-owner-data-access/](https://docs.amplify.aws/react/build-a-backend/data/customize-authz/per-user-per-owner-data-access/)
+
+##### `amplify/data/resource.ts`
+
+~~~
+// The "owner" of a Todo is allowed to create, read, update, and delete their own todos
+const schema = a.schema({
+  Todo: a
+.model({
+  content: a.string(),
+})
+.authorization((allow) => [allow.owner()]),
+});
+
+~~~
+
+| | |
+| -- | -- |
+| Hash | `c235455cb03a5496` |
+| Covered | ❌ |
+
+##### Covering Regions
+
+- *None*
+
+---
+
+#### [https://docs.amplify.aws/react/build-a-backend/data/customize-authz/per-user-per-owner-data-access/](https://docs.amplify.aws/react/build-a-backend/data/customize-authz/per-user-per-owner-data-access/)
+
+##### `amplify/data/resource.ts`
+
+~~~
+// The "owner" of a Todo record is only allowed to create, read, and update it.
+// The "owner" of a Todo record is denied to delete it.
+const schema = a.schema({
+  Todo: a
+.model({
+  content: a.string(),
+})
+.authorization((allow) => [allow.owner().to(["create", "read", "update"])]),
+});
+
+~~~
+
+| | |
+| -- | -- |
+| Hash | `4d68a311e1ae39ec` |
+| Covered | ❌ |
+
+##### Covering Regions
+
+- *None*
+
+---
+
+#### [https://docs.amplify.aws/react/build-a-backend/data/customize-authz/per-user-per-owner-data-access/](https://docs.amplify.aws/react/build-a-backend/data/customize-authz/per-user-per-owner-data-access/)
+
+##### `Unnamed Snippet`
+
+~~~
+import { generateClient } from "aws-amplify/data";
+import type { Schema } from "../amplify/data/resource"; // Path to your backend resource definition
+
+const client = generateClient<Schema>();
+
+const { errors, data: newTodo } = await client.models.Todo.create(
+  {
+content: "My new todo",
+  },
+  {
+authMode: "userPool",
+  },
+);
+
+~~~
+
+| | |
+| -- | -- |
+| Hash | `b73cd93b7f81ba2a` |
+| Covered | ❌ |
+
+##### Covering Regions
+
+- *None*
+
+---
+
+#### [https://docs.amplify.aws/react/build-a-backend/data/customize-authz/signed-in-user-data-access/](https://docs.amplify.aws/react/build-a-backend/data/customize-authz/signed-in-user-data-access/)
+
+##### `Unnamed Snippet`
+
+~~~
+import { generateClient } from "aws-amplify/data";
+import type { Schema } from "../amplify/data/resource"; // Path to your backend resource definition
+
+const client = generateClient<Schema>();
+
+const { errors, data: newTodo } = await client.models.Todo.create(
+  {
+content: "My new todo",
+  },
+  {
+authMode: "userPool",
+  },
+);
+
+~~~
+
+| | |
+| -- | -- |
+| Hash | `b73cd93b7f81ba2a` |
+| Covered | ❌ |
+
+##### Covering Regions
+
+- *None*
+
+---
+
+#### [https://docs.amplify.aws/react/build-a-backend/data/customize-authz/per-user-per-owner-data-access/](https://docs.amplify.aws/react/build-a-backend/data/customize-authz/per-user-per-owner-data-access/)
+
+##### `Unnamed Snippet`
+
+~~~
+const schema = a.schema({
+  Todo: a
+.model({
+  content: a.string(),
+  owner: a
+    .string()
+    .authorization((allow) => [allow.owner().to(["read", "delete"])]),
+})
+.authorization((allow) => [allow.owner()]),
+});
+
+~~~
+
+| | |
+| -- | -- |
+| Hash | `82938d1493598d00` |
+| Covered | ❌ |
+
+##### Covering Regions
+
+- *None*
+
+---
+
+#### [https://docs.amplify.aws/react/build-a-backend/data/customize-authz/per-user-per-owner-data-access/](https://docs.amplify.aws/react/build-a-backend/data/customize-authz/per-user-per-owner-data-access/)
+
+##### `Unnamed Snippet`
+
+~~~
+const schema = a.schema({
+  Todo: a
+.model({
+  content: a.string(),
+  author: a.string(), // record owner information now stored in "author" field
+})
+.authorization((allow) => [allow.ownerDefinedIn("author")]),
+});
+
+~~~
+
+| | |
+| -- | -- |
+| Hash | `f726c21f04df30d2` |
+| Covered | ❌ |
+
+##### Covering Regions
+
+- *None*
+
+---
+
 #### [https://docs.amplify.aws/react/build-a-backend/data/customize-authz/multi-user-data-access/](https://docs.amplify.aws/react/build-a-backend/data/customize-authz/multi-user-data-access/)
 
 ##### `amplify/data/resource.ts`
@@ -5142,6 +6038,228 @@ const schema = a.schema({
 | | |
 | -- | -- |
 | Hash | `e980f738c085ac2f` |
+| Covered | ❌ |
+
+##### Covering Regions
+
+- *None*
+
+---
+
+#### [https://docs.amplify.aws/react/build-a-backend/data/customize-authz/user-group-based-data-access/](https://docs.amplify.aws/react/build-a-backend/data/customize-authz/user-group-based-data-access/)
+
+##### `amplify/data/resource.ts`
+
+~~~
+// allow one specific group
+const schema = a.schema({
+  Salary: a
+.model({
+  wage: a.float(),
+  currency: a.string(),
+})
+.authorization((allow) => [allow.group("Admin")]),
+});
+
+~~~
+
+| | |
+| -- | -- |
+| Hash | `3558bb1b245a4672` |
+| Covered | ❌ |
+
+##### Covering Regions
+
+- *None*
+
+---
+
+#### [https://docs.amplify.aws/react/build-a-backend/data/customize-authz/user-group-based-data-access/](https://docs.amplify.aws/react/build-a-backend/data/customize-authz/user-group-based-data-access/)
+
+##### `Unnamed Snippet`
+
+~~~
+import { generateClient } from "aws-amplify/data";
+import type { Schema } from "../amplify/data/resource"; // Path to your backend resource definition
+
+const client = generateClient<Schema>();
+
+// As a signed-in user that belongs to the 'Admin' User Pool Group
+const { errors, data: newSalary } = await client.models.Salary.create(
+  {
+wage: 50.25,
+currency: "USD",
+  },
+  {
+authMode: "userPool",
+  },
+);
+
+~~~
+
+| | |
+| -- | -- |
+| Hash | `573fd6a09fd9031f` |
+| Covered | ❌ |
+
+##### Covering Regions
+
+- *None*
+
+---
+
+#### [https://docs.amplify.aws/react/build-a-backend/data/customize-authz/user-group-based-data-access/](https://docs.amplify.aws/react/build-a-backend/data/customize-authz/user-group-based-data-access/)
+
+##### `Unnamed Snippet`
+
+~~~
+// allow multiple specific groups
+const schema = a.schema({
+  Salary: a
+.model({
+  wage: a.float(),
+  currency: a.string(),
+})
+.authorization((allow) => [allow.groups(["Admin", "Leadership"])]),
+});
+
+~~~
+
+| | |
+| -- | -- |
+| Hash | `17dfb540da28c8b0` |
+| Covered | ❌ |
+
+##### Covering Regions
+
+- *None*
+
+---
+
+#### [https://docs.amplify.aws/react/build-a-backend/data/customize-authz/user-group-based-data-access/](https://docs.amplify.aws/react/build-a-backend/data/customize-authz/user-group-based-data-access/)
+
+##### `Unnamed Snippet`
+
+~~~
+// Dynamic group authorization with multiple groups
+const schema = a.schema({
+  Post: a
+.model({
+  title: a.string(),
+  groups: a.string().array(),
+})
+.authorization((allow) => [allow.groupsDefinedIn("groups")]),
+});
+
+~~~
+
+| | |
+| -- | -- |
+| Hash | `bf7dbedd18de6bb0` |
+| Covered | ❌ |
+
+##### Covering Regions
+
+- *None*
+
+---
+
+#### [https://docs.amplify.aws/react/build-a-backend/data/customize-authz/user-group-based-data-access/](https://docs.amplify.aws/react/build-a-backend/data/customize-authz/user-group-based-data-access/)
+
+##### `Unnamed Snippet`
+
+~~~
+// Dynamic group authorization with a single group
+const schema = a.schema({
+  Post: a
+.model({
+  title: a.string(),
+  group: a.string(),
+})
+.authorization((allow) => [allow.groupDefinedIn("group")]),
+});
+
+~~~
+
+| | |
+| -- | -- |
+| Hash | `d1d464b81fe796a2` |
+| Covered | ❌ |
+
+##### Covering Regions
+
+- *None*
+
+---
+
+#### [https://docs.amplify.aws/react/build-a-backend/data/customize-authz/using-oidc-authorization-provider/](https://docs.amplify.aws/react/build-a-backend/data/customize-authz/using-oidc-authorization-provider/)
+
+##### `amplify/data/resource.ts`
+
+~~~
+// amplify/data/resource.ts
+import { a, defineData, type ClientSchema } from "@aws-amplify/backend";
+
+const schema = a.schema({
+  Todo: a
+.model({
+  content: a.string(),
+})
+.authorization((allow) => [
+  allow.owner("oidc").identityClaim("user_id"),
+  allow.authenticated("oidc"),
+  allow.groups(["testGroupName"], "oidc").withClaimIn("user_groups"),
+]),
+});
+
+export type Schema = ClientSchema<typeof schema>;
+
+export const data = defineData({
+  schema,
+  authorizationModes: {
+defaultAuthorizationMode: "oidc",
+oidcAuthorizationMode: {
+  oidcProviderName: "oidc-provider-name",
+  oidcIssuerUrl: "https://example.com",
+  clientId: "client-id",
+  tokenExpiryFromAuthInSeconds: 300,
+  tokenExpireFromIssueInSeconds: 600,
+},
+  },
+});
+
+~~~
+
+| | |
+| -- | -- |
+| Hash | `69256d377eecea21` |
+| Covered | ❌ |
+
+##### Covering Regions
+
+- *None*
+
+---
+
+#### [https://docs.amplify.aws/react/build-a-backend/data/customize-authz/using-oidc-authorization-provider/](https://docs.amplify.aws/react/build-a-backend/data/customize-authz/using-oidc-authorization-provider/)
+
+##### `Unnamed Snippet`
+
+~~~
+import { generateClient } from "aws-amplify/data";
+import type { Schema } from "../amplify/data/resource"; // Path to your backend resource definition
+
+const client = generateClient<Schema>();
+
+const { errors, data: todos } = await client.models.Todo.list({
+  authMode: "oidc",
+});
+
+~~~
+
+| | |
+| -- | -- |
+| Hash | `565011bb938244a7` |
 | Covered | ❌ |
 
 ##### Covering Regions
@@ -5359,70 +6477,6 @@ const schema = a.schema({
 
 #### [https://docs.amplify.aws/react/build-a-backend/data/customize-authz/signed-in-user-data-access/](https://docs.amplify.aws/react/build-a-backend/data/customize-authz/signed-in-user-data-access/)
 
-##### `Unnamed Snippet`
-
-~~~
-import { generateClient } from "aws-amplify/data";
-import type { Schema } from "../amplify/data/resource"; // Path to your backend resource definition
-
-const client = generateClient<Schema>();
-
-const { errors, data: newTodo } = await client.models.Todo.create(
-  {
-content: "My new todo",
-  },
-  {
-authMode: "userPool",
-  },
-);
-
-~~~
-
-| | |
-| -- | -- |
-| Hash | `b73cd93b7f81ba2a` |
-| Covered | ❌ |
-
-##### Covering Regions
-
-- *None*
-
----
-
-#### [https://docs.amplify.aws/react/build-a-backend/data/customize-authz/per-user-per-owner-data-access/](https://docs.amplify.aws/react/build-a-backend/data/customize-authz/per-user-per-owner-data-access/)
-
-##### `Unnamed Snippet`
-
-~~~
-import { generateClient } from "aws-amplify/data";
-import type { Schema } from "../amplify/data/resource"; // Path to your backend resource definition
-
-const client = generateClient<Schema>();
-
-const { errors, data: newTodo } = await client.models.Todo.create(
-  {
-content: "My new todo",
-  },
-  {
-authMode: "userPool",
-  },
-);
-
-~~~
-
-| | |
-| -- | -- |
-| Hash | `b73cd93b7f81ba2a` |
-| Covered | ❌ |
-
-##### Covering Regions
-
-- *None*
-
----
-
-#### [https://docs.amplify.aws/react/build-a-backend/data/customize-authz/signed-in-user-data-access/](https://docs.amplify.aws/react/build-a-backend/data/customize-authz/signed-in-user-data-access/)
-
 ##### `amplify/data/resource.ts`
 
 ~~~
@@ -5439,339 +6493,6 @@ const schema = a.schema({
 | | |
 | -- | -- |
 | Hash | `b9b26cd28edf59b6` |
-| Covered | ❌ |
-
-##### Covering Regions
-
-- *None*
-
----
-
-#### [https://docs.amplify.aws/react/build-a-backend/data/customize-authz/using-oidc-authorization-provider/](https://docs.amplify.aws/react/build-a-backend/data/customize-authz/using-oidc-authorization-provider/)
-
-##### `amplify/data/resource.ts`
-
-~~~
-// amplify/data/resource.ts
-import { a, defineData, type ClientSchema } from "@aws-amplify/backend";
-
-const schema = a.schema({
-  Todo: a
-.model({
-  content: a.string(),
-})
-.authorization((allow) => [
-  allow.owner("oidc").identityClaim("user_id"),
-  allow.authenticated("oidc"),
-  allow.groups(["testGroupName"], "oidc").withClaimIn("user_groups"),
-]),
-});
-
-export type Schema = ClientSchema<typeof schema>;
-
-export const data = defineData({
-  schema,
-  authorizationModes: {
-defaultAuthorizationMode: "oidc",
-oidcAuthorizationMode: {
-  oidcProviderName: "oidc-provider-name",
-  oidcIssuerUrl: "https://example.com",
-  clientId: "client-id",
-  tokenExpiryFromAuthInSeconds: 300,
-  tokenExpireFromIssueInSeconds: 600,
-},
-  },
-});
-
-~~~
-
-| | |
-| -- | -- |
-| Hash | `69256d377eecea21` |
-| Covered | ❌ |
-
-##### Covering Regions
-
-- *None*
-
----
-
-#### [https://docs.amplify.aws/react/build-a-backend/data/customize-authz/using-oidc-authorization-provider/](https://docs.amplify.aws/react/build-a-backend/data/customize-authz/using-oidc-authorization-provider/)
-
-##### `Unnamed Snippet`
-
-~~~
-import { generateClient } from "aws-amplify/data";
-import type { Schema } from "../amplify/data/resource"; // Path to your backend resource definition
-
-const client = generateClient<Schema>();
-
-const { errors, data: todos } = await client.models.Todo.list({
-  authMode: "oidc",
-});
-
-~~~
-
-| | |
-| -- | -- |
-| Hash | `565011bb938244a7` |
-| Covered | ❌ |
-
-##### Covering Regions
-
-- *None*
-
----
-
-#### [https://docs.amplify.aws/react/build-a-backend/data/customize-authz/user-group-based-data-access/](https://docs.amplify.aws/react/build-a-backend/data/customize-authz/user-group-based-data-access/)
-
-##### `amplify/data/resource.ts`
-
-~~~
-// allow one specific group
-const schema = a.schema({
-  Salary: a
-.model({
-  wage: a.float(),
-  currency: a.string(),
-})
-.authorization((allow) => [allow.group("Admin")]),
-});
-
-~~~
-
-| | |
-| -- | -- |
-| Hash | `3558bb1b245a4672` |
-| Covered | ❌ |
-
-##### Covering Regions
-
-- *None*
-
----
-
-#### [https://docs.amplify.aws/react/build-a-backend/data/customize-authz/user-group-based-data-access/](https://docs.amplify.aws/react/build-a-backend/data/customize-authz/user-group-based-data-access/)
-
-##### `Unnamed Snippet`
-
-~~~
-import { generateClient } from "aws-amplify/data";
-import type { Schema } from "../amplify/data/resource"; // Path to your backend resource definition
-
-const client = generateClient<Schema>();
-
-// As a signed-in user that belongs to the 'Admin' User Pool Group
-const { errors, data: newSalary } = await client.models.Salary.create(
-  {
-wage: 50.25,
-currency: "USD",
-  },
-  {
-authMode: "userPool",
-  },
-);
-
-~~~
-
-| | |
-| -- | -- |
-| Hash | `573fd6a09fd9031f` |
-| Covered | ❌ |
-
-##### Covering Regions
-
-- *None*
-
----
-
-#### [https://docs.amplify.aws/react/build-a-backend/data/customize-authz/user-group-based-data-access/](https://docs.amplify.aws/react/build-a-backend/data/customize-authz/user-group-based-data-access/)
-
-##### `Unnamed Snippet`
-
-~~~
-// allow multiple specific groups
-const schema = a.schema({
-  Salary: a
-.model({
-  wage: a.float(),
-  currency: a.string(),
-})
-.authorization((allow) => [allow.groups(["Admin", "Leadership"])]),
-});
-
-~~~
-
-| | |
-| -- | -- |
-| Hash | `17dfb540da28c8b0` |
-| Covered | ❌ |
-
-##### Covering Regions
-
-- *None*
-
----
-
-#### [https://docs.amplify.aws/react/build-a-backend/data/customize-authz/user-group-based-data-access/](https://docs.amplify.aws/react/build-a-backend/data/customize-authz/user-group-based-data-access/)
-
-##### `Unnamed Snippet`
-
-~~~
-// Dynamic group authorization with multiple groups
-const schema = a.schema({
-  Post: a
-.model({
-  title: a.string(),
-  groups: a.string().array(),
-})
-.authorization((allow) => [allow.groupsDefinedIn("groups")]),
-});
-
-~~~
-
-| | |
-| -- | -- |
-| Hash | `bf7dbedd18de6bb0` |
-| Covered | ❌ |
-
-##### Covering Regions
-
-- *None*
-
----
-
-#### [https://docs.amplify.aws/react/build-a-backend/data/customize-authz/user-group-based-data-access/](https://docs.amplify.aws/react/build-a-backend/data/customize-authz/user-group-based-data-access/)
-
-##### `Unnamed Snippet`
-
-~~~
-// Dynamic group authorization with a single group
-const schema = a.schema({
-  Post: a
-.model({
-  title: a.string(),
-  group: a.string(),
-})
-.authorization((allow) => [allow.groupDefinedIn("group")]),
-});
-
-~~~
-
-| | |
-| -- | -- |
-| Hash | `d1d464b81fe796a2` |
-| Covered | ❌ |
-
-##### Covering Regions
-
-- *None*
-
----
-
-#### [https://docs.amplify.aws/react/build-a-backend/data/customize-authz/per-user-per-owner-data-access/](https://docs.amplify.aws/react/build-a-backend/data/customize-authz/per-user-per-owner-data-access/)
-
-##### `amplify/data/resource.ts`
-
-~~~
-// The "owner" of a Todo is allowed to create, read, update, and delete their own todos
-const schema = a.schema({
-  Todo: a
-.model({
-  content: a.string(),
-})
-.authorization((allow) => [allow.owner()]),
-});
-
-~~~
-
-| | |
-| -- | -- |
-| Hash | `c235455cb03a5496` |
-| Covered | ❌ |
-
-##### Covering Regions
-
-- *None*
-
----
-
-#### [https://docs.amplify.aws/react/build-a-backend/data/customize-authz/per-user-per-owner-data-access/](https://docs.amplify.aws/react/build-a-backend/data/customize-authz/per-user-per-owner-data-access/)
-
-##### `amplify/data/resource.ts`
-
-~~~
-// The "owner" of a Todo record is only allowed to create, read, and update it.
-// The "owner" of a Todo record is denied to delete it.
-const schema = a.schema({
-  Todo: a
-.model({
-  content: a.string(),
-})
-.authorization((allow) => [allow.owner().to(["create", "read", "update"])]),
-});
-
-~~~
-
-| | |
-| -- | -- |
-| Hash | `4d68a311e1ae39ec` |
-| Covered | ❌ |
-
-##### Covering Regions
-
-- *None*
-
----
-
-#### [https://docs.amplify.aws/react/build-a-backend/data/customize-authz/per-user-per-owner-data-access/](https://docs.amplify.aws/react/build-a-backend/data/customize-authz/per-user-per-owner-data-access/)
-
-##### `Unnamed Snippet`
-
-~~~
-const schema = a.schema({
-  Todo: a
-.model({
-  content: a.string(),
-  owner: a
-    .string()
-    .authorization((allow) => [allow.owner().to(["read", "delete"])]),
-})
-.authorization((allow) => [allow.owner()]),
-});
-
-~~~
-
-| | |
-| -- | -- |
-| Hash | `82938d1493598d00` |
-| Covered | ❌ |
-
-##### Covering Regions
-
-- *None*
-
----
-
-#### [https://docs.amplify.aws/react/build-a-backend/data/customize-authz/per-user-per-owner-data-access/](https://docs.amplify.aws/react/build-a-backend/data/customize-authz/per-user-per-owner-data-access/)
-
-##### `Unnamed Snippet`
-
-~~~
-const schema = a.schema({
-  Todo: a
-.model({
-  content: a.string(),
-  author: a.string(), // record owner information now stored in "author" field
-})
-.authorization((allow) => [allow.ownerDefinedIn("author")]),
-});
-
-~~~
-
-| | |
-| -- | -- |
-| Hash | `f726c21f04df30d2` |
 | Covered | ❌ |
 
 ##### Covering Regions
@@ -6027,6 +6748,173 @@ const { data: listPostsResult, errors } = await client.models.Post.list({
 
 ---
 
+#### [https://docs.amplify.aws/react/build-a-backend/data/data-modeling/identifiers/](https://docs.amplify.aws/react/build-a-backend/data/data-modeling/identifiers/)
+
+##### `Unnamed Snippet`
+
+~~~
+const schema = a.schema({
+  Todo: a
+.model({
+  content: a.string(),
+  completed: a.boolean(),
+})
+.authorization((allow) => [allow.publicApiKey()]),
+});
+
+~~~
+
+| | |
+| -- | -- |
+| Hash | `93fbc94ef4f108d8` |
+| Covered | ❌ |
+
+##### Covering Regions
+
+- *None*
+
+---
+
+#### [https://docs.amplify.aws/react/build-a-backend/data/data-modeling/identifiers/](https://docs.amplify.aws/react/build-a-backend/data/data-modeling/identifiers/)
+
+##### `Unnamed Snippet`
+
+~~~
+const client = generateClient<Schema>();
+
+const todo = await client.models.Todo.create({
+  content: "Buy Milk",
+  completed: false,
+});
+console.log(`New Todo created: ${todo.id}`); // New Todo created: 5DB6B4CC-CD41-49F5-9844-57C0AB506B69
+
+~~~
+
+| | |
+| -- | -- |
+| Hash | `95716a52d6270a63` |
+| Covered | ❌ |
+
+##### Covering Regions
+
+- *None*
+
+---
+
+#### [https://docs.amplify.aws/react/build-a-backend/data/data-modeling/identifiers/](https://docs.amplify.aws/react/build-a-backend/data/data-modeling/identifiers/)
+
+##### `Unnamed Snippet`
+
+~~~
+const schema = a.schema({
+  Todo: a
+.model({
+  todoId: a.id().required(),
+  content: a.string(),
+  completed: a.boolean(),
+})
+.identifier(["todoId"])
+.authorization((allow) => [allow.publicApiKey()]),
+});
+
+~~~
+
+| | |
+| -- | -- |
+| Hash | `d619a12c5b9f68b2` |
+| Covered | ❌ |
+
+##### Covering Regions
+
+- *None*
+
+---
+
+#### [https://docs.amplify.aws/react/build-a-backend/data/data-modeling/identifiers/](https://docs.amplify.aws/react/build-a-backend/data/data-modeling/identifiers/)
+
+##### `Unnamed Snippet`
+
+~~~
+const client = generateClient<Schema>();
+
+const { data: todo, errors } = await client.models.Todo.create({
+  todoId: "MyUniqueTodoId",
+  content: "Buy Milk",
+  completed: false,
+});
+console.log(`New Todo created: ${todo.todoId}`); // New Todo created: MyUniqueTodoId
+
+~~~
+
+| | |
+| -- | -- |
+| Hash | `6ffb6c45060a39f9` |
+| Covered | ❌ |
+
+##### Covering Regions
+
+- *None*
+
+---
+
+#### [https://docs.amplify.aws/react/build-a-backend/data/data-modeling/identifiers/](https://docs.amplify.aws/react/build-a-backend/data/data-modeling/identifiers/)
+
+##### `Unnamed Snippet`
+
+~~~
+const schema = a.schema({
+  StoreBranch: a
+.model({
+  geoId: a.id().required(),
+  name: a.string().required(),
+  country: a.string(),
+  state: a.string(),
+  city: a.string(),
+  zipCode: a.string(),
+  streetAddress: a.string(),
+})
+.identifier(["geoId", "name"])
+.authorization((allow) => [allow.publicApiKey()]),
+});
+
+~~~
+
+| | |
+| -- | -- |
+| Hash | `dc84893fe413f132` |
+| Covered | ❌ |
+
+##### Covering Regions
+
+- *None*
+
+---
+
+#### [https://docs.amplify.aws/react/build-a-backend/data/data-modeling/identifiers/](https://docs.amplify.aws/react/build-a-backend/data/data-modeling/identifiers/)
+
+##### `Unnamed Snippet`
+
+~~~
+const client = generateClient<Schema>();
+
+const branch = await client.models.StoreBranch.get({
+  geoId: "123",
+  name: "Downtown",
+}); // All identifier fields are required when retrieving an item
+
+~~~
+
+| | |
+| -- | -- |
+| Hash | `7a1fb3aa2c192ea3` |
+| Covered | ❌ |
+
+##### Covering Regions
+
+- *None*
+
+---
+
 #### [https://docs.amplify.aws/react/build-a-backend/data/data-modeling/secondary-index/](https://docs.amplify.aws/react/build-a-backend/data/data-modeling/secondary-index/)
 
 ##### `amplify/data/resource.ts`
@@ -6217,173 +7105,6 @@ const schema = a.schema({
 | | |
 | -- | -- |
 | Hash | `295dee0505f4abd0` |
-| Covered | ❌ |
-
-##### Covering Regions
-
-- *None*
-
----
-
-#### [https://docs.amplify.aws/react/build-a-backend/data/data-modeling/identifiers/](https://docs.amplify.aws/react/build-a-backend/data/data-modeling/identifiers/)
-
-##### `Unnamed Snippet`
-
-~~~
-const schema = a.schema({
-  Todo: a
-.model({
-  content: a.string(),
-  completed: a.boolean(),
-})
-.authorization((allow) => [allow.publicApiKey()]),
-});
-
-~~~
-
-| | |
-| -- | -- |
-| Hash | `93fbc94ef4f108d8` |
-| Covered | ❌ |
-
-##### Covering Regions
-
-- *None*
-
----
-
-#### [https://docs.amplify.aws/react/build-a-backend/data/data-modeling/identifiers/](https://docs.amplify.aws/react/build-a-backend/data/data-modeling/identifiers/)
-
-##### `Unnamed Snippet`
-
-~~~
-const client = generateClient<Schema>();
-
-const todo = await client.models.Todo.create({
-  content: "Buy Milk",
-  completed: false,
-});
-console.log(`New Todo created: ${todo.id}`); // New Todo created: 5DB6B4CC-CD41-49F5-9844-57C0AB506B69
-
-~~~
-
-| | |
-| -- | -- |
-| Hash | `95716a52d6270a63` |
-| Covered | ❌ |
-
-##### Covering Regions
-
-- *None*
-
----
-
-#### [https://docs.amplify.aws/react/build-a-backend/data/data-modeling/identifiers/](https://docs.amplify.aws/react/build-a-backend/data/data-modeling/identifiers/)
-
-##### `Unnamed Snippet`
-
-~~~
-const schema = a.schema({
-  Todo: a
-.model({
-  todoId: a.id().required(),
-  content: a.string(),
-  completed: a.boolean(),
-})
-.identifier(["todoId"])
-.authorization((allow) => [allow.publicApiKey()]),
-});
-
-~~~
-
-| | |
-| -- | -- |
-| Hash | `d619a12c5b9f68b2` |
-| Covered | ❌ |
-
-##### Covering Regions
-
-- *None*
-
----
-
-#### [https://docs.amplify.aws/react/build-a-backend/data/data-modeling/identifiers/](https://docs.amplify.aws/react/build-a-backend/data/data-modeling/identifiers/)
-
-##### `Unnamed Snippet`
-
-~~~
-const client = generateClient<Schema>();
-
-const { data: todo, errors } = await client.models.Todo.create({
-  todoId: "MyUniqueTodoId",
-  content: "Buy Milk",
-  completed: false,
-});
-console.log(`New Todo created: ${todo.todoId}`); // New Todo created: MyUniqueTodoId
-
-~~~
-
-| | |
-| -- | -- |
-| Hash | `6ffb6c45060a39f9` |
-| Covered | ❌ |
-
-##### Covering Regions
-
-- *None*
-
----
-
-#### [https://docs.amplify.aws/react/build-a-backend/data/data-modeling/identifiers/](https://docs.amplify.aws/react/build-a-backend/data/data-modeling/identifiers/)
-
-##### `Unnamed Snippet`
-
-~~~
-const schema = a.schema({
-  StoreBranch: a
-.model({
-  geoId: a.id().required(),
-  name: a.string().required(),
-  country: a.string(),
-  state: a.string(),
-  city: a.string(),
-  zipCode: a.string(),
-  streetAddress: a.string(),
-})
-.identifier(["geoId", "name"])
-.authorization((allow) => [allow.publicApiKey()]),
-});
-
-~~~
-
-| | |
-| -- | -- |
-| Hash | `dc84893fe413f132` |
-| Covered | ❌ |
-
-##### Covering Regions
-
-- *None*
-
----
-
-#### [https://docs.amplify.aws/react/build-a-backend/data/data-modeling/identifiers/](https://docs.amplify.aws/react/build-a-backend/data/data-modeling/identifiers/)
-
-##### `Unnamed Snippet`
-
-~~~
-const client = generateClient<Schema>();
-
-const branch = await client.models.StoreBranch.get({
-  geoId: "123",
-  name: "Downtown",
-}); // All identifier fields are required when retrieving an item
-
-~~~
-
-| | |
-| -- | -- |
-| Hash | `7a1fb3aa2c192ea3` |
 | Covered | ❌ |
 
 ##### Covering Regions
@@ -6959,6 +7680,125 @@ dataResources.cfnResources.amplifyDynamoDbTables[
 | | |
 | -- | -- |
 | Hash | `4acf111e12150874` |
+| Covered | ❌ |
+
+##### Covering Regions
+
+- *None*
+
+---
+
+#### [https://docs.amplify.aws/react/build-a-backend/functions/examples/add-user-to-group/](https://docs.amplify.aws/react/build-a-backend/functions/examples/add-user-to-group/)
+
+##### `Terminal`
+
+~~~
+npm add --save-dev @aws-sdk/client-cognito-identity-provider @types/aws-lambda
+
+~~~
+
+| | |
+| -- | -- |
+| Hash | `0a23d15d6d404548` |
+| Covered | ❌ |
+
+##### Covering Regions
+
+- *None*
+
+---
+
+#### [https://docs.amplify.aws/react/build-a-backend/functions/examples/add-user-to-group/](https://docs.amplify.aws/react/build-a-backend/functions/examples/add-user-to-group/)
+
+##### `amplify/auth/post-confirmation/resource.ts`
+
+~~~
+import { defineFunction } from "@aws-amplify/backend";
+
+export const postConfirmation = defineFunction({
+  name: "post-confirmation",
+  // optionally define an environment variable for your group name
+  environment: {
+GROUP_NAME: "EVERYONE",
+  },
+});
+
+~~~
+
+| | |
+| -- | -- |
+| Hash | `313f2159dfd10f36` |
+| Covered | ❌ |
+
+##### Covering Regions
+
+- *None*
+
+---
+
+#### [https://docs.amplify.aws/react/build-a-backend/functions/examples/add-user-to-group/](https://docs.amplify.aws/react/build-a-backend/functions/examples/add-user-to-group/)
+
+##### `amplify/auth/resource.ts`
+
+~~~
+import { defineAuth } from "@aws-amplify/backend";
+import { postConfirmation } from "./post-confirmation/resource";
+
+export const auth = defineAuth({
+  loginWith: {
+email: true,
+  },
+  groups: ["EVERYONE"],
+  triggers: {
+postConfirmation,
+  },
+  access: (allow) => [allow.resource(postConfirmation).to(["addUserToGroup"])],
+});
+
+~~~
+
+| | |
+| -- | -- |
+| Hash | `a33e0d803731568b` |
+| Covered | ❌ |
+
+##### Covering Regions
+
+- *None*
+
+---
+
+#### [https://docs.amplify.aws/react/build-a-backend/functions/examples/add-user-to-group/](https://docs.amplify.aws/react/build-a-backend/functions/examples/add-user-to-group/)
+
+##### `amplify/auth/post-confirmation/handler.ts`
+
+~~~
+import type { PostConfirmationTriggerHandler } from "aws-lambda";
+import {
+  CognitoIdentityProviderClient,
+  AdminAddUserToGroupCommand,
+} from "@aws-sdk/client-cognito-identity-provider";
+import { env } from "$amplify/env/post-confirmation";
+
+const client = new CognitoIdentityProviderClient();
+
+// add user to group
+export const handler: PostConfirmationTriggerHandler = async (event) => {
+  const command = new AdminAddUserToGroupCommand({
+GroupName: env.GROUP_NAME,
+Username: event.userName,
+UserPoolId: event.userPoolId,
+  });
+  const response = await client.send(command);
+  console.log("processed", response.$metadata.requestId);
+  return event;
+};
+
+~~~
+
+| | |
+| -- | -- |
+| Hash | `c6ed8737a194d963` |
 | Covered | ❌ |
 
 ##### Covering Regions
@@ -7626,93 +8466,6 @@ verifyAuthChallengeResponse,
 
 ---
 
-#### [https://docs.amplify.aws/react/build-a-backend/functions/examples/custom-message/](https://docs.amplify.aws/react/build-a-backend/functions/examples/custom-message/)
-
-##### `amplify/auth/custom-message/resource.ts`
-
-~~~
-import { defineFunction } from "@aws-amplify/backend";
-
-export const customMessage = defineFunction({
-  name: "custom-message",
-});
-
-~~~
-
-| | |
-| -- | -- |
-| Hash | `b9f42270438de5a4` |
-| Covered | ❌ |
-
-##### Covering Regions
-
-- *None*
-
----
-
-#### [https://docs.amplify.aws/react/build-a-backend/functions/examples/custom-message/](https://docs.amplify.aws/react/build-a-backend/functions/examples/custom-message/)
-
-##### `amplify/auth/custom-message/handler.ts`
-
-~~~
-import type { CustomMessageTriggerHandler } from "aws-lambda";
-
-export const handler: CustomMessageTriggerHandler = async (event) => {
-  if (event.triggerSource === "CustomMessage_ForgotPassword") {
-const locale = event.request.userAttributes["locale"];
-if (locale === "en") {
-  event.response.emailMessage = `Your new one-time code is ${event.request.codeParameter}`;
-  event.response.emailSubject = "Reset my password";
-} else if (locale === "es") {
-  event.response.emailMessage = `Tu nuevo código de un solo uso es ${event.request.codeParameter}`;
-  event.response.emailSubject = "Restablecer mi contraseña";
-}
-  }
-
-  return event;
-};
-
-~~~
-
-| | |
-| -- | -- |
-| Hash | `94344039cff6638a` |
-| Covered | ❌ |
-
-##### Covering Regions
-
-- *None*
-
----
-
-#### [https://docs.amplify.aws/react/build-a-backend/functions/examples/custom-message/](https://docs.amplify.aws/react/build-a-backend/functions/examples/custom-message/)
-
-##### `amplify/auth/resource.ts`
-
-~~~
-import { defineAuth } from "@aws-amplify/backend";
-import { customMessage } from "./custom-message/resource";
-
-export const auth = defineAuth({
-  // ...
-  triggers: {
-customMessage,
-  },
-});
-
-~~~
-
-| | |
-| -- | -- |
-| Hash | `9475e9c0f178a185` |
-| Covered | ❌ |
-
-##### Covering Regions
-
-- *None*
-
----
-
 #### [https://docs.amplify.aws/react/build-a-backend/functions/examples/dynamo-db-stream/](https://docs.amplify.aws/react/build-a-backend/functions/examples/dynamo-db-stream/)
 
 ##### `Terminal`
@@ -7857,6 +8610,93 @@ mapping.node.addDependency(policy);
 | | |
 | -- | -- |
 | Hash | `c1748580a80e9b2c` |
+| Covered | ❌ |
+
+##### Covering Regions
+
+- *None*
+
+---
+
+#### [https://docs.amplify.aws/react/build-a-backend/functions/examples/custom-message/](https://docs.amplify.aws/react/build-a-backend/functions/examples/custom-message/)
+
+##### `amplify/auth/custom-message/resource.ts`
+
+~~~
+import { defineFunction } from "@aws-amplify/backend";
+
+export const customMessage = defineFunction({
+  name: "custom-message",
+});
+
+~~~
+
+| | |
+| -- | -- |
+| Hash | `b9f42270438de5a4` |
+| Covered | ❌ |
+
+##### Covering Regions
+
+- *None*
+
+---
+
+#### [https://docs.amplify.aws/react/build-a-backend/functions/examples/custom-message/](https://docs.amplify.aws/react/build-a-backend/functions/examples/custom-message/)
+
+##### `amplify/auth/custom-message/handler.ts`
+
+~~~
+import type { CustomMessageTriggerHandler } from "aws-lambda";
+
+export const handler: CustomMessageTriggerHandler = async (event) => {
+  if (event.triggerSource === "CustomMessage_ForgotPassword") {
+const locale = event.request.userAttributes["locale"];
+if (locale === "en") {
+  event.response.emailMessage = `Your new one-time code is ${event.request.codeParameter}`;
+  event.response.emailSubject = "Reset my password";
+} else if (locale === "es") {
+  event.response.emailMessage = `Tu nuevo código de un solo uso es ${event.request.codeParameter}`;
+  event.response.emailSubject = "Restablecer mi contraseña";
+}
+  }
+
+  return event;
+};
+
+~~~
+
+| | |
+| -- | -- |
+| Hash | `94344039cff6638a` |
+| Covered | ❌ |
+
+##### Covering Regions
+
+- *None*
+
+---
+
+#### [https://docs.amplify.aws/react/build-a-backend/functions/examples/custom-message/](https://docs.amplify.aws/react/build-a-backend/functions/examples/custom-message/)
+
+##### `amplify/auth/resource.ts`
+
+~~~
+import { defineAuth } from "@aws-amplify/backend";
+import { customMessage } from "./custom-message/resource";
+
+export const auth = defineAuth({
+  // ...
+  triggers: {
+customMessage,
+  },
+});
+
+~~~
+
+| | |
+| -- | -- |
+| Hash | `9475e9c0f178a185` |
 | Covered | ❌ |
 
 ##### Covering Regions
@@ -8445,46 +9285,21 @@ throw new Error("You must be 13 years or older to use this site");
 
 ---
 
-#### [https://docs.amplify.aws/react/build-a-backend/functions/examples/add-user-to-group/](https://docs.amplify.aws/react/build-a-backend/functions/examples/add-user-to-group/)
+#### [https://docs.amplify.aws/react/build-a-backend/functions/configure-functions/](https://docs.amplify.aws/react/build-a-backend/functions/configure-functions/)
 
-##### `Terminal`
-
-~~~
-npm add --save-dev @aws-sdk/client-cognito-identity-provider @types/aws-lambda
+##### `amplify/functions/my-demo-function/resource.ts`
 
 ~~~
-
-| | |
-| -- | -- |
-| Hash | `0a23d15d6d404548` |
-| Covered | ❌ |
-
-##### Covering Regions
-
-- *None*
-
----
-
-#### [https://docs.amplify.aws/react/build-a-backend/functions/examples/add-user-to-group/](https://docs.amplify.aws/react/build-a-backend/functions/examples/add-user-to-group/)
-
-##### `amplify/auth/post-confirmation/resource.ts`
-
-~~~
-import { defineFunction } from "@aws-amplify/backend";
-
-export const postConfirmation = defineFunction({
-  name: "post-confirmation",
-  // optionally define an environment variable for your group name
-  environment: {
-GROUP_NAME: "EVERYONE",
-  },
+export const myDemoFunction = defineFunction({
+  entry: "./demo-function-handler.ts",
+  name: "overrideName", // explicitly set the name to override the default naming behavior
 });
 
 ~~~
 
 | | |
 | -- | -- |
-| Hash | `313f2159dfd10f36` |
+| Hash | `e096b9f54c2de0fb` |
 | Covered | ❌ |
 
 ##### Covering Regions
@@ -8493,30 +9308,20 @@ GROUP_NAME: "EVERYONE",
 
 ---
 
-#### [https://docs.amplify.aws/react/build-a-backend/functions/examples/add-user-to-group/](https://docs.amplify.aws/react/build-a-backend/functions/examples/add-user-to-group/)
+#### [https://docs.amplify.aws/react/build-a-backend/functions/configure-functions/](https://docs.amplify.aws/react/build-a-backend/functions/configure-functions/)
 
-##### `amplify/auth/resource.ts`
+##### `amplify/functions/my-demo-function/resource.ts`
 
 ~~~
-import { defineAuth } from "@aws-amplify/backend";
-import { postConfirmation } from "./post-confirmation/resource";
-
-export const auth = defineAuth({
-  loginWith: {
-email: true,
-  },
-  groups: ["EVERYONE"],
-  triggers: {
-postConfirmation,
-  },
-  access: (allow) => [allow.resource(postConfirmation).to(["addUserToGroup"])],
+export const myDemoFunction = defineFunction({
+  timeoutSeconds: 60, // 1 minute timeout
 });
 
 ~~~
 
 | | |
 | -- | -- |
-| Hash | `a33e0d803731568b` |
+| Hash | `9ddcadbec076fffb` |
 | Covered | ❌ |
 
 ##### Covering Regions
@@ -8525,37 +9330,64 @@ postConfirmation,
 
 ---
 
-#### [https://docs.amplify.aws/react/build-a-backend/functions/examples/add-user-to-group/](https://docs.amplify.aws/react/build-a-backend/functions/examples/add-user-to-group/)
+#### [https://docs.amplify.aws/react/build-a-backend/functions/configure-functions/](https://docs.amplify.aws/react/build-a-backend/functions/configure-functions/)
 
-##### `amplify/auth/post-confirmation/handler.ts`
+##### `amplify/functions/my-demo-function/resource.ts`
 
 ~~~
-import type { PostConfirmationTriggerHandler } from "aws-lambda";
-import {
-  CognitoIdentityProviderClient,
-  AdminAddUserToGroupCommand,
-} from "@aws-sdk/client-cognito-identity-provider";
-import { env } from "$amplify/env/post-confirmation";
-
-const client = new CognitoIdentityProviderClient();
-
-// add user to group
-export const handler: PostConfirmationTriggerHandler = async (event) => {
-  const command = new AdminAddUserToGroupCommand({
-GroupName: env.GROUP_NAME,
-Username: event.userName,
-UserPoolId: event.userPoolId,
-  });
-  const response = await client.send(command);
-  console.log("processed", response.$metadata.requestId);
-  return event;
-};
+export const myDemoFunction = defineFunction({
+  memoryMB: 256, // allocate 256 MB of memory to the function.
+});
 
 ~~~
 
 | | |
 | -- | -- |
-| Hash | `c6ed8737a194d963` |
+| Hash | `f296449660a68062` |
+| Covered | ❌ |
+
+##### Covering Regions
+
+- *None*
+
+---
+
+#### [https://docs.amplify.aws/react/build-a-backend/functions/configure-functions/](https://docs.amplify.aws/react/build-a-backend/functions/configure-functions/)
+
+##### `amplify/functions/my-demo-function/resource.ts`
+
+~~~
+export const myDemoFunction = defineFunction({
+  runtime: 20, // use Node 20
+});
+
+~~~
+
+| | |
+| -- | -- |
+| Hash | `c750380bfe065319` |
+| Covered | ❌ |
+
+##### Covering Regions
+
+- *None*
+
+---
+
+#### [https://docs.amplify.aws/react/build-a-backend/functions/configure-functions/](https://docs.amplify.aws/react/build-a-backend/functions/configure-functions/)
+
+##### `amplify/functions/my-demo-function/resource.ts`
+
+~~~
+export const myDemoFunction = defineFunction({
+  entry: "./path/to/handler.ts", // this path should either be absolute or relative to the current file
+});
+
+~~~
+
+| | |
+| -- | -- |
+| Hash | `968447ad26e96e85` |
 | Covered | ❌ |
 
 ##### Covering Regions
@@ -8789,117 +9621,6 @@ headers: {
 | | |
 | -- | -- |
 | Hash | `78c76e0bca2d358d` |
-| Covered | ❌ |
-
-##### Covering Regions
-
-- *None*
-
----
-
-#### [https://docs.amplify.aws/react/build-a-backend/functions/configure-functions/](https://docs.amplify.aws/react/build-a-backend/functions/configure-functions/)
-
-##### `amplify/functions/my-demo-function/resource.ts`
-
-~~~
-export const myDemoFunction = defineFunction({
-  entry: "./demo-function-handler.ts",
-  name: "overrideName", // explicitly set the name to override the default naming behavior
-});
-
-~~~
-
-| | |
-| -- | -- |
-| Hash | `e096b9f54c2de0fb` |
-| Covered | ❌ |
-
-##### Covering Regions
-
-- *None*
-
----
-
-#### [https://docs.amplify.aws/react/build-a-backend/functions/configure-functions/](https://docs.amplify.aws/react/build-a-backend/functions/configure-functions/)
-
-##### `amplify/functions/my-demo-function/resource.ts`
-
-~~~
-export const myDemoFunction = defineFunction({
-  timeoutSeconds: 60, // 1 minute timeout
-});
-
-~~~
-
-| | |
-| -- | -- |
-| Hash | `9ddcadbec076fffb` |
-| Covered | ❌ |
-
-##### Covering Regions
-
-- *None*
-
----
-
-#### [https://docs.amplify.aws/react/build-a-backend/functions/configure-functions/](https://docs.amplify.aws/react/build-a-backend/functions/configure-functions/)
-
-##### `amplify/functions/my-demo-function/resource.ts`
-
-~~~
-export const myDemoFunction = defineFunction({
-  memoryMB: 256, // allocate 256 MB of memory to the function.
-});
-
-~~~
-
-| | |
-| -- | -- |
-| Hash | `f296449660a68062` |
-| Covered | ❌ |
-
-##### Covering Regions
-
-- *None*
-
----
-
-#### [https://docs.amplify.aws/react/build-a-backend/functions/configure-functions/](https://docs.amplify.aws/react/build-a-backend/functions/configure-functions/)
-
-##### `amplify/functions/my-demo-function/resource.ts`
-
-~~~
-export const myDemoFunction = defineFunction({
-  runtime: 20, // use Node 20
-});
-
-~~~
-
-| | |
-| -- | -- |
-| Hash | `c750380bfe065319` |
-| Covered | ❌ |
-
-##### Covering Regions
-
-- *None*
-
----
-
-#### [https://docs.amplify.aws/react/build-a-backend/functions/configure-functions/](https://docs.amplify.aws/react/build-a-backend/functions/configure-functions/)
-
-##### `amplify/functions/my-demo-function/resource.ts`
-
-~~~
-export const myDemoFunction = defineFunction({
-  entry: "./path/to/handler.ts", // this path should either be absolute or relative to the current file
-});
-
-~~~
-
-| | |
-| -- | -- |
-| Hash | `968447ad26e96e85` |
 | Covered | ❌ |
 
 ##### Covering Regions
@@ -9478,57 +10199,65 @@ npx aws-cdk@latest bootstrap aws://<your-aws-account-id>/<your-aws-region>
 
 ---
 
-#### [https://docs.amplify.aws/react/deploy-and-host/fullstack-branching/pr-previews/](https://docs.amplify.aws/react/deploy-and-host/fullstack-branching/pr-previews/)
+#### [https://docs.amplify.aws/react/deploy-and-host/fullstack-branching/custom-pipelines/](https://docs.amplify.aws/react/deploy-and-host/fullstack-branching/custom-pipelines/)
 
-##### `amplify.yml`
+##### `Unnamed Snippet`
 
 ~~~
-version: 1
-backend:
-phases:
-    build:
-  commands:
-      - 'npm ci --cache .npm --prefer-offline'
-      - 'echo $AWS_BRANCH'
-      - |
-        case "${AWS_BRANCH}" in
-            main)
-                echo "Deploying main branch..."
-                npx ampx pipeline-deploy --branch $AWS_BRANCH --app-id $AWS_APP_ID
-                ;;
-            dev)
-                echo "Deploying dev branch..."
-                npx ampx pipeline-deploy --branch $AWS_BRANCH --app-id $AWS_APP_ID
-                ;;
-            pr-*)
-                echo "Deploying pull request branch..."
-                npx ampx generate outputs --branch dev --app-id $AWS_APP_ID 
-                ;;
-            *)
-                echo "Deploying to staging branch..."
-                npx ampx generate outputs --branch staging --app-id $AWS_APP_ID 
-                ;;
-        esac
-frontend:
-phases:
-    build:
-  commands:
-      - 'npm run build'
-artifacts:
-    baseDirectory: .amplify-hosting
-    files:
-  - '**/*'
-cache:
-    paths:
-  - .next/cache/**/*
-  - .npm/**/*
-  - node_modules/**/*
+Actions:
+  Build_82:
+# Identifies the action. Do not modify this value.
+Identifier: aws/build@v1.0.0
+# Specifies the source and/or artifacts to pass to the action as input.
+Inputs:
+  # Optional
+  Sources:
+    - WorkflowSource # This specifies that the action requires this Workflow as a source
+  Variables:
+    - Name: BRANCH_NAME
+Value: main
+    - Name: AMPLIFY_APP_ID
+Value: #####
+Configuration:
+  # Required - Steps are sequential instructions that run shell commands
+  Steps:
+    - Run: export CI=1
+    - Run: npm ci
+    - Run: npx ampx pipeline-deploy --branch $BRANCH_NAME --app-id $AMPLIFY_APP_ID
 
 ~~~
 
 | | |
 | -- | -- |
-| Hash | `1c884bd4ed6b07e6` |
+| Hash | `1c7a464e7f2880f6` |
+| Covered | ❌ |
+
+##### Covering Regions
+
+- *None*
+
+---
+
+#### [https://docs.amplify.aws/react/deploy-and-host/fullstack-branching/custom-pipelines/](https://docs.amplify.aws/react/deploy-and-host/fullstack-branching/custom-pipelines/)
+
+##### `Unnamed Snippet`
+
+~~~
+Configuration:
+  # Required - Steps are sequential instructions that run shell commands
+  Steps:
+    - Run: export CI=1
+    - Run: npm ci
+    - Run: npx ampx pipeline-deploy --branch $BRANCH_NAME --app-id $AMPLIFY_APP_ID
+    - Run: if [ $BRANCH_NAME = "main" ]; then curl -X POST -d {}
+  "https://webhooks.amplify.us-west-2.amazonaws.com/prod/webhooks?id=WEBHOOK-ID&token=TOKEN&operation=startbuild"
+  -H "Content-Type:application/json"; fi
+
+~~~
+
+| | |
+| -- | -- |
+| Hash | `49fa8f67ebb20de3` |
 | Covered | ❌ |
 
 ##### Covering Regions
@@ -9769,6 +10498,65 @@ cache:
 
 ---
 
+#### [https://docs.amplify.aws/react/deploy-and-host/fullstack-branching/pr-previews/](https://docs.amplify.aws/react/deploy-and-host/fullstack-branching/pr-previews/)
+
+##### `amplify.yml`
+
+~~~
+version: 1
+backend:
+phases:
+    build:
+  commands:
+      - 'npm ci --cache .npm --prefer-offline'
+      - 'echo $AWS_BRANCH'
+      - |
+        case "${AWS_BRANCH}" in
+            main)
+                echo "Deploying main branch..."
+                npx ampx pipeline-deploy --branch $AWS_BRANCH --app-id $AWS_APP_ID
+                ;;
+            dev)
+                echo "Deploying dev branch..."
+                npx ampx pipeline-deploy --branch $AWS_BRANCH --app-id $AWS_APP_ID
+                ;;
+            pr-*)
+                echo "Deploying pull request branch..."
+                npx ampx generate outputs --branch dev --app-id $AWS_APP_ID 
+                ;;
+            *)
+                echo "Deploying to staging branch..."
+                npx ampx generate outputs --branch staging --app-id $AWS_APP_ID 
+                ;;
+        esac
+frontend:
+phases:
+    build:
+  commands:
+      - 'npm run build'
+artifacts:
+    baseDirectory: .amplify-hosting
+    files:
+  - '**/*'
+cache:
+    paths:
+  - .next/cache/**/*
+  - .npm/**/*
+  - node_modules/**/*
+
+~~~
+
+| | |
+| -- | -- |
+| Hash | `1c884bd4ed6b07e6` |
+| Covered | ❌ |
+
+##### Covering Regions
+
+- *None*
+
+---
+
 #### [https://docs.amplify.aws/react/deploy-and-host/fullstack-branching/cross-account-deployments/](https://docs.amplify.aws/react/deploy-and-host/fullstack-branching/cross-account-deployments/)
 
 ##### `Terminal`
@@ -9791,73 +10579,6 @@ cache:
 | | |
 | -- | -- |
 | Hash | `8245f9493b30aad6` |
-| Covered | ❌ |
-
-##### Covering Regions
-
-- *None*
-
----
-
-#### [https://docs.amplify.aws/react/deploy-and-host/fullstack-branching/custom-pipelines/](https://docs.amplify.aws/react/deploy-and-host/fullstack-branching/custom-pipelines/)
-
-##### `Unnamed Snippet`
-
-~~~
-Actions:
-  Build_82:
-# Identifies the action. Do not modify this value.
-Identifier: aws/build@v1.0.0
-# Specifies the source and/or artifacts to pass to the action as input.
-Inputs:
-  # Optional
-  Sources:
-    - WorkflowSource # This specifies that the action requires this Workflow as a source
-  Variables:
-    - Name: BRANCH_NAME
-Value: main
-    - Name: AMPLIFY_APP_ID
-Value: #####
-Configuration:
-  # Required - Steps are sequential instructions that run shell commands
-  Steps:
-    - Run: export CI=1
-    - Run: npm ci
-    - Run: npx ampx pipeline-deploy --branch $BRANCH_NAME --app-id $AMPLIFY_APP_ID
-
-~~~
-
-| | |
-| -- | -- |
-| Hash | `1c7a464e7f2880f6` |
-| Covered | ❌ |
-
-##### Covering Regions
-
-- *None*
-
----
-
-#### [https://docs.amplify.aws/react/deploy-and-host/fullstack-branching/custom-pipelines/](https://docs.amplify.aws/react/deploy-and-host/fullstack-branching/custom-pipelines/)
-
-##### `Unnamed Snippet`
-
-~~~
-Configuration:
-  # Required - Steps are sequential instructions that run shell commands
-  Steps:
-    - Run: export CI=1
-    - Run: npm ci
-    - Run: npx ampx pipeline-deploy --branch $BRANCH_NAME --app-id $AMPLIFY_APP_ID
-    - Run: if [ $BRANCH_NAME = "main" ]; then curl -X POST -d {}
-  "https://webhooks.amplify.us-west-2.amazonaws.com/prod/webhooks?id=WEBHOOK-ID&token=TOKEN&operation=startbuild"
-  -H "Content-Type:application/json"; fi
-
-~~~
-
-| | |
-| -- | -- |
-| Hash | `49fa8f67ebb20de3` |
 | Covered | ❌ |
 
 ##### Covering Regions
@@ -10050,626 +10771,6 @@ new LocationMapStack(
 | | |
 | -- | -- |
 | Hash | `507842e09e0f3a5c` |
-| Covered | ❌ |
-
-##### Covering Regions
-
-- *None*
-
----
-
-#### [https://docs.amplify.aws/react/reference/amplify_outputs/](https://docs.amplify.aws/react/reference/amplify_outputs/)
-
-##### `amplify/backend.ts`
-
-~~~
-import { defineBackend } from "@aws-amplify/backend";
-import { auth } from "./auth/resource";
-import { data } from "./data/resource";
-
-const backend = defineBackend({
-  auth,
-  data,
-});
-
-backend.addOutput({
-  storage: {
-aws_region: "us-east-1",
-bucket_name: "my-externally-managed-bucket",
-  },
-});
-
-~~~
-
-| | |
-| -- | -- |
-| Hash | `e4c107cd31dcc7b7` |
-| Covered | ❌ |
-
-##### Covering Regions
-
-- *None*
-
----
-
-#### [https://docs.amplify.aws/react/reference/amplify_outputs/](https://docs.amplify.aws/react/reference/amplify_outputs/)
-
-##### `src/index.ts`
-
-~~~
-import { Amplify } from "aws-amplify";
-import outputs from "@/amplify_outputs.json";
-
-Amplify.configure(outputs);
-
-~~~
-
-| | |
-| -- | -- |
-| Hash | `96184488681b162e` |
-| Covered | ❌ |
-
-##### Covering Regions
-
-- *None*
-
----
-
-#### [https://docs.amplify.aws/react/reference/amplify_outputs/](https://docs.amplify.aws/react/reference/amplify_outputs/)
-
-##### `amplify/backend.ts`
-
-~~~
-import { defineBackend } from "@aws-amplify/backend";
-import { auth } from "./auth/resource";
-import { data } from "./data/resource";
-
-const backend = defineBackend({
-  auth,
-  data,
-});
-
-backend.addOutput({
-  custom: {
-api_id: "restAPIId",
-api_endpoint: "https://api.example.com",
-api_name: "restApiName",
-  },
-});
-
-~~~
-
-| | |
-| -- | -- |
-| Hash | `ecab0f33dfa4d382` |
-| Covered | ❌ |
-
-##### Covering Regions
-
-- *None*
-
----
-
-#### [https://docs.amplify.aws/react/reference/amplify_outputs/](https://docs.amplify.aws/react/reference/amplify_outputs/)
-
-##### `src/index.ts`
-
-~~~
-import { Amplify } from "aws-amplify";
-import outputs from "@/amplify_outputs.json";
-
-Amplify.configure(outputs);
-const currentConfig = Amplify.getConfig();
-Amplify.configure({
-  ...currentConfig,
-  API: {
-REST: {
-  [outputs.custom.api_name]: {
-    endpoint: outputs.custom.api_endpoint,
-    region: "us-east-1",
-  },
-},
-  },
-});
-
-~~~
-
-| | |
-| -- | -- |
-| Hash | `e294b9ce19c1ac38` |
-| Covered | ❌ |
-
-##### Covering Regions
-
-- *None*
-
----
-
-#### [https://docs.amplify.aws/react/reference/amplify_outputs/](https://docs.amplify.aws/react/reference/amplify_outputs/)
-
-##### `Unnamed Snippet`
-
-~~~
-{
-  "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://amplify.aws/2024-02/outputs-schema.json",
-  "title": "AWS Amplify Backend Outputs",
-  "description": "Config format for Amplify Gen 2 client libraries to communicate with backend services.",
-  "type": "object",
-  "additionalProperties": false,
-  "properties": {
-"$schema": {
-  "description": "JSON schema",
-  "type": "string"
-},
-"version": {
-  "description": "Version of this schema",
-  "const": "1"
-},
-"analytics": {
-  "description": "Outputs manually specified by developers for use with frontend library",
-  "type": "object",
-  "additionalProperties": false,
-  "properties": {
-    "amazon_pinpoint": {
-"type": "object",
-"additionalProperties": false,
-"properties": {
-  "aws_region": {
-    "description": "AWS Region of Amazon Pinpoint resources",
-    "$ref": "#/$defs/aws_region"
-  },
-  "app_id": {
-    "type": "string"
-  }
-},
-"required": [
-  "aws_region",
-  "app_id"
-]
-    }
-  }
-},
-"auth": {
-  "description": "Outputs generated from defineAuth",
-  "type": "object",
-  "additionalProperties": false,
-  "properties": {
-    "aws_region": {
-"description": "AWS Region of Amazon Cognito resources",
-"$ref": "#/$defs/aws_region"
-    },
-    "user_pool_id": {
-"description": "Cognito User Pool ID",
-"type": "string"
-    },
-    "user_pool_client_id": {
-"description": "Cognito User Pool Client ID",
-"type": "string"
-    },
-    "identity_pool_id": {
-"description": "Cognito Identity Pool ID",
-"type": "string"
-    },
-    "password_policy": {
-"description": "Cognito User Pool password policy",
-"type": "object",
-"additionalProperties": false,
-"properties": {
-  "min_length": {
-    "type": "integer",
-    "minimum": 6,
-    "maximum": 99
-  },
-  "require_numbers": {
-    "type": "boolean"
-  },
-  "require_lowercase": {
-    "type": "boolean"
-  },
-  "require_uppercase": {
-    "type": "boolean"
-  },
-  "require_symbols": {
-    "type": "boolean"
-  }
-}
-    },
-    "oauth": {
-"type": "object",
-"additionalProperties": false,
-"properties": {
-  "identity_providers": {
-    "description": "Identity providers set on Cognito User Pool",
-    "type": "array",
-    "items": {
-      "type": "string",
-      "enum": [
-        "GOOGLE",
-        "FACEBOOK",
-        "LOGIN_WITH_AMAZON",
-        "SIGN_IN_WITH_APPLE"
-      ]
-    },
-    "minItems": 0,
-    "uniqueItems": true
-  },
-  "domain": {
-    "description": "Domain used for identity providers",
-    "type": "string"
-  },
-  "scopes": {
-    "type": "array",
-    "items": {
-      "type": "string"
-    },
-    "minItems": 0,
-    "uniqueItems": true
-  },
-  "redirect_sign_in_uri": {
-    "description": "URIs used to redirect after signing in using an identity provider",
-    "type": "array",
-    "items": {
-      "type": "string"
-    },
-    "minItems": 1,
-    "uniqueItems": true
-  },
-  "redirect_sign_out_uri": {
-    "description": "URIs used to redirect after signing out",
-    "type": "array",
-    "items": {
-      "type": "string"
-    },
-    "minItems": 1,
-    "uniqueItems": true
-  },
-  "response_type": {
-    "type": "string",
-    "enum": [
-      "code",
-      "token"
-    ]
-  }
-},
-"required": [
-  "identity_providers",
-  "domain",
-  "scopes",
-  "redirect_sign_in_uri",
-  "redirect_sign_out_uri",
-  "response_type"
-]
-    },
-    "standard_required_attributes": {
-"description": "Cognito User Pool standard attributes required for signup",
-"type": "array",
-"items": {
-  "$ref": "#/$defs/amazon_cognito_standard_attributes"
-},
-"minItems": 0,
-"uniqueItems": true
-    },
-    "username_attributes": {
-"description": "Cognito User Pool username attributes",
-"type": "array",
-"items": {
-  "type": "string",
-  "enum": [
-    "email",
-    "phone_number",
-    "username"
-  ]
-},
-"minItems": 1,
-"uniqueItems": true
-    },
-    "user_verification_types": {
-"type": "array",
-"items": {
-  "type": "string",
-  "enum": [
-    "email",
-    "phone_number"
-  ]
-}
-    },
-    "unauthenticated_identities_enabled": {
-"type": "boolean",
-"default": true
-    },
-    "mfa_configuration": {
-"type": "string",
-"enum": [
-  "NONE",
-  "OPTIONAL",
-  "REQUIRED"
-]
-    },
-    "mfa_methods": {
-"type": "array",
-"items": {
-  "enum": [
-    "SMS",
-    "TOTP"
-  ]
-}
-    }
-  },
-  "required": [
-    "aws_region",
-    "user_pool_id",
-    "user_pool_client_id"
-  ]
-},
-"data": {
-  "description": "Outputs generated from defineData",
-  "type": "object",
-  "additionalProperties": false,
-  "properties": {
-    "aws_region": {
-"$ref": "#/$defs/aws_region"
-    },
-    "url": {
-"description": "AppSync endpoint URL",
-"type": "string"
-    },
-    "model_introspection": {
-"description": "generated model introspection schema for use with generateClient",
-"type": "object"
-    },
-    "api_key": {
-"type": "string"
-    },
-    "default_authorization_type": {
-"$ref": "#/$defs/aws_appsync_authorization_type"
-    },
-    "authorization_types": {
-"type": "array",
-"items": {
-  "$ref": "#/$defs/aws_appsync_authorization_type"
-}
-    }
-  },
-  "required": [
-    "aws_region",
-    "url",
-    "default_authorization_type",
-    "authorization_types"
-  ]
-},
-"geo": {
-  "description": "Outputs manually specified by developers for use with frontend library",
-  "type": "object",
-  "additionalProperties": false,
-  "properties": {
-    "aws_region": {
-"description": "AWS Region of Amazon Location Service resources",
-"$ref": "#/$defs/aws_region"
-    },
-    "maps": {
-"description": "Maps from Amazon Location Service",
-"type": "object",
-"additionalProperties": false,
-"properties": {
-  "items": {
-    "type": "object",
-    "additionalProperties": false,
-    "propertyNames": {
-      "description": "Amazon Location Service Map name",
-      "type": "string"
-    },
-    "patternProperties": {
-      ".*": {
-        "$ref": "#/$defs/amazon_location_service_config"
-      }
-    }
-  },
-  "default": {
-    "type": "string"
-  }
-},
-"required": [
-  "items",
-  "default"
-]
-    },
-    "search_indices": {
-"description": "Location search (search by places, addresses, coordinates)",
-"type": "object",
-"additionalProperties": false,
-"properties": {
-  "items": {
-    "type": "array",
-    "uniqueItems": true,
-    "minItems": 1,
-    "items": {
-      "description": "Actual search name",
-      "type": "string"
-    }
-  },
-  "default": {
-    "type": "string"
-  }
-},
-"required": [
-  "items",
-  "default"
-]
-    },
-    "geofence_collections": {
-"description": "Geofencing (visualize virtual perimeters)",
-"type": "object",
-"additionalProperties": false,
-"properties": {
-  "items": {
-    "type": "array",
-    "uniqueItems": true,
-    "minItems": 1,
-    "items": {
-      "description": "Geofence name",
-      "type": "string"
-    }
-  },
-  "default": {
-    "type": "string"
-  }
-},
-"required": [
-  "items",
-  "default"
-]
-    }
-  },
-  "required": [
-    "aws_region"
-  ]
-},
-"notifications": {
-  "type": "object",
-  "description": "Outputs manually specified by developers for use with frontend library",
-  "additionalProperties": false,
-  "properties": {
-    "aws_region": {
-"$ref": "#/$defs/aws_region"
-    },
-    "amazon_pinpoint_app_id": {
-"type": "string"
-    },
-    "channels": {
-"type": "array",
-"items": {
-  "$ref": "#/$defs/amazon_pinpoint_channels"
-},
-"minItems": 1,
-"uniqueItems": true
-    }
-  },
-  "required": [
-    "aws_region",
-    "amazon_pinpoint_app_id",
-    "channels"
-  ]
-},
-"storage": {
-  "type": "object",
-  "description": "Outputs generated from defineStorage",
-  "additionalProperties": false,
-  "properties": {
-    "aws_region": {
-"$ref": "#/$defs/aws_region"
-    },
-    "bucket_name": {
-"type": "string"
-    }
-  },
-  "required": [
-    "aws_region",
-    "bucket_name"
-  ]
-},
-"custom": {
-  "description": "Outputs generated from backend.addOutput({ custom: <config> })",
-  "type": "object"
-}
-  },
-  "required": [
-"version"
-  ],
-  "$defs": {
-"aws_region": {
-  "type": "string"
-},
-"amazon_cognito_standard_attributes": {
-  "description": "Amazon Cognito standard attributes for users -- https://docs.aws.amazon.com/cognito/latest/developerguide/user-pool-settings-attributes.html",
-  "type": "string",
-  "enum": [
-    "address",
-    "birthdate",
-    "email",
-    "family_name",
-    "gender",
-    "given_name",
-    "locale",
-    "middle_name",
-    "name",
-    "nickname",
-    "phone_number",
-    "picture",
-    "preferred_username",
-    "profile",
-    "sub",
-    "updated_at",
-    "website",
-    "zoneinfo"
-  ]
-},
-"aws_appsync_authorization_type": {
-  "description": "List of supported auth types for AWS AppSync",
-  "type": "string",
-  "enum": [
-    "AMAZON_COGNITO_USER_POOLS",
-    "API_KEY",
-    "AWS_IAM",
-    "AWS_LAMBDA",
-    "OPENID_CONNECT"
-  ]
-},
-"amazon_location_service_config": {
-  "type": "object",
-  "additionalProperties": false,
-  "properties": {
-    "style": {
-"description": "Map style",
-"type": "string"
-    }
-  }
-},
-"amazon_pinpoint_channels": {
-  "description": "supported channels for Amazon Pinpoint",
-  "type": "string",
-  "enum": [
-    "IN_APP_MESSAGING",
-    "FCM",
-    "APNS",
-    "EMAIL",
-    "SMS"
-  ]
-}
-  }
-}
-~~~
-
-| | |
-| -- | -- |
-| Hash | `f26dc9ec37d0cfd2` |
-| Covered | ❌ |
-
-##### Covering Regions
-
-- *None*
-
----
-
-#### [https://docs.amplify.aws/react/start/manual-installation/](https://docs.amplify.aws/react/start/manual-installation/)
-
-##### `amplify/data/resource.ts`
-
-~~~
-import { a, defineData, type ClientSchema } from "@aws-amplify/backend";
-
-const schema = a.schema({});
-
-export type Schema = ClientSchema<typeof schema>;
-export const data = defineData({
-  schema,
-});
-
-~~~
-
-| | |
-| -- | -- |
-| Hash | `b497a376ca20c1f5` |
 | Covered | ❌ |
 
 ##### Covering Regions
@@ -13004,366 +13105,6 @@ client.cancel(promise, "my error message");
 
 ---
 
-#### [https://docs.amplify.aws/react/build-a-backend/data/query-data/](https://docs.amplify.aws/react/build-a-backend/data/query-data/)
-
-##### `Unnamed Snippet`
-
-~~~
-import { generateClient } from "aws-amplify/data";
-import { type Schema } from "@/amplify/data/resource";
-
-const client = generateClient<Schema>();
-
-// list all items
-const { data: todos, errors } = await client.models.Todo.list();
-
-// get a specific item
-const { data: todo, errors } = await client.models.Todo.get({
-  id: "...",
-});
-
-~~~
-
-| | |
-| -- | -- |
-| Hash | `d802e473c55f60ff` |
-| Covered | ❌ |
-
-##### Covering Regions
-
-- *None*
-
----
-
-#### [https://docs.amplify.aws/react/build-a-backend/data/query-data/](https://docs.amplify.aws/react/build-a-backend/data/query-data/)
-
-##### `Unnamed Snippet`
-
-~~~
-import { generateClient } from "aws-amplify/data";
-import { type Schema } from "@/amplify/data/resource";
-
-const client = generateClient<Schema>();
-
-const { errors, data: todos } = await client.models.Todo.list({
-  authMode: "apiKey",
-});
-
-~~~
-
-| | |
-| -- | -- |
-| Hash | `27083fbf217f4594` |
-| Covered | ❌ |
-
-##### Covering Regions
-
-- *None*
-
----
-
-#### [https://docs.amplify.aws/react/build-a-backend/data/query-data/](https://docs.amplify.aws/react/build-a-backend/data/query-data/)
-
-##### `Unnamed Snippet`
-
-~~~
-import { generateClient } from "aws-amplify/data";
-import { type Schema } from "@/amplify/data/resource";
-
-const client = generateClient<Schema>();
-
-const { data: todos, errors } = await client.models.Todo.list({
-  filter: {
-content: {
-  beginsWith: "hello",
-},
-  },
-});
-
-~~~
-
-| | |
-| -- | -- |
-| Hash | `b7a13dcc42cc0f2b` |
-| Covered | ❌ |
-
-##### Covering Regions
-
-- *None*
-
----
-
-#### [https://docs.amplify.aws/react/build-a-backend/data/query-data/](https://docs.amplify.aws/react/build-a-backend/data/query-data/)
-
-##### `Unnamed Snippet`
-
-~~~
-import { generateClient } from "aws-amplify/data";
-import { type Schema } from "@/amplify/data/resource";
-
-const client = generateClient<Schema>();
-
-const { data: todos, errors } = await client.models.Todo.list({
-  filter: {
-or: [
-  {
-    priority: { eq: "1" },
-  },
-  {
-    priority: { eq: "2" },
-  },
-],
-  },
-});
-
-~~~
-
-| | |
-| -- | -- |
-| Hash | `805e7a16e0b5b803` |
-| Covered | ❌ |
-
-##### Covering Regions
-
-- *None*
-
----
-
-#### [https://docs.amplify.aws/react/build-a-backend/data/query-data/](https://docs.amplify.aws/react/build-a-backend/data/query-data/)
-
-##### `Unnamed Snippet`
-
-~~~
-import { generateClient } from "aws-amplify/data";
-import { type Schema } from "@/amplify/data/resource";
-
-const client = generateClient<Schema>();
-
-const {
-  data: todos,
-  nextToken, // Repeat this API call with the nextToken until the returned nextToken is `null`
-  errors,
-} = await client.models.Todo.list({
-  limit: 100, // default value is 100
-  nextToken: "eyJ2ZXJzaW9uejE1a2...", // previous nextToken
-});
-
-~~~
-
-| | |
-| -- | -- |
-| Hash | `6cac5a92233f7f71` |
-| Covered | ❌ |
-
-##### Covering Regions
-
-- *None*
-
----
-
-#### [https://docs.amplify.aws/react/build-a-backend/data/query-data/](https://docs.amplify.aws/react/build-a-backend/data/query-data/)
-
-##### `Unnamed Snippet`
-
-~~~
-import * as React from "react";
-import { Pagination } from "@aws-amplify/ui-react";
-
-export const PaginationHasMorePagesExample = () => {
-  const [pageTokens, setPageTokens] = React.useState([null]);
-  const [currentPageIndex, setCurrentPageIndex] = React.useState(1);
-  const [hasMorePages, setHasMorePages] = React.useState(true);
-
-  const handleNextPage = async () => {
-if (hasMorePages && currentPageIndex === pageTokens.length) {
-  const { data: todos, nextToken } = await client.models.Todo.list({
-    nextToken: pageTokens[pageTokens.length - 1],
-  });
-
-  if (!nextToken) {
-    setHasMorePages(false);
-  }
-
-  setPageTokens([...pageTokens, nextToken]);
-}
-
-setCurrentPageIndex(currentPageIndex + 1);
-  };
-
-  return (
-<Pagination
-  currentPage={currentPageIndex}
-  totalPages={pageTokens.length}
-  hasMorePages={hasMorePages}
-  onNext={handleNextPage}
-  onPrevious={() => setCurrentPageIndex(currentPageIndex - 1)}
-  onChange={(pageIndex) => setCurrentPageIndex(pageIndex)}
-/>
-  );
-};
-
-~~~
-
-| | |
-| -- | -- |
-| Hash | `af99c7c3ce818ba9` |
-| Covered | ❌ |
-
-##### Covering Regions
-
-- *None*
-
----
-
-#### [https://docs.amplify.aws/react/build-a-backend/data/query-data/](https://docs.amplify.aws/react/build-a-backend/data/query-data/)
-
-##### `Unnamed Snippet`
-
-~~~
-// same way for all CRUDL: .create, .get, .update, .delete, .list, .observeQuery
-const { data: blogWithSubsetOfData, errors } = await client.models.Blog.get(
-  { id: blog.id },
-  {
-selectionSet: ["author.email", "posts.*"],
-  },
-);
-
-~~~
-
-| | |
-| -- | -- |
-| Hash | `c5a9d7a5cdc10664` |
-| Covered | ❌ |
-
-##### Covering Regions
-
-- *None*
-
----
-
-#### [https://docs.amplify.aws/react/build-a-backend/data/query-data/](https://docs.amplify.aws/react/build-a-backend/data/query-data/)
-
-##### `Unnamed Snippet`
-
-~~~
-import { type Schema } from "@/amplify/data/resource";
-
-type Post = Schema["Post"]["type"];
-
-const [posts, setPosts] = useState<Post[]>([]);
-
-~~~
-
-| | |
-| -- | -- |
-| Hash | `4c106be9c8e3749e` |
-| Covered | ❌ |
-
-##### Covering Regions
-
-- *None*
-
----
-
-#### [https://docs.amplify.aws/react/build-a-backend/data/query-data/](https://docs.amplify.aws/react/build-a-backend/data/query-data/)
-
-##### `Unnamed Snippet`
-
-~~~
-import type { SelectionSet } from "aws-amplify/data";
-import type { Schema } from "../amplify/data/resource";
-
-const selectionSet = ["content", "blog.author.*", "comments.*"] as const;
-type PostWithComments = SelectionSet<
-  Schema["Post"]["type"],
-  typeof selectionSet
->;
-
-// ...
-const [posts, setPosts] = useState<PostWithComments[]>([]);
-
-const fetchPosts = async () => {
-  const { data: postsWithComments } = await client.models.Post.list({
-selectionSet,
-  });
-  setPosts(postsWithComments);
-};
-
-~~~
-
-| | |
-| -- | -- |
-| Hash | `594df1fdc5fc0b68` |
-| Covered | ❌ |
-
-##### Covering Regions
-
-- *None*
-
----
-
-#### [https://docs.amplify.aws/react/build-a-backend/data/query-data/](https://docs.amplify.aws/react/build-a-backend/data/query-data/)
-
-##### `Unnamed Snippet`
-
-~~~
-const promise = client.models.Todo.list();
-//  ^ Note: we're not awaiting the request, we're returning the promise
-
-try {
-  await promise;
-} catch (error) {
-  console.log(error);
-  // If the error is because the request was cancelled you can confirm here.
-  if (client.isCancelError(error)) {
-console.log(error.message); // "my message for cancellation"
-// handle user cancellation logic
-  }
-}
-...
-
-// To cancel the above request
-client.cancel(promise, "my message for cancellation");
-
-~~~
-
-| | |
-| -- | -- |
-| Hash | `e84aa109193880d4` |
-| Covered | ❌ |
-
-##### Covering Regions
-
-- *None*
-
----
-
-#### [https://docs.amplify.aws/react/build-a-backend/data/query-data/](https://docs.amplify.aws/react/build-a-backend/data/query-data/)
-
-##### `Unnamed Snippet`
-
-~~~
-async function makeAPICall() {
-  return client.models.Todo.list();
-}
-const promise = makeAPICall();
-
-// The following will NOT cancel the request.
-client.cancel(promise, "my error message");
-
-~~~
-
-| | |
-| -- | -- |
-| Hash | `5b7af56d08383ae9` |
-| Covered | ❌ |
-
-##### Covering Regions
-
-- *None*
-
----
-
 #### [https://docs.amplify.aws/react/build-a-backend/data/optimistic-ui/](https://docs.amplify.aws/react/build-a-backend/data/optimistic-ui/)
 
 ##### `Terminal`
@@ -14376,6 +14117,366 @@ listStyleType: "none",
 | | |
 | -- | -- |
 | Hash | `c229fca239cbad11` |
+| Covered | ❌ |
+
+##### Covering Regions
+
+- *None*
+
+---
+
+#### [https://docs.amplify.aws/react/build-a-backend/data/query-data/](https://docs.amplify.aws/react/build-a-backend/data/query-data/)
+
+##### `Unnamed Snippet`
+
+~~~
+import { generateClient } from "aws-amplify/data";
+import { type Schema } from "@/amplify/data/resource";
+
+const client = generateClient<Schema>();
+
+// list all items
+const { data: todos, errors } = await client.models.Todo.list();
+
+// get a specific item
+const { data: todo, errors } = await client.models.Todo.get({
+  id: "...",
+});
+
+~~~
+
+| | |
+| -- | -- |
+| Hash | `d802e473c55f60ff` |
+| Covered | ❌ |
+
+##### Covering Regions
+
+- *None*
+
+---
+
+#### [https://docs.amplify.aws/react/build-a-backend/data/query-data/](https://docs.amplify.aws/react/build-a-backend/data/query-data/)
+
+##### `Unnamed Snippet`
+
+~~~
+import { generateClient } from "aws-amplify/data";
+import { type Schema } from "@/amplify/data/resource";
+
+const client = generateClient<Schema>();
+
+const { errors, data: todos } = await client.models.Todo.list({
+  authMode: "apiKey",
+});
+
+~~~
+
+| | |
+| -- | -- |
+| Hash | `27083fbf217f4594` |
+| Covered | ❌ |
+
+##### Covering Regions
+
+- *None*
+
+---
+
+#### [https://docs.amplify.aws/react/build-a-backend/data/query-data/](https://docs.amplify.aws/react/build-a-backend/data/query-data/)
+
+##### `Unnamed Snippet`
+
+~~~
+import { generateClient } from "aws-amplify/data";
+import { type Schema } from "@/amplify/data/resource";
+
+const client = generateClient<Schema>();
+
+const { data: todos, errors } = await client.models.Todo.list({
+  filter: {
+content: {
+  beginsWith: "hello",
+},
+  },
+});
+
+~~~
+
+| | |
+| -- | -- |
+| Hash | `b7a13dcc42cc0f2b` |
+| Covered | ❌ |
+
+##### Covering Regions
+
+- *None*
+
+---
+
+#### [https://docs.amplify.aws/react/build-a-backend/data/query-data/](https://docs.amplify.aws/react/build-a-backend/data/query-data/)
+
+##### `Unnamed Snippet`
+
+~~~
+import { generateClient } from "aws-amplify/data";
+import { type Schema } from "@/amplify/data/resource";
+
+const client = generateClient<Schema>();
+
+const { data: todos, errors } = await client.models.Todo.list({
+  filter: {
+or: [
+  {
+    priority: { eq: "1" },
+  },
+  {
+    priority: { eq: "2" },
+  },
+],
+  },
+});
+
+~~~
+
+| | |
+| -- | -- |
+| Hash | `805e7a16e0b5b803` |
+| Covered | ❌ |
+
+##### Covering Regions
+
+- *None*
+
+---
+
+#### [https://docs.amplify.aws/react/build-a-backend/data/query-data/](https://docs.amplify.aws/react/build-a-backend/data/query-data/)
+
+##### `Unnamed Snippet`
+
+~~~
+import { generateClient } from "aws-amplify/data";
+import { type Schema } from "@/amplify/data/resource";
+
+const client = generateClient<Schema>();
+
+const {
+  data: todos,
+  nextToken, // Repeat this API call with the nextToken until the returned nextToken is `null`
+  errors,
+} = await client.models.Todo.list({
+  limit: 100, // default value is 100
+  nextToken: "eyJ2ZXJzaW9uejE1a2...", // previous nextToken
+});
+
+~~~
+
+| | |
+| -- | -- |
+| Hash | `6cac5a92233f7f71` |
+| Covered | ❌ |
+
+##### Covering Regions
+
+- *None*
+
+---
+
+#### [https://docs.amplify.aws/react/build-a-backend/data/query-data/](https://docs.amplify.aws/react/build-a-backend/data/query-data/)
+
+##### `Unnamed Snippet`
+
+~~~
+import * as React from "react";
+import { Pagination } from "@aws-amplify/ui-react";
+
+export const PaginationHasMorePagesExample = () => {
+  const [pageTokens, setPageTokens] = React.useState([null]);
+  const [currentPageIndex, setCurrentPageIndex] = React.useState(1);
+  const [hasMorePages, setHasMorePages] = React.useState(true);
+
+  const handleNextPage = async () => {
+if (hasMorePages && currentPageIndex === pageTokens.length) {
+  const { data: todos, nextToken } = await client.models.Todo.list({
+    nextToken: pageTokens[pageTokens.length - 1],
+  });
+
+  if (!nextToken) {
+    setHasMorePages(false);
+  }
+
+  setPageTokens([...pageTokens, nextToken]);
+}
+
+setCurrentPageIndex(currentPageIndex + 1);
+  };
+
+  return (
+<Pagination
+  currentPage={currentPageIndex}
+  totalPages={pageTokens.length}
+  hasMorePages={hasMorePages}
+  onNext={handleNextPage}
+  onPrevious={() => setCurrentPageIndex(currentPageIndex - 1)}
+  onChange={(pageIndex) => setCurrentPageIndex(pageIndex)}
+/>
+  );
+};
+
+~~~
+
+| | |
+| -- | -- |
+| Hash | `af99c7c3ce818ba9` |
+| Covered | ❌ |
+
+##### Covering Regions
+
+- *None*
+
+---
+
+#### [https://docs.amplify.aws/react/build-a-backend/data/query-data/](https://docs.amplify.aws/react/build-a-backend/data/query-data/)
+
+##### `Unnamed Snippet`
+
+~~~
+// same way for all CRUDL: .create, .get, .update, .delete, .list, .observeQuery
+const { data: blogWithSubsetOfData, errors } = await client.models.Blog.get(
+  { id: blog.id },
+  {
+selectionSet: ["author.email", "posts.*"],
+  },
+);
+
+~~~
+
+| | |
+| -- | -- |
+| Hash | `c5a9d7a5cdc10664` |
+| Covered | ❌ |
+
+##### Covering Regions
+
+- *None*
+
+---
+
+#### [https://docs.amplify.aws/react/build-a-backend/data/query-data/](https://docs.amplify.aws/react/build-a-backend/data/query-data/)
+
+##### `Unnamed Snippet`
+
+~~~
+import { type Schema } from "@/amplify/data/resource";
+
+type Post = Schema["Post"]["type"];
+
+const [posts, setPosts] = useState<Post[]>([]);
+
+~~~
+
+| | |
+| -- | -- |
+| Hash | `4c106be9c8e3749e` |
+| Covered | ❌ |
+
+##### Covering Regions
+
+- *None*
+
+---
+
+#### [https://docs.amplify.aws/react/build-a-backend/data/query-data/](https://docs.amplify.aws/react/build-a-backend/data/query-data/)
+
+##### `Unnamed Snippet`
+
+~~~
+import type { SelectionSet } from "aws-amplify/data";
+import type { Schema } from "../amplify/data/resource";
+
+const selectionSet = ["content", "blog.author.*", "comments.*"] as const;
+type PostWithComments = SelectionSet<
+  Schema["Post"]["type"],
+  typeof selectionSet
+>;
+
+// ...
+const [posts, setPosts] = useState<PostWithComments[]>([]);
+
+const fetchPosts = async () => {
+  const { data: postsWithComments } = await client.models.Post.list({
+selectionSet,
+  });
+  setPosts(postsWithComments);
+};
+
+~~~
+
+| | |
+| -- | -- |
+| Hash | `594df1fdc5fc0b68` |
+| Covered | ❌ |
+
+##### Covering Regions
+
+- *None*
+
+---
+
+#### [https://docs.amplify.aws/react/build-a-backend/data/query-data/](https://docs.amplify.aws/react/build-a-backend/data/query-data/)
+
+##### `Unnamed Snippet`
+
+~~~
+const promise = client.models.Todo.list();
+//  ^ Note: we're not awaiting the request, we're returning the promise
+
+try {
+  await promise;
+} catch (error) {
+  console.log(error);
+  // If the error is because the request was cancelled you can confirm here.
+  if (client.isCancelError(error)) {
+console.log(error.message); // "my message for cancellation"
+// handle user cancellation logic
+  }
+}
+...
+
+// To cancel the above request
+client.cancel(promise, "my message for cancellation");
+
+~~~
+
+| | |
+| -- | -- |
+| Hash | `e84aa109193880d4` |
+| Covered | ❌ |
+
+##### Covering Regions
+
+- *None*
+
+---
+
+#### [https://docs.amplify.aws/react/build-a-backend/data/query-data/](https://docs.amplify.aws/react/build-a-backend/data/query-data/)
+
+##### `Unnamed Snippet`
+
+~~~
+async function makeAPICall() {
+  return client.models.Todo.list();
+}
+const promise = makeAPICall();
+
+// The following will NOT cancel the request.
+client.cancel(promise, "my error message");
+
+~~~
+
+| | |
+| -- | -- |
+| Hash | `5b7af56d08383ae9` |
 | Covered | ❌ |
 
 ##### Covering Regions
@@ -17386,169 +17487,6 @@ revalidate: (splashUrl.expiresAt.getTime() - Date.now()) / 1000, // in seconds
 
 ---
 
-#### [https://docs.amplify.aws/react/deploy-and-host/fullstack-branching/monorepos/](https://docs.amplify.aws/react/deploy-and-host/fullstack-branching/monorepos/)
-
-##### `Unnamed Snippet`
-
-~~~
-├── apps/
-│   ├── admin-dashboard/
-│   │   ├── next.config.mjs
-│   │   └── package.json
-│   └── marketing-site/
-│       ├── astro.config.mjs
-│       └── package.json
-├── packages/
-│   └── my-shared-backend/
-│       ├── amplify/
-│       │   ├── auth/
-│       │   │   └── resource.ts
-│       │   ├── data/
-│       │   │   └── resource.ts
-│       │   └── backend.ts
-│       |── package.json
-    └── tsconfig.json
-└── package.json
-
-~~~
-
-| | |
-| -- | -- |
-| Hash | `24ba8fa46ca0b5dc` |
-| Covered | ❌ |
-
-##### Covering Regions
-
-- *None*
-
----
-
-#### [https://docs.amplify.aws/react/deploy-and-host/fullstack-branching/monorepos/](https://docs.amplify.aws/react/deploy-and-host/fullstack-branching/monorepos/)
-
-##### `Terminal`
-
-~~~
-npx ampx generate outputs --branch main --app-id BACKEND-APP-ID
-
-~~~
-
-| | |
-| -- | -- |
-| Hash | `08fd21f5eafe9848` |
-| Covered | ❌ |
-
-##### Covering Regions
-
-- *None*
-
----
-
-#### [https://docs.amplify.aws/react/deploy-and-host/fullstack-branching/monorepos/](https://docs.amplify.aws/react/deploy-and-host/fullstack-branching/monorepos/)
-
-##### `Terminal`
-
-~~~
-npx ampx generate outputs --branch main --app-id BACKEND-APP-ID
-
-~~~
-
-| | |
-| -- | -- |
-| Hash | `08fd21f5eafe9848` |
-| Covered | ❌ |
-
-##### Covering Regions
-
-- *None*
-
----
-
-#### [https://docs.amplify.aws/react/deploy-and-host/fullstack-branching/monorepos/](https://docs.amplify.aws/react/deploy-and-host/fullstack-branching/monorepos/)
-
-##### `tsconfig.json`
-
-~~~
-{
-  "compilerOptions": {
-"paths": {
-  "@/data-schema": ["./packages/my-shared-backend/amplify/data/resource"]
-}
-  }
-}
-
-~~~
-
-| | |
-| -- | -- |
-| Hash | `be4357236b96055a` |
-| Covered | ❌ |
-
-##### Covering Regions
-
-- *None*
-
----
-
-#### [https://docs.amplify.aws/react/deploy-and-host/fullstack-branching/monorepos/](https://docs.amplify.aws/react/deploy-and-host/fullstack-branching/monorepos/)
-
-##### `apps/admin-dashboard/page.tsx`
-
-~~~
-import { generateClient } from "aws-amplify/data";
-import type { Schema } from "@/data-schema";
-
-const client = generateClient<Schema>();
-
-const createTodo = async () => {
-  await client.models.Todo.create({
-content: window.prompt("Todo content?"),
-isDone: false,
-  });
-};
-
-~~~
-
-| | |
-| -- | -- |
-| Hash | `3137a2b60aedf773` |
-| Covered | ❌ |
-
-##### Covering Regions
-
-- *None*
-
----
-
-#### [https://docs.amplify.aws/react/deploy-and-host/fullstack-branching/mono-and-multi-repos/](https://docs.amplify.aws/react/deploy-and-host/fullstack-branching/mono-and-multi-repos/)
-
-##### `apps/admin-dashboard/page.tsx`
-
-~~~
-import { generateClient } from "aws-amplify/data";
-import type { Schema } from "@/data-schema";
-
-const client = generateClient<Schema>();
-
-const createTodo = async () => {
-  await client.models.Todo.create({
-content: window.prompt("Todo content?"),
-isDone: false,
-  });
-};
-
-~~~
-
-| | |
-| -- | -- |
-| Hash | `3137a2b60aedf773` |
-| Covered | ❌ |
-
-##### Covering Regions
-
-- *None*
-
----
-
 #### [https://docs.amplify.aws/react/deploy-and-host/fullstack-branching/mono-and-multi-repos/](https://docs.amplify.aws/react/deploy-and-host/fullstack-branching/mono-and-multi-repos/)
 
 ##### `Terminal`
@@ -17749,6 +17687,66 @@ paths:
 
 ---
 
+#### [https://docs.amplify.aws/react/deploy-and-host/fullstack-branching/mono-and-multi-repos/](https://docs.amplify.aws/react/deploy-and-host/fullstack-branching/mono-and-multi-repos/)
+
+##### `apps/admin-dashboard/page.tsx`
+
+~~~
+import { generateClient } from "aws-amplify/data";
+import type { Schema } from "@/data-schema";
+
+const client = generateClient<Schema>();
+
+const createTodo = async () => {
+  await client.models.Todo.create({
+content: window.prompt("Todo content?"),
+isDone: false,
+  });
+};
+
+~~~
+
+| | |
+| -- | -- |
+| Hash | `3137a2b60aedf773` |
+| Covered | ❌ |
+
+##### Covering Regions
+
+- *None*
+
+---
+
+#### [https://docs.amplify.aws/react/deploy-and-host/fullstack-branching/monorepos/](https://docs.amplify.aws/react/deploy-and-host/fullstack-branching/monorepos/)
+
+##### `apps/admin-dashboard/page.tsx`
+
+~~~
+import { generateClient } from "aws-amplify/data";
+import type { Schema } from "@/data-schema";
+
+const client = generateClient<Schema>();
+
+const createTodo = async () => {
+  await client.models.Todo.create({
+content: window.prompt("Todo content?"),
+isDone: false,
+  });
+};
+
+~~~
+
+| | |
+| -- | -- |
+| Hash | `3137a2b60aedf773` |
+| Covered | ❌ |
+
+##### Covering Regions
+
+- *None*
+
+---
+
 #### [https://docs.amplify.aws/react/deploy-and-host/fullstack-branching/branch-deployments/](https://docs.amplify.aws/react/deploy-and-host/fullstack-branching/branch-deployments/)
 
 ##### `Terminal`
@@ -17787,6 +17785,109 @@ npx ampx generate outputs --app-id <your-amplify-app-id> --branch <your-git-bran
 | | |
 | -- | -- |
 | Hash | `86876fc0d71196f7` |
+| Covered | ❌ |
+
+##### Covering Regions
+
+- *None*
+
+---
+
+#### [https://docs.amplify.aws/react/deploy-and-host/fullstack-branching/monorepos/](https://docs.amplify.aws/react/deploy-and-host/fullstack-branching/monorepos/)
+
+##### `Unnamed Snippet`
+
+~~~
+├── apps/
+│   ├── admin-dashboard/
+│   │   ├── next.config.mjs
+│   │   └── package.json
+│   └── marketing-site/
+│       ├── astro.config.mjs
+│       └── package.json
+├── packages/
+│   └── my-shared-backend/
+│       ├── amplify/
+│       │   ├── auth/
+│       │   │   └── resource.ts
+│       │   ├── data/
+│       │   │   └── resource.ts
+│       │   └── backend.ts
+│       |── package.json
+    └── tsconfig.json
+└── package.json
+
+~~~
+
+| | |
+| -- | -- |
+| Hash | `24ba8fa46ca0b5dc` |
+| Covered | ❌ |
+
+##### Covering Regions
+
+- *None*
+
+---
+
+#### [https://docs.amplify.aws/react/deploy-and-host/fullstack-branching/monorepos/](https://docs.amplify.aws/react/deploy-and-host/fullstack-branching/monorepos/)
+
+##### `Terminal`
+
+~~~
+npx ampx generate outputs --branch main --app-id BACKEND-APP-ID
+
+~~~
+
+| | |
+| -- | -- |
+| Hash | `08fd21f5eafe9848` |
+| Covered | ❌ |
+
+##### Covering Regions
+
+- *None*
+
+---
+
+#### [https://docs.amplify.aws/react/deploy-and-host/fullstack-branching/monorepos/](https://docs.amplify.aws/react/deploy-and-host/fullstack-branching/monorepos/)
+
+##### `Terminal`
+
+~~~
+npx ampx generate outputs --branch main --app-id BACKEND-APP-ID
+
+~~~
+
+| | |
+| -- | -- |
+| Hash | `08fd21f5eafe9848` |
+| Covered | ❌ |
+
+##### Covering Regions
+
+- *None*
+
+---
+
+#### [https://docs.amplify.aws/react/deploy-and-host/fullstack-branching/monorepos/](https://docs.amplify.aws/react/deploy-and-host/fullstack-branching/monorepos/)
+
+##### `tsconfig.json`
+
+~~~
+{
+  "compilerOptions": {
+"paths": {
+  "@/data-schema": ["./packages/my-shared-backend/amplify/data/resource"]
+}
+  }
+}
+
+~~~
+
+| | |
+| -- | -- |
+| Hash | `be4357236b96055a` |
 | Covered | ❌ |
 
 ##### Covering Regions

@@ -2,218 +2,6 @@
 
 # Covered Docs Snippets
 
-#### [https://docs.amplify.aws/react/build-a-backend/data/connect-from-server-runtime/nextjs-server-runtime/](https://docs.amplify.aws/react/build-a-backend/data/connect-from-server-runtime/nextjs-server-runtime/)
-
-##### `Unnamed Snippet`
-
-~~~
-import { type Schema } from "@/amplify/data/resource";
-import { createServerRunner } from "@aws-amplify/adapter-nextjs";
-import { generateServerClientUsingReqRes } from "@aws-amplify/adapter-nextjs/data";
-import outputs from "@/amplify_outputs.json";
-
-export const { runWithAmplifyServerContext } = createServerRunner({
-  config: outputs,
-});
-
-export const reqResBasedClient = generateServerClientUsingReqRes<Schema>({
-  config: outputs,
-});
-
-~~~
-
-| | |
-| -- | -- |
-| Hash | `062b069c31e86ca5` |
-| Covered | ✅ |
-
-##### Covering Regions
-
-- [../../packages/integration-tests/__tests__/defined-behavior/3-exhaustive/ssr-req-res-client.ts#108](../../packages/integration-tests/__tests__/defined-behavior/3-exhaustive/ssr-req-res-client.ts#108)
-
----
-
-#### [https://docs.amplify.aws/react/build-a-backend/data/connect-to-existing-data-sources/connect-postgres-mysql-database/](https://docs.amplify.aws/react/build-a-backend/data/connect-to-existing-data-sources/connect-postgres-mysql-database/)
-
-##### `Unnamed Snippet`
-
-~~~
-npx ampx sandbox secret set SQL_CONNECTION_STRING
-
-~~~
-
-| | |
-| -- | -- |
-| Hash | `c51525983af82763` |
-| Covered | ✅ |
-
-##### Covering Regions
-
-- [../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/cli-commands.ts#3](../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/cli-commands.ts#3)
-
----
-
-#### [https://docs.amplify.aws/react/build-a-backend/data/connect-to-existing-data-sources/connect-postgres-mysql-database/](https://docs.amplify.aws/react/build-a-backend/data/connect-to-existing-data-sources/connect-postgres-mysql-database/)
-
-##### `Unnamed Snippet`
-
-~~~
-mysql://user:password@hostname:port/db-name
-
-~~~
-
-| | |
-| -- | -- |
-| Hash | `28870705b76cb2ef` |
-| Covered | ✅ |
-
-##### Covering Regions
-
-- [../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/cli-commands.ts#3](../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/cli-commands.ts#3)
-
----
-
-#### [https://docs.amplify.aws/react/build-a-backend/data/connect-to-existing-data-sources/connect-postgres-mysql-database/](https://docs.amplify.aws/react/build-a-backend/data/connect-to-existing-data-sources/connect-postgres-mysql-database/)
-
-##### `Unnamed Snippet`
-
-~~~
-postgres://user:password@hostname:port/db-name
-
-~~~
-
-| | |
-| -- | -- |
-| Hash | `635b91f7a060cdf5` |
-| Covered | ✅ |
-
-##### Covering Regions
-
-- [../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/cli-commands.ts#3](../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/cli-commands.ts#3)
-
----
-
-#### [https://docs.amplify.aws/react/build-a-backend/data/connect-to-existing-data-sources/connect-postgres-mysql-database/](https://docs.amplify.aws/react/build-a-backend/data/connect-to-existing-data-sources/connect-postgres-mysql-database/)
-
-##### `Unnamed Snippet`
-
-~~~
-npx ampx generate schema-from-database --connection-uri-secret SQL_CONNECTION_STRING --out amplify/data/schema.sql.ts
-
-~~~
-
-| | |
-| -- | -- |
-| Hash | `7d93bdb952442e03` |
-| Covered | ✅ |
-
-##### Covering Regions
-
-- [../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/cli-commands.ts#3](../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/cli-commands.ts#3)
-
----
-
-#### [https://docs.amplify.aws/react/build-a-backend/data/connect-to-existing-data-sources/connect-postgres-mysql-database/](https://docs.amplify.aws/react/build-a-backend/data/connect-to-existing-data-sources/connect-postgres-mysql-database/)
-
-##### `Terminal`
-
-~~~
-npx ampx sandbox secret set CUSTOM_SSL_CERT < /path/to/custom/ssl/public-ca-cert.pem
-npx ampx generate schema-from-database --connection-uri-secret SQL_CONNECTION_STRING --ssl-cert-secret CUSTOM_SSL_CERT --out amplify/data/schema.sql.ts
-
-~~~
-
-| | |
-| -- | -- |
-| Hash | `4945f33e55d33118` |
-| Covered | ✅ |
-
-##### Covering Regions
-
-- [../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/cli-commands.ts#3](../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/cli-commands.ts#3)
-
----
-
-#### [https://docs.amplify.aws/react/build-a-backend/data/connect-to-existing-data-sources/connect-postgres-mysql-database/](https://docs.amplify.aws/react/build-a-backend/data/connect-to-existing-data-sources/connect-postgres-mysql-database/)
-
-##### `Unnamed Snippet`
-
-~~~
-npx ampx sandbox
-
-~~~
-
-| | |
-| -- | -- |
-| Hash | `4149df77ccfbb696` |
-| Covered | ✅ |
-
-##### Covering Regions
-
-- [../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/common.ts#5](../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/common.ts#5)
-
----
-
-#### [https://docs.amplify.aws/react/deploy-and-host/sandbox-environments/setup/](https://docs.amplify.aws/react/deploy-and-host/sandbox-environments/setup/)
-
-##### `Terminal`
-
-~~~
-npx ampx sandbox
-
-~~~
-
-| | |
-| -- | -- |
-| Hash | `4149df77ccfbb696` |
-| Covered | ✅ |
-
-##### Covering Regions
-
-- [../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/common.ts#5](../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/common.ts#5)
-
----
-
-#### [https://docs.amplify.aws/react/build-a-backend/data/set-up-data/](https://docs.amplify.aws/react/build-a-backend/data/set-up-data/)
-
-##### `Terminal`
-
-~~~
-npx ampx sandbox
-
-~~~
-
-| | |
-| -- | -- |
-| Hash | `4149df77ccfbb696` |
-| Covered | ✅ |
-
-##### Covering Regions
-
-- [../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/common.ts#5](../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/common.ts#5)
-
----
-
-#### [https://docs.amplify.aws/react/start/quickstart/](https://docs.amplify.aws/react/start/quickstart/)
-
-##### `Terminal`
-
-~~~
-npx ampx sandbox
-
-~~~
-
-| | |
-| -- | -- |
-| Hash | `4149df77ccfbb696` |
-| Covered | ✅ |
-
-##### Covering Regions
-
-- [../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/common.ts#5](../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/common.ts#5)
-
----
-
 #### [https://docs.amplify.aws/react/reference/project-structure/](https://docs.amplify.aws/react/reference/project-structure/)
 
 ##### `Unnamed Snippet`
@@ -241,8 +29,8 @@ npx ampx sandbox
 
 ##### Covering Regions
 
-- [../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/reference/project-structure.ts#7](../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/reference/project-structure.ts#7)
-- [../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/deploy-and-host/sandbox-environments/setup.ts#7](../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/deploy-and-host/sandbox-environments/setup.ts#7)
+- [../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/reference/project-structure.ts#9](../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/reference/project-structure.ts#9)
+- [../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/deploy-and-host/sandbox-environments/setup.ts#10](../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/deploy-and-host/sandbox-environments/setup.ts#10)
 
 ---
 
@@ -302,8 +90,8 @@ npx ampx sandbox
 
 ##### Covering Regions
 
-- [../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/reference/project-structure.ts#7](../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/reference/project-structure.ts#7)
-- [../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/deploy-and-host/sandbox-environments/setup.ts#7](../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/deploy-and-host/sandbox-environments/setup.ts#7)
+- [../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/reference/project-structure.ts#9](../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/reference/project-structure.ts#9)
+- [../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/deploy-and-host/sandbox-environments/setup.ts#10](../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/deploy-and-host/sandbox-environments/setup.ts#10)
 
 ---
 
@@ -329,8 +117,8 @@ email: true,
 
 ##### Covering Regions
 
-- [../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/reference/project-structure.ts#7](../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/reference/project-structure.ts#7)
-- [../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/deploy-and-host/sandbox-environments/setup.ts#7](../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/deploy-and-host/sandbox-environments/setup.ts#7)
+- [../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/reference/project-structure.ts#9](../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/reference/project-structure.ts#9)
+- [../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/deploy-and-host/sandbox-environments/setup.ts#10](../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/deploy-and-host/sandbox-environments/setup.ts#10)
 
 ---
 
@@ -356,8 +144,8 @@ email: true,
 
 ##### Covering Regions
 
-- [../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/reference/project-structure.ts#7](../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/reference/project-structure.ts#7)
-- [../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/deploy-and-host/sandbox-environments/setup.ts#7](../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/deploy-and-host/sandbox-environments/setup.ts#7)
+- [../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/reference/project-structure.ts#9](../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/reference/project-structure.ts#9)
+- [../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/deploy-and-host/sandbox-environments/setup.ts#10](../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/deploy-and-host/sandbox-environments/setup.ts#10)
 
 ---
 
@@ -384,9 +172,9 @@ defineBackend({
 
 ##### Covering Regions
 
-- [../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/start/manual-installation.ts#10](../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/start/manual-installation.ts#10)
-- [../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/reference/project-structure.ts#7](../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/reference/project-structure.ts#7)
-- [../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/deploy-and-host/sandbox-environments/setup.ts#7](../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/deploy-and-host/sandbox-environments/setup.ts#7)
+- [../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/start/manual-installation.ts#11](../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/start/manual-installation.ts#11)
+- [../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/reference/project-structure.ts#9](../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/reference/project-structure.ts#9)
+- [../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/deploy-and-host/sandbox-environments/setup.ts#10](../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/deploy-and-host/sandbox-environments/setup.ts#10)
 
 ---
 
@@ -413,9 +201,9 @@ defineBackend({
 
 ##### Covering Regions
 
-- [../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/start/manual-installation.ts#10](../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/start/manual-installation.ts#10)
-- [../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/reference/project-structure.ts#7](../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/reference/project-structure.ts#7)
-- [../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/deploy-and-host/sandbox-environments/setup.ts#7](../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/deploy-and-host/sandbox-environments/setup.ts#7)
+- [../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/start/manual-installation.ts#11](../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/start/manual-installation.ts#11)
+- [../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/reference/project-structure.ts#9](../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/reference/project-structure.ts#9)
+- [../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/deploy-and-host/sandbox-environments/setup.ts#10](../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/deploy-and-host/sandbox-environments/setup.ts#10)
 
 ---
 
@@ -457,8 +245,8 @@ bucket.grantRead(unauthRole);
 
 ##### Covering Regions
 
-- [../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/reference/project-structure.ts#7](../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/reference/project-structure.ts#7)
-- [../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/deploy-and-host/sandbox-environments/setup.ts#7](../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/deploy-and-host/sandbox-environments/setup.ts#7)
+- [../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/reference/project-structure.ts#9](../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/reference/project-structure.ts#9)
+- [../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/deploy-and-host/sandbox-environments/setup.ts#10](../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/deploy-and-host/sandbox-environments/setup.ts#10)
 
 ---
 
@@ -478,7 +266,7 @@ read -p "Enter email address: " user_email # hit enter
 
 ##### Covering Regions
 
-- [../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/start/account-setup.ts#9](../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/start/account-setup.ts#9)
+- [../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/start/account-setup.ts#11](../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/start/account-setup.ts#11)
 
 ---
 
@@ -498,7 +286,7 @@ Enter email address: <your-email-address>
 
 ##### Covering Regions
 
-- [../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/start/account-setup.ts#9](../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/start/account-setup.ts#9)
+- [../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/start/account-setup.ts#11](../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/start/account-setup.ts#11)
 
 ---
 
@@ -529,7 +317,7 @@ aws sso-admin create-account-assignment --instance-arn $ssoArn --target-id $acco
 
 ##### Covering Regions
 
-- [../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/start/account-setup.ts#9](../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/start/account-setup.ts#9)
+- [../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/start/account-setup.ts#11](../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/start/account-setup.ts#11)
 
 ---
 
@@ -554,7 +342,7 @@ Username: amplify-admin
 
 ##### Covering Regions
 
-- [../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/start/account-setup.ts#9](../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/start/account-setup.ts#9)
+- [../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/start/account-setup.ts#11](../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/start/account-setup.ts#11)
 
 ---
 
@@ -576,7 +364,7 @@ unzip awscliv2.zip
 
 ##### Covering Regions
 
-- [../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/start/account-setup.ts#9](../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/start/account-setup.ts#9)
+- [../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/start/account-setup.ts#11](../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/start/account-setup.ts#11)
 
 ---
 
@@ -611,7 +399,7 @@ aws configure sso
 
 ##### Covering Regions
 
-- [../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/start/account-setup.ts#12](../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/start/account-setup.ts#12)
+- [../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/start/account-setup.ts#13](../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/start/account-setup.ts#13)
 
 ---
 
@@ -636,7 +424,7 @@ CLI default output format [None]:
 
 ##### Covering Regions
 
-- [../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/start/account-setup.ts#12](../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/start/account-setup.ts#12)
+- [../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/start/account-setup.ts#13](../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/start/account-setup.ts#13)
 
 ---
 
@@ -659,7 +447,7 @@ aws s3 ls --profile default
 
 ##### Covering Regions
 
-- [../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/start/account-setup.ts#12](../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/start/account-setup.ts#12)
+- [../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/start/account-setup.ts#13](../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/start/account-setup.ts#13)
 
 ---
 
@@ -687,7 +475,7 @@ sso_registration_scopes = sso:account:access
 
 ##### Covering Regions
 
-- [../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/start/account-setup.ts#12](../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/start/account-setup.ts#12)
+- [../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/start/account-setup.ts#13](../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/start/account-setup.ts#13)
 
 ---
 
@@ -711,7 +499,7 @@ npx ampx sandbox --profile <profile-name>
 
 ##### Covering Regions
 
-- [../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/start/account-setup.ts#12](../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/start/account-setup.ts#12)
+- [../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/start/account-setup.ts#13](../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/start/account-setup.ts#13)
 
 ---
 
@@ -751,7 +539,7 @@ npm create amplify@latest
 
 ##### Covering Regions
 
-- [../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/start/manual-installation.ts#7](../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/start/manual-installation.ts#7)
+- [../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/start/manual-installation.ts#9](../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/start/manual-installation.ts#9)
 
 ---
 
@@ -771,7 +559,7 @@ npm create amplify@latest
 
 ##### Covering Regions
 
-- [../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/start/manual-installation.ts#7](../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/start/manual-installation.ts#7)
+- [../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/start/manual-installation.ts#9](../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/start/manual-installation.ts#9)
 
 ---
 
@@ -803,7 +591,7 @@ npm create amplify@latest
 
 ##### Covering Regions
 
-- [../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/start/manual-installation.ts#7](../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/start/manual-installation.ts#7)
+- [../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/start/manual-installation.ts#9](../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/start/manual-installation.ts#9)
 
 ---
 
@@ -823,7 +611,7 @@ npm add --save-dev @aws-amplify/backend@latest @aws-amplify/backend-cli@latest t
 
 ##### Covering Regions
 
-- [../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/start/manual-installation.ts#7](../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/start/manual-installation.ts#7)
+- [../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/start/manual-installation.ts#9](../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/start/manual-installation.ts#9)
 
 ---
 
@@ -845,7 +633,7 @@ defineBackend({});
 
 ##### Covering Regions
 
-- [../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/start/manual-installation.ts#7](../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/start/manual-installation.ts#7)
+- [../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/start/manual-installation.ts#9](../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/start/manual-installation.ts#9)
 
 ---
 
@@ -865,7 +653,7 @@ The current file is a CommonJS module whose imports will produce 'require' calls
 
 ##### Covering Regions
 
-- [../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/start/manual-installation.ts#10](../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/start/manual-installation.ts#10)
+- [../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/start/manual-installation.ts#11](../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/start/manual-installation.ts#11)
 
 ---
 
@@ -887,7 +675,7 @@ The current file is a CommonJS module whose imports will produce 'require' calls
 
 ##### Covering Regions
 
-- [../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/start/manual-installation.ts#10](../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/start/manual-installation.ts#10)
+- [../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/start/manual-installation.ts#11](../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/start/manual-installation.ts#11)
 
 ---
 
@@ -907,7 +695,118 @@ npm update @aws-amplify/backend@latest @aws-amplify/backend-cli@latest
 
 ##### Covering Regions
 
-- [../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/start/manual-installation.ts#10](../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/start/manual-installation.ts#10)
+- [../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/start/manual-installation.ts#11](../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/start/manual-installation.ts#11)
+
+---
+
+#### [https://docs.amplify.aws/react/build-a-backend/data/connect-from-server-runtime/nextjs-server-runtime/](https://docs.amplify.aws/react/build-a-backend/data/connect-from-server-runtime/nextjs-server-runtime/)
+
+##### `Unnamed Snippet`
+
+~~~
+import { type Schema } from "@/amplify/data/resource";
+import { createServerRunner } from "@aws-amplify/adapter-nextjs";
+import { generateServerClientUsingReqRes } from "@aws-amplify/adapter-nextjs/data";
+import outputs from "@/amplify_outputs.json";
+
+export const { runWithAmplifyServerContext } = createServerRunner({
+  config: outputs,
+});
+
+export const reqResBasedClient = generateServerClientUsingReqRes<Schema>({
+  config: outputs,
+});
+
+~~~
+
+| | |
+| -- | -- |
+| Hash | `062b069c31e86ca5` |
+| Covered | ✅ |
+
+##### Covering Regions
+
+- [../../packages/integration-tests/__tests__/defined-behavior/3-exhaustive/ssr-req-res-client.ts#108](../../packages/integration-tests/__tests__/defined-behavior/3-exhaustive/ssr-req-res-client.ts#108)
+
+---
+
+#### [https://docs.amplify.aws/react/build-a-backend/data/connect-to-existing-data-sources/connect-postgres-mysql-database/](https://docs.amplify.aws/react/build-a-backend/data/connect-to-existing-data-sources/connect-postgres-mysql-database/)
+
+##### `Unnamed Snippet`
+
+~~~
+npx ampx sandbox
+
+~~~
+
+| | |
+| -- | -- |
+| Hash | `4149df77ccfbb696` |
+| Covered | ✅ |
+
+##### Covering Regions
+
+- [../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/common.ts#7](../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/common.ts#7)
+
+---
+
+#### [https://docs.amplify.aws/react/deploy-and-host/sandbox-environments/setup/](https://docs.amplify.aws/react/deploy-and-host/sandbox-environments/setup/)
+
+##### `Terminal`
+
+~~~
+npx ampx sandbox
+
+~~~
+
+| | |
+| -- | -- |
+| Hash | `4149df77ccfbb696` |
+| Covered | ✅ |
+
+##### Covering Regions
+
+- [../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/common.ts#7](../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/common.ts#7)
+
+---
+
+#### [https://docs.amplify.aws/react/build-a-backend/data/set-up-data/](https://docs.amplify.aws/react/build-a-backend/data/set-up-data/)
+
+##### `Terminal`
+
+~~~
+npx ampx sandbox
+
+~~~
+
+| | |
+| -- | -- |
+| Hash | `4149df77ccfbb696` |
+| Covered | ✅ |
+
+##### Covering Regions
+
+- [../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/common.ts#7](../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/common.ts#7)
+
+---
+
+#### [https://docs.amplify.aws/react/start/quickstart/](https://docs.amplify.aws/react/start/quickstart/)
+
+##### `Terminal`
+
+~~~
+npx ampx sandbox
+
+~~~
+
+| | |
+| -- | -- |
+| Hash | `4149df77ccfbb696` |
+| Covered | ✅ |
+
+##### Covering Regions
+
+- [../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/common.ts#7](../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/common.ts#7)
 
 ---
 
