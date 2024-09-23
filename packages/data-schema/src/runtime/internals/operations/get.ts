@@ -9,7 +9,6 @@ import {
   ClientInternalsGetter,
   GraphQLOptions,
   GraphQLResult,
-  INTERNAL_USER_AGENT_OVERRIDE,
   ListArgs,
   ModelIntrospectionSchema,
   SchemaModel,
@@ -27,7 +26,7 @@ import {
   initializeModel,
 } from '../APIClient';
 
-import { handleSingularGraphQlError } from './utils';
+import { createUserAgentOverride, handleSingularGraphQlError } from './utils';
 import { selfAwareAsync } from '../../utils';
 
 import { extendCancellability } from '../cancellation';
@@ -106,9 +105,7 @@ function _get(
     const auth = authModeParams(client, getInternals, options);
     const headers = getCustomHeaders(client, getInternals, options?.headers);
 
-    const userAgentOverride = customUserAgentDetails
-      ? { [INTERNAL_USER_AGENT_OVERRIDE]: customUserAgentDetails }
-      : {};
+    const userAgentOverride = createUserAgentOverride(customUserAgentDetails);
 
     try {
       const basePromise = context

@@ -10,7 +10,6 @@ import {
   CustomOperation,
   GraphQLResult,
   GraphqlSubscriptionResult,
-  INTERNAL_USER_AGENT_OVERRIDE,
   ListArgs,
   QueryArgs,
   ModelIntrospectionSchema,
@@ -32,7 +31,7 @@ import {
   selectionSetIRToString,
 } from '../APIClient';
 
-import { handleSingularGraphQlError } from './utils';
+import { createUserAgentOverride, handleSingularGraphQlError } from './utils';
 import { selfAwareAsync } from '../../utils';
 
 import { extendCancellability } from '../cancellation';
@@ -411,9 +410,7 @@ function _op(
 
     const variables = operationVariables(operation, args);
 
-    const userAgentOverride = customUserAgentDetails
-      ? { [INTERNAL_USER_AGENT_OVERRIDE]: customUserAgentDetails }
-      : {};
+    const userAgentOverride = createUserAgentOverride(customUserAgentDetails);
 
     try {
       const basePromise = context
@@ -581,9 +578,7 @@ function _opSubscription(
 
   const variables = operationVariables(operation, args);
 
-  const userAgentOverride = customUserAgentDetails
-    ? { [INTERNAL_USER_AGENT_OVERRIDE]: customUserAgentDetails }
-    : {};
+  const userAgentOverride = createUserAgentOverride(customUserAgentDetails);
 
   const observable = client.graphql(
     {

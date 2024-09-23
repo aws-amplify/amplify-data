@@ -8,7 +8,6 @@ import {
   BaseSSRClient,
   ClientInternalsGetter,
   GraphQLResult,
-  INTERNAL_USER_AGENT_OVERRIDE,
   ListArgs,
   ModelIntrospectionSchema,
   SchemaModel,
@@ -24,7 +23,7 @@ import {
   initializeModel,
 } from '../APIClient';
 
-import { handleListGraphQlError } from './utils';
+import { createUserAgentOverride, handleListGraphQlError } from './utils';
 import { selfAwareAsync } from '../../utils';
 
 import { extendCancellability } from '../cancellation';
@@ -95,9 +94,7 @@ function _list(
     const auth = authModeParams(client, getInternals, args);
     const headers = getCustomHeaders(client, getInternals, args?.headers);
 
-    const userAgentOverride = customUserAgentDetails
-      ? { [INTERNAL_USER_AGENT_OVERRIDE]: customUserAgentDetails }
-      : {};
+    const userAgentOverride = createUserAgentOverride(customUserAgentDetails);
 
     try {
       const basePromise = contextSpec
