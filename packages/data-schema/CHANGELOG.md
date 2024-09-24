@@ -1,5 +1,11 @@
 # @aws-amplify/data-schema
 
+## 1.6.2
+
+### Patch Changes
+
+- 8281be2: fix: timestamps in model props breaks runtime
+
 ## 1.6.1
 
 ### Patch Changes
