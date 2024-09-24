@@ -4,12 +4,8 @@ import jsdom from 'jsdom';
 import * as prettier from 'prettier';
 import type { Config } from './config-type';
 
-type PageCodeBlocks = Record<string, NamedCodeBlocks>;
-type NamedCodeBlock = { name: string; code: string; hash: string };
-type NamedCodeBlocks = NamedCodeBlock[];
-
 export type CodeSnippet = {
-  path: string;
+  url: string;
   name: string;
   code: string;
   hash: string;
@@ -86,14 +82,17 @@ async function format(tag: HTMLPreElement, verbose = false) {
   return code;
 }
 
-async function getPageCodeBlocks(doc: Document): Promise<NamedCodeBlocks> {
-  const results: NamedCodeBlocks = [];
+async function getPageCodeBlocks(
+  url: string,
+  doc: Document,
+): Promise<CodeSnippet[]> {
+  const results: CodeSnippet[] = [];
 
   for (const pre of doc.getElementsByTagName('pre')) {
     const name = codeblockFilename(pre);
     const code = await format(pre);
     const hash = generateHash(code);
-    results.push({ name, code, hash });
+    results.push({ url, name, code, hash });
   }
 
   return results;
@@ -112,10 +111,10 @@ async function fetchDocuments(
 
 async function extractCodeBlocks(
   docs: Record<string, Document>,
-): Promise<PageCodeBlocks> {
-  const results: PageCodeBlocks = {};
+): Promise<CodeSnippet[]> {
+  const results: CodeSnippet[] = [];
   for (const [url, dom] of Object.entries(docs)) {
-    results[url] = await getPageCodeBlocks(dom);
+    results.push(...(await getPageCodeBlocks(url, dom)));
   }
   return results;
 }
@@ -132,19 +131,7 @@ async function fetchSnippets(urls: string[]) {
   return extractCodeBlocks(docs);
 }
 
-export async function buildSnippetMap(config: Config): Promise<CodeSnippetMap> {
-  const map: CodeSnippetMap = {};
+export async function buildSnippets(config: Config): Promise<CodeSnippet[]> {
   const urls = await discoverPages(config);
-  const snippetsByUrl = await fetchSnippets(urls);
-  for (const [path, snippets] of Object.entries(snippetsByUrl)) {
-    for (const snippet of snippets) {
-      if (!map[snippet.hash]) map[snippet.hash] = [];
-      map[snippet.hash].push({
-        ...snippet,
-        path,
-      });
-    }
-  }
-
-  return map;
+  return await fetchSnippets(urls);
 }

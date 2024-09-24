@@ -1,6 +1,8 @@
-import { writeFileSync } from 'fs';
+import { writeFileSync, mkdirSync } from 'fs';
 import { execSync } from 'child_process';
-import { relative } from 'path';
+import { relative, dirname } from 'path';
+import { URL } from 'url';
+import { rimrafSync } from 'rimraf';
 import type { CodeSnippet, CodeSnippetMap } from './fetch-snippets';
 import { Region, RegionMap } from './find-integs';
 import type { Config } from './config-type';
@@ -16,10 +18,25 @@ export class SnippetStatus {
   }
 }
 
+export type DiscoveredSnippets = {
+  /**
+   * Discovered code snippets grouped by their docs site page path.
+   */
+  byUrl: CodeSnippetMap;
+
+  /**
+   * Discovered code snippets grouped by the hash of the snippet code.
+   */
+  byHash: CodeSnippetMap;
+};
+
+export type SnippetIndex = Record<string, SnippetStatus[]>;
+export type SnippetIndexes = Record<keyof DiscoveredSnippets, SnippetIndex>;
+
 export class CoverageStatus {
   constructor(
     public region: Region & { hash: string },
-    public snippets: CodeSnippet[],
+    public snippets: SnippetStatus[],
   ) {}
 
   get isOrphaned() {
@@ -29,15 +46,24 @@ export class CoverageStatus {
 
 type CoverageReportInit = {
   config: Config;
-  buildSnippetMap: (config: Config) => Promise<CodeSnippetMap>;
+  buildSnippets: (config: Config) => Promise<CodeSnippet[]>;
   buildRegionMap: (config: Config) => Promise<RegionMap>;
+};
+
+type PageCoverageSummary = {
+  coverage: number;
+  coverageString: string;
+  covered: number;
+  total: number;
+  url: string;
+  reportPath: string;
 };
 
 export class CoverageReporter {
   constructor(private inits: CoverageReportInit) {}
 
   async report() {
-    const snippets = await this.inits.buildSnippetMap(this.inits.config);
+    const snippets = await this.inits.buildSnippets(this.inits.config);
     const coverage = await this.inits.buildRegionMap(this.inits.config);
     return new CoverageReport(
       snippets,
@@ -47,21 +73,42 @@ export class CoverageReporter {
   }
 }
 
+function groupBy<T>(
+  items: T[],
+  groupOf: (item: T) => string,
+): Record<string, T[]> {
+  const groups: Record<string, T[]> = {};
+  for (const item of items) {
+    const group = groupOf(item);
+    if (!groups[group]) groups[group] = [];
+    groups[group].push(item);
+  }
+  return groups;
+}
+
+function sum<T>(items: T[], select: (item: T) => number) {
+  let runningTotal = 0;
+  for (const item of items) {
+    runningTotal += select(item);
+  }
+  return runningTotal;
+}
+
 export class CoverageReport {
+  private snippetIndex: SnippetIndexes;
+
   constructor(
-    public snippets: CodeSnippetMap,
+    public snippets: CodeSnippet[],
     public coverage: RegionMap,
     public reportPath: string,
-  ) {}
-
-  get allSnippetStatuses(): SnippetStatus[] {
+  ) {
     const all: SnippetStatus[] = [];
-    for (const [hash, snippets] of Object.entries(this.snippets)) {
-      for (const snippet of snippets) {
-        all.push(new SnippetStatus(snippet, this.coverage[hash] || []));
-      }
+    for (const snippet of this.snippets) {
+      all.push(new SnippetStatus(snippet, this.coverage[snippet.hash] || []));
     }
-    return all;
+    const byHash = groupBy(all, (s) => s.snippet.hash);
+    const byUrl = groupBy(all, (s) => s.snippet.url);
+    this.snippetIndex = { byHash, byUrl };
   }
 
   get allCoverageStatuses(): CoverageStatus[] {
@@ -69,23 +116,14 @@ export class CoverageReport {
     for (const [hash, linkedRegions] of Object.entries(this.coverage)) {
       for (const region of linkedRegions) {
         all.push(
-          new CoverageStatus({ ...region, hash }, this.snippets[hash] || []),
+          new CoverageStatus(
+            { ...region, hash },
+            this.snippetIndex.byHash[hash] || [],
+          ),
         );
       }
     }
     return all;
-  }
-
-  get coveredSnippets(): CodeSnippet[] {
-    return this.allSnippetStatuses
-      .filter((s) => s.isCovered)
-      .map((s) => s.snippet);
-  }
-
-  get uncoveredSnippets(): CodeSnippet[] {
-    return this.allSnippetStatuses
-      .filter((s) => !s.isCovered)
-      .map((s) => s.snippet);
   }
 
   /**
@@ -106,14 +144,16 @@ export class CoverageReport {
    * Formats an individual snippet into markdown for the report.
    *
    * @param snippet The individual snippet to format.
+   * @param reportPath The file path that this report MD is written to; used for generated relative links.
    */
-  formatSnippet({ path, code, hash, name }: CodeSnippet): string {
-    const refs = this.formatRegionReferences(hash).trim();
-    const status = refs.length === 0 ? '❌' : '✅';
+  formatSnippetStatus(
+    { snippet: { code, hash, name }, isCovered }: SnippetStatus,
+    reportPath: string,
+  ): string {
+    const refs = this.formatRegionReferences(hash, reportPath).trim();
+    const status = isCovered ? '✅' : '❌';
 
-    return `#### [${path}](${path})
-
-    ##### \`${name || 'Unnamed Snippet'}\`
+    return `#### \`${name || 'Unnamed Snippet'}\`
 
     ~~~\n${code}\n~~~
 
@@ -147,14 +187,140 @@ export class CoverageReport {
     `.replace(/^ {4}/gm, ''); // dedent 4
   }
 
-  formatRegionReferences(hash: string): string {
+  /**
+   *
+   * @param hash Region hash to find and format references to.
+   * @param reportPath The file path that this report MD is written to; used for generated relative links.
+   * @returns
+   */
+  formatRegionReferences(hash: string, reportPath: string): string {
     const regions = this.coverage[hash] || [];
     return regions
       .map((r) => {
-        const link = `${this.relativePath(r.path)}#${r.start}`;
-        return `- [${link}](${link})`;
+        // not sure why offhand, but this backlink path contains an extra '../'
+        const relativePath = relative(reportPath, r.path).substring(3);
+
+        // use the path relative to reporting root for brevity.
+        // we also escape `_` chars to avoid them rendering like bold in `__test__` path.
+        const visiblePath = this.relativePath(r.path).replace(/_/g, '\\_');
+
+        const link = `${relativePath}#${r.start}`;
+        return `- [${visiblePath}](${link})`;
       })
       .join('\n');
+  }
+
+  formatPageCoverageSummaryRow(summary: PageCoverageSummary): string {
+    return (
+      '| ' +
+      [
+        summary.url,
+        `[${this.relativePath(summary.reportPath)}](${this.relativePath(summary.reportPath)})`,
+        summary.covered,
+        summary.total,
+        summary.coverageString,
+      ].join(' | ') +
+      ' |'
+    );
+  }
+
+  /**
+   *
+   * @param coverage Count or percentage percentage of covered items.
+   * @param totalItems Total count of items. If `coverage` is already a percentage, omit or set to 1.
+   * @returns
+   */
+  formatCoverage(coverage: number, totalItems: number = 1): string {
+    return (100 * (coverage / totalItems)).toFixed(1) + '%';
+  }
+
+  writeDocsCoverages() {
+    const indexPath = `${this.reportPath}/docs-pages.md`;
+
+    const writtenSnippetReports = Object.entries(this.snippetIndex.byUrl).map(
+      ([url, snippetStatuses]) =>
+        this.writeDocsCoverageForPage(url, snippetStatuses),
+    );
+
+    const summaryLines = writtenSnippetReports
+      .map((s) => this.formatPageCoverageSummaryRow(s))
+      .join('\n');
+
+    const totalCovered = sum(writtenSnippetReports, (r) => r.covered);
+    const totalSnippets = sum(writtenSnippetReports, (r) => r.total);
+    const coverageString = this.formatCoverage(totalCovered, totalSnippets);
+
+    const totalLine = `| TOTAL | | ${totalCovered} | ${totalSnippets} | ${coverageString} |`;
+
+    mkdirSync(dirname(indexPath), { recursive: true });
+    writeFileSync(
+      indexPath,
+      `[<- Back to summary](../)
+      
+      # In-Scope Pages
+
+      | URL | Report | Covered | Total | % |
+      | -- | -- | -- | -- | -- |
+      ${summaryLines}
+      ${totalLine}
+
+      [<- Back to summary](../)
+      `.replace(/^ {6}/gm, ''), // dedent 6
+    );
+
+    return { coverageString, path: indexPath };
+  }
+
+  writeDocsCoverageForPage(
+    url: string,
+    snippets: SnippetStatus[],
+  ): PageCoverageSummary {
+    const basePath = new URL(url).pathname.substring(1);
+    const urlPath =
+      basePath.length === 0 || basePath.endsWith('/')
+        ? basePath + 'index'
+        : basePath;
+    const reportPath = `${this.reportPath}/docs-page/${urlPath}.md`;
+
+    // not sure why offhand, but this backlink path contains an extra '../'
+    const backLink = relative(
+      reportPath,
+      `${this.reportPath}/docs-pages.md`,
+    ).substring(3);
+
+    const covered = snippets.filter((s) => s.isCovered).length;
+    const total = snippets.length;
+    const coverage = covered / total;
+    const coverageString = this.formatCoverage(covered, total);
+
+    mkdirSync(dirname(reportPath), { recursive: true });
+    writeFileSync(
+      reportPath,
+      `[<- Back to index](${backLink})
+
+      #  Snippets
+
+      Page: ${url}
+
+      Coverage: ${coverageString}
+
+      ${snippets
+        .map((s) => this.formatSnippetStatus(s, reportPath))
+        .join('\n')
+        .trim()}
+
+      [<- Back to index](${backLink})
+      `.replace(/^ {6}/gm, ''), // dedent 6
+    );
+
+    return {
+      coverage,
+      coverageString,
+      covered,
+      total,
+      url,
+      reportPath,
+    };
   }
 
   /**
@@ -162,37 +328,25 @@ export class CoverageReport {
    */
   write(open: boolean) {
     const SUMMARY_PATH = `${this.reportPath}/summary.md`;
-    const GAPS_REPORT_PATH = `${this.reportPath}/gaps-report.md`;
     const ORPHANS_REPORT_PATH = `${this.reportPath}/orphans-report.md`;
-    const DETAILS_REPORT_PATH = `${this.reportPath}/coverage-details.md`;
 
+    rimrafSync(this.reportPath);
+
+    const docsSummary = this.writeDocsCoverages();
+
+    mkdirSync(dirname(SUMMARY_PATH), { recursive: true });
     writeFileSync(
       SUMMARY_PATH,
       `# Docs Coverage Report
 
-      | Report | Records |
+      | Report | Count/Coverage |
       | -- | -- |
-      | [Docs Snippet Gaps](${this.relativePath(GAPS_REPORT_PATH)}) | ${this.uncoveredSnippets.length} |
+      | [Docs Snippet Coverage](${this.relativePath(docsSummary.path)}) | ${docsSummary.coverageString} |
       | [Orphaned Integ Tets](${this.relativePath(ORPHANS_REPORT_PATH)}) | ${this.orphanedRegions.length} |
-      | [Coverage Details](${this.relativePath(DETAILS_REPORT_PATH)}) | ${this.coveredSnippets.length} |
-      `.replace(/^ {6}/gm, ''),
-    ); // dedent 6
+      `.replace(/^ {6}/gm, ''), // dedent 6
+    );
 
-    writeFileSync(
-      GAPS_REPORT_PATH,
-      `[<- Back to summary](${this.relativePath(SUMMARY_PATH)})
-
-      # Uncovered Docs Snippets
-
-      ${this.uncoveredSnippets
-        .map((s) => this.formatSnippet(s))
-        .join('\n')
-        .trim()}
-
-      [<- Back to summary](${this.relativePath(SUMMARY_PATH)})
-      `.replace(/^ {6}/gm, ''),
-    ); // dedent 6
-
+    mkdirSync(dirname(ORPHANS_REPORT_PATH), { recursive: true });
     writeFileSync(
       ORPHANS_REPORT_PATH,
       `[<- Back to summary](${this.relativePath(SUMMARY_PATH)})
@@ -205,22 +359,7 @@ export class CoverageReport {
         .trim()}
 
       [<- Back to summary](${this.relativePath(SUMMARY_PATH)})
-      `.replace(/^ {6}/gm, ''),
-    ); // dedent 6
-
-    writeFileSync(
-      DETAILS_REPORT_PATH,
-      `[<- Back to summary](${this.relativePath(SUMMARY_PATH)})
-
-      # Covered Docs Snippets
-
-      ${this.coveredSnippets
-        .map((s) => this.formatSnippet(s))
-        .join('\n')
-        .trim()}
-
-      [<- Back to summary](${this.relativePath(SUMMARY_PATH)})
-      `.replace(/^ {6}/gm, ''), // dedent 4
+      `.replace(/^ {6}/gm, ''), // dedent 6
     );
 
     if (open) execSync(`code ${SUMMARY_PATH}`);
