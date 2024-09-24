@@ -4,9 +4,9 @@
 
 | URL | Report | Covered | Total | % |
 | -- | -- | -- | -- | -- |
-| https://docs.amplify.aws/react/build-a-backend/data/connect-from-server-runtime/nextjs-server-runtime/ | [docs-page/react/build-a-backend/data/connect-from-server-runtime/nextjs-server-runtime/index.md](docs-page/react/build-a-backend/data/connect-from-server-runtime/nextjs-server-runtime/index.md) | 0 | 4 | 0.0% |
+| https://docs.amplify.aws/react/build-a-backend/data/connect-from-server-runtime/nextjs-server-runtime/ | [docs-page/react/build-a-backend/data/connect-from-server-runtime/nextjs-server-runtime/index.md](docs-page/react/build-a-backend/data/connect-from-server-runtime/nextjs-server-runtime/index.md) | 1 | 4 | 25.0% |
 | https://docs.amplify.aws/react/build-a-backend/data/connect-to-existing-data-sources/connect-external-ddb-table/ | [docs-page/react/build-a-backend/data/connect-to-existing-data-sources/connect-external-ddb-table/index.md](docs-page/react/build-a-backend/data/connect-to-existing-data-sources/connect-external-ddb-table/index.md) | 0 | 26 | 0.0% |
-| https://docs.amplify.aws/react/build-a-backend/data/connect-to-existing-data-sources/connect-postgres-mysql-database/ | [docs-page/react/build-a-backend/data/connect-to-existing-data-sources/connect-postgres-mysql-database/index.md](docs-page/react/build-a-backend/data/connect-to-existing-data-sources/connect-postgres-mysql-database/index.md) | 5 | 16 | 31.3% |
+| https://docs.amplify.aws/react/build-a-backend/data/connect-to-existing-data-sources/connect-postgres-mysql-database/ | [docs-page/react/build-a-backend/data/connect-to-existing-data-sources/connect-postgres-mysql-database/index.md](docs-page/react/build-a-backend/data/connect-to-existing-data-sources/connect-postgres-mysql-database/index.md) | 6 | 16 | 37.5% |
 | https://docs.amplify.aws/react/build-a-backend/data/custom-business-logic/connect-amazon-translate/ | [docs-page/react/build-a-backend/data/custom-business-logic/connect-amazon-translate/index.md](docs-page/react/build-a-backend/data/custom-business-logic/connect-amazon-translate/index.md) | 0 | 6 | 0.0% |
 | https://docs.amplify.aws/react/build-a-backend/data/custom-business-logic/connect-amazon-polly/ | [docs-page/react/build-a-backend/data/custom-business-logic/connect-amazon-polly/index.md](docs-page/react/build-a-backend/data/custom-business-logic/connect-amazon-polly/index.md) | 0 | 8 | 0.0% |
 | https://docs.amplify.aws/react/build-a-backend/data/custom-business-logic/connect-amazon-rekognition/ | [docs-page/react/build-a-backend/data/custom-business-logic/connect-amazon-rekognition/index.md](docs-page/react/build-a-backend/data/custom-business-logic/connect-amazon-rekognition/index.md) | 0 | 8 | 0.0% |
@@ -51,12 +51,12 @@
 | https://docs.amplify.aws/react/deploy-and-host/fullstack-branching/share-resources/ | [docs-page/react/deploy-and-host/fullstack-branching/share-resources/index.md](docs-page/react/deploy-and-host/fullstack-branching/share-resources/index.md) | 0 | 1 | 0.0% |
 | https://docs.amplify.aws/react/deploy-and-host/fullstack-branching/cross-account-deployments/ | [docs-page/react/deploy-and-host/fullstack-branching/cross-account-deployments/index.md](docs-page/react/deploy-and-host/fullstack-branching/cross-account-deployments/index.md) | 0 | 1 | 0.0% |
 | https://docs.amplify.aws/react/deploy-and-host/fullstack-branching/custom-pipelines/ | [docs-page/react/deploy-and-host/fullstack-branching/custom-pipelines/index.md](docs-page/react/deploy-and-host/fullstack-branching/custom-pipelines/index.md) | 0 | 2 | 0.0% |
-| https://docs.amplify.aws/react/deploy-and-host/sandbox-environments/setup/ | [docs-page/react/deploy-and-host/sandbox-environments/setup/index.md](docs-page/react/deploy-and-host/sandbox-environments/setup/index.md) | 0 | 1 | 0.0% |
+| https://docs.amplify.aws/react/deploy-and-host/sandbox-environments/setup/ | [docs-page/react/deploy-and-host/sandbox-environments/setup/index.md](docs-page/react/deploy-and-host/sandbox-environments/setup/index.md) | 1 | 1 | 100.0% |
 | https://docs.amplify.aws/react/reference/amplify_outputs/ | [docs-page/react/reference/amplify_outputs/index.md](docs-page/react/reference/amplify_outputs/index.md) | 0 | 5 | 0.0% |
-| https://docs.amplify.aws/react/reference/project-structure/ | [docs-page/react/reference/project-structure/index.md](docs-page/react/reference/project-structure/index.md) | 0 | 5 | 0.0% |
+| https://docs.amplify.aws/react/reference/project-structure/ | [docs-page/react/reference/project-structure/index.md](docs-page/react/reference/project-structure/index.md) | 5 | 5 | 100.0% |
 | https://docs.amplify.aws/react/how-amplify-works/concepts/ | [docs-page/react/how-amplify-works/concepts/index.md](docs-page/react/how-amplify-works/concepts/index.md) | 0 | 6 | 0.0% |
-| https://docs.amplify.aws/react/start/account-setup/ | [docs-page/react/start/account-setup/index.md](docs-page/react/start/account-setup/index.md) | 0 | 11 | 0.0% |
-| https://docs.amplify.aws/react/start/manual-installation/ | [docs-page/react/start/manual-installation/index.md](docs-page/react/start/manual-installation/index.md) | 0 | 11 | 0.0% |
+| https://docs.amplify.aws/react/start/account-setup/ | [docs-page/react/start/account-setup/index.md](docs-page/react/start/account-setup/index.md) | 11 | 11 | 100.0% |
+| https://docs.amplify.aws/react/start/manual-installation/ | [docs-page/react/start/manual-installation/index.md](docs-page/react/start/manual-installation/index.md) | 10 | 11 | 90.9% |
 | https://docs.amplify.aws/react/build-a-backend/data/connect-from-server-runtime/nuxtjs-server-runtime/ | [docs-page/react/build-a-backend/data/connect-from-server-runtime/nuxtjs-server-runtime/index.md](docs-page/react/build-a-backend/data/connect-from-server-runtime/nuxtjs-server-runtime/index.md) | 0 | 5 | 0.0% |
 | https://docs.amplify.aws/react/build-a-backend/data/custom-business-logic/ | [docs-page/react/build-a-backend/data/custom-business-logic/index.md](docs-page/react/build-a-backend/data/custom-business-logic/index.md) | 0 | 11 | 0.0% |
 | https://docs.amplify.aws/react/build-a-backend/data/data-modeling/add-fields/ | [docs-page/react/build-a-backend/data/data-modeling/add-fields/index.md](docs-page/react/build-a-backend/data/data-modeling/add-fields/index.md) | 0 | 10 | 0.0% |
@@ -65,7 +65,7 @@
 | https://docs.amplify.aws/react/build-a-backend/data/mutate-data/ | [docs-page/react/build-a-backend/data/mutate-data/index.md](docs-page/react/build-a-backend/data/mutate-data/index.md) | 0 | 6 | 0.0% |
 | https://docs.amplify.aws/react/build-a-backend/data/optimistic-ui/ | [docs-page/react/build-a-backend/data/optimistic-ui/index.md](docs-page/react/build-a-backend/data/optimistic-ui/index.md) | 0 | 12 | 0.0% |
 | https://docs.amplify.aws/react/build-a-backend/data/query-data/ | [docs-page/react/build-a-backend/data/query-data/index.md](docs-page/react/build-a-backend/data/query-data/index.md) | 0 | 11 | 0.0% |
-| https://docs.amplify.aws/react/build-a-backend/data/set-up-data/ | [docs-page/react/build-a-backend/data/set-up-data/index.md](docs-page/react/build-a-backend/data/set-up-data/index.md) | 0 | 7 | 0.0% |
+| https://docs.amplify.aws/react/build-a-backend/data/set-up-data/ | [docs-page/react/build-a-backend/data/set-up-data/index.md](docs-page/react/build-a-backend/data/set-up-data/index.md) | 1 | 7 | 14.3% |
 | https://docs.amplify.aws/react/build-a-backend/data/subscribe-data/ | [docs-page/react/build-a-backend/data/subscribe-data/index.md](docs-page/react/build-a-backend/data/subscribe-data/index.md) | 0 | 9 | 0.0% |
 | https://docs.amplify.aws/react/build-a-backend/data/working-with-files/ | [docs-page/react/build-a-backend/data/working-with-files/index.md](docs-page/react/build-a-backend/data/working-with-files/index.md) | 0 | 19 | 0.0% |
 | https://docs.amplify.aws/react/build-a-backend/functions/examples/kinesis-stream/ | [docs-page/react/build-a-backend/functions/examples/kinesis-stream/index.md](docs-page/react/build-a-backend/functions/examples/kinesis-stream/index.md) | 0 | 4 | 0.0% |
@@ -76,9 +76,9 @@
 | https://docs.amplify.aws/react/deploy-and-host/fullstack-branching/mono-and-multi-repos/ | [docs-page/react/deploy-and-host/fullstack-branching/mono-and-multi-repos/index.md](docs-page/react/deploy-and-host/fullstack-branching/mono-and-multi-repos/index.md) | 0 | 8 | 0.0% |
 | https://docs.amplify.aws/react/deploy-and-host/fullstack-branching/branch-deployments/ | [docs-page/react/deploy-and-host/fullstack-branching/branch-deployments/index.md](docs-page/react/deploy-and-host/fullstack-branching/branch-deployments/index.md) | 0 | 2 | 0.0% |
 | https://docs.amplify.aws/react/deploy-and-host/sandbox-environments/features/ | [docs-page/react/deploy-and-host/sandbox-environments/features/index.md](docs-page/react/deploy-and-host/sandbox-environments/features/index.md) | 0 | 13 | 0.0% |
-| https://docs.amplify.aws/react/start/quickstart/ | [docs-page/react/start/quickstart/index.md](docs-page/react/start/quickstart/index.md) | 0 | 11 | 0.0% |
+| https://docs.amplify.aws/react/start/quickstart/ | [docs-page/react/start/quickstart/index.md](docs-page/react/start/quickstart/index.md) | 1 | 11 | 9.1% |
 | https://docs.amplify.aws/react/ | [docs-page/react/index.md](docs-page/react/index.md) | 0 | 1 | 0.0% |
 | https://docs.amplify.aws/ | [docs-page/index.md](docs-page/index.md) | 0 | 1 | 0.0% |
-| TOTAL | | 5 | 505 | 1.0% |
+| TOTAL | | 36 | 505 | 7.1% |
 
 [<- Back to summary](../)

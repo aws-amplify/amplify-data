@@ -4,7 +4,7 @@
 
 Page: https://docs.amplify.aws/react/reference/project-structure/
 
-Coverage: 0.0%
+Coverage: 100.0%
 
 #### `Unnamed Snippet`
 
@@ -27,11 +27,12 @@ Coverage: 0.0%
 | | |
 | -- | -- |
 | Hash | `a99febff4c75ee81` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/4-uncovered/reference/project-structure.ts](../../../../../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/reference/project-structure.ts#9)
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/4-uncovered/deploy-and-host/sandbox-environments/setup.ts](../../../../../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/deploy-and-host/sandbox-environments/setup.ts#10)
 
 ---
 
@@ -85,11 +86,12 @@ Coverage: 0.0%
 | | |
 | -- | -- |
 | Hash | `a64e4b7016bb56e7` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/4-uncovered/reference/project-structure.ts](../../../../../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/reference/project-structure.ts#9)
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/4-uncovered/deploy-and-host/sandbox-environments/setup.ts](../../../../../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/deploy-and-host/sandbox-environments/setup.ts#10)
 
 ---
 
@@ -109,11 +111,12 @@ email: true,
 | | |
 | -- | -- |
 | Hash | `ffe5e69116dbb94f` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/4-uncovered/reference/project-structure.ts](../../../../../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/reference/project-structure.ts#9)
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/4-uncovered/deploy-and-host/sandbox-environments/setup.ts](../../../../../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/deploy-and-host/sandbox-environments/setup.ts#10)
 
 ---
 
@@ -134,11 +137,13 @@ defineBackend({
 | | |
 | -- | -- |
 | Hash | `c754d0fa4a8944d6` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/4-uncovered/start/manual-installation.ts](../../../../../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/start/manual-installation.ts#11)
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/4-uncovered/reference/project-structure.ts](../../../../../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/reference/project-structure.ts#9)
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/4-uncovered/deploy-and-host/sandbox-environments/setup.ts](../../../../../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/deploy-and-host/sandbox-environments/setup.ts#10)
 
 ---
 
@@ -174,11 +179,12 @@ bucket.grantRead(unauthRole);
 | | |
 | -- | -- |
 | Hash | `b4b49e5b03a1c68e` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/4-uncovered/reference/project-structure.ts](../../../../../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/reference/project-structure.ts#9)
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/4-uncovered/deploy-and-host/sandbox-environments/setup.ts](../../../../../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/deploy-and-host/sandbox-environments/setup.ts#10)
 
 ---
 

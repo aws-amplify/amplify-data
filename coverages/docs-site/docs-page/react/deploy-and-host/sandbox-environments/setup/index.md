@@ -4,7 +4,7 @@
 
 Page: https://docs.amplify.aws/react/deploy-and-host/sandbox-environments/setup/
 
-Coverage: 0.0%
+Coverage: 100.0%
 
 #### `Terminal`
 
@@ -16,11 +16,11 @@ npx ampx sandbox
 | | |
 | -- | -- |
 | Hash | `4149df77ccfbb696` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/4-uncovered/common.ts](../../../../../../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/common.ts#7)
 
 ---
 

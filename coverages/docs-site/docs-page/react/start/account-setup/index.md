@@ -4,7 +4,7 @@
 
 Page: https://docs.amplify.aws/react/start/account-setup/
 
-Coverage: 0.0%
+Coverage: 100.0%
 
 #### `CloudShell`
 
@@ -16,11 +16,11 @@ read -p "Enter email address: " user_email # hit enter
 | | |
 | -- | -- |
 | Hash | `41bd29a5a3cfeebd` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/4-uncovered/start/account-setup.ts](../../../../../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/start/account-setup.ts#11)
 
 ---
 
@@ -34,11 +34,11 @@ Enter email address: <your-email-address>
 | | |
 | -- | -- |
 | Hash | `4d8dd49ba8bbad6c` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/4-uncovered/start/account-setup.ts](../../../../../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/start/account-setup.ts#11)
 
 ---
 
@@ -63,11 +63,11 @@ aws sso-admin create-account-assignment --instance-arn $ssoArn --target-id $acco
 | | |
 | -- | -- |
 | Hash | `eb84571cf12fe908` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/4-uncovered/start/account-setup.ts](../../../../../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/start/account-setup.ts#11)
 
 ---
 
@@ -86,11 +86,11 @@ Username: amplify-admin
 | | |
 | -- | -- |
 | Hash | `d65728cc9f2d35e2` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/4-uncovered/start/account-setup.ts](../../../../../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/start/account-setup.ts#11)
 
 ---
 
@@ -106,11 +106,11 @@ unzip awscliv2.zip
 | | |
 | -- | -- |
 | Hash | `d02e9eafb1be48d8` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/4-uncovered/start/account-setup.ts](../../../../../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/start/account-setup.ts#11)
 
 ---
 
@@ -139,11 +139,11 @@ aws configure sso
 | | |
 | -- | -- |
 | Hash | `67df689e3583a0a1` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/4-uncovered/start/account-setup.ts](../../../../../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/start/account-setup.ts#13)
 
 ---
 
@@ -162,11 +162,11 @@ CLI default output format [None]:
 | | |
 | -- | -- |
 | Hash | `fdde335b915b8d00` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/4-uncovered/start/account-setup.ts](../../../../../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/start/account-setup.ts#13)
 
 ---
 
@@ -183,11 +183,11 @@ aws s3 ls --profile default
 | | |
 | -- | -- |
 | Hash | `5b7ec5f24c0948b6` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/4-uncovered/start/account-setup.ts](../../../../../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/start/account-setup.ts#13)
 
 ---
 
@@ -209,11 +209,11 @@ sso_registration_scopes = sso:account:access
 | | |
 | -- | -- |
 | Hash | `4605860b47ab2f3f` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/4-uncovered/start/account-setup.ts](../../../../../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/start/account-setup.ts#13)
 
 ---
 
@@ -231,11 +231,11 @@ npx ampx sandbox --profile <profile-name>
 | | |
 | -- | -- |
 | Hash | `839d7e4495deeaf5` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/4-uncovered/start/account-setup.ts](../../../../../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/start/account-setup.ts#13)
 
 ---
 
@@ -249,11 +249,11 @@ npx ampx sandbox --profile <value>
 | | |
 | -- | -- |
 | Hash | `8c8f1482d8698a80` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/4-uncovered/start/account-setup.ts](../../../../../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/start/account-setup.ts#15)
 
 ---
 

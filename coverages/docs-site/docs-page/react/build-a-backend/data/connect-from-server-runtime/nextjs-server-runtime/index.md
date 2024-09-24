@@ -4,7 +4,7 @@
 
 Page: https://docs.amplify.aws/react/build-a-backend/data/connect-from-server-runtime/nextjs-server-runtime/
 
-Coverage: 0.0%
+Coverage: 25.0%
 
 #### `Unnamed Snippet`
 
@@ -53,11 +53,11 @@ export const reqResBasedClient = generateServerClientUsingReqRes<Schema>({
 | | |
 | -- | -- |
 | Hash | `062b069c31e86ca5` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/3-exhaustive/ssr-req-res-client.ts](../../../../../../../../packages/integration-tests/__tests__/defined-behavior/3-exhaustive/ssr-req-res-client.ts#108)
 
 ---
 

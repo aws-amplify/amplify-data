@@ -4,7 +4,7 @@
 
 Page: https://docs.amplify.aws/react/start/manual-installation/
 
-Coverage: 0.0%
+Coverage: 90.9%
 
 #### `Terminal`
 
@@ -16,11 +16,11 @@ npm create amplify@latest
 | | |
 | -- | -- |
 | Hash | `49c40ffdf76ab492` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/4-uncovered/start/manual-installation.ts](../../../../../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/start/manual-installation.ts#9)
 
 ---
 
@@ -34,11 +34,11 @@ npm create amplify@latest
 | | |
 | -- | -- |
 | Hash | `d8b7d661117c2360` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/4-uncovered/start/manual-installation.ts](../../../../../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/start/manual-installation.ts#9)
 
 ---
 
@@ -64,11 +64,11 @@ npm create amplify@latest
 | | |
 | -- | -- |
 | Hash | `ce40c8a92db3a16a` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/4-uncovered/start/manual-installation.ts](../../../../../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/start/manual-installation.ts#9)
 
 ---
 
@@ -82,11 +82,11 @@ npm add --save-dev @aws-amplify/backend@latest @aws-amplify/backend-cli@latest t
 | | |
 | -- | -- |
 | Hash | `1ee5fa5533406d7c` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/4-uncovered/start/manual-installation.ts](../../../../../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/start/manual-installation.ts#9)
 
 ---
 
@@ -102,11 +102,11 @@ defineBackend({});
 | | |
 | -- | -- |
 | Hash | `4c4780536e17d44f` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/4-uncovered/start/manual-installation.ts](../../../../../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/start/manual-installation.ts#9)
 
 ---
 
@@ -120,11 +120,11 @@ The current file is a CommonJS module whose imports will produce 'require' calls
 | | |
 | -- | -- |
 | Hash | `46e660ca9e2b4a99` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/4-uncovered/start/manual-installation.ts](../../../../../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/start/manual-installation.ts#11)
 
 ---
 
@@ -140,11 +140,11 @@ The current file is a CommonJS module whose imports will produce 'require' calls
 | | |
 | -- | -- |
 | Hash | `3ca9d4afd2142508` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/4-uncovered/start/manual-installation.ts](../../../../../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/start/manual-installation.ts#11)
 
 ---
 
@@ -164,11 +164,12 @@ email: true,
 | | |
 | -- | -- |
 | Hash | `ffe5e69116dbb94f` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/4-uncovered/reference/project-structure.ts](../../../../../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/reference/project-structure.ts#9)
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/4-uncovered/deploy-and-host/sandbox-environments/setup.ts](../../../../../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/deploy-and-host/sandbox-environments/setup.ts#10)
 
 ---
 
@@ -214,11 +215,13 @@ defineBackend({
 | | |
 | -- | -- |
 | Hash | `c754d0fa4a8944d6` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/4-uncovered/start/manual-installation.ts](../../../../../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/start/manual-installation.ts#11)
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/4-uncovered/reference/project-structure.ts](../../../../../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/reference/project-structure.ts#9)
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/4-uncovered/deploy-and-host/sandbox-environments/setup.ts](../../../../../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/deploy-and-host/sandbox-environments/setup.ts#10)
 
 ---
 
@@ -232,11 +235,11 @@ npm update @aws-amplify/backend@latest @aws-amplify/backend-cli@latest
 | | |
 | -- | -- |
 | Hash | `e02df4dc8f85e45e` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/4-uncovered/start/manual-installation.ts](../../../../../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/start/manual-installation.ts#11)
 
 ---
 

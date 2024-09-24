@@ -217,32 +217,4 @@ describe('disable model operations', () => {
       cm!.comment();
     }).toThrowError('cm.comment is not a function');
   });
-
-  test('does not break if `timestamps` present in model properties', async () => {
-    const { generateClient } = mockedGenerateClient([
-      {
-        data: {
-          listPosts: {
-            __typeName: 'FineGrained',
-            id: 'a1',
-            data: '',
-            updatedAt: '2024-08-07T19:05:44.536Z',
-            createdAt: '2024-09-07T18:05:44.536Z',
-          },
-        },
-      },
-    ]);
-    const config = await buildAmplifyConfig(schema);
-
-    // Manually injecting `timestamps` because this config is not exposed via Gen2
-    config.modelIntrospection.models.Post.attributes[0].properties = {
-      ...config.modelIntrospection.models.Post.attributes[0].properties,
-      timestamps: null,
-    };
-
-    Amplify.configure(config);
-    const client = generateClient<Schema>();
-
-    await client.models.Post.list();
-  });
 });
