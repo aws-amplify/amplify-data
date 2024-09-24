@@ -1,6 +1,20 @@
 import { a, ClientSchema } from '@aws-amplify/data-schema';
-import { Expect, Equal } from '@aws-amplify/data-schema-types';
 import { generateClient, SelectionSet } from 'aws-amplify/api';
+import {
+  Expect,
+  Equal,
+  // Remove before PR
+  UnionToIntersection,
+  Prettify,
+} from '@aws-amplify/data-schema-types';
+
+// Temp:
+
+import {
+  ResolvedModel,
+  DeepPickFromPath,
+  RestoreArrays,
+} from '../../data-schema/src/runtime';
 
 type Json = null | string | number | boolean | object | any[];
 
@@ -237,6 +251,31 @@ describe('Custom Selection Set', () => {
         ],
       });
 
+      type FM = Prettify<Schema['Comment']['type']>;
+
+      type Actual = {
+        readonly id: string;
+        readonly comments: {
+          readonly post: {
+            readonly comments: {
+              readonly post: {
+                readonly comments: {
+                  readonly post: {
+                    readonly comments: {
+                      readonly content: string;
+                      readonly postId: string | null;
+                      readonly id: string;
+                      readonly createdAt: string;
+                      readonly updatedAt: string;
+                    };
+                  };
+                };
+              };
+            };
+          };
+        }[];
+      }[];
+
       type ExpectedType2 = {
         readonly id: string;
         readonly comments: {
@@ -291,6 +330,8 @@ describe('Custom Selection Set', () => {
         title: a.string().required(),
         description: a.string(),
         meta: a.string().array(),
+        meta2: a.string().required().array(),
+        meta3: a.string().required().array().required(),
         blogId: a.id(),
         blog: a.belongsTo('Blog', 'blogId'),
         comments: a.hasMany('Comment', 'postId'),
@@ -321,6 +362,8 @@ describe('Custom Selection Set', () => {
           'posts.id',
           'posts.updatedAt',
           'posts.meta',
+          'posts.meta2',
+          'posts.meta3',
           'posts.comments.content',
           'posts.comments.createdAt',
           'posts.comments2.content',
@@ -335,6 +378,8 @@ describe('Custom Selection Set', () => {
         readonly posts: {
           readonly id: string;
           readonly meta: (string | null)[] | null;
+          readonly meta2: string[] | null;
+          readonly meta3: string[];
           readonly updatedAt: string;
           readonly comments: {
             readonly createdAt: string;
@@ -462,6 +507,16 @@ describe('Custom Selection Set', () => {
         tags: a.string().array(),
         requiredTags: a.string().required().array().required(),
       }),
+
+      Post7: a.model({
+        title: a.string().required(),
+        description: a.string(),
+        // Testing every permutation
+        metas: a.ref('Meta').array(),
+        metas2: a.ref('Meta').required().array(),
+        metas3: a.ref('Meta').array().required(),
+        metas4: a.ref('Meta').required().array().required(),
+      }),
     });
 
     type Schema = ClientSchema<typeof schema>;
@@ -568,6 +623,202 @@ describe('Custom Selection Set', () => {
 
       type _ = Expect<Equal<ActualType, ExpectedType>>;
     });
+
+    type LocalRestoreArrays<Result, FlatModel> = {
+      [K in keyof Result]: K extends keyof FlatModel
+        ? Result[K] extends Array<infer S>
+          ? FlatModel[K] extends Array<infer O>
+            ? RestoreArrays<S, O>[]
+            : never
+          : Result[K] extends object
+            ? RestoreArrays<Result[K], FlatModel[K]>
+            : FlatModel[K]
+        : never;
+    };
+
+    // https://github.com/aws-amplify/amplify-category-api/issues/2809
+    test('custom selection set on array of custom types', async () => {
+      // type UnwrapArray<T> = T extends Array<any> ? T[number] : T;
+
+      /*
+      ~~Pass 1~~
+      Result = {
+        title: string;
+        metas: {
+          requiredTags: string[];
+          tags?: Nullable<string>[] | null | undefined;
+        } | null | undefined;
+      }
+
+      FlatModel = {
+        title: string;
+        metas?: ({
+            requiredTags: string[];
+            tags?: Nullable<string>[] | null | undefined;
+        } | null | undefined)[] | null | undefined;
+      }
+      
+
+      ~~Pass 2~~
+      Result = {
+          requiredTags: string[];
+          tags?: Nullable<string>[] | null | undefined;
+        } | null | undefined;
+      
+      FlatModel = ({
+            requiredTags: string[];
+            tags?: Nullable<string>[] | null | undefined;
+        } | null | undefined)[] | null | undefined;
+      
+
+      */
+      type UnwrapArray<T> =
+        NonNullable<T> extends Array<any> ? NonNullable<T>[number] : T;
+
+      // Strip out null in DeepPick and restore in
+
+      const selSet = ['title', 'metas.*'] as const;
+
+      const { data: posts } = await client.models.Post7.list({
+        selectionSet: selSet,
+      });
+
+      type PostType = Schema['Post7']['type'];
+      type FlatModel = ResolvedModel<PostType>;
+      type Metas = FlatModel['metas'];
+      type MetasUnwrapped = UnwrapArray<Metas>;
+
+      type DeepPick = DeepPickFromPath<FlatModel, (typeof selSet)[number]>;
+
+      type Result = Prettify<UnionToIntersection<DeepPick>>;
+      type PrettyResult = Prettify<UnionToIntersection<DeepPick>>;
+
+      type LocalRestored = Prettify<LocalRestoreArrays<Result, FlatModel>>;
+
+      type ActualRestored = Prettify<RestoreArrays<Result, FlatModel>>;
+
+      type Test1 = Array<any> extends FlatModel['metas'] ? true : false;
+
+      type ActualType = typeof posts;
+
+      type AT = {
+        readonly title: string;
+        readonly metas:
+          | {
+              readonly requiredTags: string[];
+              readonly tags: (string | null)[] | null;
+            }[]
+          | null;
+      }[];
+
+      type ExpectedType = {
+        readonly title: string;
+        readonly metas:
+          | ({
+              readonly requiredTags: string[];
+              readonly tags: (string | null)[] | null;
+            } | null)[]
+          | null;
+      }[];
+
+      type _ = Expect<Equal<ActualType, ExpectedType>>;
+    });
+
+    // https://github.com/aws-amplify/amplify-category-api/issues/2809
+    test('custom selection set on array of custom types', async () => {
+      // TODO: simplify this; remove myField and comments.*
+      const selSet = ['title', 'metas2.*'] as const;
+
+      const { data: posts } = await client.models.Post7.list({
+        selectionSet: selSet,
+      });
+
+      type PostType = Schema['Post7']['type'];
+      type FlatModel = ResolvedModel<PostType>;
+
+      type DeepPick = DeepPickFromPath<FlatModel, (typeof selSet)[number]>;
+
+      type Result = Prettify<UnionToIntersection<DeepPick>>;
+
+      type Restored = Prettify<RestoreArrays<Result, FlatModel>>;
+
+      type ActualType = typeof posts;
+
+      type ExpectedType = {
+        readonly title: string;
+        readonly metas2:
+          | {
+              readonly tags: (string | null)[] | null;
+              readonly requiredTags: string[];
+            }[]
+          | null;
+      }[];
+
+      type _ = Expect<Equal<ActualType, ExpectedType>>;
+    });
+
+    // https://github.com/aws-amplify/amplify-category-api/issues/2809
+    test('custom selection set on array of custom types', async () => {
+      // TODO: simplify this; remove myField and comments.*
+      const selSet = ['title', 'metas3.*'] as const;
+
+      const { data: posts } = await client.models.Post7.list({
+        selectionSet: selSet,
+      });
+
+      type PostType = Schema['Post7']['type'];
+      type FlatModel = ResolvedModel<PostType>;
+
+      type DeepPick = DeepPickFromPath<FlatModel, (typeof selSet)[number]>;
+
+      type Result = UnionToIntersection<DeepPick>;
+
+      type Restored = Prettify<RestoreArrays<Result, FlatModel>>;
+
+      type ActualType = typeof posts;
+
+      type ExpectedType = {
+        readonly title: string;
+        readonly metas3: ({
+          readonly requiredTags: string[];
+          readonly tags: (string | null)[] | null;
+        } | null)[];
+      }[];
+
+      type _ = Expect<Equal<ActualType, ExpectedType>>;
+    });
+
+    // https://github.com/aws-amplify/amplify-category-api/issues/2809
+    test('custom selection set on array of custom types', async () => {
+      const selSet = ['title', 'metas4.*'] as const;
+
+      const { data: posts } = await client.models.Post7.list({
+        selectionSet: selSet,
+      });
+
+      type PostType = Schema['Post7']['type'];
+      type FlatModel = ResolvedModel<PostType>;
+
+      type DeepPick = DeepPickFromPath<FlatModel, (typeof selSet)[number]>;
+
+      type Result = Prettify<UnionToIntersection<DeepPick>>;
+
+      type Restored = Prettify<RestoreArrays<Result, FlatModel>>;
+
+      type ActualType = typeof posts;
+
+      type ExpectedType = {
+        readonly title: string;
+        readonly metas4: {
+          readonly tags: (string | null)[] | null;
+          readonly requiredTags: string[];
+        }[];
+      }[];
+
+      type _ = Expect<Equal<ActualType, ExpectedType>>;
+    });
+
+    // TODO: add nested custom types
   });
 
   describe('Enums', () => {

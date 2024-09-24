@@ -18,15 +18,19 @@ import { LazyLoader } from '../../runtime';
  * The first type parameter (`Bag`) should always just be the top-level `ClientSchema` that
  * references and related model definitions can be resolved against.
  */
-export type ResolveFields<Bag extends Record<string, any>, T> = ShallowPretty<
+export type ResolveFields<
+  Bag extends Record<string, any>,
+  T,
+  Flat = false,
+> = ShallowPretty<
   {
     [K in keyof T as IsRequired<T[K]> extends true
       ? K
-      : never]: ResolveIndividualField<Bag, T[K]>;
+      : never]: ResolveIndividualField<Bag, T[K], Flat>;
   } & {
     [K in keyof T as IsRequired<T[K]> extends true
       ? never
-      : K]+?: ResolveIndividualField<Bag, T[K]>;
+      : K]+?: ResolveIndividualField<Bag, T[K], Flat>;
   }
 >;
 
@@ -38,13 +42,17 @@ type ShallowPretty<T> = {
   [K in keyof T]: T[K];
 };
 
-export type ResolveIndividualField<Bag extends Record<string, any>, T> =
+export type ResolveIndividualField<
+  Bag extends Record<string, any>,
+  T,
+  Flat = false,
+> =
   T extends BaseModelField<infer FieldShape>
     ? FieldShape
     : T extends RefType<infer RefShape, any, any>
       ? ResolveRef<RefShape, Bag>
       : T extends ModelRelationshipField<infer RelationshipShape, any, any, any>
-        ? ResolveRelationship<Bag, RelationshipShape>
+        ? ResolveRelationship<Bag, RelationshipShape, Flat>
         : T extends CustomType<infer CT>
           ? ResolveFields<Bag, CT['fields']> | null
           : T extends EnumType<infer values>
@@ -57,14 +65,17 @@ export type ResolveIndividualField<Bag extends Record<string, any>, T> =
 type ResolveRelationship<
   Bag extends Record<string, any>,
   RelationshipShape extends ModelRelationshipFieldParamShape,
+  Flat = false,
 > =
   DependentLazyLoaderOpIsAvailable<Bag, RelationshipShape> extends true
-    ? LazyLoader<
-        RelationshipShape['valueRequired'] extends true
-          ? Bag[RelationshipShape['relatedModel']]['type']
-          : Bag[RelationshipShape['relatedModel']]['type'] | null,
-        RelationshipShape['array']
-      >
+    ? Flat extends false
+      ? LazyLoader<
+          RelationshipShape['valueRequired'] extends true
+            ? Bag[RelationshipShape['relatedModel']]['type']
+            : Bag[RelationshipShape['relatedModel']]['type'] | null,
+          RelationshipShape['array']
+        >
+      : Bag[RelationshipShape['relatedModel']]['type']
     : never;
 
 type DependentLazyLoaderOpIsAvailable<

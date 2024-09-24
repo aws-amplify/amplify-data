@@ -87,15 +87,48 @@ type ReturnValue<
  * Note: custom type field arrays are already handled correctly and don't need to be "restored", hence the `Result[K] extends Array<any>` check
  *
  */
-type RestoreArrays<Result, FlatModel> = {
-  [K in keyof Result]: K extends keyof FlatModel
-    ? FlatModel[K] extends Array<any>
-      ? Result[K] extends Array<any>
-        ? Result[K]
-        : Array<RestoreArrays<Result[K], UnwrapArray<FlatModel[K]>>>
-      : FlatModel[K] extends Record<string, any>
-        ? RestoreArrays<Result[K], FlatModel[K]>
-        : Result[K]
+export type RestoreArrays<
+  Result,
+  FlatModel,
+  NonNullResult = NonNullable<Result>,
+  NonNullFlatModel = NonNullable<FlatModel>,
+> = {
+  [K in keyof NonNullResult]: K extends keyof NonNullFlatModel
+    ? Array<any> extends NonNullFlatModel[K]
+      ? Array<any> extends NonNullResult[K]
+        ? NonNullResult[K]
+        : null extends NonNullFlatModel[K]
+          ? NonNullable<NonNullFlatModel[K]> extends Array<any>
+            ? null extends NonNullable<NonNullFlatModel[K]>[0]
+              ? Array<RestoreArrays<
+                  NonNullResult[K],
+                  UnwrapArray<NonNullFlatModel[K]>
+                > | null> | null
+              : Array<
+                  RestoreArrays<
+                    NonNullResult[K],
+                    UnwrapArray<NonNullFlatModel[K]>
+                  >
+                > | null
+            : never
+          : NonNullable<NonNullFlatModel[K]> extends Array<any>
+            ? null extends NonNullable<NonNullFlatModel[K]>[0]
+              ? Array<RestoreArrays<
+                  NonNullResult[K],
+                  UnwrapArray<NonNullFlatModel[K]>
+                > | null>
+              : Array<
+                  RestoreArrays<
+                    NonNullResult[K],
+                    UnwrapArray<NonNullFlatModel[K]>
+                  >
+                >
+            : never
+      : NonNullFlatModel[K] extends Record<string, any>
+        ? null extends NonNullFlatModel[K]
+          ? RestoreArrays<NonNullResult[K], NonNullFlatModel[K]> | null
+          : RestoreArrays<NonNullResult[K], NonNullFlatModel[K]>
+        : NonNullResult[K]
     : never;
 };
 
@@ -154,7 +187,7 @@ type CustomSelectionSetReturnValue<
  * To work around this limitation, DeepPickFromPath flattens Arrays of Models (e.g. { comments: { id: string}[] } => { comments: { id: string} })
  * Arrays are then restored downstream in RestoreArrays
  */
-type DeepPickFromPath<
+export type DeepPickFromPath<
   FlatModel extends Model,
   Path extends string,
 > = FlatModel extends undefined
@@ -274,7 +307,7 @@ export type ModelPath<
  * 
  * ```
  */
-type ResolvedModel<
+export type ResolvedModel<
   Model extends Record<string, unknown>,
   Depth extends number = 7,
   RecursionLoop extends number[] = [-1, 0, 1, 2, 3, 4, 5, 6],
