@@ -78,7 +78,7 @@
 | https://docs.amplify.aws/react/deploy-and-host/sandbox-environments/features/ | [docs-page/react/deploy-and-host/sandbox-environments/features/index.md](docs-page/react/deploy-and-host/sandbox-environments/features/index.md) | 0 | 13 | 0.0% |
 | https://docs.amplify.aws/react/start/quickstart/ | [docs-page/react/start/quickstart/index.md](docs-page/react/start/quickstart/index.md) | 0 | 11 | 0.0% |
 | https://docs.amplify.aws/react/ | [docs-page/react/index.md](docs-page/react/index.md) | 0 | 1 | 0.0% |
-| https://docs.amplify.aws/ | [docs-page/.md](docs-page/.md) | 0 | 1 | 0.0% |
+| https://docs.amplify.aws/ | [docs-page/index.md](docs-page/index.md) | 0 | 1 | 0.0% |
 | TOTAL | | 5 | 500 | 1.0% |
 
 [<- Back to summary](../)

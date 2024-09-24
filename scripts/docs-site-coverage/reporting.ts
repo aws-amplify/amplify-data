@@ -225,7 +225,10 @@ export class CoverageReport {
 
   writeDocsCoverageForPath(url: string, snippets: SnippetStatus[]) {
     const basePath = new URL(url).pathname.substring(1);
-    const urlPath = basePath.endsWith('/') ? basePath + 'index' : basePath;
+    const urlPath =
+      basePath.length === 0 || basePath.endsWith('/')
+        ? basePath + 'index'
+        : basePath;
     const reportPath = `${this.reportPath}/docs-page/${urlPath}.md`;
 
     // not sure why offhand, but this backlink path contains an extra '../'
