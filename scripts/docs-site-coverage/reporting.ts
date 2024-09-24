@@ -3,7 +3,7 @@ import { execSync } from 'child_process';
 import { relative, dirname } from 'path';
 import { URL } from 'url';
 import { rimrafSync } from 'rimraf';
-import type { CodeSnippet, DiscoveredSnippets } from './fetch-snippets';
+import type { CodeSnippet, CodeSnippetMap } from './fetch-snippets';
 import { Region, RegionMap } from './find-integs';
 import type { Config } from './config-type';
 
@@ -17,6 +17,18 @@ export class SnippetStatus {
     return this.coverages.length > 0;
   }
 }
+
+export type DiscoveredSnippets = {
+  /**
+   * Discovered code snippets grouped by their docs site page path.
+   */
+  byUrl: CodeSnippetMap;
+
+  /**
+   * Discovered code snippets grouped by the hash of the snippet code.
+   */
+  byHash: CodeSnippetMap;
+};
 
 export type SnippetIndex = Record<string, SnippetStatus[]>;
 export type SnippetIndexes = Record<keyof DiscoveredSnippets, SnippetIndex>;
@@ -95,8 +107,8 @@ export class CoverageReport {
       all.push(new SnippetStatus(snippet, this.coverage[snippet.hash] || []));
     }
     const byHash = groupBy(all, (s) => s.snippet.hash);
-    const byPath = groupBy(all, (s) => s.snippet.path);
-    this.snippetIndex = { byHash, byPath };
+    const byUrl = groupBy(all, (s) => s.snippet.url);
+    this.snippetIndex = { byHash, byUrl };
   }
 
   get allCoverageStatuses(): CoverageStatus[] {
@@ -132,12 +144,13 @@ export class CoverageReport {
    * Formats an individual snippet into markdown for the report.
    *
    * @param snippet The individual snippet to format.
+   * @param reportPath The file path that this report MD is written to; used for generated relative links.
    */
-  formatSnippetStatus({
-    snippet: { code, hash, name },
-    isCovered,
-  }: SnippetStatus): string {
-    const refs = this.formatRegionReferences(hash).trim();
+  formatSnippetStatus(
+    { snippet: { code, hash, name }, isCovered }: SnippetStatus,
+    reportPath: string,
+  ): string {
+    const refs = this.formatRegionReferences(hash, reportPath).trim();
     const status = isCovered ? '✅' : '❌';
 
     return `#### \`${name || 'Unnamed Snippet'}\`
@@ -174,12 +187,25 @@ export class CoverageReport {
     `.replace(/^ {4}/gm, ''); // dedent 4
   }
 
-  formatRegionReferences(hash: string): string {
+  /**
+   *
+   * @param hash Region hash to find and format references to.
+   * @param reportPath The file path that this report MD is written to; used for generated relative links.
+   * @returns
+   */
+  formatRegionReferences(hash: string, reportPath: string): string {
     const regions = this.coverage[hash] || [];
     return regions
       .map((r) => {
-        const link = `${this.relativePath(r.path)}#${r.start}`;
-        return `- [${link}](${link})`;
+        // not sure why offhand, but this backlink path contains an extra '../'
+        const relativePath = relative(reportPath, r.path).substring(3);
+
+        // use the path relative to reporting root for brevity.
+        // we also escape `_` chars to avoid them rendering like bold in `__test__` path.
+        const visiblePath = this.relativePath(r.path).replace(/_/g, '\\_');
+
+        const link = `${relativePath}#${r.start}`;
+        return `- [${visiblePath}](${link})`;
       })
       .join('\n');
   }
@@ -211,9 +237,9 @@ export class CoverageReport {
   writeDocsCoverages() {
     const indexPath = `${this.reportPath}/docs-pages.md`;
 
-    const writtenSnippetReports = Object.entries(this.snippetIndex.byPath).map(
-      ([path, snippetStatuses]) =>
-        this.writeDocsCoverageForPath(path, snippetStatuses),
+    const writtenSnippetReports = Object.entries(this.snippetIndex.byUrl).map(
+      ([url, snippetStatuses]) =>
+        this.writeDocsCoverageForPage(url, snippetStatuses),
     );
 
     const summaryLines = writtenSnippetReports
@@ -245,7 +271,7 @@ export class CoverageReport {
     return { coverageString, path: indexPath };
   }
 
-  writeDocsCoverageForPath(
+  writeDocsCoverageForPage(
     url: string,
     snippets: SnippetStatus[],
   ): PageCoverageSummary {
@@ -279,7 +305,7 @@ export class CoverageReport {
       Coverage: ${coverageString}
 
       ${snippets
-        .map((s) => this.formatSnippetStatus(s))
+        .map((s) => this.formatSnippetStatus(s, reportPath))
         .join('\n')
         .trim()}
 

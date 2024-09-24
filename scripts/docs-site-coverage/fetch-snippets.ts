@@ -5,25 +5,13 @@ import * as prettier from 'prettier';
 import type { Config } from './config-type';
 
 export type CodeSnippet = {
-  path: string;
+  url: string;
   name: string;
   code: string;
   hash: string;
 };
 
 export type CodeSnippetMap = Record<string, CodeSnippet[]>;
-
-export type DiscoveredSnippets = {
-  /**
-   * Discovered code snippets grouped by their docs site page path.
-   */
-  byPath: CodeSnippetMap;
-
-  /**
-   * Discovered code snippets grouped by the hash of the snippet code.
-   */
-  byHash: CodeSnippetMap;
-};
 
 async function getHTMLDocument(url: string) {
   const data = await fetch(url).then((result) => result.text());
@@ -95,7 +83,7 @@ async function format(tag: HTMLPreElement, verbose = false) {
 }
 
 async function getPageCodeBlocks(
-  path: string,
+  url: string,
   doc: Document,
 ): Promise<CodeSnippet[]> {
   const results: CodeSnippet[] = [];
@@ -104,7 +92,7 @@ async function getPageCodeBlocks(
     const name = codeblockFilename(pre);
     const code = await format(pre);
     const hash = generateHash(code);
-    results.push({ path, name, code, hash });
+    results.push({ url, name, code, hash });
   }
 
   return results;

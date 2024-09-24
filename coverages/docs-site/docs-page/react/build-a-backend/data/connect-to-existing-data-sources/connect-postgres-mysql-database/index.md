@@ -20,7 +20,7 @@ npx ampx sandbox secret set SQL_CONNECTION_STRING
 
 ##### Covering Regions
 
-- [../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/cli-commands.ts#3](../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/cli-commands.ts#3)
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/4-uncovered/cli-commands.ts](../../../../../../../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/cli-commands.ts#3)
 
 ---
 
@@ -38,7 +38,7 @@ mysql://user:password@hostname:port/db-name
 
 ##### Covering Regions
 
-- [../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/cli-commands.ts#3](../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/cli-commands.ts#3)
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/4-uncovered/cli-commands.ts](../../../../../../../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/cli-commands.ts#3)
 
 ---
 
@@ -56,7 +56,7 @@ postgres://user:password@hostname:port/db-name
 
 ##### Covering Regions
 
-- [../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/cli-commands.ts#3](../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/cli-commands.ts#3)
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/4-uncovered/cli-commands.ts](../../../../../../../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/cli-commands.ts#3)
 
 ---
 
@@ -74,7 +74,7 @@ npx ampx generate schema-from-database --connection-uri-secret SQL_CONNECTION_ST
 
 ##### Covering Regions
 
-- [../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/cli-commands.ts#3](../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/cli-commands.ts#3)
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/4-uncovered/cli-commands.ts](../../../../../../../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/cli-commands.ts#3)
 
 ---
 
@@ -93,7 +93,7 @@ npx ampx generate schema-from-database --connection-uri-secret SQL_CONNECTION_ST
 
 ##### Covering Regions
 
-- [../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/cli-commands.ts#3](../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/cli-commands.ts#3)
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/4-uncovered/cli-commands.ts](../../../../../../../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/cli-commands.ts#3)
 
 ---
 
