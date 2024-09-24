@@ -4,10 +4,6 @@ import jsdom from 'jsdom';
 import * as prettier from 'prettier';
 import type { Config } from './config-type';
 
-type PageCodeBlocks = Record<string, NamedCodeBlocks>;
-type NamedCodeBlock = { name: string; code: string; hash: string };
-type NamedCodeBlocks = NamedCodeBlock[];
-
 export type CodeSnippet = {
   path: string;
   name: string;
@@ -16,6 +12,18 @@ export type CodeSnippet = {
 };
 
 export type CodeSnippetMap = Record<string, CodeSnippet[]>;
+
+export type DiscoveredSnippets = {
+  /**
+   * Discovered code snippets grouped by their docs site page path.
+   */
+  byPath: CodeSnippetMap;
+
+  /**
+   * Discovered code snippets grouped by the hash of the snippet code.
+   */
+  byHash: CodeSnippetMap;
+};
 
 async function getHTMLDocument(url: string) {
   const data = await fetch(url).then((result) => result.text());
@@ -86,14 +94,17 @@ async function format(tag: HTMLPreElement, verbose = false) {
   return code;
 }
 
-async function getPageCodeBlocks(doc: Document): Promise<NamedCodeBlocks> {
-  const results: NamedCodeBlocks = [];
+async function getPageCodeBlocks(
+  path: string,
+  doc: Document,
+): Promise<CodeSnippet[]> {
+  const results: CodeSnippet[] = [];
 
   for (const pre of doc.getElementsByTagName('pre')) {
     const name = codeblockFilename(pre);
     const code = await format(pre);
     const hash = generateHash(code);
-    results.push({ name, code, hash });
+    results.push({ path, name, code, hash });
   }
 
   return results;
@@ -112,10 +123,10 @@ async function fetchDocuments(
 
 async function extractCodeBlocks(
   docs: Record<string, Document>,
-): Promise<PageCodeBlocks> {
-  const results: PageCodeBlocks = {};
+): Promise<CodeSnippet[]> {
+  const results: CodeSnippet[] = [];
   for (const [url, dom] of Object.entries(docs)) {
-    results[url] = await getPageCodeBlocks(dom);
+    results.push(...(await getPageCodeBlocks(url, dom)));
   }
   return results;
 }
@@ -132,19 +143,7 @@ async function fetchSnippets(urls: string[]) {
   return extractCodeBlocks(docs);
 }
 
-export async function buildSnippetMap(config: Config): Promise<CodeSnippetMap> {
-  const map: CodeSnippetMap = {};
+export async function buildSnippets(config: Config): Promise<CodeSnippet[]> {
   const urls = await discoverPages(config);
-  const snippetsByUrl = await fetchSnippets(urls);
-  for (const [path, snippets] of Object.entries(snippetsByUrl)) {
-    for (const snippet of snippets) {
-      if (!map[snippet.hash]) map[snippet.hash] = [];
-      map[snippet.hash].push({
-        ...snippet,
-        path,
-      });
-    }
-  }
-
-  return map;
+  return await fetchSnippets(urls);
 }

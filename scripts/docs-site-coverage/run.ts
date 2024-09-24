@@ -1,11 +1,11 @@
-import { buildSnippetMap } from './fetch-snippets';
+import { buildSnippets } from './fetch-snippets';
 import { buildRegionMap } from './find-integs';
 import { CoverageReporter } from './reporting';
 import { config } from './config';
 
 const report = await new CoverageReporter({
   config,
-  buildSnippetMap,
+  buildSnippets,
   buildRegionMap,
 }).report();
 report.write(config.openReportWhenDone);
