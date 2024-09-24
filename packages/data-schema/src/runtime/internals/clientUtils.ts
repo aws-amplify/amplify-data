@@ -49,6 +49,7 @@ export const excludeDisabledOps = (
     "properties": {
       "subscriptions": null,
       "mutations": { "delete": null }
+      "timestamps": null
     } }*/
   const modelAttrs = mis.models[modelName].attributes?.find(
     (attr) => attr.type === 'model',
@@ -68,6 +69,11 @@ export const excludeDisabledOps = (
 
   if (modelAttrs.properties) {
     for (const [key, value] of Object.entries(modelAttrs.properties)) {
+      // model.properties can contain other values that are not relevant to disabling ops, e.g. timestamps
+      if (!(key in coarseToFineDict)) {
+        continue;
+      }
+
       if (value === null) {
         // coarse-grained disable, e.g. "subscriptions": null,
         disabledOps.push(...coarseToFineDict[key]);
