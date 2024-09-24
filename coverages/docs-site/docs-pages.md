@@ -2,11 +2,11 @@
 
 # In-Scope Pages
 
-| URL | Report | Covered | Uncovered | % |
+| URL | Report | Covered | Total | % |
 | -- | -- | -- | -- | -- |
 | https://docs.amplify.aws/react/build-a-backend/data/connect-from-server-runtime/nextjs-server-runtime/ | [docs-page/react/build-a-backend/data/connect-from-server-runtime/nextjs-server-runtime/index.md](docs-page/react/build-a-backend/data/connect-from-server-runtime/nextjs-server-runtime/index.md) | 0 | 4 | 0.0% |
 | https://docs.amplify.aws/react/build-a-backend/data/connect-to-existing-data-sources/connect-external-ddb-table/ | [docs-page/react/build-a-backend/data/connect-to-existing-data-sources/connect-external-ddb-table/index.md](docs-page/react/build-a-backend/data/connect-to-existing-data-sources/connect-external-ddb-table/index.md) | 0 | 26 | 0.0% |
-| https://docs.amplify.aws/react/build-a-backend/data/connect-to-existing-data-sources/connect-postgres-mysql-database/ | [docs-page/react/build-a-backend/data/connect-to-existing-data-sources/connect-postgres-mysql-database/index.md](docs-page/react/build-a-backend/data/connect-to-existing-data-sources/connect-postgres-mysql-database/index.md) | 5 | 11 | 31.3% |
+| https://docs.amplify.aws/react/build-a-backend/data/connect-to-existing-data-sources/connect-postgres-mysql-database/ | [docs-page/react/build-a-backend/data/connect-to-existing-data-sources/connect-postgres-mysql-database/index.md](docs-page/react/build-a-backend/data/connect-to-existing-data-sources/connect-postgres-mysql-database/index.md) | 5 | 16 | 31.3% |
 | https://docs.amplify.aws/react/build-a-backend/data/custom-business-logic/connect-amazon-translate/ | [docs-page/react/build-a-backend/data/custom-business-logic/connect-amazon-translate/index.md](docs-page/react/build-a-backend/data/custom-business-logic/connect-amazon-translate/index.md) | 0 | 6 | 0.0% |
 | https://docs.amplify.aws/react/build-a-backend/data/custom-business-logic/connect-amazon-polly/ | [docs-page/react/build-a-backend/data/custom-business-logic/connect-amazon-polly/index.md](docs-page/react/build-a-backend/data/custom-business-logic/connect-amazon-polly/index.md) | 0 | 8 | 0.0% |
 | https://docs.amplify.aws/react/build-a-backend/data/custom-business-logic/connect-amazon-rekognition/ | [docs-page/react/build-a-backend/data/custom-business-logic/connect-amazon-rekognition/index.md](docs-page/react/build-a-backend/data/custom-business-logic/connect-amazon-rekognition/index.md) | 0 | 8 | 0.0% |
@@ -79,6 +79,6 @@
 | https://docs.amplify.aws/react/start/quickstart/ | [docs-page/react/start/quickstart/index.md](docs-page/react/start/quickstart/index.md) | 0 | 11 | 0.0% |
 | https://docs.amplify.aws/react/ | [docs-page/react/index.md](docs-page/react/index.md) | 0 | 1 | 0.0% |
 | https://docs.amplify.aws/ | [docs-page/index.md](docs-page/index.md) | 0 | 1 | 0.0% |
-| TOTAL | | 5 | 500 | 1.0% |
+| TOTAL | | 5 | 505 | 1.0% |
 
 [<- Back to summary](../)

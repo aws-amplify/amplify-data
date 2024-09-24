@@ -38,6 +38,15 @@ type CoverageReportInit = {
   buildRegionMap: (config: Config) => Promise<RegionMap>;
 };
 
+type PageCoverageSummary = {
+  coverage: number;
+  coverageString: string;
+  covered: number;
+  total: number;
+  url: string;
+  reportPath: string;
+};
+
 export class CoverageReporter {
   constructor(private inits: CoverageReportInit) {}
 
@@ -63,6 +72,14 @@ function groupBy<T>(
     groups[group].push(item);
   }
   return groups;
+}
+
+function sum<T>(items: T[], select: (item: T) => number) {
+  let runningTotal = 0;
+  for (const item of items) {
+    runningTotal += select(item);
+  }
+  return runningTotal;
 }
 
 export class CoverageReport {
@@ -167,42 +184,47 @@ export class CoverageReport {
       .join('\n');
   }
 
+  formatPageCoverageSummaryRow(summary: PageCoverageSummary): string {
+    return (
+      '| ' +
+      [
+        summary.url,
+        `[${this.relativePath(summary.reportPath)}](${this.relativePath(summary.reportPath)})`,
+        summary.covered,
+        summary.total,
+        summary.coverageString,
+      ].join(' | ') +
+      ' |'
+    );
+  }
+
+  /**
+   *
+   * @param coverage Count or percentage percentage of covered items.
+   * @param totalItems Total count of items. If `coverage` is already a percentage, omit or set to 1.
+   * @returns
+   */
+  formatCoverage(coverage: number, totalItems: number = 1): string {
+    return (100 * (coverage / totalItems)).toFixed(1) + '%';
+  }
+
   writeDocsCoverages() {
     const indexPath = `${this.reportPath}/docs-pages.md`;
 
     const writtenSnippetReports = Object.entries(this.snippetIndex.byPath).map(
-      ([path, s]) => this.writeDocsCoverageForPath(path, s),
+      ([path, snippetStatuses]) =>
+        this.writeDocsCoverageForPath(path, snippetStatuses),
     );
 
     const summaryLines = writtenSnippetReports
-      .map(
-        (r) =>
-          '| ' +
-          [
-            r.url,
-            `[${this.relativePath(r.reportPath)}](${this.relativePath(r.reportPath)})`,
-            r.covered,
-            r.uncovered,
-            r.coverageString,
-          ].join(' | ') +
-          ' |',
-      )
+      .map((s) => this.formatPageCoverageSummaryRow(s))
       .join('\n');
 
-    const totalCovered = writtenSnippetReports.reduce(
-      (sum, r) => sum + r.covered,
-      0,
-    );
+    const totalCovered = sum(writtenSnippetReports, (r) => r.covered);
+    const totalSnippets = sum(writtenSnippetReports, (r) => r.total);
+    const coverageString = this.formatCoverage(totalCovered, totalSnippets);
 
-    const totalUncovered = writtenSnippetReports.reduce(
-      (sum, r) => sum + r.uncovered,
-      0,
-    );
-
-    const coverageString =
-      ((100 * totalCovered) / (totalCovered + totalUncovered)).toFixed(1) + '%';
-
-    const totalLine = `| TOTAL | | ${totalCovered} | ${totalUncovered} | ${coverageString} |`;
+    const totalLine = `| TOTAL | | ${totalCovered} | ${totalSnippets} | ${coverageString} |`;
 
     mkdirSync(dirname(indexPath), { recursive: true });
     writeFileSync(
@@ -211,7 +233,7 @@ export class CoverageReport {
       
       # In-Scope Pages
 
-      | URL | Report | Covered | Uncovered | % |
+      | URL | Report | Covered | Total | % |
       | -- | -- | -- | -- | -- |
       ${summaryLines}
       ${totalLine}
@@ -223,7 +245,10 @@ export class CoverageReport {
     return { coverageString, path: indexPath };
   }
 
-  writeDocsCoverageForPath(url: string, snippets: SnippetStatus[]) {
+  writeDocsCoverageForPath(
+    url: string,
+    snippets: SnippetStatus[],
+  ): PageCoverageSummary {
     const basePath = new URL(url).pathname.substring(1);
     const urlPath =
       basePath.length === 0 || basePath.endsWith('/')
@@ -238,9 +263,9 @@ export class CoverageReport {
     ).substring(3);
 
     const covered = snippets.filter((s) => s.isCovered).length;
-    const uncovered = snippets.filter((s) => !s.isCovered).length;
-    const coverage = covered / (covered + uncovered);
-    const coverageString = (100 * coverage).toFixed(1) + '%';
+    const total = snippets.length;
+    const coverage = covered / total;
+    const coverageString = this.formatCoverage(covered, total);
 
     mkdirSync(dirname(reportPath), { recursive: true });
     writeFileSync(
@@ -266,7 +291,7 @@ export class CoverageReport {
       coverage,
       coverageString,
       covered,
-      uncovered,
+      total,
       url,
       reportPath,
     };
