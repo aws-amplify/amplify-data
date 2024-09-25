@@ -35,6 +35,7 @@ import {
 
 describe('Implicit Auth Field Handling. Given:', () => {
   describe('A model with implicit owner field from owner auth', () => {
+    // #region covers 832caa416eda81d3
     const schema = a
       .schema({
         Model: a.model({
@@ -116,6 +117,7 @@ describe('Implicit Auth Field Handling. Given:', () => {
         },
       });
     });
+    // #endregion
   });
 
   describe('A model with implicit `customOwner` field from owner auth', () => {

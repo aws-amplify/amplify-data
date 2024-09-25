@@ -4,7 +4,7 @@
 
 Page: https://docs.amplify.aws/react/deploy-and-host/fullstack-branching/cross-account-deployments/
 
-Coverage: 0.0%
+Coverage: 100.0%
 
 #### `Terminal`
 
@@ -26,11 +26,11 @@ Coverage: 0.0%
 | | |
 | -- | -- |
 | Hash | `8245f9493b30aad6` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/4-uncovered/deploy-and-host/index.ts](../../../../../../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/deploy-and-host/index.ts#10)
 
 ---
 

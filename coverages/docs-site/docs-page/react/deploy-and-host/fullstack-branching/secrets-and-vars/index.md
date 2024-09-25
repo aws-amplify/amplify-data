@@ -4,7 +4,7 @@
 
 Page: https://docs.amplify.aws/react/deploy-and-host/fullstack-branching/secrets-and-vars/
 
-Coverage: 0.0%
+Coverage: 60.0%
 
 #### `Terminal`
 
@@ -52,11 +52,11 @@ externalProviders: {
 | | |
 | -- | -- |
 | Hash | `57a89d85904e35df` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/4-uncovered/deploy-and-host/index.ts](../../../../../../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/deploy-and-host/index.ts#18)
 
 ---
 
@@ -70,11 +70,11 @@ npx ampx sandbox secret remove foo
 | | |
 | -- | -- |
 | Hash | `891a804e7948f947` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/4-uncovered/deploy-and-host/index.ts](../../../../../../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/deploy-and-host/index.ts#18)
 
 ---
 
@@ -109,11 +109,11 @@ console.log("REACT_APP_TEST_VARIABLE", process.env.REACT_APP_TEST_VARIABLE);
 | | |
 | -- | -- |
 | Hash | `a1db81993e18ae6a` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/4-uncovered/deploy-and-host/index.ts](../../../../../../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/deploy-and-host/index.ts#16)
 
 ---
 

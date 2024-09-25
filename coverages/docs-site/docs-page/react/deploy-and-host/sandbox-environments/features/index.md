@@ -4,7 +4,7 @@
 
 Page: https://docs.amplify.aws/react/deploy-and-host/sandbox-environments/features/
 
-Coverage: 0.0%
+Coverage: 100.0%
 
 #### `Unnamed Snippet`
 
@@ -22,11 +22,11 @@ Done!
 | | |
 | -- | -- |
 | Hash | `177325bd7103d995` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/4-uncovered/deploy-and-host/index.ts](../../../../../../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/deploy-and-host/index.ts#16)
 
 ---
 
@@ -42,11 +42,11 @@ npx ampx sandbox secret list
 | | |
 | -- | -- |
 | Hash | `9e94e7e14cde9252` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/4-uncovered/deploy-and-host/index.ts](../../../../../../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/deploy-and-host/index.ts#16)
 
 ---
 
@@ -64,11 +64,11 @@ lastUpdated: Mon Nov 13 2023 22:19:12 GMT-0800 (Pacific Standard Time)
 | | |
 | -- | -- |
 | Hash | `9cf830d5a5340ca0` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/4-uncovered/deploy-and-host/index.ts](../../../../../../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/deploy-and-host/index.ts#18)
 
 ---
 
@@ -82,11 +82,11 @@ npx ampx sandbox secret remove foo
 | | |
 | -- | -- |
 | Hash | `891a804e7948f947` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/4-uncovered/deploy-and-host/index.ts](../../../../../../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/deploy-and-host/index.ts#18)
 
 ---
 
@@ -112,11 +112,11 @@ externalProviders: {
 | | |
 | -- | -- |
 | Hash | `57a89d85904e35df` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/4-uncovered/deploy-and-host/index.ts](../../../../../../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/deploy-and-host/index.ts#18)
 
 ---
 
@@ -130,11 +130,11 @@ npx ampx sandbox secret set foo --profile work
 | | |
 | -- | -- |
 | Hash | `cc09b88bc8ecbeec` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/4-uncovered/deploy-and-host/index.ts](../../../../../../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/deploy-and-host/index.ts#18)
 
 ---
 
@@ -148,11 +148,11 @@ npx ampx sandbox --identifier feature1sandbox
 | | |
 | -- | -- |
 | Hash | `83d31f061c8eaf8b` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/4-uncovered/deploy-and-host/index.ts](../../../../../../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/deploy-and-host/index.ts#18)
 
 ---
 
@@ -166,11 +166,11 @@ npx ampx sandbox --identifier feature2sandbox
 | | |
 | -- | -- |
 | Hash | `84b833ec4343dc7d` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/4-uncovered/deploy-and-host/index.ts](../../../../../../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/deploy-and-host/index.ts#20)
 
 ---
 
@@ -184,11 +184,11 @@ npx ampx sandbox --identifier feature1sandbox secret set baz
 | | |
 | -- | -- |
 | Hash | `a08360d3543e0fee` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/4-uncovered/deploy-and-host/index.ts](../../../../../../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/deploy-and-host/index.ts#20)
 
 ---
 
@@ -202,11 +202,11 @@ npx ampx sandbox --outputs-out-dir ./path/to/config --outputs-format ["json", "d
 | | |
 | -- | -- |
 | Hash | `e1d0dea68bca6848` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/4-uncovered/deploy-and-host/index.ts](../../../../../../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/deploy-and-host/index.ts#20)
 
 ---
 
@@ -220,11 +220,11 @@ npx ampx generate outputs --app-id <your-amplify-app-id> --branch main --format 
 | | |
 | -- | -- |
 | Hash | `7874ae3a5848eda9` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/4-uncovered/deploy-and-host/index.ts](../../../../../../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/deploy-and-host/index.ts#20)
 
 ---
 
@@ -238,11 +238,11 @@ npx ampx generate outputs --app-id <app-id> --branch main
 | | |
 | -- | -- |
 | Hash | `0c0d50bd53d09ce1` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/4-uncovered/deploy-and-host/index.ts](../../../../../../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/deploy-and-host/index.ts#20)
 
 ---
 
@@ -257,11 +257,11 @@ npx ampx generate graphql-client-code
 | | |
 | -- | -- |
 | Hash | `28167ac180eae7dd` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/4-uncovered/deploy-and-host/index.ts](../../../../../../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/deploy-and-host/index.ts#22)
 
 ---
 

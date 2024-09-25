@@ -4,7 +4,7 @@
 
 Page: https://docs.amplify.aws/react/deploy-and-host/fullstack-branching/share-resources/
 
-Coverage: 0.0%
+Coverage: 100.0%
 
 #### `amplify.yml`
 
@@ -55,11 +55,11 @@ cache:
 | | |
 | -- | -- |
 | Hash | `9aaa4b8e97b82ac0` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/4-uncovered/deploy-and-host/index.ts](../../../../../../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/deploy-and-host/index.ts#16)
 
 ---
 

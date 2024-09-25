@@ -4,7 +4,7 @@
 
 Page: https://docs.amplify.aws/react/deploy-and-host/fullstack-branching/mono-and-multi-repos/
 
-Coverage: 0.0%
+Coverage: 100.0%
 
 #### `Terminal`
 
@@ -16,11 +16,11 @@ npm create next-app@14 -- multi-repo-example --typescript --eslint --no-app --no
 | | |
 | -- | -- |
 | Hash | `9e86939baa24d516` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/4-uncovered/deploy-and-host/index.ts](../../../../../../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/deploy-and-host/index.ts#12)
 
 ---
 
@@ -35,11 +35,11 @@ npm add @aws-amplify/backend-cli aws-amplify @aws-amplify/ui-react
 | | |
 | -- | -- |
 | Hash | `a96f0f3bf3b26739` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/4-uncovered/deploy-and-host/index.ts](../../../../../../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/deploy-and-host/index.ts#12)
 
 ---
 
@@ -53,11 +53,11 @@ npx ampx generate outputs --branch main --app-id <your-backend-app-id>
 | | |
 | -- | -- |
 | Hash | `7665aa8c85d9a3b4` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/4-uncovered/deploy-and-host/index.ts](../../../../../../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/deploy-and-host/index.ts#12)
 
 ---
 
@@ -85,11 +85,11 @@ export default withAuthenticator(App);
 | | |
 | -- | -- |
 | Hash | `39c8cf957000e6ac` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/4-uncovered/deploy-and-host/index.ts](../../../../../../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/deploy-and-host/index.ts#12)
 
 ---
 
@@ -123,11 +123,11 @@ paths:
 | | |
 | -- | -- |
 | Hash | `c151f94686992927` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/4-uncovered/deploy-and-host/index.ts](../../../../../../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/deploy-and-host/index.ts#12)
 
 ---
 
@@ -160,11 +160,11 @@ paths:
 | | |
 | -- | -- |
 | Hash | `1f61d10d39fa9a83` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/4-uncovered/deploy-and-host/index.ts](../../../../../../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/deploy-and-host/index.ts#14)
 
 ---
 
@@ -184,11 +184,11 @@ paths:
 | | |
 | -- | -- |
 | Hash | `c74ee7916c8ae999` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/4-uncovered/deploy-and-host/index.ts](../../../../../../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/deploy-and-host/index.ts#14)
 
 ---
 
@@ -212,11 +212,11 @@ isDone: false,
 | | |
 | -- | -- |
 | Hash | `3137a2b60aedf773` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/1-patterns/mutate-data.ts](../../../../../../../packages/integration-tests/__tests__/defined-behavior/1-patterns/mutate-data.ts#57)
 
 ---
 

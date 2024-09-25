@@ -4,7 +4,7 @@
 
 Page: https://docs.amplify.aws/react/start/manual-installation/
 
-Coverage: 90.9%
+Coverage: 100.0%
 
 #### `Terminal`
 
@@ -169,7 +169,6 @@ email: true,
 ##### Covering Regions
 
 - [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/4-uncovered/reference/project-structure.ts](../../../../../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/reference/project-structure.ts#9)
-- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/4-uncovered/deploy-and-host/sandbox-environments/setup.ts](../../../../../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/deploy-and-host/sandbox-environments/setup.ts#10)
 
 ---
 
@@ -190,11 +189,11 @@ export const data = defineData({
 | | |
 | -- | -- |
 | Hash | `b497a376ca20c1f5` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/1-patterns/start/manual-installation.ts](../../../../../../packages/integration-tests/__tests__/defined-behavior/1-patterns/start/manual-installation.ts#9)
 
 ---
 
@@ -221,7 +220,6 @@ defineBackend({
 
 - [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/4-uncovered/start/manual-installation.ts](../../../../../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/start/manual-installation.ts#11)
 - [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/4-uncovered/reference/project-structure.ts](../../../../../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/reference/project-structure.ts#9)
-- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/4-uncovered/deploy-and-host/sandbox-environments/setup.ts](../../../../../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/deploy-and-host/sandbox-environments/setup.ts#10)
 
 ---
 

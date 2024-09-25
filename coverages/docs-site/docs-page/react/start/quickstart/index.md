@@ -4,7 +4,7 @@
 
 Page: https://docs.amplify.aws/react/start/quickstart/
 
-Coverage: 9.1%
+Coverage: 100.0%
 
 #### `Unnamed Snippet`
 
@@ -28,11 +28,11 @@ Coverage: 9.1%
 | | |
 | -- | -- |
 | Hash | `ca66fb122174b9cc` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/4-uncovered/start/quickstart.ts](../../../../../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/start/quickstart.ts#9)
 
 ---
 
@@ -47,11 +47,11 @@ cd amplify-vite-react-template && npm install
 | | |
 | -- | -- |
 | Hash | `ed16cc50ccab928b` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/4-uncovered/start/quickstart.ts](../../../../../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/start/quickstart.ts#9)
 
 ---
 
@@ -69,11 +69,11 @@ cd amplify-vite-react-template && npm install
 | | |
 | -- | -- |
 | Hash | `008dc549768a46b2` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/4-uncovered/start/quickstart.ts](../../../../../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/start/quickstart.ts#9)
 
 ---
 
@@ -113,11 +113,11 @@ Review next step of this tutorial.
 | | |
 | -- | -- |
 | Hash | `14bd2ab04fd722de` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/1-patterns/mutate-data.ts](../../../../../../packages/integration-tests/__tests__/defined-behavior/1-patterns/mutate-data.ts#119)
 
 ---
 
@@ -131,11 +131,11 @@ npm run dev
 | | |
 | -- | -- |
 | Hash | `29238ffc8ab45ff8` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/4-uncovered/start/quickstart.ts](../../../../../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/start/quickstart.ts#9)
 
 ---
 
@@ -165,11 +165,11 @@ function App() {
 | | |
 | -- | -- |
 | Hash | `3774e58f1afbc0d2` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/4-uncovered/start/quickstart.ts](../../../../../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/start/quickstart.ts#9)
 
 ---
 
@@ -184,11 +184,11 @@ git push
 | | |
 | -- | -- |
 | Hash | `f3e938672d9247e5` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/4-uncovered/start/quickstart.ts](../../../../../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/start/quickstart.ts#11)
 
 ---
 
@@ -239,11 +239,11 @@ defaultAuthorizationMode: "userPool",
 | | |
 | -- | -- |
 | Hash | `832caa416eda81d3` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/2-expected-use/owner-fields.ts](../../../../../../packages/integration-tests/__tests__/defined-behavior/2-expected-use/owner-fields.ts#38)
 
 ---
 
@@ -271,11 +271,11 @@ function App() {
 | | |
 | -- | -- |
 | Hash | `a0636891d1ba0ef2` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/4-uncovered/start/quickstart.ts](../../../../../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/start/quickstart.ts#11)
 
 ---
 
@@ -290,11 +290,11 @@ git push
 | | |
 | -- | -- |
 | Hash | `c16d632aa0af79e6` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/4-uncovered/start/quickstart.ts](../../../../../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/start/quickstart.ts#11)
 
 ---
 

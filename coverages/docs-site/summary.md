@@ -2,5 +2,5 @@
 
 | Report | Count/Coverage |
 | -- | -- |
-| [Docs Snippet Coverage](docs-pages.md) | 7.1% |
+| [Docs Snippet Coverage](docs-pages.md) | 18.2% |
 | [Orphaned Integ Tets](orphans-report.md) | 0 |

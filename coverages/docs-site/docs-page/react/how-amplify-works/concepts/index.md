@@ -4,7 +4,7 @@
 
 Page: https://docs.amplify.aws/react/how-amplify-works/concepts/
 
-Coverage: 0.0%
+Coverage: 66.7%
 
 #### `Unnamed Snippet`
 
@@ -77,11 +77,11 @@ email: {
 | | |
 | -- | -- |
 | Hash | `a37b0e8fc70f7954` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/4-uncovered/how-amplify-works/concepts.ts](../../../../../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/how-amplify-works/concepts.ts#9)
 
 ---
 
@@ -106,11 +106,11 @@ export default withAuthenticator(App);
 | | |
 | -- | -- |
 | Hash | `278fc5fceaa75c35` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/4-uncovered/how-amplify-works/concepts.ts](../../../../../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/how-amplify-works/concepts.ts#9)
 
 ---
 
@@ -146,11 +146,11 @@ new CfnOutput(this, "mapArn", {
 | | |
 | -- | -- |
 | Hash | `3a46e2923a54b214` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/4-uncovered/how-amplify-works/concepts.ts](../../../../../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/how-amplify-works/concepts.ts#9)
 
 ---
 
@@ -178,11 +178,11 @@ new LocationMapStack(
 | | |
 | -- | -- |
 | Hash | `507842e09e0f3a5c` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/4-uncovered/how-amplify-works/concepts.ts](../../../../../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/how-amplify-works/concepts.ts#9)
 
 ---
 
