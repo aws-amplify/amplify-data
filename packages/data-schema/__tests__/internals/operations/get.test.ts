@@ -1,6 +1,5 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
-import { describe, it, expect, jest } from '@jest/globals';
 import { getFactory } from '../../../src/runtime/internals/operations/get';
 import {
   AmplifyClass,

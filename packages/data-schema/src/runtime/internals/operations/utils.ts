@@ -2,10 +2,6 @@
 // SPDX-License-Identifier: Apache-2.0
 // import { GraphQLFormattedError } from '@aws-amplify/data-schema-types';
 
-import {
-  CustomUserAgentDetails,
-} from '../../bridge-types';
-
 /**
  * Handle errors for list return types (list and index query operations)
  */

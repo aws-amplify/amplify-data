@@ -12,7 +12,7 @@ import { CustomUserAgentDetails } from '../../bridge-types';
  * External usage of this symbol is discouraged and may lead to unexpected behavior.
  */
 export const INTERNAL_USER_AGENT_OVERRIDE = Symbol(
-	'INTERNAL_USER_AGENT_OVERRIDE',
+  'INTERNAL_USER_AGENT_OVERRIDE',
 );
 
 export type AiCategory = 'ai';
@@ -37,11 +37,11 @@ export const getCustomUserAgentDetails = (
 
 /**
  * Creates a user agent override object based on custom details.
- * 
+ *
  * @internal
  * This function is intended for internal use within the Amplify library.
  * It may change or be removed in future versions without notice.
- * 
+ *
  * @param customUserAgentDetails - Optional custom user agent details
  * @returns An object with INTERNAL_USER_AGENT_OVERRIDE symbol as key and customUserAgentDetails as value, or undefined if no details provided
  */

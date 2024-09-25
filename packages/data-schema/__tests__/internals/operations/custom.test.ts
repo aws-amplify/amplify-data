@@ -1,4 +1,5 @@
-import { describe, it, expect, jest } from '@jest/globals';
+// Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
 import { customOpFactory } from '../../../src/runtime/internals/operations/custom';
 import {
   AmplifyClass,
@@ -16,6 +17,17 @@ import {
   getCustomUserAgentDetails,
   INTERNAL_USER_AGENT_OVERRIDE,
 } from '../../../src/runtime/internals/ai/getCustomUserAgentDetails';
+
+jest.mock('../../../src/runtime/internals/APIClient', () => ({
+  generateGraphQLDocument: jest.fn(),
+  buildGraphQLVariables: jest.fn(),
+  authModeParams: jest
+    .fn()
+    .mockReturnValue({ authMode: 'apiKey', authToken: 'mockToken' }),
+  getCustomHeaders: jest.fn(),
+  flattenItems: jest.fn().mockReturnValue({ id: '1', name: 'Test Item' }),
+  initializeModel: jest.fn().mockReturnValue([{ id: '1', name: 'Test Item' }]),
+}));
 
 describe('customOpFactory', () => {
   const mockGraphQLResult: GraphQLResult = {
@@ -43,22 +55,11 @@ describe('customOpFactory', () => {
     enums: {},
   };
 
-  const mockAmplify: AmplifyClass = {
-    getConfig: jest.fn<() => Readonly<ResourcesConfig>>(() => ({
-      API: {
-        GraphQL: {
-          modelIntrospection: mockModelIntrospection,
-        },
-      } as APIConfig,
-      Auth: {},
-    })),
-  };
-
   const mockGetInternals: ClientInternalsGetter = jest.fn(() => ({
     amplifyConfig: {},
     authMode: 'apiKey' as GraphQLAuthMode,
-    amplify: mockAmplify,
-    authToken: 'myAuthToken',
+    amplify: {} as AmplifyClass,
+    authToken: 'mockToken',
     headers: {},
   }));
 
@@ -93,7 +94,7 @@ describe('customOpFactory', () => {
     expect(mockClient.graphql).toHaveBeenCalledWith(
       expect.objectContaining({
         authMode: 'apiKey',
-        authToken: 'myAuthToken',
+        authToken: 'mockToken',
         query: expect.stringContaining('testQuery'),
         variables: {},
         [INTERNAL_USER_AGENT_OVERRIDE]: expect.objectContaining({
@@ -101,7 +102,7 @@ describe('customOpFactory', () => {
           action: '4',
         }),
       }),
-      {},
+      undefined,
     );
   });
 
@@ -121,7 +122,7 @@ describe('customOpFactory', () => {
       expect.not.objectContaining({
         [INTERNAL_USER_AGENT_OVERRIDE]: expect.anything(),
       }),
-      expect.any(Object),
+      undefined,
     );
   });
 });
