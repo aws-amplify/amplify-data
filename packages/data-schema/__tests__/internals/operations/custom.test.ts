@@ -1,20 +1,21 @@
 import { describe, it, expect, jest } from '@jest/globals';
 import { customOpFactory } from '../../../src/runtime/internals/operations/custom';
 import {
-  AiAction,
   AmplifyClass,
   APIConfig,
   BaseBrowserClient,
-  Category,
   ClientInternalsGetter,
   CustomOperation,
-  CustomUserAgentDetails,
   GraphQLResult,
   GraphQLAuthMode,
-  INTERNAL_USER_AGENT_OVERRIDE,
   ModelIntrospectionSchema,
   ResourcesConfig,
 } from '../../../src/runtime/bridge-types';
+import {
+  AiAction,
+  getCustomUserAgentDetails,
+  INTERNAL_USER_AGENT_OVERRIDE,
+} from '../../../src/runtime/internals/ai/getCustomUserAgentDetails';
 
 describe('customOpFactory', () => {
   const mockGraphQLResult: GraphQLResult = {
@@ -73,10 +74,9 @@ describe('customOpFactory', () => {
   });
 
   it('should include CustomUserAgentDetails when provided', async () => {
-    const customUserAgentDetails: CustomUserAgentDetails = {
-      category: Category.AI,
-      action: AiAction.SendMessage,
-    };
+    const customUserAgentDetails = getCustomUserAgentDetails(
+      AiAction.SendMessage,
+    );
 
     const customOp = customOpFactory(
       mockClient,
@@ -92,9 +92,16 @@ describe('customOpFactory', () => {
 
     expect(mockClient.graphql).toHaveBeenCalledWith(
       expect.objectContaining({
-        [INTERNAL_USER_AGENT_OVERRIDE]: customUserAgentDetails,
+        authMode: 'apiKey',
+        authToken: 'myAuthToken',
+        query: expect.stringContaining('testQuery'),
+        variables: {},
+        [INTERNAL_USER_AGENT_OVERRIDE]: expect.objectContaining({
+          category: 'ai',
+          action: '4',
+        }),
       }),
-      expect.any(Object),
+      {},
     );
   });
 

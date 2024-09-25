@@ -31,10 +31,11 @@ import {
   selectionSetIRToString,
 } from '../APIClient';
 
-import { createUserAgentOverride, handleSingularGraphQlError } from './utils';
+import { handleSingularGraphQlError } from './utils';
 import { selfAwareAsync } from '../../utils';
 
 import { extendCancellability } from '../cancellation';
+import { createUserAgentOverride } from '../ai/getCustomUserAgentDetails';
 
 type CustomOperationOptions = AuthModeParams & ListArgs;
 

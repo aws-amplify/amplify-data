@@ -3,19 +3,20 @@
 import { describe, it, expect, jest } from '@jest/globals';
 import { listFactory } from '../../../src/runtime/internals/operations/list';
 import {
-  AiAction,
   AmplifyServer,
   AmplifyClass,
   BaseBrowserClient,
-  Category,
   ClientInternalsGetter,
-  CustomUserAgentDetails,
   GraphQLResult,
   GraphQLAuthMode,
-  INTERNAL_USER_AGENT_OVERRIDE,
   ModelIntrospectionSchema,
   SchemaModel,
 } from '../../../src/runtime/bridge-types';
+import {
+  AiAction,
+  getCustomUserAgentDetails,
+  INTERNAL_USER_AGENT_OVERRIDE,
+} from '../../../src/runtime/internals/ai/getCustomUserAgentDetails';
 
 jest.mock('../../../src/runtime/internals/APIClient', () => ({
   generateGraphQLDocument: jest.fn(),
@@ -82,10 +83,9 @@ describe('listFactory', () => {
   });
 
   it('should include Custom User Agent Details when provided', async () => {
-    const customUserAgentDetails: CustomUserAgentDetails = {
-      category: Category.AI,
-      action: AiAction.ListConversations,
-    };
+    const customUserAgentDetails = getCustomUserAgentDetails(
+      AiAction.ListConversations,
+    );
 
     const list = listFactory(
       mockClient,
@@ -105,7 +105,7 @@ describe('listFactory', () => {
         query: undefined,
         variables: undefined,
         [INTERNAL_USER_AGENT_OVERRIDE]: expect.objectContaining({
-          category: Category.AI,
+          category: 'ai',
           action: '3',
         }),
       }),

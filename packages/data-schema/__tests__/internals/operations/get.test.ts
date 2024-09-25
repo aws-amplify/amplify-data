@@ -3,20 +3,21 @@
 import { describe, it, expect, jest } from '@jest/globals';
 import { getFactory } from '../../../src/runtime/internals/operations/get';
 import {
-  AiAction,
   AmplifyClass,
   AmplifyServer,
   BaseBrowserClient,
-  Category,
   ClientInternalsGetter,
-  CustomUserAgentDetails,
   GraphQLAuthMode,
   GraphQLOptions,
   GraphQLResult,
-  INTERNAL_USER_AGENT_OVERRIDE,
   ModelIntrospectionSchema,
   SchemaModel,
 } from '../../../src/runtime/bridge-types';
+import {
+  AiAction,
+  getCustomUserAgentDetails,
+  INTERNAL_USER_AGENT_OVERRIDE,
+} from '../../../src/runtime/internals/ai/getCustomUserAgentDetails';
 
 jest.mock('../../../src/runtime/internals/APIClient', () => ({
   generateGraphQLDocument: jest.fn(),
@@ -89,10 +90,9 @@ describe('getFactory', () => {
 
   describe('with context', () => {
     it('should include Custom User Agent Details when provided', async () => {
-      const customUserAgentDetails: CustomUserAgentDetails = {
-        category: Category.AI,
-        action: AiAction.GetConversation,
-      };
+      const customUserAgentDetails = getCustomUserAgentDetails(
+        AiAction.GetConversation,
+      );
 
       const get = getFactory(
         mockClient,
@@ -113,7 +113,7 @@ describe('getFactory', () => {
           query: undefined,
           variables: undefined,
           [INTERNAL_USER_AGENT_OVERRIDE]: expect.objectContaining({
-            category: Category.AI,
+            category: 'ai',
             action: '2',
           }),
         }),

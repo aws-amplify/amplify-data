@@ -14,12 +14,8 @@
 import { Observable } from 'rxjs';
 
 import { CustomHeaders, ModelSortDirection } from './client';
-import {
-  AiAction,
-  Category,
-  CustomUserAgentDetails,
-  INTERNAL_USER_AGENT_OVERRIDE,
-} from '@aws-amplify/core/internals/utils';
+
+import { AiAction, AiCategory } from './internals/ai/getCustomUserAgentDetails';
 
 export declare namespace AmplifyServer {
   export interface ContextToken {
@@ -414,12 +410,10 @@ export type BaseSSRClient = {
   isCancelError(error: any): boolean;
 };
 
-export {
-  AiAction,
-  Category,
-  CustomUserAgentDetails,
-  INTERNAL_USER_AGENT_OVERRIDE,
-};
+export interface CustomUserAgentDetails {
+  category: AiCategory;
+  action: AiAction;
+}
 
 export type GraphQLMethod = (
   options: GraphQLOptions,

@@ -23,10 +23,11 @@ import {
   initializeModel,
 } from '../APIClient';
 
-import { createUserAgentOverride, handleListGraphQlError } from './utils';
+import { handleListGraphQlError } from './utils';
 import { selfAwareAsync } from '../../utils';
 
 import { extendCancellability } from '../cancellation';
+import { createUserAgentOverride } from '../ai/getCustomUserAgentDetails';
 
 export function listFactory(
   client: BaseClient,

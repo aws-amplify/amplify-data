@@ -26,10 +26,11 @@ import {
   initializeModel,
 } from '../APIClient';
 
-import { createUserAgentOverride, handleSingularGraphQlError } from './utils';
+import { handleSingularGraphQlError } from './utils';
 import { selfAwareAsync } from '../../utils';
 
 import { extendCancellability } from '../cancellation';
+import { createUserAgentOverride } from '../ai/getCustomUserAgentDetails';
 
 export function getFactory(
   client: BaseClient,

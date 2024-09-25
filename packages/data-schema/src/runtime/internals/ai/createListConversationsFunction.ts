@@ -4,15 +4,17 @@
 import type { ConversationRoute } from '../../../ai/ConversationType';
 import type { ListReturnValue } from '../../../runtime/client';
 import {
-  AiAction,
   BaseClient,
-  Category,
   ClientInternalsGetter,
   ModelIntrospectionSchema,
   SchemaModel,
 } from '../../bridge-types';
 import { listFactory } from '../operations/list';
 import { convertItemToConversation } from './convertItemToConversation';
+import {
+  AiAction,
+  getCustomUserAgentDetails,
+} from './getCustomUserAgentDetails';
 
 export const createListConversationsFunction =
   (
@@ -30,10 +32,7 @@ export const createListConversationsFunction =
       conversationModel,
       getInternals,
       false,
-      {
-        category: Category.AI,
-        action: AiAction.ListConversations,
-      },
+      getCustomUserAgentDetails(AiAction.ListConversations),
     ) as (args?: Record<string, any>) => ListReturnValue<Record<string, any>>;
     const { data, nextToken, errors } = await list(input);
     return {

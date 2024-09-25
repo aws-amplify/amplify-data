@@ -10,8 +10,6 @@ import {
   BaseClient,
   ClientInternalsGetter,
   ModelIntrospectionSchema,
-  AiAction,
-  Category,
 } from '../../bridge-types';
 import { customOpFactory } from '../operations/custom';
 import { convertItemToConversationMessage } from './convertItemToConversationMessage';
@@ -20,6 +18,10 @@ import {
   serializeContent,
   serializeToolConfiguration,
 } from './conversationMessageSerializers';
+import {
+  AiAction,
+  getCustomUserAgentDetails,
+} from './getCustomUserAgentDetails';
 
 export const createSendMessageFunction =
   (
@@ -44,10 +46,7 @@ export const createSendMessageFunction =
       sendSchema,
       false,
       getInternals,
-      {
-        category: Category.AI,
-        action: AiAction.SendMessage,
-      },
+      getCustomUserAgentDetails(AiAction.SendMessage),
     ) as (
       args?: Record<string, any>,
     ) => SingularReturnValue<ConversationMessage>;
