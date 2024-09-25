@@ -4,7 +4,7 @@
 
 Page: https://docs.amplify.aws/react/deploy-and-host/fullstack-branching/branch-deployments/
 
-Coverage: 0.0%
+Coverage: 100.0%
 
 #### `Terminal`
 
@@ -22,11 +22,11 @@ git push origin feature/A
 | | |
 | -- | -- |
 | Hash | `91330c3134e7aa91` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/4-uncovered/deploy-and-host/index.ts](../../../../../../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/deploy-and-host/index.ts#10)
 
 ---
 
@@ -40,11 +40,11 @@ npx ampx generate outputs --app-id <your-amplify-app-id> --branch <your-git-bran
 | | |
 | -- | -- |
 | Hash | `86876fc0d71196f7` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/4-uncovered/deploy-and-host/index.ts](../../../../../../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/deploy-and-host/index.ts#10)
 
 ---
 

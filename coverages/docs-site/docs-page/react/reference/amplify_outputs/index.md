@@ -4,7 +4,7 @@
 
 Page: https://docs.amplify.aws/react/reference/amplify_outputs/
 
-Coverage: 0.0%
+Coverage: 100.0%
 
 #### `amplify/backend.ts`
 
@@ -30,11 +30,11 @@ bucket_name: "my-externally-managed-bucket",
 | | |
 | -- | -- |
 | Hash | `e4c107cd31dcc7b7` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/4-uncovered/reference/amplify-outputs.ts](../../../../../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/reference/amplify-outputs.ts#9)
 
 ---
 
@@ -51,11 +51,11 @@ Amplify.configure(outputs);
 | | |
 | -- | -- |
 | Hash | `96184488681b162e` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/4-uncovered/reference/amplify-outputs.ts](../../../../../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/reference/amplify-outputs.ts#9)
 
 ---
 
@@ -84,11 +84,11 @@ api_name: "restApiName",
 | | |
 | -- | -- |
 | Hash | `ecab0f33dfa4d382` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/4-uncovered/reference/amplify-outputs.ts](../../../../../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/reference/amplify-outputs.ts#9)
 
 ---
 
@@ -117,11 +117,11 @@ REST: {
 | | |
 | -- | -- |
 | Hash | `e294b9ce19c1ac38` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/4-uncovered/reference/amplify-outputs.ts](../../../../../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/reference/amplify-outputs.ts#9)
 
 ---
 
@@ -581,11 +581,11 @@ REST: {
 | | |
 | -- | -- |
 | Hash | `f26dc9ec37d0cfd2` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/4-uncovered/reference/amplify-outputs.ts](../../../../../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/reference/amplify-outputs.ts#9)
 
 ---
 

@@ -4,7 +4,7 @@
 
 Page: https://docs.amplify.aws/react/deploy-and-host/fullstack-branching/monorepos/
 
-Coverage: 0.0%
+Coverage: 100.0%
 
 #### `Unnamed Snippet`
 
@@ -33,11 +33,11 @@ Coverage: 0.0%
 | | |
 | -- | -- |
 | Hash | `24ba8fa46ca0b5dc` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/4-uncovered/deploy-and-host/index.ts](../../../../../../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/deploy-and-host/index.ts#14)
 
 ---
 
@@ -51,11 +51,11 @@ npx ampx generate outputs --branch main --app-id BACKEND-APP-ID
 | | |
 | -- | -- |
 | Hash | `08fd21f5eafe9848` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/4-uncovered/deploy-and-host/index.ts](../../../../../../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/deploy-and-host/index.ts#14)
 
 ---
 
@@ -69,11 +69,11 @@ npx ampx generate outputs --branch main --app-id BACKEND-APP-ID
 | | |
 | -- | -- |
 | Hash | `08fd21f5eafe9848` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/4-uncovered/deploy-and-host/index.ts](../../../../../../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/deploy-and-host/index.ts#14)
 
 ---
 
@@ -93,11 +93,11 @@ npx ampx generate outputs --branch main --app-id BACKEND-APP-ID
 | | |
 | -- | -- |
 | Hash | `be4357236b96055a` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/4-uncovered/deploy-and-host/index.ts](../../../../../../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/deploy-and-host/index.ts#14)
 
 ---
 
@@ -121,11 +121,11 @@ isDone: false,
 | | |
 | -- | -- |
 | Hash | `3137a2b60aedf773` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/1-patterns/mutate-data.ts](../../../../../../../packages/integration-tests/__tests__/defined-behavior/1-patterns/mutate-data.ts#57)
 
 ---
 

@@ -4,7 +4,7 @@
 
 Page: https://docs.amplify.aws/react/build-a-backend/data/set-up-data/
 
-Coverage: 0.0%
+Coverage: 14.3%
 
 #### `amplify/data/resource.ts`
 
@@ -55,11 +55,11 @@ npx ampx sandbox
 | | |
 | -- | -- |
 | Hash | `4149df77ccfbb696` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/4-uncovered/common.ts](../../../../../../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/common.ts#7)
 
 ---
 

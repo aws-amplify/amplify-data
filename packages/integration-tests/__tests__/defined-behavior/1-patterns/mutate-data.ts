@@ -54,7 +54,7 @@ describe('Create, update, and delete application data', () => {
     const config = await buildAmplifyConfig(schema);
     // #endregion mocking
 
-    // #region docs code
+    // #region covers 3137a2b60aedf773
     // App.tsx
     Amplify.configure(config);
     const client = generateClient<Schema>();
@@ -62,7 +62,7 @@ describe('Create, update, and delete application data', () => {
       content: 'My new todo',
       done: true,
     });
-    // #endregion docs code
+    // #endregion
 
     // #region assertions
     expect(optionsAndHeaders(spy)).toMatchSnapshot();
@@ -116,7 +116,7 @@ describe('Create, update, and delete application data', () => {
     const config = await buildAmplifyConfig(schema);
     // #endregion mocking
 
-    // #region docs code
+    // #region covers 14bd2ab04fd722de
     // App.tsx
     Amplify.configure(config);
     const client = generateClient<Schema>();
@@ -125,7 +125,7 @@ describe('Create, update, and delete application data', () => {
     };
     const { data: deletedTodo, errors } =
       await client.models.Todo.delete(toBeDeletedTodo);
-    // #endregion docs code
+    // #endregion
 
     // #region assertions
     expect(optionsAndHeaders(spy)).toMatchSnapshot();
