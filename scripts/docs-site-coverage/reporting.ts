@@ -214,8 +214,8 @@ export class CoverageReport {
     return (
       '| ' +
       [
-        summary.url,
-        `[${this.relativePath(summary.reportPath)}](${this.relativePath(summary.reportPath)})`,
+        new URL(summary.url).pathname,
+        `[docs](${summary.url})&nbsp;/&nbsp;[report](${this.relativePath(summary.reportPath)})`,
         summary.covered,
         summary.total,
         summary.coverageString,
@@ -255,16 +255,16 @@ export class CoverageReport {
     mkdirSync(dirname(indexPath), { recursive: true });
     writeFileSync(
       indexPath,
-      `[<- Back to summary](../)
+      `[<- Back to summary](./readme.md)
       
       # In-Scope Pages
 
-      | URL | Report | Covered | Total | % |
+      | Docs Site Path | Links | Covered | Total | % |
       | -- | -- | -- | -- | -- |
       ${summaryLines}
       ${totalLine}
 
-      [<- Back to summary](../)
+      [<- Back to summary](./readme.md)
       `.replace(/^ {6}/gm, ''), // dedent 6
     );
 
@@ -327,7 +327,7 @@ export class CoverageReport {
    * @param open Open the summary file using `code <filename>` when done.
    */
   write(open: boolean) {
-    const SUMMARY_PATH = `${this.reportPath}/summary.md`;
+    const SUMMARY_PATH = `${this.reportPath}/readme.md`;
     const ORPHANS_REPORT_PATH = `${this.reportPath}/orphans-report.md`;
 
     rimrafSync(this.reportPath);
