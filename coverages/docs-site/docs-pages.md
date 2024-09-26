@@ -4,7 +4,7 @@
 
 | URL | Report | Covered | Total | % |
 | -- | -- | -- | -- | -- |
-| https://docs.amplify.aws/react/start/manual-installation/ | [docs-page/react/start/manual-installation/index.md](docs-page/react/start/manual-installation/index.md) | 10 | 11 | 90.9% |
+| https://docs.amplify.aws/react/start/manual-installation/ | [docs-page/react/start/manual-installation/index.md](docs-page/react/start/manual-installation/index.md) | 11 | 11 | 100.0% |
 | https://docs.amplify.aws/react/start/account-setup/ | [docs-page/react/start/account-setup/index.md](docs-page/react/start/account-setup/index.md) | 11 | 11 | 100.0% |
 | https://docs.amplify.aws/react/build-a-backend/data/connect-from-server-runtime/nextjs-server-runtime/ | [docs-page/react/build-a-backend/data/connect-from-server-runtime/nextjs-server-runtime/index.md](docs-page/react/build-a-backend/data/connect-from-server-runtime/nextjs-server-runtime/index.md) | 1 | 4 | 25.0% |
 | https://docs.amplify.aws/react/build-a-backend/data/custom-business-logic/connect-amazon-polly/ | [docs-page/react/build-a-backend/data/custom-business-logic/connect-amazon-polly/index.md](docs-page/react/build-a-backend/data/custom-business-logic/connect-amazon-polly/index.md) | 0 | 8 | 0.0% |
@@ -79,6 +79,6 @@
 | https://docs.amplify.aws/react/start/quickstart/ | [docs-page/react/start/quickstart/index.md](docs-page/react/start/quickstart/index.md) | 11 | 11 | 100.0% |
 | https://docs.amplify.aws/react/ | [docs-page/react/index.md](docs-page/react/index.md) | 1 | 1 | 100.0% |
 | https://docs.amplify.aws/ | [docs-page/index.md](docs-page/index.md) | 1 | 1 | 100.0% |
-| TOTAL | | 97 | 505 | 19.2% |
+| TOTAL | | 98 | 505 | 19.4% |
 
 [<- Back to summary](../)

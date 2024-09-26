@@ -4,7 +4,7 @@
 
 Page: https://docs.amplify.aws/react/start/manual-installation/
 
-Coverage: 90.9%
+Coverage: 100.0%
 
 #### `Terminal`
 
@@ -196,11 +196,11 @@ export const data = defineData({
 | | |
 | -- | -- |
 | Hash | `b4bb627dcd4ecce5` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/1-patterns/start/manual-installation.ts](../../../../../../packages/integration-tests/__tests__/defined-behavior/1-patterns/start/manual-installation.ts#9)
 
 ---
 
@@ -225,8 +225,8 @@ defineBackend({
 
 ##### Covering Regions
 
-- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/4-uncovered/start/manual-installation.ts](../../../../../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/start/manual-installation.ts#11)
 - [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/4-uncovered/reference/project-structure.ts](../../../../../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/reference/project-structure.ts#9)
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/4-uncovered/start/manual-installation.ts](../../../../../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/start/manual-installation.ts#11)
 
 ---
 
