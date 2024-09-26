@@ -10,6 +10,10 @@ exports[`AI Conversation Routes Conversations Create a conversation 1`] = `
       "variables": {
         "input": {},
       },
+      Symbol(INTERNAL_USER_AGENT_OVERRIDE): {
+        "action": "1",
+        "category": "ai",
+      },
     },
     {},
   ],
@@ -26,6 +30,10 @@ exports[`AI Conversation Routes Conversations Get a conversation 1`] = `
       "variables": {
         "id": "conversation-id",
       },
+      Symbol(INTERNAL_USER_AGENT_OVERRIDE): {
+        "action": "2",
+        "category": "ai",
+      },
     },
     {},
   ],
@@ -40,6 +48,10 @@ exports[`AI Conversation Routes Conversations List conversations 1`] = `
       "authToken": undefined,
       "query": "query($filter: ModelConversationChatBotFilterInput,$limit: Int,$nextToken: String) { listConversationChatBots(filter: $filter,limit: $limit,nextToken: $nextToken) { items { id name metadata createdAt updatedAt owner } nextToken __typename } }",
       "variables": {},
+      Symbol(INTERNAL_USER_AGENT_OVERRIDE): {
+        "action": "3",
+        "category": "ai",
+      },
     },
     {},
   ],
@@ -57,6 +69,10 @@ exports[`AI Conversation Routes Conversations Paginate conversations 1`] = `
         "limit": 100,
         "nextToken": "previous-next-token",
       },
+      Symbol(INTERNAL_USER_AGENT_OVERRIDE): {
+        "action": "3",
+        "category": "ai",
+      },
     },
     {},
   ],
@@ -73,6 +89,10 @@ exports[`AI Conversation Routes Messages List messages 1`] = `
       "variables": {
         "id": "conversation-id",
       },
+      Symbol(INTERNAL_USER_AGENT_OVERRIDE): {
+        "action": "2",
+        "category": "ai",
+      },
     },
     {},
   ],
@@ -87,6 +107,10 @@ exports[`AI Conversation Routes Messages List messages 1`] = `
             "eq": "conversation-id",
           },
         },
+      },
+      Symbol(INTERNAL_USER_AGENT_OVERRIDE): {
+        "action": "5",
+        "category": "ai",
       },
     },
     {},
@@ -103,6 +127,10 @@ exports[`AI Conversation Routes Messages Paginate messages 1`] = `
       "query": "query($id: ID!) { getConversationChatBot(id: $id) { id name metadata createdAt updatedAt owner } }",
       "variables": {
         "id": "conversation-id",
+      },
+      Symbol(INTERNAL_USER_AGENT_OVERRIDE): {
+        "action": "2",
+        "category": "ai",
       },
     },
     {},
@@ -121,6 +149,10 @@ exports[`AI Conversation Routes Messages Paginate messages 1`] = `
         "limit": 100,
         "nextToken": "previous-next-token",
       },
+      Symbol(INTERNAL_USER_AGENT_OVERRIDE): {
+        "action": "5",
+        "category": "ai",
+      },
     },
     {},
   ],
@@ -136,6 +168,10 @@ exports[`AI Conversation Routes Messages Send a message 1`] = `
       "query": "query($id: ID!) { getConversationChatBot(id: $id) { id name metadata createdAt updatedAt owner } }",
       "variables": {
         "id": "conversation-id",
+      },
+      Symbol(INTERNAL_USER_AGENT_OVERRIDE): {
+        "action": "2",
+        "category": "ai",
       },
     },
     {},
@@ -171,6 +207,10 @@ exports[`AI Conversation Routes Messages Send a message 1`] = `
           ],
         },
       },
+      Symbol(INTERNAL_USER_AGENT_OVERRIDE): {
+        "action": "4",
+        "category": "ai",
+      },
     },
     {},
   ],
@@ -187,6 +227,10 @@ exports[`AI Conversation Routes Messages Subscribe to messages 1`] = `
       "variables": {
         "id": "conversation-id",
       },
+      Symbol(INTERNAL_USER_AGENT_OVERRIDE): {
+        "action": "2",
+        "category": "ai",
+      },
     },
     {},
   ],
@@ -201,6 +245,10 @@ exports[`AI Conversation Routes Messages Subscribe to messages 1`] = `
   ",
       "variables": {
         "conversationId": "conversation-id",
+      },
+      Symbol(INTERNAL_USER_AGENT_OVERRIDE): {
+        "action": "6",
+        "category": "ai",
       },
     },
     {},

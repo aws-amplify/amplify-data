@@ -15,6 +15,8 @@ import { Observable } from 'rxjs';
 
 import { CustomHeaders, ModelSortDirection } from './client';
 
+import { AiAction, AiCategory } from './internals/ai/getCustomUserAgentDetails';
+
 export declare namespace AmplifyServer {
   export interface ContextToken {
     readonly value: symbol;
@@ -408,9 +410,15 @@ export type BaseSSRClient = {
   isCancelError(error: any): boolean;
 };
 
+export interface CustomUserAgentDetails {
+  category: AiCategory;
+  action: AiAction;
+}
+
 export type GraphQLMethod = (
   options: GraphQLOptions,
   additionalHeaders?: CustomHeaders | undefined,
+  customUserAgentDetails?: CustomUserAgentDetails,
 ) => Promise<GraphQLResult> | GraphqlSubscriptionResult;
 
 export type GraphQLMethodSSR = (

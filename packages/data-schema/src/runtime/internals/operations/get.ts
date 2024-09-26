@@ -13,6 +13,7 @@ import {
   ModelIntrospectionSchema,
   SchemaModel,
   QueryArgs,
+  CustomUserAgentDetails,
 } from '../../bridge-types';
 
 import {
@@ -29,6 +30,7 @@ import { handleSingularGraphQlError } from './utils';
 import { selfAwareAsync } from '../../utils';
 
 import { extendCancellability } from '../cancellation';
+import { createUserAgentOverride } from '../ai/getCustomUserAgentDetails';
 
 export function getFactory(
   client: BaseClient,
@@ -37,6 +39,7 @@ export function getFactory(
   operation: ModelOperation,
   getInternals: ClientInternalsGetter,
   useContext = false,
+  customUserAgentDetails?: CustomUserAgentDetails,
 ) {
   const getWithContext = (
     contextSpec: AmplifyServer.ContextSpec & GraphQLOptions,
@@ -52,6 +55,7 @@ export function getFactory(
       operation,
       getInternals,
       contextSpec,
+      customUserAgentDetails,
     );
   };
 
@@ -64,6 +68,8 @@ export function getFactory(
       options,
       operation,
       getInternals,
+      undefined,
+      customUserAgentDetails,
     );
   };
 
@@ -79,6 +85,7 @@ function _get(
   operation: ModelOperation,
   getInternals: ClientInternalsGetter,
   context?: AmplifyServer.ContextSpec,
+  customUserAgentDetails?: CustomUserAgentDetails,
 ) {
   return selfAwareAsync(async (resultPromise) => {
     const { name } = model;
@@ -97,10 +104,11 @@ function _get(
     );
 
     const auth = authModeParams(client, getInternals, options);
+    const headers = getCustomHeaders(client, getInternals, options?.headers);
+
+    const userAgentOverride = createUserAgentOverride(customUserAgentDetails);
 
     try {
-      const headers = getCustomHeaders(client, getInternals, options?.headers);
-
       const basePromise = context
         ? ((client as BaseSSRClient).graphql(
             context,
@@ -116,6 +124,7 @@ function _get(
               ...auth,
               query,
               variables,
+              ...userAgentOverride,
             },
             headers,
           ) as Promise<GraphQLResult>);
