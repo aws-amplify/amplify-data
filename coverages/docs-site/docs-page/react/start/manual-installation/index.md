@@ -4,7 +4,7 @@
 
 Page: https://docs.amplify.aws/react/start/manual-installation/
 
-Coverage: 100.0%
+Coverage: 90.9%
 
 #### `Terminal`
 
@@ -177,7 +177,14 @@ email: true,
 ~~~
 import { a, defineData, type ClientSchema } from "@aws-amplify/backend";
 
-const schema = a.schema({});
+const schema = a.schema({
+  Todo: a
+.model({
+  content: a.string(),
+  isDone: a.boolean(),
+})
+.authorization((allow) => [allow.publicApiKey()]),
+});
 
 export type Schema = ClientSchema<typeof schema>;
 export const data = defineData({
@@ -188,12 +195,12 @@ export const data = defineData({
 
 | | |
 | -- | -- |
-| Hash | `b497a376ca20c1f5` |
-| Covered | ✅ |
+| Hash | `b4bb627dcd4ecce5` |
+| Covered | ❌ |
 
 ##### Covering Regions
 
-- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/1-patterns/start/manual-installation.ts](../../../../../../packages/integration-tests/__tests__/defined-behavior/1-patterns/start/manual-installation.ts#9)
+- *None*
 
 ---
 

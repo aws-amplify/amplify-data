@@ -4,7 +4,7 @@
 
 Page: https://docs.amplify.aws/react/how-amplify-works/concepts/
 
-Coverage: 66.7%
+Coverage: 100.0%
 
 #### `Unnamed Snippet`
 
@@ -26,11 +26,11 @@ chatId: a.id(),
 | | |
 | -- | -- |
 | Hash | `821a39b70747c164` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/1-patterns/how-amplify-works/concepts.ts](../../../../../../packages/integration-tests/__tests__/defined-behavior/1-patterns/how-amplify-works/concepts.ts#19)
 
 ---
 
@@ -53,11 +53,11 @@ const { errors, data: newMessage } = await client.models.Message.create({
 | | |
 | -- | -- |
 | Hash | `b9d80a938dc6ed37` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/1-patterns/how-amplify-works/concepts.ts](../../../../../../packages/integration-tests/__tests__/defined-behavior/1-patterns/how-amplify-works/concepts.ts#69)
 
 ---
 
