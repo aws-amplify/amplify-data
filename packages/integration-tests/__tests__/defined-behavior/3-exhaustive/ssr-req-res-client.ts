@@ -105,6 +105,7 @@ describe('something', () => {
       return { amplify: Amplify };
     });
 
+    // #region covers 062b069c31e86ca5
     const client = generateServerClientUsingReqRes<Schema>({
       config,
     });
@@ -123,6 +124,7 @@ describe('something', () => {
     );
 
     await client.queries.myQuery(mockContextSpec, { id: 'a1' });
+    // #endregion
 
     const calls = spy.mock.calls;
 

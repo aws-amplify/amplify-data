@@ -1,5 +1,23 @@
 # @aws-amplify/data-schema
 
+## 1.6.2
+
+### Patch Changes
+
+- 8281be2: fix: timestamps in model props breaks runtime
+
+## 1.6.1
+
+### Patch Changes
+
+- 79e8873: fix: Custom operation Ref return works with null/undefined responses
+
+## 1.6.0
+
+### Minor Changes
+
+- adf9f6e: add support for async lambda function handlers
+
 ## 1.5.1
 
 ### Patch Changes

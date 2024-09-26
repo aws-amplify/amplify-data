@@ -1,0 +1,90 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Get Started Manual Installation Manual Setup new, sample schema compiles without failures 1`] = `
+{
+  "aws_appsync_apiKey": "FAKE-KEY",
+  "aws_appsync_authenticationType": "API_KEY",
+  "aws_appsync_graphqlEndpoint": "https://localhost/graphql",
+  "aws_appsync_region": "us-west-1",
+  "aws_project_region": "us-east-2",
+  "modelIntrospection": {
+    "enums": {},
+    "models": {
+      "Todo": {
+        "attributes": [
+          {
+            "properties": {},
+            "type": "model",
+          },
+          {
+            "properties": {
+              "rules": [
+                {
+                  "allow": "public",
+                  "operations": [
+                    "create",
+                    "update",
+                    "delete",
+                    "read",
+                  ],
+                  "provider": "apiKey",
+                },
+              ],
+            },
+            "type": "auth",
+          },
+        ],
+        "fields": {
+          "content": {
+            "attributes": [],
+            "isArray": false,
+            "isRequired": false,
+            "name": "content",
+            "type": "String",
+          },
+          "createdAt": {
+            "attributes": [],
+            "isArray": false,
+            "isReadOnly": true,
+            "isRequired": false,
+            "name": "createdAt",
+            "type": "AWSDateTime",
+          },
+          "id": {
+            "attributes": [],
+            "isArray": false,
+            "isRequired": true,
+            "name": "id",
+            "type": "ID",
+          },
+          "isDone": {
+            "attributes": [],
+            "isArray": false,
+            "isRequired": false,
+            "name": "isDone",
+            "type": "Boolean",
+          },
+          "updatedAt": {
+            "attributes": [],
+            "isArray": false,
+            "isReadOnly": true,
+            "isRequired": false,
+            "name": "updatedAt",
+            "type": "AWSDateTime",
+          },
+        },
+        "name": "Todo",
+        "pluralName": "Todos",
+        "primaryKeyInfo": {
+          "isCustomPrimaryKey": false,
+          "primaryKeyFieldName": "id",
+          "sortKeyFieldNames": [],
+        },
+        "syncable": true,
+      },
+    },
+    "nonModels": {},
+    "version": 1,
+  },
+}
+`;
