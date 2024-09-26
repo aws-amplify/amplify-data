@@ -88,7 +88,7 @@ export interface Conversation {
    * Sends a message to the current conversation.
    */
   sendMessage: (
-    input: ConversationSendMessageInput,
+    input: ConversationSendMessageInput | string,
   ) => SingularReturnValue<ConversationMessage>;
   /**
    * @experimental
