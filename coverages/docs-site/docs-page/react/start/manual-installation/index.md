@@ -177,7 +177,14 @@ email: true,
 ~~~
 import { a, defineData, type ClientSchema } from "@aws-amplify/backend";
 
-const schema = a.schema({});
+const schema = a.schema({
+  Todo: a
+.model({
+  content: a.string(),
+  isDone: a.boolean(),
+})
+.authorization((allow) => [allow.publicApiKey()]),
+});
 
 export type Schema = ClientSchema<typeof schema>;
 export const data = defineData({
@@ -188,7 +195,7 @@ export const data = defineData({
 
 | | |
 | -- | -- |
-| Hash | `b497a376ca20c1f5` |
+| Hash | `b4bb627dcd4ecce5` |
 | Covered | ✅ |
 
 ##### Covering Regions
@@ -218,8 +225,8 @@ defineBackend({
 
 ##### Covering Regions
 
-- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/4-uncovered/start/manual-installation.ts](../../../../../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/start/manual-installation.ts#11)
 - [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/4-uncovered/reference/project-structure.ts](../../../../../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/reference/project-structure.ts#9)
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/4-uncovered/start/manual-installation.ts](../../../../../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/start/manual-installation.ts#11)
 
 ---
 

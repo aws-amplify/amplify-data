@@ -6,8 +6,7 @@ describe('Get Started', () => {
   describe('Manual Installation', () => {
     describe('Manual Setup', () => {
       test('new, sample schema compiles without failures', async () => {
-        // #region covers b497a376ca20c1f5
-        // Note: A schema cannot be empty.
+        // #region covers b4bb627dcd4ecce5
         const schema = a.schema({
           Todo: a
             .model({

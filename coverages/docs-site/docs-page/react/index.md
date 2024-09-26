@@ -4,7 +4,7 @@
 
 Page: https://docs.amplify.aws/react/
 
-Coverage: 0.0%
+Coverage: 100.0%
 
 #### `amplify/backend.ts`
 
@@ -30,11 +30,11 @@ new sns.Topic(customResourceStack, "CustomTopic");
 | | |
 | -- | -- |
 | Hash | `193a2a390fb5a565` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/4-uncovered/root.ts](../../../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/root.ts#8)
 
 ---
 

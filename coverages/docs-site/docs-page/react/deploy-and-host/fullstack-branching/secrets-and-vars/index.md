@@ -4,7 +4,7 @@
 
 Page: https://docs.amplify.aws/react/deploy-and-host/fullstack-branching/secrets-and-vars/
 
-Coverage: 60.0%
+Coverage: 100.0%
 
 #### `Terminal`
 
@@ -22,11 +22,11 @@ Done!
 | | |
 | -- | -- |
 | Hash | `1877f2be69c8f496` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/4-uncovered/deploy-and-host/index.ts](../../../../../../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/deploy-and-host/index.ts#22)
 
 ---
 
@@ -91,11 +91,11 @@ build:
 | | |
 | -- | -- |
 | Hash | `89f1b18d54b81799` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/4-uncovered/deploy-and-host/index.ts](../../../../../../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/deploy-and-host/index.ts#22)
 
 ---
 
