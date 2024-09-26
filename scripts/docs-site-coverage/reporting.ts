@@ -215,7 +215,7 @@ export class CoverageReport {
       '| ' +
       [
         new URL(summary.url).pathname,
-        `[docs](${summary.url}) / [report](${this.relativePath(summary.reportPath)})`,
+        `[docs](${summary.url})&nbsp;/&nbsp;[report](${this.relativePath(summary.reportPath)})`,
         summary.covered,
         summary.total,
         summary.coverageString,
