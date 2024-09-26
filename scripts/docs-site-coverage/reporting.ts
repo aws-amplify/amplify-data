@@ -215,7 +215,7 @@ export class CoverageReport {
       '| ' +
       [
         new URL(summary.url).pathname,
-        `[docs](${summary.url})\\ | [report](${this.relativePath(summary.reportPath)})`,
+        `[docs](${summary.url}) / [report](${this.relativePath(summary.reportPath)})`,
         summary.covered,
         summary.total,
         summary.coverageString,
@@ -255,7 +255,7 @@ export class CoverageReport {
     mkdirSync(dirname(indexPath), { recursive: true });
     writeFileSync(
       indexPath,
-      `[<- Back to summary](../readme.md)
+      `[<- Back to summary](./readme.md)
       
       # In-Scope Pages
 
@@ -264,7 +264,7 @@ export class CoverageReport {
       ${summaryLines}
       ${totalLine}
 
-      [<- Back to summary](../readme.md)
+      [<- Back to summary](./readme.md)
       `.replace(/^ {6}/gm, ''), // dedent 6
     );
 
