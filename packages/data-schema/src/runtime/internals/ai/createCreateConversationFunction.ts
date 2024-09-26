@@ -41,9 +41,13 @@ export const createCreateConversationFunction =
         client,
         modelIntrospection,
         data?.id,
+        data?.createdAt,
+        data?.updatedAt,
         conversationRouteName,
         conversationMessageModel,
         getInternals,
+        data?.metadata,
+        data?.name,
       ),
       errors,
     };
