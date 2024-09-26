@@ -1,5 +1,11 @@
 # @aws-amplify/data-schema
 
+## 1.6.3
+
+### Patch Changes
+
+- 5441ead: Add ability to override user agent with granular actions
+
 ## 1.6.2
 
 ### Patch Changes
