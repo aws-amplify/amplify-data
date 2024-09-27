@@ -162,11 +162,13 @@ describe('generateConversationsProperty()', () => {
         [mathBotMockData.name]: {
           create: expect.any(Function),
           get: expect.any(Function),
+          delete: expect.any(Function),
           list: expect.any(Function),
         },
         [scienceBotMockData.name]: {
           create: expect.any(Function),
           get: expect.any(Function),
+          delete: expect.any(Function),
           list: expect.any(Function),
         },
       });
