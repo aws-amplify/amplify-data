@@ -27,6 +27,10 @@ describe('AI Conversation Routes', () => {
       // #region mocking
       const sampleConversation = {
         id: 'conversation-id',
+        createdAt: '2023-06-01T12:00:00Z',
+        updatedAt: '2023-08-02T12:00:00Z',
+        metadata: {},
+        name: 'Test Conversation',
       };
       const { spy, generateClient } = mockedGenerateClient([
         {
@@ -52,10 +56,14 @@ describe('AI Conversation Routes', () => {
       expect(optionsAndHeaders(spy)).toMatchSnapshot();
       expect(createConversationErrors).toBeUndefined();
       expect(createdConversation).toStrictEqual({
+        createdAt: '2023-06-01T12:00:00Z',
         id: sampleConversation.id,
         listMessages: expect.any(Function),
+        metadata: {},
+        name: 'Test Conversation',
         onMessage: expect.any(Function),
         sendMessage: expect.any(Function),
+        updatedAt: '2023-08-02T12:00:00Z',
       });
       // #endregion assertions
     });
@@ -64,6 +72,10 @@ describe('AI Conversation Routes', () => {
       // #region mocking
       const sampleConversation = {
         id: 'conversation-id',
+        createdAt: '2023-06-01T12:00:00Z',
+        updatedAt: '2023-06-01T12:00:00Z',
+        metadata: {},
+        name: 'Test Conversation',
       };
       const { spy, generateClient } = mockedGenerateClient([
         {
@@ -87,10 +99,14 @@ describe('AI Conversation Routes', () => {
       expect(optionsAndHeaders(spy)).toMatchSnapshot();
       expect(getConversationErrors).toBeUndefined();
       expect(conversation).toStrictEqual({
+        createdAt: '2023-06-01T12:00:00Z',
         id: sampleConversation.id,
         listMessages: expect.any(Function),
+        metadata: {},
+        name: 'Test Conversation',
         onMessage: expect.any(Function),
         sendMessage: expect.any(Function),
+        updatedAt: '2023-06-01T12:00:00Z',
       });
       // #endregion assertions
     });
@@ -99,9 +115,17 @@ describe('AI Conversation Routes', () => {
       // #region mocking
       const sampleConversation1 = {
         id: 'conversation-id-1',
+        createdAt: '2023-06-01T12:00:00Z',
+        updatedAt: '2023-08-02T12:00:00Z',
+        metadata: {},
+        name: 'Test Conversation',
       };
       const sampleConversation2 = {
         id: 'conversation-id-2',
+        createdAt: '2024-09-02T12:00:00Z',
+        updatedAt: '2024-09-05T12:00:00Z',
+        metadata: {},
+        name: 'Test Conversation2',
       };
       const { spy, generateClient } = mockedGenerateClient([
         {
@@ -128,16 +152,24 @@ describe('AI Conversation Routes', () => {
       expect(listConversationsErrors).toBeUndefined();
       expect(conversations).toStrictEqual([
         {
+          createdAt: '2023-06-01T12:00:00Z',
           id: sampleConversation1.id,
           listMessages: expect.any(Function),
+          metadata: {},
+          name: 'Test Conversation',
           onMessage: expect.any(Function),
           sendMessage: expect.any(Function),
+          updatedAt: '2023-08-02T12:00:00Z',
         },
         {
+          createdAt: '2024-09-02T12:00:00Z',
           id: sampleConversation2.id,
           listMessages: expect.any(Function),
+          metadata: {},
+          name: 'Test Conversation2',
           onMessage: expect.any(Function),
           sendMessage: expect.any(Function),
+          updatedAt: '2024-09-05T12:00:00Z',
         },
       ]);
       // #endregion assertions
@@ -147,9 +179,17 @@ describe('AI Conversation Routes', () => {
       // #region mocking
       const sampleConversation1 = {
         id: 'conversation-id-1',
+        createdAt: '2023-06-01T12:00:00Z',
+        updatedAt: '2023-08-02T12:00:00Z',
+        metadata: {},
+        name: 'Test Conversation',
       };
       const sampleConversation2 = {
         id: 'conversation-id-2',
+        createdAt: '2024-09-02T12:00:00Z',
+        updatedAt: '2024-09-05T12:00:00Z',
+        metadata: {},
+        name: 'Test Conversation2',
       };
       const sampleNextToken = 'next-token';
       const { spy, generateClient } = mockedGenerateClient([
@@ -183,16 +223,24 @@ describe('AI Conversation Routes', () => {
       expect(listConversationsErrors).toBeUndefined();
       expect(conversations).toStrictEqual([
         {
+          createdAt: '2023-06-01T12:00:00Z',
           id: sampleConversation1.id,
           listMessages: expect.any(Function),
+          metadata: {},
+          name: 'Test Conversation',
           onMessage: expect.any(Function),
           sendMessage: expect.any(Function),
+          updatedAt: '2023-08-02T12:00:00Z',
         },
         {
+          createdAt: '2024-09-02T12:00:00Z',
           id: sampleConversation2.id,
           listMessages: expect.any(Function),
+          metadata: {},
+          name: 'Test Conversation2',
           onMessage: expect.any(Function),
           sendMessage: expect.any(Function),
+          updatedAt: '2024-09-05T12:00:00Z',
         },
       ]);
       expect(nextToken).toBe(sampleNextToken);

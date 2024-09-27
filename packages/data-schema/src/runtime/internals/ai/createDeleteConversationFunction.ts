@@ -11,10 +11,7 @@ import {
 } from '../../bridge-types';
 import { getFactory } from '../operations/get';
 import { convertItemToConversation } from './convertItemToConversation';
-import {
-  AiAction,
-  getCustomUserAgentDetails,
-} from './getCustomUserAgentDetails';
+import { AiAction, getCustomUserAgentDetails } from './getCustomUserAgentDetails';
 
 export const createDeleteConversationFunction =
   (
@@ -44,9 +41,13 @@ export const createDeleteConversationFunction =
             client,
             modelIntrospection,
             data?.id,
+            data?.createdAt,
+            data?.updatedAt,
             conversationRouteName,
             conversationMessageModel,
             getInternals,
+            data?.metadata,
+            data?.name,
           )
         : data,
       errors,

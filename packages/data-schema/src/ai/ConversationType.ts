@@ -83,6 +83,11 @@ type ConversationOnMessageHandler = (message: ConversationMessage) => void;
 
 export interface Conversation {
   id: string;
+  createdAt: string;
+  updatedAt: string;
+
+  metadata?: Record<string, any>;
+  name?: string;
   /**
    * @experimental
    *

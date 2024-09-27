@@ -17,9 +17,13 @@ export const convertItemToConversation = (
   client: BaseClient,
   modelIntrospection: ModelIntrospectionSchema,
   conversationId: string,
+  conversationCreatedAt: string,
+  conversationUpdatedAt: string,
   conversationRouteName: string,
   conversationMessageModel: SchemaModel,
   getInternals: ClientInternalsGetter,
+  conversationMetadata?: Record<string, any>,
+  conversationName?: string,
 ): Conversation => {
   if (!conversationId) {
     throw new Error(
@@ -28,6 +32,10 @@ export const convertItemToConversation = (
   }
   return {
     id: conversationId,
+    createdAt: conversationCreatedAt,
+    updatedAt: conversationUpdatedAt,
+    metadata: conversationMetadata,
+    name: conversationName,
     onMessage: createOnMessageFunction(
       client as BaseBrowserClient,
       modelIntrospection,
