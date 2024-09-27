@@ -56,7 +56,9 @@ export interface ConversationRoute {
    *
    * Deletes an existing {@link Conversation} based on ID.
    */
-    delete: (input: ConversationRouteDeleteInput) => SingularReturnValue<Conversation>;
+  delete: (
+    input: ConversationRouteDeleteInput,
+  ) => SingularReturnValue<Conversation>;
   /**
    * @experimental
    *
