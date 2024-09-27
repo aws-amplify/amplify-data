@@ -62,7 +62,7 @@ export interface ConversationRoute {
 }
 
 // conversation types
-interface ConversationSendMessageInput {
+export interface ConversationSendMessageInput {
   content: ConversationSendMessageInputContent[];
   aiContext?: string | Record<string, any>;
   toolConfiguration?: ToolConfiguration;
@@ -83,7 +83,7 @@ export interface Conversation {
    * Sends a message to the current conversation.
    */
   sendMessage: (
-    input: ConversationSendMessageInput,
+    input: ConversationSendMessageInput | string,
   ) => SingularReturnValue<ConversationMessage>;
   /**
    * @experimental
