@@ -62,7 +62,7 @@ describe('createDeleteConversationFunction()', () => {
         'DELETE',
         expect.any(Function),
         false,
-        { category: 'ai', action: '8' },
+        { category: 'ai', action: '4' },
       );
       expect(mockDelete).toHaveBeenCalledWith({ id: mockConversation.id });
       expect(mockConvertItemToConversation).toHaveBeenCalledWith(

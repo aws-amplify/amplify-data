@@ -73,7 +73,7 @@ describe('createListMessagesFunction()', () => {
         {},
         expect.any(Function),
         false,
-        { action: '5', category: 'ai' },
+        { action: '6', category: 'ai' },
       );
       expect(mockList).toHaveBeenCalled();
       expect(data).toStrictEqual([mockMessage, mockMessage2]);

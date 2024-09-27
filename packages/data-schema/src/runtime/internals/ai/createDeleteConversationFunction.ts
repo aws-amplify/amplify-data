@@ -30,7 +30,7 @@ export const createDeleteConversationFunction =
       'DELETE',
       getInternals,
       false,
-      getCustomUserAgentDetails(AiAction.Delete),
+      getCustomUserAgentDetails(AiAction.DeleteConversation),
     ) as (
       args?: Record<string, any>,
     ) => SingularReturnValue<Record<string, any>>;
