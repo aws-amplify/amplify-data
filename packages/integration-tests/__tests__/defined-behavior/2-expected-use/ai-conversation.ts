@@ -52,14 +52,10 @@ describe('AI Conversation Routes', () => {
       expect(optionsAndHeaders(spy)).toMatchSnapshot();
       expect(createConversationErrors).toBeUndefined();
       expect(createdConversation).toStrictEqual({
-        createdAt: undefined,
         id: sampleConversation.id,
         listMessages: expect.any(Function),
-        metadata: undefined,
-        name: undefined,
         onMessage: expect.any(Function),
         sendMessage: expect.any(Function),
-        updatedAt: undefined,
       });
       // #endregion assertions
     });
@@ -91,14 +87,10 @@ describe('AI Conversation Routes', () => {
       expect(optionsAndHeaders(spy)).toMatchSnapshot();
       expect(getConversationErrors).toBeUndefined();
       expect(conversation).toStrictEqual({
-        createdAt: undefined,
         id: sampleConversation.id,
         listMessages: expect.any(Function),
-        metadata: undefined,
-        name: undefined,
         onMessage: expect.any(Function),
         sendMessage: expect.any(Function),
-        updatedAt: undefined,
       });
       // #endregion assertions
     });
@@ -136,24 +128,16 @@ describe('AI Conversation Routes', () => {
       expect(listConversationsErrors).toBeUndefined();
       expect(conversations).toStrictEqual([
         {
-          createdAt: undefined,
           id: sampleConversation1.id,
           listMessages: expect.any(Function),
-          metadata: undefined,
-          name: undefined,
           onMessage: expect.any(Function),
           sendMessage: expect.any(Function),
-          updatedAt: undefined,
         },
         {
-          createdAt: undefined,
           id: sampleConversation2.id,
           listMessages: expect.any(Function),
-          metadata: undefined,
-          name: undefined,
           onMessage: expect.any(Function),
           sendMessage: expect.any(Function),
-          updatedAt: undefined,
         },
       ]);
       // #endregion assertions
@@ -199,24 +183,16 @@ describe('AI Conversation Routes', () => {
       expect(listConversationsErrors).toBeUndefined();
       expect(conversations).toStrictEqual([
         {
-          createdAt: undefined,
           id: sampleConversation1.id,
           listMessages: expect.any(Function),
-          metadata: undefined,
-          name: undefined,
           onMessage: expect.any(Function),
           sendMessage: expect.any(Function),
-          updatedAt: undefined,
         },
         {
-          createdAt: undefined,
           id: sampleConversation2.id,
           listMessages: expect.any(Function),
-          metadata: undefined,
-          name: undefined,
           onMessage: expect.any(Function),
           sendMessage: expect.any(Function),
-          updatedAt: undefined,
         },
       ]);
       expect(nextToken).toBe(sampleNextToken);
