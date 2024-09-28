@@ -22,14 +22,14 @@ describe('createListConversationsFunction()', () => {
     createdAt: '2023-06-01T12:00:00Z',
     updatedAt: '2023-08-02T12:00:00Z',
     metadata: {},
-    name: 'Test Conversation',
+    name: mockConversationName,
   };
   const mockConversation2 = {
     id: 'conversation-id2',
     createdAt: '2024-09-02T12:00:00Z',
     updatedAt: '2024-09-05T12:00:00Z',
     metadata: {},
-    name: 'Test Conversation2',
+    name: mockConversationName,
   };
   // assert mocks
   const mocklistFactory = listFactory as jest.Mock;
@@ -81,7 +81,7 @@ describe('createListConversationsFunction()', () => {
         {},
         expect.any(Function),
         {},
-        'Test Conversation',
+        mockConversationName,
       );
       expect(mockConvertItemToConversation).toHaveBeenCalledWith(
         {},
@@ -93,7 +93,7 @@ describe('createListConversationsFunction()', () => {
         {},
         expect.any(Function),
         {},
-        'Test Conversation2',
+        mockConversationName,
       );
     });
 

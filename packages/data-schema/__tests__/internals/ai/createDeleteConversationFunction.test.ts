@@ -22,7 +22,7 @@ describe('createDeleteConversationFunction()', () => {
     createdAt: '2023-06-01T12:00:00Z',
     updatedAt: '2023-06-01T12:00:00Z',
     metadata: {},
-    name: 'Test Conversation',
+    name: mockConversationName,
   };
   // assert mocks
   const mockGetFactory = getFactory as jest.Mock;
@@ -75,7 +75,7 @@ describe('createDeleteConversationFunction()', () => {
         {},
         expect.any(Function),
         {},
-        'Test Conversation',
+        mockConversationName
       );
     });
 
