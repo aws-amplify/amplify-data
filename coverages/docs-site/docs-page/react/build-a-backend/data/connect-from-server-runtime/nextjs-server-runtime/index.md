@@ -57,7 +57,7 @@ export const reqResBasedClient = generateServerClientUsingReqRes<Schema>({
 
 ##### Covering Regions
 
-- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/3-exhaustive/ssr-req-res-client.ts](../../../../../../../../packages/integration-tests/__tests__/defined-behavior/3-exhaustive/ssr-req-res-client.ts#108)
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/3-exhaustive/ssr-req-res-client.ts](../../../../../../../../packages/integration-tests/__tests__/defined-behavior/3-exhaustive/ssr-req-res-client.ts#L108)
 
 ---
 
