@@ -81,7 +81,7 @@ describe('Specify a custom field type', () => {
           content: a.string(),
         }),
       })
-      .authorization((allow) => allow.guest());
+      .authorization((allow) => allow.publicApiKey());
 
     type Schema = ClientSchema<typeof schema>;
 
@@ -165,7 +165,7 @@ describe('Specify a custom field type', () => {
           lastKnownLocation: a.ref('Location'),
         }),
       })
-      .authorization((allow) => allow.guest());
+      .authorization((allow) => allow.publicApiKey());
 
     type Schema = ClientSchema<typeof schema>;
 
@@ -303,7 +303,7 @@ describe('Specify an enum field type', () => {
           content: a.string(),
         }),
       })
-      .authorization((allow) => allow.guest());
+      .authorization((allow) => allow.publicApiKey());
 
     type Schema = ClientSchema<typeof schema>;
 
@@ -393,7 +393,7 @@ describe('Specify an enum field type', () => {
           privacySetting: a.ref('PrivacySetting'),
         }),
       })
-      .authorization((allow) => allow.guest());
+      .authorization((allow) => allow.publicApiKey());
 
     type Schema = ClientSchema<typeof schema>;
 

@@ -23,7 +23,7 @@ describe('Modeling relationships', () => {
           //    from the `Member`s model.
           members: a.hasMany('Member', 'teamId'),
         })
-        .authorization((allow) => [allow.publicApiKey()]),
+        .authorization((allow) => allow.publicApiKey()),
       Member: a
         .model({
           name: a.string().required(),
@@ -32,7 +32,7 @@ describe('Modeling relationships', () => {
           // 2. Create a belongsTo relationship with the reference field
           team: a.belongsTo('Team', 'teamId'),
         })
-        .authorization((allow) => [allow.publicApiKey()]),
+        .authorization((allow) => allow.publicApiKey()),
     });
     type Schema = ClientSchema<typeof schema>;
 
@@ -301,7 +301,7 @@ describe('Modeling relationships', () => {
           activeCart: a.hasOne('Cart', 'customerId'),
         }),
       })
-      .authorization((allow) => [allow.publicApiKey()]);
+      .authorization((allow) => allow.publicApiKey());
     type Schema = ClientSchema<typeof schema>;
 
     test('create a "Has One" relationship between records', async () => {
