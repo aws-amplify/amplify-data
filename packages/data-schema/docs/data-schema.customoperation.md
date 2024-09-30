@@ -13,7 +13,7 @@ export type CustomOperation<T extends CustomOperationParamShape, K extends keyof
     arguments<Arguments extends CustomArguments>(args: Arguments): CustomOperation<SetTypeSubArg<T, 'arguments', Arguments>, K | 'arguments', B>;
     returns<ReturnType extends CustomReturnType>(returnType: ReturnType): CustomOperation<SetTypeSubArg<T, 'returnType', ReturnType>, K | 'returns', B>;
     authorization<AuthRuleType extends Authorization<any, any, any>>(callback: (allow: AllowModifierForCustomOperation) => AuthRuleType | AuthRuleType[]): CustomOperation<SetTypeSubArg<T, 'authorization', AuthRuleType[]>, K | 'authorization', B>;
-    handler<H extends HandlerInputType>(handlers: H): CustomOperation<T, K | 'handler', B>;
+    handler<H extends HandlerInputType>(handlers: H): [H] extends [UltimateFunctionHandlerAsyncType] ? CustomOperation<AsyncFunctionCustomOperation<T>, K | 'handler' | 'returns', B> : CustomOperation<T, K | 'handler', B>;
     for<Source extends SubscriptionSource>(source: Source | Source[]): CustomOperation<T['typeName'] extends 'Subscription' ? SetTypeSubArg<T, 'returnType', Source extends SubscriptionSource[] ? Source[number] : Source> : T, K | 'for', B>;
 }, K> & Brand<B>;
 ```
