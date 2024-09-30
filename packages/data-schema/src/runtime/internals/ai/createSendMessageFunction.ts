@@ -5,6 +5,7 @@ import { SingularReturnValue } from '../..';
 import type {
   Conversation,
   ConversationMessage,
+  ConversationSendMessageInput,
 } from '../../../ai/ConversationType';
 import {
   BaseClient,
@@ -31,13 +32,19 @@ export const createSendMessageFunction =
     conversationRouteName: string,
     getInternals: ClientInternalsGetter,
   ): Conversation['sendMessage'] =>
-  async ({ aiContext, content, toolConfiguration }) => {
+  async (input: ConversationSendMessageInput | string) => {
     const { conversations } = modelIntrospection;
 
     // Safe guard for standalone function. When called as part of client generation, this should never be falsy.
     if (!conversations) {
       return {} as SingularReturnValue<ConversationMessage>;
     }
+    
+    const processedInput: ConversationSendMessageInput =
+      typeof input === 'string' ? { content: [{ text: input }] } : input;
+
+    const { content, aiContext, toolConfiguration } = processedInput;
+
     const sendSchema = conversations[conversationRouteName].message.send;
     const sendOperation = customOpFactory(
       client,

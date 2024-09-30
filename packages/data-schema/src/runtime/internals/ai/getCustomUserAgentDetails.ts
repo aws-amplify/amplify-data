@@ -18,14 +18,14 @@ export const INTERNAL_USER_AGENT_OVERRIDE = Symbol(
 export type AiCategory = 'ai';
 
 export enum AiAction {
-  CreateConversation = '1',
-  GetConversation = '2',
-  ListConversations = '3',
-  SendMessage = '4',
-  ListMessages = '5',
-  OnMessage = '6',
-  Generation = '7',
-  Delete = '8',
+	CreateConversation = '1',
+	GetConversation = '2',
+	ListConversations = '3',
+	DeleteConversation = '4',
+	SendMessage = '5',
+	ListMessages = '6',
+	OnMessage = '7',
+	Generation = '8',
 }
 
 export const getCustomUserAgentDetails = (

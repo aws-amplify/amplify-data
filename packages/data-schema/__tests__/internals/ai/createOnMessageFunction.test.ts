@@ -81,7 +81,7 @@ describe('createOnMessageFunction()', () => {
         mockConversationSchema.message.subscribe,
         false,
         expect.any(Function),
-        { action: '6', category: 'ai' },
+        { action: '7', category: 'ai' },
       );
       expect(mockCustomOp).toHaveBeenCalledWith({
         conversationId: mockConversationId,

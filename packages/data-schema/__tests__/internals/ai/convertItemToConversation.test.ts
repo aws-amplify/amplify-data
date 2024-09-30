@@ -17,15 +17,21 @@ describe('convertItemToConversation()', () => {
         {} as BaseClient,
         {} as ModelIntrospectionSchema,
         mockConversationId,
+        '1',
+        '2',
         mockConversationName,
         {} as SchemaModel,
         jest.fn(),
       ),
     ).toStrictEqual({
       id: mockConversationId,
+      createdAt: '1',
+      updatedAt: '2',
       onMessage: expect.any(Function),
       sendMessage: expect.any(Function),
       listMessages: expect.any(Function),
+      metadata: undefined,
+      name: undefined,
     });
   });
 });

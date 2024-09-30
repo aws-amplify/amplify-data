@@ -41,9 +41,13 @@ export const createListConversationsFunction =
           client,
           modelIntrospection,
           datum.id,
+          datum.createdAt,
+          datum.updatedAt,
           conversationRouteName,
           conversationMessageModel,
           getInternals,
+          datum?.metadata,
+          datum?.name,
         );
       }),
       nextToken,

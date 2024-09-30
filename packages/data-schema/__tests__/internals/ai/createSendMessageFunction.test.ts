@@ -116,7 +116,7 @@ describe('createSendMessageFunction()', () => {
         mockConversationSchema.message.send,
         false,
         expect.any(Function),
-        { action: '4', category: 'ai' },
+        { action: '5', category: 'ai' },
       );
       expect(mockSerializeAiContext).toHaveBeenCalledWith(mockAiContext);
       expect(mockSerializeContent).toHaveBeenCalledWith(mockContent);
@@ -131,6 +131,27 @@ describe('createSendMessageFunction()', () => {
       });
       expect(data).toBe(mockMessage);
     });
+    
+    it('sends a message with string input', async () => {
+      const messageString = 'Hello, world!';
+      const { data } = await sendMessage(messageString);
+    
+      expect(mockCustomOpFactory).toHaveBeenCalledWith(
+        {},
+        mockModelIntrospectionSchema,
+        'mutation',
+        mockConversationSchema.message.send,
+        false,
+        expect.any(Function),
+        { action: '5', category: 'ai' },
+      );
+      expect(mockSerializeContent).toHaveBeenCalledWith([{ text: messageString }]);
+      expect(mockCustomOp).toHaveBeenCalledWith({
+        content: [{ text: messageString }],
+        conversationId: mockConversationId,
+      });
+      expect(data).toBe(mockMessage);
+    });
 
     it('does not send optional properties if undefined', async () => {
       const { data } = await sendMessage({ content: mockContent });
@@ -142,7 +163,7 @@ describe('createSendMessageFunction()', () => {
         mockConversationSchema.message.send,
         false,
         expect.any(Function),
-        { action: '4', category: 'ai' },
+        { action: '5', category: 'ai' },
       );
       expect(mockSerializeAiContext).not.toHaveBeenCalled();
       expect(mockSerializeToolConfiguration).not.toHaveBeenCalled();
