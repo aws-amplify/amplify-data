@@ -34,7 +34,7 @@ bucket_name: "my-externally-managed-bucket",
 
 ##### Covering Regions
 
-- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/4-uncovered/reference/amplify-outputs.ts](../../../../../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/reference/amplify-outputs.ts#9)
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/4-uncovered/reference/amplify-outputs.ts](../../../../../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/reference/amplify-outputs.ts#L9)
 
 ---
 
@@ -55,7 +55,7 @@ Amplify.configure(outputs);
 
 ##### Covering Regions
 
-- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/4-uncovered/reference/amplify-outputs.ts](../../../../../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/reference/amplify-outputs.ts#9)
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/4-uncovered/reference/amplify-outputs.ts](../../../../../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/reference/amplify-outputs.ts#L9)
 
 ---
 
@@ -88,7 +88,7 @@ api_name: "restApiName",
 
 ##### Covering Regions
 
-- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/4-uncovered/reference/amplify-outputs.ts](../../../../../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/reference/amplify-outputs.ts#9)
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/4-uncovered/reference/amplify-outputs.ts](../../../../../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/reference/amplify-outputs.ts#L9)
 
 ---
 
@@ -121,7 +121,7 @@ REST: {
 
 ##### Covering Regions
 
-- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/4-uncovered/reference/amplify-outputs.ts](../../../../../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/reference/amplify-outputs.ts#9)
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/4-uncovered/reference/amplify-outputs.ts](../../../../../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/reference/amplify-outputs.ts#L9)
 
 ---
 
@@ -585,7 +585,7 @@ REST: {
 
 ##### Covering Regions
 
-- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/4-uncovered/reference/amplify-outputs.ts](../../../../../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/reference/amplify-outputs.ts#9)
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/4-uncovered/reference/amplify-outputs.ts](../../../../../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/reference/amplify-outputs.ts#L9)
 
 ---
 
