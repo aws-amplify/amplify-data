@@ -18,7 +18,7 @@ exports[`AI Generation Routes Generations Run a generation 1`] = `
         ],
       },
       Symbol(INTERNAL_USER_AGENT_OVERRIDE): {
-        "action": "7",
+        "action": "8",
         "category": "ai",
       },
     },

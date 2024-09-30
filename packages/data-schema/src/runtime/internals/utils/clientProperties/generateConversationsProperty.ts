@@ -11,6 +11,7 @@ import {
 import { createCreateConversationFunction } from '../../ai/createCreateConversationFunction';
 import { createGetConversationFunction } from '../../ai/createGetConversationFunction';
 import { createListConversationsFunction } from '../../ai/createListConversationsFunction';
+import { createDeleteConversationFunction } from '../../ai/createDeleteConversationFunction';
 
 export function generateConversationsProperty(
   client: BaseClient,
@@ -69,6 +70,14 @@ export function generateConversationsProperty(
         getInternals,
       ),
       get: createGetConversationFunction(
+        client,
+        conversationModelIntrospection,
+        name,
+        conversationModel,
+        conversationMessageModel,
+        getInternals,
+      ),
+      delete: createDeleteConversationFunction(
         client,
         conversationModelIntrospection,
         name,

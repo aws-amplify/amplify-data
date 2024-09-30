@@ -109,7 +109,7 @@ exports[`AI Conversation Routes Messages List messages 1`] = `
         },
       },
       Symbol(INTERNAL_USER_AGENT_OVERRIDE): {
-        "action": "5",
+        "action": "6",
         "category": "ai",
       },
     },
@@ -150,7 +150,7 @@ exports[`AI Conversation Routes Messages Paginate messages 1`] = `
         "nextToken": "previous-next-token",
       },
       Symbol(INTERNAL_USER_AGENT_OVERRIDE): {
-        "action": "5",
+        "action": "6",
         "category": "ai",
       },
     },
@@ -208,7 +208,7 @@ exports[`AI Conversation Routes Messages Send a message 1`] = `
         },
       },
       Symbol(INTERNAL_USER_AGENT_OVERRIDE): {
-        "action": "4",
+        "action": "5",
         "category": "ai",
       },
     },
@@ -247,7 +247,7 @@ exports[`AI Conversation Routes Messages Subscribe to messages 1`] = `
         "conversationId": "conversation-id",
       },
       Symbol(INTERNAL_USER_AGENT_OVERRIDE): {
-        "action": "6",
+        "action": "7",
         "category": "ai",
       },
     },

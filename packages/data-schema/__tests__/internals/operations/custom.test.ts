@@ -99,7 +99,7 @@ describe('customOpFactory', () => {
         variables: {},
         [INTERNAL_USER_AGENT_OVERRIDE]: expect.objectContaining({
           category: 'ai',
-          action: '4',
+          action: '5',
         }),
       }),
       undefined,

@@ -29,6 +29,10 @@ interface ConversationRouteGetInput {
   id: string;
 }
 
+interface ConversationRouteDeleteInput {
+  id: string;
+}
+
 interface ConversationRouteListInput {
   limit?: number;
   nextToken?: string | null;
@@ -47,6 +51,12 @@ export interface ConversationRoute {
    * Gets an existing {@link Conversation} based on ID.
    */
   get: (input: ConversationRouteGetInput) => SingularReturnValue<Conversation>;
+  /**
+   * @experimental
+   *
+   * Deletes an existing {@link Conversation} based on ID.
+   */
+    delete: (input: ConversationRouteDeleteInput) => SingularReturnValue<Conversation>;
   /**
    * @experimental
    *
