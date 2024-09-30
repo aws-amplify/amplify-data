@@ -157,71 +157,69 @@ describe('operation return types', () => {
 
     describe('create input type', () => {
       test('Doctor has correct create input type', async () => {
-        type ResolveCreateDoctorInput = Parameters<
-          typeof client.models.Doctor.create
-        >[0];
-
         type ExpectedCreateDoctorInput = {
           id?: string | undefined;
           name: string;
           officeId?: string | null | undefined;
           officeLocationId?: string | null | undefined;
         };
+        type Expected = (input: ExpectedCreateDoctorInput, options: any) => any;
 
-        type _ = Expect<
-          Equal<ResolveCreateDoctorInput, ExpectedCreateDoctorInput>
-        >;
+        type Actual = typeof client.models.Doctor.create;
+
+        type ActualExtendsExpected = Actual extends Expected ? true : false;
+        type _test = Expect<Equal<ActualExtendsExpected, true>>;
       });
 
       test('License has correct create input type', async () => {
-        type ResolveLicenseDoctorInput = Parameters<
-          typeof client.models.License.create
-        >[0];
-
         type ExpectedLicenseDoctorInput = {
           id?: string | undefined;
           doctorId?: string | null | undefined;
           serial: string;
         };
+        type Expected = (
+          input: ExpectedLicenseDoctorInput,
+          options: any,
+        ) => any;
 
-        type _ = Expect<
-          Equal<ResolveLicenseDoctorInput, ExpectedLicenseDoctorInput>
-        >;
+        type Actual = typeof client.models.License.create;
+
+        type ActualExtendsExpected = Actual extends Expected ? true : false;
+        type _test = Expect<Equal<ActualExtendsExpected, true>>;
       });
     });
 
     describe('update input type', () => {
       test('Doctor has correct update input type', async () => {
-        type ResolveUpdateDoctorInput = Parameters<
-          typeof client.models.Doctor.update
-        >[0];
-
         type ExpectedUpdateDoctorInput = {
           id: string;
           name?: string;
           officeId?: string | null | undefined;
           officeLocationId?: string | null | undefined;
         };
+        type Expected = (input: ExpectedUpdateDoctorInput, options: any) => any;
 
-        type _ = Expect<
-          Equal<ResolveUpdateDoctorInput, ExpectedUpdateDoctorInput>
-        >;
+        type Actual = typeof client.models.Doctor.update;
+
+        type ActualExtendsExpected = Actual extends Expected ? true : false;
+        type _test = Expect<Equal<ActualExtendsExpected, true>>;
       });
 
       test('License has correct update input type', async () => {
-        type ResolveUpdateLicenseInput = Parameters<
-          typeof client.models.License.update
-        >[0];
-
         type ExpectedUpdateLicenseInput = {
           id: string;
           doctorId?: string | null | undefined;
           serial?: string | undefined;
         };
+        type Expected = (
+          input: ExpectedUpdateLicenseInput,
+          options: any,
+        ) => any;
 
-        type _ = Expect<
-          Equal<ResolveUpdateLicenseInput, ExpectedUpdateLicenseInput>
-        >;
+        type Actual = typeof client.models.License.update;
+
+        type ActualExtendsExpected = Actual extends Expected ? true : false;
+        type _test = Expect<Equal<ActualExtendsExpected, true>>;
       });
     });
   });
@@ -292,19 +290,17 @@ describe('operation return types', () => {
 
     describe('create input type', () => {
       test('Office has correct create input type', async () => {
-        type ResolveCreateOfficeInput = Parameters<
-          typeof client.models.Office.create
-        >[0];
-
         type ExpectedCreateOfficeInput = {
           name: string;
           id: string;
           locationId: string;
         };
+        type Expected = (input: ExpectedCreateOfficeInput, options: any) => any;
 
-        type _ = Expect<
-          Equal<ResolveCreateOfficeInput, ExpectedCreateOfficeInput>
-        >;
+        type Actual = typeof client.models.Office.create;
+
+        type ActualExtendsExpected = Actual extends Expected ? true : false;
+        type _test = Expect<Equal<ActualExtendsExpected, true>>;
       });
 
       // Doctor create input type has been verified above
@@ -312,19 +308,17 @@ describe('operation return types', () => {
 
     describe('update input type', () => {
       test('Office has correct create input type', async () => {
-        type ResolveUpdateOfficeInput = Parameters<
-          typeof client.models.Office.update
-        >[0];
-
         type ExpectedUpdateOfficeInput = {
           id: string;
           locationId: string;
           name?: string | undefined;
         };
+        type Expected = (input: ExpectedUpdateOfficeInput, options: any) => any;
 
-        type _ = Expect<
-          Equal<ResolveUpdateOfficeInput, ExpectedUpdateOfficeInput>
-        >;
+        type Actual = typeof client.models.Office.update;
+
+        type ActualExtendsExpected = Actual extends Expected ? true : false;
+        type _test = Expect<Equal<ActualExtendsExpected, true>>;
       });
 
       // Doctor update input type has been verified above
@@ -419,43 +413,39 @@ describe('operation return types', () => {
 
     describe('create input type', () => {
       test('DoctorPatient has correct create input type', async () => {
-        type ResolveCreateDoctorPatientInput = Parameters<
-          typeof client.models.DoctorPatient.create
-        >[0];
-
         type ExpectedCreateDoctorPatientInput = {
           id?: string | undefined;
           doctorPatientId?: string | null | undefined;
           patientId?: string | null | undefined;
         };
+        type Expected = (
+          input: ExpectedCreateDoctorPatientInput,
+          options: any,
+        ) => any;
 
-        type _ = Expect<
-          Equal<
-            ResolveCreateDoctorPatientInput,
-            ExpectedCreateDoctorPatientInput
-          >
-        >;
+        type Actual = typeof client.models.DoctorPatient.create;
+
+        type ActualExtendsExpected = Actual extends Expected ? true : false;
+        type _test = Expect<Equal<ActualExtendsExpected, true>>;
       });
     });
 
     describe('update input type', () => {
       test('DoctorPatient has correct update input type', async () => {
-        type ResolveUpdateDoctorPatientInput = Parameters<
-          typeof client.models.DoctorPatient.update
-        >[0];
-
         type ExpectedUpdateDoctorPatientInput = {
           id: string;
           doctorPatientId?: string | null | undefined;
           patientId?: string | null | undefined;
         };
+        type Expected = (
+          input: ExpectedUpdateDoctorPatientInput,
+          options: any,
+        ) => any;
 
-        type _ = Expect<
-          Equal<
-            ResolveUpdateDoctorPatientInput,
-            ExpectedUpdateDoctorPatientInput
-          >
-        >;
+        type Actual = typeof client.models.DoctorPatient.update;
+
+        type ActualExtendsExpected = Actual extends Expected ? true : false;
+        type _test = Expect<Equal<ActualExtendsExpected, true>>;
       });
     });
   });

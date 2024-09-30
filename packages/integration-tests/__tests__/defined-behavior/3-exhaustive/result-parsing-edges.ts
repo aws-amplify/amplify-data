@@ -61,6 +61,7 @@ describe('Result parsing edge cases', () => {
       });
 
       test('of type `SomeCustomType[]`', async () => {
+        // #region mocking
         const schema = a
           .schema({
             SomeCustomType: a.customType({
@@ -194,6 +195,7 @@ describe('Result parsing edge cases', () => {
       });
 
       test('of type `SomeCustomType[]`', async () => {
+        // #region mocking
         const schema = a
           .schema({
             SomeCustomType: a.customType({
@@ -281,6 +283,146 @@ describe('Result parsing edge cases', () => {
         // #region assertions
         expect(carts[0]).toEqual(expect.objectContaining(expectedItem));
         // #endregion assertions
+      });
+    });
+    describe('custom operations with model `ref` return', () => {
+      test('pass `undefined` responses through to client result `data`', async () => {
+        // #region mocking
+        const schema = a
+          .schema({
+            Cart: a.model({
+              id: a.id().required(),
+            }),
+            opTest: a
+              .query()
+              .arguments({})
+              .returns(a.ref('Cart'))
+              .handler(a.handler.function('opTest')),
+          })
+          .authorization((allow) => [allow.publicApiKey()]);
+        type Schema = ClientSchema<typeof schema>;
+
+        const { spy, generateClient } = mockedGenerateClient([
+          { data: { opTest: undefined } },
+        ]);
+        const config = await buildAmplifyConfig(schema);
+        Amplify.configure(config);
+        const client = generateClient<Schema>();
+        // #endregion mocking
+
+        const { data: value } = await client.queries.opTest({});
+        // #region assertions
+        expect(value).toBe(undefined);
+
+        // #endregion assertions
+      });
+
+      test('pass `null` responses through to client result `data`', async () => {
+        // #region mocking
+        const schema = a
+          .schema({
+            Cart: a.model({
+              id: a.id().required(),
+            }),
+            opTest: a
+              .query()
+              .arguments({})
+              .returns(a.ref('Cart'))
+              .handler(a.handler.function('opTest')),
+          })
+          .authorization((allow) => [allow.publicApiKey()]);
+        type Schema = ClientSchema<typeof schema>;
+
+        const { spy, generateClient } = mockedGenerateClient([
+          { data: { opTest: null } },
+        ]);
+        const config = await buildAmplifyConfig(schema);
+        Amplify.configure(config);
+        const client = generateClient<Schema>();
+        // #endregion mocking
+
+        const { data: value } = await client.queries.opTest({});
+        // #region assertions
+        expect(value).toBe(null);
+
+        // #endregion assertions
+      });
+      describe('when `ref` model has a relationship', () => {
+        test('for hasMany model relationship pass `null` responses through to client result `data`', async () => {
+          // #region mocking
+          const schema = a
+            .schema({
+              Cart: a.model({
+                id: a.id().required(),
+                items: a.hasMany('CartItem', 'cartId'),
+              }),
+              CartItem: a.model({
+                name: a.string(),
+                price: a.float(),
+                cartId: a.id().required(),
+                cart: a.belongsTo('Cart', 'cartId'),
+              }),
+              opTest: a
+                .query()
+                .arguments({})
+                .returns(a.ref('Cart'))
+                .handler(a.handler.function('opTest')),
+            })
+            .authorization((allow) => [allow.publicApiKey()]);
+          type Schema = ClientSchema<typeof schema>;
+
+          const { spy, generateClient } = mockedGenerateClient([
+            { data: { opTest: null } },
+          ]);
+          const config = await buildAmplifyConfig(schema);
+          Amplify.configure(config);
+          const client = generateClient<Schema>();
+          // #endregion mocking
+
+          const { data: value } = await client.queries.opTest({});
+          // #region assertions
+          expect(value).toBe(null);
+
+          // #endregion assertions
+        });
+
+        test('for belongsTo model relationship pass `null` responses through to client result `data`', async () => {
+          // #region mocking
+          const schema = a
+            .schema({
+              Cart: a.model({
+                id: a.id().required(),
+                items: a.hasMany('CartItem', 'cartId'),
+              }),
+              CartItem: a.model({
+                name: a.string(),
+                price: a.float(),
+                cartId: a.id().required(),
+                cart: a.belongsTo('Cart', 'cartId'),
+              }),
+              opTest: a
+                .query()
+                .arguments({})
+                .returns(a.ref('CartItem'))
+                .handler(a.handler.function('opTest')),
+            })
+            .authorization((allow) => [allow.publicApiKey()]);
+          type Schema = ClientSchema<typeof schema>;
+
+          const { spy, generateClient } = mockedGenerateClient([
+            { data: { opTest: null } },
+          ]);
+          const config = await buildAmplifyConfig(schema);
+          Amplify.configure(config);
+          const client = generateClient<Schema>();
+          // #endregion mocking
+
+          const { data: value } = await client.queries.opTest({});
+          // #region assertions
+          expect(value).toBe(null);
+
+          // #endregion assertions
+        });
       });
     });
   });

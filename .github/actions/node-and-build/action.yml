@@ -10,14 +10,10 @@ inputs:
 runs:
   using: 'composite'
   steps:
-    - name: Setup Node.js 18
-      uses: actions/setup-node@64ed1c7eab4cce3362f8c340dee64e5eaeef8f7c # v3.6.0 https://github.com/actions/setup-node/commit/64ed1c7eab4cce3362f8c340dee64e5eaeef8f7c
-      # TODO: we currently have Node pinned to version `18.20.2` for `npm-cli-adduser` to work
-      # (See https://github.com/aws-amplify/amplify-js/pull/13450).
-      # We either need to fix this, or find an alternative as this dep seems to
-      # be unmaintained.
+    - name: Setup Node.js 20
+      uses: actions/setup-node@1e60f620b9541d16bece96c5465dc8ee9832be0b # v4.0.9 https://github.com/actions/setup-node/commit/1e60f620b9541d16bece96c5465dc8ee9832be0b
       with:
-        node-version: 18.20.2
+        node-version: 20
       env:
         SEGMENT_DOWNLOAD_TIMEOUT_MINS: 2
     - uses: actions/cache@88522ab9f39a2ea568f7027eddc7d8d8bc9d59c8 # v3.3.1

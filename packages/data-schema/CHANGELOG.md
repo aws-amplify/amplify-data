@@ -1,5 +1,57 @@
 # @aws-amplify/data-schema
 
+## 1.6.3
+
+### Patch Changes
+
+- 5441ead: Add ability to override user agent with granular actions
+
+## 1.6.2
+
+### Patch Changes
+
+- 8281be2: fix: timestamps in model props breaks runtime
+
+## 1.6.1
+
+### Patch Changes
+
+- 79e8873: fix: Custom operation Ref return works with null/undefined responses
+
+## 1.6.0
+
+### Minor Changes
+
+- adf9f6e: add support for async lambda function handlers
+
+## 1.5.1
+
+### Patch Changes
+
+- b7400b1: fixes result parsing for observeQuery, onCreate, onUpdate, and onDelete operations
+
+## 1.5.0
+
+### Minor Changes
+
+- 6028bf7: Add AI routes to client
+
+## 1.4.1
+
+### Patch Changes
+
+- ed16182: adds selectionSet types to mutation operations
+
+## 1.4.0
+
+### Minor Changes
+
+- 27a0cec: add model .disableOperations() modifier
+
+### Patch Changes
+
+- 2a144f8: fixed cancel behavior for modeled operations
+
 ## 1.3.10
 
 ### Patch Changes

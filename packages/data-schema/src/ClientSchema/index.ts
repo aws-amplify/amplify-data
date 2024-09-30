@@ -1,6 +1,7 @@
 import type { __modelMeta__ } from '../runtime/client';
 import type {
   BaseSchema,
+  ConversationType,
   CustomOperation,
   CustomType,
   EnumType,
@@ -21,6 +22,7 @@ import type {
 } from '../CombineSchema';
 import type { SchemaMetadata } from './utilities/SchemaMetadata';
 import type { Brand, Select, SpreadTuple } from '../util';
+import { ClientConversation } from './ai/ClientConversation';
 
 export type ClientSchema<
   Schema extends GenericModelSchema<any> | CombinedModelSchema<any>,
@@ -65,11 +67,14 @@ type ClientSchemaProperty<
             | 'queryCustomOperation'
             | 'mutationCustomOperation'
             | 'subscriptionCustomOperation'
+            | 'generationCustomOperation'
           >
         ? RemapCustomOperation<T, Metadata, IsRDS, T[K]>
         : T[K] extends Brand<'modelType'>
           ? RemapModel<T, Metadata, IsRDS, T[K], K>
-          : never;
+          : T[K] extends Brand<'conversationCustomOperation'>
+            ? RemapAIRoute<T, T[K]>
+            : never;
 
 type RemapEnum<_T extends ModelSchemaContents, E> =
   E extends EnumType<infer values> ? ClientEnum<values> : never;
@@ -111,6 +116,11 @@ type RemapModel<
       >
     : never;
 
+type RemapAIRoute<
+  _T extends ModelSchemaContents,
+  E,
+> = E extends ConversationType ? ClientConversation : never;
+
 type GetInternalClientSchema<Schema> =
   Schema extends GenericModelSchema<any> ? InternalClientSchema<Schema> : never;
 
@@ -146,6 +156,8 @@ export type ClientSchemaByEntityTypeBaseShape = {
   queries: Record<string, ClientCustomOperation<any, any>>;
   mutations: Record<string, ClientCustomOperation<any, any>>;
   subscriptions: Record<string, ClientCustomOperation<any, any>>;
+  conversations: Record<string, ClientConversation>;
+  generations: Record<string, ClientCustomOperation<any, any>>;
 };
 
 export type ClientSchemaByEntityType<T> = {
@@ -155,4 +167,6 @@ export type ClientSchemaByEntityType<T> = {
   queries: Select<T, { __entityType: 'customQuery' }>;
   mutations: Select<T, { __entityType: 'customMutation' }>;
   subscriptions: Select<T, { __entityType: 'customSubscription' }>;
+  conversations: Select<T, { __entityType: 'customConversation' }>;
+  generations: Select<T, { __entityType: 'customGeneration' }>;
 };

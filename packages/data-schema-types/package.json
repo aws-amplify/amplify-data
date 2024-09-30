@@ -20,7 +20,7 @@
     "clean": "rimraf dist",
     "docs": "api-extractor run && api-documenter markdown --input-folder temp --output-folder docs",
     "docs:temp": "api-extractor run && api-documenter markdown --input-folder temp --output-folder temp/docs",
-    "check:api": "rimraf temp && npm run docs:temp && node ../../scripts/shallow-dir-diff.js docs temp/docs",
+    "check:api": "rimraf temp && npm run docs:temp && tsx ../../scripts/shallow-dir-diff.ts docs temp/docs",
     "test": "echo \"No tests\"",
     "lint": "eslint ."
   },

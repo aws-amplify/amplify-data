@@ -30,11 +30,13 @@ import {
   ModelRelationalField,
   ModelRelationalFieldParamShape,
 } from './ModelRelationalField';
+import { ConversationType } from './ai/ConversationType';
 
-export { ModelType as ModelType } from './ModelType';
-export { EnumType as EnumType } from './EnumType';
-export { CustomType as CustomType } from './CustomType';
-export { CustomOperation as CustomOperation } from './CustomOperation';
+export { ModelType } from './ModelType';
+export { EnumType } from './EnumType';
+export { CustomType } from './CustomType';
+export { CustomOperation } from './CustomOperation';
+export { ConversationType } from './ai/ConversationType';
 
 export const rdsSchemaBrandName = 'RDSSchema';
 export const rdsSchemaBrand = brand(rdsSchemaBrandName);
@@ -48,7 +50,8 @@ type SchemaContent =
   | BaseModelType
   | CustomType<CustomTypeParamShape>
   | EnumType
-  | CustomOperation<CustomOperationParamShape, any>;
+  | CustomOperation<CustomOperationParamShape, any>
+  | ConversationType;
 
 // The SQL-only `addToSchema` accepts all top-level entities, excepts models
 type AddToSchemaContent = Exclude<SchemaContent, BaseModelType>;

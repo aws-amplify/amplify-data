@@ -1,6 +1,6 @@
 {
   "name": "@aws-amplify/data-schema",
-  "version": "1.3.10",
+  "version": "1.6.3",
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
@@ -16,7 +16,7 @@
     "clean": "rimraf dist",
     "docs": "api-extractor run && api-documenter markdown --input-folder temp --output-folder docs",
     "docs:temp": "api-extractor run && api-documenter markdown --input-folder temp --output-folder temp/docs",
-    "check:api": "rimraf temp && npm run docs:temp && node ../../scripts/shallow-dir-diff.js docs temp/docs",
+    "check:api": "rimraf temp && npm run docs:temp && tsx ../../scripts/shallow-dir-diff.ts docs temp/docs",
     "lint": "eslint .",
     "test": "jest"
   },
@@ -51,7 +51,9 @@
   },
   "dependencies": {
     "@aws-amplify/data-schema-types": "*",
+    "@smithy/util-base64": "^3.0.0",
     "@types/aws-lambda": "^8.10.134",
+    "@types/json-schema": "^7.0.15",
     "rxjs": "^7.8.1"
   },
   "devDependencies": {

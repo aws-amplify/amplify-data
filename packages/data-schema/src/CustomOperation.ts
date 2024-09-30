@@ -1,6 +1,6 @@
 import { SetTypeSubArg } from '@aws-amplify/data-schema-types';
 import { Brand, brand } from './util';
-import { InternalField, type BaseModelField } from './ModelField';
+import { InternalField, ModelField, type BaseModelField } from './ModelField';
 import {
   AllowModifierForCustomOperation,
   Authorization,
@@ -10,34 +10,57 @@ import { RefType, InternalRef } from './RefType';
 import { EnumType } from './EnumType';
 import { CustomType } from './CustomType';
 import type {
+  AsyncFunctionHandler,
   CustomHandler,
   FunctionHandler,
   HandlerType as Handler,
 } from './Handler';
+import { brandSymbol } from './util/Brand';
+import { AiModel, InferenceConfiguration } from './ai/ModelType';
 
 const queryBrand = 'queryCustomOperation';
 const mutationBrand = 'mutationCustomOperation';
 const subscriptionBrand = 'subscriptionCustomOperation';
+const generationBrand = 'generationCustomOperation';
 
 type CustomOperationBrand =
   | typeof queryBrand
   | typeof mutationBrand
-  | typeof subscriptionBrand;
+  | typeof subscriptionBrand
+  | typeof generationBrand;
 
 type CustomArguments = Record<string, BaseModelField | EnumType>;
-
 type SubscriptionSource = RefType<any, any>;
 type InternalSubscriptionSource = InternalRef;
-
 type CustomReturnType = RefType<any> | CustomType<any>;
 type InternalCustomArguments = Record<string, InternalField>;
 type InternalCustomReturnType = InternalRef;
-type HandlerInputType = FunctionHandler[] | CustomHandler[] | Handler;
+type HandlerInputType =
+  | FunctionHandler[]
+  | CustomHandler[]
+  | AsyncFunctionHandler[]
+  | HeterogeneousFunctionHandlerWithLastAsync
+  | HeterogeneousFunctionHandlerType
+  | Handler;
+type HeterogeneousFunctionHandlerType = (
+  | FunctionHandler
+  | AsyncFunctionHandler
+)[];
+type HeterogeneousFunctionHandlerWithLastAsync = [
+  ...HeterogeneousFunctionHandlerType,
+  AsyncFunctionHandler,
+];
+
+export type UltimateFunctionHandlerAsyncType =
+  | AsyncFunctionHandler
+  | AsyncFunctionHandler[]
+  | HeterogeneousFunctionHandlerWithLastAsync;
 
 export const CustomOperationNames = [
   'Query',
   'Mutation',
   'Subscription',
+  'Generation',
 ] as const;
 type CustomOperationName = (typeof CustomOperationNames)[number];
 
@@ -48,6 +71,7 @@ type CustomData = {
   typeName: CustomOperationName;
   handlers: Handler[] | null;
   subscriptionSource: SubscriptionSource[];
+  input?: CustomOperationInput;
 };
 
 type InternalCustomData = CustomData & {
@@ -57,12 +81,15 @@ type InternalCustomData = CustomData & {
   authorization: Authorization<any, any, any>[];
 };
 
+export type CustomOperationInput = GenerationInput;
+
 export type CustomOperationParamShape = {
   arguments: CustomArguments | null;
   returnType: CustomReturnType | null;
   authorization: Authorization<any, any, any>[];
   typeName: CustomOperationName;
   handlers: Handler | null;
+  input?: CustomOperationInput;
 };
 
 /**
@@ -103,7 +130,14 @@ export type CustomOperation<
     >;
     handler<H extends HandlerInputType>(
       handlers: H,
-    ): CustomOperation<T, K | 'handler', B>;
+    ): [H] extends [UltimateFunctionHandlerAsyncType]
+      ? CustomOperation<
+          AsyncFunctionCustomOperation<T>,
+          K | 'handler' | 'returns',
+          B
+        >
+      : CustomOperation<T, K | 'handler', B>;
+
     for<Source extends SubscriptionSource>(
       source: Source | Source[],
     ): CustomOperation<
@@ -144,7 +178,7 @@ export type InternalCustom<B extends CustomOperationBrand = any> =
 function _custom<
   T extends CustomOperationParamShape,
   B extends CustomOperationBrand,
->(typeName: CustomOperationName, brand: B) {
+>(typeName: CustomOperationName, brand: B, input?: T['input']) {
   const data: CustomData = {
     arguments: {},
     returnType: null,
@@ -152,6 +186,7 @@ function _custom<
     typeName: typeName,
     handlers: null,
     subscriptionSource: [],
+    input,
   };
 
   const builder = brandedBuilder<T>(
@@ -180,6 +215,10 @@ function _custom<
         data.handlers = Array.isArray(handlers)
           ? handlers
           : ([handlers] as Handler[]);
+
+        if (lastHandlerIsAsyncFunction(handlers)) {
+          data.returnType = eventInvocationResponse;
+        }
 
         return this;
       },
@@ -303,4 +342,71 @@ export function subscription(): CustomOperation<
   typeof subscriptionBrand
 > {
   return _custom('Subscription', subscriptionBrand);
+}
+
+// #region async Lambda function related types
+type AsyncFunctionCustomOperation<T extends CustomOperationParamShape> =
+  SetTypeSubArg<
+    SetTypeSubArg<T, 'returnType', EventInvocationResponseCustomType>,
+    'handlers',
+    AsyncFunctionHandler
+  >;
+
+type EventInvocationResponseCustomType = CustomType<{
+  fields: {
+    success: ModelField<boolean, 'required', undefined>;
+  };
+}>;
+
+const eventInvocationResponse = {
+  data: {
+    type: 'ref',
+    link: 'EventInvocationResponse',
+    valueRequired: false,
+    array: false,
+    arrayRequired: false,
+    mutationOperations: [],
+    authorization: [],
+  },
+};
+
+function lastHandlerIsAsyncFunction(handlers: HandlerInputType): boolean {
+  const lastHandlerBrandSymbol = Array.isArray(handlers)
+    ? handlers[handlers.length - 1][brandSymbol]
+    : handlers[brandSymbol];
+  return lastHandlerBrandSymbol === 'asyncFunctionHandler';
+}
+// #endregion async Lambda function related types
+export interface GenerationInput {
+  aiModel: AiModel;
+  systemPrompt: string;
+  inferenceConfiguration?: InferenceConfiguration;
+}
+
+/**
+ * @experimental
+ *
+ * Define an AI generation route for single request-response interaction with specified AI model.
+ * @example
+ * makeRecipe: a.generation({
+ *   aiModel: { resourcePath },
+ *   systemPrompt: 'Please make a recipe from the provided ingredients',
+ * })
+ *   .arguments({ ingredients: a.string().array() })
+ *   .returns(a.ref("Recipe"))
+ * @returns a generation route definition
+ */
+export function generation(input: GenerationInput): CustomOperation<
+  {
+    arguments: null;
+    returnType: null;
+    authorization: [];
+    typeName: 'Generation';
+    handlers: null;
+    input: GenerationInput;
+  },
+  'for' | 'handler',
+  typeof generationBrand
+> {
+  return _custom('Generation', generationBrand, input);
 }

@@ -15,6 +15,8 @@ import { Observable } from 'rxjs';
 
 import { CustomHeaders, ModelSortDirection } from './client';
 
+import { AiAction, AiCategory } from './internals/ai/getCustomUserAgentDetails';
+
 export declare namespace AmplifyServer {
   export interface ContextToken {
     readonly value: symbol;
@@ -87,6 +89,8 @@ export interface ModelIntrospectionSchema {
   queries?: CustomOperations;
   mutations?: CustomOperations;
   subscriptions?: CustomOperations;
+  conversations?: SchemaConversationRoutes;
+  generations?: SchemaGenerationRoutes;
 }
 
 /**
@@ -96,6 +100,27 @@ export type SchemaModels = Record<string, SchemaModel>;
 export type SchemaNonModels = Record<string, SchemaNonModel>;
 export type SchemaEnums = Record<string, SchemaEnum>;
 export type CustomOperations = Record<string, CustomOperation>;
+export type SchemaConversationRoutes = Record<string, SchemaConversationRoute>;
+export type SchemaGenerationRoutes = Record<string, CustomOperation>;
+
+export type SchemaConversationRoute = {
+  name: string;
+  models: SchemaModels;
+  nonModels: SchemaNonModels;
+  enums: SchemaEnums;
+  conversation: SchemaConversation;
+  message: SchemaConversationMessage;
+};
+
+export type SchemaConversation = {
+  modelName: string;
+};
+
+export type SchemaConversationMessage = {
+  modelName: string;
+  subscribe: CustomOperation;
+  send: CustomOperation;
+};
 
 export interface SchemaModel {
   name: string;
@@ -140,7 +165,7 @@ export type CustomOperationArguments = Record<string, CustomOperationArgument>;
 
 export interface CustomOperationArgument {
   name: string;
-  type: FieldType;
+  type: InputFieldType;
   isArray: boolean;
   isRequired: boolean;
   isArrayNullable?: boolean;
@@ -185,7 +210,15 @@ export interface NonModelFieldType {
   nonModel: string;
 }
 
-export type FieldType =
+export interface EnumType {
+  enum: string;
+}
+
+export interface InputType {
+  input: string;
+}
+
+type ScalarType =
   | 'ID'
   | 'String'
   | 'Int'
@@ -199,10 +232,16 @@ export type FieldType =
   | 'AWSIPAddress'
   | 'Boolean'
   | 'AWSJSON'
-  | 'AWSPhone'
-  | { enum: string }
+  | 'AWSPhone';
+
+export type FieldType =
+  | ScalarType
+  | EnumType
   | ModelFieldType
   | NonModelFieldType;
+
+export type InputFieldType = ScalarType | EnumType | InputType;
+
 export type FieldAttribute = ModelAttribute;
 
 /**
@@ -371,13 +410,19 @@ export type BaseSSRClient = {
   isCancelError(error: any): boolean;
 };
 
+export interface CustomUserAgentDetails {
+  category: AiCategory;
+  action: AiAction;
+}
+
 export type GraphQLMethod = (
   options: GraphQLOptions,
   additionalHeaders?: CustomHeaders | undefined,
-) => GraphQLResult | GraphqlSubscriptionResult;
+  customUserAgentDetails?: CustomUserAgentDetails,
+) => Promise<GraphQLResult> | GraphqlSubscriptionResult;
 
 export type GraphQLMethodSSR = (
   contextSpec: AmplifyServer.ContextSpec,
   options: GraphQLOptions,
   additionalHeaders?: CustomHeaders | undefined,
-) => GraphQLResult | GraphqlSubscriptionResult;
+) => Promise<GraphQLResult> | GraphqlSubscriptionResult;
