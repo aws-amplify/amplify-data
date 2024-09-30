@@ -30,7 +30,7 @@ chatId: a.id(),
 
 ##### Covering Regions
 
-- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/1-patterns/how-amplify-works/concepts.ts](../../../../../../packages/integration-tests/__tests__/defined-behavior/1-patterns/how-amplify-works/concepts.ts#19)
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/1-patterns/how-amplify-works/concepts.ts](../../../../../../packages/integration-tests/__tests__/defined-behavior/1-patterns/how-amplify-works/concepts.ts#L19)
 
 ---
 
@@ -57,7 +57,7 @@ const { errors, data: newMessage } = await client.models.Message.create({
 
 ##### Covering Regions
 
-- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/1-patterns/how-amplify-works/concepts.ts](../../../../../../packages/integration-tests/__tests__/defined-behavior/1-patterns/how-amplify-works/concepts.ts#69)
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/1-patterns/how-amplify-works/concepts.ts](../../../../../../packages/integration-tests/__tests__/defined-behavior/1-patterns/how-amplify-works/concepts.ts#L69)
 
 ---
 
@@ -81,7 +81,7 @@ email: {
 
 ##### Covering Regions
 
-- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/4-uncovered/how-amplify-works/concepts.ts](../../../../../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/how-amplify-works/concepts.ts#9)
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/4-uncovered/how-amplify-works/concepts.ts](../../../../../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/how-amplify-works/concepts.ts#L9)
 
 ---
 
@@ -110,7 +110,7 @@ export default withAuthenticator(App);
 
 ##### Covering Regions
 
-- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/4-uncovered/how-amplify-works/concepts.ts](../../../../../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/how-amplify-works/concepts.ts#9)
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/4-uncovered/how-amplify-works/concepts.ts](../../../../../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/how-amplify-works/concepts.ts#L9)
 
 ---
 
@@ -150,7 +150,7 @@ new CfnOutput(this, "mapArn", {
 
 ##### Covering Regions
 
-- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/4-uncovered/how-amplify-works/concepts.ts](../../../../../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/how-amplify-works/concepts.ts#9)
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/4-uncovered/how-amplify-works/concepts.ts](../../../../../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/how-amplify-works/concepts.ts#L9)
 
 ---
 
@@ -182,7 +182,7 @@ new LocationMapStack(
 
 ##### Covering Regions
 
-- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/4-uncovered/how-amplify-works/concepts.ts](../../../../../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/how-amplify-works/concepts.ts#9)
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/4-uncovered/how-amplify-works/concepts.ts](../../../../../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/how-amplify-works/concepts.ts#L9)
 
 ---
 

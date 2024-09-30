@@ -34,7 +34,7 @@ new sns.Topic(customResourceStack, "CustomTopic");
 
 ##### Covering Regions
 
-- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/4-uncovered/root.ts](../../../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/root.ts#8)
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/4-uncovered/root.ts](../../../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/root.ts#L8)
 
 ---
 
