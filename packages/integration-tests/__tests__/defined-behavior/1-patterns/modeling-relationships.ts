@@ -15,6 +15,7 @@ describe('Modeling relationships', () => {
 
   describe('Model one-to-many relationship', () => {
     // https://docs.amplify.aws/react/build-a-backend/data/data-modeling/relationships/#model-a-one-to-one-relationship
+    // #region covers 0d0ad5f8c1b991de
     const schema = a.schema({
       Team: a
         .model({
@@ -34,6 +35,7 @@ describe('Modeling relationships', () => {
         })
         .authorization((allow) => allow.publicApiKey()),
     });
+    // #endregion
     type Schema = ClientSchema<typeof schema>;
 
     test('create a "Has Many" relationship between records', async () => {
@@ -72,7 +74,7 @@ describe('Modeling relationships', () => {
       const client = generateClient<Schema>();
       // #endregion mocking
 
-      // #region docs code
+      // #region covers dc7d0a1a6d72510a
       const { data: team } = await client.models.Team.create({
         mantra: 'Go Frontend!',
       });
@@ -81,7 +83,7 @@ describe('Modeling relationships', () => {
         name: 'Tim',
         teamId: team!.id,
       });
-      // #endregion docs code
+      // #endregion
 
       // #region assertions
       expect(optionsAndHeaders(spy)).toMatchSnapshot();
@@ -126,7 +128,7 @@ describe('Modeling relationships', () => {
       const client = generateClient<Schema>();
       // #endregion mocking
 
-      // #region docs code
+      // #region covers 06214f3775b02364
       const { data: newTeam } = await client.models.Team.create({
         mantra: 'Go Fullstack',
       });
@@ -135,7 +137,7 @@ describe('Modeling relationships', () => {
         id: 'member-id',
         teamId: newTeam!.id,
       });
-      // #endregion docs code
+      // #endregion
 
       // #region assertions
       expect(optionsAndHeaders(spy)).toMatchSnapshot();
@@ -167,12 +169,12 @@ describe('Modeling relationships', () => {
       const client = generateClient<Schema>();
       // #endregion mocking
 
-      // #region docs code
+      // #region covers f2ae6e917b0bc1b2
       const { data: member } = await client.models.Member.update({
         id: 'member-id',
         teamId: null,
       });
-      // #endregion docs code
+      // #endregion
 
       // #region assertions
       expect(optionsAndHeaders(spy)).toMatchSnapshot();
@@ -216,17 +218,77 @@ describe('Modeling relationships', () => {
       const client = generateClient<Schema>();
       // #endregion mocking
 
-      // #region App code
+      // #region covers b02d88e15c6256e8
+      // TODO: fix missing non-null assertion on docs site
+      // https://docs.amplify.aws/react/build-a-backend/data/data-modeling/relationships/#lazy-load-a-has-many-relationship
       const { data: team } = await client.models.Team.get({ id: 'team-id' });
 
       const { data: members } = await team!.members();
 
       members.forEach((member) => console.log(member.id));
-      // #endregion App code
+      // #endregion
 
       // #region assertions
       expect(optionsAndHeaders(spy)).toMatchSnapshot();
       expect(members[0]).toEqual(expect.objectContaining(expectedMember));
+      // #endregion assertions
+    });
+
+    test('Eagerly load a "Has Many" relationship (hasMany side)', async () => {
+      // #region mocking
+      const expectedMember = {
+        __typeName: 'Member',
+        id: 'member-id',
+        name: 'Tim',
+        teamId: 'new-team-id',
+        updatedAt: '2024-03-01T19:05:44.536Z',
+        createdAt: '2024-03-01T18:05:44.536Z',
+      };
+
+      const expectedTeam = {
+        __typeName: 'Team',
+        id: 'team-id',
+        members: {
+          items: [expectedMember],
+        },
+      };
+
+      const { spy, generateClient } = mockedGenerateClient([
+        {
+          data: {
+            getTeam: expectedTeam,
+          },
+        },
+        {
+          data: {
+            listMembers: { items: [expectedMember] },
+          },
+        },
+      ]);
+      const config = await buildAmplifyConfig(schema);
+      Amplify.configure(config);
+      const client = generateClient<Schema>();
+      // #endregion mocking
+
+      // #region covers ae43c44bff14af30
+      // TODO: fix missing non-null assertion on docs site
+      // https://docs.amplify.aws/react/build-a-backend/data/data-modeling/relationships/#eagerly-load-a-has-many-relationship
+      const { data: teamWithMembers } = await client.models.Team.get(
+        { id: 'team-id' },
+        { selectionSet: ['id', 'members.*'] },
+      );
+
+      teamWithMembers!.members.forEach((member) => console.log(member.id));
+      // #endregion
+
+      // #region assertions
+      expect(optionsAndHeaders(spy)).toMatchSnapshot();
+      expect(teamWithMembers).toEqual(
+        expect.objectContaining({
+          id: 'team-id',
+          members: [expectedMember],
+        }),
+      );
       // #endregion assertions
     });
 

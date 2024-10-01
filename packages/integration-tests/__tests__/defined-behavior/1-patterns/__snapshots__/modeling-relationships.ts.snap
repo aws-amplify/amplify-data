@@ -149,6 +149,22 @@ exports[`Modeling relationships Model one-to-many relationship Delete a "Has Man
 ]
 `;
 
+exports[`Modeling relationships Model one-to-many relationship Eagerly load a "Has Many" relationship (hasMany side) 1`] = `
+[
+  [
+    {
+      "authMode": undefined,
+      "authToken": undefined,
+      "query": "query($id: ID!) { getTeam(id: $id) { id members { items { id name teamId createdAt updatedAt } } } }",
+      "variables": {
+        "id": "team-id",
+      },
+    },
+    {},
+  ],
+]
+`;
+
 exports[`Modeling relationships Model one-to-many relationship Lazy load a "Has Many" relationship (belongsTo side) 1`] = `
 [
   [
