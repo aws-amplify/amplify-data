@@ -4,7 +4,7 @@
 
 Page: https://docs.amplify.aws/react/build-a-backend/data/data-modeling/add-fields/
 
-Coverage: 0.0%
+Coverage: 100.0%
 
 #### `Unnamed Snippet`
 
@@ -17,18 +17,18 @@ location: a.customType({
 }),
 content: a.string(),
   }),
-});
+}).authorization((allow) => allow.publicApiKey());
 
 ~~~
 
 | | |
 | -- | -- |
-| Hash | `43905c308842f472` |
-| Covered | ❌ |
+| Hash | `279bf864a21cd97b` |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/1-patterns/add-fields.ts](../../../../../../../../packages/integration-tests/__tests__/defined-behavior/1-patterns/add-fields.ts#L75)
 
 ---
 
@@ -49,18 +49,18 @@ content: a.string(),
   User: a.model({
 lastKnownLocation: a.ref("Location"),
   }),
-});
+}).authorization((allow) => allow.publicApiKey());
 
 ~~~
 
 | | |
 | -- | -- |
-| Hash | `f888c3d166c2cecc` |
-| Covered | ❌ |
+| Hash | `b7fd0a0c85d7fa05` |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/1-patterns/add-fields.ts](../../../../../../../../packages/integration-tests/__tests__/defined-behavior/1-patterns/add-fields.ts#L155)
 
 ---
 
@@ -81,11 +81,11 @@ console.log(newPost?.location?.lat, newPost?.location?.long);
 | | |
 | -- | -- |
 | Hash | `230bf27a1eb5947d` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/1-patterns/add-fields.ts](../../../../../../../../packages/integration-tests/__tests__/defined-behavior/1-patterns/add-fields.ts#L210)
 
 ---
 
@@ -97,18 +97,18 @@ a.schema({
 privacySetting: a.enum(["PRIVATE", "FRIENDS_ONLY", "PUBLIC"]),
 content: a.string(),
   }),
-});
+}).authorization((allow) => allow.publicApiKey());
 
 ~~~
 
 | | |
 | -- | -- |
-| Hash | `820795dcb914b7d6` |
-| Covered | ❌ |
+| Hash | `35bf03594722226f` |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/1-patterns/add-fields.ts](../../../../../../../../packages/integration-tests/__tests__/defined-behavior/1-patterns/add-fields.ts#L306)
 
 ---
 
@@ -126,18 +126,18 @@ privacySetting: a.ref("PrivacySetting"),
   Video: a.model({
 privacySetting: a.ref("PrivacySetting"),
   }),
-});
+}).authorization((allow) => allow.publicApiKey());
 
 ~~~
 
 | | |
 | -- | -- |
-| Hash | `3285944c721301a5` |
-| Covered | ❌ |
+| Hash | `f88634036e3d5189` |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/1-patterns/add-fields.ts](../../../../../../../../packages/integration-tests/__tests__/defined-behavior/1-patterns/add-fields.ts#L418)
 
 ---
 
@@ -158,11 +158,11 @@ client.models.Post.create({
 | | |
 | -- | -- |
 | Hash | `53b6683a37d9bc50` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/1-patterns/add-fields.ts](../../../../../../../../packages/integration-tests/__tests__/defined-behavior/1-patterns/add-fields.ts#L395)
 
 ---
 
@@ -177,78 +177,84 @@ const availableSettings = client.enums.PrivacySetting.values();
 | | |
 | -- | -- |
 | Hash | `1f73a4fff6b93118` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/1-patterns/add-fields.ts](../../../../../../../../packages/integration-tests/__tests__/defined-behavior/1-patterns/add-fields.ts#L475)
 
 ---
 
 #### `Unnamed Snippet`
 
 ~~~
-const schema = a.schema({
-  Todo: a.model({
-content: a.string().required(),
-  }),
-});
+const schema = a
+  .schema({
+Todo: a.model({
+  content: a.string().required(),
+}),
+  })
+  .authorization((allow) => allow.publicApiKey());
 
 ~~~
 
 | | |
 | -- | -- |
-| Hash | `cdf4d0b665542edb` |
-| Covered | ❌ |
+| Hash | `0d26c55b7f416673` |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/1-patterns/add-fields.ts](../../../../../../../../packages/integration-tests/__tests__/defined-behavior/1-patterns/add-fields.ts#L512)
 
 ---
 
 #### `Unnamed Snippet`
 
 ~~~
-const schema = a.schema({
-  Todo: a.model({
-content: a.string().required(),
-notes: a.string().array(),
-  }),
-});
+const schema = a
+  .schema({
+Todo: a.model({
+  content: a.string().required(),
+  notes: a.string().array(),
+}),
+  })
+  .authorization((allow) => allow.publicApiKey());
 
 ~~~
 
 | | |
 | -- | -- |
-| Hash | `dc3c19f2f62eb37c` |
-| Covered | ❌ |
+| Hash | `2b588d62751dc8ee` |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/1-patterns/add-fields.ts](../../../../../../../../packages/integration-tests/__tests__/defined-behavior/1-patterns/add-fields.ts#L540)
 
 ---
 
 #### `Unnamed Snippet`
 
 ~~~
-const schema = a.schema({
-  Todo: a.model({
-content: a.string().default("My new Todo"),
-  }),
-});
+const schema = a
+  .schema({
+Todo: a.model({
+  content: a.string().default("My new Todo"),
+}),
+  })
+  .authorization((allow) => allow.publicApiKey());
 
 ~~~
 
 | | |
 | -- | -- |
-| Hash | `9f1c692ef6b1f458` |
-| Covered | ❌ |
+| Hash | `74405b7e731fd3fd` |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/1-patterns/add-fields.ts](../../../../../../../../packages/integration-tests/__tests__/defined-behavior/1-patterns/add-fields.ts#L593)
 
 ---
 
