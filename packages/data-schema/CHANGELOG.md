@@ -1,5 +1,11 @@
 # @aws-amplify/data-schema
 
+## 1.8.1
+
+### Patch Changes
+
+- 29f13a4: Expose name, metadata, createdAt, updatedAt in Covnersation Type
+
 ## 1.8.0
 
 ### Minor Changes
