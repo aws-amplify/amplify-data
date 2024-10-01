@@ -16,7 +16,7 @@ import {
   getCustomUserAgentDetails,
 } from './getCustomUserAgentDetails';
 
-export const createGetConversationFunction =
+export const createDeleteConversationFunction =
   (
     client: BaseClient,
     modelIntrospection: ModelIntrospectionSchema,
@@ -24,26 +24,26 @@ export const createGetConversationFunction =
     conversationModel: SchemaModel,
     conversationMessageModel: SchemaModel,
     getInternals: ClientInternalsGetter,
-  ): ConversationRoute['get'] =>
+  ): ConversationRoute['delete'] =>
   async ({ id }) => {
-    const get = getFactory(
+    const deleteOperation = getFactory(
       client,
       modelIntrospection,
       conversationModel,
-      'GET',
+      'DELETE',
       getInternals,
       false,
-      getCustomUserAgentDetails(AiAction.GetConversation),
+      getCustomUserAgentDetails(AiAction.DeleteConversation),
     ) as (
       args?: Record<string, any>,
     ) => SingularReturnValue<Record<string, any>>;
-    const { data, errors } = await get({ id });
+    const { data, errors } = await deleteOperation({ id });
     return {
       data: data
         ? convertItemToConversation(
             client,
             modelIntrospection,
-            data.id,
+            data?.id,
             conversationRouteName,
             conversationMessageModel,
             getInternals,

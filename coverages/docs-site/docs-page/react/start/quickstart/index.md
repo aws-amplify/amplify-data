@@ -32,7 +32,7 @@ Coverage: 100.0%
 
 ##### Covering Regions
 
-- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/4-uncovered/start/quickstart.ts](../../../../../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/start/quickstart.ts#9)
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/4-uncovered/start/quickstart.ts](../../../../../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/start/quickstart.ts#L9)
 
 ---
 
@@ -51,7 +51,7 @@ cd amplify-vite-react-template && npm install
 
 ##### Covering Regions
 
-- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/4-uncovered/start/quickstart.ts](../../../../../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/start/quickstart.ts#9)
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/4-uncovered/start/quickstart.ts](../../../../../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/start/quickstart.ts#L9)
 
 ---
 
@@ -73,7 +73,7 @@ cd amplify-vite-react-template && npm install
 
 ##### Covering Regions
 
-- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/4-uncovered/start/quickstart.ts](../../../../../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/start/quickstart.ts#9)
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/4-uncovered/start/quickstart.ts](../../../../../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/start/quickstart.ts#L9)
 
 ---
 
@@ -117,7 +117,7 @@ Review next step of this tutorial.
 
 ##### Covering Regions
 
-- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/1-patterns/mutate-data.ts](../../../../../../packages/integration-tests/__tests__/defined-behavior/1-patterns/mutate-data.ts#119)
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/1-patterns/mutate-data.ts](../../../../../../packages/integration-tests/__tests__/defined-behavior/1-patterns/mutate-data.ts#L119)
 
 ---
 
@@ -135,7 +135,7 @@ npm run dev
 
 ##### Covering Regions
 
-- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/4-uncovered/start/quickstart.ts](../../../../../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/start/quickstart.ts#9)
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/4-uncovered/start/quickstart.ts](../../../../../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/start/quickstart.ts#L9)
 
 ---
 
@@ -169,7 +169,7 @@ function App() {
 
 ##### Covering Regions
 
-- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/4-uncovered/start/quickstart.ts](../../../../../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/start/quickstart.ts#9)
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/4-uncovered/start/quickstart.ts](../../../../../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/start/quickstart.ts#L9)
 
 ---
 
@@ -188,7 +188,7 @@ git push
 
 ##### Covering Regions
 
-- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/4-uncovered/start/quickstart.ts](../../../../../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/start/quickstart.ts#11)
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/4-uncovered/start/quickstart.ts](../../../../../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/start/quickstart.ts#L11)
 
 ---
 
@@ -206,7 +206,7 @@ npx ampx sandbox
 
 ##### Covering Regions
 
-- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/4-uncovered/common.ts](../../../../../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/common.ts#7)
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/4-uncovered/common.ts](../../../../../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/common.ts#L7)
 
 ---
 
@@ -243,7 +243,7 @@ defaultAuthorizationMode: "userPool",
 
 ##### Covering Regions
 
-- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/2-expected-use/owner-fields.ts](../../../../../../packages/integration-tests/__tests__/defined-behavior/2-expected-use/owner-fields.ts#38)
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/2-expected-use/owner-fields.ts](../../../../../../packages/integration-tests/__tests__/defined-behavior/2-expected-use/owner-fields.ts#L38)
 
 ---
 
@@ -275,7 +275,7 @@ function App() {
 
 ##### Covering Regions
 
-- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/4-uncovered/start/quickstart.ts](../../../../../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/start/quickstart.ts#11)
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/4-uncovered/start/quickstart.ts](../../../../../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/start/quickstart.ts#L11)
 
 ---
 
@@ -294,7 +294,7 @@ git push
 
 ##### Covering Regions
 
-- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/4-uncovered/start/quickstart.ts](../../../../../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/start/quickstart.ts#11)
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/4-uncovered/start/quickstart.ts](../../../../../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/start/quickstart.ts#L11)
 
 ---
 

@@ -72,6 +72,8 @@ describe('createListMessagesFunction()', () => {
         mockModelIntrospectionSchema,
         {},
         expect.any(Function),
+        false,
+        { action: '6', category: 'ai' },
       );
       expect(mockList).toHaveBeenCalled();
       expect(data).toStrictEqual([mockMessage, mockMessage2]);

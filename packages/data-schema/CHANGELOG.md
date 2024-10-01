@@ -1,5 +1,17 @@
 # @aws-amplify/data-schema
 
+## 1.7.0
+
+### Minor Changes
+
+- 1d9bd61: Add conversation delete api, re-organized AiAction enums to align with Amplify-JS"
+
+## 1.6.3
+
+### Patch Changes
+
+- 5441ead: Add ability to override user agent with granular actions
+
 ## 1.6.2
 
 ### Patch Changes

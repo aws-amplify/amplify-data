@@ -9,6 +9,10 @@ import {
 } from '../../../bridge-types';
 import { CustomQueries } from '../../../client';
 import { customOpFactory } from '../../operations/custom';
+import {
+  AiAction,
+  getCustomUserAgentDetails,
+} from '../../ai/getCustomUserAgentDetails';
 
 export function generateGenerationsProperty<T extends Record<any, any>>(
   client: BaseClient,
@@ -34,6 +38,7 @@ export function generateGenerationsProperty<T extends Record<any, any>>(
       generation,
       false,
       getInternals,
+      getCustomUserAgentDetails(AiAction.Generation),
     );
   }
 

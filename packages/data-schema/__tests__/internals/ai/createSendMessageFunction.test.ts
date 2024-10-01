@@ -116,6 +116,7 @@ describe('createSendMessageFunction()', () => {
         mockConversationSchema.message.send,
         false,
         expect.any(Function),
+        { action: '5', category: 'ai' },
       );
       expect(mockSerializeAiContext).toHaveBeenCalledWith(mockAiContext);
       expect(mockSerializeContent).toHaveBeenCalledWith(mockContent);
@@ -141,6 +142,7 @@ describe('createSendMessageFunction()', () => {
         mockConversationSchema.message.send,
         false,
         expect.any(Function),
+        { action: '5', category: 'ai' },
       );
       expect(mockSerializeAiContext).not.toHaveBeenCalled();
       expect(mockSerializeToolConfiguration).not.toHaveBeenCalled();

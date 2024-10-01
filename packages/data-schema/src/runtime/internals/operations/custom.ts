@@ -17,6 +17,7 @@ import {
   InputFieldType,
   EnumType,
   InputType,
+  CustomUserAgentDetails,
 } from '../../bridge-types';
 
 import { map } from 'rxjs';
@@ -34,6 +35,7 @@ import { handleSingularGraphQlError } from './utils';
 import { selfAwareAsync } from '../../utils';
 
 import { extendCancellability } from '../cancellation';
+import { createUserAgentOverride } from '../ai/getCustomUserAgentDetails';
 
 type CustomOperationOptions = AuthModeParams & ListArgs;
 
@@ -120,6 +122,7 @@ export function customOpFactory(
   operation: CustomOperation,
   useContext: boolean,
   getInternals: ClientInternalsGetter,
+  customUserAgentDetails?: CustomUserAgentDetails,
 ) {
   // .arguments() are defined for the custom operation in the schema builder
   // and are present in the model introspection schema
@@ -159,6 +162,7 @@ export function customOpFactory(
         getInternals,
         arg,
         options,
+        customUserAgentDetails,
       );
     }
 
@@ -171,6 +175,7 @@ export function customOpFactory(
       arg,
       options,
       contextSpec,
+      customUserAgentDetails,
     );
   };
 
@@ -384,6 +389,7 @@ function _op(
   args?: QueryArgs,
   options?: AuthModeParams & ListArgs,
   context?: AmplifyServer.ContextSpec,
+  customUserAgentDetails?: CustomUserAgentDetails,
 ) {
   return selfAwareAsync(async (resultPromise) => {
     const { name: operationName } = operation;
@@ -405,6 +411,8 @@ function _op(
 
     const variables = operationVariables(operation, args);
 
+    const userAgentOverride = createUserAgentOverride(customUserAgentDetails);
+
     try {
       const basePromise = context
         ? ((client as BaseSSRClient).graphql(
@@ -421,6 +429,7 @@ function _op(
               ...auth,
               query,
               variables,
+              ...userAgentOverride,
             },
             headers,
           ) as Promise<GraphQLResult>);
@@ -548,6 +557,7 @@ function _opSubscription(
   getInternals: ClientInternalsGetter,
   args?: QueryArgs,
   options?: AuthModeParams & ListArgs,
+  customUserAgentDetails?: CustomUserAgentDetails,
 ) {
   const operationType = 'subscription';
   const { name: operationName } = operation;
@@ -569,11 +579,14 @@ function _opSubscription(
 
   const variables = operationVariables(operation, args);
 
+  const userAgentOverride = createUserAgentOverride(customUserAgentDetails);
+
   const observable = client.graphql(
     {
       ...auth,
       query,
       variables,
+      ...userAgentOverride,
     },
     headers,
   ) as GraphqlSubscriptionResult;

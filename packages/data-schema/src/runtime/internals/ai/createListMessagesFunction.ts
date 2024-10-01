@@ -6,7 +6,7 @@ import type {
   ConversationMessage,
 } from '../../../ai/ConversationType';
 import type { ListReturnValue } from '../../../runtime/client';
-import type {
+import {
   BaseClient,
   ClientInternalsGetter,
   ModelIntrospectionSchema,
@@ -14,6 +14,10 @@ import type {
 } from '../../bridge-types';
 import { listFactory } from '../operations/list';
 import { convertItemToConversationMessage } from './convertItemToConversationMessage';
+import {
+  AiAction,
+  getCustomUserAgentDetails,
+} from './getCustomUserAgentDetails';
 
 export const createListMessagesFunction =
   (
@@ -29,6 +33,8 @@ export const createListMessagesFunction =
       modelIntrospection,
       conversationMessageModel,
       getInternals,
+      false,
+      getCustomUserAgentDetails(AiAction.ListMessages),
     ) as (args?: Record<string, any>) => ListReturnValue<ConversationMessage>;
     const { data, nextToken, errors } = await list({
       ...input,
