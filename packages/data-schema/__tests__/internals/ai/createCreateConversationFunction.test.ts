@@ -17,7 +17,13 @@ jest.mock('../../../src/runtime/internals/operations/get');
 describe('createCreateConversationFunction()', () => {
   let createConversation: ConversationRoute['create'];
   const mockConversationName = 'conversation-name';
-  const mockConversation = { id: 'conversation-id' };
+  const mockConversation = {
+    id: 'conversation-id',
+    createdAt: '2023-06-01T12:00:00Z',
+    updatedAt: '2023-06-01T12:00:00Z',
+    metadata: {},
+    name: mockConversationName,
+  };
   // assert mocks
   const mockGetFactory = getFactory as jest.Mock;
   const mockConvertItemToConversation = convertItemToConversation as jest.Mock;
@@ -63,9 +69,13 @@ describe('createCreateConversationFunction()', () => {
         {},
         {},
         mockConversation.id,
+        '2023-06-01T12:00:00Z',
+        '2023-06-01T12:00:00Z',
         mockConversationName,
         {},
         expect.any(Function),
+        {},
+        mockConversationName,
       );
     });
   });

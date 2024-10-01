@@ -56,7 +56,9 @@ export interface ConversationRoute {
    *
    * Deletes an existing {@link Conversation} based on ID.
    */
-    delete: (input: ConversationRouteDeleteInput) => SingularReturnValue<Conversation>;
+  delete: (
+    input: ConversationRouteDeleteInput,
+  ) => SingularReturnValue<Conversation>;
   /**
    * @experimental
    *
@@ -66,11 +68,13 @@ export interface ConversationRoute {
 }
 
 // conversation types
-interface ConversationSendMessageInput {
+interface ConversationSendMessageInputObject {
   content: ConversationSendMessageInputContent[];
   aiContext?: string | Record<string, any>;
   toolConfiguration?: ToolConfiguration;
 }
+
+export type ConversationSendMessageInput = ConversationSendMessageInputObject | string;
 
 interface ConversationListMessagesInput {
   limit?: number;
@@ -81,13 +85,18 @@ type ConversationOnMessageHandler = (message: ConversationMessage) => void;
 
 export interface Conversation {
   id: string;
+  createdAt: string;
+  updatedAt: string;
+
+  metadata?: Record<string, any>;
+  name?: string;
   /**
    * @experimental
    *
    * Sends a message to the current conversation.
    */
   sendMessage: (
-    input: ConversationSendMessageInput,
+    input: ConversationSendMessageInput | string,
   ) => SingularReturnValue<ConversationMessage>;
   /**
    * @experimental

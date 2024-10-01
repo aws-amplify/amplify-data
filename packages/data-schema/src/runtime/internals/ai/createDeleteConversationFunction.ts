@@ -44,9 +44,13 @@ export const createDeleteConversationFunction =
             client,
             modelIntrospection,
             data?.id,
+            data?.createdAt,
+            data?.updatedAt,
             conversationRouteName,
             conversationMessageModel,
             getInternals,
+            data?.metadata,
+            data?.name,
           )
         : data,
       errors,
