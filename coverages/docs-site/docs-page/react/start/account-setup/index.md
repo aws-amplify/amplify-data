@@ -20,7 +20,7 @@ read -p "Enter email address: " user_email # hit enter
 
 ##### Covering Regions
 
-- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/4-uncovered/start/account-setup.ts](../../../../../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/start/account-setup.ts#11)
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/4-uncovered/start/account-setup.ts](../../../../../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/start/account-setup.ts#L11)
 
 ---
 
@@ -38,7 +38,7 @@ Enter email address: <your-email-address>
 
 ##### Covering Regions
 
-- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/4-uncovered/start/account-setup.ts](../../../../../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/start/account-setup.ts#11)
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/4-uncovered/start/account-setup.ts](../../../../../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/start/account-setup.ts#L11)
 
 ---
 
@@ -67,7 +67,7 @@ aws sso-admin create-account-assignment --instance-arn $ssoArn --target-id $acco
 
 ##### Covering Regions
 
-- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/4-uncovered/start/account-setup.ts](../../../../../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/start/account-setup.ts#11)
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/4-uncovered/start/account-setup.ts](../../../../../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/start/account-setup.ts#L11)
 
 ---
 
@@ -90,7 +90,7 @@ Username: amplify-admin
 
 ##### Covering Regions
 
-- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/4-uncovered/start/account-setup.ts](../../../../../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/start/account-setup.ts#11)
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/4-uncovered/start/account-setup.ts](../../../../../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/start/account-setup.ts#L11)
 
 ---
 
@@ -110,7 +110,7 @@ unzip awscliv2.zip
 
 ##### Covering Regions
 
-- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/4-uncovered/start/account-setup.ts](../../../../../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/start/account-setup.ts#11)
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/4-uncovered/start/account-setup.ts](../../../../../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/start/account-setup.ts#L11)
 
 ---
 
@@ -143,7 +143,7 @@ aws configure sso
 
 ##### Covering Regions
 
-- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/4-uncovered/start/account-setup.ts](../../../../../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/start/account-setup.ts#13)
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/4-uncovered/start/account-setup.ts](../../../../../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/start/account-setup.ts#L13)
 
 ---
 
@@ -166,7 +166,7 @@ CLI default output format [None]:
 
 ##### Covering Regions
 
-- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/4-uncovered/start/account-setup.ts](../../../../../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/start/account-setup.ts#13)
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/4-uncovered/start/account-setup.ts](../../../../../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/start/account-setup.ts#L13)
 
 ---
 
@@ -187,7 +187,7 @@ aws s3 ls --profile default
 
 ##### Covering Regions
 
-- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/4-uncovered/start/account-setup.ts](../../../../../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/start/account-setup.ts#13)
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/4-uncovered/start/account-setup.ts](../../../../../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/start/account-setup.ts#L13)
 
 ---
 
@@ -213,7 +213,7 @@ sso_registration_scopes = sso:account:access
 
 ##### Covering Regions
 
-- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/4-uncovered/start/account-setup.ts](../../../../../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/start/account-setup.ts#13)
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/4-uncovered/start/account-setup.ts](../../../../../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/start/account-setup.ts#L13)
 
 ---
 
@@ -235,7 +235,7 @@ npx ampx sandbox --profile <profile-name>
 
 ##### Covering Regions
 
-- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/4-uncovered/start/account-setup.ts](../../../../../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/start/account-setup.ts#13)
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/4-uncovered/start/account-setup.ts](../../../../../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/start/account-setup.ts#L13)
 
 ---
 
@@ -253,7 +253,7 @@ npx ampx sandbox --profile <value>
 
 ##### Covering Regions
 
-- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/4-uncovered/start/account-setup.ts](../../../../../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/start/account-setup.ts#15)
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/4-uncovered/start/account-setup.ts](../../../../../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/start/account-setup.ts#L15)
 
 ---
 

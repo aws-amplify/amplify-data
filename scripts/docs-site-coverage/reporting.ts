@@ -204,7 +204,7 @@ export class CoverageReport {
         // we also escape `_` chars to avoid them rendering like bold in `__test__` path.
         const visiblePath = this.relativePath(r.path).replace(/_/g, '\\_');
 
-        const link = `${relativePath}#${r.start}`;
+        const link = `${relativePath}#L${r.start}`;
         return `- [${visiblePath}](${link})`;
       })
       .join('\n');
