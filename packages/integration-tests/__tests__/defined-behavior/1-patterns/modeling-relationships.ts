@@ -6,12 +6,16 @@ import {
   mockedGenerateClient,
   optionsAndHeaders,
   useState,
+  expectGraphqlMatches,
 } from '../../utils';
 
 describe('Modeling relationships', () => {
   afterEach(() => {
     jest.clearAllMocks();
   });
+
+  // #region covers dce6a76edb6ca8c8
+  // (many to many)
 
   describe('Model one-to-many relationship', () => {
     // https://docs.amplify.aws/react/build-a-backend/data/data-modeling/relationships/#model-a-one-to-one-relationship
@@ -707,4 +711,175 @@ describe('Modeling relationships', () => {
       // #endregion assertions
     });
   });
+
+  describe('Model multiple relationships between two models', () => {
+    // https://docs.amplify.aws/react/build-a-backend/data/data-modeling/relationships/#model-multiple-relationships-between-two-models
+    // #region covers 0d2b1e843c6bf398
+    const schema = a
+      .schema({
+        Post: a.model({
+          title: a.string().required(),
+          content: a.string().required(),
+          authorId: a.id(),
+          author: a.belongsTo('Person', 'authorId'),
+          editorId: a.id(),
+          editor: a.belongsTo('Person', 'editorId'),
+        }),
+        Person: a.model({
+          name: a.string(),
+          editedPosts: a.hasMany('Post', 'editorId'),
+          authoredPosts: a.hasMany('Post', 'authorId'),
+        }),
+      })
+      .authorization((allow) => allow.publicApiKey());
+    // #endregion
+
+    type Schema = ClientSchema<typeof schema>;
+
+    test('you can fetch the related data [for each independent relationship]', async () => {
+      // #region mocking
+      const { spy, generateClient } = mockedGenerateClient([
+        {
+          data: {
+            getPost: {
+              title: 'some title',
+              content: 'some content',
+              authorId: 'related-author-id',
+              editorId: 'related-editor-id',
+            },
+          },
+        },
+        {
+          data: {
+            getPerson: null,
+          },
+        },
+        {
+          data: {
+            getPerson: null,
+          },
+        },
+      ]);
+      const config = await buildAmplifyConfig(schema);
+      Amplify.configure(config);
+      // #endregion mocking
+
+      // #region covers 3ff516f1c240d2e3
+      // TODO: optional chaining results in es-lint and type issues.
+      // update docs to use non-null assertion or something like `(await post?.author()) || {}`
+      // https://docs.amplify.aws/react/build-a-backend/data/data-modeling/relationships/#model-multiple-relationships-between-two-models
+      const client = generateClient<Schema>();
+
+      const { data: post } = await client.models.Post.get({
+        id: 'SOME_POST_ID',
+      });
+
+      const { data: _author } = await post!.author();
+      const { data: _editor } = await post!.editor();
+      // #endregion
+
+      expect(optionsAndHeaders(spy)).toMatchSnapshot();
+    });
+  });
+
+  describe('Model relationships for models with sort keys in their identifier', () => {
+    test('generates a graphql schema with the corresponding sort keys', async () => {
+      // #region covers b7d6f1236e4afce6
+      const schema = a
+        .schema({
+          Post: a.model({
+            title: a.string().required(),
+            content: a.string().required(),
+            // Reference fields must correspond to identifier fields.
+            authorName: a.string(),
+            authorDoB: a.date(),
+            // Must pass references in the same order as identifiers.
+            author: a.belongsTo('Person', ['authorName', 'authorDoB']),
+          }),
+          Person: a
+            .model({
+              name: a.string().required(),
+              dateOfBirth: a.date().required(),
+              // Must reference all reference fields corresponding to the
+              // identifier of this model.
+              authoredPosts: a.hasMany('Post', ['authorName', 'authorDoB']),
+            })
+            .identifier(['name', 'dateOfBirth']),
+        })
+        .authorization((allow) => allow.publicApiKey());
+      // #endregion
+      const actualGraphql = schema.transform().schema;
+
+      expectGraphqlMatches(
+        actualGraphql,
+        `type Post @model @auth(rules: [{allow: public, provider: apiKey}])
+        {
+          title: String!
+          content: String!
+          authorName: String
+          authorDoB: AWSDate
+          author: Person @belongsTo(references: ["authorName","authorDoB"])
+        }
+        
+        type Person @model @auth(rules: [{allow: public, provider: apiKey}])
+        {
+          name: String! @primaryKey(sortKeyFields: ["dateOfBirth"])
+          dateOfBirth: AWSDate!
+          authoredPosts: [Post] @hasMany(references: ["authorName","authorDoB"])
+        }`,
+      );
+    });
+  });
+
+  describe('Make relationships required or optional', () => {
+    test('generates a graphql schema with the corresponding optionality', async () => {
+      // #region covers 433fee752f917db8
+      const schema = a
+        .schema({
+          Post: a.model({
+            title: a.string().required(),
+            content: a.string().required(),
+            // You must supply an author when creating the post
+            // Author can't be set to `null`.
+            authorId: a.id().required(),
+            author: a.belongsTo('Person', 'authorId'),
+            // You can optionally supply an editor when creating the post.
+            // Editor can also be set to `null`.
+            editorId: a.id(),
+            editor: a.belongsTo('Person', 'editorId'),
+          }),
+          Person: a.model({
+            name: a.string(),
+            editedPosts: a.hasMany('Post', 'editorId'),
+            authoredPosts: a.hasMany('Post', 'authorId'),
+          }),
+        })
+        .authorization((allow) => allow.publicApiKey());
+      // #endregion
+
+      const actualGraphql = schema.transform().schema;
+
+      expectGraphqlMatches(
+        actualGraphql,
+        `type Post @model @auth(rules: [{allow: public, provider: apiKey}])
+        {
+          title: String!
+          content: String!
+          authorId: ID!
+          author: Person @belongsTo(references: ["authorId"])
+          editorId: ID
+          editor: Person @belongsTo(references: ["editorId"])
+        }
+        
+        type Person @model @auth(rules: [{allow: public, provider: apiKey}])
+        {
+          name: String
+          editedPosts: [Post] @hasMany(references: ["editorId"])
+          authoredPosts: [Post] @hasMany(references: ["authorId"])
+        }`,
+      );
+    });
+  });
+
+  // #endregion
 });

@@ -178,6 +178,44 @@ exports[`Modeling relationships Model a "one-to-one" relationship create a "Has 
 ]
 `;
 
+exports[`Modeling relationships Model multiple relationships between two models you can fetch the related data [for each independent relationship] 1`] = `
+[
+  [
+    {
+      "authMode": undefined,
+      "authToken": undefined,
+      "query": "query($id: ID!) { getPost(id: $id) { id title content authorId editorId createdAt updatedAt } }",
+      "variables": {
+        "id": "SOME_POST_ID",
+      },
+    },
+    {},
+  ],
+  [
+    {
+      "authMode": undefined,
+      "authToken": undefined,
+      "query": "query($id: ID!) { getPerson(id: $id) { id name createdAt updatedAt } }",
+      "variables": {
+        "id": "related-author-id",
+      },
+    },
+    {},
+  ],
+  [
+    {
+      "authMode": undefined,
+      "authToken": undefined,
+      "query": "query($id: ID!) { getPerson(id: $id) { id name createdAt updatedAt } }",
+      "variables": {
+        "id": "related-editor-id",
+      },
+    },
+    {},
+  ],
+]
+`;
+
 exports[`Modeling relationships Model one-to-many relationship Delete a "Has Many" relationship between records 1`] = `
 [
   [
