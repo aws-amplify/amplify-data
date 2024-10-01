@@ -17,8 +17,20 @@ jest.mock('../../../src/runtime/internals/operations/list');
 describe('createListConversationsFunction()', () => {
   let listConversations: ConversationRoute['list'];
   const mockConversationName = 'conversation-name';
-  const mockConversation = { id: 'conversation-id' };
-  const mockConversation2 = { id: 'conversation-id-2' };
+  const mockConversation = {
+    id: 'conversation-id',
+    createdAt: '2023-06-01T12:00:00Z',
+    updatedAt: '2023-08-02T12:00:00Z',
+    metadata: {},
+    name: mockConversationName,
+  };
+  const mockConversation2 = {
+    id: 'conversation-id2',
+    createdAt: '2024-09-02T12:00:00Z',
+    updatedAt: '2024-09-05T12:00:00Z',
+    metadata: {},
+    name: mockConversationName,
+  };
   // assert mocks
   const mocklistFactory = listFactory as jest.Mock;
   const mockConvertItemToConversation = convertItemToConversation as jest.Mock;
@@ -63,17 +75,25 @@ describe('createListConversationsFunction()', () => {
         {},
         {},
         mockConversation.id,
+        '2023-06-01T12:00:00Z',
+        '2023-08-02T12:00:00Z',
         mockConversationName,
         {},
         expect.any(Function),
+        {},
+        mockConversationName,
       );
       expect(mockConvertItemToConversation).toHaveBeenCalledWith(
         {},
         {},
         mockConversation2.id,
+        '2024-09-02T12:00:00Z',
+        '2024-09-05T12:00:00Z',
         mockConversationName,
         {},
         expect.any(Function),
+        {},
+        mockConversationName,
       );
     });
 

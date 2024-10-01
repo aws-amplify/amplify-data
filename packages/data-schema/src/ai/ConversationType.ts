@@ -68,11 +68,13 @@ export interface ConversationRoute {
 }
 
 // conversation types
-export interface ConversationSendMessageInput {
+interface ConversationSendMessageInputObject {
   content: ConversationSendMessageInputContent[];
   aiContext?: string | Record<string, any>;
   toolConfiguration?: ToolConfiguration;
 }
+
+export type ConversationSendMessageInput = ConversationSendMessageInputObject | string;
 
 interface ConversationListMessagesInput {
   limit?: number;
@@ -83,6 +85,11 @@ type ConversationOnMessageHandler = (message: ConversationMessage) => void;
 
 export interface Conversation {
   id: string;
+  createdAt: string;
+  updatedAt: string;
+
+  metadata?: Record<string, any>;
+  name?: string;
   /**
    * @experimental
    *
