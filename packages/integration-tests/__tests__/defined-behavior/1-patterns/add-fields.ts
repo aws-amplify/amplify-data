@@ -5,6 +5,7 @@ import {
   buildAmplifyConfig,
   mockedGenerateClient,
   optionsAndHeaders,
+  expectGraphqlMatches,
 } from '../../utils';
 
 describe('Specify a custom field type', () => {
@@ -206,6 +207,7 @@ describe('Specify a custom field type', () => {
     });
 
     describe('client runtime', () => {
+      // #region covers 230bf27a1eb5947d
       Object.entries(opInputResultMap).forEach(
         ([op, { input, resultKey, result }]) => {
           test(`${op}`, async () => {
@@ -233,6 +235,7 @@ describe('Specify a custom field type', () => {
           });
         },
       );
+      // #endregion
     });
   });
 });
@@ -382,6 +385,32 @@ describe('Specify an enum field type', () => {
           });
         },
       );
+
+      test('enums types are enforced on the client', async () => {
+        const { generateClient } = mockedGenerateClient([]);
+        const config = await buildAmplifyConfig(schema);
+        Amplify.configure(config);
+        const client = generateClient<Schema>();
+
+        // #region covers 53b6683a37d9bc50
+        try {
+          await client.models.Post.create({
+            content: 'hello',
+            // WORKS - value auto-completed
+            privacySetting: 'PRIVATE',
+          });
+
+          await client.models.Post.create({
+            content: 'hello',
+            // DOES NOT WORK - TYPE ERROR
+            // @ts-expect-error
+            privacySetting: 'NOT_PUBLIC',
+          });
+        } catch {
+          // runtime not under test
+        }
+        // #endregion
+      });
     });
   });
 
@@ -508,7 +537,7 @@ describe('Specify an enum field type', () => {
   });
 
   describe('Mark field as array', () => {
-    // #region covers 0d26c55b7f416673
+    // #region covers 2b588d62751dc8ee
     const schema = a
       .schema({
         Todo: a.model({
@@ -555,6 +584,98 @@ describe('Specify an enum field type', () => {
         expect.objectContaining({
           content: 'some-content',
           todos: ['a', 'b', 'c'],
+        }),
+      );
+    });
+  });
+
+  describe('Mark field as array', () => {
+    // #region covers 74405b7e731fd3fd
+    const schema = a
+      .schema({
+        Todo: a.model({
+          content: a.string().default('My new Todo'),
+        }),
+      })
+      .authorization((allow) => allow.publicApiKey());
+    // #endregion
+
+    type Schema = ClientSchema<typeof schema>;
+
+    test('Array field is an array type', () => {
+      type _test = Expect<
+        Equal<Schema['Todo']['type']['content'], string | null | undefined>
+      >;
+    });
+
+    test('Allows the defaulted field to be empty during create', async () => {
+      const { generateClient } = mockedGenerateClient([
+        {
+          data: {
+            createTodo: {
+              id: 'some-id',
+              content: 'My new Todo',
+            },
+          },
+        },
+      ]);
+      const config = await buildAmplifyConfig(schema);
+      Amplify.configure(config);
+      const client = generateClient<Schema>();
+
+      // content is not required at creation time.
+      const { data } = await client.models.Todo.create({});
+
+      // non-functional assertions -- the default is provided server-side.
+      // just demonstrating that we the field is still returned normally.
+      expect(data).toEqual(
+        expect.objectContaining({
+          content: 'My new Todo',
+        }),
+      );
+    });
+
+    test('Allows a value for the field during create', async () => {
+      const { generateClient, spy } = mockedGenerateClient([
+        {
+          data: {
+            createTodo: {
+              id: 'some-id',
+              content: 'non-default value',
+            },
+          },
+        },
+      ]);
+      const config = await buildAmplifyConfig(schema);
+      Amplify.configure(config);
+      const client = generateClient<Schema>();
+
+      // content is not required at creation time.
+      const { data } = await client.models.Todo.create({
+        content: 'non-default value',
+      });
+
+      // the defaulted field exists in the request.
+      expectGraphqlMatches(
+        optionsAndHeaders(spy)[0][0].query,
+        `mutation($input: CreateTodoInput!) {
+          createTodo(input: $input) {
+            id content createdAt updatedAt
+          }
+        }`,
+      );
+
+      expect(optionsAndHeaders(spy)[0][0].variables).toEqual({
+        input: {
+          content: 'non-default value',
+        },
+      });
+
+      // non-functional assertions -- the default is provided server-side.
+      // just demonstrating that we the field is still returned normally.
+      expect(data).toEqual(
+        expect.objectContaining({
+          content: 'non-default value',
         }),
       );
     });
