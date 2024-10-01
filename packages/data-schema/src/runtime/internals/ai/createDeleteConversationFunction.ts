@@ -11,7 +11,10 @@ import {
 } from '../../bridge-types';
 import { getFactory } from '../operations/get';
 import { convertItemToConversation } from './convertItemToConversation';
-import { AiAction, getCustomUserAgentDetails } from './getCustomUserAgentDetails';
+import {
+  AiAction,
+  getCustomUserAgentDetails,
+} from './getCustomUserAgentDetails';
 
 export const createDeleteConversationFunction =
   (
