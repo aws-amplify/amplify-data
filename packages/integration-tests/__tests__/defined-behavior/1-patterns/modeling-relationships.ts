@@ -347,6 +347,7 @@ describe('Modeling relationships', () => {
 
   describe('Model a "one-to-one" relationship', () => {
     // https://docs.amplify.aws/react/build-a-backend/data/data-modeling/relationships/#model-a-one-to-one-relationship
+    // #region covers 3807e61bd96dc4fe
     const schema = a
       .schema({
         Cart: a.model({
@@ -364,6 +365,7 @@ describe('Modeling relationships', () => {
         }),
       })
       .authorization((allow) => allow.publicApiKey());
+    // #endregion
     type Schema = ClientSchema<typeof schema>;
 
     test('create a "Has One" relationship between records', async () => {
@@ -402,7 +404,7 @@ describe('Modeling relationships', () => {
       const client = generateClient<Schema>();
       // #endregion mocking
 
-      // #region docs code
+      // #region covers c866224db025011b
       const { data: customer, errors } = await client.models.Customer.create({
         name: 'Rene',
       });
@@ -411,7 +413,7 @@ describe('Modeling relationships', () => {
         itemsX: ['Tomato', 'Ice', 'Mint'],
         customerId: customer?.id,
       });
-      // #endregion docs code
+      // #endregion
 
       // #region assertions
       expect(optionsAndHeaders(spy)).toMatchSnapshot();
@@ -466,7 +468,7 @@ describe('Modeling relationships', () => {
       };
       // #endregion "state" from previous test
 
-      // #region docs code
+      // #region covers 33c181d03567d778
       const { data: newCustomer } = await client.models.Customer.create({
         name: 'Ian',
       });
@@ -475,7 +477,73 @@ describe('Modeling relationships', () => {
         id: cart.id,
         customerId: newCustomer?.id,
       });
-      // #endregion docs code
+      // #endregion
+
+      // #region assertions
+      expect(optionsAndHeaders(spy)).toMatchSnapshot();
+      expect(newCustomer).toEqual(expect.objectContaining(expectedCustomer));
+      expect(updatedCart).toEqual(expect.objectContaining(expectedCart));
+      // #endregion assertions
+    });
+
+    test('Delete a "Has One" relationship between records', async () => {
+      // #region mocking
+      const expectedCustomer = {
+        __typeName: 'Customer',
+        id: 'customer-id-ian',
+        name: 'Ian',
+        updatedAt: '2024-03-01T19:05:44.536Z',
+        createdAt: '2024-03-01T18:05:44.536Z',
+      };
+
+      const expectedCart = {
+        __typeName: 'Cart',
+        id: 'some-cart-id',
+        customerId: null,
+        itemsX: ['Tomato', 'Ice', 'Mint'],
+        updatedAt: '2024-03-01T19:05:44.536Z',
+        createdAt: '2024-03-01T18:05:44.536Z',
+      };
+
+      const { spy, generateClient } = mockedGenerateClient([
+        {
+          data: {
+            createCustomer: expectedCustomer,
+          },
+        },
+        {
+          data: {
+            updateCart: expectedCart,
+          },
+        },
+      ]);
+      const config = await buildAmplifyConfig(schema);
+      Amplify.configure(config);
+      const client = generateClient<Schema>();
+      // #endregion mocking
+
+      // #region "state" from previous test
+      const cart = {
+        id: 'some-cart-id',
+        customerId: 'some-customer-id',
+        itemsX: ['Tomato', 'Ice', 'Mint'],
+        updatedAt: '2024-03-01T19:05:44.536Z',
+        createdAt: '2024-03-01T18:05:44.536Z',
+      };
+
+      const { data: newCustomer } = await client.models.Customer.create({
+        name: 'Ian',
+      });
+      // #endregion
+
+      // #region covers 01f88137bf80d2f9
+      // TODO: fix project.id -> cart.id on docs page
+      // https://docs.amplify.aws/react/build-a-backend/data/data-modeling/relationships/#delete-a-has-one-relationship-between-records
+      const { data: updatedCart } = await client.models.Cart.update({
+        id: cart.id,
+        customerId: null,
+      });
+      // #endregion
 
       // #region assertions
       expect(optionsAndHeaders(spy)).toMatchSnapshot();
@@ -520,7 +588,9 @@ describe('Modeling relationships', () => {
       const client = generateClient<Schema>();
       // #endregion mocking
 
-      // #region App code
+      // #region covers c5f4e8bcdb208fdd
+      // TODO: add missing non-null assertion to docs site
+      // https://docs.amplify.aws/react/build-a-backend/data/data-modeling/relationships/#lazy-load-a-has-one-relationship
       const { data: cart } = await client.models.Cart.get({
         id: 'some-cart-id',
       });
@@ -582,6 +652,58 @@ describe('Modeling relationships', () => {
       // #region assertions
       expect(optionsAndHeaders(spy)).toMatchSnapshot();
       expect(lazyLoadedCart).toEqual(expect.objectContaining(expectedCart));
+      // #endregion assertions
+    });
+
+    test('Eagerly load a "Has One" relationship (hasOne side)', async () => {
+      // Not shown in the docs.
+
+      // #region mocking
+      const expectedCustomer = {
+        __typeName: 'Customer',
+        id: 'customer-id',
+        name: 'Leonard',
+        updatedAt: '2024-03-01T19:05:44.536Z',
+        createdAt: '2024-03-01T18:05:44.536Z',
+      };
+
+      const expectedCart = {
+        __typeName: 'Cart',
+        id: 'MY_CART_ID',
+        customer: expectedCustomer,
+      };
+
+      const { spy, generateClient } = mockedGenerateClient([
+        {
+          data: {
+            getCart: expectedCart,
+          },
+        },
+      ]);
+      const config = await buildAmplifyConfig(schema);
+      Amplify.configure(config);
+      const client = generateClient<Schema>();
+      // #endregion mocking
+
+      // #region covers edb23d7db6fb10cb
+      // TODO: fix docs snippet missing non-null assertion
+      // https://docs.amplify.aws/react/build-a-backend/data/data-modeling/relationships/#eagerly-load-a-has-one-relationship
+      const { data: cart } = await client.models.Cart.get(
+        { id: 'MY_CART_ID' },
+        { selectionSet: ['id', 'customer.*'] },
+      );
+
+      console.log(cart!.customer.id);
+      // #endregion
+
+      // #region assertions
+      expect(optionsAndHeaders(spy)).toMatchSnapshot();
+      expect(cart).toEqual(
+        expect.objectContaining({
+          id: 'MY_CART_ID',
+          customer: expectedCustomer,
+        }),
+      );
       // #endregion assertions
     });
   });
