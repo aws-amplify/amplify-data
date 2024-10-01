@@ -71,6 +71,7 @@ describe('Specify a custom field type', () => {
   });
 
   describe('Inline definition', () => {
+    // #region covers 279bf864a21cd97b
     const schema = a
       .schema({
         Post: a.model({
@@ -82,6 +83,7 @@ describe('Specify a custom field type', () => {
         }),
       })
       .authorization((allow) => allow.publicApiKey());
+    // #endregion
 
     type Schema = ClientSchema<typeof schema>;
 
@@ -149,6 +151,7 @@ describe('Specify a custom field type', () => {
   });
 
   describe('Explicit definition', () => {
+    // #region covers b7fd0a0c85d7fa05
     const schema = a
       .schema({
         Location: a.customType({
@@ -166,6 +169,7 @@ describe('Specify a custom field type', () => {
         }),
       })
       .authorization((allow) => allow.publicApiKey());
+    // #endregion
 
     type Schema = ClientSchema<typeof schema>;
 
@@ -296,6 +300,7 @@ describe('Specify an enum field type', () => {
   // #endregion
 
   describe('Inline definition', () => {
+    // #region covers 35bf03594722226f
     const schema = a
       .schema({
         Post: a.model({
@@ -304,6 +309,7 @@ describe('Specify an enum field type', () => {
         }),
       })
       .authorization((allow) => allow.publicApiKey());
+    // #endregion
 
     type Schema = ClientSchema<typeof schema>;
 
@@ -380,6 +386,7 @@ describe('Specify an enum field type', () => {
   });
 
   describe('Explicit definition', () => {
+    // #region covers f88634036e3d5189
     const schema = a
       .schema({
         PrivacySetting: a.enum(['PRIVATE', 'FRIENDS_ONLY', 'PUBLIC']),
@@ -394,6 +401,7 @@ describe('Specify an enum field type', () => {
         }),
       })
       .authorization((allow) => allow.publicApiKey());
+    // #endregion
 
     type Schema = ClientSchema<typeof schema>;
 
@@ -435,8 +443,10 @@ describe('Specify an enum field type', () => {
         Amplify.configure(config);
         const client = generateClient<Schema>();
 
+        // #region covers 1f73a4fff6b93118
         const enumValues = client.enums.PrivacySetting.values();
         expect(enumValues).toStrictEqual(['PRIVATE', 'FRIENDS_ONLY', 'PUBLIC']);
+        // #endregion
       });
 
       Object.entries(opInputResultMap).forEach(
@@ -465,6 +475,87 @@ describe('Specify an enum field type', () => {
             expect(data).toEqual(normalizedResult);
           });
         },
+      );
+    });
+  });
+
+  describe('Mark field as required', () => {
+    // #region covers 0d26c55b7f416673
+    const schema = a
+      .schema({
+        Todo: a.model({
+          content: a.string().required(),
+        }),
+      })
+      .authorization((allow) => allow.publicApiKey());
+    // #endregion
+
+    type Schema = ClientSchema<typeof schema>;
+
+    test('Required field is non-nullable', () => {
+      type _test = Expect<Equal<Schema['Todo']['type']['content'], string>>;
+    });
+
+    test('Required field must be provided during create', async () => {
+      const { generateClient } = mockedGenerateClient([]);
+      const config = await buildAmplifyConfig(schema);
+      Amplify.configure(config);
+      const client = generateClient<Schema>();
+
+      // @ts-expect-error
+      await expect(client.models.Todo.create({})).rejects.toThrow();
+    });
+  });
+
+  describe('Mark field as array', () => {
+    // #region covers 0d26c55b7f416673
+    const schema = a
+      .schema({
+        Todo: a.model({
+          content: a.string().required(),
+          todos: a.string().array(),
+        }),
+      })
+      .authorization((allow) => allow.publicApiKey());
+    // #endregion
+
+    type Schema = ClientSchema<typeof schema>;
+
+    test('Array field is an array type', () => {
+      type _test = Expect<
+        Equal<
+          Schema['Todo']['type']['todos'],
+          (string | null)[] | null | undefined
+        >
+      >;
+    });
+
+    test('Accepts arrays during create', async () => {
+      const { generateClient } = mockedGenerateClient([
+        {
+          data: {
+            createTodo: {
+              id: 'some-id',
+              content: 'some-content',
+              todos: ['a', 'b', 'c'],
+            },
+          },
+        },
+      ]);
+      const config = await buildAmplifyConfig(schema);
+      Amplify.configure(config);
+      const client = generateClient<Schema>();
+
+      const { data } = await client.models.Todo.create({
+        content: 'some-content',
+        todos: ['a', 'b', 'c'],
+      });
+
+      expect(data).toEqual(
+        expect.objectContaining({
+          content: 'some-content',
+          todos: ['a', 'b', 'c'],
+        }),
       );
     });
   });
