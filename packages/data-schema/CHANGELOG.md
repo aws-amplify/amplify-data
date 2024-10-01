@@ -1,5 +1,11 @@
 # @aws-amplify/data-schema
 
+## 1.8.0
+
+### Minor Changes
+
+- 6eb40fc: Add conversation delete api, re-organized AiAction enums to align with Amplify-JS"
+
 ## 1.7.0
 
 ### Minor Changes
