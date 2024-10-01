@@ -17,13 +17,13 @@ location: a.customType({
 }),
 content: a.string(),
   }),
-});
+}).authorization((allow) => allow.publicApiKey());
 
 ~~~
 
 | | |
 | -- | -- |
-| Hash | `43905c308842f472` |
+| Hash | `279bf864a21cd97b` |
 | Covered | ❌ |
 
 ##### Covering Regions
@@ -49,13 +49,13 @@ content: a.string(),
   User: a.model({
 lastKnownLocation: a.ref("Location"),
   }),
-});
+}).authorization((allow) => allow.publicApiKey());
 
 ~~~
 
 | | |
 | -- | -- |
-| Hash | `f888c3d166c2cecc` |
+| Hash | `b7fd0a0c85d7fa05` |
 | Covered | ❌ |
 
 ##### Covering Regions
@@ -97,13 +97,13 @@ a.schema({
 privacySetting: a.enum(["PRIVATE", "FRIENDS_ONLY", "PUBLIC"]),
 content: a.string(),
   }),
-});
+}).authorization((allow) => allow.publicApiKey());
 
 ~~~
 
 | | |
 | -- | -- |
-| Hash | `820795dcb914b7d6` |
+| Hash | `35bf03594722226f` |
 | Covered | ❌ |
 
 ##### Covering Regions
@@ -126,13 +126,13 @@ privacySetting: a.ref("PrivacySetting"),
   Video: a.model({
 privacySetting: a.ref("PrivacySetting"),
   }),
-});
+}).authorization((allow) => allow.publicApiKey());
 
 ~~~
 
 | | |
 | -- | -- |
-| Hash | `3285944c721301a5` |
+| Hash | `f88634036e3d5189` |
 | Covered | ❌ |
 
 ##### Covering Regions
@@ -188,17 +188,19 @@ const availableSettings = client.enums.PrivacySetting.values();
 #### `Unnamed Snippet`
 
 ~~~
-const schema = a.schema({
-  Todo: a.model({
-content: a.string().required(),
-  }),
-});
+const schema = a
+  .schema({
+Todo: a.model({
+  content: a.string().required(),
+}),
+  })
+  .authorization((allow) => allow.publicApiKey());
 
 ~~~
 
 | | |
 | -- | -- |
-| Hash | `cdf4d0b665542edb` |
+| Hash | `0d26c55b7f416673` |
 | Covered | ❌ |
 
 ##### Covering Regions
@@ -210,18 +212,20 @@ content: a.string().required(),
 #### `Unnamed Snippet`
 
 ~~~
-const schema = a.schema({
-  Todo: a.model({
-content: a.string().required(),
-notes: a.string().array(),
-  }),
-});
+const schema = a
+  .schema({
+Todo: a.model({
+  content: a.string().required(),
+  notes: a.string().array(),
+}),
+  })
+  .authorization((allow) => allow.publicApiKey());
 
 ~~~
 
 | | |
 | -- | -- |
-| Hash | `dc3c19f2f62eb37c` |
+| Hash | `2b588d62751dc8ee` |
 | Covered | ❌ |
 
 ##### Covering Regions
@@ -233,17 +237,19 @@ notes: a.string().array(),
 #### `Unnamed Snippet`
 
 ~~~
-const schema = a.schema({
-  Todo: a.model({
-content: a.string().default("My new Todo"),
-  }),
-});
+const schema = a
+  .schema({
+Todo: a.model({
+  content: a.string().default("My new Todo"),
+}),
+  })
+  .authorization((allow) => allow.publicApiKey());
 
 ~~~
 
 | | |
 | -- | -- |
-| Hash | `9f1c692ef6b1f458` |
+| Hash | `74405b7e731fd3fd` |
 | Covered | ❌ |
 
 ##### Covering Regions

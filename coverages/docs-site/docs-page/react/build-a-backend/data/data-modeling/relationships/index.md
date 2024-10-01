@@ -9,32 +9,30 @@ Coverage: 0.0%
 #### `Unnamed Snippet`
 
 ~~~
-const schema = a.schema({
-  Member: a
-.model({
+const schema = a
+  .schema({
+Member: a.model({
   name: a.string().required(),
   // 1. Create a reference field
   teamId: a.id(),
   // 2. Create a belongsTo relationship with the reference field
   team: a.belongsTo("Team", "teamId"),
-})
-.authorization((allow) => [allow.publicApiKey()]),
+}),
 
-  Team: a
-.model({
+Team: a.model({
   mantra: a.string().required(),
   // 3. Create a hasMany relationship with the reference field
   //    from the `Member`s model.
   members: a.hasMany("Member", "teamId"),
-})
-.authorization((allow) => [allow.publicApiKey()]),
-});
+}),
+  })
+  .authorization((allow) => allow.publicApiKey());
 
 ~~~
 
 | | |
 | -- | -- |
-| Hash | `df45cee6e4cb42c5` |
+| Hash | `0d0ad5f8c1b991de` |
 | Covered | ❌ |
 
 ##### Covering Regions
@@ -162,27 +160,29 @@ teamWithMembers.members.forEach((member) => console.log(member.id));
 #### `Unnamed Snippet`
 
 ~~~
-const schema = a.schema({
-  Cart: a.model({
-items: a.string().required().array(),
-// 1. Create reference field
-customerId: a.id(),
-// 2. Create relationship field with the reference field
-customer: a.belongsTo("Customer", "customerId"),
-  }),
-  Customer: a.model({
-name: a.string(),
-// 3. Create relationship field with the reference field
-//    from the Cart model
-activeCart: a.hasOne("Cart", "customerId"),
-  }),
-});
+const schema = a
+  .schema({
+Cart: a.model({
+  items: a.string().required().array(),
+  // 1. Create reference field
+  customerId: a.id(),
+  // 2. Create relationship field with the reference field
+  customer: a.belongsTo("Customer", "customerId"),
+}),
+Customer: a.model({
+  name: a.string(),
+  // 3. Create relationship field with the reference field
+  //    from the Cart model
+  activeCart: a.hasOne("Cart", "customerId"),
+}),
+  })
+  .authorization((allow) => allow.publicApiKey());
 
 ~~~
 
 | | |
 | -- | -- |
-| Hash | `6c5b797209223c96` |
+| Hash | `3807e61bd96dc4fe` |
 | Covered | ❌ |
 
 ##### Covering Regions
@@ -334,13 +334,13 @@ Tag: a.model({
   posts: a.hasMany("PostTag", "tagId"),
 }),
   })
-  .authorization((allow) => [allow.publicApiKey()]);
+  .authorization((allow) => allow.publicApiKey());
 
 ~~~
 
 | | |
 | -- | -- |
-| Hash | `5fc48807eeb6242d` |
+| Hash | `dce6a76edb6ca8c8` |
 | Covered | ❌ |
 
 ##### Covering Regions
@@ -368,13 +368,13 @@ Person: a.model({
   authoredPosts: a.hasMany("Post", "authorId"),
 }),
   })
-  .authorization((allow) => [allow.publicApiKey()]);
+  .authorization((allow) => allow.publicApiKey());
 
 ~~~
 
 | | |
 | -- | -- |
-| Hash | `e571f5db22f9a3e9` |
+| Hash | `0d2b1e843c6bf398` |
 | Covered | ❌ |
 
 ##### Covering Regions
@@ -430,13 +430,13 @@ Person: a
   })
   .identifier(["name", "dateOfBirth"]),
   })
-  .authorization((allow) => [allow.publicApiKey()]);
+  .authorization((allow) => allow.publicApiKey());
 
 ~~~
 
 | | |
 | -- | -- |
-| Hash | `f9a22fa228ec8309` |
+| Hash | `b7d6f1236e4afce6` |
 | Covered | ❌ |
 
 ##### Covering Regions
@@ -448,31 +448,33 @@ Person: a
 #### `Unnamed Snippet`
 
 ~~~
-const schema = a.schema({
-  Post: a.model({
-title: a.string().required(),
-content: a.string().required(),
-// You must supply an author when creating the post
-// Author can't be set to `null`.
-authorId: a.id().required(),
-author: a.belongsTo("Person", "authorId"),
-// You can optionally supply an editor when creating the post.
-// Editor can also be set to `null`.
-editorId: a.id(),
-editor: a.belongsTo("Person", "editorId"),
-  }),
-  Person: a.model({
-name: a.string(),
-editedPosts: a.hasMany("Post", "editorId"),
-authoredPosts: a.hasMany("Post", "authorId"),
-  }),
-});
+const schema = a
+  .schema({
+Post: a.model({
+  title: a.string().required(),
+  content: a.string().required(),
+  // You must supply an author when creating the post
+  // Author can't be set to `null`.
+  authorId: a.id().required(),
+  author: a.belongsTo("Person", "authorId"),
+  // You can optionally supply an editor when creating the post.
+  // Editor can also be set to `null`.
+  editorId: a.id(),
+  editor: a.belongsTo("Person", "editorId"),
+}),
+Person: a.model({
+  name: a.string(),
+  editedPosts: a.hasMany("Post", "editorId"),
+  authoredPosts: a.hasMany("Post", "authorId"),
+}),
+  })
+  .authorization((allow) => allow.publicApiKey());
 
 ~~~
 
 | | |
 | -- | -- |
-| Hash | `129f8c5aae309b52` |
+| Hash | `433fee752f917db8` |
 | Covered | ❌ |
 
 ##### Covering Regions
