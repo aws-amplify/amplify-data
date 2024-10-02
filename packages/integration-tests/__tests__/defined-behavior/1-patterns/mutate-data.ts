@@ -21,6 +21,7 @@ describe('Create, update, and delete application data', () => {
   // https://docs.amplify.aws/gen2/build-a-backend/data/mutate-data/
 
   // data/resource.ts
+  // #region covers 93fbc94ef4f108d8
   const schema = a.schema({
     Todo: a
       .model({
@@ -34,6 +35,7 @@ describe('Create, update, and delete application data', () => {
         allow.publicApiKey().to(['read']),
       ]),
   });
+  // #endregion
   type Schema = ClientSchema<typeof schema>;
 
   afterEach(() => {
@@ -54,7 +56,7 @@ describe('Create, update, and delete application data', () => {
     const config = await buildAmplifyConfig(schema);
     // #endregion mocking
 
-    // #region covers 3137a2b60aedf773
+    // #region covers 3137a2b60aedf773, 95716a52d6270a63
     // App.tsx
     Amplify.configure(config);
     const client = generateClient<Schema>();

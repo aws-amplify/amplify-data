@@ -4,7 +4,7 @@
 
 Page: https://docs.amplify.aws/react/build-a-backend/data/data-modeling/secondary-index/
 
-Coverage: 0.0%
+Coverage: 100.0%
 
 #### `amplify/data/resource.ts`
 
@@ -25,11 +25,12 @@ export const schema = a.schema({
 | | |
 | -- | -- |
 | Hash | `22ba8c0684be1400` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/2-expected-use/primary-and-secondary-indexes.ts](../../../../../../../../packages/integration-tests/__tests__/defined-behavior/2-expected-use/primary-and-secondary-indexes.ts#L403)
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/1-patterns/secondary-indexes.ts](../../../../../../../../packages/integration-tests/__tests__/defined-behavior/1-patterns/secondary-indexes.ts#L19)
 
 ---
 
@@ -51,11 +52,11 @@ accountRepresentativeId: "YOUR_REP_ID",
 | | |
 | -- | -- |
 | Hash | `00052f6a61b4a992` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/1-patterns/secondary-indexes.ts](../../../../../../../../packages/integration-tests/__tests__/defined-behavior/1-patterns/secondary-indexes.ts#L53)
 
 ---
 
@@ -80,11 +81,11 @@ export const schema = a.schema({
 | | |
 | -- | -- |
 | Hash | `956e34083f456707` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/1-patterns/secondary-indexes.ts](../../../../../../../../packages/integration-tests/__tests__/defined-behavior/1-patterns/secondary-indexes.ts#L77)
 
 ---
 
@@ -104,11 +105,11 @@ name: {
 | | |
 | -- | -- |
 | Hash | `d839094b3650525c` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/1-patterns/secondary-indexes.ts](../../../../../../../../packages/integration-tests/__tests__/defined-behavior/1-patterns/secondary-indexes.ts#L113)
 
 ---
 
@@ -133,11 +134,11 @@ const schema = a.schema({
 | | |
 | -- | -- |
 | Hash | `1b750f5a650f2978` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/1-patterns/secondary-indexes.ts](../../../../../../../../packages/integration-tests/__tests__/defined-behavior/1-patterns/secondary-indexes.ts#L142)
 
 ---
 
@@ -153,11 +154,11 @@ const { data, errors } = await client.models.Customer.listByRep({
 | | |
 | -- | -- |
 | Hash | `4df128e1af50d457` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/1-patterns/secondary-indexes.ts](../../../../../../../../packages/integration-tests/__tests__/defined-behavior/1-patterns/secondary-indexes.ts#L179)
 
 ---
 
@@ -182,11 +183,11 @@ const schema = a.schema({
 | | |
 | -- | -- |
 | Hash | `295dee0505f4abd0` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/1-patterns/secondary-indexes.ts](../../../../../../../../packages/integration-tests/__tests__/defined-behavior/1-patterns/secondary-indexes.ts#L202)
 
 ---
 

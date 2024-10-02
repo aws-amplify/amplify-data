@@ -72,7 +72,7 @@ describe('Specify a custom field type', () => {
   });
 
   describe('Inline definition', () => {
-    // #region covers 279bf864a21cd97b
+    // #region covers 279bf864a21cd97b, 93fbc94ef4f108d8
     const schema = a
       .schema({
         Post: a.model({

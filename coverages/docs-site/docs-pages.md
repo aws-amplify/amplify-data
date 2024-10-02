@@ -32,9 +32,9 @@
 | /react/build-a-backend/data/customize-authz/using-oidc-authorization-provider/ | [docs](https://docs.amplify.aws/react/build-a-backend/data/customize-authz/using-oidc-authorization-provider/)&nbsp;/&nbsp;[report](docs-page/react/build-a-backend/data/customize-authz/using-oidc-authorization-provider/index.md) | 0 | 2 | 0.0% |
 | /react/build-a-backend/data/data-modeling/ | [docs](https://docs.amplify.aws/react/build-a-backend/data/data-modeling/)&nbsp;/&nbsp;[report](docs-page/react/build-a-backend/data/data-modeling/index.md) | 0 | 2 | 0.0% |
 | /react/build-a-backend/data/data-modeling/add-fields/ | [docs](https://docs.amplify.aws/react/build-a-backend/data/data-modeling/add-fields/)&nbsp;/&nbsp;[report](docs-page/react/build-a-backend/data/data-modeling/add-fields/index.md) | 10 | 10 | 100.0% |
-| /react/build-a-backend/data/data-modeling/identifiers/ | [docs](https://docs.amplify.aws/react/build-a-backend/data/data-modeling/identifiers/)&nbsp;/&nbsp;[report](docs-page/react/build-a-backend/data/data-modeling/identifiers/index.md) | 0 | 6 | 0.0% |
+| /react/build-a-backend/data/data-modeling/identifiers/ | [docs](https://docs.amplify.aws/react/build-a-backend/data/data-modeling/identifiers/)&nbsp;/&nbsp;[report](docs-page/react/build-a-backend/data/data-modeling/identifiers/index.md) | 6 | 6 | 100.0% |
 | /react/build-a-backend/data/data-modeling/relationships/ | [docs](https://docs.amplify.aws/react/build-a-backend/data/data-modeling/relationships/)&nbsp;/&nbsp;[report](docs-page/react/build-a-backend/data/data-modeling/relationships/index.md) | 17 | 17 | 100.0% |
-| /react/build-a-backend/data/data-modeling/secondary-index/ | [docs](https://docs.amplify.aws/react/build-a-backend/data/data-modeling/secondary-index/)&nbsp;/&nbsp;[report](docs-page/react/build-a-backend/data/data-modeling/secondary-index/index.md) | 0 | 7 | 0.0% |
+| /react/build-a-backend/data/data-modeling/secondary-index/ | [docs](https://docs.amplify.aws/react/build-a-backend/data/data-modeling/secondary-index/)&nbsp;/&nbsp;[report](docs-page/react/build-a-backend/data/data-modeling/secondary-index/index.md) | 7 | 7 | 100.0% |
 | /react/build-a-backend/data/mutate-data/ | [docs](https://docs.amplify.aws/react/build-a-backend/data/mutate-data/)&nbsp;/&nbsp;[report](docs-page/react/build-a-backend/data/mutate-data/index.md) | 0 | 6 | 0.0% |
 | /react/build-a-backend/data/optimistic-ui/ | [docs](https://docs.amplify.aws/react/build-a-backend/data/optimistic-ui/)&nbsp;/&nbsp;[report](docs-page/react/build-a-backend/data/optimistic-ui/index.md) | 0 | 12 | 0.0% |
 | /react/build-a-backend/data/override-resources/ | [docs](https://docs.amplify.aws/react/build-a-backend/data/override-resources/)&nbsp;/&nbsp;[report](docs-page/react/build-a-backend/data/override-resources/index.md) | 0 | 6 | 0.0% |
@@ -79,6 +79,6 @@
 | /react/start/account-setup/ | [docs](https://docs.amplify.aws/react/start/account-setup/)&nbsp;/&nbsp;[report](docs-page/react/start/account-setup/index.md) | 11 | 11 | 100.0% |
 | /react/start/manual-installation/ | [docs](https://docs.amplify.aws/react/start/manual-installation/)&nbsp;/&nbsp;[report](docs-page/react/start/manual-installation/index.md) | 11 | 11 | 100.0% |
 | /react/start/quickstart/ | [docs](https://docs.amplify.aws/react/start/quickstart/)&nbsp;/&nbsp;[report](docs-page/react/start/quickstart/index.md) | 11 | 11 | 100.0% |
-| TOTAL | | 125 | 505 | 24.8% |
+| TOTAL | | 138 | 505 | 27.3% |
 
 [<- Back to summary](./readme.md)
