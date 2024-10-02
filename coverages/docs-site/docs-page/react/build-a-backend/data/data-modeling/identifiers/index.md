@@ -1,6 +1,6 @@
 [<- Back to index](../../../../../../docs-pages.md)
 
-#  Snippets
+# Snippets
 
 Page: https://docs.amplify.aws/react/build-a-backend/data/data-modeling/identifiers/
 
@@ -8,7 +8,7 @@ Coverage: 100.0%
 
 #### `Unnamed Snippet`
 
-~~~
+```
 const schema = a.schema({
   Todo: a
 .model({
@@ -18,12 +18,12 @@ const schema = a.schema({
 .authorization((allow) => [allow.publicApiKey()]),
 });
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `93fbc94ef4f108d8` |
-| Covered | ✅ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `93fbc94ef4f108d8` |
+| Covered | ✅                 |
 
 ##### Covering Regions
 
@@ -34,7 +34,7 @@ const schema = a.schema({
 
 #### `Unnamed Snippet`
 
-~~~
+```
 const client = generateClient<Schema>();
 
 const todo = await client.models.Todo.create({
@@ -43,12 +43,12 @@ const todo = await client.models.Todo.create({
 });
 console.log(`New Todo created: ${todo.id}`); // New Todo created: 5DB6B4CC-CD41-49F5-9844-57C0AB506B69
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `95716a52d6270a63` |
-| Covered | ✅ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `95716a52d6270a63` |
+| Covered | ✅                 |
 
 ##### Covering Regions
 
@@ -58,7 +58,7 @@ console.log(`New Todo created: ${todo.id}`); // New Todo created: 5DB6B4CC-CD41-
 
 #### `Unnamed Snippet`
 
-~~~
+```
 const schema = a.schema({
   Todo: a
 .model({
@@ -70,22 +70,25 @@ const schema = a.schema({
 .authorization((allow) => [allow.publicApiKey()]),
 });
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `d619a12c5b9f68b2` |
-| Covered | ✅ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `d619a12c5b9f68b2` |
+| Covered | ✅                 |
 
 ##### Covering Regions
 
 - [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/1-patterns/identifiers.ts](../../../../../../../../packages/integration-tests/__tests__/defined-behavior/1-patterns/identifiers.ts#L19)
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/2-expected-use/primary-and-secondary-indexes.ts](../../../../../../../../packages/integration-tests/__tests__/defined-behavior/2-expected-use/primary-and-secondary-indexes.ts#L31)
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/2-expected-use/primary-and-secondary-indexes.ts](../../../../../../../../packages/integration-tests/__tests__/defined-behavior/2-expected-use/primary-and-secondary-indexes.ts#L133)
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/2-expected-use/primary-and-secondary-indexes.ts](../../../../../../../../packages/integration-tests/__tests__/defined-behavior/2-expected-use/primary-and-secondary-indexes.ts#L253)
 
 ---
 
 #### `Unnamed Snippet`
 
-~~~
+```
 const client = generateClient<Schema>();
 
 const { data: todo, errors } = await client.models.Todo.create({
@@ -95,12 +98,12 @@ const { data: todo, errors } = await client.models.Todo.create({
 });
 console.log(`New Todo created: ${todo.todoId}`); // New Todo created: MyUniqueTodoId
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `6ffb6c45060a39f9` |
-| Covered | ✅ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `6ffb6c45060a39f9` |
+| Covered | ✅                 |
 
 ##### Covering Regions
 
@@ -110,7 +113,7 @@ console.log(`New Todo created: ${todo.todoId}`); // New Todo created: MyUniqueTo
 
 #### `Unnamed Snippet`
 
-~~~
+```
 const schema = a.schema({
   StoreBranch: a
 .model({
@@ -126,12 +129,12 @@ const schema = a.schema({
 .authorization((allow) => [allow.publicApiKey()]),
 });
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `dc84893fe413f132` |
-| Covered | ✅ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `dc84893fe413f132` |
+| Covered | ✅                 |
 
 ##### Covering Regions
 
@@ -141,7 +144,7 @@ const schema = a.schema({
 
 #### `Unnamed Snippet`
 
-~~~
+```
 const client = generateClient<Schema>();
 
 const branch = await client.models.StoreBranch.get({
@@ -149,12 +152,12 @@ const branch = await client.models.StoreBranch.get({
   name: "Downtown",
 }); // All identifier fields are required when retrieving an item
 
-~~~
+```
 
-| | |
-| -- | -- |
-| Hash | `7a1fb3aa2c192ea3` |
-| Covered | ✅ |
+|         |                    |
+| ------- | ------------------ |
+| Hash    | `7a1fb3aa2c192ea3` |
+| Covered | ✅                 |
 
 ##### Covering Regions
 
