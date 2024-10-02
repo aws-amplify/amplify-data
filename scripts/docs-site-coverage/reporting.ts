@@ -243,6 +243,7 @@ export class CoverageReport {
     );
 
     const summaryLines = writtenSnippetReports
+      .sort((a, b) => (a.url > b.url ? 1 : -1))
       .map((s) => this.formatPageCoverageSummaryRow(s))
       .join('\n');
 
