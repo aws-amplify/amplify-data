@@ -4,42 +4,40 @@
 
 Page: https://docs.amplify.aws/react/build-a-backend/data/data-modeling/relationships/
 
-Coverage: 0.0%
+Coverage: 100.0%
 
 #### `Unnamed Snippet`
 
 ~~~
-const schema = a.schema({
-  Member: a
-.model({
+const schema = a
+  .schema({
+Member: a.model({
   name: a.string().required(),
   // 1. Create a reference field
   teamId: a.id(),
   // 2. Create a belongsTo relationship with the reference field
   team: a.belongsTo("Team", "teamId"),
-})
-.authorization((allow) => [allow.publicApiKey()]),
+}),
 
-  Team: a
-.model({
+Team: a.model({
   mantra: a.string().required(),
   // 3. Create a hasMany relationship with the reference field
   //    from the `Member`s model.
   members: a.hasMany("Member", "teamId"),
-})
-.authorization((allow) => [allow.publicApiKey()]),
-});
+}),
+  })
+  .authorization((allow) => allow.publicApiKey());
 
 ~~~
 
 | | |
 | -- | -- |
-| Hash | `df45cee6e4cb42c5` |
-| Covered | ❌ |
+| Hash | `0d0ad5f8c1b991de` |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/1-patterns/modeling-relationships.ts](../../../../../../../../packages/integration-tests/__tests__/defined-behavior/1-patterns/modeling-relationships.ts#L22)
 
 ---
 
@@ -60,11 +58,11 @@ const { data: member } = await client.models.Member.create({
 | | |
 | -- | -- |
 | Hash | `dc7d0a1a6d72510a` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/1-patterns/modeling-relationships.ts](../../../../../../../../packages/integration-tests/__tests__/defined-behavior/1-patterns/modeling-relationships.ts#L81)
 
 ---
 
@@ -85,11 +83,11 @@ await client.models.Member.update({
 | | |
 | -- | -- |
 | Hash | `06214f3775b02364` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/1-patterns/modeling-relationships.ts](../../../../../../../../packages/integration-tests/__tests__/defined-behavior/1-patterns/modeling-relationships.ts#L135)
 
 ---
 
@@ -106,11 +104,11 @@ await client.models.Member.update({
 | | |
 | -- | -- |
 | Hash | `f2ae6e917b0bc1b2` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/1-patterns/modeling-relationships.ts](../../../../../../../../packages/integration-tests/__tests__/defined-behavior/1-patterns/modeling-relationships.ts#L176)
 
 ---
 
@@ -128,11 +126,11 @@ members.forEach((member) => console.log(member.id));
 | | |
 | -- | -- |
 | Hash | `b02d88e15c6256e8` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/1-patterns/modeling-relationships.ts](../../../../../../../../packages/integration-tests/__tests__/defined-behavior/1-patterns/modeling-relationships.ts#L225)
 
 ---
 
@@ -151,43 +149,45 @@ teamWithMembers.members.forEach((member) => console.log(member.id));
 | | |
 | -- | -- |
 | Hash | `ae43c44bff14af30` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/1-patterns/modeling-relationships.ts](../../../../../../../../packages/integration-tests/__tests__/defined-behavior/1-patterns/modeling-relationships.ts#L277)
 
 ---
 
 #### `Unnamed Snippet`
 
 ~~~
-const schema = a.schema({
-  Cart: a.model({
-items: a.string().required().array(),
-// 1. Create reference field
-customerId: a.id(),
-// 2. Create relationship field with the reference field
-customer: a.belongsTo("Customer", "customerId"),
-  }),
-  Customer: a.model({
-name: a.string(),
-// 3. Create relationship field with the reference field
-//    from the Cart model
-activeCart: a.hasOne("Cart", "customerId"),
-  }),
-});
+const schema = a
+  .schema({
+Cart: a.model({
+  items: a.string().required().array(),
+  // 1. Create reference field
+  customerId: a.id(),
+  // 2. Create relationship field with the reference field
+  customer: a.belongsTo("Customer", "customerId"),
+}),
+Customer: a.model({
+  name: a.string(),
+  // 3. Create relationship field with the reference field
+  //    from the Cart model
+  activeCart: a.hasOne("Cart", "customerId"),
+}),
+  })
+  .authorization((allow) => allow.publicApiKey());
 
 ~~~
 
 | | |
 | -- | -- |
-| Hash | `6c5b797209223c96` |
-| Covered | ❌ |
+| Hash | `3807e61bd96dc4fe` |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/1-patterns/modeling-relationships.ts](../../../../../../../../packages/integration-tests/__tests__/defined-behavior/1-patterns/modeling-relationships.ts#L354)
 
 ---
 
@@ -208,11 +208,11 @@ const { data: cart } = await client.models.Cart.create({
 | | |
 | -- | -- |
 | Hash | `c866224db025011b` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/1-patterns/modeling-relationships.ts](../../../../../../../../packages/integration-tests/__tests__/defined-behavior/1-patterns/modeling-relationships.ts#L411)
 
 ---
 
@@ -233,11 +233,11 @@ await client.models.Cart.update({
 | | |
 | -- | -- |
 | Hash | `33c181d03567d778` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/1-patterns/modeling-relationships.ts](../../../../../../../../packages/integration-tests/__tests__/defined-behavior/1-patterns/modeling-relationships.ts#L475)
 
 ---
 
@@ -254,11 +254,11 @@ await client.models.Cart.update({
 | | |
 | -- | -- |
 | Hash | `01f88137bf80d2f9` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/1-patterns/modeling-relationships.ts](../../../../../../../../packages/integration-tests/__tests__/defined-behavior/1-patterns/modeling-relationships.ts#L543)
 
 ---
 
@@ -273,11 +273,11 @@ const { data: customer } = await cart.customer();
 | | |
 | -- | -- |
 | Hash | `c5f4e8bcdb208fdd` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/1-patterns/modeling-relationships.ts](../../../../../../../../packages/integration-tests/__tests__/defined-behavior/1-patterns/modeling-relationships.ts#L595)
 
 ---
 
@@ -296,11 +296,11 @@ console.log(cart.customer.id);
 | | |
 | -- | -- |
 | Hash | `edb23d7db6fb10cb` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/1-patterns/modeling-relationships.ts](../../../../../../../../packages/integration-tests/__tests__/defined-behavior/1-patterns/modeling-relationships.ts#L692)
 
 ---
 
@@ -334,18 +334,18 @@ Tag: a.model({
   posts: a.hasMany("PostTag", "tagId"),
 }),
   })
-  .authorization((allow) => [allow.publicApiKey()]);
+  .authorization((allow) => allow.publicApiKey());
 
 ~~~
 
 | | |
 | -- | -- |
-| Hash | `5fc48807eeb6242d` |
-| Covered | ❌ |
+| Hash | `dce6a76edb6ca8c8` |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/1-patterns/modeling-relationships.ts](../../../../../../../../packages/integration-tests/__tests__/defined-behavior/1-patterns/modeling-relationships.ts#L17)
 
 ---
 
@@ -368,18 +368,18 @@ Person: a.model({
   authoredPosts: a.hasMany("Post", "authorId"),
 }),
   })
-  .authorization((allow) => [allow.publicApiKey()]);
+  .authorization((allow) => allow.publicApiKey());
 
 ~~~
 
 | | |
 | -- | -- |
-| Hash | `e571f5db22f9a3e9` |
-| Covered | ❌ |
+| Hash | `0d2b1e843c6bf398` |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/1-patterns/modeling-relationships.ts](../../../../../../../../packages/integration-tests/__tests__/defined-behavior/1-patterns/modeling-relationships.ts#L717)
 
 ---
 
@@ -398,11 +398,11 @@ const { data: editor } = await post?.editor();
 | | |
 | -- | -- |
 | Hash | `3ff516f1c240d2e3` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/1-patterns/modeling-relationships.ts](../../../../../../../../packages/integration-tests/__tests__/defined-behavior/1-patterns/modeling-relationships.ts#L767)
 
 ---
 
@@ -430,54 +430,56 @@ Person: a
   })
   .identifier(["name", "dateOfBirth"]),
   })
-  .authorization((allow) => [allow.publicApiKey()]);
+  .authorization((allow) => allow.publicApiKey());
 
 ~~~
 
 | | |
 | -- | -- |
-| Hash | `f9a22fa228ec8309` |
-| Covered | ❌ |
+| Hash | `b7d6f1236e4afce6` |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/1-patterns/modeling-relationships.ts](../../../../../../../../packages/integration-tests/__tests__/defined-behavior/1-patterns/modeling-relationships.ts#L787)
 
 ---
 
 #### `Unnamed Snippet`
 
 ~~~
-const schema = a.schema({
-  Post: a.model({
-title: a.string().required(),
-content: a.string().required(),
-// You must supply an author when creating the post
-// Author can't be set to `null`.
-authorId: a.id().required(),
-author: a.belongsTo("Person", "authorId"),
-// You can optionally supply an editor when creating the post.
-// Editor can also be set to `null`.
-editorId: a.id(),
-editor: a.belongsTo("Person", "editorId"),
-  }),
-  Person: a.model({
-name: a.string(),
-editedPosts: a.hasMany("Post", "editorId"),
-authoredPosts: a.hasMany("Post", "authorId"),
-  }),
-});
+const schema = a
+  .schema({
+Post: a.model({
+  title: a.string().required(),
+  content: a.string().required(),
+  // You must supply an author when creating the post
+  // Author can't be set to `null`.
+  authorId: a.id().required(),
+  author: a.belongsTo("Person", "authorId"),
+  // You can optionally supply an editor when creating the post.
+  // Editor can also be set to `null`.
+  editorId: a.id(),
+  editor: a.belongsTo("Person", "editorId"),
+}),
+Person: a.model({
+  name: a.string(),
+  editedPosts: a.hasMany("Post", "editorId"),
+  authoredPosts: a.hasMany("Post", "authorId"),
+}),
+  })
+  .authorization((allow) => allow.publicApiKey());
 
 ~~~
 
 | | |
 | -- | -- |
-| Hash | `129f8c5aae309b52` |
-| Covered | ❌ |
+| Hash | `433fee752f917db8` |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/1-patterns/modeling-relationships.ts](../../../../../../../../packages/integration-tests/__tests__/defined-behavior/1-patterns/modeling-relationships.ts#L836)
 
 ---
 

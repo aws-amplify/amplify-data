@@ -16,7 +16,7 @@ import {
   getCustomUserAgentDetails,
 } from './getCustomUserAgentDetails';
 
-export const createCreateConversationFunction =
+export const createDeleteConversationFunction =
   (
     client: BaseClient,
     modelIntrospection: ModelIntrospectionSchema,
@@ -24,31 +24,35 @@ export const createCreateConversationFunction =
     conversationModel: SchemaModel,
     conversationMessageModel: SchemaModel,
     getInternals: ClientInternalsGetter,
-  ): ConversationRoute['create'] =>
-  async () => {
-    const get = getFactory(
+  ): ConversationRoute['delete'] =>
+  async ({ id }) => {
+    const deleteOperation = getFactory(
       client,
       modelIntrospection,
       conversationModel,
-      'CREATE',
+      'DELETE',
       getInternals,
       false,
-      getCustomUserAgentDetails(AiAction.CreateConversation),
-    ) as () => SingularReturnValue<Record<string, any>>;
-    const { data, errors } = await get();
+      getCustomUserAgentDetails(AiAction.DeleteConversation),
+    ) as (
+      args?: Record<string, any>,
+    ) => SingularReturnValue<Record<string, any>>;
+    const { data, errors } = await deleteOperation({ id });
     return {
-      data: convertItemToConversation(
-        client,
-        modelIntrospection,
-        data?.id,
-        data?.createdAt,
-        data?.updatedAt,
-        conversationRouteName,
-        conversationMessageModel,
-        getInternals,
-        data?.metadata,
-        data?.name,
-      ),
+      data: data
+        ? convertItemToConversation(
+            client,
+            modelIntrospection,
+            data?.id,
+            data?.createdAt,
+            data?.updatedAt,
+            conversationRouteName,
+            conversationMessageModel,
+            getInternals,
+            data?.metadata,
+            data?.name,
+          )
+        : data,
       errors,
     };
   };
