@@ -4,7 +4,7 @@
 
 Page: https://docs.amplify.aws/react/build-a-backend/data/data-modeling/relationships/
 
-Coverage: 0.0%
+Coverage: 100.0%
 
 #### `Unnamed Snippet`
 
@@ -33,11 +33,11 @@ Team: a.model({
 | | |
 | -- | -- |
 | Hash | `0d0ad5f8c1b991de` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/1-patterns/modeling-relationships.ts](../../../../../../../../packages/integration-tests/__tests__/defined-behavior/1-patterns/modeling-relationships.ts#L22)
 
 ---
 
@@ -58,11 +58,11 @@ const { data: member } = await client.models.Member.create({
 | | |
 | -- | -- |
 | Hash | `dc7d0a1a6d72510a` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/1-patterns/modeling-relationships.ts](../../../../../../../../packages/integration-tests/__tests__/defined-behavior/1-patterns/modeling-relationships.ts#L81)
 
 ---
 
@@ -83,11 +83,11 @@ await client.models.Member.update({
 | | |
 | -- | -- |
 | Hash | `06214f3775b02364` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/1-patterns/modeling-relationships.ts](../../../../../../../../packages/integration-tests/__tests__/defined-behavior/1-patterns/modeling-relationships.ts#L135)
 
 ---
 
@@ -104,11 +104,11 @@ await client.models.Member.update({
 | | |
 | -- | -- |
 | Hash | `f2ae6e917b0bc1b2` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/1-patterns/modeling-relationships.ts](../../../../../../../../packages/integration-tests/__tests__/defined-behavior/1-patterns/modeling-relationships.ts#L176)
 
 ---
 
@@ -126,11 +126,11 @@ members.forEach((member) => console.log(member.id));
 | | |
 | -- | -- |
 | Hash | `b02d88e15c6256e8` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/1-patterns/modeling-relationships.ts](../../../../../../../../packages/integration-tests/__tests__/defined-behavior/1-patterns/modeling-relationships.ts#L225)
 
 ---
 
@@ -149,11 +149,11 @@ teamWithMembers.members.forEach((member) => console.log(member.id));
 | | |
 | -- | -- |
 | Hash | `ae43c44bff14af30` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/1-patterns/modeling-relationships.ts](../../../../../../../../packages/integration-tests/__tests__/defined-behavior/1-patterns/modeling-relationships.ts#L277)
 
 ---
 
@@ -183,11 +183,11 @@ Customer: a.model({
 | | |
 | -- | -- |
 | Hash | `3807e61bd96dc4fe` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/1-patterns/modeling-relationships.ts](../../../../../../../../packages/integration-tests/__tests__/defined-behavior/1-patterns/modeling-relationships.ts#L354)
 
 ---
 
@@ -208,11 +208,11 @@ const { data: cart } = await client.models.Cart.create({
 | | |
 | -- | -- |
 | Hash | `c866224db025011b` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/1-patterns/modeling-relationships.ts](../../../../../../../../packages/integration-tests/__tests__/defined-behavior/1-patterns/modeling-relationships.ts#L411)
 
 ---
 
@@ -233,11 +233,11 @@ await client.models.Cart.update({
 | | |
 | -- | -- |
 | Hash | `33c181d03567d778` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/1-patterns/modeling-relationships.ts](../../../../../../../../packages/integration-tests/__tests__/defined-behavior/1-patterns/modeling-relationships.ts#L475)
 
 ---
 
@@ -254,11 +254,11 @@ await client.models.Cart.update({
 | | |
 | -- | -- |
 | Hash | `01f88137bf80d2f9` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/1-patterns/modeling-relationships.ts](../../../../../../../../packages/integration-tests/__tests__/defined-behavior/1-patterns/modeling-relationships.ts#L543)
 
 ---
 
@@ -273,11 +273,11 @@ const { data: customer } = await cart.customer();
 | | |
 | -- | -- |
 | Hash | `c5f4e8bcdb208fdd` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/1-patterns/modeling-relationships.ts](../../../../../../../../packages/integration-tests/__tests__/defined-behavior/1-patterns/modeling-relationships.ts#L595)
 
 ---
 
@@ -296,11 +296,11 @@ console.log(cart.customer.id);
 | | |
 | -- | -- |
 | Hash | `edb23d7db6fb10cb` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/1-patterns/modeling-relationships.ts](../../../../../../../../packages/integration-tests/__tests__/defined-behavior/1-patterns/modeling-relationships.ts#L692)
 
 ---
 
@@ -341,11 +341,11 @@ Tag: a.model({
 | | |
 | -- | -- |
 | Hash | `dce6a76edb6ca8c8` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/1-patterns/modeling-relationships.ts](../../../../../../../../packages/integration-tests/__tests__/defined-behavior/1-patterns/modeling-relationships.ts#L17)
 
 ---
 
@@ -375,11 +375,11 @@ Person: a.model({
 | | |
 | -- | -- |
 | Hash | `0d2b1e843c6bf398` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/1-patterns/modeling-relationships.ts](../../../../../../../../packages/integration-tests/__tests__/defined-behavior/1-patterns/modeling-relationships.ts#L717)
 
 ---
 
@@ -398,11 +398,11 @@ const { data: editor } = await post?.editor();
 | | |
 | -- | -- |
 | Hash | `3ff516f1c240d2e3` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/1-patterns/modeling-relationships.ts](../../../../../../../../packages/integration-tests/__tests__/defined-behavior/1-patterns/modeling-relationships.ts#L767)
 
 ---
 
@@ -437,11 +437,11 @@ Person: a
 | | |
 | -- | -- |
 | Hash | `b7d6f1236e4afce6` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/1-patterns/modeling-relationships.ts](../../../../../../../../packages/integration-tests/__tests__/defined-behavior/1-patterns/modeling-relationships.ts#L787)
 
 ---
 
@@ -475,11 +475,11 @@ Person: a.model({
 | | |
 | -- | -- |
 | Hash | `433fee752f917db8` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/1-patterns/modeling-relationships.ts](../../../../../../../../packages/integration-tests/__tests__/defined-behavior/1-patterns/modeling-relationships.ts#L836)
 
 ---
 
