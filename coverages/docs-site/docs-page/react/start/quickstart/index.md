@@ -117,7 +117,7 @@ Review next step of this tutorial.
 
 ##### Covering Regions
 
-- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/1-patterns/mutate-data.ts](../../../../../../packages/integration-tests/__tests__/defined-behavior/1-patterns/mutate-data.ts#L119)
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/1-patterns/mutate-data.ts](../../../../../../packages/integration-tests/__tests__/defined-behavior/1-patterns/mutate-data.ts#L121)
 
 ---
 

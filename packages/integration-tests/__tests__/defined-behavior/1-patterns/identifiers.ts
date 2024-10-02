@@ -55,7 +55,7 @@ describe('Custom data model identifiers', () => {
         const config = await buildAmplifyConfig(schema);
         Amplify.configure(config);
 
-        // #redgion covers 6ffb6c45060a39f9
+        // #region covers 6ffb6c45060a39f9
         const client = generateClient<Schema>();
 
         const { data: todo, errors } = await client.models.Todo.create({
@@ -130,7 +130,7 @@ describe('Custom data model identifiers', () => {
         const config = await buildAmplifyConfig(schema);
         Amplify.configure(config);
 
-        // #redgion covers 7a1fb3aa2c192ea3
+        // #region covers 7a1fb3aa2c192ea3
         const client = generateClient<Schema>();
 
         const { data: branch } = await client.models.StoreBranch.get({
