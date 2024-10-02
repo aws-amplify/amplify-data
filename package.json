@@ -35,8 +35,6 @@
     "e2e-sandbox:clean": "npm run --prefix ./packages/e2e-tests/sandbox clean",
     "e2e-sandbox:install": "npm run --prefix ./packages/e2e-tests/sandbox install:no-lock",
     "e2e-sandbox:test": "npm run --prefix ./packages/e2e-tests/sandbox test",
-    "test": "turbo run test && npm run test:scripts && npm run e2e-exports",
-    "test:scripts": "npx jest scripts/",
     "lint": "turbo run lint",
     "prepare": "husky",
     "publish:release": "changeset version && changeset publish",
@@ -44,7 +42,7 @@
     "publish:local": "tsx scripts/publish_local.ts",
     "start:npm-proxy": "tsx scripts/start_npm_proxy.ts",
     "stop:npm-proxy": "tsx scripts/stop_npm_proxy.ts",
-    "test": "turbo run test && npm run test:scripts",
+    "test": "turbo run test && npm run test:scripts && npm run e2e-exports",
     "test:scripts": "npx jest scripts/",
     "turbo": "turbo",
     "vend": "npm run start:npm-proxy && npm run publish:local"
