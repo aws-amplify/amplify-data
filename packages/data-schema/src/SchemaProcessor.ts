@@ -5,6 +5,7 @@ import {
   string,
   type BaseModelField,
   ModelFieldType,
+  __generated,
 } from './ModelField';
 import {
   ModelRelationshipTypes,
@@ -198,7 +199,9 @@ function scalarFieldToGql(
     }
   }
 
-  if (_default !== undefined) {
+  if (_default === __generated) {
+    field += ` @default`;
+  } else if (_default !== undefined) {
     field += ` @default(value: "${_default?.toString()}")`;
   }
 

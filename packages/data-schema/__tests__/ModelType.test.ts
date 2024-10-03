@@ -897,3 +897,31 @@ describe('disableOperations', () => {
     expect(schema.transform().schema).toMatchSnapshot();
   });
 });
+
+describe("default() to GQL mapping", () => {
+  it("should map .default(val) to `@default(value: val)`", () => {
+    const schema = a
+    .schema({
+      song: a
+        .model({
+          title: a.string().default("Little Wing"),
+        })
+    })
+    .authorization((allow) => allow.publicApiKey());
+
+    expect(schema.transform().schema).toMatchSnapshot();
+  })
+
+  it("should map .default() to `@default`", () => {
+    const schema = a
+    .schema({
+      song: a
+        .model({
+          title: a.string().default(),
+        })
+    })
+    .authorization((allow) => allow.publicApiKey());
+
+    expect(schema.transform().schema).toMatchSnapshot();
+  })
+})
