@@ -18,4 +18,10 @@ describe('/', () => {
     // sample graphql schema provided directly to `defineData()`.
     // #endregion
   });
+
+  test('connect-to-api', () => {
+    // #region covers 898189587ea17dac
+    // generic imports + configure
+    // #endregion
+  });
 });

@@ -4,7 +4,7 @@
 
 Page: https://docs.amplify.aws/react/build-a-backend/data/set-up-data/
 
-Coverage: 14.3%
+Coverage: 28.6%
 
 #### `amplify/data/resource.ts`
 
@@ -94,11 +94,11 @@ Amplify.configure(outputs);
 | | |
 | -- | -- |
 | Hash | `898189587ea17dac` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/4-uncovered/root.ts](../../../../../../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/root.ts#L23)
 
 ---
 
