@@ -50,7 +50,7 @@ const fetchTodos = async () => {
 
 ##### Covering Regions
 
-- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/1-patterns/read-data.ts](../../../../../../../packages/integration-tests/__tests__/defined-behavior/1-patterns/read-data.ts#L458)
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/1-patterns/read-data.ts](../../../../../../../packages/integration-tests/__tests__/defined-behavior/1-patterns/read-data.ts#L455)
 
 ---
 
@@ -79,7 +79,7 @@ const fetchTodos = async () => {
 
 ##### Covering Regions
 
-- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/1-patterns/read-data.ts](../../../../../../../packages/integration-tests/__tests__/defined-behavior/1-patterns/read-data.ts#L458)
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/1-patterns/read-data.ts](../../../../../../../packages/integration-tests/__tests__/defined-behavior/1-patterns/read-data.ts#L455)
 
 ---
 

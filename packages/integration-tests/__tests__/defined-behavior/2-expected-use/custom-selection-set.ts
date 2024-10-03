@@ -286,6 +286,7 @@ describe('providing a custom selection set', () => {
     });
   });
 
+  // #region covers 837a78504eebfe1e
   describe('to `onCreate` operations', () => {
     let backgroundSub = null as Subscription | null;
 
@@ -438,7 +439,13 @@ describe('providing a custom selection set', () => {
       });
     });
   });
+  // #endregion
 
+  // #region covers ceec33b4e66930a2, 211161dff2eb4646, 92b382c0ac2298ec
+  // some of these snippets show out of band examples explaining how observequery only responds
+  // to operations made against the model under observation and only receives fields from the
+  // corresponding mutation's selection set. hence, not actually much novel to cover here. it's
+  // all "custom selection sets on subs/observeQuery" essentially.
   describe('to `observeQuery` operations', () => {
     let backgroundSub = null as Subscription | null;
 
@@ -521,4 +528,5 @@ describe('providing a custom selection set', () => {
       });
     });
   });
+  // #endregion
 });
