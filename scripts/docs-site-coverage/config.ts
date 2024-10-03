@@ -73,6 +73,9 @@ const ingoredPaths: (string | RegExp)[] = [
 
   // Non-docs content.
   /^https:\/\/docs\.amplify\.aws\/contribute/,
+
+  // build-time. shows overriding AWS resources via the construct.
+  'https://docs.amplify.aws/react/build-a-backend/data/override-resources/',
 ];
 
 export const config: Config = {

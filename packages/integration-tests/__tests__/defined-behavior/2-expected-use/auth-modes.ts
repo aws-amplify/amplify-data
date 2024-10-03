@@ -335,7 +335,7 @@ describe('custom client and request headers', () => {
     });
 
     test('call site headers', async () => {
-      // #region covers 3d9cf7dde513d92c
+      // #region covers 3d9cf7dde513d92c, 4729d3f005811c37
       const client = generateClient<Schema>();
 
       await client.models.Post.get(
