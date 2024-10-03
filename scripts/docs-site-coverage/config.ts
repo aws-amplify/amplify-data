@@ -35,6 +35,10 @@ const ingoredPaths: (string | RegExp)[] = [
   /^https:\/\/docs\.amplify\.aws\/react\/build-a-backend\/auth/,
   /^https:\/\/docs\.amplify\.aws\/react\/build-a-backend\/storage/,
 
+  // Functions. There are 2 or 3 incidental schema builder snippets here. AFAIK, these should
+  // be covered by backend.
+  /^https:\/\/docs\.amplify\.aws\/react\/build-a-backend\/functions/,
+
   // "Add any AWS service" categories that are not built on top of Data category.
   /^https:\/\/docs\.amplify\.aws\/react\/build-a-backend\/add-aws-services\/analytics/,
   /^https:\/\/docs\.amplify\.aws\/react\/build-a-backend\/add-aws-services\/geo/,
