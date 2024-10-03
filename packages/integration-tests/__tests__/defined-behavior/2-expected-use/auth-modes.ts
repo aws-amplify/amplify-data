@@ -353,12 +353,10 @@ describe('custom client and request headers', () => {
       expect(headers).toStrictEqual({ 'client-header': 'should exist' });
     });
 
-    test.skip('call site headers function (async)', async () => {
+    test('call site headers function (async)', async () => {
       // #region covers 6d4cd9b69d769785
       const client = generateClient<Schema>();
 
-      // this is in our docs: https://docs.amplify.aws/react/build-a-backend/data/connect-to-API/#set-custom-request-headers
-      // last snippet, "custom headers per request" tab. question is, is the snippet wrong? or, is it a bug?
       await client.models.Post.get(
         { id: 'a1' },
         {
@@ -371,7 +369,11 @@ describe('custom client and request headers', () => {
 
       const [[, headers]] = optionsAndHeaders(innerSpy);
 
-      expect(headers).toStrictEqual({ 'client-header': 'should exist' });
+      const resolvedHeaders = await headers();
+
+      expect(resolvedHeaders).toStrictEqual({
+        'client-header': 'should exist',
+      });
     });
   });
 });
