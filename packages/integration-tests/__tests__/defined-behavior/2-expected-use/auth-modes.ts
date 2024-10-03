@@ -46,6 +46,7 @@ describe('authMode overrides', () => {
     'userPool',
   ] as const;
 
+  // #region covers 214c31dd2206bfca, 92f1e6d948bb2f1e, b7b5ef648a737b54, 2fcbfbd338e2b642, bd051f6474d8be69
   describe('client', () => {
     afterEach(() => {
       jest.clearAllMocks();
@@ -149,7 +150,9 @@ describe('authMode overrides', () => {
       });
     }
   });
+  // #endregion
 
+  // #region covers f836602769f99712, de5a11b2edead530, 7f181ae9db749fd0, 274e791981c46dd6, ac808f107270b120
   describe('call site', () => {
     afterEach(() => {
       jest.clearAllMocks();
@@ -263,6 +266,7 @@ describe('authMode overrides', () => {
       });
     }
   });
+  // #endregion
 });
 
 /*
@@ -295,6 +299,7 @@ describe('custom client and request headers', () => {
     });
 
     test('client headers', async () => {
+      // #region covers 486ccc64ea1f256b
       const client = generateClient<Schema>({
         headers: {
           'client-header': 'should exist',
@@ -302,13 +307,15 @@ describe('custom client and request headers', () => {
       });
 
       await client.models.Post.get({ id: 'a1' });
+      // #endregion
 
       const [[, headers]] = optionsAndHeaders(innerSpy);
 
       expect(headers).toStrictEqual({ 'client-header': 'should exist' });
     });
 
-    test('client header function', async () => {
+    test('client header function (async)', async () => {
+      // #region covers 139f78578144d99f
       const client = generateClient<Schema>({
         headers: async () => ({
           'client-header': 'should exist',
@@ -316,6 +323,49 @@ describe('custom client and request headers', () => {
       });
 
       await client.models.Post.get({ id: 'a1' });
+      // #endregion
+
+      const [[, headers]] = optionsAndHeaders(innerSpy);
+
+      const resolvedHeaders = await headers();
+
+      expect(resolvedHeaders).toStrictEqual({
+        'client-header': 'should exist',
+      });
+    });
+
+    test('call site headers', async () => {
+      // #region covers 3d9cf7dde513d92c
+      const client = generateClient<Schema>();
+
+      await client.models.Post.get(
+        { id: 'a1' },
+        {
+          headers: {
+            'client-header': 'should exist',
+          },
+        },
+      );
+      // #endregion
+
+      const [[, headers]] = optionsAndHeaders(innerSpy);
+
+      expect(headers).toStrictEqual({ 'client-header': 'should exist' });
+    });
+
+    test('call site headers function (async)', async () => {
+      // #region covers 6d4cd9b69d769785
+      const client = generateClient<Schema>();
+
+      await client.models.Post.get(
+        { id: 'a1' },
+        {
+          headers: async () => ({
+            'client-header': 'should exist',
+          }),
+        },
+      );
+      // #endregion
 
       const [[, headers]] = optionsAndHeaders(innerSpy);
 

@@ -455,7 +455,7 @@ describe('Read application data', () => {
     const client = generateClient<Schema>();
     // #endregion mocking
 
-    // #region docs code
+    // #region covers 074ff31ac8fcd4d4, ab5b1a4b0db8b096
     const selectionSet = ['content', 'author', 'comments.*'] as const;
     type PostWithComments = SelectionSet<
       Schema['Post']['type'],
@@ -471,7 +471,7 @@ describe('Read application data', () => {
 
       setPosts(postsWithComments);
     }
-    // #endregion docs code
+    // #endregion
 
     // #region assertions
     expect(fetchPosts).not.toThrow();
