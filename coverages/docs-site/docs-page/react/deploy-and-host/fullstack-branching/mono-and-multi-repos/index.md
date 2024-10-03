@@ -216,7 +216,7 @@ isDone: false,
 
 ##### Covering Regions
 
-- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/1-patterns/mutate-data.ts](../../../../../../../packages/integration-tests/__tests__/defined-behavior/1-patterns/mutate-data.ts#L57)
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/1-patterns/mutate-data.ts](../../../../../../../packages/integration-tests/__tests__/defined-behavior/1-patterns/mutate-data.ts#L59)
 
 ---
 

@@ -4,7 +4,7 @@
 
 Page: https://docs.amplify.aws/react/build-a-backend/data/data-modeling/identifiers/
 
-Coverage: 0.0%
+Coverage: 100.0%
 
 #### `Unnamed Snippet`
 
@@ -23,11 +23,12 @@ const schema = a.schema({
 | | |
 | -- | -- |
 | Hash | `93fbc94ef4f108d8` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/1-patterns/mutate-data.ts](../../../../../../../../packages/integration-tests/__tests__/defined-behavior/1-patterns/mutate-data.ts#L24)
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/1-patterns/add-fields.ts](../../../../../../../../packages/integration-tests/__tests__/defined-behavior/1-patterns/add-fields.ts#L75)
 
 ---
 
@@ -47,11 +48,11 @@ console.log(`New Todo created: ${todo.id}`); // New Todo created: 5DB6B4CC-CD41-
 | | |
 | -- | -- |
 | Hash | `95716a52d6270a63` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/1-patterns/mutate-data.ts](../../../../../../../../packages/integration-tests/__tests__/defined-behavior/1-patterns/mutate-data.ts#L59)
 
 ---
 
@@ -74,11 +75,14 @@ const schema = a.schema({
 | | |
 | -- | -- |
 | Hash | `d619a12c5b9f68b2` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/2-expected-use/primary-and-secondary-indexes.ts](../../../../../../../../packages/integration-tests/__tests__/defined-behavior/2-expected-use/primary-and-secondary-indexes.ts#L31)
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/2-expected-use/primary-and-secondary-indexes.ts](../../../../../../../../packages/integration-tests/__tests__/defined-behavior/2-expected-use/primary-and-secondary-indexes.ts#L133)
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/2-expected-use/primary-and-secondary-indexes.ts](../../../../../../../../packages/integration-tests/__tests__/defined-behavior/2-expected-use/primary-and-secondary-indexes.ts#L253)
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/1-patterns/identifiers.ts](../../../../../../../../packages/integration-tests/__tests__/defined-behavior/1-patterns/identifiers.ts#L19)
 
 ---
 
@@ -99,11 +103,11 @@ console.log(`New Todo created: ${todo.todoId}`); // New Todo created: MyUniqueTo
 | | |
 | -- | -- |
 | Hash | `6ffb6c45060a39f9` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/1-patterns/identifiers.ts](../../../../../../../../packages/integration-tests/__tests__/defined-behavior/1-patterns/identifiers.ts#L58)
 
 ---
 
@@ -130,11 +134,11 @@ const schema = a.schema({
 | | |
 | -- | -- |
 | Hash | `dc84893fe413f132` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/1-patterns/identifiers.ts](../../../../../../../../packages/integration-tests/__tests__/defined-behavior/1-patterns/identifiers.ts#L84)
 
 ---
 
@@ -153,11 +157,11 @@ const branch = await client.models.StoreBranch.get({
 | | |
 | -- | -- |
 | Hash | `7a1fb3aa2c192ea3` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/1-patterns/identifiers.ts](../../../../../../../../packages/integration-tests/__tests__/defined-behavior/1-patterns/identifiers.ts#L133)
 
 ---
 
