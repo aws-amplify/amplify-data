@@ -1,0 +1,32 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ClientSchema overview sample schema 1`] = `
+"type Customer @model @auth(rules: [{allow: public, provider: apiKey}])
+{
+  customerId: ID! @primaryKey
+  name: String
+  location: CustomerLocation
+  engagementStage: CustomerEngagementStage
+  collectionId: ID
+  collection: Collection @belongsTo(references: ["collectionId"])
+}
+
+type Collection @model @auth(rules: [{allow: public, provider: apiKey}])
+{
+  customers: [Customer] @hasMany(references: ["collectionId"])
+  tags: [String]
+  representativeId: ID! @index(queryField: "listCollectionByRepresentativeId")
+}
+
+type CustomerLocation 
+{
+  lat: Float!
+  long: Float!
+}
+
+enum CustomerEngagementStage {
+  PROSPECT
+  INTERESTED
+  PURCHASED
+}"
+`;

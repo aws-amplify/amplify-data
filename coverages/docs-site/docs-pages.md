@@ -30,7 +30,7 @@
 | /react/build-a-backend/data/customize-authz/signed-in-user-data-access/ | [docs](https://docs.amplify.aws/react/build-a-backend/data/customize-authz/signed-in-user-data-access/)&nbsp;/&nbsp;[report](docs-page/react/build-a-backend/data/customize-authz/signed-in-user-data-access/index.md) | 0 | 4 | 0.0% |
 | /react/build-a-backend/data/customize-authz/user-group-based-data-access/ | [docs](https://docs.amplify.aws/react/build-a-backend/data/customize-authz/user-group-based-data-access/)&nbsp;/&nbsp;[report](docs-page/react/build-a-backend/data/customize-authz/user-group-based-data-access/index.md) | 0 | 5 | 0.0% |
 | /react/build-a-backend/data/customize-authz/using-oidc-authorization-provider/ | [docs](https://docs.amplify.aws/react/build-a-backend/data/customize-authz/using-oidc-authorization-provider/)&nbsp;/&nbsp;[report](docs-page/react/build-a-backend/data/customize-authz/using-oidc-authorization-provider/index.md) | 0 | 2 | 0.0% |
-| /react/build-a-backend/data/data-modeling/ | [docs](https://docs.amplify.aws/react/build-a-backend/data/data-modeling/)&nbsp;/&nbsp;[report](docs-page/react/build-a-backend/data/data-modeling/index.md) | 0 | 2 | 0.0% |
+| /react/build-a-backend/data/data-modeling/ | [docs](https://docs.amplify.aws/react/build-a-backend/data/data-modeling/)&nbsp;/&nbsp;[report](docs-page/react/build-a-backend/data/data-modeling/index.md) | 2 | 2 | 100.0% |
 | /react/build-a-backend/data/data-modeling/add-fields/ | [docs](https://docs.amplify.aws/react/build-a-backend/data/data-modeling/add-fields/)&nbsp;/&nbsp;[report](docs-page/react/build-a-backend/data/data-modeling/add-fields/index.md) | 10 | 10 | 100.0% |
 | /react/build-a-backend/data/data-modeling/identifiers/ | [docs](https://docs.amplify.aws/react/build-a-backend/data/data-modeling/identifiers/)&nbsp;/&nbsp;[report](docs-page/react/build-a-backend/data/data-modeling/identifiers/index.md) | 6 | 6 | 100.0% |
 | /react/build-a-backend/data/data-modeling/relationships/ | [docs](https://docs.amplify.aws/react/build-a-backend/data/data-modeling/relationships/)&nbsp;/&nbsp;[report](docs-page/react/build-a-backend/data/data-modeling/relationships/index.md) | 17 | 17 | 100.0% |
@@ -79,6 +79,6 @@
 | /react/start/account-setup/ | [docs](https://docs.amplify.aws/react/start/account-setup/)&nbsp;/&nbsp;[report](docs-page/react/start/account-setup/index.md) | 11 | 11 | 100.0% |
 | /react/start/manual-installation/ | [docs](https://docs.amplify.aws/react/start/manual-installation/)&nbsp;/&nbsp;[report](docs-page/react/start/manual-installation/index.md) | 11 | 11 | 100.0% |
 | /react/start/quickstart/ | [docs](https://docs.amplify.aws/react/start/quickstart/)&nbsp;/&nbsp;[report](docs-page/react/start/quickstart/index.md) | 11 | 11 | 100.0% |
-| TOTAL | | 138 | 505 | 27.3% |
+| TOTAL | | 140 | 505 | 27.7% |
 
 [<- Back to summary](./readme.md)

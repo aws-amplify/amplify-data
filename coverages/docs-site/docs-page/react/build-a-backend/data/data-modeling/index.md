@@ -4,7 +4,7 @@
 
 Page: https://docs.amplify.aws/react/build-a-backend/data/data-modeling/
 
-Coverage: 0.0%
+Coverage: 100.0%
 
 #### `Unnamed Snippet`
 
@@ -60,11 +60,11 @@ apiKeyAuthorizationMode: {
 | | |
 | -- | -- |
 | Hash | `1f807200986a702a` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/1-patterns/client-schema.ts](../../../../../../../packages/integration-tests/__tests__/defined-behavior/1-patterns/client-schema.ts#L11)
 
 ---
 
@@ -95,11 +95,11 @@ apiKeyAuthorizationMode: {
 | | |
 | -- | -- |
 | Hash | `18d9bf46eea33c9b` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/4-uncovered/root.ts](../../../../../../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/root.ts#L17)
 
 ---
 
