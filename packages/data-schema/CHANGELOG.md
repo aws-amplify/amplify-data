@@ -1,5 +1,11 @@
 # @aws-amplify/data-schema
 
+## 1.9.0
+
+### Minor Changes
+
+- 9e99f59: Implement support for generated (auto-increment) fields using `.default()`.
+
 ## 1.8.1
 
 ### Patch Changes
