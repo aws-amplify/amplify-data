@@ -4,7 +4,7 @@
 
 Page: https://docs.amplify.aws/react/build-a-backend/data/subscribe-data/
 
-Coverage: 0.0%
+Coverage: 55.6%
 
 #### `Unnamed Snippet`
 
@@ -43,11 +43,11 @@ return () => sub.unsubscribe();
 | | |
 | -- | -- |
 | Hash | `19bebafef196be7c` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/1-patterns/subscribe-to-real-time-events.ts](../../../../../../../packages/integration-tests/__tests__/defined-behavior/1-patterns/subscribe-to-real-time-events.ts#L61)
 
 ---
 
@@ -81,11 +81,11 @@ const { data } = await client.models.Blog.update({
 | | |
 | -- | -- |
 | Hash | `ceec33b4e66930a2` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/2-expected-use/custom-selection-set.ts](../../../../../../../packages/integration-tests/__tests__/defined-behavior/2-expected-use/custom-selection-set.ts#L444)
 
 ---
 
@@ -110,11 +110,11 @@ handle(data.items)
 | | |
 | -- | -- |
 | Hash | `211161dff2eb4646` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/2-expected-use/custom-selection-set.ts](../../../../../../../packages/integration-tests/__tests__/defined-behavior/2-expected-use/custom-selection-set.ts#L444)
 
 ---
 
@@ -149,11 +149,11 @@ blogId: blog.id,
 | | |
 | -- | -- |
 | Hash | `92b382c0ac2298ec` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/2-expected-use/custom-selection-set.ts](../../../../../../../packages/integration-tests/__tests__/defined-behavior/2-expected-use/custom-selection-set.ts#L444)
 
 ---
 
@@ -193,11 +193,11 @@ deleteSub.unsubscribe();
 | | |
 | -- | -- |
 | Hash | `837a78504eebfe1e` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/2-expected-use/custom-selection-set.ts](../../../../../../../packages/integration-tests/__tests__/defined-behavior/2-expected-use/custom-selection-set.ts#L289)
 
 ---
 

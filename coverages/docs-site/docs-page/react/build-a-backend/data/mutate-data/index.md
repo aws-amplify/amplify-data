@@ -4,7 +4,7 @@
 
 Page: https://docs.amplify.aws/react/build-a-backend/data/mutate-data/
 
-Coverage: 0.0%
+Coverage: 83.3%
 
 #### `Unnamed Snippet`
 
@@ -24,11 +24,11 @@ const { errors, data: newTodo } = await client.models.Todo.create({
 | | |
 | -- | -- |
 | Hash | `526c23ab1a272548` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/1-patterns/mutate-data.ts](../../../../../../../packages/integration-tests/__tests__/defined-behavior/1-patterns/mutate-data.ts#L59)
 
 ---
 
@@ -52,11 +52,11 @@ const { data: updatedTodo, errors } = await client.models.Todo.update(todo);
 | | |
 | -- | -- |
 | Hash | `704cbd0a4efed24a` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/1-patterns/mutate-data.ts](../../../../../../../packages/integration-tests/__tests__/defined-behavior/1-patterns/mutate-data.ts#L90)
 
 ---
 
@@ -80,11 +80,11 @@ const { data: deletedTodo, errors } =
 | | |
 | -- | -- |
 | Hash | `a0aebe5c8b5a2797` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/1-patterns/mutate-data.ts](../../../../../../../packages/integration-tests/__tests__/defined-behavior/1-patterns/mutate-data.ts#L120)
 
 ---
 
@@ -111,11 +111,12 @@ authMode: "apiKey",
 | | |
 | -- | -- |
 | Hash | `4729d3f005811c37` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/2-expected-use/auth-modes.ts](../../../../../../../packages/integration-tests/__tests__/defined-behavior/2-expected-use/auth-modes.ts#L338)
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/1-patterns/error-handling.ts](../../../../../../../packages/integration-tests/__tests__/defined-behavior/1-patterns/error-handling.ts#L746)
 
 ---
 
@@ -170,11 +171,11 @@ client.cancel(promise, "my error message");
 | | |
 | -- | -- |
 | Hash | `93ed69df71688b6d` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/1-patterns/error-handling.ts](../../../../../../../packages/integration-tests/__tests__/defined-behavior/1-patterns/error-handling.ts#L746)
 
 ---
 
