@@ -1,5 +1,11 @@
 # @aws-amplify/data-schema
 
+## 1.9.2
+
+### Patch Changes
+
+- 52b79da: include custom conversation handler in lambdaDefinitions
+
 ## 1.9.1
 
 ### Patch Changes
