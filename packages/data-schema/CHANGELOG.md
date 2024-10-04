@@ -1,5 +1,11 @@
 # @aws-amplify/data-schema
 
+## 1.9.1
+
+### Patch Changes
+
+- a316ab3: support multiline systemPrompt input for conversation and generation definitions
+
 ## 1.9.0
 
 ### Minor Changes
