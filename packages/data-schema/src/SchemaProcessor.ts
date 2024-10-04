@@ -510,6 +510,7 @@ function customOperationToGql(
     const { aiModel, systemPrompt, inferenceConfiguration } =
       typeDef.data.input;
 
+    const escapedSystemPrompt = systemPrompt.replace(/\r?\n/g, '\\n');
     const inferenceConfigurationEntries = Object.entries(
       inferenceConfiguration ?? {},
     );
@@ -519,7 +520,7 @@ function customOperationToGql(
             .map(([key, value]) => `${key}: ${value}`)
             .join(', ')} }`
         : '';
-    gqlHandlerContent += `@generation(aiModel: "${aiModel.resourcePath}", systemPrompt: "${systemPrompt}"${inferenceConfigurationGql}) `;
+    gqlHandlerContent += `@generation(aiModel: "${aiModel.resourcePath}", systemPrompt: "${escapedSystemPrompt}"${inferenceConfigurationGql}) `;
   }
 
   const gqlField = `${callSignature}: ${returnTypeName} ${gqlHandlerContent}${authString}`;

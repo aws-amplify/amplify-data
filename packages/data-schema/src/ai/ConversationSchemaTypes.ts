@@ -13,7 +13,7 @@ export const createConversationField = (
 
   const args: Record<string, string> = {
     aiModel: aiModel.resourcePath,
-    systemPrompt,
+    systemPrompt: systemPrompt.replace(/\r?\n/g, '\\n'),
   };
 
   if (handler) {
