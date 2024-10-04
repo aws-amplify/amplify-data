@@ -1442,7 +1442,9 @@ const schemaPreprocessor = (
         }
       } else if (isConversationRoute(typeDef)) {
         // TODO: add inferenceConfiguration values to directive.
-        customMutations.push(createConversationField(typeDef, typeName));
+        const { field, functionHandler } = createConversationField(typeDef, typeName);
+        customMutations.push(field);
+        Object.assign(lambdaFunctions, functionHandler);
         shouldAddConversationTypes = true;
       }
     } else if (staticSchema) {
