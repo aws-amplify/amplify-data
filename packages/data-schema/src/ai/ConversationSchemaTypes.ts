@@ -1,3 +1,4 @@
+import { LambdaFunctionDefinition } from '@aws-amplify/data-schema-types';
 import { InternalRef } from '../RefType';
 import { capitalize } from '../runtime/utils';
 import type {
@@ -8,7 +9,7 @@ import type {
 export const createConversationField = (
   typeDef: InternalConversationType,
   typeName: string,
-): string => {
+): { field: string, functionHandler: LambdaFunctionDefinition } => {
   const { aiModel, systemPrompt, handler, tools } = typeDef;
 
   const args: Record<string, string> = {
@@ -25,12 +26,11 @@ export const createConversationField = (
     systemPrompt: systemPrompt.replace(/\r?\n/g, '\\n'),
   };
 
+  const functionHandler: LambdaFunctionDefinition = {};
   if (handler) {
-    if (typeof handler === 'string') {
-      args['functionName'] = handler;
-    } else if (typeof handler.getInstance === 'function') {
-      args['functionName'] = `Fn${capitalize(typeName)}`;
-    }
+    const functionName = `Fn${capitalize(typeName)}`;
+    args['functionName'] = functionName;
+    functionHandler[functionName] = handler;
   }
 
   const argsString = Object.entries(args)
@@ -43,7 +43,8 @@ export const createConversationField = (
 
   const conversationDirective = `@conversation(${argsString}${toolsString})`;
 
-  return `${typeName}(conversationId: ID!, content: [ContentBlockInput], aiContext: AWSJSON, toolConfiguration: ToolConfigurationInput): ConversationMessage ${conversationDirective} @aws_cognito_user_pools`;
+  const field = `${typeName}(conversationId: ID!, content: [ContentBlockInput], aiContext: AWSJSON, toolConfiguration: ToolConfigurationInput): ConversationMessage ${conversationDirective} @aws_cognito_user_pools`;
+  return { field, functionHandler };
 };
 
 const isRef = (query: unknown): query is { data: InternalRef['data'] } =>
