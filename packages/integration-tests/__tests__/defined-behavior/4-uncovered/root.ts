@@ -12,4 +12,16 @@ describe('/', () => {
     // #region covers fe8797e13aaa1221
     // #endregion
   });
+
+  test('data-modeling', () => {
+    // #region covers 18d9bf46eea33c9b
+    // sample graphql schema provided directly to `defineData()`.
+    // #endregion
+  });
+
+  test('connect-to-api', () => {
+    // #region covers 898189587ea17dac
+    // generic imports + configure
+    // #endregion
+  });
 });

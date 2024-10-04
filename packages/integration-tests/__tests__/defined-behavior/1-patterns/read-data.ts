@@ -89,8 +89,7 @@ describe('Read application data', () => {
     const config = await buildAmplifyConfig(schema);
     // #endregion mocking
 
-    // #region docs code
-    // App.tsx
+    // #region covers d802e473c55f60ff
     Amplify.configure(config);
 
     const client = generateClient<Schema>();
@@ -143,8 +142,7 @@ describe('Read application data', () => {
     const config = await buildAmplifyConfig(schema);
     // #endregion mocking
 
-    // #region docs code
-    // App.tsx
+    // #region covers b7a13dcc42cc0f2b
     Amplify.configure(config);
 
     const client = generateClient<Schema>();
@@ -156,7 +154,7 @@ describe('Read application data', () => {
         },
       },
     });
-    // #endregion docs code
+    // #endregion
 
     // #region assertions
     expect(optionsAndHeaders(spy)).toMatchSnapshot();
@@ -181,8 +179,7 @@ describe('Read application data', () => {
     const config = await buildAmplifyConfig(schema);
     // #endregion mocking
 
-    // #region docs code
-    // App.tsx
+    // #region covers 805e7a16e0b5b803
     Amplify.configure(config);
 
     const client = generateClient<Schema>();
@@ -199,7 +196,7 @@ describe('Read application data', () => {
         ],
       },
     });
-    // #endregion docs code
+    // #endregion
 
     // #region assertions
     expect(optionsAndHeaders(spy)).toMatchSnapshot();
@@ -225,8 +222,8 @@ describe('Read application data', () => {
     const config = await buildAmplifyConfig(schema);
     // #endregion mocking
 
-    // #region docs code
-    // App.tsx
+    // #region covers 6cac5a92233f7f71, af99c7c3ce818ba9
+    // (`af99c7c3ce818ba9` demonstrates pagination in UI)
     Amplify.configure(config);
 
     const client = generateClient<Schema>();
@@ -242,7 +239,7 @@ describe('Read application data', () => {
 
     // front-end sample code skipped for unit test. we're not mocking full react DX for now.
 
-    // #endregion docs code
+    // #endregion
 
     // #region assertions
     expect(optionsAndHeaders(spy)).toMatchSnapshot();
@@ -354,7 +351,7 @@ describe('Read application data', () => {
     const config = await buildAmplifyConfig(schema);
     // #endregion mocking
 
-    // #region docs code
+    // #region covers c5a9d7a5cdc10664
     Amplify.configure(config);
 
     const client = generateClient<Schema>();
@@ -370,7 +367,7 @@ describe('Read application data', () => {
         ],
       },
     );
-    // #endregion docs code
+    // #endregion
 
     // #region assertions
     expect(optionsAndHeaders(spy)).toMatchSnapshot();
@@ -401,11 +398,11 @@ describe('Read application data', () => {
 
     // #endregion mocking
 
-    // #region docs code
+    // #region covers 4c106be9c8e3749e
     type Post = Schema['Post']['type'];
 
     const [post, setPosts] = useState<Post[]>([]);
-    // #endregion docs code
+    // #endregion
 
     // #region assertions
     // not shown in the docs snippet, but setPosts should be callable with a list of post
@@ -455,7 +452,7 @@ describe('Read application data', () => {
     const client = generateClient<Schema>();
     // #endregion mocking
 
-    // #region docs code
+    // #region covers 074ff31ac8fcd4d4, ab5b1a4b0db8b096, 594df1fdc5fc0b68
     const selectionSet = ['content', 'author', 'comments.*'] as const;
     type PostWithComments = SelectionSet<
       Schema['Post']['type'],
@@ -471,7 +468,7 @@ describe('Read application data', () => {
 
       setPosts(postsWithComments);
     }
-    // #endregion docs code
+    // #endregion
 
     // #region assertions
     expect(fetchPosts).not.toThrow();

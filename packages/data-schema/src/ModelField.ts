@@ -8,6 +8,11 @@ import type { brandSymbol } from './util/Brand.js';
  */
 export const __auth = Symbol('__auth');
 
+/**
+ * Used by `.default()` to represent a generated field (SQL).
+ */
+export const __generated = Symbol('__generated');
+
 const brandName = 'modelField';
 
 export enum ModelFieldType {
@@ -44,7 +49,7 @@ type FieldData = {
   required: boolean;
   array: boolean;
   arrayRequired: boolean;
-  default: undefined | ModelFieldTypeParamOuter;
+  default: undefined | symbol | ModelFieldTypeParamOuter;
   authorization: Authorization<any, any, any>[];
 };
 
@@ -112,7 +117,7 @@ export type ModelField<
      * @param value the default value
      */
     default(
-      value: ModelFieldTypeParamOuter,
+      value?: ModelFieldTypeParamOuter,
     ): ModelField<T, UsedMethod | 'default'>;
     /**
      * Configures field-level authorization rules. Pass in an array of authorizations `(allow => allow.____)` to mix and match
@@ -180,7 +185,7 @@ function _field<T extends ModelFieldTypeParamOuter>(fieldType: ModelFieldType) {
       return this;
     },
     default(val) {
-      data.default = val;
+      data.default = typeof val === 'undefined' ? __generated : val;
       _meta.lastInvokedMethod = 'default';
 
       return this;

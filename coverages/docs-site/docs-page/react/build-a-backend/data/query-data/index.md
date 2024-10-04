@@ -4,7 +4,7 @@
 
 Page: https://docs.amplify.aws/react/build-a-backend/data/query-data/
 
-Coverage: 0.0%
+Coverage: 100.0%
 
 #### `Unnamed Snippet`
 
@@ -27,11 +27,11 @@ const { data: todo, errors } = await client.models.Todo.get({
 | | |
 | -- | -- |
 | Hash | `d802e473c55f60ff` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/1-patterns/read-data.ts](../../../../../../../packages/integration-tests/__tests__/defined-behavior/1-patterns/read-data.ts#L92)
 
 ---
 
@@ -52,11 +52,11 @@ const { errors, data: todos } = await client.models.Todo.list({
 | | |
 | -- | -- |
 | Hash | `27083fbf217f4594` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/2-expected-use/auth-modes.ts](../../../../../../../packages/integration-tests/__tests__/defined-behavior/2-expected-use/auth-modes.ts#L338)
 
 ---
 
@@ -81,11 +81,11 @@ content: {
 | | |
 | -- | -- |
 | Hash | `b7a13dcc42cc0f2b` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/1-patterns/read-data.ts](../../../../../../../packages/integration-tests/__tests__/defined-behavior/1-patterns/read-data.ts#L145)
 
 ---
 
@@ -115,11 +115,11 @@ or: [
 | | |
 | -- | -- |
 | Hash | `805e7a16e0b5b803` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/1-patterns/read-data.ts](../../../../../../../packages/integration-tests/__tests__/defined-behavior/1-patterns/read-data.ts#L182)
 
 ---
 
@@ -145,11 +145,11 @@ const {
 | | |
 | -- | -- |
 | Hash | `6cac5a92233f7f71` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/1-patterns/read-data.ts](../../../../../../../packages/integration-tests/__tests__/defined-behavior/1-patterns/read-data.ts#L225)
 
 ---
 
@@ -197,11 +197,11 @@ setCurrentPageIndex(currentPageIndex + 1);
 | | |
 | -- | -- |
 | Hash | `af99c7c3ce818ba9` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/1-patterns/read-data.ts](../../../../../../../packages/integration-tests/__tests__/defined-behavior/1-patterns/read-data.ts#L225)
 
 ---
 
@@ -221,11 +221,11 @@ selectionSet: ["author.email", "posts.*"],
 | | |
 | -- | -- |
 | Hash | `c5a9d7a5cdc10664` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/1-patterns/read-data.ts](../../../../../../../packages/integration-tests/__tests__/defined-behavior/1-patterns/read-data.ts#L354)
 
 ---
 
@@ -243,11 +243,11 @@ const [posts, setPosts] = useState<Post[]>([]);
 | | |
 | -- | -- |
 | Hash | `4c106be9c8e3749e` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/1-patterns/read-data.ts](../../../../../../../packages/integration-tests/__tests__/defined-behavior/1-patterns/read-data.ts#L401)
 
 ---
 
@@ -278,11 +278,11 @@ selectionSet,
 | | |
 | -- | -- |
 | Hash | `594df1fdc5fc0b68` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/1-patterns/read-data.ts](../../../../../../../packages/integration-tests/__tests__/defined-behavior/1-patterns/read-data.ts#L455)
 
 ---
 
@@ -312,11 +312,11 @@ client.cancel(promise, "my message for cancellation");
 | | |
 | -- | -- |
 | Hash | `e84aa109193880d4` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/1-patterns/error-handling.ts](../../../../../../../packages/integration-tests/__tests__/defined-behavior/1-patterns/error-handling.ts#L746)
 
 ---
 
@@ -336,11 +336,11 @@ client.cancel(promise, "my error message");
 | | |
 | -- | -- |
 | Hash | `5b7af56d08383ae9` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/1-patterns/error-handling.ts](../../../../../../../packages/integration-tests/__tests__/defined-behavior/1-patterns/error-handling.ts#L746)
 
 ---
 

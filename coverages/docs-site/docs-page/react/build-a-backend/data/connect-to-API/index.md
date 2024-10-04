@@ -4,7 +4,7 @@
 
 Page: https://docs.amplify.aws/react/build-a-backend/data/connect-to-API/
 
-Coverage: 0.0%
+Coverage: 100.0%
 
 #### `Unnamed Snippet`
 
@@ -19,11 +19,11 @@ Amplify.configure(outputs);
 | | |
 | -- | -- |
 | Hash | `898189587ea17dac` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/4-uncovered/root.ts](../../../../../../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/root.ts#L23)
 
 ---
 
@@ -46,11 +46,11 @@ const fetchTodos = async () => {
 | | |
 | -- | -- |
 | Hash | `074ff31ac8fcd4d4` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/1-patterns/read-data.ts](../../../../../../../packages/integration-tests/__tests__/defined-behavior/1-patterns/read-data.ts#L455)
 
 ---
 
@@ -75,11 +75,11 @@ const fetchTodos = async () => {
 | | |
 | -- | -- |
 | Hash | `ab5b1a4b0db8b096` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/1-patterns/read-data.ts](../../../../../../../packages/integration-tests/__tests__/defined-behavior/1-patterns/read-data.ts#L455)
 
 ---
 
@@ -98,11 +98,11 @@ const client = generateClient<Schema>({
 | | |
 | -- | -- |
 | Hash | `214c31dd2206bfca` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/2-expected-use/auth-modes.ts](../../../../../../../packages/integration-tests/__tests__/defined-behavior/2-expected-use/auth-modes.ts#L49)
 
 ---
 
@@ -121,11 +121,11 @@ const client = generateClient<Schema>({
 | | |
 | -- | -- |
 | Hash | `92f1e6d948bb2f1e` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/2-expected-use/auth-modes.ts](../../../../../../../packages/integration-tests/__tests__/defined-behavior/2-expected-use/auth-modes.ts#L49)
 
 ---
 
@@ -144,11 +144,11 @@ const client = generateClient<Schema>({
 | | |
 | -- | -- |
 | Hash | `b7b5ef648a737b54` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/2-expected-use/auth-modes.ts](../../../../../../../packages/integration-tests/__tests__/defined-behavior/2-expected-use/auth-modes.ts#L49)
 
 ---
 
@@ -167,11 +167,11 @@ const client = generateClient<Schema>({
 | | |
 | -- | -- |
 | Hash | `2fcbfbd338e2b642` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/2-expected-use/auth-modes.ts](../../../../../../../packages/integration-tests/__tests__/defined-behavior/2-expected-use/auth-modes.ts#L49)
 
 ---
 
@@ -194,11 +194,11 @@ const client = generateClient<Schema>({
 | | |
 | -- | -- |
 | Hash | `bd051f6474d8be69` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/2-expected-use/auth-modes.ts](../../../../../../../packages/integration-tests/__tests__/defined-behavior/2-expected-use/auth-modes.ts#L49)
 
 ---
 
@@ -214,11 +214,11 @@ const { data: todos, errors } = await client.models.Todo.list({
 | | |
 | -- | -- |
 | Hash | `f836602769f99712` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/2-expected-use/auth-modes.ts](../../../../../../../packages/integration-tests/__tests__/defined-behavior/2-expected-use/auth-modes.ts#L155)
 
 ---
 
@@ -234,11 +234,11 @@ const { data: todos, errors } = await client.models.Todo.list({
 | | |
 | -- | -- |
 | Hash | `de5a11b2edead530` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/2-expected-use/auth-modes.ts](../../../../../../../packages/integration-tests/__tests__/defined-behavior/2-expected-use/auth-modes.ts#L155)
 
 ---
 
@@ -254,11 +254,11 @@ const { data: todos, errors } = await client.models.Todo.list({
 | | |
 | -- | -- |
 | Hash | `7f181ae9db749fd0` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/2-expected-use/auth-modes.ts](../../../../../../../packages/integration-tests/__tests__/defined-behavior/2-expected-use/auth-modes.ts#L155)
 
 ---
 
@@ -274,11 +274,11 @@ const { data: todos, errors } = await client.models.Todo.list({
 | | |
 | -- | -- |
 | Hash | `274e791981c46dd6` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/2-expected-use/auth-modes.ts](../../../../../../../packages/integration-tests/__tests__/defined-behavior/2-expected-use/auth-modes.ts#L155)
 
 ---
 
@@ -298,11 +298,11 @@ const { data: todos, errors } = await client.models.Todo.list({
 | | |
 | -- | -- |
 | Hash | `ac808f107270b120` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/2-expected-use/auth-modes.ts](../../../../../../../packages/integration-tests/__tests__/defined-behavior/2-expected-use/auth-modes.ts#L155)
 
 ---
 
@@ -323,11 +323,11 @@ const client = generateClient<Schema>({
 | | |
 | -- | -- |
 | Hash | `486ccc64ea1f256b` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/2-expected-use/auth-modes.ts](../../../../../../../packages/integration-tests/__tests__/defined-behavior/2-expected-use/auth-modes.ts#L302)
 
 ---
 
@@ -349,11 +349,11 @@ headers: {
 | | |
 | -- | -- |
 | Hash | `3d9cf7dde513d92c` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/2-expected-use/auth-modes.ts](../../../../../../../packages/integration-tests/__tests__/defined-behavior/2-expected-use/auth-modes.ts#L338)
 
 ---
 
@@ -387,11 +387,11 @@ return {
 | | |
 | -- | -- |
 | Hash | `139f78578144d99f` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/2-expected-use/auth-modes.ts](../../../../../../../packages/integration-tests/__tests__/defined-behavior/2-expected-use/auth-modes.ts#L318)
 
 ---
 
@@ -426,11 +426,11 @@ headers: async (requestOptions) => {
 | | |
 | -- | -- |
 | Hash | `6d4cd9b69d769785` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/2-expected-use/auth-modes.ts](../../../../../../../packages/integration-tests/__tests__/defined-behavior/2-expected-use/auth-modes.ts#L357)
 
 ---
 

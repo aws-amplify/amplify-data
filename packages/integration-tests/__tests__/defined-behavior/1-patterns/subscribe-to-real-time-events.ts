@@ -58,7 +58,7 @@ describe('Subscribe to real-time events', () => {
     Amplify.configure(config);
     // #endregion mocking
 
-    // #region docs code
+    // #region covers 19bebafef196be7c
     type Todo = Schema['Todo']['type'];
     const client = generateClient<Schema>();
 
@@ -77,7 +77,7 @@ describe('Subscribe to real-time events', () => {
     //   </ul>
     // }
 
-    // #endregion docs code
+    // #endregion
 
     // #region assertions
     // console.log('subs', subs);
