@@ -26,7 +26,7 @@ export const createConversationField = (
     systemPrompt: systemPrompt.replace(/\r?\n/g, '\\n'),
   };
 
-  let functionHandler: LambdaFunctionDefinition = {};
+  const functionHandler: LambdaFunctionDefinition = {};
   if (handler) {
     const functionName = `Fn${capitalize(typeName)}`;
     args['functionName'] = functionName;
