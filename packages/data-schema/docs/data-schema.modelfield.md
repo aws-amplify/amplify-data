@@ -14,7 +14,7 @@ export type ModelField<T extends ModelFieldTypeParamOuter = ModelFieldTypeParamO
     [brandSymbol]: typeof brandName;
     required(): ModelField<Required<T>, UsedMethod | 'required'>;
     array(): ModelField<ArrayField<T>, Exclude<UsedMethod, 'required'>>;
-    default(value: ModelFieldTypeParamOuter): ModelField<T, UsedMethod | 'default'>;
+    default(value?: ModelFieldTypeParamOuter): ModelField<T, UsedMethod | 'default'>;
     authorization<AuthRuleType extends Authorization<any, any, any>>(callback: (allow: Omit<AllowModifier, 'resource'>) => AuthRuleType | AuthRuleType[]): ModelField<T, UsedMethod | 'authorization', AuthRuleType>;
 }, UsedMethod>;
 ```

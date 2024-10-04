@@ -19,7 +19,7 @@ type Model = Record<string, any>;
 /**
  * Currently this omits any object-type fields. Update this when we add custom types/enums.
  */
-type NonRelationalFields<M extends Model> = {
+type NonRelationshipFields<M extends Model> = {
   [Field in keyof M as UnwrapArray<M[Field]> extends Record<string, unknown>
     ? never
     : Field]: M[Field];
@@ -120,7 +120,11 @@ type DeepPickFromPath<
       : Path extends `${infer Head}.${infer Tail}`
         ? Head extends keyof FlatModel
           ? Tail extends '*'
-            ? { [k in Head]: NonRelationalFields<UnwrapArray<FlatModel[Head]>> }
+            ? {
+                [k in Head]: NonRelationshipFields<
+                  UnwrapArray<FlatModel[Head]>
+                >;
+              }
             : { [k in Head]: DeepPickFromPath<FlatModel[Head], Tail> }
           : never
         : Path extends keyof FlatModel
@@ -229,7 +233,7 @@ type ResolvedModel<
   Depth extends number = 7,
   RecursionLoop extends number[] = [-1, 0, 1, 2, 3, 4, 5, 6],
 > = {
-  done: NonRelationalFields<Model>;
+  done: NonRelationshipFields<Model>;
   recur: {
     [Field in keyof Model]: Model[Field] extends (
       ...args: any
@@ -270,7 +274,7 @@ type WritableKeys<T> = {
 }[keyof T];
 
 /**
- * All required fields and relational fields, exclude readonly fields
+ * All required fields and relationship fields, exclude readonly fields
  */
 type MutationInput<
   Fields,

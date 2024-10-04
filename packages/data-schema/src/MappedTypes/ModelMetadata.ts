@@ -5,7 +5,7 @@ import {
 import { __modelMeta__ } from '../runtime/';
 import type { PrimaryIndexIrShape } from '../util';
 import type { ModelType } from '../ModelType';
-import type { ModelRelationalFieldParamShape } from '../ModelRelationalField';
+import type { ModelRelationshipFieldParamShape } from '../ModelRelationshipField';
 
 export type ModelIdentifier<T> = {
   [Property in keyof T]: T[Property] extends ModelType<infer R, any>
@@ -23,7 +23,7 @@ export type ModelSecondaryIndexes<T> = {
     : never;
 };
 
-export type RelationalMetadata<
+export type RelationshipMetadata<
   ResolvedSchema,
   ResolvedFields extends Record<string, unknown>,
   IdentifierMeta extends Record<string, { identifier: PrimaryIndexIrShape }>,
@@ -31,7 +31,7 @@ export type RelationalMetadata<
   ExcludeEmpty<
     {
       [ModelName in keyof ResolvedSchema]: {
-        [Field in keyof ResolvedSchema[ModelName] as ResolvedSchema[ModelName][Field] extends ModelRelationalFieldParamShape
+        [Field in keyof ResolvedSchema[ModelName] as ResolvedSchema[ModelName][Field] extends ModelRelationshipFieldParamShape
           ? ResolvedSchema[ModelName][Field]['relationshipType'] extends
               | 'hasOne'
               | 'belongsTo'
@@ -39,11 +39,11 @@ export type RelationalMetadata<
               // E.g. if Post hasOne Author, we need to add a postAuthorId field to the Post model
               ModelName
             : never
-          : never]: ResolvedSchema[ModelName][Field] extends ModelRelationalFieldParamShape
-          ? ResolvedSchema[ModelName][Field] extends ModelRelationalFieldParamShape
+          : never]: ResolvedSchema[ModelName][Field] extends ModelRelationshipFieldParamShape
+          ? ResolvedSchema[ModelName][Field] extends ModelRelationshipFieldParamShape
             ? ResolvedSchema[ModelName][Field]['relationshipType'] extends 'hasMany'
               ? {
-                  relationalInputFields: Partial<
+                  relationshipInputFields: Partial<
                     Record<
                       // For M:N and 1:M we add a parent model field to the child
                       `${Uncapitalize<ModelName & string>}`,
@@ -55,7 +55,7 @@ export type RelationalMetadata<
                   >;
                 }
               : {
-                  relationalInputFields: Partial<
+                  relationshipInputFields: Partial<
                     Record<
                       // For 1:1 and Belongs To we add a child model field to the parent
                       Field,

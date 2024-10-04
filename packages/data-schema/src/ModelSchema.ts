@@ -27,9 +27,9 @@ import { processSchema } from './SchemaProcessor';
 import { AllowModifier, SchemaAuthorization, allow } from './Authorization';
 import { Brand, brand, getBrand, RenameUsingTuples } from './util';
 import {
-  ModelRelationalField,
-  ModelRelationalFieldParamShape,
-} from './ModelRelationalField';
+  ModelRelationshipField,
+  ModelRelationshipFieldParamShape,
+} from './ModelRelationshipField';
 import { ConversationType } from './ai/ConversationType';
 
 export { ModelType } from './ModelType';
@@ -144,7 +144,7 @@ type OmitFromEach<Models, Modifier extends string> = {
 
 type RelationshipTemplate = Record<
   string,
-  ModelRelationalField<ModelRelationalFieldParamShape, string, any, any>
+  ModelRelationshipField<ModelRelationshipFieldParamShape, string, any, any>
 >;
 
 export type RDSModelSchema<
@@ -258,7 +258,7 @@ type ModelWithRelationships<
 > = ModelName extends keyof RelationshipMap
   ? RelationshipMap[ModelName] extends Record<
       string,
-      ModelRelationalField<ModelRelationalFieldParamShape, string, any, any>
+      ModelRelationshipField<ModelRelationshipFieldParamShape, string, any, any>
     >
     ? AddRelationshipFieldsToModelTypeFields<
         Types[ModelName],

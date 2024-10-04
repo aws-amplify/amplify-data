@@ -207,7 +207,7 @@ export function initializeModel(
     if (record === null || record === undefined) {
       return record;
     }
-    const initializedRelationalFields: Record<string, any> = {};
+    const initializedRelationshipFields: Record<string, any> = {};
     for (const fieldName of modelFields) {
       const modelField = introModelFields[fieldName];
       const modelFieldType = modelField?.type as ModelFieldType;
@@ -255,7 +255,7 @@ export function initializeModel(
           }
 
           if (context) {
-            initializedRelationalFields[fieldName] = (
+            initializedRelationshipFields[fieldName] = (
               contextSpec: AmplifyServer.ContextSpec,
               options?: LazyLoadOptions,
             ) => {
@@ -276,7 +276,7 @@ export function initializeModel(
               return { data: null };
             };
           } else {
-            initializedRelationalFields[fieldName] = (
+            initializedRelationshipFields[fieldName] = (
               options?: LazyLoadOptions,
             ) => {
               if (record[targetNames[0]]) {
@@ -347,7 +347,7 @@ export function initializeModel(
             }
 
             if (context) {
-              initializedRelationalFields[fieldName] = (
+              initializedRelationshipFields[fieldName] = (
                 contextSpec: AmplifyServer.ContextSpec,
                 options?: LazyLoadOptions,
               ) => {
@@ -373,7 +373,7 @@ export function initializeModel(
                 return [];
               };
             } else {
-              initializedRelationalFields[fieldName] = (
+              initializedRelationshipFields[fieldName] = (
                 options?: LazyLoadOptions,
               ) => {
                 if (record[parentPk]) {
@@ -418,7 +418,7 @@ export function initializeModel(
           }
 
           if (context) {
-            initializedRelationalFields[fieldName] = (
+            initializedRelationshipFields[fieldName] = (
               contextSpec: AmplifyServer.ContextSpec,
               options?: LazyLoadOptions,
             ) => {
@@ -444,7 +444,7 @@ export function initializeModel(
               return [];
             };
           } else {
-            initializedRelationalFields[fieldName] = (
+            initializedRelationshipFields[fieldName] = (
               options?: LazyLoadOptions,
             ) => {
               if (record[parentPk]) {
@@ -477,7 +477,7 @@ export function initializeModel(
       }
     }
 
-    return { ...record, ...initializedRelationalFields };
+    return { ...record, ...initializedRelationshipFields };
   });
 }
 

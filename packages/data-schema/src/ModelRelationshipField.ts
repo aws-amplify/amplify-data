@@ -7,7 +7,7 @@ import { AllowModifier, Authorization, allow } from './Authorization';
  */
 export const __auth = Symbol('__auth');
 
-const brandName = 'modelRelationalField';
+const brandName = 'modelRelationshipField';
 
 /**
  * Model relationship types
@@ -20,7 +20,7 @@ export enum ModelRelationshipTypes {
 
 type RelationshipTypes = `${ModelRelationshipTypes}`;
 
-type ModelRelationalFieldData = {
+type ModelRelationshipFieldData = {
   fieldType: 'model';
   type: ModelRelationshipTypes;
   relatedModel: string;
@@ -31,7 +31,7 @@ type ModelRelationalFieldData = {
   authorization: Authorization<any, any, any>[];
 };
 
-export type ModelRelationalFieldParamShape = {
+export type ModelRelationshipFieldParamShape = {
   type: 'model';
   relationshipType: string;
   relatedModel: string;
@@ -41,23 +41,23 @@ export type ModelRelationalFieldParamShape = {
   arrayRequired: boolean;
 };
 
-type ModelRelationalFieldFunctions<
-  T extends ModelRelationalFieldParamShape,
+type ModelRelationshipFieldFunctions<
+  T extends ModelRelationshipFieldParamShape,
   // RM adds structural separation with ModelField; easier to identify it when mapping to ClientTypes
   RM extends string | symbol,
-  K extends keyof ModelRelationalField<T, RM> = never,
+  K extends keyof ModelRelationshipField<T, RM> = never,
 > = {
   /**
    * When set, it requires the value of the relationship type to be required.
    */
-  valueRequired(): ModelRelationalField<
+  valueRequired(): ModelRelationshipField<
     SetTypeSubArg<T, 'valueRequired', true>,
     K | 'valueRequired'
   >;
   /**
    * When set, it requires the relationship to always return a value
    */
-  required(): ModelRelationalField<
+  required(): ModelRelationshipField<
     // The RM generic cannot be "required" since no such field exists
     SetTypeSubArg<T, 'arrayRequired', true>,
     K | 'required'
@@ -68,22 +68,22 @@ type ModelRelationalFieldFunctions<
    */
   authorization<AuthRuleType extends Authorization<any, any, any>>(
     callback: (allow: AllowModifier) => AuthRuleType | AuthRuleType[],
-  ): ModelRelationalField<T, K | 'authorization', K, AuthRuleType>;
+  ): ModelRelationshipField<T, K | 'authorization', K, AuthRuleType>;
 };
 
 /**
- * Model relational field definition interface
+ * Model relationship field definition interface
  *
- * @param T - The shape of the model relational field
+ * @param T - The shape of the model relationship field
  * @param RM - Adds structural separation with ModelField; easier to identify it when mapping to ClientTypes
  * @param K - The keys already defined
  */
-export type ModelRelationalField<
-  T extends ModelRelationalFieldParamShape,
+export type ModelRelationshipField<
+  T extends ModelRelationshipFieldParamShape,
   RM extends string | symbol,
-  K extends keyof ModelRelationalField<T, RM> = never,
+  K extends keyof ModelRelationshipField<T, RM> = never,
   Auth = undefined,
-> = Omit<ModelRelationalFieldFunctions<T, RM, K>, K> & {
+> = Omit<ModelRelationshipFieldFunctions<T, RM, K>, K> & {
   // This is a lie. This property is never set at runtime. It's just used to smuggle auth types through.
   [__auth]?: Auth;
 } & Brand<typeof brandName>;
@@ -92,15 +92,15 @@ export type ModelRelationalField<
  * Internal representation of Model Field that exposes the `data` property.
  * Used at buildtime.
  */
-export type InternalRelationalField = ModelRelationalField<
-  ModelRelationalFieldParamShape,
+export type InternalRelationshipField = ModelRelationshipField<
+  ModelRelationshipFieldParamShape,
   string,
   never
 > & {
-  data: ModelRelationalFieldData;
+  data: ModelRelationshipFieldData;
 };
 
-const relationalModifiers = [
+const relationshipModifiers = [
   'required',
   'valueRequired',
   'authorization',
@@ -108,7 +108,7 @@ const relationalModifiers = [
 
 const relationModifierMap: Record<
   `${ModelRelationshipTypes}`,
-  (typeof relationalModifiers)[number][]
+  (typeof relationshipModifiers)[number][]
 > = {
   belongsTo: ['authorization'],
   hasMany: ['valueRequired', 'authorization'],
@@ -125,12 +125,12 @@ export type RelationTypeFunctionOmitMapping<
       ? 'valueRequired'
       : never;
 
-function _modelRelationalField<
-  T extends ModelRelationalFieldParamShape,
+function _modelRelationshipField<
+  T extends ModelRelationshipFieldParamShape,
   RelatedModel extends string,
   RT extends ModelRelationshipTypes,
 >(type: RT, relatedModel: RelatedModel, references: string[]) {
-  const data: ModelRelationalFieldData = {
+  const data: ModelRelationshipFieldData = {
     relatedModel,
     type,
     fieldType: 'model',
@@ -159,7 +159,7 @@ function _modelRelationalField<
 
       return this;
     },
-  } as ModelRelationalField<T, RelatedModel>;
+  } as ModelRelationshipField<T, RelatedModel>;
 
   const builder = Object.fromEntries(
     relationModifierMap[type].map((key) => [
@@ -171,7 +171,7 @@ function _modelRelationalField<
   return {
     ...builder,
     data,
-  } as InternalRelationalField as ModelRelationalField<
+  } as InternalRelationshipField as ModelRelationshipField<
     T,
     RelatedModel,
     RelationTypeFunctionOmitMapping<typeof type>
@@ -179,13 +179,13 @@ function _modelRelationalField<
 }
 
 /**
- * Model relational type definition content
+ * Model relationship type definition content
  *
  * @param RM - The related model name
  * @param RT - The relationship type
  * @param IsArray - Whether the relationship is an array
  */
-export type ModelRelationalTypeArgFactory<
+export type ModelRelationshipTypeArgFactory<
   RM extends string,
   RT extends RelationshipTypes,
   IsArray extends boolean,
@@ -228,8 +228,8 @@ export function hasOne<RM extends string>(
   relatedModel: RM,
   references: string | string[],
 ) {
-  return _modelRelationalField<
-    ModelRelationalTypeArgFactory<RM, ModelRelationshipTypes.hasOne, false>,
+  return _modelRelationshipField<
+    ModelRelationshipTypeArgFactory<RM, ModelRelationshipTypes.hasOne, false>,
     RM,
     ModelRelationshipTypes.hasOne
   >(
@@ -269,8 +269,8 @@ export function hasMany<RM extends string>(
   relatedModel: RM,
   references: string | string[],
 ) {
-  return _modelRelationalField<
-    ModelRelationalTypeArgFactory<RM, ModelRelationshipTypes.hasMany, true>,
+  return _modelRelationshipField<
+    ModelRelationshipTypeArgFactory<RM, ModelRelationshipTypes.hasMany, true>,
     RM,
     ModelRelationshipTypes.hasMany
   >(
@@ -331,8 +331,12 @@ export function belongsTo<RM extends string>(
   relatedModel: RM,
   references: string | string[],
 ) {
-  return _modelRelationalField<
-    ModelRelationalTypeArgFactory<RM, ModelRelationshipTypes.belongsTo, false>,
+  return _modelRelationshipField<
+    ModelRelationshipTypeArgFactory<
+      RM,
+      ModelRelationshipTypes.belongsTo,
+      false
+    >,
     RM,
     ModelRelationshipTypes.belongsTo
   >(

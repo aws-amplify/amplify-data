@@ -9,7 +9,7 @@ Use `belongsTo()` to create a field to query the related `hasOne()` or `hasMany(
 **Signature:**
 
 ```typescript
-export declare function belongsTo<RM extends string>(relatedModel: RM, references: string | string[]): ModelRelationalField<ModelRelationalTypeArgFactory<RM, ModelRelationshipTypes.belongsTo, false>, RM, "required" | "valueRequired", undefined>;
+export declare function belongsTo<RM extends string>(relatedModel: RM, references: string | string[]): ModelRelationshipField<ModelRelationshipTypeArgFactory<RM, ModelRelationshipTypes.belongsTo, false>, RM, "required" | "valueRequired", undefined>;
 ```
 
 ## Parameters
@@ -65,7 +65,7 @@ the field(s) that should be used to reference the related model
 </tbody></table>
 **Returns:**
 
-[ModelRelationalField](./data-schema.modelrelationalfield.md)<!-- -->&lt;[ModelRelationalTypeArgFactory](./data-schema.modelrelationaltypeargfactory.md)<!-- -->&lt;RM, [ModelRelationshipTypes.belongsTo](./data-schema.modelrelationshiptypes.md)<!-- -->, false&gt;, RM, "required" \| "valueRequired", undefined&gt;
+[ModelRelationshipField](./data-schema.modelrelationshipfield.md)<!-- -->&lt;[ModelRelationshipTypeArgFactory](./data-schema.modelrelationshiptypeargfactory.md)<!-- -->&lt;RM, [ModelRelationshipTypes.belongsTo](./data-schema.modelrelationshiptypes.md)<!-- -->, false&gt;, RM, "required" \| "valueRequired", undefined&gt;
 
 a belong-to relationship definition
 

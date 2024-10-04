@@ -205,7 +205,7 @@ describe('Custom Selection Set', () => {
 
     type Schema = ClientSchema<typeof schema>;
 
-    test('specifying wildcard selection set on relationship returns only non-relational fields', async () => {
+    test('specifying wildcard selection set on relationship returns only non-relationship fields', async () => {
       const client = generateClient<Schema>();
 
       const posts = await client.models.Post.list({

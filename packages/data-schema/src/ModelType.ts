@@ -6,10 +6,10 @@ import {
 } from './util';
 import type { InternalField, BaseModelField } from './ModelField';
 import type {
-  ModelRelationalField,
-  InternalRelationalField,
-  ModelRelationalFieldParamShape,
-} from './ModelRelationalField';
+  ModelRelationshipField,
+  InternalRelationshipField,
+  ModelRelationshipFieldParamShape,
+} from './ModelRelationshipField';
 import { type AllowModifier, type Authorization, allow } from './Authorization';
 import type { RefType, RefTypeParamShape } from './RefType';
 import type { EnumType } from './EnumType';
@@ -32,7 +32,7 @@ export type deferredRefResolvingPrefix = 'deferredRefResolving:';
 type ModelFields = Record<
   string,
   | BaseModelField
-  | ModelRelationalField<any, string, any, any>
+  | ModelRelationshipField<any, string, any, any>
   | RefType<any, any, any>
   | EnumType
   | CustomType<CustomTypeParamShape>
@@ -40,7 +40,7 @@ type ModelFields = Record<
 
 type InternalModelFields = Record<
   string,
-  InternalField | InternalRelationalField
+  InternalField | InternalRelationshipField
 >;
 
 export type DisableOperationsOptions =
@@ -168,7 +168,7 @@ export type AddRelationshipFieldsToModelTypeFields<
   Model,
   RelationshipFields extends Record<
     string,
-    ModelRelationalField<ModelRelationalFieldParamShape, string, any, any>
+    ModelRelationshipField<ModelRelationshipFieldParamShape, string, any, any>
   >,
 > =
   Model extends ModelType<
@@ -305,7 +305,7 @@ export type SchemaModelType<
       relationships<
         Param extends Record<
           string,
-          ModelRelationalField<any, string, any, any>
+          ModelRelationshipField<any, string, any, any>
         > = Record<never, never>,
       >(
         relationships: Param,

@@ -170,23 +170,23 @@ Public API for the chainable builder methods exposed by Model Field. The type is
 </td></tr>
 <tr><td>
 
-[ModelRelationalField](./data-schema.modelrelationalfield.md)
+[ModelRelationshipField](./data-schema.modelrelationshipfield.md)
 
 
 </td><td>
 
-Model relational field definition interface
+Model relationship field definition interface
 
 
 </td></tr>
 <tr><td>
 
-[ModelRelationalTypeArgFactory](./data-schema.modelrelationaltypeargfactory.md)
+[ModelRelationshipTypeArgFactory](./data-schema.modelrelationshiptypeargfactory.md)
 
 
 </td><td>
 
-Model relational type definition content
+Model relationship type definition content
 
 
 </td></tr>

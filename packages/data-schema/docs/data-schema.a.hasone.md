@@ -9,7 +9,7 @@ Create one-to-one relationship between two models using the `hasOne("MODEL_NAME"
 **Signature:**
 
 ```typescript
-export declare function hasOne<RM extends string>(relatedModel: RM, references: string | string[]): ModelRelationalField<ModelRelationalTypeArgFactory<RM, ModelRelationshipTypes.hasOne, false>, RM, "valueRequired", undefined>;
+export declare function hasOne<RM extends string>(relatedModel: RM, references: string | string[]): ModelRelationshipField<ModelRelationshipTypeArgFactory<RM, ModelRelationshipTypes.hasOne, false>, RM, "valueRequired", undefined>;
 ```
 
 ## Parameters
@@ -65,7 +65,7 @@ the field(s) that should be used to reference the related model
 </tbody></table>
 **Returns:**
 
-[ModelRelationalField](./data-schema.modelrelationalfield.md)<!-- -->&lt;[ModelRelationalTypeArgFactory](./data-schema.modelrelationaltypeargfactory.md)<!-- -->&lt;RM, [ModelRelationshipTypes.hasOne](./data-schema.modelrelationshiptypes.md)<!-- -->, false&gt;, RM, "valueRequired", undefined&gt;
+[ModelRelationshipField](./data-schema.modelrelationshipfield.md)<!-- -->&lt;[ModelRelationshipTypeArgFactory](./data-schema.modelrelationshiptypeargfactory.md)<!-- -->&lt;RM, [ModelRelationshipTypes.hasOne](./data-schema.modelrelationshiptypes.md)<!-- -->, false&gt;, RM, "valueRequired", undefined&gt;
 
 a one-to-one relationship definition
 

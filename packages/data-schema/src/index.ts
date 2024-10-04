@@ -13,8 +13,8 @@ export type { ModelType, ModelDefaultIdentifier } from './ModelType';
 export type { RefType } from './RefType';
 export type { CustomType } from './CustomType';
 export type {
-  ModelRelationalField,
+  ModelRelationshipField,
   ModelRelationshipTypes,
-  ModelRelationalTypeArgFactory,
-} from './ModelRelationalField';
+  ModelRelationshipTypeArgFactory,
+} from './ModelRelationshipField';
 export type { EnumType } from './EnumType';
