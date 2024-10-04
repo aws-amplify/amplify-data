@@ -510,6 +510,16 @@ function customOperationToGql(
     const { aiModel, systemPrompt, inferenceConfiguration } =
       typeDef.data.input;
 
+    // This is done to escape newlines in potentially multi-line system prompts
+    // e.g.
+    // generateStuff: a.generation({
+    //   aiModel: a.ai.model('Claude 3 Haiku'),
+    //   systemPrompt: `Generate a haiku
+    //   make it multiline`,
+    // }),
+    //
+    // It doesn't affect non multi-line string inputs for system prompts
+    const escapedSystemPrompt = systemPrompt.replace(/\r?\n/g, '\\n');
     const inferenceConfigurationEntries = Object.entries(
       inferenceConfiguration ?? {},
     );
@@ -519,7 +529,7 @@ function customOperationToGql(
             .map(([key, value]) => `${key}: ${value}`)
             .join(', ')} }`
         : '';
-    gqlHandlerContent += `@generation(aiModel: "${aiModel.resourcePath}", systemPrompt: "${systemPrompt}"${inferenceConfigurationGql}) `;
+    gqlHandlerContent += `@generation(aiModel: "${aiModel.resourcePath}", systemPrompt: "${escapedSystemPrompt}"${inferenceConfigurationGql}) `;
   }
 
   const gqlField = `${callSignature}: ${returnTypeName} ${gqlHandlerContent}${authString}`;
