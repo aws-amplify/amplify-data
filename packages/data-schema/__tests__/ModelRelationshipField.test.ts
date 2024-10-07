@@ -1,8 +1,8 @@
 import { a } from '../src/index';
-import { InternalRelationalField } from '../src/ModelRelationalField';
+import { InternalRelationshipField } from '../src/ModelRelationshipField';
 import { configure } from '../src/ModelSchema';
 
-describe('relational field required modifier', () => {
+describe('relationship field required modifier', () => {
   describe('belongsTo', () => {
     it("doesn't offer a required modifier", () => {
       expect(() => {
@@ -37,7 +37,7 @@ describe('relational field required modifier', () => {
       const field = a.belongsTo(
         'Test',
         'idFieldName',
-      ) as InternalRelationalField;
+      ) as InternalRelationshipField;
       expect(field.data.references).toEqual(['idFieldName']);
     });
   });
@@ -74,12 +74,15 @@ describe('relational field required modifier', () => {
     it('required sets arrayRequired to true', () => {
       const field = a
         .hasOne('Test', 'testId')
-        .required() as InternalRelationalField;
+        .required() as InternalRelationshipField;
       expect(field.data.arrayRequired).toBe(true);
     });
 
     it('references sets the reference field value', () => {
-      const field = a.hasOne('Test', 'idFieldName') as InternalRelationalField;
+      const field = a.hasOne(
+        'Test',
+        'idFieldName',
+      ) as InternalRelationshipField;
       expect(field.data.references).toEqual(['idFieldName']);
     });
   });
@@ -109,12 +112,15 @@ describe('relational field required modifier', () => {
     it('valueRequired sets valueRequired to true', () => {
       const field = a
         .hasMany('Test', 'testId')
-        .valueRequired() as InternalRelationalField;
+        .valueRequired() as InternalRelationshipField;
       expect(field.data.valueRequired).toBe(true);
     });
 
     it('references sets the reference field value', () => {
-      const field = a.hasMany('Test', 'idFieldName') as InternalRelationalField;
+      const field = a.hasMany(
+        'Test',
+        'idFieldName',
+      ) as InternalRelationshipField;
       expect(field.data.references).toEqual(['idFieldName']);
     });
   });
@@ -288,7 +294,7 @@ describe('schema generation with relationships', () => {
   });
 
   describe('validation for malformed relationships', () => {
-    test('conflicting relational definition on related model fails', () => {
+    test('conflicting relationship definition on related model fails', () => {
       const schema = a
         .schema({
           Team: a.model({
@@ -307,7 +313,7 @@ describe('schema generation with relationships', () => {
       );
     });
 
-    test('conflicting relational definition on parent model fails', () => {
+    test('conflicting relationship definition on parent model fails', () => {
       const schema = a
         .schema({
           Team: a.model({
@@ -380,7 +386,7 @@ describe('schema generation with relationships', () => {
       );
     });
 
-    test('Multiple relational definition on parent model ', () => {
+    test('Multiple relationship definition on parent model ', () => {
       const schema = a
         .schema({
           Team: a.model({

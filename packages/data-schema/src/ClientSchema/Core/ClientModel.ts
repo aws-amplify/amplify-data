@@ -14,7 +14,7 @@ import type {
   Prettify,
 } from '@aws-amplify/data-schema-types';
 import type { ModelField } from '../../ModelField';
-import type { ModelRelationalField } from '../../ModelRelationalField';
+import type { ModelRelationshipField } from '../../ModelRelationshipField';
 import type { EnumType } from '../../EnumType';
 import type { CustomType, CustomTypeParamShape } from '../../CustomType';
 import type { RefType } from '../../RefType';
@@ -164,7 +164,7 @@ type ImpliedAuthFieldsFromFields<T> = UnionToIntersection<
   T extends ModelTypeParamShape
     ? T['fields'][keyof T['fields']] extends
         | ModelField<any, any, infer Auth>
-        | ModelRelationalField<any, any, any, infer Auth>
+        | ModelRelationshipField<any, any, any, infer Auth>
         | RefType<any, any, infer Auth>
       ? Auth extends Authorization<any, any, any>
         ? ImpliedAuthFields<Auth>
@@ -267,7 +267,7 @@ export type IndexQueryInput<
  */
 
 /**
- * All required fields and relational fields, exclude readonly fields
+ * All required fields and relationship fields, exclude readonly fields
  */
 type MutationInput<
   Model extends ClientModel<any, any, any, any, any>,

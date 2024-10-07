@@ -125,7 +125,7 @@ export interface ConversationInput {
   systemPrompt: string;
   inferenceConfiguration?: InferenceConfiguration;
   tools?: ToolDefinition[];
-  handler?: DefineFunction | string;
+  handler?: DefineFunction;
 }
 
 export interface InternalConversationType

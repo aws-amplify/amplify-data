@@ -103,6 +103,13 @@ export type ResourceAuthorizationData = {
   operations?: ResourceOperation[];
 };
 
+/**
+ * Container for authorization schema definition content.
+ *
+ * @param AuthStrategy The auth strategy to use.
+ * @param AuthField The field to use for owner authorization.
+ * @param AuthFieldPlurality Whether the field is plural or singular.
+ */
 export type Authorization<
   AuthStrategy extends Strategy,
   AuthField extends string | undefined,

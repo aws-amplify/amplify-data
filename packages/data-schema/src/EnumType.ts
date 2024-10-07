@@ -6,6 +6,11 @@ type EnumTypeParamShape<values extends readonly string[] = readonly string[]> =
     values: values;
   };
 
+/**
+ * Enum type definition content
+ *
+ * @param values - The values of the enum
+ */
 export interface EnumType<values extends readonly string[] = readonly string[]>
   extends EnumTypeParamShape<values> {
   [brandSymbol]: 'enum';

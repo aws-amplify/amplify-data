@@ -1,5 +1,23 @@
 # @aws-amplify/data-schema
 
+## 1.10.0
+
+### Minor Changes
+
+- 400096f: fix: Exports needed to build customer declaration files for common cases
+
+## 1.9.2
+
+### Patch Changes
+
+- 52b79da: include custom conversation handler in lambdaDefinitions
+
+## 1.9.1
+
+### Patch Changes
+
+- a316ab3: support multiline systemPrompt input for conversation and generation definitions
+
 ## 1.9.0
 
 ### Minor Changes

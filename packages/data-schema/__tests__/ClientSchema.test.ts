@@ -1451,6 +1451,7 @@ describe('SQL Schema with sql statement references', () => {
 describe('ai routes', () => {
   test('conversations', () => {
     const handler = defineFunctionStub({});
+    const customConversationHandler = defineFunctionStub({});
     const schema = a.schema({
       Profile: a.customType({
         value: a.integer(),
@@ -1480,6 +1481,25 @@ describe('ai routes', () => {
           },
         ],
       }),
+
+      MultilinePromptChatBot: a.conversation({
+        aiModel: a.ai.model('Claude 3 Haiku'),
+        systemPrompt: `You are a helpful assistant.
+        Respond in the poetic form of haiku.`,
+        tools: [
+          { query: a.ref('myToolQuery'), description: 'does a thing' },
+          {
+            query: a.ref('anotherToolQuery'),
+            description: 'does a different thing',
+          },
+        ],
+      }),
+
+      CustomHandlerChatBot: a.conversation({
+        aiModel: a.ai.model('Claude 3 Haiku'),
+        systemPrompt: 'Hello, world!',
+        handler: customConversationHandler,
+      }),
     });
 
     type Schema = ClientSchema<typeof schema>;
@@ -1493,8 +1513,12 @@ describe('ai routes', () => {
 
     type test = Expect<Equal<ActualChatBotInterface, Expected>>;
 
-    const graphql = schema.transform().schema;
+    const derivedApiDefinition = schema.transform();
+    const graphql = derivedApiDefinition.schema;
     expect(graphql).toMatchSnapshot();
+
+    const lambdaFunctions = derivedApiDefinition.lambdaFunctions;
+    expect(lambdaFunctions['FnCustomHandlerChatBot']).toBeDefined();
   });
 
   test('generations', () => {

@@ -13,7 +13,7 @@ export declare function integer(): ModelField<Nullable<number>>;
 ```
 **Returns:**
 
-ModelField&lt;Nullable&lt;number&gt;&gt;
+[ModelField](./data-schema.modelfield.md)<!-- -->&lt;[Nullable](./data-schema.nullable.md)<!-- -->&lt;number&gt;&gt;
 
 integer field definition
 

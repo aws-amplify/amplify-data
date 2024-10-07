@@ -54,7 +54,7 @@ GenerationInput
 </tbody></table>
 **Returns:**
 
-CustomOperation&lt;{ arguments: null; returnType: null; authorization: \[\]; typeName: 'Generation'; handlers: null; input: GenerationInput; }, 'for' \| 'handler', typeof generationBrand&gt;
+[CustomOperation](./data-schema.customoperation.md)<!-- -->&lt;{ arguments: null; returnType: null; authorization: \[\]; typeName: 'Generation'; handlers: null; input: GenerationInput; }, 'for' \| 'handler', typeof generationBrand&gt;
 
 a generation route definition
 

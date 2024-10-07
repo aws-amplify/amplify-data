@@ -19,7 +19,7 @@ export declare function subscription(): CustomOperation<{
 ```
 **Returns:**
 
-CustomOperation&lt;{ arguments: null; returnType: null; authorization: \[\]; typeName: 'Subscription'; handlers: null; }, 'returns', typeof subscriptionBrand&gt;
+[CustomOperation](./data-schema.customoperation.md)<!-- -->&lt;{ arguments: null; returnType: null; authorization: \[\]; typeName: 'Subscription'; handlers: null; }, 'returns', typeof subscriptionBrand&gt;
 
 a custom subscription
 

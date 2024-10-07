@@ -9,8 +9,8 @@ import {
 } from './ModelField';
 import {
   ModelRelationshipTypes,
-  type InternalRelationalField,
-} from './ModelRelationalField';
+  type InternalRelationshipField,
+} from './ModelRelationshipField';
 import type { InternalModel, DisableOperationsOptions } from './ModelType';
 import type { InternalModelIndexType } from './ModelIndex';
 import {
@@ -44,7 +44,7 @@ import {
   type CustomHandler,
   type SqlReferenceHandler,
   FunctionHandler,
-  AsyncFunctionHandler
+  AsyncFunctionHandler,
 } from './Handler';
 import * as os from 'os';
 import * as path from 'path';
@@ -61,7 +61,7 @@ import {
 type ScalarFieldDef = Exclude<InternalField['data'], { fieldType: 'model' }>;
 
 type ModelFieldDef = Extract<
-  InternalRelationalField['data'],
+  InternalRelationshipField['data'],
   { fieldType: 'model' }
 >;
 
@@ -301,10 +301,12 @@ function transformFunctionHandler(
     } else if (typeof handlerData.handler.getInstance === 'function') {
       const fnName = `Fn${capitalize(functionFieldName)}${idx === 0 ? '' : `${idx + 1}`}`;
       lambdaFunctionDefinition[fnName] = handlerData.handler;
-      const invocationTypeArg = handlerData.invocationType === 'Event' ? ', invocationType: Event)' : ')'
+      const invocationTypeArg =
+        handlerData.invocationType === 'Event'
+          ? ', invocationType: Event)'
+          : ')';
       gqlHandlerContent += `@function(name: "${fnName}"${invocationTypeArg} `;
-    }
-    else {
+    } else {
       throw new Error(
         `Invalid value specified for ${functionFieldName} handler.function(). Expected: defineFunction or string.`,
       );
@@ -510,6 +512,16 @@ function customOperationToGql(
     const { aiModel, systemPrompt, inferenceConfiguration } =
       typeDef.data.input;
 
+    // This is done to escape newlines in potentially multi-line system prompts
+    // e.g.
+    // generateStuff: a.generation({
+    //   aiModel: a.ai.model('Claude 3 Haiku'),
+    //   systemPrompt: `Generate a haiku
+    //   make it multiline`,
+    // }),
+    //
+    // It doesn't affect non multi-line string inputs for system prompts
+    const escapedSystemPrompt = systemPrompt.replace(/\r?\n/g, '\\n');
     const inferenceConfigurationEntries = Object.entries(
       inferenceConfiguration ?? {},
     );
@@ -519,7 +531,7 @@ function customOperationToGql(
             .map(([key, value]) => `${key}: ${value}`)
             .join(', ')} }`
         : '';
-    gqlHandlerContent += `@generation(aiModel: "${aiModel.resourcePath}", systemPrompt: "${systemPrompt}"${inferenceConfigurationGql}) `;
+    gqlHandlerContent += `@generation(aiModel: "${aiModel.resourcePath}", systemPrompt: "${escapedSystemPrompt}"${inferenceConfigurationGql}) `;
   }
 
   const gqlField = `${callSignature}: ${returnTypeName} ${gqlHandlerContent}${authString}`;
@@ -1289,13 +1301,18 @@ const schemaPreprocessor = (
   // This is done here so that:
   // - it only happens once per schema
   // - downstream validation based on `getRefTypeForSchema` finds the EventInvocationResponse type
-  const containsAsyncLambdaCustomOperation = Object.entries(schema.data.types).find(([_, typeDef]) => {
-    return isCustomOperation(typeDef)
-    && finalHandlerIsAsyncFunctionHandler(typeDef.data.handlers);
+  const containsAsyncLambdaCustomOperation = Object.entries(
+    schema.data.types,
+  ).find(([_, typeDef]) => {
+    return (
+      isCustomOperation(typeDef) &&
+      finalHandlerIsAsyncFunctionHandler(typeDef.data.handlers)
+    );
   });
 
   if (containsAsyncLambdaCustomOperation) {
-    schema.data.types['EventInvocationResponse'] = eventInvocationResponseCustomType;
+    schema.data.types['EventInvocationResponse'] =
+      eventInvocationResponseCustomType;
   }
 
   const topLevelTypes = sortTopLevelTypes(Object.entries(schema.data.types));
@@ -1432,7 +1449,12 @@ const schemaPreprocessor = (
         }
       } else if (isConversationRoute(typeDef)) {
         // TODO: add inferenceConfiguration values to directive.
-        customMutations.push(createConversationField(typeDef, typeName));
+        const { field, functionHandler } = createConversationField(
+          typeDef,
+          typeName,
+        );
+        customMutations.push(field);
+        Object.assign(lambdaFunctions, functionHandler);
         shouldAddConversationTypes = true;
       }
     } else if (staticSchema) {
@@ -1617,7 +1639,11 @@ function validateCustomOperations(
   ) {
     // TODO: There should be a more elegant and readable way to handle this check.
     // Maybe it's not even necessary anymore since we're the setting returnType in the handler() method.
-    if (!handlers || handlers.length === 0 || handlers[handlers.length - 1][brandSymbol] !== 'asyncFunctionHandler') {
+    if (
+      !handlers ||
+      handlers.length === 0 ||
+      handlers[handlers.length - 1][brandSymbol] !== 'asyncFunctionHandler'
+    ) {
       const typeDescription =
         opType === 'Generation' ? 'Generation Route' : `Custom ${opType}`;
       throw new Error(
@@ -1709,14 +1735,20 @@ const isCustomHandler = (
 const isFunctionHandler = (
   handler: HandlerType[] | null,
 ): handler is (FunctionHandler | AsyncFunctionHandler)[] => {
-  return Array.isArray(handler) && ['functionHandler', 'asyncFunctionHandler'].includes(getBrand(handler[0]));
+  return (
+    Array.isArray(handler) &&
+    ['functionHandler', 'asyncFunctionHandler'].includes(getBrand(handler[0]))
+  );
 };
 
 const finalHandlerIsAsyncFunctionHandler = (
   handler: HandlerType[] | null,
 ): handler is AsyncFunctionHandler[] => {
-  return Array.isArray(handler) && getBrand(handler[handler.length - 1]) === 'asyncFunctionHandler';
-}
+  return (
+    Array.isArray(handler) &&
+    getBrand(handler[handler.length - 1]) === 'asyncFunctionHandler'
+  );
+};
 
 const normalizeDataSourceName = (
   dataSource: undefined | string | RefType<any, any, any>,
@@ -1808,11 +1840,11 @@ const eventInvocationResponseCustomType = {
           required: true,
           array: false,
           arrayRequired: false,
-        }
-      }
+        },
+      },
     },
-    type: 'customType'
-  }
+    type: 'customType',
+  },
 };
 
 function transformCustomOperations(
@@ -1976,8 +2008,8 @@ function validateRelationships(
     );
 
     // Validate that the references defined in the relationship follow the
-    // relational definition rules.
-    validateRelationalReferences(relationship);
+    // relationship definition rules.
+    validateRelationshipReferences(relationship);
   }
 }
 
@@ -2012,7 +2044,7 @@ function describeConnectFieldRelationship(
  * Validates that the types of child model's reference fields match the types of the parent model's identifier fields.
  * @param relationship The {@link ModelRelationship} to validate.
  */
-function validateRelationalReferences(relationship: ModelRelationship) {
+function validateRelationshipReferences(relationship: ModelRelationship) {
   const {
     parent,
     parentConnectionField,
@@ -2089,7 +2121,7 @@ type ConnectionField = {
 /**
  * An internal representation of a model relationship used by validation functions.
  * Use {@link getModelRelationship} to create this.
- * See {@link validateRelationalReferences} for validation example.
+ * See {@link validateRelationshipReferences} for validation example.
  */
 type ModelRelationship = {
   /**
@@ -2200,7 +2232,7 @@ function getAssociatedConnectionField(
 
     // In order to find that associated connection field, we need to do some validation that we'll depend on further downstream.
     // 1. Field type matches the source model's type.
-    // 2. A valid counterpart relational modifier is defined on the field. See `associatedRelationshipTypes` for more information.
+    // 2. A valid counterpart relationship modifier is defined on the field. See `associatedRelationshipTypes` for more information.
     // 3. The reference arguments provided to the field match (element count + string comparison) references passed to the source connection field.
     return (
       connectionField.data.relatedModel === sourceModelName &&

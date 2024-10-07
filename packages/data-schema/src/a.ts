@@ -18,7 +18,7 @@ import {
   ipAddress,
 } from './ModelField';
 import { ref } from './RefType';
-import { hasOne, hasMany, belongsTo } from './ModelRelationalField';
+import { hasOne, hasMany, belongsTo } from './ModelRelationshipField';
 import { customType } from './CustomType';
 import { enumType } from './EnumType';
 import { query, mutation, subscription, generation } from './CustomOperation';
