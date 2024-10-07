@@ -4,7 +4,7 @@
 
 Page: https://docs.amplify.aws/react/build-a-backend/data/mutate-data/
 
-Coverage: 83.3%
+Coverage: 100.0%
 
 #### `Unnamed Snippet`
 
@@ -116,7 +116,6 @@ authMode: "apiKey",
 ##### Covering Regions
 
 - [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/2-expected-use/auth-modes.ts](../../../../../../../packages/integration-tests/__tests__/defined-behavior/2-expected-use/auth-modes.ts#L338)
-- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/1-patterns/error-handling.ts](../../../../../../../packages/integration-tests/__tests__/defined-behavior/1-patterns/error-handling.ts#L746)
 
 ---
 
@@ -147,11 +146,11 @@ client.cancel(promise, "my message for cancellation");
 | | |
 | -- | -- |
 | Hash | `7788520a09a949aa` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/1-patterns/error-handling.ts](../../../../../../../packages/integration-tests/__tests__/defined-behavior/1-patterns/error-handling.ts#L746)
 
 ---
 

@@ -24,4 +24,13 @@ describe('/', () => {
     // generic imports + configure
     // #endregion
   });
+
+  test('subscribe-data', () => {
+    // #region covers 3d50d3d345883f3f, ccefe4830defbe18
+    // connection state change Hub events and connection management sample code.
+    // this package doesn't directly interact with Hub. these events are emitted by the
+    // core JS library graphql package.
+    // TODO: consider whether this should be configured with an e2e anyway.
+    // #endregion
+  });
 });

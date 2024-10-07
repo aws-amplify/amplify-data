@@ -100,9 +100,11 @@ describe('ClientSchema', () => {
         ]);
         const client = generateClient<Schema>();
 
+        // #region covers cb7710cc0dc02bd3
         const { data: post } = await client.mutations.LikePost({
           postId: 'something',
         });
+        // #endregion
 
         // expect no type errors, assuming non-null result.
         const test: Schema['Post']['type'] = post!;

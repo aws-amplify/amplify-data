@@ -144,6 +144,8 @@ describe('ClientSchema', () => {
     });
 
     test(`['functionHandler'] can be used add typing to lambda handlers`, async () => {
+      // #region covers 584adc09feb4d383
+
       // We can grab the full handler type from the Schema:
       type myQueryHandler = Schema['myQuery']['functionHandler'];
 
@@ -168,6 +170,8 @@ describe('ClientSchema', () => {
         // the function signature.
         return result;
       };
+
+      // #endregion
     });
   });
 });
