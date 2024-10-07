@@ -78,7 +78,7 @@ const ingoredPaths: (string | RegExp)[] = [
   'https://docs.amplify.aws/react/build-a-backend/data/override-resources/',
 
   // we'll cover outputs from snippets from the root "custom business logic" page in the local
-  // defined=behavior tests, but not the individual sample AWS service integrations. we'll
+  // defined-behavior tests, but not the individual sample AWS service integrations. we'll
   // anticipate these being covered either by e2e's or vetted by the DXE team (or whoever writes these).
   'https://docs.amplify.aws/react/build-a-backend/data/custom-business-logic/connect-amazon-polly/',
   'https://docs.amplify.aws/react/build-a-backend/data/custom-business-logic/connect-amazon-rekognition/',

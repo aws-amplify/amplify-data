@@ -20,6 +20,7 @@ describe('custom operations', () => {
 
   const dummyHandler = '' as any;
 
+  // #region covers d9c0f0f657dbbe8a, e394d9c98b1a1f8d
   const schema = a.schema({
     PhoneNumber: a
       .model({
@@ -126,6 +127,8 @@ describe('custom operations', () => {
 
   type Schema = ClientSchema<typeof schema>;
 
+  // #endregion
+
   test('primitive type result', async () => {
     const { spy, generateClient } = mockedGenerateClient([
       {
@@ -139,7 +142,9 @@ describe('custom operations', () => {
     Amplify.configure(config);
     const client = generateClient<Schema>();
 
+    // #region covers ffefd700b1e323c9
     const { data } = await client.queries.echo({ value: 'something' });
+    // #endregion
 
     expect(data).toEqual('Echo result');
     expect(optionsAndHeaders(spy)).toMatchSnapshot();
@@ -298,10 +303,10 @@ describe('custom operations', () => {
       {
         data: {
           soloAsync: {
-            success: true
-          }
-        }
-      }
+            success: true,
+          },
+        },
+      },
     ]);
 
     const config = await buildAmplifyConfig(schema);
@@ -310,14 +315,14 @@ describe('custom operations', () => {
     const client = generateClient<Schema>();
 
     const { data } = await client.queries.soloAsync({
-      value: 'hello, world!'
+      value: 'hello, world!',
     });
 
     expect(data).toEqual(
       expect.objectContaining({
         success: true,
-      })
-    )
+      }),
+    );
     expect(optionsAndHeaders(spy)).toMatchSnapshot();
   });
 
@@ -338,7 +343,7 @@ describe('custom operations', () => {
     const client = generateClient<Schema>();
 
     const { data } = await client.queries.asyncSync({
-      value: 'hello, world!'
+      value: 'hello, world!',
     });
 
     expect(data).toEqual({
@@ -364,7 +369,7 @@ describe('custom operations', () => {
     const client = generateClient<Schema>();
 
     const { data } = await client.queries.syncSync({
-      value: 'hello, world!'
+      value: 'hello, world!',
     });
 
     expect(data).toEqual({
@@ -378,10 +383,10 @@ describe('custom operations', () => {
       {
         data: {
           syncAsync: {
-            success: true
-          }
-        }
-      }
+            success: true,
+          },
+        },
+      },
     ]);
 
     const config = await buildAmplifyConfig(schema);
@@ -390,14 +395,14 @@ describe('custom operations', () => {
     const client = generateClient<Schema>();
 
     const { data } = await client.queries.syncAsync({
-      value: 'hello, world!'
+      value: 'hello, world!',
     });
 
     expect(data).toEqual(
       expect.objectContaining({
         success: true,
-      })
-    )
+      }),
+    );
     expect(optionsAndHeaders(spy)).toMatchSnapshot();
   });
 
@@ -406,10 +411,10 @@ describe('custom operations', () => {
       {
         data: {
           asyncAsync: {
-            success: true
-          }
-        }
-      }
+            success: true,
+          },
+        },
+      },
     ]);
 
     const config = await buildAmplifyConfig(schema);
@@ -418,14 +423,14 @@ describe('custom operations', () => {
     const client = generateClient<Schema>();
 
     const { data } = await client.queries.asyncAsync({
-      value: 'hello, world!'
+      value: 'hello, world!',
     });
 
     expect(data).toEqual(
       expect.objectContaining({
         success: true,
-      })
-    )
+      }),
+    );
     expect(optionsAndHeaders(spy)).toMatchSnapshot();
   });
 
