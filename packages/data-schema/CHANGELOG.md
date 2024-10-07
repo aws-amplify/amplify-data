@@ -1,5 +1,11 @@
 # @aws-amplify/data-schema
 
+## 1.10.0
+
+### Minor Changes
+
+- 400096f: fix: Exports needed to build customer declaration files for common cases
+
 ## 1.9.2
 
 ### Patch Changes
