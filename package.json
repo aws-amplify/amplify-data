@@ -24,6 +24,7 @@
     "clean:npm-proxy": "npm run stop:npm-proxy && rimraf verdaccio-cache verdaccio-logs.txt",
     "delete-cache": "find . -type d \\( -name .turbo -o -name .rollup.cache \\) -exec rm -rf {} +",
     "docs": "turbo run docs",
+    "e2e-exports": "npm run --prefix ./packages/e2e-tests/exports-test e2e",
     "e2e": "npm run e2e-node && npm run e2e-sandbox",
     "e2e:clean": "npm run e2e-node:clean && npm run e2e-sandbox:clean",
     "e2e-node": "npm run --prefix ./packages/e2e-tests/node e2e-node",
@@ -41,7 +42,7 @@
     "publish:local": "tsx scripts/publish_local.ts",
     "start:npm-proxy": "tsx scripts/start_npm_proxy.ts",
     "stop:npm-proxy": "tsx scripts/stop_npm_proxy.ts",
-    "test": "turbo run test && npm run test:scripts",
+    "test": "turbo run test && npm run test:scripts && npm run e2e-exports",
     "test:scripts": "npx jest scripts/",
     "turbo": "turbo",
     "vend": "npm run start:npm-proxy && npm run publish:local"

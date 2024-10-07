@@ -55,9 +55,11 @@ type FieldData = {
 
 type ModelFieldTypeParamInner = string | number | boolean | Date | Json | null;
 
-// A precise, recursive Json type blows the type calculation stack without installing
-// explicit `Json extends T ? short-circuit : ...` type checks all over the place.
-// We may take that on later. But, this is a good-enough approximation for now.
+/**
+ * A precise, recursive Json type blows the type calculation stack without installing
+ * explicit `Json extends T ? short-circuit : ...` type checks all over the place.
+ * We may take that on later. But, this is a good-enough approximation for now.
+ */
 export type Json = null | string | number | boolean | object | any[];
 
 export type ModelFieldTypeParamOuter =

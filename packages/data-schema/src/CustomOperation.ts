@@ -92,6 +92,13 @@ export type CustomOperationParamShape = {
   input?: CustomOperationInput;
 };
 
+/**
+ * Custom operation definition interface
+ *
+ * @param T - The shape of the custom operation
+ * @param K - The keys already defined
+ * @param B - The brand of the custom operation
+ */
 export type CustomOperation<
   T extends CustomOperationParamShape,
   K extends keyof CustomOperation<T> = never,

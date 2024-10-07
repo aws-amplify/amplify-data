@@ -13,7 +13,7 @@ export declare function boolean(): ModelField<Nullable<boolean>>;
 ```
 **Returns:**
 
-ModelField&lt;Nullable&lt;boolean&gt;&gt;
+[ModelField](./data-schema.modelfield.md)<!-- -->&lt;[Nullable](./data-schema.nullable.md)<!-- -->&lt;boolean&gt;&gt;
 
 boolean field definition
 

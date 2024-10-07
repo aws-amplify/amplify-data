@@ -27,9 +27,9 @@ import { processSchema } from './SchemaProcessor';
 import { AllowModifier, SchemaAuthorization, allow } from './Authorization';
 import { Brand, brand, getBrand, RenameUsingTuples } from './util';
 import {
-  ModelRelationalField,
-  ModelRelationalFieldParamShape,
-} from './ModelRelationalField';
+  ModelRelationshipField,
+  ModelRelationshipFieldParamShape,
+} from './ModelRelationshipField';
 import { ConversationType } from './ai/ConversationType';
 
 export { ModelType } from './ModelType';
@@ -104,6 +104,12 @@ export type BaseSchema<
 export type GenericModelSchema<T extends ModelSchemaParamShape> =
   BaseSchema<T> & Brand<typeof rdsSchemaBrandName | typeof ddbSchemaBrandName>;
 
+/**
+ * Model schema definition interface
+ *
+ * @param T - The shape of the model schema
+ * @param UsedMethods - The method keys already defined
+ */
 export type ModelSchema<
   T extends ModelSchemaParamShape,
   UsedMethods extends 'authorization' | 'relationships' = never,
@@ -138,7 +144,7 @@ type OmitFromEach<Models, Modifier extends string> = {
 
 type RelationshipTemplate = Record<
   string,
-  ModelRelationalField<ModelRelationalFieldParamShape, string, any, any>
+  ModelRelationshipField<ModelRelationshipFieldParamShape, string, any, any>
 >;
 
 export type RDSModelSchema<
@@ -252,7 +258,7 @@ type ModelWithRelationships<
 > = ModelName extends keyof RelationshipMap
   ? RelationshipMap[ModelName] extends Record<
       string,
-      ModelRelationalField<ModelRelationalFieldParamShape, string, any, any>
+      ModelRelationshipField<ModelRelationshipFieldParamShape, string, any, any>
     >
     ? AddRelationshipFieldsToModelTypeFields<
         Types[ModelName],
@@ -440,7 +446,11 @@ type SchemaReturnType<
   DE extends DatasourceEngine,
   Types extends ModelSchemaContents,
 > = DE extends 'dynamodb'
-  ? ModelSchema<{ types: Types; authorization: []; configuration: any }>
+  ? ModelSchema<{
+      types: Types;
+      authorization: [];
+      configuration: any;
+    }>
   : RDSModelSchema<{
       types: Types;
       authorization: [];

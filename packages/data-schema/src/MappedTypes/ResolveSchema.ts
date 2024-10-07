@@ -1,10 +1,10 @@
 import type { ModelType } from '../ModelType';
 import type { GenericModelSchema } from '../ModelSchema';
 import type {
-  ModelRelationalField,
+  ModelRelationshipField,
   ModelRelationshipTypes,
   RelationTypeFunctionOmitMapping,
-} from '../ModelRelationalField';
+} from '../ModelRelationshipField';
 import type { BaseModelField } from '../ModelField';
 import type { CustomType, CustomTypeParamShape } from '../CustomType';
 import type { EnumType } from '../EnumType';
@@ -91,8 +91,8 @@ export type FieldTypes<T> = {
               arrayRequired: false;
               authorization: [];
             }> | null
-          : // resolve relational and model fields to the their first type arg
-            T[ModelProp][FieldProp] extends ModelRelationalField<
+          : // resolve relationship and model fields to the their first type arg
+            T[ModelProp][FieldProp] extends ModelRelationshipField<
                 infer R,
                 string,
                 RelationTypeFunctionOmitMapping<ModelRelationshipTypes>,
@@ -107,7 +107,7 @@ export type FieldTypes<T> = {
  * Resolves field types for a CustomType.
  *
  * This utility type is needed in addition to the `FieldTypes` utility type as
- * without checking `ModelRelationalField` can improve ~5% on resolving performance.
+ * without checking `ModelRelationshipField` can improve ~5% on resolving performance.
  *
  * Non-model types are replaced with Refs. Refs remain and are resolved in ResolveFieldProperties.ts
  */

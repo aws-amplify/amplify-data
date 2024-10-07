@@ -55,7 +55,7 @@ database table fields. Supports scalar types and relationship types.
 </tbody></table>
 **Returns:**
 
-ModelType&lt;{ fields: T; identifier: ModelDefaultIdentifier; secondaryIndexes: \[\]; authorization: \[\]; disabledOperations: \[\]; }&gt;
+[ModelType](./data-schema.modeltype.md)<!-- -->&lt;{ fields: T; identifier: [ModelDefaultIdentifier](./data-schema.modeldefaultidentifier.md)<!-- -->; secondaryIndexes: \[\]; authorization: \[\]; disabledOperations: \[\]; }&gt;
 
 a data model definition
 

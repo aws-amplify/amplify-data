@@ -13,7 +13,7 @@ export declare function id(): ModelField<Nullable<string>>;
 ```
 **Returns:**
 
-ModelField&lt;Nullable&lt;string&gt;&gt;
+[ModelField](./data-schema.modelfield.md)<!-- -->&lt;[Nullable](./data-schema.nullable.md)<!-- -->&lt;string&gt;&gt;
 
 ID field definition
 
