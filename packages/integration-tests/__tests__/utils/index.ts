@@ -400,6 +400,74 @@ export function expectSchemaModelContains({
   throw new Error('No matching definition found in the schema.');
 }
 
+export function expectSchemaFieldDirective({
+  schema,
+  model,
+  field,
+  directive,
+}: {
+  schema: string;
+  model: string;
+  field: string;
+  directive: string;
+}) {
+  const ast = parse(schema);
+  for (const def of ast.definitions) {
+    if (def.kind === 'ObjectTypeDefinition') {
+      if (def.name.value === model) {
+        for (const _field of def.fields || []) {
+          if (_field.kind === 'FieldDefinition') {
+            if (_field.name.value === field) {
+              if (_field.directives?.some((d) => print(d) === directive)) {
+                return true;
+              } else {
+                throw new Error(
+                  `No match for "${model} ${directive}" in \n${JSON.stringify(
+                    _field.directives?.map((d) => print(d)),
+                    null,
+                    2,
+                  )} `,
+                );
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+  throw new Error('No matching field-directive found in the schema.');
+}
+
+export function expectSchemaModelDirective({
+  schema,
+  model,
+  directive,
+}: {
+  schema: string;
+  model: string;
+  directive: string;
+}) {
+  const ast = parse(schema);
+  for (const def of ast.definitions) {
+    if (def.kind === 'ObjectTypeDefinition') {
+      if (def.name.value === model) {
+        if (def.directives?.some((d) => print(d) === directive)) {
+          return true;
+        } else {
+          throw new Error(
+            `No match for "${model} ${directive}" in \n${JSON.stringify(
+              def.directives?.map((d) => print(d)),
+              null,
+              2,
+            )} `,
+          );
+        }
+      }
+    }
+  }
+  throw new Error('No matching model-directive found in the schema.');
+}
+
 function graphqlFieldMatches({
   def,
   type,

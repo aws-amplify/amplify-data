@@ -4,7 +4,7 @@
 
 Page: https://docs.amplify.aws/react/build-a-backend/data/customize-authz/
 
-Coverage: 0.0%
+Coverage: 85.7%
 
 #### `Unnamed Snippet`
 
@@ -64,11 +64,11 @@ Notes: a
 | | |
 | -- | -- |
 | Hash | `76ed8e59fffd0aac` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/1-patterns/auth-rules.ts](../../../../../../../packages/integration-tests/__tests__/defined-behavior/1-patterns/auth-rules.ts#L40)
 
 ---
 
@@ -95,11 +95,11 @@ const schema = a.schema({
 | | |
 | -- | -- |
 | Hash | `2194b55334d745ad` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/1-patterns/auth-rules.ts](../../../../../../../packages/integration-tests/__tests__/defined-behavior/1-patterns/auth-rules.ts#L79)
 
 ---
 
@@ -129,11 +129,11 @@ const schema = a.schema({
 | | |
 | -- | -- |
 | Hash | `714da914aa4034ef` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/1-patterns/auth-rules.ts](../../../../../../../packages/integration-tests/__tests__/defined-behavior/1-patterns/auth-rules.ts#L105)
 
 ---
 
@@ -172,11 +172,11 @@ const schema = a.schema({
 | | |
 | -- | -- |
 | Hash | `5e987afe82e5a1ff` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/1-patterns/auth-rules.ts](../../../../../../../packages/integration-tests/__tests__/defined-behavior/1-patterns/auth-rules.ts#L142)
 
 ---
 
@@ -197,11 +197,11 @@ const schema = a.schema({
 | | |
 | -- | -- |
 | Hash | `d51a9297b3d57373` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/1-patterns/auth-rules.ts](../../../../../../../packages/integration-tests/__tests__/defined-behavior/1-patterns/auth-rules.ts#L196)
 
 ---
 
@@ -231,11 +231,11 @@ const { data: listPostsResult, errors } = await client.models.Post.list({
 | | |
 | -- | -- |
 | Hash | `ba61062287418137` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/2-expected-use/auth-modes.ts](../../../../../../../packages/integration-tests/__tests__/defined-behavior/2-expected-use/auth-modes.ts#L49)
 
 ---
 

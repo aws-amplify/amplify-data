@@ -46,7 +46,7 @@ describe('authMode overrides', () => {
     'userPool',
   ] as const;
 
-  // #region covers 214c31dd2206bfca, 92f1e6d948bb2f1e, b7b5ef648a737b54, 2fcbfbd338e2b642, bd051f6474d8be69
+  // #region covers 214c31dd2206bfca, 92f1e6d948bb2f1e, b7b5ef648a737b54, 2fcbfbd338e2b642, bd051f6474d8be69, ba61062287418137
   describe('client', () => {
     afterEach(() => {
       jest.clearAllMocks();
