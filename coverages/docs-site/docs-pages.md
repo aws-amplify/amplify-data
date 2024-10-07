@@ -35,11 +35,11 @@
 | /react/build-a-backend/data/data-modeling/identifiers/ | [docs](https://docs.amplify.aws/react/build-a-backend/data/data-modeling/identifiers/)&nbsp;/&nbsp;[report](docs-page/react/build-a-backend/data/data-modeling/identifiers/index.md) | 6 | 6 | 100.0% |
 | /react/build-a-backend/data/data-modeling/relationships/ | [docs](https://docs.amplify.aws/react/build-a-backend/data/data-modeling/relationships/)&nbsp;/&nbsp;[report](docs-page/react/build-a-backend/data/data-modeling/relationships/index.md) | 17 | 17 | 100.0% |
 | /react/build-a-backend/data/data-modeling/secondary-index/ | [docs](https://docs.amplify.aws/react/build-a-backend/data/data-modeling/secondary-index/)&nbsp;/&nbsp;[report](docs-page/react/build-a-backend/data/data-modeling/secondary-index/index.md) | 7 | 7 | 100.0% |
-| /react/build-a-backend/data/mutate-data/ | [docs](https://docs.amplify.aws/react/build-a-backend/data/mutate-data/)&nbsp;/&nbsp;[report](docs-page/react/build-a-backend/data/mutate-data/index.md) | 5 | 6 | 83.3% |
+| /react/build-a-backend/data/mutate-data/ | [docs](https://docs.amplify.aws/react/build-a-backend/data/mutate-data/)&nbsp;/&nbsp;[report](docs-page/react/build-a-backend/data/mutate-data/index.md) | 6 | 6 | 100.0% |
 | /react/build-a-backend/data/optimistic-ui/ | [docs](https://docs.amplify.aws/react/build-a-backend/data/optimistic-ui/)&nbsp;/&nbsp;[report](docs-page/react/build-a-backend/data/optimistic-ui/index.md) | 0 | 12 | 0.0% |
 | /react/build-a-backend/data/query-data/ | [docs](https://docs.amplify.aws/react/build-a-backend/data/query-data/)&nbsp;/&nbsp;[report](docs-page/react/build-a-backend/data/query-data/index.md) | 11 | 11 | 100.0% |
 | /react/build-a-backend/data/set-up-data/ | [docs](https://docs.amplify.aws/react/build-a-backend/data/set-up-data/)&nbsp;/&nbsp;[report](docs-page/react/build-a-backend/data/set-up-data/index.md) | 2 | 7 | 28.6% |
-| /react/build-a-backend/data/subscribe-data/ | [docs](https://docs.amplify.aws/react/build-a-backend/data/subscribe-data/)&nbsp;/&nbsp;[report](docs-page/react/build-a-backend/data/subscribe-data/index.md) | 5 | 9 | 55.6% |
+| /react/build-a-backend/data/subscribe-data/ | [docs](https://docs.amplify.aws/react/build-a-backend/data/subscribe-data/)&nbsp;/&nbsp;[report](docs-page/react/build-a-backend/data/subscribe-data/index.md) | 9 | 9 | 100.0% |
 | /react/build-a-backend/data/working-with-files/ | [docs](https://docs.amplify.aws/react/build-a-backend/data/working-with-files/)&nbsp;/&nbsp;[report](docs-page/react/build-a-backend/data/working-with-files/index.md) | 0 | 19 | 0.0% |
 | /react/build-a-backend/server-side-rendering/ | [docs](https://docs.amplify.aws/react/build-a-backend/server-side-rendering/)&nbsp;/&nbsp;[report](docs-page/react/build-a-backend/server-side-rendering/index.md) | 0 | 12 | 0.0% |
 | /react/build-a-backend/troubleshooting/cannot-find-module-amplify-env/ | [docs](https://docs.amplify.aws/react/build-a-backend/troubleshooting/cannot-find-module-amplify-env/)&nbsp;/&nbsp;[report](docs-page/react/build-a-backend/troubleshooting/cannot-find-module-amplify-env/index.md) | 0 | 2 | 0.0% |
@@ -60,6 +60,6 @@
 | /react/start/account-setup/ | [docs](https://docs.amplify.aws/react/start/account-setup/)&nbsp;/&nbsp;[report](docs-page/react/start/account-setup/index.md) | 11 | 11 | 100.0% |
 | /react/start/manual-installation/ | [docs](https://docs.amplify.aws/react/start/manual-installation/)&nbsp;/&nbsp;[report](docs-page/react/start/manual-installation/index.md) | 11 | 11 | 100.0% |
 | /react/start/quickstart/ | [docs](https://docs.amplify.aws/react/start/quickstart/)&nbsp;/&nbsp;[report](docs-page/react/start/quickstart/index.md) | 11 | 11 | 100.0% |
-| TOTAL | | 182 | 407 | 44.7% |
+| TOTAL | | 187 | 407 | 45.9% |
 
 [<- Back to summary](./readme.md)

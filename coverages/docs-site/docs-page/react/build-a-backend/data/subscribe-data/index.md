@@ -4,7 +4,7 @@
 
 Page: https://docs.amplify.aws/react/build-a-backend/data/subscribe-data/
 
-Coverage: 55.6%
+Coverage: 100.0%
 
 #### `Unnamed Snippet`
 
@@ -47,7 +47,7 @@ return () => sub.unsubscribe();
 
 ##### Covering Regions
 
-- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/1-patterns/subscribe-to-real-time-events.ts](../../../../../../../packages/integration-tests/__tests__/defined-behavior/1-patterns/subscribe-to-real-time-events.ts#L61)
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/1-patterns/subscribe-to-real-time-events.ts](../../../../../../../packages/integration-tests/__tests__/defined-behavior/1-patterns/subscribe-to-real-time-events.ts#L64)
 
 ---
 
@@ -198,6 +198,7 @@ deleteSub.unsubscribe();
 ##### Covering Regions
 
 - [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/2-expected-use/custom-selection-set.ts](../../../../../../../packages/integration-tests/__tests__/defined-behavior/2-expected-use/custom-selection-set.ts#L289)
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/1-patterns/subscribe-to-real-time-events.ts](../../../../../../../packages/integration-tests/__tests__/defined-behavior/1-patterns/subscribe-to-real-time-events.ts#L133)
 
 ---
 
@@ -225,11 +226,11 @@ content: {
 | | |
 | -- | -- |
 | Hash | `dd37adfa68dc80a8` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/1-patterns/subscribe-to-real-time-events.ts](../../../../../../../packages/integration-tests/__tests__/defined-behavior/1-patterns/subscribe-to-real-time-events.ts#L234)
 
 ---
 
@@ -252,11 +253,11 @@ console.log(connectionState);
 | | |
 | -- | -- |
 | Hash | `3d50d3d345883f3f` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/4-uncovered/root.ts](../../../../../../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/root.ts#L29)
 
 ---
 
@@ -311,11 +312,11 @@ const cleanupSubscriptions = () => {
 | | |
 | -- | -- |
 | Hash | `ccefe4830defbe18` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/4-uncovered/root.ts](../../../../../../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/root.ts#L29)
 
 ---
 
@@ -330,11 +331,11 @@ sub.unsubscribe();
 | | |
 | -- | -- |
 | Hash | `982a132bf936968c` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/1-patterns/subscribe-to-real-time-events.ts](../../../../../../../packages/integration-tests/__tests__/defined-behavior/1-patterns/subscribe-to-real-time-events.ts#L189)
 
 ---
 
