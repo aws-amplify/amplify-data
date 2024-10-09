@@ -12,7 +12,7 @@ import { print } from 'graphql';
 
 describe('data/customize-authz', () => {
   test('Customize your auth rules', async () => {
-    // #region covers e2f15d81cee3ec1a,
+    // #region covers e2f15d81cee3ec1a
     const schema = a.schema({
       Post: a
         .model({
