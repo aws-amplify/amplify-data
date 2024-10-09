@@ -2,5 +2,5 @@
 
 | Report | Count/Coverage |
 | -- | -- |
-| [Docs Snippet Coverage](docs-pages.md) | 65.8% |
+| [Docs Snippet Coverage](docs-pages.md) | 68.1% |
 | [Orphaned Integ Tests](orphans-report.md) | 2 |

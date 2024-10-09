@@ -9,7 +9,7 @@
 ~~~
   // #region covers 214c31dd2206bfca, 92f1e6d948bb2f1e, b7b5ef648a737b54, 2fcbfbd338e2b642, bd051f6474d8be69,
   // #region covers ba61062287418137, 89231235f277e013, f1c468dfd69b0c4a, a4e33f3ee41a3d19, 27d103ec9928e5ee
-  // #region covers b73cd93b7f81ba2a, c8110784c3c7df69, 75bbbc970e89b3dc
+  // #region covers b73cd93b7f81ba2a, c8110784c3c7df69, 75bbbc970e89b3dc, 573fd6a09fd9031f, 565011bb938244a7
   describe('client', () => {
 afterEach(() => {
   jest.clearAllMocks();

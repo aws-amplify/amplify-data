@@ -4,7 +4,7 @@
 
 Page: https://docs.amplify.aws/react/build-a-backend/data/customize-authz/signed-in-user-data-access/
 
-Coverage: 75.0%
+Coverage: 100.0%
 
 #### `amplify/data/resource.ts`
 
@@ -77,11 +77,11 @@ const schema = a.schema({
 | | |
 | -- | -- |
 | Hash | `b9b26cd28edf59b6` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/1-patterns/auth-rules.ts](../../../../../../../../packages/integration-tests/__tests__/defined-behavior/1-patterns/auth-rules.ts#L479)
 
 ---
 

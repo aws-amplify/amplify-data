@@ -4,7 +4,7 @@
 
 Page: https://docs.amplify.aws/react/build-a-backend/data/customize-authz/user-group-based-data-access/
 
-Coverage: 0.0%
+Coverage: 100.0%
 
 #### `amplify/data/resource.ts`
 
@@ -24,11 +24,11 @@ const schema = a.schema({
 | | |
 | -- | -- |
 | Hash | `3558bb1b245a4672` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/1-patterns/auth-rules.ts](../../../../../../../../packages/integration-tests/__tests__/defined-behavior/1-patterns/auth-rules.ts#L142)
 
 ---
 
@@ -56,11 +56,12 @@ authMode: "userPool",
 | | |
 | -- | -- |
 | Hash | `573fd6a09fd9031f` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/2-expected-use/auth-modes.ts](../../../../../../../../packages/integration-tests/__tests__/defined-behavior/2-expected-use/auth-modes.ts#L51)
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/2-expected-use/auth-modes.ts](../../../../../../../../packages/integration-tests/__tests__/defined-behavior/2-expected-use/auth-modes.ts#L161)
 
 ---
 
@@ -82,11 +83,11 @@ const schema = a.schema({
 | | |
 | -- | -- |
 | Hash | `17dfb540da28c8b0` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/1-patterns/auth-rules.ts](../../../../../../../../packages/integration-tests/__tests__/defined-behavior/1-patterns/auth-rules.ts#L142)
 
 ---
 
@@ -108,11 +109,11 @@ const schema = a.schema({
 | | |
 | -- | -- |
 | Hash | `bf7dbedd18de6bb0` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/1-patterns/auth-rules.ts](../../../../../../../../packages/integration-tests/__tests__/defined-behavior/1-patterns/auth-rules.ts#L499)
 
 ---
 
@@ -134,11 +135,11 @@ const schema = a.schema({
 | | |
 | -- | -- |
 | Hash | `d1d464b81fe796a2` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/1-patterns/auth-rules.ts](../../../../../../../../packages/integration-tests/__tests__/defined-behavior/1-patterns/auth-rules.ts#L519)
 
 ---
 

@@ -11,7 +11,7 @@ import {
 import { print } from 'graphql';
 
 describe('data/customize-authz', () => {
-  test('Customize your auth rules', async () => {
+  test('Customize your auth rules', () => {
     // #region covers e2f15d81cee3ec1a, 21cf216d105e1ece
     const schema = a.schema({
       Post: a
@@ -36,7 +36,7 @@ describe('data/customize-authz', () => {
     });
   });
 
-  test('Global authorization rule (only for getting started)', async () => {
+  test('Global authorization rule (only for getting started)', () => {
     // #region covers 76ed8e59fffd0aac
     const schema = a
       .schema({
@@ -75,7 +75,7 @@ describe('data/customize-authz', () => {
     });
   });
 
-  test('Model-level authorization rules', async () => {
+  test('Model-level authorization rules', () => {
     // #region covers 2194b55334d745ad
     const schema = a.schema({
       Post: a
@@ -101,7 +101,7 @@ describe('data/customize-authz', () => {
     });
   });
 
-  test('Field-level authorization rules', async () => {
+  test('Field-level authorization rules', () => {
     // #region covers 714da914aa4034ef
     const schema = a.schema({
       Employee: a
@@ -137,9 +137,9 @@ describe('data/customize-authz', () => {
     });
   });
 
-  test('Non-model authorization rules', async () => {
+  test('Non-model authorization rules', () => {
     const schema = a.schema({
-      // #region covers 5e987afe82e5a1ff, 9b0106fa74c7ae17
+      // #region covers 5e987afe82e5a1ff, 9b0106fa74c7ae17, 3558bb1b245a4672, 17dfb540da28c8b0
       CustomType: a.customType({
         value: a.string().required(),
       }),
@@ -214,8 +214,8 @@ describe('data/customize-authz', () => {
 });
 
 describe('data/customize-authz/configure-custom-identity-and-group-claim', () => {
-  test('configure custom identity and group claims', async () => {
-    // #region covers 97e7b3e58b77c840
+  test('configure custom identity and group claims', () => {
+    // #region covers 97e7b3e58b77c840, 69256d377eecea21
     const schema = a.schema({
       Post: a
         .model({
@@ -245,7 +245,7 @@ describe('data/customize-authz/configure-custom-identity-and-group-claim', () =>
 });
 
 describe('data/customize-authz/custom-data-access-patterns', () => {
-  test('Custom data access using Lambda functions', async () => {
+  test('Custom data access using Lambda functions', () => {
     // #region covers 9cc76371f93ceb4b
     const schema = a.schema({
       Todo: a
@@ -470,6 +470,68 @@ describe('customize-authz/per-user-per-owner-data-access', () => {
       schema: schema.transform().schema,
       model: 'Todo',
       directive: `@auth(rules: [{allow: owner, ownerField: "author"}])`,
+    });
+  });
+});
+
+describe('ustomize-authz/signed-in-user-data-access', () => {
+  test('Use identity pool for signed-in user authentication', () => {
+    // #region covers b9b26cd28edf59b6
+    const schema = a.schema({
+      Todo: a
+        .model({
+          content: a.string(),
+        })
+        .authorization((allow) => [allow.authenticated('identityPool')]),
+    });
+    // #endregion
+
+    expectSchemaModelDirective({
+      schema: schema.transform().schema,
+      model: 'Todo',
+      directive: `@auth(rules: [{allow: private, provider: iam}])`,
+    });
+  });
+});
+
+describe('customize-authz/user-group-based-data-access', () => {
+  test('Add authorization rules for dynamically set user groups', () => {
+    // #region covers bf7dbedd18de6bb0
+    // Dynamic group authorization with multiple groups
+    const schema = a.schema({
+      Post: a
+        .model({
+          title: a.string(),
+          groups: a.string().array(),
+        })
+        .authorization((allow) => [allow.groupsDefinedIn('groups')]),
+    });
+    // #endregion
+
+    expectSchemaModelDirective({
+      schema: schema.transform().schema,
+      model: 'Post',
+      directive: `@auth(rules: [{allow: groups, groupsField: "groups"}])`,
+    });
+  });
+
+  test('Add authorization rules for a single dynamically set user group', () => {
+    // #region covers d1d464b81fe796a2
+    // Dynamic group authorization with a single group
+    const schema = a.schema({
+      Post: a
+        .model({
+          title: a.string(),
+          group: a.string(),
+        })
+        .authorization((allow) => [allow.groupDefinedIn('group')]),
+    });
+    // #endregion
+
+    expectSchemaModelDirective({
+      schema: schema.transform().schema,
+      model: 'Post',
+      directive: `@auth(rules: [{allow: groups, groupsField: "group"}])`,
     });
   });
 });
