@@ -4,7 +4,7 @@
 
 Page: https://docs.amplify.aws/react/build-a-backend/data/connect-to-API/
 
-Coverage: 94.1%
+Coverage: 100.0%
 
 #### `Unnamed Snippet`
 
@@ -194,11 +194,11 @@ const client = generateClient<Schema>({
 | | |
 | -- | -- |
 | Hash | `bd051f6474d8be69` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/2-expected-use/auth-modes.ts](../../../../../../../packages/integration-tests/__tests__/defined-behavior/2-expected-use/auth-modes.ts#L49)
 
 ---
 

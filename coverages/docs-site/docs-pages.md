@@ -8,7 +8,7 @@
 | /react/ | [docs](https://docs.amplify.aws/react/)&nbsp;/&nbsp;[report](docs-page/react/index.md) | 1 | 1 | 100.0% |
 | /react/build-a-backend/data/connect-from-server-runtime/nextjs-server-runtime/ | [docs](https://docs.amplify.aws/react/build-a-backend/data/connect-from-server-runtime/nextjs-server-runtime/)&nbsp;/&nbsp;[report](docs-page/react/build-a-backend/data/connect-from-server-runtime/nextjs-server-runtime/index.md) | 1 | 4 | 25.0% |
 | /react/build-a-backend/data/connect-from-server-runtime/nuxtjs-server-runtime/ | [docs](https://docs.amplify.aws/react/build-a-backend/data/connect-from-server-runtime/nuxtjs-server-runtime/)&nbsp;/&nbsp;[report](docs-page/react/build-a-backend/data/connect-from-server-runtime/nuxtjs-server-runtime/index.md) | 0 | 5 | 0.0% |
-| /react/build-a-backend/data/connect-to-API/ | [docs](https://docs.amplify.aws/react/build-a-backend/data/connect-to-API/)&nbsp;/&nbsp;[report](docs-page/react/build-a-backend/data/connect-to-API/index.md) | 16 | 17 | 94.1% |
+| /react/build-a-backend/data/connect-to-API/ | [docs](https://docs.amplify.aws/react/build-a-backend/data/connect-to-API/)&nbsp;/&nbsp;[report](docs-page/react/build-a-backend/data/connect-to-API/index.md) | 17 | 17 | 100.0% |
 | /react/build-a-backend/data/connect-to-existing-data-sources/connect-external-ddb-table/ | [docs](https://docs.amplify.aws/react/build-a-backend/data/connect-to-existing-data-sources/connect-external-ddb-table/)&nbsp;/&nbsp;[report](docs-page/react/build-a-backend/data/connect-to-existing-data-sources/connect-external-ddb-table/index.md) | 0 | 26 | 0.0% |
 | /react/build-a-backend/data/connect-to-existing-data-sources/connect-postgres-mysql-database/ | [docs](https://docs.amplify.aws/react/build-a-backend/data/connect-to-existing-data-sources/connect-postgres-mysql-database/)&nbsp;/&nbsp;[report](docs-page/react/build-a-backend/data/connect-to-existing-data-sources/connect-postgres-mysql-database/index.md) | 6 | 16 | 37.5% |
 | /react/build-a-backend/data/custom-business-logic/ | [docs](https://docs.amplify.aws/react/build-a-backend/data/custom-business-logic/)&nbsp;/&nbsp;[report](docs-page/react/build-a-backend/data/custom-business-logic/index.md) | 9 | 11 | 81.8% |
@@ -52,7 +52,7 @@
 | /react/reference/project-structure/ | [docs](https://docs.amplify.aws/react/reference/project-structure/)&nbsp;/&nbsp;[report](docs-page/react/reference/project-structure/index.md) | 5 | 5 | 100.0% |
 | /react/start/account-setup/ | [docs](https://docs.amplify.aws/react/start/account-setup/)&nbsp;/&nbsp;[report](docs-page/react/start/account-setup/index.md) | 11 | 11 | 100.0% |
 | /react/start/manual-installation/ | [docs](https://docs.amplify.aws/react/start/manual-installation/)&nbsp;/&nbsp;[report](docs-page/react/start/manual-installation/index.md) | 11 | 11 | 100.0% |
-| /react/start/quickstart/ | [docs](https://docs.amplify.aws/react/start/quickstart/)&nbsp;/&nbsp;[report](docs-page/react/start/quickstart/index.md) | 10 | 12 | 83.3% |
-| TOTAL | | 235 | 345 | 68.1% |
+| /react/start/quickstart/ | [docs](https://docs.amplify.aws/react/start/quickstart/)&nbsp;/&nbsp;[report](docs-page/react/start/quickstart/index.md) | 12 | 12 | 100.0% |
+| TOTAL | | 238 | 345 | 69.0% |
 
 [<- Back to summary](./readme.md)

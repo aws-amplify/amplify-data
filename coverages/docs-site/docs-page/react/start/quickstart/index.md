@@ -4,7 +4,7 @@
 
 Page: https://docs.amplify.aws/react/start/quickstart/
 
-Coverage: 83.3%
+Coverage: 100.0%
 
 #### `Unnamed Snippet`
 
@@ -166,11 +166,11 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
 | | |
 | -- | -- |
 | Hash | `4843a42677bbbe4e` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/4-uncovered/start/quickstart.ts](../../../../../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/start/quickstart.ts#L9)
 
 ---
 
@@ -204,11 +204,11 @@ export default App;
 | | |
 | -- | -- |
 | Hash | `1099eb31a7a597ff` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/4-uncovered/start/quickstart.ts](../../../../../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/start/quickstart.ts#L11)
 
 ---
 
