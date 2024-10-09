@@ -13,7 +13,7 @@
 | /react/build-a-backend/data/connect-to-existing-data-sources/connect-postgres-mysql-database/ | [docs](https://docs.amplify.aws/react/build-a-backend/data/connect-to-existing-data-sources/connect-postgres-mysql-database/)&nbsp;/&nbsp;[report](docs-page/react/build-a-backend/data/connect-to-existing-data-sources/connect-postgres-mysql-database/index.md) | 6 | 16 | 37.5% |
 | /react/build-a-backend/data/custom-business-logic/ | [docs](https://docs.amplify.aws/react/build-a-backend/data/custom-business-logic/)&nbsp;/&nbsp;[report](docs-page/react/build-a-backend/data/custom-business-logic/index.md) | 9 | 11 | 81.8% |
 | /react/build-a-backend/data/custom-subscription/ | [docs](https://docs.amplify.aws/react/build-a-backend/data/custom-subscription/)&nbsp;/&nbsp;[report](docs-page/react/build-a-backend/data/custom-subscription/index.md) | 0 | 8 | 0.0% |
-| /react/build-a-backend/data/customize-authz/ | [docs](https://docs.amplify.aws/react/build-a-backend/data/customize-authz/)&nbsp;/&nbsp;[report](docs-page/react/build-a-backend/data/customize-authz/index.md) | 6 | 7 | 85.7% |
+| /react/build-a-backend/data/customize-authz/ | [docs](https://docs.amplify.aws/react/build-a-backend/data/customize-authz/)&nbsp;/&nbsp;[report](docs-page/react/build-a-backend/data/customize-authz/index.md) | 7 | 7 | 100.0% |
 | /react/build-a-backend/data/customize-authz/configure-custom-identity-and-group-claim/ | [docs](https://docs.amplify.aws/react/build-a-backend/data/customize-authz/configure-custom-identity-and-group-claim/)&nbsp;/&nbsp;[report](docs-page/react/build-a-backend/data/customize-authz/configure-custom-identity-and-group-claim/index.md) | 0 | 2 | 0.0% |
 | /react/build-a-backend/data/customize-authz/custom-data-access-patterns/ | [docs](https://docs.amplify.aws/react/build-a-backend/data/customize-authz/custom-data-access-patterns/)&nbsp;/&nbsp;[report](docs-page/react/build-a-backend/data/customize-authz/custom-data-access-patterns/index.md) | 0 | 5 | 0.0% |
 | /react/build-a-backend/data/customize-authz/grant-lambda-function-access-to-api/ | [docs](https://docs.amplify.aws/react/build-a-backend/data/customize-authz/grant-lambda-function-access-to-api/)&nbsp;/&nbsp;[report](docs-page/react/build-a-backend/data/customize-authz/grant-lambda-function-access-to-api/index.md) | 0 | 5 | 0.0% |
@@ -52,7 +52,7 @@
 | /react/reference/project-structure/ | [docs](https://docs.amplify.aws/react/reference/project-structure/)&nbsp;/&nbsp;[report](docs-page/react/reference/project-structure/index.md) | 5 | 5 | 100.0% |
 | /react/start/account-setup/ | [docs](https://docs.amplify.aws/react/start/account-setup/)&nbsp;/&nbsp;[report](docs-page/react/start/account-setup/index.md) | 11 | 11 | 100.0% |
 | /react/start/manual-installation/ | [docs](https://docs.amplify.aws/react/start/manual-installation/)&nbsp;/&nbsp;[report](docs-page/react/start/manual-installation/index.md) | 11 | 11 | 100.0% |
-| /react/start/quickstart/ | [docs](https://docs.amplify.aws/react/start/quickstart/)&nbsp;/&nbsp;[report](docs-page/react/start/quickstart/index.md) | 11 | 11 | 100.0% |
-| TOTAL | | 199 | 344 | 57.8% |
+| /react/start/quickstart/ | [docs](https://docs.amplify.aws/react/start/quickstart/)&nbsp;/&nbsp;[report](docs-page/react/start/quickstart/index.md) | 10 | 12 | 83.3% |
+| TOTAL | | 199 | 345 | 57.7% |
 
 [<- Back to summary](./readme.md)

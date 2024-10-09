@@ -4,7 +4,7 @@
 
 Page: https://docs.amplify.aws/react/build-a-backend/data/customize-authz/
 
-Coverage: 85.7%
+Coverage: 100.0%
 
 #### `Unnamed Snippet`
 
@@ -28,11 +28,11 @@ const schema = a.schema({
 | | |
 | -- | -- |
 | Hash | `e2f15d81cee3ec1a` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/1-patterns/auth-rules.ts](../../../../../../../packages/integration-tests/__tests__/defined-behavior/1-patterns/auth-rules.ts#L15)
 
 ---
 

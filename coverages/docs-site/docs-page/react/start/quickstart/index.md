@@ -4,7 +4,7 @@
 
 Page: https://docs.amplify.aws/react/start/quickstart/
 
-Coverage: 100.0%
+Coverage: 83.3%
 
 #### `Unnamed Snippet`
 
@@ -139,37 +139,76 @@ npm run dev
 
 ---
 
-#### `src/App.tsx`
+#### `src/main.tsx`
 
 ~~~
+import React from "react";
+import ReactDOM from "react-dom/client";
 import { Authenticator } from "@aws-amplify/ui-react";
+import { Amplify } from "aws-amplify";
+import App from "./App.tsx";
+import outputs from "../amplify_outputs.json";
+import "./index.css";
 import "@aws-amplify/ui-react/styles.css";
-// ... other imports
 
-function App() {
-  // ...
-  return (
+Amplify.configure(outputs);
+
+ReactDOM.createRoot(document.getElementById("root")!).render(
+  <React.StrictMode>
 <Authenticator>
-  {({ signOut }) => (
-    <main>
-{/*...*/}
-<button onClick={signOut}>Sign out</button>
-    </main>
-  )}
+  <App />
 </Authenticator>
-  );
-}
+  </React.StrictMode>,
+);
 
 ~~~
 
 | | |
 | -- | -- |
-| Hash | `3774e58f1afbc0d2` |
-| Covered | ✅ |
+| Hash | `4843a42677bbbe4e` |
+| Covered | ❌ |
 
 ##### Covering Regions
 
-- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/4-uncovered/start/quickstart.ts](../../../../../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/start/quickstart.ts#L9)
+- *None*
+
+---
+
+#### `src/App.tsx`
+
+~~~
+import type { Schema } from "../amplify/data/resource";
+import { useAuthenticator } from "@aws-amplify/ui-react";
+import { useEffect, useState } from "react";
+import { generateClient } from "aws-amplify/data";
+
+const client = generateClient<Schema>();
+
+function App() {
+  const { signOut } = useAuthenticator();
+
+  // ...
+
+  return (
+<main>
+  {/* ... */}
+  <button onClick={signOut}>Sign out</button>
+</main>
+  );
+}
+
+export default App;
+
+~~~
+
+| | |
+| -- | -- |
+| Hash | `1099eb31a7a597ff` |
+| Covered | ❌ |
+
+##### Covering Regions
+
+- *None*
 
 ---
 
