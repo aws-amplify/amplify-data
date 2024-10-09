@@ -46,7 +46,9 @@ describe('authMode overrides', () => {
     'userPool',
   ] as const;
 
-  // #region covers 214c31dd2206bfca, 92f1e6d948bb2f1e, b7b5ef648a737b54, 2fcbfbd338e2b642, bd051f6474d8be69, ba61062287418137
+  // #region covers 214c31dd2206bfca, 92f1e6d948bb2f1e, b7b5ef648a737b54, 2fcbfbd338e2b642, bd051f6474d8be69,
+  // #region covers ba61062287418137, 89231235f277e013, f1c468dfd69b0c4a, a4e33f3ee41a3d19, 27d103ec9928e5ee
+  // #region covers b73cd93b7f81ba2a, c8110784c3c7df69, 75bbbc970e89b3dc
   describe('client', () => {
     afterEach(() => {
       jest.clearAllMocks();
@@ -151,8 +153,12 @@ describe('authMode overrides', () => {
     }
   });
   // #endregion
+  // #endregion
+  // #endregion
 
   // #region covers f836602769f99712, de5a11b2edead530, 7f181ae9db749fd0, 274e791981c46dd6, ac808f107270b120
+  // #region covers ba61062287418137, 89231235f277e013, f1c468dfd69b0c4a, a4e33f3ee41a3d19, 27d103ec9928e5ee
+  // #region covers b73cd93b7f81ba2a, c8110784c3c7df69, 75bbbc970e89b3dc
   describe('call site', () => {
     afterEach(() => {
       jest.clearAllMocks();
@@ -266,6 +272,8 @@ describe('authMode overrides', () => {
       });
     }
   });
+  // #endregion
+  // #endregion
   // #endregion
 });
 

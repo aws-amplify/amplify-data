@@ -4,7 +4,7 @@
 
 Page: https://docs.amplify.aws/react/build-a-backend/data/customize-authz/custom-data-access-patterns/
 
-Coverage: 0.0%
+Coverage: 100.0%
 
 #### `amplify/data/resource.ts`
 
@@ -50,11 +50,11 @@ lambdaAuthorizationMode: {
 | | |
 | -- | -- |
 | Hash | `9cc76371f93ceb4b` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/1-patterns/auth-rules.ts](../../../../../../../../packages/integration-tests/__tests__/defined-behavior/1-patterns/auth-rules.ts#L249)
 
 ---
 
@@ -80,11 +80,12 @@ authMode: "lambda",
 | | |
 | -- | -- |
 | Hash | `f1c468dfd69b0c4a` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/2-expected-use/auth-modes.ts](../../../../../../../../packages/integration-tests/__tests__/defined-behavior/2-expected-use/auth-modes.ts#L50)
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/2-expected-use/auth-modes.ts](../../../../../../../../packages/integration-tests/__tests__/defined-behavior/2-expected-use/auth-modes.ts#L160)
 
 ---
 
@@ -133,11 +134,11 @@ ttlOverride: 300,
 | | |
 | -- | -- |
 | Hash | `7979ac575fb5c105` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/4-uncovered/customize-authz.ts](../../../../../../../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/customize-authz.ts#L10)
 
 ---
 
@@ -161,11 +162,11 @@ ttlOverride: 300,
 | | |
 | -- | -- |
 | Hash | `bf33ce519615bf57` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/4-uncovered/customize-authz.ts](../../../../../../../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/customize-authz.ts#L10)
 
 ---
 
@@ -187,11 +188,11 @@ ttlOverride: 300,
 | | |
 | -- | -- |
 | Hash | `1638c78777796c97` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/4-uncovered/customize-authz.ts](../../../../../../../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/customize-authz.ts#L10)
 
 ---
 
