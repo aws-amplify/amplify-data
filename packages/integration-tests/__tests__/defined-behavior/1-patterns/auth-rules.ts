@@ -192,6 +192,41 @@ describe('data/customize-authz', () => {
     });
   });
 
+  test('Non-model authorization rules - unsupported rules', () => {
+    expect(() =>
+      a.schema({
+        // #region covers 5e987afe82e5a1ff
+        CustomType: a.customType({
+          value: a.string().required(),
+        }),
+        listCustomType: a
+          .query()
+          .returns(a.ref('CustomType').array())
+          .handler(a.handler.function('placeholder'))
+          .authorization((allow) => [
+            // Dynamic auth rules - Not supported
+            // (commented out in test because "not supported"!)
+
+            // @ts-expect-error
+            allow.owner(),
+
+            // @ts-expect-error
+            allow.ownerDefinedIn('owner'),
+
+            // @ts-expect-error
+            allow.ownersDefinedIn('otherOwners'),
+
+            // @ts-expect-error
+            allow.groupDefinedIn('group'),
+
+            // @ts-expect-error
+            allow.groupsDefinedIn('otherGroups'),
+          ]),
+      }),
+    ).toThrow();
+    // #endregion
+  });
+
   test('Configure multiple authorization rules', async () => {
     // #region covers d51a9297b3d57373, 02802ed51338dc5f
     const schema = a.schema({

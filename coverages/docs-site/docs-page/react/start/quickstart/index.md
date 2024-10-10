@@ -292,16 +292,15 @@ defaultAuthorizationMode: "userPool",
 // ... imports
 
 function App() {
+  const { user, signOut } = useAuthenticator();
+
   // ...
+
   return (
-<Authenticator>
-  {({ signOut, user }) => (
-    <main>
-<h1>{user?.signInDetails?.loginId}'s todos</h1>
-{/* ... rest of the UI */}
-    </main>
-  )}
-</Authenticator>
+<main>
+  <h1>{user?.signInDetails?.loginId}'s todos</h1>
+  {/* ... */}
+</main>
   );
 }
 
@@ -309,7 +308,7 @@ function App() {
 
 | | |
 | -- | -- |
-| Hash | `a0636891d1ba0ef2` |
+| Hash | `8988d8464b80c15e` |
 | Covered | ✅ |
 
 ##### Covering Regions
