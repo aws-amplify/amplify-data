@@ -16,7 +16,7 @@ import type {
   HandlerType as Handler,
 } from './Handler';
 import { brandSymbol } from './util/Brand';
-import { AiModel, InferenceConfiguration } from './ai/ModelType';
+import { AiModel, GenerationAIModels, InferenceConfiguration, ModelFunction } from './ai/ModelType';
 
 const queryBrand = 'queryCustomOperation';
 const mutationBrand = 'mutationCustomOperation';
@@ -371,7 +371,7 @@ function lastHandlerIsAsyncFunction(handlers: HandlerInputType): boolean {
 }
 // #endregion async Lambda function related types
 export interface GenerationInput {
-  aiModel: AiModel;
+  aiModel: ReturnType<ModelFunction<GenerationAIModels>>;
   systemPrompt: string;
   inferenceConfiguration?: InferenceConfiguration;
 }

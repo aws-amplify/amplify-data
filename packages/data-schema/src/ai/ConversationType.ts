@@ -6,7 +6,7 @@ import type { DefineFunction } from '@aws-amplify/data-schema-types';
 import type { ListReturnValue, SingularReturnValue } from '../runtime/client';
 import { type Brand, brand } from '../util';
 import type { RefType } from '../RefType';
-import { AiModel, InferenceConfiguration } from './ModelType';
+import { AiModel, ConversationAIModels, InferenceConfiguration, ModelFunction } from './ModelType';
 import {
   ConversationMessageContent,
   ConversationSendMessageInputContent,
@@ -121,7 +121,7 @@ export interface ToolDefinition {
 }
 
 export interface ConversationInput {
-  aiModel: AiModel;
+  aiModel: ReturnType<ModelFunction<ConversationAIModels>>;
   systemPrompt: string;
   inferenceConfiguration?: InferenceConfiguration;
   tools?: ToolDefinition[];

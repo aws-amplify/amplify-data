@@ -1,7 +1,7 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-const supportedModelsLookup = {
+export const supportedModelsLookup = {
   // Anthropic models
   'Claude 3 Haiku': 'anthropic.claude-3-haiku-20240307-v1:0',
   'Claude 3 Opus': 'anthropic.claude-3-opus-20240229-v1:0',
@@ -20,6 +20,17 @@ const supportedModelsLookup = {
   'Mistral Small': 'mistral.mistral-small-2402-v1:0',
 } as const;
 
+export const generationSupportedModelsLookup = {
+  // Anthropic models
+  'Claude 3 Haiku': 'anthropic.claude-3-haiku-20240307-v1:0',
+  'Claude 3 Opus': 'anthropic.claude-3-opus-20240229-v1:0',
+  'Claude 3 Sonnet': 'anthropic.claude-3-sonnet-20240229-v1:0',
+  'Claude 3.5 Sonnet': 'anthropic.claude-3-5-sonnet-20240620-v1:0',
+} as const;
+
+export type ConversationAIModels = keyof typeof supportedModelsLookup;
+export type GenerationAIModels = keyof typeof generationSupportedModelsLookup;
+
 export interface AiModel {
   resourcePath: string;
 }
@@ -36,8 +47,19 @@ export interface InferenceConfiguration {
  * Bedrock models currently supporting Converse API and Tool use
  * @see {@link https://docs.aws.amazon.com/bedrock/latest/userguide/conversation-inference.html#conversation-inference-supported-models-features}
  */
-export function model(modelName: keyof typeof supportedModelsLookup): AiModel {
+export const model: ModelFunction<ConversationAIModels> = _model;
+
+// export function model(modelName: keyof typeof supportedModelsLookup): AiModel {
+//   return {
+//     resourcePath: supportedModelsLookup[modelName],
+//   };
+// }
+
+export type ModelFunction<T extends ConversationAIModels | GenerationAIModels> = (modelName: T) => AiModel;
+
+function _model<T extends ConversationAIModels | GenerationAIModels>(modelName: T): AiModel {
   return {
     resourcePath: supportedModelsLookup[modelName],
   };
 }
+
