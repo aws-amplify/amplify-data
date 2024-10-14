@@ -53,6 +53,19 @@ function getBenchFilePaths(dir: string): string[] {
 async function runBenches(benchFilePaths: string[]) {
   const errors: BenchErrors = [];
 
+  const start = new Date();
+  let started = 0;
+  let completed = 0;
+
+  const updateStatus = () => {
+    const elapsed = Math.floor((new Date().getTime() - start.getTime()) / 1000);
+    process.stdout.write(
+      `\rrunning: ${started}; done: ${completed}; elapsed: ${elapsed}s`,
+    );
+  };
+
+  const tick = setInterval(updateStatus, 1000);
+
   await Promise.all(
     benchFilePaths.map(async (file) => {
       try {
@@ -60,7 +73,7 @@ async function runBenches(benchFilePaths: string[]) {
          * Template string parameters are escaped automatically by execa. For details:
          * https://github.com/sindresorhus/execa/blob/HEAD/docs/escaping.md
          */
-        console.log(`Checking ${file} ...`);
+        started++;
         await execa('npx', [
           'tsx',
           file,
@@ -68,7 +81,7 @@ async function runBenches(benchFilePaths: string[]) {
           '--benchPercentThreshold',
           String(BENCH_DEGRADATION_THRESHOLD),
         ]);
-        console.log(`Done checking ${file}.`);
+        completed++;
       } catch (error: any) {
         // The message is emitted twice in stderr; grabbing the first occurrence to reduce noise
         const [firstPart] = error.stderr.split('\n');
@@ -76,6 +89,11 @@ async function runBenches(benchFilePaths: string[]) {
       }
     }),
   );
+
+  clearInterval(tick);
+
+  updateStatus();
+  console.log(`\n\nDone.`);
 
   return errors;
 }
