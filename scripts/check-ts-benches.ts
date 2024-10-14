@@ -1,4 +1,4 @@
-import { execa } from 'execa';
+import { execa as execa_ } from 'execa';
 
 import { readdirSync, statSync } from 'fs';
 import { join } from 'path';
@@ -10,10 +10,36 @@ const FILE_SUFFIXES = ['CRUDL', 'selection-set'];
 
 const BENCH_DEGRADATION_THRESHOLD = 1;
 
+// emit verbose logs
+const execa = execa_({
+  verbose: 'full',
+});
+
+function groupsOfThree(paths: string[]) {
+  const result: string[][] = [];
+  for (let i = 0; i < paths.length; i += 3) {
+    result.push(paths.slice(i, i + 3));
+  }
+  return result;
+}
+
+async function runBenchGroups(pathGroups: string[][]) {
+  const errors: BenchErrors = [];
+  for (const group of pathGroups) {
+    const groupErrors = await runBenches(group);
+    errors.push(...groupErrors);
+  }
+
+  return errors;
+}
+
 // Orchestrator; returns void when benches are within defined threshold, throws if threshold is exceeded
 (async function runCheck() {
   const benchFilePaths = getBenchFilePaths(BENCHES_ROOT_DIR);
-  const errors = await runBenches(benchFilePaths);
+
+  const benchGroups = groupsOfThree(benchFilePaths);
+
+  const errors = await runBenchGroups(benchGroups);
 
   processErrors(errors);
 })();
