@@ -15,6 +15,19 @@ const execa = execa_({
   verbose: 'full',
 });
 
+// Orchestrator; returns void when benches are within defined threshold, throws if threshold is exceeded
+(async function runCheck() {
+  const benchFilePaths = getBenchFilePaths(BENCHES_ROOT_DIR);
+  const benchGroups = groupsOfThree(benchFilePaths);
+
+  const errors = await runBenchGroupsSequentially(benchGroups);
+
+  processErrors(errors);
+})();
+
+/**
+ * Create 2D array of groups of up to 3 bench paths
+ */
 function groupsOfThree(paths: string[]) {
   const result: string[][] = [];
   for (let i = 0; i < paths.length; i += 3) {
@@ -23,7 +36,13 @@ function groupsOfThree(paths: string[]) {
   return result;
 }
 
-async function runBenchGroups(pathGroups: string[][]) {
+/**
+ * The GHA executor we use in our workflow can silently run out of memory and time out
+ * if we attempt to run all the benches concurrently
+ *
+ * Breaking them up into sequential groups of 3 resolves the issue
+ */
+async function runBenchGroupsSequentially(pathGroups: string[][]) {
   const errors: BenchErrors = [];
   for (const group of pathGroups) {
     const groupErrors = await runBenches(group);
@@ -32,17 +51,6 @@ async function runBenchGroups(pathGroups: string[][]) {
 
   return errors;
 }
-
-// Orchestrator; returns void when benches are within defined threshold, throws if threshold is exceeded
-(async function runCheck() {
-  const benchFilePaths = getBenchFilePaths(BENCHES_ROOT_DIR);
-
-  const benchGroups = groupsOfThree(benchFilePaths);
-
-  const errors = await runBenchGroups(benchGroups);
-
-  processErrors(errors);
-})();
 
 /**
  *  Recurse through directory (dir) and retrieve all file paths that match global FILE_SUFFIXES pattern
