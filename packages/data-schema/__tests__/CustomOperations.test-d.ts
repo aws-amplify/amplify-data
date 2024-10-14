@@ -857,4 +857,24 @@ describe('.for() modifier', () => {
   it('is available only on a.subscription()', () => {
     a.subscription().for(a.ref('Model'));
   });
+
+  describe('aiModel route availability', () => {
+    describe('generation route', () => {
+      it('expected models are available', () => {
+        a.generation({
+          aiModel: a.ai.model('Claude 3 Haiku'),
+          systemPrompt: 'Hello, world!',
+        });
+      });
+
+      it('unsupported models are not available', () => {
+        a.generation({
+          // @ts-expect-error unsupported model
+          aiModel: a.ai.model('Llama 3.1 405B Instruct'),
+          systemPrompt: 'Hello, world!',
+        });
+      });
+    });
+  });
 });
+
