@@ -1,4 +1,4 @@
-import { execa } from 'execa';
+import { execa as execa_ } from 'execa';
 
 import { readdirSync, statSync } from 'fs';
 import { join } from 'path';
@@ -10,10 +10,17 @@ const FILE_SUFFIXES = ['CRUDL', 'selection-set'];
 
 const BENCH_DEGRADATION_THRESHOLD = 1;
 
+// verbose surfaces stdout from each npx command we execute. Helpful when things aren't working as expected
+const execa = execa_({
+  verbose: 'full',
+});
+
 // Orchestrator; returns void when benches are within defined threshold, throws if threshold is exceeded
 (async function runCheck() {
   const benchFilePaths = getBenchFilePaths(BENCHES_ROOT_DIR);
-  const errors = await runBenches(benchFilePaths);
+  const benchGroups = groupsOfThree(benchFilePaths);
+
+  const errors = await runBenchGroupsSequentially(benchGroups);
 
   processErrors(errors);
 })();
@@ -42,6 +49,33 @@ function getBenchFilePaths(dir: string): string[] {
     }
   });
   return results;
+}
+
+/**
+ * Create 2D array of groups of up to 3 bench paths
+ */
+function groupsOfThree(paths: string[]) {
+  const result: string[][] = [];
+  for (let i = 0; i < paths.length; i += 3) {
+    result.push(paths.slice(i, i + 3));
+  }
+  return result;
+}
+
+/**
+ * The GHA executor we use in our workflow can silently run out of memory and time out
+ * if we attempt to run all the benches concurrently
+ *
+ * Breaking them up into sequentially-executed groups of 3 benches resolves the issue
+ */
+async function runBenchGroupsSequentially(pathGroups: string[][]) {
+  const errors: BenchErrors = [];
+  for (const group of pathGroups) {
+    const groupErrors = await runBenches(group);
+    errors.push(...groupErrors);
+  }
+
+  return errors;
 }
 
 /**
