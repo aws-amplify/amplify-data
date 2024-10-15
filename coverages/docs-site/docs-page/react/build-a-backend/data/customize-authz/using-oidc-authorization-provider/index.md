@@ -4,7 +4,7 @@
 
 Page: https://docs.amplify.aws/react/build-a-backend/data/customize-authz/using-oidc-authorization-provider/
 
-Coverage: 0.0%
+Coverage: 100.0%
 
 #### `amplify/data/resource.ts`
 
@@ -45,11 +45,11 @@ oidcAuthorizationMode: {
 | | |
 | -- | -- |
 | Hash | `69256d377eecea21` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/1-patterns/auth-rules.ts](../../../../../../../../packages/integration-tests/__tests__/defined-behavior/1-patterns/auth-rules.ts#L253)
 
 ---
 
@@ -70,11 +70,12 @@ const { errors, data: todos } = await client.models.Todo.list({
 | | |
 | -- | -- |
 | Hash | `565011bb938244a7` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/2-expected-use/auth-modes.ts](../../../../../../../../packages/integration-tests/__tests__/defined-behavior/2-expected-use/auth-modes.ts#L51)
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/2-expected-use/auth-modes.ts](../../../../../../../../packages/integration-tests/__tests__/defined-behavior/2-expected-use/auth-modes.ts#L161)
 
 ---
 
