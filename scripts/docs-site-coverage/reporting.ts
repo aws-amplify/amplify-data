@@ -343,7 +343,7 @@ export class CoverageReport {
       | Report | Count/Coverage |
       | -- | -- |
       | [Docs Snippet Coverage](${this.relativePath(docsSummary.path)}) | ${docsSummary.coverageString} |
-      | [Orphaned Integ Tets](${this.relativePath(ORPHANS_REPORT_PATH)}) | ${this.orphanedRegions.length} |
+      | [Orphaned Integ Tests](${this.relativePath(ORPHANS_REPORT_PATH)}) | ${this.orphanedRegions.length} |
       `.replace(/^ {6}/gm, ''), // dedent 6
     );
 
