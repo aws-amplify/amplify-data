@@ -230,6 +230,19 @@ const ToolInputSchema = `type ToolInputSchema {
   json: AWSJSON
 }`;
 
+const ConversationMessageStreamEvent = `type ConversationMessageStreamPart {
+  id: ID!
+  owner: String
+  conversationId: ID!
+  associatedUserMessageId: ID!
+  contentBlockIndex: Int!
+  contentBlockText: String
+  contentBlockDeltaIndex: Int
+  contentBlockToolUse: AWSJSON
+  contentBlockDoneAtIndex: Int
+  stopReason: String
+}`;
+
 export const conversationTypes: string[] = [
   ConversationParticipantRole,
   ConversationMessage,
@@ -262,4 +275,5 @@ export const conversationTypes: string[] = [
   Tool,
   ToolSpecification,
   ToolInputSchema,
+  ConversationMessageStreamEvent,
 ];
