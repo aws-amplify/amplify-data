@@ -24,6 +24,16 @@ export interface ConversationMessage {
   role: 'user' | 'assistant';
 }
 
+export interface ConversationStreamEvent {
+  conversationId: string;
+  associatedUserMessageId: string;
+  contentBlockIndex: number;
+  contentBlockDoneAtIndex?: number
+  contentBlockDeltaIndex?: number;
+  contentBlockText?: string;
+  contentBlockToolUse?: string;
+  stopReason?: string;
+}
 // conversation route types
 interface ConversationRouteGetInput {
   id: string;
@@ -106,6 +116,8 @@ interface ConversationListMessagesInput {
 
 type ConversationOnMessageHandler = (message: ConversationMessage) => void;
 
+type ConversationOnStreamEventHandler = (streamEvent: ConversationStreamEvent) => void;
+
 export interface Conversation {
   id: string;
   createdAt: string;
@@ -133,8 +145,14 @@ export interface Conversation {
    * @experimental
    *
    * Subscribes to new messages on the current conversation.
+    */
+    onMessage: (handler: ConversationOnMessageHandler) => Subscription;
+  /**
+   * @experimental
+   *
+   * Subscribes to new stream events on the current conversation.
    */
-  onMessage: (handler: ConversationOnMessageHandler) => Subscription;
+  onStreamEvent: (handler: ConversationOnStreamEventHandler) => Subscription;
 }
 
 // schema definition input
