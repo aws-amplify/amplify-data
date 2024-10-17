@@ -26,22 +26,24 @@ export const createConversationField = (
     systemPrompt: systemPrompt.replace(/\r?\n/g, '\\n'),
   };
 
-  const functionHandler: LambdaFunctionDefinition = {};
-  if (handler) {
-    const functionName = `Fn${capitalize(typeName)}`;
-    args['functionName'] = functionName;
-    functionHandler[functionName] = handler;
-  }
-
   const argsString = Object.entries(args)
     .map(([key, value]) => `${key}: "${value}"`)
     .join(', ');
+
+  const functionHandler: LambdaFunctionDefinition = {};
+  let handlerString = '';
+  if (handler) {
+    const functionName = `Fn${capitalize(typeName)}`;
+    const eventVersion = handler.eventVersion;
+    handlerString = `, handler: { functionName: "${functionName}", eventVersion: "${eventVersion}" }`;
+    functionHandler[functionName] = handler;
+  }
 
   const toolsString = tools?.length
     ? `, tools: [${getConversationToolsString(tools)}]`
     : '';
 
-  const conversationDirective = `@conversation(${argsString}${toolsString})`;
+  const conversationDirective = `@conversation(${argsString}${handlerString}${toolsString})`;
 
   const field = `${typeName}(conversationId: ID!, content: [ContentBlockInput], aiContext: AWSJSON, toolConfiguration: ToolConfigurationInput): ConversationMessage ${conversationDirective} @aws_cognito_user_pools`;
   return { field, functionHandler };
