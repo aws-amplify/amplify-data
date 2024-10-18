@@ -236,7 +236,7 @@ const ConversationMessageStreamEvent = `type ConversationMessageStreamPart {
   contentBlockIndex: Int!
   contentBlockText: String
   contentBlockDeltaIndex: Int
-  contentBlockToolUse: AWSJSON
+  contentBlockToolUse: ToolUseBlock
   contentBlockDoneAtIndex: Int
   stopReason: String
 }`;
