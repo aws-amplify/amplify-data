@@ -10,6 +10,7 @@ import {
 } from '../../bridge-types';
 import { customOpFactory } from '../operations/custom';
 import { AiAction, getCustomUserAgentDetails } from './getCustomUserAgentDetails';
+import { convertItemToConversationStreamEvent } from './conversationStreamEventDeserializers';
 
 export const createOnStreamEventFunction =
   (
@@ -36,5 +37,7 @@ export const createOnStreamEventFunction =
       getInternals,
       getCustomUserAgentDetails(AiAction.OnMessage),
     ) as (args?: Record<string, any>) => Observable<any>;
-    return subscribeOperation({ conversationId }).subscribe((data) => handler(data));
+    return subscribeOperation({ conversationId }).subscribe((data) => {
+      handler(convertItemToConversationStreamEvent(data));
+    });
   };
