@@ -25,9 +25,11 @@ export interface ConversationMessage {
 }
 
 export interface ConversationStreamEvent {
+  id: string;
   conversationId: string;
   associatedUserMessageId: string;
   contentBlockIndex: number;
+  contentBlockDoneAtIndex?: number;
   contentBlockDoneAtIndex?: number
   contentBlockDeltaIndex?: number;
   contentBlockText?: string;
