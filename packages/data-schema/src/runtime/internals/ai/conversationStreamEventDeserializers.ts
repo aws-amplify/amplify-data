@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { ConversationStreamEvent } from "../../../ai/ConversationType";
+import { ToolUseBlock } from "../../../ai/types/contentBlocks";
 
 export const convertItemToConversationStreamEvent = ({
   id,
@@ -19,16 +20,21 @@ export const convertItemToConversationStreamEvent = ({
   contentBlockIndex,
   contentBlockDoneAtIndex,
   contentBlockDeltaIndex,
-  contentBlockText,
-  contentBlockToolUse: deserializeToolUseBlock(contentBlockToolUse),
+  text: contentBlockText,
+  toolUse: deserializeToolUseBlock(contentBlockToolUse),
   stopReason,
   id,
 });
 
-const deserializeToolUseBlock = ({ toolUse }: Record<'toolUse', any>) =>
-  toolUse
-    ? {
-        ...toolUse,
-        input: JSON.parse(toolUse.input),
-      }
-    : null;
+const deserializeToolUseBlock = (
+  contentBlockToolUse: any,
+): ToolUseBlock | undefined => {
+  if (contentBlockToolUse) {
+    const toolUseBlock = {
+      ...contentBlockToolUse,
+      input: JSON.parse(contentBlockToolUse.input),
+    };
+
+    return toolUseBlock;
+  }
+};

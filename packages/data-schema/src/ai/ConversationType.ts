@@ -33,8 +33,8 @@ export interface ConversationStreamEvent {
   contentBlockIndex: number;
   contentBlockDoneAtIndex?: number;
   contentBlockDeltaIndex?: number;
-  contentBlockText?: string;
-  contentBlockToolUse?: ToolUseBlock;
+  text?: string;
+  toolUse?: ToolUseBlock;
   stopReason?: string;
 }
 // conversation route types
