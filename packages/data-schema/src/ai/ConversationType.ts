@@ -22,13 +22,15 @@ export interface ConversationMessage {
   createdAt: string;
   id: string;
   role: 'user' | 'assistant';
+  associatedUserMessageId?: string;
 }
 
 export interface ConversationStreamEvent {
+  id: string;
   conversationId: string;
   associatedUserMessageId: string;
   contentBlockIndex: number;
-  contentBlockDoneAtIndex?: number
+  contentBlockDoneAtIndex?: number;
   contentBlockDeltaIndex?: number;
   contentBlockText?: string;
   contentBlockToolUse?: string;
