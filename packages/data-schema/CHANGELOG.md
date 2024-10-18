@@ -1,5 +1,11 @@
 # @aws-amplify/data-schema
 
+## 1.10.1
+
+### Patch Changes
+
+- b0b6007: Narrow down type for custom conversation handler
+
 ## 1.10.0
 
 ### Minor Changes
