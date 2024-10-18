@@ -471,5 +471,26 @@ describe('AI Conversation Routes', () => {
       });
       // #endregion assertions
     });
+
+    test('Uses custom conversation handler', () => {
+      const customConversationHandlerMock = {
+        eventVersion: '1.0',
+        getInstance: jest.fn()
+      } as const;
+
+      const schema = a.schema({
+        SampleChat: a
+          .conversation({
+            aiModel: a.ai.model('Claude 3 Haiku'),
+            systemPrompt: 'testSystemPrompt',
+            handler: customConversationHandlerMock
+          }),
+      });
+
+      const transformedSchema = schema.transform().schema;
+      expect(transformedSchema).toMatchSnapshot();
+      const expectedDirective = '@conversation(aiModel: "anthropic.claude-3-haiku-20240307-v1:0", systemPrompt: "testSystemPrompt", handler: { functionName: "FnSampleChat", eventVersion: "1.0" })';
+      expect(transformedSchema).toContain(expectedDirective);
+    });
   });
 });
