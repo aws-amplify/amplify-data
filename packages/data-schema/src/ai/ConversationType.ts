@@ -12,6 +12,7 @@ import {
 } from './types/ConversationMessageContent';
 import { ToolConfiguration } from './types/ToolConfiguration';
 import { AiModel } from '@aws-amplify/data-schema-types';
+import { ToolUseBlock } from './types/contentBlocks';
 
 export const brandName = 'conversationCustomOperation';
 
@@ -33,7 +34,7 @@ export interface ConversationStreamEvent {
   contentBlockDoneAtIndex?: number;
   contentBlockDeltaIndex?: number;
   contentBlockText?: string;
-  contentBlockToolUse?: string;
+  contentBlockToolUse?: ToolUseBlock;
   stopReason?: string;
 }
 // conversation route types
@@ -147,8 +148,8 @@ export interface Conversation {
    * @experimental
    *
    * Subscribes to new messages on the current conversation.
-    */
-    onMessage: (handler: ConversationOnMessageHandler) => Subscription;
+  */
+  onMessage: (handler: ConversationOnMessageHandler) => Subscription;
   /**
    * @experimental
    *
