@@ -11,7 +11,7 @@ import { AuthMode, CustomHeaders, SingularReturnValue } from '../src/runtime';
 import { configure } from '../src/internals';
 import { Nullable } from '../src/ModelField';
 import { AppSyncResolverEvent, Callback, Context } from 'aws-lambda';
-import { defineFunctionStub } from './utils';
+import { defineConversationHandlerFunctionStub, defineFunctionStub } from './utils';
 
 const fakeSecret = () => ({}) as any;
 
@@ -1451,7 +1451,7 @@ describe('SQL Schema with sql statement references', () => {
 describe('ai routes', () => {
   test('conversations', () => {
     const handler = defineFunctionStub({});
-    const customConversationHandler = defineFunctionStub({});
+    const customConversationHandler = defineConversationHandlerFunctionStub({});
     const schema = a.schema({
       Profile: a.customType({
         value: a.integer(),
