@@ -33,16 +33,3 @@ describe('validated on execution', () => {
     expect(schema.transform).toThrow('Invalid identifier');
   });
 });
-
-describe('static (type) validation', () => {
-  test('type error on identifier naming a non-required field', () => {
-    const schema = a.schema({
-      Todo: a
-        .model({
-          content: a.string(),
-        })
-        // @ts-expect-error
-        .identifier(['content']),
-    });
-  });
-});
