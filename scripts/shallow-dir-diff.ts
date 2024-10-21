@@ -21,9 +21,6 @@ function main(a: string, b: string) {
       const aData = fs.readFileSync(`${aPath}`).toString();
       const bData = fs.readFileSync(`${bPath}`).toString();
       if (aData !== bData)
-        console.log(fileName);
-        console.log(aData);
-        console.log(bData);
         differences.push(`File contents differ for ${fileName}`);
     }
   }
