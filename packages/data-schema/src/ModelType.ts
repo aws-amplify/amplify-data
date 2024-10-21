@@ -105,8 +105,6 @@ export type ExtractSecondaryIndexIRFields<
     ? NonNullable<R> extends string | number
       ? RequiredOnly extends false
         ? FieldProp
-        : null extends R
-          ? never
           : FieldProp
       : never
     : T['fields'][FieldProp] extends
