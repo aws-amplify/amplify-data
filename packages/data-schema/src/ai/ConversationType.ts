@@ -5,12 +5,13 @@ import type { Subscription } from 'rxjs';
 import type { ListReturnValue, SingularReturnValue } from '../runtime/client';
 import { type Brand, brand } from '../util';
 import type { RefType } from '../RefType';
-import { AiModel, InferenceConfiguration } from './ModelType';
+import { InferenceConfiguration } from './ModelType';
 import {
   ConversationMessageContent,
   ConversationSendMessageInputContent,
 } from './types/ConversationMessageContent';
 import { ToolConfiguration } from './types/ToolConfiguration';
+import { AiModel } from '@aws-amplify/data-schema-types';
 
 export const brandName = 'conversationCustomOperation';
 
