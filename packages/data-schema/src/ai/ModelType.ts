@@ -1,6 +1,8 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
+import { AiModel } from '@aws-amplify/data-schema-types';
+
 const supportedModelsLookup = {
   // Anthropic models
   'Claude 3 Haiku': 'anthropic.claude-3-haiku-20240307-v1:0',
@@ -19,10 +21,6 @@ const supportedModelsLookup = {
   'Mistral Large 2': 'mistral.mistral-large-2407-v1:0',
   'Mistral Small': 'mistral.mistral-small-2402-v1:0',
 } as const;
-
-export interface AiModel {
-  resourcePath: string;
-}
 
 export interface InferenceConfiguration {
   topP?: number;

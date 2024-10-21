@@ -1,4 +1,4 @@
-import { SetTypeSubArg } from '@aws-amplify/data-schema-types';
+import { AiModel, SetTypeSubArg } from '@aws-amplify/data-schema-types';
 import { Brand, brand } from './util';
 import { InternalField, ModelField, type BaseModelField } from './ModelField';
 import {
@@ -16,7 +16,7 @@ import type {
   HandlerType as Handler,
 } from './Handler';
 import { brandSymbol } from './util/Brand';
-import { AiModel, InferenceConfiguration } from './ai/ModelType';
+import { InferenceConfiguration } from './ai/ModelType';
 
 const queryBrand = 'queryCustomOperation';
 const mutationBrand = 'mutationCustomOperation';
