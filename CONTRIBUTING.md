@@ -34,6 +34,7 @@ To send us a pull request, please:
 
 1. Fork the repository.
 2. Modify the source; please focus on the specific change you are contributing. If you also reformat all the code, it will be hard for us to focus on your change.
+1. Create a changeset with `npx changeset` (see [Creating changesets](CONTRIBUTING.md#creating-changesets) for details)
 3. Ensure all local automated tests and checks pass (`npm run check`).
 4. Commit to your fork using clear commit messages. [Conventional commits](https://www.conventionalcommits.org/en/v1.0.0/) are preferred.
 5. Send us a pull request, answering any default questions in the pull request template.
@@ -41,6 +42,12 @@ To send us a pull request, please:
 
 GitHub provides additional document on [forking a repository](https://help.github.com/articles/fork-a-repo/) and
 [creating a pull request](https://help.github.com/articles/creating-a-pull-request/).
+
+### Creating changesets
+
+This repo uses changesets for versioning and releasing changes.
+
+All changes that affect release artifacts must have a corresponding changeset. To create a changeset run `npx changeset`. This will start a walkthrough to author the changeset file. This file should be committed to the repo.
 
 ### Other helpful scripts
 
