@@ -228,7 +228,7 @@ const ToolInputSchema = `type ToolInputSchema {
   json: AWSJSON
 }`;
 
-const ConversationMessageStreamEvent = `type ConversationMessageStreamPart {
+const ConversationMessageStreamEvent = `type ConversationMessageStreamPart @aws_cognito_user_pools {
   id: ID!
   owner: String
   conversationId: ID!
