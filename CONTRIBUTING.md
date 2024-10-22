@@ -18,37 +18,41 @@ reported the issue. Please try to include as much information as you can. Detail
 - Any modifications you've made relevant to the bug
 - Anything unusual about your environment or deployment
 
+## Finding contributions to work on
+
+Looking at the existing issues is a great way to find something to contribute on. As our projects, by default, use the default GitHub issue labels (enhancement/bug/duplicate/help wanted/invalid/question/wontfix), looking at any 'help wanted' issues is a great place to start.
+
 ## Contributing via Pull Requests
 
 Contributions via pull requests are much appreciated. Before sending us a pull request, please ensure that:
 
 1. You are working against the latest source on the _main_ branch.
 2. You check existing open, and recently merged, pull requests to make sure someone else hasn't addressed the problem already.
-3. You open an issue to discuss any significant work - we would hate for your time to be wasted.
+3. **You open an issue to discuss any significant work - we would hate for your time to be wasted.**
 
 To send us a pull request, please:
 
 1. Fork the repository.
 2. Modify the source; please focus on the specific change you are contributing. If you also reformat all the code, it will be hard for us to focus on your change.
-3. Ensure local tests pass.
-4. Commit to your fork using clear commit messages.
-5. Send us a pull request, answering any default questions in the pull request interface.
+3. Ensure all local automated tests and checks pass (`npm run check`).
+4. Commit to your fork using clear commit messages. [Conventional commits](https://www.conventionalcommits.org/en/v1.0.0/) are preferred.
+5. Send us a pull request, answering any default questions in the pull request template.
 6. Pay attention to any automated CI failures reported in the pull request, and stay involved in the conversation.
 
 GitHub provides additional document on [forking a repository](https://help.github.com/articles/fork-a-repo/) and
 [creating a pull request](https://help.github.com/articles/creating-a-pull-request/).
 
-## Finding contributions to work on
-
-Looking at the existing issues is a great way to find something to contribute on. As our projects, by default, use the default GitHub issue labels (enhancement/bug/duplicate/help wanted/invalid/question/wontfix), looking at any 'help wanted' issues is a great place to start.
-
 ### Other helpful scripts
 
-`npm run baseline:benchmarks` will let you know if your changes are passing typescript benchmark limits
+`npm run check:type-perf` will let you know if your changes are passing typescript benchmark limits
 
 `npm run vend` will start a local npm proxy and publish the local packages to this proxy so they can be installed / used as if they were published on npm
 
 `npm run e2e` will run the E2E test suite.
+
+### E2E tests
+
+See the [e2e-tests README](packages/e2e-tests/README.md) for more information.
 
 ### Publishing packages locally
 
