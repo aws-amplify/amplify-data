@@ -10,7 +10,7 @@ export const convertItemToConversationMessage = ({
   conversationId,
   role,
 }: any) => ({
-  content: deserializeContent(content),
+  content: deserializeContent(content ?? []),
   conversationId,
   createdAt,
   id,
