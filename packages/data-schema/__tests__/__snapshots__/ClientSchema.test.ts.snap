@@ -209,7 +209,7 @@ type ToolInputSchema {
   json: AWSJSON
 }
 
-type ConversationMessageStreamPart {
+type ConversationMessageStreamPart @aws_cognito_user_pools {
   id: ID!
   owner: String
   conversationId: ID!
