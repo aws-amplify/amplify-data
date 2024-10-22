@@ -10,11 +10,13 @@ bench('basic schema w client types', async () => {
         description: a.string(),
         comments: a.hasMany('Comment', 'postId'),
       }),
-      Comment: a.model({
-        content: a.string().required(),
-        postId: a.string().required(),
-        post: a.belongsTo('Post', 'postId'),
-      }),
+      Comment: a
+        .model({
+          content: a.string().required(),
+          postId: a.string().required(),
+          post: a.belongsTo('Post', 'postId'),
+        })
+        .secondaryIndexes((indexes) => [indexes('postId')]),
     })
     .authorization((allow) => [allow.guest()]);
 
@@ -44,6 +46,9 @@ bench('basic schema w client types', async () => {
   // query
   const _listComments = await client.models.Comment.list();
   const _getComment = await client.models.Comment.get({ id: 'abc' });
+  const _listByPost = await client.models.Comment.listCommentByPostId({
+    postId: 'a1',
+  });
 
   // mutation
   const _createComment = await client.models.Comment.create({
@@ -60,4 +65,4 @@ bench('basic schema w client types', async () => {
   client.models.Comment.onCreate().subscribe({ next: () => null });
   client.models.Comment.onUpdate().subscribe({ next: () => null });
   client.models.Comment.onDelete().subscribe({ next: () => null });
-}).types([393112, 'instantiations']);
+}).types([411920, 'instantiations']);

@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/ban-types */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-
 import { bench } from '@arktype/attest';
 import { generateClient } from 'aws-amplify/api';
 
@@ -54,7 +53,13 @@ bench('basic schema w client types', async () => {
       identifier: {
         readonly id: string;
       };
-      secondaryIndexes: unknown;
+      secondaryIndexes: {
+        listCommentByPostId: {
+          input: {
+            postId: string;
+          };
+        };
+      };
       type: {
         content: string;
         postId: string;
@@ -195,6 +200,9 @@ bench('basic schema w client types', async () => {
   // query
   const _listComments = await client.models.Comment.list();
   const _getComment = await client.models.Comment.get({ id: 'abc' });
+  const _listByPost = await client.models.Comment.listCommentByPostId({
+    postId: 'a1',
+  });
 
   // mutation
   const _createComment = await client.models.Comment.create({
@@ -211,4 +219,4 @@ bench('basic schema w client types', async () => {
   client.models.Comment.onCreate().subscribe({ next: () => null });
   client.models.Comment.onUpdate().subscribe({ next: () => null });
   client.models.Comment.onDelete().subscribe({ next: () => null });
-}).types([5427, 'instantiations']);
+}).types([5760, 'instantiations']);
