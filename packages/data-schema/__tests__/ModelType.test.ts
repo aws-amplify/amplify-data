@@ -924,4 +924,19 @@ describe("default() to GQL mapping", () => {
 
     expect(schema.transform().schema).toMatchSnapshot();
   })
+
+  it("should map generated (`.default()`) identifiers to @primaryKey @default", () => {
+    const schema = a
+    .schema({
+      song: a
+        .model({
+          id: a.integer().default(),
+          title: a.string()
+        })
+      .identifier(["id"])
+    })
+    .authorization((allow) => allow.publicApiKey());
+
+    expect(schema.transform().schema).toMatchSnapshot();
+  })
 })
