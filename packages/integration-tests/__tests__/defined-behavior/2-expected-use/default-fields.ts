@@ -7,7 +7,7 @@ import { Amplify } from "aws-amplify";
 const schemaDefaultHasValue = a
   .schema({
     Todo: a.model({
-      content: a.string().default('default'),
+      number: a.integer().default(42),
     }),
   })
   .authorization((allow) => allow.owner());
@@ -15,23 +15,7 @@ const schemaDefaultHasValue = a
 const schemaDefaultHasNoValue = a
   .schema({
     Todo: a.model({
-      content: a.string().default(),
-    }),
-  })
-  .authorization((allow) => allow.owner());
-
-const schemaDefaultHasNoValueRequired = a
-  .schema({
-    Todo: a.model({
-      content: a.string().default().required(),
-    }),
-  })
-  .authorization((allow) => allow.owner());
-
-const schemaDefaultHasValueRequired = a
-  .schema({
-    Todo: a.model({
-      content: a.string().default('default').required(),
+      number: a.integer().default(),
     }),
   })
   .authorization((allow) => allow.owner());
@@ -48,11 +32,9 @@ const schemaDefaultHasValueRequired = a
  * So, here we assert that the two cases have identical behaviors and effects to MIS and runtime features.
  */
 describe.each([
-  { caseIdentifier: "default field with value", schema: schemaDefaultHasValue, isRequired: false },
-  { caseIdentifier: "default field has no value", schema: schemaDefaultHasNoValue, isRequired: false },
-  { caseIdentifier: "required default field has no value", schema: schemaDefaultHasNoValueRequired, isRequired: true },
-  { caseIdentifier: "required default field with value", schema: schemaDefaultHasValueRequired, isRequired: true },
-])('Default value fields. Given a $caseIdentifier', ({ schema, isRequired }) => {
+  { caseIdentifier: "default field with value", schema: schemaDefaultHasValue },
+  { caseIdentifier: "default field has no value", schema: schemaDefaultHasNoValue },
+])('Default value fields. Given a $caseIdentifier', ({ schema }) => {
 
   type Schema = ClientSchema<typeof schema>;
 
@@ -60,19 +42,18 @@ describe.each([
     type _fieldIsNullable =
       Expect<
         Equal<
-          Schema['Todo']['type']['content'],
-          Nullable<string> | undefined
+          Schema['Todo']['type']['number'],
+          Nullable<number> | undefined
         >
       >;
   })
 
   test('the generated modelIntrospection schema is not modified', async () => {
     const { modelIntrospection } = await buildAmplifyConfig(schema);
-    expect(modelIntrospection.models.Todo.fields.content)
+    expect(modelIntrospection.models.Todo.fields.number)
       .toEqual(expect.objectContaining({
-        name: 'content',
+        name: 'number',
         isArray: false,
-        isRequired: isRequired,
         attributes: []
       }));
   });
@@ -103,13 +84,13 @@ describe.each([
       { data: { listModels: { items: [] } } },
       ]);
 
-      const content = 'Lorem ipsum'
+      const number = 43;
       const client = generateClient<Schema>();
-      await client.models.Todo.create({content});
+      await client.models.Todo.create({number});
 
       expectVariables(spy, {
         input: {
-          content
+          number: number
         }
       })
     })

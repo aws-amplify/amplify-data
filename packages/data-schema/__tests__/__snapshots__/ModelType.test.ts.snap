@@ -1,9 +1,10 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`default() to GQL mapping should map .default() to \`@default\` 1`] = `
-"type song @model @auth(rules: [{allow: public, provider: apiKey}])
+"type album @model @auth(rules: [{allow: public, provider: apiKey}])
 {
-  title: String @default
+  trackNumber: Int @default
+  title: String
 }"
 `;
 

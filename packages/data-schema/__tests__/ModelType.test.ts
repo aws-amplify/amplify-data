@@ -915,9 +915,10 @@ describe("default() to GQL mapping", () => {
   it("should map .default() to `@default`", () => {
     const schema = a
     .schema({
-      song: a
+      album: a
         .model({
-          title: a.string().default(),
+          trackNumber: a.integer().default(),
+          title: a.string(),
         })
     })
     .authorization((allow) => allow.publicApiKey());
