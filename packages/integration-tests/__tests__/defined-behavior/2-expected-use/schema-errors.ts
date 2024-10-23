@@ -14,22 +14,32 @@ describe('validated on execution', () => {
     expect(() => schema.transform()).toThrow('missing authorization rules');
   });
 
-  /**
-   * Example of a test for a feature request.
-   *
-   * E.g., if a customer bypasses the TS errors in any way.
-   */
-  test.skip('Throws in identifier naming a non-required field', async () => {
-    const schema = a.schema({
-      Todo: a
-        .model({
-          content: a.string(),
-        })
-        .authorization((allow) => allow.publicApiKey())
-        // @ts-ignore
-        .identifier(['content']),
-    });
 
-    expect(schema.transform).toThrow('Invalid identifier');
-  });
+  describe.each([
+	{ field: a.string() },
+	{ field: a.integer() },
+	{ field: a.float() },
+	{ field: a.datetime() },
+	{ field: a.timestamp() },
+  ])('Generated fields and identifiers', ({field: baseField}) => {
+	/**
+	 * We allowed nullable identifiers to support SQL generated fields 
+	 * e.g. Postgres SERIAL ... See PR: #373
+	 *
+	 * However, if a field is nullable and not indicated as DB generated (.default()),
+	 * we should throw.
+	 */
+	test('Throws if identifier is nullable and has no default', async () => {
+	  const schema = a.schema({
+		Model: a
+		  .model({
+			nullableFieldNoDefault: baseField,
+		  })
+		  .authorization((allow) => allow.publicApiKey())
+		  .identifier(['nullableFieldNoDefault']),
+	  });
+
+	  expect(() => schema.transform()).toThrow('Invalid identifier: a nullable identifier must be generatable');
+	});
+  })
 });
