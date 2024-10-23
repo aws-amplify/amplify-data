@@ -155,6 +155,12 @@ function isRefField(
   return isRefFieldDef((field as any)?.data);
 }
 
+function canGenerateFieldType(
+  fieldType: ModelFieldType
+): boolean {
+  return fieldType === 'Int';
+}
+
 function scalarFieldToGql(
   fieldDef: ScalarFieldDef,
   identifier?: readonly string[],
@@ -168,6 +174,10 @@ function scalarFieldToGql(
     default: _default,
   } = fieldDef;
   let field: string = fieldType;
+
+  if (_default === __generated && !canGenerateFieldType(fieldType)) {
+    throw new Error('db generation not supported for field');
+  }
 
   if (identifier !== undefined) {
     if (!required && fieldType !== 'ID' && _default !== __generated) {
