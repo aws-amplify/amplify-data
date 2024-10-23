@@ -3,7 +3,7 @@
 exports[`Primary Indexes Custom identifier single field SK defaulted/serial field can be used in identifier 1`] = `
 "type Model @model @auth(rules: [{allow: public, provider: apiKey}])
 {
-  idSerial: Int! @primaryKey
+  idSerial: Int! @primaryKey @default
   content: String
 }"
 `;
