@@ -170,6 +170,10 @@ function scalarFieldToGql(
   let field: string = fieldType;
 
   if (identifier !== undefined) {
+    if (!required && fieldType !== 'ID' && _default !== __generated) {
+      throw new Error(`Invalid identifier: a nullable identifier must be generatable`);
+    }
+
     field += '!';
     if (identifier.length > 1) {
       const [_pk, ...sk] = identifier;
