@@ -188,6 +188,10 @@ function scalarFieldToGql(
       field += ` ${index}`;
     }
 
+    if (_default === __generated) {
+      field += ` @default`;
+    }
+
     return field;
   }
 
