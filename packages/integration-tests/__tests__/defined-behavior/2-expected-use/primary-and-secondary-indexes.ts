@@ -127,6 +127,21 @@ describe('Primary Indexes', () => {
         },
       });
     });
+
+	test('defaulted/serial field can be used in identifier', () => {
+	  const schema = a
+	  .schema({
+		Model: a
+		.model({
+		  idSerial: a.integer().default(),
+		  content: a.string(),
+		})
+		.identifier(['idSerial'])
+	  })
+	  .authorization(allow => allow.publicApiKey())
+
+	  expect(schema.transform().schema).toMatchSnapshot();
+	});
   });
 
   describe('Custom identifier with composite SK', () => {
