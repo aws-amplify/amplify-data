@@ -171,7 +171,7 @@ function scalarFieldToGql(
 
   if (identifier !== undefined) {
     if (!required && fieldType !== 'ID' && _default !== __generated) {
-      throw new Error(`Invalid identifier: a nullable identifier must be generatable`);
+      throw new Error('a nullable identifier must be generatable');
     }
 
     field += '!';

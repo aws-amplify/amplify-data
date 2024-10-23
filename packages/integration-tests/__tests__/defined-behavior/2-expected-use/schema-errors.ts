@@ -21,9 +21,9 @@ describe('validated on execution', () => {
 	{ field: a.float() },
 	{ field: a.datetime() },
 	{ field: a.timestamp() },
-  ])('Generated fields and identifiers', ({field: baseField}) => {
+  ])('Generated fields and identifiers', ({field}) => {
 	/**
-	 * We allowed nullable identifiers to support SQL generated fields 
+	 * We allowed nullable identifiers to support SQL generated fields
 	 * e.g. Postgres SERIAL ... See PR: #373
 	 *
 	 * However, if a field is nullable and not indicated as DB generated (.default()),
@@ -33,13 +33,13 @@ describe('validated on execution', () => {
 	  const schema = a.schema({
 		Model: a
 		  .model({
-			nullableFieldNoDefault: baseField,
+			nullableFieldNoDefault: field,
 		  })
 		  .authorization((allow) => allow.publicApiKey())
 		  .identifier(['nullableFieldNoDefault']),
 	  });
 
-	  expect(() => schema.transform()).toThrow('Invalid identifier: a nullable identifier must be generatable');
+	  expect(() => schema.transform()).toThrow('a nullable identifier must be generatable');
 	});
   })
 });
