@@ -1,0 +1,19 @@
+{
+  "name": "lsp-type-gen-example",
+  "version": "1.0.0",
+  "main": "index.js",
+  "private": true,
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "@aws-amplify/data-schema": "1.10.2",
+    "@types/node": "^22.7.8",
+    "data-plugin": "file:../../packages/data-plugin",
+    "typescript": "^5.6.3"
+  }
+}

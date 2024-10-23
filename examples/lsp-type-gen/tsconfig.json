@@ -1,0 +1,18 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "commonjs",
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "strict": true,
+    "skipLibCheck": true,
+    "sourceMap": true,
+    "outDir": "./dist",
+    "plugins": [
+      {
+        "name": "data-plugin/dist/index.js",
+        "filePattern": "**/lsp-type-gen/resource.ts"
+      }
+    ]
+  }
+}

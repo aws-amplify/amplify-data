@@ -1,0 +1,17 @@
+{
+  "name": "data-plugin",
+  "private": true,
+  "version": "0.0.1",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc"
+  },
+  "devDependencies": {
+    "@types/minimatch": "^5.1.2",
+    "typescript": "^5.6.0"
+  },
+  "dependencies": {
+    "minimatch": "^10.0.1"
+  }
+}
