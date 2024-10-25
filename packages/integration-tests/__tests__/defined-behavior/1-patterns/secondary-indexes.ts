@@ -46,6 +46,15 @@ describe('Custom secondary indexes', () => {
             },
           },
         },
+        {
+          data: null,
+          errors: [
+            {
+            path: null,
+            locations: []
+            } as any
+          ]
+          },
       ]);
       const config = await buildAmplifyConfig(schema);
       Amplify.configure(config);
@@ -57,6 +66,7 @@ describe('Custom secondary indexes', () => {
         await client.models.Customer.listCustomerByAccountRepresentativeId({
           accountRepresentativeId: 'YOUR_REP_ID',
         });
+      
 
       // #endregion
 
@@ -70,7 +80,17 @@ describe('Custom secondary indexes', () => {
           },
         ]),
       );
+
+      // Ensuring `data: null` does not throw exception
+      // https://github.com/aws-amplify/amplify-js/issues/13941
+      expect(async () => {
+        const { data: data2, errors: errors2 } =
+          await client.models.Customer.listCustomerByAccountRepresentativeId({
+            accountRepresentativeId: 'YOUR_REP_ID',
+          });
+      }).not.toThrow();
     });
+    
   });
 
   describe('Add sort keys to secondary indexes', () => {
