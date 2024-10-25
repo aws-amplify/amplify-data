@@ -46,7 +46,7 @@ describe('Custom secondary indexes', () => {
             },
           },
         },
-        {
+        { 
           data: null,
           errors: [
             {
@@ -84,7 +84,7 @@ describe('Custom secondary indexes', () => {
       // Ensuring `data: null` does not throw exception
       // https://github.com/aws-amplify/amplify-js/issues/13941
       expect(async () => {
-        const { data: data2, errors: errors2 } =
+        const { data: nullDataResponse, errors: nullDataErrors } =
           await client.models.Customer.listCustomerByAccountRepresentativeId({
             accountRepresentativeId: 'YOUR_REP_ID',
           });
