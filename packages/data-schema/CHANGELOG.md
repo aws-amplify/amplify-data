@@ -1,5 +1,19 @@
 # @aws-amplify/data-schema
 
+## 1.10.2
+
+### Patch Changes
+
+- 8497f22: Move AiModel to data-schema-types
+- Updated dependencies [8497f22]
+  - @aws-amplify/data-schema-types@1.2.0
+
+## 1.10.1
+
+### Patch Changes
+
+- b0b6007: Narrow down type for custom conversation handler
+
 ## 1.10.0
 
 ### Minor Changes

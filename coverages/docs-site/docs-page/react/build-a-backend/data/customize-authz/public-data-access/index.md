@@ -4,7 +4,7 @@
 
 Page: https://docs.amplify.aws/react/build-a-backend/data/customize-authz/public-data-access/
 
-Coverage: 0.0%
+Coverage: 100.0%
 
 #### `amplify/data/resource.ts`
 
@@ -22,11 +22,11 @@ const schema = a.schema({
 | | |
 | -- | -- |
 | Hash | `21cf216d105e1ece` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/1-patterns/auth-rules.ts](../../../../../../../../packages/integration-tests/__tests__/defined-behavior/1-patterns/auth-rules.ts#L15)
 
 ---
 
@@ -52,11 +52,12 @@ authMode: "apiKey",
 | | |
 | -- | -- |
 | Hash | `c8110784c3c7df69` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/2-expected-use/auth-modes.ts](../../../../../../../../packages/integration-tests/__tests__/defined-behavior/2-expected-use/auth-modes.ts#L51)
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/2-expected-use/auth-modes.ts](../../../../../../../../packages/integration-tests/__tests__/defined-behavior/2-expected-use/auth-modes.ts#L161)
 
 ---
 
@@ -76,11 +77,11 @@ const schema = a.schema({
 | | |
 | -- | -- |
 | Hash | `02802ed51338dc5f` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/1-patterns/auth-rules.ts](../../../../../../../../packages/integration-tests/__tests__/defined-behavior/1-patterns/auth-rules.ts#L231)
 
 ---
 
@@ -107,11 +108,11 @@ Cognito: {
 | | |
 | -- | -- |
 | Hash | `638c91685ddf6aad` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/4-uncovered/customize-authz.ts](../../../../../../../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/customize-authz.ts#L20)
 
 ---
 
@@ -137,11 +138,12 @@ authMode: "identityPool",
 | | |
 | -- | -- |
 | Hash | `75bbbc970e89b3dc` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/2-expected-use/auth-modes.ts](../../../../../../../../packages/integration-tests/__tests__/defined-behavior/2-expected-use/auth-modes.ts#L51)
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/2-expected-use/auth-modes.ts](../../../../../../../../packages/integration-tests/__tests__/defined-behavior/2-expected-use/auth-modes.ts#L161)
 
 ---
 

@@ -139,37 +139,76 @@ npm run dev
 
 ---
 
-#### `src/App.tsx`
+#### `src/main.tsx`
 
 ~~~
+import React from "react";
+import ReactDOM from "react-dom/client";
 import { Authenticator } from "@aws-amplify/ui-react";
+import { Amplify } from "aws-amplify";
+import App from "./App.tsx";
+import outputs from "../amplify_outputs.json";
+import "./index.css";
 import "@aws-amplify/ui-react/styles.css";
-// ... other imports
 
-function App() {
-  // ...
-  return (
+Amplify.configure(outputs);
+
+ReactDOM.createRoot(document.getElementById("root")!).render(
+  <React.StrictMode>
 <Authenticator>
-  {({ signOut }) => (
-    <main>
-{/*...*/}
-<button onClick={signOut}>Sign out</button>
-    </main>
-  )}
+  <App />
 </Authenticator>
-  );
-}
+  </React.StrictMode>,
+);
 
 ~~~
 
 | | |
 | -- | -- |
-| Hash | `3774e58f1afbc0d2` |
+| Hash | `4843a42677bbbe4e` |
 | Covered | ✅ |
 
 ##### Covering Regions
 
 - [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/4-uncovered/start/quickstart.ts](../../../../../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/start/quickstart.ts#L9)
+
+---
+
+#### `src/App.tsx`
+
+~~~
+import type { Schema } from "../amplify/data/resource";
+import { useAuthenticator } from "@aws-amplify/ui-react";
+import { useEffect, useState } from "react";
+import { generateClient } from "aws-amplify/data";
+
+const client = generateClient<Schema>();
+
+function App() {
+  const { signOut } = useAuthenticator();
+
+  // ...
+
+  return (
+<main>
+  {/* ... */}
+  <button onClick={signOut}>Sign out</button>
+</main>
+  );
+}
+
+export default App;
+
+~~~
+
+| | |
+| -- | -- |
+| Hash | `1099eb31a7a597ff` |
+| Covered | ✅ |
+
+##### Covering Regions
+
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/4-uncovered/start/quickstart.ts](../../../../../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/start/quickstart.ts#L11)
 
 ---
 
@@ -253,16 +292,15 @@ defaultAuthorizationMode: "userPool",
 // ... imports
 
 function App() {
+  const { user, signOut } = useAuthenticator();
+
   // ...
+
   return (
-<Authenticator>
-  {({ signOut, user }) => (
-    <main>
-<h1>{user?.signInDetails?.loginId}'s todos</h1>
-{/* ... rest of the UI */}
-    </main>
-  )}
-</Authenticator>
+<main>
+  <h1>{user?.signInDetails?.loginId}'s todos</h1>
+  {/* ... */}
+</main>
   );
 }
 
@@ -270,7 +308,7 @@ function App() {
 
 | | |
 | -- | -- |
-| Hash | `a0636891d1ba0ef2` |
+| Hash | `8988d8464b80c15e` |
 | Covered | ✅ |
 
 ##### Covering Regions

@@ -178,7 +178,7 @@ export type FunctionHandler = {
    *     // 3. set the function has the handler
    *     .handler(a.handler.function(echoHandler).async())
    *
-   * @see {@link https://docs.amplify.aws/react/build-a-backend/data/INSERT_PATH_WHEN_READY}
+   * @see {@link https://docs.amplify.aws/react/build-a-backend/data/custom-business-logic/#async-function-handlers}
    * @returns A function handler for query / mutation that is asynchronously invoked.
    */
   async(): AsyncFunctionHandler;

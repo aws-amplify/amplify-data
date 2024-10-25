@@ -4,7 +4,7 @@
 
 Page: https://docs.amplify.aws/react/build-a-backend/data/customize-authz/grant-lambda-function-access-to-api/
 
-Coverage: 0.0%
+Coverage: 100.0%
 
 #### `amplify/data/resource.ts`
 
@@ -40,11 +40,11 @@ export const data = defineData({
 | | |
 | -- | -- |
 | Hash | `06faca1d4de6d812` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/1-patterns/auth-rules.ts](../../../../../../../../packages/integration-tests/__tests__/defined-behavior/1-patterns/auth-rules.ts#L306)
 
 ---
 
@@ -67,11 +67,11 @@ allow.resource(functionWithDataAccess).to(["query", "listen"]),
 | | |
 | -- | -- |
 | Hash | `a23fa5edeff73d65` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/1-patterns/auth-rules.ts](../../../../../../../../packages/integration-tests/__tests__/defined-behavior/1-patterns/auth-rules.ts#L343)
 
 ---
 
@@ -123,11 +123,11 @@ export const handler = async (event) => {
 | | |
 | -- | -- |
 | Hash | `71dbe766650761ef` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/4-uncovered/customize-authz.ts](../../../../../../../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/customize-authz.ts#L15)
 
 ---
 
@@ -141,11 +141,11 @@ npx ampx generate graphql-client-code --out <path-function-handler-dir>/graphql
 | | |
 | -- | -- |
 | Hash | `e91221e30934954b` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/4-uncovered/customize-authz.ts](../../../../../../../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/customize-authz.ts#L15)
 
 ---
 
@@ -177,11 +177,11 @@ query: listTodos,
 | | |
 | -- | -- |
 | Hash | `dbf5abada7203d58` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/4-uncovered/customize-authz.ts](../../../../../../../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/customize-authz.ts#L15)
 
 ---
 

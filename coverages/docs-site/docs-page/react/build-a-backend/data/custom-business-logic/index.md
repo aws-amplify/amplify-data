@@ -4,7 +4,7 @@
 
 Page: https://docs.amplify.aws/react/build-a-backend/data/custom-business-logic/
 
-Coverage: 0.0%
+Coverage: 81.8%
 
 #### `Unnamed Snippet`
 
@@ -42,11 +42,11 @@ export const data = defineData({
 | | |
 | -- | -- |
 | Hash | `d9c0f0f657dbbe8a` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/2-expected-use/custom-operations.ts](../../../../../../../packages/integration-tests/__tests__/defined-behavior/2-expected-use/custom-operations.ts#L23)
 
 ---
 
@@ -87,11 +87,11 @@ export const data = defineData({
 | | |
 | -- | -- |
 | Hash | `e394d9c98b1a1f8d` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/2-expected-use/custom-operations.ts](../../../../../../../packages/integration-tests/__tests__/defined-behavior/2-expected-use/custom-operations.ts#L23)
 
 ---
 
@@ -116,11 +116,11 @@ executionDuration: performance.now() - start,
 | | |
 | -- | -- |
 | Hash | `584adc09feb4d383` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/1-patterns/client-schema.ts](../../../../../../../packages/integration-tests/__tests__/defined-behavior/1-patterns/client-schema.ts#L147)
 
 ---
 
@@ -171,11 +171,11 @@ apiKeyAuthorizationMode: {
 | | |
 | -- | -- |
 | Hash | `20ac9f34c6a87da3` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/4-uncovered/custom-business-logic.ts](../../../../../../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/custom-business-logic.ts#L9)
 
 ---
 
@@ -260,11 +260,11 @@ export function response(ctx) {
 | | |
 | -- | -- |
 | Hash | `b8bef9853eb46bd0` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/4-uncovered/custom-business-logic.ts](../../../../../../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/custom-business-logic.ts#L14)
 
 ---
 
@@ -296,11 +296,11 @@ backend.data.addDynamoDbDataSource("ExternalTableDataSource", externalTable);
 | | |
 | -- | -- |
 | Hash | `fedff4bb36109427` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/4-uncovered/custom-business-logic.ts](../../../../../../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/custom-business-logic.ts#L19)
 
 ---
 
@@ -352,11 +352,11 @@ apiKeyAuthorizationMode: {
 | | |
 | -- | -- |
 | Hash | `37dddc093610e7b1` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/4-uncovered/custom-business-logic.ts](../../../../../../../packages/integration-tests/__tests__/defined-behavior/4-uncovered/custom-business-logic.ts#L24)
 
 ---
 
@@ -372,11 +372,11 @@ const { data, errors } = await client.queries.echo({
 | | |
 | -- | -- |
 | Hash | `ffefd700b1e323c9` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/2-expected-use/custom-operations.ts](../../../../../../../packages/integration-tests/__tests__/defined-behavior/2-expected-use/custom-operations.ts#L145)
 
 ---
 
@@ -392,11 +392,11 @@ const { data, errors } = await client.mutations.likePost({
 | | |
 | -- | -- |
 | Hash | `cb7710cc0dc02bd3` |
-| Covered | ❌ |
+| Covered | ✅ |
 
 ##### Covering Regions
 
-- *None*
+- [../../packages/integration-tests/\_\_tests\_\_/defined-behavior/2-expected-use/client-schema.ts](../../../../../../../packages/integration-tests/__tests__/defined-behavior/2-expected-use/client-schema.ts#L103)
 
 ---
 

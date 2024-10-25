@@ -93,6 +93,16 @@ Description
 </th></tr></thead>
 <tbody><tr><td>
 
+[AiModel](./data-schema-types.aimodel.md)
+
+
+</td><td>
+
+
+
+</td></tr>
+<tr><td>
+
 [AuthMode](./data-schema-types.authmode.md)
 
 

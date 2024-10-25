@@ -2,16 +2,16 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import type { Subscription } from 'rxjs';
-import type { DefineFunction } from '@aws-amplify/data-schema-types';
 import type { ListReturnValue, SingularReturnValue } from '../runtime/client';
 import { type Brand, brand } from '../util';
 import type { RefType } from '../RefType';
-import { AiModel, InferenceConfiguration } from './ModelType';
+import { InferenceConfiguration } from './ModelType';
 import {
   ConversationMessageContent,
   ConversationSendMessageInputContent,
 } from './types/ConversationMessageContent';
 import { ToolConfiguration } from './types/ToolConfiguration';
+import { AiModel } from '@aws-amplify/data-schema-types';
 
 export const brandName = 'conversationCustomOperation';
 
@@ -143,12 +143,22 @@ export interface ToolDefinition {
   description: string;
 }
 
+// Type that is compatible with ConversationHandlerFunctionFactory
+// defined in https://github.com/aws-amplify/amplify-backend/blob/main/packages/backend-ai/API.md
+export type DefineConversationHandlerFunction = {
+  // Explicitly enumerate major versions of event to assure
+  // that customer is passing compatible version of conversation handler.
+  readonly eventVersion: `1.${number}`;
+  readonly provides?: string | undefined;
+  getInstance: (props: any) => any;
+};
+
 export interface ConversationInput {
   aiModel: AiModel;
   systemPrompt: string;
   inferenceConfiguration?: InferenceConfiguration;
   tools?: ToolDefinition[];
-  handler?: DefineFunction;
+  handler?: DefineConversationHandlerFunction;
 }
 
 export interface InternalConversationType
