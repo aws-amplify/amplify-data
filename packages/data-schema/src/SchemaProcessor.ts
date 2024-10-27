@@ -175,15 +175,8 @@ function scalarFieldToGql(
   } = fieldDef;
   let field: string = fieldType;
 
-  if (_default === __generated && !canGenerateFieldType(fieldType)) {
-    throw new Error('db generation not supported for field');
-  }
 
   if (identifier !== undefined) {
-    if (!required && fieldType !== 'ID' && _default !== __generated) {
-      throw new Error('a nullable identifier must be generatable');
-    }
-
     field += '!';
     if (identifier.length > 1) {
       const [_pk, ...sk] = identifier;
@@ -936,6 +929,33 @@ function processFieldLevelAuthRules(
   return fieldLevelAuthRules;
 }
 
+function validateDBGeneration(fields: Record<string, any>) {
+  for (const [fieldName, fieldDef] of Object.entries(fields)) {
+    const _default = fieldDef.data?.default;
+    const fieldType = fieldDef.data?.fieldType;
+    const isGenerated = _default === __generated;
+
+    if (isGenerated && !canGenerateFieldType(fieldType)) {
+      throw new Error(`Incompatible field type. Field type ${fieldType} in field ${fieldName} cannot be configured as a DB-generated field.`);
+    }
+  }
+}
+
+function validateNullableIdentifiers(fields: Record<string, any>, identifier?: readonly string[]){
+  for (const [fieldName, fieldDef] of Object.entries(fields)) {
+    const fieldType = fieldDef.data?.fieldType;
+    const required = fieldDef.data?.required;
+    const _default = fieldDef.data?.default;
+    const isGenerated = _default === __generated;
+
+    if (identifier !== undefined && identifier.includes(fieldName)) {
+      if (!required && fieldType !== 'ID' && !isGenerated) {
+        throw new Error(`Invalid identifier definition. Field ${fieldName} cannot be used in the identifier. Identifiers must reference required or DB-generated fields)`);
+      }
+    }
+  }
+}
+
 function processFields(
   typeName: string,
   fields: Record<string, any>,
@@ -951,6 +971,8 @@ function processFields(
   const implicitTypes: [string, any][] = [];
 
   validateImpliedFields(fields, impliedFields);
+  validateDBGeneration(fields);
+  validateNullableIdentifiers(fields, identifier)
 
   for (const [fieldName, fieldDef] of Object.entries(fields)) {
     const fieldAuth = fieldLevelAuthRules[fieldName]
