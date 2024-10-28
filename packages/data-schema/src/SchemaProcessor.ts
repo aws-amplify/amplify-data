@@ -27,6 +27,7 @@ import {
   FunctionSchemaAccess,
   LambdaFunctionDefinition,
   CustomSqlDataSourceStrategy,
+  DatasourceEngine,
 } from '@aws-amplify/data-schema-types';
 import type { InternalRef, RefType } from './RefType';
 import type { EnumType } from './EnumType';
@@ -929,11 +930,15 @@ function processFieldLevelAuthRules(
   return fieldLevelAuthRules;
 }
 
-function validateDBGeneration(fields: Record<string, any>) {
+function validateDBGeneration(fields: Record<string, any>, databaseEngine: DatasourceEngine) {
   for (const [fieldName, fieldDef] of Object.entries(fields)) {
     const _default = fieldDef.data?.default;
     const fieldType = fieldDef.data?.fieldType;
     const isGenerated = _default === __generated;
+
+    if (isGenerated && databaseEngine !== 'postgresql') {
+      throw new Error(`Invalid field definition for ${fieldName}. DB-generated fields are only supported with PostgreSQL data sources.`);
+    }
 
     if (isGenerated && !canGenerateFieldType(fieldType)) {
       throw new Error(`Incompatible field type. Field type ${fieldType} in field ${fieldName} cannot be configured as a DB-generated field.`);
@@ -964,6 +969,7 @@ function processFields(
   identifier?: readonly string[],
   partitionKey?: string,
   secondaryIndexes: TransformedSecondaryIndexes = {},
+  databaseEngine: DatasourceEngine = 'dynamodb',
 ) {
   const gqlFields: string[] = [];
   // stores nested, field-level type definitions (custom types and enums)
@@ -971,7 +977,7 @@ function processFields(
   const implicitTypes: [string, any][] = [];
 
   validateImpliedFields(fields, impliedFields);
-  validateDBGeneration(fields);
+  validateDBGeneration(fields, databaseEngine);
   validateNullableIdentifiers(fields, identifier)
 
   for (const [fieldName, fieldDef] of Object.entries(fields)) {
@@ -1329,8 +1335,9 @@ const schemaPreprocessor = (
   const lambdaFunctions: LambdaFunctionDefinition = {};
   const customSqlDataSourceStrategies: CustomSqlDataSourceStrategy[] = [];
 
+  const databaseEngine = schema.data.configuration.database.engine
   const databaseType =
-    schema.data.configuration.database.engine === 'dynamodb'
+    databaseEngine === 'dynamodb'
       ? 'dynamodb'
       : 'sql';
 
@@ -1413,6 +1420,10 @@ const schemaPreprocessor = (
           fields,
           authFields,
           fieldLevelAuthRules,
+          undefined,
+          undefined,
+          undefined,
+          databaseEngine
         );
 
         topLevelTypes.push(...implicitTypes);
@@ -1524,6 +1535,8 @@ const schemaPreprocessor = (
         fieldLevelAuthRules,
         identifier,
         partitionKey,
+        undefined,
+        databaseEngine,
       );
 
       topLevelTypes.push(...implicitTypes);
@@ -1588,6 +1601,7 @@ const schemaPreprocessor = (
         identifier,
         partitionKey,
         transformedSecondaryIndexes,
+        databaseEngine,
       );
       topLevelTypes.push(...implicitTypes);
 
