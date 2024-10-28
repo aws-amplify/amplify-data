@@ -97,17 +97,12 @@ export type ModelTypeParamShape = {
  */
 export type ExtractSecondaryIndexIRFields<
   T extends ModelTypeParamShape,
-  RequiredOnly extends boolean = false,
 > = {
   [FieldProp in keyof T['fields'] as T['fields'][FieldProp] extends BaseModelField<
     infer R
   >
     ? NonNullable<R> extends string | number
-      ? RequiredOnly extends false
-        ? FieldProp
-        : null extends R
-          ? never
-          : FieldProp
+      ? FieldProp
       : never
     : T['fields'][FieldProp] extends
           | EnumType
@@ -230,7 +225,7 @@ export type ModelType<
   {
     [brandSymbol]: typeof brandName;
     identifier<
-      PrimaryIndexFields = ExtractSecondaryIndexIRFields<T, true>,
+      PrimaryIndexFields = ExtractSecondaryIndexIRFields<T>,
       PrimaryIndexPool extends string = keyof PrimaryIndexFields & string,
       const ID extends ReadonlyArray<PrimaryIndexPool> = readonly [],
       const PrimaryIndexIR extends PrimaryIndexIrShape = PrimaryIndexFieldsToIR<

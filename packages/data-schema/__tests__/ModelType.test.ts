@@ -1,6 +1,7 @@
 import { expectTypeTestsToPassAsync } from 'jest-tsd';
 import { a, ClientSchema } from '../src/index';
 import { PrivateProviders, Operations, Operation } from '../src/Authorization';
+import { configure } from '../src/ModelSchema';
 
 describe('type definition tests', () => {
   // evaluates type defs in corresponding test-d.ts file
@@ -899,10 +900,18 @@ describe('disableOperations', () => {
 });
 
 describe("default() to GQL mapping", () => {
+  const postgresConfig = configure({
+    database: {
+      identifier: 'some-identifier',
+      engine: 'postgresql',
+      connectionUri: '' as any,
+    },
+  })
+
   it("should map .default(val) to `@default(value: val)`", () => {
     const schema = a
     .schema({
-      song: a
+      Song: a
         .model({
           title: a.string().default("Little Wing"),
         })
@@ -913,12 +922,28 @@ describe("default() to GQL mapping", () => {
   })
 
   it("should map .default() to `@default`", () => {
-    const schema = a
+    const schema = postgresConfig
     .schema({
-      song: a
+      Album: a
         .model({
-          title: a.string().default(),
+          trackNumber: a.integer().default(),
+          title: a.string(),
         })
+    })
+    .authorization((allow) => allow.publicApiKey());
+
+    expect(schema.transform().schema).toMatchSnapshot();
+  })
+
+  it("should map generated (`.default()`) identifiers to @primaryKey @default", () => {
+    const schema = postgresConfig
+    .schema({
+      Song: a
+        .model({
+          id: a.integer().default(),
+          title: a.string()
+        })
+      .identifier(["id"])
     })
     .authorization((allow) => allow.publicApiKey());
 

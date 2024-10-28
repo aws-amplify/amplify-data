@@ -101,7 +101,8 @@ describe('identifiers', () => {
       title: string(),
     });
 
-    // @ts-expect-error
+    // While allowed on schemas to facilitate SQL generated fields e.g. SERIAL,
+    // improperly assignging a nullable field as an identifier will result in build errors
     m2.identifier(['title']);
   });
 

@@ -1,16 +1,25 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`default() to GQL mapping should map .default() to \`@default\` 1`] = `
-"type song @model @auth(rules: [{allow: public, provider: apiKey}])
+"type Album @model(timestamps: null) @auth(rules: [{allow: public, provider: apiKey}])
 {
-  title: String @default
+  trackNumber: Int @default
+  title: String
 }"
 `;
 
 exports[`default() to GQL mapping should map .default(val) to \`@default(value: val)\` 1`] = `
-"type song @model @auth(rules: [{allow: public, provider: apiKey}])
+"type Song @model @auth(rules: [{allow: public, provider: apiKey}])
 {
   title: String @default(value: "Little Wing")
+}"
+`;
+
+exports[`default() to GQL mapping should map generated (\`.default()\`) identifiers to @primaryKey @default 1`] = `
+"type Song @model(timestamps: null) @auth(rules: [{allow: public, provider: apiKey}])
+{
+  id: Int! @primaryKey @default
+  title: String
 }"
 `;
 

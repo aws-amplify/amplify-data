@@ -1,0 +1,47 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`validated on execution Generated fields and identifiers: datetime Throws if identifier is nullable and has no default 1`] = `"Invalid identifier definition. Field nullableFieldNoDefault cannot be used in the identifier. Identifiers must reference required or DB-generated fields)"`;
+
+exports[`validated on execution Generated fields and identifiers: datetime Throws if you use \`.default()\` on unsupported engine 1`] = `"Invalid field definition for nullableGeneratedField. DB-generated fields are only supported with PostgreSQL data sources."`;
+
+exports[`validated on execution Generated fields and identifiers: datetime Throws if you use \`.default()\` on unsupported engine 2`] = `"Model \`Model\` is missing authorization rules. Add global rules to the schema or ensure every model has its own rules."`;
+
+exports[`validated on execution Generated fields and identifiers: datetime Throws if you use \`.default()\` on unsupported engine 3`] = `"Incompatible field type. Field type AWSDateTime in field nullableGeneratedField cannot be configured as a DB-generated field."`;
+
+exports[`validated on execution Generated fields and identifiers: datetime Throws if you use \`.default()\` on unsupported field type 1`] = `"Incompatible field type. Field type AWSDateTime in field nullableGeneratedField cannot be configured as a DB-generated field."`;
+
+exports[`validated on execution Generated fields and identifiers: float Throws if identifier is nullable and has no default 1`] = `"Invalid identifier definition. Field nullableFieldNoDefault cannot be used in the identifier. Identifiers must reference required or DB-generated fields)"`;
+
+exports[`validated on execution Generated fields and identifiers: float Throws if you use \`.default()\` on unsupported engine 1`] = `"Invalid field definition for nullableGeneratedField. DB-generated fields are only supported with PostgreSQL data sources."`;
+
+exports[`validated on execution Generated fields and identifiers: float Throws if you use \`.default()\` on unsupported engine 2`] = `"Model \`Model\` is missing authorization rules. Add global rules to the schema or ensure every model has its own rules."`;
+
+exports[`validated on execution Generated fields and identifiers: float Throws if you use \`.default()\` on unsupported engine 3`] = `"Incompatible field type. Field type Float in field nullableGeneratedField cannot be configured as a DB-generated field."`;
+
+exports[`validated on execution Generated fields and identifiers: float Throws if you use \`.default()\` on unsupported field type 1`] = `"Incompatible field type. Field type Float in field nullableGeneratedField cannot be configured as a DB-generated field."`;
+
+exports[`validated on execution Generated fields and identifiers: integer Throws if identifier is nullable and has no default 1`] = `"Invalid identifier definition. Field nullableFieldNoDefault cannot be used in the identifier. Identifiers must reference required or DB-generated fields)"`;
+
+exports[`validated on execution Generated fields and identifiers: integer Throws if you use \`.default()\` on unsupported engine 1`] = `"Invalid field definition for nullableGeneratedField. DB-generated fields are only supported with PostgreSQL data sources."`;
+
+exports[`validated on execution Generated fields and identifiers: integer Throws if you use \`.default()\` on unsupported engine 2`] = `"Model \`Model\` is missing authorization rules. Add global rules to the schema or ensure every model has its own rules."`;
+
+exports[`validated on execution Generated fields and identifiers: string Throws if identifier is nullable and has no default 1`] = `"Invalid identifier definition. Field nullableFieldNoDefault cannot be used in the identifier. Identifiers must reference required or DB-generated fields)"`;
+
+exports[`validated on execution Generated fields and identifiers: string Throws if you use \`.default()\` on unsupported engine 1`] = `"Invalid field definition for nullableGeneratedField. DB-generated fields are only supported with PostgreSQL data sources."`;
+
+exports[`validated on execution Generated fields and identifiers: string Throws if you use \`.default()\` on unsupported engine 2`] = `"Model \`Model\` is missing authorization rules. Add global rules to the schema or ensure every model has its own rules."`;
+
+exports[`validated on execution Generated fields and identifiers: string Throws if you use \`.default()\` on unsupported engine 3`] = `"Incompatible field type. Field type String in field nullableGeneratedField cannot be configured as a DB-generated field."`;
+
+exports[`validated on execution Generated fields and identifiers: string Throws if you use \`.default()\` on unsupported field type 1`] = `"Incompatible field type. Field type String in field nullableGeneratedField cannot be configured as a DB-generated field."`;
+
+exports[`validated on execution Generated fields and identifiers: timestamp Throws if identifier is nullable and has no default 1`] = `"Invalid identifier definition. Field nullableFieldNoDefault cannot be used in the identifier. Identifiers must reference required or DB-generated fields)"`;
+
+exports[`validated on execution Generated fields and identifiers: timestamp Throws if you use \`.default()\` on unsupported engine 1`] = `"Invalid field definition for nullableGeneratedField. DB-generated fields are only supported with PostgreSQL data sources."`;
+
+exports[`validated on execution Generated fields and identifiers: timestamp Throws if you use \`.default()\` on unsupported engine 2`] = `"Model \`Model\` is missing authorization rules. Add global rules to the schema or ensure every model has its own rules."`;
+
+exports[`validated on execution Generated fields and identifiers: timestamp Throws if you use \`.default()\` on unsupported engine 3`] = `"Incompatible field type. Field type AWSTimestamp in field nullableGeneratedField cannot be configured as a DB-generated field."`;
+
+exports[`validated on execution Generated fields and identifiers: timestamp Throws if you use \`.default()\` on unsupported field type 1`] = `"Incompatible field type. Field type AWSTimestamp in field nullableGeneratedField cannot be configured as a DB-generated field."`;
