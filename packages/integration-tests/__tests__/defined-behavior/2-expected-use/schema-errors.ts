@@ -1,4 +1,5 @@
 import { a } from '@aws-amplify/data-schema';
+import { DatasourceEngine } from '@aws-amplify/data-schema-types';
 import { configure } from '@aws-amplify/data-schema/internals';
 
 /**
@@ -52,14 +53,14 @@ describe('validated on execution', () => {
       expect(() => schema.transform()).toThrowErrorMatchingSnapshot()
     });
 
-    it.skip.each([
+    it.each([
       { engine: 'mysql', engineSupportsGeneration: false },
       { engine: 'dynamodb', engineSupportsGeneration: false },
       { engine: 'postgresql', engineSupportsGeneration: true }
     ])('Throws if you use `.default()` on unsupported engine', ({ engine, engineSupportsGeneration }) => {
       const schema = configure({
         database: {
-          engine: engine as 'mysql' | 'dynamodb' | 'postgresql',
+          engine: engine as DatasourceEngine,
           identifier: 'some-identifier',
           connectionUri: '' as any,
         },
