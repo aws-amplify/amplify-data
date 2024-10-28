@@ -3,6 +3,7 @@ import { Nullable } from "../../../../data-schema/dist/esm/ModelField";
 import { Equal, Expect } from "@aws-amplify/data-schema-types";
 import { buildAmplifyConfig, expectVariables, mockedGenerateClient } from "../../utils";
 import { Amplify } from "aws-amplify";
+import { configure } from "@aws-amplify/data-schema/internals";
 
 const schemaDefaultHasValue = a
   .schema({
@@ -12,13 +13,19 @@ const schemaDefaultHasValue = a
   })
   .authorization((allow) => allow.owner());
 
-const schemaDefaultHasNoValue = a
+const schemaDefaultHasNoValue = configure({
+  database: {
+    engine: 'postgresql',
+    identifier: 'some-identifier',
+    connectionUri: '' as any,
+  },
+})
   .schema({
     Todo: a.model({
       number: a.integer().default(),
-    }),
+    })
   })
-  .authorization((allow) => allow.owner());
+  .authorization((allow) => allow.publicApiKey())
 
 /**
  * Defining the behavior for fields applied with `.default()`.
@@ -81,12 +88,12 @@ describe.each([
 
     test('Create a new Todo with content', async () => {
       const { spy, generateClient } = mockedGenerateClient([
-      { data: { listModels: { items: [] } } },
+        { data: { listModels: { items: [] } } },
       ]);
 
       const number = 43;
       const client = generateClient<Schema>();
-      await client.models.Todo.create({number});
+      await client.models.Todo.create({ number });
 
       expectVariables(spy, {
         input: {

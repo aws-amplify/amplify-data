@@ -14,6 +14,7 @@ import type {
   ModelPrimaryCompositeKeyInput,
   StringFilter,
 } from '../../../../data-schema/src/util';
+import { configure } from '@aws-amplify/data-schema/internals';
 
 /**
  * Custom Identifier and Secondary Index permutations
@@ -128,20 +129,25 @@ describe('Primary Indexes', () => {
       });
     });
 
-	test('defaulted/serial field can be used in identifier', () => {
-	  const schema = a
-	  .schema({
-		Model: a
-		.model({
-		  idSerial: a.integer().default(),
-		  content: a.string(),
-		})
-		.identifier(['idSerial'])
-	  })
-	  .authorization(allow => allow.publicApiKey())
+    test('defaulted/serial field can be used in identifier', () => {
+      const schema = configure({
+        database: {
+          engine: 'postgresql',
+          identifier: 'some-identifier',
+          connectionUri: '' as any,
+        },
+      }).schema({
+        Model: a
+          .model({
+            idSerial: a.integer().default(),
+            content: a.string(),
+          })
+          .identifier(['idSerial'])
+      })
+        .authorization(allow => allow.publicApiKey())
 
-	  expect(schema.transform().schema).toMatchSnapshot();
-	});
+      expect(schema.transform().schema).toMatchSnapshot();
+    });
   });
 
   describe('Custom identifier with composite SK', () => {

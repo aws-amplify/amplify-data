@@ -71,7 +71,7 @@ describe('validated on execution', () => {
           })
         })
 
-      if (engineSupportsGeneration) {
+      if (engineSupportsGeneration && fieldSupportsGeneration) {
         expect(() => schema.transform()).not.toThrow();
       } else {
         expect(() => schema.transform()).toThrowErrorMatchingSnapshot()
