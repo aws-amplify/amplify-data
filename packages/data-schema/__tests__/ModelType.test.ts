@@ -918,7 +918,6 @@ describe("default() to GQL mapping", () => {
     })
     .authorization((allow) => allow.publicApiKey());
 
-    console.log(schema)
     expect(schema.transform().schema).toMatchSnapshot();
   })
 
@@ -933,7 +932,6 @@ describe("default() to GQL mapping", () => {
     })
     .authorization((allow) => allow.publicApiKey());
 
-    console.log(schema)
     expect(schema.transform().schema).toMatchSnapshot();
   })
 
@@ -949,7 +947,6 @@ describe("default() to GQL mapping", () => {
     })
     .authorization((allow) => allow.publicApiKey());
 
-    console.log(schema.data.configuration)
     expect(schema.transform().schema).toMatchSnapshot();
   })
 })
