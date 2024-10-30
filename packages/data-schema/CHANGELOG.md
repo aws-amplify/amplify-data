@@ -1,5 +1,11 @@
 # @aws-amplify/data-schema
 
+## 1.11.0
+
+### Minor Changes
+
+- 1a671ab: allow nullable identifiers
+
 ## 1.10.2
 
 ### Patch Changes
