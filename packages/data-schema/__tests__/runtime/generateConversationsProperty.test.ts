@@ -160,12 +160,14 @@ describe('generateConversationsProperty()', () => {
     it('returns expected `conversations` object', async () => {
       expect(conversations).toStrictEqual({
         [mathBotMockData.name]: {
+          update: expect.any(Function),
           create: expect.any(Function),
           get: expect.any(Function),
           delete: expect.any(Function),
           list: expect.any(Function),
         },
         [scienceBotMockData.name]: {
+          update: expect.any(Function),
           create: expect.any(Function),
           get: expect.any(Function),
           delete: expect.any(Function),

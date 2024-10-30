@@ -1,5 +1,11 @@
 # @aws-amplify/data-schema
 
+## 1.12.0
+
+### Minor Changes
+
+- b98059b: Adding an update function to AI conversations to update metadata and name fields. Also adding optional metadata and name fields to create function.
+
 ## 1.11.0
 
 ### Minor Changes

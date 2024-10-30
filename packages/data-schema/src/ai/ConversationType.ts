@@ -33,6 +33,17 @@ interface ConversationRouteDeleteInput {
   id: string;
 }
 
+interface ConversationRouteCreateInput {
+  metadata?: Record<string, any>;
+  name?: string;
+}
+
+interface ConversationRouteUpdateInput {
+  id: string;
+  metadata?: Record<string, any>;
+  name?: string;
+}
+
 interface ConversationRouteListInput {
   limit?: number;
   nextToken?: string | null;
@@ -44,7 +55,17 @@ export interface ConversationRoute {
    *
    * Creates a {@link Conversation} from the current conversation route.
    */
-  create: () => SingularReturnValue<Conversation>;
+  create: (
+    input?: ConversationRouteCreateInput,
+  ) => SingularReturnValue<Conversation>;
+  /**
+   * @experimental
+   *
+   * Creates a {@link Conversation} from the current conversation route.
+   */
+  update: (
+    input: ConversationRouteUpdateInput,
+  ) => SingularReturnValue<Conversation>;
   /**
    * @experimental
    *
@@ -74,7 +95,9 @@ interface ConversationSendMessageInputObject {
   toolConfiguration?: ToolConfiguration;
 }
 
-export type ConversationSendMessageInput = ConversationSendMessageInputObject | string;
+export type ConversationSendMessageInput =
+  | ConversationSendMessageInputObject
+  | string;
 
 interface ConversationListMessagesInput {
   limit?: number;
