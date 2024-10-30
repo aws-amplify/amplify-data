@@ -2579,6 +2579,7 @@ bench('99 complex models CRUDL', async () => {
       FieldLevelAuthModel99: a
         .model({
           field1: a.string().authorization((allow) => allow.owner()),
+          field2: a.string().required(),
           relatedChildren: a.hasMany('GlobalPublicAuthModel99', 'parentId'),
         })
         .authorization((allow) => [

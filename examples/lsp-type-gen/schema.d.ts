@@ -1,4 +1,32 @@
 export type Schema = {
+  Author: {
+    __entityType: 'model';
+    identifier: { readonly id: string; };
+    secondaryIndexes: unknown;
+    type: {
+      name: string;
+      email?: string | null;
+      posts: (options?: { authMode?: AuthMode; authToken?: string; limit?: number; nextToken?: string | null; headers?: CustomHeaders; } | undefined) => ListReturnValue<Schema['Post']>;
+      readonly id: string;
+      readonly createdAt: string;
+      readonly updatedAt: string;
+    };
+    createType: {
+      name: string;
+      email?: string | null;
+      id?: string | undefined;
+    };
+    updateType: {
+      id: string;
+      name?: string;
+      email?: string | null;
+    };
+    deleteType: {
+      readonly id: string;
+    };
+    nestedTypes: {};
+    __meta: { listOptionsPkParams: unknown; disabledOperations: {}; };
+  };
   Post: {
     __entityType: 'model';
     identifier: { readonly id: string; };
@@ -6,7 +34,9 @@ export type Schema = {
     type: {
       title: string;
       description?: string | null;
-      comments?: (options?: { authMode?: AuthMode; authToken?: string; limit?: number; nextToken?: string | null; headers?: CustomHeaders; } | undefined) => ListReturnValue<Schema['Comment']> | null;
+      comments: (options?: { authMode?: AuthMode; authToken?: string; limit?: number; nextToken?: string | null; headers?: CustomHeaders; } | undefined) => ListReturnValue<Schema['Comment']>;
+      authorId?: string | null;
+      author: (options?: { authMode?: AuthMode; authToken?: string; headers?: CustomHeaders; } | undefined) => SingularReturnValue<Schema['Author']>;
       readonly id: string;
       readonly createdAt: string;
       readonly updatedAt: string;
@@ -14,12 +44,14 @@ export type Schema = {
     createType: {
       title: string;
       description?: string | null;
+      authorId?: string | null;
       id?: string | undefined;
     };
     updateType: {
       id: string;
       title?: string;
       description?: string | null;
+      authorId?: string | null;
     };
     deleteType: {
       readonly id: string;
@@ -36,7 +68,7 @@ export type Schema = {
       views?: number | null;
       upvotes?: number | null;
       postId: string;
-      post?: (options?: { authMode?: AuthMode; authToken?: string; headers?: CustomHeaders; } | undefined) => SingularReturnValue<Schema['Post']> | null;
+      post: (options?: { authMode?: AuthMode; authToken?: string; headers?: CustomHeaders; } | undefined) => SingularReturnValue<Schema['Post']>;
       readonly id: string;
       readonly createdAt: string;
       readonly updatedAt: string;

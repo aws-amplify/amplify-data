@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "target": "ES2022",
+    "target": "ES2023",
     "module": "commonjs",
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
@@ -11,7 +11,7 @@
     "plugins": [
       {
         "name": "data-plugin/dist/index.js",
-        "filePattern": "**/lsp-type-gen/resource.ts"
+        "filePattern": "**/example/schema.ts"
       }
     ]
   }

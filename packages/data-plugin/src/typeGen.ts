@@ -3,7 +3,7 @@ import * as fs from 'fs';
 
 export function generateSchemaTypes(
   schemaFilePath: string,
-  outputFilePath: string
+  outputFilePath: string,
 ) {
   const schemaContent = fs.readFileSync(schemaFilePath, 'utf-8');
 
@@ -11,7 +11,7 @@ export function generateSchemaTypes(
     'schema.ts',
     schemaContent,
     ts.ScriptTarget.Latest,
-    true
+    true,
   );
 
   // Find the schema variable declaration
@@ -67,7 +67,7 @@ export function generateSchemaTypes(
 
       typeDeclarations.push(`    nestedTypes: {};`);
       typeDeclarations.push(
-        `    __meta: { listOptionsPkParams: unknown; disabledOperations: {}; };`
+        `    __meta: { listOptionsPkParams: unknown; disabledOperations: {}; };`,
       );
       typeDeclarations.push(`  };`);
     }
@@ -84,7 +84,7 @@ export function generateSchemaTypes(
 
 function generateFieldTypes(
   modelArg: ts.ObjectLiteralExpression,
-  noRelations = false
+  noRelations = false,
 ): string[] {
   const fields: string[] = [];
   modelArg.properties.forEach((field) => {
@@ -127,9 +127,9 @@ function generateFieldTypes(
         // nothing
       } else {
         fields.push(
-          `${fieldName}${isRequired ? '' : '?'}: ${fieldType}${
-            isRequired ? '' : ' | null'
-          };`
+          `${fieldName}${isRequired || isRelation ? '' : '?'}: ${fieldType}${
+            isRequired || isRelation ? '' : ' | null'
+          };`,
         );
       }
     }
@@ -174,7 +174,7 @@ function checkIfRequired(node: ts.CallExpression): boolean {
 function generateCRUDTypes(
   modelName: string,
   initializer: ts.Expression,
-  typeDeclarations: string[]
+  typeDeclarations: string[],
 ) {
   if (ts.isCallExpression(initializer)) {
     const modelArg = initializer.arguments[0];
@@ -192,8 +192,8 @@ function generateCRUDTypes(
       typeDeclarations.push(`      id: string;`);
       typeDeclarations.push(
         ...fields.map(
-          (f) => `      ${f.includes('?:') ? f : f.replace(':', '?:')}`
-        )
+          (f) => `      ${f.includes('?:') ? f : f.replace(':', '?:')}`,
+        ),
       );
       typeDeclarations.push(`    };`);
 
