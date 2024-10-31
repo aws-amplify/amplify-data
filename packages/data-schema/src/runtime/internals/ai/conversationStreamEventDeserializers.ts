@@ -14,17 +14,18 @@ export const convertItemToConversationStreamEvent = ({
   contentBlockText,
   contentBlockToolUse,
   stopReason,
-}: any): ConversationStreamEvent => ({
-  conversationId,
-  associatedUserMessageId,
-  contentBlockIndex,
-  contentBlockDoneAtIndex,
-  contentBlockDeltaIndex,
-  text: contentBlockText,
-  toolUse: deserializeToolUseBlock(contentBlockToolUse),
-  stopReason,
-  id,
-});
+}: any): ConversationStreamEvent =>
+  removeNullsFromConversationStreamEvent({
+    conversationId,
+    associatedUserMessageId,
+    contentBlockIndex,
+    contentBlockDoneAtIndex,
+    contentBlockDeltaIndex,
+    text: contentBlockText,
+    toolUse: deserializeToolUseBlock(contentBlockToolUse),
+    stopReason,
+    id,
+  });
 
 const deserializeToolUseBlock = (
   contentBlockToolUse: any,
@@ -38,3 +39,10 @@ const deserializeToolUseBlock = (
     return toolUseBlock;
   }
 };
+
+const removeNullsFromConversationStreamEvent = (
+  block: ConversationStreamEvent,
+): ConversationStreamEvent =>
+  Object.fromEntries(
+    Object.entries(block).filter(([_, v]) => v !== null),
+  ) as ConversationStreamEvent;

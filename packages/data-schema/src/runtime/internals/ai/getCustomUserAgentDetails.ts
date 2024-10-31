@@ -24,7 +24,7 @@ export enum AiAction {
   DeleteConversation = '4',
   SendMessage = '5',
   ListMessages = '6',
-  OnMessage = '7',
+  OnStreamEvent = '7',
   Generation = '8',
   UpdateConversation = '9',
 }

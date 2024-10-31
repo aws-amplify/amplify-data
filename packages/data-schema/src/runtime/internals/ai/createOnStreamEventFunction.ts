@@ -35,7 +35,7 @@ export const createOnStreamEventFunction =
       subscribeSchema,
       false,
       getInternals,
-      getCustomUserAgentDetails(AiAction.OnMessage),
+      getCustomUserAgentDetails(AiAction.OnStreamEvent),
     ) as (args?: Record<string, any>) => Observable<any>;
     return subscribeOperation({ conversationId }).subscribe((data) => {
       handler(convertItemToConversationStreamEvent(data));

@@ -64,7 +64,6 @@ describe('AI Conversation Routes', () => {
         listMessages: expect.any(Function),
         metadata: {},
         name: 'Test Conversation',
-        onMessage: expect.any(Function),
         onStreamEvent: expect.any(Function),
         sendMessage: expect.any(Function),
         updatedAt: '2023-08-02T12:00:00Z',
@@ -114,7 +113,6 @@ describe('AI Conversation Routes', () => {
         listMessages: expect.any(Function),
         metadata: {},
         name: 'Test Conversation',
-        onMessage: expect.any(Function),
         onStreamEvent: expect.any(Function),
         sendMessage: expect.any(Function),
         updatedAt: '2023-08-02T12:00:00Z',
@@ -158,7 +156,6 @@ describe('AI Conversation Routes', () => {
         listMessages: expect.any(Function),
         metadata: {},
         name: 'Test Conversation',
-        onMessage: expect.any(Function),
         onStreamEvent: expect.any(Function),
         sendMessage: expect.any(Function),
         updatedAt: '2023-06-01T12:00:00Z',
@@ -212,7 +209,6 @@ describe('AI Conversation Routes', () => {
           listMessages: expect.any(Function),
           metadata: {},
           name: 'Test Conversation',
-          onMessage: expect.any(Function),
           onStreamEvent: expect.any(Function),
           sendMessage: expect.any(Function),
           updatedAt: '2023-08-02T12:00:00Z',
@@ -223,7 +219,6 @@ describe('AI Conversation Routes', () => {
           listMessages: expect.any(Function),
           metadata: {},
           name: 'Test Conversation2',
-          onMessage: expect.any(Function),
           onStreamEvent: expect.any(Function),
           sendMessage: expect.any(Function),
           updatedAt: '2024-09-05T12:00:00Z',
@@ -285,7 +280,6 @@ describe('AI Conversation Routes', () => {
           listMessages: expect.any(Function),
           metadata: {},
           name: 'Test Conversation',
-          onMessage: expect.any(Function),
           onStreamEvent: expect.any(Function),
           sendMessage: expect.any(Function),
           updatedAt: '2023-08-02T12:00:00Z',
@@ -296,7 +290,6 @@ describe('AI Conversation Routes', () => {
           listMessages: expect.any(Function),
           metadata: {},
           name: 'Test Conversation2',
-          onMessage: expect.any(Function),
           onStreamEvent: expect.any(Function),
           sendMessage: expect.any(Function),
           updatedAt: '2024-09-05T12:00:00Z',
@@ -325,6 +318,17 @@ describe('AI Conversation Routes', () => {
       createdAt: '2024-08-22T18:28:00.596Z',
       id: 'message-id',
       role: 'user',
+    };
+    const sampleConversationStreamEvent = {
+      id: 'stream-event-id',
+      conversationId: sampleConversation.id,
+      associatedUserMessageId: sampleConversationMessage1.id,
+      contentBlockDeltaIndex: 0,
+      contentBlockDoneAtIndex: undefined,
+      contentBlockIndex: 0,
+      contentBlockText: 'foo',
+      stopReason: undefined,
+      contentBlockToolUse: undefined,
     };
     // #endregion mocking common
 
@@ -506,15 +510,14 @@ describe('AI Conversation Routes', () => {
         id: sampleConversation.id,
       });
       // subscribe to messages
-      conversation?.onMessage((message) => {
-        mockHandler(message);
+      conversation?.onStreamEvent((streamEvent) => {
+        mockHandler(streamEvent);
       });
 
       subs.onCreateAssistantResponseChatBot.next({
         data: {
           onCreateAssistantResponseChatBot: {
-            ...sampleConversationMessage1,
-            role: 'assistant',
+            ...sampleConversationStreamEvent,
           },
         },
       });
@@ -524,10 +527,17 @@ describe('AI Conversation Routes', () => {
       // #region assertions
       expect(optionsAndHeaders(spy)).toMatchSnapshot();
       expect(subOptionsAndHeaders(subSpy)).toMatchSnapshot();
-      expect(mockHandler).toHaveBeenCalledWith({
-        ...sampleConversationMessage1,
-        role: 'assistant',
-      });
+      const {
+        contentBlockText,
+        contentBlockToolUse,
+        ...rest
+      } = sampleConversationStreamEvent;
+      const expectedConversationStreamEvent = {
+        text: contentBlockText,
+        toolUse: contentBlockToolUse,
+        ...rest,
+      };
+      expect(mockHandler).toHaveBeenCalledWith(expectedConversationStreamEvent);
       // #endregion assertions
     });
 

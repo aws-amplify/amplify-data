@@ -12,7 +12,7 @@ import {
 } from './types/ConversationMessageContent';
 import { ToolConfiguration } from './types/ToolConfiguration';
 import { AiModel } from '@aws-amplify/data-schema-types';
-import { ToolUseBlock } from './types/contentBlocks';
+import { ConversationStreamEvent } from './types/ConversationStreamEvent';
 
 export const brandName = 'conversationCustomOperation';
 
@@ -26,17 +26,6 @@ export interface ConversationMessage {
   associatedUserMessageId?: string;
 }
 
-export interface ConversationStreamEvent {
-  id: string;
-  conversationId: string;
-  associatedUserMessageId: string;
-  contentBlockIndex: number;
-  contentBlockDoneAtIndex?: number;
-  contentBlockDeltaIndex?: number;
-  text?: string;
-  toolUse?: ToolUseBlock;
-  stopReason?: string;
-}
 // conversation route types
 interface ConversationRouteGetInput {
   id: string;
@@ -117,9 +106,9 @@ interface ConversationListMessagesInput {
   nextToken?: string | null;
 }
 
-type ConversationOnMessageHandler = (message: ConversationMessage) => void;
-
-type ConversationOnStreamEventHandler = (streamEvent: ConversationStreamEvent) => void;
+type ConversationOnStreamEventHandler = (
+  streamEvent: ConversationStreamEvent,
+) => void;
 
 export interface Conversation {
   id: string;
@@ -144,12 +133,6 @@ export interface Conversation {
   listMessages: (
     input?: ConversationListMessagesInput,
   ) => ListReturnValue<ConversationMessage>;
-  /**
-   * @experimental
-   *
-   * Subscribes to new messages on the current conversation.
-  */
-  onMessage: (handler: ConversationOnMessageHandler) => Subscription;
   /**
    * @experimental
    *
@@ -206,3 +189,5 @@ function _conversation(input: ConversationInput): ConversationType {
 export function conversation(input: ConversationInput): ConversationType {
   return _conversation(input);
 }
+export { ConversationStreamEvent };
+

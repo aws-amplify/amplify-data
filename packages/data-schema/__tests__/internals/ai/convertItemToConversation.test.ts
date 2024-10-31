@@ -27,7 +27,6 @@ describe('convertItemToConversation()', () => {
       id: mockConversationId,
       createdAt: '2023-06-01T12:00:00Z',
       updatedAt: '2023-06-02T12:00:00Z',
-      onMessage: expect.any(Function),
       onStreamEvent: expect.any(Function),
       sendMessage: expect.any(Function),
       listMessages: expect.any(Function),
