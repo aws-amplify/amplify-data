@@ -544,11 +544,5 @@ type ConversationMessageStreamPart @aws_cognito_user_pools {
   contentBlockToolUse: ToolUseBlock
   contentBlockDoneAtIndex: Int
   stopReason: String
-  errors: [ConversationTurnError]
-}
-
-type ConversationTurnError @aws_cognito_user_pools {
-  message: String!
-  errorType: String!
 }"
 `;
