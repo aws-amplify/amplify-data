@@ -120,6 +120,55 @@ describe('AI Conversation Routes', () => {
       // #endregion assertions
     });
 
+    test('Update a conversation', async () => {
+      const sampleConversation = {
+        id: 'conversation-id',
+        createdAt: '2023-06-01T12:00:00Z',
+        updatedAt: '2023-08-02T12:00:00Z',
+        metadata: {},
+        name: 'Test Conversation',
+      };
+
+      const { spy, generateClient } = mockedGenerateClient([
+        {
+          data: {
+            updateConversation: sampleConversation,
+          },
+        },
+      ]);
+      // simulated amplifyconfiguration.json
+      const config = await buildAmplifyConfig(schema);
+      // #endregion mocking
+
+      // #region api call
+      // App.tsx
+      Amplify.configure(config);
+      const client = generateClient<Schema>();
+      // create conversation
+      const { data: updatedConversation, errors: updateConversationErrors } =
+        await client.conversations.chatBot.update({
+          id: sampleConversation.id,
+          name: 'updated conversation name',
+          metadata: { arbitrary: 'data' },
+        });
+      // #endregion api call
+
+      // #region assertions
+      expect(optionsAndHeaders(spy)).toMatchSnapshot();
+      expect(updateConversationErrors).toBeUndefined();
+      expect(updatedConversation).toStrictEqual({
+        createdAt: '2023-06-01T12:00:00Z',
+        id: sampleConversation.id,
+        listMessages: expect.any(Function),
+        metadata: {},
+        name: 'Test Conversation',
+        onMessage: expect.any(Function),
+        sendMessage: expect.any(Function),
+        updatedAt: '2023-08-02T12:00:00Z',
+      });
+      // #endregion assertions
+    });
+
     test('Get a conversation', async () => {
       // #region mocking
       const sampleConversation = {
