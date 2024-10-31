@@ -25,8 +25,10 @@ export const createCreateConversationFunction =
     conversationMessageModel: SchemaModel,
     getInternals: ClientInternalsGetter,
   ): ConversationRoute['create'] =>
-  async () => {
-    const get = getFactory(
+  async (input) => {
+    const { name, metadata: metadataObject } = input ?? {};
+    const metadata = JSON.stringify(metadataObject);
+    const createOperation = getFactory(
       client,
       modelIntrospection,
       conversationModel,
@@ -34,8 +36,8 @@ export const createCreateConversationFunction =
       getInternals,
       false,
       getCustomUserAgentDetails(AiAction.CreateConversation),
-    ) as () => SingularReturnValue<Record<string, any>>;
-    const { data, errors } = await get();
+    ) as (args?: Record<string, any>) => SingularReturnValue<Record<string, any>>;
+    const { data, errors } = await createOperation({ name, metadata });
     return {
       data: convertItemToConversation(
         client,
