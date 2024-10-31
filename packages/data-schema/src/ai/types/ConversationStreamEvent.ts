@@ -4,6 +4,10 @@
 import { ToolUseBlock } from "./contentBlocks";
 
 export interface ConversationStreamTextEvent {
+  id: string;
+  conversationId: string;
+  associatedUserMessageId: string;
+  contentBlockIndex: number;
   contentBlockDeltaIndex: number;
   contentBlockDoneAtIndex?: never;
   text: string;
@@ -12,6 +16,10 @@ export interface ConversationStreamTextEvent {
 }
 
 export interface ConversationStreamToolUseEvent {
+  id: string;
+  conversationId: string;
+  associatedUserMessageId: string;
+  contentBlockIndex: number;
   contentBlockDeltaIndex?: never;
   contentBlockDoneAtIndex?: never;
   text?: never;
@@ -20,6 +28,10 @@ export interface ConversationStreamToolUseEvent {
 }
 
 export interface ConversationStreamDoneAtIndexEvent {
+  id: string;
+  conversationId: string;
+  associatedUserMessageId: string;
+  contentBlockIndex: number;
   contentBlockDoneAtIndex: number;
   contentBlockDeltaIndex?: never;
   text?: never;
@@ -28,6 +40,10 @@ export interface ConversationStreamDoneAtIndexEvent {
 }
 
 export interface ConversationStreamTurnDoneEvent {
+  id: string;
+  conversationId: string;
+  associatedUserMessageId: string;
+  contentBlockIndex: number;
   contentBlockDoneAtIndex?: never;
   contentBlockDeltaIndex?: never;
   text?: never;
@@ -35,17 +51,8 @@ export interface ConversationStreamTurnDoneEvent {
   stopReason: string;
 }
 
-export interface ConversationStreamEventBase {
-  id: string;
-  conversationId: string;
-  associatedUserMessageId: string;
-  contentBlockIndex: number;
-}
-
-export type ConversationStreamEvent = ConversationStreamEventBase &
-  (
-    | ConversationStreamTextEvent
-    | ConversationStreamToolUseEvent
-    | ConversationStreamDoneAtIndexEvent
-    | ConversationStreamTurnDoneEvent
-  );
+export type ConversationStreamEvent =
+  | ConversationStreamTextEvent
+  | ConversationStreamToolUseEvent
+  | ConversationStreamDoneAtIndexEvent
+  | ConversationStreamTurnDoneEvent;
