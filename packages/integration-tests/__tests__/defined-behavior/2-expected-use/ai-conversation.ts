@@ -162,7 +162,7 @@ describe('AI Conversation Routes', () => {
         listMessages: expect.any(Function),
         metadata: {},
         name: 'Test Conversation',
-        onMessage: expect.any(Function),
+        onStreamEvent: expect.any(Function),
         sendMessage: expect.any(Function),
         updatedAt: '2023-08-02T12:00:00Z',
       });
