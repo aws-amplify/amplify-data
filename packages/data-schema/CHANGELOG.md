@@ -1,5 +1,11 @@
 # @aws-amplify/data-schema
 
+## 1.12.1
+
+### Patch Changes
+
+- 4dba12c: fix create and update conversation missing / malformed input
+
 ## 1.12.0
 
 ### Minor Changes
