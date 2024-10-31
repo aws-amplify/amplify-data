@@ -25,7 +25,8 @@ export const createUpdateConversationFunction =
     conversationMessageModel: SchemaModel,
     getInternals: ClientInternalsGetter,
   ): ConversationRoute['update'] =>
-  async ({ id, metadata, name }) => {
+  async ({ id, metadata: metadataObject, name }) => {
+    const metadata = JSON.stringify(metadataObject);
     const updateOperation = getFactory(
       client,
       modelIntrospection,

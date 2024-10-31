@@ -8,7 +8,10 @@ exports[`AI Conversation Routes Conversations Create a conversation 1`] = `
       "authToken": undefined,
       "query": "mutation($input: CreateConversationChatBotInput!) { createConversationChatBot(input: $input) { id name metadata createdAt updatedAt owner } }",
       "variables": {
-        "input": {},
+        "input": {
+          "metadata": "{"arbitrary":"data"}",
+          "name": "Test Conversation",
+        },
       },
       Symbol(INTERNAL_USER_AGENT_OVERRIDE): {
         "action": "1",
@@ -71,6 +74,30 @@ exports[`AI Conversation Routes Conversations Paginate conversations 1`] = `
       },
       Symbol(INTERNAL_USER_AGENT_OVERRIDE): {
         "action": "3",
+        "category": "ai",
+      },
+    },
+    {},
+  ],
+]
+`;
+
+exports[`AI Conversation Routes Conversations Update a conversation 1`] = `
+[
+  [
+    {
+      "authMode": undefined,
+      "authToken": undefined,
+      "query": "mutation($input: UpdateConversationChatBotInput!) { updateConversationChatBot(input: $input) { id name metadata createdAt updatedAt owner } }",
+      "variables": {
+        "input": {
+          "id": "conversation-id",
+          "metadata": "{"arbitrary":"data"}",
+          "name": "updated conversation name",
+        },
+      },
+      Symbol(INTERNAL_USER_AGENT_OVERRIDE): {
+        "action": "9",
         "category": "ai",
       },
     },
