@@ -89,7 +89,7 @@ bench('p50 conversation operations', async () => {
 
   await client.conversations.ChatBot.list();
 
-  conversation?.onMessage(() => {});
+  conversation?.onStreamEvent(() => {});
 
   await conversation?.sendMessage({
     content: [{ text: 'foo' }],

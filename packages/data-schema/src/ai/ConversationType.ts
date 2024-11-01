@@ -12,6 +12,7 @@ import {
 } from './types/ConversationMessageContent';
 import { ToolConfiguration } from './types/ToolConfiguration';
 import { AiModel } from '@aws-amplify/data-schema-types';
+import { ConversationStreamEvent } from './types/ConversationStreamEvent';
 
 export const brandName = 'conversationCustomOperation';
 
@@ -22,6 +23,7 @@ export interface ConversationMessage {
   createdAt: string;
   id: string;
   role: 'user' | 'assistant';
+  associatedUserMessageId?: string;
 }
 
 // conversation route types
@@ -104,7 +106,9 @@ interface ConversationListMessagesInput {
   nextToken?: string | null;
 }
 
-type ConversationOnMessageHandler = (message: ConversationMessage) => void;
+type ConversationOnStreamEventHandler = (
+  streamEvent: ConversationStreamEvent,
+) => void;
 
 export interface Conversation {
   id: string;
@@ -132,9 +136,9 @@ export interface Conversation {
   /**
    * @experimental
    *
-   * Subscribes to new messages on the current conversation.
+   * Subscribes to new stream events on the current conversation.
    */
-  onMessage: (handler: ConversationOnMessageHandler) => Subscription;
+  onStreamEvent: (handler: ConversationOnStreamEventHandler) => Subscription;
 }
 
 // schema definition input
@@ -185,3 +189,5 @@ function _conversation(input: ConversationInput): ConversationType {
 export function conversation(input: ConversationInput): ConversationType {
   return _conversation(input);
 }
+export { ConversationStreamEvent };
+
