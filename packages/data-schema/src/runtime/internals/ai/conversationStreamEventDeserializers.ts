@@ -14,6 +14,7 @@ export const convertItemToConversationStreamEvent = ({
   contentBlockText,
   contentBlockToolUse,
   stopReason,
+  errors,
 }: any): ConversationStreamEvent =>
   removeNullsFromConversationStreamEvent({
     conversationId,
@@ -25,6 +26,7 @@ export const convertItemToConversationStreamEvent = ({
     toolUse: deserializeToolUseBlock(contentBlockToolUse),
     stopReason,
     id,
+    errors,
   });
 
 const deserializeToolUseBlock = (
