@@ -13,6 +13,7 @@ export interface ConversationStreamTextEvent {
   text: string;
   toolUse?: never;
   stopReason?: never;
+  errors?: never;
 }
 
 export interface ConversationStreamToolUseEvent {
@@ -25,6 +26,7 @@ export interface ConversationStreamToolUseEvent {
   text?: never;
   toolUse: ToolUseBlock;
   stopReason?: never;
+  errors?: never;
 }
 
 export interface ConversationStreamDoneAtIndexEvent {
@@ -37,6 +39,7 @@ export interface ConversationStreamDoneAtIndexEvent {
   text?: never;
   toolUse?: never;
   stopReason?: never;
+  errors?: never;
 }
 
 export interface ConversationStreamTurnDoneEvent {
@@ -49,10 +52,30 @@ export interface ConversationStreamTurnDoneEvent {
   text?: never;
   toolUse?: never;
   stopReason: string;
+  errors?: never;
+}
+
+export interface ConversationStreamErrorEvent {
+  id: string;
+  conversationId: string;
+  associatedUserMessageId: string;
+  contentBlockIndex?: never;
+  contentBlockDoneAtIndex?: never;
+  contentBlockDeltaIndex?: never;
+  text?: never;
+  toolUse?: never;
+  stopReason?: never;
+  errors: ConversationTurnError[]
+}
+
+export interface ConversationTurnError {
+  message: string;
+  errorType: string;
 }
 
 export type ConversationStreamEvent =
   | ConversationStreamTextEvent
   | ConversationStreamToolUseEvent
   | ConversationStreamDoneAtIndexEvent
-  | ConversationStreamTurnDoneEvent;
+  | ConversationStreamTurnDoneEvent
+  | ConversationStreamErrorEvent;

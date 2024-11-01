@@ -220,6 +220,12 @@ type ConversationMessageStreamPart @aws_cognito_user_pools {
   contentBlockToolUse: ToolUseBlock
   contentBlockDoneAtIndex: Int
   stopReason: String
+  errors: [ConversationTurnError]
+}
+
+type ConversationTurnError @aws_cognito_user_pools {
+  message: String!
+  errorType: String!
 }"
 `;
 
@@ -231,7 +237,7 @@ exports[`ai routes generations 1`] = `
 }
 
 type Query {
-  makeRecipe: Recipe @generation(aiModel: "anthropic.claude-3-haiku-20240307-v1:0", systemPrompt: "Hello, world!") 
+  makeRecipe: Recipe @generation(aiModel: "anthropic.claude-3-haiku-20240307-v1:0", systemPrompt: "Hello, world!")
 }"
 `;
 

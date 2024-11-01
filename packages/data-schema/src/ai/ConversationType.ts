@@ -106,9 +106,7 @@ interface ConversationListMessagesInput {
   nextToken?: string | null;
 }
 
-type ConversationOnStreamEventHandler = (
-  streamEvent: ConversationStreamEvent,
-) => void;
+type ConversationOnStreamEventHandler = (streamEvent: ConversationStreamEvent) => void;
 
 export interface Conversation {
   id: string;
