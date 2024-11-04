@@ -1,6 +1,10 @@
 import { SetTypeSubArg } from '@aws-amplify/data-schema-types';
 import { Brand } from './util';
-import { AllowModifier, Authorization, allow } from './Authorization';
+import {
+  Authorization,
+  SharedAuthorizationCallback,
+  allow,
+} from './Authorization';
 import { __auth } from './ModelField';
 
 const brandName = 'ref';
@@ -63,7 +67,7 @@ export type RefType<
      * multiple authorization rules for this field.
      */
     authorization<AuthRuleType extends Authorization<any, any, any>>(
-      callback: (allow: AllowModifier) => AuthRuleType | AuthRuleType[],
+      callback: SharedAuthorizationCallback<AuthRuleType>,
     ): RefType<T, K | 'authorization', AuthRuleType>;
 
     mutations(operations: MutationOperations[]): RefType<T, K | 'mutations'>;
@@ -115,7 +119,7 @@ function _ref<T extends RefTypeParamShape>(link: T['link']) {
       return this;
     },
     authorization<AuthRuleType extends Authorization<any, any, any>>(
-      callback: (allow: AllowModifier) => AuthRuleType | AuthRuleType[],
+      callback: SharedAuthorizationCallback<AuthRuleType>,
     ) {
       const rules = callback(allow);
       data.authorization = Array.isArray(rules) ? rules : [rules];

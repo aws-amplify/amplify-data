@@ -10,7 +10,12 @@ import type {
   InternalRelationshipField,
   ModelRelationshipFieldParamShape,
 } from './ModelRelationshipField';
-import { type AllowModifier, type Authorization, allow } from './Authorization';
+import {
+  type AllowModifier,
+  type Authorization,
+  type ModelTypeAuthorizationCallback,
+  allow,
+} from './Authorization';
 import type { RefType, RefTypeParamShape } from './RefType';
 import type { EnumType } from './EnumType';
 import type { CustomType, CustomTypeParamShape } from './CustomType';
@@ -276,9 +281,7 @@ export type ModelType<
       UsedMethod | 'disableOperations'
     >;
     authorization<AuthRuleType extends Authorization<any, any, any>>(
-      callback: (
-        allow: Omit<AllowModifier, 'resource'>,
-      ) => AuthRuleType | AuthRuleType[],
+      callback: ModelTypeAuthorizationCallback<AuthRuleType>,
     ): ModelType<
       SetTypeSubArg<T, 'authorization', AuthRuleType[]>,
       UsedMethod | 'authorization'

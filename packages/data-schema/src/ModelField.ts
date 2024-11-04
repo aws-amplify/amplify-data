@@ -1,5 +1,9 @@
 import { brand } from './util';
-import { AllowModifier, Authorization, allow } from './Authorization';
+import {
+  Authorization,
+  ModelFieldAuthorizationCallback,
+  allow,
+} from './Authorization';
 import type { methodKeyOf, satisfy } from './util/usedMethods.js';
 import type { brandSymbol } from './util/Brand.js';
 
@@ -124,9 +128,7 @@ export type ModelField<
      * multiple authorization rules for this field.
      */
     authorization<AuthRuleType extends Authorization<any, any, any>>(
-      callback: (
-        allow: Omit<AllowModifier, 'resource'>,
-      ) => AuthRuleType | AuthRuleType[],
+      callback: ModelFieldAuthorizationCallback<AuthRuleType>,
     ): ModelField<T, UsedMethod | 'authorization', AuthRuleType>;
   },
   UsedMethod

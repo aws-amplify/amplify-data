@@ -19,6 +19,15 @@ Description
 </th></tr></thead>
 <tbody><tr><td>
 
+[authorizationBuilder(callback)](./data-schema.a.authorizationbuilder.md)
+
+
+</td><td>
+
+
+</td></tr>
+<tr><td>
+
 [belongsTo(relatedModel, references)](./data-schema.a.belongsto.md)
 
 

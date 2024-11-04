@@ -106,6 +106,15 @@ Container for authorization schema definition content.
 </td></tr>
 <tr><td>
 
+[AuthorizationCallback](./data-schema.authorizationcallback.md)
+
+
+</td><td>
+
+
+</td></tr>
+<tr><td>
+
 [ClientSchema](./data-schema.clientschema.md)
 
 

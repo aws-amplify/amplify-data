@@ -5,7 +5,7 @@ export { a };
 
 export type { ClientSchema };
 
-export type { Authorization } from './Authorization';
+export type { Authorization, AuthorizationCallback } from './Authorization';
 export type { CustomOperation } from './CustomOperation';
 export type { ModelField, Nullable, Json } from './ModelField';
 export type { ModelSchema } from './ModelSchema';
