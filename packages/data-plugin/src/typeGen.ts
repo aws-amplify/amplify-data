@@ -1,4 +1,4 @@
-import * as ts from 'typescript';
+import ts from 'typescript';
 import * as fs from 'fs';
 
 export function generateSchemaTypes(
@@ -153,7 +153,8 @@ function getFieldType(methodName: string, relationName?: string): string {
     case 'a.belongsTo':
       return `(options?: { authMode?: AuthMode; authToken?: string; headers?: CustomHeaders; } | undefined) => SingularReturnValue<Schema['${relationName}']>`;
     default:
-      return 'any';
+      // return 'any';
+      throw new Error(`invalid type. Received: ${methodName}`);
   }
 }
 

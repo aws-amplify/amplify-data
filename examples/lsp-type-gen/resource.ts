@@ -9,6 +9,7 @@ const schema = a.schema({
   Post: a.model({
     title: a.string().required(),
     description: a.string(),
+    description2: a.string(),
     comments: a.hasMany('Comment', 'postId'),
     authorId: a.string(),
     author: a.belongsTo('Author', 'authorId'),

@@ -11,7 +11,7 @@
     "plugins": [
       {
         "name": "data-plugin/dist/index.js",
-        "filePattern": "**/example/schema.ts"
+        "filePattern": "**/lsp-type-gen/resource.ts"
       }
     ]
   }

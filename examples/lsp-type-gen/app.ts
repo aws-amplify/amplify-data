@@ -8,4 +8,6 @@ async function test() {
     title: 'hello',
     description: 'desc',
   });
+
+  console.log();
 }

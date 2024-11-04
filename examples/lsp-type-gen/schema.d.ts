@@ -34,6 +34,7 @@ export type Schema = {
     type: {
       title: string;
       description?: string | null;
+      description2?: string | null;
       comments: (options?: { authMode?: AuthMode; authToken?: string; limit?: number; nextToken?: string | null; headers?: CustomHeaders; } | undefined) => ListReturnValue<Schema['Comment']>;
       authorId?: string | null;
       author: (options?: { authMode?: AuthMode; authToken?: string; headers?: CustomHeaders; } | undefined) => SingularReturnValue<Schema['Author']>;
@@ -44,6 +45,7 @@ export type Schema = {
     createType: {
       title: string;
       description?: string | null;
+      description2?: string | null;
       authorId?: string | null;
       id?: string | undefined;
     };
@@ -51,6 +53,7 @@ export type Schema = {
       id: string;
       title?: string;
       description?: string | null;
+      description2?: string | null;
       authorId?: string | null;
     };
     deleteType: {

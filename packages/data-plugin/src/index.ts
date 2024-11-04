@@ -41,22 +41,58 @@ function createProxy(
   info: ts.server.PluginCreateInfo,
   timestampPath: string,
   filePattern: string,
-  logger: Logger
+  logger: Logger,
 ): ts.LanguageService {
   const proxy: ts.LanguageService = Object.create(null);
-  for (let k of Object.keys(info.languageService) as Array<
+  for (const k of Object.keys(info.languageService) as Array<
     keyof ts.LanguageService
   >) {
     const x = info.languageService[k];
 
     proxy[k] = (...args: any[]) =>
+      // eslint-disable-next-line @typescript-eslint/ban-types
       (x as Function).apply(info.languageService, args);
   }
 
   proxy.getSemanticDiagnostics = (fileName: string) => {
     const prior = info.languageService.getSemanticDiagnostics(fileName);
-    handleFileSave(fileName, filePattern, timestampPath, logger);
-    return prior;
+    // Get the source file from the program
+    const source = info.languageService.getProgram()?.getSourceFile(fileName);
+
+    if (!source) {
+      //
+      return [
+        ...prior,
+        {
+          file: source,
+          category: ts.DiagnosticCategory.Error,
+          code: 9999, // Custom error code
+          messageText: `@aws-amplify/data-plugin Exception: no source`,
+          start: 0,
+          length: 99999999999,
+        },
+      ];
+    }
+
+    try {
+      handleFileSave(fileName, filePattern, timestampPath, logger);
+      return prior;
+    } catch (error: any) {
+      if (minimatch(fileName, filePattern, { matchBase: true })) {
+        return [
+          ...prior,
+          {
+            file: source,
+            category: ts.DiagnosticCategory.Error,
+            code: 9999, // Custom error code
+            messageText: `@aws-amplify/data-plugin Exception: ${error.message}. See https://docs.amplify.aws/errors/`,
+            start: 0,
+            length: 99999999999,
+          },
+        ];
+      }
+      return prior;
+    }
   };
 
   return proxy;
@@ -66,7 +102,7 @@ function handleFileSave(
   fileName: string,
   filePattern: string,
   dtsFilePath: string,
-  logger: Logger
+  logger: Logger,
 ): void {
   logger(`Filename: ${fileName}`);
 
@@ -87,14 +123,15 @@ function handleFileSave(
 function writeDeclarations(
   fileName: string,
   dtsFilePath: string,
-  logger: Logger
+  logger: Logger,
 ): void {
   try {
     generateSchemaTypes(fileName, dtsFilePath);
 
     logger(`Updated declarations file`);
   } catch (error) {
-    console.error(`Error appending timestamp: ${error}`);
+    console.error(`Error: ${error}`);
+    throw error;
   }
 }
 
