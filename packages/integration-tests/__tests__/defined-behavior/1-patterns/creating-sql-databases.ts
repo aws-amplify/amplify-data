@@ -41,7 +41,7 @@ type TableDefinition = {
 };
 
 type FieldDefinition = {
-  name: string;
+  typeName: string;
   isArray: boolean;
   isRef: boolean;
   isRequired: boolean;
@@ -57,10 +57,21 @@ function built<const T>(definition: T): Built<T> {
   };
 }
 
-function omit<T extends object, K extends string>(o: T, k: K): Omit<T, K> {
-  const cp = { ...o } as any;
-  delete cp[k];
-  return cp;
+/**
+ * Totally forgot we could get TypeScript to infer omitted fields with
+ * some clever destructuring. Would some sneakiness like this in the builders
+ * be better or worse?
+ *
+ * Perhaps better in the sense that we'd know with high certainty that the
+ * types align with the runtime.
+ *
+ * @param o
+ * @param k
+ * @returns
+ */
+function omit<O extends object, K extends string>(o: O, k: K): Omit<O, K> {
+  const { [k]: _omitted, ...oWithKOmitted } = o;
+  return oWithKOmitted;
 }
 
 function array<const Self extends { [internal]: object }>(
@@ -100,10 +111,10 @@ const sql = {
   table<const T extends TableDefinition['fields']>(fields: T) {
     return built({ fields });
   },
-  field<const Name extends string>(name: Name) {
+  field<const TypeName extends string>(typeName: TypeName) {
     return {
       [internal]: {
-        name,
+        typeName,
         isRef: false,
         isArray: false,
         isRequired: false,
@@ -112,10 +123,10 @@ const sql = {
       required,
     } as const;
   },
-  ref<const Name extends string>(name: Name) {
+  ref<const TypeName extends string>(typeName: TypeName) {
     return {
       [internal]: {
-        name,
+        typeName,
         isRef: true,
         isArray: false,
         isRequired: false,
@@ -144,6 +155,14 @@ const schema = sql.schema({
 
 const typeTest =
   schema['tables']['customer'][internal].fields.favoriteColors[internal];
+
+const typeTest2 = schema['tables']['address'][internal].fields.number[internal];
+
+type Schema = typeof schema;
+
+type T001 = Schema['tables']['address'][internal]['fields']['number'][internal];
+
+// type FinalFieldType<Def extends FieldDefinition> =
 
 describe('creating sql databases', () => {
   const datasource = {};
