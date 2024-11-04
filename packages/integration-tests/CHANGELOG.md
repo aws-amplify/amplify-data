@@ -1,5 +1,11 @@
 # integration-tests
 
+## 0.1.1
+
+### Patch Changes
+
+- 060a3b6: Added null check to handle potential null data in API response (issue #13941)
+
 ## 0.1.0
 
 ### Minor Changes

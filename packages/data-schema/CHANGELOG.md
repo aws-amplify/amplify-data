@@ -1,5 +1,11 @@
 # @aws-amplify/data-schema
 
+## 1.12.2
+
+### Patch Changes
+
+- 060a3b6: Added null check to handle potential null data in API response (issue #13941)
+
 ## 1.12.1
 
 ### Patch Changes
