@@ -47,16 +47,6 @@ type FieldDefinition = {
   isRequired: boolean;
 };
 
-type Built<T> = {
-  [internal]: T;
-};
-
-function built<const T>(definition: T): Built<T> {
-  return {
-    [internal]: definition,
-  };
-}
-
 /**
  * Totally forgot we could get TypeScript to infer omitted fields with
  * some clever destructuring. Would some sneakiness like this in the builders
@@ -109,7 +99,7 @@ const sql = {
     return def as any;
   },
   table<const T extends TableDefinition['fields']>(fields: T) {
-    return built({ fields });
+    return { [internal]: { fields } };
   },
   field<const TypeName extends string>(typeName: TypeName) {
     return {
@@ -162,7 +152,30 @@ type Schema = typeof schema;
 
 type T001 = Schema['tables']['address'][internal]['fields']['number'][internal];
 
-// type FinalFieldType<Def extends FieldDefinition> =
+type PrimitiveTypes = {
+  string: string;
+  number: number;
+  boolean: boolean;
+};
+
+type PrimitiveType<TypeName> = TypeName extends keyof PrimitiveTypes
+  ? PrimitiveTypes[TypeName]
+  : never;
+
+type Arrayatize<T, Def extends FieldDefinition> = Def['isArray'] extends true
+  ? T[]
+  : T;
+type Requiredtize<
+  T,
+  Def extends FieldDefinition,
+> = Def['isRequired'] extends true ? T : T | undefined | null;
+
+type FinalFieldType<Def extends FieldDefinition> = Arrayatize<
+  Requiredtize<PrimitiveType<Def['typeName']>, Def>,
+  Def
+>;
+
+type T002 = FinalFieldType<T001>;
 
 describe('creating sql databases', () => {
   const datasource = {};
