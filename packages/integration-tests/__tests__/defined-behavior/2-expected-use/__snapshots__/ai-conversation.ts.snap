@@ -106,6 +106,30 @@ exports[`AI Conversation Routes Conversations Update a conversation 1`] = `
 ]
 `;
 
+exports[`AI Conversation Routes Conversations Update a conversation 2`] = `
+[
+  [
+    {
+      "authMode": undefined,
+      "authToken": undefined,
+      "query": "mutation($input: UpdateConversationChatBotInput!) { updateConversationChatBot(input: $input) { id name metadata createdAt updatedAt owner } }",
+      "variables": {
+        "input": {
+          "id": "conversation-id",
+          "metadata": "{"arbitrary":"data"}",
+          "name": "updated conversation name",
+        },
+      },
+      Symbol(INTERNAL_USER_AGENT_OVERRIDE): {
+        "action": "9",
+        "category": "ai",
+      },
+    },
+    {},
+  ],
+]
+`;
+
 exports[`AI Conversation Routes Messages List messages 1`] = `
 [
   [
@@ -531,5 +555,18 @@ type ToolSpecification {
 
 type ToolInputSchema {
   json: AWSJSON
+}
+
+type ConversationMessageStreamPart @aws_cognito_user_pools {
+  id: ID!
+  owner: String
+  conversationId: ID!
+  associatedUserMessageId: ID!
+  contentBlockIndex: Int!
+  contentBlockText: String
+  contentBlockDeltaIndex: Int
+  contentBlockToolUse: ToolUseBlock
+  contentBlockDoneAtIndex: Int
+  stopReason: String
 }"
 `;

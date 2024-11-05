@@ -4,25 +4,28 @@
 import type { Conversation } from '../../../src/ai/ConversationType';
 import type { BaseClient } from '../../../src/runtime';
 import type { ModelIntrospectionSchema } from '../../../src/runtime/bridge-types';
-import { convertItemToConversationMessage } from '../../../src/runtime/internals/ai/convertItemToConversationMessage';
-import { createOnMessageFunction } from '../../../src/runtime/internals/ai/createOnMessageFunction';
 import { customOpFactory } from '../../../src/runtime/internals/operations/custom';
-
-jest.mock('../../../src/runtime/internals/ai/convertItemToConversationMessage');
+import { createOnStreamEventFunction } from '../../../src/runtime/internals/ai/createOnStreamEventFunction';
+import { convertItemToConversationStreamEvent } from '../../../src/runtime/internals/ai/conversationStreamEventDeserializers';
+jest.mock('../../../src/runtime/internals/ai/conversationStreamEventDeserializers');
 jest.mock('../../../src/runtime/internals/operations/custom');
 
-describe('createOnMessageFunction()', () => {
-  let onMessage: Conversation['onMessage'];
+describe('createOnStreamEventFunction()', () => {
+  let onStreamEvent: Conversation['onStreamEvent'];
   const mockConversationName = 'conversation-name';
   const mockConversationId = 'conversation-id';
-  const mockContent = [{ text: 'foo' }];
   const mockRole = 'user';
-  const mockCreatedAt = '2024-06-27T00:00:00Z';
   const mockMessageId = 'message-id';
-  const mockMessage = {
-    content: mockContent,
+  const mockAssociatedUserMessageId = 'associated-user-message-id';
+  const mockContentBlockIndex = 0;
+  const mockContentBlockDeltaIndex = 0;
+  const mockText = 'hello';
+  const mockStreamEvent = {
+    associatedUserMessageId: mockAssociatedUserMessageId,
+    contentBlockIndex: mockContentBlockIndex,
+    contentBlockDeltaIndex: mockContentBlockDeltaIndex,
+    text: mockText,
     conversationId: mockConversationId,
-    createdAt: mockCreatedAt,
     id: mockMessageId,
     role: mockRole,
   };
@@ -32,21 +35,21 @@ describe('createOnMessageFunction()', () => {
   } as unknown as ModelIntrospectionSchema;
   // assert mocks
   const mockCustomOpFactory = customOpFactory as jest.Mock;
-  const mockConvertItemToConversationMessage =
-    convertItemToConversationMessage as jest.Mock;
+  const mockConvertItemToConversationStreamEvent =
+    convertItemToConversationStreamEvent as jest.Mock;
   // create mocks
   const mockCustomOp = jest.fn();
   const mockSubscribe = jest.fn();
   const mockHandler = jest.fn();
 
   beforeAll(async () => {
-    mockConvertItemToConversationMessage.mockImplementation((data) => data);
+    mockConvertItemToConversationStreamEvent.mockImplementation((data) => data);
     mockCustomOp.mockReturnValue({ subscribe: mockSubscribe });
     mockCustomOpFactory.mockReturnValue(mockCustomOp);
     mockSubscribe.mockImplementation((subscription) => {
-      subscription(mockMessage);
+      subscription(mockStreamEvent);
     });
-    onMessage = await createOnMessageFunction(
+    onStreamEvent = await createOnStreamEventFunction(
       {} as BaseClient,
       mockModelIntrospectionSchema,
       mockConversationId,
@@ -59,20 +62,27 @@ describe('createOnMessageFunction()', () => {
     jest.clearAllMocks();
   });
 
-  it('returns a onMessage function', async () => {
-    expect(onMessage).toBeDefined();
+  it('returns a onStreamEvent function', async () => {
+    expect(onStreamEvent).toBeDefined();
   });
 
-  describe('onMessage()', () => {
+  describe('onStreamEvent()', () => {
     it('triggers handler', async () => {
       const expectedData = {
-        content: mockContent,
+        associatedUserMessageId: mockAssociatedUserMessageId,
+        contentBlockIndex: mockContentBlockIndex,
+        contentBlockDeltaIndex: mockContentBlockDeltaIndex,
+        text: mockText,
         conversationId: mockConversationId,
-        createdAt: mockCreatedAt,
         id: mockMessageId,
         role: mockRole,
       };
-      onMessage(mockHandler);
+      const expectedUndefinedFields = {
+        contentBlockDoneAtIndex: undefined,
+        toolUse: undefined,
+        stopReason: undefined,
+      };
+      onStreamEvent(mockHandler);
 
       expect(mockCustomOpFactory).toHaveBeenCalledWith(
         {},
@@ -86,8 +96,8 @@ describe('createOnMessageFunction()', () => {
       expect(mockCustomOp).toHaveBeenCalledWith({
         conversationId: mockConversationId,
       });
-      expect(mockConvertItemToConversationMessage).toHaveBeenCalledWith(
-        expectedData,
+      expect(mockConvertItemToConversationStreamEvent).toHaveBeenCalledWith(
+        { ...expectedData, ...expectedUndefinedFields },
       );
       expect(mockHandler).toHaveBeenCalledWith(expectedData);
     });
