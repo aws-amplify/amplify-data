@@ -241,6 +241,12 @@ const ConversationMessageStreamEvent = `type ConversationMessageStreamPart @aws_
   contentBlockToolUse: ToolUseBlock
   contentBlockDoneAtIndex: Int
   stopReason: String
+  errors: [ConversationTurnError]
+}`;
+
+const ConversationTurnError = `type ConversationTurnError @aws_cognito_user_pools {
+  message: String!
+  errorType: String!
 }`;
 
 export const conversationTypes: string[] = [
@@ -276,4 +282,5 @@ export const conversationTypes: string[] = [
   ToolSpecification,
   ToolInputSchema,
   ConversationMessageStreamEvent,
+  ConversationTurnError,
 ];
