@@ -25,6 +25,7 @@ import { query, mutation, subscription, generation } from './CustomOperation';
 import { handler } from './Handler';
 import { conversation } from './ai/ConversationType';
 import { model as aiModel } from './ai/ModelType';
+import { sql } from './sql';
 
 const ai = {
   model: aiModel,
@@ -64,4 +65,5 @@ export {
   generation,
   ai,
   handler,
+  sql,
 };
