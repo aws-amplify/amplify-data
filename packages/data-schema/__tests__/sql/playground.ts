@@ -4,16 +4,17 @@ import { a, ClientSchema } from '../../src/index';
 const sqlSchema = a.sql.schema({
   tables: {
     address: a.sql.table({
-      number: a.sql.field('number').array().required(),
-      street: a.sql.field('string'),
-      city: a.sql.field('string'),
-      state: a.sql.field('string'),
-      zip: a.sql.field('string'),
+      number: a.sql.int().array().required(),
+      street: a.sql.varchar(),
+      city: a.sql.varchar(),
+      state: a.sql.varchar(),
+      zip: a.sql.varchar(),
     }),
     customer: a.sql.table({
-      firstName: a.sql.field('string'),
-      lastName: a.sql.field('number'),
-      favoriteColors: a.sql.field('string').array(),
+      firstName: a.sql.varchar(),
+      lastName: a.sql.varchar(),
+      bio: a.sql.text(),
+      favoriteColors: a.sql.varchar().array(),
       // address: sql.ref('address'),
     }),
   },
@@ -24,3 +25,5 @@ const schema = a.schema({
 });
 
 type Schema = ClientSchema<typeof schema>;
+
+type TEST001 = Schema['Address']['type'];

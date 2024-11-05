@@ -34,9 +34,6 @@ export type FieldDefinition = {
   isArray: boolean;
   isRef: boolean;
   isRequired: boolean;
-  apiFieldType: <Self extends FieldDefinition>(
-    this: Self,
-  ) => FinalFieldType<Self>;
 };
 // #endregion builder types
 
@@ -124,6 +121,22 @@ function required<const Self extends { [internal]: object }>(
   ) as any;
 }
 
+function field<const TypeName extends string>(typeName: TypeName) {
+  return {
+    [internal]: {
+      typeName,
+      isRef: false,
+      isArray: false,
+      isRequired: false,
+      toApiField() {
+        return {} as any;
+      },
+    } as const,
+    array,
+    required,
+  } as const;
+}
+
 export const sql = {
   schema<const T extends SchemaDefinition>(def: T): T {
     return def as any;
@@ -136,20 +149,14 @@ export const sql = {
       },
     };
   },
-  field<const TypeName extends string>(typeName: TypeName) {
-    return {
-      [internal]: {
-        typeName,
-        isRef: false,
-        isArray: false,
-        isRequired: false,
-        toApiField() {
-          return {} as any;
-        },
-      } as const,
-      array,
-      required,
-    } as const;
+  int() {
+    return field('number');
+  },
+  varchar() {
+    return field('string');
+  },
+  text() {
+    return field('string');
   },
   ref<const TypeName extends string>(typeName: TypeName) {
     return {
