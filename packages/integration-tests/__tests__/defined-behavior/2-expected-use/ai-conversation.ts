@@ -14,7 +14,7 @@ describe('AI Conversation Routes', () => {
     chatBot: a.conversation({
       aiModel: a.ai.model('Claude 3 Haiku'),
       systemPrompt: 'You are a helpful chatbot.',
-    }),
+    }).authorization((allow) => allow.owner()),
   });
   type Schema = ClientSchema<typeof schema>;
 
@@ -536,12 +536,12 @@ describe('AI Conversation Routes', () => {
             aiModel: a.ai.model('Claude 3 Haiku'),
             systemPrompt: 'testSystemPrompt',
             handler: customConversationHandlerMock
-          }),
+          }).authorization((allow) => allow.owner()),
       });
 
       const transformedSchema = schema.transform().schema;
       expect(transformedSchema).toMatchSnapshot();
-      const expectedDirective = '@conversation(aiModel: "anthropic.claude-3-haiku-20240307-v1:0", systemPrompt: "testSystemPrompt", handler: { functionName: "FnSampleChat", eventVersion: "1.0" })';
+      const expectedDirective = '@conversation(aiModel: "anthropic.claude-3-haiku-20240307-v1:0", systemPrompt: "testSystemPrompt", auth: { strategy: owner, provider: userPools }, handler: { functionName: "FnSampleChat", eventVersion: "1.0" })';
       expect(transformedSchema).toContain(expectedDirective);
     });
   });
