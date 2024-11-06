@@ -65,8 +65,10 @@ bench('p50 conversation operations', async () => {
           allow.publicApiKey().to(['read']),
           allow.owner(),
         ]),
-      ChatBot: a.conversation(input),
-      GossipBot: a.conversation(input),
+      ChatBot: a.conversation(input)
+        .authorization((allow) => allow.owner()),
+      GossipBot: a.conversation(input)
+        .authorization((allow) => allow.owner()),
     })
     .authorization((allow) => allow.publicApiKey());
 
@@ -89,7 +91,7 @@ bench('p50 conversation operations', async () => {
 
   await client.conversations.ChatBot.list();
 
-  conversation?.onMessage(() => {});
+  conversation?.onMessage(() => { });
 
   await conversation?.sendMessage({
     content: [{ text: 'foo' }],
