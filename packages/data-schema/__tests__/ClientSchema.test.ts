@@ -1500,7 +1500,7 @@ describe('ai routes', () => {
         systemPrompt: 'Hello, world!',
         handler: customConversationHandler,
       }).authorization((allow) => allow.owner()),
-    });
+    }).authorization((allow) => allow.publicApiKey());
 
     type Schema = ClientSchema<typeof schema>;
     type ActualChatBot = Prettify<Schema['ChatBot']>;
