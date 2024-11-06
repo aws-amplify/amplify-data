@@ -1,5 +1,6 @@
 import type { Prettify, Equal, Expect } from '@aws-amplify/data-schema-types';
 import { a, ClientSchema } from '../../src/index';
+import { EligibleIdFields } from '../../src/sql';
 
 const sqlSchema = a.sql.schema({
   tables: {
@@ -17,9 +18,20 @@ const sqlSchema = a.sql.schema({
         bio: a.sql.text(),
         favoriteColors: a.sql.varchar().array(),
       })
-      .identifier(['lastName', 'firstName']),
+      .identifier(['firstName', 'lastName']),
   },
 });
+
+const sample = a.sql.table({
+  firstName: a.sql.varchar().required(),
+  lastName: a.sql.varchar().required(),
+  bio: a.sql.text(),
+  age: a.sql.int(),
+});
+
+type Sample = typeof sample;
+
+type IdSample = EligibleIdFields<Sample>;
 
 const schema = a
   .schema({

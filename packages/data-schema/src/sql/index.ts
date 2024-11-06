@@ -146,9 +146,15 @@ function required<const Self extends { [internal]: object }>(
   ) as any;
 }
 
+export type EligibleIdFields<Table extends { [internal]: TableDefinition }> = {
+  [K in keyof Table[internal]['fields'] as Table[internal]['fields'][K][internal]['isRequired'] extends true
+    ? K
+    : never]: Table[internal]['fields'][K];
+};
+
 function identifier<
   const Self extends { [internal]: TableDefinition },
-  const Fields extends (keyof Self[internal]['fields'])[],
+  const Fields extends (keyof EligibleIdFields<Self>)[],
 >(
   this: Self,
   identifier: Fields,
