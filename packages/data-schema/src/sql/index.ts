@@ -1,6 +1,12 @@
 import * as a from '../a';
-import { ModelType, ModelTypeParamShape } from '../ModelType';
-import { ModelField } from '../ModelField';
+import {
+  ModelType,
+  ModelTypeParamShape,
+  ModelDefaultIdentifier,
+} from '../ModelType';
+import { ModelField, InternalField } from '../ModelField';
+import { RefType } from '../RefType';
+import { KindaPretty } from '../util';
 
 // #region builder types
 type SetKey<T, Key, Value> = {
@@ -26,6 +32,7 @@ export type SchemaDefinition = {
 };
 
 export type TableDefinition = {
+  identifier: string[];
   fields: Record<string, { [internal]: FieldDefinition }>;
 };
 
@@ -40,10 +47,20 @@ export type FieldDefinition = {
 // #region API resolution types
 
 export type PrimitiveTypes = {
-  string: string;
-  number: number;
+  varchar: string;
+  text: string;
+  int: number;
+  float: number;
   boolean: boolean;
 };
+
+export const DatabaseToApiTypes = {
+  varchar: 'string',
+  text: 'string',
+  int: 'number',
+  float: 'number',
+  boolean: 'boolean',
+} as const;
 
 export type PrimitiveType<TypeName> = TypeName extends keyof PrimitiveTypes
   ? PrimitiveTypes[TypeName]
@@ -58,19 +75,27 @@ type Requiredtize<
   Def extends FieldDefinition,
 > = Def['isRequired'] extends true ? T : T | null;
 
-export type FinalFieldType<Def extends FieldDefinition> = Arrayatize<
-  Requiredtize<PrimitiveType<Def['typeName']>, Def>,
-  Def
->;
+export type FinalFieldType<Def extends FieldDefinition> =
+  Def['isRef'] extends true
+    ? RefType<{
+        type: 'ref';
+        array: Def['isArray'];
+        arrayRequired: Def['isRequired'];
+        valueRequired: Def['isRequired'];
+        link: Def['typeName'];
+        authorization: [];
+      }>
+    : Arrayatize<Requiredtize<PrimitiveType<Def['typeName']>, Def>, Def>;
 
 export type ApiModelFields<
   T extends Record<string, { [internal]: FieldDefinition }>,
 > = {
-  [K in keyof T]: ApiFieldType<T[K]>;
+  [K in keyof T]: ApiFieldType<T[K][internal]>;
 };
 
-export type ApiFieldType<T extends { [internal]: FieldDefinition }> =
-  ModelField<FinalFieldType<T[internal]>>;
+export type ApiFieldType<T extends FieldDefinition> = ModelField<
+  FinalFieldType<T>
+>;
 
 // #endregion
 
@@ -121,6 +146,25 @@ function required<const Self extends { [internal]: object }>(
   ) as any;
 }
 
+function identifier<
+  const Self extends { [internal]: TableDefinition },
+  const Fields extends (keyof Self[internal]['fields'])[],
+>(
+  this: Self,
+  identifier: Fields,
+): SetInternalKey<Self, 'identifier', Fields, 'identifier'> {
+  return omit(
+    {
+      ...this,
+      [internal]: {
+        ...this[internal],
+        identifier,
+      },
+    },
+    'identifier',
+  ) as any;
+}
+
 function field<const TypeName extends string>(typeName: TypeName) {
   return {
     [internal]: {
@@ -128,44 +172,94 @@ function field<const TypeName extends string>(typeName: TypeName) {
       isRef: false,
       isArray: false,
       isRequired: false,
-      toApiField() {
-        return {} as any;
-      },
     } as const,
     array,
     required,
   } as const;
 }
 
+function convertSqlTableToApiModel<const T extends TableDefinition>(table: T) {
+  const fields = {} as any;
+  for (const [fieldName, fieldDef] of Object.entries(table.fields)) {
+    fields[fieldName] = convertSqlFieldToApiField(fieldDef[internal]);
+  }
+  return a
+    .model(fields as ApiModelFields<T['fields']>)
+    .identifier(table.identifier as any);
+}
+
+function convertSqlFieldToApiField<const T extends FieldDefinition>(
+  field: T,
+): ApiFieldType<T> {
+  const modelFieldBuilder = {
+    int: a.integer,
+    float: a.float,
+    varchar: a.string,
+    text: a.string,
+  }[field.typeName];
+
+  if (!modelFieldBuilder) {
+    throw new Error(`Unknown field type ${field.typeName}.`);
+  }
+
+  let modelField = modelFieldBuilder() as any;
+
+  if (field.isArray) modelField = modelField.array();
+  if (field.isRequired) modelField = modelField.required();
+
+  return modelField;
+}
+
+function transformTables(tables: SchemaDefinition['tables']) {
+  return Object.entries(tables).map(([tableName, tableDef]) => {
+    return {
+      tableName,
+      columns: transformColumns(tableDef[internal]),
+      primaryKey: tableDef[internal].identifier,
+    };
+  });
+}
+
+function transformColumns(table: TableDefinition) {
+  return Object.entries(table.fields).map(([fieldName, fieldDef]) => {
+    return {
+      name: fieldName,
+      type: fieldDef[internal].typeName,
+      isNullable: fieldDef[internal].isRequired,
+    };
+  });
+}
+
 export const sql = {
-  schema<const T extends SchemaDefinition>(def: T): T {
-    return def as any;
+  schema<const T extends SchemaDefinition>(def: T) {
+    return {
+      ...def,
+      transform() {
+        return {
+          tables: transformTables(def.tables),
+        };
+      },
+    };
   },
   table<const T extends TableDefinition['fields']>(fields: T) {
     return {
-      [internal]: { fields },
+      [internal]: { fields, identifier: ['id'] },
+      identifier,
       toAPIModel() {
-        return a.model({} as unknown as ApiModelFields<T>);
+        return convertSqlTableToApiModel(this[internal]);
       },
     };
   },
   int() {
-    return field('number');
+    return field('int');
+  },
+  float() {
+    return field('float');
   },
   varchar() {
-    return field('string');
+    return field('varchar');
   },
   text() {
-    return field('string');
-  },
-  ref<const TypeName extends string>(typeName: TypeName) {
-    return {
-      [internal]: {
-        typeName,
-        isRef: true,
-        isArray: false,
-        isRequired: false,
-      } as const,
-    } as const;
+    return field('text');
   },
 };
