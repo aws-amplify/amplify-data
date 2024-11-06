@@ -1480,7 +1480,7 @@ describe('ai routes', () => {
             description: 'does a different thing',
           },
         ],
-      }),
+      }).authorization((allow) => allow.owner()),
 
       MultilinePromptChatBot: a.conversation({
         aiModel: a.ai.model('Claude 3 Haiku'),
@@ -1493,13 +1493,13 @@ describe('ai routes', () => {
             description: 'does a different thing',
           },
         ],
-      }),
+      }).authorization((allow) => allow.owner()),
 
       CustomHandlerChatBot: a.conversation({
         aiModel: a.ai.model('Claude 3 Haiku'),
         systemPrompt: 'Hello, world!',
         handler: customConversationHandler,
-      }),
+      }).authorization((allow) => allow.owner()),
     });
 
     type Schema = ClientSchema<typeof schema>;
@@ -1519,6 +1519,19 @@ describe('ai routes', () => {
 
     const lambdaFunctions = derivedApiDefinition.lambdaFunctions;
     expect(lambdaFunctions['FnCustomHandlerChatBot']).toBeDefined();
+  });
+
+  test('conversation without authorization throws', () => {
+    const schema = a.schema({
+      ChatBot: a.conversation({
+        aiModel: a.ai.model('Claude 3 Haiku'),
+        systemPrompt: 'Hello, world!',
+      }),
+    });
+
+    expect(() => schema.transform()).toThrowError(
+      'Conversation ChatBot is missing authorization rules. Use .authorization((allow) => allow.owner()) to configure authorization for your conversation route.',
+    );
   });
 
   test('generations', () => {
