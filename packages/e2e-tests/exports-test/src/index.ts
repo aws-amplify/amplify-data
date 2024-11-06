@@ -1,38 +1,34 @@
 import { a, defineFunction } from '@aws-amplify/backend';
+import { configure } from '@aws-amplify/data-schema/internals';
 
 const defFunc = defineFunction({
   entry: './handlers/test-handler.ts',
 });
 
-export function buildMutation() {
-  return a
-    .mutation()
-    .arguments({
-      input: a.string(),
-    })
-    .returns(a.string())
-    .handler(a.handler.function(defFunc))
-    .authorization((allow) => [allow.authenticated()]);
-}
+const fakeSecret = () => ({}) as any;
+const datasourceConfigMySQL = {
+  engine: 'mysql',
+  connectionUri: fakeSecret(),
+} as const;
 
-export function buildQueryRequiredInputJsonOutput() {
-  return a
-    .query()
-    .arguments({
-      input: a.string().required(),
-    })
-    .returns(a.json())
-    .handler(a.handler.function(defFunc));
-}
-
-export function buildDefaultSchema() {
-  return a.schema({
+export function buildCombineSchema() {
+  const schemaA = a.schema({
     Todo: a
       .model({
         content: a.string(),
       })
       .authorization((allow) => [allow.guest()]),
   });
+  const sqlSchema = configure({ database: datasourceConfigMySQL }).schema({
+    post: a
+      .model({
+        id: a.string().required(),
+        title: a.string(),
+        author: a.string(),
+      })
+      .identifier(['id']),
+  });
+  return a.combine([schemaA, sqlSchema])
 }
 
 export function buildComplicatedSchema() {
