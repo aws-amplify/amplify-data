@@ -29,7 +29,7 @@ const sample = a.sql.table({
   age: a.sql.int(),
 });
 
-type Sample = typeof sample;
+type Sample = typeof sqlSchema.tables.customer;
 
 type IdSample = EligibleIdFields<Sample>;
 
@@ -39,6 +39,13 @@ const schema = a
       .toAPIModel()
       .authorization((allow) => [allow.owner(), allow.group('Admins')]),
     Customer: sqlSchema.tables.customer.toAPIModel(),
+    SomethingElse: a
+      .model({
+        a: a.string().required(),
+        b: a.integer().required(),
+        c: a.string().required(),
+      })
+      .identifier(['a', 'b', 'c']),
   })
   .authorization((allow) => allow.owner());
 
@@ -49,6 +56,8 @@ type AddressType = Schema['Address']['type'];
 type CustomerType = Schema['Customer']['type'];
 
 type CustomerTypePK = Schema['Customer']['identifier'];
+
+type SamplePk = Schema['SomethingElse']['identifier'];
 
 describe('sql resource definitions', () => {
   test('playground', async () => {

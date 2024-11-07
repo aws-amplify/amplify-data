@@ -1,10 +1,6 @@
 import * as a from '../a';
-import {
-  ModelType,
-  ModelTypeParamShape,
-  ModelDefaultIdentifier,
-} from '../ModelType';
-import { ModelField, InternalField } from '../ModelField';
+import { ModelType } from '../ModelType';
+import { ModelField } from '../ModelField';
 import { RefType } from '../RefType';
 import { KindaPretty } from '../util';
 
@@ -97,6 +93,38 @@ export type ApiFieldType<T extends FieldDefinition> = ModelField<
   FinalFieldType<T>
 >;
 
+export type EligibleIdFields<Table extends { [internal]: TableDefinition }> = {
+  [K in keyof Table[internal]['fields'] as Table[internal]['fields'][K][internal]['isRequired'] extends true
+    ? K
+    : never]: Table[internal]['fields'][K];
+};
+
+type ModelIdentifierDefinition<M, T extends string[]> = {
+  pk: PK<M, T>;
+  sk: SK<M, T>;
+  compositeSk: 'wip';
+};
+
+type ExtractPKandSKFieldNames<T extends string[]> = T extends [
+  infer First,
+  ...infer Rest,
+]
+  ? {
+      pk: First;
+      sk: Rest;
+    }
+  : never;
+
+type PK<_M, T extends string[]> = Record<
+  ExtractPKandSKFieldNames<T>['pk'],
+  string
+>;
+
+type SK<_M, T extends string[]> = Record<
+  ExtractPKandSKFieldNames<T>['sk'][number],
+  string
+>;
+
 // #endregion
 
 /**
@@ -146,12 +174,6 @@ function required<const Self extends { [internal]: object }>(
   ) as any;
 }
 
-export type EligibleIdFields<Table extends { [internal]: TableDefinition }> = {
-  [K in keyof Table[internal]['fields'] as Table[internal]['fields'][K][internal]['isRequired'] extends true
-    ? K
-    : never]: Table[internal]['fields'][K];
-};
-
 function identifier<
   const Self extends { [internal]: TableDefinition },
   const Fields extends (keyof EligibleIdFields<Self>)[],
@@ -184,14 +206,28 @@ function field<const TypeName extends string>(typeName: TypeName) {
   } as const;
 }
 
-function convertSqlTableToApiModel<const T extends TableDefinition>(table: T) {
+function toAPIModel<const T extends { [internal]: TableDefinition }>(
+  this: T,
+): ModelType<
+  {
+    fields: ApiModelFields<T[internal]['fields']>;
+    authorization: [];
+    disabledOperations: [];
+    secondaryIndexes: [];
+    identifier: ModelIdentifierDefinition<
+      ApiModelFields<T[internal]['fields']>,
+      T[internal]['identifier']
+    >;
+  },
+  'identifier'
+> {
   const fields = {} as any;
-  for (const [fieldName, fieldDef] of Object.entries(table.fields)) {
+  for (const [fieldName, fieldDef] of Object.entries(this[internal].fields)) {
     fields[fieldName] = convertSqlFieldToApiField(fieldDef[internal]);
   }
   return a
-    .model(fields as ApiModelFields<T['fields']>)
-    .identifier(table.identifier as any);
+    .model(fields as ApiModelFields<T[internal]['fields']>)
+    .identifier(this[internal].identifier as any) as any;
 }
 
 function convertSqlFieldToApiField<const T extends FieldDefinition>(
@@ -251,9 +287,7 @@ export const sql = {
     return {
       [internal]: { fields, identifier: ['id'] },
       identifier,
-      toAPIModel() {
-        return convertSqlTableToApiModel(this[internal]);
-      },
+      toAPIModel,
     };
   },
   int() {
