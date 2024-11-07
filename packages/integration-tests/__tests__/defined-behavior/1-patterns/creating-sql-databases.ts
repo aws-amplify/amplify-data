@@ -12,6 +12,7 @@ import {
   optionsAndHeaders,
   useState,
   expectGraphqlMatches,
+  expectGraphqlRequestEquals,
 } from '../../utils';
 
 const sqlSchema = a.sql.schema({
@@ -54,6 +55,7 @@ type Schema = ClientSchema<typeof schema>;
 
 describe('sql resource definitions', () => {
   beforeEach(async () => {
+    jest.clearAllMocks();
     const config = await buildAmplifyConfig(schema);
     Amplify.configure(config);
   });
@@ -158,19 +160,79 @@ describe('sql resource definitions', () => {
     expectGraphqlMatches(transformedGraphql, expected);
   });
 
-  test('can produce a client', async () => {
-    const { generateClient } = mockedGenerateClient([{ data: null }]);
+  test('client can create()', async () => {
+    const createCustomer = {
+      firstName: 'First',
+      lastName: 'Last',
+      bio: null,
+      favoriteColors: ['red', 'green', 'blue'],
+    };
+    const { spy, generateClient } = mockedGenerateClient([
+      {
+        data: {
+          createCustomer,
+        },
+      },
+    ]);
     const client = generateClient<Schema>();
 
-    const created = await client.models.Customer.create({
-      firstName: 'something',
-      lastName: 'something',
-      favoriteColors: [],
+    const { data: created } = await client.models.Customer.create({
+      firstName: 'First',
+      lastName: 'Last',
+      favoriteColors: ['red', 'green', 'blue'],
     });
 
-    const gotten = await client.models.Customer.get({
-      firstName: 'something',
-      lastName: 'something',
+    expect(created).toEqual(createCustomer);
+
+    expectGraphqlRequestEquals(spy, {
+      query: `mutation($input: CreateCustomerInput!) {
+        createCustomer(input: $input) {
+          firstName lastName bio favoriteColors createdAt updatedAt owner
+        }
+      }`,
+      variables: {
+        input: {
+          firstName: 'First',
+          lastName: 'Last',
+          favoriteColors: ['red', 'green', 'blue'],
+        },
+      },
+    });
+  });
+
+  test('client can get()', async () => {
+    const getCustomer = {
+      firstName: 'First',
+      lastName: 'Last',
+      bio: null,
+      favoriteColors: ['red', 'green', 'blue'],
+    };
+
+    const { spy, generateClient } = mockedGenerateClient([
+      {
+        data: {
+          getCustomer,
+        },
+      },
+    ]);
+    const client = generateClient<Schema>();
+
+    const { data: gotten } = await client.models.Customer.get({
+      firstName: 'First',
+      lastName: 'Last',
+    });
+    expect(gotten).toEqual(getCustomer);
+
+    expectGraphqlRequestEquals(spy, {
+      query: `query ($firstName: String!, $lastName: String!) {
+        getCustomer(firstName: $firstName, lastName: $lastName) {
+          firstName lastName bio favoriteColors createdAt updatedAt owner
+        }
+      }`,
+      variables: {
+        firstName: 'First',
+        lastName: 'Last',
+      },
     });
   });
 });

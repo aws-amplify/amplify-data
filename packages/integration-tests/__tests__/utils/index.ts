@@ -328,6 +328,20 @@ export function condenseSelectionSet(selectionSet: string) {
   return selectionSet.replace(/[\s\r\n]+/g, ' ').trim();
 }
 
+export function expectGraphqlRequestEquals(
+  spy: jest.SpyInstance,
+  {
+    query: expectedQuery,
+    variables: expectedVariables = {},
+  }: { query: string; variables?: Record<string, any> },
+  requestIndex = 0,
+) {
+  const [options] = optionsAndHeaders(spy)[requestIndex];
+  const { query: actualQuery, variables: actualVariables } = options;
+  expectGraphqlMatches(actualQuery, expectedQuery);
+  expect(actualVariables).toEqual(expectedVariables);
+}
+
 export function expectSelectionSetContains(
   spy: jest.SpyInstance,
   fields: string[],
