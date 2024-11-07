@@ -86,7 +86,7 @@ export type FinalFieldType<Def extends FieldDefinition> =
 export type ApiModelFields<
   T extends Record<string, { [internal]: FieldDefinition }>,
 > = {
-  [K in keyof T]: ApiFieldType<T[K][internal]>;
+  -readonly [K in keyof T]: ApiFieldType<T[K][internal]>;
 };
 
 export type ApiFieldType<T extends FieldDefinition> = ModelField<

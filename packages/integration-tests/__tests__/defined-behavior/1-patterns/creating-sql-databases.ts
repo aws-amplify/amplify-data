@@ -14,71 +14,157 @@ import {
   expectGraphqlMatches,
 } from '../../utils';
 
-const sqlSchema = sql.schema({
+const sqlSchema = a.sql.schema({
   tables: {
-    address: sql.table({
-      number: sql.field('number').array().required(),
-      street: sql.field('string'),
-      city: sql.field('string'),
-      state: sql.field('string'),
-      zip: sql.field('string'),
+    address: a.sql.table({
+      number: a.sql.int().array().required(),
+      street: a.sql.varchar(),
+      city: a.sql.varchar(),
+      state: a.sql.varchar(),
+      zip: a.sql.varchar(),
     }),
-    customer: sql.table({
-      firstName: sql.field('string'),
-      lastName: sql.field('number'),
-      favoriteColors: sql.field('string').array(),
-      // address: sql.ref('address'),
-    }),
+    customer: a.sql
+      .table({
+        firstName: a.sql.varchar().required(),
+        lastName: a.sql.varchar().required(),
+        bio: a.sql.text(),
+        favoriteColors: a.sql.varchar().array(),
+      })
+      .identifier(['firstName', 'lastName']),
   },
 });
 
-const typeTest =
-  sqlSchema['tables']['customer'][internal].fields.favoriteColors[internal];
+const schema = a
+  .schema({
+    Address: sqlSchema.tables.address
+      .toAPIModel()
+      .authorization((allow) => [allow.owner(), allow.group('Admins')]),
+    Customer: sqlSchema.tables.customer.toAPIModel(),
+    NonSqlTable: a
+      .model({
+        a: a.string().required(),
+        b: a.integer().required(),
+        c: a.string().required(),
+      })
+      .identifier(['a', 'b', 'c']),
+  })
+  .authorization((allow) => allow.owner());
 
-const typeTest2 =
-  sqlSchema['tables']['address'][internal].fields.number[internal];
+type Schema = ClientSchema<typeof schema>;
 
-type SqlSchema = typeof sqlSchema;
+describe('sql resource definitions', () => {
+  beforeEach(async () => {
+    const config = await buildAmplifyConfig(schema);
+    Amplify.configure(config);
+  });
 
-type T001 =
-  SqlSchema['tables']['address'][internal]['fields']['number'][internal];
+  test('can produce sql table definitions', async () => {
+    const sqlDefinition = sqlSchema.transform();
+    const expected = {
+      tables: [
+        {
+          tableName: 'address',
+          columns: [
+            {
+              name: 'number',
+              type: 'int',
+              isNullable: true,
+            },
+            {
+              name: 'street',
+              type: 'varchar',
+              isNullable: false,
+            },
+            {
+              name: 'city',
+              type: 'varchar',
+              isNullable: false,
+            },
+            {
+              name: 'state',
+              type: 'varchar',
+              isNullable: false,
+            },
+            {
+              name: 'zip',
+              type: 'varchar',
+              isNullable: false,
+            },
+          ],
+          primaryKey: ['id'],
+        },
+        {
+          tableName: 'customer',
+          columns: [
+            {
+              name: 'firstName',
+              type: 'varchar',
+              isNullable: true,
+            },
+            {
+              name: 'lastName',
+              type: 'varchar',
+              isNullable: true,
+            },
+            {
+              name: 'bio',
+              type: 'text',
+              isNullable: false,
+            },
+            {
+              name: 'favoriteColors',
+              type: 'varchar',
+              isNullable: false,
+            },
+          ],
+          primaryKey: ['firstName', 'lastName'],
+        },
+      ],
+    };
+    expect(sqlDefinition).toEqual(expected);
+  });
 
-type PrimitiveTypes = {
-  string: string;
-  number: number;
-  boolean: boolean;
-};
+  test('can produce graphql definitions', async () => {
+    const transformedGraphql = schema.transform().schema;
 
-type PrimitiveType<TypeName> = TypeName extends keyof PrimitiveTypes
-  ? PrimitiveTypes[TypeName]
-  : never;
+    const expected = `
+      type Address @model @auth(rules: [
+        {allow: owner, ownerField: "owner"},
+        {allow: groups, groups: ["Admins"]}
+      ]) {
+        number: [Int]!
+        street: String
+        city: String
+        state: String
+        zip: String
+      }
 
-type Arrayatize<T, Def extends FieldDefinition> = Def['isArray'] extends true
-  ? T[]
-  : T;
-type Requiredtize<
-  T,
-  Def extends FieldDefinition,
-> = Def['isRequired'] extends true ? T : T | undefined | null;
+      type Customer @model @auth(rules: [{allow: owner, ownerField: "owner"}])
+      {
+        firstName: String! @primaryKey(sortKeyFields: ["lastName"])
+        lastName: String!
+        bio: String
+        favoriteColors: [String]
+      }
 
-type FinalFieldType<Def extends FieldDefinition> = Arrayatize<
-  Requiredtize<PrimitiveType<Def['typeName']>, Def>,
-  Def
->;
+      type NonSqlTable @model @auth(rules: [{allow: owner, ownerField: "owner"}])
+      {
+        a: String! @primaryKey(sortKeyFields: ["b", "c"])
+        b: Int!
+        c: String!
+      }
+    `;
 
-type T002 = FinalFieldType<T001>;
+    expectGraphqlMatches(transformedGraphql, expected);
+  });
 
-const schema = a.schema({
-  Address: sqlSchema.tables.address,
-});
+  test('can produce a client', async () => {
+    const { generateClient } = mockedGenerateClient([{ data: null }]);
+    const client = generateClient<Schema>();
 
-describe('creating sql databases', () => {
-  const datasource = {};
-  const schema = {};
-
-  //   type Schema = ClientSchema<typeof schema>;
-
-  test('schema ', async () => {});
-
-  test('something', async () => {});
+    const c = await client.models.Customer.get({
+      firstName: 'something',
+      lastName: 'something',
+    });
+  });
 });

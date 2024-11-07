@@ -136,4 +136,31 @@ type NonSqlTable @model @auth(rules: [{allow: owner, ownerField: "owner"}])
 
     expect(transformedGraphql).toEqual(expected);
   });
+
+  test('ClientSchema types', () => {
+    type AddressType = Schema['Address']['type'];
+
+    type ExpectedType = {
+      number: number[];
+      street?: string | null | undefined;
+      city?: string | null | undefined;
+      state?: string | null | undefined;
+      zip?: string | null | undefined;
+      owner?: string | null | undefined;
+      readonly createdAt: string;
+      readonly updatedAt: string;
+    };
+
+    type AddressCreateType = Schema['Address']['createType'];
+
+    type NonSqlTableType = Schema['NonSqlTable']['type'];
+    type ExpectedNonSqlTableType = {
+      a: string;
+      b: number;
+      c: string;
+      owner?: string | null | undefined;
+      readonly createdAt: string;
+      readonly updatedAt: string;
+    };
+  });
 });
