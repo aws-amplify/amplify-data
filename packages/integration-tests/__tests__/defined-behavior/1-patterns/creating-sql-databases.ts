@@ -162,7 +162,13 @@ describe('sql resource definitions', () => {
     const { generateClient } = mockedGenerateClient([{ data: null }]);
     const client = generateClient<Schema>();
 
-    const c = await client.models.Customer.get({
+    const created = await client.models.Customer.create({
+      firstName: 'something',
+      lastName: 'something',
+      favoriteColors: [],
+    });
+
+    const gotten = await client.models.Customer.get({
       firstName: 'something',
       lastName: 'something',
     });
