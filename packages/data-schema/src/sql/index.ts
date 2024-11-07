@@ -2,7 +2,7 @@ import * as a from '../a';
 import { ModelType } from '../ModelType';
 import { ModelField } from '../ModelField';
 import { RefType } from '../RefType';
-import { KindaPretty } from '../util';
+import { KindaPretty as _KP } from '../util';
 
 // #region builder types
 type SetKey<T, Key, Value> = {

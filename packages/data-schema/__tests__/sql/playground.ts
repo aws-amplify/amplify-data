@@ -1,6 +1,5 @@
 import type { Prettify, Equal, Expect } from '@aws-amplify/data-schema-types';
 import { a, ClientSchema } from '../../src/index';
-import { EligibleIdFields } from '../../src/sql';
 
 const sqlSchema = a.sql.schema({
   tables: {
@@ -22,24 +21,13 @@ const sqlSchema = a.sql.schema({
   },
 });
 
-const sample = a.sql.table({
-  firstName: a.sql.varchar().required(),
-  lastName: a.sql.varchar().required(),
-  bio: a.sql.text(),
-  age: a.sql.int(),
-});
-
-type Sample = typeof sqlSchema.tables.customer;
-
-type IdSample = EligibleIdFields<Sample>;
-
 const schema = a
   .schema({
     Address: sqlSchema.tables.address
       .toAPIModel()
       .authorization((allow) => [allow.owner(), allow.group('Admins')]),
     Customer: sqlSchema.tables.customer.toAPIModel(),
-    SomethingElse: a
+    NonSqlTable: a
       .model({
         a: a.string().required(),
         b: a.integer().required(),
@@ -51,23 +39,101 @@ const schema = a
 
 type Schema = ClientSchema<typeof schema>;
 
-type AddressType = Schema['Address']['type'];
-
-type CustomerType = Schema['Customer']['type'];
-
-type CustomerTypePK = Schema['Customer']['identifier'];
-
-type SamplePk = Schema['SomethingElse']['identifier'];
-
 describe('sql resource definitions', () => {
-  test('playground', async () => {
-    const transformedGraphql = schema.transform().schema;
+  test('can produce sql table definitions', async () => {
     const sqlDefinition = sqlSchema.transform();
-    console.log(
-      'transformedGraphql:',
-      transformedGraphql,
-      '\n\nsqlDefinition:',
-      JSON.stringify(sqlDefinition, null, 2),
-    );
+    const expected = {
+      tables: [
+        {
+          tableName: 'address',
+          columns: [
+            {
+              name: 'number',
+              type: 'int',
+              isNullable: true,
+            },
+            {
+              name: 'street',
+              type: 'varchar',
+              isNullable: false,
+            },
+            {
+              name: 'city',
+              type: 'varchar',
+              isNullable: false,
+            },
+            {
+              name: 'state',
+              type: 'varchar',
+              isNullable: false,
+            },
+            {
+              name: 'zip',
+              type: 'varchar',
+              isNullable: false,
+            },
+          ],
+          primaryKey: ['id'],
+        },
+        {
+          tableName: 'customer',
+          columns: [
+            {
+              name: 'firstName',
+              type: 'varchar',
+              isNullable: true,
+            },
+            {
+              name: 'lastName',
+              type: 'varchar',
+              isNullable: true,
+            },
+            {
+              name: 'bio',
+              type: 'text',
+              isNullable: false,
+            },
+            {
+              name: 'favoriteColors',
+              type: 'varchar',
+              isNullable: false,
+            },
+          ],
+          primaryKey: ['firstName', 'lastName'],
+        },
+      ],
+    };
+    expect(sqlDefinition).toEqual(expected);
+  });
+
+  test('can produce graphql definitions', async () => {
+    const transformedGraphql = schema.transform().schema;
+
+    const expected = `type Address @model @auth(rules: [{allow: owner, ownerField: "owner"},
+  {allow: groups, groups: ["Admins"]}])
+{
+  number: [Int]!
+  street: String
+  city: String
+  state: String
+  zip: String
+}
+
+type Customer @model @auth(rules: [{allow: owner, ownerField: "owner"}])
+{
+  firstName: String! @primaryKey(sortKeyFields: ["lastName"])
+  lastName: String!
+  bio: String
+  favoriteColors: [String]
+}
+
+type NonSqlTable @model @auth(rules: [{allow: owner, ownerField: "owner"}])
+{
+  a: String! @primaryKey(sortKeyFields: ["b", "c"])
+  b: Int!
+  c: String!
+}`;
+
+    expect(transformedGraphql).toEqual(expected);
   });
 });
