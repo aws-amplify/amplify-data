@@ -196,7 +196,7 @@ function _conversation(input: ConversationInput): ConversationType {
     ...input,
     ...builder,
     data,
-  } as InternalConversationType as ConversationType;
+  } as InternalConversationType;
 }
 
 /**
