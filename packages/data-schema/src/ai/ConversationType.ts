@@ -108,7 +108,7 @@ interface ConversationListMessagesInput {
 
 type ConversationOnStreamEventHandler = {
   next: (event: ConversationStreamEvent) => void;
-  errors: (errors: ConversationStreamErrorEvent) => void;
+  error: (error: ConversationStreamErrorEvent) => void;
 };
 
 export interface Conversation {

@@ -6,7 +6,7 @@ import type { BaseClient } from '../../../src/runtime';
 import type { ModelIntrospectionSchema } from '../../../src/runtime/bridge-types';
 import { customOpFactory } from '../../../src/runtime/internals/operations/custom';
 import { createOnStreamEventFunction } from '../../../src/runtime/internals/ai/createOnStreamEventFunction';
-import { convertItemToConversationStreamEvent } from '../../../src/runtime/internals/ai/conversationStreamEventDeserializers';
+import { convertItemToConversationStreamEventIR } from '../../../src/runtime/internals/ai/conversationStreamEventDeserializers';
 jest.mock('../../../src/runtime/internals/ai/conversationStreamEventDeserializers');
 jest.mock('../../../src/runtime/internals/operations/custom');
 
@@ -36,14 +36,17 @@ describe('createOnStreamEventFunction()', () => {
   // assert mocks
   const mockCustomOpFactory = customOpFactory as jest.Mock;
   const mockConvertItemToConversationStreamEvent =
-    convertItemToConversationStreamEvent as jest.Mock;
+  convertItemToConversationStreamEventIR as jest.Mock;
   // create mocks
   const mockCustomOp = jest.fn();
   const mockSubscribe = jest.fn();
-  const mockHandler = jest.fn();
+  const mockHandler = {
+    next: jest.fn(),
+    error: jest.fn(),
+  };
 
   beforeAll(async () => {
-    mockConvertItemToConversationStreamEvent.mockImplementation((data) => data);
+    mockConvertItemToConversationStreamEvent.mockImplementation((data) => ({ next: data }));
     mockCustomOp.mockReturnValue({ subscribe: mockSubscribe });
     mockCustomOpFactory.mockReturnValue(mockCustomOp);
     mockSubscribe.mockImplementation((subscription) => {
@@ -67,7 +70,7 @@ describe('createOnStreamEventFunction()', () => {
   });
 
   describe('onStreamEvent()', () => {
-    it('triggers handler', async () => {
+    it('triggers next handler', async () => {
       const expectedData = {
         associatedUserMessageId: mockAssociatedUserMessageId,
         contentBlockIndex: mockContentBlockIndex,
@@ -99,7 +102,22 @@ describe('createOnStreamEventFunction()', () => {
       expect(mockConvertItemToConversationStreamEvent).toHaveBeenCalledWith(
         { ...expectedData, ...expectedUndefinedFields },
       );
-      expect(mockHandler).toHaveBeenCalledWith(expectedData);
+      expect(mockHandler.next).toHaveBeenCalledWith(expectedData);
     });
+
+    // it('triggers errors handler', async () => {
+    //   const mockError = {
+    //     message: 'error',
+    //     errorType: 'errorType',
+    //   };
+    //   const expectedError = {
+    //     id: mockMessageId,
+    //     associatedUserMessageId: mockAssociatedUserMessageId,
+    //     conversationId: mockConversationId,
+    //     errors: [mockError],
+    //   };
+    //   onStreamEvent(mockHandler);
+    //   expect(mockHandler.error).toHaveBeenCalledWith(expectedError);
+    // });
   });
 });

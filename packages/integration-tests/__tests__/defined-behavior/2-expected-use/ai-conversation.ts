@@ -559,8 +559,11 @@ describe('AI Conversation Routes', () => {
         id: sampleConversation.id,
       });
       // subscribe to messages
-      conversation?.onStreamEvent((streamEvent) => {
-        mockHandler(streamEvent);
+      conversation?.onStreamEvent({
+        next: (streamEvent) => {
+          mockHandler(streamEvent);
+        },
+        error: () => {},
       });
 
       subs.onCreateAssistantResponseChatBot.next({

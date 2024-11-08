@@ -38,8 +38,8 @@ export const createOnStreamEventFunction =
       getCustomUserAgentDetails(AiAction.OnStreamEvent),
     ) as (args?: Record<string, any>) => Observable<any>;
     return subscribeOperation({ conversationId }).subscribe((data) => {
-      const { event, errors } = convertItemToConversationStreamEventIR(data);
-      if (errors) handler.errors(errors);
-      if (event) handler.next(event);
+      const { next, error } = convertItemToConversationStreamEventIR(data);
+      if (error) handler.error(error);
+      if (next) handler.next(next);
     });
   };

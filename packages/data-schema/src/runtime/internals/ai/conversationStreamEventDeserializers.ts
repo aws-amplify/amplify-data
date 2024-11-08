@@ -16,17 +16,17 @@ export const convertItemToConversationStreamEventIR =  ({
   contentBlockToolUse,
   stopReason,
   errors,
-}: any): { event?: ConversationStreamEvent, errors?: ConversationStreamErrorEvent } => {
+}: any): { next?: ConversationStreamEvent, error?: ConversationStreamErrorEvent } => {
   if (errors) {
-    const errorEvent = {
+    const error = {
       id,
       conversationId,
       associatedUserMessageId,
       errors,
-    } as ConversationStreamErrorEvent;
-    return { errors: errorEvent };
+    };
+    return { error };
   }
-  const event = removeNullsFromConversationStreamEvent({
+  const next = removeNullsFromConversationStreamEvent({
     conversationId,
     associatedUserMessageId,
     contentBlockIndex,
@@ -38,7 +38,7 @@ export const convertItemToConversationStreamEventIR =  ({
     id,
   });
 
-  return { event };
+  return { next };
 }
 
 export const convertItemToConversationStreamEvent = ({
