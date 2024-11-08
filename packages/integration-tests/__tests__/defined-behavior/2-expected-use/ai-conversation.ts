@@ -6,6 +6,7 @@ import {
   optionsAndHeaders,
   subOptionsAndHeaders,
   pause,
+  expectSchemaFieldDirective,
 } from '../../utils';
 
 describe('AI Conversation Routes', () => {
@@ -539,10 +540,61 @@ describe('AI Conversation Routes', () => {
           }).authorization((allow) => allow.owner()),
       });
 
-      const transformedSchema = schema.transform().schema;
-      expect(transformedSchema).toMatchSnapshot();
-      const expectedDirective = '@conversation(aiModel: "anthropic.claude-3-haiku-20240307-v1:0", systemPrompt: "testSystemPrompt", auth: { strategy: owner, provider: userPools }, handler: { functionName: "FnSampleChat", eventVersion: "1.0" })';
-      expect(transformedSchema).toContain(expectedDirective);
+      expectSchemaFieldDirective({
+        schema: schema.transform().schema,
+        model: 'Mutation',
+        field: 'SampleChat',
+        directive: [
+          '@conversation(',
+          'aiModel: "anthropic.claude-3-haiku-20240307-v1:0", ',
+          'systemPrompt: "testSystemPrompt", ',
+          'auth: {strategy: owner, provider: userPools}, ',
+          'handler: {functionName: "FnSampleChat", eventVersion: "1.0"}',
+          ')',
+        ].join(''),
+      });
+
+      expectSchemaFieldDirective({
+        schema: schema.transform().schema,
+        model: 'Mutation',
+        field: 'SampleChat',
+        directive: '@aws_cognito_user_pools',
+      });
+    });
+  });
+
+  describe('Invalid authorization definitions', () => {
+    const input = {
+      aiModel: a.ai.model('Claude 3 Haiku'),
+      systemPrompt: 'testSystemPrompt',
+    };
+
+    test('Invalid auth strategy on field', () => {
+      expect(() =>
+        a.schema({
+          SampleChat: a.conversation(input)
+            // @ts-expect-error
+            .authorization((allow) => allow.authenticated())
+        })
+      ).toThrow();
+    });
+
+    test('Missing auth strategy on field, no schema auth', () => {
+      expect(() =>
+        a.schema({
+          SampleChat: a.conversation(input)
+        }).transform()
+      ).toThrow();
+    });
+
+    test('Missing auth strategy on field, schema auth', () => {
+      expect(() =>
+        a.schema({
+          SampleChat: a.conversation(input)
+        })
+          .authorization((allow) => allow.authenticated())
+          .transform()
+      ).toThrow();
     });
   });
 });
