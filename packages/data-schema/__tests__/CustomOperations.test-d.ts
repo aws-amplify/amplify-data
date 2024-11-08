@@ -19,7 +19,6 @@ import { defineFunctionStub } from './utils';
 import type {
   CustomOperation,
 } from '../src/CustomOperation';
-import { expectType } from 'tsd';
 
 describe('custom operations return types', () => {
   describe('when .ref() a basic custom type', () => {
@@ -866,20 +865,18 @@ describe('.for() modifier', () => {
 describe('.arguments() modifier', () => {
   // Test to verify that CustomType can be used as an argument in custom operations
   it('accepts CustomType in arguments', () => {
-    const operation = a.query().arguments({
+    const operation: CustomOperation<any, "arguments" | "for", "queryCustomOperation"> = a.query().arguments({
       customArg: a.customType({
         field1: a.string(),
         field2: a.integer()
       })
     });
-    expectType<CustomOperation<any, "arguments" | "for", "queryCustomOperation">>(operation);
   });
 
   // Test to verify that RefType can be used as an argument in custom operations
   it('accepts RefType in arguments', () => {
-    const operation = a.query().arguments({
+    const operation:CustomOperation<any, "arguments" | "for", "queryCustomOperation">  = a.query().arguments({
       refArg: a.ref('SomeType')
     });
-    expectType<CustomOperation<any, "arguments" | "for", "queryCustomOperation">>(operation);
   });
 });
