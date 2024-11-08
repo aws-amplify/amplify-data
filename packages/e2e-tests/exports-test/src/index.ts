@@ -5,6 +5,37 @@ const defFunc = defineFunction({
   entry: './handlers/test-handler.ts',
 });
 
+export function buildMutation() {
+  return a
+    .mutation()
+    .arguments({
+      input: a.string(),
+    })
+    .returns(a.string())
+    .handler(a.handler.function(defFunc))
+    .authorization((allow) => [allow.authenticated()]);
+}
+
+export function buildQueryRequiredInputJsonOutput() {
+  return a
+    .query()
+    .arguments({
+      input: a.string().required(),
+    })
+    .returns(a.json())
+    .handler(a.handler.function(defFunc));
+}
+
+export function buildDefaultSchema() {
+  return a.schema({
+    Todo: a
+      .model({
+        content: a.string(),
+      })
+      .authorization((allow) => [allow.guest()]),
+  });
+}
+
 const fakeSecret = () => ({}) as any;
 const datasourceConfigMySQL = {
   engine: 'mysql',
