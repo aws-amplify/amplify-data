@@ -3,8 +3,9 @@
 
 import { ConversationStreamEvent } from "../../../ai/ConversationType";
 import { ToolUseBlock } from "../../../ai/types/contentBlocks";
+import { ConversationStreamErrorEvent } from "../../../ai/types/ConversationStreamEvent";
 
-export const convertItemToConversationStreamEvent = ({
+export const convertItemToConversationStreamEvent =  ({
   id,
   conversationId,
   associatedUserMessageId,
@@ -14,8 +15,19 @@ export const convertItemToConversationStreamEvent = ({
   contentBlockText,
   contentBlockToolUse,
   stopReason,
-}: any): ConversationStreamEvent =>
-  removeNullsFromConversationStreamEvent({
+  errors,
+}: any): { next?: ConversationStreamEvent, error?: ConversationStreamErrorEvent } => {
+  if (errors) {
+    const error = {
+      id,
+      conversationId,
+      associatedUserMessageId,
+      errors,
+    };
+    return { error };
+  }
+  const next = removeNullsFromConversationStreamEvent({
+    id,
     conversationId,
     associatedUserMessageId,
     contentBlockIndex,
@@ -24,8 +36,10 @@ export const convertItemToConversationStreamEvent = ({
     text: contentBlockText,
     toolUse: deserializeToolUseBlock(contentBlockToolUse),
     stopReason,
-    id,
   });
+
+  return { next };
+};
 
 const deserializeToolUseBlock = (
   contentBlockToolUse: any,
