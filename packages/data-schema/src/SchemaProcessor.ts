@@ -78,7 +78,8 @@ function isInternalModel(model: unknown): model is InternalModel {
   if (
     (model as any).data &&
     !isCustomType(model) &&
-    !isCustomOperation(model)
+    !isCustomOperation(model) &&
+    !isConversationRoute(model)
   ) {
     return true;
   }
@@ -1499,7 +1500,6 @@ const schemaPreprocessor = (
             break;
         }
       } else if (isConversationRoute(typeDef)) {
-        // TODO: add inferenceConfiguration values to directive.
         const { field, functionHandler } = createConversationField(
           typeDef,
           typeName,

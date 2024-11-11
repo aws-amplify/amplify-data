@@ -60,8 +60,10 @@ bench('p50 conversation', () => {
         allow.publicApiKey().to(['read']),
         allow.owner(),
       ]),
-    ChatBot: a.conversation(input),
-    GossipBot: a.conversation(input),
+    ChatBot: a.conversation(input)
+      .authorization((allow) => allow.owner()),
+    GossipBot: a.conversation(input)
+      .authorization((allow) => allow.owner()),
   }).authorization((allow) => allow.publicApiKey());
 }).types([8514, 'instantiations']);
 
@@ -110,8 +112,10 @@ bench('p50 conversation w/ client types', () => {
           allow.publicApiKey().to(['read']),
           allow.owner(),
         ]),
-      ChatBot: a.conversation(input),
-      GossipBot: a.conversation(input),
+      ChatBot: a.conversation(input)
+        .authorization((allow) => allow.owner()),
+      GossipBot: a.conversation(input)
+        .authorization((allow) => allow.owner()),
     })
     .authorization((allow) => allow.publicApiKey());
 
@@ -153,8 +157,10 @@ bench('p50 combined conversation w/ client types', () => {
           allow.publicApiKey().to(['read']),
           allow.owner(),
         ]),
-      ChatBot: a.conversation(input),
-      GossipBot: a.conversation(input),
+      ChatBot: a.conversation(input)
+        .authorization((allow) => allow.owner()),
+      GossipBot: a.conversation(input)
+        .authorization((allow) => allow.owner()),
     })
     .authorization((allow) => allow.publicApiKey());
 
@@ -169,8 +175,10 @@ bench('p50 combined conversation w/ client types', () => {
         employee: a.belongsTo('Employee', ['employeeId']),
       })
       .identifier(['todoId', 'name']),
-    ChatBot: a.conversation(input),
-    GossipBot: a.conversation(input),
+    ChatBot: a.conversation(input)
+      .authorization((allow) => allow.owner()),
+    GossipBot: a.conversation(input)
+      .authorization((allow) => allow.owner()),
   });
 
   const s = a.combine([s1, s2]);
