@@ -23,11 +23,14 @@ import { customType } from './CustomType';
 import { enumType } from './EnumType';
 import { query, mutation, subscription, generation } from './CustomOperation';
 import { handler } from './Handler';
-import { conversation } from './ai/ConversationType';
+import { conversation, modelTool, queryTool } from './ai/ConversationType';
 import { model as aiModel } from './ai/ModelType';
+import { queryTool as aiQueryTool, modelTool as aiModelTool } from './ai/ConversationType';
 
 const ai = {
   model: aiModel,
+  queryTool: aiQueryTool,
+  modelTool: aiModelTool,
 };
 
 // We are re-exporting with this pattern to make the JSDoc happy.

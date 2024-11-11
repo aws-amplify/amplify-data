@@ -71,15 +71,22 @@ const extractAuthorization = (typeDef: InternalConversationType, typeName: strin
 const getConversationToolsString = (tools: ToolDefinition[]) =>
   tools
     .map((tool) => {
-      const { query, description } = tool;
-      if (!isRef(query)) {
-        throw new Error(`Unexpected query was found in tool ${tool}.`);
-      }
-      // TODO: add validation for query / auth (cup) / etc
-      const queryName = query.data.link;
-      return `{ name: "${queryName}", description: "${description}" }`;
+      const { name, description } = tool;
+      const toolDefinition = extractToolDefinition(tool);
+      return `{ name: "${name}", description: "${description}", ${toolDefinition} }`;
     })
     .join(', ');
+
+const extractToolDefinition = (tool: ToolDefinition): string => {
+  if ('model' in tool) {
+    if (!isRef(tool.model)) throw new Error(`Unexpected model was found in tool ${tool}.`);
+    const { model, operation } = tool;
+    return `modelName: "${model.data.link}", modelOperation: ${operation}`;
+  }
+
+  if (!isRef(tool.query)) throw new Error(`Unexpected query was found in tool ${tool}.`);
+  return `queryName: "${tool.query.data.link}"`;
+};
 
 const ConversationParticipantRole = `enum ConversationParticipantRole {
   user
