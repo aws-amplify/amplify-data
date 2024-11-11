@@ -120,6 +120,8 @@ Container for authorization schema definition content.
 
 </td><td>
 
+CombinedModel schema definition interface
+
 
 </td></tr>
 <tr><td>

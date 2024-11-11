@@ -4,6 +4,8 @@
 
 ## CombinedModelSchema type
 
+CombinedModel schema definition interface
+
 **Signature:**
 
 ```typescript
