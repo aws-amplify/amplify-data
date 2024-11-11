@@ -51,6 +51,18 @@ export interface ConversationStreamTurnDoneEvent {
   stopReason: string;
 }
 
+export interface ConversationStreamErrorEvent {
+  id: string;
+  conversationId: string;
+  associatedUserMessageId: string;
+  errors: ConversationTurnError[]
+}
+
+export interface ConversationTurnError {
+  message: string;
+  errorType: string;
+}
+
 export type ConversationStreamEvent =
   | ConversationStreamTextEvent
   | ConversationStreamToolUseEvent

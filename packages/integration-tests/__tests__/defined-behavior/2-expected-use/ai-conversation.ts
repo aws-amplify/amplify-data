@@ -7,6 +7,7 @@ import {
   subOptionsAndHeaders,
   pause,
 } from '../../utils';
+import { Subscriber } from 'rxjs';
 
 describe('AI Conversation Routes', () => {
   // data/resource.ts
@@ -368,16 +369,44 @@ describe('AI Conversation Routes', () => {
       id: 'message-id',
       role: 'user',
     };
-    const sampleConversationStreamEvent = {
-      id: 'stream-event-id',
+    const sampleConversationStreamTextEvent = {
+      id: 'stream-text-event-id',
       conversationId: sampleConversation.id,
       associatedUserMessageId: sampleConversationMessage1.id,
       contentBlockDeltaIndex: 0,
-      contentBlockDoneAtIndex: undefined,
       contentBlockIndex: 0,
       contentBlockText: 'foo',
-      stopReason: undefined,
-      contentBlockToolUse: undefined,
+    };
+    const sampleConversationStreamToolUseEvent = {
+      id: 'stream-tooluse-event-id',
+      conversationId: sampleConversation.id,
+      associatedUserMessageId: sampleConversationMessage1.id,
+      contentBlockIndex: 0,
+      contentBlockToolUse: {
+        toolUseId: 'toolUseId',
+        name: 'toolUseName',
+        input: JSON.stringify({ toolUseParam: 'toolUseParam' }),
+      },
+    };
+    const sampleConversationStreamDoneAtIndexEvent = {
+      id: 'stream-doneatindex-event-id',
+      conversationId: sampleConversation.id,
+      associatedUserMessageId: sampleConversationMessage1.id,
+      contentBlockDoneAtIndex: 0,
+      contentBlockIndex: 0,
+    };
+    const sampleConversationStreamTurnDoneEvent = {
+      id: 'stream-turndone-event-id',
+      conversationId: sampleConversation.id,
+      associatedUserMessageId: sampleConversationMessage1.id,
+      contentBlockIndex: 0,
+      stopReason: 'stopReason',
+    };
+    const sampleConversationStreamErrorEvent = {
+      id: 'stream-error-event-id',
+      conversationId: sampleConversation.id,
+      associatedUserMessageId: sampleConversationMessage1.id,
+      errors: [{ message: 'error message', errorType: 'errorType' }],
     };
     // #endregion mocking common
 
@@ -531,6 +560,117 @@ describe('AI Conversation Routes', () => {
       // #endregion assertions
     });
 
+    describe('Stream events', () => {
+      const mockNextHandler = jest.fn();
+      const mockErrorHandler = jest.fn();
+      let subs: Record<string, Subscriber<any>>;
+
+      beforeAll(async () => {
+        const { subs: mockedSubs, generateClient } = mockedGenerateClient([
+          {
+            data: {
+              getConversation: sampleConversation,
+            },
+          },
+        ]);
+        subs = mockedSubs;
+
+        const config = await buildAmplifyConfig(schema);
+        Amplify.configure(config);
+
+        const client = generateClient<Schema>();
+        const { data: conversation } = await client.conversations.chatBot.get({
+          id: sampleConversation.id,
+        });
+        // subscribe to messages
+        conversation?.onStreamEvent({
+          next: (streamEvent) => mockNextHandler(streamEvent),
+          error: (error) => mockErrorHandler(error),
+        });
+      });
+
+      test('Text event', async () => {
+        subs.onCreateAssistantResponseChatBot.next({
+          data: {
+            onCreateAssistantResponseChatBot: {
+              ...sampleConversationStreamTextEvent,
+            },
+          },
+        });
+
+        await pause(1);
+        const {
+          contentBlockText,
+          ...rest
+        } = sampleConversationStreamTextEvent;
+        const expectedConversationStreamEvent = {
+          text: contentBlockText,
+          ...rest,
+        };
+        expect(mockNextHandler).toHaveBeenCalledWith(expectedConversationStreamEvent);
+      });
+
+      test('Tool use event', async () => {
+        subs.onCreateAssistantResponseChatBot.next({
+          data: {
+            onCreateAssistantResponseChatBot: {
+              ...sampleConversationStreamToolUseEvent,
+            },
+          },
+        });
+
+        await pause(1);
+        const {
+          contentBlockToolUse: { input, toolUseId, name },
+          ...rest
+        } = sampleConversationStreamToolUseEvent;
+        const expectedConversationStreamEvent = {
+          toolUse: { input: JSON.parse(input), toolUseId, name },
+          ...rest,
+        };
+        expect(mockNextHandler).toHaveBeenCalledWith(expectedConversationStreamEvent);
+      });
+
+      test('Done at index event', async () => {
+        subs.onCreateAssistantResponseChatBot.next({
+          data: {
+            onCreateAssistantResponseChatBot: {
+              ...sampleConversationStreamDoneAtIndexEvent,
+            },
+          },
+        });
+
+        await pause(1);
+        expect(mockNextHandler).toHaveBeenCalledWith(sampleConversationStreamDoneAtIndexEvent);
+      });
+
+      test('Turn done event', async () => {
+        subs.onCreateAssistantResponseChatBot.next({
+          data: {
+            onCreateAssistantResponseChatBot: {
+              ...sampleConversationStreamTurnDoneEvent,
+            },
+          },
+        });
+
+        await pause(1);
+        expect(mockNextHandler).toHaveBeenCalledWith(sampleConversationStreamTurnDoneEvent);
+      });
+
+      test('Error event', async () => {
+        subs.onCreateAssistantResponseChatBot.next({
+          data: {
+            onCreateAssistantResponseChatBot: {
+              ...sampleConversationStreamErrorEvent,
+            },
+          },
+        });
+
+        await pause(1);
+        expect(mockErrorHandler).toHaveBeenCalledWith(sampleConversationStreamErrorEvent);
+      });
+    });
+
     test('Subscribe to messages', async () => {
       // #region mocking
       const { spy, subSpy, subs, generateClient } = mockedGenerateClient([
@@ -545,7 +685,7 @@ describe('AI Conversation Routes', () => {
           },
         },
       ]);
-      const mockHandler = jest.fn();
+      const mockNextHandler = jest.fn();
       // simulated amplifyconfiguration.json
       const config = await buildAmplifyConfig(schema);
       // #endregion mocking
@@ -559,14 +699,17 @@ describe('AI Conversation Routes', () => {
         id: sampleConversation.id,
       });
       // subscribe to messages
-      conversation?.onStreamEvent((streamEvent) => {
-        mockHandler(streamEvent);
+      conversation?.onStreamEvent({
+        next: (streamEvent) => {
+          mockNextHandler(streamEvent);
+        },
+        error: () => { },
       });
 
       subs.onCreateAssistantResponseChatBot.next({
         data: {
           onCreateAssistantResponseChatBot: {
-            ...sampleConversationStreamEvent,
+            ...sampleConversationStreamTextEvent,
           },
         },
       });
@@ -578,15 +721,13 @@ describe('AI Conversation Routes', () => {
       expect(subOptionsAndHeaders(subSpy)).toMatchSnapshot();
       const {
         contentBlockText,
-        contentBlockToolUse,
         ...rest
-      } = sampleConversationStreamEvent;
+      } = sampleConversationStreamTextEvent;
       const expectedConversationStreamEvent = {
         text: contentBlockText,
-        toolUse: contentBlockToolUse,
         ...rest,
       };
-      expect(mockHandler).toHaveBeenCalledWith(expectedConversationStreamEvent);
+      expect(mockNextHandler).toHaveBeenCalledWith(expectedConversationStreamEvent);
       // #endregion assertions
     });
 

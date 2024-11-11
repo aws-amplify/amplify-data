@@ -29,6 +29,13 @@ describe('createOnStreamEventFunction()', () => {
     id: mockMessageId,
     role: mockRole,
   };
+  const mockError = { message: 'error message', errorType: 'errorType' };
+  const mockStreamEventError = {
+    errors: [mockError],
+    id: mockMessageId,
+    conversationId: mockConversationId,
+    associatedUserMessageId: mockAssociatedUserMessageId,
+  };
   const mockConversationSchema = { message: { subscribe: {} } };
   const mockModelIntrospectionSchema = {
     conversations: { [mockConversationName]: mockConversationSchema },
@@ -36,19 +43,18 @@ describe('createOnStreamEventFunction()', () => {
   // assert mocks
   const mockCustomOpFactory = customOpFactory as jest.Mock;
   const mockConvertItemToConversationStreamEvent =
-    convertItemToConversationStreamEvent as jest.Mock;
+  convertItemToConversationStreamEvent as jest.Mock;
   // create mocks
   const mockCustomOp = jest.fn();
   const mockSubscribe = jest.fn();
-  const mockHandler = jest.fn();
+  const mockHandler = {
+    next: jest.fn(),
+    error: jest.fn(),
+  };
 
   beforeAll(async () => {
-    mockConvertItemToConversationStreamEvent.mockImplementation((data) => data);
     mockCustomOp.mockReturnValue({ subscribe: mockSubscribe });
     mockCustomOpFactory.mockReturnValue(mockCustomOp);
-    mockSubscribe.mockImplementation((subscription) => {
-      subscription(mockStreamEvent);
-    });
     onStreamEvent = await createOnStreamEventFunction(
       {} as BaseClient,
       mockModelIntrospectionSchema,
@@ -67,7 +73,11 @@ describe('createOnStreamEventFunction()', () => {
   });
 
   describe('onStreamEvent()', () => {
-    it('triggers handler', async () => {
+    it('triggers next handler', async () => {
+      mockConvertItemToConversationStreamEvent.mockImplementation((next) => ({ next }));
+      mockSubscribe.mockImplementation((subscription) => {
+        subscription(mockStreamEvent);
+      });
       const expectedData = {
         associatedUserMessageId: mockAssociatedUserMessageId,
         contentBlockIndex: mockContentBlockIndex,
@@ -99,7 +109,46 @@ describe('createOnStreamEventFunction()', () => {
       expect(mockConvertItemToConversationStreamEvent).toHaveBeenCalledWith(
         { ...expectedData, ...expectedUndefinedFields },
       );
-      expect(mockHandler).toHaveBeenCalledWith(expectedData);
+      expect(mockHandler.next).toHaveBeenCalledWith(expectedData);
+    });
+
+    it('triggers errors handler', async () => {
+      mockConvertItemToConversationStreamEvent.mockImplementation((error) => ({ error }));
+      mockSubscribe.mockImplementation((subscription) => {
+        subscription(mockStreamEventError);
+      });
+      const expectedError = {
+        id: mockMessageId,
+        associatedUserMessageId: mockAssociatedUserMessageId,
+        conversationId: mockConversationId,
+        errors: [mockError],
+      };
+      const expectedUndefinedFields = {
+        contentBlockDoneAtIndex: undefined,
+        toolUse: undefined,
+        stopReason: undefined,
+        contentBlockIndex: undefined,
+        contentBlockDeltaIndex: undefined,
+        text: undefined,
+        role: undefined,
+      };
+      onStreamEvent(mockHandler);
+      expect(mockCustomOpFactory).toHaveBeenCalledWith(
+        {},
+        mockModelIntrospectionSchema,
+        'subscription',
+        mockConversationSchema.message.subscribe,
+        false,
+        expect.any(Function),
+        { action: '7', category: 'ai' },
+      );
+      expect(mockCustomOp).toHaveBeenCalledWith({
+        conversationId: mockConversationId,
+      });
+      expect(mockConvertItemToConversationStreamEvent).toHaveBeenCalledWith(
+        { ...expectedError, ...expectedUndefinedFields },
+      );
+      expect(mockHandler.error).toHaveBeenCalledWith(expectedError);
     });
   });
 });

@@ -12,7 +12,7 @@ import {
 } from './types/ConversationMessageContent';
 import { ToolConfiguration } from './types/ToolConfiguration';
 import { AiModel } from '@aws-amplify/data-schema-types';
-import { ConversationStreamEvent } from './types/ConversationStreamEvent';
+import { ConversationStreamErrorEvent, ConversationStreamEvent } from './types/ConversationStreamEvent';
 
 export const brandName = 'conversationCustomOperation';
 
@@ -106,9 +106,10 @@ interface ConversationListMessagesInput {
   nextToken?: string | null;
 }
 
-type ConversationOnStreamEventHandler = (
-  streamEvent: ConversationStreamEvent,
-) => void;
+type ConversationOnStreamEventHandler = {
+  next: (event: ConversationStreamEvent) => void;
+  error: (error: ConversationStreamErrorEvent) => void;
+};
 
 export interface Conversation {
   id: string;
