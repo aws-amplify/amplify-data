@@ -72,6 +72,9 @@ const getConversationToolsString = (tools: ToolDefinition[]) =>
   tools
     .map((tool) => {
       const { name, description } = tool;
+      if (!/^[a-zA-Z][a-zA-Z0-9_]*$/.test(name)) {
+        throw new Error(`Tool name must start with a letter and contain only letters, numbers, and underscores. Found: ${name}`);
+      }
       const toolDefinition = extractToolDefinition(tool);
       return `{ name: "${name}", description: "${description}", ${toolDefinition} }`;
     })

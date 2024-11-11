@@ -9,5 +9,7 @@
 ```typescript
 ai: {
     model: typeof aiModel;
+    queryTool: typeof queryTool;
+    modelTool: typeof modelTool;
 }
 ```
