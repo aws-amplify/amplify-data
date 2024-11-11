@@ -1474,11 +1474,16 @@ describe('ai routes', () => {
         aiModel: a.ai.model('Claude 3 Haiku'),
         systemPrompt: 'Hello, world!',
         tools: [
-          { query: a.ref('myToolQuery'), description: 'does a thing' },
-          {
+          a.ai.queryTool({
+            query: a.ref('myToolQuery'),
+            description: 'does a thing',
+            name: 'myToolQuery',
+          }),
+          a.ai.queryTool({
             query: a.ref('anotherToolQuery'),
             description: 'does a different thing',
-          },
+            name: 'anotherToolQuery',
+          }),
         ],
       }).authorization((allow) => allow.owner()),
 
@@ -1487,11 +1492,16 @@ describe('ai routes', () => {
         systemPrompt: `You are a helpful assistant.
         Respond in the poetic form of haiku.`,
         tools: [
-          { query: a.ref('myToolQuery'), description: 'does a thing' },
-          {
+          a.ai.queryTool( {
+            query: a.ref('myToolQuery'),
+            description: 'does a thing',
+            name: 'tool name for myToolQuery',
+          }),
+          a.ai.queryTool({
             query: a.ref('anotherToolQuery'),
             description: 'does a different thing',
-          },
+            name: 'tool name for anotherToolQuery',
+          }),
         ],
       }).authorization((allow) => allow.owner()),
 
