@@ -9,17 +9,17 @@ import {
   ModelIntrospectionSchema,
 } from '../../bridge-types';
 import { customOpFactory } from '../operations/custom';
-import { convertItemToConversationMessage } from './convertItemToConversationMessage';
 import { AiAction, getCustomUserAgentDetails } from './getCustomUserAgentDetails';
+import { convertItemToConversationStreamEvent } from './conversationStreamEventDeserializers';
 
-export const createOnMessageFunction =
+export const createOnStreamEventFunction =
   (
     client: BaseClient,
     modelIntrospection: ModelIntrospectionSchema,
     conversationId: string,
     conversationRouteName: string,
     getInternals: ClientInternalsGetter,
-  ): Conversation['onMessage'] =>
+  ): Conversation['onStreamEvent'] =>
   (handler): Subscription => {
     const { conversations } = modelIntrospection;
     // Safe guard for standalone function. When called as part of client generation, this should never be falsy.
@@ -35,9 +35,11 @@ export const createOnMessageFunction =
       subscribeSchema,
       false,
       getInternals,
-      getCustomUserAgentDetails(AiAction.OnMessage),
+      getCustomUserAgentDetails(AiAction.OnStreamEvent),
     ) as (args?: Record<string, any>) => Observable<any>;
     return subscribeOperation({ conversationId }).subscribe((data) => {
-      handler(convertItemToConversationMessage(data));
+      const { next, error } = convertItemToConversationStreamEvent(data);
+      if (error) handler.error(error);
+      if (next) handler.next(next);
     });
   };

@@ -246,6 +246,25 @@ const ToolInputSchema = `type ToolInputSchema {
   json: AWSJSON
 }`;
 
+const ConversationMessageStreamEvent = `type ConversationMessageStreamPart @aws_cognito_user_pools {
+  id: ID!
+  owner: String
+  conversationId: ID!
+  associatedUserMessageId: ID!
+  contentBlockIndex: Int!
+  contentBlockText: String
+  contentBlockDeltaIndex: Int
+  contentBlockToolUse: ToolUseBlock
+  contentBlockDoneAtIndex: Int
+  stopReason: String
+  errors: [ConversationTurnError]
+}`;
+
+const ConversationTurnError = `type ConversationTurnError @aws_cognito_user_pools {
+  message: String!
+  errorType: String!
+}`;
+
 export const conversationTypes: string[] = [
   ConversationParticipantRole,
   ConversationMessage,
@@ -278,4 +297,6 @@ export const conversationTypes: string[] = [
   Tool,
   ToolSpecification,
   ToolInputSchema,
+  ConversationMessageStreamEvent,
+  ConversationTurnError,
 ];

@@ -10,7 +10,7 @@ import type {
   SchemaModel,
 } from '../../bridge-types';
 import { createListMessagesFunction } from './createListMessagesFunction';
-import { createOnMessageFunction } from './createOnMessageFunction';
+import { createOnStreamEventFunction } from './createOnStreamEventFunction';
 import { createSendMessageFunction } from './createSendMessageFunction';
 
 export const convertItemToConversation = (
@@ -36,7 +36,7 @@ export const convertItemToConversation = (
     updatedAt: conversationUpdatedAt,
     metadata: conversationMetadata,
     name: conversationName,
-    onMessage: createOnMessageFunction(
+    onStreamEvent: createOnStreamEventFunction(
       client as BaseBrowserClient,
       modelIntrospection,
       conversationId,
