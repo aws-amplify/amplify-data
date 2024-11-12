@@ -1,4 +1,5 @@
 import { LambdaFunctionDefinition } from '@aws-amplify/data-schema-types';
+import { accessData } from '../Authorization';
 import { InternalRef } from '../RefType';
 import { capitalize } from '../runtime/utils';
 import type {
@@ -11,6 +12,7 @@ export const createConversationField = (
   typeName: string,
 ): { field: string, functionHandler: LambdaFunctionDefinition } => {
   const { aiModel, systemPrompt, handler, tools } = typeDef;
+  const { strategy, provider } = extractAuthorization(typeDef, typeName);
 
   const args: Record<string, string> = {
     aiModel: aiModel.resourcePath,
@@ -30,6 +32,7 @@ export const createConversationField = (
     .map(([key, value]) => `${key}: "${value}"`)
     .join(', ');
 
+  const authString = `, auth: { strategy: ${strategy}, provider: ${provider} }`;
   const functionHandler: LambdaFunctionDefinition = {};
   let handlerString = '';
   if (handler) {
@@ -43,7 +46,7 @@ export const createConversationField = (
     ? `, tools: [${getConversationToolsString(tools)}]`
     : '';
 
-  const conversationDirective = `@conversation(${argsString}${handlerString}${toolsString})`;
+  const conversationDirective = `@conversation(${argsString}${authString}${handlerString}${toolsString})`;
 
   const field = `${typeName}(conversationId: ID!, content: [ContentBlockInput], aiContext: AWSJSON, toolConfiguration: ToolConfigurationInput): ConversationMessage ${conversationDirective} @aws_cognito_user_pools`;
   return { field, functionHandler };
@@ -51,6 +54,19 @@ export const createConversationField = (
 
 const isRef = (query: unknown): query is { data: InternalRef['data'] } =>
   (query as any)?.data?.type === 'ref';
+
+const extractAuthorization = (typeDef: InternalConversationType, typeName: string): { strategy: string, provider: string } => {
+  const { authorization } = typeDef.data;
+  if (authorization.length === 0) {
+    throw new Error(`Conversation ${typeName} is missing authorization rules. Use .authorization((allow) => allow.owner()) to configure authorization for your conversation route.`);
+  }
+
+  const { strategy, provider } = accessData(authorization[0]);
+  if (strategy !== 'owner' || provider !== 'userPools') {
+    throw new Error(`Conversation ${typeName} must use owner authorization with a user pool provider. Use .authorization((allow) => allow.owner()) to configure authorization for your conversation route.`);
+  }
+  return { strategy, provider };
+};
 
 const getConversationToolsString = (tools: ToolDefinition[]) =>
   tools
