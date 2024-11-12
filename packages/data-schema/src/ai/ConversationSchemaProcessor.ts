@@ -55,15 +55,25 @@ const isRef = (query: unknown): query is { data: InternalRef['data'] } =>
 const getConversationToolsString = (tools: ToolDefinition[]) =>
   tools
     .map((tool) => {
-      const { query, description } = tool;
-      if (!isRef(query)) {
-        throw new Error(`Unexpected query was found in tool ${tool}.`);
+      const { name, description } = tool;
+      if (!/^[a-zA-Z][a-zA-Z0-9_]*$/.test(name)) {
+        throw new Error(`Tool name must start with a letter and contain only letters, numbers, and underscores. Found: ${name}`);
       }
-      // TODO: add validation for query / auth (cup) / etc
-      const queryName = query.data.link;
-      return `{ name: "${queryName}", description: "${description}" }`;
+      const toolDefinition = extractToolDefinition(tool);
+      return `{ name: "${name}", description: "${description}", ${toolDefinition} }`;
     })
     .join(', ');
+
+const extractToolDefinition = (tool: ToolDefinition): string => {
+  if ('model' in tool) {
+    if (!isRef(tool.model)) throw new Error(`Unexpected model was found in tool ${tool}.`);
+    const { model, operation } = tool;
+    return `modelName: "${model.data.link}", modelOperation: ${operation}`;
+  }
+
+  if (!isRef(tool.query)) throw new Error(`Unexpected query was found in tool ${tool}.`);
+  return `queryName: "${tool.query.data.link}"`;
+};
 
 const extractAuthorization = (typeDef: InternalConversationType, typeName: string): { strategy: string, provider: string } => {
   const { authorization } = typeDef.data;
