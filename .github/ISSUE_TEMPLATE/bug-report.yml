@@ -1,0 +1,47 @@
+name: Bug Report
+description: Create a bug report to help us improve `@aws-amplify/data-schema`
+labels: ['pending-triage']
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to fill out this bug report!
+  - type: textarea
+    id: env
+    attributes:
+      label: Package version
+      description: |
+        Please copy and paste the output of the following command.
+        ```bash
+        npm ls @aws-amplify/data-schema
+        ```
+      render: plain text
+    validations:
+      required: true
+  - type: textarea
+    id: env
+    attributes:
+      label: Schema definition
+      description: |
+        Please copy and paste the contents of `amplify/data/resource.ts` below
+      render: plain text
+    validations:
+      required: false
+  - type: textarea
+    id: description
+    attributes:
+      label: Describe the bug
+      description: |
+        A clear and concise description of the bug you are observing.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Reproduction steps
+      description: |
+        How can this bug be reproduced?
+        Please include any code snippets or screenshots that you think would be helpful!
+        For more complex issues provide a repository with the smallest sample that reproduces the issue.
+    validations:
+      required: true
