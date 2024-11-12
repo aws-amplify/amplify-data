@@ -10,7 +10,7 @@ Model schema definition interface
 
 ```typescript
 export type ModelSchema<T extends ModelSchemaParamShape, UsedMethods extends 'authorization' | 'relationships' = never> = Omit<{
-    authorization: <AuthRules extends SchemaAuthorization<any, any, any>>(callback: (allow: AllowModifier) => AuthRules | AuthRules[]) => ModelSchema<SetTypeSubArg<T, 'authorization', AuthRules[]>, UsedMethods | 'authorization'>;
+    authorization: <AuthRules extends SchemaAuthorization<any, any, any>>(callback: SchemaAuthorizationCallback<AuthRules>) => ModelSchema<SetTypeSubArg<T, 'authorization', AuthRules[]>, UsedMethods | 'authorization'>;
 }, UsedMethods> & BaseSchema<T> & DDBSchemaBrand;
 ```
 **References:** [ModelSchema](./data-schema.modelschema.md)

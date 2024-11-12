@@ -24,7 +24,11 @@ import type {
   SubscriptionCustomOperation,
 } from './CustomOperation';
 import { processSchema } from './SchemaProcessor';
-import { AllowModifier, SchemaAuthorization, allow } from './Authorization';
+import {
+  SchemaAuthorization,
+  SchemaAuthorizationCallback,
+  allow,
+} from './Authorization';
 import { Brand, brand, getBrand, RenameUsingTuples } from './util';
 import {
   ModelRelationshipField,
@@ -116,7 +120,7 @@ export type ModelSchema<
 > = Omit<
   {
     authorization: <AuthRules extends SchemaAuthorization<any, any, any>>(
-      callback: (allow: AllowModifier) => AuthRules | AuthRules[],
+      callback: SchemaAuthorizationCallback<AuthRules>,
     ) => ModelSchema<
       SetTypeSubArg<T, 'authorization', AuthRules[]>,
       UsedMethods | 'authorization'
@@ -189,7 +193,7 @@ export type RDSModelSchema<
     >;
     // TODO: hide this, since SQL schema auth is configured via .setAuthorization?
     authorization: <AuthRules extends SchemaAuthorization<any, any, any>>(
-      callback: (allow: AllowModifier) => AuthRules | AuthRules[],
+      callback: SchemaAuthorizationCallback<AuthRules>,
     ) => RDSModelSchema<
       SetTypeSubArg<T, 'authorization', AuthRules[]>,
       UsedMethods | 'authorization'

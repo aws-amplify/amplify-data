@@ -127,6 +127,10 @@ export type Authorization<
   };
 };
 
+export type AuthorizationCallbackForCustomOperation = (
+  allow: AllowModifierForCustomOperation,
+) => Authorization<any, any, any>;
+
 export type OwnerField = object;
 
 /**
@@ -688,4 +692,80 @@ export const accessSchemaData = <T extends SchemaAuthorization<any, any, any>>(
 
 // `allow` is declared as a `const` above
 export type AllowModifier = typeof allow;
-export type AllowModifierForCustomOperation = typeof allowForCustomOperations;
+type AllowModifierForCustomOperation = typeof allowForCustomOperations;
+
+type CallbackAllowModifier = AllowModifier | AllowModifierForCustomOperation;
+
+type InternalAuthorizationCallback<
+  AM extends CallbackAllowModifier,
+  AuthRuleType extends
+    | Authorization<any, any, any>
+    | SchemaAuthorization<any, any, any>,
+  ExcludedModifier extends keyof AM & string = never,
+> = (allow: Omit<AM, ExcludedModifier>) => AuthRuleType | AuthRuleType[];
+
+export type ModelTypeAuthorizationCallback<
+  AuthRuleType extends Authorization<any, any, any>,
+> = InternalAuthorizationCallback<AllowModifier, AuthRuleType, 'resource'>;
+
+export type SharedAuthorizationCallback<
+  AuthRuleType extends Authorization<any, any, any>,
+> = InternalAuthorizationCallback<AllowModifier, AuthRuleType>;
+
+export type SchemaAuthorizationCallback<
+  AuthRuleType extends SchemaAuthorization<any, any, any>,
+> = InternalAuthorizationCallback<AllowModifier, AuthRuleType>;
+
+export type ModelFieldAuthorizationCallback<
+  AuthRuleType extends SchemaAuthorization<any, any, any>,
+> = InternalAuthorizationCallback<AllowModifier, AuthRuleType, 'resource'>;
+
+export type CustomOperationAuthorizationCallback<
+  AuthRuleType extends SchemaAuthorization<any, any, any>,
+> = InternalAuthorizationCallback<
+  AllowModifierForCustomOperation,
+  AuthRuleType
+>;
+
+export type AuthorizationCallbackMapping = {
+  customOperation: CustomOperationAuthorizationCallback<any>;
+  modelField: ModelFieldAuthorizationCallback<any>;
+  modelRelationship: SharedAuthorizationCallback<any>;
+  modelType: ModelTypeAuthorizationCallback<any>;
+  ref: SharedAuthorizationCallback<any>;
+  schema: SchemaAuthorizationCallback<any>;
+};
+
+export type AuthorizationCallback<
+  K extends keyof AuthorizationCallbackMapping,
+> = (
+  ...args: Parameters<AuthorizationCallbackMapping[K]>
+) => ReturnType<AuthorizationCallbackMapping[K]>;
+
+/**
+ * Define an authorization callback that can be reused for multiple authorization calls
+ * across the schema definition.
+ * @typeParam AuthorizationType - The type of Authorization callback being built
+ * 
+ * @example
+ * const authCallback = authorizationBuilder((allow) => [
+ *   allow.groups(["example"]).to(["read"]),
+ * ]);
+ * 
+ * const schema = a.schema({
+ *   Post: a.model({
+ *     id: a.id(),
+ *     title: a.string(),
+ *     protectedField: a.string().authorization(authCallback),
+ *     content: a.string(),
+ *   }).authorization(authCallback),
+ * }).authorization(authCallback); 
+ * 
+ * @param authorizationCallback 
+ * @returns The reusable authorization callback
+ */
+export function authorizationBuilder<
+  AuthorizationType extends keyof AuthorizationCallbackMapping = 'modelType',
+>(callback: AuthorizationCallback<AuthorizationType>): AuthorizationCallback<AuthorizationType> {
+  return callback;
+}
