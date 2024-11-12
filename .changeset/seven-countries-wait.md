@@ -2,4 +2,4 @@
 "@aws-amplify/data-schema": patch
 ---
 
-refactor conversation graphql supporting types
+Add associatedUserMessageId to ConversationMessage. Refactor conversation graphql supporting types.

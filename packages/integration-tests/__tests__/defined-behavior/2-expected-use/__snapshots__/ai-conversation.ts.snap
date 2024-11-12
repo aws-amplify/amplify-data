@@ -399,6 +399,7 @@ enum ConversationParticipantRole {
 interface ConversationMessage {
   id: ID!
   conversationId: ID!
+  associatedUserMessageId: ID
   role: ConversationParticipantRole
   content: [ContentBlock]
   aiContext: AWSJSON
@@ -449,7 +450,6 @@ input ToolResultBlockInput {
 type DocumentBlockSource {
   bytes: String
 }
-
 
 type DocumentBlock {
   format: String!

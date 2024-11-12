@@ -1,5 +1,5 @@
-export const CONVERSATION_SCHEMA_GRAPHQL_TYPES = /* GraphQL */ `
-enum ConversationParticipantRole {
+export const CONVERSATION_SCHEMA_GRAPHQL_TYPES =
+/* GraphQL */ `enum ConversationParticipantRole {
   user
   assistant
 }
@@ -7,6 +7,7 @@ enum ConversationParticipantRole {
 interface ConversationMessage {
   id: ID!
   conversationId: ID!
+  associatedUserMessageId: ID
   role: ConversationParticipantRole
   content: [ContentBlock]
   aiContext: AWSJSON
@@ -33,6 +34,12 @@ input ImageBlockSourceInput {
 input ImageBlockInput {
   format: String!
   source: ImageBlockSourceInput!
+}
+
+input ToolUseBlockInput {
+  toolUseId: String!
+  name: String!
+  input: AWSJSON!
 }
 
 input ToolResultContentBlockInput {
@@ -65,12 +72,6 @@ type ImageBlock {
 
 type ImageBlockSource {
   bytes: String
-}
-
-input ToolUseBlockInput {
-  toolUseId: String!
-  name: String!
-  input: AWSJSON!
 }
 
 type ToolUseBlock {
