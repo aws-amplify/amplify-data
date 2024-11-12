@@ -16,13 +16,15 @@ const input = {
 
 bench('schema with conversation', () => {
   a.schema({
-    Conversation: a.conversation(input),
+    Conversation: a.conversation(input)
+      .authorization((allow) => allow.owner()),
   });
 }).types([496, 'instantiations']);
 
 bench('schema with conversation and client types', () => {
   const s = a.schema({
-    Conversation: a.conversation(input),
+    Conversation: a.conversation(input)
+      .authorization((allow) => allow.owner()),
   });
 
   type _ = ClientSchema<typeof s>;
@@ -30,7 +32,8 @@ bench('schema with conversation and client types', () => {
 
 bench('schema with conversation and model', () => {
   a.schema({
-    Conversation: a.conversation(input),
+    Conversation: a.conversation(input)
+      .authorization((allow) => allow.owner()),
     Post: a.model({
       title: a.string().required(),
     }),
@@ -39,7 +42,8 @@ bench('schema with conversation and model', () => {
 
 bench('schema with conversation, model and client types', () => {
   const s = a.schema({
-    Conversation: a.conversation(input),
+    Conversation: a.conversation(input)
+      .authorization((allow) => allow.owner()),
     Post: a.model({
       title: a.string().required(),
       description: a.string(),

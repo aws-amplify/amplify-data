@@ -1,17 +1,18 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
+import { AiModel } from '@aws-amplify/data-schema-types';
 import type { Subscription } from 'rxjs';
+import { allowForConversations, AllowModifierForConversations, Authorization } from '../Authorization';
+import type { RefType } from '../RefType';
 import type { ListReturnValue, SingularReturnValue } from '../runtime/client';
 import { type Brand, brand } from '../util';
-import type { RefType } from '../RefType';
 import { InferenceConfiguration } from './ModelType';
 import {
   ConversationMessageContent,
   ConversationSendMessageInputContent,
 } from './types/ConversationMessageContent';
 import { ToolConfiguration } from './types/ToolConfiguration';
-import { AiModel } from '@aws-amplify/data-schema-types';
 import { ConversationStreamErrorEvent, ConversationStreamEvent } from './types/ConversationStreamEvent';
 
 export const brandName = 'conversationCustomOperation';
@@ -166,14 +167,41 @@ export interface ConversationInput {
   handler?: DefineConversationHandlerFunction;
 }
 
-export interface InternalConversationType
-  extends ConversationType,
-    ConversationInput {}
+export type InternalConversationType = ConversationType
+  & ConversationInput
+  & { data: ConversationData }
+  & Brand<typeof brandName>;
 
-export interface ConversationType extends Brand<typeof brandName> {}
+type ConversationData = {
+  authorization: Authorization<any, any, any>[];
+}
+
+export interface ConversationType extends Brand<typeof brandName> {
+  authorization(
+    callback: (allow: AllowModifierForConversations) => Authorization<any, any, any>,
+  ): ConversationType;
+}
 
 function _conversation(input: ConversationInput): ConversationType {
-  return { ...brand(brandName), ...input };
+  const data: ConversationData = {
+    authorization: [],
+  };
+  const builder = {
+    authorization<AuthRuleType extends Authorization<any, any, any>>(
+      callback: (allow: AllowModifierForConversations) => AuthRuleType | AuthRuleType[],
+    ) {
+      const rules = callback(allowForConversations);
+      data.authorization = Array.isArray(rules) ? rules : [rules];
+
+      return this;
+    },
+  };
+  return {
+    ...brand(brandName),
+    ...input,
+    ...builder,
+    data,
+  } as InternalConversationType;
 }
 
 /**

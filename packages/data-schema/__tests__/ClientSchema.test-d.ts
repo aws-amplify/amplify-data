@@ -561,3 +561,14 @@ describe('SQL Schema', () => {
     type testPostStatus = Expect<Equal<ActualPostStatus, ExpectedPostStatus>>;
   });
 });
+
+describe('Conversation routes', () => {
+  test('a.conversation() with invalid strategy fails', () => {
+    a.conversation({
+      aiModel: a.ai.model('Claude 3 Haiku'),
+      systemPrompt: 'Hello, world!',
+      // @ts-expect-error invalid strategy
+      authorization: (allow) => allow.publicApiKey(),
+    });
+  });
+});
