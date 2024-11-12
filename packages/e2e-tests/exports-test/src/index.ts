@@ -1,4 +1,5 @@
 import { a, defineFunction } from '@aws-amplify/backend';
+import { configure } from '@aws-amplify/data-schema/internals';
 
 const defFunc = defineFunction({
   entry: './handlers/test-handler.ts',
@@ -33,6 +34,32 @@ export function buildDefaultSchema() {
       })
       .authorization((allow) => [allow.guest()]),
   });
+}
+
+const fakeSecret = () => ({}) as any;
+const datasourceConfigMySQL = {
+  engine: 'mysql',
+  connectionUri: fakeSecret(),
+} as const;
+
+export function buildCombineSchema() {
+  const schemaA = a.schema({
+    Todo: a
+      .model({
+        content: a.string(),
+      })
+      .authorization((allow) => [allow.guest()]),
+  });
+  const sqlSchema = configure({ database: datasourceConfigMySQL }).schema({
+    post: a
+      .model({
+        id: a.string().required(),
+        title: a.string(),
+        author: a.string(),
+      })
+      .identifier(['id']),
+  });
+  return a.combine([schemaA, sqlSchema])
 }
 
 export function buildComplicatedSchema() {

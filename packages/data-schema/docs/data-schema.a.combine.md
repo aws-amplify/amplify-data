@@ -49,7 +49,7 @@ The schemas to combine into a single API
 </tbody></table>
 **Returns:**
 
-CombinedModelSchema&lt;Schema&gt;
+[CombinedModelSchema](./data-schema.combinedmodelschema.md)<!-- -->&lt;Schema&gt;
 
 An API and data model definition to be deployed with Amplify (Gen 2) experience (`processSchema(...)`<!-- -->) or with the Amplify Data CDK construct (`@aws-amplify/data-construct`<!-- -->)
 

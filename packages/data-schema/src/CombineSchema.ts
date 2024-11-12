@@ -11,6 +11,11 @@ const CombinedSchemaBrandName = 'CombinedSchema';
 export const combinedSchemaBrand = brand(CombinedSchemaBrandName);
 export type CombinedSchemaBrand = Brand<typeof CombinedSchemaBrandName>;
 
+/**
+ * CombinedModel schema definition interface
+ *
+ * @param Schemas - The schemas to combine into a single API
+ */
 export type CombinedModelSchema<Schemas extends GenericModelSchema<any>[]> =
   CombinedSchemaBrand & { schemas: [...Schemas] };
 
