@@ -1,5 +1,11 @@
 # @aws-amplify/data-schema
 
+## 1.13.1
+
+### Patch Changes
+
+- 34b4fef: make ConversationMessageStreamPart.contentBlockIndex optional for error events
+
 ## 1.13.0
 
 ### Minor Changes
