@@ -144,9 +144,27 @@ export interface Conversation {
 }
 
 // schema definition input
-export interface ToolDefinition {
-  query: RefType<any>;
+interface ToolDefinitionBase {
+  name: string;
   description: string;
+}
+
+interface ModelToolDefinition extends ToolDefinitionBase {
+  model: RefType<any>;
+  operation: 'list';
+  query?: never;
+}
+
+interface QueryToolDefinition extends ToolDefinitionBase {
+  query: RefType<any>;
+  model?: never;
+  operation?: never;
+}
+
+export type ToolDefinition = ModelToolDefinition | QueryToolDefinition;
+
+export function dataTool(input: ToolDefinition): ToolDefinition {
+  return input;
 }
 
 // Type that is compatible with ConversationHandlerFunctionFactory
