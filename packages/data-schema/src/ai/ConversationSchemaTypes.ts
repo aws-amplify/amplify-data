@@ -235,7 +235,7 @@ const ConversationMessageStreamEvent = `type ConversationMessageStreamPart @aws_
   owner: String
   conversationId: ID!
   associatedUserMessageId: ID!
-  contentBlockIndex: Int!
+  contentBlockIndex: Int
   contentBlockText: String
   contentBlockDeltaIndex: Int
   contentBlockToolUse: ToolUseBlock

@@ -214,7 +214,7 @@ type ConversationMessageStreamPart @aws_cognito_user_pools {
   owner: String
   conversationId: ID!
   associatedUserMessageId: ID!
-  contentBlockIndex: Int!
+  contentBlockIndex: Int
   contentBlockText: String
   contentBlockDeltaIndex: Int
   contentBlockToolUse: ToolUseBlock
