@@ -121,13 +121,13 @@ export type EligibleIdFields<Table extends Nested<TableDefinition>> = {
     : never]: DeNested<Table>['fields'][K];
 };
 
-type ModelIdentifierDefinition<M, T extends string[]> = {
+export type ModelIdentifierDefinition<M, T extends string[]> = {
   pk: PK<M, T>;
   sk: SK<M, T>;
   compositeSk: 'wip';
 };
 
-type ExtractPKandSKFieldNames<T extends string[]> = T extends [
+export type ExtractPKandSKFieldNames<T extends string[]> = T extends [
   infer First,
   ...infer Rest,
 ]
@@ -137,12 +137,12 @@ type ExtractPKandSKFieldNames<T extends string[]> = T extends [
     }
   : never;
 
-type PK<_M, T extends string[]> = Record<
+export type PK<_M, T extends string[]> = Record<
   ExtractPKandSKFieldNames<T>['pk'],
   string
 >;
 
-type SK<_M, T extends string[]> = Record<
+export type SK<_M, T extends string[]> = Record<
   ExtractPKandSKFieldNames<T>['sk'][number],
   string
 >;
@@ -161,12 +161,15 @@ type SK<_M, T extends string[]> = Record<
  * @param k
  * @returns
  */
-function omit<O extends object, K extends string>(o: O, k: K): Omit<O, K> {
+export function omit<O extends object, K extends string>(
+  o: O,
+  k: K,
+): Omit<O, K> {
   const { [k]: _omitted, ...oWithKOmitted } = o;
   return oWithKOmitted;
 }
 
-function array<const Self extends Nested<object>>(
+export function array<const Self extends Nested<object>>(
   this: Self,
 ): SetInternalKey<Self, 'isArray', true, 'array'> {
   return omit(
@@ -181,7 +184,7 @@ function array<const Self extends Nested<object>>(
   ) as any;
 }
 
-function required<const Self extends Nested<object>>(
+export function required<const Self extends Nested<object>>(
   this: Self,
 ): SetInternalKey<Self, 'isRequired', true, 'required'> {
   return omit(
@@ -196,7 +199,7 @@ function required<const Self extends Nested<object>>(
   ) as any;
 }
 
-function identifier<
+export function identifier<
   const Self extends Nested<TableDefinition>,
   const Fields extends (keyof EligibleIdFields<Self>)[],
 >(
@@ -215,7 +218,7 @@ function identifier<
   ) as any;
 }
 
-function field<const TypeName extends string>(
+export function field<const TypeName extends string>(
   typeName: TypeName,
   typeArgs?: string,
 ): Nested<SetKey<FieldDefinition, 'typeName', TypeName>> & {
@@ -235,7 +238,7 @@ function field<const TypeName extends string>(
   };
 }
 
-function toAPIModel<const T extends Nested<TableDefinition>>(
+export function toAPIModel<const T extends Nested<TableDefinition>>(
   this: T,
 ): ModelType<
   {
@@ -259,7 +262,7 @@ function toAPIModel<const T extends Nested<TableDefinition>>(
     .identifier(denested(this).identifier as any) as any;
 }
 
-function convertSqlFieldToApiField<const T extends FieldDefinition>(
+export function convertSqlFieldToApiField<const T extends FieldDefinition>(
   field: T,
 ): ApiFieldType<T> {
   const modelFieldBuilder = (apiBuilderMap as any)[field.typeName];
@@ -276,7 +279,7 @@ function convertSqlFieldToApiField<const T extends FieldDefinition>(
   return modelField;
 }
 
-function transformTables(tables: SchemaDefinition['tables']) {
+export function transformTables(tables: SchemaDefinition['tables']) {
   return Object.entries(tables).map(([tableName, tableDef]) => {
     return {
       tableName,
@@ -286,7 +289,7 @@ function transformTables(tables: SchemaDefinition['tables']) {
   });
 }
 
-function transformColumns(table: TableDefinition) {
+export function transformColumns(table: TableDefinition) {
   return Object.entries(table.fields).map(([fieldName, fieldDef]) => {
     const internalDef = denested(fieldDef);
     return {

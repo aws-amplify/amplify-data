@@ -18,3 +18,5 @@ export type {
   ModelRelationshipTypeArgFactory,
 } from './ModelRelationshipField';
 export type { EnumType } from './EnumType';
+
+export type * from './sql/index';
