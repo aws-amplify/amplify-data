@@ -30,6 +30,106 @@ Model relationship types
 </td></tr>
 </tbody></table>
 
+## Functions
+
+<table><thead><tr><th>
+
+Function
+
+
+</th><th>
+
+Description
+
+
+</th></tr></thead>
+<tbody><tr><td>
+
+[array(this)](./data-schema.array.md)
+
+
+</td><td>
+
+
+</td></tr>
+<tr><td>
+
+[convertSqlFieldToApiField(field)](./data-schema.convertsqlfieldtoapifield.md)
+
+
+</td><td>
+
+
+</td></tr>
+<tr><td>
+
+[field(typeName, typeArgs)](./data-schema.field.md)
+
+
+</td><td>
+
+
+</td></tr>
+<tr><td>
+
+[identifier(this, identifier)](./data-schema.identifier.md)
+
+
+</td><td>
+
+
+</td></tr>
+<tr><td>
+
+[omit(o, k)](./data-schema.omit.md)
+
+
+</td><td>
+
+Totally forgot we could get TypeScript to infer omitted fields with some clever destructuring. Would some sneakiness like this in the builders be better or worse?
+
+Perhaps better in the sense that we'd know with high certainty that the types align with the runtime.
+
+
+</td></tr>
+<tr><td>
+
+[required(this)](./data-schema.required.md)
+
+
+</td><td>
+
+
+</td></tr>
+<tr><td>
+
+[toAPIModel(this)](./data-schema.toapimodel.md)
+
+
+</td><td>
+
+
+</td></tr>
+<tr><td>
+
+[transformColumns(table)](./data-schema.transformcolumns.md)
+
+
+</td><td>
+
+
+</td></tr>
+<tr><td>
+
+[transformTables(tables)](./data-schema.transformtables.md)
+
+
+</td><td>
+
+
+</td></tr>
+</tbody></table>
+
 ## Interfaces
 
 <table><thead><tr><th>
@@ -80,6 +180,39 @@ Description
 </td></tr>
 </tbody></table>
 
+## Variables
+
+<table><thead><tr><th>
+
+Variable
+
+
+</th><th>
+
+Description
+
+
+</th></tr></thead>
+<tbody><tr><td>
+
+[apiBuilderMap](./data-schema.apibuildermap.md)
+
+
+</td><td>
+
+
+</td></tr>
+<tr><td>
+
+[sql](./data-schema.sql.md)
+
+
+</td><td>
+
+
+</td></tr>
+</tbody></table>
+
 ## Type Aliases
 
 <table><thead><tr><th>
@@ -94,6 +227,33 @@ Description
 
 </th></tr></thead>
 <tbody><tr><td>
+
+[ApiFieldType](./data-schema.apifieldtype.md)
+
+
+</td><td>
+
+
+</td></tr>
+<tr><td>
+
+[ApiModelFields](./data-schema.apimodelfields.md)
+
+
+</td><td>
+
+
+</td></tr>
+<tr><td>
+
+[Arrayatize](./data-schema.arrayatize.md)
+
+
+</td><td>
+
+
+</td></tr>
+<tr><td>
 
 [Authorization](./data-schema.authorization.md)
 
@@ -137,6 +297,51 @@ Custom type container
 </td></tr>
 <tr><td>
 
+[DeNested](./data-schema.denested.md)
+
+
+</td><td>
+
+
+</td></tr>
+<tr><td>
+
+[EligibleIdFields](./data-schema.eligibleidfields.md)
+
+
+</td><td>
+
+
+</td></tr>
+<tr><td>
+
+[ExtractPKandSKFieldNames](./data-schema.extractpkandskfieldnames.md)
+
+
+</td><td>
+
+
+</td></tr>
+<tr><td>
+
+[FieldDefinition](./data-schema.fielddefinition.md)
+
+
+</td><td>
+
+
+</td></tr>
+<tr><td>
+
+[FinalFieldType](./data-schema.finalfieldtype.md)
+
+
+</td><td>
+
+
+</td></tr>
+<tr><td>
+
 [Json](./data-schema.json.md)
 
 
@@ -165,6 +370,15 @@ Model default identifier
 </td><td>
 
 Public API for the chainable builder methods exposed by Model Field. The type is narrowing e.g., after calling .array() it will be omitted from intellisense suggestions
+
+
+</td></tr>
+<tr><td>
+
+[ModelIdentifierDefinition](./data-schema.modelidentifierdefinition.md)
+
+
+</td><td>
 
 
 </td></tr>
@@ -214,6 +428,15 @@ Model type definition interface
 </td></tr>
 <tr><td>
 
+[Nested](./data-schema.nested.md)
+
+
+</td><td>
+
+
+</td></tr>
+<tr><td>
+
 [Nullable](./data-schema.nullable.md)
 
 
@@ -225,12 +448,84 @@ Field type arg mutators
 </td></tr>
 <tr><td>
 
+[PK](./data-schema.pk.md)
+
+
+</td><td>
+
+
+</td></tr>
+<tr><td>
+
+[PrimitiveType](./data-schema.primitivetype.md)
+
+
+</td><td>
+
+
+</td></tr>
+<tr><td>
+
+[PrimitiveTypes](./data-schema.primitivetypes.md)
+
+
+</td><td>
+
+
+</td></tr>
+<tr><td>
+
 [RefType](./data-schema.reftype.md)
 
 
 </td><td>
 
 Reference type definition interface
+
+
+</td></tr>
+<tr><td>
+
+[SchemaDefinition](./data-schema.schemadefinition.md)
+
+
+</td><td>
+
+
+</td></tr>
+<tr><td>
+
+[SetInternalKey](./data-schema.setinternalkey.md)
+
+
+</td><td>
+
+
+</td></tr>
+<tr><td>
+
+[SetKey](./data-schema.setkey.md)
+
+
+</td><td>
+
+
+</td></tr>
+<tr><td>
+
+[SK](./data-schema.sk.md)
+
+
+</td><td>
+
+
+</td></tr>
+<tr><td>
+
+[TableDefinition](./data-schema.tabledefinition.md)
+
+
+</td><td>
 
 
 </td></tr>
