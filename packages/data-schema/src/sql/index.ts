@@ -5,12 +5,12 @@ import { RefType } from '../RefType';
 import { KindaPretty as _KP } from '../util';
 
 // #region builder types
-type SetKey<T, Key, Value> = {
+export type SetKey<T, Key, Value> = {
   [K in keyof T]: K extends Key ? Value : T[K];
 };
 
-type SetInternalKey<
-  T extends { [internal]: any },
+export type SetInternalKey<
+  T extends Nested<any>,
   Key,
   Value,
   OmitKey extends string = never,
@@ -23,13 +23,27 @@ type SetInternalKey<
 const internal = Symbol('amplifyData');
 type internal = typeof internal;
 
+export type Nested<T> = { [internal]: T };
+
+const nested = <T>(data: T): Nested<T> => {
+  return {
+    [internal]: data,
+  };
+};
+
+export type DeNested<T extends Nested<any>> = T[internal];
+
+const denested = <T extends Nested<any>>(nested: T): DeNested<T> => {
+  return nested[internal];
+};
+
 export type SchemaDefinition = {
-  tables: Record<string, { [internal]: TableDefinition }>;
+  tables: Record<string, Nested<TableDefinition>>;
 };
 
 export type TableDefinition = {
   identifier: string[];
-  fields: Record<string, { [internal]: FieldDefinition }>;
+  fields: Record<string, Nested<FieldDefinition>>;
 };
 
 export type FieldDefinition = {
@@ -54,15 +68,15 @@ export type PrimitiveTypes = {
   boolean: boolean;
 };
 
-export const DatabaseToApiTypes = {
-  varchar: 'string',
-  text: 'string',
-  smallint: 'number',
-  int: 'number',
-  bigint: 'number',
-  real: 'number',
-  'double precision': 'number',
-  boolean: 'boolean',
+export const apiBuilderMap = {
+  smallint: a.integer,
+  int: a.integer,
+  bigint: a.integer,
+  real: a.float,
+  'double precision': a.float,
+  varchar: a.string,
+  text: a.string,
+  boolean: a.boolean,
 } as const;
 
 export type PrimitiveType<TypeName> = TypeName extends keyof PrimitiveTypes
@@ -90,20 +104,21 @@ export type FinalFieldType<Def extends FieldDefinition> =
       }>
     : Arrayatize<Requiredtize<PrimitiveType<Def['typeName']>, Def>, Def>;
 
-export type ApiModelFields<
-  T extends Record<string, { [internal]: FieldDefinition }>,
-> = {
-  -readonly [K in keyof T]: ApiFieldType<T[K][internal]>;
-};
+export type ApiModelFields<T extends Record<string, Nested<FieldDefinition>>> =
+  {
+    -readonly [K in keyof T]: ApiFieldType<DeNested<T[K]>>;
+  };
 
 export type ApiFieldType<T extends FieldDefinition> = ModelField<
   FinalFieldType<T>
 >;
 
-export type EligibleIdFields<Table extends { [internal]: TableDefinition }> = {
-  [K in keyof Table[internal]['fields'] as Table[internal]['fields'][K][internal]['isRequired'] extends true
+export type EligibleIdFields<Table extends Nested<TableDefinition>> = {
+  [K in keyof DeNested<Table>['fields'] as DeNested<
+    DeNested<Table>['fields'][K]
+  >['isRequired'] extends true
     ? K
-    : never]: Table[internal]['fields'][K];
+    : never]: DeNested<Table>['fields'][K];
 };
 
 type ModelIdentifierDefinition<M, T extends string[]> = {
@@ -151,38 +166,38 @@ function omit<O extends object, K extends string>(o: O, k: K): Omit<O, K> {
   return oWithKOmitted;
 }
 
-function array<const Self extends { [internal]: object }>(
+function array<const Self extends Nested<object>>(
   this: Self,
 ): SetInternalKey<Self, 'isArray', true, 'array'> {
   return omit(
     {
       ...this,
-      [internal]: {
-        ...this[internal],
+      ...nested({
+        ...denested(this),
         isArray: true,
-      },
+      }),
     },
     'array',
   ) as any;
 }
 
-function required<const Self extends { [internal]: object }>(
+function required<const Self extends Nested<object>>(
   this: Self,
 ): SetInternalKey<Self, 'isRequired', true, 'required'> {
   return omit(
     {
       ...this,
-      [internal]: {
-        ...this[internal],
+      ...nested({
+        ...denested(this),
         isRequired: true,
-      },
+      }),
     },
     'required',
   ) as any;
 }
 
 function identifier<
-  const Self extends { [internal]: TableDefinition },
+  const Self extends Nested<TableDefinition>,
   const Fields extends (keyof EligibleIdFields<Self>)[],
 >(
   this: Self,
@@ -191,10 +206,10 @@ function identifier<
   return omit(
     {
       ...this,
-      [internal]: {
-        ...this[internal],
+      ...nested({
+        ...denested(this),
         identifier,
-      },
+      }),
     },
     'identifier',
   ) as any;
@@ -203,62 +218,57 @@ function identifier<
 function field<const TypeName extends string>(
   typeName: TypeName,
   typeArgs?: string,
-) {
+): Nested<SetKey<FieldDefinition, 'typeName', TypeName>> & {
+  array: typeof array;
+  required: typeof required;
+} {
   return {
-    [internal]: {
+    ...nested({
       typeName,
       typeArgs,
       isRef: false,
       isArray: false,
       isRequired: false,
-    } as const,
+    }),
     array,
     required,
-  } as const;
+  };
 }
 
-function toAPIModel<const T extends { [internal]: TableDefinition }>(
+function toAPIModel<const T extends Nested<TableDefinition>>(
   this: T,
 ): ModelType<
   {
-    fields: ApiModelFields<T[internal]['fields']>;
+    fields: ApiModelFields<DeNested<T>['fields']>;
     authorization: [];
     disabledOperations: [];
     secondaryIndexes: [];
     identifier: ModelIdentifierDefinition<
-      ApiModelFields<T[internal]['fields']>,
-      T[internal]['identifier']
+      ApiModelFields<DeNested<T>['fields']>,
+      DeNested<T>['identifier']
     >;
   },
   'identifier'
 > {
   const fields = {} as any;
-  for (const [fieldName, fieldDef] of Object.entries(this[internal].fields)) {
-    fields[fieldName] = convertSqlFieldToApiField(fieldDef[internal]);
+  for (const [fieldName, fieldDef] of Object.entries(denested(this).fields)) {
+    fields[fieldName] = convertSqlFieldToApiField(denested(fieldDef));
   }
   return a
-    .model(fields as ApiModelFields<T[internal]['fields']>)
-    .identifier(this[internal].identifier as any) as any;
+    .model(fields as ApiModelFields<DeNested<T>['fields']>)
+    .identifier(denested(this).identifier as any) as any;
 }
 
 function convertSqlFieldToApiField<const T extends FieldDefinition>(
   field: T,
 ): ApiFieldType<T> {
-  const modelFieldBuilder = {
-    smallint: a.integer,
-    int: a.integer,
-    bigint: a.integer,
-    real: a.float,
-    'double precision': a.float,
-    varchar: a.string,
-    text: a.string,
-  }[field.typeName];
+  const modelFieldBuilder = (apiBuilderMap as any)[field.typeName];
 
   if (!modelFieldBuilder) {
     throw new Error(`Unknown field type ${field.typeName}.`);
   }
 
-  let modelField = modelFieldBuilder() as any;
+  let modelField = modelFieldBuilder();
 
   if (field.isArray) modelField = modelField.array();
   if (field.isRequired) modelField = modelField.required();
@@ -270,20 +280,21 @@ function transformTables(tables: SchemaDefinition['tables']) {
   return Object.entries(tables).map(([tableName, tableDef]) => {
     return {
       tableName,
-      columns: transformColumns(tableDef[internal]),
-      primaryKey: tableDef[internal].identifier,
+      columns: transformColumns(denested(tableDef)),
+      primaryKey: denested(tableDef).identifier,
     };
   });
 }
 
 function transformColumns(table: TableDefinition) {
   return Object.entries(table.fields).map(([fieldName, fieldDef]) => {
+    const internalDef = denested(fieldDef);
     return {
       name: fieldName,
-      type: fieldDef[internal].typeArgs
-        ? `${fieldDef[internal].typeName}(${fieldDef[internal].typeArgs})`
-        : fieldDef[internal].typeName,
-      isNullable: !fieldDef[internal].isRequired,
+      type: internalDef.typeArgs
+        ? `${internalDef.typeName}(${internalDef.typeArgs})`
+        : internalDef.typeName,
+      isNullable: !internalDef.isRequired,
     };
   });
 }
@@ -299,9 +310,17 @@ export const sql = {
       },
     };
   },
-  table<const T extends TableDefinition['fields']>(fields: T) {
+  table<const T extends TableDefinition['fields']>(
+    fields: T,
+  ): Nested<{
+    fields: T;
+    identifier: ['id'];
+  }> & {
+    identifier: typeof identifier;
+    toAPIModel: typeof toAPIModel;
+  } {
     return {
-      [internal]: { fields, identifier: ['id'] },
+      ...nested({ fields, identifier: ['id'] }),
       identifier,
       toAPIModel,
     };

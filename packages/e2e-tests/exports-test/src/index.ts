@@ -36,8 +36,17 @@ export function buildDefaultSchema() {
 }
 
 export function buildComplicatedSchema() {
+  const sqlSchema = a.sql.schema({
+    tables: {
+      something: a.sql.table({
+        field: a.sql.varchar(),
+      }),
+    },
+  });
+
   return a
     .schema({
+      SqlTable: sqlSchema.tables.something.toAPIModel(),
       PrivacySetting: a.enum(['PRIVATE', 'FRIENDS_ONLY', 'PUBLIC']),
       FulfillmentStatus: a.enum(['PENDING', 'SHIPPED', 'DELIVERED']),
       Company: a
