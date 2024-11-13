@@ -45,7 +45,7 @@ export const createConversationField = (
 
     const conversationDirective = `@conversation(${argsString}${authString}${handlerString}${toolsString})`;
 
-  const field = `${typeName}(conversationId: ID!, content: [ContentBlockInput], aiContext: AWSJSON, toolConfiguration: ToolConfigurationInput): ConversationMessage ${conversationDirective} @aws_cognito_user_pools`;
+  const field = `${typeName}(conversationId: ID!, content: [AmplifyAIContentBlockInput], aiContext: AWSJSON, toolConfiguration: AmplifyAIToolConfigurationInput): AmplifyAIConversationMessage ${conversationDirective} @aws_cognito_user_pools`;
   return { field, functionHandler };
 };
 
