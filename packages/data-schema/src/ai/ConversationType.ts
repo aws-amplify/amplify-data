@@ -151,14 +151,14 @@ interface ToolDefinitionBase {
 
 interface ModelToolDefinition extends ToolDefinitionBase {
   model: RefType<any>;
-  operation: 'list';
+  modelOperation: 'list';
   query?: never;
 }
 
 interface QueryToolDefinition extends ToolDefinitionBase {
   query: RefType<any>;
   model?: never;
-  operation?: never;
+  modelOperation?: never;
 }
 
 export type ToolDefinition = ModelToolDefinition | QueryToolDefinition;

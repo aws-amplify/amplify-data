@@ -821,7 +821,7 @@ describe('AI Conversation Routes', () => {
               name: 'myTool',
               description: 'does a thing',
               model: a.ref('MyModel'),
-              operation: 'list',
+              modelOperation: 'list',
             }),
           ],
         })
@@ -913,7 +913,7 @@ describe('AI Conversation Routes', () => {
               name: 'myTool',
               description: 'does a thing',
               model: a.ref('MyModel'),
-              operation: 'list',
+              modelOperation: 'list',
             }),
             a.ai.dataTool({
               name: 'myTool2',
@@ -953,7 +953,7 @@ describe('AI Conversation Routes', () => {
                 name: 'abc-123',
                 description: 'does a thing',
                 model: a.ref('MyModel'),
-                operation: 'list',
+                modelOperation: 'list',
               }),
             ],
           })
@@ -977,7 +977,7 @@ describe('AI Conversation Routes', () => {
                 description: 'does a thing',
                 query: a.ref('myToolQuery'),
                 model: a.ref('MyModel'),
-                operation: 'list',
+                modelOperation: 'list',
               }),
             ],
           })

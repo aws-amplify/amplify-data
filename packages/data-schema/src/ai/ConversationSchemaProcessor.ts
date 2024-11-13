@@ -101,8 +101,8 @@ const extractToolDefinition = (tool: ToolDefinition): string => {
   if ('model' in tool) {
     if (!isRef(tool.model))
       throw new Error(`Unexpected model was found in tool ${tool}.`);
-    const { model, operation } = tool;
-    return `modelName: "${model.data.link}", modelOperation: ${operation}`;
+    const { model, modelOperation } = tool;
+    return `modelName: "${model.data.link}", modelOperation: ${modelOperation}`;
   }
 
   if (!isRef(tool.query))
