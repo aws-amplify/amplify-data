@@ -4,13 +4,13 @@ import { InternalRef } from '../RefType';
 import { capitalize } from '../runtime/utils';
 import type {
   InternalConversationType,
-  ToolDefinition,
+  DataToolDefinition,
 } from './ConversationType';
 
 export const createConversationField = (
   typeDef: InternalConversationType,
   typeName: string,
-): { field: string, functionHandler: LambdaFunctionDefinition } => {
+): { field: string; functionHandler: LambdaFunctionDefinition } => {
   const { aiModel, systemPrompt, handler, tools } = typeDef;
   const { strategy, provider } = extractAuthorization(typeDef, typeName);
 
@@ -55,28 +55,57 @@ export const createConversationField = (
 const isRef = (query: unknown): query is { data: InternalRef['data'] } =>
   (query as any)?.data?.type === 'ref';
 
-const extractAuthorization = (typeDef: InternalConversationType, typeName: string): { strategy: string, provider: string } => {
+const extractAuthorization = (
+  typeDef: InternalConversationType,
+  typeName: string,
+): { strategy: string; provider: string } => {
   const { authorization } = typeDef.data;
   if (authorization.length === 0) {
-    throw new Error(`Conversation ${typeName} is missing authorization rules. Use .authorization((allow) => allow.owner()) to configure authorization for your conversation route.`);
+    throw new Error(
+      `Conversation ${typeName} is missing authorization rules. Use .authorization((allow) => allow.owner()) to configure authorization for your conversation route.`,
+    );
   }
 
   const { strategy, provider } = accessData(authorization[0]);
   if (strategy !== 'owner' || provider !== 'userPools') {
-    throw new Error(`Conversation ${typeName} must use owner authorization with a user pool provider. Use .authorization((allow) => allow.owner()) to configure authorization for your conversation route.`);
+    throw new Error(
+      `Conversation ${typeName} must use owner authorization with a user pool provider. Use .authorization((allow) => allow.owner()) to configure authorization for your conversation route.`,
+    );
   }
   return { strategy, provider };
 };
 
-const getConversationToolsString = (tools: ToolDefinition[]) =>
+const getConversationToolsString = (tools: DataToolDefinition[]) =>
   tools
     .map((tool) => {
-      const { query, description } = tool;
-      if (!isRef(query)) {
-        throw new Error(`Unexpected query was found in tool ${tool}.`);
+      const { name, description } = tool;
+      // https://docs.aws.amazon.com/bedrock/latest/APIReference/API_runtime_ToolSpecification.html
+      // Pattern: ^[a-zA-Z][a-zA-Z0-9_]*$
+      // Length Constraints: Minimum length of 1. Maximum length of 64.
+      const isValidToolName =
+        /^[a-zA-Z][a-zA-Z0-9_]*$/.test(name) &&
+        name.length >= 1 &&
+        name.length <= 64;
+
+      if (!isValidToolName) {
+        throw new Error(
+          `Tool name must be between 1 and 64 characters, start with a letter, and contain only letters, numbers, and underscores. Found: ${name}`,
+        );
       }
-      // TODO: add validation for query / auth (cup) / etc
-      const queryName = query.data.link;
-      return `{ name: "${queryName}", description: "${description}" }`;
+      const toolDefinition = extractToolDefinition(tool);
+      return `{ name: "${name}", description: "${description}", ${toolDefinition} }`;
     })
     .join(', ');
+
+const extractToolDefinition = (tool: DataToolDefinition): string => {
+  if ('model' in tool) {
+    if (!isRef(tool.model))
+      throw new Error(`Unexpected model was found in tool ${tool}.`);
+    const { model, modelOperation } = tool;
+    return `modelName: "${model.data.link}", modelOperation: ${modelOperation}`;
+  }
+
+  if (!isRef(tool.query))
+    throw new Error(`Unexpected query was found in tool ${tool}.`);
+  return `queryName: "${tool.query.data.link}"`;
+};

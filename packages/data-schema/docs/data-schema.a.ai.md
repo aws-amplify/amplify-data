@@ -9,5 +9,6 @@
 ```typescript
 ai: {
     model: typeof aiModel;
+    dataTool: typeof dataTool;
 }
 ```
