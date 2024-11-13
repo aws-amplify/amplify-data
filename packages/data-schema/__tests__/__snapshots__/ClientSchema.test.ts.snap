@@ -51,6 +51,7 @@ enum ConversationParticipantRole {
 interface ConversationMessage {
   id: ID!
   conversationId: ID!
+  associatedUserMessageId: ID
   role: ConversationParticipantRole
   content: [ContentBlock]
   aiContext: AWSJSON
@@ -101,7 +102,6 @@ input ToolResultBlockInput {
 type DocumentBlockSource {
   bytes: String
 }
-
 
 type DocumentBlock {
   format: String!
@@ -207,6 +207,25 @@ type ToolSpecification {
 
 type ToolInputSchema {
   json: AWSJSON
+}
+
+type ConversationMessageStreamPart @aws_cognito_user_pools {
+  id: ID!
+  owner: String
+  conversationId: ID!
+  associatedUserMessageId: ID!
+  contentBlockIndex: Int
+  contentBlockText: String
+  contentBlockDeltaIndex: Int
+  contentBlockToolUse: ToolUseBlock
+  contentBlockDoneAtIndex: Int
+  stopReason: String
+  errors: [ConversationTurnError]
+}
+
+type ConversationTurnError @aws_cognito_user_pools {
+  message: String!
+  errorType: String!
 }"
 `;
 

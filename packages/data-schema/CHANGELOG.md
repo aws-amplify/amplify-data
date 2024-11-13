@@ -1,5 +1,30 @@
 # @aws-amplify/data-schema
 
+## 1.13.3
+
+### Patch Changes
+
+- 85ab30c: Add associatedUserMessageId to ConversationMessage. Refactor conversation graphql supporting types.
+
+## 1.13.2
+
+### Patch Changes
+
+- 723b301: fix: Add exports for combine schema
+
+## 1.13.1
+
+### Patch Changes
+
+- 34b4fef: make ConversationMessageStreamPart.contentBlockIndex optional for error events
+
+## 1.13.0
+
+### Minor Changes
+
+- 20f30fe: add streaming support for conversation routes
+- 20f30fe: propagate conversation errors through subscription
+
 ## 1.12.2
 
 ### Patch Changes

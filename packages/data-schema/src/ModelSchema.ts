@@ -147,6 +147,12 @@ type RelationshipTemplate = Record<
   ModelRelationshipField<ModelRelationshipFieldParamShape, string, any, any>
 >;
 
+/**
+ * RDSModel schema definition interface
+ *
+ * @param T - The shape of the RDS model schema
+ * @param UsedMethods - The method keys already defined
+ */
 export type RDSModelSchema<
   T extends RDSModelSchemaParamShape,
   UsedMethods extends RDSModelSchemaFunctions = never,

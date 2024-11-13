@@ -54,10 +54,8 @@ import {
   brandName as conversationBrandName,
   type InternalConversationType,
 } from './ai/ConversationType';
-import {
-  conversationTypes,
-  createConversationField,
-} from './ai/ConversationSchemaTypes';
+import { CONVERSATION_SCHEMA_GRAPHQL_TYPES } from './ai/ConversationSchemaGraphQLTypes';
+import { createConversationField } from './ai/ConversationSchemaProcessor';
 
 type ScalarFieldDef = Exclude<InternalField['data'], { fieldType: 'model' }>;
 
@@ -1626,7 +1624,7 @@ const schemaPreprocessor = (
 
   gqlModels.push(...generateCustomOperationTypes(customOperations));
   if (shouldAddConversationTypes) {
-    gqlModels.push(...conversationTypes);
+    gqlModels.push(CONVERSATION_SCHEMA_GRAPHQL_TYPES);
   }
 
   const processedSchema = gqlModels.join('\n\n');
