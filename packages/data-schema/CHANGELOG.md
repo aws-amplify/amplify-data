@@ -1,5 +1,11 @@
 # @aws-amplify/data-schema
 
+## 1.13.3
+
+### Patch Changes
+
+- 85ab30c: Add associatedUserMessageId to ConversationMessage. Refactor conversation graphql supporting types.
+
 ## 1.13.2
 
 ### Patch Changes
