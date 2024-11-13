@@ -6,8 +6,10 @@ import {
 } from 'aws-amplify/data';
 import { Hub, ConsoleLogger } from 'aws-amplify/utils';
 import type { Schema } from './amplify/data/resource';
-import outputs from './amplify_outputs.json';
 import { WebSocket } from 'ws';
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore - outputs is loaded dynamically in GHA; expected undefined locally
+import outputs from './amplify_outputs.json';
 
 // TODO: use imported type from `aws-amplify/data` once it's fixed
 export type Client = ReturnType<typeof generateClient<Schema>>;

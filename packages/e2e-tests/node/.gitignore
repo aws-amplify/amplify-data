@@ -25,3 +25,5 @@ dist-ssr
 
 # amplify
 .amplify
+amplify_outputs.json
+amplify_outputs.base64

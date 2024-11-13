@@ -17,6 +17,7 @@ jobs:
   local-e2e:
     needs:
       - prebuild-ubuntu
+    secrets: inherit
     uses: ./.github/workflows/callable-local-e2e-tests.yml
   e2e:
     needs:
