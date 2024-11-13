@@ -1,5 +1,11 @@
 # integration-tests
 
+## 0.1.2
+
+### Patch Changes
+
+- 723b301: fix: Add exports for combine schema
+
 ## 0.1.1
 
 ### Patch Changes

@@ -115,6 +115,17 @@ Container for authorization schema definition content.
 </td></tr>
 <tr><td>
 
+[CombinedModelSchema](./data-schema.combinedmodelschema.md)
+
+
+</td><td>
+
+CombinedModel schema definition interface
+
+
+</td></tr>
+<tr><td>
+
 [CustomOperation](./data-schema.customoperation.md)
 
 
@@ -220,6 +231,17 @@ Model type definition interface
 </td><td>
 
 Field type arg mutators
+
+
+</td></tr>
+<tr><td>
+
+[RDSModelSchema](./data-schema.rdsmodelschema.md)
+
+
+</td><td>
+
+RDSModel schema definition interface
 
 
 </td></tr>
