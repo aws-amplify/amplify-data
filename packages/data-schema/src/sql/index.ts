@@ -34,6 +34,7 @@ export type TableDefinition = {
 
 export type FieldDefinition = {
   typeName: string;
+  typeArgs: string | undefined | null;
   isArray: boolean;
   isRef: boolean;
   isRequired: boolean;
@@ -45,16 +46,22 @@ export type FieldDefinition = {
 export type PrimitiveTypes = {
   varchar: string;
   text: string;
+  smallint: number;
   int: number;
-  float: number;
+  bigint: number;
+  real: number;
+  'double precision': number;
   boolean: boolean;
 };
 
 export const DatabaseToApiTypes = {
   varchar: 'string',
   text: 'string',
+  smallint: 'number',
   int: 'number',
-  float: 'number',
+  bigint: 'number',
+  real: 'number',
+  'double precision': 'number',
   boolean: 'boolean',
 } as const;
 
@@ -193,10 +200,14 @@ function identifier<
   ) as any;
 }
 
-function field<const TypeName extends string>(typeName: TypeName) {
+function field<const TypeName extends string>(
+  typeName: TypeName,
+  typeArgs?: string,
+) {
   return {
     [internal]: {
       typeName,
+      typeArgs,
       isRef: false,
       isArray: false,
       isRequired: false,
@@ -234,8 +245,11 @@ function convertSqlFieldToApiField<const T extends FieldDefinition>(
   field: T,
 ): ApiFieldType<T> {
   const modelFieldBuilder = {
+    smallint: a.integer,
     int: a.integer,
-    float: a.float,
+    bigint: a.integer,
+    real: a.float,
+    'double precision': a.float,
     varchar: a.string,
     text: a.string,
   }[field.typeName];
@@ -266,8 +280,10 @@ function transformColumns(table: TableDefinition) {
   return Object.entries(table.fields).map(([fieldName, fieldDef]) => {
     return {
       name: fieldName,
-      type: fieldDef[internal].typeName,
-      isNullable: fieldDef[internal].isRequired,
+      type: fieldDef[internal].typeArgs
+        ? `${fieldDef[internal].typeName}(${fieldDef[internal].typeArgs})`
+        : fieldDef[internal].typeName,
+      isNullable: !fieldDef[internal].isRequired,
     };
   });
 }
@@ -290,14 +306,23 @@ export const sql = {
       toAPIModel,
     };
   },
+  smallint() {
+    return field('smallint');
+  },
   int() {
     return field('int');
   },
-  float() {
-    return field('float');
+  bigint() {
+    return field('bigint');
   },
-  varchar() {
-    return field('varchar');
+  real() {
+    return field('real');
+  },
+  double() {
+    return field('double precision');
+  },
+  varchar(size?: number) {
+    return field('varchar', size?.toString());
   },
   text() {
     return field('text');

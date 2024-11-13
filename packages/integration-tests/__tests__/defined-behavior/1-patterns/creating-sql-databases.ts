@@ -23,11 +23,14 @@ const sqlSchema = a.sql.schema({
       city: a.sql.varchar(),
       state: a.sql.varchar(),
       zip: a.sql.varchar(),
+      lat: a.sql.real(),
+      long: a.sql.real(),
     }),
     customer: a.sql
       .table({
         firstName: a.sql.varchar().required(),
         lastName: a.sql.varchar().required(),
+        jobTitle: a.sql.varchar(50),
         bio: a.sql.text(),
         favoriteColors: a.sql.varchar().array(),
       })
@@ -70,27 +73,37 @@ describe('sql resource definitions', () => {
             {
               name: 'number',
               type: 'int',
-              isNullable: true,
+              isNullable: false,
             },
             {
               name: 'street',
               type: 'varchar',
-              isNullable: false,
+              isNullable: true,
             },
             {
               name: 'city',
               type: 'varchar',
-              isNullable: false,
+              isNullable: true,
             },
             {
               name: 'state',
               type: 'varchar',
-              isNullable: false,
+              isNullable: true,
             },
             {
               name: 'zip',
               type: 'varchar',
-              isNullable: false,
+              isNullable: true,
+            },
+            {
+              name: 'lat',
+              type: 'real',
+              isNullable: true,
+            },
+            {
+              name: 'long',
+              type: 'real',
+              isNullable: true,
             },
           ],
           primaryKey: ['id'],
@@ -101,22 +114,27 @@ describe('sql resource definitions', () => {
             {
               name: 'firstName',
               type: 'varchar',
-              isNullable: true,
+              isNullable: false,
             },
             {
               name: 'lastName',
               type: 'varchar',
+              isNullable: false,
+            },
+            {
+              name: 'jobTitle',
+              type: 'varchar(50)',
               isNullable: true,
             },
             {
               name: 'bio',
               type: 'text',
-              isNullable: false,
+              isNullable: true,
             },
             {
               name: 'favoriteColors',
               type: 'varchar',
-              isNullable: false,
+              isNullable: true,
             },
           ],
           primaryKey: ['firstName', 'lastName'],
@@ -139,12 +157,15 @@ describe('sql resource definitions', () => {
         city: String
         state: String
         zip: String
+        lat: Float
+        long: Float
       }
 
       type Customer @model @auth(rules: [{allow: owner, ownerField: "owner"}])
       {
         firstName: String! @primaryKey(sortKeyFields: ["lastName"])
         lastName: String!
+        jobTitle: String
         bio: String
         favoriteColors: [String]
       }
@@ -187,7 +208,7 @@ describe('sql resource definitions', () => {
     expectGraphqlRequestEquals(spy, {
       query: `mutation($input: CreateCustomerInput!) {
         createCustomer(input: $input) {
-          firstName lastName bio favoriteColors createdAt updatedAt owner
+          firstName lastName jobTitle bio favoriteColors createdAt updatedAt owner
         }
       }`,
       variables: {
@@ -226,7 +247,7 @@ describe('sql resource definitions', () => {
     expectGraphqlRequestEquals(spy, {
       query: `query ($firstName: String!, $lastName: String!) {
         getCustomer(firstName: $firstName, lastName: $lastName) {
-          firstName lastName bio favoriteColors createdAt updatedAt owner
+          firstName lastName jobTitle bio favoriteColors createdAt updatedAt owner
         }
       }`,
       variables: {
