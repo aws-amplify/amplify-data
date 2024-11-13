@@ -16,19 +16,13 @@ export function buildMutation() {
     .authorization((allow) => [allow.authenticated()]);
 }
 
-export function buildQueryRequiredInputJsonOutput() {
+export function buildSchemaWithFunctionDataAccess() {
   return a.schema({
-    testQuery: a
-    .query()
-    .arguments({
-      input: a.string().required(),
-    })
-    .returns(a.json())
-    .handler(a.handler.function(defFunc))
+    Todo: a.model({ content: a.string() })
   }).authorization((allow) => [allow.resource(defFunc)]);
 }
 
-export function buildQueryWithSDataAccess() {
+export function buildQueryRequiredInputJsonOutput() {
   return a
     .query()
     .arguments({
