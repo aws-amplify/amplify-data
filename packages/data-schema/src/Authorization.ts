@@ -93,6 +93,9 @@ export type SchemaAuthorization<
   | Authorization<AuthStrategy, AuthField, AuthFieldPlurality>
   | ResourceAuthorization;
 
+/**
+ * Container for representing the authorization of function resources
+ */
 export type ResourceAuthorization = {
   [__data]: ResourceAuthorizationData;
 };

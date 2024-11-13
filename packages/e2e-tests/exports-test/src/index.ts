@@ -17,6 +17,18 @@ export function buildMutation() {
 }
 
 export function buildQueryRequiredInputJsonOutput() {
+  return a.schema({
+    testQuery: a
+    .query()
+    .arguments({
+      input: a.string().required(),
+    })
+    .returns(a.json())
+    .handler(a.handler.function(defFunc))
+  }).authorization((allow) => [allow.resource(defFunc)]);
+}
+
+export function buildQueryWithSDataAccess() {
   return a
     .query()
     .arguments({
