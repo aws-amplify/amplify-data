@@ -1,5 +1,11 @@
 # integration-tests
 
+## 0.1.3
+
+### Patch Changes
+
+- 7d3c2bf: fix: Export ResourceAuthorization to fix related declaration errors
+
 ## 0.1.2
 
 ### Patch Changes

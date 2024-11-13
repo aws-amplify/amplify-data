@@ -1,5 +1,11 @@
 # @aws-amplify/data-schema
 
+## 1.13.4
+
+### Patch Changes
+
+- 7d3c2bf: fix: Export ResourceAuthorization to fix related declaration errors
+
 ## 1.13.3
 
 ### Patch Changes
