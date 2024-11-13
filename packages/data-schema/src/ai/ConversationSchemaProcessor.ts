@@ -4,7 +4,7 @@ import { InternalRef } from '../RefType';
 import { capitalize } from '../runtime/utils';
 import type {
   InternalConversationType,
-  ToolDefinition,
+  DataToolDefinition,
 } from './ConversationType';
 
 export const createConversationField = (
@@ -75,7 +75,7 @@ const extractAuthorization = (
   return { strategy, provider };
 };
 
-const getConversationToolsString = (tools: ToolDefinition[]) =>
+const getConversationToolsString = (tools: DataToolDefinition[]) =>
   tools
     .map((tool) => {
       const { name, description } = tool;
@@ -97,7 +97,7 @@ const getConversationToolsString = (tools: ToolDefinition[]) =>
     })
     .join(', ');
 
-const extractToolDefinition = (tool: ToolDefinition): string => {
+const extractToolDefinition = (tool: DataToolDefinition): string => {
   if ('model' in tool) {
     if (!isRef(tool.model))
       throw new Error(`Unexpected model was found in tool ${tool}.`);
