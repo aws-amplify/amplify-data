@@ -1,5 +1,11 @@
 # @aws-amplify/data-schema
 
+## 1.13.2
+
+### Patch Changes
+
+- 723b301: fix: Add exports for combine schema
+
 ## 1.13.1
 
 ### Patch Changes
