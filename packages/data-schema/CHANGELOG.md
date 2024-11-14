@@ -1,5 +1,12 @@
 # @aws-amplify/data-schema
 
+## 1.14.0
+
+### Minor Changes
+
+- a0849fc: require .authorization on conversation routes
+- a0849fc: Support model and custom op query tools, update tool definition API to a.ai.dataTool
+
 ## 1.13.4
 
 ### Patch Changes
