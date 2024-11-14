@@ -603,11 +603,16 @@ bench('prod p50 conversation', () => {
         allow.authenticated('identityPool').to(['read']),
         allow.owner(),
       ]),
-    ChatBot: a.conversation(input),
-    GossipBot: a.conversation(input),
-    HaikuBot: a.conversation(input),
-    MathBot: a.conversation(input),
-    ScienceBot: a.conversation(input),
+    ChatBot: a.conversation(input)
+      .authorization((allow) => allow.owner()),
+    GossipBot: a.conversation(input)
+      .authorization((allow) => allow.owner()),
+    HaikuBot: a.conversation(input)
+      .authorization((allow) => allow.owner()),
+    MathBot: a.conversation(input)
+      .authorization((allow) => allow.owner()),
+    ScienceBot: a.conversation(input)
+      .authorization((allow) => allow.owner()),
     // [Global authorization rule]
   }).authorization((allow) => allow.publicApiKey());
 }).types([20837, 'instantiations']);
@@ -1197,11 +1202,16 @@ bench('prod p50 conversation w/ client types', () => {
           allow.authenticated('identityPool').to(['read']),
           allow.owner(),
         ]),
-      ChatBot: a.conversation(input),
-      GossipBot: a.conversation(input),
-      HaikuBot: a.conversation(input),
-      MathBot: a.conversation(input),
-      ScienceBot: a.conversation(input),
+      ChatBot: a.conversation(input)
+        .authorization((allow) => allow.owner()),
+      GossipBot: a.conversation(input)
+        .authorization((allow) => allow.owner()),
+      HaikuBot: a.conversation(input)
+        .authorization((allow) => allow.owner()),
+      MathBot: a.conversation(input)
+        .authorization((allow) => allow.owner()),
+      ScienceBot: a.conversation(input)
+        .authorization((allow) => allow.owner()),
       // [Global authorization rule]
     })
     .authorization((allow) => allow.publicApiKey());
@@ -1794,11 +1804,16 @@ bench('prod p50 conversation combined w/ client types', () => {
           allow.authenticated('identityPool').to(['read']),
           allow.owner(),
         ]),
-      ChatBot: a.conversation(input),
-      GossipBot: a.conversation(input),
-      HaikuBot: a.conversation(input),
-      MathBot: a.conversation(input),
-      ScienceBot: a.conversation(input),
+      ChatBot: a.conversation(input)
+        .authorization((allow) => allow.owner()),
+      GossipBot: a.conversation(input)
+        .authorization((allow) => allow.owner()),
+      HaikuBot: a.conversation(input)
+        .authorization((allow) => allow.owner()),
+      MathBot: a.conversation(input)
+        .authorization((allow) => allow.owner()),
+      ScienceBot: a.conversation(input)
+        .authorization((allow) => allow.owner()),
       // [Global authorization rule]
     })
     .authorization((allow) => allow.publicApiKey());

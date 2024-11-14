@@ -1,17 +1,18 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
+import { AiModel } from '@aws-amplify/data-schema-types';
 import type { Subscription } from 'rxjs';
+import { allowForConversations, AllowModifierForConversations, Authorization } from '../Authorization';
+import type { RefType } from '../RefType';
 import type { ListReturnValue, SingularReturnValue } from '../runtime/client';
 import { type Brand, brand } from '../util';
-import type { RefType } from '../RefType';
 import { InferenceConfiguration } from './ModelType';
 import {
   ConversationMessageContent,
   ConversationSendMessageInputContent,
 } from './types/ConversationMessageContent';
 import { ToolConfiguration } from './types/ToolConfiguration';
-import { AiModel } from '@aws-amplify/data-schema-types';
 import { ConversationStreamErrorEvent, ConversationStreamEvent } from './types/ConversationStreamEvent';
 
 export const brandName = 'conversationCustomOperation';
@@ -143,9 +144,67 @@ export interface Conversation {
 }
 
 // schema definition input
-export interface ToolDefinition {
-  query: RefType<any>;
+interface ToolDefinitionBase {
+  name: string;
   description: string;
+}
+
+interface ModelToolDefinition extends ToolDefinitionBase {
+  model: RefType<any>;
+  modelOperation: 'list';
+  query?: never;
+}
+
+interface QueryToolDefinition extends ToolDefinitionBase {
+  query: RefType<any>;
+  model?: never;
+  modelOperation?: never;
+}
+
+export type DataToolDefinition = ModelToolDefinition | QueryToolDefinition;
+
+/**
+ * @experimental
+ *
+ * Define a data tool to be used within an AI conversation route.
+ *
+ * @remarks
+ *
+ * Data tools can use a model generated list query or a custom query.
+ * The tool's name must satisfy the following requirements:
+ * - Be unique across all tools for a given conversation.
+ * - Length must be between 1 and 64 characters.
+ * - Must start with a letter.
+ * - Must contain only letters, numbers, and underscores.
+ *
+ * The tool's `name` and `description` are used by the LLM to help it understand
+ * the tool's purpose.
+ *
+ * @example
+ *
+ * realtorChat: a.conversation({
+ *   aiModel: a.ai.model('Claude 3 Haiku'),
+ *   systemPrompt: 'You are a helpful real estate assistant',
+ *   tools: [
+ *     // Data tools can use a model generated list query.
+ *     a.ai.dataTool({
+ *       name: 'get_listed_properties',
+ *       description: 'Get properties currently listed for sale',
+ *       model: a.model('RealEstateProperty'),
+ *       modelOperation: 'list',
+ *     }),
+ *     // Data tools can also use a custom query.
+ *     a.ai.dataTool({
+ *       name: 'get_oncall_realtor',
+ *       description: 'Get the oncall realtor',
+ *       query: a.query('getOnCallRealtor'),
+ *     }),
+ *   ],
+ * })
+ * @returns a data tool definition
+ */
+export function dataTool(input: DataToolDefinition): DataToolDefinition {
+  return input;
 }
 
 // Type that is compatible with ConversationHandlerFunctionFactory
@@ -162,18 +221,45 @@ export interface ConversationInput {
   aiModel: AiModel;
   systemPrompt: string;
   inferenceConfiguration?: InferenceConfiguration;
-  tools?: ToolDefinition[];
+  tools?: DataToolDefinition[];
   handler?: DefineConversationHandlerFunction;
 }
 
-export interface InternalConversationType
-  extends ConversationType,
-    ConversationInput {}
+export type InternalConversationType = ConversationType
+  & ConversationInput
+  & { data: ConversationData }
+  & Brand<typeof brandName>;
 
-export interface ConversationType extends Brand<typeof brandName> {}
+type ConversationData = {
+  authorization: Authorization<any, any, any>[];
+}
+
+export interface ConversationType extends Brand<typeof brandName> {
+  authorization(
+    callback: (allow: AllowModifierForConversations) => Authorization<any, any, any>,
+  ): ConversationType;
+}
 
 function _conversation(input: ConversationInput): ConversationType {
-  return { ...brand(brandName), ...input };
+  const data: ConversationData = {
+    authorization: [],
+  };
+  const builder = {
+    authorization<AuthRuleType extends Authorization<any, any, any>>(
+      callback: (allow: AllowModifierForConversations) => AuthRuleType | AuthRuleType[],
+    ) {
+      const rules = callback(allowForConversations);
+      data.authorization = Array.isArray(rules) ? rules : [rules];
+
+      return this;
+    },
+  };
+  return {
+    ...brand(brandName),
+    ...input,
+    ...builder,
+    data,
+  } as InternalConversationType;
 }
 
 /**

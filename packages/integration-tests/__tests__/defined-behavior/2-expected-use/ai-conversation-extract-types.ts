@@ -9,7 +9,7 @@ describe('AI Conversation Routes', () => {
     chatBot: a.conversation({
       aiModel: a.ai.model('Claude 3 Haiku'),
       systemPrompt: 'You are a helpful chatbot.',
-    }),
+    }).authorization((allow) => allow.owner()),
   });
   type Schema = ClientSchema<typeof schema>;
 
