@@ -195,5 +195,5 @@ bench('p50 sql', () => {
     })
     .authorization((allow) => allow.owner());
 
-  type Schema = ClientSchema<typeof schema>;
+  type _Schema = ClientSchema<typeof schema>;
 }).types([10643, 'instantiations']);
