@@ -1,5 +1,11 @@
 # @aws-amplify/data-schema
 
+## 1.14.1
+
+### Patch Changes
+
+- 7e71444: rename conversation route supporting types with AmplifyAI prefix
+
 ## 1.14.0
 
 ### Minor Changes
