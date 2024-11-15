@@ -232,7 +232,7 @@ exports[`AI Conversation Routes Messages Send a message 1`] = `
       "authMode": undefined,
       "authToken": undefined,
       "query": "
-    mutation($conversationId: ID!, $content: [ContentBlockInput], $aiContext: AWSJSON, $toolConfiguration: ToolConfigurationInput) {
+    mutation($conversationId: ID!, $content: [AmplifyAIContentBlockInput], $aiContext: AWSJSON, $toolConfiguration: AmplifyAIToolConfigurationInput) {
       chatBot(conversationId: $conversationId, content: $content, aiContext: $aiContext, toolConfiguration: $toolConfiguration) {id conversationId role content { text document { format name source { bytes } } image { format source { bytes } } toolResult { content { document { format name source { bytes } } image { format source { bytes } } json text } toolUseId status } toolUse { toolUseId name input } } aiContext toolConfiguration { tools { toolSpec { name description inputSchema { json } } } } createdAt updatedAt owner}
     }
   ",
@@ -291,7 +291,7 @@ exports[`AI Conversation Routes Messages Subscribe to messages 1`] = `
       "authToken": undefined,
       "query": "
     subscription($conversationId: ID!) {
-      onCreateAssistantResponseChatBot(conversationId: $conversationId) {id conversationId role content { text document { format name source { bytes } } image { format source { bytes } } toolResult { content { document { format name source { bytes } } image { format source { bytes } } json text } toolUseId status } toolUse { toolUseId name input } } aiContext toolConfiguration { tools { toolSpec { name description inputSchema { json } } } } createdAt updatedAt owner}
+      onCreateAssistantResponseChatBot(conversationId: $conversationId) {id owner conversationId associatedUserMessageId contentBlockIndex contentBlockText contentBlockDeltaIndex contentBlockToolUse { toolUseId name input } contentBlockDoneAtIndex stopReason errors { message errorType }}
     }
   ",
       "variables": {
@@ -315,65 +315,23 @@ exports[`AI Conversation Routes Messages Subscribe to messages 2`] = `
       "query": "subscription ($conversationId: ID!) {
   onCreateAssistantResponseChatBot(conversationId: $conversationId) {
     id
-    conversationId
-    role
-    content {
-      text
-      document {
-        format
-        name
-        source {
-          bytes
-        }
-      }
-      image {
-        format
-        source {
-          bytes
-        }
-      }
-      toolResult {
-        content {
-          document {
-            format
-            name
-            source {
-              bytes
-            }
-          }
-          image {
-            format
-            source {
-              bytes
-            }
-          }
-          json
-          text
-        }
-        toolUseId
-        status
-      }
-      toolUse {
-        toolUseId
-        name
-        input
-      }
-    }
-    aiContext
-    toolConfiguration {
-      tools {
-        toolSpec {
-          name
-          description
-          inputSchema {
-            json
-          }
-        }
-      }
-    }
-    createdAt
-    updatedAt
     owner
+    conversationId
+    associatedUserMessageId
+    contentBlockIndex
+    contentBlockText
+    contentBlockDeltaIndex
+    contentBlockToolUse {
+      toolUseId
+      name
+      input
+    }
+    contentBlockDoneAtIndex
+    stopReason
+    errors {
+      message
+      errorType
+    }
   }
 }
 ",
