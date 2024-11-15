@@ -5,6 +5,7 @@ import {
   buildAmplifyConfig,
   mockedGenerateClient,
   optionsAndHeaders,
+  expectGraphqlMatches,
   useState,
 } from '../../utils';
 
@@ -34,6 +35,105 @@ describe('lazy loaders edges', () => {
     .authorization((allow) => [allow.publicApiKey()]);
 
   type Schema = ClientSchema<typeof schema>;
+
+  const compositeKeySchema = a.schema({
+    Order: a.model({
+      id: a.id(),
+      customerFirstName: a.string().required(),
+      customerLastName: a.string().required(),
+      customerRegion: a.string().required(),
+      customer: a.belongsTo('Customer', ['customerFirstName','customerLastName', 'customerRegion']),
+    }).authorization(allow => [allow.publicApiKey()]),
+    Customer: a.model({
+      customerFirstName: a.string().required(),
+      customerLastName: a.string().required(),
+      customerRegion: a.string().required(),
+      orders: a.hasMany('Order', ['customerFirstName','customerLastName', 'customerRegion']),
+    }).identifier(['customerFirstName', 'customerLastName','customerRegion']).authorization(allow => [allow.publicApiKey()]),
+  })
+
+  type CompositeKeySchema = ClientSchema<typeof compositeKeySchema>;
+
+  describe('when related data model has a composite key', ()=>{
+    test('belongsTo: related data is queried with foreign keys', async() => {
+      const { generateClient, spy} = mockedGenerateClient([
+        {
+          data: {
+            getOrder: {
+              __typeName: 'Order',
+              id: 'order-id',
+              customerFirstName: 'Some First Name',
+              customerLastName: 'Some Last Name',
+              customerRegion: 'Region A',
+              updatedAt: '2024-03-01T19:05:44.536Z',
+              createdAt: '2024-03-01T18:05:44.536Z',
+            },
+          },
+        },
+        {
+          data: {
+            getCustomer: {
+              __typeName: 'Customer',
+              customerFirstName: 'Some First Name',
+              customerLastName: 'Some Last Name',
+              region: 'Region A',
+              orders: [
+                {
+                  __typeName: 'Order',
+                  id: 'order-id',
+                  customerFirstName: 'Some First Name',
+                  customerLastName: 'Some Last Name',
+                  customerRegion: 'Region A',
+                  updatedAt: '2024-03-01T19:05:44.536Z',
+                  createdAt: '2024-03-01T18:05:44.536Z',
+                },
+              ],
+              updatedAt: '2024-03-01T19:05:44.536Z',
+              createdAt: '2024-03-01T18:05:44.536Z',
+            },
+          },
+        },
+        {
+          data: {
+            getCustomer: {
+              __typeName: 'Customer',
+              customerFirstName: 'Another First Name',
+              customerLastName: 'Another Last Name',
+              customerRegion: 'Region B',
+              orders: [
+              ],
+              updatedAt: '2077-03-01T19:05:44.536Z',
+              createdAt: '2077-03-01T18:05:44.536Z',
+            },
+          },
+        },
+      ]);
+      const config = await buildAmplifyConfig(compositeKeySchema);
+      Amplify.configure(config);
+      const client = generateClient<CompositeKeySchema>();
+
+      const { data: order } = await client.models.Order.get({
+        id: 'order-id',
+      });
+      const { data: customer } = await order!.customer();
+
+      //both primary key and sort key are used in query
+      expectGraphqlMatches(
+        optionsAndHeaders(spy)[1][0].query,
+        `query($customerFirstName: String!,$customerLastName: String!, $customerRegion: String!) 
+        { getCustomer(customerFirstName: $customerFirstName,customerLastName: $customerLastName,
+         customerRegion: $customerRegion) 
+         { customerFirstName customerLastName customerRegion createdAt updatedAt } }`,
+      );
+
+      //sort key are processed by the reduce() correctly
+      expect(optionsAndHeaders(spy)[1][0].variables).toEqual({
+        customerFirstName: 'Some First Name',
+        customerLastName: 'Some Last Name',
+        customerRegion: 'Region A',
+      })
+    })
+  });
 
   describe('when target data does not exist', () => {
     test('hasMany: returns []', async () => {
