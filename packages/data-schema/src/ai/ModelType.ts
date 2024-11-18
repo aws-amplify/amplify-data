@@ -29,8 +29,6 @@ export interface InferenceConfiguration {
 }
 
 /**
- * @experimental
- *
  * Bedrock models currently supporting Converse API and Tool use
  * @see {@link https://docs.aws.amazon.com/bedrock/latest/userguide/conversation-inference.html#conversation-inference-supported-models-features}
  */
