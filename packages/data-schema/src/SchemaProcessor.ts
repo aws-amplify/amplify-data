@@ -155,9 +155,7 @@ function isRefField(
   return isRefFieldDef((field as any)?.data);
 }
 
-function canGenerateFieldType(
-  fieldType: ModelFieldType
-): boolean {
+function canGenerateFieldType(fieldType: ModelFieldType): boolean {
   return fieldType === 'Int';
 }
 
@@ -174,7 +172,6 @@ function scalarFieldToGql(
     default: _default,
   } = fieldDef;
   let field: string = fieldType;
-
 
   if (identifier !== undefined) {
     field += '!';
@@ -929,23 +926,33 @@ function processFieldLevelAuthRules(
   return fieldLevelAuthRules;
 }
 
-function validateDBGeneration(fields: Record<string, any>, databaseEngine: DatasourceEngine) {
+function validateDBGeneration(
+  fields: Record<string, any>,
+  databaseEngine: DatasourceEngine,
+) {
   for (const [fieldName, fieldDef] of Object.entries(fields)) {
     const _default = fieldDef.data?.default;
     const fieldType = fieldDef.data?.fieldType;
     const isGenerated = _default === __generated;
 
     if (isGenerated && databaseEngine !== 'postgresql') {
-      throw new Error(`Invalid field definition for ${fieldName}. DB-generated fields are only supported with PostgreSQL data sources.`);
+      throw new Error(
+        `Invalid field definition for ${fieldName}. DB-generated fields are only supported with PostgreSQL data sources.`,
+      );
     }
 
     if (isGenerated && !canGenerateFieldType(fieldType)) {
-      throw new Error(`Incompatible field type. Field type ${fieldType} in field ${fieldName} cannot be configured as a DB-generated field.`);
+      throw new Error(
+        `Incompatible field type. Field type ${fieldType} in field ${fieldName} cannot be configured as a DB-generated field.`,
+      );
     }
   }
 }
 
-function validateNullableIdentifiers(fields: Record<string, any>, identifier?: readonly string[]){
+function validateNullableIdentifiers(
+  fields: Record<string, any>,
+  identifier?: readonly string[],
+) {
   for (const [fieldName, fieldDef] of Object.entries(fields)) {
     const fieldType = fieldDef.data?.fieldType;
     const required = fieldDef.data?.required;
@@ -954,7 +961,9 @@ function validateNullableIdentifiers(fields: Record<string, any>, identifier?: r
 
     if (identifier !== undefined && identifier.includes(fieldName)) {
       if (!required && fieldType !== 'ID' && !isGenerated) {
-        throw new Error(`Invalid identifier definition. Field ${fieldName} cannot be used in the identifier. Identifiers must reference required or DB-generated fields)`);
+        throw new Error(
+          `Invalid identifier definition. Field ${fieldName} cannot be used in the identifier. Identifiers must reference required or DB-generated fields)`,
+        );
       }
     }
   }
@@ -977,7 +986,7 @@ function processFields(
 
   validateImpliedFields(fields, impliedFields);
   validateDBGeneration(fields, databaseEngine);
-  validateNullableIdentifiers(fields, identifier)
+  validateNullableIdentifiers(fields, identifier);
 
   for (const [fieldName, fieldDef] of Object.entries(fields)) {
     const fieldAuth = fieldLevelAuthRules[fieldName]
@@ -1334,11 +1343,8 @@ const schemaPreprocessor = (
   const lambdaFunctions: LambdaFunctionDefinition = {};
   const customSqlDataSourceStrategies: CustomSqlDataSourceStrategy[] = [];
 
-  const databaseEngine = schema.data.configuration.database.engine
-  const databaseType =
-    databaseEngine === 'dynamodb'
-      ? 'dynamodb'
-      : 'sql';
+  const databaseEngine = schema.data.configuration.database.engine;
+  const databaseType = databaseEngine === 'dynamodb' ? 'dynamodb' : 'sql';
 
   const staticSchema = databaseType === 'sql';
 
@@ -1422,7 +1428,7 @@ const schemaPreprocessor = (
           undefined,
           undefined,
           undefined,
-          databaseEngine
+          databaseEngine,
         );
 
         topLevelTypes.push(...implicitTypes);
@@ -1996,12 +2002,15 @@ function extractNestedCustomTypeNames(
     for (const [fieldName, fieldDef] of Object.entries(fields)) {
       if (isCustomType(fieldDef)) {
         const customTypeName = `${capitalize(name)}${capitalize(fieldName)}`;
+        if (namesList.includes(customTypeName)) continue;
         namesList.push(customTypeName);
         traverseCustomTypeFields(customTypeName, fieldDef, namesList);
       } else if (isRefField(fieldDef)) {
         const refType = getRefType(fieldDef.data.link, name);
-
-        if (refType.type === 'CustomType') {
+        if (
+          refType.type === 'CustomType' &&
+          !namesList.includes(fieldDef.data.link)
+        ) {
           namesList.push(fieldDef.data.link);
           traverseCustomTypeFields(fieldDef.data.link, refType.def, namesList);
         }
