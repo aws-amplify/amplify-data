@@ -1,5 +1,11 @@
 # @aws-amplify/data-schema
 
+## 1.15.0
+
+### Minor Changes
+
+- e7ff339: Remove experimental tag for AI functions and types
+
 ## 1.14.2
 
 ### Patch Changes
