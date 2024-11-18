@@ -1,5 +1,11 @@
 # @aws-amplify/data-schema
 
+## 1.14.2
+
+### Patch Changes
+
+- ca505f9: Add Claude 3.5 Haiku and 3.5 Sonnet v2 models
+
 ## 1.14.1
 
 ### Patch Changes
