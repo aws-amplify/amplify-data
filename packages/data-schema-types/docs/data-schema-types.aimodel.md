@@ -4,7 +4,6 @@
 
 ## AiModel type
 
-
 **Signature:**
 
 ```typescript
