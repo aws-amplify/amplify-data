@@ -384,8 +384,6 @@ export interface GenerationInput {
 }
 
 /**
- * @experimental
- *
  * Define an AI generation route for single request-response interaction with specified AI model.
  * @example
  * makeRecipe: a.generation({

@@ -54,38 +54,28 @@ interface ConversationRouteListInput {
 
 export interface ConversationRoute {
   /**
-   * @experimental
-   *
    * Creates a {@link Conversation} from the current conversation route.
    */
   create: (
     input?: ConversationRouteCreateInput,
   ) => SingularReturnValue<Conversation>;
   /**
-   * @experimental
-   *
    * Creates a {@link Conversation} from the current conversation route.
    */
   update: (
     input: ConversationRouteUpdateInput,
   ) => SingularReturnValue<Conversation>;
   /**
-   * @experimental
-   *
    * Gets an existing {@link Conversation} based on ID.
    */
   get: (input: ConversationRouteGetInput) => SingularReturnValue<Conversation>;
   /**
-   * @experimental
-   *
    * Deletes an existing {@link Conversation} based on ID.
    */
   delete: (
     input: ConversationRouteDeleteInput,
   ) => SingularReturnValue<Conversation>;
   /**
-   * @experimental
-   *
    * Lists all existing {@link Conversation}s on the current conversation route.
    */
   list: (input?: ConversationRouteListInput) => ListReturnValue<Conversation>;
@@ -120,24 +110,18 @@ export interface Conversation {
   metadata?: Record<string, any>;
   name?: string;
   /**
-   * @experimental
-   *
    * Sends a message to the current conversation.
    */
   sendMessage: (
     input: ConversationSendMessageInput | string,
   ) => SingularReturnValue<ConversationMessage>;
   /**
-   * @experimental
-   *
    * Lists all existing messages for the current conversation.
    */
   listMessages: (
     input?: ConversationListMessagesInput,
   ) => ListReturnValue<ConversationMessage>;
   /**
-   * @experimental
-   *
    * Subscribes to new stream events on the current conversation.
    */
   onStreamEvent: (handler: ConversationOnStreamEventHandler) => Subscription;
@@ -164,8 +148,6 @@ interface QueryToolDefinition extends ToolDefinitionBase {
 export type DataToolDefinition = ModelToolDefinition | QueryToolDefinition;
 
 /**
- * @experimental
- *
  * Define a data tool to be used within an AI conversation route.
  *
  * @remarks
@@ -263,8 +245,6 @@ function _conversation(input: ConversationInput): ConversationType {
 }
 
 /**
- * @experimental
- *
  * Define an AI conversation route which enables multi-turn conversation APIs for interacting with specified AI model.
  * @example
  * realtorChat: a.conversation({
