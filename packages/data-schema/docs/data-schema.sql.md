@@ -9,6 +9,7 @@
 ```typescript
 sql: {
     schema<const T extends SchemaDefinition>(def: T): T & {
+        migrations: MigrationRecord[];
         transform(): {
             tables: {
                 tableName: string;
@@ -20,6 +21,7 @@ sql: {
                 primaryKey: string[];
             }[];
         };
+        addMigration: typeof addMigration;
     };
     table<const T_1 extends Record<string, Nested<FieldDefinition>>>(fields: T_1): Nested<{
         fields: T_1;
