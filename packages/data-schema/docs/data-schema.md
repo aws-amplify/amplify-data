@@ -63,6 +63,15 @@ Description
 </td></tr>
 <tr><td>
 
+[denested(nested)](./data-schema.denested.md)
+
+
+</td><td>
+
+
+</td></tr>
+<tr><td>
+
 [field(typeName, typeArgs)](./data-schema.field.md)
 
 
@@ -73,6 +82,15 @@ Description
 <tr><td>
 
 [identifier(this, identifier)](./data-schema.identifier.md)
+
+
+</td><td>
+
+
+</td></tr>
+<tr><td>
+
+[nested(data)](./data-schema.nested.md)
 
 
 </td><td>
@@ -104,6 +122,15 @@ Perhaps better in the sense that we'd know with high certainty that the types al
 <tr><td>
 
 [toAPIModel(this)](./data-schema.toapimodel.md)
+
+
+</td><td>
+
+
+</td></tr>
+<tr><td>
+
+[transformColumn(fieldName, internalDef)](./data-schema.transformcolumn.md)
 
 
 </td><td>
