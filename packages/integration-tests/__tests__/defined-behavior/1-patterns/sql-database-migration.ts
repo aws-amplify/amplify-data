@@ -40,9 +40,10 @@ const migrated = sqlSchema.addMigration((existing) =>
   existing()
     .alter('address')
     .renameField('city', 'town')
+    .renameField('town', 'village')
     .done()
     .alter('address')
-    .renameField('town', 'village')
+    .renameField('village', 'zone')
     .removeField('zip')
     .addField('zipCode', a.sql.varchar().required())
     .done()
@@ -51,8 +52,7 @@ const migrated = sqlSchema.addMigration((existing) =>
     .done(),
 );
 
-// console.log('test', sqlSchema.tables.customer.toAPIModel());
-console.log('migration steps', JSON.stringify(migrated.migrations, null, 2));
+console.log('migration', JSON.stringify(migrated.migrations, null, 2));
 
 const schema = a
   .schema({

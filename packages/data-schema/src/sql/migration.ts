@@ -3,7 +3,7 @@ import {
   type FieldDefinition,
   type Nested,
   type DeNested,
-  // nested,
+  nested,
   denested,
   transformTables,
   transformColumn,
@@ -57,33 +57,33 @@ function renameTo<
   TableName extends string,
   NewTableName extends string,
 >(
-  this: {
+  this: Nested<{
     schemaDef: T;
     fields: Fields;
     step: AlterTableStep;
     migrationSteps: AlterTableStep[];
     tableName: TableName;
-  },
+  }>,
   newName: NewTableName,
-): {
+): Nested<{
   migrationSteps: AlterTableStep[];
   schemaDef: RenameTo<T, TableName, NewTableName>;
   step: AlterTableStep;
-  renameTo: typeof renameTo;
-  renameField: typeof renameField;
-  removeField: typeof removeField;
-  addField: typeof addField;
-  done: typeof done;
   fields: Fields;
   tableName: TableName;
-} {
-  this.step.modifications.push({
+}> &
+  AlterPublicAPI {
+  const denestedThis = denested(this);
+
+  denestedThis.step.modifications.push({
     type: 'renameTo',
     newName,
   });
 
-  this.schemaDef.tables[newName] = this.schemaDef.tables[this.tableName];
-  delete this.schemaDef.tables[this.tableName];
+  denestedThis.schemaDef.tables[newName] =
+    denestedThis.schemaDef.tables[denestedThis.tableName];
+
+  delete denestedThis.schemaDef.tables[denestedThis.tableName];
 
   return this as any;
 }
@@ -114,33 +114,33 @@ function addField<
   FieldDef extends FieldDefinition,
   TableName extends string,
 >(
-  this: {
+  this: Nested<{
     schemaDef: T;
     fields: Fields;
     step: AlterTableStep;
     migrationSteps: AlterTableStep[];
     tableName: TableName;
-  },
+  }>,
   fieldName: F,
   field: Nested<FieldDef>,
-): {
+): Nested<{
   migrationSteps: AlterTableStep[];
   schemaDef: AddField<T, TableName, F, FieldDef>;
   step: AlterTableStep;
-  renameTo: typeof renameTo;
-  renameField: typeof renameField;
-  removeField: typeof removeField;
-  addField: typeof addField;
-  done: typeof done;
   fields: Fields;
   tableName: TableName;
-} {
-  this.step.modifications.push({
+}> &
+  AlterPublicAPI {
+  const denestedThis = denested(this);
+
+  denestedThis.step.modifications.push({
     type: 'addColumn',
     field: transformColumn(fieldName, denested(field)),
   });
 
-  denested(this.schemaDef.tables[this.tableName]).fields[fieldName] = field;
+  denested(denestedThis.schemaDef.tables[denestedThis.tableName]).fields[
+    fieldName
+  ] = field;
 
   return this as any;
 }
@@ -173,32 +173,32 @@ function removeField<
   F extends Fields,
   TableName extends string,
 >(
-  this: {
+  this: Nested<{
     schemaDef: T;
     fields: Fields;
     step: AlterTableStep;
     migrationSteps: AlterTableStep[];
     tableName: TableName;
-  },
+  }>,
   fieldName: F,
-): {
+): Nested<{
   migrationSteps: AlterTableStep[];
   schemaDef: RemoveField<T, TableName, F>;
   step: AlterTableStep;
-  renameTo: typeof renameTo;
-  renameField: typeof renameField;
-  removeField: typeof removeField;
-  addField: typeof addField;
-  done: typeof done;
   fields: Exclude<Fields, F>;
   tableName: TableName;
-} {
-  this.step.modifications.push({
+}> &
+  AlterPublicAPI {
+  const denestedThis = denested(this);
+
+  denestedThis.step.modifications.push({
     type: 'removeColumn',
     fieldName,
   });
 
-  delete denested(this.schemaDef.tables[this.tableName]).fields[fieldName];
+  delete denested(denestedThis.schemaDef.tables[denestedThis.tableName]).fields[
+    fieldName
+  ];
 
   return this as any;
 }
@@ -242,59 +242,71 @@ function renameField<
   TableName extends string,
   NewFieldName extends string,
 >(
-  this: {
+  this: Nested<{
     schemaDef: T;
     fields: Fields;
     step: AlterTableStep;
     migrationSteps: AlterTableStep[];
     tableName: TableName;
-  },
+  }>,
   oldName: F,
   newName: NewFieldName,
-): {
+): Nested<{
   migrationSteps: AlterTableStep[];
   schemaDef: RenameField<T, TableName, F, NewFieldName>;
   step: AlterTableStep;
-  renameTo: typeof renameTo;
-  renameField: typeof renameField;
-  removeField: typeof removeField;
-  addField: typeof addField;
-  done: typeof done;
   fields: Exclude<Fields, F> | NewFieldName;
   tableName: TableName;
-} {
-  this.step.modifications.push({
+}> &
+  AlterPublicAPI {
+  const denestedThis = denested(this);
+
+  denestedThis.step.modifications.push({
     type: 'renameColumn',
     oldName,
     newName,
   });
 
-  const table = this.schemaDef.tables[this.tableName];
+  const table = denestedThis.schemaDef.tables[denestedThis.tableName];
   const tableFields = denested(table).fields;
 
-  denested(this.schemaDef.tables[this.tableName]).fields[newName] =
-    tableFields[oldName];
+  denested(denestedThis.schemaDef.tables[denestedThis.tableName]).fields[
+    newName
+  ] = tableFields[oldName];
 
-  delete denested(this.schemaDef.tables[this.tableName]).fields[oldName];
+  delete denested(denestedThis.schemaDef.tables[denestedThis.tableName]).fields[
+    oldName
+  ];
 
   return this as any;
 }
 
-function done<T extends SchemaDefinition>(this: {
-  schemaDef: T;
-  migrationSteps: AlterTableStep[];
-  step: AlterTableStep;
-}): {
-  schemaDef: T;
-  migrationSteps: AlterTableStep[];
+function done<T extends SchemaDefinition>(
+  this: Nested<{
+    schemaDef: T;
+    migrationSteps: AlterTableStep[];
+    step: AlterTableStep;
+  }>,
+): {
   alter: typeof alter;
+} & Nested<{
+  schemaDef: T;
+  migrationSteps: AlterTableStep[];
   step: AlterTableStep;
-} {
-  const { step } = this;
+}> {
+  const { step } = denested(this);
 
-  this.migrationSteps.push(step);
+  denested(this).migrationSteps.push(step);
 
   return { ...this, alter };
+}
+
+interface AlterPublicAPI {
+  renameTo: typeof renameTo;
+  renameField: typeof renameField;
+  removeField: typeof removeField;
+  addField: typeof addField;
+  done: typeof done;
 }
 
 function alter<
@@ -303,20 +315,16 @@ function alter<
   Fields extends string = keyof DeNested<T['tables'][TableName]>['fields'] &
     string,
 >(
-  this: { schemaDef: T; migrationSteps: AlterTableStep[] },
+  this: Nested<{ schemaDef: T; migrationSteps: AlterTableStep[] }>,
   tableName: TableName,
-): T & {
+): Nested<{
   schemaDef: T;
   migrationSteps: AlterTableStep[];
-  renameTo: typeof renameTo;
-  renameField: typeof renameField;
-  removeField: typeof removeField;
-  addField: typeof addField;
-  done: typeof done;
   fields: Fields;
   step: AlterTableStep;
   tableName: TableName;
-} {
+}> &
+  AlterPublicAPI {
   const step: AlterTableStep = {
     operation: 'alterTable',
     tableName,
@@ -330,25 +338,32 @@ function alter<
     removeField,
     addField,
     done,
-    step,
-    tableName,
+    ...nested({
+      step,
+      tableName,
+      schemaDef: denested(this).schemaDef,
+      migrationSteps: denested(this).migrationSteps,
+    }),
   } as any;
 }
 
 function migration<const T extends SchemaDefinition>(
   this: any,
 ): {
+  alter: typeof alter;
+} & Nested<{
   schemaDef: T;
   migrationSteps: AlterTableStep[];
-  alter: typeof alter;
-} {
-  // TODO: use more general type that support different kinds of steps, not just AlterTable*
+}> {
+  // TODO: use more general type that supports different kinds of steps, not just AlterTable*
   const migrationSteps: AlterTableStep[] = [];
 
   return {
     ...this,
-    schemaDef: this,
-    migrationSteps,
+    ...nested({
+      schemaDef: this,
+      migrationSteps,
+    }),
     alter,
   };
 }
@@ -368,16 +383,16 @@ export function addMigration<
   const MT extends SchemaDefinition,
 >(
   this: T & { migrations: MigrationRecord[] },
-  callback: (existing: typeof migration<T>) => {
+  callback: (existing: typeof migration<T>) => Nested<{
     migrationSteps: AlterTableStep[];
     schemaDef: MT;
-  },
+  }>,
 ): ApplyMigration<T, MT> & { migrations: MigrationRecord[] } {
   // save pre-migration state;
   const prevState = transformTables({ ...this.tables });
   const newState = { ...this };
 
-  const { migrationSteps } = callback(migration.bind(newState));
+  const { migrationSteps } = denested(callback(migration.bind(newState)));
 
   const newMigration = {
     createdAt: Date.now(),
