@@ -3,6 +3,7 @@ import { ModelType } from '../ModelType';
 import { ModelField } from '../ModelField';
 import { RefType } from '../RefType';
 import { KindaPretty as _KP } from '../util';
+import { addMigration, type MigrationRecord } from './migration';
 
 // #region builder types
 export type SetKey<T, Key, Value> = {
@@ -25,7 +26,7 @@ type internal = typeof internal;
 
 export type Nested<T> = { [internal]: T };
 
-const nested = <T>(data: T): Nested<T> => {
+export const nested = <T>(data: T): Nested<T> => {
   return {
     [internal]: data,
   };
@@ -33,7 +34,7 @@ const nested = <T>(data: T): Nested<T> => {
 
 export type DeNested<T extends Nested<any>> = T[internal];
 
-const denested = <T extends Nested<any>>(nested: T): DeNested<T> => {
+export const denested = <T extends Nested<any>>(nested: T): DeNested<T> => {
   return nested[internal];
 };
 
@@ -306,11 +307,13 @@ export const sql = {
   schema<const T extends SchemaDefinition>(def: T) {
     return {
       ...def,
+      migrations: [] as MigrationRecord[],
       transform() {
         return {
           tables: transformTables(def.tables),
         };
       },
+      addMigration,
     };
   },
   table<const T extends TableDefinition['fields']>(
