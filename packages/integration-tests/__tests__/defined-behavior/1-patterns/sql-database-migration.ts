@@ -51,6 +51,9 @@ const migrated = sqlSchema.addMigration((existing) =>
     .done(),
 );
 
+// console.log('test', sqlSchema.tables.customer.toAPIModel());
+console.log('migration steps', JSON.stringify(migrated.migrations, null, 2));
+
 const schema = a
   .schema({
     Address: migrated.tables.address

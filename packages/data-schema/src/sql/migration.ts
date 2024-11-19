@@ -1,11 +1,12 @@
 import {
   type SchemaDefinition,
-  type TableDefinition,
   type FieldDefinition,
   type Nested,
   type DeNested,
   // nested,
   denested,
+  transformTables,
+  transformColumn,
 } from './index';
 
 interface AlterTableRenameTo {
@@ -13,16 +14,15 @@ interface AlterTableRenameTo {
   newName: string;
 }
 interface AlterTableAddField {
-  type: 'addField';
-  fieldName: string;
-  field: Nested<FieldDefinition>;
+  type: 'addColumn';
+  field: ReturnType<typeof transformColumn>;
 }
 interface AlterTableRemoveField {
-  type: 'removeField';
+  type: 'removeColumn';
   fieldName: string;
 }
 interface AlterTableRenameField {
-  type: 'renameField';
+  type: 'renameColumn';
   oldName: string;
   newName: string;
 }
@@ -136,13 +136,9 @@ function addField<
   tableName: TableName;
 } {
   this.step.modifications.push({
-    type: 'addField',
-    fieldName,
-    field: field,
+    type: 'addColumn',
+    field: transformColumn(fieldName, denested(field)),
   });
-
-  // const table = this.schemaDef.tables[this.tableName];
-  // const tableFields = denested(table).fields;
 
   denested(this.schemaDef.tables[this.tableName]).fields[fieldName] = field;
 
@@ -198,7 +194,7 @@ function removeField<
   tableName: TableName;
 } {
   this.step.modifications.push({
-    type: 'removeField',
+    type: 'removeColumn',
     fieldName,
   });
 
@@ -268,7 +264,7 @@ function renameField<
   tableName: TableName;
 } {
   this.step.modifications.push({
-    type: 'renameField',
+    type: 'renameColumn',
     oldName,
     newName,
   });
@@ -346,7 +342,7 @@ function migration<const T extends SchemaDefinition>(
   migrationSteps: AlterTableStep[];
   alter: typeof alter;
 } {
-  // TODO: use more general type that support different kinds of steps
+  // TODO: use more general type that support different kinds of steps, not just AlterTable*
   const migrationSteps: AlterTableStep[] = [];
 
   return {
@@ -359,7 +355,7 @@ function migration<const T extends SchemaDefinition>(
 
 export interface MigrationRecord {
   createdAt: number;
-  prevState: Record<string, Nested<TableDefinition>>;
+  prevState: ReturnType<typeof transformTables>;
   migrationSteps: AlterTableStep[];
 }
 
@@ -378,7 +374,7 @@ export function addMigration<
   },
 ): ApplyMigration<T, MT> & { migrations: MigrationRecord[] } {
   // save pre-migration state;
-  const prevState = { ...this.tables };
+  const prevState = transformTables({ ...this.tables });
   const newState = { ...this };
 
   const { migrationSteps } = callback(migration.bind(newState));

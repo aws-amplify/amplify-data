@@ -293,14 +293,22 @@ export function transformTables(tables: SchemaDefinition['tables']) {
 export function transformColumns(table: TableDefinition) {
   return Object.entries(table.fields).map(([fieldName, fieldDef]) => {
     const internalDef = denested(fieldDef);
-    return {
-      name: fieldName,
-      type: internalDef.typeArgs
-        ? `${internalDef.typeName}(${internalDef.typeArgs})`
-        : internalDef.typeName,
-      isNullable: !internalDef.isRequired,
-    };
+
+    return transformColumn(fieldName, internalDef);
   });
+}
+
+export function transformColumn(
+  fieldName: string,
+  internalDef: FieldDefinition,
+) {
+  return {
+    name: fieldName,
+    type: internalDef.typeArgs
+      ? `${internalDef.typeName}(${internalDef.typeArgs})`
+      : internalDef.typeName,
+    isNullable: !internalDef.isRequired,
+  };
 }
 
 export const sql = {
