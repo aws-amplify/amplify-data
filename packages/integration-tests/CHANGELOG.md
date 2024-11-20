@@ -1,5 +1,11 @@
 # integration-tests
 
+## 0.2.0
+
+### Minor Changes
+
+- 068f8af: Fix: change accumulator return type for initializeModel function
+
 ## 0.1.3
 
 ### Patch Changes

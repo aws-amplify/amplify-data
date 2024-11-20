@@ -1,5 +1,11 @@
 # @aws-amplify/data-schema
 
+## 1.16.0
+
+### Minor Changes
+
+- 068f8af: Fix: change accumulator return type for initializeModel function
+
 ## 1.15.0
 
 ### Minor Changes
