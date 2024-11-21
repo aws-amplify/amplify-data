@@ -1,5 +1,42 @@
 # @aws-amplify/data-schema
 
+## 1.16.0
+
+### Minor Changes
+
+- 068f8af: Fix: change accumulator return type for initializeModel function
+
+## 1.15.0
+
+### Minor Changes
+
+- e7ff339: Remove experimental tag for AI functions and types
+
+## 1.14.2
+
+### Patch Changes
+
+- ca505f9: Add Claude 3.5 Haiku and 3.5 Sonnet v2 models
+
+## 1.14.1
+
+### Patch Changes
+
+- 7e71444: rename conversation route supporting types with AmplifyAI prefix
+
+## 1.14.0
+
+### Minor Changes
+
+- a0849fc: require .authorization on conversation routes
+- a0849fc: Support model and custom op query tools, update tool definition API to a.ai.dataTool
+
+## 1.13.4
+
+### Patch Changes
+
+- 7d3c2bf: fix: Export ResourceAuthorization to fix related declaration errors
+
 ## 1.13.3
 
 ### Patch Changes

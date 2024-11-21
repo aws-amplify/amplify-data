@@ -93,6 +93,9 @@ export type SchemaAuthorization<
   | Authorization<AuthStrategy, AuthField, AuthFieldPlurality>
   | ResourceAuthorization;
 
+/**
+ * Container for representing the authorization of function resources
+ */
 export type ResourceAuthorization = {
   [__data]: ResourceAuthorizationData;
 };
@@ -596,6 +599,21 @@ export const allowForCustomOperations = {
   },
 } as const;
 
+export const allowForConversations = {
+  owner() {
+    return authData(
+      {
+        strategy: 'owner',
+        provider: 'userPools',
+      },
+      {
+        to,
+        identityClaim,
+      },
+    );
+  },
+} as const;
+
 function resourceTo<SELF extends ResourceAuthorization>(
   this: SELF,
   operations: ResourceOperation[],
@@ -689,3 +707,4 @@ export const accessSchemaData = <T extends SchemaAuthorization<any, any, any>>(
 // `allow` is declared as a `const` above
 export type AllowModifier = typeof allow;
 export type AllowModifierForCustomOperation = typeof allowForCustomOperations;
+export type AllowModifierForConversations = typeof allowForConversations;

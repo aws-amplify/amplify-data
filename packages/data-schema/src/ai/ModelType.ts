@@ -8,7 +8,9 @@ const supportedModelsLookup = {
   'Claude 3 Haiku': 'anthropic.claude-3-haiku-20240307-v1:0',
   'Claude 3 Opus': 'anthropic.claude-3-opus-20240229-v1:0',
   'Claude 3 Sonnet': 'anthropic.claude-3-sonnet-20240229-v1:0',
+  'Claude 3.5 Haiku': 'anthropic.claude-3-5-haiku-20241022-v1:0',
   'Claude 3.5 Sonnet': 'anthropic.claude-3-5-sonnet-20240620-v1:0',
+  'Claude 3.5 Sonnet v2': 'anthropic.claude-3-5-sonnet-20241022-v2:0',
   // Cohere models
   'Cohere Command R': 'cohere.command-r-v1:0',
   'Cohere Command R+': 'cohere.command-r-plus-v1:0',
@@ -29,8 +31,6 @@ export interface InferenceConfiguration {
 }
 
 /**
- * @experimental
- *
  * Bedrock models currently supporting Converse API and Tool use
  * @see {@link https://docs.aws.amazon.com/bedrock/latest/userguide/conversation-inference.html#conversation-inference-supported-models-features}
  */

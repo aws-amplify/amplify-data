@@ -16,6 +16,12 @@ export function buildMutation() {
     .authorization((allow) => [allow.authenticated()]);
 }
 
+export function buildSchemaWithFunctionDataAccess() {
+  return a.schema({
+    Todo: a.model({ content: a.string() })
+  }).authorization((allow) => [allow.resource(defFunc)]);
+}
+
 export function buildQueryRequiredInputJsonOutput() {
   return a
     .query()

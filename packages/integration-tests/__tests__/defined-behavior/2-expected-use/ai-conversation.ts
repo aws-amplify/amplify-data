@@ -6,6 +6,7 @@ import {
   optionsAndHeaders,
   subOptionsAndHeaders,
   pause,
+  expectSchemaFieldDirective,
 } from '../../utils';
 import { Subscriber } from 'rxjs';
 
@@ -15,7 +16,7 @@ describe('AI Conversation Routes', () => {
     chatBot: a.conversation({
       aiModel: a.ai.model('Claude 3 Haiku'),
       systemPrompt: 'You are a helpful chatbot.',
-    }),
+    }).authorization((allow) => allow.owner()),
   });
   type Schema = ClientSchema<typeof schema>;
 
@@ -743,13 +744,246 @@ describe('AI Conversation Routes', () => {
             aiModel: a.ai.model('Claude 3 Haiku'),
             systemPrompt: 'testSystemPrompt',
             handler: customConversationHandlerMock
-          }),
+          }).authorization((allow) => allow.owner()),
       });
 
-      const transformedSchema = schema.transform().schema;
-      expect(transformedSchema).toMatchSnapshot();
-      const expectedDirective = '@conversation(aiModel: "anthropic.claude-3-haiku-20240307-v1:0", systemPrompt: "testSystemPrompt", handler: { functionName: "FnSampleChat", eventVersion: "1.0" })';
-      expect(transformedSchema).toContain(expectedDirective);
+      expectSchemaFieldDirective({
+        schema: schema.transform().schema,
+        model: 'Mutation',
+        field: 'SampleChat',
+        directive: [
+          '@conversation(',
+          'aiModel: "anthropic.claude-3-haiku-20240307-v1:0", ',
+          'systemPrompt: "testSystemPrompt", ',
+          'auth: {strategy: owner, provider: userPools}, ',
+          'handler: {functionName: "FnSampleChat", eventVersion: "1.0"}',
+          ')',
+        ].join(''),
+      });
+
+      expectSchemaFieldDirective({
+        schema: schema.transform().schema,
+        model: 'Mutation',
+        field: 'SampleChat',
+        directive: '@aws_cognito_user_pools',
+      });
+    });
+  });
+
+  describe('Invalid authorization definitions', () => {
+    const input = {
+      aiModel: a.ai.model('Claude 3 Haiku'),
+      systemPrompt: 'testSystemPrompt',
+    };
+
+    test('Invalid auth strategy on field', () => {
+      expect(() =>
+        a.schema({
+          SampleChat: a.conversation(input)
+            // @ts-expect-error
+            .authorization((allow) => allow.authenticated())
+        })
+      ).toThrow();
+    });
+
+    test('Missing auth strategy on field, no schema auth', () => {
+      expect(() =>
+        a.schema({
+          SampleChat: a.conversation(input)
+        }).transform()
+      ).toThrow();
+    });
+
+    test('Missing auth strategy on field, schema auth', () => {
+      expect(() =>
+        a.schema({
+          SampleChat: a.conversation(input)
+        })
+          .authorization((allow) => allow.authenticated())
+          .transform()
+      ).toThrow();
+    });
+  });
+
+  describe('Conversation tools', () => {
+    test('generated model list query tool', () => {
+      const schema = a.schema({
+        MyModel: a.model({
+          name: a.string(),
+        })
+          .authorization((allow) => allow.owner()),
+
+        chatBot: a.conversation({
+          aiModel: a.ai.model('Claude 3 Haiku'),
+          systemPrompt: 'You are a helpful chatbot.',
+          tools: [
+            a.ai.dataTool({
+              name: 'myTool',
+              description: 'does a thing',
+              model: a.ref('MyModel'),
+              modelOperation: 'list',
+            }),
+          ],
+        })
+          .authorization((allow) => allow.owner())
+      });
+
+      expectSchemaFieldDirective({
+        schema: schema.transform().schema,
+        model: 'Mutation',
+        field: 'chatBot',
+        directive: [
+          '@conversation(',
+          'aiModel: "anthropic.claude-3-haiku-20240307-v1:0", ',
+          'systemPrompt: "You are a helpful chatbot.", ',
+          'auth: {strategy: owner, provider: userPools}, ',
+          'tools: [{name: "myTool", description: "does a thing", modelName: "MyModel", modelOperation: list}]',
+          ')',
+        ].join(''),
+      });
+    });
+
+    test('custom query tool', () => {
+      const schema = a.schema({
+        FooBar: a.customType({
+          foo: a.string(),
+          bar: a.integer(),
+        }),
+        myToolQuery: a.query()
+          .arguments({
+            input: a.string(),
+          })
+          .returns(a.ref('FooBar'))
+          .handler(a.handler.function('fakeHandler'))
+          .authorization((allow) => allow.authenticated()),
+
+        chatBot: a.conversation({
+          aiModel: a.ai.model('Claude 3 Haiku'),
+          systemPrompt: 'You are a helpful chatbot.',
+          tools: [
+            a.ai.dataTool({
+              name: 'myTool',
+              description: 'does a thing',
+              query: a.ref('myToolQuery'),
+            }),
+          ],
+        })
+          .authorization((allow) => allow.owner())
+      });
+
+      expectSchemaFieldDirective({
+        schema: schema.transform().schema,
+        model: 'Mutation',
+        field: 'chatBot',
+        directive: [
+          '@conversation(',
+          'aiModel: "anthropic.claude-3-haiku-20240307-v1:0", ',
+          'systemPrompt: "You are a helpful chatbot.", ',
+          'auth: {strategy: owner, provider: userPools}, ',
+          'tools: [{name: "myTool", description: "does a thing", queryName: "myToolQuery"}]',
+          ')',
+        ].join(''),
+      });
+    });
+
+    test('model and query tools', () => {
+      const schema = a.schema({
+        MyModel: a.model({
+          name: a.string(),
+        })
+          .authorization((allow) => allow.owner()),
+
+        FooBar: a.customType({
+          foo: a.string(),
+          bar: a.integer(),
+        }),
+        myToolQuery: a.query()
+          .arguments({
+            input: a.string(),
+          })
+          .returns(a.ref('FooBar'))
+          .handler(a.handler.function('fakeHandler'))
+          .authorization((allow) => allow.authenticated()),
+
+        chatBot: a.conversation({
+          aiModel: a.ai.model('Claude 3 Haiku'),
+          systemPrompt: 'You are a helpful chatbot.',
+          tools: [
+            a.ai.dataTool({
+              name: 'myTool',
+              description: 'does a thing',
+              model: a.ref('MyModel'),
+              modelOperation: 'list',
+            }),
+            a.ai.dataTool({
+              name: 'myTool2',
+              description: 'does a different thing',
+              query: a.ref('myToolQuery'),
+            }),
+          ],
+        }).authorization((allow) => allow.owner())
+      });
+
+      expectSchemaFieldDirective({
+        schema: schema.transform().schema,
+        model: 'Mutation',
+        field: 'chatBot',
+        directive: [
+          '@conversation(',
+          'aiModel: "anthropic.claude-3-haiku-20240307-v1:0", ',
+          'systemPrompt: "You are a helpful chatbot.", ',
+          'auth: {strategy: owner, provider: userPools}, ',
+          'tools: [',
+          '{name: "myTool", description: "does a thing", modelName: "MyModel", modelOperation: list}, ',
+          '{name: "myTool2", description: "does a different thing", queryName: "myToolQuery"}',
+          ']',
+          ')',
+        ].join(''),
+      });
+    });
+
+    describe('invalid tool definitions', () => {
+      test('invalid tool name', () => {
+        const schema = a.schema({
+          invalidChatName: a.conversation({
+            aiModel: a.ai.model('Claude 3 Haiku'),
+            systemPrompt: 'You are a helpful chatbot.',
+            tools: [
+              a.ai.dataTool({
+                name: 'abc-123',
+                description: 'does a thing',
+                model: a.ref('MyModel'),
+                modelOperation: 'list',
+              }),
+            ],
+          })
+          .authorization((allow) => allow.owner())
+        });
+
+        expect(() => schema.transform()).toThrow(
+          'Tool name must be between 1 and 64 characters, start with a letter, and contain only letters, numbers, and underscores. Found: abc-123',
+        );
+      });
+
+      test('mixing model and query tools', () => {
+        a.schema({
+          invalidToolDefinition: a.conversation({
+            aiModel: a.ai.model('Claude 3 Haiku'),
+            systemPrompt: 'You are a helpful chatbot.',
+            tools: [
+              // @ts-expect-error
+              a.ai.dataTool({
+                name: 'myTool',
+                description: 'does a thing',
+                query: a.ref('myToolQuery'),
+                model: a.ref('MyModel'),
+                modelOperation: 'list',
+              }),
+            ],
+          })
+          .authorization((allow) => allow.owner())
+        });
+      });
     });
   });
 });

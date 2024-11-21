@@ -256,4 +256,15 @@ Reference type definition interface
 
 
 </td></tr>
+<tr><td>
+
+[ResourceAuthorization](./data-schema.resourceauthorization.md)
+
+
+</td><td>
+
+Container for representing the authorization of function resources
+
+
+</td></tr>
 </tbody></table>

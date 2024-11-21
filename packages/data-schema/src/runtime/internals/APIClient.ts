@@ -243,8 +243,9 @@ export function initializeModel(
             // eslint-disable-next-line array-callback-return
             (acc: Record<string, any>, curVal) => {
               if (record[curVal]) {
-                return (acc[curVal] = record[curVal]);
+                acc[curVal] = record[curVal];
               }
+              return acc; 
             },
             {},
           );
