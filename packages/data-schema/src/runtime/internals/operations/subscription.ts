@@ -32,7 +32,7 @@ export function subscriptionFactory(
   const subscription = (args?: Record<string, any>) => {
     const query = generateGraphQLDocument(
       modelIntrospection,
-      name,
+      model,
       operation,
       args,
     );

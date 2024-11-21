@@ -120,7 +120,7 @@ function _indexQuery(
 
     const query = generateGraphQLDocument(
       modelIntrospection,
-      name,
+      model,
       'INDEX_QUERY',
       args,
       indexMeta,
@@ -189,7 +189,12 @@ function _indexQuery(
       const { data, errors } = error;
 
       // `data` is not `null`, and is not an empty object:
-      if (data !== undefined && data !== null && Object.keys(data).length !== 0 && errors) {
+      if (
+        data !== undefined &&
+        data !== null &&
+        Object.keys(data).length !== 0 &&
+        errors
+      ) {
         const [key] = Object.keys(data);
 
         if (data[key]?.items) {
