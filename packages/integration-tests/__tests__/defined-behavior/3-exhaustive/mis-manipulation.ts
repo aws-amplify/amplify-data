@@ -4,6 +4,7 @@ import {
   buildAmplifyConfig,
   mockedGenerateClient,
   optionsAndHeaders,
+  expectGraphqlMatches,
 } from '../../utils';
 
 const sampleTodo = {
@@ -45,7 +46,7 @@ describe('Manipulated MIS cannot be used to call the wrong model', () => {
     jest.clearAllMocks();
   });
 
-  test('create an item', async () => {
+  test('create performs operation against intended model', async () => {
     // #region mocking
     const { spy, generateClient } = mockedGenerateClient([
       {
@@ -69,13 +70,18 @@ describe('Manipulated MIS cannot be used to call the wrong model', () => {
     // #endregion
 
     // #region assertions
-    expect(optionsAndHeaders(spy)).toMatchSnapshot();
+    expectGraphqlMatches(
+      optionsAndHeaders(spy)[0][0].query,
+      `mutation($input: CreateTodoInput!) { 
+        createTodo(input: $input) { id content createdAt updatedAt }
+      }`,
+    );
     expect(errors).toBeUndefined();
     expect(newTodo).toEqual(sampleTodo);
     // #endregion assertions
   });
 
-  test('update an item', async () => {
+  test('update performs operation against intended model', async () => {
     // #region mocking
     const { spy, generateClient } = mockedGenerateClient([
       {
@@ -99,13 +105,18 @@ describe('Manipulated MIS cannot be used to call the wrong model', () => {
     // #endregion
 
     // #region assertions
-    expect(optionsAndHeaders(spy)).toMatchSnapshot();
+    expectGraphqlMatches(
+      optionsAndHeaders(spy)[0][0].query,
+      `mutation($input: UpdateTodoInput!) { 
+        updateTodo(input: $input) { id content createdAt updatedAt }
+      }`,
+    );
     expect(errors).toBeUndefined();
     expect(updatedTodo).toEqual(sampleTodo);
     // #endregion assertions
   });
 
-  test('delete an item', async () => {
+  test('delete performs operation against intended model', async () => {
     // #region mocking
     const { spy, generateClient } = mockedGenerateClient([
       {
@@ -131,7 +142,12 @@ describe('Manipulated MIS cannot be used to call the wrong model', () => {
     // #endregion
 
     // #region assertions
-    expect(optionsAndHeaders(spy)).toMatchSnapshot();
+    expectGraphqlMatches(
+      optionsAndHeaders(spy)[0][0].query,
+      `mutation($input: DeleteTodoInput!) { 
+        deleteTodo(input: $input) { id content createdAt updatedAt }
+      }`,
+    );
     expect(errors).toBeUndefined();
     expect(deletedTodo).toEqual(sampleTodo);
     // #endregion assertions
