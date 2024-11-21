@@ -60,7 +60,7 @@ export function listFactory(
       getInternals,
       args,
       undefined,
-      customUserAgentDetails
+      customUserAgentDetails,
     );
   };
 
@@ -81,7 +81,7 @@ function _list(
 
     const query = generateGraphQLDocument(
       modelIntrospection,
-      name,
+      model,
       'LIST',
       args,
     );
