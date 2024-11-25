@@ -1,4 +1,5 @@
-import type { SetTypeSubArg } from '@aws-amplify/data-schema-types';
+import type { Prettify, SetTypeSubArg } from '@aws-amplify/data-schema-types';
+import { KindaPretty } from './util';
 import {
   type PrimaryIndexIrShape,
   type SecondaryIndexIrShape,
@@ -28,6 +29,9 @@ import type { methodKeyOf } from './util/usedMethods.js';
 
 const brandName = 'modelType';
 export type deferredRefResolvingPrefix = 'deferredRefResolving:';
+
+type AllowModifierBase = Omit<AllowModifier, 'resource'>;
+type AnyAuthorization = Authorization<any, any, any>;
 
 type ModelFields = Record<
   string,
@@ -95,9 +99,7 @@ export type ModelTypeParamShape = {
  * indicator string, and resolve its corresponding type later in
  * packages/data-schema/src/runtime/client/index.ts
  */
-export type ExtractSecondaryIndexIRFields<
-  T extends ModelTypeParamShape,
-> = {
+export type ExtractSecondaryIndexIRFields<T extends ModelTypeParamShape> = {
   [FieldProp in keyof T['fields'] as T['fields'][FieldProp] extends BaseModelField<
     infer R
   >
@@ -275,10 +277,26 @@ export type ModelType<
       SetTypeSubArg<T, 'disabledOperations', Ops>,
       UsedMethod | 'disableOperations'
     >;
-    authorization<AuthRuleType extends Authorization<any, any, any>>(
-      callback: (
-        allow: Omit<AllowModifier, 'resource'>,
-      ) => AuthRuleType | AuthRuleType[],
+
+    /**
+     * Configures authorization rules for public, signed-in user, per user, and per user group data access
+     *
+     * @param callback - A function that receives an allow modifier to define authorization rules
+     * @returns {ModelType} A ModelType instance with updated authorization rules
+     *
+     * @example
+     * model.authorization((allow) => [
+     *   allow.guest(),
+     *   allow.publicApiKey(),
+     *   allow.authenticated(),
+     * ])
+     */
+    authorization<AuthRuleType extends AnyAuthorization>(
+      callback: 
+      /**
+       * Modifier that defines authorization rules.
+       */
+      (allow: AllowModifierBase) => AuthRuleType | AuthRuleType[],
     ): ModelType<
       SetTypeSubArg<T, 'authorization', AuthRuleType[]>,
       UsedMethod | 'authorization'
