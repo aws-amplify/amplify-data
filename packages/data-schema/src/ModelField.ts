@@ -3,6 +3,8 @@ import { AllowModifier, Authorization, allow } from './Authorization';
 import type { methodKeyOf, satisfy } from './util/usedMethods.js';
 import type { brandSymbol } from './util/Brand.js';
 
+const internal = Symbol('internal');
+
 /**
  * Used to "attach" auth types to ModelField without exposing them on the builder.
  */
@@ -82,7 +84,7 @@ export type BaseModelField<
 
 export type UsableModelFieldKey = satisfy<
   methodKeyOf<ModelField>,
-  'required' | 'default' | 'authorization'
+  'required' | 'default' | 'authorization' | 'array'
 >;
 
 /**
@@ -101,6 +103,7 @@ export type ModelField<
     // This is a lie. This property is never set at runtime. It's just used to smuggle auth types through.
     [__auth]?: Auth;
     [brandSymbol]: typeof brandName;
+    [internal](): ModelField<ArrayField<T>, Exclude<UsedMethod, 'required'>>;
 
     /**
      * Marks a field as required.
@@ -110,7 +113,10 @@ export type ModelField<
     /**
      * Converts a field type definition to an array of the field type.
      */
-    array(): ModelField<ArrayField<T>, Exclude<UsedMethod, 'required'>>;
+    array(): ModelField<
+      ArrayField<T>,
+      Exclude<UsedMethod, 'required'> | 'array'
+    >;
     // TODO: should be T, but .array breaks this constraint. Fix later
     /**
      * Sets a default value for the scalar type.
@@ -199,6 +205,12 @@ function _field<T extends ModelFieldTypeParamOuter>(fieldType: ModelFieldType) {
       return this;
     },
     ...brand(brandName),
+    [internal](): ModelField<ArrayField<T>> {
+      data.array = true;
+      _meta.lastInvokedMethod = 'array';
+
+      return this;
+    },
   } as ModelField<T>;
 
   // this double cast gives us a Subtyping Constraint i.e., hides `data` from the public API,
