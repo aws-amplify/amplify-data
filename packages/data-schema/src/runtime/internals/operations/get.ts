@@ -92,7 +92,7 @@ function _get(
 
     const query = generateGraphQLDocument(
       modelIntrospection,
-      name,
+      model,
       operation,
       options,
     );

@@ -1,5 +1,11 @@
 # @aws-amplify/data-schema
 
+## 1.16.1
+
+### Patch Changes
+
+- ba19bb4: fix prevent mis model mismatch
+
 ## 1.16.0
 
 ### Minor Changes

@@ -1,7 +1,6 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 
 // SPDX-License-Identifier: Apache-2.0
-
 import {
   AmplifyServer,
   AssociationBelongsTo,
@@ -245,7 +244,7 @@ export function initializeModel(
               if (record[curVal]) {
                 acc[curVal] = record[curVal];
               }
-              return acc; 
+              return acc;
             },
             {},
           );
@@ -843,13 +842,11 @@ export function generateSelectionSet(
 
 export function generateGraphQLDocument(
   modelIntrospection: ModelIntrospectionSchema,
-  modelName: string,
+  modelDefinition: SchemaModel,
   modelOperation: ModelOperation,
   listArgs?: ListArgs | QueryArgs,
   indexMeta?: IndexMeta,
 ): string {
-  const modelDefinition = modelIntrospection.models[modelName];
-
   const {
     name,
     pluralName,
@@ -917,7 +914,7 @@ export function generateGraphQLDocument(
       )?.properties?.name;
 
       skQueryArgs = {
-        [compositeSkArgName]: `Model${capitalize(modelName)}${capitalize(keyName)}CompositeKeyConditionInput`,
+        [compositeSkArgName]: `Model${capitalize(name)}${capitalize(keyName)}CompositeKeyConditionInput`,
       };
     }
 
@@ -941,7 +938,7 @@ export function generateGraphQLDocument(
 
   const selectionSetFields = generateSelectionSet(
     modelIntrospection,
-    modelName,
+    name,
     selectionSet as ListArgs['selectionSet'],
   );
 
@@ -1011,7 +1008,7 @@ export function generateGraphQLDocument(
         const compositeSkArgName = resolvedSkName(sortKeyFieldNames);
 
         return {
-          [compositeSkArgName]: `Model${capitalize(modelName)}PrimaryCompositeKeyConditionInput`,
+          [compositeSkArgName]: `Model${capitalize(name)}PrimaryCompositeKeyConditionInput`,
         };
       }
     }
