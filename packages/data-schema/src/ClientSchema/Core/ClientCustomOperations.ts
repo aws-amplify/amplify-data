@@ -2,15 +2,15 @@ import type {
   CustomOperationParamShape,
   UltimateFunctionHandlerAsyncType,
 } from '../../CustomOperation';
-import type { BaseModelField, ModelFieldType, Nullable } from '../../ModelField';
+import type { BaseModelField, ModelFieldType } from '../../ModelField';
 import type { RefType } from '../../RefType';
 import type { ResolveFieldRequirements } from '../../MappedTypes/ResolveFieldProperties';
 import type { AppSyncResolverHandler } from 'aws-lambda';
 import type { CustomType } from '../../CustomType';
 import type { FieldTypesOfCustomType } from '../../MappedTypes/ResolveSchema';
 import type { ResolveRef } from '../utilities/ResolveRef';
-import type { EnumType } from '../../EnumType';
 import { ClientSchemaProperty } from './ClientSchemaProperty';
+import type { ResolveFields } from '../utilities';
 
 type CustomOperationSubType<Op extends CustomOperationParamShape> =
   `custom${Op['typeName']}`;
@@ -84,44 +84,18 @@ export interface ClientCustomOperation<
 
 /**
  * Digs out custom operation arguments, mapped to the intended graphql types.
- * It handles various field types including basic fields, enums, custom types, and references.
- * The type can process nested structures and manages nullability.
+ * using the existing ResolveFields utility type. This handles:
+ * - Basic scalar fields
+ * - Enum types
+ * - Custom types (including nested structures)
+ * - Reference types
  */
 type CustomOpArguments<
   Shape extends CustomOperationParamShape,
-  RefBag extends Record<string, any> = any
+  RefBag extends Record<string, any> = any,
 > = Shape['arguments'] extends null
   ? never
-  : ResolveFieldRequirements<{
-      [FieldName in keyof Shape['arguments']]: Shape['arguments'][FieldName] extends BaseModelField<infer R>
-        ? R
-        : Shape['arguments'][FieldName] extends EnumType<infer Values>
-          ? Values[number] | null
-        : Shape['arguments'][FieldName] extends CustomType<infer CustomTypeShape>
-          ? CustomTypeShape['fields'] extends { nestedObject1: any }
-            ? { 
-                [Key in keyof CustomTypeShape['fields']]?: 
-                CustomTypeShape['fields'][Key] extends CustomType<infer NestedShape>
-                    ? {
-                        [NestedKey in keyof NestedShape['fields']]?: 
-                          NestedShape['fields'][NestedKey] extends BaseModelField<infer FieldType>
-                            ? FieldType extends Nullable<infer UnwrappedType> ? UnwrappedType | null : FieldType
-                            : never
-                      } | null
-                  : CustomTypeShape['fields'][Key] extends BaseModelField<infer FieldType>
-                    ? FieldType extends Nullable<infer UnwrappedType> ? UnwrappedType | null : FieldType
-                  : never
-              } | null  
-            : { 
-                [Key in keyof CustomTypeShape['fields']]?: 
-                CustomTypeShape['fields'][Key] extends BaseModelField<infer FieldType>
-                    ? FieldType extends Nullable<infer UnwrappedType> ? UnwrappedType | null : FieldType
-                    : never
-              }
-        : Shape['arguments'][FieldName] extends RefType<infer RefShape, any, any>
-          ? ResolveRef<RefShape, RefBag>
-        : never
-      }>;
+  : ResolveFields<RefBag, Shape['arguments']>;
 
 /**
  * Removes `null | undefined` from the return type if the operation is a subscription,
