@@ -103,7 +103,7 @@ export type ModelField<
     // This is a lie. This property is never set at runtime. It's just used to smuggle auth types through.
     [__auth]?: Auth;
     [brandSymbol]: typeof brandName;
-    [internal](): ModelField<ArrayField<T>, Exclude<UsedMethod, 'required'>>;
+    [internal](): ModelField<T, UsedMethod>;
 
     /**
      * Marks a field as required.
@@ -204,13 +204,10 @@ function _field<T extends ModelFieldTypeParamOuter>(fieldType: ModelFieldType) {
 
       return this;
     },
-    ...brand(brandName),
-    [internal](): ModelField<ArrayField<T>> {
-      data.array = true;
-      _meta.lastInvokedMethod = 'array';
-
+    [internal]() {
       return this;
     },
+    ...brand(brandName),
   } as ModelField<T>;
 
   // this double cast gives us a Subtyping Constraint i.e., hides `data` from the public API,
