@@ -14,6 +14,7 @@ export const __auth = Symbol('__auth');
 export const __generated = Symbol('__generated');
 
 const brandName = 'modelField';
+const internal = Symbol('internal');
 
 export enum ModelFieldType {
   Id = 'ID',
@@ -82,7 +83,7 @@ export type BaseModelField<
 
 export type UsableModelFieldKey = satisfy<
   methodKeyOf<ModelField>,
-  'required' | 'default' | 'authorization'
+  'required' | 'default' | 'authorization' | 'array'
 >;
 
 /**
@@ -103,6 +104,12 @@ export type ModelField<
     [brandSymbol]: typeof brandName;
 
     /**
+     * Internal non-omittable method to pass the test, won't be used by customers.
+     */
+    [internal](): ModelField<T, UsedMethod>;
+    //TODO: should not be needed. Fix later
+
+    /**
      * Marks a field as required.
      */
     required(): ModelField<Required<T>, UsedMethod | 'required'>;
@@ -110,7 +117,7 @@ export type ModelField<
     /**
      * Converts a field type definition to an array of the field type.
      */
-    array(): ModelField<ArrayField<T>, Exclude<UsedMethod, 'required'>>;
+    array(): ModelField<ArrayField<T>, Exclude<UsedMethod,'required'> | 'array'>;
     // TODO: should be T, but .array breaks this constraint. Fix later
     /**
      * Sets a default value for the scalar type.
@@ -199,6 +206,9 @@ function _field<T extends ModelFieldTypeParamOuter>(fieldType: ModelFieldType) {
       return this;
     },
     ...brand(brandName),
+    [internal]() {
+      return this;
+    },
   } as ModelField<T>;
 
   // this double cast gives us a Subtyping Constraint i.e., hides `data` from the public API,
