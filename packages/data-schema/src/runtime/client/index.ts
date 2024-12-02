@@ -87,7 +87,7 @@ type ReturnValue<
  * Note: custom type field arrays are already handled correctly and don't need to be "restored", hence the `Result[K] extends Array<any>` check
  *
  */
-export type RestoreArrays<
+type RestoreArrays<
   Result,
   FlatModel,
   NonNullResult = NonNullable<Result>,
@@ -187,7 +187,7 @@ type CustomSelectionSetReturnValue<
  * To work around this limitation, DeepPickFromPath flattens Arrays of Models (e.g. { comments: { id: string}[] } => { comments: { id: string} })
  * Arrays are then restored downstream in RestoreArrays
  */
-export type DeepPickFromPath<
+type DeepPickFromPath<
   FlatModel extends Model,
   Path extends string,
 > = FlatModel extends undefined
@@ -307,7 +307,7 @@ export type ModelPath<
  * 
  * ```
  */
-export type ResolvedModel<
+type ResolvedModel<
   Model extends Record<string, unknown>,
   Depth extends number = 7,
   RecursionLoop extends number[] = [-1, 0, 1, 2, 3, 4, 5, 6],

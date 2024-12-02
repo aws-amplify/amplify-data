@@ -51,8 +51,6 @@ export interface ClientModel<
   __meta: {
     listOptionsPkParams: ListOptionsPkParams<Bag, T>;
     disabledOperations: DisabledOpsToMap<T['disabledOperations']>;
-    // return type sans async getters - used by custom selection set in the client types
-    flat: ClientFieldsFlat<Bag, Metadata, IsRDS, T>;
   };
 }
 
@@ -89,16 +87,6 @@ type ClientFields<
   IsRDS extends boolean,
   T extends ModelTypeParamShape,
 > = ResolveFields<Bag, T['fields']> &
-  If<Not<IsRDS>, ImplicitIdentifier<T>> &
-  AuthFields<Metadata, T> &
-  Omit<SystemFields<IsRDS>, keyof ResolveFields<Bag, T['fields']>>;
-
-type ClientFieldsFlat<
-  Bag extends Record<string, unknown>,
-  Metadata extends SchemaMetadata<any>,
-  IsRDS extends boolean,
-  T extends ModelTypeParamShape,
-> = ResolveFields<Bag, T['fields'], true> &
   If<Not<IsRDS>, ImplicitIdentifier<T>> &
   AuthFields<Metadata, T> &
   Omit<SystemFields<IsRDS>, keyof ResolveFields<Bag, T['fields']>>;
