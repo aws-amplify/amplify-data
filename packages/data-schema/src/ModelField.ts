@@ -117,7 +117,7 @@ export type ModelField<
     /**
      * Converts a field type definition to an array of the field type.
      */
-    array(): ModelField<ArrayField<T>, Exclude<UsedMethod,'required'> | 'array'>;
+    array(): ModelField<ArrayField<T>, Exclude<UsedMethod, 'required'> | 'array'>;
     // TODO: should be T, but .array breaks this constraint. Fix later
     /**
      * Sets a default value for the scalar type.
