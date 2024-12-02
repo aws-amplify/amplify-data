@@ -114,21 +114,21 @@ type HandleArrayNullability<Result, FlatModel> =
   Array<any> extends Result
     ? // If Result is already an array, return it as is.
       Result
-    : null extends FlatModel
-      ? NonNullable<FlatModel> extends Array<any>
-        ? null extends NonNullable<FlatModel>[0]
+    : NonNullable<FlatModel> extends Array<infer InnerValue>
+      ? // is the array nullable?
+        null extends FlatModel
+        ? // is the value nullable?
+          null extends InnerValue
           ? // value and array are nullable - a.ref('SomeType').array()
             Array<RestoreArrays<Result, UnwrapArray<FlatModel>> | null> | null
           : // value required; array nullable - a.ref('SomeType').required().array()
             Array<RestoreArrays<Result, UnwrapArray<FlatModel>>> | null
-        : never
-      : NonNullable<FlatModel> extends Array<any>
-        ? null extends NonNullable<FlatModel>[0]
+        : null extends InnerValue
           ? // value nullable; array required  - a.ref('SomeType').array().required()
             Array<RestoreArrays<Result, UnwrapArray<FlatModel>> | null>
           : // value required; array required - a.ref('SomeType').required().array().required()
             Array<RestoreArrays<Result, UnwrapArray<FlatModel>>>
-        : never;
+      : never;
 
 /**
  * Generates flattened, readonly return type using specified custom sel. set
