@@ -84,53 +84,41 @@ type ReturnValue<
  * This mapped type traverses the SelectionSetReturnValue result and the original FlatModel, restoring array types
  * that were flattened in DeepPickFromPath
  *
- * Note: custom type field arrays are already handled correctly and don't need to be "restored", hence the `Result[K] extends Array<any>` check
- *
+ * @typeParam Result - this is the result of applying the selection set path to FlatModel; return type of UnionToIntersection<DeepPickFromPath<FlatModel, Paths>>
+ * @typeParam FlatModel - the reference model shape; return type of ResolvedModel<Model>
  */
-type RestoreArrays<
-  Result,
-  FlatModel,
-  NonNullResult = NonNullable<Result>,
-  NonNullFlatModel = NonNullable<FlatModel>,
-> = {
-  [K in keyof NonNullResult]: K extends keyof NonNullFlatModel
-    ? Array<any> extends NonNullFlatModel[K]
-      ? Array<any> extends NonNullResult[K]
-        ? NonNullResult[K]
-        : null extends NonNullFlatModel[K]
-          ? NonNullable<NonNullFlatModel[K]> extends Array<any>
-            ? null extends NonNullable<NonNullFlatModel[K]>[0]
-              ? Array<RestoreArrays<
-                  NonNullResult[K],
-                  UnwrapArray<NonNullFlatModel[K]>
-                > | null> | null
-              : Array<
-                  RestoreArrays<
-                    NonNullResult[K],
-                    UnwrapArray<NonNullFlatModel[K]>
-                  >
-                > | null
-            : never
-          : NonNullable<NonNullFlatModel[K]> extends Array<any>
-            ? null extends NonNullable<NonNullFlatModel[K]>[0]
-              ? Array<RestoreArrays<
-                  NonNullResult[K],
-                  UnwrapArray<NonNullFlatModel[K]>
-                > | null>
-              : Array<
-                  RestoreArrays<
-                    NonNullResult[K],
-                    UnwrapArray<NonNullFlatModel[K]>
-                  >
-                >
-            : never
-      : NonNullFlatModel[K] extends Record<string, any>
-        ? null extends NonNullFlatModel[K]
-          ? RestoreArrays<NonNullResult[K], NonNullFlatModel[K]> | null
-          : RestoreArrays<NonNullResult[K], NonNullFlatModel[K]>
-        : NonNullResult[K]
+type RestoreArrays<Result, FlatModel> = {
+  [K in keyof NonNullable<Result>]: K extends keyof NonNullable<FlatModel>
+    ? Array<any> extends NonNullable<FlatModel>[K]
+      ? HandleArrayNullability<
+          NonNullable<Result>[K],
+          NonNullable<FlatModel>[K]
+        >
+      : NonNullable<FlatModel>[K] extends Record<string, any>
+        ? RestoreArrays<NonNullable<Result>[K], NonNullable<FlatModel>[K]>
+        : NonNullable<Result>[K]
     : never;
 };
+
+/**
+ * This mapped type gets called by RestoreArrays<T, K> and it restores the expected
+ * nullability in array fields (e.g. nullable vs. required value & nullable vs. required array)
+ */
+type HandleArrayNullability<Result, FlatModel> =
+  Array<any> extends Result
+    ? // If Result is already an array, return it as is.
+      Result
+    : null extends FlatModel
+      ? NonNullable<FlatModel> extends Array<any>
+        ? null extends NonNullable<FlatModel>[0]
+          ? Array<RestoreArrays<Result, UnwrapArray<FlatModel>> | null> | null
+          : Array<RestoreArrays<Result, UnwrapArray<FlatModel>>> | null
+        : never
+      : NonNullable<FlatModel> extends Array<any>
+        ? null extends NonNullable<FlatModel>[0]
+          ? Array<RestoreArrays<Result, UnwrapArray<FlatModel>> | null>
+          : Array<RestoreArrays<Result, UnwrapArray<FlatModel>>>
+        : never;
 
 /**
  * Generates flattened, readonly return type using specified custom sel. set

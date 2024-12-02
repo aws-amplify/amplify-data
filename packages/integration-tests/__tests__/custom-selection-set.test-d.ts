@@ -478,6 +478,22 @@ describe('Custom Selection Set', () => {
         metas3: a.ref('Meta').array().required(),
         metas4: a.ref('Meta').required().array().required(),
       }),
+
+      NestedMeta: a.customType({
+        metas: a.ref('Meta').array(),
+        metas2: a.ref('Meta').required().array(),
+        metas3: a.ref('Meta').array().required(),
+        metas4: a.ref('Meta').required().array().required(),
+      }),
+
+      Post8: a.model({
+        title: a.string().required(),
+        description: a.string(),
+        metas: a.ref('NestedMeta').array(),
+        metas2: a.ref('NestedMeta').required().array(),
+        metas3: a.ref('NestedMeta').array().required(),
+        metas4: a.ref('NestedMeta').required().array().required(),
+      }),
     });
 
     type Schema = ClientSchema<typeof schema>;
@@ -675,7 +691,24 @@ describe('Custom Selection Set', () => {
       type _ = Expect<Equal<ActualType, ExpectedType>>;
     });
 
-    // TODO: add nested custom types
+    test('custom selection set on array of nested custom types', async () => {
+      const { data: posts } = await client.models.Post8.list({
+        selectionSet: ['title', 'metas4.metas4.requiredTags'],
+      });
+
+      type ActualType = typeof posts;
+
+      type ExpectedType = {
+        readonly title: string;
+        readonly metas4: {
+          readonly metas4: {
+            readonly requiredTags: string[];
+          }[];
+        }[];
+      }[];
+
+      type _ = Expect<Equal<ActualType, ExpectedType>>;
+    });
   });
 
   describe('Enums', () => {
