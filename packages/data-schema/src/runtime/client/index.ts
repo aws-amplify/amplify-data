@@ -86,6 +86,12 @@ type ReturnValue<
  *
  * @typeParam Result - this is the result of applying the selection set path to FlatModel; return type of UnionToIntersection<DeepPickFromPath<FlatModel, Paths>>
  * @typeParam FlatModel - the reference model shape; return type of ResolvedModel<Model>
+ *
+ * Note: we wrap `Result` and `FlatModel` in NonNullable, because recursive invocations of this mapped type
+ * can result in the type arguments containing `{} | null | undefined` which breaks indexed access, e.g. Result[K]
+ *
+ * Using NonNullable<> directly inside the mapped type is significantly more performant here than attempting to pre-compute in the type params,
+ * e.g., `type RestoreArrays<Result, FlatModel, NonNullableResult = NonNullable<Result>, NonNullableFlatModel = NonNullable<FlatModel>> = {...}`
  */
 type RestoreArrays<Result, FlatModel> = {
   [K in keyof NonNullable<Result>]: K extends keyof NonNullable<FlatModel>
@@ -111,13 +117,17 @@ type HandleArrayNullability<Result, FlatModel> =
     : null extends FlatModel
       ? NonNullable<FlatModel> extends Array<any>
         ? null extends NonNullable<FlatModel>[0]
-          ? Array<RestoreArrays<Result, UnwrapArray<FlatModel>> | null> | null
-          : Array<RestoreArrays<Result, UnwrapArray<FlatModel>>> | null
+          ? // value and array are nullable - a.ref('SomeType').array()
+            Array<RestoreArrays<Result, UnwrapArray<FlatModel>> | null> | null
+          : // value required; array nullable - a.ref('SomeType').required().array()
+            Array<RestoreArrays<Result, UnwrapArray<FlatModel>>> | null
         : never
       : NonNullable<FlatModel> extends Array<any>
         ? null extends NonNullable<FlatModel>[0]
-          ? Array<RestoreArrays<Result, UnwrapArray<FlatModel>> | null>
-          : Array<RestoreArrays<Result, UnwrapArray<FlatModel>>>
+          ? // value nullable; array required  - a.ref('SomeType').array().required()
+            Array<RestoreArrays<Result, UnwrapArray<FlatModel>> | null>
+          : // value required; array required - a.ref('SomeType').required().array().required()
+            Array<RestoreArrays<Result, UnwrapArray<FlatModel>>>
         : never;
 
 /**
