@@ -15,7 +15,7 @@ export type ModelField<T extends ModelFieldTypeParamOuter = ModelFieldTypeParamO
     required(): ModelField<Required<T>, UsedMethod | 'required'>;
     array(): ModelField<ArrayField<T>, Exclude<UsedMethod, 'required'>>;
     default(value?: ModelFieldTypeParamOuter): ModelField<T, UsedMethod | 'default'>;
-    authorization<AuthRuleType extends Authorization<any, any, any>>(callback: (allow: Omit<AllowModifier, 'resource'>) => AuthRuleType | AuthRuleType[]): ModelField<T, UsedMethod | 'authorization', AuthRuleType>;
+    authorization<AuthRuleType extends Authorization<any, any, any>>(callback: (allow: AllowModifierBase) => AuthRuleType | AuthRuleType[]): ModelField<T, UsedMethod | 'authorization', AuthRuleType>;
 }, UsedMethod>;
 ```
 **References:** [ModelField](./data-schema.modelfield.md)<!-- -->, [Authorization](./data-schema.authorization.md)
