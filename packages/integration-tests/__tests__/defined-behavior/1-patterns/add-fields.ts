@@ -681,3 +681,18 @@ describe('Specify an enum field type', () => {
     });
   });
 });
+
+test('Disallow additional array modifier', () => {
+  a.schema({
+    ToDo: a.model({
+      values: a
+        .string()
+        .required()
+        .array()
+        .required()
+        // @ts-expect-error
+        .array()
+        .required(),
+    }),
+  })
+});
