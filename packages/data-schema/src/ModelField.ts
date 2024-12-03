@@ -15,6 +15,8 @@ export const __generated = Symbol('__generated');
 
 const brandName = 'modelField';
 
+type AllowModifierBase = Omit<AllowModifier, 'resource'>;
+
 export enum ModelFieldType {
   Id = 'ID',
   String = 'String',
@@ -125,7 +127,7 @@ export type ModelField<
      */
     authorization<AuthRuleType extends Authorization<any, any, any>>(
       callback: (
-        allow: Omit<AllowModifier, 'resource'>,
+        allow: AllowModifierBase,
       ) => AuthRuleType | AuthRuleType[],
     ): ModelField<T, UsedMethod | 'authorization', AuthRuleType>;
   },
