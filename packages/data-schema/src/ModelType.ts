@@ -1,5 +1,4 @@
-import type { Prettify, SetTypeSubArg } from '@aws-amplify/data-schema-types';
-import { KindaPretty } from './util';
+import type { SetTypeSubArg } from '@aws-amplify/data-schema-types';
 import {
   type PrimaryIndexIrShape,
   type SecondaryIndexIrShape,
