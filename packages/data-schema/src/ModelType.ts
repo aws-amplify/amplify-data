@@ -226,7 +226,6 @@ export type ModelType<
   {
     [brandSymbol]: typeof brandName;
 
-
     /**
      * Defines single-field or composite identifiers
      *
