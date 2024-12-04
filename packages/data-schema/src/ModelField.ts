@@ -103,11 +103,13 @@ export type ModelField<
     [__auth]?: Auth;
     [brandSymbol]: typeof brandName;
 
-    /**
-     * Internal non-omittable method to pass the test, won't be used by customers.
+     /**
+     * Internal non-omittable method that allows `BaseModelField` to retain a reference to `T` type arg in `ModelField`. 
+     * Since all public methods are omittable, the evaluated `BaseModelField` loses type information unless 
+     * some property on the type is guaranteed to reference `T`
+     * Context: https://github.com/aws-amplify/amplify-api-next/pull/406/files#r1869481467
      */
-    [internal](): ModelField<T, UsedMethod>;
-    //TODO: should not be needed. Fix later
+    [internal](): ModelField<T>;
 
     /**
      * Marks a field as required.
