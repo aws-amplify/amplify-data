@@ -15,7 +15,7 @@ export type ModelType<T extends ModelTypeParamShape = ModelTypeParamShape, UsedM
     secondaryIndexes<const SecondaryIndexFields = ExtractSecondaryIndexIRFields<T>, const SecondaryIndexPKPool extends string = keyof SecondaryIndexFields & string, const Indexes extends readonly ModelIndexType<string, string, unknown, readonly [], any>[] = readonly [], const IndexesIR extends readonly any[] = SecondaryIndexToIR<Indexes, SecondaryIndexFields>>(callback: (index: <PK extends SecondaryIndexPKPool>(pk: PK) => ModelIndexType<SecondaryIndexPKPool, PK, ReadonlyArray<Exclude<SecondaryIndexPKPool, PK>>>) => Indexes): ModelType<SetTypeSubArg<T, 'secondaryIndexes', IndexesIR>, UsedMethod | 'secondaryIndexes'>;
     disableOperations<const Ops extends ReadonlyArray<DisableOperationsOptions>>(ops: Ops): ModelType<SetTypeSubArg<T, 'disabledOperations', Ops>, UsedMethod | 'disableOperations'>;
     authorization<AuthRuleType extends AnyAuthorization>(callback: 
-    (allow: AllowModifierBase) => AuthRuleType | AuthRuleType[]): ModelType<SetTypeSubArg<T, 'authorization', AuthRuleType[]>, UsedMethod | 'authorization'>;
+    (allow: BaseAllowModifier) => AuthRuleType | AuthRuleType[]): ModelType<SetTypeSubArg<T, 'authorization', AuthRuleType[]>, UsedMethod | 'authorization'>;
 }, UsedMethod>;
 ```
 **References:** [ModelType](./data-schema.modeltype.md)

@@ -29,7 +29,7 @@ import type { methodKeyOf } from './util/usedMethods.js';
 const brandName = 'modelType';
 export type deferredRefResolvingPrefix = 'deferredRefResolving:';
 
-type AllowModifierBase = Omit<AllowModifier, 'resource'>;
+type BaseAllowModifier = Omit<AllowModifier, 'resource'>;
 type AnyAuthorization = Authorization<any, any, any>;
 
 type ModelFields = Record<
@@ -225,6 +225,17 @@ export type ModelType<
 > = Omit<
   {
     [brandSymbol]: typeof brandName;
+
+
+    /**
+     * Defines single-field or composite identifiers
+     *
+     * @param identifier - A list of field names used as identifiers for the data model
+     * @returns {ModelType} A ModelType instance with updated identifiers
+     *
+     * @example
+     * .identifier(['name', 'age'])
+     */
     identifier<
       PrimaryIndexFields = ExtractSecondaryIndexIRFields<T>,
       PrimaryIndexPool extends string = keyof PrimaryIndexFields & string,
@@ -239,6 +250,16 @@ export type ModelType<
       SetTypeSubArg<T, 'identifier', PrimaryIndexIR>,
       UsedMethod | 'identifier'
     >;
+
+    /**
+     * Adds secondary index for a model, secondary index consists of a "hash key" and optionally, a "sort key"
+     *
+     * @param callback - A function that specifies "hash key" and "sort key" 
+     * @returns {ModelType} A ModelType instance with updated secondary index
+     *
+     * @example
+     * .secondaryIndexes((index) => [index('type').sortKeys(['sort'])])
+     */
     secondaryIndexes<
       const SecondaryIndexFields = ExtractSecondaryIndexIRFields<T>,
       const SecondaryIndexPKPool extends string = keyof SecondaryIndexFields &
@@ -268,6 +289,16 @@ export type ModelType<
       SetTypeSubArg<T, 'secondaryIndexes', IndexesIR>,
       UsedMethod | 'secondaryIndexes'
     >;
+
+    /**
+     * Disables the specified operations for the model
+     *
+     * @param ops - A list of operations to be disabled
+     * @returns {ModelType} A ModelType instance with updated disabled operations
+     *
+     * @example
+     * model.disableOperations(['queries', 'subscriptions'])
+     */
     disableOperations<
       const Ops extends ReadonlyArray<DisableOperationsOptions>,
     >(
@@ -295,7 +326,7 @@ export type ModelType<
       /**
        * Modifier that defines authorization rules.
        */
-      (allow: AllowModifierBase) => AuthRuleType | AuthRuleType[],
+      (allow: BaseAllowModifier) => AuthRuleType | AuthRuleType[],
     ): ModelType<
       SetTypeSubArg<T, 'authorization', AuthRuleType[]>,
       UsedMethod | 'authorization'
