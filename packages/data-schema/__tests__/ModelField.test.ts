@@ -99,3 +99,8 @@ describe('field level auth', () => {
     expect(field.data.authorization).toMatchSnapshot();
   });
 });
+
+it('array modifier becomes unavailable after being used once', () => {
+  // @ts-expect-error .array() is not a valid modifier after being used once
+  a.model({ values: a.string().required().array().required().array().required() });
+});
