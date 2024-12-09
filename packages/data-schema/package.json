@@ -1,6 +1,6 @@
 {
   "name": "@aws-amplify/data-schema",
-  "version": "1.16.1",
+  "version": "1.17.1",
   "license": "Apache-2.0",
   "repository": {
     "type": "git",

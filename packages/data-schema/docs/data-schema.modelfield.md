@@ -12,8 +12,9 @@ Public API for the chainable builder methods exposed by Model Field. The type is
 export type ModelField<T extends ModelFieldTypeParamOuter = ModelFieldTypeParamOuter, UsedMethod extends UsableModelFieldKey = never, Auth = undefined> = Omit<{
     [__auth]?: Auth;
     [brandSymbol]: typeof brandName;
+    [internal](): ModelField<T>;
     required(): ModelField<Required<T>, UsedMethod | 'required'>;
-    array(): ModelField<ArrayField<T>, Exclude<UsedMethod, 'required'>>;
+    array(): ModelField<ArrayField<T>, Exclude<UsedMethod, 'required'> | 'array'>;
     default(value?: ModelFieldTypeParamOuter): ModelField<T, UsedMethod | 'default'>;
     authorization<AuthRuleType extends Authorization<any, any, any>>(callback: (allow: Omit<AllowModifier, 'resource'>) => AuthRuleType | AuthRuleType[]): ModelField<T, UsedMethod | 'authorization', AuthRuleType>;
 }, UsedMethod>;

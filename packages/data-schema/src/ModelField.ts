@@ -14,6 +14,7 @@ export const __auth = Symbol('__auth');
 export const __generated = Symbol('__generated');
 
 const brandName = 'modelField';
+const internal = Symbol('internal');
 
 export enum ModelFieldType {
   Id = 'ID',
@@ -82,7 +83,7 @@ export type BaseModelField<
 
 export type UsableModelFieldKey = satisfy<
   methodKeyOf<ModelField>,
-  'required' | 'default' | 'authorization'
+  'required' | 'default' | 'authorization' | 'array'
 >;
 
 /**
@@ -102,6 +103,14 @@ export type ModelField<
     [__auth]?: Auth;
     [brandSymbol]: typeof brandName;
 
+     /**
+     * Internal non-omittable method that allows `BaseModelField` to retain a reference to `T` type arg in `ModelField`. 
+     * Since all public methods are omittable, the evaluated `BaseModelField` loses type information unless 
+     * some property on the type is guaranteed to reference `T`
+     * Context: https://github.com/aws-amplify/amplify-api-next/pull/406/files#r1869481467
+     */
+    [internal](): ModelField<T>;
+
     /**
      * Marks a field as required.
      */
@@ -110,7 +119,7 @@ export type ModelField<
     /**
      * Converts a field type definition to an array of the field type.
      */
-    array(): ModelField<ArrayField<T>, Exclude<UsedMethod, 'required'>>;
+    array(): ModelField<ArrayField<T>, Exclude<UsedMethod, 'required'> | 'array'>;
     // TODO: should be T, but .array breaks this constraint. Fix later
     /**
      * Sets a default value for the scalar type.
@@ -199,6 +208,9 @@ function _field<T extends ModelFieldTypeParamOuter>(fieldType: ModelFieldType) {
       return this;
     },
     ...brand(brandName),
+    [internal]() {
+      return this;
+    },
   } as ModelField<T>;
 
   // this double cast gives us a Subtyping Constraint i.e., hides `data` from the public API,
