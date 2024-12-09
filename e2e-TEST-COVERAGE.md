@@ -13,7 +13,7 @@ The following table outlines the current e2e test coverage for various runtimes 
 
 Legend:
 - ✅ Fully covered by e2e tests
-- ⚠️ Partial e2e test coverage or in progress
+- ⚠️ In progress
 - N/A Not applicable or not planned
 
 ## Notes
