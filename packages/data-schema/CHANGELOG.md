@@ -1,5 +1,16 @@
 # @aws-amplify/data-schema
 
+## 1.17.0
+
+### Minor Changes
+
+- 2a9282b: Disable additional .array() modifier on model field definition
+
+### Patch Changes
+
+- 5945ba9: add Amazon Nova Micro, Lite, and Pro models
+- cd8f4bd: fix: custom sel. set return type for array custom types
+
 ## 1.16.1
 
 ### Patch Changes
