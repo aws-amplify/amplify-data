@@ -1,12 +1,15 @@
-# Supported Runtimes and Environments
+# Supported Runtimes and Build Tools
 
 The following table outlines the current support status for various runtimes and environments in our project:
 
 | Runtime/Environment | Status |
 |---------------------|-----------|
-| Chrome           | N/A | 
+| Chrome           | [✅](.github/workflows/callable-e2e-test.yml) | 
 | Node             | [✅](packages/e2e-tests/node/jest.config.ts) | 
 | Webpack                | N/A        | 
+| Rollup                 | N/A        |
+| Metro                    | N/A      |
+| React Natives            | N/A      |
 
 Legend:
 - ✅ Fully supported and tested
