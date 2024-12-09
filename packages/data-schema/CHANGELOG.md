@@ -1,5 +1,11 @@
 # @aws-amplify/data-schema
 
+## 1.17.1
+
+### Patch Changes
+
+- 08727a2: add Amazon Nova Micro, Lite, and Pro models
+
 ## 1.17.0
 
 ### Minor Changes
