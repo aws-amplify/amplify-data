@@ -6,10 +6,10 @@ The following table outlines the current support status for various runtimes and
 |---------------------|-----------|
 | Chrome           | [✅](.github/workflows/callable-e2e-test.yml) | 
 | Node             | [✅](packages/e2e-tests/node/jest.config.ts) | 
-| Webpack                | N/A        | 
-| Rollup                 | N/A        |
-| Metro                    | N/A      |
-| React Natives            | N/A      |
+| Webpack                |    	⚠️     | 
+| Rollup                 | 	⚠️        |
+| Metro                    | 	⚠️      |
+| React Natives            | 	⚠️      |
 
 Legend:
 - ✅ Fully supported and tested
