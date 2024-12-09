@@ -1,6 +1,6 @@
-# Supported Runtimes and Build Tools
+# E2E Test Coverage
 
-The following table outlines the current support status for various runtimes and environments in our project:
+The following table outlines the current e2e test coverage for various runtimes and environments in our project:
 
 | Runtime/Environment | Status |
 |---------------------|-----------|
@@ -12,11 +12,11 @@ The following table outlines the current support status for various runtimes and
 | React Natives            | 	⚠️      |
 
 Legend:
-- ✅ Fully supported and tested
-- ⚠️ Partial support or in progress
-- N/A Not applicable or not planned for support
+- ✅ Fully covered by e2e tests
+- ⚠️ Partial e2e test coverage or in progress
+- N/A Not applicable or not planned
 
 ## Notes
 
-- Click on the icons in the table to view relevant tests or configuration files.
+- Click on the icons in the table to view relevant e2e test configurations or workflows.
 
