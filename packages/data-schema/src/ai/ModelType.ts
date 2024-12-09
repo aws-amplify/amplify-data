@@ -4,7 +4,7 @@
 import { AiModel } from '@aws-amplify/data-schema-types';
 
 const supportedModelsLookup = {
-  // Amazon models
+  // Amazon Nova models
   'Amazon Nova Pro': 'amazon.nova-pro-v1:0',
   'Amazon Nova Lite': 'amazon.nova-lite-v1:0',
   'Amazon Nova Micro': 'amazon.nova-micro-v1:0',
