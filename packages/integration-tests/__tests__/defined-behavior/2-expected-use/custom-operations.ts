@@ -123,13 +123,22 @@ describe('custom operations', () => {
         a.handler.function(dummyHandler).async(),
       ])
       .authorization((allow) => [allow.publicApiKey()]),
+    CustomArgType: a.customType({
+      message: a.string(),
+      count: a.integer(),
+    }),
+    NestedObjectType: a.customType({
+      innerField1: a.boolean(),
+      innerField2: a.string(),
+    }),
+
+    NestedFieldType: a.customType({
+      nestedObject1: a.ref('NestedObjectType'),
+    }),
     queryWithCustomTypeArg: a
       .query()
       .arguments({
-        customArg: a.customType({
-          message: a.string(),
-          count: a.integer(),
-        }),
+        customArg: a.ref('CustomArgType'),
       })
       .returns(a.string())
       .handler(a.handler.function(dummyHandler))
@@ -137,10 +146,7 @@ describe('custom operations', () => {
     mutateWithCustomTypeArg: a
       .mutation()
       .arguments({
-        customArg: a.customType({
-          message: a.string(),
-          count: a.integer(),
-        }),
+        customArg: a.ref('CustomArgType'),
       })
       .returns(a.string())
       .handler(a.handler.function(dummyHandler))
@@ -148,12 +154,7 @@ describe('custom operations', () => {
     mutationWithNestedCustomType: a
       .mutation()
       .arguments({
-        nestedField: a.customType({
-          nestedObject1: a.customType({
-            innerField1: a.boolean(),
-            innerField2: a.string(),
-          }),
-        }),
+        nestedField: a.ref('NestedFieldType'),
       })
       .returns(a.string())
       .handler(a.handler.function(dummyHandler))
@@ -174,14 +175,15 @@ describe('custom operations', () => {
       .returns(a.string())
       .handler(a.handler.function(dummyHandler))
       .authorization((allow) => [allow.publicApiKey()]),
+    ComplexCustomArgType: a.customType({
+      field1: a.string(),
+      field2: a.integer(),
+    }),
     complexQueryOperation: a
       .query()
       .arguments({
         scalarArg: a.string(),
-        customArg: a.customType({
-          field1: a.string(),
-          field2: a.integer(),
-        }),
+        customArg: a.ref('ComplexCustomArgType'),
         refArg: a.ref('EchoResult'),
       })
       .returns(a.string())
@@ -191,10 +193,7 @@ describe('custom operations', () => {
       .mutation()
       .arguments({
         scalarArg: a.string(),
-        customArg: a.customType({
-          field1: a.string(),
-          field2: a.integer(),
-        }),
+        customArg: a.ref('ComplexCustomArgType'),
         refArg: a.ref('EchoResult'),
       })
       .returns(a.string())
@@ -261,7 +260,7 @@ describe('custom operations', () => {
     Equal<ActualMutationWithRefArg, ExpectedMutationWithRefArg>
   >;
 
-  type ExpectedComplexArgs = {
+  type ExpectedComplexQueryArgs = {
     scalarArg?: string | null;
     customArg?: {
       field1?: string | null;
@@ -272,7 +271,9 @@ describe('custom operations', () => {
     } | null;
   };
   type ActualComplexArgs = Schema['complexQueryOperation']['args'];
-  type TestComplexArgs = Expect<Equal<ActualComplexArgs, ExpectedComplexArgs>>;
+  type TestComplexArgs = Expect<
+    Equal<ActualComplexArgs, ExpectedComplexQueryArgs>
+  >;
 
   type ExpectedComplexMutationArgs = {
     scalarArg?: string | null;
@@ -290,7 +291,26 @@ describe('custom operations', () => {
   >;
   // #endregion
 
-  test.skip('primitive type result', async () => {
+  test('schema.transform() includes custom types, ref types, and operations', () => {
+    const transformedSchema = schema.transform();
+    const expectedTypes = ['CustomArgType', 'EchoResult', 'Query', 'Mutation'];
+    const expectedOperations = [
+      'queryWithCustomTypeArg(customArg: ID): String',
+      'queryWithRefArg(refArg: ID): String',
+      'mutateWithCustomTypeArg(customArg: ID): String',
+      'mutationWithRefArg(refArg: ID): String',
+    ];
+
+    expectedTypes.forEach((type) => {
+      expect(transformedSchema.schema).toContain(`type ${type}`);
+    });
+
+    expectedOperations.forEach((operation) => {
+      expect(transformedSchema.schema).toContain(operation);
+    });
+  });
+
+  test('primitive type result', async () => {
     const { spy, generateClient } = mockedGenerateClient([
       {
         data: {
@@ -302,7 +322,6 @@ describe('custom operations', () => {
     const config = await buildAmplifyConfig(schema);
     Amplify.configure(config);
     const client = generateClient<Schema>();
-
     // #region covers ffefd700b1e323c9
     const { data } = await client.queries.echo({ value: 'something' });
     // #endregion
@@ -311,7 +330,7 @@ describe('custom operations', () => {
     expect(optionsAndHeaders(spy)).toMatchSnapshot();
   });
 
-  test.skip('custom type result', async () => {
+  test('custom type result', async () => {
     const { spy, generateClient } = mockedGenerateClient([
       {
         data: {
@@ -336,7 +355,7 @@ describe('custom operations', () => {
     expect(optionsAndHeaders(spy)).toMatchSnapshot();
   });
 
-  test.skip('custom type array result', async () => {
+  test('custom type array result', async () => {
     const { spy, generateClient } = mockedGenerateClient([
       {
         data: {
@@ -375,7 +394,7 @@ describe('custom operations', () => {
     expect(optionsAndHeaders(spy)).toMatchSnapshot();
   });
 
-  test.skip('model result', async () => {
+  test('model result', async () => {
     const { spy, generateClient } = mockedGenerateClient([
       {
         data: {
@@ -407,7 +426,7 @@ describe('custom operations', () => {
     expect(optionsAndHeaders(spy)).toMatchSnapshot();
   });
 
-  test.skip('model array result', async () => {
+  test('model array result', async () => {
     const { spy, generateClient } = mockedGenerateClient([
       {
         data: {
@@ -459,7 +478,7 @@ describe('custom operations', () => {
     expect(optionsAndHeaders(spy)).toMatchSnapshot();
   });
 
-  test.skip('solo async handler', async () => {
+  test('solo async handler', async () => {
     const { spy, generateClient } = mockedGenerateClient([
       {
         data: {
@@ -487,7 +506,7 @@ describe('custom operations', () => {
     expect(optionsAndHeaders(spy)).toMatchSnapshot();
   });
 
-  test.skip('async sync', async () => {
+  test('async sync', async () => {
     const { spy, generateClient } = mockedGenerateClient([
       {
         data: {
@@ -513,7 +532,7 @@ describe('custom operations', () => {
     expect(optionsAndHeaders(spy)).toMatchSnapshot();
   });
 
-  test.skip('sync sync', async () => {
+  test('sync sync', async () => {
     const { spy, generateClient } = mockedGenerateClient([
       {
         data: {
@@ -539,7 +558,7 @@ describe('custom operations', () => {
     expect(optionsAndHeaders(spy)).toMatchSnapshot();
   });
 
-  test.skip('sync async', async () => {
+  test('sync async', async () => {
     const { spy, generateClient } = mockedGenerateClient([
       {
         data: {
@@ -567,7 +586,7 @@ describe('custom operations', () => {
     expect(optionsAndHeaders(spy)).toMatchSnapshot();
   });
 
-  test.skip('async async', async () => {
+  test('async async', async () => {
     const { spy, generateClient } = mockedGenerateClient([
       {
         data: {
@@ -699,6 +718,87 @@ describe('custom operations', () => {
 
       // @ts-expect-error
       const { data } = await client.queries.echoEnum({ status: 'BAD VALUE' });
+    });
+  });
+  describe('client operations with custom types and refs', () => {
+    test('client can call custom query with custom type argument', async () => {
+      const { spy, generateClient } = mockedGenerateClient([
+        {
+          data: {
+            queryWithCustomTypeArg: 'Custom type query result',
+          },
+        },
+      ]);
+
+      const config = await buildAmplifyConfig(schema);
+      Amplify.configure(config);
+      const client = generateClient<Schema>();
+
+      const { data } = await client.queries.queryWithCustomTypeArg({
+        customArg: {},
+      });
+      expect(data).toEqual('Custom type query result');
+      expect(optionsAndHeaders(spy)).toMatchSnapshot();
+    });
+
+    test('client can call custom query with ref argument', async () => {
+      const { spy, generateClient } = mockedGenerateClient([
+        {
+          data: {
+            queryWithRefArg: 'Ref type query result',
+          },
+        },
+      ]);
+
+      const config = await buildAmplifyConfig(schema);
+      Amplify.configure(config);
+      const client = generateClient<Schema>();
+
+      const { data } = await client.queries.queryWithRefArg({
+        refArg: {},
+      });
+      expect(data).toEqual('Ref type query result');
+      expect(optionsAndHeaders(spy)).toMatchSnapshot();
+    });
+
+    test('client can call custom mutation with custom type argument', async () => {
+      const { spy, generateClient } = mockedGenerateClient([
+        {
+          data: {
+            mutateWithCustomTypeArg: 'Custom type mutation result',
+          },
+        },
+      ]);
+
+      const config = await buildAmplifyConfig(schema);
+      Amplify.configure(config);
+      const client = generateClient<Schema>();
+
+      const { data } = await client.mutations.mutateWithCustomTypeArg({
+        customArg: {},
+      });
+      expect(data).toEqual('Custom type mutation result');
+      expect(optionsAndHeaders(spy)).toMatchSnapshot();
+    });
+
+    test('client can call custom mutation with ref argument', async () => {
+      const { spy, generateClient } = mockedGenerateClient([
+        {
+          data: {
+            mutationWithRefArg: 'Ref type mutation result',
+          },
+        },
+      ]);
+
+      const config = await buildAmplifyConfig(schema);
+      Amplify.configure(config);
+      const client = generateClient<Schema>();
+
+      const { data } = await client.mutations.mutationWithRefArg({
+        refArg: {},
+      });
+      expect(data).toEqual('Ref type mutation result');
+      expect(optionsAndHeaders(spy)).toMatchSnapshot();
     });
   });
 });
