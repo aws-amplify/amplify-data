@@ -4,6 +4,10 @@
 import { AiModel } from '@aws-amplify/data-schema-types';
 
 const supportedModelsLookup = {
+  // Amazon Nova models
+  'Amazon Nova Pro': 'amazon.nova-pro-v1:0',
+  'Amazon Nova Lite': 'amazon.nova-lite-v1:0',
+  'Amazon Nova Micro': 'amazon.nova-micro-v1:0',
   // Anthropic models
   'Claude 3 Haiku': 'anthropic.claude-3-haiku-20240307-v1:0',
   'Claude 3 Opus': 'anthropic.claude-3-opus-20240229-v1:0',

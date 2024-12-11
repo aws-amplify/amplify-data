@@ -84,20 +84,51 @@ type ReturnValue<
  * This mapped type traverses the SelectionSetReturnValue result and the original FlatModel, restoring array types
  * that were flattened in DeepPickFromPath
  *
- * Note: custom type field arrays are already handled correctly and don't need to be "restored", hence the `Result[K] extends Array<any>` check
+ * @typeParam Result - this is the result of applying the selection set path to FlatModel; return type of UnionToIntersection<DeepPickFromPath<FlatModel, Paths>>
+ * @typeParam FlatModel - the reference model shape; return type of ResolvedModel<Model>
  *
+ * Note: we wrap `Result` and `FlatModel` in NonNullable, because recursive invocations of this mapped type
+ * can result in the type arguments containing `{} | null | undefined` which breaks indexed access, e.g. Result[K]
+ *
+ * Using NonNullable<> directly inside the mapped type is significantly more performant here than attempting to pre-compute in the type params,
+ * e.g., `type RestoreArrays<Result, FlatModel, NonNullableResult = NonNullable<Result>, NonNullableFlatModel = NonNullable<FlatModel>> = {...}`
  */
 type RestoreArrays<Result, FlatModel> = {
-  [K in keyof Result]: K extends keyof FlatModel
-    ? FlatModel[K] extends Array<any>
-      ? Result[K] extends Array<any>
-        ? Result[K]
-        : Array<RestoreArrays<Result[K], UnwrapArray<FlatModel[K]>>>
-      : FlatModel[K] extends Record<string, any>
-        ? RestoreArrays<Result[K], FlatModel[K]>
-        : Result[K]
+  [K in keyof NonNullable<Result>]: K extends keyof NonNullable<FlatModel>
+    ? Array<any> extends NonNullable<FlatModel>[K]
+      ? HandleArrayNullability<
+          NonNullable<Result>[K],
+          NonNullable<FlatModel>[K]
+        >
+      : NonNullable<FlatModel>[K] extends Record<string, any>
+        ? RestoreArrays<NonNullable<Result>[K], NonNullable<FlatModel>[K]>
+        : NonNullable<Result>[K]
     : never;
 };
+
+/**
+ * This mapped type gets called by RestoreArrays<T, K> and it restores the expected
+ * nullability in array fields (e.g. nullable vs. required value & nullable vs. required array)
+ */
+type HandleArrayNullability<Result, FlatModel> =
+  Array<any> extends Result
+    ? // If Result is already an array, return it as is.
+      Result
+    : NonNullable<FlatModel> extends Array<infer InnerValue>
+      ? // is the array nullable?
+        null extends FlatModel
+        ? // is the value nullable?
+          null extends InnerValue
+          ? // value and array are nullable - a.ref('SomeType').array()
+            Array<RestoreArrays<Result, UnwrapArray<FlatModel>> | null> | null
+          : // value required; array nullable - a.ref('SomeType').required().array()
+            Array<RestoreArrays<Result, UnwrapArray<FlatModel>>> | null
+        : null extends InnerValue
+          ? // value nullable; array required  - a.ref('SomeType').array().required()
+            Array<RestoreArrays<Result, UnwrapArray<FlatModel>> | null>
+          : // value required; array required - a.ref('SomeType').required().array().required()
+            Array<RestoreArrays<Result, UnwrapArray<FlatModel>>>
+      : never;
 
 /**
  * Generates flattened, readonly return type using specified custom sel. set
