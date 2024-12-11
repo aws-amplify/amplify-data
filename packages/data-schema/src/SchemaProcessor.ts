@@ -1481,7 +1481,6 @@ const schemaPreprocessor = (
         const {
           gqlField,
           implicitTypes,
-          inputTypes: operationInputTypes,
           customTypeAuthRules,
           jsFunctionForField,
           lambdaFunctionDefinition,
