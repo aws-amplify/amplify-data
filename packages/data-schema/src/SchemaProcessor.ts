@@ -1481,6 +1481,7 @@ const schemaPreprocessor = (
         const {
           gqlField,
           implicitTypes,
+          inputTypes,
           customTypeAuthRules,
           jsFunctionForField,
           lambdaFunctionDefinition,
@@ -1674,13 +1675,20 @@ const schemaPreprocessor = (
 
   const customOperationTypes = generateCustomOperationTypes(customOperations);
 
-  const processedSchema = [
+  const schemaComponents = [
     ...enumTypes,
     ...gqlModels,
     ...customOperationTypes,
-    ...(shouldAddConversationTypes ? [CONVERSATION_SCHEMA_GRAPHQL_TYPES] : []),
-    ...inputTypes,
-  ].join('\n\n');
+  ];
+
+  if (shouldAddConversationTypes) {
+    schemaComponents.push(CONVERSATION_SCHEMA_GRAPHQL_TYPES);
+  }
+
+  schemaComponents.push(...inputTypes);
+
+  const processedSchema = schemaComponents.join('\n\n');
+
   return {
     schema: processedSchema,
     jsFunctions,
