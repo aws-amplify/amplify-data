@@ -1,14 +1,14 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`CustomOperation transform dynamo schema Custom Mutation w required arg and enum 1`] = `
-"type Post @model @auth(rules: [{allow: private}])
-{
-  title: String
-}
-
-enum LikePostReactionType {
+"enum LikePostReactionType {
   :shipit:
   :risitas:
+}
+
+type Post @model @auth(rules: [{allow: private}])
+{
+  title: String
 }
 
 type Mutation {
@@ -45,17 +45,7 @@ exports[`CustomOperation transform dynamo schema Custom mutation w inline boolea
 `;
 
 exports[`CustomOperation transform dynamo schema Custom mutation w inline custom return type 1`] = `
-"type LikePostReturnType 
-{
-  stringField: String
-  intField: Int
-  floatField: Float
-  boolField: Boolean
-  datetimeField: AWSDateTime
-  jsonField: AWSJSON
-}
-
-type Mutation {
+"type Mutation {
   likePost(postId: String!): LikePostReturnType 
 }"
 `;
@@ -109,17 +99,7 @@ type Query {
 `;
 
 exports[`CustomOperation transform dynamo schema Custom query w inline custom return type 1`] = `
-"type GetPostDetailsReturnType 
-{
-  stringField: String
-  intField: Int
-  floatField: Float
-  boolField: Boolean
-  datetimeField: AWSDateTime
-  jsonField: AWSJSON
-}
-
-type Query {
+"type Query {
   getPostDetails(postId: String!): GetPostDetailsReturnType 
 }"
 `;
@@ -258,12 +238,7 @@ type Subscription {
 `;
 
 exports[`CustomOperation transform dynamo schema custom subscriptions Custom subscription where .for() resource has a CustomType return type 1`] = `
-"type CreateCustomTypePostReturnType @aws_api_key
-{
-  title: String!
-}
-
-type Mutation {
+"type Mutation {
   createCustomTypePost: CreateCustomTypePostReturnType @function(name: "createCustomTypePost") @auth(rules: [{allow: public, provider: apiKey}])
 }
 
@@ -340,23 +315,13 @@ exports[`CustomOperation transform dynamo schema handlers a.handler.custom a.han
   title: String
 }
 
-type GetPostDetailsReturnType @aws_api_key
-{
-  
-}
-
 type Query {
   getPostDetails: GetPostDetailsReturnType @aws_api_key
 }"
 `;
 
 exports[`CustomOperation transform dynamo schema handlers a.handler.custom a.handler.custom with auth works 1`] = `
-"type GetPostDetailsReturnType @aws_cognito_user_pools(cognito_groups: ["groupA", "groupB"])
-{
-  
-}
-
-type Query {
+"type Query {
   getPostDetails: GetPostDetailsReturnType @aws_cognito_user_pools(cognito_groups: ["groupA", "groupB"])
 }"
 `;
@@ -373,12 +338,7 @@ type Query {
 `;
 
 exports[`CustomOperation transform dynamo schema handlers a.handler.function defineFunction 1`] = `
-"type GetPostDetailsReturnType @aws_cognito_user_pools
-{
-  
-}
-
-type Query {
+"type Query {
   getPostDetails: GetPostDetailsReturnType @function(name: "FnGetPostDetails") @auth(rules: [{allow: private}])
 }"
 `;
@@ -395,12 +355,7 @@ type Query {
 `;
 
 exports[`CustomOperation transform dynamo schema handlers a.handler.function defineFunction async - sync 1`] = `
-"type GetPostDetailsReturnType @aws_cognito_user_pools
-{
-  
-}
-
-type Query {
+"type Query {
   getPostDetails: GetPostDetailsReturnType @function(name: "FnGetPostDetails", invocationType: Event) @function(name: "FnGetPostDetails2") @auth(rules: [{allow: private}])
 }"
 `;
@@ -428,34 +383,19 @@ type Query {
 `;
 
 exports[`CustomOperation transform dynamo schema handlers a.handler.function pipeline / mix 1`] = `
-"type GetPostDetailsReturnType @aws_cognito_user_pools
-{
-  
-}
-
-type Query {
+"type Query {
   getPostDetails: GetPostDetailsReturnType @function(name: "myFunc") @function(name: "FnGetPostDetails2") @function(name: "FnGetPostDetails3") @function(name: "myFunc2") @auth(rules: [{allow: private}])
 }"
 `;
 
 exports[`CustomOperation transform dynamo schema handlers a.handler.function string 1`] = `
-"type GetPostDetailsReturnType @aws_cognito_user_pools
-{
-  
-}
-
-type Query {
+"type Query {
   getPostDetails: GetPostDetailsReturnType @function(name: "myFunc") @auth(rules: [{allow: private}])
 }"
 `;
 
 exports[`CustomOperation transform dynamo schema handlers a.handler.inlineSql escapes quotes 1`] = `
-"type GetPostDetailsReturnType @aws_cognito_user_pools
-{
-  
-}
-
-type Query {
+"type Query {
   getPostDetails: GetPostDetailsReturnType @sql(statement: "SELECT * from TESTTABLE status = \\"active\\";") @auth(rules: [{allow: private}])
 }"
 `;
@@ -472,24 +412,14 @@ exports[`CustomOperation transform dynamo schema handlers a.handler.inlineSql wo
   "functionSlots": [],
   "jsFunctions": [],
   "lambdaFunctions": {},
-  "schema": "type GetPostDetailsReturnType @aws_cognito_user_pools
-{
-  
-}
-
-type Query {
+  "schema": "type Query {
   getPostDetails: GetPostDetailsReturnType @sql(statement: "SELECT * from TESTTABLE;") @auth(rules: [{allow: private}])
 }",
 }
 `;
 
 exports[`CustomOperation transform dynamo schema handlers a.handler.sqlReference works 1`] = `
-"type GetPostDetailsReturnType @aws_cognito_user_pools
-{
-  
-}
-
-type Query {
+"type Query {
   getPostDetails: GetPostDetailsReturnType @sql(reference: "./testQueryName") @auth(rules: [{allow: private}])
 }"
 `;

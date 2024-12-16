@@ -98,6 +98,9 @@ describe('ClientSchema', () => {
 
   describe(`['CustomOperationName']`, () => {
     const schema = a.schema({
+      MyQueryReturnType: a.customType({
+        output: a.string(),
+      }),
       myQuery: a
         .query()
         .arguments({

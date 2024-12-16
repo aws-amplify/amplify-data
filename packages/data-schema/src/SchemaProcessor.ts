@@ -2038,7 +2038,14 @@ function extractNestedCustomTypeNames(
   topLevelTypes: [string, any][],
   getRefType: ReturnType<typeof getRefTypeForSchema>,
 ): string[] {
-  if (!customTypeAuthRules) {
+  if (!customTypeAuthRules || !topLevelTypes || topLevelTypes.length === 0) {
+    return [];
+  }
+  const foundType = topLevelTypes.find(
+    ([topLevelTypeName]) => customTypeAuthRules.typeName === topLevelTypeName,
+  );
+
+  if (!foundType) {
     return [];
   }
 

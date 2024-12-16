@@ -40,14 +40,14 @@ type Location
 `;
 
 exports[`CustomType transform Explicit CustomType nests explicit CustomType 1`] = `
-"type Post @model @auth(rules: [{allow: public, provider: apiKey}])
-{
-  meta: Meta
-}
-
-enum PostStatus {
+"enum PostStatus {
   unpublished
   published
+}
+
+type Post @model @auth(rules: [{allow: public, provider: apiKey}])
+{
+  meta: Meta
 }
 
 type Meta 
@@ -63,14 +63,14 @@ type AltMeta
 `;
 
 exports[`CustomType transform Explicit CustomType nests explicit enum 1`] = `
-"type Post @model @auth(rules: [{allow: public, provider: apiKey}])
-{
-  meta: Meta
-}
-
-enum PostStatus {
+"enum PostStatus {
   unpublished
   published
+}
+
+type Post @model @auth(rules: [{allow: public, provider: apiKey}])
+{
+  meta: Meta
 }
 
 type Meta 
@@ -81,7 +81,12 @@ type Meta
 `;
 
 exports[`CustomType transform Explicit CustomType nests implicit CustomType 1`] = `
-"type Post @model @auth(rules: [{allow: public, provider: apiKey}])
+"enum MetaStatus {
+  unpublished
+  published
+}
+
+type Post @model @auth(rules: [{allow: public, provider: apiKey}])
 {
   meta: Meta
 }
@@ -92,11 +97,6 @@ type Meta
   nestedMeta: MetaNestedMeta
 }
 
-enum MetaStatus {
-  unpublished
-  published
-}
-
 type MetaNestedMeta 
 {
   field1: String
@@ -104,7 +104,12 @@ type MetaNestedMeta
 `;
 
 exports[`CustomType transform Explicit CustomType nests implicit enum type 1`] = `
-"type Post @model @auth(rules: [{allow: public, provider: apiKey}])
+"enum MetaStatus {
+  unpublished
+  published
+}
+
+type Post @model @auth(rules: [{allow: public, provider: apiKey}])
 {
   meta: Meta
 }
@@ -113,11 +118,6 @@ type Meta
 {
   status: MetaStatus
   publishedDate: AWSDate
-}
-
-enum MetaStatus {
-  unpublished
-  published
 }"
 `;
 
@@ -135,7 +135,12 @@ type PostLocation
 `;
 
 exports[`CustomType transform Implicit CustomType nests explicit CustomType 1`] = `
-"type Post @model @auth(rules: [{allow: public, provider: apiKey}])
+"enum PostMetaStatus {
+  unpublished
+  published
+}
+
+type Post @model @auth(rules: [{allow: public, provider: apiKey}])
 {
   meta: PostMeta
 }
@@ -149,23 +154,18 @@ type PostMeta
 {
   status: PostMetaStatus
   nestedMeta: AltMeta
-}
-
-enum PostMetaStatus {
-  unpublished
-  published
 }"
 `;
 
 exports[`CustomType transform Implicit CustomType nests explicit enum 1`] = `
-"type Post @model @auth(rules: [{allow: public, provider: apiKey}])
-{
-  meta: PostMeta
-}
-
-enum PostStatus {
+"enum PostStatus {
   unpublished
   published
+}
+
+type Post @model @auth(rules: [{allow: public, provider: apiKey}])
+{
+  meta: PostMeta
 }
 
 type PostMeta 
@@ -176,7 +176,12 @@ type PostMeta
 `;
 
 exports[`CustomType transform Implicit CustomType nests implicit CustomType 1`] = `
-"type Post @model @auth(rules: [{allow: public, provider: apiKey}])
+"enum PostMetaStatus {
+  unpublished
+  published
+}
+
+type Post @model @auth(rules: [{allow: public, provider: apiKey}])
 {
   meta: PostMeta
 }
@@ -187,11 +192,6 @@ type PostMeta
   nestedMeta: PostMetaNestedMeta
 }
 
-enum PostMetaStatus {
-  unpublished
-  published
-}
-
 type PostMetaNestedMeta 
 {
   field1: String
@@ -199,7 +199,12 @@ type PostMetaNestedMeta
 `;
 
 exports[`CustomType transform Implicit CustomType nests implicit enum type 1`] = `
-"type Post @model @auth(rules: [{allow: public, provider: apiKey}])
+"enum PostMetaStatus {
+  unpublished
+  published
+}
+
+type Post @model @auth(rules: [{allow: public, provider: apiKey}])
 {
   meta: PostMeta
 }
@@ -208,10 +213,5 @@ type PostMeta
 {
   status: PostMetaStatus
   publishedDate: AWSDate
-}
-
-enum PostMetaStatus {
-  unpublished
-  published
 }"
 `;
