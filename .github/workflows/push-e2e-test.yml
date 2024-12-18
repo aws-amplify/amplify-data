@@ -10,8 +10,7 @@ on:
     branches:
       - rename-old-refs
 
-      # bump
 jobs:
   e2e:
     secrets: inherit
-    uses: callable-release-verification.yml
+    uses: ./.github/workflows/callable-release-verification.yml
