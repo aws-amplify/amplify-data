@@ -1213,7 +1213,6 @@ describe('Custom selection set edge cases', () => {
         );
 
         const { data } = await client.models.CustomerPart.list({
-          //sth is wrong here
           selectionSet: [
             'customer.*',
             'customer.verbiageReqReq.*',
