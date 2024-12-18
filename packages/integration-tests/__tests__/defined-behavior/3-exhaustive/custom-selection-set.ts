@@ -7,8 +7,6 @@ import {
 } from '../../utils';
 import { Expect, Equal, Prettify } from '@aws-amplify/data-schema-types';
 import { SelectionSet } from 'aws-amplify/data';
-import { optionsAndHeaders } from '../../utils';
-import { ResolveSchema } from '../../../../data-schema/dist/esm/MappedTypes/ResolveSchema';
 
 describe('Custom selection set edge cases', () => {
   afterEach(() => {
@@ -1218,14 +1216,12 @@ describe('Custom selection set edge cases', () => {
           //sth is wrong here
           selectionSet: [
             'customer.*',
-            // 'customer.verbiageReqReq.*',
-            // 'customer.verbiageOptReq.*',
-            // 'customer.verbiageReqOpt.*',
-            // 'customer.verbiageOptOpt.*',
+            'customer.verbiageReqReq.*',
+            'customer.verbiageOptReq.*',
+            'customer.verbiageReqOpt.*',
+            'customer.verbiageOptOpt.*',
           ],
         });
-        console.log(optionsAndHeaders(spy)[0][0].query);
-
         return { data, spy };
       }
 
@@ -1265,11 +1261,6 @@ describe('Custom selection set edge cases', () => {
         type ActualType = typeof cus;
         type _test = Expect<Equal<ActualType, ExpectedType>>;
       });
-
-      // const verbiageReqReq = cps.verbiageReqReq; // should be Verbiage[] and it is!
-      // const verbiageOptReq = cps.verbiageOptReq; // should be (Verbiage | null)[], but is (never[] | null)[]
-      // const verbiageReqOpt = cps.verbiageReqOpt; // should be Verbiage[] | null, but is never[][] | null
-      // const verbiageOptOpt = cps.verbiageOptOpt; // should be (Verbiage | null)[] | null, but is (never[] | null)[] | null
     });
   });
 });
