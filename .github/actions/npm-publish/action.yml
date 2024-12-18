@@ -33,7 +33,7 @@ runs:
     - name: Run npm publish
       if: github.repository_owner == 'aws-amplify'
       shell: bash
-      working-directory: ./amplify-api-next
+      working-directory: ./amplify-data
       env:
         NPM_TOKEN: ${{ inputs.npm_token }}
         GH_SHA: ${{ github.sha }}
