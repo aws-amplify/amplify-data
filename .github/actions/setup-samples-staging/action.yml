@@ -27,7 +27,7 @@ runs:
         token: ${{ inputs.AMPLIFY_JS_SAMPLES_STAGING_READ }}
 
     # We test on the staging branch that corresponds to the current
-    #   `amplify-api-next` branch (when it exists), and otherwise test on the
+    #   `amplify-data` branch (when it exists), and otherwise test on the
     #   default branch (`main`)
     - name: Staging repo branch selection
       shell: bash

@@ -13,8 +13,8 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
         with:
-          path: amplify-api-next
+          path: amplify-data
       - name: Setup samples staging
-        uses: ./amplify-api-next/.github/actions/setup-samples-staging
+        uses: ./amplify-data/.github/actions/setup-samples-staging
         with:
           AMPLIFY_JS_SAMPLES_STAGING_READ: ${{ secrets.AMPLIFY_JS_SAMPLES_STAGING_READ }}
