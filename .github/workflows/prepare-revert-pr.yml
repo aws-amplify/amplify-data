@@ -25,14 +25,14 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@24cb9080177205b6e8c946b17badbe402adc938f # v3.4.0 https://github.com/actions/checkout/commit/24cb9080177205b6e8c946b17badbe402adc938f
         with:
-          path: amplify-api-next
+          path: amplify-data
           token: ${{ secrets.GITHUB_TOKEN }}
           # fetch full history so that we can properly lookup past releases
           fetch-depth: 0
       - name: Setup node and build the repository
-        uses: ./amplify-api-next/.github/actions/node-and-build
+        uses: ./amplify-data/.github/actions/node-and-build
         with:
           is-prebuild: true
       - name: Generate Revert PR
-        working-directory: ./amplify-api-next
+        working-directory: ./amplify-data
         run: npx tsx ./scripts/prepare-revert-pr.ts

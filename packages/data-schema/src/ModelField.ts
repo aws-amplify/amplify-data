@@ -103,11 +103,11 @@ export type ModelField<
     [__auth]?: Auth;
     [brandSymbol]: typeof brandName;
 
-     /**
-     * Internal non-omittable method that allows `BaseModelField` to retain a reference to `T` type arg in `ModelField`. 
-     * Since all public methods are omittable, the evaluated `BaseModelField` loses type information unless 
+    /**
+     * Internal non-omittable method that allows `BaseModelField` to retain a reference to `T` type arg in `ModelField`.
+     * Since all public methods are omittable, the evaluated `BaseModelField` loses type information unless
      * some property on the type is guaranteed to reference `T`
-     * Context: https://github.com/aws-amplify/amplify-api-next/pull/406/files#r1869481467
+     * Context: https://github.com/aws-amplify/amplify-data/pull/406/files#r1869481467
      */
     [internal](): ModelField<T>;
 
@@ -119,7 +119,10 @@ export type ModelField<
     /**
      * Converts a field type definition to an array of the field type.
      */
-    array(): ModelField<ArrayField<T>, Exclude<UsedMethod, 'required'> | 'array'>;
+    array(): ModelField<
+      ArrayField<T>,
+      Exclude<UsedMethod, 'required'> | 'array'
+    >;
     // TODO: should be T, but .array breaks this constraint. Fix later
     /**
      * Sets a default value for the scalar type.

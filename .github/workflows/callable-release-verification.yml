@@ -4,7 +4,7 @@ on: workflow_call
 
 jobs:
   prebuild-ubuntu:
-    uses: ./.github/workflows/callable-prebuild-amplify-api-next.yml
+    uses: ./.github/workflows/callable-prebuild-amplify-data.yml
     with:
       runs_on: ubuntu-latest
   prebuild-samples-staging:
