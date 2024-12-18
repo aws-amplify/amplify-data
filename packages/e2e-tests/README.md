@@ -1,4 +1,4 @@
-# `amplify-api-next` E2E Tests
+# `amplify-data` E2E Tests
 
 This package contains automated tests for validating functionality E2E in Node.
 
@@ -67,7 +67,7 @@ the IAM OIDC provider.
 ### IAM trust policy restrictions for OIDC provider:
 
 Currently, the trust policy for the OIDC provider is set to only allow execution
-of the `main` branch on `amplify-api-next`, since this branch contains appropriate
+of the `main` branch on `amplify-data`, since this branch contains appropriate
 restrictions to limit E2E runs (test runs only occur when an approved PR has
 been merged to `main`).
 
