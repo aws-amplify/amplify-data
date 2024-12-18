@@ -1006,7 +1006,7 @@ describe('Custom selection set edge cases', () => {
         }[];
 
         type ActualType = typeof data;
-        type p = Prettify<ActualType>;
+
         type _test = Expect<Equal<ActualType, ExpectedTodoType>>;
       });
     });
