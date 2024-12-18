@@ -5,7 +5,7 @@ import {
   mockedGenerateClient,
   expectSelectionSetEquals,
 } from '../../utils';
-import { Expect, Equal, Prettify } from '@aws-amplify/data-schema-types';
+import { Expect, Equal } from '@aws-amplify/data-schema-types';
 import { SelectionSet } from 'aws-amplify/data';
 
 describe('Custom selection set edge cases', () => {
