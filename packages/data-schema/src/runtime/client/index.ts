@@ -198,15 +198,25 @@ type DeepPickFromPath<
         ? Head extends keyof FlatModel
           ? Tail extends '*'
             ? {
-                [k in Head]: NonRelationshipFields<
-                  UnwrapArray<FlatModel[Head]>
-                >;
+                [k in Head]: FlatModel[Head] extends Record<string, unknown>
+                  ? NonRelationshipFields<FlattenArrays<FlatModel[Head]>>
+                  : NonRelationshipFields<UnwrapArray<FlatModel[Head]>>;
               }
             : { [k in Head]: DeepPickFromPath<FlatModel[Head], Tail> }
           : never
         : Path extends keyof FlatModel
           ? { [K in Path]: FlatModel[Path] }
           : never;
+
+/**
+ * This mapped type gets called by DeepPickFromPath<FlatModel, Path> when user uses selection
+ * set on a query to a many-to-many relationship join table. It flattens the Arrays of Models referenced in the join table.
+ *
+ * (e.g. { customer: { orders: Order[]} } => { customer: { orders: Order} })
+ */
+type FlattenArrays<T> = {
+  [K in keyof T]: UnwrapArray<T[K]>;
+};
 
 /**
  * Generates custom selection set type with up to 6 levels of nested fields
