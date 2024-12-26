@@ -47,7 +47,7 @@ exports[`custom operations client operations with custom types and refs client c
       "authMode": undefined,
       "authToken": undefined,
       "query": "
-    mutation($customArg: ID) {
+    mutation($customArg: MutateWithCustomTypeArgCustomArgInput) {
       mutateWithCustomTypeArg(customArg: $customArg) 
     }
   ",
@@ -67,7 +67,7 @@ exports[`custom operations client operations with custom types and refs client c
       "authMode": undefined,
       "authToken": undefined,
       "query": "
-    mutation($refArg: ID) {
+    mutation($refArg: MutationWithRefArgRefArgInput) {
       mutationWithRefArg(refArg: $refArg) 
     }
   ",
@@ -87,7 +87,7 @@ exports[`custom operations client operations with custom types and refs client c
       "authMode": undefined,
       "authToken": undefined,
       "query": "
-    query($customArg: ID) {
+    query($customArg: QueryWithCustomTypeArgCustomArgInput) {
       queryWithCustomTypeArg(customArg: $customArg) 
     }
   ",
@@ -107,7 +107,7 @@ exports[`custom operations client operations with custom types and refs client c
       "authMode": undefined,
       "authToken": undefined,
       "query": "
-    query($refArg: ID) {
+    query($refArg: QueryWithRefArgRefArgInput) {
       queryWithRefArg(refArg: $refArg) 
     }
   ",

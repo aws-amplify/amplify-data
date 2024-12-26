@@ -344,6 +344,8 @@ function customOperationToGql(
 ): {
   gqlField: string;
   implicitTypes: [string, any][];
+  inputTypes: string[];
+  returnTypes: string[];
   customTypeAuthRules: CustomTypeAuthRules;
   lambdaFunctionDefinition: LambdaFunctionDefinition;
   customSqlDataSourceStrategy: CustomSqlDataSourceStrategy | undefined;
@@ -358,6 +360,9 @@ function customOperationToGql(
 
   let callSignature: string = typeName;
   const implicitTypes: [string, any][] = [];
+  const inputTypes: string[] = [];
+
+  let returnTypes: string[] = [];
 
   // When Custom Operations are defined with a Custom Type return type,
   // the Custom Type inherits the operation's auth rules
@@ -404,7 +409,7 @@ function customOperationToGql(
           authRules: authorization,
         };
 
-        implicitTypes.push([returnTypeName, returnType]);
+        implicitTypes.push([returnTypeName, { ...returnType, isInput: false }]);
       }
       return returnTypeName;
     } else if (isEnumType(returnType)) {
@@ -441,7 +446,13 @@ function customOperationToGql(
       refererTypeName: typeName,
     });
   }
-
+  // After resolving returnTypeName
+  if (isCustomType(returnType)) {
+    returnTypes = generateInputTypes(
+      [[returnTypeName, { ...returnType, isInput: false }]],
+      false,
+    );
+  }
   if (Object.keys(fieldArgs).length > 0) {
     const { gqlFields, implicitTypes: implied } = processFields(
       typeName,
@@ -456,6 +467,13 @@ function customOperationToGql(
     );
     callSignature += `(${gqlFields.join(', ')})`;
     implicitTypes.push(...implied);
+
+    const newInputTypes = generateInputTypes(implied, true);
+    for (const newType of newInputTypes) {
+      if (!inputTypes.includes(newType)) {
+        inputTypes.push(newType);
+      }
+    }
   }
 
   const handler = handlers && handlers[0];
@@ -552,6 +570,8 @@ function customOperationToGql(
   return {
     gqlField,
     implicitTypes: implicitTypes,
+    inputTypes,
+    returnTypes,
     customTypeAuthRules,
     lambdaFunctionDefinition,
     customSqlDataSourceStrategy,
@@ -1000,13 +1020,9 @@ function processFields(
       : '';
 
     if (isModelField(fieldDef)) {
-      if (isInput) {
-        gqlFields.push(`${fieldName}: ID${fieldAuth}`);
-      } else {
-        gqlFields.push(
-          `${fieldName}: ${modelFieldToGql(fieldDef.data)}${fieldAuth}`,
-        );
-      }
+      gqlFields.push(
+        `${fieldName}: ${modelFieldToGql(fieldDef.data)}${fieldAuth}`,
+      );
     } else if (isScalarField(fieldDef)) {
       if (fieldName === partitionKey) {
         gqlFields.push(
@@ -1018,7 +1034,17 @@ function processFields(
         );
       } else if (isRefField(fieldDef)) {
         if (isInput) {
-          gqlFields.push(`${fieldName}: ID${fieldAuth}`);
+          const inputTypeName = `${capitalize(typeName)}${capitalize(fieldName)}Input`;
+          gqlFields.push(`${fieldName}: ${inputTypeName}${fieldAuth}`);
+          implicitTypes.push([
+            inputTypeName,
+            {
+              data: {
+                type: 'customType',
+                fields: { id: { data: { fieldType: 'ID' } } },
+              },
+            },
+          ]);
         } else {
           gqlFields.push(
             `${fieldName}: ${refFieldToGql(fieldDef.data, secondaryIndexes[fieldName])}${fieldAuth}`,
@@ -1326,10 +1352,16 @@ const mergeCustomTypeAuthRules = (
   }
 };
 
-function generateInputTypes(implicitTypes: [string, any][]): string[] {
-  return implicitTypes.flatMap(([typeName, typeDef]) => {
+function generateInputTypes(
+  implicitTypes: [string, any][],
+  isInput: boolean,
+): string[] {
+  const generatedTypes = new Set<string>();
+
+  implicitTypes.forEach(([typeName, typeDef]) => {
     if (isEnumType(typeDef)) {
-      return [`enum ${typeName} {\n  ${typeDef.values.join('\n  ')}\n}`];
+      const enumType = `enum ${typeName} {\n  ${typeDef.values.join('\n  ')}\n}`;
+      generatedTypes.add(enumType);
     } else if (isCustomType(typeDef)) {
       const { gqlFields } = processFields(
         typeName,
@@ -1340,14 +1372,17 @@ function generateInputTypes(implicitTypes: [string, any][]): string[] {
         undefined,
         {},
         'dynamodb',
-        true,
+        isInput,
       );
-      return [`input ${typeName} {\n  ${gqlFields.join('\n  ')}\n}`];
+      const typeKeyword = isInput ? 'input' : 'type';
+      const customType = `${typeKeyword} ${typeName} {\n  ${gqlFields.join('\n  ')}\n}`;
+      generatedTypes.add(customType);
     } else {
       console.warn(`Unexpected type definition for ${typeName}:`, typeDef);
-      return [];
     }
   });
+
+  return Array.from(generatedTypes);
 }
 
 const schemaPreprocessor = (
@@ -1359,7 +1394,7 @@ const schemaPreprocessor = (
   lambdaFunctions: LambdaFunctionDefinition;
   customSqlDataSourceStrategies?: CustomSqlDataSourceStrategy[];
 } => {
-  const enumTypes: string[] = [];
+  const enumTypes = new Set<string>();
   const gqlModels: string[] = [];
   const inputTypes: string[] = [];
 
@@ -1424,10 +1459,8 @@ const schemaPreprocessor = (
             `Values of the enum type ${typeName} should not contain any whitespace.`,
           );
         }
-        const enumType = `enum ${typeName} {\n  ${typeDef.values.join(
-          '\n  ',
-        )}\n}`;
-        enumTypes.push(enumType);
+        const enumType = `enum ${typeName} {\n  ${typeDef.values.join('\n  ')}\n}`;
+        enumTypes.add(enumType);
       } else if (isCustomType(typeDef)) {
         const fields = typeDef.data.fields;
 
@@ -1481,7 +1514,8 @@ const schemaPreprocessor = (
         const {
           gqlField,
           implicitTypes,
-          inputTypes,
+          inputTypes: operationInputTypes,
+          returnTypes: operationReturnTypes,
           customTypeAuthRules,
           jsFunctionForField,
           lambdaFunctionDefinition,
@@ -1493,14 +1527,26 @@ const schemaPreprocessor = (
           databaseType,
           getRefType,
         );
+        inputTypes.push(...operationInputTypes);
+        gqlModels.push(...operationReturnTypes);
 
         implicitTypes.forEach(([name, type]) => {
           if (isEnumType(type)) {
             const enumType = `enum ${name} {\n  ${type.values.join('\n  ')}\n}`;
-            enumTypes.push(enumType);
+            enumTypes.add(enumType);
           } else {
-            const generatedType = generateInputTypes([[name, type]])[0];
-            inputTypes.push(generatedType);
+            const isInput = !operationReturnTypes.some((rt) =>
+              rt.includes(name),
+            );
+            const generatedType = generateInputTypes(
+              [[name, type]],
+              isInput,
+            )[0];
+            if (isInput) {
+              inputTypes.push(generatedType);
+            } else {
+              gqlModels.push(generatedType);
+            }
           }
         });
 
@@ -1676,7 +1722,7 @@ const schemaPreprocessor = (
   const customOperationTypes = generateCustomOperationTypes(customOperations);
 
   const schemaComponents = [
-    ...enumTypes,
+    ...Array.from(enumTypes),
     ...gqlModels,
     ...customOperationTypes,
   ];
@@ -1986,6 +2032,8 @@ function transformCustomOperations(
   const {
     gqlField,
     implicitTypes,
+    inputTypes,
+    returnTypes,
     customTypeAuthRules,
     lambdaFunctionDefinition,
     customSqlDataSourceStrategy,
@@ -1998,12 +2046,13 @@ function transformCustomOperations(
     getRefType,
   );
 
-  const inputTypes = generateInputTypes(implicitTypes);
+  // const inputTypes = generateInputTypes(implicitTypes);
 
   return {
     gqlField,
     implicitTypes,
     inputTypes,
+    returnTypes,
     customTypeAuthRules,
     jsFunctionForField,
     lambdaFunctionDefinition,

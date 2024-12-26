@@ -40,9 +40,9 @@ describe('something', () => {
         parentId: a.id(),
         parent: a.belongsTo('Parent', 'parentId'),
       }),
-      MyQueryReturnType: a.customType({
-        success: a.boolean(),
-      }),
+      // MyQueryReturnType: a.customType({
+      //   success: a.boolean(),
+      // }),
       myQuery: a
         .query()
         .arguments({ id: a.string() })

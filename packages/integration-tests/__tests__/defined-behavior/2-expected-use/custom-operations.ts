@@ -295,10 +295,16 @@ describe('custom operations', () => {
     const transformedSchema = schema.transform();
     const expectedTypes = ['CustomArgType', 'EchoResult', 'Query', 'Mutation'];
     const expectedOperations = [
-      'queryWithCustomTypeArg(customArg: ID): String',
-      'queryWithRefArg(refArg: ID): String',
-      'mutateWithCustomTypeArg(customArg: ID): String',
-      'mutationWithRefArg(refArg: ID): String',
+      'queryWithCustomTypeArg(customArg: QueryWithCustomTypeArgCustomArgInput): String',
+      'queryWithRefArg(refArg: QueryWithRefArgRefArgInput): String',
+      'mutateWithCustomTypeArg(customArg: MutateWithCustomTypeArgCustomArgInput): String',
+      'mutationWithRefArg(refArg: MutationWithRefArgRefArgInput): String',
+    ];
+    const expectedInputTypes = [
+      'input QueryWithCustomTypeArgCustomArgInput',
+      'input QueryWithRefArgRefArgInput',
+      'input MutateWithCustomTypeArgCustomArgInput',
+      'input MutationWithRefArgRefArgInput',
     ];
 
     expectedTypes.forEach((type) => {
@@ -308,8 +314,11 @@ describe('custom operations', () => {
     expectedOperations.forEach((operation) => {
       expect(transformedSchema.schema).toContain(operation);
     });
-  });
 
+    expectedInputTypes.forEach((inputType) => {
+      expect(transformedSchema.schema).toContain(inputType);
+    });
+  });
   test('primitive type result', async () => {
     const { spy, generateClient } = mockedGenerateClient([
       {
