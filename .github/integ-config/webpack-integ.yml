@@ -1,0 +1,5 @@
+- test_name: webpack_basic
+    desc: 'TypeScript + Webpack 5'
+    framework: webpack
+    browser: [chrome]
+    spec: webpack

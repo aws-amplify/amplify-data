@@ -1,0 +1,46 @@
+name: Local Webpack E2E Test
+
+on: workflow_call
+
+jobs:
+  unit_test:
+    name: Local Webpack E2E Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@24cb9080177205b6e8c946b17badbe402adc938f # v3.4.0 https://github.com/actions/checkout/commit/24cb9080177205b6e8c946b17badbe402adc938f
+        with:
+          path: amplify-data
+      - name: Setup node and build the repository
+        uses: ./amplify-data/.github/actions/node-and-build
+      - name: Load Verdaccio with AmplifyData
+        uses: ./amplify-data/.github/actions/load-verdaccio-with-amplify-data
+     - name: Run cypress tests for webpack e2e test dev
+        shell: bash
+        working-directory: ./amplify-data
+        env:
+          E2E_ENV: ${{ '{}' }}
+        run: |
+          if [ -z “” ]; then
+            ../amplify-data/scripts/retry-yarn-script.sh -s \
+            "ci:test-webpack \
+             webpack \
+            webpack \
+            chrome \
+            dev \
+            cli \
+            --env $(echo $E2E_ENV | jq -r 'tostring')" \
+          else
+            echo "Skipping specialized yarn script execution in the dev environment."
+          fi
+      - name: Upload artifact
+        uses: actions/upload-artifact@0b7f8abb1508181956e8e162db84b466c27e18ce # v3.1.2 https://github.com/actions/upload-artifact/commit/0b7f8abb1508181956e8e162db84b466c27e18ce
+        if: failure()
+        with:
+          name: ${{ inputs.test_name }}
+          if-no-files-found: ignore
+          path: |
+            amplify-js-samples-staging/cypress/videos
+            amplify-js-samples-staging/cypress/screenshots
+          retention-days: 14

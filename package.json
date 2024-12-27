@@ -44,6 +44,8 @@
     "stop:npm-proxy": "tsx scripts/stop_npm_proxy.ts",
     "test": "turbo run test && npm run test:scripts && npm run e2e-exports",
     "test:scripts": "npx jest scripts/",
+    "ci:test": "node scripts/test.js",
+    "ci:test-webpack": "node scripts/webpack-test.js",
     "turbo": "turbo",
     "vend": "npm run start:npm-proxy && npm run publish:local"
   },
@@ -63,6 +65,8 @@
     "@typescript-eslint/eslint-plugin": "^6.7.4",
     "@typescript-eslint/parser": "^6.7.4",
     "aws-amplify": "^6.6.5",
+    "concurrently": "^9.1.0",
+    "cypress": "^13.17.0",
     "eslint": "^8.50.0",
     "eslint-config-prettier": "^9.0.0",
     "eslint-plugin-import": "^2.28.1",
