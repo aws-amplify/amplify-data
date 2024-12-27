@@ -3,7 +3,7 @@ name: Local Webpack E2E Test
 on: workflow_call
 
 jobs:
-  unit_test:
+  e2e-test:
     name: Local Webpack E2E Tests
     runs-on: ubuntu-latest
 
