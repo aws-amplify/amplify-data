@@ -22,19 +22,15 @@ jobs:
         env:
           E2E_ENV: ${{ '{}' }}
         run: |
-          if [ -z “” ]; then
-            ../amplify-data/scripts/retry-npm-script.sh -s \
-            "ci:test-webpack \
-             webpack \
-            webpack \
-            chrome \
-            dev \
-            cli \
-            --env $(echo $E2E_ENV | jq -r 'tostring')" \
-            -n 3
-          else
-            echo "Skipping specialized yarn script execution in the dev environment."
-          fi
+          ../amplify-data/scripts/retry-npm-script.sh -s \
+          "ci:test-webpack \
+           webpack \
+          webpack \
+          chrome \
+          dev \
+          cli \
+          --env $(echo $E2E_ENV | jq -r 'tostring')" \
+          -n 3
       - name: Upload artifact
         uses: actions/upload-artifact@0b7f8abb1508181956e8e162db84b466c27e18ce # v3.1.2 https://github.com/actions/upload-artifact/commit/0b7f8abb1508181956e8e162db84b466c27e18ce
         if: failure()
