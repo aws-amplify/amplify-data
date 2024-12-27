@@ -23,7 +23,7 @@ jobs:
           E2E_ENV: ${{ '{}' }}
         run: |
           if [ -z “” ]; then
-            ../amplify-data/scripts/retry-yarn-script.sh -s \
+            ../amplify-data/scripts/retry-npm-script.sh -s \
             "ci:test-webpack \
              webpack \
             webpack \
@@ -31,6 +31,7 @@ jobs:
             dev \
             cli \
             --env $(echo $E2E_ENV | jq -r 'tostring')" \
+            -n 3
           else
             echo "Skipping specialized yarn script execution in the dev environment."
           fi
