@@ -13,11 +13,6 @@ type Post @model @auth(rules: [{allow: private}])
 
 type Mutation {
   likePost(postId: String!, reactionType: LikePostReactionType): Post 
-}
-
-enum LikePostReactionType {
-  :shipit:
-  :risitas:
 }"
 `;
 
@@ -51,15 +46,6 @@ exports[`CustomOperation transform dynamo schema Custom mutation w inline boolea
 
 exports[`CustomOperation transform dynamo schema Custom mutation w inline custom return type 1`] = `
 "type LikePostReturnType {
-  stringField: String
-  intField: Int
-  floatField: Float
-  boolField: Boolean
-  datetimeField: AWSDateTime
-  jsonField: AWSJSON
-}
-
-type LikePostReturnType {
   stringField: String
   intField: Int
   floatField: Float
@@ -123,15 +109,6 @@ type Query {
 
 exports[`CustomOperation transform dynamo schema Custom query w inline custom return type 1`] = `
 "type GetPostDetailsReturnType {
-  stringField: String
-  intField: Int
-  floatField: Float
-  boolField: Boolean
-  datetimeField: AWSDateTime
-  jsonField: AWSJSON
-}
-
-type GetPostDetailsReturnType {
   stringField: String
   intField: Int
   floatField: Float
@@ -283,10 +260,6 @@ exports[`CustomOperation transform dynamo schema custom subscriptions Custom sub
   title: String!
 }
 
-type CreateCustomTypePostReturnType {
-  title: String!
-}
-
 type Mutation {
   createCustomTypePost: CreateCustomTypePostReturnType @function(name: "createCustomTypePost") @auth(rules: [{allow: public, provider: apiKey}])
 }
@@ -368,10 +341,6 @@ type GetPostDetailsReturnType {
   
 }
 
-type GetPostDetailsReturnType {
-  
-}
-
 type Query {
   getPostDetails: GetPostDetailsReturnType @aws_api_key
 }"
@@ -379,10 +348,6 @@ type Query {
 
 exports[`CustomOperation transform dynamo schema handlers a.handler.custom a.handler.custom with auth works 1`] = `
 "type GetPostDetailsReturnType {
-  
-}
-
-type GetPostDetailsReturnType {
   
 }
 
@@ -407,10 +372,6 @@ exports[`CustomOperation transform dynamo schema handlers a.handler.function def
   
 }
 
-type GetPostDetailsReturnType {
-  
-}
-
 type Query {
   getPostDetails: GetPostDetailsReturnType @function(name: "FnGetPostDetails") @auth(rules: [{allow: private}])
 }"
@@ -429,10 +390,6 @@ type Query {
 
 exports[`CustomOperation transform dynamo schema handlers a.handler.function defineFunction async - sync 1`] = `
 "type GetPostDetailsReturnType {
-  
-}
-
-type GetPostDetailsReturnType {
   
 }
 
@@ -468,10 +425,6 @@ exports[`CustomOperation transform dynamo schema handlers a.handler.function pip
   
 }
 
-type GetPostDetailsReturnType {
-  
-}
-
 type Query {
   getPostDetails: GetPostDetailsReturnType @function(name: "myFunc") @function(name: "FnGetPostDetails2") @function(name: "FnGetPostDetails3") @function(name: "myFunc2") @auth(rules: [{allow: private}])
 }"
@@ -482,10 +435,6 @@ exports[`CustomOperation transform dynamo schema handlers a.handler.function str
   
 }
 
-type GetPostDetailsReturnType {
-  
-}
-
 type Query {
   getPostDetails: GetPostDetailsReturnType @function(name: "myFunc") @auth(rules: [{allow: private}])
 }"
@@ -493,10 +442,6 @@ type Query {
 
 exports[`CustomOperation transform dynamo schema handlers a.handler.inlineSql escapes quotes 1`] = `
 "type GetPostDetailsReturnType {
-  
-}
-
-type GetPostDetailsReturnType {
   
 }
 
@@ -521,10 +466,6 @@ exports[`CustomOperation transform dynamo schema handlers a.handler.inlineSql wo
   
 }
 
-type GetPostDetailsReturnType {
-  
-}
-
 type Query {
   getPostDetails: GetPostDetailsReturnType @sql(statement: "SELECT * from TESTTABLE;") @auth(rules: [{allow: private}])
 }",
@@ -533,10 +474,6 @@ type Query {
 
 exports[`CustomOperation transform dynamo schema handlers a.handler.sqlReference works 1`] = `
 "type GetPostDetailsReturnType {
-  
-}
-
-type GetPostDetailsReturnType {
   
 }
 

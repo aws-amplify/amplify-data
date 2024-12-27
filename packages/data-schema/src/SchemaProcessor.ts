@@ -469,11 +469,7 @@ function customOperationToGql(
     implicitTypes.push(...implied);
 
     const newInputTypes = generateInputTypes(implied, true);
-    for (const newType of newInputTypes) {
-      if (!inputTypes.includes(newType)) {
-        inputTypes.push(newType);
-      }
-    }
+    inputTypes.push(...newInputTypes);
   }
 
   const handler = handlers && handlers[0];
@@ -1359,10 +1355,7 @@ function generateInputTypes(
   const generatedTypes = new Set<string>();
 
   implicitTypes.forEach(([typeName, typeDef]) => {
-    if (isEnumType(typeDef)) {
-      const enumType = `enum ${typeName} {\n  ${typeDef.values.join('\n  ')}\n}`;
-      generatedTypes.add(enumType);
-    } else if (isCustomType(typeDef)) {
+    if (isCustomType(typeDef)) {
       const { gqlFields } = processFields(
         typeName,
         typeDef.data.fields,
@@ -1544,8 +1537,6 @@ const schemaPreprocessor = (
             )[0];
             if (isInput) {
               inputTypes.push(generatedType);
-            } else {
-              gqlModels.push(generatedType);
             }
           }
         });
@@ -2045,8 +2036,6 @@ function transformCustomOperations(
     databaseType,
     getRefType,
   );
-
-  // const inputTypes = generateInputTypes(implicitTypes);
 
   return {
     gqlField,
