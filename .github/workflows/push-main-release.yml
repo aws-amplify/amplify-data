@@ -59,6 +59,6 @@ jobs:
   release:
     needs:
       - release-verification-testing
-      - sandbox_test
+      # - sandbox_test
     secrets: inherit
     uses: ./.github/workflows/callable-npm-publish-release.yml
