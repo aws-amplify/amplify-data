@@ -16,22 +16,24 @@ jobs:
       #   uses: ./amplify-data/.github/actions/node-and-build
       # - name: Load Verdaccio with AmplifyData
       #   uses: ./amplify-data/.github/actions/load-verdaccio-with-amplify-data
+      - name: Make script executable
+        run: chmod +x ./amplify-data/scripts/retry-npm-script.sh
       - name: Run cypress tests for webpack e2e test dev
         shell: bash
         working-directory: ./amplify-data
         env:
           E2E_ENV: ${{ '{}' }}
-        # run: |
-        #   ../amplify-data/scripts/retry-npm-script.sh -s \
-        #   "ci:test-webpack \
-        #    webpack \
-        #   webpack \
-        #   chrome \
-        #   dev \
-        #   cli \
-        #   --env $(echo $E2E_ENV | jq -r 'tostring')" \
-        #   -n 3
-        run: npm run ci:test-webpack webpack webpack chrome dev cli --env $(echo $E2E_ENV | jq -r 'tostring')
+        run: |
+          ../amplify-data/scripts/retry-npm-script.sh -s \
+          "ci:test-webpack \
+           webpack \
+          webpack \
+          chrome \
+          dev \
+          cli \
+          --env $(echo $E2E_ENV | jq -r 'tostring')" \
+          -n 3
+        # run: npm run ci:test-webpack webpack webpack chrome dev cli --env $(echo $E2E_ENV | jq -r 'tostring')
       - name: Upload artifact
         uses: actions/upload-artifact@0b7f8abb1508181956e8e162db84b466c27e18ce # v3.1.2 https://github.com/actions/upload-artifact/commit/0b7f8abb1508181956e8e162db84b466c27e18ce
         if: failure()
