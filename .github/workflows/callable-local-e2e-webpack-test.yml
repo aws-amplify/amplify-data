@@ -17,7 +17,7 @@ jobs:
       # - name: Load Verdaccio with AmplifyData
       #   uses: ./amplify-data/.github/actions/load-verdaccio-with-amplify-data
       - name: Make script executable
-        run: chmod +x ./amplify-data/scripts/retry-npm-script.sh
+        run: chmod +x ../amplify-data/scripts/retry-npm-script.sh
       - name: Run cypress tests for webpack e2e test dev
         shell: bash
         working-directory: ./amplify-data
