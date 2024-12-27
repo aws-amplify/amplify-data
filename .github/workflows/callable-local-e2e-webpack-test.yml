@@ -3,7 +3,7 @@ name: Local Webpack E2E Test
 on: workflow_call
 
 jobs:
-  e2e-test:
+  webpack-e2e:
     name: Local Webpack E2E Tests
     runs-on: ubuntu-latest
 
@@ -16,7 +16,7 @@ jobs:
         uses: ./amplify-data/.github/actions/node-and-build
       - name: Load Verdaccio with AmplifyData
         uses: ./amplify-data/.github/actions/load-verdaccio-with-amplify-data
-     - name: Run cypress tests for webpack e2e test dev
+      - name: Run cypress tests for webpack e2e test dev
         shell: bash
         working-directory: ./amplify-data
         env:
