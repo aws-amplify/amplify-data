@@ -1,5 +1,6 @@
 import concurrently from 'concurrently';
-import { existsSync } from 'fs-extra';
+import fsExtra from 'fs-extra' 
+const { pathExistsSync } = fsExtra
 import { logError } from './common.js';
 
 const defaultTimeout = 5 * 60 * 1000; // 5 minutes
@@ -67,7 +68,7 @@ const getParameters = () => {
 // bash command for installing node_modules if it is not present
 // TODO: remove --ignore-engines when we update the cypress image
 const npmInstall = (sampleDir) => {
-	return existsSync(`${sampleDir}/node_modules`)
+	return pathExistsSync(`${sampleDir}/node_modules`)
 		? `echo "Skipping npm install"`
 		: `npm --prefix ${sampleDir} install`;
 }; 
