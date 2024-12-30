@@ -85,7 +85,8 @@
     "tsx": "^4.8.2",
     "turbo": "^1.10.14",
     "typescript": "^5.1.6",
-    "verdaccio": "^6.0.2"
+    "verdaccio": "^6.0.2",
+    "wait-on": "^8.0.1"
   },
   "resolutions": {
     "cookie": "^0.7.2"
