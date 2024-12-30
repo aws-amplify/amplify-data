@@ -61,6 +61,7 @@ const getParameters = () => {
 		browser,
 		build,
 		backend,
+        env: JSON.parse(env || '{}'),
 	};
 };
 
