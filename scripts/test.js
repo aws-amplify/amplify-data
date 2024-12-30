@@ -1,7 +1,7 @@
-const { parseArgs } = require('node:util');
+// const { parseArgs } = require('node:util');
 const concurrently = require('concurrently');
 const fs = require('fs-extra');
-const { logError } = require('./common.js');
+const { logError } = require('./common.js').default;
 
 const defaultTimeout = 5 * 60 * 1000; // 5 minutes
 

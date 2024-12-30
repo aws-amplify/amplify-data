@@ -1,6 +1,6 @@
-const concurrently = require('concurrently');
-const fs = require('fs-extra');
-const { logError } = require('./common.js');
+import concurrently from 'concurrently';
+import { existsSync } from 'fs-extra';
+import { logError } from './common.js';
 
 const defaultTimeout = 5 * 60 * 1000; // 5 minutes
 
@@ -31,57 +31,49 @@ const BUILD_TYPE = {
 	dev: 'dev',
 };
 
+// Read arguments from process.argv, validate them, and assign defaults. Returns the parameter list.
+const getParameters = () => {
+	let {
+		values: { env },
+		positionals: [
+			framework,
+			testFile,
+			browser,
+            build,
+			backend,
+		],
+	} = parseArgs({
+		options: {
+			env: {
+				type: 'string',
+			},
+		},
+		allowPositionals: true,
+	});
+
+	if (!backend) {
+		backend = 'cli';
+	}
+	return {
+		framework,
+		testFile,
+		browser,
+		build,
+		backend,
+	};
+};
+
+
 // bash command for installing node_modules if it is not present
 // TODO: remove --ignore-engines when we update the cypress image
 const npmInstall = (sampleDir) => {
-	return fs.existsSync(`${sampleDir}/node_modules`)
+	return existsSync(`${sampleDir}/node_modules`)
 		? `echo "Skipping npm install"`
 		: `npm --prefix ${sampleDir} install`;
 }; 
 
 const sampleDirectory = ({ framework}) => {
 	return `packages/e2e-tests/${framework}`;
-};
-
-// bash command for serving sample on prod
-const runAppOnProd = ({ framework, backend, env }) => {
-	const sampleDir = sampleDirectory({ framework});
-	let distDir; // distribution directory
-	if (framework === FRAMEWORKS.webpack) {
-		distDir = `${sampleDir}/dist`;
-	} else {
-		logError(`unknown framework: ${framework}`);
-	}
-    //npm install the dependencies 
-	const install = npmInstall(sampleDir);
-    //env variables 
-	const envVars = Object.entries(env)
-		.map(([key, value]) => `${key}=${value}`)
-		.join(' ');
-
-	let buildCommand = 'build';
-	let startCommand = 'start';
-	if (backend === 'gen2') {
-		buildCommand = 'build:gen2';
-		startCommand = 'start:gen2';
-	}
-	const serveCommand =
-		framework === 'next'
-			? `npm --prefix ${sampleDir} run ${startCommand}`
-			: `serve -s ${distDir} -l ${frameworkPort[framework]}`;
-
-	const command = [
-		envVars && `export ${envVars}`,
-		install,
-		`npm --prefix ${sampleDir} run ${buildCommand} ${prodFlag}`,
-		serveCommand,
-	]
-		.filter(Boolean)
-		.join(' && ');
-
-	console.log('prod', command);
-
-	return command;
 };
 
 const getDevStartCommand = ({ framework, backend }) => {
@@ -122,18 +114,13 @@ const startSampleAndRun = async () => {
 	const params = getParameters();
 	const {
 		framework,
-		category,
 		testFile,
 		browser,
 		build,
-		sample,
 	} = params;
-	const sampleDir = sampleDirectory({ framework, category, sample });
+	const sampleDir = sampleDirectory({ framework});
 
-	const waitOnOption =
-		category === 'geo'
-			? `http-get://127.0.0.1:${frameworkPort[framework]}`
-			: `tcp:127.0.0.1:${frameworkPort[framework]}`;
+	const waitOnOption = `tcp:127.0.0.1:${frameworkPort[framework]}`;
 
 	// commands
 	const runApp =

@@ -3,6 +3,6 @@ const logError = (error) => {
 	return;
 };
 
-module.exports = {
+export default {
 	logError,
 };
