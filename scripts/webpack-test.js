@@ -125,8 +125,7 @@ const startSampleAndRun = async () => {
 	const waitOnOption = `tcp:127.0.0.1:${frameworkPort[framework]}`;
 
 	// commands
-	const runApp =
-		build === runAppOnDev(params);
+	const runApp = runAppOnDev(params);
 	const runCypress = `wait-on -t ${defaultTimeout} ${waitOnOption} && cypress run --browser ${browser} --headless --config baseUrl=http://localhost:${frameworkPort[framework]} --spec "cypress/e2e/${framework}/${testFile}.spec.*"`;
 
 	return concurrently(
