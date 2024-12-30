@@ -147,7 +147,7 @@ const startSampleAndRun = async () => {
         [runApp, runCypress],
 		{
 			killOthers: ['success', 'failure'],
-			successCondition: ['first'],
+			successCondition: ['second'],
 		}
 	);
 	return result.then(() => {
