@@ -128,14 +128,29 @@ const startSampleAndRun = async () => {
 	const runApp = runAppOnDev(params);
 	const runCypress = `wait-on -t ${defaultTimeout} ${waitOnOption} && cypress run --browser ${browser} --headless --config baseUrl=http://localhost:${frameworkPort[framework]} --spec "cypress/e2e/${framework}/${testFile}.spec.*"`;
 
-	return concurrently(
+	// return concurrently(
+    //     [runApp, runCypress],
+	// 	{
+	// 		killOthers: ['success', 'failure'],
+	// 		successCondition: ['first'],
+	// 	}
+	// )
+	// 	.then(() => {
+	// 		process.exit(0);
+	// 	})
+	// 	.catch((exitInfos) => {
+	// 		// Concurrently throws SIGTERM with exit code 0 on success, check code and exit with it
+	// 		const { exitCode } = exitInfos[0];
+	// 		process.exit(exitCode);
+	// 	});
+    const {result} = concurrently(
         [runApp, runCypress],
 		{
 			killOthers: ['success', 'failure'],
 			successCondition: ['first'],
 		}
-	)
-		.then(() => {
+	);
+	return result.then(() => {
 			process.exit(0);
 		})
 		.catch((exitInfos) => {
