@@ -155,15 +155,8 @@ const startSampleAndRun = async () => {
 		})
 		.catch((exitInfos) => {
 			// Concurrently throws SIGTERM with exit code 0 on success, check code and exit with it
-            if (Array.isArray(exitInfos)) {
-                // If it's an array of exit infos
-                const exitCode = exitInfos[0]?.exitCode ?? 1;
-                process.exit(exitCode);
-            } else {
-                // If it's a single error object
-                const exitCode = exitInfos?.exitCode ?? 1;
-                process.exit(exitCode);
-            }
+            const { exitCode } = exitInfos[0];
+			process.exit(exitCode);
 		});
 };
 
