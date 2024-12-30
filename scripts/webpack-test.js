@@ -130,6 +130,7 @@ const startSampleAndRun = async () => {
 	const runCypress = `wait-on -t ${defaultTimeout} ${waitOnOption} && cypress run --browser ${browser} --headless --config baseUrl=http://localhost:${frameworkPort[framework]} --spec "cypress/e2e/${framework}/${testFile}.spec.*"`;
 
 	return concurrently(
+        [runApp, runCypress],
 		{
 			killOthers: ['success', 'failure'],
 			successCondition: ['first'],
