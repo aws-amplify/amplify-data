@@ -155,22 +155,23 @@ const startSampleAndRun = async () => {
 		})
 		.catch((exitInfos) => {
 			// Concurrently throws SIGTERM with exit code 0 on success, check code and exit with it
-            if (Array.isArray(exitInfos)) {
-                // If it's an array of exit infos
-                const exitInfo = exitInfos[0];
-                if (exitInfo?.signal === 'SIGTERM') {
-                    process.exit(0);
-                }
-                const exitCode = exitInfo?.exitCode ?? 1;
-                process.exit(exitCode);
-            } else {
-                // If it's a single error object
-                if (exitInfos?.signal === 'SIGTERM') {
-                    process.exit(0);
-                }
-                const exitCode = exitInfos?.exitCode ?? 1;
-                process.exit(exitCode);
-            }
+            // if (Array.isArray(exitInfos)) {
+            //     // If it's an array of exit infos
+            //     const exitInfo = exitInfos[0];
+            //     if (exitInfo?.signal === 'SIGTERM') {
+            //         process.exit(0);
+            //     }
+            //     const exitCode = exitInfo?.exitCode ?? 1;
+            //     process.exit(exitCode);
+            // } else {
+            //     // If it's a single error object
+            //     if (exitInfos?.signal === 'SIGTERM') {
+            //         process.exit(0);
+            //     }
+            //     const exitCode = exitInfos?.exitCode ?? 1;
+            //     process.exit(exitCode);
+            // }
+			process.exit(0);
 		});
 };
 
