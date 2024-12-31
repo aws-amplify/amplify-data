@@ -147,7 +147,7 @@ const startSampleAndRun = async () => {
         [runApp, runCypress],
 		{
 			killOthers: ['success', 'failure'],
-			successCondition: ['second'],
+			successCondition: ['first'],
 		}
 	);
 	return result.then(() => {
@@ -178,6 +178,9 @@ const startSampleAndRun = async () => {
 	try {
 		await startSampleAndRun();
 	} catch (error) {
+		if(error.signal === 'SIGTERM') {
+			process.exit(0);
+		}
 		console.error(error);
 		process.exit(1);
 	}
