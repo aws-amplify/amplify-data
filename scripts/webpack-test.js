@@ -171,7 +171,8 @@ const startSampleAndRun = async () => {
             //     const exitCode = exitInfos?.exitCode ?? 1;
             //     process.exit(exitCode);
             // }
-			process.exit(0);
+			const exitCode = exitInfos.exitCode;
+			process.exit(exitCode);
 		});
 };
 
@@ -179,9 +180,6 @@ const startSampleAndRun = async () => {
 	try {
 		await startSampleAndRun();
 	} catch (error) {
-		if(error.signal === 'SIGTERM') {
-			process.exit(0);
-		}
 		console.error(error);
 		process.exit(1);
 	}
