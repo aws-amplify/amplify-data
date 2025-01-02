@@ -72,7 +72,7 @@ const getParameters = () => {
 		process.exit(1);
 	}
 
-	if (!sample || !fs.existsSync(`samples/${framework}/${category}/${sample}`)) {
+	if (!sample || !pathExistsSync(`samples/${framework}/${sample}`)) {
 		logError('Please enter a valid sample name');
 		process.exit(1);
 	}
@@ -112,8 +112,8 @@ const sampleDirectory = ({ framework, sample }) => {
 };
 
 // bash command for serving sample on prod
-const runAppOnProd = ({ framework, category, sample, backend, env }) => {
-	const sampleDir = sampleDirectory({ framework, category, sample });
+const runAppOnProd = ({ framework, sample, backend, env }) => {
+	const sampleDir = sampleDirectory({ framework, sample });
 	let distDir; // distribution directory
 	if (framework === FRAMEWORKS.webpack) {
 		const { name } = JSON.parse(fs.readFileSync(`${sampleDir}/package.json`));
