@@ -1,0 +1,7 @@
+tests:
+  - test_name: webpack_data_gen2
+    desc: 'Webpack 5'
+    framework: webpack
+    sample_name: basic-bundle
+    spec: bundle
+    browser: [chrome]

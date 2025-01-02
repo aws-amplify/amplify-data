@@ -26,8 +26,8 @@ jobs:
   #   secrets: inherit
   #   uses: ./.github/workflows/callable-e2e-tests.yml
   #
-  webpack-e2e:
+  e2e:
     needs:
       - prebuild-ubuntu
     secrets: inherit
-    uses: ./.github/workflows/callable-local-e2e-webpack-test.yml
+    uses: ./.github/workflows/callable-local-e2e-tests-temp.yml

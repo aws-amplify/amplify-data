@@ -1,7 +1,8 @@
-// const { parseArgs } = require('node:util');
-const concurrently = require('concurrently');
-const fs = require('fs-extra');
-const { logError } = require('./common.js').default;
+import concurrently from 'concurrently';
+import {parseArgs} from 'node:util';
+import fsExtra from 'fs-extra';
+import logError from './common.js';
+const { pathExistsSync } = fsExtra
 
 const defaultTimeout = 5 * 60 * 1000; // 5 minutes
 
@@ -51,13 +52,11 @@ const getParameters = () => {
 		values: { env },
 		positionals: [
 			framework,
-			category,
 			sample,
 			testFile,
 			browser,
 			build,
 			backend,
-			amplifyJsDir,
 		],
 	} = parseArgs({
 		options: {
@@ -73,10 +72,6 @@ const getParameters = () => {
 		process.exit(1);
 	}
 
-	if (!category) {
-		logError('Please enter a valid category');
-		process.exit(1);
-	}
 	if (!sample || !fs.existsSync(`samples/${framework}/${category}/${sample}`)) {
 		logError('Please enter a valid sample name');
 		process.exit(1);
@@ -95,12 +90,10 @@ const getParameters = () => {
 	}
 	return {
 		framework,
-		category,
 		sample,
 		testFile,
 		browser,
 		build,
-		amplifyJsDir,
 		backend,
 		env: JSON.parse(env || '{}'),
 	};
@@ -109,13 +102,13 @@ const getParameters = () => {
 // bash command for installing node_modules if it is not present
 // TODO: remove --ignore-engines when we update the cypress image
 const npmInstall = (sampleDir) => {
-	return fs.existsSync(`${sampleDir}/node_modules`)
+	return pathExistsSync(`${sampleDir}/node_modules`)
 		? `echo "Skipping npm install"`
 		: `npm --prefix ${sampleDir} install`;
 }; 
 
-const sampleDirectory = ({ framework, category, sample }) => {
-	return `samples/${framework}/${category}/${sample}`;
+const sampleDirectory = ({ framework, sample }) => {
+	return `samples/${framework}/${sample}`;
 };
 
 // bash command for serving sample on prod
@@ -181,8 +174,8 @@ const getDevStartCommand = ({ framework, backend }) => {
 };
 
 // bash command for serving sample on dev
-const runAppOnDev = ({ framework, category, sample, backend, env }) => {
-	const sampleDir = sampleDirectory({ framework, category, sample });
+const runAppOnDev = ({ framework, sample, backend, env }) => {
+	const sampleDir = sampleDirectory({ framework, sample });
 	const install = npmInstall(sampleDir);
 	const startScript = getDevStartCommand({ framework, backend });
 	const envVars = Object.entries(env)
@@ -206,41 +199,34 @@ const startSampleAndRun = async () => {
 	const params = getParameters();
 	const {
 		framework,
-		category,
 		testFile,
 		browser,
 		build,
 		sample,
 	} = params;
-	const sampleDir = sampleDirectory({ framework, category, sample });
+	const sampleDir = sampleDirectory({ framework, sample });
 
-	const waitOnOption =
-		category === 'geo'
-			? `http-get://127.0.0.1:${frameworkPort[framework]}`
-			: `tcp:127.0.0.1:${frameworkPort[framework]}`;
+	const waitOnOption = `tcp:127.0.0.1:${frameworkPort[framework]}`;
 
 	// commands
 	const runApp =
 		build === BUILD_TYPE.dev ? runAppOnDev(params) : runAppOnProd(params);
-	const runCypress = `wait-on -t ${defaultTimeout} ${waitOnOption} && cypress run --browser ${browser} --headless --config baseUrl=http://localhost:${frameworkPort[framework]} --spec "cypress/integration/${category}/${testFile}.spec.*"`;
+		const runCypress = `wait-on -t ${defaultTimeout} ${waitOnOption} && cypress run --browser ${browser} --headless --config baseUrl=http://localhost:${frameworkPort[framework]} --spec "cypress/e2e/${framework}/${testFile}.spec.*"`;
 
-	return concurrently(
-		framework === FRAMEWORKS.node
-			? [installAndRunNodeTests]
-			: [runApp, runCypress],
+	const {result} = concurrently(
+		[runApp, runCypress],
 		{
 			killOthers: ['success', 'failure'],
 			successCondition: ['first'],
 		}
-	)
-		.then(() => {
-			process.exit(0);
-		})
-		.catch((exitInfos) => {
-			// Concurrently throws SIGTERM with exit code 0 on success, check code and exit with it
-			const { exitCode } = exitInfos[0];
-			process.exit(exitCode);
-		});
+	);
+	return result.then(() => {
+		process.exit(0);
+	})
+	.catch((exitInfos) => {
+		const exitCode = exitInfos.exitCode;
+		process.exit(exitCode);
+	});
 };
 
 (async () => {

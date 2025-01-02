@@ -1,0 +1,103 @@
+name: E2E Test
+run-name: e2e.${{ inputs.test_name }}
+
+on:
+  workflow_call:
+    inputs:
+      test_name:
+        required: true
+        type: string
+      framework:
+        required: true
+        type: string
+      sample_name:
+        required: true
+        type: string
+      spec:
+        required: true
+        type: string
+      browser:
+        required: true
+        type: string
+      backend:
+        required: true
+        type: string
+      timeout_minutes:
+        required: true
+        type: number
+      retry_count:
+        required: true
+        type: number
+      npm_script:
+        required: false
+        type: string
+      npm_script_args:
+        required: false
+        type: number
+      env:
+        required: false
+        type: string
+
+jobs:
+  e2e-test:
+    name: E2E ${{ inputs.test_name }}
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        browser:
+          - ${{ fromJson(inputs.browser) }}
+        sample_name:
+          - ${{ fromJson(inputs.sample_name) }}
+      fail-fast: false
+    timeout-minutes: ${{ inputs.timeout_minutes }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@24cb9080177205b6e8c946b17badbe402adc938f # v3.4.0 https://github.com/actions/checkout/commit/24cb9080177205b6e8c946b17badbe402adc938f
+        with:
+          path: amplify-data
+      - name: Setup node and build the repository
+        uses: ./amplify-data/.github/actions/node-and-build
+      - name: Load Verdaccio with AmplifyData
+        uses: ./amplify-data/.github/actions/load-verdaccio-with-amplify-data
+      - name: Make script executable
+        run: chmod +x ./amplify-data/scripts/retry-npm-script.sh
+      - name: Run cypress tests for webpack e2e test dev
+        shell: bash
+        working-directory: ./amplify-data
+        env:
+          E2E_FRAMEWORK: ${{ inputs.framework }}
+          E2E_SAMPLE_NAME: ${{ matrix.sample_name }}
+          E2E_SPEC: ${{ inputs.spec }}
+          E2E_BROWSER: ${{ matrix.browser }}
+          E2E_BACKEND: ${{ inputs.backend }}
+          E2E_RETRY_COUNT: ${{ inputs.retry_count }}
+          E2E_TEST_NAME: ${{ inputs.test_name }}
+          E2E_NPM_SCRIPT: ${{ inputs.npm_script }}
+          E2E_ENV: ${{ inputs.env }}
+        run: |
+          if [ -z "$E2E_NPM_SCRIPT" ]; then
+            ../amplify-js/scripts/retry-npm-script.sh -s \
+            "ci:test \
+            $E2E_FRAMEWORK \
+            $E2E_SAMPLE_NAME \
+            $E2E_SPEC \
+            $E2E_BROWSER \
+            dev \
+            $E2E_BACKEND \
+            --env $(echo $E2E_ENV | jq -r 'tostring')" \
+            $E2E_NPM_SCRIPT \
+            -n $E2E_RETRY_COUNT
+          else
+            echo "Skipping specialized yarn script execution in the dev environment."
+          fi
+      - name: Upload artifact
+        uses: actions/upload-artifact@0b7f8abb1508181956e8e162db84b466c27e18ce # v3.1.2 https://github.com/actions/upload-artifact/commit/0b7f8abb1508181956e8e162db84b466c27e18ce
+        if: failure()
+        with:
+          name: ${{ inputs.test_name }}
+          if-no-files-found: ignore
+          path: |
+            amplify-js-samples-staging/cypress/videos
+            amplify-js-samples-staging/cypress/screenshots
+          retention-days: 14
