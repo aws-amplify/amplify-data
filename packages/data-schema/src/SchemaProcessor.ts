@@ -451,14 +451,18 @@ function customOperationToGql(
     returnTypes = generateInputTypes(
       [[returnTypeName, { ...returnType, isInput: false }]],
       false,
+      getRefType,
     );
   }
+  const dedupedInputTypes = new Set<string>(inputTypes);
+
   if (Object.keys(fieldArgs).length > 0) {
     const { gqlFields, implicitTypes: implied } = processFields(
       typeName,
       fieldArgs,
       {},
       {},
+      getRefType,
       undefined,
       undefined,
       {},
@@ -468,8 +472,12 @@ function customOperationToGql(
     callSignature += `(${gqlFields.join(', ')})`;
     implicitTypes.push(...implied);
 
-    const newInputTypes = generateInputTypes(implied, true);
-    inputTypes.push(...newInputTypes);
+    const newTypes = generateInputTypes(implied, true, getRefType);
+    for (const t of newTypes) {
+      if (!dedupedInputTypes.has(t)) {
+        dedupedInputTypes.add(t);
+      }
+    }
   }
 
   const handler = handlers && handlers[0];
@@ -995,6 +1003,8 @@ function processFields(
   fields: Record<string, any>,
   impliedFields: Record<string, any>,
   fieldLevelAuthRules: Record<string, string | null>,
+  getRefType: ReturnType<typeof getRefTypeForSchema>,
+
   identifier?: readonly string[],
   partitionKey?: string,
   secondaryIndexes: TransformedSecondaryIndexes = {},
@@ -1351,6 +1361,7 @@ const mergeCustomTypeAuthRules = (
 function generateInputTypes(
   implicitTypes: [string, any][],
   isInput: boolean,
+  getRefType: ReturnType<typeof getRefTypeForSchema>,
 ): string[] {
   const generatedTypes = new Set<string>();
 
@@ -1361,6 +1372,7 @@ function generateInputTypes(
         typeDef.data.fields,
         {},
         {},
+        getRefType,
         undefined,
         undefined,
         {},
@@ -1487,14 +1499,20 @@ const schemaPreprocessor = (
           fields,
           authFields,
           fieldLevelAuthRules,
-          undefined,
+          getRefType,
           undefined,
           undefined,
           databaseEngine,
         );
-
-        topLevelTypes.push(...implicitTypes);
-
+        const existingTypeNames = new Set<string>(
+          topLevelTypes.map(([n]) => n),
+        );
+        for (const [name, type] of implicitTypes) {
+          if (!existingTypeNames.has(name)) {
+            topLevelTypes.push([name, type]);
+            existingTypeNames.add(name);
+          }
+        }
         const joined = gqlFields.join('\n  ');
 
         const model = `type ${typeName} ${customAuth}\n{\n  ${joined}\n}`;
@@ -1534,6 +1552,7 @@ const schemaPreprocessor = (
             const generatedType = generateInputTypes(
               [[name, type]],
               isInput,
+              getRefType,
             )[0];
             if (isInput) {
               inputTypes.push(generatedType);
@@ -1619,12 +1638,19 @@ const schemaPreprocessor = (
         fields,
         authFields,
         fieldLevelAuthRules,
+        getRefType,
         identifier,
         partitionKey,
         undefined,
         databaseEngine,
       );
-
+      const existingTypeNames = new Set<string>(topLevelTypes.map(([n]) => n));
+      for (const [name, type] of implicitTypes) {
+        if (!existingTypeNames.has(name)) {
+          topLevelTypes.push([name, type]);
+          existingTypeNames.add(name);
+        }
+      }
       topLevelTypes.push(...implicitTypes);
 
       const joined = gqlFields.join('\n  ');
@@ -1684,6 +1710,7 @@ const schemaPreprocessor = (
         fields,
         authFields,
         fieldLevelAuthRules,
+        getRefType,
         identifier,
         partitionKey,
         transformedSecondaryIndexes,
