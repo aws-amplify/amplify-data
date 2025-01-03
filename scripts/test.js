@@ -2,7 +2,7 @@ import concurrently from 'concurrently';
 import {parseArgs} from 'node:util';
 import fsExtra from 'fs-extra';
 import common from './common.js';
-import {logError} from common;
+const {logError} = common;
 const { pathExistsSync } = fsExtra
 
 const defaultTimeout = 5 * 60 * 1000; // 5 minutes
