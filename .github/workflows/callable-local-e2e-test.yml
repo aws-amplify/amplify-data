@@ -62,7 +62,36 @@ jobs:
         uses: ./amplify-data/.github/actions/load-verdaccio-with-amplify-data
       - name: Make script executable
         run: chmod +x ./amplify-data/scripts/retry-npm-script.sh
-      - name: Run cypress tests for webpack e2e test dev
+      # - name: Run cypress tests for webpack e2e test dev
+      #   shell: bash
+      #   working-directory: ./amplify-data
+      #   env:
+      #     E2E_FRAMEWORK: ${{ inputs.framework }}
+      #     E2E_SAMPLE_NAME: ${{ matrix.sample_name }}
+      #     E2E_SPEC: ${{ inputs.spec }}
+      #     E2E_BROWSER: ${{ matrix.browser }}
+      #     E2E_BACKEND: ${{ inputs.backend }}
+      #     E2E_RETRY_COUNT: ${{ inputs.retry_count }}
+      #     E2E_TEST_NAME: ${{ inputs.test_name }}
+      #     E2E_NPM_SCRIPT: ${{ inputs.npm_script }}
+      #     E2E_ENV: ${{ inputs.env }}
+      #   run: |
+      #     if [ -z "$E2E_NPM_SCRIPT" ]; then
+      #       ../amplify-data/scripts/retry-npm-script.sh -s \
+      #       "ci:test \
+      #       $E2E_FRAMEWORK \
+      #       $E2E_SAMPLE_NAME \
+      #       $E2E_SPEC \
+      #       $E2E_BROWSER \
+      #       dev \
+      #       $E2E_BACKEND \
+      #       --env $(echo $E2E_ENV | jq -r 'tostring')" \
+      #       $E2E_NPM_SCRIPT \
+      #       -n $E2E_RETRY_COUNT
+      #     else
+      #       echo "Skipping specialized yarn script execution in the dev environment."
+      #     fi
+      - name: Run cypress tests for ${{ inputs.test_name }} prod
         shell: bash
         working-directory: ./amplify-data
         env:
@@ -74,6 +103,7 @@ jobs:
           E2E_RETRY_COUNT: ${{ inputs.retry_count }}
           E2E_TEST_NAME: ${{ inputs.test_name }}
           E2E_NPM_SCRIPT: ${{ inputs.npm_script }}
+          E2E_NPM_SCRIPT_ARGS: ${{ inputs.npm_script_args }}
           E2E_ENV: ${{ inputs.env }}
         run: |
           if [ -z "$E2E_NPM_SCRIPT" ]; then
@@ -83,13 +113,13 @@ jobs:
             $E2E_SAMPLE_NAME \
             $E2E_SPEC \
             $E2E_BROWSER \
-            dev \
+            prod \
             $E2E_BACKEND \
             --env $(echo $E2E_ENV | jq -r 'tostring')" \
             $E2E_NPM_SCRIPT \
             -n $E2E_RETRY_COUNT
           else
-            echo "Skipping specialized yarn script execution in the dev environment."
+            npm run "$E2E_NPM_SCRIPT" "$E2E_NPM_SCRIPT_ARGS"
           fi
       - name: Upload artifact
         uses: actions/upload-artifact@0b7f8abb1508181956e8e162db84b466c27e18ce # v3.1.2 https://github.com/actions/upload-artifact/commit/0b7f8abb1508181956e8e162db84b466c27e18ce

@@ -3,7 +3,7 @@ import {parseArgs} from 'node:util';
 import fsExtra from 'fs-extra';
 import common from './common.js';
 const {logError} = common;
-const { pathExistsSync } = fsExtra
+const { pathExistsSync } = fsExtra;
 
 const defaultTimeout = 5 * 60 * 1000; // 5 minutes
 
@@ -117,17 +117,6 @@ const runAppOnProd = ({ framework, sample, backend, env }) => {
 	const sampleDir = sampleDirectory({ framework, sample });
 	let distDir; // distribution directory
 	if (framework === FRAMEWORKS.webpack) {
-		const { name } = JSON.parse(fs.readFileSync(`${sampleDir}/package.json`));
-		distDir = `${sampleDir}/dist/${name}`;
-	} else if (framework === FRAMEWORKS.react || framework === FRAMEWORKS.next) {
-		distDir = `${sampleDir}/build`;
-	} else if (framework === FRAMEWORKS.vue || framework === FRAMEWORKS.vite) {
-		distDir = `${sampleDir}/dist`;
-	} else if (framework === FRAMEWORKS.rollup) {
-		distDir = `${sampleDir}/public`;
-	} else if (framework === FRAMEWORKS.ionic) {
-		distDir = `${sampleDir}/www`;
-	} else if (framework === FRAMEWORKS.javascript) {
 		distDir = `${sampleDir}/dist`;
 	} else {
 		logError(`unknown framework: ${framework}`);
@@ -151,7 +140,7 @@ const runAppOnProd = ({ framework, sample, backend, env }) => {
 	const command = [
 		envVars && `export ${envVars}`,
 		install,
-		`npm --prefix ${sampleDir} run ${buildCommand} ${prodFlag}`,
+		`npm run ${buildCommand} --prefix ${sampleDir}`,
 		serveCommand,
 	]
 		.filter(Boolean)
