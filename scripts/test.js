@@ -73,7 +73,7 @@ const getParameters = () => {
 		process.exit(1);
 	}
 
-	if (!sample || !pathExistsSync(`samples/${framework}/${sample}`)) {
+	if (!sample || !pathExistsSync(`packages/e2e-tests/${framework}/${sample}`)) {
 		logError('Please enter a valid sample name');
 		process.exit(1);
 	}
@@ -109,7 +109,7 @@ const npmInstall = (sampleDir) => {
 }; 
 
 const sampleDirectory = ({ framework, sample }) => {
-	return `samples/${framework}/${sample}`;
+	return `packages/e2e-tests/${framework}/${sample}`;
 };
 
 // bash command for serving sample on prod
