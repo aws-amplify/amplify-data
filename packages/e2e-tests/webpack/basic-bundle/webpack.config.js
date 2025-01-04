@@ -6,7 +6,7 @@ module.exports = {
 	mode: 'development',
 	entry: './src/app.ts',
 	output: {
-		filename: '[name].bundle.ts',
+		filename: '[name].bundle.js',
 		path: path.resolve(__dirname, 'dist'),
 	},
 	module: {
@@ -14,7 +14,7 @@ module.exports = {
 			{
 				test: /\.ts$/,
 				exclude: /node_modules/,
-				loader: 'ts-loader',
+				use: 'ts-loader',
 			},
 		],
 	},
