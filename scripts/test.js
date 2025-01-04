@@ -140,7 +140,7 @@ const runAppOnProd = ({ framework, sample, backend, env }) => {
 	const command = [
 		envVars && `export ${envVars}`,
 		install,
-		`npm run ${buildCommand} --prefix ${sampleDir}`,
+		`npm --prefix ${sampleDir} run ${buildCommand}`,
 		serveCommand,
 	]
 		.filter(Boolean)
