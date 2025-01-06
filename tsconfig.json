@@ -22,5 +22,12 @@
       // ]
     }
   },
-  "exclude": ["**/node_modules", "**/dist", "**/lib-esm", "**/*js"]
+  "exclude": [
+    "**/node_modules",
+    "**/dist",
+    "**/lib-esm",
+    "**/*js",
+    "cypress.config.ts",
+    "cypress/**/*"
+  ]
 }
