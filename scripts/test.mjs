@@ -102,7 +102,7 @@ const npmInstall = (sampleDir) => {
 };
 
 const sampleDirectory = ({ framework, sample }) => {
-  return `packages/e2e-tests/${framework}/${sample}`;
+  return `packages/e2e-tests/cypress-samples/${framework}/${sample}`;
 };
 
 // bash command for serving sample on prod
