@@ -20,3 +20,7 @@ packages/*/temp
 # rollup
 **/.rollup.cache
 **/buildMeta
+
+# cypress
+cypress/videos
+cypress/screenshots

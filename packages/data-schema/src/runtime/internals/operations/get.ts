@@ -109,55 +109,55 @@ function _get(
     const userAgentOverride = createUserAgentOverride(customUserAgentDetails);
 
     try {
-      // const basePromise = context
-      //   ? ((client as BaseSSRClient).graphql(
-      //       context,
-      //       {
-      //         ...auth,
-      //         query,
-      //         variables,
-      //       },
-      //       headers,
-      //     ) as Promise<GraphQLResult>)
-      //   : ((client as BaseBrowserClient).graphql(
-      //       {
-      //         ...auth,
-      //         query,
-      //         variables,
-      //         ...userAgentOverride,
-      //       },
-      //       headers,
-      //     ) as Promise<GraphQLResult>);
-      // const extendedPromise = extendCancellability(basePromise, resultPromise);
-      // const { data, extensions } = await extendedPromise;
-      // // flatten response
-      // if (data) {
-      //   const [key] = Object.keys(data);
-      //   const flattenedResult = flattenItems(
-      //     modelIntrospection,
-      //     name,
-      //     data[key],
-      //   );
-      //   if (flattenedResult === null) {
-      //     return { data: null, extensions };
-      //   } else if (options?.selectionSet) {
-      //     return { data: flattenedResult, extensions };
-      //   } else {
-      //     // TODO: refactor to avoid destructuring here
-      //     const [initialized] = initializeModel(
-      //       client,
-      //       name,
-      //       [flattenedResult],
-      //       modelIntrospection,
-      //       auth.authMode,
-      //       auth.authToken,
-      //       !!context,
-      //     );
-      //     return { data: initialized, extensions };
-      //   }
-      // } else {
-      //   return { data: null, extensions };
-      // }
+      const basePromise = context
+        ? ((client as BaseSSRClient).graphql(
+            context,
+            {
+              ...auth,
+              query,
+              variables,
+            },
+            headers,
+          ) as Promise<GraphQLResult>)
+        : ((client as BaseBrowserClient).graphql(
+            {
+              ...auth,
+              query,
+              variables,
+              ...userAgentOverride,
+            },
+            headers,
+          ) as Promise<GraphQLResult>);
+      const extendedPromise = extendCancellability(basePromise, resultPromise);
+      const { data, extensions } = await extendedPromise;
+      // flatten response
+      if (data) {
+        const [key] = Object.keys(data);
+        const flattenedResult = flattenItems(
+          modelIntrospection,
+          name,
+          data[key],
+        );
+        if (flattenedResult === null) {
+          return { data: null, extensions };
+        } else if (options?.selectionSet) {
+          return { data: flattenedResult, extensions };
+        } else {
+          // TODO: refactor to avoid destructuring here
+          const [initialized] = initializeModel(
+            client,
+            name,
+            [flattenedResult],
+            modelIntrospection,
+            auth.authMode,
+            auth.authToken,
+            !!context,
+          );
+          return { data: initialized, extensions };
+        }
+      } else {
+        return { data: null, extensions };
+      }
     } catch (error: any) {
       /**
        * The `data` type returned by `error` here could be:

@@ -45,7 +45,6 @@
     "test": "turbo run test && npm run test:scripts && npm run e2e-exports",
     "test:scripts": "npx jest scripts/",
     "ci:test": "node scripts/test.js",
-    "ci:test-webpack": "node scripts/webpack-test.js",
     "turbo": "turbo",
     "vend": "npm run start:npm-proxy && npm run publish:local"
   },
