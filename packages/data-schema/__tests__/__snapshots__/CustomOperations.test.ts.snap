@@ -533,6 +533,17 @@ type Query {
 }"
 `;
 
+exports[`custom operations + custom type auth inheritance inline custom type inherits auth rules from referencing op 1`] = `
+"type MyQueryReturnType {
+  fieldA: String
+  fieldB: Int
+}
+
+type Query {
+  myQuery: MyQueryReturnType @function(name: "myFn") @auth(rules: [{allow: public, provider: apiKey}])
+}"
+`;
+
 exports[`custom operations + custom type auth inheritance nested custom types inherit auth rules from top-level referencing op 1`] = `
 "type MyQueryReturnType @aws_api_key
 {

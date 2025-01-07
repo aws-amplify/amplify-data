@@ -1399,6 +1399,31 @@ describe('custom operations + custom type auth inheritance', () => {
     );
   });
 
+  test('inline custom type inherits auth rules from referencing op', () => {
+    const s = a.schema({
+      myQuery: a
+        .query()
+        .handler(a.handler.function('myFn'))
+        .returns(
+          a.customType({
+            fieldA: a.string(),
+            fieldB: a.integer(),
+          }),
+        )
+        .authorization((allow) => allow.publicApiKey()),
+    });
+
+    const result = s.transform().schema;
+
+    expect(result).toMatchSnapshot();
+    expect(result).toEqual(expect.stringContaining('type MyQueryReturnType {'));
+    expect(result).toEqual(
+      expect.stringContaining(
+        'myQuery: MyQueryReturnType @function(name: "myFn") @auth(rules: [{allow: public, provider: apiKey}])',
+      ),
+    );
+  });
+
   test('top-level custom type with nested top-level custom types inherits combined auth rules from referencing ops', () => {
     const s = a.schema({
       myQuery: a

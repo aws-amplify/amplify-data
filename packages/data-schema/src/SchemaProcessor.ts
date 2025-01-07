@@ -1042,15 +1042,39 @@ function processFields(
         if (isInput) {
           const inputTypeName = `${capitalize(typeName)}${capitalize(fieldName)}Input`;
           gqlFields.push(`${fieldName}: ${inputTypeName}${fieldAuth}`);
-          implicitTypes.push([
-            inputTypeName,
-            {
-              data: {
-                type: 'customType',
-                fields: { id: { data: { fieldType: 'ID' } } },
+
+          const refTypeInfo = getRefType(fieldDef.data.link, typeName);
+
+          if (refTypeInfo.type === 'CustomType') {
+            const { implicitTypes: nestedImplicitTypes } = processFields(
+              inputTypeName,
+              refTypeInfo.def.data.fields,
+              {},
+              {},
+              getRefType,
+              undefined,
+              undefined,
+              {},
+              'dynamodb',
+              true,
+            );
+
+            implicitTypes.push([
+              inputTypeName,
+              {
+                data: {
+                  type: 'customType',
+                  fields: refTypeInfo.def.data.fields,
+                },
               },
-            },
-          ]);
+            ]);
+
+            implicitTypes.push(...nestedImplicitTypes);
+          } else {
+            throw new Error(
+              `Field '${fieldName}' in type '${typeName}' references '${fieldDef.data.link}' which is not a CustomType. Check schema definitions.`,
+            );
+          }
         } else {
           gqlFields.push(
             `${fieldName}: ${refFieldToGql(fieldDef.data, secondaryIndexes[fieldName])}${fieldAuth}`,
@@ -1382,6 +1406,12 @@ function generateInputTypes(
       const typeKeyword = isInput ? 'input' : 'type';
       const customType = `${typeKeyword} ${typeName} {\n  ${gqlFields.join('\n  ')}\n}`;
       generatedTypes.add(customType);
+    } else if (typeDef.type === 'enum') {
+      const enumDefinition = `enum ${typeName} {\n  ${typeDef.values.join('\n  ')}\n}`;
+      generatedTypes.add(enumDefinition);
+    } else if (typeDef.type === 'scalar') {
+      const scalarDefinition = `scalar ${typeName}`;
+      generatedTypes.add(scalarDefinition);
     } else {
       console.warn(`Unexpected type definition for ${typeName}:`, typeDef);
     }
