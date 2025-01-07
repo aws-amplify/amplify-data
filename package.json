@@ -35,6 +35,7 @@
     "e2e-sandbox:clean": "npm run --prefix ./packages/e2e-tests/sandbox clean",
     "e2e-sandbox:install": "npm run --prefix ./packages/e2e-tests/sandbox install:no-lock",
     "e2e-sandbox:test": "npm run --prefix ./packages/e2e-tests/sandbox test",
+    "cypress:webpack": "cypress run --config baseUrl=http://localhost:3000",
     "lint": "turbo run lint",
     "prepare": "husky",
     "publish:release": "changeset version && changeset publish",

@@ -96,3 +96,44 @@ Execa is the primary dependency used to run CLI commands in the process
 controller, and it is a pure ES module. Unlike `amplify-backend`, which uses the
 Node test runner, our tests are written in Jest. This results in [this issue](https://github.com/sindresorhus/execa/issues/465).
 The workaround is to use Jest's [experimental support for ECMAScript Modules](https://jestjs.io/docs/ecmascript-modules). There is a backlog item to investigate other potential solutions.
+
+## Cypress testing:
+
+All samples within the `cypress-samples` directory will be tested by the spec files under `cypress/e2e`.
+
+### How to add a new Cypress test sample:
+
+1. Add a sample under `cypress-samples` in this directory following the structure `cypress-samples/<framework>/<sample_name>`.
+2. Add a corresponding test file `*.spec.cy.ts` under `amplify-data/cypress/<framework>`.
+3. Add integ config to the `amplfy-data/.github/integ-config/local-integ-all.yml` file.
+4. Update the e2e test coverage for `amplify-data` repo in `amplify-data/e2e-TEST-COVERAGE.md`.
+
+### How to run Cypress tests:
+
+#### Start sample application
+
+```bash
+$ cd cypress-samples/<framework>/<sample>
+$ npm run start
+```
+
+#### Run Cypress Test
+
+- Ensure that the sample application is running on the default port for that framework
+- Navigate to the root directory: `amplify-data`
+
+##### Headless
+
+```bash
+$ npm run cypress:<framework> --spec "cypress/e2e/<framework>/<sample>.spec.cy.ts"
+```
+
+_.. or .._
+
+##### GUI
+
+```bash
+$ npx cypress open
+```
+
+- Click `<sample>.spec.js` file in the GUI
