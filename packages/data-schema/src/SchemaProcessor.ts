@@ -409,7 +409,10 @@ function customOperationToGql(
           authRules: authorization,
         };
 
-        implicitTypes.push([returnTypeName, { ...returnType, isInput: false }]);
+        implicitTypes.push([
+          returnTypeName,
+          { ...returnType, generateInputType: false },
+        ]);
       }
       return returnTypeName;
     } else if (isEnumType(returnType)) {
@@ -449,7 +452,7 @@ function customOperationToGql(
   // After resolving returnTypeName
   if (isCustomType(returnType)) {
     returnTypes = generateInputTypes(
-      [[returnTypeName, { ...returnType, isInput: false }]],
+      [[returnTypeName, { ...returnType, isgenerateInputTypeInput: false }]],
       false,
       getRefType,
     );
@@ -1009,7 +1012,7 @@ function processFields(
   partitionKey?: string,
   secondaryIndexes: TransformedSecondaryIndexes = {},
   databaseEngine: DatasourceEngine = 'dynamodb',
-  isInput: boolean = false,
+  generateInputType: boolean = false,
 ) {
   const gqlFields: string[] = [];
   // stores nested, field-level type definitions (custom types and enums)
@@ -1039,7 +1042,7 @@ function processFields(
           )}${fieldAuth}`,
         );
       } else if (isRefField(fieldDef)) {
-        if (isInput) {
+        if (generateInputType) {
           const inputTypeName = `${capitalize(typeName)}${capitalize(fieldName)}Input`;
           gqlFields.push(`${fieldName}: ${inputTypeName}${fieldAuth}`);
 
@@ -1091,7 +1094,7 @@ function processFields(
       } else if (isCustomType(fieldDef)) {
         // The inline CustomType name should be `<TypeName><FieldName>` to avoid
         // CustomType name conflicts
-        const customTypeName = `${capitalize(typeName)}${capitalize(fieldName)}${isInput ? 'Input' : ''}`;
+        const customTypeName = `${capitalize(typeName)}${capitalize(fieldName)}${generateInputType ? 'Input' : ''}`;
         implicitTypes.push([customTypeName, fieldDef]);
         gqlFields.push(`${fieldName}: ${customTypeName}${fieldAuth}`);
       } else {
@@ -1384,7 +1387,7 @@ const mergeCustomTypeAuthRules = (
 
 function generateInputTypes(
   implicitTypes: [string, any][],
-  isInput: boolean,
+  generateInputType: boolean,
   getRefType: ReturnType<typeof getRefTypeForSchema>,
 ): string[] {
   const generatedTypes = new Set<string>();
@@ -1401,9 +1404,9 @@ function generateInputTypes(
         undefined,
         {},
         'dynamodb',
-        isInput,
+        generateInputType,
       );
-      const typeKeyword = isInput ? 'input' : 'type';
+      const typeKeyword = generateInputType ? 'input' : 'type';
       const customType = `${typeKeyword} ${typeName} {\n  ${gqlFields.join('\n  ')}\n}`;
       generatedTypes.add(customType);
     } else if (typeDef.type === 'enum') {
@@ -1571,21 +1574,33 @@ const schemaPreprocessor = (
         inputTypes.push(...operationInputTypes);
         gqlModels.push(...operationReturnTypes);
 
-        implicitTypes.forEach(([name, type]) => {
-          if (isEnumType(type)) {
-            const enumType = `enum ${name} {\n  ${type.values.join('\n  ')}\n}`;
-            enumTypes.add(enumType);
+        /**
+         * Processes implicit types to generate GraphQL definitions.
+         *
+         * - Enums are converted to 'enum' definitions and added to the schema.
+         * - Custom types are conditionally treated as input types if they are
+         *   not part of the operation's return types.
+         * - Input types are generated and added to the inputTypes array when required.
+         *
+         * This ensures that all necessary type definitions, including enums and input types,
+         * are correctly generated and available in the schema output.
+         */
+
+        implicitTypes.forEach(([typeName, typeDef]) => {
+          if (isEnumType(typeDef)) {
+            const enumTypeDefinition = `enum ${typeName} {\n  ${typeDef.values.join('\n  ')}\n}`;
+            enumTypes.add(enumTypeDefinition);
           } else {
-            const isInput = !operationReturnTypes.some((rt) =>
-              rt.includes(name),
+            const shouldGenerateInputType = !operationReturnTypes.some(
+              (returnType) => returnType.includes(typeName),
             );
-            const generatedType = generateInputTypes(
-              [[name, type]],
-              isInput,
+            const generatedTypeDefinition = generateInputTypes(
+              [[typeName, typeDef]],
+              shouldGenerateInputType,
               getRefType,
             )[0];
-            if (isInput) {
-              inputTypes.push(generatedType);
+            if (shouldGenerateInputType) {
+              inputTypes.push(generatedTypeDefinition);
             }
           }
         });
