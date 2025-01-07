@@ -66,7 +66,10 @@ const getParameters = () => {
     process.exit(1);
   }
 
-  if (!sample || !pathExistsSync(`packages/e2e-tests/${framework}/${sample}`)) {
+  if (
+    !sample ||
+    !pathExistsSync(`packages/e2e-tests/cypress-samples/${framework}/${sample}`)
+  ) {
     logError('Please enter a valid sample name');
     process.exit(1);
   }
