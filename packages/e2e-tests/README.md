@@ -1,8 +1,10 @@
 # `amplify-data` E2E Tests
 
+## Node testing
+
 This package contains automated tests for validating functionality E2E in Node.
 
-## How it works:
+### How it works:
 
 - All tests within `node` share a single "long-lived" Amplify backend (added to
   the shared Cypress account).
@@ -10,7 +12,7 @@ This package contains automated tests for validating functionality E2E in Node.
 - See [test utils](node/utils.ts) for helpers that configure Amplify, generate /
   configure the API client, as well as for additional test utilities and types.
 
-## How to add a new test / test local changes:
+### How to add a new test / test local changes:
 
 1. Create a new file under `__tests__`
 2. Use the helpers to configure Amplify and generate / configure the API client.
@@ -19,12 +21,12 @@ This package contains automated tests for validating functionality E2E in Node.
    ensure that a `package-lock` file is not generated for this sample.
 4. [TODO] subscription testing (will be added with follow-up PR)
 
-## [TODO] Global cleanup
+### [TODO] Global cleanup
 
 Add a check to clean up potential orphaned records after all tests have run
 (see https://jestjs.io/docs/configuration#globalteardown-string).
 
-## [Known Issue] Jest open handles warning
+### [Known Issue] Jest open handles warning
 
 Tests that use `Hub` currently emit the following warning when running the tests:
 
@@ -42,7 +44,7 @@ TODO: Investigate and/or fix.
 
 All tests within the `sandbox` directory deploy a new sandbox for each test run.
 
-## How it works:
+### How it works:
 
 CLI commands are managed by the process controller. The process controller is
 responsible for executing CLI commands, and listening for output from the CLI.
@@ -58,7 +60,7 @@ Test setup / execution is structured as follows:
 5. Sandbox is torn down after the tests are complete. `.amplify/` and
    `amplify_outputs.json` are deleted.
 
-## CI AWS Credentials:
+### CI AWS Credentials:
 
 We follow the recommended OS approach to get AWS account credentials: https://w.amazon.com/bin/view/Open_Source/GitHub/Actions.
 Specifically, we use the [aws-actions/configure-aws-credentials](https://github.com/aws-actions/configure-aws-credentials#assuming-a-role) GH Action to obtain credentials from
@@ -83,14 +85,14 @@ To view identify provider details in the console, see: `Console > IAM > Identity
 - https://docs.github.com/en/actions/deployment/security-hardening-your-deployments/configuring-openid-connect-in-amazon-web-services
 - https://github.com/aws-actions/configure-aws-credentials
 
-## How to add a new test:
+### How to add a new test:
 
 1. Add a new project directory under `amplify-backends`. Must also contain a
    basic `package.json`.
 2. Add a corresponding test file under `__tests__`.
 3. Use the utils to generate / teardown the sandbox withthe process controller.
 
-## Using Execa with Jest
+### Using Execa with Jest
 
 Execa is the primary dependency used to run CLI commands in the process
 controller, and it is a pure ES module. Unlike `amplify-backend`, which uses the
@@ -105,7 +107,7 @@ All samples within the `cypress-samples` directory will be tested by the spec fi
 
 1. Add a sample under `cypress-samples` in this directory following the structure `cypress-samples/<framework>/<sample_name>`.
 2. Add a corresponding test file `*.spec.cy.ts` under `amplify-data/cypress/<framework>`.
-3. Add integ config to the `amplfy-data/.github/integ-config/local-integ-all.yml` file.
+3. Add integ config to the [local-integ-all.yml](../../.github/integ-config/local-integ-all.yml) file.
 4. Update the e2e test coverage for `amplify-data` repo in `amplify-data/e2e-TEST-COVERAGE.md`.
 
 ### How to run Cypress tests:
@@ -125,7 +127,7 @@ $ npm run start
 ##### Headless
 
 ```bash
-$ npm run cypress:<framework> --spec "cypress/e2e/<framework>/<sample>.spec.cy.ts"
+$ npm run cypress:<framework> --spec "cypress/e2e/<framework>/<testfile>.spec.cy.ts"
 ```
 
 _.. or .._
@@ -133,7 +135,7 @@ _.. or .._
 ##### GUI
 
 ```bash
-$ npx cypress open
+$ npx cypress:open:<framework>
 ```
 
-- Click `<sample>.spec.js` file in the GUI
+- Click `<sample>.spec.cy.ts` file in the GUI
