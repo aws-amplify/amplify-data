@@ -455,6 +455,7 @@ function customOperationToGql(
       [[returnTypeName, { ...returnType, isgenerateInputTypeInput: false }]],
       false,
       getRefType,
+      authorization,
     );
   }
   const dedupedInputTypes = new Set<string>(inputTypes);
@@ -1389,6 +1390,8 @@ function generateInputTypes(
   implicitTypes: [string, any][],
   generateInputType: boolean,
   getRefType: ReturnType<typeof getRefTypeForSchema>,
+  authRules?: Authorization<any, any, any>[],
+  isInlineType = false,
 ): string[] {
   const generatedTypes = new Set<string>();
 
@@ -1406,8 +1409,12 @@ function generateInputTypes(
         'dynamodb',
         generateInputType,
       );
+      const authString =
+        !isInlineType && authRules
+          ? mapToNativeAppSyncAuthDirectives(authRules, false).authString
+          : '';
       const typeKeyword = generateInputType ? 'input' : 'type';
-      const customType = `${typeKeyword} ${typeName} {\n  ${gqlFields.join('\n  ')}\n}`;
+      const customType = `${typeKeyword} ${typeName}${authString ? ` ${authString}` : ''}\n{\n  ${gqlFields.join('\n  ')}\n}`;
       generatedTypes.add(customType);
     } else if (typeDef.type === 'enum') {
       const enumDefinition = `enum ${typeName} {\n  ${typeDef.values.join('\n  ')}\n}`;

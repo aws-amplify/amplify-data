@@ -1416,11 +1416,8 @@ describe('custom operations + custom type auth inheritance', () => {
     const result = s.transform().schema;
 
     expect(result).toMatchSnapshot();
-    expect(result).toEqual(expect.stringContaining('type MyQueryReturnType {'));
     expect(result).toEqual(
-      expect.stringContaining(
-        'myQuery: MyQueryReturnType @function(name: "myFn") @auth(rules: [{allow: public, provider: apiKey}])',
-      ),
+      expect.stringContaining('type MyQueryReturnType @aws_api_key\n{'),
     );
   });
 
