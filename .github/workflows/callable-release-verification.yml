@@ -14,6 +14,9 @@ jobs:
     needs:
       - prebuild-ubuntu
     uses: ./.github/workflows/callable-unit-tests.yml
+  # NOTE: "local-e2e" is a temporal naming to distinguish them from those pulled 
+  # from amplify-js-samples-staging. Should be renamed once we move all e2e tests
+  # to the amplify-data repo.
   local-e2e:
     needs:
       - prebuild-ubuntu
