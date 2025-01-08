@@ -128,8 +128,10 @@ function _get(
             },
             headers,
           ) as Promise<GraphQLResult>);
+
       const extendedPromise = extendCancellability(basePromise, resultPromise);
       const { data, extensions } = await extendedPromise;
+
       // flatten response
       if (data) {
         const [key] = Object.keys(data);
@@ -138,6 +140,7 @@ function _get(
           name,
           data[key],
         );
+
         if (flattenedResult === null) {
           return { data: null, extensions };
         } else if (options?.selectionSet) {
@@ -153,6 +156,7 @@ function _get(
             auth.authToken,
             !!context,
           );
+          
           return { data: initialized, extensions };
         }
       } else {
