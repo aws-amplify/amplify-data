@@ -156,7 +156,7 @@ function _get(
             auth.authToken,
             !!context,
           );
-          
+
           return { data: initialized, extensions };
         }
       } else {
