@@ -1,0 +1,8 @@
+# amplify
+node_modules
+.amplify
+amplify_outputs*
+amplifyconfiguration*
+
+# Lock files
+package-lock.json
