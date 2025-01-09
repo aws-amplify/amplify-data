@@ -106,9 +106,9 @@ All samples within the `cypress-samples` directory will be tested by the spec fi
 ### How to add a new Cypress test sample:
 
 1. Add a sample under `cypress-samples` in this directory following the structure `cypress-samples/<framework>/<sample_name>`.
-2. Add a corresponding test file `*.spec.cy.ts` under `amplify-data/cypress/<framework>`.
+2. Add a corresponding test file `*.spec.cy.ts` under `amplify-data/cypress/e2e/<framework>`.
 3. Add integ config to the [local-integ-all.yml](../../.github/integ-config/local-integ-all.yml) file.
-4. Update the e2e test coverage for `amplify-data` repo in `amplify-data/e2e-TEST-COVERAGE.md`.
+4. Update the e2e test coverage for `amplify-data` repo in [e2e test coverage table](../../e2e-TEST-COVERAGE.md).
 
 ### How to run Cypress tests:
 
