@@ -1,5 +1,11 @@
 # @aws-amplify/data-schema
 
+## 1.17.2
+
+### Patch Changes
+
+- 56cf00c: Fix DeepPickFromPath unable to flatten arrays in a join table
+
 ## 1.17.1
 
 ### Patch Changes

@@ -1107,4 +1107,159 @@ describe('Custom selection set edge cases', () => {
       type _test = Expect<Equal<ActualType, ExpectedTodoType>>;
     });
   });
+
+  describe('optional array with many-to-many relationships', () => {
+    const schema = a
+      .schema({
+        AlphabetEnum: a.enum(['A', 'B', 'C', 'D']),
+        Customer: a.model({
+          name: a.string().required(),
+          verbiageReqReq: a.ref('Verbiage').required().array().required(),
+          verbiageOptReq: a.ref('Verbiage').array().required(),
+          verbiageReqOpt: a.ref('Verbiage').required().array(),
+          verbiageOptOpt: a.ref('Verbiage').array(),
+          orders: a.hasMany('CustomerPart', 'customerId'),
+        }),
+        Verbiage: a.customType({
+          name: a.ref('AlphabetEnum').required(),
+          paragraphs: a.string().required().array().required(),
+        }),
+        CustomerPart: a.model({
+          customer: a.belongsTo('Customer', 'customerId'),
+          customerId: a.string(),
+          experience: a.string(),
+          part: a.belongsTo('Part', 'partId'),
+          partId: a.string(),
+        }),
+        Part: a.model({
+          name: a.string().required(),
+          orders: a.hasMany('CustomerPart', 'partId'),
+        }),
+      })
+      .authorization((allow) => allow.guest());
+
+    type Schema = ClientSchema<typeof schema>;
+
+    async function getMockedClient(
+      operationName: string,
+      mockedResult: object,
+    ) {
+      const { spy, generateClient } = mockedGenerateClient([
+        {
+          data: {
+            [operationName]: {
+              items: [mockedResult],
+            },
+          },
+        },
+      ]);
+
+      const config = await buildAmplifyConfig(schema);
+      Amplify.configure(config);
+      const client = generateClient<Schema>();
+      return { client, spy };
+    }
+
+    describe('Defined many-to-many relations', () => {
+      const sampleCustomerPart = {
+        customer: [
+          {
+            name: 'some-customer',
+            verbiageReqReq: [
+              {
+                name: 'A',
+                paragraphs: ['some-paragraph'],
+              },
+            ],
+            verbiageOptReq: [
+              {
+                name: 'A',
+                paragraphs: ['some-paragraph'],
+              },
+            ],
+            verbiageReqOpt: [
+              {
+                name: 'A',
+                paragraphs: ['some-paragraph'],
+              },
+            ],
+            verbiageOptOpt: [
+              {
+                name: 'A',
+                paragraphs: ['some-paragraph'],
+              },
+            ],
+          },
+        ],
+        customerId: 'some-customer-id',
+        part: [
+          {
+            name: 'some-part',
+            orders: [
+              {
+                customerId: 'some-customer-id',
+                partId: 'some-part-id',
+              },
+            ],
+          },
+        ],
+        partId: 'some-part-id',
+      };
+
+      async function mockedOperation() {
+        const { client, spy } = await getMockedClient(
+          'listCustomerPart',
+          sampleCustomerPart,
+        );
+
+        const { data } = await client.models.CustomerPart.list({
+          selectionSet: [
+            'customer.*',
+            'customer.verbiageReqReq.*',
+            'customer.verbiageOptReq.*',
+            'customer.verbiageReqOpt.*',
+            'customer.verbiageOptOpt.*',
+          ],
+        });
+        return { data, spy };
+      }
+
+      type Verbiage = {
+        readonly name: 'A' | 'B' | 'C' | 'D';
+        readonly paragraphs: string[];
+      };
+
+      test('.required().array().required()', async () => {
+        const { data } = await mockedOperation();
+        const cus = data[0].customer.verbiageReqReq;
+        type ExpectedType = Verbiage[];
+        type ActualType = typeof cus;
+        type _test = Expect<Equal<ActualType, ExpectedType>>;
+      });
+
+      test('.array().required()', async () => {
+        const { data } = await mockedOperation();
+        const cus = data[0].customer.verbiageOptReq;
+        type ExpectedType = (Verbiage | null)[];
+        type ActualType = typeof cus;
+        type _test = Expect<Equal<ActualType, ExpectedType>>;
+      });
+
+      test('.required().array()', async () => {
+        const { data } = await mockedOperation();
+        const cus = data[0].customer.verbiageReqOpt;
+        type ExpectedType = Verbiage[] | null;
+        type ActualType = typeof cus;
+        type _test = Expect<Equal<ActualType, ExpectedType>>;
+      });
+
+      test('.array()', async () => {
+        const { data } = await mockedOperation();
+        const cus = data[0].customer.verbiageOptOpt;
+        type ExpectedType = (Verbiage | null)[] | null;
+        type ActualType = typeof cus;
+        type _test = Expect<Equal<ActualType, ExpectedType>>;
+      });
+    });
+  });
 });

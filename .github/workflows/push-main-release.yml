@@ -8,7 +8,7 @@ concurrency:
 on:
   push:
     branches:
-      # NOTE: to run E2E tests against an `amplify-api-next` branch, add the name
+      # NOTE: to run E2E tests against an `amplify-data` branch, add the name
       # of that branch (and corresponding `amplify-js-samples-staging` branch, if
       # testing sample / test changes) here.
       # Must disable publishing to NPM prior to adding this branch to avoid
@@ -17,7 +17,7 @@ on:
 
 jobs:
   prebuild-ubuntu:
-    uses: ./.github/workflows/callable-prebuild-amplify-api-next.yml
+    uses: ./.github/workflows/callable-prebuild-amplify-data.yml
     with:
       runs_on: ubuntu-latest
   # This step is included at the top level as a workround (i.e. not in a
@@ -38,19 +38,19 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@24cb9080177205b6e8c946b17badbe402adc938f # v3.4.0 https://github.com/actions/checkout/commit/24cb9080177205b6e8c946b17badbe402adc938f
         with:
-          path: amplify-api-next
+          path: amplify-data
       - name: Setup node and build the repository
-        uses: ./amplify-api-next/.github/actions/node-and-build
+        uses: ./amplify-data/.github/actions/node-and-build
       - name: Configure AWS test execution credentials
         uses: aws-actions/configure-aws-credentials@e3dd6a429d7300a6a4c196c26e071d42e0343502 # version 4.0.2
         with:
           role-to-assume: ${{ secrets.SANDBOX_E2E_RUNNER_ROLE_ARN }}
           aws-region: us-west-2
       - name: Install Sandbox E2E Dependencies
-        working-directory: ./amplify-api-next
+        working-directory: ./amplify-data
         run: npm run e2e-sandbox:install
       - name: Run E2E sandbox tests
-        working-directory: ./amplify-api-next
+        working-directory: ./amplify-data
         run: npm run e2e-sandbox:test
   release-verification-testing:
     secrets: inherit

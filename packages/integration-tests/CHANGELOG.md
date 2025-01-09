@@ -1,5 +1,11 @@
 # integration-tests
 
+## 0.2.1
+
+### Patch Changes
+
+- 56cf00c: Fix DeepPickFromPath unable to flatten arrays in a join table
+
 ## 0.2.0
 
 ### Minor Changes

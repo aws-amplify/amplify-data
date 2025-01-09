@@ -31,15 +31,15 @@ runs:
       if: inputs.force == 'true'
       run: npm i --force
       shell: bash
-      working-directory: ./amplify-api-next
+      working-directory: ./amplify-data
     # TODO We should be able to skip yarn / bootstrap if we cache enough things. Leaving because skipping causes issues.
     - name: Install
       if: inputs.force != 'true' && (inputs.is-prebuild != 'true' || steps.cache-build-artifacts.outputs.cache-hit != 'true')
       run: npm i
       shell: bash
-      working-directory: ./amplify-api-next
+      working-directory: ./amplify-data
     - name: Build packages
       if: steps.cache-build-artifacts.outputs.cache-hit != 'true'
       run: npm run build
       shell: bash
-      working-directory: ./amplify-api-next
+      working-directory: ./amplify-data

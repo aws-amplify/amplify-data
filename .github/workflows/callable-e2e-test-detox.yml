@@ -24,20 +24,20 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
         with:
-          path: amplify-api-next
+          path: amplify-data
       - name: Setup node and build the repository
-        uses: ./amplify-api-next/.github/actions/node-and-build
+        uses: ./amplify-data/.github/actions/node-and-build
       - name: Setup samples staging repository
-        uses: ./amplify-api-next/.github/actions/setup-samples-staging
+        uses: ./amplify-data/.github/actions/setup-samples-staging
         with:
           AMPLIFY_JS_SAMPLES_STAGING_READ: ${{ secrets.AMPLIFY_JS_SAMPLES_STAGING_READ }}
-      - name: Load Verdaccio with amplify-api-next
-        uses: ./amplify-api-next/.github/actions/load-verdaccio-with-amplify-api-next
+      - name: Load Verdaccio with amplify-data
+        uses: ./amplify-data/.github/actions/load-verdaccio-with-amplify-data
       - name: Yarn Install
         working-directory: ${{ inputs.working_directory }}
         run: |
           echo "Current NPM registry: " $(yarn config get registry)
-          $GITHUB_WORKSPACE/amplify-api-next/scripts/retry-yarn-script.sh -s 'install --frozen-lockfile --non-interactive' -n 3
+          $GITHUB_WORKSPACE/amplify-data/scripts/retry-yarn-script.sh -s 'install --frozen-lockfile --non-interactive' -n 3
         shell: bash
       - name: Install CocoaPods
         run: |
@@ -72,6 +72,6 @@ jobs:
         shell: bash
       - name: Detox run
         run: |
-          $GITHUB_WORKSPACE/amplify-api-next/scripts/retry-yarn-script.sh -s 'detox test -c ios.sim.debug -u' -n 3
+          $GITHUB_WORKSPACE/amplify-data/scripts/retry-yarn-script.sh -s 'detox test -c ios.sim.debug -u' -n 3
         working-directory: ${{ inputs.working_directory }}
         shell: bash

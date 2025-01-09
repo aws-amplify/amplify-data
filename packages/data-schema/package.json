@@ -1,10 +1,10 @@
 {
   "name": "@aws-amplify/data-schema",
-  "version": "1.17.1",
+  "version": "1.17.2",
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
-    "url": "https://github.com/aws-amplify/amplify-api-next.git"
+    "url": "https://github.com/aws-amplify/amplify-data.git"
   },
   "main": "./dist/cjs/index.js",
   "module": "./dist/esm/index.mjs",
