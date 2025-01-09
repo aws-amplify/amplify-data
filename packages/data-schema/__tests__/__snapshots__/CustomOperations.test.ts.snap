@@ -1,14 +1,14 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`CustomOperation transform dynamo schema Custom Mutation w required arg and enum 1`] = `
-"type Post @model @auth(rules: [{allow: private}])
-{
-  title: String
-}
-
-enum LikePostReactionType {
+"enum LikePostReactionType {
   :shipit:
   :risitas:
+}
+
+type Post @model @auth(rules: [{allow: private}])
+{
+  title: String
 }
 
 type Mutation {
@@ -45,7 +45,7 @@ exports[`CustomOperation transform dynamo schema Custom mutation w inline boolea
 `;
 
 exports[`CustomOperation transform dynamo schema Custom mutation w inline custom return type 1`] = `
-"type LikePostReturnType 
+"type LikePostReturnType
 {
   stringField: String
   intField: Int
@@ -109,7 +109,7 @@ type Query {
 `;
 
 exports[`CustomOperation transform dynamo schema Custom query w inline custom return type 1`] = `
-"type GetPostDetailsReturnType 
+"type GetPostDetailsReturnType
 {
   stringField: String
   intField: Int
@@ -534,6 +534,18 @@ type Subscription {
 `;
 
 exports[`custom operations + custom type auth inheritance implicit custom type inherits auth rules from referencing op 1`] = `
+"type MyQueryReturnType @aws_api_key
+{
+  fieldA: String
+  fieldB: Int
+}
+
+type Query {
+  myQuery: MyQueryReturnType @function(name: "myFn") @auth(rules: [{allow: public, provider: apiKey}])
+}"
+`;
+
+exports[`custom operations + custom type auth inheritance inline custom type inherits auth rules from referencing op 1`] = `
 "type MyQueryReturnType @aws_api_key
 {
   fieldA: String

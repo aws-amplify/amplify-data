@@ -155,9 +155,7 @@ function isRefField(
   return isRefFieldDef((field as any)?.data);
 }
 
-function canGenerateFieldType(
-  fieldType: ModelFieldType
-): boolean {
+function canGenerateFieldType(fieldType: ModelFieldType): boolean {
   return fieldType === 'Int';
 }
 
@@ -174,7 +172,6 @@ function scalarFieldToGql(
     default: _default,
   } = fieldDef;
   let field: string = fieldType;
-
 
   if (identifier !== undefined) {
     field += '!';
@@ -347,6 +344,8 @@ function customOperationToGql(
 ): {
   gqlField: string;
   implicitTypes: [string, any][];
+  inputTypes: string[];
+  returnTypes: string[];
   customTypeAuthRules: CustomTypeAuthRules;
   lambdaFunctionDefinition: LambdaFunctionDefinition;
   customSqlDataSourceStrategy: CustomSqlDataSourceStrategy | undefined;
@@ -361,6 +360,9 @@ function customOperationToGql(
 
   let callSignature: string = typeName;
   const implicitTypes: [string, any][] = [];
+  const inputTypes: string[] = [];
+
+  let returnTypes: string[] = [];
 
   // When Custom Operations are defined with a Custom Type return type,
   // the Custom Type inherits the operation's auth rules
@@ -407,7 +409,10 @@ function customOperationToGql(
           authRules: authorization,
         };
 
-        implicitTypes.push([returnTypeName, returnType]);
+        implicitTypes.push([
+          returnTypeName,
+          { ...returnType, generateInputType: false },
+        ]);
       }
       return returnTypeName;
     } else if (isEnumType(returnType)) {
@@ -444,6 +449,16 @@ function customOperationToGql(
       refererTypeName: typeName,
     });
   }
+  // After resolving returnTypeName
+  if (isCustomType(returnType)) {
+    returnTypes = generateInputTypes(
+      [[returnTypeName, { ...returnType, isgenerateInputTypeInput: false }]],
+      false,
+      getRefType,
+      authorization,
+    );
+  }
+  const dedupedInputTypes = new Set<string>(inputTypes);
 
   if (Object.keys(fieldArgs).length > 0) {
     const { gqlFields, implicitTypes: implied } = processFields(
@@ -451,9 +466,22 @@ function customOperationToGql(
       fieldArgs,
       {},
       {},
+      getRefType,
+      undefined,
+      undefined,
+      {},
+      databaseType === 'sql' ? 'postgresql' : 'dynamodb',
+      true,
     );
     callSignature += `(${gqlFields.join(', ')})`;
     implicitTypes.push(...implied);
+
+    const newTypes = generateInputTypes(implied, true, getRefType);
+    for (const t of newTypes) {
+      if (!dedupedInputTypes.has(t)) {
+        dedupedInputTypes.add(t);
+      }
+    }
   }
 
   const handler = handlers && handlers[0];
@@ -550,6 +578,8 @@ function customOperationToGql(
   return {
     gqlField,
     implicitTypes: implicitTypes,
+    inputTypes,
+    returnTypes,
     customTypeAuthRules,
     lambdaFunctionDefinition,
     customSqlDataSourceStrategy,
@@ -929,23 +959,33 @@ function processFieldLevelAuthRules(
   return fieldLevelAuthRules;
 }
 
-function validateDBGeneration(fields: Record<string, any>, databaseEngine: DatasourceEngine) {
+function validateDBGeneration(
+  fields: Record<string, any>,
+  databaseEngine: DatasourceEngine,
+) {
   for (const [fieldName, fieldDef] of Object.entries(fields)) {
     const _default = fieldDef.data?.default;
     const fieldType = fieldDef.data?.fieldType;
     const isGenerated = _default === __generated;
 
     if (isGenerated && databaseEngine !== 'postgresql') {
-      throw new Error(`Invalid field definition for ${fieldName}. DB-generated fields are only supported with PostgreSQL data sources.`);
+      throw new Error(
+        `Invalid field definition for ${fieldName}. DB-generated fields are only supported with PostgreSQL data sources.`,
+      );
     }
 
     if (isGenerated && !canGenerateFieldType(fieldType)) {
-      throw new Error(`Incompatible field type. Field type ${fieldType} in field ${fieldName} cannot be configured as a DB-generated field.`);
+      throw new Error(
+        `Incompatible field type. Field type ${fieldType} in field ${fieldName} cannot be configured as a DB-generated field.`,
+      );
     }
   }
 }
 
-function validateNullableIdentifiers(fields: Record<string, any>, identifier?: readonly string[]){
+function validateNullableIdentifiers(
+  fields: Record<string, any>,
+  identifier?: readonly string[],
+) {
   for (const [fieldName, fieldDef] of Object.entries(fields)) {
     const fieldType = fieldDef.data?.fieldType;
     const required = fieldDef.data?.required;
@@ -954,7 +994,9 @@ function validateNullableIdentifiers(fields: Record<string, any>, identifier?: r
 
     if (identifier !== undefined && identifier.includes(fieldName)) {
       if (!required && fieldType !== 'ID' && !isGenerated) {
-        throw new Error(`Invalid identifier definition. Field ${fieldName} cannot be used in the identifier. Identifiers must reference required or DB-generated fields)`);
+        throw new Error(
+          `Invalid identifier definition. Field ${fieldName} cannot be used in the identifier. Identifiers must reference required or DB-generated fields)`,
+        );
       }
     }
   }
@@ -965,10 +1007,13 @@ function processFields(
   fields: Record<string, any>,
   impliedFields: Record<string, any>,
   fieldLevelAuthRules: Record<string, string | null>,
+  getRefType: ReturnType<typeof getRefTypeForSchema>,
+
   identifier?: readonly string[],
   partitionKey?: string,
   secondaryIndexes: TransformedSecondaryIndexes = {},
   databaseEngine: DatasourceEngine = 'dynamodb',
+  generateInputType: boolean = false,
 ) {
   const gqlFields: string[] = [];
   // stores nested, field-level type definitions (custom types and enums)
@@ -977,7 +1022,7 @@ function processFields(
 
   validateImpliedFields(fields, impliedFields);
   validateDBGeneration(fields, databaseEngine);
-  validateNullableIdentifiers(fields, identifier)
+  validateNullableIdentifiers(fields, identifier);
 
   for (const [fieldName, fieldDef] of Object.entries(fields)) {
     const fieldAuth = fieldLevelAuthRules[fieldName]
@@ -998,40 +1043,74 @@ function processFields(
           )}${fieldAuth}`,
         );
       } else if (isRefField(fieldDef)) {
-        gqlFields.push(
-          `${fieldName}: ${refFieldToGql(fieldDef.data, secondaryIndexes[fieldName])}${fieldAuth}`,
-        );
+        if (generateInputType) {
+          const inputTypeName = `${capitalize(typeName)}${capitalize(fieldName)}Input`;
+          gqlFields.push(`${fieldName}: ${inputTypeName}${fieldAuth}`);
+
+          const refTypeInfo = getRefType(fieldDef.data.link, typeName);
+
+          if (refTypeInfo.type === 'CustomType') {
+            const { implicitTypes: nestedImplicitTypes } = processFields(
+              inputTypeName,
+              refTypeInfo.def.data.fields,
+              {},
+              {},
+              getRefType,
+              undefined,
+              undefined,
+              {},
+              'dynamodb',
+              true,
+            );
+
+            implicitTypes.push([
+              inputTypeName,
+              {
+                data: {
+                  type: 'customType',
+                  fields: refTypeInfo.def.data.fields,
+                },
+              },
+            ]);
+
+            implicitTypes.push(...nestedImplicitTypes);
+          } else {
+            throw new Error(
+              `Field '${fieldName}' in type '${typeName}' references '${fieldDef.data.link}' which is not a CustomType. Check schema definitions.`,
+            );
+          }
+        } else {
+          gqlFields.push(
+            `${fieldName}: ${refFieldToGql(fieldDef.data, secondaryIndexes[fieldName])}${fieldAuth}`,
+          );
+        }
       } else if (isEnumType(fieldDef)) {
         // The inline enum type name should be `<TypeName><FieldName>` to avoid
         // enum type name conflicts
         const enumName = `${capitalize(typeName)}${capitalize(fieldName)}`;
-
         implicitTypes.push([enumName, fieldDef]);
-
         gqlFields.push(
           `${fieldName}: ${enumFieldToGql(enumName, secondaryIndexes[fieldName])}`,
         );
       } else if (isCustomType(fieldDef)) {
         // The inline CustomType name should be `<TypeName><FieldName>` to avoid
         // CustomType name conflicts
-        const customTypeName = `${capitalize(typeName)}${capitalize(
-          fieldName,
-        )}`;
-
+        const customTypeName = `${capitalize(typeName)}${capitalize(fieldName)}${generateInputType ? 'Input' : ''}`;
         implicitTypes.push([customTypeName, fieldDef]);
-
-        gqlFields.push(`${fieldName}: ${customTypeName}`);
+        gqlFields.push(`${fieldName}: ${customTypeName}${fieldAuth}`);
       } else {
         gqlFields.push(
           `${fieldName}: ${scalarFieldToGql(
-            (fieldDef as any).data,
+            fieldDef.data,
             undefined,
             secondaryIndexes[fieldName],
           )}${fieldAuth}`,
         );
       }
     } else {
-      throw new Error(`Unexpected field definition: ${fieldDef}`);
+      throw new Error(
+        `Unexpected field definition for ${typeName}.${fieldName}: ${JSON.stringify(fieldDef)}`,
+      );
     }
   }
 
@@ -1307,6 +1386,50 @@ const mergeCustomTypeAuthRules = (
   }
 };
 
+function generateInputTypes(
+  implicitTypes: [string, any][],
+  generateInputType: boolean,
+  getRefType: ReturnType<typeof getRefTypeForSchema>,
+  authRules?: Authorization<any, any, any>[],
+  isInlineType = false,
+): string[] {
+  const generatedTypes = new Set<string>();
+
+  implicitTypes.forEach(([typeName, typeDef]) => {
+    if (isCustomType(typeDef)) {
+      const { gqlFields } = processFields(
+        typeName,
+        typeDef.data.fields,
+        {},
+        {},
+        getRefType,
+        undefined,
+        undefined,
+        {},
+        'dynamodb',
+        generateInputType,
+      );
+      const authString =
+        !isInlineType && authRules
+          ? mapToNativeAppSyncAuthDirectives(authRules, false).authString
+          : '';
+      const typeKeyword = generateInputType ? 'input' : 'type';
+      const customType = `${typeKeyword} ${typeName}${authString ? ` ${authString}` : ''}\n{\n  ${gqlFields.join('\n  ')}\n}`;
+      generatedTypes.add(customType);
+    } else if (typeDef.type === 'enum') {
+      const enumDefinition = `enum ${typeName} {\n  ${typeDef.values.join('\n  ')}\n}`;
+      generatedTypes.add(enumDefinition);
+    } else if (typeDef.type === 'scalar') {
+      const scalarDefinition = `scalar ${typeName}`;
+      generatedTypes.add(scalarDefinition);
+    } else {
+      console.warn(`Unexpected type definition for ${typeName}:`, typeDef);
+    }
+  });
+
+  return Array.from(generatedTypes);
+}
+
 const schemaPreprocessor = (
   schema: InternalSchema,
 ): {
@@ -1316,7 +1439,9 @@ const schemaPreprocessor = (
   lambdaFunctions: LambdaFunctionDefinition;
   customSqlDataSourceStrategies?: CustomSqlDataSourceStrategy[];
 } => {
+  const enumTypes = new Set<string>();
   const gqlModels: string[] = [];
+  const inputTypes: string[] = [];
 
   const customQueries = [];
   const customMutations = [];
@@ -1334,11 +1459,8 @@ const schemaPreprocessor = (
   const lambdaFunctions: LambdaFunctionDefinition = {};
   const customSqlDataSourceStrategies: CustomSqlDataSourceStrategy[] = [];
 
-  const databaseEngine = schema.data.configuration.database.engine
-  const databaseType =
-    databaseEngine === 'dynamodb'
-      ? 'dynamodb'
-      : 'sql';
+  const databaseEngine = schema.data.configuration.database.engine;
+  const databaseType = databaseEngine === 'dynamodb' ? 'dynamodb' : 'sql';
 
   const staticSchema = databaseType === 'sql';
 
@@ -1382,10 +1504,8 @@ const schemaPreprocessor = (
             `Values of the enum type ${typeName} should not contain any whitespace.`,
           );
         }
-        const enumType = `enum ${typeName} {\n  ${typeDef.values.join(
-          '\n  ',
-        )}\n}`;
-        gqlModels.push(enumType);
+        const enumType = `enum ${typeName} {\n  ${typeDef.values.join('\n  ')}\n}`;
+        enumTypes.add(enumType);
       } else if (isCustomType(typeDef)) {
         const fields = typeDef.data.fields;
 
@@ -1419,14 +1539,20 @@ const schemaPreprocessor = (
           fields,
           authFields,
           fieldLevelAuthRules,
+          getRefType,
           undefined,
           undefined,
-          undefined,
-          databaseEngine
+          databaseEngine,
         );
-
-        topLevelTypes.push(...implicitTypes);
-
+        const existingTypeNames = new Set<string>(
+          topLevelTypes.map(([n]) => n),
+        );
+        for (const [name, type] of implicitTypes) {
+          if (!existingTypeNames.has(name)) {
+            topLevelTypes.push([name, type]);
+            existingTypeNames.add(name);
+          }
+        }
         const joined = gqlFields.join('\n  ');
 
         const model = `type ${typeName} ${customAuth}\n{\n  ${joined}\n}`;
@@ -1439,6 +1565,8 @@ const schemaPreprocessor = (
         const {
           gqlField,
           implicitTypes,
+          inputTypes: operationInputTypes,
+          returnTypes: operationReturnTypes,
           customTypeAuthRules,
           jsFunctionForField,
           lambdaFunctionDefinition,
@@ -1450,8 +1578,39 @@ const schemaPreprocessor = (
           databaseType,
           getRefType,
         );
+        inputTypes.push(...operationInputTypes);
+        gqlModels.push(...operationReturnTypes);
 
-        topLevelTypes.push(...implicitTypes);
+        /**
+         * Processes implicit types to generate GraphQL definitions.
+         *
+         * - Enums are converted to 'enum' definitions and added to the schema.
+         * - Custom types are conditionally treated as input types if they are
+         *   not part of the operation's return types.
+         * - Input types are generated and added to the inputTypes array when required.
+         *
+         * This ensures that all necessary type definitions, including enums and input types,
+         * are correctly generated and available in the schema output.
+         */
+
+        implicitTypes.forEach(([typeName, typeDef]) => {
+          if (isEnumType(typeDef)) {
+            const enumTypeDefinition = `enum ${typeName} {\n  ${typeDef.values.join('\n  ')}\n}`;
+            enumTypes.add(enumTypeDefinition);
+          } else {
+            const shouldGenerateInputType = !operationReturnTypes.some(
+              (returnType) => returnType.includes(typeName),
+            );
+            const generatedTypeDefinition = generateInputTypes(
+              [[typeName, typeDef]],
+              shouldGenerateInputType,
+              getRefType,
+            )[0];
+            if (shouldGenerateInputType) {
+              inputTypes.push(generatedTypeDefinition);
+            }
+          }
+        });
 
         mergeCustomTypeAuthRules(
           customTypeInheritedAuthRules,
@@ -1531,12 +1690,19 @@ const schemaPreprocessor = (
         fields,
         authFields,
         fieldLevelAuthRules,
+        getRefType,
         identifier,
         partitionKey,
         undefined,
         databaseEngine,
       );
-
+      const existingTypeNames = new Set<string>(topLevelTypes.map(([n]) => n));
+      for (const [name, type] of implicitTypes) {
+        if (!existingTypeNames.has(name)) {
+          topLevelTypes.push([name, type]);
+          existingTypeNames.add(name);
+        }
+      }
       topLevelTypes.push(...implicitTypes);
 
       const joined = gqlFields.join('\n  ');
@@ -1596,6 +1762,7 @@ const schemaPreprocessor = (
         fields,
         authFields,
         fieldLevelAuthRules,
+        getRefType,
         identifier,
         partitionKey,
         transformedSecondaryIndexes,
@@ -1622,12 +1789,21 @@ const schemaPreprocessor = (
     subscriptions: customSubscriptions,
   };
 
-  gqlModels.push(...generateCustomOperationTypes(customOperations));
+  const customOperationTypes = generateCustomOperationTypes(customOperations);
+
+  const schemaComponents = [
+    ...Array.from(enumTypes),
+    ...gqlModels,
+    ...customOperationTypes,
+  ];
+
   if (shouldAddConversationTypes) {
-    gqlModels.push(CONVERSATION_SCHEMA_GRAPHQL_TYPES);
+    schemaComponents.push(CONVERSATION_SCHEMA_GRAPHQL_TYPES);
   }
 
-  const processedSchema = gqlModels.join('\n\n');
+  schemaComponents.push(...inputTypes);
+
+  const processedSchema = schemaComponents.join('\n\n');
 
   return {
     schema: processedSchema,
@@ -1926,6 +2102,8 @@ function transformCustomOperations(
   const {
     gqlField,
     implicitTypes,
+    inputTypes,
+    returnTypes,
     customTypeAuthRules,
     lambdaFunctionDefinition,
     customSqlDataSourceStrategy,
@@ -1941,6 +2119,8 @@ function transformCustomOperations(
   return {
     gqlField,
     implicitTypes,
+    inputTypes,
+    returnTypes,
     customTypeAuthRules,
     jsFunctionForField,
     lambdaFunctionDefinition,
@@ -1975,7 +2155,14 @@ function extractNestedCustomTypeNames(
   topLevelTypes: [string, any][],
   getRefType: ReturnType<typeof getRefTypeForSchema>,
 ): string[] {
-  if (!customTypeAuthRules) {
+  if (!customTypeAuthRules || !topLevelTypes || topLevelTypes.length === 0) {
+    return [];
+  }
+  const foundType = topLevelTypes.find(
+    ([topLevelTypeName]) => customTypeAuthRules.typeName === topLevelTypeName,
+  );
+
+  if (!foundType) {
     return [];
   }
 
