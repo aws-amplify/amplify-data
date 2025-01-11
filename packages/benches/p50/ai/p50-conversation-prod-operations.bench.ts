@@ -1,15 +1,25 @@
+// Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
+
 import { bench } from '@arktype/attest';
-import { a, ClientSchema } from '@aws-amplify/data-schema';
+import { a, type ClientSchema } from '@aws-amplify/data-schema';
 import { Amplify } from 'aws-amplify';
 import { generateClient } from 'aws-amplify/api';
 
-const selectionSet = ['name'] as const;
-
+const input = {
+  aiModel: a.ai.model('Claude 3 Haiku'),
+  systemPrompt: 'Hello, world!',
+  inferenceConfiguration: {
+    topP: 1,
+    temperature: 1,
+    maxTokens: 1000,
+  },
+};
 /**
- * The following benchmarks are an extension of `p50.bench.ts`.
- * Here we perform CRUDL operations for a single model.
+ * The following benchmarks are an extension of `p50-prod-conversation.bench.ts`.
+ * Here we perform operations against a conversation route.
  */
-bench('prod p50 CRUDL', async () => {
+bench('prod p50 conversation operations', async () => {
   const schema = a
     .schema({
       PrivacySetting: a.enum(['PRIVATE', 'FRIENDS_ONLY', 'PUBLIC']),
@@ -30,9 +40,9 @@ bench('prod p50 CRUDL', async () => {
             .string()
             .required()
             .authorization((allow) => allow.owner()),
-          employees: a.hasMany('Employee', 'companyId'),
-          stores: a.hasMany('Store', 'companyId'),
-          warehouses: a.hasMany('Warehouse', 'companyId'),
+          employees: a.hasMany('Employee', ['companyId']),
+          stores: a.hasMany('Store', ['companyId']),
+          warehouses: a.hasMany('Warehouse', ['companyId']),
           location: a.customType({
             lat: a.float().required(),
             long: a.float().required(),
@@ -64,10 +74,10 @@ bench('prod p50 CRUDL', async () => {
             .required()
             .authorization((allow) => allow.owner()),
           companyId: a.id(),
-          company: a.belongsTo('Company', 'companyId'),
-          todos: a.hasMany('Todo', 'employeeId'),
-          posts: a.hasMany('Post', 'employeeId'),
-          tasks: a.hasMany('Task', 'employeeId'),
+          company: a.belongsTo('Company', ['companyId']),
+          todos: a.hasMany('Todo', ['employeeId']),
+          posts: a.hasMany('Post', ['employeeId']),
+          tasks: a.hasMany('Task', ['employeeId']),
         })
         .identifier(['employeeId', 'name'])
         .authorization((allow) => [
@@ -100,9 +110,8 @@ bench('prod p50 CRUDL', async () => {
           ]),
         privacySetting: a.ref('PrivacySetting').required(),
         companyId: a.id(),
-        company: a.belongsTo('Company', 'companyId'),
-        warehouseId: a.id(),
-        warehouse: a.belongsTo('Warehouse', 'warehouseId'),
+        company: a.belongsTo('Company', ['companyId']),
+        warehouse: a.belongsTo('Warehouse', ['storeId']),
       }),
       // Model #5:
       Warehouse: a.model({
@@ -123,8 +132,9 @@ bench('prod p50 CRUDL', async () => {
           ]),
         privacySetting: a.ref('PrivacySetting'),
         companyId: a.id(),
-        company: a.belongsTo('Company', 'companyId'),
-        stores: a.hasMany('Store', 'warehouseId'),
+        company: a.belongsTo('Company', ['companyId']),
+        storeId: a.id(),
+        stores: a.hasMany('Store', ['storeId']),
         textField1: a.string(),
       }),
       // Model #6:
@@ -141,7 +151,7 @@ bench('prod p50 CRUDL', async () => {
               allow.group('Admin').to(['read']),
               allow.owner(),
             ]),
-          orders: a.hasMany('Order', 'customerId'),
+          orders: a.hasMany('Order', ['customerId']),
           textField1: a.string(),
           textField2: a.string(),
           textField3: a.string(),
@@ -156,7 +166,7 @@ bench('prod p50 CRUDL', async () => {
           viewCount: a.integer(),
           complete: a.boolean(),
           employeeId: a.id(),
-          employee: a.belongsTo('Employee', 'employeeId'),
+          employee: a.belongsTo('Employee', ['employeeId']),
           textField1: a.string(),
           textField2: a.string(),
           textField3: a.string(),
@@ -176,7 +186,7 @@ bench('prod p50 CRUDL', async () => {
           lastViewedTime: a.time(),
           privacySetting: a.ref('PrivacySetting').required(),
           employeeId: a.id(),
-          employee: a.belongsTo('Employee', 'employeeId'),
+          employee: a.belongsTo('Employee', ['employeeId']),
           textField1: a.string(),
           textField2: a.string(),
           textField3: a.string(),
@@ -192,7 +202,7 @@ bench('prod p50 CRUDL', async () => {
         privacySetting: a.ref('PrivacySetting').required(),
         priority: a.enum(['LOW', 'MEDIUM', 'HIGH', 'CRITICAL']),
         employeeId: a.id(),
-        employee: a.belongsTo('Employee', 'employeeId'),
+        employee: a.belongsTo('Employee', ['employeeId']),
         textField1: a.string(),
         textField2: a.string(),
         textField3: a.string(),
@@ -204,11 +214,10 @@ bench('prod p50 CRUDL', async () => {
         id: a.id().required(),
         status: a.ref('FulfillmentStatus').required(),
         customerId: a.id(),
-        customer: a.belongsTo('Customer', 'customerId'),
-        items: a.hasMany('OrderItem', 'orderId'),
+        customer: a.belongsTo('Customer', ['customerId']),
         totalPrice: a.float(),
         date: a.date(),
-        lineItems: a.hasMany('LineItem', 'orderId'),
+        lineItems: a.hasMany('LineItem', ['orderId']),
         textField1: a.string(),
         textField2: a.string(),
         textField3: a.string(),
@@ -223,14 +232,14 @@ bench('prod p50 CRUDL', async () => {
       // Model #11:
       LineItem: a.model({
         id: a.id().required(),
-        product: a.hasOne('Product', 'lineItemId'),
+        product: a.hasOne('Product', ['lineItemId']),
         agreedUnitPrice: a.float(),
         quantity: a.integer().required(),
         fulfilledQuantity: a.integer(),
         fulfilledTime: a.time(),
         fulfilledDate: a.date(),
         orderId: a.id(),
-        order: a.belongsTo('Order', 'orderId'),
+        order: a.belongsTo('Order', ['orderId']),
         textField1: a.string(),
         textField2: a.string(),
       }),
@@ -243,8 +252,8 @@ bench('prod p50 CRUDL', async () => {
         productImgSrc: a.url(),
         inventoryCount: a.integer(),
         lineItemId: a.id(),
-        lineItem: a.belongsTo('LineItem', 'lineItemId'),
-        reviews: a.hasMany('Review', 'productId'),
+        lineItem: a.belongsTo('LineItem', ['lineItemId']),
+        reviews: a.hasMany('Review', ['productId']),
         textField1: a.string(),
         textField2: a.string(),
         textField3: a.string(),
@@ -260,6 +269,12 @@ bench('prod p50 CRUDL', async () => {
         textField13: a.string(),
         textField14: a.string(),
         textField15: a.string(),
+      }),
+      Review: a.model({
+        content: a.string().required(),
+        rating: a.integer().required(),
+        productId: a.id(),
+        product: a.belongsTo('Product', ['productId']),
       }),
       // Model #13:
       CustomerPost: a
@@ -297,9 +312,9 @@ bench('prod p50 CRUDL', async () => {
             .string()
             .required()
             .authorization((allow) => allow.owner()),
-          employees: a.hasMany('Employee2', 'company2Id'),
-          stores: a.hasMany('Store2', 'company2Id'),
-          warehouses: a.hasMany('Warehouse2', 'company2Id'),
+          employees: a.hasMany('Employee2', ['company2Id']),
+          stores: a.hasMany('Store2', ['company2Id']),
+          warehouses: a.hasMany('Warehouse2', ['company2Id']),
           location: a.customType({
             lat: a.float().required(),
             long: a.float().required(),
@@ -331,10 +346,10 @@ bench('prod p50 CRUDL', async () => {
             .required()
             .authorization((allow) => allow.owner()),
           company2Id: a.id(),
-          company: a.belongsTo('Company2', 'company2Id'),
-          todos: a.hasMany('Todo2', 'employee2Id'),
-          posts: a.hasMany('Post2', 'employee2Id'),
-          tasks: a.hasMany('Task2', 'employee2Id'),
+          company: a.belongsTo('Company2', ['company2Id']),
+          todos: a.hasMany('Todo2', ['employee2Id']),
+          posts: a.hasMany('Post2', ['employee2Id']),
+          tasks: a.hasMany('Task2', ['employee2Id']),
         })
         .identifier(['employeeId', 'name'])
         .authorization((allow) => [
@@ -367,9 +382,9 @@ bench('prod p50 CRUDL', async () => {
           ]),
         privacySetting: a.ref('PrivacySetting').required(),
         company2Id: a.id(),
-        company: a.belongsTo('Company2', 'company2Id'),
+        company: a.belongsTo('Company2', ['company2Id']),
         warehouse2Id: a.id(),
-        warehouse: a.belongsTo('Warehouse2', 'warehouse2Id'),
+        warehouse: a.belongsTo('Warehouse2', ['warehouse2Id']),
       }),
       // Model #18:
       Warehouse2: a.model({
@@ -390,8 +405,8 @@ bench('prod p50 CRUDL', async () => {
           ]),
         privacySetting: a.ref('PrivacySetting2'),
         company2Id: a.id(),
-        company: a.belongsTo('Company2', 'company2Id'),
-        stores: a.hasMany('Store2', 'warehouse2Id'),
+        company: a.belongsTo('Company2', ['company2Id']),
+        stores: a.hasMany('Store2', ['store2Id']),
         textField1: a.string(),
       }),
       // Model #19:
@@ -408,7 +423,7 @@ bench('prod p50 CRUDL', async () => {
               allow.group('Admin2').to(['read']),
               allow.owner(),
             ]),
-          orders: a.hasMany('Order2', 'customer2Id'),
+          orders: a.hasMany('Order2', ['order2Id']),
           textField1: a.string(),
           textField2: a.string(),
           textField3: a.string(),
@@ -592,6 +607,16 @@ bench('prod p50 CRUDL', async () => {
           allow.authenticated('identityPool').to(['read']),
           allow.owner(),
         ]),
+      ChatBot: a.conversation(input)
+        .authorization((allow) => allow.owner()),
+      GossipBot: a.conversation(input)
+        .authorization((allow) => allow.owner()),
+      HaikuBot: a.conversation(input)
+        .authorization((allow) => allow.owner()),
+      MathBot: a.conversation(input)
+        .authorization((allow) => allow.owner()),
+      ScienceBot: a.conversation(input)
+        .authorization((allow) => allow.owner()),
       // [Global authorization rule]
     })
     .authorization((allow) => allow.publicApiKey());
@@ -611,25 +636,18 @@ bench('prod p50 CRUDL', async () => {
 
   const client = generateClient<Schema>();
 
-  const result = await client.models.Todo.create({
-    todoId: '123',
-    name: 'New Todo',
+  const { data: conversation } = await client.conversations.ChatBot.create();
+
+  await client.conversations.ChatBot.list();
+
+  conversation?.onStreamEvent({
+    next: () => {},
+    error: () => {},
   });
 
-  await client.models.Todo.get(
-    { todoId: result.data!.todoId, name: result.data!.name },
-    { selectionSet },
-  );
-
-  await client.models.Todo.update({
-    todoId: result.data!.todoId,
-    name: 'Updated Todo',
+  await conversation?.sendMessage({
+    content: [{ text: 'foo' }],
   });
 
-  await client.models.Todo.delete({
-    todoId: result.data!.todoId,
-    name: result.data!.name,
-  });
-
-  await client.models.Todo.list({ selectionSet });
-}).types([707395, 'instantiations']);
+  await conversation?.listMessages();
+}).types([35375, 'instantiations']);

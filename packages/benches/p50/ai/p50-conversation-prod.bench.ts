@@ -1,13 +1,22 @@
-import { bench } from '@arktype/attest';
-import { a, ClientSchema } from '@aws-amplify/data-schema';
+// Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
 
+import { bench } from '@arktype/attest';
+import { a, type ClientSchema } from '@aws-amplify/data-schema';
+
+const input = {
+  aiModel: a.ai.model('Claude 3 Haiku'),
+  systemPrompt: 'Hello, world!',
+  inferenceConfiguration: {
+    topP: 1,
+    temperature: 1,
+    maxTokens: 1000,
+  },
+};
 /**
- * The following benchmarks are for testing production-level ~p50 schemas.
- * Our assumption around what is a prod-level "p50" is approximately 25 models
- * with 10 fields each, 80% of models contain connections, with a mix of auth
- * rules and identifiers.
+ * The following benchmarks are `p50-prod.bench.ts` but with 5 conversation routes added to schemas.
  */
-bench('prod p50', () => {
+bench('prod p50 conversation', () => {
   a.schema({
     PrivacySetting: a.enum(['PRIVATE', 'FRIENDS_ONLY', 'PUBLIC']),
     FulfillmentStatus: a.enum(['PENDING', 'SHIPPED', 'DELIVERED']),
@@ -594,11 +603,21 @@ bench('prod p50', () => {
         allow.authenticated('identityPool').to(['read']),
         allow.owner(),
       ]),
+    ChatBot: a.conversation(input)
+      .authorization((allow) => allow.owner()),
+    GossipBot: a.conversation(input)
+      .authorization((allow) => allow.owner()),
+    HaikuBot: a.conversation(input)
+      .authorization((allow) => allow.owner()),
+    MathBot: a.conversation(input)
+      .authorization((allow) => allow.owner()),
+    ScienceBot: a.conversation(input)
+      .authorization((allow) => allow.owner()),
     // [Global authorization rule]
   }).authorization((allow) => allow.publicApiKey());
-}).types([20946, 'instantiations']);
+}).types([20837, 'instantiations']);
 
-bench('prod p50 w/ client types', () => {
+bench('prod p50 conversation w/ client types', () => {
   const s = a
     .schema({
       PrivacySetting: a.enum(['PRIVATE', 'FRIENDS_ONLY', 'PUBLIC']),
@@ -1183,14 +1202,24 @@ bench('prod p50 w/ client types', () => {
           allow.authenticated('identityPool').to(['read']),
           allow.owner(),
         ]),
+      ChatBot: a.conversation(input)
+        .authorization((allow) => allow.owner()),
+      GossipBot: a.conversation(input)
+        .authorization((allow) => allow.owner()),
+      HaikuBot: a.conversation(input)
+        .authorization((allow) => allow.owner()),
+      MathBot: a.conversation(input)
+        .authorization((allow) => allow.owner()),
+      ScienceBot: a.conversation(input)
+        .authorization((allow) => allow.owner()),
       // [Global authorization rule]
     })
     .authorization((allow) => allow.publicApiKey());
 
   type _ = ClientSchema<typeof s>;
-}).types([23327, 'instantiations']);
+}).types([22779, 'instantiations']);
 
-bench('prod p50 combined w/ client types', () => {
+bench('prod p50 conversation combined w/ client types', () => {
   const s1 = a.schema({
     PrivacySetting: a.enum(['PRIVATE', 'FRIENDS_ONLY', 'PUBLIC']),
     FulfillmentStatus: a.enum(['PENDING', 'SHIPPED', 'DELIVERED']),
@@ -1775,10 +1804,20 @@ bench('prod p50 combined w/ client types', () => {
           allow.authenticated('identityPool').to(['read']),
           allow.owner(),
         ]),
+      ChatBot: a.conversation(input)
+        .authorization((allow) => allow.owner()),
+      GossipBot: a.conversation(input)
+        .authorization((allow) => allow.owner()),
+      HaikuBot: a.conversation(input)
+        .authorization((allow) => allow.owner()),
+      MathBot: a.conversation(input)
+        .authorization((allow) => allow.owner()),
+      ScienceBot: a.conversation(input)
+        .authorization((allow) => allow.owner()),
       // [Global authorization rule]
     })
     .authorization((allow) => allow.publicApiKey());
 
   const s = a.combine([s1, s2]);
   type _ = ClientSchema<typeof s>;
-}).types([27507, 'instantiations']);
+}).types([27012, 'instantiations']);

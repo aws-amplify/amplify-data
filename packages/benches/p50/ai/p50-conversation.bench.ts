@@ -1,12 +1,22 @@
-import { bench } from '@arktype/attest';
-import { a, ClientSchema } from '@aws-amplify/data-schema';
+// Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
 
+import { bench } from '@arktype/attest';
+import { a, type ClientSchema } from '@aws-amplify/data-schema';
+
+const input = {
+  aiModel: a.ai.model('Claude 3 Haiku'),
+  systemPrompt: 'Hello, world!',
+  inferenceConfiguration: {
+    topP: 1,
+    temperature: 1,
+    maxTokens: 1000,
+  },
+};
 /**
- * The following benchmarks are for testing ~p50 schemas. Our assumption around
- * what is a "p50" is: 3 models, 5 fields each, all connected with
- * relationships, 2 auth rules, and at least 1 field-level auth rule.
+ * The following benchmarks are `p50.bench.ts` but with 2 conversation routes added to schemas.
  */
-bench('p50', () => {
+bench('p50 conversation', () => {
   a.schema({
     Employee: a
       .model({
@@ -50,10 +60,14 @@ bench('p50', () => {
         allow.publicApiKey().to(['read']),
         allow.owner(),
       ]),
+    ChatBot: a.conversation(input)
+      .authorization((allow) => allow.owner()),
+    GossipBot: a.conversation(input)
+      .authorization((allow) => allow.owner()),
   }).authorization((allow) => allow.publicApiKey());
-}).types([8572, 'instantiations']);
+}).types([8514, 'instantiations']);
 
-bench('p50 w/ client types', () => {
+bench('p50 conversation w/ client types', () => {
   const s = a
     .schema({
       Employee: a
@@ -98,13 +112,17 @@ bench('p50 w/ client types', () => {
           allow.publicApiKey().to(['read']),
           allow.owner(),
         ]),
+      ChatBot: a.conversation(input)
+        .authorization((allow) => allow.owner()),
+      GossipBot: a.conversation(input)
+        .authorization((allow) => allow.owner()),
     })
     .authorization((allow) => allow.publicApiKey());
 
   type _ = ClientSchema<typeof s>;
-}).types([10938, 'instantiations']);
+}).types([10441, 'instantiations']);
 
-bench('p50 combined schema w/ client types', () => {
+bench('p50 combined conversation w/ client types', () => {
   const s1 = a
     .schema({
       Employee: a
@@ -139,6 +157,10 @@ bench('p50 combined schema w/ client types', () => {
           allow.publicApiKey().to(['read']),
           allow.owner(),
         ]),
+      ChatBot: a.conversation(input)
+        .authorization((allow) => allow.owner()),
+      GossipBot: a.conversation(input)
+        .authorization((allow) => allow.owner()),
     })
     .authorization((allow) => allow.publicApiKey());
 
@@ -153,8 +175,12 @@ bench('p50 combined schema w/ client types', () => {
         employee: a.belongsTo('Employee', ['employeeId']),
       })
       .identifier(['todoId', 'name']),
+    ChatBot: a.conversation(input)
+      .authorization((allow) => allow.owner()),
+    GossipBot: a.conversation(input)
+      .authorization((allow) => allow.owner()),
   });
 
   const s = a.combine([s1, s2]);
   type _ = ClientSchema<typeof s>;
-}).types([14350, 'instantiations']);
+}).types([13892, 'instantiations']);

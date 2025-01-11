@@ -1,14 +1,26 @@
+// Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
+
 import { bench } from '@arktype/attest';
-import { a, ClientSchema } from '@aws-amplify/data-schema';
+import { a, type ClientSchema } from '@aws-amplify/data-schema';
 import { Amplify } from 'aws-amplify';
 import { generateClient } from 'aws-amplify/api';
 
+const input = {
+  aiModel: a.ai.model('Claude 3 Haiku'),
+  systemPrompt: 'Hello, world!',
+  inferenceConfiguration: {
+    topP: 1,
+    temperature: 1,
+    maxTokens: 1000,
+  },
+};
+
 /**
- * The following benchmarks are an extension of `p50.bench.ts`.
- * Here we perform CRUDL operations for a single model.
+ * The following benchmarks are an extension of `p50-conversation.bench.ts`.
+ * Here we perform operations against a conversation route.
  */
-bench('p50 CRUDL', async () => {
-  // const schema = helper();
+bench('p50 conversation operations', async () => {
   const schema = a
     .schema({
       Employee: a
@@ -18,8 +30,8 @@ bench('p50 CRUDL', async () => {
           phone: a.phone().authorization((allow) => allow.owner()),
           website: a.url(),
           ssn: a.string().authorization((allow) => allow.owner()),
-          todos: a.hasMany('Todo', 'employeeId'),
-          posts: a.hasMany('Post', 'employeeId'),
+          todos: a.hasMany('Todo', ['employeeId']),
+          posts: a.hasMany('Post', ['employeeId']),
         })
         .authorization((allow) => [
           allow.authenticated().to(['read']),
@@ -33,7 +45,7 @@ bench('p50 CRUDL', async () => {
           viewCount: a.integer(),
           complete: a.boolean(),
           employeeId: a.id(),
-          employee: a.belongsTo('Employee', 'employeeId'),
+          employee: a.belongsTo('Employee', ['employeeId']),
         })
         .identifier(['todoId', 'name']),
       Post: a
@@ -47,12 +59,16 @@ bench('p50 CRUDL', async () => {
           lastViewedDate: a.date(),
           lastViewedTime: a.time(),
           employeeId: a.id(),
-          employee: a.belongsTo('Employee', 'employeeId'),
+          employee: a.belongsTo('Employee', ['employeeId']),
         })
         .authorization((allow) => [
           allow.publicApiKey().to(['read']),
           allow.owner(),
         ]),
+      ChatBot: a.conversation(input)
+        .authorization((allow) => allow.owner()),
+      GossipBot: a.conversation(input)
+        .authorization((allow) => allow.owner()),
     })
     .authorization((allow) => allow.publicApiKey());
 
@@ -71,25 +87,18 @@ bench('p50 CRUDL', async () => {
 
   const client = generateClient<Schema>();
 
-  const result = await client.models.Todo.create({
-    todoId: '123',
-    name: 'New Todo',
+  const { data: conversation } = await client.conversations.ChatBot.create();
+
+  await client.conversations.ChatBot.list();
+
+  conversation?.onStreamEvent({
+    next: () => {},
+    error: () => {},
   });
 
-  await client.models.Todo.get({
-    todoId: result.data!.todoId,
-    name: result.data!.name,
+  await conversation?.sendMessage({
+    content: [{ text: 'foo' }],
   });
 
-  await client.models.Todo.update({
-    todoId: result.data!.todoId,
-    name: 'Updated Todo',
-  });
-
-  await client.models.Todo.delete({
-    todoId: result.data!.todoId,
-    name: result.data!.name,
-  });
-
-  await client.models.Todo.list();
-}).types([351592, 'instantiations']);
+  await conversation?.listMessages();
+}).types([13028, 'instantiations']);
