@@ -235,7 +235,7 @@ export type ModelType<
      * @returns A ModelType instance with updated identifiers
      *
      * @example
-     * .identifier(['name', 'age'])
+     * model().identifier(['name', 'age'])
      */
     identifier<
       PrimaryIndexFields = ExtractSecondaryIndexIRFields<T>,
@@ -259,7 +259,7 @@ export type ModelType<
      * @returns A ModelType instance with updated secondary index
      *
      * @example
-     * .secondaryIndexes((index) => [index('type').sortKeys(['sort'])])
+     * model().secondaryIndexes((index) => [index('type').sortKeys(['sort'])])
      */
     secondaryIndexes<
       const SecondaryIndexFields = ExtractSecondaryIndexIRFields<T>,
@@ -298,7 +298,7 @@ export type ModelType<
      * @returns A ModelType instance with updated disabled operations
      *
      * @example
-     * model.disableOperations(['queries', 'subscriptions'])
+     * model().disableOperations(['queries', 'subscriptions'])
      */
     disableOperations<
       const Ops extends ReadonlyArray<DisableOperationsOptions>,
@@ -316,7 +316,7 @@ export type ModelType<
      * @returns A ModelType instance with updated authorization rules
      *
      * @example
-     * model.authorization((allow) => [
+     * model().authorization((allow) => [
      *   allow.guest(),
      *   allow.publicApiKey(),
      *   allow.authenticated(),
