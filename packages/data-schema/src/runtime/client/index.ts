@@ -252,7 +252,7 @@ type FlattenArrays<T> = {
  * and especially for bi-directional relationships which are infinitely recursable by their nature
  *
  */
-export type ModelPath<
+type ModelPathInner<
   FlatModel extends Record<string, unknown>,
   // actual recursive Depth is 6, since we decrement down to 0
   Depth extends number = 5, // think of this as the initialization expr. in a for loop (e.g. `let depth = 5`)
@@ -263,7 +263,7 @@ export type ModelPath<
   recur: Field extends string
     ? NonNullable<UnwrapArray<FlatModel[Field]>> extends Record<string, unknown>
       ?
-          | `${Field}.${ModelPath<
+          | `${Field}.${ModelPathInner<
               NonNullable<UnwrapArray<FlatModel[Field]>>,
               // this decrements `Depth` by 1 in each recursive call; it's equivalent to the update expr. afterthought in a for loop (e.g. `depth -= 1`)
               RecursionLoop[Depth]
@@ -273,6 +273,10 @@ export type ModelPath<
     : never;
   // this is equivalent to the condition expr. in a for loop (e.g. `depth !== -1`)
 }[Depth extends -1 ? 'done' : 'recur'];
+
+export type ModelPath<FlatModel extends Record<string, unknown>> =
+  | (string & Readonly<unknown>)
+  | ModelPathInner<FlatModel>;
 
 export type SelectionSet<
   Model,
@@ -470,7 +474,7 @@ type IndexQueryMethod<
   Context extends ContextType = 'CLIENT',
   FlatModel extends Record<string, unknown> = Model['__meta']['flatModel'],
 > = Context extends 'CLIENT' | 'COOKIES'
-  ? <SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[]>(
+  ? <SelectionSet extends ReadonlyArray<ModelPath<FlatModel>>>(
       input: Method['input'],
       options?: {
         filter?: ModelFilter<Model>;
@@ -483,7 +487,7 @@ type IndexQueryMethod<
         headers?: CustomHeaders;
       },
     ) => ListReturnValue<Prettify<ReturnValue<Model, FlatModel, SelectionSet>>>
-  : <SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[]>(
+  : <SelectionSet extends ReadonlyArray<ModelPath<FlatModel>>>(
       contextSpec: AmplifyServer.ContextSpec,
       input: Method['input'],
       options?: {
@@ -505,9 +509,7 @@ type ModelTypesClient<
   // Omit any disabled operations
   Omit<
     {
-      create<
-        SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[],
-      >(
+      create<SelectionSet extends ReadonlyArray<ModelPath<FlatModel>>>(
         model: Model['createType'],
         options?: {
           selectionSet?: SelectionSet;
@@ -518,9 +520,7 @@ type ModelTypesClient<
       ): SingularReturnValue<
         Prettify<ReturnValue<Model, FlatModel, SelectionSet>>
       >;
-      update<
-        SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[],
-      >(
+      update<SelectionSet extends ReadonlyArray<ModelPath<FlatModel>>>(
         model: Model['updateType'],
         options?: {
           selectionSet?: SelectionSet;
@@ -531,9 +531,7 @@ type ModelTypesClient<
       ): SingularReturnValue<
         Prettify<ReturnValue<Model, FlatModel, SelectionSet>>
       >;
-      delete<
-        SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[],
-      >(
+      delete<SelectionSet extends ReadonlyArray<ModelPath<FlatModel>>>(
         identifier: Model['deleteType'],
         options?: {
           selectionSet?: SelectionSet;
@@ -544,7 +542,7 @@ type ModelTypesClient<
       ): SingularReturnValue<
         Prettify<ReturnValue<Model, FlatModel, SelectionSet>>
       >;
-      get<SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[]>(
+      get<SelectionSet extends ReadonlyArray<ModelPath<FlatModel>>>(
         identifier: Model['identifier'],
         options?: {
           selectionSet?: SelectionSet;
@@ -555,7 +553,7 @@ type ModelTypesClient<
       ): SingularReturnValue<
         Prettify<ReturnValue<Model, FlatModel, SelectionSet>>
       >;
-      list<SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[]>(
+      list<SelectionSet extends ReadonlyArray<ModelPath<FlatModel>>>(
         options?: ListCpkOptions<Model> & {
           filter?: ModelFilter<Model>;
           limit?: number;
@@ -567,7 +565,7 @@ type ModelTypesClient<
         },
       ): ListReturnValue<Prettify<ReturnValue<Model, FlatModel, SelectionSet>>>;
       onCreate<
-        SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[],
+        SelectionSet extends ReadonlyArray<ModelPath<FlatModel>>,
       >(options?: {
         filter?: ModelSubscriptionFilter<Model>;
         selectionSet?: SelectionSet;
@@ -578,7 +576,7 @@ type ModelTypesClient<
         Prettify<ReturnValue<Model, FlatModel, SelectionSet>>
       >;
       onUpdate<
-        SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[],
+        SelectionSet extends ReadonlyArray<ModelPath<FlatModel>>,
       >(options?: {
         filter?: ModelSubscriptionFilter<Model>;
         selectionSet?: SelectionSet;
@@ -589,7 +587,7 @@ type ModelTypesClient<
         Prettify<ReturnValue<Model, FlatModel, SelectionSet>>
       >;
       onDelete<
-        SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[],
+        SelectionSet extends ReadonlyArray<ModelPath<FlatModel>>,
       >(options?: {
         filter?: ModelSubscriptionFilter<Model>;
         selectionSet?: SelectionSet;
@@ -599,9 +597,7 @@ type ModelTypesClient<
       }): ObservedReturnValue<
         Prettify<ReturnValue<Model, FlatModel, SelectionSet>>
       >;
-      observeQuery<
-        SelectionSet extends ModelPath<FlatModel>[] = never[],
-      >(options?: {
+      observeQuery<SelectionSet extends ModelPath<FlatModel>[]>(options?: {
         filter?: ModelFilter<Model>;
         selectionSet?: SelectionSet;
         authMode?: AuthMode;
@@ -620,9 +616,7 @@ type ModelTypesSSRCookies<
   // Omit any disabled operations
   Omit<
     {
-      create<
-        SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[],
-      >(
+      create<SelectionSet extends ReadonlyArray<ModelPath<FlatModel>>>(
         model: Model['createType'],
         options?: {
           selectionSet?: SelectionSet;
@@ -633,9 +627,7 @@ type ModelTypesSSRCookies<
       ): SingularReturnValue<
         Prettify<ReturnValue<Model, FlatModel, SelectionSet>>
       >;
-      update<
-        SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[],
-      >(
+      update<SelectionSet extends ReadonlyArray<ModelPath<FlatModel>>>(
         model: Model['updateType'],
         options?: {
           selectionSet?: SelectionSet;
@@ -646,9 +638,7 @@ type ModelTypesSSRCookies<
       ): SingularReturnValue<
         Prettify<ReturnValue<Model, FlatModel, SelectionSet>>
       >;
-      delete<
-        SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[],
-      >(
+      delete<SelectionSet extends ReadonlyArray<ModelPath<FlatModel>>>(
         identifier: Model['deleteType'],
         options?: {
           selectionSet?: SelectionSet;
@@ -659,7 +649,7 @@ type ModelTypesSSRCookies<
       ): SingularReturnValue<
         Prettify<ReturnValue<Model, FlatModel, SelectionSet>>
       >;
-      get<SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[]>(
+      get<SelectionSet extends ReadonlyArray<ModelPath<FlatModel>>>(
         identifier: Model['identifier'],
         options?: {
           selectionSet?: SelectionSet;
@@ -670,7 +660,7 @@ type ModelTypesSSRCookies<
       ): SingularReturnValue<
         Prettify<ReturnValue<Model, FlatModel, SelectionSet>>
       >;
-      list<SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[]>(
+      list<SelectionSet extends ReadonlyArray<ModelPath<FlatModel>>>(
         options?: ListCpkOptions<Model> & {
           filter?: ModelFilter<Model>;
           sortDirection?: ModelSortDirection;
@@ -693,9 +683,7 @@ type ModelTypesSSRRequest<
   // Omit any disabled operations
   Omit<
     {
-      create<
-        SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[],
-      >(
+      create<SelectionSet extends ReadonlyArray<ModelPath<FlatModel>>>(
         contextSpec: AmplifyServer.ContextSpec,
         model: Model['createType'],
         options?: {
@@ -707,9 +695,7 @@ type ModelTypesSSRRequest<
       ): SingularReturnValue<
         Prettify<ReturnValue<Model, FlatModel, SelectionSet>>
       >;
-      update<
-        SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[],
-      >(
+      update<SelectionSet extends ReadonlyArray<ModelPath<FlatModel>>>(
         contextSpec: AmplifyServer.ContextSpec,
         model: Model['updateType'],
         options?: {
@@ -721,9 +707,7 @@ type ModelTypesSSRRequest<
       ): SingularReturnValue<
         Prettify<ReturnValue<Model, FlatModel, SelectionSet>>
       >;
-      delete<
-        SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[],
-      >(
+      delete<SelectionSet extends ReadonlyArray<ModelPath<FlatModel>>>(
         contextSpec: AmplifyServer.ContextSpec,
         identifier: Model['deleteType'],
         options?: {
@@ -735,7 +719,7 @@ type ModelTypesSSRRequest<
       ): SingularReturnValue<
         Prettify<ReturnValue<Model, FlatModel, SelectionSet>>
       >;
-      get<SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[]>(
+      get<SelectionSet extends ReadonlyArray<ModelPath<FlatModel>>>(
         contextSpec: AmplifyServer.ContextSpec,
         identifier: Model['identifier'],
         options?: {
@@ -747,7 +731,7 @@ type ModelTypesSSRRequest<
       ): SingularReturnValue<
         Prettify<ReturnValue<Model, FlatModel, SelectionSet>>
       >;
-      list<SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[]>(
+      list<SelectionSet extends ReadonlyArray<ModelPath<FlatModel>>>(
         contextSpec: AmplifyServer.ContextSpec,
         options?: ListCpkOptions<Model> & {
           filter?: ModelFilter<Model>;

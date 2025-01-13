@@ -125,21 +125,21 @@ type ResolveRelationship<
             : Bag[RelationshipShape['relatedModel']]['type'] | null,
           RelationshipShape['array']
         >
-      : // Array-ing inline here vs. (inside of ShortCircuitBiDirectionalRelationship or in a separate conditional type) is significantly more performant
-        RelationshipShape['array'] extends true
-        ? Array<
-            ShortCircuitBiDirectionalRelationship<
-              Bag[RelationshipShape['relatedModel']]['__meta']['flatModel'],
-              ParentModelName,
-              Bag[RelationshipShape['relatedModel']]['__meta']['rawType']['fields']
-            >
-          >
-        : ShortCircuitBiDirectionalRelationship<
+      : never
+    : // Array-ing inline here vs. (inside of ShortCircuitBiDirectionalRelationship or in a separate conditional type) is significantly more performant
+      RelationshipShape['array'] extends true
+      ? Array<
+          ShortCircuitBiDirectionalRelationship<
             Bag[RelationshipShape['relatedModel']]['__meta']['flatModel'],
             ParentModelName,
             Bag[RelationshipShape['relatedModel']]['__meta']['rawType']['fields']
           >
-    : never;
+        >
+      : ShortCircuitBiDirectionalRelationship<
+          Bag[RelationshipShape['relatedModel']]['__meta']['flatModel'],
+          ParentModelName,
+          Bag[RelationshipShape['relatedModel']]['__meta']['rawType']['fields']
+        >;
 
 type DependentLazyLoaderOpIsAvailable<
   Bag extends Record<string, any>,
