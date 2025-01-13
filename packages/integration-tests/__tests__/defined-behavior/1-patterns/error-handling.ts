@@ -507,6 +507,7 @@ describe('Exceptions', () => {
         notes: a.hasMany('Note', 'todoId'),
         assignee: a.hasOne('Person', 'todoId'),
       })
+      .secondaryIndexes((index) => [index('priority').sortKeys(['content'])])
       .authorization((allow) => allow.owner()),
     Note: a
       .model({
@@ -683,34 +684,28 @@ describe('Exceptions', () => {
     // TODO: refer to Asana task to see which failure case ivaartem was specifically asking about.
   });
 
-  // TODO: Cancel appears to be broken. The implementation lives in JS repo.
-  // Need to fix there and then uncomment these these.
-  // Open question: Is there a way we can move more of the graphql client
-  // implementation into this repo? This feels like something we should ideally
-  // be able to fix *in this repo*.
-  describe.skip('Explicit cancellation results in an exception', () => {
-    function mockSleepingFetch() {
-      jest.spyOn(global, 'fetch').mockImplementation(async (input, init) => {
-        const abortSignal = init?.signal;
-        // This does indeed exist ...
-        console.log({ abortSignal });
-
-        return new Promise((_unsleep, reject) => {
-          if (abortSignal) {
-            if (abortSignal.aborted) reject(abortSignal.reason);
-            abortSignal.addEventListener('abort', (event) => {
-              // ... but, 'abort' is never firing. What am I not understanding?
-              console.log('aborted');
-              reject(event);
+  describe('Explicit cancellation results in an AbortError', () => {
+    function mockSleepingFetch(fetchSpy?: jest.SpyInstance) {
+      return new Promise<void>((fetchStarted) => {
+        (fetchSpy || jest.spyOn(global, 'fetch')).mockImplementation(
+          (input, init) => {
+            const abortSignal = init?.signal;
+            return new Promise((_resolve, reject) => {
+              if (abortSignal) {
+                if (abortSignal.aborted) {
+                  reject(abortSignal.reason);
+                } else {
+                  abortSignal.addEventListener('abort', (event) => {
+                    reject(abortSignal.reason);
+                  });
+                }
+              }
+              fetchStarted();
             });
-          }
-        });
+          },
+        );
       });
     }
-
-    beforeEach(() => {
-      mockSleepingFetch();
-    });
 
     afterEach(() => {
       jest.clearAllMocks();
@@ -724,22 +719,177 @@ describe('Exceptions', () => {
     const TodoModelCases = [
       ['list', {}],
       ['get', { id: 'some-id' }],
+      ['create', { id: 'some-id', content: 'some content' }],
       ['update', { id: 'some-id', content: 'some content' }],
       ['delete', { id: 'some-id' }],
     ] as const;
 
-    for (const [op, args] of TodoModelCases) {
-      test(`in Model.${op}() throws cancellation error`, async () => {
-        const config = await buildAmplifyConfig(schema);
-        Amplify.configure(config);
-        const client = generateClient<Schema>();
+    for (const delay of [true, false]) {
+      describe(`when cancel ${delay ? 'is delayed after' : 'immediately follows'}`, () => {
+        test(`graphql()`, async () => {
+          const fetchStarted = mockSleepingFetch();
+          const config = await buildAmplifyConfig(schema);
+          Amplify.configure(config);
+          const client = generateClient<Schema>();
 
-        // @ts-ignore
-        const request = client.models.Todo[op](args);
-        const isCanceled = client.cancel(request);
+          const request = client.graphql({
+            query: `query Q { getWhatever { a b c } }`,
+          });
+          if (delay) await fetchStarted;
+          if (!(request instanceof Promise)) throw new Error();
+          const isCanceled = client.cancel(request);
 
-        expect(isCanceled).toBe(true);
-        await expect(request).rejects.toThrow();
+          expect(isCanceled).toBe(true);
+          await expect(request).rejects.toThrow('AbortError');
+        });
+
+        // #region covers 7788520a09a949aa, 93ed69df71688b6d, e84aa109193880d4, 5b7af56d08383ae9
+        for (const [op, args] of TodoModelCases) {
+          test(`Model.${op}()`, async () => {
+            const fetchStarted = mockSleepingFetch();
+            const config = await buildAmplifyConfig(schema);
+            Amplify.configure(config);
+            const client = generateClient<Schema>();
+
+            // TS just can't tell whether args matches the op in the loop.
+            const request = client.models.Todo[op](args as any);
+            if (delay) await fetchStarted;
+            const isCanceled = client.cancel(request);
+
+            expect(isCanceled).toBe(true);
+            await expect(request).rejects.toThrow('AbortError');
+          });
+        }
+        // #endregion
+
+        test(`a custom operation`, async () => {
+          const fetchStarted = mockSleepingFetch();
+          const config = await buildAmplifyConfig(schema);
+          Amplify.configure(config);
+          const client = generateClient<Schema>();
+
+          const request = client.mutations.completeTodo({ todoId: '123' });
+          if (delay) await fetchStarted;
+          const isCanceled = client.cancel(request);
+
+          expect(isCanceled).toBe(true);
+          await expect(request).rejects.toThrow('AbortError');
+        });
+
+        test(`an index query`, async () => {
+          const fetchStarted = mockSleepingFetch();
+          const config = await buildAmplifyConfig(schema);
+          Amplify.configure(config);
+          const client = generateClient<Schema>();
+
+          const request = client.models.Todo.listTodoByPriorityAndContent({
+            priority: 'high',
+          });
+          if (delay) await fetchStarted;
+          const isCanceled = client.cancel(request);
+
+          expect(isCanceled).toBe(true);
+          await expect(request).rejects.toThrow('AbortError');
+        });
+
+        test(`a belongsTo lazy loader`, async () => {
+          // set up mocks to create an *instantiated* object we can lazy-load from.
+          jest.clearAllMocks();
+          const fetchSpy = jest
+            .spyOn(global, 'fetch')
+            .mockImplementation(async (...args: any) => {
+              return new Response(
+                JSON.stringify({
+                  data: {
+                    createNote: {
+                      id: 'some-id',
+                      todoId: 'some-id',
+                    },
+                  },
+                }),
+              );
+            });
+
+          const config = await buildAmplifyConfig(schema);
+          Amplify.configure(config);
+          const client = generateClient<Schema>();
+
+          const { data: note } = await client.models.Note.create({
+            todoId: 'some-id',
+          });
+
+          const fetchStarted = mockSleepingFetch();
+          const request = note!.todo();
+          if (delay) await fetchStarted;
+          const isCanceled = client.cancel(request);
+
+          expect(isCanceled).toEqual(true);
+          await expect(request).rejects.toThrow('AbortError');
+        });
+
+        test(`a hasOne lazy loader`, async () => {
+          // set up mocks to create an *instantiated* object we can lazy-load from.
+          jest.clearAllMocks();
+          const fetchSpy = jest
+            .spyOn(global, 'fetch')
+            .mockImplementation(async (...args: any) => {
+              return new Response(
+                JSON.stringify({
+                  data: {
+                    createTodo: {
+                      id: 'some-id',
+                    },
+                  },
+                }),
+              );
+            });
+
+          const config = await buildAmplifyConfig(schema);
+          Amplify.configure(config);
+          const client = generateClient<Schema>();
+
+          const { data: todo } = await client.models.Todo.create({});
+
+          const fetchStarted = mockSleepingFetch();
+          const request = todo!.assignee();
+          if (delay) await fetchStarted;
+          const isCanceled = client.cancel(request);
+
+          expect(isCanceled).toEqual(true);
+          await expect(request).rejects.toThrow('AbortError');
+        });
+
+        test(`a hasMany lazy loader`, async () => {
+          // set up mocks to create an *instantiated* object we can lazy-load from.
+          jest.clearAllMocks();
+          const fetchSpy = jest
+            .spyOn(global, 'fetch')
+            .mockImplementation(async (...args: any) => {
+              return new Response(
+                JSON.stringify({
+                  data: {
+                    createTodo: {
+                      id: 'some-id',
+                    },
+                  },
+                }),
+              );
+            });
+
+          const config = await buildAmplifyConfig(schema);
+          Amplify.configure(config);
+          const client = generateClient<Schema>();
+
+          const { data: todo } = await client.models.Todo.create({});
+
+          const fetchStarted = mockSleepingFetch();
+          const request = todo!.notes();
+          if (delay) await fetchStarted;
+          const isCanceled = client.cancel(request);
+
+          expect(isCanceled).toEqual(true);
+          await expect(request).rejects.toThrow('AbortError');
+        });
       });
     }
   });

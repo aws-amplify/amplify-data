@@ -11,6 +11,7 @@ import { AuthMode, CustomHeaders, SingularReturnValue } from '../src/runtime';
 import { configure } from '../src/internals';
 import { Nullable } from '../src/ModelField';
 import { AppSyncResolverEvent, Callback, Context } from 'aws-lambda';
+import { defineConversationHandlerFunctionStub, defineFunctionStub } from './utils';
 
 const fakeSecret = () => ({}) as any;
 
@@ -1444,5 +1445,133 @@ describe('SQL Schema with sql statement references', () => {
         importLine: expect.stringContaining('__tests__'),
       },
     });
+  });
+});
+
+describe('ai routes', () => {
+  test('conversations', () => {
+    const handler = defineFunctionStub({});
+    const customConversationHandler = defineConversationHandlerFunctionStub({});
+    const schema = a.schema({
+      Profile: a.customType({
+        value: a.integer(),
+        unit: a.string(),
+      }),
+      myToolQuery: a
+        .query()
+        .arguments({ a: a.integer(), b: a.string() })
+        .returns(a.ref('Profile'))
+        .authorization((allow) => allow.publicApiKey())
+        .handler(a.handler.function(handler)),
+
+      anotherToolQuery: a
+        .query()
+        .returns(a.string())
+        .authorization((allow) => allow.publicApiKey())
+        .handler(a.handler.function(handler)),
+
+      ChatBot: a.conversation({
+        aiModel: a.ai.model('Claude 3 Haiku'),
+        systemPrompt: 'Hello, world!',
+        tools: [
+          a.ai.dataTool({
+            query: a.ref('myToolQuery'),
+            description: 'does a thing',
+            name: 'myToolQuery',
+          }),
+          a.ai.dataTool({
+            query: a.ref('anotherToolQuery'),
+            description: 'does a different thing',
+            name: 'anotherToolQuery',
+          }),
+        ],
+      }).authorization((allow) => allow.owner()),
+
+      MultilinePromptChatBot: a.conversation({
+        aiModel: a.ai.model('Claude 3 Haiku'),
+        systemPrompt: `You are a helpful assistant.
+        Respond in the poetic form of haiku.`,
+        tools: [
+          a.ai.dataTool({
+            query: a.ref('myToolQuery'),
+            description: 'does a thing',
+            name: 'tool_name_for_myToolQuery',
+          }),
+          a.ai.dataTool({
+            query: a.ref('anotherToolQuery'),
+            description: 'does a different thing',
+            name: 'tool_name_for_anotherToolQuery',
+          }),
+        ],
+      }).authorization((allow) => allow.owner()),
+
+      CustomHandlerChatBot: a.conversation({
+        aiModel: a.ai.model('Claude 3 Haiku'),
+        systemPrompt: 'Hello, world!',
+        handler: customConversationHandler,
+      }).authorization((allow) => allow.owner()),
+    }).authorization((allow) => allow.publicApiKey());
+
+    type Schema = ClientSchema<typeof schema>;
+    type ActualChatBot = Prettify<Schema['ChatBot']>;
+
+    type Expected = {
+      __entityType: 'customConversation';
+    };
+
+    type ActualChatBotInterface = Pick<ActualChatBot, keyof Expected>;
+
+    type test = Expect<Equal<ActualChatBotInterface, Expected>>;
+
+    const derivedApiDefinition = schema.transform();
+    const graphql = derivedApiDefinition.schema;
+    expect(graphql).toMatchSnapshot();
+
+    const lambdaFunctions = derivedApiDefinition.lambdaFunctions;
+    expect(lambdaFunctions['FnCustomHandlerChatBot']).toBeDefined();
+  });
+
+  test('conversation without authorization throws', () => {
+    const schema = a.schema({
+      ChatBot: a.conversation({
+        aiModel: a.ai.model('Claude 3 Haiku'),
+        systemPrompt: 'Hello, world!',
+      }),
+    });
+
+    expect(() => schema.transform()).toThrowError(
+      'Conversation ChatBot is missing authorization rules. Use .authorization((allow) => allow.owner()) to configure authorization for your conversation route.',
+    );
+  });
+
+  test('generations', () => {
+    const schema = a.schema({
+      Recipe: a
+        .model({
+          ingredients: a.string().array(),
+          directions: a.string(),
+        })
+        .authorization((allow) => allow.publicApiKey()),
+      makeRecipe: a
+        .generation({
+          aiModel: a.ai.model('Claude 3 Haiku'),
+          systemPrompt: 'Hello, world!',
+        })
+        .returns(a.ref('Recipe')),
+    });
+
+    type Schema = ClientSchema<typeof schema>;
+    type ActualMakeRecipe = Prettify<Schema['makeRecipe']>;
+
+    type Expected = {
+      __entityType: 'customGeneration';
+    };
+
+    type ActualChatBotInterface = Pick<ActualMakeRecipe, keyof Expected>;
+
+    type test = Expect<Equal<ActualChatBotInterface, Expected>>;
+
+    const graphql = schema.transform().schema;
+    expect(graphql).toMatchSnapshot();
   });
 });

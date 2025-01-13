@@ -19,7 +19,7 @@ export declare function mutation(): CustomOperation<{
 ```
 **Returns:**
 
-CustomOperation&lt;{ arguments: null; returnType: null; authorization: \[\]; typeName: 'Mutation'; handlers: null; }, 'for', typeof mutationBrand&gt;
+[CustomOperation](./data-schema.customoperation.md)<!-- -->&lt;{ arguments: null; returnType: null; authorization: \[\]; typeName: 'Mutation'; handlers: null; }, 'for', typeof mutationBrand&gt;
 
 a custom mutation
 

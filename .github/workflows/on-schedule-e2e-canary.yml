@@ -1,0 +1,12 @@
+name: E2E Test Canary
+
+on:
+  # Tests scheduled for 7pm UTC (12pm PDT / 11am PST) everyday.
+  # Default supported timezone is UTC.
+  schedule:
+    - cron: '0 19 * * *'
+
+jobs:
+  e2e-canary:
+    secrets: inherit
+    uses: ./.github/workflows/callable-release-verification.yml

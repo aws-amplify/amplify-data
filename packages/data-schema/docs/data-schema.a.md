@@ -52,6 +52,17 @@ The interface for merging up to 50 schemas into a single API.
 </td></tr>
 <tr><td>
 
+[conversation(input)](./data-schema.a.conversation.md)
+
+
+</td><td>
+
+Define an AI conversation route which enables multi-turn conversation APIs for interacting with specified AI model.
+
+
+</td></tr>
+<tr><td>
+
 [customType(fields)](./data-schema.a.customtype.md)
 
 
@@ -113,6 +124,17 @@ this type param pattern allows us to infer literal type values from the array wi
 </td><td>
 
 A float scalar type following represented server-side as an IEEE 754 floating point value.
+
+
+</td></tr>
+<tr><td>
+
+[generation(input)](./data-schema.a.generation.md)
+
+
+</td><td>
+
+Define an AI generation route for single request-response interaction with specified AI model.
 
 
 </td></tr>
@@ -317,6 +339,15 @@ Description
 
 </th></tr></thead>
 <tbody><tr><td>
+
+[ai](./data-schema.a.ai.md)
+
+
+</td><td>
+
+
+</td></tr>
+<tr><td>
 
 [handler](./data-schema.a.handler.md)
 

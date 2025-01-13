@@ -25,6 +25,222 @@ type Query {
 }
 `;
 
+exports[`ai routes conversations 1`] = `
+"type Profile @aws_api_key
+{
+  value: Int
+  unit: String
+}
+
+type Mutation {
+  ChatBot(conversationId: ID!, content: [AmplifyAIContentBlockInput], aiContext: AWSJSON, toolConfiguration: AmplifyAIToolConfigurationInput): AmplifyAIConversationMessage @conversation(aiModel: "anthropic.claude-3-haiku-20240307-v1:0", systemPrompt: "Hello, world!", auth: { strategy: owner, provider: userPools }, tools: [{ name: "myToolQuery", description: "does a thing", queryName: "myToolQuery" }, { name: "anotherToolQuery", description: "does a different thing", queryName: "anotherToolQuery" }]) @aws_cognito_user_pools
+  MultilinePromptChatBot(conversationId: ID!, content: [AmplifyAIContentBlockInput], aiContext: AWSJSON, toolConfiguration: AmplifyAIToolConfigurationInput): AmplifyAIConversationMessage @conversation(aiModel: "anthropic.claude-3-haiku-20240307-v1:0", systemPrompt: "You are a helpful assistant.\\n        Respond in the poetic form of haiku.", auth: { strategy: owner, provider: userPools }, tools: [{ name: "tool_name_for_myToolQuery", description: "does a thing", queryName: "myToolQuery" }, { name: "tool_name_for_anotherToolQuery", description: "does a different thing", queryName: "anotherToolQuery" }]) @aws_cognito_user_pools
+  CustomHandlerChatBot(conversationId: ID!, content: [AmplifyAIContentBlockInput], aiContext: AWSJSON, toolConfiguration: AmplifyAIToolConfigurationInput): AmplifyAIConversationMessage @conversation(aiModel: "anthropic.claude-3-haiku-20240307-v1:0", systemPrompt: "Hello, world!", auth: { strategy: owner, provider: userPools }, handler: { functionName: "FnCustomHandlerChatBot", eventVersion: "1.0" }) @aws_cognito_user_pools
+}
+
+type Query {
+  myToolQuery(a: Int, b: String): Profile @function(name: "FnMyToolQuery") @auth(rules: [{allow: public, provider: apiKey}])
+  anotherToolQuery: String @function(name: "FnAnotherToolQuery") @auth(rules: [{allow: public, provider: apiKey}])
+}
+
+enum AmplifyAIConversationParticipantRole {
+  user
+  assistant
+}
+
+interface AmplifyAIConversationMessage {
+  id: ID!
+  conversationId: ID!
+  associatedUserMessageId: ID
+  role: AmplifyAIConversationParticipantRole
+  content: [AmplifyAIContentBlock]
+  aiContext: AWSJSON
+  toolConfiguration: AmplifyAIToolConfiguration
+  createdAt: AWSDateTime
+  updatedAt: AWSDateTime
+  owner: String
+}
+
+input AmplifyAIDocumentBlockSourceInput {
+  bytes: String
+}
+
+input AmplifyAIDocumentBlockInput {
+  format: String!
+  name: String!
+  source: AmplifyAIDocumentBlockSourceInput!
+}
+
+input AmplifyAIImageBlockSourceInput {
+  bytes: String
+}
+
+input AmplifyAIImageBlockInput {
+  format: String!
+  source: AmplifyAIImageBlockSourceInput!
+}
+
+input AmplifyAIToolUseBlockInput {
+  toolUseId: String!
+  name: String!
+  input: AWSJSON!
+}
+
+input AmplifyAIToolResultContentBlockInput {
+  document: AmplifyAIDocumentBlockInput
+  image: AmplifyAIImageBlockInput
+  json: AWSJSON
+  text: String
+}
+
+input AmplifyAIToolResultBlockInput {
+  content: [AmplifyAIToolResultContentBlockInput!]!
+  toolUseId: String!
+  status: String
+}
+
+type AmplifyAIDocumentBlockSource {
+  bytes: String
+}
+
+type AmplifyAIDocumentBlock {
+  format: String!
+  name: String!
+  source: AmplifyAIDocumentBlockSource!
+}
+
+type AmplifyAIImageBlock {
+  format: String!
+  source: AmplifyAIImageBlockSource!
+}
+
+type AmplifyAIImageBlockSource {
+  bytes: String
+}
+
+type AmplifyAIToolUseBlock {
+  toolUseId: String!
+  name: String!
+  input: AWSJSON!
+}
+
+type AmplifyAIToolResultContentBlock {
+  document: AmplifyAIDocumentBlock
+  image: AmplifyAIImageBlock
+  json: AWSJSON
+  text: String
+}
+
+type AmplifyAIToolResultBlock {
+  content: [AmplifyAIToolResultContentBlock!]!
+  toolUseId: String!
+  status: String
+}
+
+type AmplifyAIContentBlockText {
+  text: String
+}
+
+type AmplifyAIContentBlockImage {
+  image: AmplifyAIImageBlock
+}
+
+type AmplifyAIContentBlockDocument {
+  document: AmplifyAIDocumentBlock
+}
+
+type AmplifyAIContentBlockToolUse {
+  toolUse: AmplifyAIToolUseBlock
+}
+
+type AmplifyAIContentBlockToolResult {
+  toolResult: AmplifyAIToolResultBlock
+}
+
+input AmplifyAIContentBlockInput {
+  text: String
+  document: AmplifyAIDocumentBlockInput
+  image: AmplifyAIImageBlockInput
+  toolResult: AmplifyAIToolResultBlockInput
+  toolUse: AmplifyAIToolUseBlockInput
+}
+
+type AmplifyAIContentBlock {
+  text: String
+  document: AmplifyAIDocumentBlock
+  image: AmplifyAIImageBlock
+  toolResult: AmplifyAIToolResultBlock
+  toolUse: AmplifyAIToolUseBlock
+}
+
+input AmplifyAIToolConfigurationInput {
+  tools: [AmplifyAIToolInput]
+}
+
+input AmplifyAIToolInput {
+  toolSpec: AmplifyAIToolSpecificationInput
+}
+
+input AmplifyAIToolSpecificationInput {
+  name: String!
+  description: String
+  inputSchema: AmplifyAIToolInputSchemaInput!
+}
+
+input AmplifyAIToolInputSchemaInput {
+  json: AWSJSON
+}
+
+type AmplifyAIToolConfiguration {
+  tools: [AmplifyAITool]
+}
+
+type AmplifyAITool {
+  toolSpec: AmplifyAIToolSpecification
+}
+
+type AmplifyAIToolSpecification {
+  name: String!
+  description: String
+  inputSchema: AmplifyAIToolInputSchema!
+}
+
+type AmplifyAIToolInputSchema {
+  json: AWSJSON
+}
+
+type AmplifyAIConversationMessageStreamPart @aws_cognito_user_pools {
+  id: ID!
+  owner: String
+  conversationId: ID!
+  associatedUserMessageId: ID!
+  contentBlockIndex: Int
+  contentBlockText: String
+  contentBlockDeltaIndex: Int
+  contentBlockToolUse: AmplifyAIToolUseBlock
+  contentBlockDoneAtIndex: Int
+  stopReason: String
+  errors: [AmplifyAIConversationTurnError]
+}
+
+type AmplifyAIConversationTurnError @aws_cognito_user_pools {
+  message: String!
+  errorType: String!
+}"
+`;
+
+exports[`ai routes generations 1`] = `
+"type Recipe @model @auth(rules: [{allow: public, provider: apiKey}])
+{
+  ingredients: [String]
+  directions: String
+}
+
+type Query {
+  makeRecipe: Recipe @generation(aiModel: "anthropic.claude-3-haiku-20240307-v1:0", systemPrompt: "Hello, world!") 
+}"
+`;
+
 exports[`custom operations Add entities to SQL schema add custom type, enum, and custom query to generated SQL schema 1`] = `
 "type post @model(timestamps: null) @auth(rules: [{allow: private}])
 {

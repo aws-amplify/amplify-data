@@ -10,7 +10,7 @@ import type { NonModelTypesShape } from '../../src/MappedTypes/ExtractNonModelTy
 
 import {
   ModelIdentifier,
-  RelationalMetadata,
+  RelationshipMetadata,
   ModelSecondaryIndexes,
 } from '../../src/MappedTypes/ModelMetadata';
 import { Json, Nullable } from '../../src/ModelField';
@@ -240,7 +240,7 @@ describe('ModelSecondaryIndexes', () => {
   });
 });
 
-describe('RelationalMetadata', () => {
+describe('RelationshipMetadata', () => {
   test('No meta for relation-less models', () => {
     const s = a.schema({
       Post: a.model({
@@ -251,7 +251,7 @@ describe('RelationalMetadata', () => {
 
     type Schema = typeof s;
 
-    type Resolved = RelationalMetadata<
+    type Resolved = RelationshipMetadata<
       ResolveSchema<Schema>,
       ResolveFieldProperties<Schema, NonModelTypesShape, ResolveSchema<Schema>>,
       ModelIdentifier<SchemaTypes<Schema>>
@@ -285,7 +285,7 @@ describe('RelationalMetadata', () => {
     >;
 
     type Resolved = Prettify<
-      RelationalMetadata<
+      RelationshipMetadata<
         ResolveSchema<Schema>,
         ResolvedFields,
         ModelIdentifier<SchemaTypes<Schema>>
@@ -294,7 +294,7 @@ describe('RelationalMetadata', () => {
 
     type Expected = {
       Comment: {
-        relationalInputFields: {
+        relationshipInputFields: {
           post?:
             | {
                 readonly id: string;
@@ -333,7 +333,7 @@ describe('RelationalMetadata', () => {
       ResolveSchema<Schema>
     >;
     type Resolved = Prettify<
-      RelationalMetadata<
+      RelationshipMetadata<
         ResolveSchema<Schema>,
         ResolvedFields,
         ModelIdentifier<SchemaTypes<Schema>>
@@ -342,7 +342,7 @@ describe('RelationalMetadata', () => {
 
     type Expected = {
       Comment: {
-        relationalInputFields: {
+        relationshipInputFields: {
           post?:
             | {
                 readonly id: string;
@@ -383,7 +383,7 @@ describe('RelationalMetadata', () => {
       ResolveSchema<Schema>
     >;
     type Resolved = Prettify<
-      RelationalMetadata<
+      RelationshipMetadata<
         ResolveSchema<Schema>,
         ResolvedFields,
         ModelIdentifier<SchemaTypes<Schema>>
@@ -392,7 +392,7 @@ describe('RelationalMetadata', () => {
 
     type Expected = {
       Comment: {
-        relationalInputFields: {
+        relationshipInputFields: {
           post?:
             | {
                 customPk: string;
@@ -435,7 +435,7 @@ describe('RelationalMetadata', () => {
     >;
 
     type Resolved = Prettify<
-      RelationalMetadata<
+      RelationshipMetadata<
         ResolveSchema<Schema>,
         ResolvedFields,
         ModelIdentifier<SchemaTypes<Schema>>
@@ -444,7 +444,7 @@ describe('RelationalMetadata', () => {
 
     type Expected = {
       Comment: {
-        relationalInputFields: {
+        relationshipInputFields: {
           post?:
             | {
                 customPk: string;
@@ -482,7 +482,7 @@ describe('RelationalMetadata', () => {
     >;
 
     type Resolved = Prettify<
-      RelationalMetadata<
+      RelationshipMetadata<
         ResolveSchema<Schema>,
         ResolvedFields,
         ModelIdentifier<SchemaTypes<Schema>>
@@ -491,7 +491,7 @@ describe('RelationalMetadata', () => {
 
     type Expected = {
       Comment: {
-        relationalInputFields: {
+        relationshipInputFields: {
           post?:
             | {
                 readonly id: string;
@@ -529,7 +529,7 @@ describe('RelationalMetadata', () => {
       ResolveSchema<Schema>
     >;
     type Resolved = Prettify<
-      RelationalMetadata<
+      RelationshipMetadata<
         ResolveSchema<Schema>,
         ResolvedFields,
         ModelIdentifier<SchemaTypes<Schema>>
@@ -538,7 +538,7 @@ describe('RelationalMetadata', () => {
 
     type Expected = {
       Post: {
-        relationalInputFields: {
+        relationshipInputFields: {
           author?:
             | {
                 readonly id: string;
@@ -552,7 +552,7 @@ describe('RelationalMetadata', () => {
         };
       };
       Author: {
-        relationalInputFields: {
+        relationshipInputFields: {
           post?:
             | {
                 title?: Nullable<string> | undefined;

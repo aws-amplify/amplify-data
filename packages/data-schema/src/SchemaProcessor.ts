@@ -1,12 +1,17 @@
-import { type CustomPathData, type InternalSchema } from './ModelSchema';
+import type { CustomPathData, InternalSchema } from './ModelSchema';
 import {
   type ModelField,
   type InternalField,
   string,
   type BaseModelField,
+  ModelFieldType,
+  __generated,
 } from './ModelField';
-import { type InternalRelationalField } from './ModelRelationalField';
-import type { InternalModel } from './ModelType';
+import {
+  ModelRelationshipTypes,
+  type InternalRelationshipField,
+} from './ModelRelationshipField';
+import type { InternalModel, DisableOperationsOptions } from './ModelType';
 import type { InternalModelIndexType } from './ModelIndex';
 import {
   type Authorization,
@@ -22,11 +27,17 @@ import {
   FunctionSchemaAccess,
   LambdaFunctionDefinition,
   CustomSqlDataSourceStrategy,
+  DatasourceEngine,
 } from '@aws-amplify/data-schema-types';
 import type { InternalRef, RefType } from './RefType';
 import type { EnumType } from './EnumType';
 import type { CustomType, CustomTypeParamShape } from './CustomType';
-import { type InternalCustom, CustomOperationNames } from './CustomOperation';
+import {
+  type InternalCustom,
+  type CustomOperationInput,
+  type GenerationInput,
+  CustomOperationNames,
+} from './CustomOperation';
 import { Brand, getBrand } from './util';
 import {
   getHandlerData,
@@ -34,14 +45,22 @@ import {
   type CustomHandler,
   type SqlReferenceHandler,
   FunctionHandler,
+  AsyncFunctionHandler,
 } from './Handler';
 import * as os from 'os';
 import * as path from 'path';
+import { brandSymbol } from './util/Brand';
+import {
+  brandName as conversationBrandName,
+  type InternalConversationType,
+} from './ai/ConversationType';
+import { CONVERSATION_SCHEMA_GRAPHQL_TYPES } from './ai/ConversationSchemaGraphQLTypes';
+import { createConversationField } from './ai/ConversationSchemaProcessor';
 
 type ScalarFieldDef = Exclude<InternalField['data'], { fieldType: 'model' }>;
 
 type ModelFieldDef = Extract<
-  InternalRelationalField['data'],
+  InternalRelationshipField['data'],
   { fieldType: 'model' }
 >;
 
@@ -57,7 +76,8 @@ function isInternalModel(model: unknown): model is InternalModel {
   if (
     (model as any).data &&
     !isCustomType(model) &&
-    !isCustomOperation(model)
+    !isCustomOperation(model) &&
+    !isConversationRoute(model)
   ) {
     return true;
   }
@@ -78,6 +98,16 @@ function isCustomType(
     return true;
   }
   return false;
+}
+
+function isConversationRoute(type: any): type is InternalConversationType {
+  return getBrand(type) === conversationBrandName;
+}
+
+function isGenerationInput(
+  input?: CustomOperationInput,
+): input is GenerationInput {
+  return Boolean(input?.aiModel && input?.systemPrompt);
 }
 
 function isCustomOperation(type: any): type is InternalCustom {
@@ -125,6 +155,12 @@ function isRefField(
   return isRefFieldDef((field as any)?.data);
 }
 
+function canGenerateFieldType(
+  fieldType: ModelFieldType
+): boolean {
+  return fieldType === 'Int';
+}
+
 function scalarFieldToGql(
   fieldDef: ScalarFieldDef,
   identifier?: readonly string[],
@@ -139,6 +175,7 @@ function scalarFieldToGql(
   } = fieldDef;
   let field: string = fieldType;
 
+
   if (identifier !== undefined) {
     field += '!';
     if (identifier.length > 1) {
@@ -152,6 +189,10 @@ function scalarFieldToGql(
 
     for (const index of secondaryIndexes) {
       field += ` ${index}`;
+    }
+
+    if (_default === __generated) {
+      field += ` @default`;
     }
 
     return field;
@@ -169,7 +210,9 @@ function scalarFieldToGql(
     }
   }
 
-  if (_default !== undefined) {
+  if (_default === __generated) {
+    field += ` @default`;
+  } else if (_default !== undefined) {
     field += ` @default(value: "${_default?.toString()}")`;
   }
 
@@ -252,7 +295,7 @@ function enumFieldToGql(enumName: string, secondaryIndexes: string[] = []) {
 }
 
 function transformFunctionHandler(
-  handlers: FunctionHandler[],
+  handlers: (FunctionHandler | AsyncFunctionHandler)[],
   functionFieldName: string,
 ): {
   gqlHandlerContent: string;
@@ -264,13 +307,16 @@ function transformFunctionHandler(
   handlers.forEach((handler, idx) => {
     const handlerData = getHandlerData(handler);
 
-    if (typeof handlerData === 'string') {
-      gqlHandlerContent += `@function(name: "${handlerData}") `;
-    } else if (typeof handlerData.getInstance === 'function') {
+    if (typeof handlerData.handler === 'string') {
+      gqlHandlerContent += `@function(name: "${handlerData.handler}") `;
+    } else if (typeof handlerData.handler.getInstance === 'function') {
       const fnName = `Fn${capitalize(functionFieldName)}${idx === 0 ? '' : `${idx + 1}`}`;
-
-      lambdaFunctionDefinition[fnName] = handlerData;
-      gqlHandlerContent += `@function(name: "${fnName}") `;
+      lambdaFunctionDefinition[fnName] = handlerData.handler;
+      const invocationTypeArg =
+        handlerData.invocationType === 'Event'
+          ? ', invocationType: Event)'
+          : ')';
+      gqlHandlerContent += `@function(name: "${fnName}"${invocationTypeArg} `;
     } else {
       throw new Error(
         `Invalid value specified for ${functionFieldName} handler.function(). Expected: defineFunction or string.`,
@@ -278,7 +324,10 @@ function transformFunctionHandler(
     }
   });
 
-  return { gqlHandlerContent, lambdaFunctionDefinition };
+  return {
+    gqlHandlerContent,
+    lambdaFunctionDefinition,
+  };
 }
 
 type CustomTypeAuthRules =
@@ -397,14 +446,14 @@ function customOperationToGql(
   }
 
   if (Object.keys(fieldArgs).length > 0) {
-    const { gqlFields, implicitTypes } = processFields(
+    const { gqlFields, implicitTypes: implied } = processFields(
       typeName,
       fieldArgs,
       {},
       {},
     );
     callSignature += `(${gqlFields.join(', ')})`;
-    implicitTypes.push(...implicitTypes);
+    implicitTypes.push(...implied);
   }
 
   const handler = handlers && handlers[0];
@@ -465,7 +514,39 @@ function customOperationToGql(
     gqlHandlerContent += `@aws_subscribe(mutations: ["${subscriptionSources}"]) `;
   }
 
+  if (opType === 'Generation') {
+    if (!isGenerationInput(typeDef.data.input)) {
+      throw new Error(
+        `Invalid Generation Route definition. A Generation Route must include a valid input. ${typeName} has an invalid or no input defined.`,
+      );
+    }
+    const { aiModel, systemPrompt, inferenceConfiguration } =
+      typeDef.data.input;
+
+    // This is done to escape newlines in potentially multi-line system prompts
+    // e.g.
+    // generateStuff: a.generation({
+    //   aiModel: a.ai.model('Claude 3 Haiku'),
+    //   systemPrompt: `Generate a haiku
+    //   make it multiline`,
+    // }),
+    //
+    // It doesn't affect non multi-line string inputs for system prompts
+    const escapedSystemPrompt = systemPrompt.replace(/\r?\n/g, '\\n');
+    const inferenceConfigurationEntries = Object.entries(
+      inferenceConfiguration ?? {},
+    );
+    const inferenceConfigurationGql =
+      inferenceConfigurationEntries.length > 0
+        ? `, inferenceConfiguration: { ${inferenceConfigurationEntries
+            .map(([key, value]) => `${key}: ${value}`)
+            .join(', ')} }`
+        : '';
+    gqlHandlerContent += `@generation(aiModel: "${aiModel.resourcePath}", systemPrompt: "${escapedSystemPrompt}"${inferenceConfigurationGql}) `;
+  }
+
   const gqlField = `${callSignature}: ${returnTypeName} ${gqlHandlerContent}${authString}`;
+
   return {
     gqlField,
     implicitTypes: implicitTypes,
@@ -485,6 +566,34 @@ function escapeGraphQlString(str: string) {
 }
 
 /**
+ * AWS AppSync scalars that are stored as strings in the data source
+ */
+const stringFieldTypes = {
+  ID: true,
+  String: true,
+  AWSDate: true,
+  AWSTime: true,
+  AWSDateTime: true,
+  AWSEmail: true,
+  AWSPhone: true,
+  AWSURL: true,
+  AWSIPAddress: true,
+};
+
+/**
+ * Normalize string-compatible field types for comparison
+ */
+const normalizeStringFieldTypes = (
+  fieldType: ModelFieldType,
+): ModelFieldType => {
+  if (fieldType in stringFieldTypes) {
+    return ModelFieldType.String;
+  }
+
+  return fieldType;
+};
+
+/**
  * Tests whether two ModelField definitions are in conflict.
  *
  * This is a shallow check intended to catch conflicts between defined fields
@@ -496,15 +605,24 @@ function escapeGraphQlString(str: string) {
  * @returns
  */
 function areConflicting(left: BaseModelField, right: BaseModelField): boolean {
-  // These are the only props we care about for this comparison, because the others
+  const leftData = (left as InternalField).data;
+  const rightData = (right as InternalField).data;
+
+  // `array` and `fieldType` are the only props we care about for this comparison, because the others
   // (required, arrayRequired, etc) are not specified on auth or FK directives.
-  const relevantProps = ['array', 'fieldType'] as const;
-  for (const prop of relevantProps) {
-    if (
-      (left as InternalField).data[prop] !== (right as InternalField).data[prop]
-    ) {
-      return true;
-    }
+  if (leftData.array !== rightData.array) {
+    return true;
+  }
+
+  // Convert "string-compatible" field types to `String` for the sake of this comparison
+  //
+  // E.g. if a customer has an explicit a.id() field that they're referencing in an allow.ownerDefinedIn rule
+  // we treat ID and String as equivalent/non-conflicting
+  if (
+    normalizeStringFieldTypes(leftData.fieldType) !==
+    normalizeStringFieldTypes(rightData.fieldType)
+  ) {
+    return true;
   }
 
   return false;
@@ -811,6 +929,37 @@ function processFieldLevelAuthRules(
   return fieldLevelAuthRules;
 }
 
+function validateDBGeneration(fields: Record<string, any>, databaseEngine: DatasourceEngine) {
+  for (const [fieldName, fieldDef] of Object.entries(fields)) {
+    const _default = fieldDef.data?.default;
+    const fieldType = fieldDef.data?.fieldType;
+    const isGenerated = _default === __generated;
+
+    if (isGenerated && databaseEngine !== 'postgresql') {
+      throw new Error(`Invalid field definition for ${fieldName}. DB-generated fields are only supported with PostgreSQL data sources.`);
+    }
+
+    if (isGenerated && !canGenerateFieldType(fieldType)) {
+      throw new Error(`Incompatible field type. Field type ${fieldType} in field ${fieldName} cannot be configured as a DB-generated field.`);
+    }
+  }
+}
+
+function validateNullableIdentifiers(fields: Record<string, any>, identifier?: readonly string[]){
+  for (const [fieldName, fieldDef] of Object.entries(fields)) {
+    const fieldType = fieldDef.data?.fieldType;
+    const required = fieldDef.data?.required;
+    const _default = fieldDef.data?.default;
+    const isGenerated = _default === __generated;
+
+    if (identifier !== undefined && identifier.includes(fieldName)) {
+      if (!required && fieldType !== 'ID' && !isGenerated) {
+        throw new Error(`Invalid identifier definition. Field ${fieldName} cannot be used in the identifier. Identifiers must reference required or DB-generated fields)`);
+      }
+    }
+  }
+}
+
 function processFields(
   typeName: string,
   fields: Record<string, any>,
@@ -819,6 +968,7 @@ function processFields(
   identifier?: readonly string[],
   partitionKey?: string,
   secondaryIndexes: TransformedSecondaryIndexes = {},
+  databaseEngine: DatasourceEngine = 'dynamodb',
 ) {
   const gqlFields: string[] = [];
   // stores nested, field-level type definitions (custom types and enums)
@@ -826,6 +976,8 @@ function processFields(
   const implicitTypes: [string, any][] = [];
 
   validateImpliedFields(fields, impliedFields);
+  validateDBGeneration(fields, databaseEngine);
+  validateNullableIdentifiers(fields, identifier)
 
   for (const [fieldName, fieldDef] of Object.entries(fields)) {
     const fieldAuth = fieldLevelAuthRules[fieldName]
@@ -1037,6 +1189,29 @@ const extractFunctionSchemaAccess = (
   return { schemaAuth, functionSchemaAccess };
 };
 
+/**
+ * Searches a schema and all related schemas (through `.combine()`) for the given type by name.
+ *
+ * @param schema
+ * @param name
+ * @returns
+ */
+const findCombinedSchemaType = (
+  schema: InternalSchema,
+  name: string,
+): unknown | undefined => {
+  if (schema.context) {
+    for (const contextualSchema of schema.context.schemas) {
+      if (contextualSchema.data.types[name]) {
+        return contextualSchema.data.types[name];
+      }
+    }
+  } else {
+    return schema.data.types[name];
+  }
+  return undefined;
+};
+
 type GetRef =
   | {
       type: 'Model';
@@ -1055,12 +1230,14 @@ type GetRef =
  * Returns a closure for retrieving reference type and definition from schema
  */
 const getRefTypeForSchema = (schema: InternalSchema) => {
-  const getRefType = (source: string, target: string): GetRef => {
-    const typeDef = schema.data.types[source];
+  const getRefType = (name: string, referrerName?: string): GetRef => {
+    const typeDef = findCombinedSchemaType(schema, name);
 
     if (typeDef === undefined) {
       throw new Error(
-        `Invalid ref. ${target} is referencing ${source} which is not defined in the schema`,
+        referrerName
+          ? `Invalid ref. ${referrerName} is referring to ${name} which is not defined in the schema`
+          : `Invalid ref. ${name} is not defined in the schema`,
       );
     }
 
@@ -1081,7 +1258,9 @@ const getRefTypeForSchema = (schema: InternalSchema) => {
     }
 
     throw new Error(
-      `Invalid ref. ${target} is referencing ${source} which is neither a Model, Custom Operation, Custom Type, or Enum`,
+      referrerName
+        ? `Invalid ref. ${referrerName} is referring to ${name} which is neither a Model, Custom Operation, Custom Type, or Enum`
+        : `Invalid ref. ${name} is neither a Model, Custom Operation, Custom Type, or Enum`,
     );
   };
 
@@ -1142,6 +1321,7 @@ const schemaPreprocessor = (
   const customQueries = [];
   const customMutations = [];
   const customSubscriptions = [];
+  let shouldAddConversationTypes = false;
 
   // Dict of auth rules to be applied to custom types
   // Inherited from the auth configured on the custom operations that return these custom types
@@ -1154,12 +1334,32 @@ const schemaPreprocessor = (
   const lambdaFunctions: LambdaFunctionDefinition = {};
   const customSqlDataSourceStrategies: CustomSqlDataSourceStrategy[] = [];
 
+  const databaseEngine = schema.data.configuration.database.engine
   const databaseType =
-    schema.data.configuration.database.engine === 'dynamodb'
+    databaseEngine === 'dynamodb'
       ? 'dynamodb'
       : 'sql';
 
   const staticSchema = databaseType === 'sql';
+
+  // If the schema contains a custom operation with an async lambda handler,
+  // we need to add the EventInvocationResponse custom type to the schema.
+  // This is done here so that:
+  // - it only happens once per schema
+  // - downstream validation based on `getRefTypeForSchema` finds the EventInvocationResponse type
+  const containsAsyncLambdaCustomOperation = Object.entries(
+    schema.data.types,
+  ).find(([_, typeDef]) => {
+    return (
+      isCustomOperation(typeDef) &&
+      finalHandlerIsAsyncFunctionHandler(typeDef.data.handlers)
+    );
+  });
+
+  if (containsAsyncLambdaCustomOperation) {
+    schema.data.types['EventInvocationResponse'] =
+      eventInvocationResponseCustomType;
+  }
 
   const topLevelTypes = sortTopLevelTypes(Object.entries(schema.data.types));
 
@@ -1219,6 +1419,10 @@ const schemaPreprocessor = (
           fields,
           authFields,
           fieldLevelAuthRules,
+          undefined,
+          undefined,
+          undefined,
+          databaseEngine
         );
 
         topLevelTypes.push(...implicitTypes);
@@ -1228,6 +1432,8 @@ const schemaPreprocessor = (
         const model = `type ${typeName} ${customAuth}\n{\n  ${joined}\n}`;
         gqlModels.push(model);
       } else if (isCustomOperation(typeDef)) {
+        // TODO: add generation route logic.
+
         const { typeName: opType } = typeDef.data;
 
         const {
@@ -1279,6 +1485,7 @@ const schemaPreprocessor = (
 
         switch (opType) {
           case 'Query':
+          case 'Generation':
             customQueries.push(gqlField);
             break;
           case 'Mutation':
@@ -1290,6 +1497,14 @@ const schemaPreprocessor = (
           default:
             break;
         }
+      } else if (isConversationRoute(typeDef)) {
+        const { field, functionHandler } = createConversationField(
+          typeDef,
+          typeName,
+        );
+        customMutations.push(field);
+        Object.assign(lambdaFunctions, functionHandler);
+        shouldAddConversationTypes = true;
       }
     } else if (staticSchema) {
       const fields = { ...typeDef.data.fields } as Record<
@@ -1318,6 +1533,8 @@ const schemaPreprocessor = (
         fieldLevelAuthRules,
         identifier,
         partitionKey,
+        undefined,
+        databaseEngine,
       );
 
       topLevelTypes.push(...implicitTypes);
@@ -1357,6 +1574,18 @@ const schemaPreprocessor = (
         );
       }
 
+      const getInternalModel = (
+        modelName: string,
+        sourceName?: string,
+      ): InternalModel => {
+        const model = getRefType(modelName, sourceName);
+        if (!isInternalModel(model.def)) {
+          throw new Error(`Expected to find model type with name ${modelName}`);
+        }
+        return model.def;
+      };
+      validateRelationships(typeName, fields, getInternalModel);
+
       const fieldLevelAuthRules = processFieldLevelAuthRules(
         fields,
         authFields,
@@ -1370,12 +1599,19 @@ const schemaPreprocessor = (
         identifier,
         partitionKey,
         transformedSecondaryIndexes,
+        databaseEngine,
       );
       topLevelTypes.push(...implicitTypes);
 
       const joined = gqlFields.join('\n  ');
 
-      const model = `type ${typeName} @model ${authString}\n{\n  ${joined}\n}`;
+      const modelAttrs = modelAttributesFromDisabledOps(
+        typeDef.data.disabledOperations,
+      );
+
+      const modelDirective = modelAttrs ? `@model(${modelAttrs})` : '@model';
+
+      const model = `type ${typeName} ${modelDirective} ${authString}\n{\n  ${joined}\n}`;
       gqlModels.push(model);
     }
   }
@@ -1387,6 +1623,9 @@ const schemaPreprocessor = (
   };
 
   gqlModels.push(...generateCustomOperationTypes(customOperations));
+  if (shouldAddConversationTypes) {
+    gqlModels.push(CONVERSATION_SCHEMA_GRAPHQL_TYPES);
+  }
 
   const processedSchema = gqlModels.join('\n\n');
 
@@ -1411,8 +1650,9 @@ function validateCustomOperations(
   const authConfigured = authRules.length > 0;
 
   if (
-    (authConfigured && !handlerConfigured) ||
-    (handlerConfigured && !authConfigured)
+    opType !== 'Generation' &&
+    ((authConfigured && !handlerConfigured) ||
+      (handlerConfigured && !authConfigured))
   ) {
     // Deploying a custom operation with auth and no handler reference OR
     // with a handler reference but no auth
@@ -1432,22 +1672,36 @@ function validateCustomOperations(
     }
 
     if (configuredHandlers.size > 1) {
-      const configuredHandlersStr = JSON.stringify(
-        Array.from(configuredHandlers),
-      );
-      throw new Error(
-        `Field handlers must be of the same type. ${typeName} has been configured with ${configuredHandlersStr}`,
-      );
+      configuredHandlers.delete('asyncFunctionHandler');
+      configuredHandlers.delete('functionHandler');
+      if (configuredHandlers.size > 0) {
+        const configuredHandlersStr = JSON.stringify(
+          Array.from(configuredHandlers),
+        );
+        throw new Error(
+          `Field handlers must be of the same type. ${typeName} has been configured with ${configuredHandlersStr}`,
+        );
+      }
     }
   }
 
   if (
     typeDef.data.returnType === null &&
-    (opType === 'Query' || opType === 'Mutation')
+    (opType === 'Query' || opType === 'Mutation' || opType === 'Generation')
   ) {
-    throw new Error(
-      `Invalid Custom ${opType} definition. A Custom ${opType} must include a return type. ${typeName} has no return type specified.`,
-    );
+    // TODO: There should be a more elegant and readable way to handle this check.
+    // Maybe it's not even necessary anymore since we're the setting returnType in the handler() method.
+    if (
+      !handlers ||
+      handlers.length === 0 ||
+      handlers[handlers.length - 1][brandSymbol] !== 'asyncFunctionHandler'
+    ) {
+      const typeDescription =
+        opType === 'Generation' ? 'Generation Route' : `Custom ${opType}`;
+      throw new Error(
+        `Invalid ${typeDescription} definition. A ${typeDescription} must include a return type. ${typeName} has no return type specified.`,
+      );
+    }
   }
 
   if (opType !== 'Subscription' && subscriptionSource.length > 0) {
@@ -1532,8 +1786,20 @@ const isCustomHandler = (
 
 const isFunctionHandler = (
   handler: HandlerType[] | null,
-): handler is FunctionHandler[] => {
-  return Array.isArray(handler) && getBrand(handler[0]) === 'functionHandler';
+): handler is (FunctionHandler | AsyncFunctionHandler)[] => {
+  return (
+    Array.isArray(handler) &&
+    ['functionHandler', 'asyncFunctionHandler'].includes(getBrand(handler[0]))
+  );
+};
+
+const finalHandlerIsAsyncFunctionHandler = (
+  handler: HandlerType[] | null,
+): handler is AsyncFunctionHandler[] => {
+  return (
+    Array.isArray(handler) &&
+    getBrand(handler[handler.length - 1]) === 'asyncFunctionHandler'
+  );
 };
 
 const normalizeDataSourceName = (
@@ -1617,6 +1883,22 @@ const handleCustom = (
   return jsFn;
 };
 
+const eventInvocationResponseCustomType = {
+  data: {
+    fields: {
+      success: {
+        data: {
+          fieldType: ModelFieldType.Boolean,
+          required: true,
+          array: false,
+          arrayRequired: false,
+        },
+      },
+    },
+    type: 'customType',
+  },
+};
+
 function transformCustomOperations(
   typeDef: InternalCustom,
   typeName: string,
@@ -1625,12 +1907,18 @@ function transformCustomOperations(
   getRefType: ReturnType<typeof getRefTypeForSchema>,
 ) {
   const { typeName: opType, handlers } = typeDef.data;
+
   let jsFunctionForField: JsResolver | undefined = undefined;
 
   validateCustomOperations(typeDef, typeName, authRules, getRefType);
 
   if (isCustomHandler(handlers)) {
-    jsFunctionForField = handleCustom(handlers, opType, typeName);
+    jsFunctionForField = handleCustom(
+      handlers,
+      // Generation routes should not have handlers
+      opType as Exclude<typeof opType, 'Generation'>,
+      typeName,
+    );
   }
 
   const isCustom = Boolean(jsFunctionForField);
@@ -1729,6 +2017,444 @@ function extractNestedCustomTypeNames(
   );
 
   return nestedCustomTypeNames;
+}
+
+/**
+ * Validates that defined relationships conform to the following rules.
+ * - relationships are bidirectional
+ *   - hasOne has a belongsTo counterpart
+ *   - hasMany has a belongsTo counterpart
+ *   - belongsTo has either a hasOne or hasMany counterpart
+ * - both sides of a relationship have identical `references` defined.
+ * - the `references` match the primary key of the parent model
+ *   - references[0] is the primaryKey's partitionKey on the parent model
+ *   - references[1...n] are the primaryKey's sortKey(s) on the parent model
+ *   - types match (id / string / number)
+ * - the `references` are fields defined on the child model
+ *   - field names match the named `references` arguments
+ *   - child model references fields types match those of the parent model's primaryKey
+ * @param typeName source model's type name.
+ * @param record map of field name to {@link ModelField}
+ * @param getInternalModel given a model name, return an {@link InternalModel}
+ */
+function validateRelationships(
+  typeName: string,
+  record: Record<string, ModelField<any, any>>,
+  getInternalModel: (
+    modelName: string,
+    referringModelName?: string,
+  ) => InternalModel,
+) {
+  for (const [name, field] of Object.entries(record)) {
+    // If the field's type is not a model, there's no relationship
+    // to evaluate and we can skip this iteration.
+    if (!isModelField(field)) {
+      continue;
+    }
+
+    // Create a structure representing the relationship for validation.
+    const relationship = getModelRelationship(
+      typeName,
+      { name: name, def: field.data },
+      getInternalModel,
+    );
+
+    // Validate that the references defined in the relationship follow the
+    // relationship definition rules.
+    validateRelationshipReferences(relationship);
+  }
+}
+
+/**
+ * Helper function that describes the relationship of a given connection field for use in logging or error messages.
+ *
+ * `Parent.child: Child @hasMany(references: ['parentId'])`
+ * -- or --
+ * `Child.parent: Parent @belongsTo(references: ['parentId'])`
+ * @param sourceField The {@link ConnectionField} to describe.
+ * @param sourceModelName The name of the model within which the sourceField is defined.
+ * @returns a 'string' describing the relationship
+ */
+function describeConnectFieldRelationship(
+  sourceField: ConnectionField,
+  sourceModelName: string,
+): string {
+  const associatedTypeDescription = sourceField.def.array
+    ? `[${sourceField.def.relatedModel}]`
+    : sourceField.def.relatedModel;
+  const referencesDescription =
+    sourceField.def.references
+      .reduce(
+        (description, reference) => description + `'${reference}', `,
+        'references: [',
+      )
+      .slice(0, -2) + ']';
+  return `${sourceModelName}.${sourceField.name}: ${associatedTypeDescription} @${sourceField.def.type}(${referencesDescription})`;
+}
+
+/**
+ * Validates that the types of child model's reference fields match the types of the parent model's identifier fields.
+ * @param relationship The {@link ModelRelationship} to validate.
+ */
+function validateRelationshipReferences(relationship: ModelRelationship) {
+  const {
+    parent,
+    parentConnectionField,
+    child,
+    childConnectionField,
+    references,
+  } = relationship;
+  const parentIdentifiers = getIndentifierTypes(parent);
+
+  const childReferenceTypes: ModelFieldType[] = [];
+  // Iterate through the model schema defined 'references' to find each matching field on the Related model.
+  // If a field by that name is not found, throw a validate error.
+  // Accumulate the ModelFieldType for each reference field to validate matching types below.
+  for (const reference of references) {
+    const relatedReferenceType = child.data.fields[reference]?.data
+      .fieldType as ModelFieldType;
+    // reference field on related type with name passed to references not found. Time to throw a validation error.
+    if (!relatedReferenceType) {
+      const errorMessage =
+        `reference field '${reference}' must be defined on ${parentConnectionField.def.relatedModel}. ` +
+        describeConnectFieldRelationship(
+          parentConnectionField,
+          childConnectionField.def.relatedModel,
+        ) +
+        ' <-> ' +
+        describeConnectFieldRelationship(
+          childConnectionField,
+          parentConnectionField.def.relatedModel,
+        );
+      throw new Error(errorMessage);
+    }
+    childReferenceTypes.push(relatedReferenceType);
+  }
+
+  if (parentIdentifiers.length !== childReferenceTypes.length) {
+    throw new Error(
+      `The identifiers defined on ${childConnectionField.def.relatedModel} must match the reference fields defined on ${parentConnectionField.def.relatedModel}.\n` +
+        `${parentIdentifiers.length} identifiers defined on ${childConnectionField.def.relatedModel}.\n` +
+        `${childReferenceTypes.length} reference fields found on ${parentConnectionField.def.relatedModel}`,
+    );
+  }
+
+  const matchingModelFieldType = (
+    a: ModelFieldType,
+    b: ModelFieldType,
+  ): boolean => {
+    // `String` and `Id` are considered equal types for when comparing
+    // the child model's references fields with their counterparts within
+    // the parent model's identifier (parent key) fields.
+    const matching = [ModelFieldType.Id, ModelFieldType.String];
+    return a === b || (matching.includes(a) && matching.includes(b));
+  };
+
+  // Zip pairs of child model's reference field with corresponding parent model's identifier field.
+  // Confirm that the types match. If they don't, throw a validation error.
+  parentIdentifiers
+    .map((identifier, index) => [identifier, childReferenceTypes[index]])
+    .forEach(([parent, child]) => {
+      if (!matchingModelFieldType(parent, child)) {
+        throw new Error('Validate Error: types do not match');
+      }
+    });
+}
+
+/**
+ * Internal convenience type that contains the name of the connection field along with
+ * its {@link ModelFieldDef}.
+ */
+type ConnectionField = {
+  name: string;
+  def: ModelFieldDef;
+};
+
+/**
+ * An internal representation of a model relationship used by validation functions.
+ * Use {@link getModelRelationship} to create this.
+ * See {@link validateRelationshipReferences} for validation example.
+ */
+type ModelRelationship = {
+  /**
+   * The model that is referred to by the child.
+   */
+  parent: InternalModel;
+
+  /**
+   * The field on the parent into which the child model(s) is/are populated.
+   */
+  parentConnectionField: ConnectionField;
+
+  /**
+   * The model that refers to the parent.
+   */
+  child: InternalModel;
+
+  /**
+   * The field on the child into which the parent is loaded.
+   */
+  childConnectionField: ConnectionField;
+
+  /**
+   * The field names on the child that refer to the parent's PK.
+   *
+   * Both sides of the relationship must identify these "references" fields which
+   * names the child FK fields. So, regardless of which side of the relationship
+   * is explored, if the relationship definition is valid, these fields will be
+   * the same.
+   */
+  references: string[];
+};
+
+/**
+ * Relationship definitions require bi-directionality.
+ * Use this to generate a `ModelRelationshipTypes[]` containing acceptable counterparts on the
+ * associated model.
+ *
+ * Given {@link ModelRelationshipTypes.hasOne} or {@link ModelRelationshipTypes.hasOne} returns [{@link ModelRelationshipTypes.belongsTo}]
+ * Given {@link ModelRelationshipTypes.belongsTo} returns [{@link ModelRelationshipTypes.hasOne}, {@link ModelRelationshipTypes.belongsTo}]
+ *
+ * @param relationshipType {@link ModelRelationshipTypes} defined on source model's connection field.
+ * @returns possible counterpart {@link ModelRelationshipTypes} as `ModelRelationshipTypes[]`
+ */
+function associatedRelationshipTypes(
+  relationshipType: ModelRelationshipTypes,
+): ModelRelationshipTypes[] {
+  switch (relationshipType) {
+    case ModelRelationshipTypes.hasOne:
+    case ModelRelationshipTypes.hasMany:
+      return [ModelRelationshipTypes.belongsTo];
+    case ModelRelationshipTypes.belongsTo:
+      return [ModelRelationshipTypes.hasOne, ModelRelationshipTypes.hasMany];
+    default:
+      return []; // TODO: Remove this case on types are updated.
+  }
+}
+
+/**
+ * Retrieves the types of the identifiers defined on a model.
+ *
+ * Note: if a field by the name `id` isn't found in the {@link InternalModel},
+ * this assumes an implicitly generated identifier is used with the type.
+ *
+ * This function does not validate that a corresponding field exists for each of the
+ * identifiers because this validation happens at compile time.
+ * @param model {@link InternalModel} from which to retrieve identifier types.
+ * @returns Array of {@link ModelFieldType} of the model's identifiers found.
+ */
+function getIndentifierTypes(model: InternalModel): ModelFieldType[] {
+  return model.data.identifier.flatMap((fieldName) => {
+    const field = model.data.fields[fieldName];
+    if (field) {
+      return [field.data.fieldType as ModelFieldType];
+    } else if (fieldName === 'id') {
+      // implicity generated ID
+      return [ModelFieldType.Id];
+    }
+    return [];
+  });
+}
+
+/**
+ * Given a relationship definition within a source model (`sourceModelName`, `sourceConnectionField`) and
+ * the associated model (`associatedModel`), this finds the connection field for the relationship defined on the
+ * associated model. Invalid states, such a 0 or >1 matching connection fields result in an error.
+ * @param sourceModelName
+ * @param sourceConnectionField
+ * @param associatedModel
+ * @returns
+ */
+function getAssociatedConnectionField(
+  sourceModelName: string,
+  sourceConnectionField: ConnectionField,
+  associatedModel: InternalModel,
+): ConnectionField {
+  const associatedRelationshipOptions = associatedRelationshipTypes(
+    sourceConnectionField.def.type,
+  );
+  // Iterate through the associated model's fields to find the associated connection field for the relationship defined on the source model.
+  const associatedConnectionFieldCandidates = Object.entries(
+    associatedModel.data.fields,
+  ).filter(([_key, connectionField]) => {
+    // If the field isn't a model, it's not part of the relationship definition -- ignore the field.
+    if (!isModelField(connectionField)) {
+      return false;
+    }
+
+    // In order to find that associated connection field, we need to do some validation that we'll depend on further downstream.
+    // 1. Field type matches the source model's type.
+    // 2. A valid counterpart relationship modifier is defined on the field. See `associatedRelationshipTypes` for more information.
+    // 3. The reference arguments provided to the field match (element count + string comparison) references passed to the source connection field.
+    return (
+      connectionField.data.relatedModel === sourceModelName &&
+      associatedRelationshipOptions.includes(connectionField.data.type) &&
+      connectionField.data.references.length ===
+        sourceConnectionField.def.references.length &&
+      connectionField.data.references.every(
+        (value, index) => value === sourceConnectionField.def.references[index],
+      )
+    );
+  });
+
+  // We should have found exactly one connection field candidate. If that's not the case, we need to throw a validation error.
+  if (associatedConnectionFieldCandidates.length != 1) {
+    // const associatedModelDescription = sourceConnectionField.def.array
+    // ? `[${sourceConnectionField.def.relatedModel}]`
+    // : sourceConnectionField.def.relatedModel
+    const sourceConnectionFieldDescription = describeConnectFieldRelationship(
+      sourceConnectionField,
+      sourceModelName,
+    ); // `${sourceModelName}.${sourceConnectionField.name}: ${associatedModelDescription} @${sourceConnectionField.def.type}(references: [${sourceConnectionField.def.references}])`
+    const errorMessage =
+      associatedConnectionFieldCandidates.length === 0
+        ? `Unable to find associated relationship definition in ${sourceConnectionField.def.relatedModel}`
+        : `Found multiple relationship associations with ${associatedConnectionFieldCandidates.map((field) => `${sourceConnectionField.def.relatedModel}.${field[0]}`).join(', ')}`;
+    throw new Error(`${errorMessage} for ${sourceConnectionFieldDescription}`);
+  }
+
+  const associatedConnectionField = associatedConnectionFieldCandidates[0];
+  if (!isModelField(associatedConnectionField[1])) {
+    // This shouldn't happen because we've validated that it's a model field above.
+    // However it's necessary to narrow the type.
+    // const associatedModelDescription = sourceConnectionField.def.array
+    // ? `[${sourceConnectionField.def.relatedModel}]`
+    // : sourceConnectionField.def.relatedModel
+    const sourceConnectionFieldDescription = describeConnectFieldRelationship(
+      sourceConnectionField,
+      sourceModelName,
+    );
+    const errorMessage = `Cannot find counterpart to relationship defintion for ${sourceConnectionFieldDescription}`;
+    throw new Error(errorMessage);
+  }
+
+  return {
+    name: associatedConnectionField[0],
+    def: associatedConnectionField[1].data,
+  };
+}
+
+/**
+ * Given either side of a relationship (source), this retrieves the other side (related)
+ * and packages the information neatly into a {@link ModelRelationship} for validation purposes.
+ *
+ * @param sourceModelName
+ * @param sourceConnectionField
+ * @param getInternalModel
+ * @returns a {@link ModelRelationship}
+ */
+function getModelRelationship(
+  sourceModelName: string,
+  sourceModelConnectionField: ConnectionField,
+  getInternalModel: (
+    modelName: string,
+    referringModelName?: string,
+  ) => InternalModel,
+): ModelRelationship {
+  const sourceModel = getInternalModel(sourceModelName, sourceModelName);
+  const associatedModel = getInternalModel(
+    sourceModelConnectionField.def.relatedModel,
+    sourceModelName,
+  );
+
+  const relatedModelConnectionField = getAssociatedConnectionField(
+    sourceModelName,
+    sourceModelConnectionField,
+    associatedModel,
+  );
+
+  switch (sourceModelConnectionField.def.type) {
+    case ModelRelationshipTypes.hasOne:
+    case ModelRelationshipTypes.hasMany:
+      return {
+        parent: sourceModel,
+        parentConnectionField: sourceModelConnectionField,
+        child: associatedModel,
+        childConnectionField: relatedModelConnectionField,
+        references: sourceModelConnectionField.def.references,
+      };
+    case ModelRelationshipTypes.belongsTo:
+      return {
+        parent: associatedModel,
+        parentConnectionField: relatedModelConnectionField,
+        child: sourceModel,
+        childConnectionField: sourceModelConnectionField,
+        references: sourceModelConnectionField.def.references,
+      };
+    default:
+      throw new Error(
+        `"${sourceModelConnectionField.def.type}" is not a valid relationship type.`,
+      );
+  }
+}
+
+/**
+ *
+ * @param disabledOps
+ * @returns sanitized string @model directive attribute; can be passed in as-is
+ *
+ * @example
+ * ```ts
+ * const disabledOps = ["subscriptions", "create"];
+ * ```
+ * returns
+ * ```
+ * subscriptions:null,mutations:{create:null}
+ * ```
+ */
+function modelAttributesFromDisabledOps(
+  disabledOps: ReadonlyArray<DisableOperationsOptions>,
+) {
+  const fineCoarseMap: Record<string, string> = {
+    onCreate: 'subscriptions',
+    onUpdate: 'subscriptions',
+    onDelete: 'subscriptions',
+    create: 'mutations',
+    update: 'mutations',
+    delete: 'mutations',
+    list: 'queries',
+    get: 'queries',
+  };
+
+  const coarseGrainedOps = ['queries', 'mutations', 'subscriptions'];
+
+  const coarseFirstSorted = disabledOps
+    // disabledOps is readOnly; create a copy w/ slice
+    .slice()
+    .sort((a: DisableOperationsOptions, b: DisableOperationsOptions) => {
+      if (coarseGrainedOps.includes(a) && !coarseGrainedOps.includes(b)) {
+        return -1;
+      }
+
+      if (!coarseGrainedOps.includes(a) && coarseGrainedOps.includes(b)) {
+        return 1;
+      }
+
+      return 0;
+    });
+
+  const modelAttrs: Record<string, null | Record<string, null>> = {};
+
+  for (const op of coarseFirstSorted) {
+    if (coarseGrainedOps.includes(op)) {
+      modelAttrs[op] = null;
+      continue;
+    }
+
+    const coarseOp = fineCoarseMap[op];
+
+    if (modelAttrs[coarseOp] !== null) {
+      modelAttrs[coarseOp] = modelAttrs[coarseOp] || {};
+
+      modelAttrs[coarseOp]![op] = null;
+    }
+  }
+
+  const modelAttrsStr = JSON.stringify(modelAttrs)
+    .replace(/"/g, '') // remove quotes
+    .slice(1, -1); // drop outer curlies {}
+
+  return modelAttrsStr;
 }
 
 /**

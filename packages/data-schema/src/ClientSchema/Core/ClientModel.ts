@@ -2,6 +2,7 @@ import type {
   deferredRefResolvingPrefix,
   ModelTypeParamShape,
   ModelDefaultIdentifier,
+  DisableOperationsOptions,
 } from '../../ModelType';
 import type { ClientSchemaProperty } from './ClientSchemaProperty';
 import type { Authorization, ImpliedAuthFields } from '../../Authorization';
@@ -17,7 +18,7 @@ import type {
   Prettify,
 } from '@aws-amplify/data-schema-types';
 import type { ModelField } from '../../ModelField';
-import type { ModelRelationalField } from '../../ModelRelationalField';
+import type { ModelRelationshipField } from '../../ModelRelationshipField';
 import type { EnumType } from '../../EnumType';
 import type { CustomType, CustomTypeParamShape } from '../../CustomType';
 import type { RefType } from '../../RefType';
@@ -58,8 +59,36 @@ export interface ClientModel<
     rawType: T;
     // custom selection set-optimized type with limited depth and flattened relationships
     flatModel: FlatClientFields<Bag, Metadata, false, T, K>;
+    disabledOperations: DisabledOpsToMap<T['disabledOperations']>;
   };
 }
+
+/**
+ * Creates a map of disabled operations, expanding coarse-grained ops into fine-grained ones
+ * The map is used in runtime/client/index.ts to Omit any disabled ops from the data-client types
+ *
+ * @example
+ * a.model({...}).disableOperations(['update', 'subscriptions'])
+ * Returns
+ * {
+ *   update: true;
+ *   onCreate: true;
+ *   onUpdate: true;
+ *   onDelete: true;
+ *   observeQuery: true;
+ * }
+ */
+type DisabledOpsToMap<Ops extends ReadonlyArray<DisableOperationsOptions>> = {
+  [Op in Ops[number] as Op extends 'queries'
+    ? 'list' | 'get' | 'observeQuery'
+    : Op extends 'mutations'
+      ? 'create' | 'update' | 'delete'
+      : Op extends 'subscriptions'
+        ? 'onCreate' | 'onUpdate' | 'onDelete' | 'observeQuery'
+        : Op extends 'list'
+          ? 'list' | 'observeQuery'
+          : Op]: true;
+};
 
 type ClientFields<
   Bag extends Record<string, unknown>,
@@ -155,7 +184,7 @@ type ImpliedAuthFieldsFromFields<T> = UnionToIntersection<
   T extends ModelTypeParamShape
     ? T['fields'][keyof T['fields']] extends
         | ModelField<any, any, infer Auth>
-        | ModelRelationalField<any, any, any, infer Auth>
+        | ModelRelationshipField<any, any, any, infer Auth>
         | RefType<any, any, infer Auth>
       ? Auth extends Authorization<any, any, any>
         ? ImpliedAuthFields<Auth>
@@ -258,7 +287,7 @@ export type IndexQueryInput<
  */
 
 /**
- * All required fields and relational fields, exclude readonly fields
+ * All required fields and relationship fields, exclude readonly fields
  */
 type MutationInput<
   Model extends ClientModel<any, any, any, any, any>,

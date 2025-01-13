@@ -21,6 +21,7 @@ describe('Create, update, and delete application data', () => {
   // https://docs.amplify.aws/gen2/build-a-backend/data/mutate-data/
 
   // data/resource.ts
+  // #region covers 93fbc94ef4f108d8
   const schema = a.schema({
     Todo: a
       .model({
@@ -34,6 +35,7 @@ describe('Create, update, and delete application data', () => {
         allow.publicApiKey().to(['read']),
       ]),
   });
+  // #endregion
   type Schema = ClientSchema<typeof schema>;
 
   afterEach(() => {
@@ -54,7 +56,7 @@ describe('Create, update, and delete application data', () => {
     const config = await buildAmplifyConfig(schema);
     // #endregion mocking
 
-    // #region docs code
+    // #region covers 3137a2b60aedf773, 95716a52d6270a63, 526c23ab1a272548
     // App.tsx
     Amplify.configure(config);
     const client = generateClient<Schema>();
@@ -62,7 +64,7 @@ describe('Create, update, and delete application data', () => {
       content: 'My new todo',
       done: true,
     });
-    // #endregion docs code
+    // #endregion
 
     // #region assertions
     expect(optionsAndHeaders(spy)).toMatchSnapshot();
@@ -85,15 +87,14 @@ describe('Create, update, and delete application data', () => {
     const config = await buildAmplifyConfig(schema);
     // #endregion mocking
 
-    // #region docs code
-    // App.tsx
+    // #region covers 704cbd0a4efed24a
     Amplify.configure(config);
     const client = generateClient<Schema>();
     const { data: updatedTodo, errors } = await client.models.Todo.update({
       id: 'some_id',
       description: 'Updated description',
     });
-    // #endregion docs code
+    // #endregion
 
     // #region assertions
     expect(optionsAndHeaders(spy)).toMatchSnapshot();
@@ -116,8 +117,7 @@ describe('Create, update, and delete application data', () => {
     const config = await buildAmplifyConfig(schema);
     // #endregion mocking
 
-    // #region docs code
-    // App.tsx
+    // #region covers 14bd2ab04fd722de, a0aebe5c8b5a2797
     Amplify.configure(config);
     const client = generateClient<Schema>();
     const toBeDeletedTodo = {
@@ -125,7 +125,7 @@ describe('Create, update, and delete application data', () => {
     };
     const { data: deletedTodo, errors } =
       await client.models.Todo.delete(toBeDeletedTodo);
-    // #endregion docs code
+    // #endregion
 
     // #region assertions
     expect(optionsAndHeaders(spy)).toMatchSnapshot();

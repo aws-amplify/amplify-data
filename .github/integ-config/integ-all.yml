@@ -1,0 +1,8 @@
+tests:
+  - test_name: integ_next_api_data_client_gen2
+    desc: Next.js Data Client Gen 2
+    framework: next
+    category: api
+    sample_name: [data-client-gen2]
+    spec: data-client-gen2
+    browser: [chrome] # TODO: investigate adding FF. See https://github.com/aws-amplify/amplify-js/pull/12726.

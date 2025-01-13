@@ -1,5 +1,264 @@
 # @aws-amplify/data-schema
 
+## 1.17.2
+
+### Patch Changes
+
+- 56cf00c: Fix DeepPickFromPath unable to flatten arrays in a join table
+
+## 1.17.1
+
+### Patch Changes
+
+- 08727a2: add Amazon Nova Micro, Lite, and Pro models
+
+## 1.17.0
+
+### Minor Changes
+
+- 2a9282b: Disable additional .array() modifier on model field definition
+
+### Patch Changes
+
+- 5945ba9: add Amazon Nova Micro, Lite, and Pro models
+- cd8f4bd: fix: custom sel. set return type for array custom types
+
+## 1.16.1
+
+### Patch Changes
+
+- ba19bb4: fix prevent mis model mismatch
+
+## 1.16.0
+
+### Minor Changes
+
+- 068f8af: Fix: change accumulator return type for initializeModel function
+
+## 1.15.0
+
+### Minor Changes
+
+- e7ff339: Remove experimental tag for AI functions and types
+
+## 1.14.2
+
+### Patch Changes
+
+- ca505f9: Add Claude 3.5 Haiku and 3.5 Sonnet v2 models
+
+## 1.14.1
+
+### Patch Changes
+
+- 7e71444: rename conversation route supporting types with AmplifyAI prefix
+
+## 1.14.0
+
+### Minor Changes
+
+- a0849fc: require .authorization on conversation routes
+- a0849fc: Support model and custom op query tools, update tool definition API to a.ai.dataTool
+
+## 1.13.4
+
+### Patch Changes
+
+- 7d3c2bf: fix: Export ResourceAuthorization to fix related declaration errors
+
+## 1.13.3
+
+### Patch Changes
+
+- 85ab30c: Add associatedUserMessageId to ConversationMessage. Refactor conversation graphql supporting types.
+
+## 1.13.2
+
+### Patch Changes
+
+- 723b301: fix: Add exports for combine schema
+
+## 1.13.1
+
+### Patch Changes
+
+- 34b4fef: make ConversationMessageStreamPart.contentBlockIndex optional for error events
+
+## 1.13.0
+
+### Minor Changes
+
+- 20f30fe: add streaming support for conversation routes
+- 20f30fe: propagate conversation errors through subscription
+
+## 1.12.2
+
+### Patch Changes
+
+- 060a3b6: Added null check to handle potential null data in API response (issue #13941)
+
+## 1.12.1
+
+### Patch Changes
+
+- 4dba12c: fix create and update conversation missing / malformed input
+
+## 1.12.0
+
+### Minor Changes
+
+- b98059b: Adding an update function to AI conversations to update metadata and name fields. Also adding optional metadata and name fields to create function.
+
+## 1.11.0
+
+### Minor Changes
+
+- 1a671ab: allow nullable identifiers
+
+## 1.10.2
+
+### Patch Changes
+
+- 8497f22: Move AiModel to data-schema-types
+- Updated dependencies [8497f22]
+  - @aws-amplify/data-schema-types@1.2.0
+
+## 1.10.1
+
+### Patch Changes
+
+- b0b6007: Narrow down type for custom conversation handler
+
+## 1.10.0
+
+### Minor Changes
+
+- 400096f: fix: Exports needed to build customer declaration files for common cases
+
+## 1.9.2
+
+### Patch Changes
+
+- 52b79da: include custom conversation handler in lambdaDefinitions
+
+## 1.9.1
+
+### Patch Changes
+
+- a316ab3: support multiline systemPrompt input for conversation and generation definitions
+
+## 1.9.0
+
+### Minor Changes
+
+- 9e99f59: Implement support for generated (auto-increment) fields using `.default()`.
+
+## 1.8.1
+
+### Patch Changes
+
+- 29f13a4: Expose name, metadata, createdAt, updatedAt in Covnersation Type
+
+## 1.8.0
+
+### Minor Changes
+
+- 6eb40fc: Add conversation delete api, re-organized AiAction enums to align with Amplify-JS"
+
+## 1.7.0
+
+### Minor Changes
+
+- 1d9bd61: Add conversation delete api, re-organized AiAction enums to align with Amplify-JS"
+
+## 1.6.3
+
+### Patch Changes
+
+- 5441ead: Add ability to override user agent with granular actions
+
+## 1.6.2
+
+### Patch Changes
+
+- 8281be2: fix: timestamps in model props breaks runtime
+
+## 1.6.1
+
+### Patch Changes
+
+- 79e8873: fix: Custom operation Ref return works with null/undefined responses
+
+## 1.6.0
+
+### Minor Changes
+
+- adf9f6e: add support for async lambda function handlers
+
+## 1.5.1
+
+### Patch Changes
+
+- b7400b1: fixes result parsing for observeQuery, onCreate, onUpdate, and onDelete operations
+
+## 1.5.0
+
+### Minor Changes
+
+- 6028bf7: Add AI routes to client
+
+## 1.4.1
+
+### Patch Changes
+
+- ed16182: adds selectionSet types to mutation operations
+
+## 1.4.0
+
+### Minor Changes
+
+- 27a0cec: add model .disableOperations() modifier
+
+### Patch Changes
+
+- 2a144f8: fixed cancel behavior for modeled operations
+
+## 1.3.10
+
+### Patch Changes
+
+- f4a47cc: fix subscription filter input types
+
+## 1.3.9
+
+### Patch Changes
+
+- 43c3163: add relationship validation in schema processor
+
+## 1.3.8
+
+### Patch Changes
+
+- 6a5a69c: fix index query support with reqRes client
+
+## 1.3.7
+
+### Patch Changes
+
+- 9b387bc: fix types and handling of enums in custom operation arguments
+
+## 1.3.6
+
+### Patch Changes
+
+- 7175920: allow ownerDefinedIn to reference string-compatible field types
+
+## 1.3.5
+
+### Patch Changes
+
+- aeb07d5: Fix sort key input name for timestamp
+
 ## 1.3.4
 
 ### Patch Changes

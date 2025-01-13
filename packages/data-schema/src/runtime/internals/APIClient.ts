@@ -1,7 +1,6 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 
 // SPDX-License-Identifier: Apache-2.0
-
 import {
   AmplifyServer,
   AssociationBelongsTo,
@@ -21,7 +20,8 @@ import {
 } from '../bridge-types';
 
 import { CustomHeaders } from '../client';
-import { resolveOwnerFields, capitalize } from '../utils';
+import { resolveOwnerFields, capitalize, selfAwareAsync } from '../utils';
+import { extendCancellability } from './cancellation';
 
 import type { IndexMeta } from './operations/indexQuery';
 
@@ -46,7 +46,7 @@ const skGraphQlFieldTypeMap = {
   AWSDate: 'String',
   AWSTime: 'String',
   AWSDateTime: 'String',
-  AWSTimestamp: 'String',
+  AWSTimestamp: 'Int',
   AWSEmail: 'String',
   AWSPhone: 'String',
   AWSURL: 'String',
@@ -203,8 +203,10 @@ export function initializeModel(
     .map(([fieldName]) => fieldName);
 
   return result.map((record) => {
-    const initializedRelationalFields: Record<string, any> = {};
-
+    if (record === null || record === undefined) {
+      return record;
+    }
+    const initializedRelationshipFields: Record<string, any> = {};
     for (const fieldName of modelFields) {
       const modelField = introModelFields[fieldName];
       const modelFieldType = modelField?.type as ModelFieldType;
@@ -240,14 +242,20 @@ export function initializeModel(
             // eslint-disable-next-line array-callback-return
             (acc: Record<string, any>, curVal) => {
               if (record[curVal]) {
-                return (acc[curVal] = record[curVal]);
+                acc[curVal] = record[curVal];
               }
+              return acc;
             },
             {},
           );
 
+          // if get is disabled on the related model
+          if ((client as any).models[relatedModelName]?.get === undefined) {
+            break;
+          }
+
           if (context) {
-            initializedRelationalFields[fieldName] = (
+            initializedRelationshipFields[fieldName] = (
               contextSpec: AmplifyServer.ContextSpec,
               options?: LazyLoadOptions,
             ) => {
@@ -268,7 +276,7 @@ export function initializeModel(
               return { data: null };
             };
           } else {
-            initializedRelationalFields[fieldName] = (
+            initializedRelationshipFields[fieldName] = (
               options?: LazyLoadOptions,
             ) => {
               if (record[targetNames[0]]) {
@@ -333,39 +341,58 @@ export function initializeModel(
               },
             );
 
+            // if list is disabled on the related model
+            if ((client as any).models[relatedModelName]?.list === undefined) {
+              break;
+            }
+
             if (context) {
-              initializedRelationalFields[fieldName] = (
+              initializedRelationshipFields[fieldName] = (
                 contextSpec: AmplifyServer.ContextSpec,
                 options?: LazyLoadOptions,
               ) => {
                 if (record[parentPk]) {
-                  return (client as any).models[relatedModelName]
-                    .list(contextSpec, {
+                  return selfAwareAsync(async (resultPromise) => {
+                    const basePromise = (client as any).models[
+                      relatedModelName
+                    ].list(contextSpec, {
                       filter: { and: hasManyFilter },
                       limit: options?.limit,
                       nextToken: options?.nextToken,
                       authMode: options?.authMode || authMode,
                       authToken: options?.authToken || authToken,
-                    })
-                    .then(mapResult);
+                    });
+                    const extendedBase = extendCancellability(
+                      basePromise,
+                      resultPromise,
+                    );
+                    return mapResult((await extendedBase) as any);
+                  });
                 }
 
                 return [];
               };
             } else {
-              initializedRelationalFields[fieldName] = (
+              initializedRelationshipFields[fieldName] = (
                 options?: LazyLoadOptions,
               ) => {
                 if (record[parentPk]) {
-                  return (client as any).models[relatedModelName]
-                    .list({
+                  return selfAwareAsync(async (resultPromise) => {
+                    const basePromise = (client as any).models[
+                      relatedModelName
+                    ].list({
                       filter: { and: hasManyFilter },
                       limit: options?.limit,
                       nextToken: options?.nextToken,
                       authMode: options?.authMode || authMode,
                       authToken: options?.authToken || authToken,
-                    })
-                    .then(mapResult);
+                    });
+                    const extendedBase = extendCancellability(
+                      basePromise,
+                      resultPromise,
+                    );
+                    return mapResult((await extendedBase) as any);
+                  });
                 }
 
                 return [];
@@ -385,39 +412,58 @@ export function initializeModel(
             },
           );
 
+          // if list is disabled on the related model
+          if ((client as any).models[relatedModelName]?.list === undefined) {
+            break;
+          }
+
           if (context) {
-            initializedRelationalFields[fieldName] = (
+            initializedRelationshipFields[fieldName] = (
               contextSpec: AmplifyServer.ContextSpec,
               options?: LazyLoadOptions,
             ) => {
               if (record[parentPk]) {
-                return (client as any).models[relatedModelName]
-                  .list(contextSpec, {
+                return selfAwareAsync(async (resultPromise) => {
+                  const basePromise = (client as any).models[
+                    relatedModelName
+                  ].list(contextSpec, {
                     filter: { and: hasManyFilter },
                     limit: options?.limit,
                     nextToken: options?.nextToken,
                     authMode: options?.authMode || authMode,
                     authToken: options?.authToken || authToken,
-                  })
-                  .then(mapResult);
+                  });
+                  const extendedBase = extendCancellability(
+                    basePromise,
+                    resultPromise,
+                  );
+                  return mapResult((await extendedBase) as any);
+                });
               }
 
               return [];
             };
           } else {
-            initializedRelationalFields[fieldName] = (
+            initializedRelationshipFields[fieldName] = (
               options?: LazyLoadOptions,
             ) => {
               if (record[parentPk]) {
-                return (client as any).models[relatedModelName]
-                  .list({
+                return selfAwareAsync(async (resultPromise) => {
+                  const basePromise = (client as any).models[
+                    relatedModelName
+                  ].list({
                     filter: { and: hasManyFilter },
                     limit: options?.limit,
                     nextToken: options?.nextToken,
                     authMode: options?.authMode || authMode,
                     authToken: options?.authToken || authToken,
-                  })
-                  .then(mapResult);
+                  });
+                  const extendedBase = extendCancellability(
+                    basePromise,
+                    resultPromise,
+                  );
+                  return mapResult((await extendedBase) as any);
+                });
               }
 
               return [];
@@ -431,13 +477,13 @@ export function initializeModel(
       }
     }
 
-    return { ...record, ...initializedRelationalFields };
+    return { ...record, ...initializedRelationshipFields };
   });
 }
 
 export const graphQLOperationsInfo = {
   CREATE: { operationPrefix: 'create', usePlural: false },
-  READ: { operationPrefix: 'get', usePlural: false },
+  GET: { operationPrefix: 'get', usePlural: false },
   UPDATE: { operationPrefix: 'update', usePlural: false },
   DELETE: { operationPrefix: 'delete', usePlural: false },
   LIST: { operationPrefix: 'list', usePlural: true },
@@ -445,7 +491,7 @@ export const graphQLOperationsInfo = {
   ONCREATE: { operationPrefix: 'onCreate', usePlural: false },
   ONUPDATE: { operationPrefix: 'onUpdate', usePlural: false },
   ONDELETE: { operationPrefix: 'onDelete', usePlural: false },
-  OBSERVE_QUERY: { operationPrefix: 'observeQuery', usePlural: false },
+  OBSERVEQUERY: { operationPrefix: 'observeQuery', usePlural: false },
 } as const;
 export type ModelOperation = keyof typeof graphQLOperationsInfo;
 
@@ -796,13 +842,11 @@ export function generateSelectionSet(
 
 export function generateGraphQLDocument(
   modelIntrospection: ModelIntrospectionSchema,
-  modelName: string,
+  modelDefinition: SchemaModel,
   modelOperation: ModelOperation,
   listArgs?: ListArgs | QueryArgs,
   indexMeta?: IndexMeta,
 ): string {
-  const modelDefinition = modelIntrospection.models[modelName];
-
   const {
     name,
     pluralName,
@@ -870,7 +914,7 @@ export function generateGraphQLDocument(
       )?.properties?.name;
 
       skQueryArgs = {
-        [compositeSkArgName]: `Model${capitalize(modelName)}${capitalize(keyName)}CompositeKeyConditionInput`,
+        [compositeSkArgName]: `Model${capitalize(name)}${capitalize(keyName)}CompositeKeyConditionInput`,
       };
     }
 
@@ -894,7 +938,7 @@ export function generateGraphQLDocument(
 
   const selectionSetFields = generateSelectionSet(
     modelIntrospection,
-    modelName,
+    name,
     selectionSet as ListArgs['selectionSet'],
   );
 
@@ -964,7 +1008,7 @@ export function generateGraphQLDocument(
         const compositeSkArgName = resolvedSkName(sortKeyFieldNames);
 
         return {
-          [compositeSkArgName]: `Model${capitalize(modelName)}PrimaryCompositeKeyConditionInput`,
+          [compositeSkArgName]: `Model${capitalize(name)}PrimaryCompositeKeyConditionInput`,
         };
       }
     }
@@ -999,7 +1043,7 @@ export function generateGraphQLDocument(
       graphQLOperationType ?? (graphQLOperationType = 'mutation');
     // TODO(Eslint): this this case clause correct without the break statement?
     // eslint-disable-next-line no-fallthrough
-    case 'READ':
+    case 'GET':
       graphQLArguments ?? (graphQLArguments = getPkArgs);
       graphQLSelectionSet ?? (graphQLSelectionSet = selectionSetFields);
     // TODO(Eslint): this this case clause correct without the break statement?
@@ -1047,7 +1091,7 @@ export function generateGraphQLDocument(
       graphQLOperationType ?? (graphQLOperationType = 'subscription');
       graphQLSelectionSet ?? (graphQLSelectionSet = selectionSetFields);
       break;
-    case 'OBSERVE_QUERY':
+    case 'OBSERVEQUERY':
     default:
       throw new Error(
         'Internal error: Attempted to generate graphql document for observeQuery. Please report this error.',
@@ -1120,7 +1164,7 @@ export function buildGraphQLVariables(
           : {},
       };
       break;
-    case 'READ':
+    case 'GET':
     case 'DELETE':
       // only identifiers are sent
       if (arg) {
@@ -1194,11 +1238,10 @@ export function buildGraphQLVariables(
         variables = { filter: arg.filter };
       }
       break;
-    case 'OBSERVE_QUERY':
+    case 'OBSERVEQUERY':
       throw new Error(
         'Internal error: Attempted to build variables for observeQuery. Please report this error.',
       );
-      break;
     default: {
       const exhaustiveCheck: never = operation;
       throw new Error(`Unhandled operation case: ${exhaustiveCheck}`);

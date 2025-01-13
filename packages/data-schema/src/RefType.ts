@@ -26,6 +26,12 @@ export type RefTypeParamShape = {
 
 type MutationOperations = 'create' | 'update' | 'delete';
 
+/**
+ * Reference type definition interface
+ *
+ * @param T - The shape of the reference type
+ * @param K - The keys already defined
+ */
 export type RefType<
   T extends RefTypeParamShape,
   K extends keyof RefType<T> = never,

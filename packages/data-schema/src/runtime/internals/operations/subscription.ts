@@ -17,6 +17,7 @@ import {
   generateGraphQLDocument,
   getCustomHeaders,
   initializeModel,
+  flattenItems,
 } from '../APIClient';
 
 export function subscriptionFactory(
@@ -31,7 +32,7 @@ export function subscriptionFactory(
   const subscription = (args?: Record<string, any>) => {
     const query = generateGraphQLDocument(
       modelIntrospection,
-      name,
+      model,
       operation,
       args,
     );
@@ -59,18 +60,25 @@ export function subscriptionFactory(
     return observable.pipe(
       map((value) => {
         const [key] = Object.keys(value.data);
-        // Will need flattening here if/when custom selection set support is added:
         const data = (value.data as any)[key];
-        const [initialized] = initializeModel(
-          client,
-          name,
-          [data],
-          modelIntrospection,
-          auth.authMode,
-          auth.authToken,
-        );
+        const flattenedResult = flattenItems(modelIntrospection, name, data);
 
-        return initialized;
+        if (flattenedResult === null) {
+          return null;
+        } else if (args?.selectionSet) {
+          return flattenedResult;
+        } else {
+          const [initialized] = initializeModel(
+            client,
+            name,
+            [flattenedResult],
+            modelIntrospection,
+            auth.authMode,
+            auth.authToken,
+          );
+
+          return initialized;
+        }
       }),
     );
   };

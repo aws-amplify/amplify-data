@@ -19,7 +19,7 @@ export declare function query(): CustomOperation<{
 ```
 **Returns:**
 
-CustomOperation&lt;{ arguments: null; returnType: null; authorization: \[\]; typeName: 'Query'; handlers: null; }, 'for', typeof queryBrand&gt;
+[CustomOperation](./data-schema.customoperation.md)<!-- -->&lt;{ arguments: null; returnType: null; authorization: \[\]; typeName: 'Query'; handlers: null; }, 'for', typeof queryBrand&gt;
 
 a custom query
 

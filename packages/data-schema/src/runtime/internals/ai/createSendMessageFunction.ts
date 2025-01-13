@@ -1,0 +1,72 @@
+// Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
+
+import { SingularReturnValue } from '../..';
+import type {
+  Conversation,
+  ConversationMessage,
+  ConversationSendMessageInput,
+} from '../../../ai/ConversationType';
+import {
+  BaseClient,
+  ClientInternalsGetter,
+  ModelIntrospectionSchema,
+} from '../../bridge-types';
+import { customOpFactory } from '../operations/custom';
+import { convertItemToConversationMessage } from './convertItemToConversationMessage';
+import {
+  serializeAiContext,
+  serializeContent,
+  serializeToolConfiguration,
+} from './conversationMessageSerializers';
+import {
+  AiAction,
+  getCustomUserAgentDetails,
+} from './getCustomUserAgentDetails';
+
+export const createSendMessageFunction =
+  (
+    client: BaseClient,
+    modelIntrospection: ModelIntrospectionSchema,
+    conversationId: string,
+    conversationRouteName: string,
+    getInternals: ClientInternalsGetter,
+  ): Conversation['sendMessage'] =>
+  async (input: ConversationSendMessageInput | string) => {
+    const { conversations } = modelIntrospection;
+
+    // Safe guard for standalone function. When called as part of client generation, this should never be falsy.
+    if (!conversations) {
+      return {} as SingularReturnValue<ConversationMessage>;
+    }
+
+    const processedInput: ConversationSendMessageInput =
+      typeof input === 'string' ? { content: [{ text: input }] } : input;
+
+    const { content, aiContext, toolConfiguration } = processedInput;
+
+    const sendSchema = conversations[conversationRouteName].message.send;
+    const sendOperation = customOpFactory(
+      client,
+      modelIntrospection,
+      'mutation',
+      sendSchema,
+      false,
+      getInternals,
+      getCustomUserAgentDetails(AiAction.SendMessage),
+    ) as (
+      args?: Record<string, any>,
+    ) => SingularReturnValue<ConversationMessage>;
+    const { data, errors } = await sendOperation({
+      conversationId,
+      content: serializeContent(content),
+      ...(aiContext && { aiContext: serializeAiContext(aiContext) }),
+      ...(toolConfiguration && {
+        toolConfiguration: serializeToolConfiguration(toolConfiguration),
+      }),
+    });
+    return {
+      data: data ? convertItemToConversationMessage(data) : data,
+      errors,
+    };
+  };

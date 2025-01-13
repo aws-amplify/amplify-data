@@ -17,11 +17,14 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@24cb9080177205b6e8c946b17badbe402adc938f # v3.4.0 https://github.com/actions/checkout/commit/24cb9080177205b6e8c946b17badbe402adc938f
         with:
-          path: amplify-api-next
+          path: amplify-data
       - name: Setup node and build the repository
-        uses: ./amplify-api-next/.github/actions/node-and-build
+        uses: ./amplify-data/.github/actions/node-and-build
         with:
           is-prebuild: true
+  e2e:
+    secrets: inherit
+    uses: ./.github/workflows/callable-release-verification.yml
   unit-tests:
     needs:
       - prebuild
@@ -36,9 +39,9 @@ jobs:
         run: echo "preid=$(echo $BRANCH |  tr -cd '[:alnum:]_\-/.' | cut -d \/ -f 2)" >> $GITHUB_OUTPUT
     outputs:
       preid: ${{ steps.output_preid.outputs.preid }}
-
   preid-release:
     needs:
+      - e2e
       - unit-tests
       - parse-preid
     secrets: inherit

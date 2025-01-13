@@ -1,8 +1,8 @@
 import { BaseModelField } from '../../ModelField';
 import {
-  ModelRelationalField,
-  ModelRelationalFieldParamShape,
-} from '../../ModelRelationalField';
+  ModelRelationshipField,
+  ModelRelationshipFieldParamShape,
+} from '../../ModelRelationshipField';
 import { EnumType } from '../../EnumType';
 import { CustomType } from '../../CustomType';
 import { RefType, RefTypeParamShape } from '../../RefType';
@@ -58,7 +58,7 @@ export type ResolveIndividualField<
     ? FieldShape
     : T extends RefType<infer RefShape, any, any>
       ? ResolveRef<RefShape, Bag>
-      : T extends ModelRelationalField<infer RelationshipShape, any, any, any>
+      : T extends ModelRelationshipField<infer RelationshipShape, any, any, any>
         ? ResolveRelationship<Bag, RelationshipShape, FlatModelName>
         : T extends CustomType<infer CT>
           ? ResolveFields<Bag, CT['fields']> | null
@@ -97,7 +97,7 @@ type ShortCircuitBiDirectionalRelationship<
   Raw extends ModelTypeParamShape['fields'],
 > = {
   [Field in keyof Model as Field extends keyof Raw
-    ? Raw[Field] extends ModelRelationalField<
+    ? Raw[Field] extends ModelRelationshipField<
         infer RelationshipShape,
         any,
         any,
@@ -114,30 +114,45 @@ type ShortCircuitBiDirectionalRelationship<
 
 type ResolveRelationship<
   Bag extends Record<string, any>,
-  RelationshipShape extends ModelRelationalFieldParamShape,
+  RelationshipShape extends ModelRelationshipFieldParamShape,
   ParentModelName extends keyof Bag & string = never,
 > =
   ExtendsNever<ParentModelName> extends true
-    ? LazyLoader<
-        RelationshipShape['valueRequired'] extends true
-          ? Bag[RelationshipShape['relatedModel']]['type']
-          : Bag[RelationshipShape['relatedModel']]['type'] | null,
-        RelationshipShape['array']
-      >
-    : // Array-ing inline here vs. (inside of ShortCircuitBiDirectionalRelationship or in a separate conditional type) is significantly more performant
-      RelationshipShape['array'] extends true
-      ? Array<
-          ShortCircuitBiDirectionalRelationship<
+    ? DependentLazyLoaderOpIsAvailable<Bag, RelationshipShape> extends true
+      ? LazyLoader<
+          RelationshipShape['valueRequired'] extends true
+            ? Bag[RelationshipShape['relatedModel']]['type']
+            : Bag[RelationshipShape['relatedModel']]['type'] | null,
+          RelationshipShape['array']
+        >
+      : // Array-ing inline here vs. (inside of ShortCircuitBiDirectionalRelationship or in a separate conditional type) is significantly more performant
+        RelationshipShape['array'] extends true
+        ? Array<
+            ShortCircuitBiDirectionalRelationship<
+              Bag[RelationshipShape['relatedModel']]['__meta']['flatModel'],
+              ParentModelName,
+              Bag[RelationshipShape['relatedModel']]['__meta']['rawType']['fields']
+            >
+          >
+        : ShortCircuitBiDirectionalRelationship<
             Bag[RelationshipShape['relatedModel']]['__meta']['flatModel'],
             ParentModelName,
             Bag[RelationshipShape['relatedModel']]['__meta']['rawType']['fields']
           >
-        >
-      : ShortCircuitBiDirectionalRelationship<
-          Bag[RelationshipShape['relatedModel']]['__meta']['flatModel'],
-          ParentModelName,
-          Bag[RelationshipShape['relatedModel']]['__meta']['rawType']['fields']
-        >;
+    : never;
+
+type DependentLazyLoaderOpIsAvailable<
+  Bag extends Record<string, any>,
+  RelationshipShape extends ModelRelationshipFieldParamShape,
+> = RelationshipShape['relationshipType'] extends 'hasOne' | 'hasMany'
+  ? // hasOne and hasMany depend on `list`
+    'list' extends keyof Bag[RelationshipShape['relatedModel']]['__meta']['disabledOperations']
+    ? false
+    : true
+  : // the relationship is a belongsTo, which depends on `get`
+    'get' extends keyof Bag[RelationshipShape['relatedModel']]['__meta']['disabledOperations']
+    ? false
+    : true;
 
 type IsRequired<T> =
   T extends BaseModelField<infer FieldShape>
@@ -146,7 +161,7 @@ type IsRequired<T> =
       : true
     : T extends RefType<infer RefShape, any, any>
       ? IsRefRequired<RefShape>
-      : T extends ModelRelationalField<any, any, any, any>
+      : T extends ModelRelationshipField<any, any, any, any>
         ? true
         : T extends CustomType<any> | EnumType<any>
           ? false

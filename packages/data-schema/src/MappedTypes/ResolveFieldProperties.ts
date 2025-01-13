@@ -7,9 +7,9 @@ import type { ModelField } from '../ModelField';
 import type { ModelType, ModelTypeParamShape } from '../ModelType';
 import type { GenericModelSchema } from '../ModelSchema';
 import type {
-  ModelRelationalField,
-  ModelRelationalFieldParamShape,
-} from '../ModelRelationalField';
+  ModelRelationshipField,
+  ModelRelationshipFieldParamShape,
+} from '../ModelRelationshipField';
 import type { PrimaryIndexIrShape } from '../util/';
 
 import type { ResolveSchema, SchemaTypes } from './ResolveSchema';
@@ -38,7 +38,7 @@ export type ResolveFieldProperties<
     ResolvedSchema,
     IdentifierMeta
   >,
-  FieldsWithRelationships = ResolveModelsRelationalAndRefFields<
+  FieldsWithRelationships = ResolveModelsRelationshipAndRefFields<
     FieldsWithInjectedImplicitFields,
     NonModelTypes
   >,
@@ -59,7 +59,7 @@ export type ResolveStaticFieldProperties<
     ResolvedSchema & ImplicitModelsSchema,
     never
   >,
-  FieldsWithRelationships = ResolveModelsRelationalAndRefFields<
+  FieldsWithRelationships = ResolveModelsRelationshipAndRefFields<
     FieldsWithInjectedImplicitFields,
     NonModelTypes
   >,
@@ -73,20 +73,20 @@ export type ResolveStaticFieldProperties<
 type GetRelationshipRef<
   T,
   RM extends keyof T,
-  TypeArg extends ModelRelationalFieldParamShape,
+  TypeArg extends ModelRelationshipFieldParamShape,
   Flat extends boolean,
-  ResolvedModel = ResolveRelationalFieldsForModel<T, RM, Flat>,
+  ResolvedModel = ResolveRelationshipFieldsForModel<T, RM, Flat>,
   Model = TypeArg['valueRequired'] extends true
     ? ResolvedModel
     : ResolvedModel | null | undefined,
 > = LazyLoader<Model, TypeArg['array']>;
 
-type ResolveRelationalFieldsForModel<
+type ResolveRelationshipFieldsForModel<
   Schema,
   ModelName extends keyof Schema,
   Flat extends boolean,
 > = {
-  [FieldName in keyof Schema[ModelName]]: Schema[ModelName][FieldName] extends ModelRelationalFieldParamShape
+  [FieldName in keyof Schema[ModelName]]: Schema[ModelName][FieldName] extends ModelRelationshipFieldParamShape
     ? Schema[ModelName][FieldName]['relatedModel'] extends keyof Schema
       ? GetRelationshipRef<
           Schema,
@@ -147,7 +147,7 @@ export type ResolveFieldRequirements<Resolved> = Intersection<
   ExtractNonNullableFieldsToRequiredFields<Resolved>
 >;
 
-type ResolveModelsRelationalAndRefFields<
+type ResolveModelsRelationshipAndRefFields<
   Schema,
   NonModelTypes extends NonModelTypesShape,
   Flat extends boolean = false,
@@ -159,7 +159,7 @@ type ResolveModelsRelationalAndRefFields<
       any
     > | null
       ? ResolveRef<NonModelTypes, R>
-      : Schema[ModelProp][FieldProp] extends ModelRelationalFieldParamShape
+      : Schema[ModelProp][FieldProp] extends ModelRelationshipFieldParamShape
         ? Schema[ModelProp][FieldProp]['relatedModel'] extends keyof Schema
           ? GetRelationshipRef<
               Schema,
@@ -167,7 +167,7 @@ type ResolveModelsRelationalAndRefFields<
               Schema[ModelProp][FieldProp],
               Flat
             >
-          : never // if the field value extends ModelRelationalFieldShape "relatedModel" should always point to a Model (keyof Schema)
+          : never // if the field value extends ModelRelationshipFieldShape "relatedModel" should always point to a Model (keyof Schema)
         : Schema[ModelProp][FieldProp];
   };
 };
@@ -245,7 +245,7 @@ type ImpliedAuthFieldsFromFields<T> = UnionToIntersection<
   T extends ModelTypeParamShape
     ? T['fields'][keyof T['fields']] extends
         | ModelField<any, any, infer Auth>
-        | ModelRelationalField<any, any, any, infer Auth>
+        | ModelRelationshipField<any, any, any, infer Auth>
         | RefType<any, any, infer Auth>
       ? Auth extends Authorization<any, any, any>
         ? ImpliedAuthFields<Auth>

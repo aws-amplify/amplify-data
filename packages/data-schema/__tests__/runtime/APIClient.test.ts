@@ -809,27 +809,39 @@ describe('generateGraphQLDocument()', () => {
     };
 
     test.each([
-      ['READ', 'User', '$userId: ID!'],
+      ['GET', userSchemaModel, '$userId: ID!'],
       [
-        'READ',
-        'Product',
+        'GET',
+        productSchemaModel,
         '$sku: String!,$factoryId: String!,$warehouseId: String!',
       ],
-      ['READ', 'person', 'getPerson'],
-      ['LIST', 'person', 'listPeople'],
-      ['LIST', 'person', '$filter: ModelPersonFilterInput'],
-      ['CREATE', 'person', '$input: CreatePersonInput!'],
-      ['UPDATE', 'person', '$input: UpdatePersonInput!'],
-      ['DELETE', 'person', '$input: DeletePersonInput!'],
-      ['ONCREATE', 'person', '$filter: ModelSubscriptionPersonFilterInput'],
-      ['ONUPDATE', 'person', '$filter: ModelSubscriptionPersonFilterInput'],
-      ['ONDELETE', 'person', '$filter: ModelSubscriptionPersonFilterInput'],
+      ['GET', personSchemaModel, 'getPerson'],
+      ['LIST', personSchemaModel, 'listPeople'],
+      ['LIST', personSchemaModel, '$filter: ModelPersonFilterInput'],
+      ['CREATE', personSchemaModel, '$input: CreatePersonInput!'],
+      ['UPDATE', personSchemaModel, '$input: UpdatePersonInput!'],
+      ['DELETE', personSchemaModel, '$input: DeletePersonInput!'],
+      [
+        'ONCREATE',
+        personSchemaModel,
+        '$filter: ModelSubscriptionPersonFilterInput',
+      ],
+      [
+        'ONUPDATE',
+        personSchemaModel,
+        '$filter: ModelSubscriptionPersonFilterInput',
+      ],
+      [
+        'ONDELETE',
+        personSchemaModel,
+        '$filter: ModelSubscriptionPersonFilterInput',
+      ],
     ])(
       '%s generates operation name or arguments for model %s to contain %s',
-      (modelOperation, modelName, expectedArgs) => {
+      (modelOperation, model, expectedArgs) => {
         const document = generateGraphQLDocument(
           mockModelDefinitions,
-          modelName,
+          model,
           modelOperation as ModelOperation,
         );
 
@@ -842,6 +854,7 @@ describe('generateGraphQLDocument()', () => {
     const modelOperation = 'INDEX_QUERY';
     const getIndexMeta = (
       modelName: string,
+      indexName?: string,
     ): {
       queryField: string;
       pk: string;
@@ -849,7 +862,15 @@ describe('generateGraphQLDocument()', () => {
     } => {
       const indexProperties = modelIntroSchema.models[
         modelName
-      ].attributes?.find((attribute) => attribute.type === 'key')?.properties;
+      ].attributes?.find((attribute) => {
+        if (indexName) {
+          return (
+            attribute.type === 'key' && attribute.properties?.name === indexName
+          );
+        }
+
+        return attribute.type === 'key';
+      })?.properties;
 
       if (!indexProperties) {
         fail('Test fixture contains incorrect schema for this test.');
@@ -864,42 +885,51 @@ describe('generateGraphQLDocument()', () => {
 
     test.each([
       [
-        'EnumAsIndexPartitionKey',
+        modelIntroSchema.models.EnumAsIndexPartitionKey,
         '$status: EnumAsIndexPartitionKeyStatus!',
         getIndexMeta('EnumAsIndexPartitionKey'),
         { status: 'yes' },
       ],
       [
-        'EnumAsIndexSortKey',
+        modelIntroSchema.models.EnumAsIndexSortKey,
         '$status: ModelStringKeyConditionInput',
         getIndexMeta('EnumAsIndexSortKey'),
         { title: 'test' },
       ],
       [
-        'RefEnumAsIndexPartitionKey',
+        modelIntroSchema.models.RefEnumAsIndexPartitionKey,
         '$status: EnumIndexStatus!',
         getIndexMeta('RefEnumAsIndexPartitionKey'),
         { status: 'yes' },
       ],
       [
-        'RefEnumAsIndexSortKey',
+        modelIntroSchema.models.RefEnumAsIndexSortKey,
         '$status: ModelStringKeyConditionInput',
         getIndexMeta('RefEnumAsIndexSortKey'),
         { title: 'test' },
       ],
+      [
+        modelIntroSchema.models.SecondaryIndexModel,
+        '$timestamp: ModelIntKeyConditionInput',
+        getIndexMeta(
+          'SecondaryIndexModel',
+          'secondaryIndexModelsByDescriptionAndTimestamp',
+        ),
+        { description: 'test' },
+      ],
     ])(
       'generates document for model %p containing input type: %p',
-      (modelName, expectedEnumInputString, indexMeta, args) => {
+      (model, expectedSortKeyInputString, indexMeta, args) => {
         const document = generateGraphQLDocument(
           modelIntroSchema,
-          modelName,
+          model,
           modelOperation,
           args,
           indexMeta,
         );
 
         expect(document).toEqual(
-          expect.stringContaining(expectedEnumInputString),
+          expect.stringContaining(expectedSortKeyInputString),
         );
       },
     );

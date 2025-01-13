@@ -2,9 +2,9 @@ import { expectTypeTestsToPassAsync } from 'jest-tsd';
 import { a } from '../src/index';
 import { ModelField, InternalField, __auth } from '../src/ModelField';
 import {
-  ModelRelationalField,
-  InternalRelationalField,
-} from '../src/ModelRelationalField';
+  ModelRelationshipField,
+  InternalRelationshipField,
+} from '../src/ModelRelationshipField';
 import { Authorization, ImpliedAuthFields } from '../src/Authorization';
 
 // evaluates type defs in corresponding test-d.ts file
@@ -50,7 +50,7 @@ describe('field level auth', () => {
       ]);
 
     type ExpectedAuthFields =
-      typeof field extends ModelRelationalField<any, any, any, infer Auth>
+      typeof field extends ModelRelationshipField<any, any, any, infer Auth>
         ? Auth extends Authorization<any, any, any>
           ? ImpliedAuthFields<Auth>
           : never
@@ -94,8 +94,13 @@ describe('field level auth', () => {
           .ownersDefinedIn('admin')
           .to(['read', 'create', 'delete'])
           .identityClaim('identityClaimValue'),
-      ]) as InternalRelationalField;
+      ]) as InternalRelationshipField;
 
     expect(field.data.authorization).toMatchSnapshot();
   });
+});
+
+it('array modifier becomes unavailable after being used once', () => {
+  // @ts-expect-error .array() is not a valid modifier after being used once
+  a.model({ values: a.string().required().array().required().array().required() });
 });

@@ -1,0 +1,9 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Primary Indexes Custom identifier single field SK defaulted/serial field can be used in identifier 1`] = `
+"type Model @model(timestamps: null) @auth(rules: [{allow: public, provider: apiKey}])
+{
+  idSerial: Int! @primaryKey @default
+  content: String
+}"
+`;

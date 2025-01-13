@@ -112,3 +112,7 @@ type BackendSecret = {
   resolve: (scope: any, backendIdentifier: any) => any;
   resolvePath: (backendIdentifier: any) => any;
 };
+
+export type AiModel = {
+  resourcePath: string;
+}

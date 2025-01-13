@@ -22,6 +22,8 @@ import {
 } from '../APIClient';
 
 import { handleListGraphQlError } from './utils';
+import { selfAwareAsync } from '../../utils';
+import { extendCancellability } from '../cancellation';
 
 export interface IndexMeta {
   queryField: string;
@@ -37,7 +39,7 @@ export function indexQueryFactory(
   getInternals: ClientInternalsGetter,
   context = false,
 ) {
-  const indexQueryWithContext = async (
+  const indexQueryWithContext = (
     contextSpec: AmplifyServer.ContextSpec,
     args: QueryArgs,
     options?: ListArgs,
@@ -56,7 +58,7 @@ export function indexQueryFactory(
     );
   };
 
-  const indexQuery = async (args: QueryArgs, options?: ListArgs) => {
+  const indexQuery = (args: QueryArgs, options?: ListArgs) => {
     return _indexQuery(
       client,
       modelIntrospection,
@@ -104,7 +106,7 @@ function processGraphQlResponse(
   };
 }
 
-async function _indexQuery(
+function _indexQuery(
   client: BaseClient,
   modelIntrospection: ModelIntrospectionSchema,
   model: SchemaModel,
@@ -113,108 +115,117 @@ async function _indexQuery(
   args?: ListArgs & AuthModeParams,
   contextSpec?: AmplifyServer.ContextSpec,
 ) {
-  const { name } = model;
+  return selfAwareAsync(async (resultPromise) => {
+    const { name } = model;
 
-  const query = generateGraphQLDocument(
-    modelIntrospection,
-    name,
-    'INDEX_QUERY',
-    args,
-    indexMeta,
-  );
-  const variables = buildGraphQLVariables(
-    model,
-    'INDEX_QUERY',
-    args,
-    modelIntrospection,
-    indexMeta,
-  );
-
-  const auth = authModeParams(client, getInternals, args);
-
-  const modelInitializer = (flattenedResult: any[]) =>
-    initializeModel(
-      client,
-      name,
-      flattenedResult,
+    const query = generateGraphQLDocument(
       modelIntrospection,
-      auth.authMode,
-      auth.authToken,
-      !!contextSpec,
+      model,
+      'INDEX_QUERY',
+      args,
+      indexMeta,
+    );
+    const variables = buildGraphQLVariables(
+      model,
+      'INDEX_QUERY',
+      args,
+      modelIntrospection,
+      indexMeta,
     );
 
-  try {
-    const headers = getCustomHeaders(client, getInternals, args?.headers);
+    const auth = authModeParams(client, getInternals, args);
 
-    const graphQlParams = {
-      ...auth,
-      query,
-      variables,
-    };
-
-    const requestArgs: [any, any] = [graphQlParams, headers];
-
-    if (contextSpec !== undefined) {
-      requestArgs.unshift(contextSpec);
-    }
-
-    const response = (await (client as BaseClient).graphql(
-      ...requestArgs,
-    )) as GraphQLResult;
-
-    if (response.data !== undefined) {
-      return processGraphQlResponse(
-        modelIntrospection,
+    const modelInitializer = (flattenedResult: any[]) =>
+      initializeModel(
+        client,
         name,
-        response,
-        args?.selectionSet,
-        modelInitializer,
+        flattenedResult,
+        modelIntrospection,
+        auth.authMode,
+        auth.authToken,
+        !!contextSpec,
       );
-    }
-  } catch (error: any) {
-    /**
-     * The `data` type returned by `error` here could be:
-     * 1) `null`
-     * 2) an empty object
-     * 3) "populated" but with a `null` value:
-     *   `data: { listByExampleId: null }`
-     * 4) an actual record:
-     *   `data: { listByExampleId: items: [{ id: '1', ...etc } }]`
-     */
-    const { data, errors } = error;
 
-    // `data` is not `null`, and is not an empty object:
-    if (data !== undefined && Object.keys(data).length !== 0 && errors) {
-      const [key] = Object.keys(data);
+    try {
+      const headers = getCustomHeaders(client, getInternals, args?.headers);
 
-      if (data[key]?.items) {
-        const flattenedResult = data[key]?.items.map(
-          (value: Record<string, any>) =>
-            flattenItems(modelIntrospection, name, value),
-        );
+      const graphQlParams = {
+        ...auth,
+        query,
+        variables,
+      };
 
-        /**
-         * Check exists since `flattenedResult` could be `null`.
-         * if `flattenedResult` exists, result is an actual record.
-         */
-        if (flattenedResult) {
-          return {
-            data: args?.selectionSet
-              ? flattenedResult
-              : modelInitializer(flattenedResult),
-            nextToken: data[key]?.nextToken,
-          };
-        }
+      const requestArgs: [any, any] = [graphQlParams, headers];
+
+      if (contextSpec !== undefined) {
+        requestArgs.unshift(contextSpec);
       }
 
-      // response is of type `data: { listByExampleId: null }`
-      return {
-        data: data[key],
-        nextToken: data[key]?.nextToken,
-      };
-    } else {
-      // `data` is `null` or an empty object:
-      return handleListGraphQlError(error);
+      const basePromise = (client as BaseClient).graphql(
+        ...requestArgs,
+      ) as Promise<GraphQLResult>;
+      const extendedPromise = extendCancellability(basePromise, resultPromise);
+      const response = await extendedPromise;
+
+      if (response.data !== undefined) {
+        return processGraphQlResponse(
+          modelIntrospection,
+          name,
+          response,
+          args?.selectionSet,
+          modelInitializer,
+        );
+      }
+    } catch (error: any) {
+      /**
+       * The `data` type returned by `error` here could be:
+       * 1) `null`
+       * 2) an empty object
+       * 3) "populated" but with a `null` value:
+       *   `data: { listByExampleId: null }`
+       * 4) an actual record:
+       *   `data: { listByExampleId: items: [{ id: '1', ...etc } }]`
+       */
+      const { data, errors } = error;
+
+      // `data` is not `null`, and is not an empty object:
+      if (
+        data !== undefined &&
+        data !== null &&
+        Object.keys(data).length !== 0 &&
+        errors
+      ) {
+        const [key] = Object.keys(data);
+
+        if (data[key]?.items) {
+          const flattenedResult = data[key]?.items.map(
+            (value: Record<string, any>) =>
+              flattenItems(modelIntrospection, name, value),
+          );
+
+          /**
+           * Check exists since `flattenedResult` could be `null`.
+           * if `flattenedResult` exists, result is an actual record.
+           */
+          if (flattenedResult) {
+            return {
+              data: args?.selectionSet
+                ? flattenedResult
+                : modelInitializer(flattenedResult),
+              nextToken: data[key]?.nextToken,
+            };
+          }
+        }
+
+        // response is of type `data: { listByExampleId: null }`
+        return {
+          data: data[key],
+          nextToken: data[key]?.nextToken,
+        };
+      } else {
+        // `data` is `null` or an empty object:
+        return handleListGraphQlError(error);
+      }
     }
-  }
+  });
 }

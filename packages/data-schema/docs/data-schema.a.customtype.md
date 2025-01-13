@@ -51,7 +51,7 @@ the fields to be added to the custom type
 </tbody></table>
 **Returns:**
 
-CustomType&lt;{ fields: T; }&gt;
+[CustomType](./data-schema.customtype.md)<!-- -->&lt;{ fields: T; }&gt;
 
 a custom type
 

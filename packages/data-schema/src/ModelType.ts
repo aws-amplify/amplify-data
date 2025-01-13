@@ -6,10 +6,10 @@ import {
 } from './util';
 import type { InternalField, BaseModelField } from './ModelField';
 import type {
-  ModelRelationalField,
-  InternalRelationalField,
-  ModelRelationalFieldParamShape,
-} from './ModelRelationalField';
+  ModelRelationshipField,
+  InternalRelationshipField,
+  ModelRelationshipFieldParamShape,
+} from './ModelRelationshipField';
 import { type AllowModifier, type Authorization, allow } from './Authorization';
 import type { RefType, RefTypeParamShape } from './RefType';
 import type { EnumType } from './EnumType';
@@ -32,7 +32,7 @@ export type deferredRefResolvingPrefix = 'deferredRefResolving:';
 type ModelFields = Record<
   string,
   | BaseModelField
-  | ModelRelationalField<any, string, any, any>
+  | ModelRelationshipField<any, string, any, any>
   | RefType<any, any, any>
   | EnumType
   | CustomType<CustomTypeParamShape>
@@ -40,14 +40,28 @@ type ModelFields = Record<
 
 type InternalModelFields = Record<
   string,
-  InternalField | InternalRelationalField
+  InternalField | InternalRelationshipField
 >;
+
+export type DisableOperationsOptions =
+  | 'queries'
+  | 'mutations'
+  | 'subscriptions'
+  | 'list'
+  | 'get'
+  | 'create'
+  | 'update'
+  | 'delete'
+  | 'onCreate'
+  | 'onUpdate'
+  | 'onDelete';
 
 type ModelData = {
   fields: ModelFields;
   identifier: ReadonlyArray<string>;
   secondaryIndexes: ReadonlyArray<ModelIndexType<any, any, any, any, any>>;
   authorization: Authorization<any, any, any>[];
+  disabledOperations: ReadonlyArray<DisableOperationsOptions>;
 };
 
 type InternalModelData = ModelData & {
@@ -55,6 +69,7 @@ type InternalModelData = ModelData & {
   identifier: ReadonlyArray<string>;
   secondaryIndexes: ReadonlyArray<InternalModelIndexType>;
   authorization: Authorization<any, any, any>[];
+  disabledOperations: ReadonlyArray<DisableOperationsOptions>;
   originalName?: string;
 };
 
@@ -63,6 +78,7 @@ export type ModelTypeParamShape = {
   identifier: PrimaryIndexIrShape;
   secondaryIndexes: ReadonlyArray<SecondaryIndexIrShape>;
   authorization: Authorization<any, any, any>[];
+  disabledOperations: ReadonlyArray<DisableOperationsOptions>;
 };
 
 /**
@@ -81,17 +97,12 @@ export type ModelTypeParamShape = {
  */
 export type ExtractSecondaryIndexIRFields<
   T extends ModelTypeParamShape,
-  RequiredOnly extends boolean = false,
 > = {
   [FieldProp in keyof T['fields'] as T['fields'][FieldProp] extends BaseModelField<
     infer R
   >
     ? NonNullable<R> extends string | number
-      ? RequiredOnly extends false
-        ? FieldProp
-        : null extends R
-          ? never
-          : FieldProp
+      ? FieldProp
       : never
     : T['fields'][FieldProp] extends
           | EnumType
@@ -152,7 +163,7 @@ export type AddRelationshipFieldsToModelTypeFields<
   Model,
   RelationshipFields extends Record<
     string,
-    ModelRelationalField<ModelRelationalFieldParamShape, string, any, any>
+    ModelRelationshipField<ModelRelationshipFieldParamShape, string, any, any>
   >,
 > =
   Model extends ModelType<
@@ -201,6 +212,12 @@ export type BaseModelType<T extends ModelTypeParamShape = ModelTypeParamShape> =
 
 export type UsableModelTypeKey = methodKeyOf<ModelType>;
 
+/**
+ * Model type definition interface
+ *
+ * @param T - The shape of the model type
+ * @param UsedMethod - The method keys already defined
+ */
 export type ModelType<
   T extends ModelTypeParamShape = ModelTypeParamShape,
   UsedMethod extends UsableModelTypeKey = never,
@@ -208,7 +225,7 @@ export type ModelType<
   {
     [brandSymbol]: typeof brandName;
     identifier<
-      PrimaryIndexFields = ExtractSecondaryIndexIRFields<T, true>,
+      PrimaryIndexFields = ExtractSecondaryIndexIRFields<T>,
       PrimaryIndexPool extends string = keyof PrimaryIndexFields & string,
       const ID extends ReadonlyArray<PrimaryIndexPool> = readonly [],
       const PrimaryIndexIR extends PrimaryIndexIrShape = PrimaryIndexFieldsToIR<
@@ -250,6 +267,14 @@ export type ModelType<
       SetTypeSubArg<T, 'secondaryIndexes', IndexesIR>,
       UsedMethod | 'secondaryIndexes'
     >;
+    disableOperations<
+      const Ops extends ReadonlyArray<DisableOperationsOptions>,
+    >(
+      ops: Ops,
+    ): ModelType<
+      SetTypeSubArg<T, 'disabledOperations', Ops>,
+      UsedMethod | 'disableOperations'
+    >;
     authorization<AuthRuleType extends Authorization<any, any, any>>(
       callback: (
         allow: Omit<AllowModifier, 'resource'>,
@@ -275,7 +300,7 @@ export type SchemaModelType<
       relationships<
         Param extends Record<
           string,
-          ModelRelationalField<any, string, any, any>
+          ModelRelationshipField<any, string, any, any>
         > = Record<never, never>,
       >(
         relationships: Param,
@@ -302,6 +327,7 @@ function _model<T extends ModelTypeParamShape>(fields: T['fields']) {
     identifier: ['id'],
     secondaryIndexes: [],
     authorization: [],
+    disabledOperations: [],
   };
 
   const builder = {
@@ -312,6 +338,11 @@ function _model<T extends ModelTypeParamShape>(fields: T['fields']) {
     },
     secondaryIndexes(callback) {
       data.secondaryIndexes = callback(modelIndex);
+
+      return this;
+    },
+    disableOperations(ops) {
+      data.disabledOperations = ops;
 
       return this;
     },
@@ -355,6 +386,13 @@ export const isSchemaModelType = (
   );
 };
 
+/**
+ * Model default identifier
+ *
+ * @param pk - primary key
+ * @param sk - secondary key
+ * @param compositeSk - composite secondary key
+ */
 export type ModelDefaultIdentifier = {
   pk: { readonly id: string };
   sk: never;
@@ -375,6 +413,7 @@ export function model<T extends ModelFields>(
   identifier: ModelDefaultIdentifier;
   secondaryIndexes: [];
   authorization: [];
+  disabledOperations: [];
 }> {
   return _model(fields);
 }

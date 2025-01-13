@@ -1,11 +1,15 @@
-import type { CustomOperationParamShape } from '../../CustomOperation';
-import type { BaseModelField } from '../../ModelField';
+import type {
+  CustomOperationParamShape,
+  UltimateFunctionHandlerAsyncType,
+} from '../../CustomOperation';
+import type { BaseModelField, ModelFieldType } from '../../ModelField';
 import type { RefType } from '../../RefType';
 import type { ResolveFieldRequirements } from '../../MappedTypes/ResolveFieldProperties';
 import type { AppSyncResolverHandler } from 'aws-lambda';
 import type { CustomType } from '../../CustomType';
 import type { FieldTypesOfCustomType } from '../../MappedTypes/ResolveSchema';
 import type { ResolveRef } from '../utilities/ResolveRef';
+import type { EnumType } from '../../EnumType';
 import { ClientSchemaProperty } from './ClientSchemaProperty';
 
 type CustomOperationSubType<Op extends CustomOperationParamShape> =
@@ -35,7 +39,13 @@ export interface ClientCustomOperation<
    */
   functionHandler: AppSyncResolverHandler<
     CustomOpArguments<Op>,
-    LambdaReturnType<CustomOpReturnType<Op, RefBag>>
+    // If the final handler is an async function, the Schema['fieldname']['functionhandler']
+    // should have a return type of `void`. This only applies to `functionHandler` and not
+    // `returnType` because `returnType` determines the type returned by the mutation / query
+    // in the data client.
+    Op['handlers'] extends UltimateFunctionHandlerAsyncType
+      ? void
+      : LambdaReturnType<CustomOpReturnType<Op, RefBag>>
   >;
 
   /**
@@ -83,7 +93,9 @@ type CustomOpArguments<Shape extends CustomOperationParamShape> =
           infer R
         >
           ? R
-          : never;
+          : Shape['arguments'][FieldName] extends EnumType<infer Values>
+            ? Values[number] | null
+            : never;
       }>;
 
 /**
@@ -96,6 +108,26 @@ type Normalize<
 > = Shape['typeName'] extends 'Subscription'
   ? Exclude<RT, null | undefined>
   : RT;
+
+type _EventInvocationResponseBag = {
+  EventInvocationResponse: {
+    __entityType: 'customType';
+    type: '';
+    data: {
+      fields: {
+        success: {
+          data: {
+            fieldType: ModelFieldType.Boolean;
+            required: true;
+            array: false;
+            arrayRequired: false;
+          };
+        };
+      };
+      type: 'customType';
+    };
+  };
+};
 
 /**
  * Computes the return type from the `returnType` of a custom operation shape.

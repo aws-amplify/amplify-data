@@ -294,6 +294,114 @@ describe('CustomOperation transform', () => {
       expect(result).toMatchSnapshot();
     });
 
+    test('Generation route does not require a handler even when auth is defined', () => {
+      const s = a.schema({
+        Recipe: a.customType({
+          ingredients: a.string().array(),
+        }),
+        makeRecipe: a
+          .generation({
+            aiModel: a.ai.model('Claude 3 Haiku'),
+            systemPrompt: 'Hello, world!',
+          })
+          .arguments({
+            content: a.string(),
+          })
+          .returns(a.ref('Recipe'))
+          .authorization((allow) => allow.publicApiKey()),
+      });
+
+      const result = s.transform().schema;
+
+      expect(result).toMatchSnapshot();
+    });
+
+    test('Generation route should create directive with inference configuration', () => {
+      const s = a.schema({
+        Recipe: a.customType({
+          ingredients: a.string().array(),
+        }),
+        makeRecipe: a
+          .generation({
+            aiModel: a.ai.model('Claude 3 Haiku'),
+            systemPrompt: 'Hello, world!',
+            inferenceConfiguration: {
+              temperature: 0.5,
+              maxTokens: 100,
+              topP: 1,
+            },
+          })
+          .arguments({
+            content: a.string(),
+          })
+          .returns(a.ref('Recipe'))
+          .authorization((allow) => allow.publicApiKey()),
+      });
+
+      const result = s.transform().schema;
+
+      expect(result).toMatchSnapshot();
+    });
+
+    test('Generation route with empty inference configuration should not pass argument along to directive', () => {
+      const s = a.schema({
+        makeRecipe: a
+          .generation({
+            aiModel: a.ai.model('Claude 3 Haiku'),
+            systemPrompt: 'Hello, world!',
+            inferenceConfiguration: {},
+          })
+          .arguments({
+            content: a.string(),
+          })
+          .returns(a.string())
+          .authorization((allow) => allow.publicApiKey()),
+      });
+
+      const result = s.transform().schema;
+
+      expect(result).toMatchSnapshot();
+    });
+
+    test('Generation route with subset of inference configuration should create directive arg', () => {
+      const s = a.schema({
+        makeRecipe: a
+          .generation({
+            aiModel: a.ai.model('Claude 3 Haiku'),
+            systemPrompt: 'Hello, world!',
+            inferenceConfiguration: {
+              temperature: 0.5,
+            },
+          })
+          .arguments({
+            content: a.string(),
+          })
+          .returns(a.string())
+          .authorization((allow) => allow.publicApiKey()),
+      });
+
+      const result = s.transform().schema;
+
+      expect(result).toMatchSnapshot();
+    });
+
+    test('Generation route w/ no return should throw', () => {
+      const s = a.schema({
+        makeRecipe: a
+          .generation({
+            aiModel: a.ai.model('Claude 3 Haiku'),
+            systemPrompt: 'Hello, world!',
+          })
+          .arguments({
+            content: a.string(),
+          }),
+      });
+
+      expect(() => s.transform()).toThrow(
+        'Invalid Generation Route definition. A Generation Route must include a return type',
+      );
+    });
+
     for (const returnType of [
       'string',
       'integer',
@@ -495,7 +603,7 @@ describe('CustomOperation transform', () => {
           .authorization((allow) => allow.publicApiKey());
 
         expect(() => s.transform()).toThrow(
-          'Invalid ref. onLikePost is referencing Post which is not defined in the schema',
+          'Invalid ref. onLikePost is referring to Post which is not defined in the schema',
         );
       });
 
@@ -614,11 +722,11 @@ describe('CustomOperation transform', () => {
               .returns(a.customType({}))
               .authorization((allow) => allow.publicApiKey())
               .handler([
+                // @ts-expect-error
                 a.handler.custom({
                   entry: './filename.js',
                   dataSource: 'CommentTable',
                 }),
-                // @ts-expect-error
                 a.handler.function('myFn'),
               ]),
           });
@@ -791,6 +899,100 @@ describe('CustomOperation transform', () => {
             FnGetPostDetails: fn1,
           });
         });
+
+        test('defineFunction event invocation', () => {
+          const fn1 = defineFunctionStub({});
+          const s = a.schema({
+            getPostDetails: a
+              .query()
+              .arguments({})
+              .handler(a.handler.function(fn1).async())
+              .authorization((allow) => allow.authenticated())
+          });
+
+          const { schema, lambdaFunctions } = s.transform();
+          expect(schema).toMatchSnapshot();
+          expect(lambdaFunctions).toMatchObject({
+            FnGetPostDetails: fn1,
+          });
+        })
+
+        test('defineFunction sync - async', () => {
+          const fn1 = defineFunctionStub({});
+          const s = a.schema({
+            getPostDetails: a
+              .query()
+              .arguments({})
+              .handler([
+                a.handler.function(fn1),
+                a.handler.function(fn1).async(),
+              ])
+              .authorization((allow) => allow.authenticated())
+          });
+
+          const { schema, lambdaFunctions } = s.transform();
+          expect(schema).toMatchSnapshot();
+          expect(lambdaFunctions).toMatchObject({
+            FnGetPostDetails: fn1,
+          });
+        })
+
+        test('defineFunction sync - async with returns generates type errors', () => {
+          const fn1 = defineFunctionStub({});
+          const s = a.schema({
+            getPostDetails: a
+              .query()
+              .arguments({})
+              .handler([
+                a.handler.function(fn1),
+                a.handler.function(fn1).async(),
+              ])
+              .authorization((allow) => allow.authenticated())
+              // @ts-expect-error
+              .returns({ })
+          });
+        })
+
+        test('defineFunction async - async', () => {
+          const fn1 = defineFunctionStub({});
+          const fn2 = defineFunctionStub({});
+
+          const s = a.schema({
+            getPostDetails: a
+              .query()
+              .arguments({})
+              .handler([
+                a.handler.function(fn1).async(),
+                a.handler.function(fn2).async(),
+              ])
+              .authorization((allow) => allow.authenticated())
+          });
+
+          const { schema, lambdaFunctions } = s.transform();
+          expect(schema).toMatchSnapshot();
+          expect(lambdaFunctions).toMatchObject({
+            FnGetPostDetails: fn1,
+            FnGetPostDetails2: fn2,
+          });
+        })
+
+        test('defineFunction async - sync', () => {
+          const fn1 = defineFunctionStub({});
+          const s = a.schema({
+            getPostDetails: a
+              .query()
+              .arguments({})
+              .handler([
+                a.handler.function(fn1).async(),
+                a.handler.function(fn1),
+              ])
+              .returns(a.customType({}))
+              .authorization((allow) => allow.authenticated())
+          });
+
+          const { schema, lambdaFunctions } = s.transform();
+          expect(schema).toMatchSnapshot();
+        })
 
         test('pipeline / mix', () => {
           const fn1 = defineFunctionStub({});

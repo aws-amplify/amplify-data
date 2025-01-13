@@ -14,6 +14,7 @@ import type {
   ModelPrimaryCompositeKeyInput,
   StringFilter,
 } from '../../../../data-schema/src/util';
+import { configure } from '@aws-amplify/data-schema/internals';
 
 /**
  * Custom Identifier and Secondary Index permutations
@@ -28,6 +29,7 @@ import type {
 
 describe('Primary Indexes', () => {
   describe('Custom identifier single field SK', () => {
+    // #region covers d619a12c5b9f68b2
     const schema = a
       .schema({
         Model: a
@@ -38,6 +40,7 @@ describe('Primary Indexes', () => {
           .identifier(['pk', 'sk1']),
       })
       .authorization((allow) => allow.publicApiKey());
+    // #endregion
 
     type Schema = ClientSchema<typeof schema>;
 
@@ -125,9 +128,30 @@ describe('Primary Indexes', () => {
         },
       });
     });
+
+    test('defaulted/serial field can be used in identifier', () => {
+      const schema = configure({
+        database: {
+          engine: 'postgresql',
+          identifier: 'some-identifier',
+          connectionUri: '' as any,
+        },
+      }).schema({
+        Model: a
+          .model({
+            idSerial: a.integer().default(),
+            content: a.string(),
+          })
+          .identifier(['idSerial'])
+      })
+        .authorization(allow => allow.publicApiKey())
+
+      expect(schema.transform().schema).toMatchSnapshot();
+    });
   });
 
   describe('Custom identifier with composite SK', () => {
+    // #region covers d619a12c5b9f68b2
     const schema = a
       .schema({
         Model: a
@@ -139,6 +163,7 @@ describe('Primary Indexes', () => {
           .identifier(['pk', 'sk1', 'sk2']),
       })
       .authorization((allow) => allow.publicApiKey());
+    // #endregion
 
     type Schema = ClientSchema<typeof schema>;
 
@@ -246,6 +271,7 @@ describe('Primary Indexes', () => {
 
   // Outstanding bug in graphql schema generation.
   describe.skip('A model with custom identifier, enum PK', () => {
+    // #region covers d619a12c5b9f68b2
     const schema = a
       .schema({
         Category: a.enum(['cats', 'dogs']),
@@ -258,6 +284,8 @@ describe('Primary Indexes', () => {
           .identifier(['category', 'name']),
       })
       .authorization((allow) => allow.publicApiKey());
+    // #endregion
+
     type Schema = ClientSchema<typeof schema>;
 
     afterEach(() => {
@@ -393,6 +421,7 @@ describe('Primary Indexes', () => {
 
 describe('Secondary Indexes', () => {
   describe('Secondary index with single field SK', () => {
+    // #region covers 22ba8c0684be1400
     const schema = a
       .schema({
         Model: a
@@ -403,6 +432,7 @@ describe('Secondary Indexes', () => {
           .secondaryIndexes((index) => [index('gsiPk').sortKeys(['gsiSk'])]),
       })
       .authorization((allow) => allow.publicApiKey());
+    // #endregion
 
     type Schema = ClientSchema<typeof schema>;
 
@@ -499,6 +529,7 @@ describe('Secondary Indexes', () => {
       });
     });
   });
+
   describe('Secondary index with composite SK', () => {
     const schema = a
       .schema({
@@ -599,10 +630,13 @@ describe('Secondary Indexes', () => {
         { data: { listModels: { items: [] } } },
       ]);
       const client = generateClient<Schema>();
-      await client.models.Model.listModelByGsiPkAndGsiSk1AndGsiSk2({
-        gsiPk: 'abc',
-        gsiSk1GsiSk2: { beginsWith: { gsiSk1: '...', gsiSk2: 0 } },
-      });
+      await client.models.Model.listModelByGsiPkAndGsiSk1AndGsiSk2(
+        {
+          gsiPk: 'abc',
+          gsiSk1GsiSk2: { beginsWith: { gsiSk1: '...', gsiSk2: 0 } },
+        },
+        { sortDirection: 'ASC' },
+      );
 
       const [[{ query, variables }]] = optionsAndHeaders(spy);
 
@@ -618,6 +652,7 @@ describe('Secondary Indexes', () => {
       expect(variables).toStrictEqual({
         gsiPk: 'abc',
         gsiSk1GsiSk2: { beginsWith: { gsiSk1: '...', gsiSk2: 0 } },
+        sortDirection: 'ASC',
       });
     });
   });

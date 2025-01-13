@@ -1,11 +1,16 @@
 import { a, ClientSchema } from '@aws-amplify/data-schema';
 import { Amplify } from 'aws-amplify';
-import { type SelectionSet } from '@aws-amplify/data-schema-types';
+import type {
+  SelectionSet,
+  Expect,
+  Equal,
+} from '@aws-amplify/data-schema-types';
 import {
   buildAmplifyConfig,
   mockedGenerateClient,
   optionsAndHeaders,
   useState,
+  expectGraphqlMatches,
 } from '../../utils';
 
 describe('custom operations', () => {
@@ -15,6 +20,7 @@ describe('custom operations', () => {
 
   const dummyHandler = '' as any;
 
+  // #region covers d9c0f0f657dbbe8a, e394d9c98b1a1f8d
   const schema = a.schema({
     PhoneNumber: a
       .model({
@@ -68,9 +74,60 @@ describe('custom operations', () => {
       .returns(a.ref('EchoResult').array())
       .handler(a.handler.function(dummyHandler))
       .authorization((allow) => [allow.publicApiKey()]),
+    soloAsync: a
+      .query()
+      .arguments({
+        value: a.string(),
+      })
+      .handler(a.handler.function(dummyHandler).async())
+      .authorization((allow) => [allow.publicApiKey()]),
+    asyncSync: a
+      .query()
+      .arguments({
+        value: a.string(),
+      })
+      .handler([
+        a.handler.function(dummyHandler).async(),
+        a.handler.function(dummyHandler),
+      ])
+      .returns(a.ref('EchoResult'))
+      .authorization((allow) => [allow.publicApiKey()]),
+    syncAsync: a
+      .query()
+      .arguments({
+        value: a.string(),
+      })
+      .handler([
+        a.handler.function(dummyHandler),
+        a.handler.function(dummyHandler).async(),
+      ])
+      .authorization((allow) => [allow.publicApiKey()]),
+    syncSync: a
+      .query()
+      .arguments({
+        value: a.string(),
+      })
+      .handler([
+        a.handler.function(dummyHandler),
+        a.handler.function(dummyHandler),
+      ])
+      .returns(a.ref('EchoResult'))
+      .authorization((allow) => [allow.publicApiKey()]),
+    asyncAsync: a
+      .query()
+      .arguments({
+        value: a.string(),
+      })
+      .handler([
+        a.handler.function(dummyHandler).async(),
+        a.handler.function(dummyHandler).async(),
+      ])
+      .authorization((allow) => [allow.publicApiKey()]),
   });
 
   type Schema = ClientSchema<typeof schema>;
+
+  // #endregion
 
   test('primitive type result', async () => {
     const { spy, generateClient } = mockedGenerateClient([
@@ -85,7 +142,9 @@ describe('custom operations', () => {
     Amplify.configure(config);
     const client = generateClient<Schema>();
 
+    // #region covers ffefd700b1e323c9
     const { data } = await client.queries.echo({ value: 'something' });
+    // #endregion
 
     expect(data).toEqual('Echo result');
     expect(optionsAndHeaders(spy)).toMatchSnapshot();
@@ -237,5 +296,248 @@ describe('custom operations', () => {
       }),
     );
     expect(optionsAndHeaders(spy)).toMatchSnapshot();
+  });
+
+  test('solo async handler', async () => {
+    const { spy, generateClient } = mockedGenerateClient([
+      {
+        data: {
+          soloAsync: {
+            success: true,
+          },
+        },
+      },
+    ]);
+
+    const config = await buildAmplifyConfig(schema);
+    Amplify.configure(config);
+
+    const client = generateClient<Schema>();
+
+    const { data } = await client.queries.soloAsync({
+      value: 'hello, world!',
+    });
+
+    expect(data).toEqual(
+      expect.objectContaining({
+        success: true,
+      }),
+    );
+    expect(optionsAndHeaders(spy)).toMatchSnapshot();
+  });
+
+  test('async sync', async () => {
+    const { spy, generateClient } = mockedGenerateClient([
+      {
+        data: {
+          asyncSync: {
+            result: 'custom type echo result',
+          },
+        },
+      },
+    ]);
+
+    const config = await buildAmplifyConfig(schema);
+    Amplify.configure(config);
+
+    const client = generateClient<Schema>();
+
+    const { data } = await client.queries.asyncSync({
+      value: 'hello, world!',
+    });
+
+    expect(data).toEqual({
+      result: 'custom type echo result',
+    });
+    expect(optionsAndHeaders(spy)).toMatchSnapshot();
+  });
+
+  test('sync sync', async () => {
+    const { spy, generateClient } = mockedGenerateClient([
+      {
+        data: {
+          syncSync: {
+            result: 'custom type echo result',
+          },
+        },
+      },
+    ]);
+
+    const config = await buildAmplifyConfig(schema);
+    Amplify.configure(config);
+
+    const client = generateClient<Schema>();
+
+    const { data } = await client.queries.syncSync({
+      value: 'hello, world!',
+    });
+
+    expect(data).toEqual({
+      result: 'custom type echo result',
+    });
+    expect(optionsAndHeaders(spy)).toMatchSnapshot();
+  });
+
+  test('sync async', async () => {
+    const { spy, generateClient } = mockedGenerateClient([
+      {
+        data: {
+          syncAsync: {
+            success: true,
+          },
+        },
+      },
+    ]);
+
+    const config = await buildAmplifyConfig(schema);
+    Amplify.configure(config);
+
+    const client = generateClient<Schema>();
+
+    const { data } = await client.queries.syncAsync({
+      value: 'hello, world!',
+    });
+
+    expect(data).toEqual(
+      expect.objectContaining({
+        success: true,
+      }),
+    );
+    expect(optionsAndHeaders(spy)).toMatchSnapshot();
+  });
+
+  test('async async', async () => {
+    const { spy, generateClient } = mockedGenerateClient([
+      {
+        data: {
+          asyncAsync: {
+            success: true,
+          },
+        },
+      },
+    ]);
+
+    const config = await buildAmplifyConfig(schema);
+    Amplify.configure(config);
+
+    const client = generateClient<Schema>();
+
+    const { data } = await client.queries.asyncAsync({
+      value: 'hello, world!',
+    });
+
+    expect(data).toEqual(
+      expect.objectContaining({
+        success: true,
+      }),
+    );
+    expect(optionsAndHeaders(spy)).toMatchSnapshot();
+  });
+
+  describe('with enum arguments', () => {
+    const schema = a.schema({
+      Status: a.enum(['Active', 'Inactive', 'Unknown']),
+      echoEnum: a
+        .query()
+        .arguments({
+          status: a.enum(['Active', 'Inactive', 'Unknown']),
+        })
+        .returns(a.ref('Status'))
+        .handler(a.handler.function('name' as any))
+        .authorization((allow) => [allow.publicApiKey()]),
+    });
+
+    type Schema = ClientSchema<typeof schema>;
+
+    test(`appear with enums values in the ClientSchema['args']`, async () => {
+      type ExpectedArgs = {
+        status?: 'Active' | 'Inactive' | 'Unknown' | null | undefined;
+      };
+      type test = Expect<Equal<Schema['echoEnum']['args'], ExpectedArgs>>;
+    });
+
+    test('appear in the schema model', async () => {
+      /**
+       * Relevant invariants:
+       *
+       * 1. `echoEnum` must have arguments `(status: SOME_ENUM_TYPE_NAME)`
+       * 2. `SOME_ENUM_TYPE_NAME` must appear as an enum containing `Active, Inactive, Unknown`
+       */
+      expectGraphqlMatches(
+        schema.transform().schema,
+        `
+        enum Status {
+          Active,
+          Inactive,
+          Unknown
+        }
+
+        enum EchoEnumStatus {
+          Active,
+          Inactive,
+          Unknown
+        }
+
+        type Query {
+          echoEnum(status: EchoEnumStatus): Status @function(name: "name") @auth(rules: [{allow: public, provider: apiKey}])
+        }
+      `,
+      );
+    });
+
+    test('produce operation-namespaced enums in the modelIntrospection schema', async () => {
+      const { modelIntrospection } = await buildAmplifyConfig(schema);
+      expect(modelIntrospection.enums.EchoEnumStatus).toEqual(
+        expect.objectContaining({
+          name: 'EchoEnumStatus',
+          values: ['Active', 'Inactive', 'Unknown'],
+        }),
+      );
+    });
+
+    test('produce query entries referring to the namespaced enum in the modelIntrospection schema', async () => {
+      const { modelIntrospection } = await buildAmplifyConfig(schema);
+      expect(modelIntrospection.queries.echoEnum.arguments).toEqual(
+        expect.objectContaining({
+          status: {
+            name: 'status',
+            isArray: false,
+            type: { enum: 'EchoEnumStatus' },
+            isRequired: false,
+          },
+        }),
+      );
+    });
+
+    test('can be called with valid enum values', async () => {
+      const { spy, generateClient } = mockedGenerateClient([
+        {
+          data: { echoEnum: 'Active' },
+        },
+      ]);
+
+      const config = await buildAmplifyConfig(schema);
+      Amplify.configure(config);
+      const client = generateClient<Schema>();
+
+      const { data } = await client.queries.echoEnum({ status: 'Active' });
+      expect(optionsAndHeaders(spy)).toMatchSnapshot();
+      expect(data).toEqual('Active');
+    });
+
+    test('raise type errors when called with invalid enum values', async () => {
+      const { spy, generateClient } = mockedGenerateClient([
+        {
+          data: { echoEnum: 'Active' },
+        },
+      ]);
+
+      const config = await buildAmplifyConfig(schema);
+      Amplify.configure(config);
+      const client = generateClient<Schema>();
+
+      // @ts-expect-error
+      const { data } = await client.queries.echoEnum({ status: 'BAD VALUE' });
+    });
   });
 });

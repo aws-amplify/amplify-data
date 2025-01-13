@@ -1,5 +1,53 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`Modeling relationships Model a "one-to-one" relationship Delete a "Has One" relationship between records 1`] = `
+[
+  [
+    {
+      "authMode": undefined,
+      "authToken": undefined,
+      "query": "mutation($input: CreateCustomerInput!) { createCustomer(input: $input) { id name createdAt updatedAt } }",
+      "variables": {
+        "input": {
+          "name": "Ian",
+        },
+      },
+    },
+    {},
+  ],
+  [
+    {
+      "authMode": undefined,
+      "authToken": undefined,
+      "query": "mutation($input: UpdateCartInput!) { updateCart(input: $input) { id itemsX customerId createdAt updatedAt } }",
+      "variables": {
+        "input": {
+          "customerId": null,
+          "id": "some-cart-id",
+        },
+      },
+    },
+    {},
+  ],
+]
+`;
+
+exports[`Modeling relationships Model a "one-to-one" relationship Eagerly load a "Has One" relationship (hasOne side) 1`] = `
+[
+  [
+    {
+      "authMode": undefined,
+      "authToken": undefined,
+      "query": "query($id: ID!) { getCart(id: $id) { id customer { id name createdAt updatedAt } } }",
+      "variables": {
+        "id": "MY_CART_ID",
+      },
+    },
+    {},
+  ],
+]
+`;
+
 exports[`Modeling relationships Model a "one-to-one" relationship Lazy load a "Has One" relationship (belongsTo side) 1`] = `
 [
   [
@@ -130,6 +178,44 @@ exports[`Modeling relationships Model a "one-to-one" relationship create a "Has 
 ]
 `;
 
+exports[`Modeling relationships Model multiple relationships between two models you can fetch the related data [for each independent relationship] 1`] = `
+[
+  [
+    {
+      "authMode": undefined,
+      "authToken": undefined,
+      "query": "query($id: ID!) { getPost(id: $id) { id title content authorId editorId createdAt updatedAt } }",
+      "variables": {
+        "id": "SOME_POST_ID",
+      },
+    },
+    {},
+  ],
+  [
+    {
+      "authMode": undefined,
+      "authToken": undefined,
+      "query": "query($id: ID!) { getPerson(id: $id) { id name createdAt updatedAt } }",
+      "variables": {
+        "id": "related-author-id",
+      },
+    },
+    {},
+  ],
+  [
+    {
+      "authMode": undefined,
+      "authToken": undefined,
+      "query": "query($id: ID!) { getPerson(id: $id) { id name createdAt updatedAt } }",
+      "variables": {
+        "id": "related-editor-id",
+      },
+    },
+    {},
+  ],
+]
+`;
+
 exports[`Modeling relationships Model one-to-many relationship Delete a "Has Many" relationship between records 1`] = `
 [
   [
@@ -142,6 +228,22 @@ exports[`Modeling relationships Model one-to-many relationship Delete a "Has Man
           "id": "member-id",
           "teamId": null,
         },
+      },
+    },
+    {},
+  ],
+]
+`;
+
+exports[`Modeling relationships Model one-to-many relationship Eagerly load a "Has Many" relationship (hasMany side) 1`] = `
+[
+  [
+    {
+      "authMode": undefined,
+      "authToken": undefined,
+      "query": "query($id: ID!) { getTeam(id: $id) { id members { items { id name teamId createdAt updatedAt } } } }",
+      "variables": {
+        "id": "team-id",
       },
     },
     {},

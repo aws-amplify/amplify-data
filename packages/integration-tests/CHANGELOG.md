@@ -1,5 +1,35 @@
 # integration-tests
 
+## 0.2.1
+
+### Patch Changes
+
+- 56cf00c: Fix DeepPickFromPath unable to flatten arrays in a join table
+
+## 0.2.0
+
+### Minor Changes
+
+- 068f8af: Fix: change accumulator return type for initializeModel function
+
+## 0.1.3
+
+### Patch Changes
+
+- 7d3c2bf: fix: Export ResourceAuthorization to fix related declaration errors
+
+## 0.1.2
+
+### Patch Changes
+
+- 723b301: fix: Add exports for combine schema
+
+## 0.1.1
+
+### Patch Changes
+
+- 060a3b6: Added null check to handle potential null data in API response (issue #13941)
+
 ## 0.1.0
 
 ### Minor Changes

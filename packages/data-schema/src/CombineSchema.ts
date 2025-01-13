@@ -11,6 +11,11 @@ const CombinedSchemaBrandName = 'CombinedSchema';
 export const combinedSchemaBrand = brand(CombinedSchemaBrandName);
 export type CombinedSchemaBrand = Brand<typeof CombinedSchemaBrandName>;
 
+/**
+ * CombinedModel schema definition interface
+ *
+ * @param Schemas - The schemas to combine into a single API
+ */
 export type CombinedModelSchema<Schemas extends GenericModelSchema<any>[]> =
   CombinedSchemaBrand & { schemas: [...Schemas] };
 
@@ -31,10 +36,14 @@ function internalCombine<
   SchemasTuple extends [...Schema],
 >(schemas: SchemasTuple): CombinedModelSchema<Schema> {
   validateDuplicateTypeNames(schemas);
-  return {
+  const combined = {
     ...combinedSchemaBrand,
     schemas: schemas,
   };
+  for (const schema of combined.schemas) {
+    schema.context = combined;
+  }
+  return combined;
 }
 
 function validateDuplicateTypeNames<Schema extends GenericModelSchema<any>[]>(

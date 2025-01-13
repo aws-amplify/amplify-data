@@ -1,5 +1,11 @@
 # @aws-amplify/data-schema-types
 
+## 1.2.0
+
+### Minor Changes
+
+- 8497f22: Move AiModel to data-schema-types
+
 ## 1.1.1
 
 ### Patch Changes

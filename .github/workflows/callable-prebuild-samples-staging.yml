@@ -1,0 +1,20 @@
+name: Prebuild AmplifyJsSamplesStaging
+
+on:
+  workflow_call:
+    secrets:
+      AMPLIFY_JS_SAMPLES_STAGING_READ:
+        required: true
+jobs:
+  pre-staging:
+    name: Prebuild Staging
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+        with:
+          path: amplify-data
+      - name: Setup samples staging
+        uses: ./amplify-data/.github/actions/setup-samples-staging
+        with:
+          AMPLIFY_JS_SAMPLES_STAGING_READ: ${{ secrets.AMPLIFY_JS_SAMPLES_STAGING_READ }}

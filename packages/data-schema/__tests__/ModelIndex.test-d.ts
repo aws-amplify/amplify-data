@@ -50,7 +50,7 @@ test('secondaryIndexes input validation', () => {
         index('metadata'),
         // @ts-expect-error - array field
         index('tags'),
-        // @ts-expect-error - relational field
+        // @ts-expect-error - relationship field
         index('comments'),
         // @ts-expect-error - custom type field
         index('location'),

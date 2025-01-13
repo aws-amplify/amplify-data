@@ -1,4 +1,11 @@
-import { GraphQLError, print, parse, DocumentNode, TypeNode } from 'graphql';
+import {
+  GraphQLError,
+  print,
+  parse,
+  DocumentNode,
+  TypeNode,
+  ObjectTypeDefinitionNode,
+} from 'graphql';
 import { generateModels } from '@aws-amplify/graphql-generator';
 import { generateClient as actualGenerateClient } from 'aws-amplify/api';
 // eslint-disable-next-line import/no-extraneous-dependencies
@@ -76,7 +83,7 @@ export async function buildAmplifyConfig(schema: {
  * Produces a `generateClient` function and associated spy that is pre-configured
  * to return the given list of responses in order.
  *
- * This helps facilitate a test structure where as much mocking as done ahead of
+ * This helps facilitate a test structure where as much mocking is done ahead of
  * time as possible, so that the test body can show "actual customer code" to the
  * greatest degree possible.
  *
@@ -92,7 +99,7 @@ export function mockedGenerateClient(
 ) {
   const subs = {} as Record<string, Subscriber<any>>;
 
-  _graphqlspy.mockImplementation(async () => {
+  _graphqlspy.mockImplementation(async (_amplify: any, _options: any) => {
     const result = responses.shift();
 
     if (typeof result === 'function') {
@@ -108,7 +115,7 @@ export function mockedGenerateClient(
     }
   });
 
-  _graphqlsubspy.mockImplementation((amplify: any, options: any) => {
+  _graphqlsubspy.mockImplementation((_amplify: any, options: any) => {
     const graphql = print(options.query);
     const operationMatch = graphql.match(/\s+(on(Create|Update|Delete)\w+)/);
     const operation = operationMatch?.[1];
@@ -132,7 +139,7 @@ export function mockedGenerateClient(
   function generateServerClientUsingReqRes<T extends Record<any, any>>(
     options: Parameters<typeof actualGenerateServerClientUsingReqRes>[0],
   ) {
-    return actualGenerateServerClientUsingReqRes(options);
+    return actualGenerateServerClientUsingReqRes<T>(options);
   }
 
   return {
@@ -208,6 +215,7 @@ export function findSingularName(pluralName: string): string {
 }
 
 export function parseQuery(query: string | DocumentNode) {
+  // the types inferred from `parse` appear to just be wrong. they do not align with the actual AST.
   const q: any =
     typeof query === 'string'
       ? parse(query).definitions[0]
@@ -241,7 +249,83 @@ export function parseQuery(query: string | DocumentNode) {
         )
       : selections?.selectionSet?.selections?.map((i: any) => i.name.value);
 
-  return { operation, selection, type, table, selectionSet };
+  const selectionSetString: string = selectionSetFromAST(
+    selections?.selectionSet?.selections,
+  );
+
+  return {
+    operation,
+    selection,
+    type,
+    table,
+    selectionSet,
+    selectionSetString,
+  };
+}
+
+function selectionSetFromAST(selections: any) {
+  const fields = [] as any;
+  for (const s of selections || []) {
+    if (s.selectionSet) {
+      fields.push(
+        `${s.name.value} { ${selectionSetFromAST(s.selectionSet.selections)} }`,
+      );
+    } else {
+      fields.push(s.name.value);
+    }
+  }
+  return fields.join(' ');
+}
+
+export function findModelNode(ast: DocumentNode, modelName: string) {
+  for (const def of ast.definitions) {
+    if (def.kind === 'ObjectTypeDefinition' && def.name.value === modelName) {
+      return def;
+    }
+  }
+  return undefined;
+}
+
+export function findFieldNode(
+  modelNode: ObjectTypeDefinitionNode,
+  fieldName: string,
+) {
+  for (const field of modelNode.fields || []) {
+    if (field.kind === 'FieldDefinition' && field.name.value === fieldName) {
+      return field;
+    }
+  }
+  return undefined;
+}
+
+/**
+ * Condenses spacing/trimming of a selection set specified as a graphql string, but
+ * does *not* normalize field ordering and does not *add* spacing. E.g.,
+ *
+ * ```plain
+ *  id
+ *  description
+ *  details {
+ *    content
+ *  }
+ *  steps {
+ *    items {
+ *      id description todoId
+ *    }
+ *  }
+ * ```
+ *
+ * Becomes:
+ *
+ * ```plain
+ * id description details { content } steps { items { id description todoId } }
+ * ```
+ *
+ * @param selectionSet Selection set as a graphql string
+ * @returns
+ */
+export function condenseSelectionSet(selectionSet: string) {
+  return selectionSet.replace(/[\s\r\n]+/g, ' ').trim();
 }
 
 export function expectSelectionSetContains(
@@ -264,6 +348,17 @@ export function expectSelectionSetNotContains(
   const { query } = options;
   const { selectionSet } = parseQuery(query);
   expect(fields.every((f) => !selectionSet.includes(f))).toBe(true);
+}
+
+export function expectSelectionSetEquals(
+  spy: jest.SpyInstance,
+  selectionSet: string,
+  requestIndex = 0,
+) {
+  const [options] = optionsAndHeaders(spy)[requestIndex];
+  const { query } = options;
+  const { selectionSetString } = parseQuery(query);
+  expect(selectionSetString).toEqual(condenseSelectionSet(selectionSet));
 }
 
 export function expectVariables(
@@ -297,40 +392,89 @@ export function expectSchemaModelContains({
   isArray: boolean;
 }) {
   const ast = parse(schema);
-  for (const def of ast.definitions) {
-    if (def.kind === 'ObjectTypeDefinition') {
-      if (def.name.value === model) {
-        for (const _field of def.fields || []) {
-          if (_field.kind === 'FieldDefinition') {
-            if (_field.name.value === field) {
-              const matches = graphqlFieldMatches({
-                def: _field.type,
-                type,
-                isRequired,
-                isArray,
-              });
-              if (matches) {
-                return true;
-              } else {
-                throw new Error(
-                  `${JSON.stringify(
-                    _field,
-                    null,
-                    2,
-                  )} does not match ${JSON.stringify({
-                    type,
-                    isArray,
-                    isRequired,
-                  })}`,
-                );
-              }
-            }
-          }
-        }
-      }
-    }
+
+  const modelDef = findModelNode(ast, model);
+  if (!modelDef) throw new Error('No matching definition found in the schema.');
+
+  const fieldDef = findFieldNode(modelDef, field);
+  if (!fieldDef) throw new Error('No matching definition found in the schema.');
+
+  const matches = graphqlFieldMatches({
+    def: fieldDef.type,
+    type,
+    isRequired,
+    isArray,
+  });
+  if (matches) {
+    return true;
+  } else {
+    throw new Error(
+      `${JSON.stringify(fieldDef, null, 2)} does not match ${JSON.stringify({
+        type,
+        isArray,
+        isRequired,
+      })}`,
+    );
   }
-  throw new Error('No matching definition found in the schema.');
+}
+
+export function expectSchemaFieldDirective({
+  schema,
+  model,
+  field,
+  directive,
+}: {
+  schema: string;
+  model: string;
+  field: string;
+  directive: string;
+}) {
+  const ast = parse(schema);
+
+  const modelDef = findModelNode(ast, model);
+  if (!modelDef) throw new Error('No matching definition found in the schema.');
+
+  const fieldDef = findFieldNode(modelDef, field);
+  if (!fieldDef) throw new Error('No matching definition found in the schema.');
+
+  if (fieldDef.directives?.some((d) => print(d) === directive)) {
+    return true;
+  } else {
+    throw new Error(
+      `No match for "${model} ${directive}" in \n${JSON.stringify(
+        fieldDef.directives?.map((d) => print(d)),
+        null,
+        2,
+      )} `,
+    );
+  }
+}
+
+export function expectSchemaModelDirective({
+  schema,
+  model,
+  directive,
+}: {
+  schema: string;
+  model: string;
+  directive: string;
+}) {
+  const ast = parse(schema);
+
+  const modelDef = findModelNode(ast, model);
+  if (!modelDef) throw new Error('No matching definition found in the schema.');
+
+  if (modelDef.directives?.some((d) => print(d) === directive)) {
+    return true;
+  } else {
+    throw new Error(
+      `No match for "${model} ${directive}" in \n${JSON.stringify(
+        modelDef.directives?.map((d) => print(d)),
+        null,
+        2,
+      )} `,
+    );
+  }
 }
 
 function graphqlFieldMatches({
@@ -385,19 +529,38 @@ export function expectSchemaModelExcludes({
   field: string;
 }) {
   const ast = parse(schema);
-  for (const def of ast.definitions) {
-    if (def.kind === 'ObjectTypeDefinition') {
-      if (def.name.value === model) {
-        for (const _field of def.fields || []) {
-          if (_field.kind === 'FieldDefinition') {
-            if (_field.name.value === field) {
-              throw new Error(
-                `Field '${field}' unexpectedly exists on '${model}'`,
-              );
-            }
-          }
-        }
-      }
-    }
+
+  const modelDef = findModelNode(ast, model);
+  if (!modelDef) return true; // field can't exist if the model doesn't!
+
+  const fieldDef = findFieldNode(modelDef, field);
+  if (!fieldDef) return true; // exactly what we're asserting.
+
+  // else, we found the field, whereas we were "hoping" for its absence.
+  throw new Error(`Field '${field}' unexpectedly exists on '${model}'`);
+}
+
+/**
+ * Performs a normalized comparison of actual and expected GraphQL strings.
+ *
+ * Normalizes the strings by parsing and re-printing each.
+ *
+ * Logs the strings and throws on mismatch.
+ *
+ * @param actual GraphQL string
+ * @param expected GraphQL string
+ */
+export function expectGraphqlMatches(actual: string, expected: string) {
+  const actualNormalized = print(parse(actual));
+  const expectedNormalized = print(parse(expected));
+  if (actualNormalized !== expectedNormalized) {
+    console.error(
+      [
+        `Actual:\n${actual}`,
+        `Actual (normalized):\n${actualNormalized}`,
+        `Expected (normalized):\n${expectedNormalized}`,
+      ].join('\n\n'),
+    );
+    throw new Error('Actual and Expected graphql does not match.');
   }
 }
