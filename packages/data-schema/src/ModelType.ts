@@ -29,6 +29,9 @@ import type { methodKeyOf } from './util/usedMethods.js';
 const brandName = 'modelType';
 export type deferredRefResolvingPrefix = 'deferredRefResolving:';
 
+type BaseAllowModifier = Omit<AllowModifier, 'resource'>;
+type AnyAuthorization = Authorization<any, any, any>;
+
 type ModelFields = Record<
   string,
   | BaseModelField
@@ -224,6 +227,16 @@ export type ModelType<
 > = Omit<
   {
     [brandSymbol]: typeof brandName;
+
+    /**
+     * Defines single-field or composite identifiers
+     *
+     * @param identifier A list of field names used as identifiers for the data model
+     * @returns A ModelType instance with updated identifiers
+     *
+     * @example
+     * .identifier(['name', 'age'])
+     */
     identifier<
       PrimaryIndexFields = ExtractSecondaryIndexIRFields<T>,
       PrimaryIndexPool extends string = keyof PrimaryIndexFields & string,
@@ -238,6 +251,16 @@ export type ModelType<
       SetTypeSubArg<T, 'identifier', PrimaryIndexIR>,
       UsedMethod | 'identifier'
     >;
+
+    /**
+     * Adds secondary index for a model, secondary index consists of a "hash key" and optionally, a "sort key"
+     *
+     * @param callback A function that specifies "hash key" and "sort key" 
+     * @returns A ModelType instance with updated secondary index
+     *
+     * @example
+     * .secondaryIndexes((index) => [index('type').sortKeys(['sort'])])
+     */
     secondaryIndexes<
       const SecondaryIndexFields = ExtractSecondaryIndexIRFields<T>,
       const SecondaryIndexPKPool extends string = keyof SecondaryIndexFields &
@@ -267,6 +290,16 @@ export type ModelType<
       SetTypeSubArg<T, 'secondaryIndexes', IndexesIR>,
       UsedMethod | 'secondaryIndexes'
     >;
+
+    /**
+     * Disables the specified operations for the model
+     *
+     * @param ops A list of operations to be disabled
+     * @returns A ModelType instance with updated disabled operations
+     *
+     * @example
+     * model.disableOperations(['queries', 'subscriptions'])
+     */
     disableOperations<
       const Ops extends ReadonlyArray<DisableOperationsOptions>,
     >(
@@ -275,9 +308,23 @@ export type ModelType<
       SetTypeSubArg<T, 'disabledOperations', Ops>,
       UsedMethod | 'disableOperations'
     >;
-    authorization<AuthRuleType extends Authorization<any, any, any>>(
+
+    /**
+     * Configures authorization rules for public, signed-in user, per user, and per user group data access
+     *
+     * @param callback A function that receives an allow modifier to define authorization rules
+     * @returns A ModelType instance with updated authorization rules
+     *
+     * @example
+     * model.authorization((allow) => [
+     *   allow.guest(),
+     *   allow.publicApiKey(),
+     *   allow.authenticated(),
+     * ])
+     */
+    authorization<AuthRuleType extends AnyAuthorization>(
       callback: (
-        allow: Omit<AllowModifier, 'resource'>,
+        allow: BaseAllowModifier,
       ) => AuthRuleType | AuthRuleType[],
     ): ModelType<
       SetTypeSubArg<T, 'authorization', AuthRuleType[]>,
