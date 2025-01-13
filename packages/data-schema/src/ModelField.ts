@@ -83,7 +83,7 @@ export type BaseModelField<
 
 export type UsableModelFieldKey = satisfy<
   methodKeyOf<ModelField>,
-  'required' | 'default' | 'authorization' | 'array'
+  'required' | 'default' | 'authorization' | 'array' | 'validate'
 >;
 
 /**
@@ -130,7 +130,11 @@ export type ModelField<
      */
     default(
       value?: ModelFieldTypeParamOuter,
-    ): ModelField<T, UsedMethod | 'default'>;
+      // .validate() cannot be called after .default()
+    ): ModelField<T, UsedMethod | 'default' | 'validate'>;
+    validate(
+      value?: ModelFieldTypeParamOuter,
+    ): ModelField<T, UsedMethod | 'validate'>;
     /**
      * Configures field-level authorization rules. Pass in an array of authorizations `(allow => allow.____)` to mix and match
      * multiple authorization rules for this field.
@@ -199,6 +203,12 @@ function _field<T extends ModelFieldTypeParamOuter>(fieldType: ModelFieldType) {
     default(val) {
       data.default = typeof val === 'undefined' ? __generated : val;
       _meta.lastInvokedMethod = 'default';
+
+      return this;
+    },
+    // just a stub for now
+    validate() {
+      _meta.lastInvokedMethod = 'validate';
 
       return this;
     },
@@ -339,3 +349,11 @@ export function url(): ModelField<Nullable<string>> {
 export function ipAddress(): ModelField<Nullable<string>> {
   return _field(ModelFieldType.IPAddress);
 }
+
+// Test
+// Valid
+const _valid = string().default();
+const _valid2 = string().validate().default();
+
+// Invalid
+const _invalid = string().default().validate(); // TS error
