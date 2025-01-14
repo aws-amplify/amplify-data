@@ -10,7 +10,12 @@ import type {
   InternalRelationshipField,
   ModelRelationshipFieldParamShape,
 } from './ModelRelationshipField';
-import { type AllowModifier, type Authorization, allow } from './Authorization';
+import { 
+  type Authorization, 
+  type BaseAllowModifier, 
+  type AnyAuthorization,
+  allow, 
+} from './Authorization';
 import type { RefType, RefTypeParamShape } from './RefType';
 import type { EnumType } from './EnumType';
 import type { CustomType, CustomTypeParamShape } from './CustomType';
@@ -28,9 +33,6 @@ import type { methodKeyOf } from './util/usedMethods.js';
 
 const brandName = 'modelType';
 export type deferredRefResolvingPrefix = 'deferredRefResolving:';
-
-type BaseAllowModifier = Omit<AllowModifier, 'resource'>;
-type AnyAuthorization = Authorization<any, any, any>;
 
 type ModelFields = Record<
   string,
@@ -229,13 +231,17 @@ export type ModelType<
     [brandSymbol]: typeof brandName;
 
     /**
-     * Defines single-field or composite identifiers
+     * Defines single-field or composite identifiers, the fields must be marked required
      *
      * @param identifier A list of field names used as identifiers for the data model
      * @returns A ModelType instance with updated identifiers
      *
      * @example
-     * model().identifier(['name', 'age'])
+     * a.model({
+     *  name: a.string().required(),
+     *  email: a.string().required(),
+     *  age: a.integer(),
+     * }).identifier(['name', 'email'])
      */
     identifier<
       PrimaryIndexFields = ExtractSecondaryIndexIRFields<T>,
@@ -259,7 +265,10 @@ export type ModelType<
      * @returns A ModelType instance with updated secondary index
      *
      * @example
-     * model().secondaryIndexes((index) => [index('type').sortKeys(['sort'])])
+     * a.model().secondaryIndexes((index) => [index('type').sortKeys(['sort'])])
+     * 
+     * @see [Amplify documentation for secondary indexes](https://docs.amplify.aws/react/build-a-backend/data/data-modeling/secondary-index/)
+     * @see [Amazon DynamoDB documentation for secondary indexes](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/SecondaryIndexes.html)
      */
     secondaryIndexes<
       const SecondaryIndexFields = ExtractSecondaryIndexIRFields<T>,
@@ -298,7 +307,9 @@ export type ModelType<
      * @returns A ModelType instance with updated disabled operations
      *
      * @example
-     * model().disableOperations(['queries', 'subscriptions'])
+     * a.model().disableOperations(['delete', 'update', 'queries', 'subscriptions'])
+     * 
+     * @see [Amplify Data documentation for supported operations](https://docs.amplify.aws/react/build-a-backend/data/)
      */
     disableOperations<
       const Ops extends ReadonlyArray<DisableOperationsOptions>,
@@ -316,7 +327,7 @@ export type ModelType<
      * @returns A ModelType instance with updated authorization rules
      *
      * @example
-     * model().authorization((allow) => [
+     * a.model().authorization((allow) => [
      *   allow.guest(),
      *   allow.publicApiKey(),
      *   allow.authenticated(),
