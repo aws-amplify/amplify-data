@@ -708,3 +708,6 @@ export const accessSchemaData = <T extends SchemaAuthorization<any, any, any>>(
 export type AllowModifier = typeof allow;
 export type AllowModifierForCustomOperation = typeof allowForCustomOperations;
 export type AllowModifierForConversations = typeof allowForConversations;
+
+export type BaseAllowModifier = Omit<AllowModifier, 'resource'>;
+export type AnyAuthorization = Authorization<any, any, any>;
