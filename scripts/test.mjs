@@ -72,8 +72,8 @@ const runAppOnProd = ({ framework}) => {
   }
   const install = npmInstall(sampleDir);
 
-  let buildCommand = 'build:gen2';
-  let startCommand = 'start:gen2';
+  let buildCommand = 'build';
+  let startCommand = 'start';
 
   const serveCommand = `serve -s ${distDir} -l ${frameworkPort[framework]}`;
 
@@ -91,7 +91,7 @@ const runAppOnProd = ({ framework}) => {
 };
 
 const getDevStartCommand = ({ framework }) => {
-  const startWithbackendCmd ='start:gen2';
+  const startWithbackendCmd ='start';
   return startWithbackendCmd;
 };
 
