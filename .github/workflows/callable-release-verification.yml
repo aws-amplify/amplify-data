@@ -14,14 +14,14 @@ jobs:
   #   needs:
   #     - prebuild-ubuntu
   #   uses: ./.github/workflows/callable-unit-tests.yml
-  # local-e2e:
-  #   needs:
-  #     - prebuild-ubuntu
-  #   secrets: inherit
-  #   uses: ./.github/workflows/callable-local-e2e-tests.yml
-  e2e:
+  local-e2e:
     needs:
       - prebuild-ubuntu
-      # - prebuild-samples-staging
     secrets: inherit
-    uses: ./.github/workflows/callable-e2e-tests.yml
+    uses: ./.github/workflows/callable-local-e2e-tests.yml
+  # e2e:
+  #   needs:
+  #     - prebuild-ubuntu
+  #     # - prebuild-samples-staging
+  #   secrets: inherit
+  #   uses: ./.github/workflows/callable-e2e-tests.yml
