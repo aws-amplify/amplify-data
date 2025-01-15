@@ -22,24 +22,11 @@ const frameworkPort = {
   [FRAMEWORKS.webpack]: '3000',
 };
 
-const SUPPORTED_BROWSERS = [
-  'chrome',
-];
-const isSupportedBrowser = (browser) => {
-  return SUPPORTED_BROWSERS.includes(browser);
-};
-
 // Read arguments from process.argv, validate them, and assign defaults. Returns the parameter list.
 const getParameters = () => {
   let {
-    values: { env },
-    positionals: [framework, testFile, browser, build],
+    positionals: [framework, build],
   } = parseArgs({
-    options: {
-      env: {
-        type: 'string',
-      },
-    },
     allowPositionals: true,
   });
 
@@ -49,27 +36,17 @@ const getParameters = () => {
   }
 
   if (
-    !sample ||
     !pathExistsSync(`packages/e2e-tests/${framework}`)
   ) {
-    logError('Please enter a valid sample name');
+    logError('Please enter a valid framework name');
     process.exit(1);
-  }
-  if (!testFile) {
-    testFile = sample;
-  }
-  if (!browser || !isSupportedBrowser(browser)) {
-    browser = 'chrome';
   }
   if (!build || !BUILD_TYPE.hasOwnProperty(build)) {
     build = 'dev';
   }
   return {
     framework,
-    testFile,
-    browser,
-    build,
-    env: JSON.parse(env || '{}'),
+    build
   };
 };
 
@@ -117,7 +94,7 @@ const runAppOnProd = ({ framework, env }) => {
   return command;
 };
 
-const getDevStartCommand = ({ framework, backend }) => {
+const getDevStartCommand = ({ framework }) => {
   const startWithbackendCmd ='start:gen2';
   return startWithbackendCmd;
 };
@@ -146,23 +123,27 @@ const runAppOnDev = ({ framework, env }) => {
 
 const startSampleAndRun = async () => {
   const params = getParameters();
-  const { framework, testFile, browser, build, sample } = params;
-  const sampleDir = sampleDirectory({ framework, sample });
+  const { framework, build} = params;
 
   const waitOnOption = `tcp:127.0.0.1:${frameworkPort[framework]}`;
 
   // commands
   const runApp =
     build === BUILD_TYPE.dev ? runAppOnDev(params) : runAppOnProd(params);
-  const runTest = `wait-on -t ${defaultTimeout} ${waitOnOption} && cypress run --browser ${browser} --headless --config baseUrl=http://localhost:${frameworkPort[framework]} --spec "cypress/e2e/${framework}/${testFile}.spec.*"`;
+  const runTest = `wait-on -t ${defaultTimeout} ${waitOnOption} && curl -o /dev/null -s -w "%{http_code}" http://localhost:3000`;
 
   const { result } = concurrently([runApp, runTest], {
     killOthers: ['success', 'failure'],
     successCondition: ['first'],
   });
   return result
-    .then(() => {
-      process.exit(0);
+    .then((results) => {
+      const statusCode = parseInt(results[1].command.stdout.trim(), 10);
+      if (statusCode === 200) {
+        process.exit(0);
+      } else {
+        process.exit(1);
+      }
     })
     .catch((exitInfos) => {
       const exitCode = exitInfos.exitCode;
