@@ -131,11 +131,11 @@ const startSampleAndRun = async () => {
     .then((results) => {
       const statusCode = parseInt(results[1].command.stdout.trim(), 10);
       if (statusCode === 200) {
-        process.exit(0);
         console.log('Success: Status code 200 received');
+        process.exit(0);
       } else {
-        process.exit(1);
         console.log('Failure: Unexpected status code ${statusCode}');
+        process.exit(1);
       }
     })
     .catch((exitInfos) => {
