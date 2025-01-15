@@ -1,5 +1,11 @@
 # @aws-amplify/data-schema
 
+## 1.17.3
+
+### Patch Changes
+
+- c85577d: Add JSDoc for Data schema builder methods
+
 ## 1.17.2
 
 ### Patch Changes
