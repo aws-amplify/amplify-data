@@ -16,6 +16,9 @@ import type {
 import { configure } from '../src/ModelSchema';
 import { Nullable } from '../src/ModelField';
 import { defineFunctionStub } from './utils';
+import type {
+  CustomOperation,
+} from '../src/CustomOperation';
 
 describe('custom operations return types', () => {
   describe('when .ref() a basic custom type', () => {
@@ -856,5 +859,24 @@ describe('.for() modifier', () => {
 
   it('is available only on a.subscription()', () => {
     a.subscription().for(a.ref('Model'));
+  });
+});
+
+describe('.arguments() modifier', () => {
+  // Test to verify that CustomType can be used as an argument in custom operations
+  it('accepts CustomType in arguments', () => {
+    const operation: CustomOperation<any, "arguments" | "for", "queryCustomOperation"> = a.query().arguments({
+      customArg: a.customType({
+        field1: a.string(),
+        field2: a.integer()
+      })
+    });
+  });
+
+  // Test to verify that RefType can be used as an argument in custom operations
+  it('accepts RefType in arguments', () => {
+    const operation:CustomOperation<any, "arguments" | "for", "queryCustomOperation">  = a.query().arguments({
+      refArg: a.ref('SomeType')
+    });
   });
 });
