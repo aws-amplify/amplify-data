@@ -121,7 +121,7 @@ const startSampleAndRun = async () => {
   // commands
   const runApp =
     build === BUILD_TYPE.dev ? runAppOnDev(params) : runAppOnProd(params);
-  const runTest = `wait-on -t ${defaultTimeout} ${waitOnOption} && curl -o /dev/null -s -w "%{http_code}" http://localhost:3000`;
+  const runTest = `wait-on -t ${defaultTimeout} ${waitOnOption} && curl -o /dev/null -s -w "%{http_code}" http://localhost:3000/main.bundle.js`;
 
   const { result } = concurrently([runApp, runTest], {
     killOthers: ['success', 'failure'],
@@ -132,8 +132,10 @@ const startSampleAndRun = async () => {
       const statusCode = parseInt(results[1].command.stdout.trim(), 10);
       if (statusCode === 200) {
         process.exit(0);
+        console.log('Success: Status code 200 received');
       } else {
         process.exit(1);
+        console.log('Failure: Unexpected status code ${statusCode}');
       }
     })
     .catch((exitInfos) => {
