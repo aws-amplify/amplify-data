@@ -291,7 +291,7 @@ exports[`AI Conversation Routes Messages Subscribe to messages 1`] = `
       "authToken": undefined,
       "query": "
     subscription($conversationId: ID!) {
-      onCreateAssistantResponseChatBot(conversationId: $conversationId) {id owner conversationId associatedUserMessageId contentBlockIndex contentBlockText contentBlockDeltaIndex contentBlockToolUse { toolUseId name input } contentBlockDoneAtIndex stopReason errors { message errorType }}
+      onCreateAssistantResponseChatBot(conversationId: $conversationId) {id owner conversationId associatedUserMessageId contentBlockIndex contentBlockText contentBlockDeltaIndex contentBlockToolUse { toolUseId name input } contentBlockDoneAtIndex stopReason errors { message errorType } p}
     }
   ",
       "variables": {
@@ -332,6 +332,7 @@ exports[`AI Conversation Routes Messages Subscribe to messages 2`] = `
       message
       errorType
     }
+    p
   }
 }
 ",
