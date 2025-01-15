@@ -43,5 +43,5 @@ jobs:
           ../amplify-data/scripts/retry-npm-script.sh -s \
           "ci:test \
           $E2E_FRAMEWORK \
-          dev \
+          dev" \
           -n $E2E_RETRY_COUNT
