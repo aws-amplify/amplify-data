@@ -1397,7 +1397,7 @@ function generateInputTypes(
 
   implicitTypes.forEach(([typeName, typeDef]) => {
     if (isCustomType(typeDef)) {
-      const { gqlFields } = processFields(
+      const { gqlFields, implicitTypes: nestedTypes } = processFields(
         typeName,
         typeDef.data.fields,
         {},
@@ -1416,6 +1416,20 @@ function generateInputTypes(
       const typeKeyword = generateInputType ? 'input' : 'type';
       const customType = `${typeKeyword} ${typeName}${authString ? ` ${authString}` : ''}\n{\n  ${gqlFields.join('\n  ')}\n}`;
       generatedTypes.add(customType);
+
+      // Process nested types
+      if (nestedTypes.length > 0) {
+        const nestedGeneratedTypes = generateInputTypes(
+          nestedTypes,
+          generateInputType,
+          getRefType,
+          authRules,
+          true,
+        );
+        nestedGeneratedTypes.forEach((type) => {
+          generatedTypes.add(type);
+        });
+      }
     } else if (typeDef.type === 'enum') {
       const enumDefinition = `enum ${typeName} {\n  ${typeDef.values.join('\n  ')}\n}`;
       generatedTypes.add(enumDefinition);
@@ -1441,7 +1455,7 @@ const schemaPreprocessor = (
 } => {
   const enumTypes = new Set<string>();
   const gqlModels: string[] = [];
-  const inputTypes: string[] = [];
+  const inputTypes = new Map<string, string>();
 
   const customQueries = [];
   const customMutations = [];
@@ -1578,7 +1592,10 @@ const schemaPreprocessor = (
           databaseType,
           getRefType,
         );
-        inputTypes.push(...operationInputTypes);
+        operationInputTypes.forEach((type) => {
+          const typeName = type.split(' ')[1];
+          inputTypes.set(typeName, type);
+        });
         gqlModels.push(...operationReturnTypes);
 
         /**
@@ -1601,13 +1618,16 @@ const schemaPreprocessor = (
             const shouldGenerateInputType = !operationReturnTypes.some(
               (returnType) => returnType.includes(typeName),
             );
-            const generatedTypeDefinition = generateInputTypes(
+            const generatedTypeDefinitions = generateInputTypes(
               [[typeName, typeDef]],
               shouldGenerateInputType,
               getRefType,
-            )[0];
+            );
             if (shouldGenerateInputType) {
-              inputTypes.push(generatedTypeDefinition);
+              generatedTypeDefinitions.forEach((def) => {
+                const defName = def.split(' ')[1];
+                inputTypes.set(defName, def);
+              });
             }
           }
         });
@@ -1801,7 +1821,7 @@ const schemaPreprocessor = (
     schemaComponents.push(CONVERSATION_SCHEMA_GRAPHQL_TYPES);
   }
 
-  schemaComponents.push(...inputTypes);
+  schemaComponents.push(...inputTypes.values());
 
   const processedSchema = schemaComponents.join('\n\n');
 
