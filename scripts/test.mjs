@@ -62,7 +62,7 @@ const sampleDirectory = ({ framework }) => {
 };
 
 // bash command for serving sample on prod
-const runAppOnProd = ({ framework, env }) => {
+const runAppOnProd = ({ framework}) => {
   const sampleDir = sampleDirectory({ framework });
   let distDir; // distribution directory
   if (framework === FRAMEWORKS.webpack) {
@@ -71,9 +71,6 @@ const runAppOnProd = ({ framework, env }) => {
     logError(`unknown framework: ${framework}`);
   }
   const install = npmInstall(sampleDir);
-  const envVars = Object.entries(env)
-    .map(([key, value]) => `${key}=${value}`)
-    .join(' ');
 
   let buildCommand = 'build:gen2';
   let startCommand = 'start:gen2';
@@ -81,7 +78,6 @@ const runAppOnProd = ({ framework, env }) => {
   const serveCommand = `serve -s ${distDir} -l ${frameworkPort[framework]}`;
 
   const command = [
-    envVars && `export ${envVars}`,
     install,
     `npm --prefix ${sampleDir} run ${buildCommand}`,
     serveCommand,
@@ -100,16 +96,11 @@ const getDevStartCommand = ({ framework }) => {
 };
 
 // bash command for serving sample on dev
-const runAppOnDev = ({ framework, env }) => {
+const runAppOnDev = ({ framework}) => {
   const sampleDir = sampleDirectory({ framework });
   const install = npmInstall(sampleDir);
   const startScript = getDevStartCommand({ framework});
-  const envVars = Object.entries(env)
-    .map(([key, value]) => `${key}=${value}`)
-    .join(' ');
-
   const command = [
-    envVars && `export ${envVars}`,
     install,
     `npm --prefix ${sampleDir} run ${startScript}`,
   ]
