@@ -16,9 +16,7 @@ import type {
 import { configure } from '../src/ModelSchema';
 import { Nullable } from '../src/ModelField';
 import { defineFunctionStub } from './utils';
-import type {
-  CustomOperation,
-} from '../src/CustomOperation';
+import type { CustomOperation } from '../src/CustomOperation';
 
 describe('custom operations return types', () => {
   describe('when .ref() a basic custom type', () => {
@@ -87,7 +85,7 @@ describe('custom operations return types', () => {
     });
 
     it('produces async function handler types', () => {
-      const handler = defineFunctionStub({})
+      const handler = defineFunctionStub({});
       const schema = a.schema({
         aQuery: a
           .query()
@@ -95,7 +93,7 @@ describe('custom operations return types', () => {
           .arguments({
             input: a.string(),
             content: a.string().required(),
-          })
+          }),
       });
 
       type Schema = ClientSchema<typeof schema>;
@@ -112,10 +110,7 @@ describe('custom operations return types', () => {
       type ExpectedResult = {
         success: boolean;
       } | null;
-      type ExpectedFunctionHandler = AppSyncResolverHandler<
-        ActualArgs,
-        void
-      >;
+      type ExpectedFunctionHandler = AppSyncResolverHandler<ActualArgs, void>;
       type _T1 = Expect<Equal<ActualArgs, ExpectedArgs>>;
       type _T2 = Expect<Equal<ActualResult, ExpectedResult>>;
       type _T3 = Expect<Equal<ActualHandler, ExpectedFunctionHandler>>;
@@ -865,18 +860,101 @@ describe('.for() modifier', () => {
 describe('.arguments() modifier', () => {
   // Test to verify that CustomType can be used as an argument in custom operations
   it('accepts CustomType in arguments', () => {
-    const operation: CustomOperation<any, "arguments" | "for", "queryCustomOperation"> = a.query().arguments({
+    const operation: CustomOperation<
+      any,
+      'arguments' | 'for',
+      'queryCustomOperation'
+    > = a.query().arguments({
       customArg: a.customType({
         field1: a.string(),
-        field2: a.integer()
-      })
+        field2: a.integer(),
+      }),
     });
   });
 
   // Test to verify that RefType can be used as an argument in custom operations
   it('accepts RefType in arguments', () => {
-    const operation:CustomOperation<any, "arguments" | "for", "queryCustomOperation">  = a.query().arguments({
-      refArg: a.ref('SomeType')
+    const operation: CustomOperation<
+      any,
+      'arguments' | 'for',
+      'queryCustomOperation'
+    > = a.query().arguments({
+      refArg: a.ref('SomeType'),
     });
+  });
+
+  it('handles deeply nested custom types', () => {
+    const schema = a.schema({
+      DeepNested: a.customType({
+        level1: a.customType({
+          level2: a.customType({
+            level3: a.string(),
+          }),
+        }),
+      }),
+      deepQuery: a
+        .query()
+        .arguments({
+          input: a.ref('DeepNested'),
+        })
+        .returns(a.string()),
+    });
+
+    type Schema = ClientSchema<typeof schema>;
+
+    type ExpectedArgs = {
+      input?: {
+        level1?: {
+          level2?: {
+            level3?: string | null;
+          } | null;
+        } | null;
+      } | null;
+    };
+
+    type ActualArgs = Schema['deepQuery']['args'];
+
+    type Test = Expect<Equal<ActualArgs, ExpectedArgs>>;
+  });
+
+  it('handles mixed custom types and refs', () => {
+    const schema = a.schema({
+      RefType: a.customType({
+        field: a.string(),
+      }),
+      MixedType: a.customType({
+        nested: a.customType({
+          refField: a.ref('RefType'),
+          customField: a.customType({
+            deepField: a.integer(),
+          }),
+        }),
+      }),
+      mixedQuery: a
+        .query()
+        .arguments({
+          input: a.ref('MixedType'),
+        })
+        .returns(a.string()),
+    });
+
+    type Schema = ClientSchema<typeof schema>;
+
+    type ExpectedArgs = {
+      input?: {
+        nested?: {
+          refField?: {
+            field?: string | null;
+          } | null;
+          customField?: {
+            deepField?: number | null;
+          } | null;
+        } | null;
+      } | null;
+    };
+
+    type ActualArgs = Schema['mixedQuery']['args'];
+
+    type Test = Expect<Equal<ActualArgs, ExpectedArgs>>;
   });
 });
