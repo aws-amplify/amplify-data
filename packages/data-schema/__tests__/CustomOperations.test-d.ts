@@ -957,4 +957,44 @@ describe('.arguments() modifier', () => {
 
     type Test = Expect<Equal<ActualArgs, ExpectedArgs>>;
   });
+
+  it('handles RefType with multi-layered custom types in nested structures', () => {
+    const schema = a.schema({
+      NestedCustomType: a.customType({
+        nestedField: a.string(),
+      }),
+      RefType: a.customType({
+        field: a.string(),
+        nestedCustom: a.ref('NestedCustomType'),
+      }),
+      OuterType: a.customType({
+        refField: a.ref('RefType'),
+        otherField: a.integer(),
+      }),
+      complexQuery: a
+        .query()
+        .arguments({
+          input: a.ref('OuterType'),
+        })
+        .returns(a.string()),
+    });
+
+    type Schema = ClientSchema<typeof schema>;
+
+    type ExpectedArgs = {
+      input?: {
+        refField?: {
+          field?: string | null;
+          nestedCustom?: {
+            nestedField?: string | null;
+          } | null;
+        } | null;
+        otherField?: number | null;
+      } | null;
+    };
+
+    type ActualArgs = Schema['complexQuery']['args'];
+
+    type Test = Expect<Equal<ActualArgs, ExpectedArgs>>;
+  });
 });
