@@ -124,12 +124,13 @@ const startSampleAndRun = async () => {
   const runTest = `wait-on -t ${defaultTimeout} ${waitOnOption} && curl -o /dev/null -s -w "%{http_code}" http://localhost:3000/main.bundle.js`;
 
   const { result } = concurrently([runApp, runTest], {
-    killOthers: ['success', 'failure'],
+    killOthers: ['failure'],
     successCondition: ['second'],
   });
   return result
     .then((results) => {
       const statusCode = parseInt(results[1].command.stdout.trim(), 10);
+      commands[0].kill();
       if (statusCode === 200) {
         console.log('Success: Status code 200 received');
         process.exit(0);
@@ -139,6 +140,7 @@ const startSampleAndRun = async () => {
       }
     })
     .catch((exitInfos) => {
+      commands[0].kill();
       console.log("Unexpected exit");
       const exitCode = exitInfos.exitCode;
       process.exit(exitCode);
