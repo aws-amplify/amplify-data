@@ -125,7 +125,6 @@ const startSampleAndRun = async () => {
 
   const { result } = concurrently([runApp, runTest], {
     killOthers: ['success', 'failure'],
-    successCondition: ['first'],
   });
   return result
     .then((results) => {
@@ -138,9 +137,9 @@ const startSampleAndRun = async () => {
         process.exit(1);
       }
     })
-    .catch((exitInfos) => {
-      const exitCode = exitInfos.exitCode;
-      process.exit(exitCode);
+    .catch((error) => {
+      console.error(error);
+      process.exit(1);
     });
 };
 
