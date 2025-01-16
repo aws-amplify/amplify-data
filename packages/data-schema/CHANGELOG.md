@@ -1,5 +1,11 @@
 # @aws-amplify/data-schema
 
+## 1.17.4
+
+### Patch Changes
+
+- 3b276c0: add padding field to ConversationMessageStreamPart GraphQL type
+
 ## 1.17.3
 
 ### Patch Changes
