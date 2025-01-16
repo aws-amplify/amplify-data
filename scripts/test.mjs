@@ -137,9 +137,9 @@ const startSampleAndRun = async () => {
         process.exit(1);
       }
     })
-    .catch((error) => {
-      console.error(error);
-      process.exit(1);
+    .catch((exitInfos) => {
+      const exitCode = exitInfos.exitCode;
+      process.exit(exitCode);
     });
 };
 
