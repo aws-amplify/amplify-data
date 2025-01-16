@@ -139,6 +139,7 @@ const startSampleAndRun = async () => {
       }
     })
     .catch((exitInfos) => {
+      console.log("Unexpected exit");
       const exitCode = exitInfos.exitCode;
       process.exit(exitCode);
     });
