@@ -122,7 +122,7 @@ const startSampleAndRun = async () => {
   const runApp =
     build === BUILD_TYPE.dev ? runAppOnDev(params) : runAppOnProd(params);
   const runTest = `wait-on -t ${defaultTimeout} ${waitOnOption} && curl -o /dev/null -s -w "%{http_code}" http://localhost:3000/main.bundle-t.js |
-  xargs -I {} sh -c 'if [ "{}" = "200" ]; then exit 0; else echo "Received status code: {}"; exit 1; fi'`;
+  (read status; if [ "$status" = "200" ]; then exit 0; else echo "Received status code: $status"; exit 1; fi)`;
 
   const { result } = concurrently([runApp, runTest], {
     killOthers: ['success', 'failure'],
