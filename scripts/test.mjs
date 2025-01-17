@@ -124,7 +124,7 @@ const startSampleAndRun = async () => {
   const runTest = `wait-on -t ${defaultTimeout} ${waitOnOption} && curl -o /dev/null -s -w "%{http_code}" http://localhost:3000/main.bundle.js`;
 
   const { result } = concurrently([runApp, runTest], {
-    killOthers: ['success, failure'],
+    killOthers: ['success', 'failure'],
     successCondition: ['last'],
   });
   return result
