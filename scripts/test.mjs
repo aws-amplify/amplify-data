@@ -130,7 +130,6 @@ const startSampleAndRun = async () => {
   return result
     .then((results) => {
       const statusCode = parseInt(results[1].command.stdout.trim(), 10);
-      commands[0].kill();
       if (statusCode === 200) {
         console.log('Success: Status code 200 received');
         process.exit(0);
@@ -140,7 +139,6 @@ const startSampleAndRun = async () => {
       }
     })
     .catch((exitInfos) => {
-      commands[0].kill();
       console.log("Unexpected exit");
       const exitCode = exitInfos.exitCode;
       process.exit(exitCode);
