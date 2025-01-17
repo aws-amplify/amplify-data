@@ -125,7 +125,7 @@ const startSampleAndRun = async () => {
 
   const { result } = concurrently([runApp, runTest], {
     killOthers: ['success', 'failure'],
-    successCondition: ['last'],
+    successCondition: ['first'],
   });
   return result
     .then((results) => {
