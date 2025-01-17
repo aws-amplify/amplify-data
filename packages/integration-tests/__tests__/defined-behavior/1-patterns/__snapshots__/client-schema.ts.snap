@@ -1,13 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`ClientSchema overview sample schema 1`] = `
-"enum CustomerEngagementStage {
-  PROSPECT
-  INTERESTED
-  PURCHASED
-}
-
-type Customer @model @auth(rules: [{allow: public, provider: apiKey}])
+"type Customer @model @auth(rules: [{allow: public, provider: apiKey}])
 {
   customerId: ID! @primaryKey
   name: String
@@ -28,5 +22,11 @@ type CustomerLocation
 {
   lat: Float!
   long: Float!
+}
+
+enum CustomerEngagementStage {
+  PROSPECT
+  INTERESTED
+  PURCHASED
 }"
 `;

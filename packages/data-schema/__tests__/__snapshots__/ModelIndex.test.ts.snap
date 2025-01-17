@@ -1,61 +1,61 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`secondary index schema generation generates correct schema for using a.enum() as the partition key 1`] = `
-"enum TodoStatus {
-  open
-  in_progress
-  completed
-}
-
-type Todo @model @auth(rules: [{allow: public, provider: apiKey}])
+"type Todo @model @auth(rules: [{allow: public, provider: apiKey}])
 {
   title: String!
   content: String
   status: TodoStatus @index(sortKeyFields: ["title"], queryField: "listTodoByStatusAndTitle")
+}
+
+enum TodoStatus {
+  open
+  in_progress
+  completed
 }"
 `;
 
 exports[`secondary index schema generation generates correct schema for using a.enum() as the sort key 1`] = `
-"enum TodoStatus {
-  open
-  in_progress
-  completed
-}
-
-type Todo @model @auth(rules: [{allow: public, provider: apiKey}])
+"type Todo @model @auth(rules: [{allow: public, provider: apiKey}])
 {
   title: String! @index(sortKeyFields: ["status"], queryField: "listTodoByTitleAndStatus")
   content: String
   status: TodoStatus
+}
+
+enum TodoStatus {
+  open
+  in_progress
+  completed
 }"
 `;
 
 exports[`secondary index schema generation generates correct schema for using a.ref() (refer to an enum) as the partition key 1`] = `
-"enum TodoStatus {
-  open
-  in_progress
-  completed
-}
-
-type Todo @model @auth(rules: [{allow: public, provider: apiKey}])
+"type Todo @model @auth(rules: [{allow: public, provider: apiKey}])
 {
   title: String!
   content: String
   status: TodoStatus @index(sortKeyFields: ["title"], queryField: "listTodoByStatusAndTitle")
+}
+
+enum TodoStatus {
+  open
+  in_progress
+  completed
 }"
 `;
 
 exports[`secondary index schema generation generates correct schema for using a.ref() (refer to an enum) as the sort key 1`] = `
-"enum TodoStatus {
-  open
-  in_progress
-  completed
-}
-
-type Todo @model @auth(rules: [{allow: public, provider: apiKey}])
+"type Todo @model @auth(rules: [{allow: public, provider: apiKey}])
 {
   title: String! @index(sortKeyFields: ["status"], queryField: "listTodoByTitleAndStatus")
   content: String
   status: TodoStatus
+}
+
+enum TodoStatus {
+  open
+  in_progress
+  completed
 }"
 `;

@@ -1812,17 +1812,15 @@ const schemaPreprocessor = (
   const customOperationTypes = generateCustomOperationTypes(customOperations);
 
   const schemaComponents = [
-    ...Array.from(enumTypes),
     ...gqlModels,
+    ...Array.from(enumTypes),
     ...customOperationTypes,
+    ...Array.from(inputTypes.values()),
   ];
 
   if (shouldAddConversationTypes) {
     schemaComponents.push(CONVERSATION_SCHEMA_GRAPHQL_TYPES);
   }
-
-  schemaComponents.push(...inputTypes.values());
-
   const processedSchema = schemaComponents.join('\n\n');
 
   return {
