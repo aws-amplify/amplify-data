@@ -1341,14 +1341,15 @@ describe('custom operations + custom type auth inheritance', () => {
 
   test('implicit custom type inherits auth rules from referencing op', () => {
     const s = a.schema({
-      MyQueryReturnType: a.customType({
-        fieldA: a.string(),
-        fieldB: a.integer(),
-      }),
       myQuery: a
         .query()
         .handler(a.handler.function('myFn'))
-        .returns(a.ref('MyQueryReturnType'))
+        .returns(
+          a.customType({
+            fieldA: a.string(),
+            fieldB: a.integer(),
+          }),
+        )
         .authorization((allow) => allow.publicApiKey()),
     });
 
@@ -1362,22 +1363,23 @@ describe('custom operations + custom type auth inheritance', () => {
 
   test('nested custom types inherit auth rules from top-level referencing op', () => {
     const s = a.schema({
-      MyQueryReturnType: a.customType({
-        fieldA: a.string(),
-        fieldB: a.integer(),
-        nestedCustomType: a.customType({
-          nestedA: a.string(),
-          nestedB: a.string(),
-          grandChild: a.customType({
-            grandA: a.string(),
-            grandB: a.string(),
-          }),
-        }),
-      }),
       myQuery: a
         .query()
         .handler(a.handler.function('myFn'))
-        .returns(a.ref('MyQueryReturnType'))
+        .returns(
+          a.customType({
+            fieldA: a.string(),
+            fieldB: a.integer(),
+            nestedCustomType: a.customType({
+              nestedA: a.string(),
+              nestedB: a.string(),
+              grandChild: a.customType({
+                grandA: a.string(),
+                grandB: a.string(),
+              }),
+            }),
+          }),
+        )
         .authorization((allow) => allow.publicApiKey()),
     });
 
@@ -1396,28 +1398,6 @@ describe('custom operations + custom type auth inheritance', () => {
       expect.stringContaining(
         'type MyQueryReturnTypeNestedCustomTypeGrandChild @aws_api_key',
       ),
-    );
-  });
-
-  test('inline custom type inherits auth rules from referencing op', () => {
-    const s = a.schema({
-      myQuery: a
-        .query()
-        .handler(a.handler.function('myFn'))
-        .returns(
-          a.customType({
-            fieldA: a.string(),
-            fieldB: a.integer(),
-          }),
-        )
-        .authorization((allow) => allow.publicApiKey()),
-    });
-
-    const result = s.transform().schema;
-
-    expect(result).toMatchSnapshot();
-    expect(result).toEqual(
-      expect.stringContaining('type MyQueryReturnType @aws_api_key\n{'),
     );
   });
 

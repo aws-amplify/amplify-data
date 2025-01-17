@@ -1424,7 +1424,7 @@ function generateInputTypes(
           generateInputType,
           getRefType,
           authRules,
-          true,
+          false,
         );
         nestedGeneratedTypes.forEach((type) => {
           generatedTypes.add(type);
