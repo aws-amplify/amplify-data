@@ -907,7 +907,7 @@ describe('CustomOperation transform', () => {
               .query()
               .arguments({})
               .handler(a.handler.function(fn1).async())
-              .authorization((allow) => allow.authenticated())
+              .authorization((allow) => allow.authenticated()),
           });
 
           const { schema, lambdaFunctions } = s.transform();
@@ -915,7 +915,7 @@ describe('CustomOperation transform', () => {
           expect(lambdaFunctions).toMatchObject({
             FnGetPostDetails: fn1,
           });
-        })
+        });
 
         test('defineFunction sync - async', () => {
           const fn1 = defineFunctionStub({});
@@ -927,7 +927,7 @@ describe('CustomOperation transform', () => {
                 a.handler.function(fn1),
                 a.handler.function(fn1).async(),
               ])
-              .authorization((allow) => allow.authenticated())
+              .authorization((allow) => allow.authenticated()),
           });
 
           const { schema, lambdaFunctions } = s.transform();
@@ -935,7 +935,7 @@ describe('CustomOperation transform', () => {
           expect(lambdaFunctions).toMatchObject({
             FnGetPostDetails: fn1,
           });
-        })
+        });
 
         test('defineFunction sync - async with returns generates type errors', () => {
           const fn1 = defineFunctionStub({});
@@ -949,9 +949,9 @@ describe('CustomOperation transform', () => {
               ])
               .authorization((allow) => allow.authenticated())
               // @ts-expect-error
-              .returns({ })
+              .returns({}),
           });
-        })
+        });
 
         test('defineFunction async - async', () => {
           const fn1 = defineFunctionStub({});
@@ -965,7 +965,7 @@ describe('CustomOperation transform', () => {
                 a.handler.function(fn1).async(),
                 a.handler.function(fn2).async(),
               ])
-              .authorization((allow) => allow.authenticated())
+              .authorization((allow) => allow.authenticated()),
           });
 
           const { schema, lambdaFunctions } = s.transform();
@@ -974,7 +974,7 @@ describe('CustomOperation transform', () => {
             FnGetPostDetails: fn1,
             FnGetPostDetails2: fn2,
           });
-        })
+        });
 
         test('defineFunction async - sync', () => {
           const fn1 = defineFunctionStub({});
@@ -987,12 +987,12 @@ describe('CustomOperation transform', () => {
                 a.handler.function(fn1),
               ])
               .returns(a.customType({}))
-              .authorization((allow) => allow.authenticated())
+              .authorization((allow) => allow.authenticated()),
           });
 
           const { schema, lambdaFunctions } = s.transform();
           expect(schema).toMatchSnapshot();
-        })
+        });
 
         test('pipeline / mix', () => {
           const fn1 = defineFunctionStub({});

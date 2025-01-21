@@ -84,7 +84,7 @@ describe('custom operations return types', () => {
     });
 
     it('produces async function handler types', () => {
-      const handler = defineFunctionStub({})
+      const handler = defineFunctionStub({});
       const schema = a.schema({
         aQuery: a
           .query()
@@ -92,7 +92,7 @@ describe('custom operations return types', () => {
           .arguments({
             input: a.string(),
             content: a.string().required(),
-          })
+          }),
       });
 
       type Schema = ClientSchema<typeof schema>;
@@ -109,10 +109,7 @@ describe('custom operations return types', () => {
       type ExpectedResult = {
         success: boolean;
       } | null;
-      type ExpectedFunctionHandler = AppSyncResolverHandler<
-        ActualArgs,
-        void
-      >;
+      type ExpectedFunctionHandler = AppSyncResolverHandler<ActualArgs, void>;
       type _T1 = Expect<Equal<ActualArgs, ExpectedArgs>>;
       type _T2 = Expect<Equal<ActualResult, ExpectedResult>>;
       type _T3 = Expect<Equal<ActualHandler, ExpectedFunctionHandler>>;
