@@ -8,6 +8,9 @@ import {
 import { Expect, Equal } from '@aws-amplify/data-schema-types';
 import { SelectionSet } from 'aws-amplify/data';
 
+// Temp
+import { ModelPath } from '../../../../data-schema/src/runtime/client/index';
+
 describe('Custom selection set edge cases', () => {
   afterEach(() => {
     jest.clearAllMocks();
@@ -354,7 +357,7 @@ describe('Custom selection set edge cases', () => {
         const { data } = await mockedOperation();
 
         type ExpectedTodoType = SelectionSet<
-          Schema['Todo']['type'],
+          Schema['Todo'],
           typeof selectionSet
         >[];
 
@@ -407,6 +410,8 @@ describe('Custom selection set edge cases', () => {
 
       async function mockedOperation() {
         const { client, spy } = await getMockedClient(sampleTodo);
+
+        type Test = ModelPath<Schema['Todo']['__meta']['flatModel']>;
 
         const { data } = await client.models.Todo.list({
           selectionSet: ['id', 'steps.todo.steps.todo.steps.todo.steps.*'],
