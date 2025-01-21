@@ -33,7 +33,7 @@ runs:
       shell: bash
       working-directory: ./amplify-js-samples-staging
       env:
-        BRANCH: feat/lzhouq-test
+        BRANCH: ${{ github.ref_name }}
       run: |
         if git ls-remote --exit-code --heads origin refs/heads/$BRANCH; then
             # Corresponding branch on sample repo exists, check it out

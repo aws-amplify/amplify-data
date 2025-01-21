@@ -132,8 +132,11 @@ const startSampleAndRun = async () => {
       process.exit(0);
     })
     .catch((exitInfos) => {
-      const exitCode = exitInfos.exitCode;
-      process.exit(exitCode);
+      // const exitCode = exitInfos.exitCode;
+      // process.exit(exitCode);
+      // Concurrently throws SIGTERM with exit code 0 on success, check code and exit with it
+			const { exitCode } = exitInfos[0];
+			process.exit(exitCode);
     });
 };
 
