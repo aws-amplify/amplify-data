@@ -7,9 +7,9 @@ jobs:
     uses: ./.github/workflows/callable-prebuild-amplify-data.yml
     with:
       runs_on: ubuntu-latest
-  # prebuild-samples-staging:
-  #   secrets: inherit
-  #   uses: ./.github/workflows/callable-prebuild-samples-staging.yml
+  prebuild-samples-staging:
+    secrets: inherit
+    uses: ./.github/workflows/callable-prebuild-samples-staging.yml
   # unit-tests:
   #   needs:
   #     - prebuild-ubuntu
