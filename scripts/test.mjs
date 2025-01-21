@@ -135,7 +135,7 @@ const startSampleAndRun = async () => {
   //     const exitCode = exitInfos.exitCode;
   //     process.exit(exitCode);
   //   });
-  return concurrently( [runApp, runCypress],
+  return concurrently( [runApp, runTest],
 		{
 			killOthers: ['success', 'failure'],
 			successCondition: ['first'],
