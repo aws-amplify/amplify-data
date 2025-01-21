@@ -1,5 +1,11 @@
 # @aws-amplify/data-schema
 
+## 1.17.5
+
+### Patch Changes
+
+- 8cea062: style: cleanup whitespace and standardize code formatting in data-schema package
+
 ## 1.17.4
 
 ### Patch Changes
