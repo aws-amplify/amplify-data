@@ -121,34 +121,20 @@ const startSampleAndRun = async () => {
   const runApp =
     build === BUILD_TYPE.dev ? runAppOnDev(params) : runAppOnProd(params);
   const runTest = `wait-on -t ${defaultTimeout} ${waitOnOption} && curl -o /dev/null -s -w "%{http_code}" http://localhost:${frameworkPort[framework]}/main.bundle-t.js |
-  (read status; if [ "$status" = "200" ]; then exit 0; else echo "Received status code: $status"; exit 1; fi)`;
+  (read status; if [ "$status" = "200" ]; then exit 0; else echo "Received status code: $status"; exit 4; fi)`;
 
-  // const { result } = concurrently([runApp, runTest], {
-  //   killOthers: ['success', 'failure'],
-  //   successCondition: ['first'],
-  // });
-  // return result
-  //   .then((results) => {
-  //     process.exit(0);
-  //   })
-  //   .catch((exitInfos) => {
-  //     const exitCode = exitInfos.exitCode;
-  //     process.exit(exitCode);
-  //   });
-  return concurrently( [runApp, runTest],
-		{
-			killOthers: ['success', 'failure'],
-			successCondition: ['first'],
-		}
-	)
-		.then(() => {
-			process.exit(0);
-		})
-		.catch((exitInfos) => {
-			// Concurrently throws SIGTERM with exit code 0 on success, check code and exit with it
-			const { exitCode } = exitInfos[0];
-			process.exit(exitCode);
-		});
+  const { result } = concurrently([runApp, runTest], {
+    killOthers: ['success', 'failure'],
+    successCondition: ['first'],
+  });
+  return result
+    .then((results) => {
+      process.exit(0);
+    })
+    .catch((exitInfos) => {
+      const exitCode = exitInfos.exitCode;
+      process.exit(exitCode);
+    });
 };
 
 (async () => {
