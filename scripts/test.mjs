@@ -135,6 +135,7 @@ const startSampleAndRun = async () => {
       // const exitCode = exitInfos.exitCode;
       // process.exit(exitCode);
       // Concurrently throws SIGTERM with exit code 0 on success, check code and exit with it
+      console.log('Exit Info:', JSON.stringify(exitInfos, null, 2));
 			const { exitCode } = exitInfos[0];
 			process.exit(exitCode);
     });
