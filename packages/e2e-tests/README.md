@@ -104,36 +104,6 @@ The workaround is to use Jest's [experimental support for ECMAScript Modules](ht
 ### How to add a new e2e test sample:
 
 1. Add a sample in this directory following the structure `e2e-tests/<framework>`.
-2. Add a corresponding port number in [test.mjs](../../scripts/test.mjs) file.
-3. Add integ config to the [local-integ-all.yml](../../.github/integ-config/local-integ-all.yml) file.
+2. Modify the [test.mjs](../../scripts/test.mjs) file to include your test.
+3. Add configs for your test to the [local-integ-all.yml](../../.github/integ-config/local-integ-all.yml) file.
 4. Update the e2e test coverage for `amplify-data` repo in [e2e test coverage table](../../e2e-TEST-COVERAGE.md).
-
-### How to run Cypress tests:
-
-#### Start sample application
-
-```bash
-$ cd cypress-samples/<framework>/<sample>
-$ npm run start
-```
-
-#### Run Cypress Test
-
-- Ensure that the sample application is running on the default port for that framework
-- Navigate to the root directory: `amplify-data`
-
-##### Headless
-
-```bash
-$ npm run cypress:<framework> --spec "cypress/e2e/<framework>/<testfile>.spec.cy.ts"
-```
-
-_.. or .._
-
-##### GUI
-
-```bash
-$ npx cypress:open:<framework>
-```
-
-- Click `<sample>.spec.cy.ts` file in the GUI

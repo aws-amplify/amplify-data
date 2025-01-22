@@ -35,6 +35,7 @@
     "e2e-sandbox:clean": "npm run --prefix ./packages/e2e-tests/sandbox clean",
     "e2e-sandbox:install": "npm run --prefix ./packages/e2e-tests/sandbox install:no-lock",
     "e2e-sandbox:test": "npm run --prefix ./packages/e2e-tests/sandbox test",
+    "e2e-webpack:serve": "npm --prefix packages/e2e-tests/webpack run build && npx serve -s packages/e2e-tests/webpack/dist -l 3000",
     "lint": "turbo run lint",
     "prepare": "husky",
     "publish:release": "changeset version && changeset publish",

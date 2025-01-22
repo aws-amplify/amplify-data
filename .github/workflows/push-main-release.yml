@@ -14,7 +14,6 @@ on:
       # Must disable publishing to NPM prior to adding this branch to avoid
       # accidentally publishing changes.
       - main
-      - lzhouq/feat/webpack
 
 jobs:
   # prebuild-ubuntu:
