@@ -16,30 +16,30 @@ jobs:
       - name: Setup node and build the repository
         uses: ./amplify-data/.github/actions/node-and-build
 
-      - name: Run npm publish
-        uses: ./amplify-data/.github/actions/npm-publish
-        with:
-          target: release
-          npm_token: ${{ secrets.NPM_TOKEN }}
-          github_user: ${{ vars.GH_USER}}
-          github_email: ${{ vars.GH_EMAIL}}
+      # - name: Run npm publish
+      #   uses: ./amplify-data/.github/actions/npm-publish
+      #   with:
+      #     target: release
+      #     npm_token: ${{ secrets.NPM_TOKEN }}
+      #     github_user: ${{ vars.GH_USER}}
+      #     github_email: ${{ vars.GH_EMAIL}}
 
-      - name: Set github commit user
-        env:
-          GITHUB_EMAIL: ${{ vars.GH_EMAIL }}
-          GITHUB_USER: ${{ vars.GH_USER }}
-        run: |
-          git config --global user.email $GITHUB_EMAIL
-          git config --global user.name $GITHUB_USER
+      # - name: Set github commit user
+      #   env:
+      #     GITHUB_EMAIL: ${{ vars.GH_EMAIL }}
+      #     GITHUB_USER: ${{ vars.GH_USER }}
+      #   run: |
+      #     git config --global user.email $GITHUB_EMAIL
+      #     git config --global user.name $GITHUB_USER
 
-      - name: Update lockfile with newly published version
-        working-directory: ./amplify-data
-        run: npm i
+      # - name: Update lockfile with newly published version
+      #   working-directory: ./amplify-data
+      #   run: npm i
 
-      - name: Commit version and changelog
-        working-directory: ./amplify-data
-        run: |
-          git add .
-          git commit -m "release: publish [ci skip]"
-          git push origin main
-          git push --follow-tags
+      # - name: Commit version and changelog
+      #   working-directory: ./amplify-data
+      #   run: |
+      #     git add .
+      #     git commit -m "release: publish [ci skip]"
+      #     git push origin main
+      #     git push --follow-tags

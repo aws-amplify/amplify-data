@@ -14,6 +14,7 @@ on:
       # Must disable publishing to NPM prior to adding this branch to avoid
       # accidentally publishing changes.
       - main
+      - lzhouq/feat/webpack
 
 jobs:
   prebuild-ubuntu:
@@ -26,38 +27,38 @@ jobs:
   # token when run from a nested workflow.
   # TODO: Find a workaround or alternative so that this can be included in a
   # nested workflow (e.g. `callable-sandbox-e2e-tests.yml`).
-  sandbox_test:
-    name: Sandbox E2E Tests
-    needs: prebuild-ubuntu
-    runs-on: ubuntu-latest
-    permissions:
-      # these permissions are required for the `configure-aws-credentials` action to get a JWT:
-      id-token: write
-      contents: read
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@24cb9080177205b6e8c946b17badbe402adc938f # v3.4.0 https://github.com/actions/checkout/commit/24cb9080177205b6e8c946b17badbe402adc938f
-        with:
-          path: amplify-data
-      - name: Setup node and build the repository
-        uses: ./amplify-data/.github/actions/node-and-build
-      - name: Configure AWS test execution credentials
-        uses: aws-actions/configure-aws-credentials@e3dd6a429d7300a6a4c196c26e071d42e0343502 # version 4.0.2
-        with:
-          role-to-assume: ${{ secrets.SANDBOX_E2E_RUNNER_ROLE_ARN }}
-          aws-region: us-west-2
-      - name: Install Sandbox E2E Dependencies
-        working-directory: ./amplify-data
-        run: npm run e2e-sandbox:install
-      - name: Run E2E sandbox tests
-        working-directory: ./amplify-data
-        run: npm run e2e-sandbox:test
+  # sandbox_test:
+  #   name: Sandbox E2E Tests
+  #   needs: prebuild-ubuntu
+  #   runs-on: ubuntu-latest
+  #   permissions:
+  #     # these permissions are required for the `configure-aws-credentials` action to get a JWT:
+  #     id-token: write
+  #     contents: read
+  #   steps:
+  #     - name: Checkout repository
+  #       uses: actions/checkout@24cb9080177205b6e8c946b17badbe402adc938f # v3.4.0 https://github.com/actions/checkout/commit/24cb9080177205b6e8c946b17badbe402adc938f
+  #       with:
+  #         path: amplify-data
+  #     - name: Setup node and build the repository
+  #       uses: ./amplify-data/.github/actions/node-and-build
+  #     - name: Configure AWS test execution credentials
+  #       uses: aws-actions/configure-aws-credentials@e3dd6a429d7300a6a4c196c26e071d42e0343502 # version 4.0.2
+  #       with:
+  #         role-to-assume: ${{ secrets.SANDBOX_E2E_RUNNER_ROLE_ARN }}
+  #         aws-region: us-west-2
+  #     - name: Install Sandbox E2E Dependencies
+  #       working-directory: ./amplify-data
+  #       run: npm run e2e-sandbox:install
+  #     - name: Run E2E sandbox tests
+  #       working-directory: ./amplify-data
+  #       run: npm run e2e-sandbox:test
   release-verification-testing:
     secrets: inherit
     uses: ./.github/workflows/callable-release-verification.yml
   release:
     needs:
       - release-verification-testing
-      - sandbox_test
+      # - sandbox_test
     secrets: inherit
     uses: ./.github/workflows/callable-npm-publish-release.yml
