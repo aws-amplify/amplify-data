@@ -101,6 +101,8 @@ The workaround is to use Jest's [experimental support for ECMAScript Modules](ht
 
 ## General tool testing:
 
+This is the general guidance for testing module bundlers. When testing other tools in the future, please adapt these guidelines accordingly and update this file.
+
 ### How to add a new e2e test sample:
 
 1. Add a sample in this directory following the structure `e2e-tests/<framework>`.
