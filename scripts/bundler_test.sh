@@ -10,7 +10,7 @@ NPM_PID=$!
 check_server() {
     for i in {1..30}; do
         sleep 2
-        if curl -s -o /dev/null -w "%{http_code}" http://localhost:3000 | grep -q "200"; then
+        if curl -s -o /dev/null -w "%{http_code}" http://localhost:3001 | grep -q "200"; then
             return 0
         fi
     done
