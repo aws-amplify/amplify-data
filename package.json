@@ -46,6 +46,7 @@
     "test": "turbo run test && npm run test:scripts && npm run e2e-exports",
     "test:scripts": "npx jest scripts/",
     "ci:test": "node scripts/test.mjs",
+    "e2e-shell:test": "./bundler_test.sh",
     "turbo": "turbo",
     "vend": "npm run start:npm-proxy && npm run publish:local"
   },
