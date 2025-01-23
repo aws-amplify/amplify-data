@@ -45,6 +45,11 @@ exports[`CustomType transform Explicit CustomType nests explicit CustomType 1`] 
   meta: Meta
 }
 
+enum PostStatus {
+  unpublished
+  published
+}
+
 type Meta 
 {
   status: PostStatus
@@ -54,11 +59,6 @@ type Meta
 type AltMeta 
 {
   field1: String
-}
-
-enum PostStatus {
-  unpublished
-  published
 }"
 `;
 
@@ -68,15 +68,15 @@ exports[`CustomType transform Explicit CustomType nests explicit enum 1`] = `
   meta: Meta
 }
 
+enum PostStatus {
+  unpublished
+  published
+}
+
 type Meta 
 {
   status: PostStatus
   publishedDate: AWSDate
-}
-
-enum PostStatus {
-  unpublished
-  published
 }"
 `;
 
@@ -92,14 +92,14 @@ type Meta
   nestedMeta: MetaNestedMeta
 }
 
-type MetaNestedMeta 
-{
-  field1: String
-}
-
 enum MetaStatus {
   unpublished
   published
+}
+
+type MetaNestedMeta 
+{
+  field1: String
 }"
 `;
 
@@ -163,15 +163,15 @@ exports[`CustomType transform Implicit CustomType nests explicit enum 1`] = `
   meta: PostMeta
 }
 
+enum PostStatus {
+  unpublished
+  published
+}
+
 type PostMeta 
 {
   status: PostStatus
   publishedDate: AWSDate
-}
-
-enum PostStatus {
-  unpublished
-  published
 }"
 `;
 
@@ -187,14 +187,14 @@ type PostMeta
   nestedMeta: PostMetaNestedMeta
 }
 
-type PostMetaNestedMeta 
-{
-  field1: String
-}
-
 enum PostMetaStatus {
   unpublished
   published
+}
+
+type PostMetaNestedMeta 
+{
+  field1: String
 }"
 `;
 

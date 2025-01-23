@@ -361,7 +361,6 @@ function customOperationToGql(
   let callSignature: string = typeName;
   const implicitTypes: [string, any][] = [];
   const inputTypes: string[] = [];
-
   let returnTypes: string[] = [];
 
   // When Custom Operations are defined with a Custom Type return type,
@@ -1432,10 +1431,8 @@ function generateInputTypes(
       }
     } else if (typeDef.type === 'enum') {
       const enumDefinition = `enum ${typeName} {\n  ${typeDef.values.join('\n  ')}\n}`;
-      generatedTypes.add(enumDefinition);
     } else if (typeDef.type === 'scalar') {
-      const scalarDefinition = `scalar ${typeName}`;
-      generatedTypes.add(scalarDefinition);
+      generatedTypes.add(`scalar ${typeName}`);
     } else {
       console.warn(`Unexpected type definition for ${typeName}:`, typeDef);
     }
@@ -1453,10 +1450,7 @@ const schemaPreprocessor = (
   lambdaFunctions: LambdaFunctionDefinition;
   customSqlDataSourceStrategies?: CustomSqlDataSourceStrategy[];
 } => {
-  const enumTypes = new Set<string>();
-  const gqlModels: string[] = [];
-  const inputTypes = new Map<string, string>();
-
+  const gqlComponents: string[] = [];
   const customQueries = [];
   const customMutations = [];
   const customSubscriptions = [];
@@ -1519,7 +1513,7 @@ const schemaPreprocessor = (
           );
         }
         const enumType = `enum ${typeName} {\n  ${typeDef.values.join('\n  ')}\n}`;
-        enumTypes.add(enumType);
+        gqlComponents.push(enumType);
       } else if (isCustomType(typeDef)) {
         const fields = typeDef.data.fields;
 
@@ -1570,7 +1564,7 @@ const schemaPreprocessor = (
         const joined = gqlFields.join('\n  ');
 
         const model = `type ${typeName} ${customAuth}\n{\n  ${joined}\n}`;
-        gqlModels.push(model);
+        gqlComponents.push(model);
       } else if (isCustomOperation(typeDef)) {
         // TODO: add generation route logic.
 
@@ -1593,10 +1587,9 @@ const schemaPreprocessor = (
           getRefType,
         );
         operationInputTypes.forEach((type) => {
-          const typeName = type.split(' ')[1];
-          inputTypes.set(typeName, type);
+          gqlComponents.push(type);
         });
-        gqlModels.push(...operationReturnTypes);
+        gqlComponents.push(...operationReturnTypes);
 
         /**
          * Processes implicit types to generate GraphQL definitions.
@@ -1613,7 +1606,7 @@ const schemaPreprocessor = (
         implicitTypes.forEach(([typeName, typeDef]) => {
           if (isEnumType(typeDef)) {
             const enumTypeDefinition = `enum ${typeName} {\n  ${typeDef.values.join('\n  ')}\n}`;
-            enumTypes.add(enumTypeDefinition);
+            gqlComponents.push(enumTypeDefinition);
           } else {
             const shouldGenerateInputType = !operationReturnTypes.some(
               (returnType) => returnType.includes(typeName),
@@ -1624,10 +1617,7 @@ const schemaPreprocessor = (
               getRefType,
             );
             if (shouldGenerateInputType) {
-              generatedTypeDefinitions.forEach((def) => {
-                const defName = def.split(' ')[1];
-                inputTypes.set(defName, def);
-              });
+              gqlComponents.push(...generatedTypeDefinitions);
             }
           }
         });
@@ -1736,7 +1726,7 @@ const schemaPreprocessor = (
       // passing (timestamps: null) to @model to suppress this behavior as a short
       // term solution.
       const model = `type ${typeName} @model(timestamps: null) ${authString}${refersToString}\n{\n  ${joined}\n}`;
-      gqlModels.push(model);
+      gqlComponents.push(model);
     } else {
       const fields = typeDef.data.fields as Record<string, BaseModelField>;
 
@@ -1799,7 +1789,7 @@ const schemaPreprocessor = (
       const modelDirective = modelAttrs ? `@model(${modelAttrs})` : '@model';
 
       const model = `type ${typeName} ${modelDirective} ${authString}\n{\n  ${joined}\n}`;
-      gqlModels.push(model);
+      gqlComponents.push(model);
     }
   }
 
@@ -1809,19 +1799,12 @@ const schemaPreprocessor = (
     subscriptions: customSubscriptions,
   };
 
-  const customOperationTypes = generateCustomOperationTypes(customOperations);
-
-  const schemaComponents = [
-    ...gqlModels,
-    ...Array.from(enumTypes),
-    ...customOperationTypes,
-    ...Array.from(inputTypes.values()),
-  ];
+  gqlComponents.push(...generateCustomOperationTypes(customOperations));
 
   if (shouldAddConversationTypes) {
-    schemaComponents.push(CONVERSATION_SCHEMA_GRAPHQL_TYPES);
+    gqlComponents.push(CONVERSATION_SCHEMA_GRAPHQL_TYPES);
   }
-  const processedSchema = schemaComponents.join('\n\n');
+  const processedSchema = gqlComponents.join('\n\n');
 
   return {
     schema: processedSchema,

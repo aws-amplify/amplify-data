@@ -1,66 +1,66 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`CustomOperation transform custom operations with custom types and refs Schema with custom mutation using custom type argument 1`] = `
-"type CustomArgType 
+"input MutateWithCustomTypeArgCustomArgInput
+{
+  field: String
+}
+
+type CustomArgType 
 {
   field: String
 }
 
 type Mutation {
   mutateWithCustomTypeArg(customArg: MutateWithCustomTypeArgCustomArgInput): String @function(name: "myFunc") @auth(rules: [{allow: public, provider: apiKey}])
-}
-
-input MutateWithCustomTypeArgCustomArgInput
-{
-  field: String
 }"
 `;
 
 exports[`CustomOperation transform custom operations with custom types and refs Schema with custom mutation using ref argument 1`] = `
-"type RefArgType 
+"input MutationWithRefArgRefArgInput
+{
+  field: String
+}
+
+type RefArgType 
 {
   field: String
 }
 
 type Mutation {
   mutationWithRefArg(refArg: MutationWithRefArgRefArgInput): String @function(name: "myFunc") @auth(rules: [{allow: public, provider: apiKey}])
-}
-
-input MutationWithRefArgRefArgInput
-{
-  field: String
 }"
 `;
 
 exports[`CustomOperation transform custom operations with custom types and refs Schema with custom query using custom type argument 1`] = `
-"type CustomArgType 
+"input QueryWithCustomTypeArgCustomArgInput
+{
+  field: String
+}
+
+type CustomArgType 
 {
   field: String
 }
 
 type Query {
   queryWithCustomTypeArg(customArg: QueryWithCustomTypeArgCustomArgInput): String @function(name: "myFunc") @auth(rules: [{allow: public, provider: apiKey}])
-}
-
-input QueryWithCustomTypeArgCustomArgInput
-{
-  field: String
 }"
 `;
 
 exports[`CustomOperation transform custom operations with custom types and refs Schema with custom query using ref argument 1`] = `
-"type RefArgType 
+"input QueryWithRefArgRefArgInput
+{
+  field: String
+}
+
+type RefArgType 
 {
   field: String
 }
 
 type Query {
   queryWithRefArg(refArg: QueryWithRefArgRefArgInput): String @function(name: "myFunc") @auth(rules: [{allow: public, provider: apiKey}])
-}
-
-input QueryWithRefArgRefArgInput
-{
-  field: String
 }"
 `;
 

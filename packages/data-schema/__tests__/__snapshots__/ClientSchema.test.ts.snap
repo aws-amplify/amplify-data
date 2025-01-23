@@ -250,17 +250,17 @@ exports[`custom operations Add entities to SQL schema add custom type, enum, and
   author: String
 }
 
-type PostMeta @aws_cognito_user_pools
-{
-  viewCount: Int
-  approvedOn: AWSDate
-}
-
 enum PostStatus {
   draft
   pending
   approved
   published
+}
+
+type PostMeta @aws_cognito_user_pools
+{
+  viewCount: Int
+  approvedOn: AWSDate
 }
 
 type Query {
