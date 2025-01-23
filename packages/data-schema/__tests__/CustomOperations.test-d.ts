@@ -16,6 +16,7 @@ import type {
 import { configure } from '../src/ModelSchema';
 import { Nullable } from '../src/ModelField';
 import { defineFunctionStub } from './utils';
+import type { CustomOperation } from '../src/CustomOperation';
 
 describe('custom operations return types', () => {
   describe('when .ref() a basic custom type', () => {
@@ -853,5 +854,155 @@ describe('.for() modifier', () => {
 
   it('is available only on a.subscription()', () => {
     a.subscription().for(a.ref('Model'));
+  });
+});
+
+describe('.arguments() modifier', () => {
+  // Test to verify that CustomType can be used as an argument in custom operations
+  it('accepts CustomType in arguments', () => {
+    type ExpectedType = CustomOperation<
+      any,
+      'arguments' | 'for',
+      'queryCustomOperation'
+    >;
+
+    const operation = a.query().arguments({
+      customArg: a.customType({
+        field1: a.string(),
+        field2: a.integer(),
+      }),
+    });
+
+    type test = Expect<Equal<ExpectedType, typeof operation>>;
+  });
+
+  // Test to verify that RefType can be used as an argument in custom operations
+  it('accepts RefType in arguments', () => {
+    type ExpectedType = CustomOperation<
+      any,
+      'arguments' | 'for',
+      'queryCustomOperation'
+    >;
+
+    const operation = a.query().arguments({
+      refArg: a.ref('SomeType'),
+    });
+
+    type test = Expect<Equal<ExpectedType, typeof operation>>;
+  });
+
+  it('handles deeply nested custom types', () => {
+    const schema = a.schema({
+      DeepNested: a.customType({
+        level1: a.customType({
+          level2: a.customType({
+            level3: a.string(),
+          }),
+        }),
+      }),
+      deepQuery: a
+        .query()
+        .arguments({
+          input: a.ref('DeepNested'),
+        })
+        .returns(a.string()),
+    });
+
+    type Schema = ClientSchema<typeof schema>;
+
+    type ExpectedArgs = {
+      input?: {
+        level1?: {
+          level2?: {
+            level3?: string | null;
+          } | null;
+        } | null;
+      } | null;
+    };
+
+    type ActualArgs = Schema['deepQuery']['args'];
+
+    type Test = Expect<Equal<ActualArgs, ExpectedArgs>>;
+  });
+
+  it('handles mixed custom types and refs', () => {
+    const schema = a.schema({
+      RefType: a.customType({
+        field: a.string(),
+      }),
+      MixedType: a.customType({
+        nested: a.customType({
+          refField: a.ref('RefType'),
+          customField: a.customType({
+            deepField: a.integer(),
+          }),
+        }),
+      }),
+      mixedQuery: a
+        .query()
+        .arguments({
+          input: a.ref('MixedType'),
+        })
+        .returns(a.string()),
+    });
+
+    type Schema = ClientSchema<typeof schema>;
+
+    type ExpectedArgs = {
+      input?: {
+        nested?: {
+          refField?: {
+            field?: string | null;
+          } | null;
+          customField?: {
+            deepField?: number | null;
+          } | null;
+        } | null;
+      } | null;
+    };
+
+    type ActualArgs = Schema['mixedQuery']['args'];
+
+    type Test = Expect<Equal<ActualArgs, ExpectedArgs>>;
+  });
+
+  it('handles RefType with multi-layered custom types in nested structures', () => {
+    const schema = a.schema({
+      NestedCustomType: a.customType({
+        nestedField: a.string(),
+      }),
+      RefType: a.customType({
+        field: a.string(),
+        nestedCustom: a.ref('NestedCustomType'),
+      }),
+      OuterType: a.customType({
+        refField: a.ref('RefType'),
+        otherField: a.integer(),
+      }),
+      complexQuery: a
+        .query()
+        .arguments({
+          input: a.ref('OuterType'),
+        })
+        .returns(a.string()),
+    });
+
+    type Schema = ClientSchema<typeof schema>;
+
+    type ExpectedArgs = {
+      input?: {
+        refField?: {
+          field?: string | null;
+          nestedCustom?: {
+            nestedField?: string | null;
+          } | null;
+        } | null;
+        otherField?: number | null;
+      } | null;
+    };
+
+    type ActualArgs = Schema['complexQuery']['args'];
+
+    type Test = Expect<Equal<ActualArgs, ExpectedArgs>>;
   });
 });
