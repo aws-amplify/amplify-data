@@ -1036,7 +1036,7 @@ function processFields(
       if (fieldName === partitionKey) {
         gqlFields.push(
           `${fieldName}: ${scalarFieldToGql(
-            fieldDef.data,
+            (fieldDef as any).data,
             identifier,
             secondaryIndexes[fieldName],
           )}${fieldAuth}`,
@@ -1429,8 +1429,6 @@ function generateInputTypes(
           generatedTypes.add(type);
         });
       }
-    } else if (typeDef.type === 'enum') {
-      const enumDefinition = `enum ${typeName} {\n  ${typeDef.values.join('\n  ')}\n}`;
     } else if (typeDef.type === 'scalar') {
       generatedTypes.add(`scalar ${typeName}`);
     } else {
@@ -1605,19 +1603,20 @@ const schemaPreprocessor = (
 
         implicitTypes.forEach(([typeName, typeDef]) => {
           if (isEnumType(typeDef)) {
-            const enumTypeDefinition = `enum ${typeName} {\n  ${typeDef.values.join('\n  ')}\n}`;
-            gqlComponents.push(enumTypeDefinition);
+            gqlComponents.push(
+              `enum ${typeName} {\n  ${typeDef.values.join('\n  ')}\n}`,
+            );
           } else {
-            const shouldGenerateInputType = !operationReturnTypes.some(
-              (returnType) => returnType.includes(typeName),
+            const isReturnType = operationReturnTypes.some((returnType) =>
+              returnType.includes(typeName),
             );
-            const generatedTypeDefinitions = generateInputTypes(
-              [[typeName, typeDef]],
-              shouldGenerateInputType,
-              getRefType,
-            );
-            if (shouldGenerateInputType) {
-              gqlComponents.push(...generatedTypeDefinitions);
+            if (!isReturnType) {
+              const generatedTypes = generateInputTypes(
+                [[typeName, typeDef]],
+                true,
+                getRefType,
+              );
+              gqlComponents.push(...generatedTypes);
             }
           }
         });

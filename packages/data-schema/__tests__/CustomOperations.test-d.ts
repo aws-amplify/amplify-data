@@ -860,27 +860,35 @@ describe('.for() modifier', () => {
 describe('.arguments() modifier', () => {
   // Test to verify that CustomType can be used as an argument in custom operations
   it('accepts CustomType in arguments', () => {
-    const operation: CustomOperation<
+    type ExpectedType = CustomOperation<
       any,
       'arguments' | 'for',
       'queryCustomOperation'
-    > = a.query().arguments({
+    >;
+
+    const operation = a.query().arguments({
       customArg: a.customType({
         field1: a.string(),
         field2: a.integer(),
       }),
     });
+
+    type test = Expect<Equal<ExpectedType, typeof operation>>;
   });
 
   // Test to verify that RefType can be used as an argument in custom operations
   it('accepts RefType in arguments', () => {
-    const operation: CustomOperation<
+    type ExpectedType = CustomOperation<
       any,
       'arguments' | 'for',
       'queryCustomOperation'
-    > = a.query().arguments({
+    >;
+
+    const operation = a.query().arguments({
       refArg: a.ref('SomeType'),
     });
+
+    type test = Expect<Equal<ExpectedType, typeof operation>>;
   });
 
   it('handles deeply nested custom types', () => {
