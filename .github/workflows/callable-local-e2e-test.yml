@@ -30,8 +30,6 @@ jobs:
           path: amplify-data
       - name: Setup node and build the repository
         uses: ./amplify-data/.github/actions/node-and-build
-      - name: Make script executable
-        run: chmod +x ./amplify-data/scripts/retry-npm-script.sh ./amplify-data/scripts/bundler_test.sh
       - name: Run e2e tests for ${{ inputs.test_name }} dev
         shell: bash
         working-directory: ./amplify-data
