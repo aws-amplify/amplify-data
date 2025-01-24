@@ -51,10 +51,14 @@ if check_server; then
     echo "Test pass!"
     # Kill the npm process
     kill $NPM_PID
+    timeout 10s wait $NPM_PID 2>/dev/null || kill -9 $NPM_PID
+    echo "Server process terminated."
     exit 0
 else
     echo "Error: Command failed with exit code 1."
     # Kill the npm process
     kill $NPM_PID
+    timeout 10s wait $NPM_PID 2>/dev/null || kill -9 $NPM_PID
+    echo "Server process terminated."
     exit 1
 fi

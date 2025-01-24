@@ -30,14 +30,14 @@ jobs:
           path: amplify-data
       - name: Setup node and build the repository
         uses: ./amplify-data/.github/actions/node-and-build
-      # - name: Run e2e tests for ${{ inputs.test_name }} dev
-      #   shell: bash
-      #   working-directory: ./amplify-data
-      #   env:
-      #     E2E_FRAMEWORK: ${{ inputs.framework }}
-      #     E2E_TEST_NAME: ${{ inputs.test_name }}
-      #   run: |
-      #     npm run e2e-shell:test dev
+      - name: Run e2e tests for ${{ inputs.test_name }} dev
+        shell: bash
+        working-directory: ./amplify-data
+        env:
+          E2E_FRAMEWORK: ${{ inputs.framework }}
+          E2E_TEST_NAME: ${{ inputs.test_name }}
+        run: |
+          npm run e2e-shell:test dev
       - name: Run e2e tests for ${{ inputs.test_name }} prod
         shell: bash
         working-directory: ./amplify-data
