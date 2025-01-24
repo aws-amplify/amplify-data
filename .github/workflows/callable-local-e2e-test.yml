@@ -10,12 +10,6 @@ on:
       framework:
         required: true
         type: string
-      timeout_minutes:
-        required: true
-        type: number
-      retry_count:
-        required: true
-        type: number
 
 jobs:
   e2e-test:
