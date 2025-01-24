@@ -8,9 +8,10 @@ npm --prefix packages/e2e-tests/webpack install && npm --prefix packages/e2e-tes
 NPM_PID=$!
 
 # Function to check if the server is up
+echo "curl -s -o /dev/null -w "%{http_code}" http://localhost:3000 | grep -q "200""
 check_server() {
     for i in {1..30}; do
-        sleep 2
+        sleep 5
         if curl -s -o /dev/null -w "%{http_code}" http://localhost:3000 | grep -q "200"; then
             return 0
         fi
