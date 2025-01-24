@@ -15,9 +15,9 @@ run_dev() {
 
 # Function to run prod environment
 run_prod() {
-    echo "npm --prefix packages/e2e-tests/webpack install && 
-    npm --prefix packages/e2e-tests/webpack run build && 
+    echo "npm --prefix packages/e2e-tests/webpack install && npm --prefix packages/e2e-tests/webpack run build && 
     npm --prefix packages/e2e-tests/webpack run serve"
+
     npm --prefix packages/e2e-tests/webpack install && 
     npm --prefix packages/e2e-tests/webpack run build && 
     npm --prefix packages/e2e-tests/webpack run serve &
