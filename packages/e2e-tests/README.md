@@ -106,6 +106,6 @@ This is the general guidance for testing module bundlers. When testing other too
 ### How to add a new e2e test sample:
 
 1. Add a sample in this directory following the structure `e2e-tests/<framework>`.
-2. Modify the [test.mjs](../../scripts/test.mjs) file to include your test.
-3. Add configs for your test to the [local-integ-all.yml](../../.github/integ-config/local-integ-all.yml) file.
+2. Add configs for your test to the [local-integ-all.yml](../../.github/integ-config/local-integ-all.yml) file.
+3. Create an npm command for your test script and call it from [callable-local-e2e-test](../../.github/workflows/callable-local-e2e-test.yml).
 4. Update the e2e test coverage for `amplify-data` repo in [e2e test coverage table](../../e2e-TEST-COVERAGE.md).
