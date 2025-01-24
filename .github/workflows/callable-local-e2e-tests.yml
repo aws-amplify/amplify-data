@@ -28,7 +28,7 @@ jobs:
         run: npm run e2e-node:test
 
   e2e-prep:
-    name: Get E2E test config
+    name: Get local E2E test config
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
