@@ -1440,9 +1440,6 @@ function generateInputTypes(
       );
     } else if (typeDef?.data?.type === 'ref') {
       const { type: refTargetType } = getRefType(typeDef.data.link, typeName);
-
-      if (refTargetType === 'Enum') {
-      }
     } else if (typeDef.type === 'scalar') {
       generatedTypes.add(`scalar ${typeName}`);
     } else {
