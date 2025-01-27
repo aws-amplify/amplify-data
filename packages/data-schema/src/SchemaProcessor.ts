@@ -1439,7 +1439,7 @@ function generateInputTypes(
         `enum ${typeName} {\n  ${typeDef.values.join('\n  ')}\n}`,
       );
     } else if (typeDef?.data?.type === 'ref') {
-      const { type: refTargetType } = getRefType(typeDef.data.link, typeName);
+      getRefType(typeDef.data.link, typeName);
     } else if (typeDef.type === 'scalar') {
       generatedTypes.add(`scalar ${typeName}`);
     } else {
