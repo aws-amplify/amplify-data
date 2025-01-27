@@ -397,6 +397,8 @@ function customOperationToGql(
           typeName: returnType.data.link,
           authRules: authorization,
         };
+      } else if (type === 'Enum') {
+        return refFieldToGql(returnType.data);
       }
 
       return refFieldToGql(returnType?.data);
@@ -1042,13 +1044,16 @@ function processFields(
           )}${fieldAuth}`,
         );
       } else if (isRefField(fieldDef)) {
-        if (generateInputType) {
-          const inputTypeName = `${capitalize(typeName)}${capitalize(fieldName)}Input`;
-          gqlFields.push(`${fieldName}: ${inputTypeName}${fieldAuth}`);
+        const refTypeInfo = getRefType(fieldDef.data.link, typeName);
+        if (refTypeInfo.type === 'Enum') {
+          gqlFields.push(
+            `${fieldName}: ${refFieldToGql(fieldDef.data, secondaryIndexes[fieldName])}${fieldAuth}`,
+          );
+        } else if (refTypeInfo.type === 'CustomType') {
+          if (generateInputType) {
+            const inputTypeName = `${capitalize(typeName)}${capitalize(fieldName)}Input`;
+            gqlFields.push(`${fieldName}: ${inputTypeName}${fieldAuth}`);
 
-          const refTypeInfo = getRefType(fieldDef.data.link, typeName);
-
-          if (refTypeInfo.type === 'CustomType') {
             const { implicitTypes: nestedImplicitTypes } = processFields(
               inputTypeName,
               refTypeInfo.def.data.fields,
@@ -1074,13 +1079,13 @@ function processFields(
 
             implicitTypes.push(...nestedImplicitTypes);
           } else {
-            throw new Error(
-              `Field '${fieldName}' in type '${typeName}' references '${fieldDef.data.link}' which is not a CustomType. Check schema definitions.`,
+            gqlFields.push(
+              `${fieldName}: ${refFieldToGql(fieldDef.data, secondaryIndexes[fieldName])}${fieldAuth}`,
             );
           }
         } else {
-          gqlFields.push(
-            `${fieldName}: ${refFieldToGql(fieldDef.data, secondaryIndexes[fieldName])}${fieldAuth}`,
+          throw new Error(
+            `Field '${fieldName}' in type '${typeName}' references '${fieldDef.data.link}' which is neither a CustomType nor an Enum.`,
           );
         }
       } else if (isEnumType(fieldDef)) {
@@ -1428,6 +1433,15 @@ function generateInputTypes(
         nestedGeneratedTypes.forEach((type) => {
           generatedTypes.add(type);
         });
+      }
+    } else if (typeDef.type === 'enum') {
+      generatedTypes.add(
+        `enum ${typeName} {\n  ${typeDef.values.join('\n  ')}\n}`,
+      );
+    } else if (typeDef?.data?.type === 'ref') {
+      const { type: refTargetType } = getRefType(typeDef.data.link, typeName);
+
+      if (refTargetType === 'Enum') {
       }
     } else if (typeDef.type === 'scalar') {
       generatedTypes.add(`scalar ${typeName}`);
