@@ -1165,6 +1165,44 @@ describe('CustomOperation transform', () => {
 
       expect(result).toMatchSnapshot();
     });
+
+    test('Schema with custom mutation using enum ref in nested custom type', () => {
+      const s = a
+        .schema({
+          NestedCustomType: a.customType({
+            field: a.string(),
+            enumField: a.ref('SomeEnum'),
+          }),
+          SomeEnum: a.enum(['VALUE1', 'VALUE2']),
+          mutateWithNestedEnumRef: a
+            .mutation()
+            .arguments({ nestedArg: a.ref('NestedCustomType') })
+            .returns(a.string())
+            .handler(a.handler.function('myFunc')),
+        })
+        .authorization((allow) => allow.publicApiKey());
+
+      const result = s.transform().schema;
+
+      expect(result).toMatchSnapshot();
+    });
+
+    test('Schema with custom query using enum ref as argument', () => {
+      const s = a
+        .schema({
+          SomeEnum: a.enum(['OPTION1', 'OPTION2']),
+          queryWithEnumRefArg: a
+            .query()
+            .arguments({ enumArg: a.ref('SomeEnum') })
+            .returns(a.string())
+            .handler(a.handler.function('myFunc')),
+        })
+        .authorization((allow) => allow.publicApiKey());
+
+      const result = s.transform().schema;
+
+      expect(result).toMatchSnapshot();
+    });
   });
 
   const fakeSecret = () => ({}) as any;

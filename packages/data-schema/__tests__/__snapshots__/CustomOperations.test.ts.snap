@@ -16,6 +16,29 @@ type Mutation {
 }"
 `;
 
+exports[`CustomOperation transform custom operations with custom types and refs Schema with custom mutation using enum ref in nested custom type 1`] = `
+"enum SomeEnum {
+  VALUE1
+  VALUE2
+}
+
+input MutateWithNestedEnumRefNestedArgInput
+{
+  field: String
+  enumField: SomeEnum
+}
+
+type NestedCustomType 
+{
+  field: String
+  enumField: SomeEnum
+}
+
+type Mutation {
+  mutateWithNestedEnumRef(nestedArg: MutateWithNestedEnumRefNestedArgInput): String @function(name: "myFunc") @auth(rules: [{allow: public, provider: apiKey}])
+}"
+`;
+
 exports[`CustomOperation transform custom operations with custom types and refs Schema with custom mutation using ref argument 1`] = `
 "input MutationWithRefArgRefArgInput
 {
@@ -45,6 +68,17 @@ type CustomArgType
 
 type Query {
   queryWithCustomTypeArg(customArg: QueryWithCustomTypeArgCustomArgInput): String @function(name: "myFunc") @auth(rules: [{allow: public, provider: apiKey}])
+}"
+`;
+
+exports[`CustomOperation transform custom operations with custom types and refs Schema with custom query using enum ref as argument 1`] = `
+"enum SomeEnum {
+  OPTION1
+  OPTION2
+}
+
+type Query {
+  queryWithEnumRefArg(enumArg: SomeEnum): String @function(name: "myFunc") @auth(rules: [{allow: public, provider: apiKey}])
 }"
 `;
 

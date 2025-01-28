@@ -18,7 +18,7 @@ import { LazyLoader } from '../../runtime';
  * The first type parameter (`Bag`) should always just be the top-level `ClientSchema` that
  * references and related model definitions can be resolved against.
  */
-export type ResolveFields<Bag extends Record<string, any>, T> = ShallowPretty<
+export type ResolveFields<Bag extends Record<string, any>, T> = Expand<
   {
     [K in keyof T as IsRequired<T[K]> extends true
       ? K
@@ -34,9 +34,7 @@ export type ResolveFields<Bag extends Record<string, any>, T> = ShallowPretty<
 // down the line *as-needed*. Performing this *here* is somehow essential to getting 2 unit
 // tests to pass, but hurts performance significantly. E.g., p50/operations/p50-prod-CRUDL.bench.ts
 // goes from `783705` to `1046408`.
-type ShallowPretty<T> = {
-  [K in keyof T]: T[K];
-};
+type Expand<T> = T extends infer O ? { [K in keyof O]: O[K] } : never;
 
 export type ResolveIndividualField<Bag extends Record<string, any>, T> =
   T extends BaseModelField<infer FieldShape>
