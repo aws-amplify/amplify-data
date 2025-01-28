@@ -1,5 +1,103 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`CustomOperation transform custom operations with custom types and refs Schema with custom mutation using custom type argument 1`] = `
+"input MutateWithCustomTypeArgCustomArgInput
+{
+  field: String
+}
+
+type CustomArgType 
+{
+  field: String
+}
+
+type Mutation {
+  mutateWithCustomTypeArg(customArg: MutateWithCustomTypeArgCustomArgInput): String @function(name: "myFunc") @auth(rules: [{allow: public, provider: apiKey}])
+}"
+`;
+
+exports[`CustomOperation transform custom operations with custom types and refs Schema with custom mutation using enum ref in nested custom type 1`] = `
+"enum SomeEnum {
+  VALUE1
+  VALUE2
+}
+
+input MutateWithNestedEnumRefNestedArgInput
+{
+  field: String
+  enumField: SomeEnum
+}
+
+type NestedCustomType 
+{
+  field: String
+  enumField: SomeEnum
+}
+
+type Mutation {
+  mutateWithNestedEnumRef(nestedArg: MutateWithNestedEnumRefNestedArgInput): String @function(name: "myFunc") @auth(rules: [{allow: public, provider: apiKey}])
+}"
+`;
+
+exports[`CustomOperation transform custom operations with custom types and refs Schema with custom mutation using ref argument 1`] = `
+"input MutationWithRefArgRefArgInput
+{
+  field: String
+}
+
+type RefArgType 
+{
+  field: String
+}
+
+type Mutation {
+  mutationWithRefArg(refArg: MutationWithRefArgRefArgInput): String @function(name: "myFunc") @auth(rules: [{allow: public, provider: apiKey}])
+}"
+`;
+
+exports[`CustomOperation transform custom operations with custom types and refs Schema with custom query using custom type argument 1`] = `
+"input QueryWithCustomTypeArgCustomArgInput
+{
+  field: String
+}
+
+type CustomArgType 
+{
+  field: String
+}
+
+type Query {
+  queryWithCustomTypeArg(customArg: QueryWithCustomTypeArgCustomArgInput): String @function(name: "myFunc") @auth(rules: [{allow: public, provider: apiKey}])
+}"
+`;
+
+exports[`CustomOperation transform custom operations with custom types and refs Schema with custom query using enum ref as argument 1`] = `
+"enum SomeEnum {
+  OPTION1
+  OPTION2
+}
+
+type Query {
+  queryWithEnumRefArg(enumArg: SomeEnum): String @function(name: "myFunc") @auth(rules: [{allow: public, provider: apiKey}])
+}"
+`;
+
+exports[`CustomOperation transform custom operations with custom types and refs Schema with custom query using ref argument 1`] = `
+"input QueryWithRefArgRefArgInput
+{
+  field: String
+}
+
+type RefArgType 
+{
+  field: String
+}
+
+type Query {
+  queryWithRefArg(refArg: QueryWithRefArgRefArgInput): String @function(name: "myFunc") @auth(rules: [{allow: public, provider: apiKey}])
+}"
+`;
+
 exports[`CustomOperation transform dynamo schema Custom Mutation w required arg and enum 1`] = `
 "type Post @model @auth(rules: [{allow: private}])
 {
@@ -45,7 +143,7 @@ exports[`CustomOperation transform dynamo schema Custom mutation w inline boolea
 `;
 
 exports[`CustomOperation transform dynamo schema Custom mutation w inline custom return type 1`] = `
-"type LikePostReturnType 
+"type LikePostReturnType
 {
   stringField: String
   intField: Int
@@ -109,7 +207,7 @@ type Query {
 `;
 
 exports[`CustomOperation transform dynamo schema Custom query w inline custom return type 1`] = `
-"type GetPostDetailsReturnType 
+"type GetPostDetailsReturnType
 {
   stringField: String
   intField: Int
