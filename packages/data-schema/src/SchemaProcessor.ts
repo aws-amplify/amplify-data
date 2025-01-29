@@ -1110,7 +1110,7 @@ function processFields(
         implicitTypes.push([customTypeName, fieldDef]);
         // Recursively process the fields of the nested custom type
         const {
-          gqlFields: nestedFields,
+          gqlFields: _nestedFields,
           implicitTypes: nestedImplicitTypes,
           gqlComponents: nestedComponents,
         } = processFields(
@@ -1595,7 +1595,7 @@ const schemaPreprocessor = (
         const {
           gqlFields,
           implicitTypes,
-          gqlComponents: nestedComponents,
+          gqlComponents: _nestedComponents,
         } = processFields(
           typeName,
           fields,
