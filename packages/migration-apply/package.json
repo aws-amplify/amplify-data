@@ -1,0 +1,22 @@
+{
+  "name": "migration-apply",
+  "version": "1.0.0",
+  "main": "dist/parse-migration.js",
+  "scripts": {
+    "parse-migration": "ts-node src/parse-migration.ts",
+    "build": "tsc",
+    "start": "npm run build && node dist/parse-migration.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@typescript-eslint/parser": "^7.1.0",
+    "@typescript-eslint/types": "^8.22.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.24",
+    "typescript": "^5.3.3"
+  }
+}
