@@ -228,6 +228,15 @@ Description
 </th></tr></thead>
 <tbody><tr><td>
 
+[AmplifySqlMigration](./data-schema.amplifysqlmigration.md)
+
+
+</td><td>
+
+
+</td></tr>
+<tr><td>
+
 [ApiFieldType](./data-schema.apifieldtype.md)
 
 
