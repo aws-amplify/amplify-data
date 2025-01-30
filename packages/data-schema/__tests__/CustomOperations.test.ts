@@ -1203,6 +1203,79 @@ describe('CustomOperation transform', () => {
 
       expect(result).toMatchSnapshot();
     });
+
+    test('Schema with custom operation using enum directly in arguments', () => {
+      const s = a
+        .schema({
+          directEnumQuery: a
+            .query()
+            .arguments({
+              status: a.enum(['PENDING', 'APPROVED', 'REJECTED']),
+            })
+            .returns(a.string())
+            .handler(a.handler.function('myFunc')),
+        })
+        .authorization((allow) => allow.publicApiKey());
+
+      const result = s.transform().schema;
+
+      expect(result).toMatchSnapshot();
+      expect(result).toContain('enum DirectEnumQueryStatus {');
+      expect(result).toContain(
+        'directEnumQuery(status: DirectEnumQueryStatus): String',
+      );
+    });
+
+    test('Schema with custom operation using enum in inline custom type arguments', () => {
+      const s = a
+        .schema({
+          inlineEnumQuery: a
+            .query()
+            .arguments({
+              input: a.customType({
+                name: a.string(),
+                status: a.enum(['ACTIVE', 'INACTIVE']),
+              }),
+            })
+            .returns(a.string())
+            .handler(a.handler.function('myFunc')),
+        })
+        .authorization((allow) => allow.publicApiKey());
+
+      const result = s.transform().schema;
+
+      expect(result).toMatchSnapshot();
+      expect(result).toContain('enum InlineEnumQueryInputStatus {');
+      expect(result).toContain('input InlineEnumQueryInput {');
+      expect(result).toContain(
+        'inlineEnumQuery(input: InlineEnumQueryInput): String',
+      );
+    });
+
+    test('Schema with custom operation using enum in referenced custom type arguments', () => {
+      const s = a
+        .schema({
+          StatusInput: a.customType({
+            name: a.string(),
+            status: a.enum(['NEW', 'IN_PROGRESS', 'COMPLETED']),
+          }),
+          refEnumQuery: a
+            .query()
+            .arguments({
+              input: a.ref('StatusInput'),
+            })
+            .returns(a.string())
+            .handler(a.handler.function('myFunc')),
+        })
+        .authorization((allow) => allow.publicApiKey());
+
+      const result = s.transform().schema;
+
+      expect(result).toMatchSnapshot();
+      expect(result).toContain('enum StatusInputStatus {');
+      expect(result).toContain('input StatusInput {');
+      expect(result).toContain('refEnumQuery(input: StatusInput): String');
+    });
   });
 
   const fakeSecret = () => ({}) as any;

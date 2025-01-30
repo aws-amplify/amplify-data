@@ -55,6 +55,65 @@ type Mutation {
 }"
 `;
 
+exports[`CustomOperation transform custom operations with custom types and refs Schema with custom operation using enum directly in arguments 1`] = `
+"enum DirectEnumQueryStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+type Query {
+  directEnumQuery(status: DirectEnumQueryStatus): String @function(name: "myFunc") @auth(rules: [{allow: public, provider: apiKey}])
+}"
+`;
+
+exports[`CustomOperation transform custom operations with custom types and refs Schema with custom operation using enum in inline custom type arguments 1`] = `
+"input InlineEnumQueryInputInput
+{
+  name: String
+  status: InlineEnumQueryInputInputStatus
+}
+
+enum InlineEnumQueryInputInputStatus {
+  ACTIVE
+  INACTIVE
+}
+
+type Query {
+  inlineEnumQuery(input: InlineEnumQueryInputInput): String @function(name: "myFunc") @auth(rules: [{allow: public, provider: apiKey}])
+}"
+`;
+
+exports[`CustomOperation transform custom operations with custom types and refs Schema with custom operation using enum in referenced custom type arguments 1`] = `
+"input RefEnumQueryInputInput
+{
+  name: String
+  status: RefEnumQueryInputInputStatus
+}
+
+enum RefEnumQueryInputInputStatus {
+  NEW
+  IN_PROGRESS
+  COMPLETED
+}
+
+type StatusInput 
+{
+  name: String
+  status: StatusInputStatus
+}
+
+enum StatusInputStatus {
+  NEW
+  IN_PROGRESS
+  COMPLETED
+}
+
+type Query {
+  refEnumQuery(input: RefEnumQueryInputInput): String @function(name: "myFunc") @auth(rules: [{allow: public, provider: apiKey}])
+}"
+`;
+
 exports[`CustomOperation transform custom operations with custom types and refs Schema with custom query using custom type argument 1`] = `
 "input QueryWithCustomTypeArgCustomArgInput
 {
