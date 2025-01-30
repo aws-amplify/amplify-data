@@ -3,20 +3,20 @@ import { a } from "../../../src/index";
 import { Schema } from "./schema-definition";
 import type { Prettify } from '@aws-amplify/data-schema-types';
 
-type Prettied = Prettify<Schema>;
+type _Prettied = Prettify<Schema>;
 
-export const migration: AmplifySqlMigration = {
+export const migration: AmplifySqlMigration<Schema> = {
   steps: [
     {
       up: a.sqlMigration.createTable({
-        name: 'User',
+        name: 'Address',
         columns: [
-          { name: 'id', type: 'uuid' },
-          { name: 'name', type: 'string' },
+          { name: 'state', type: 'string' },
+          { name: 'zip', type: 'string' },
         ],
       }),
       down: a.sqlMigration.dropTable({
-        name: 'User',
+        name: 'Address',
       }),
     },
   ],

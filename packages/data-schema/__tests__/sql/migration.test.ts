@@ -9,8 +9,8 @@ describe('Migration Parser', () => {
     expect(parsedMigration).toEqual({
       steps: [
         {
-          up: { type: 'createTable', name: 'User', columns: [{ name: 'id', type: 'uuid' }, { name: 'name', type: 'string' }] },
-          down: { type: 'dropTable', name: 'User' },
+          up: { type: 'createTable', name: 'Address', columns: [{ name: 'state', type: 'string' }, { name: 'zip', type: 'string' }] },
+          down: { type: 'dropTable', name: 'Address' },
         },
       ],
     });

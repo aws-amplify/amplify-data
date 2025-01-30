@@ -1,54 +1,58 @@
-export type AmplifySqlMigration = {
-  steps: AmplifySqlMigrationStep[];
+export type AmplifySqlMigration<T extends Record<any, any>> = {
+  steps: AmplifySqlMigrationStep<T>[];
 };
 
-type AmplifySqlMigrationStep = {
-  up: AmplifySqlMigrationCreateTableStep;
-  down: AmplifySqlMigrationDropTableStep;
+type AmplifySqlMigrationStep<T extends Record<any, any>> = {
+  up: AmplifySqlMigrationCreateTableStep<T>;
+  down: AmplifySqlMigrationDropTableStep<T>;
 } | {
-  up: AmplifySqlMigrationAddColumnStep;
-  down: AmplifySqlMigrationDropColumnStep;
+  up: AmplifySqlMigrationAddColumnStep<T>;
+  down: AmplifySqlMigrationDropColumnStep<T>;
 } | {
-  up: AmplifySqlMigrationCreateIndexStep;
-  down: AmplifySqlMigrationDropIndexStep;
+  up: AmplifySqlMigrationCreateIndexStep<T>;
+  down: AmplifySqlMigrationDropIndexStep<T>;
 };
 
-function createTable(input: Omit<AmplifySqlMigrationCreateTableStep, 'type'>): AmplifySqlMigrationCreateTableStep {
+
+function createTable<T extends Record<any, any>>(
+  input: Omit<AmplifySqlMigrationCreateTableStep<T>, 'type'>
+): AmplifySqlMigrationCreateTableStep<T> {
   return {
     type: 'createTable',
     ...input,
   };
 }
 
-function dropTable(input: Omit<AmplifySqlMigrationDropTableStep, 'type'>): AmplifySqlMigrationDropTableStep {
+
+function dropTable<T extends Record<any, any>>(input: Omit<AmplifySqlMigrationDropTableStep<T>, 'type'>): AmplifySqlMigrationDropTableStep<T> {
   return {
     type: 'dropTable',
     ...input,
   };
 }
 
-function addColumn(input: Omit<AmplifySqlMigrationAddColumnStep, 'type'>): AmplifySqlMigrationAddColumnStep {
+function addColumn<T extends Record<any, any>>(input: Omit<AmplifySqlMigrationAddColumnStep<T>, 'type'>): AmplifySqlMigrationAddColumnStep<T> {
   return {
     type: 'addColumn',
     ...input,
   };
 }
 
-function dropColumn(input: Omit<AmplifySqlMigrationDropColumnStep, 'type'>): AmplifySqlMigrationDropColumnStep {
+function dropColumn<T extends Record<any, any>>(input: Omit<AmplifySqlMigrationDropColumnStep<T>, 'type'>): AmplifySqlMigrationDropColumnStep<T> {
   return {
     type: 'dropColumn',
     ...input,
   };
 }
 
-function createIndex(input: Omit<AmplifySqlMigrationCreateIndexStep, 'type'>): AmplifySqlMigrationCreateIndexStep {
+function createIndex<T extends Record<any, any>>(input: Omit<AmplifySqlMigrationCreateIndexStep<T>, 'type'>): AmplifySqlMigrationCreateIndexStep<T> {
   return {
     type: 'createIndex',
     ...input,
   };
 }
 
-function dropIndex(input: Omit<AmplifySqlMigrationDropIndexStep, 'type'>): AmplifySqlMigrationDropIndexStep {
+function dropIndex<T extends Record<any, any>>(input: Omit<AmplifySqlMigrationDropIndexStep<T>, 'type'>): AmplifySqlMigrationDropIndexStep<T> {
   return {
     type: 'dropIndex',
     ...input,
@@ -64,11 +68,11 @@ export const sqlMigration = {
   dropIndex,
 };
 
-type AmplifySqlMigrationCreateTableStep = {
+type AmplifySqlMigrationCreateTableStep<T extends Record<string, { types: Record<string, { fields: Record<string, any> }> }>> = {
   type: 'createTable';
-  name: string;
+  name: keyof T;
   columns: {
-    name: string;
+    name: keyof T[keyof T]['types'][keyof T[keyof T]['types']]['fields'];
     type: string;
     constraints?: {
       nullable?: boolean;
@@ -76,12 +80,12 @@ type AmplifySqlMigrationCreateTableStep = {
   }[];
 };
 
-type AmplifySqlMigrationDropTableStep = {
+type AmplifySqlMigrationDropTableStep<T> = {
   type: 'dropTable';
   name: string;
 };
 
-type AmplifySqlMigrationAddColumnStep = {
+type AmplifySqlMigrationAddColumnStep<T> = {
   type: 'addColumn';
   table: string;
   column: {
@@ -91,7 +95,7 @@ type AmplifySqlMigrationAddColumnStep = {
   };
 };
 
-type AmplifySqlMigrationDropColumnStep = {
+type AmplifySqlMigrationDropColumnStep<T> = {
   type: 'dropColumn';
   table: string;
   column: {
@@ -99,7 +103,7 @@ type AmplifySqlMigrationDropColumnStep = {
   };
 };
 
-type AmplifySqlMigrationCreateIndexStep = {
+type AmplifySqlMigrationCreateIndexStep<T> = {
   type: 'createIndex';
   table: string;
   columns: {
@@ -112,7 +116,7 @@ type AmplifySqlMigrationCreateIndexStep = {
   unique?: boolean;
 }
 
-type AmplifySqlMigrationDropIndexStep = {
+type AmplifySqlMigrationDropIndexStep<T> = {
   type: 'dropIndex';
   table: string;
   indexName: string;
