@@ -1,8 +1,10 @@
-export type AmplifySqlMigration<T extends Record<any, any>> = {
+import { DeNested, SchemaDefinition } from ".";
+
+export type AmplifySqlMigration<T extends SchemaDefinition> = {
   steps: AmplifySqlMigrationStep<T>[];
 };
 
-type AmplifySqlMigrationStep<T extends Record<any, any>> = {
+type AmplifySqlMigrationStep<T extends SchemaDefinition> = {
   up: AmplifySqlMigrationCreateTableStep<T>;
   down: AmplifySqlMigrationDropTableStep<T>;
 } | {
@@ -14,15 +16,14 @@ type AmplifySqlMigrationStep<T extends Record<any, any>> = {
 };
 
 
-function createTable<T extends Record<any, any>>(
-  input: Omit<AmplifySqlMigrationCreateTableStep<T>, 'type'>
+function createTable<T extends SchemaDefinition, TName extends Tables<T>>(
+  input: Omit<AmplifySqlMigrationCreateTableStep<T, TName>, 'type'>
 ): AmplifySqlMigrationCreateTableStep<T> {
   return {
     type: 'createTable',
     ...input,
   };
 }
-
 
 function dropTable<T extends Record<any, any>>(input: Omit<AmplifySqlMigrationDropTableStep<T>, 'type'>): AmplifySqlMigrationDropTableStep<T> {
   return {
@@ -68,11 +69,18 @@ export const sqlMigration = {
   dropIndex,
 };
 
-type AmplifySqlMigrationCreateTableStep<T extends Record<string, { types: Record<string, { fields: Record<string, any> }> }>> = {
+type Tables<T extends SchemaDefinition> = keyof T['tables']
+type TableFields<T extends SchemaDefinition, TName extends Tables<T>> =
+  keyof DeNested<T['tables'][TName]>['fields']
+
+type AmplifySqlMigrationCreateTableStep<
+  T extends SchemaDefinition,
+  TName extends Tables<T> = Tables<T>
+> = {
   type: 'createTable';
-  name: keyof T;
+  name: TName;
   columns: {
-    name: keyof T[keyof T]['types'][keyof T[keyof T]['types']]['fields'];
+    name: TableFields<T, TName>;
     type: string;
     constraints?: {
       nullable?: boolean;

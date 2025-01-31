@@ -11,11 +11,17 @@ const sqlSchema = a.sql.schema({
       zip: a.sql.varchar(),
       details: a.sql.text(),
     }),
+    person: a.sql.table({
+      name: a.sql.varchar(),
+      age: a.sql.int(),
+    }),
   },
 });
 
 const schema = a.schema({
   Address: sqlSchema.tables.address.toAPIModel(),
+  Person: sqlSchema.tables.person.toAPIModel(),
 });
 
+export type MySQLSchema = typeof sqlSchema;
 export type Schema = ClientSchema<typeof schema>;

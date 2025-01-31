@@ -1,18 +1,18 @@
-import { type AmplifySqlMigration } from "../../../src/index";
-import { a } from "../../../src/index";
-import { Schema } from "./schema-definition";
 import type { Prettify } from '@aws-amplify/data-schema-types';
+import { a, type AmplifySqlMigration } from "../../../src/index";
+import { MySQLSchema, Schema } from "./schema-definition";
 
-type _Prettied = Prettify<Schema>;
+type _PrettyClientSchema = Prettify<Schema>;
+type _PrettyMySQLSchema = Prettify<MySQLSchema>;
 
-export const migration: AmplifySqlMigration<Schema> = {
+export const migration: AmplifySqlMigration<MySQLSchema> = {
   steps: [
     {
       up: a.sqlMigration.createTable({
-        name: 'Address',
+        name: 'address',
         columns: [
-          { name: 'state', type: 'string' },
-          { name: 'zip', type: 'string' },
+          { name: 'details', type: 'string' },
+          { name: 'city', type: 'string' },
         ],
       }),
       down: a.sqlMigration.dropTable({
