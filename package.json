@@ -45,6 +45,7 @@
     "test": "turbo run test && npm run test:scripts && npm run e2e-exports",
     "test:scripts": "npx jest scripts/",
     "turbo": "turbo",
+    "typedoc": "typedoc",
     "vend": "npm run start:npm-proxy && npm run publish:local"
   },
   "devDependencies": {
@@ -80,6 +81,7 @@
     "ts-jest": "^29.1.1",
     "tsx": "^4.8.2",
     "turbo": "^1.10.14",
+    "typedoc": "^0.27.6",
     "typescript": "^5.1.6",
     "verdaccio": "^6.0.2"
   },

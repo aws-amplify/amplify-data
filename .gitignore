@@ -4,6 +4,7 @@ lib-esm
 dist
 node_modules
 tsconfig.tsbuildinfo
+typedocs/reference.json
 
 .turbo
 .idea
