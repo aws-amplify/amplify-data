@@ -77,5 +77,5 @@ if (require.main === module) {
     process.exit(1);
   }
 
-  console.log(parseMigrationFile(filePath));
+  console.log(JSON.stringify(parseMigrationFile(filePath), null, 2));
 }

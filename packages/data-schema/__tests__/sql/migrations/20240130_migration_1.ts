@@ -11,8 +11,8 @@ export const migration: AmplifySqlMigration<MySQLSchema> = {
       up: a.sqlMigration.createTable({
         name: 'address',
         columns: [
-          { name: 'details', type: 'string' },
-          { name: 'city', type: 'string' },
+          { name: 'zip', type: 'varchar' },
+          { name: 'details', type: 'text' },
         ],
       }),
       down: a.sqlMigration.dropTable({
