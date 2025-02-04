@@ -1220,7 +1220,7 @@ describe('CustomOperation transform', () => {
       const result = s.transform().schema;
 
       expect(result).toMatchSnapshot();
-      expect(result).toContain('enum DirectEnumQueryStatus {');
+      expect(result).toContain('enum DirectEnumQueryStatus');
       expect(result).toContain(
         'directEnumQuery(status: DirectEnumQueryStatus): String',
       );
@@ -1245,10 +1245,10 @@ describe('CustomOperation transform', () => {
       const result = s.transform().schema;
 
       expect(result).toMatchSnapshot();
-      expect(result).toContain('enum InlineEnumQueryInputStatus {');
-      expect(result).toContain('input InlineEnumQueryInput {');
+      expect(result).toContain('enum InlineEnumQueryInputInputStatus');
+      expect(result).toContain('input InlineEnumQueryInputInput');
       expect(result).toContain(
-        'inlineEnumQuery(input: InlineEnumQueryInput): String',
+        'inlineEnumQuery(input: InlineEnumQueryInputInput): String',
       );
     });
 
@@ -1272,9 +1272,49 @@ describe('CustomOperation transform', () => {
       const result = s.transform().schema;
 
       expect(result).toMatchSnapshot();
-      expect(result).toContain('enum StatusInputStatus {');
-      expect(result).toContain('input StatusInput {');
-      expect(result).toContain('refEnumQuery(input: StatusInput): String');
+      expect(result).toContain('enum StatusInputStatus');
+      expect(result).toContain('input RefEnumQueryInputInput');
+      expect(result).toContain(
+        'refEnumQuery(input: RefEnumQueryInputInput): String',
+      );
+    });
+
+    test.only('Schema with custom operation using nested custom types in referenced custom type arguments', () => {
+      const s = a
+        .schema({
+          NestedRef: a.customType({
+            inner: a.customType({
+              filter: a.string().required(),
+              e1: a.enum(['a', 'b', 'c']),
+            }),
+          }),
+          fcnCall: a
+            .query()
+            .arguments({
+              arg1: a.ref('NestedRef'),
+              arg2: a.customType({
+                x: a.string().required(),
+              }),
+            })
+            .returns(
+              a.customType({
+                todoCount: a.integer().required(),
+                x: a.string().required(),
+              }),
+            )
+            .handler(a.handler.function('myFunc')),
+        })
+        .authorization((allow) => allow.publicApiKey());
+
+      const result = s.transform().schema;
+
+      expect(result).toMatchSnapshot();
+      expect(result).toContain('enum NestedRefInnerE1');
+      expect(result).toContain('input FcnCallArg1Input');
+      expect(result).toContain('input FcnCallArg2Input');
+      expect(result).toContain(
+        'fcnCall(arg1: FcnCallArg1Input, arg2: FcnCallArg2Input): FcnCallReturnType',
+      );
     });
   });
 

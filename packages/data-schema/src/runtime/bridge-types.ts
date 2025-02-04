@@ -167,7 +167,7 @@ export type CustomOperationArguments = Record<string, CustomOperationArgument>;
 
 export interface CustomOperationArgument {
   name: string;
-  type: InputFieldType | CustomType<any> | RefType<any, any>;
+  type: InputFieldType;
   isArray: boolean;
   isRequired: boolean;
   isArrayNullable?: boolean;
@@ -242,7 +242,12 @@ export type FieldType =
   | ModelFieldType
   | NonModelFieldType;
 
-export type InputFieldType = ScalarType | EnumType | InputType | CustomType<any> | RefType<any, any>;
+export type InputFieldType =
+  | ScalarType
+  | EnumType
+  | InputType
+  | CustomType<any>
+  | RefType<any, any>;
 
 export type FieldAttribute = ModelAttribute;
 

@@ -88,13 +88,7 @@ exports[`CustomOperation transform custom operations with custom types and refs 
 "input RefEnumQueryInputInput
 {
   name: String
-  status: RefEnumQueryInputInputStatus
-}
-
-enum RefEnumQueryInputInputStatus {
-  NEW
-  IN_PROGRESS
-  COMPLETED
+  status: StatusInputStatus
 }
 
 type StatusInput 
@@ -111,6 +105,45 @@ enum StatusInputStatus {
 
 type Query {
   refEnumQuery(input: RefEnumQueryInputInput): String @function(name: "myFunc") @auth(rules: [{allow: public, provider: apiKey}])
+}"
+`;
+
+exports[`CustomOperation transform custom operations with custom types and refs Schema with custom operation using nested custom types in referenced custom type arguments 1`] = `
+"input FcnCallArg1Input
+{
+  inner: NestedRefInner
+}
+
+input FcnCallArg2Input
+{
+  x: String!
+}
+
+type NestedRef 
+{
+  inner: NestedRefInner
+}
+
+type FcnCallReturnType @aws_api_key
+{
+  todoCount: Int!
+  x: String!
+}
+
+type NestedRefInner 
+{
+  filter: String!
+  e1: NestedRefInnerE1
+}
+
+enum NestedRefInnerE1 {
+  a
+  b
+  c
+}
+
+type Query {
+  fcnCall(arg1: FcnCallArg1Input, arg2: FcnCallArg2Input): FcnCallReturnType @function(name: "myFunc") @auth(rules: [{allow: public, provider: apiKey}])
 }"
 `;
 
@@ -202,7 +235,7 @@ exports[`CustomOperation transform dynamo schema Custom mutation w inline boolea
 `;
 
 exports[`CustomOperation transform dynamo schema Custom mutation w inline custom return type 1`] = `
-"type LikePostReturnType
+"type LikePostReturnType 
 {
   stringField: String
   intField: Int
@@ -266,7 +299,7 @@ type Query {
 `;
 
 exports[`CustomOperation transform dynamo schema Custom query w inline custom return type 1`] = `
-"type GetPostDetailsReturnType
+"type GetPostDetailsReturnType 
 {
   stringField: String
   intField: Int
