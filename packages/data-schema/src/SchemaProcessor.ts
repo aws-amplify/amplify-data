@@ -1590,17 +1590,16 @@ const schemaPreprocessor = (
         );
 
         for (const { name, fields, refName } of inputTypes) {
-          const { gqlFields, implicitTypes: nestedImplicitTypes } =
-            processFields(
-              refName ? refName : name,
-              fields,
-              {},
-              {},
-              undefined,
-              undefined,
-              undefined,
-              databaseEngine,
-            );
+          const { gqlFields } = processFields(
+            refName ? refName : name,
+            fields,
+            {},
+            {},
+            undefined,
+            undefined,
+            undefined,
+            databaseEngine,
+          );
           const inputTypeDefinition = `input ${name}\n{\n  ${gqlFields.join('\n  ')}\n}`;
           gqlModels.push(inputTypeDefinition);
         }
