@@ -1279,7 +1279,7 @@ describe('CustomOperation transform', () => {
       );
     });
 
-    test.only('Schema with custom operation using nested custom types in referenced custom type arguments', () => {
+    test('Schema with custom operation using nested custom types in referenced custom type arguments', () => {
       const s = a
         .schema({
           NestedRef: a.customType({
@@ -1312,6 +1312,7 @@ describe('CustomOperation transform', () => {
       expect(result).toContain('enum NestedRefInnerE1');
       expect(result).toContain('input FcnCallArg1Input');
       expect(result).toContain('input FcnCallArg2Input');
+      expect(result).toContain('input FcnCallArg1InputInnerInput');
       expect(result).toContain(
         'fcnCall(arg1: FcnCallArg1Input, arg2: FcnCallArg2Input): FcnCallReturnType',
       );

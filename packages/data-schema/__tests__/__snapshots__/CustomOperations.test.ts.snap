@@ -109,9 +109,15 @@ type Query {
 `;
 
 exports[`CustomOperation transform custom operations with custom types and refs Schema with custom operation using nested custom types in referenced custom type arguments 1`] = `
-"input FcnCallArg1Input
+"input FcnCallArg1InputInnerInput
 {
-  inner: NestedRefInner
+  filter: String!
+  e1: NestedRefInnerE1
+}
+
+input FcnCallArg1Input
+{
+  inner: FcnCallArg1InputInnerInput
 }
 
 input FcnCallArg2Input

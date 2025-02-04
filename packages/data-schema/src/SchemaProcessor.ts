@@ -442,13 +442,19 @@ function customOperationToGql(
       refererTypeName: typeName,
     });
   }
-  const {
-    inputTypes,
-    argDefinitions,
-    implicitTypes: inputImplicitTypes,
-  } = generateInputTypes(typeName, fieldArgs, getRefType);
 
-  implicitTypes.push(...inputImplicitTypes);
+  const { inputTypes, argDefinitions, collectedEnums } = generateInputTypes(
+    typeName,
+    fieldArgs,
+    getRefType,
+  );
+
+  // Handle collected enums
+  for (const [enumName, enumDef] of collectedEnums) {
+    if (!implicitTypes.some(([name]) => name === enumName)) {
+      implicitTypes.push([enumName, enumDef]);
+    }
+  }
 
   if (argDefinitions.length > 0) {
     callSignature += `(${argDefinitions.join(', ')})`;
@@ -1325,7 +1331,7 @@ function generateInputTypes(
 ): {
   inputTypes: { name: string; fields: Record<string, any>; refName?: string }[];
   argDefinitions: string[];
-  implicitTypes: [string, any][];
+  collectedEnums: Map<string, any>;
 } {
   const inputTypes: {
     name: string;
@@ -1333,23 +1339,82 @@ function generateInputTypes(
     refName?: string;
   }[] = [];
   const argDefinitions: string[] = [];
-  const implicitTypes: [string, any][] = [];
+  const collectedEnums: Map<string, any> = new Map();
+
+  function processNonSacalrFields(
+    fields: Record<string, any>,
+    prefix: string,
+    originalTypeName: string,
+    isParentRef: boolean = false,
+  ): Record<string, any> {
+    const processedFields: Record<string, any> = {};
+    for (const [fieldName, fieldDef] of Object.entries(fields)) {
+      if (isRefField(fieldDef)) {
+        const refType = getRefType(fieldDef.data.link, originalTypeName);
+        if (refType.type === 'CustomType') {
+          const nestedInputTypeName = `${prefix}${capitalize(fieldName)}Input`;
+          inputTypes.push({
+            name: nestedInputTypeName,
+            fields: processNonSacalrFields(
+              refType.def.data.fields,
+              nestedInputTypeName,
+              fieldDef.data.link,
+              true,
+            ),
+          });
+          processedFields[fieldName] = {
+            data: { type: 'ref', link: nestedInputTypeName },
+          };
+        } else if (refType.type === 'Enum') {
+          processedFields[fieldName] = {
+            data: { type: 'ref', link: fieldDef.data.link },
+          };
+        } else {
+          processedFields[fieldName] = fieldDef;
+        }
+      } else if (isCustomType(fieldDef)) {
+        const nestedInputTypeName = `${prefix}${capitalize(fieldName)}Input`;
+        inputTypes.push({
+          name: nestedInputTypeName,
+          fields: processNonSacalrFields(
+            fieldDef.data.fields,
+            nestedInputTypeName,
+            `${capitalize(originalTypeName)}${capitalize(fieldName)}`,
+            isParentRef,
+          ),
+        });
+        processedFields[fieldName] = {
+          data: { type: 'ref', link: nestedInputTypeName },
+        };
+      } else if (isEnumType(fieldDef)) {
+        const enumName = `${isParentRef ? capitalize(originalTypeName) : prefix}${capitalize(fieldName)}`;
+        if (!collectedEnums.has(enumName) && !isParentRef) {
+          collectedEnums.set(enumName, fieldDef);
+        }
+        processedFields[fieldName] = { data: { type: 'ref', link: enumName } };
+      } else {
+        processedFields[fieldName] = fieldDef;
+      }
+    }
+    return processedFields;
+  }
 
   for (const [argName, argDef] of Object.entries(args)) {
     if (isRefField(argDef)) {
       const refType = getRefType(argDef.data.link, operationName);
       if (refType.type === 'CustomType') {
         const inputTypeName = `${capitalize(operationName)}${capitalize(argName)}Input`;
-        if ('data' in refType.def && 'fields' in refType.def.data) {
-          inputTypes.push({
-            name: inputTypeName,
-            fields: refType.def.data.fields,
-            refName: argDef.data.link,
-          });
-          argDefinitions.push(`${argName}: ${inputTypeName}`);
-        } else {
-          throw new Error(`Invalid reference type for argument ${argName}`);
-        }
+        inputTypes.push({
+          name: inputTypeName,
+          fields: processNonSacalrFields(
+            refType.def.data.fields,
+            inputTypeName,
+            argDef.data.link,
+            true,
+          ),
+          refName: argDef.data.link,
+        });
+        argDefinitions.push(`${argName}: ${inputTypeName}`);
       } else if (refType.type === 'Enum') {
         argDefinitions.push(`${argName}: ${argDef.data.link}`);
       } else {
@@ -1357,11 +1422,21 @@ function generateInputTypes(
       }
     } else if (isEnumType(argDef)) {
       const enumName = `${capitalize(operationName)}${capitalize(argName)}`;
-      argDefinitions.push(`${argName}: ${enumFieldToGql(enumName)}`);
-      implicitTypes.push([enumName, argDef]);
+      if (!collectedEnums.has(enumName)) {
+        collectedEnums.set(enumName, argDef);
+      }
+      argDefinitions.push(`${argName}: ${enumName}`);
     } else if (isCustomType(argDef)) {
       const inputTypeName = `${capitalize(operationName)}${capitalize(argName)}Input`;
-      inputTypes.push({ name: inputTypeName, fields: argDef.data.fields });
+      inputTypes.push({
+        name: inputTypeName,
+        fields: processNonSacalrFields(
+          argDef.data.fields,
+          inputTypeName,
+          `${capitalize(operationName)}${capitalize(argName)}`,
+          false,
+        ),
+      });
       argDefinitions.push(`${argName}: ${inputTypeName}`);
     } else if (isScalarField(argDef)) {
       argDefinitions.push(`${argName}: ${scalarFieldToGql(argDef.data)}`);
@@ -1370,7 +1445,7 @@ function generateInputTypes(
     }
   }
 
-  return { inputTypes, argDefinitions, implicitTypes };
+  return { inputTypes, argDefinitions, collectedEnums };
 }
 
 const schemaPreprocessor = (
@@ -1528,10 +1603,6 @@ const schemaPreprocessor = (
             );
           const inputTypeDefinition = `input ${name}\n{\n  ${gqlFields.join('\n  ')}\n}`;
           gqlModels.push(inputTypeDefinition);
-          if (nestedImplicitTypes.length && !refName) {
-            // if (nestedImplicitTypes.length) {
-            topLevelTypes.push(...nestedImplicitTypes);
-          }
         }
 
         topLevelTypes.push(...implicitTypes);
