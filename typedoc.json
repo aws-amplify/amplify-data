@@ -1,0 +1,16 @@
+{
+	"name": "Amplify Data API Documentation",
+	"entryPointStrategy": "packages",
+    "entryPoints": [
+		"packages/data-schema",
+		"packages/data-schema-types",
+	],
+	"json": "typedocs/reference.json",
+	"sortEntryPoints": false,
+	"includeVersion": false,
+	"hideGenerator": true,
+	"navigationLinks": {
+	},
+	"plugin": [
+	],
+}
