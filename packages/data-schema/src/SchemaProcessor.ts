@@ -347,7 +347,7 @@ function customOperationToGql(
   customTypeAuthRules: CustomTypeAuthRules;
   lambdaFunctionDefinition: LambdaFunctionDefinition;
   customSqlDataSourceStrategy: CustomSqlDataSourceStrategy | undefined;
-  inputTypes: { name: string; fields: Record<string, any>; refName?: string }[];
+  inputTypes: { name: string; fields: Record<string, any> }[];
 } {
   const {
     arguments: fieldArgs,
@@ -1329,42 +1329,51 @@ function generateInputTypes(
   args: Record<string, any>,
   getRefType: (name: string, referrerName?: string) => GetRef,
 ): {
-  inputTypes: { name: string; fields: Record<string, any>; refName?: string }[];
+  inputTypes: { name: string; fields: Record<string, any> }[];
   argDefinitions: string[];
   collectedEnums: Map<string, any>;
 } {
   const inputTypes: {
     name: string;
     fields: Record<string, any>;
-    refName?: string;
   }[] = [];
   const argDefinitions: string[] = [];
   const collectedEnums: Map<string, any> = new Map();
+  const processedTypes = new Set<string>(); // Track processed types to avoid duplicates
 
-  function processNonSacalrFields(
+  function processNonScalarFields(
     fields: Record<string, any>,
-    prefix: string,
     originalTypeName: string,
     isParentRef: boolean = false,
+    parentChain: string[] = [], // Used to detect circular references
   ): Record<string, any> {
     const processedFields: Record<string, any> = {};
     for (const [fieldName, fieldDef] of Object.entries(fields)) {
       if (isRefField(fieldDef)) {
         const refType = getRefType(fieldDef.data.link, originalTypeName);
         if (refType.type === 'CustomType') {
-          const nestedInputTypeName = `${prefix}${capitalize(fieldName)}Input`;
-          inputTypes.push({
-            name: nestedInputTypeName,
-            fields: processNonSacalrFields(
-              refType.def.data.fields,
-              nestedInputTypeName,
-              fieldDef.data.link,
-              true,
-            ),
-          });
+          const nestedInputTypeName = `${capitalize(fieldDef.data.link)}Input`;
           processedFields[fieldName] = {
             data: { type: 'ref', link: nestedInputTypeName },
           };
+
+          // Process the nested type if it hasn't been processed and isn't a circular reference
+          if (
+            !parentChain.includes(nestedInputTypeName) &&
+            !processedTypes.has(nestedInputTypeName)
+          ) {
+            processedTypes.add(nestedInputTypeName);
+            const nestedFields = processNonScalarFields(
+              refType.def.data.fields,
+              fieldDef.data.link,
+              true,
+              [...parentChain, nestedInputTypeName],
+            );
+            inputTypes.push({
+              name: nestedInputTypeName,
+              fields: nestedFields,
+            });
+          }
         } else if (refType.type === 'Enum') {
           processedFields[fieldName] = {
             data: { type: 'ref', link: fieldDef.data.link },
@@ -1373,21 +1382,28 @@ function generateInputTypes(
           processedFields[fieldName] = fieldDef;
         }
       } else if (isCustomType(fieldDef)) {
-        const nestedInputTypeName = `${prefix}${capitalize(fieldName)}Input`;
-        inputTypes.push({
-          name: nestedInputTypeName,
-          fields: processNonSacalrFields(
-            fieldDef.data.fields,
-            nestedInputTypeName,
-            `${capitalize(originalTypeName)}${capitalize(fieldName)}`,
-            isParentRef,
-          ),
-        });
+        // Handle inline custom types
+        const nestedInputTypeName = `${capitalize(originalTypeName)}${capitalize(fieldName)}Input`;
         processedFields[fieldName] = {
           data: { type: 'ref', link: nestedInputTypeName },
         };
+
+        if (!processedTypes.has(nestedInputTypeName)) {
+          processedTypes.add(nestedInputTypeName);
+          const nestedFields = processNonScalarFields(
+            fieldDef.data.fields,
+            `${capitalize(originalTypeName)}${capitalize(fieldName)}`,
+            isParentRef,
+            [...parentChain, nestedInputTypeName],
+          );
+          inputTypes.push({
+            name: nestedInputTypeName,
+            fields: nestedFields,
+          });
+        }
       } else if (isEnumType(fieldDef)) {
-        const enumName = `${isParentRef ? capitalize(originalTypeName) : prefix}${capitalize(fieldName)}`;
+        // Handle enum types
+        const enumName = `${capitalize(originalTypeName)}${capitalize(fieldName)}`;
         if (!collectedEnums.has(enumName) && !isParentRef) {
           collectedEnums.set(enumName, fieldDef);
         }
@@ -1399,45 +1415,58 @@ function generateInputTypes(
     return processedFields;
   }
 
+  // Process top-level arguments
   for (const [argName, argDef] of Object.entries(args)) {
     if (isRefField(argDef)) {
       const refType = getRefType(argDef.data.link, operationName);
       if (refType.type === 'CustomType') {
-        const inputTypeName = `${capitalize(operationName)}${capitalize(argName)}Input`;
-        inputTypes.push({
-          name: inputTypeName,
-          fields: processNonSacalrFields(
+        const inputTypeName = `${capitalize(argDef.data.link)}Input`;
+        argDefinitions.push(`${argName}: ${inputTypeName}`);
+
+        // Process the input type if it hasn't been processed yet
+        if (!processedTypes.has(inputTypeName)) {
+          processedTypes.add(inputTypeName);
+          const fields = processNonScalarFields(
             refType.def.data.fields,
-            inputTypeName,
             argDef.data.link,
             true,
-          ),
-          refName: argDef.data.link,
-        });
-        argDefinitions.push(`${argName}: ${inputTypeName}`);
+            [inputTypeName],
+          );
+          inputTypes.push({
+            name: inputTypeName,
+            fields,
+          });
+        }
       } else if (refType.type === 'Enum') {
         argDefinitions.push(`${argName}: ${argDef.data.link}`);
       } else {
         argDefinitions.push(`${argName}: ${refFieldToGql(argDef.data)}`);
       }
     } else if (isEnumType(argDef)) {
+      // Handle top-level enum arguments
       const enumName = `${capitalize(operationName)}${capitalize(argName)}`;
       if (!collectedEnums.has(enumName)) {
         collectedEnums.set(enumName, argDef);
       }
       argDefinitions.push(`${argName}: ${enumName}`);
     } else if (isCustomType(argDef)) {
+      // Handle top-level custom type arguments
       const inputTypeName = `${capitalize(operationName)}${capitalize(argName)}Input`;
-      inputTypes.push({
-        name: inputTypeName,
-        fields: processNonSacalrFields(
+      argDefinitions.push(`${argName}: ${inputTypeName}`);
+
+      if (!processedTypes.has(inputTypeName)) {
+        processedTypes.add(inputTypeName);
+        const fields = processNonScalarFields(
           argDef.data.fields,
-          inputTypeName,
           `${capitalize(operationName)}${capitalize(argName)}`,
           false,
-        ),
-      });
-      argDefinitions.push(`${argName}: ${inputTypeName}`);
+          [inputTypeName],
+        );
+        inputTypes.push({
+          name: inputTypeName,
+          fields,
+        });
+      }
     } else if (isScalarField(argDef)) {
       argDefinitions.push(`${argName}: ${scalarFieldToGql(argDef.data)}`);
     } else {
@@ -1505,6 +1534,7 @@ const schemaPreprocessor = (
   );
 
   const getRefType = getRefTypeForSchema(schema);
+  const uniqueInputTypes = new Map<string, Record<string, any>>();
 
   for (const [typeName, typeDef] of topLevelTypes) {
     const mostRelevantAuthRules: Authorization<any, any, any>[] =
@@ -1589,19 +1619,11 @@ const schemaPreprocessor = (
           getRefType,
         );
 
-        for (const { name, fields, refName } of inputTypes) {
-          const { gqlFields } = processFields(
-            refName ? refName : name,
-            fields,
-            {},
-            {},
-            undefined,
-            undefined,
-            undefined,
-            databaseEngine,
-          );
-          const inputTypeDefinition = `input ${name}\n{\n  ${gqlFields.join('\n  ')}\n}`;
-          gqlModels.push(inputTypeDefinition);
+        // Process input types without duplicates
+        for (const { name, fields } of inputTypes) {
+          if (!uniqueInputTypes.has(name)) {
+            uniqueInputTypes.set(name, fields);
+          }
         }
 
         topLevelTypes.push(...implicitTypes);
@@ -1766,6 +1788,22 @@ const schemaPreprocessor = (
       const model = `type ${typeName} ${modelDirective} ${authString}\n{\n  ${joined}\n}`;
       gqlModels.push(model);
     }
+  }
+
+  // Generate input types after processing all custom operations
+  for (const [name, fields] of uniqueInputTypes) {
+    const { gqlFields } = processFields(
+      name,
+      fields,
+      {},
+      {},
+      undefined,
+      undefined,
+      undefined,
+      databaseEngine,
+    );
+    const inputTypeDefinition = `input ${name} {\n  ${gqlFields.join('\n  ')}\n}`;
+    gqlModels.push(inputTypeDefinition);
   }
 
   const customOperations = {

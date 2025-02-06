@@ -38,7 +38,7 @@ export interface ClientCustomOperation<
    * ```
    */
   functionHandler: AppSyncResolverHandler<
-    CustomOpArguments<Op, RefBag>,
+    CustomOpArguments<Op>,
     // If the final handler is an async function, the Schema['fieldname']['functionhandler']
     // should have a return type of `void`. This only applies to `functionHandler` and not
     // `returnType` because `returnType` determines the type returned by the mutation / query

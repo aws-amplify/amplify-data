@@ -295,16 +295,16 @@ describe('custom operations', () => {
     const transformedSchema = schema.transform();
     const expectedTypes = ['CustomArgType', 'EchoResult', 'Query', 'Mutation'];
     const expectedOperations = [
-      'queryWithCustomTypeArg(customArg: QueryWithCustomTypeArgCustomArgInput): String',
-      'queryWithRefArg(refArg: QueryWithRefArgRefArgInput): String',
-      'mutateWithCustomTypeArg(customArg: MutateWithCustomTypeArgCustomArgInput): String',
-      'mutationWithRefArg(refArg: MutationWithRefArgRefArgInput): String',
+      'queryWithCustomTypeArg(customArg: CustomArgTypeInput): String',
+      'queryWithRefArg(refArg: EchoResultInput): String',
+      'mutateWithCustomTypeArg(customArg: CustomArgTypeInput): String',
+      'mutationWithRefArg(refArg: EchoResultInput): String',
     ];
     const expectedInputTypes = [
-      'input QueryWithCustomTypeArgCustomArgInput',
-      'input QueryWithRefArgRefArgInput',
-      'input MutateWithCustomTypeArgCustomArgInput',
-      'input MutationWithRefArgRefArgInput',
+      'input CustomArgTypeInput',
+      'input EchoResultInput',
+      'input CustomArgTypeInput',
+      'input EchoResultInput',
     ];
 
     expectedTypes.forEach((type) => {
