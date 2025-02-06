@@ -1324,6 +1324,15 @@ const mergeCustomTypeAuthRules = (
   }
 };
 
+/**
+ * Generates input types for custom operations in the schema.
+ *
+ * Processes operation arguments to create corresponding input types,
+ * handling referenced and inline custom types, enums, and nested structures.
+ * Manages circular references and prevents duplicate processing.
+ *
+ **/
+
 function generateInputTypes(
   operationName: string,
   args: Record<string, any>,
