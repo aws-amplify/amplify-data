@@ -1350,12 +1350,12 @@ function generateInputTypes(
   const collectedEnums: Map<string, any> = new Map();
   const processedTypes = new Set<string>(); // Track processed types to avoid duplicates
 
-  function processNonScalarFields(
+  const processNonScalarFields = (
     fields: Record<string, any>,
     originalTypeName: string,
     isParentRef: boolean = false,
     parentChain: string[] = [], // Used to detect circular references
-  ): Record<string, any> {
+  ): Record<string, any> => {
     const processedFields: Record<string, any> = {};
     for (const [fieldName, fieldDef] of Object.entries(fields)) {
       if (isRefField(fieldDef)) {
@@ -1388,7 +1388,10 @@ function generateInputTypes(
             data: { type: 'ref', link: fieldDef.data.link },
           };
         } else {
-          processedFields[fieldName] = fieldDef;
+          throw new Error(
+            `Unsupported reference type '${refType.type}' for field '${fieldName}'. ` +
+              `Only references to CustomType and Enum are supported.`,
+          );
         }
       } else if (isCustomType(fieldDef)) {
         // Handle inline custom types
@@ -1422,7 +1425,7 @@ function generateInputTypes(
       }
     }
     return processedFields;
-  }
+  };
 
   // Process top-level arguments
   for (const [argName, argDef] of Object.entries(args)) {
@@ -1449,7 +1452,10 @@ function generateInputTypes(
       } else if (refType.type === 'Enum') {
         argDefinitions.push(`${argName}: ${argDef.data.link}`);
       } else {
-        argDefinitions.push(`${argName}: ${refFieldToGql(argDef.data)}`);
+        throw new Error(
+          `Unsupported reference type '${refType.type}' for argument '${argName}' in '${operationName}'. ` +
+            `Only references to CustomType and Enum are supported.`,
+        );
       }
     } else if (isEnumType(argDef)) {
       // Handle top-level enum arguments
