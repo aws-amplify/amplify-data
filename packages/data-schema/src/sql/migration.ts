@@ -1,6 +1,6 @@
 import { DeNested, SchemaDefinition } from ".";
 
-export type AmplifySqlMigration<T extends SchemaDefinition> = {
+export type AmplifySqlMigration<T extends SchemaDefinition = any> = {
   steps: AmplifySqlMigrationStep<T>[];
 };
 
