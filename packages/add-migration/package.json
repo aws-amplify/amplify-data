@@ -12,7 +12,7 @@
     "license": "ISC",
     "description": "",
     "bin": {
-        "add-migration": "./bin/index.js"
+        "add-migration": "./bin/index.ts"
     },
     "files": [
       "bin",
@@ -20,7 +20,10 @@
     ],
     "dependencies": {
       "@typescript-eslint/parser": "^7.1.0",
-      "@typescript-eslint/types": "^8.22.0"
+      "@typescript-eslint/types": "^8.22.0",
+      "@aws-amplify/platform-core": "^1.6.1",
+      "yargs": "^17.7.2",
+      "@aws-amplify/cli-core": "^1.2.3"
     },
     "devDependencies": {
       "@types/node": "^20.11.24",

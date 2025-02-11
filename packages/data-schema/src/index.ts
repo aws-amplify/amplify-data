@@ -19,4 +19,4 @@ export type {
 } from './ModelRelationshipField';
 export type { EnumType } from './EnumType';
 
-export type * from './sql/index';
+export * from './sql/index';

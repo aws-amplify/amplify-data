@@ -1,0 +1,620 @@
+{
+    "tables": [
+        {
+            "tableName": "address1",
+            "columns": [
+                {
+                    "name": "number",
+                    "type": "int",
+                    "isNullable": false
+                },
+                {
+                    "name": "street",
+                    "type": "varchar",
+                    "isNullable": true
+                },
+                {
+                    "name": "city",
+                    "type": "varchar",
+                    "isNullable": true
+                },
+                {
+                    "name": "state",
+                    "type": "varchar",
+                    "isNullable": true
+                },
+                {
+                    "name": "zip",
+                    "type": "varchar",
+                    "isNullable": true
+                },
+                {
+                    "name": "lat",
+                    "type": "real",
+                    "isNullable": true
+                },
+                {
+                    "name": "long",
+                    "type": "real",
+                    "isNullable": true
+                }
+            ],
+            "primaryKey": [
+                "id"
+            ]
+        },
+        {
+            "tableName": "customer1",
+            "columns": [
+                {
+                    "name": "firstName",
+                    "type": "varchar",
+                    "isNullable": false
+                },
+                {
+                    "name": "lastName",
+                    "type": "varchar",
+                    "isNullable": false
+                },
+                {
+                    "name": "jobTitle",
+                    "type": "varchar(50)",
+                    "isNullable": true
+                },
+                {
+                    "name": "bio",
+                    "type": "text",
+                    "isNullable": true
+                },
+                {
+                    "name": "favoriteColors",
+                    "type": "varchar",
+                    "isNullable": true
+                }
+            ],
+            "primaryKey": [
+                "firstName",
+                "lastName"
+            ]
+        },
+        {
+            "tableName": "address2",
+            "columns": [
+                {
+                    "name": "number",
+                    "type": "int",
+                    "isNullable": false
+                },
+                {
+                    "name": "street",
+                    "type": "varchar",
+                    "isNullable": true
+                },
+                {
+                    "name": "city",
+                    "type": "varchar",
+                    "isNullable": true
+                },
+                {
+                    "name": "state",
+                    "type": "varchar",
+                    "isNullable": true
+                },
+                {
+                    "name": "zip",
+                    "type": "varchar",
+                    "isNullable": true
+                },
+                {
+                    "name": "lat",
+                    "type": "real",
+                    "isNullable": true
+                },
+                {
+                    "name": "long",
+                    "type": "real",
+                    "isNullable": true
+                }
+            ],
+            "primaryKey": [
+                "id"
+            ]
+        },
+        {
+            "tableName": "customer2",
+            "columns": [
+                {
+                    "name": "firstName",
+                    "type": "varchar",
+                    "isNullable": false
+                },
+                {
+                    "name": "lastName",
+                    "type": "varchar",
+                    "isNullable": false
+                },
+                {
+                    "name": "jobTitle",
+                    "type": "varchar(50)",
+                    "isNullable": true
+                },
+                {
+                    "name": "bio",
+                    "type": "text",
+                    "isNullable": true
+                },
+                {
+                    "name": "favoriteColors",
+                    "type": "varchar",
+                    "isNullable": true
+                }
+            ],
+            "primaryKey": [
+                "firstName",
+                "lastName"
+            ]
+        },
+        {
+            "tableName": "address3",
+            "columns": [
+                {
+                    "name": "number",
+                    "type": "int",
+                    "isNullable": false
+                },
+                {
+                    "name": "street",
+                    "type": "varchar",
+                    "isNullable": true
+                },
+                {
+                    "name": "city",
+                    "type": "varchar",
+                    "isNullable": true
+                },
+                {
+                    "name": "state",
+                    "type": "varchar",
+                    "isNullable": true
+                },
+                {
+                    "name": "zip",
+                    "type": "varchar",
+                    "isNullable": true
+                },
+                {
+                    "name": "lat",
+                    "type": "real",
+                    "isNullable": true
+                },
+                {
+                    "name": "long",
+                    "type": "real",
+                    "isNullable": true
+                }
+            ],
+            "primaryKey": [
+                "id"
+            ]
+        },
+        {
+            "tableName": "customer3",
+            "columns": [
+                {
+                    "name": "firstName",
+                    "type": "varchar",
+                    "isNullable": false
+                },
+                {
+                    "name": "lastName",
+                    "type": "varchar",
+                    "isNullable": false
+                },
+                {
+                    "name": "jobTitle",
+                    "type": "varchar(50)",
+                    "isNullable": true
+                },
+                {
+                    "name": "bio",
+                    "type": "text",
+                    "isNullable": true
+                },
+                {
+                    "name": "favoriteColors",
+                    "type": "varchar",
+                    "isNullable": true
+                }
+            ],
+            "primaryKey": [
+                "firstName",
+                "lastName"
+            ]
+        },
+        {
+            "tableName": "address4",
+            "columns": [
+                {
+                    "name": "number",
+                    "type": "int",
+                    "isNullable": false
+                },
+                {
+                    "name": "street",
+                    "type": "varchar",
+                    "isNullable": true
+                },
+                {
+                    "name": "city",
+                    "type": "varchar",
+                    "isNullable": true
+                },
+                {
+                    "name": "state",
+                    "type": "varchar",
+                    "isNullable": true
+                },
+                {
+                    "name": "zip",
+                    "type": "varchar",
+                    "isNullable": true
+                },
+                {
+                    "name": "lat",
+                    "type": "real",
+                    "isNullable": true
+                },
+                {
+                    "name": "long",
+                    "type": "real",
+                    "isNullable": true
+                }
+            ],
+            "primaryKey": [
+                "id"
+            ]
+        },
+        {
+            "tableName": "customer4",
+            "columns": [
+                {
+                    "name": "firstName",
+                    "type": "varchar",
+                    "isNullable": false
+                },
+                {
+                    "name": "lastName",
+                    "type": "varchar",
+                    "isNullable": false
+                },
+                {
+                    "name": "jobTitle",
+                    "type": "varchar(50)",
+                    "isNullable": true
+                },
+                {
+                    "name": "bio",
+                    "type": "text",
+                    "isNullable": true
+                },
+                {
+                    "name": "favoriteColors",
+                    "type": "varchar",
+                    "isNullable": true
+                }
+            ],
+            "primaryKey": [
+                "firstName",
+                "lastName"
+            ]
+        },
+        {
+            "tableName": "address5",
+            "columns": [
+                {
+                    "name": "number",
+                    "type": "int",
+                    "isNullable": false
+                },
+                {
+                    "name": "street",
+                    "type": "varchar",
+                    "isNullable": true
+                },
+                {
+                    "name": "city",
+                    "type": "varchar",
+                    "isNullable": true
+                },
+                {
+                    "name": "state",
+                    "type": "varchar",
+                    "isNullable": true
+                },
+                {
+                    "name": "zip",
+                    "type": "varchar",
+                    "isNullable": true
+                },
+                {
+                    "name": "lat",
+                    "type": "real",
+                    "isNullable": true
+                },
+                {
+                    "name": "long",
+                    "type": "real",
+                    "isNullable": true
+                }
+            ],
+            "primaryKey": [
+                "id"
+            ]
+        },
+        {
+            "tableName": "customer5",
+            "columns": [
+                {
+                    "name": "firstName",
+                    "type": "varchar",
+                    "isNullable": false
+                },
+                {
+                    "name": "lastName",
+                    "type": "varchar",
+                    "isNullable": false
+                },
+                {
+                    "name": "jobTitle",
+                    "type": "varchar(50)",
+                    "isNullable": true
+                },
+                {
+                    "name": "bio",
+                    "type": "text",
+                    "isNullable": true
+                },
+                {
+                    "name": "favoriteColors",
+                    "type": "varchar",
+                    "isNullable": true
+                }
+            ],
+            "primaryKey": [
+                "firstName",
+                "lastName"
+            ]
+        },
+        {
+            "tableName": "address6",
+            "columns": [
+                {
+                    "name": "number",
+                    "type": "int",
+                    "isNullable": false
+                },
+                {
+                    "name": "street",
+                    "type": "varchar",
+                    "isNullable": true
+                },
+                {
+                    "name": "city",
+                    "type": "varchar",
+                    "isNullable": true
+                },
+                {
+                    "name": "state",
+                    "type": "varchar",
+                    "isNullable": true
+                },
+                {
+                    "name": "zip",
+                    "type": "varchar",
+                    "isNullable": true
+                },
+                {
+                    "name": "lat",
+                    "type": "real",
+                    "isNullable": true
+                },
+                {
+                    "name": "long",
+                    "type": "real",
+                    "isNullable": true
+                }
+            ],
+            "primaryKey": [
+                "id"
+            ]
+        },
+        {
+            "tableName": "customer6",
+            "columns": [
+                {
+                    "name": "firstName",
+                    "type": "varchar",
+                    "isNullable": false
+                },
+                {
+                    "name": "lastName",
+                    "type": "varchar",
+                    "isNullable": false
+                },
+                {
+                    "name": "jobTitle",
+                    "type": "varchar(50)",
+                    "isNullable": true
+                },
+                {
+                    "name": "bio",
+                    "type": "text",
+                    "isNullable": true
+                },
+                {
+                    "name": "favoriteColors",
+                    "type": "varchar",
+                    "isNullable": true
+                }
+            ],
+            "primaryKey": [
+                "firstName",
+                "lastName"
+            ]
+        },
+        {
+            "tableName": "address7",
+            "columns": [
+                {
+                    "name": "number",
+                    "type": "int",
+                    "isNullable": false
+                },
+                {
+                    "name": "street",
+                    "type": "varchar",
+                    "isNullable": true
+                },
+                {
+                    "name": "city",
+                    "type": "varchar",
+                    "isNullable": true
+                },
+                {
+                    "name": "state",
+                    "type": "varchar",
+                    "isNullable": true
+                },
+                {
+                    "name": "zip",
+                    "type": "varchar",
+                    "isNullable": true
+                },
+                {
+                    "name": "lat",
+                    "type": "real",
+                    "isNullable": true
+                },
+                {
+                    "name": "long",
+                    "type": "real",
+                    "isNullable": true
+                }
+            ],
+            "primaryKey": [
+                "id"
+            ]
+        },
+        {
+            "tableName": "customer7",
+            "columns": [
+                {
+                    "name": "firstName",
+                    "type": "varchar",
+                    "isNullable": false
+                },
+                {
+                    "name": "lastName",
+                    "type": "varchar",
+                    "isNullable": false
+                },
+                {
+                    "name": "jobTitle",
+                    "type": "varchar(50)",
+                    "isNullable": true
+                },
+                {
+                    "name": "bio",
+                    "type": "text",
+                    "isNullable": true
+                },
+                {
+                    "name": "favoriteColors",
+                    "type": "varchar",
+                    "isNullable": true
+                }
+            ],
+            "primaryKey": [
+                "firstName",
+                "lastName"
+            ]
+        },
+        {
+            "tableName": "address8",
+            "columns": [
+                {
+                    "name": "number",
+                    "type": "int",
+                    "isNullable": false
+                },
+                {
+                    "name": "street",
+                    "type": "varchar",
+                    "isNullable": true
+                },
+                {
+                    "name": "city",
+                    "type": "varchar",
+                    "isNullable": true
+                },
+                {
+                    "name": "state",
+                    "type": "varchar",
+                    "isNullable": true
+                },
+                {
+                    "name": "zip",
+                    "type": "varchar",
+                    "isNullable": true
+                },
+                {
+                    "name": "lat",
+                    "type": "real",
+                    "isNullable": true
+                },
+                {
+                    "name": "long",
+                    "type": "real",
+                    "isNullable": true
+                }
+            ],
+            "primaryKey": [
+                "id"
+            ]
+        },
+        {
+            "tableName": "customer8",
+            "columns": [
+                {
+                    "name": "firstName",
+                    "type": "varchar",
+                    "isNullable": false
+                },
+                {
+                    "name": "lastName",
+                    "type": "varchar",
+                    "isNullable": false
+                },
+                {
+                    "name": "jobTitle",
+                    "type": "varchar(50)",
+                    "isNullable": true
+                },
+                {
+                    "name": "bio",
+                    "type": "text",
+                    "isNullable": true
+                },
+                {
+                    "name": "favoriteColors",
+                    "type": "varchar",
+                    "isNullable": true
+                }
+            ],
+            "primaryKey": [
+                "firstName",
+                "lastName"
+            ]
+        }
+    ]
+}

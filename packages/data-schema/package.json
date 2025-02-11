@@ -18,7 +18,8 @@
     "docs:temp": "api-extractor run && api-documenter markdown --input-folder temp --output-folder temp/docs",
     "check:api": "rimraf temp && npm run docs:temp && tsx ../../scripts/shallow-dir-diff.ts docs temp/docs",
     "lint": "eslint .",
-    "test": "jest"
+    "test": "jest",
+    "test:watch": "jest --watch"
   },
   "exports": {
     ".": {

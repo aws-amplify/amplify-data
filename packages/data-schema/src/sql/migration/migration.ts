@@ -7,7 +7,7 @@ import {
   denested,
   transformTables,
   transformColumn,
-} from './index';
+} from '../index';
 
 interface AlterTableRenameTo {
   type: 'renameTo';

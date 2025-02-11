@@ -4,6 +4,7 @@ import { ModelField } from '../ModelField';
 import { RefType } from '../RefType';
 import { KindaPretty as _KP } from '../util';
 import { addMigration, type MigrationRecord } from './migration';
+export { generateMigration } from './migration';
 
 // #region builder types
 export type SetKey<T, Key, Value> = {

@@ -1,0 +1,40 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`sql resource definitions can produce sql migration when no snapshot is provided 1`] = `
+"import { a, type AmplifySqlMigration } from "@aws-amplify/data-schema";
+export await using migration: AmplifySqlMigration = {
+    steps: [
+        {
+            up: [
+                a.sqlMigration.createTable({
+                    name: "address",
+                    columns: [
+                        { name: "number", type: "int" },
+                        { name: "street", type: "varchar" },
+                        { name: "city", type: "varchar" },
+                        { name: "state", type: "varchar" },
+                        { name: "zip", type: "varchar" }
+                    ]
+                }),
+                a.sqlMigration.createTable({
+                    name: "customer",
+                    columns: [
+                        { name: "firstName", type: "varchar" },
+                        { name: "lastName", type: "varchar" },
+                        { name: "bio", type: "text" },
+                        { name: "favoriteColors", type: "varchar" }
+                    ]
+                })
+            ],
+            down: [
+                a.sqlMigration.dropTable({
+                    name: "address"
+                }),
+                a.sqlMigration.dropTable({
+                    name: "customer"
+                })
+            ]
+        }
+    ]
+};"
+`;
