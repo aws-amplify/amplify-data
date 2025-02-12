@@ -16,6 +16,8 @@ import { Observable } from 'rxjs';
 import { CustomHeaders, ModelSortDirection } from './client';
 
 import { AiAction, AiCategory } from './internals/ai/getCustomUserAgentDetails';
+import { CustomType } from '../CustomType';
+import { RefType } from '../RefType';
 
 export declare namespace AmplifyServer {
   export interface ContextToken {
@@ -240,7 +242,12 @@ export type FieldType =
   | ModelFieldType
   | NonModelFieldType;
 
-export type InputFieldType = ScalarType | EnumType | InputType;
+export type InputFieldType =
+  | ScalarType
+  | EnumType
+  | InputType
+  | CustomType<any>
+  | RefType<any, any>;
 
 export type FieldAttribute = ModelAttribute;
 
