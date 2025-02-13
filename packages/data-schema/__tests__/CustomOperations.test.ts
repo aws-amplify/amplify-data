@@ -1271,8 +1271,8 @@ describe('CustomOperation transform', () => {
 
       expect(result).toMatchSnapshot();
       expect(result).toContain('enum PostStatus');
-      expect(result).toContain('input PostInput');
-      expect(result).toContain('refCustomType(arg: PostInput): String');
+      expect(result).toContain('input postInput');
+      expect(result).toContain('refCustomType(arg: postInput): String');
     });
 
     test('custom operation query with ref to nested custom type argument', () => {
@@ -1299,8 +1299,8 @@ describe('CustomOperation transform', () => {
       expect(result).toMatchSnapshot();
       expect(result).toContain('enum PostInnerE1');
       expect(result).toContain('input PostInnerInput');
-      expect(result).toContain('input PostInput');
-      expect(result).toContain('fcnCall(arg: PostInput)');
+      expect(result).toContain('input postInput');
+      expect(result).toContain('fcnCall(arg: postInput)');
     });
 
     test('custom operation mutation with multiple references to the same custom type', () => {
@@ -1324,9 +1324,9 @@ describe('CustomOperation transform', () => {
       const result = s.transform().schema;
 
       expect(result).toMatchSnapshot();
-      expect(result).toContain('input PostInput');
+      expect(result).toContain('input postInput');
       expect(result).toContain(
-        'refCustomType(arg1: PostInput, arg2: PostInput)',
+        'refCustomType(arg1: postInput, arg2: postInput)',
       );
     });
 
@@ -1357,9 +1357,9 @@ describe('CustomOperation transform', () => {
       const result = s.transform().schema;
 
       expect(result).toMatchSnapshot();
-      expect(result).toContain('input PostInput');
-      expect(result).toContain('fnCall1(arg: PostInput)');
-      expect(result).toContain('fnCall2(arg: PostInput)');
+      expect(result).toContain('input postInput');
+      expect(result).toContain('fnCall1(arg: postInput)');
+      expect(result).toContain('fnCall2(arg: postInput)');
     });
 
     test('custom operation with inline custom type containing reference to another custom type', () => {
@@ -1384,7 +1384,7 @@ describe('CustomOperation transform', () => {
       const result = s.transform().schema;
 
       expect(result).toMatchSnapshot();
-      expect(result).toContain('input PostInput');
+      expect(result).toContain('input postInput');
       expect(result).toContain('input FnCallArgInput');
       expect(result).toContain('fnCall(arg: FnCallArgInput)');
     });
@@ -1410,8 +1410,8 @@ describe('CustomOperation transform', () => {
       const result = s.transform().schema;
 
       expect(result).toMatchSnapshot();
-      expect(result).toContain('input PostInput');
-      expect(result).toContain('inlineCustomType(arg: PostInput)');
+      expect(result).toContain('input postInput');
+      expect(result).toContain('inlineCustomType(arg: postInput)');
     });
 
     test('custom operation with inline custom type referencing self-referential type', () => {
@@ -1437,7 +1437,7 @@ describe('CustomOperation transform', () => {
       const result = s.transform().schema;
 
       expect(result).toMatchSnapshot();
-      expect(result).toContain('input PostInput');
+      expect(result).toContain('input postInput');
       expect(result).toContain('input InlineCustomTypeArgInput');
       expect(result).toContain(
         'inlineCustomType(arg: InlineCustomTypeArgInput)',
@@ -1471,8 +1471,8 @@ describe('CustomOperation transform', () => {
       const result = s.transform().schema;
 
       expect(result).toMatchSnapshot();
-      expect(result).toContain('input UpdateInput');
-      expect(result).toContain('input PostInput');
+      expect(result).toContain('input updateInput');
+      expect(result).toContain('input postInput');
       expect(result).toContain('input InlineCustomTypeArgInput');
       expect(result).toContain(
         'inlineCustomType(arg: InlineCustomTypeArgInput)',

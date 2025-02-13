@@ -16,12 +16,12 @@ exports[`CustomOperation transform custom operations with custom types and refs 
   field: String
 }
 
-input PostInput {
+input postInput {
   field: String
 }
 
 type Mutation {
-  refCustomType(arg: PostInput): String @function(name: "myFunc") @auth(rules: [{allow: public, provider: apiKey}])
+  refCustomType(arg: postInput): String @function(name: "myFunc") @auth(rules: [{allow: public, provider: apiKey}])
 }"
 `;
 
@@ -32,13 +32,13 @@ exports[`CustomOperation transform custom operations with custom types and refs 
   number: Int
 }
 
-input PostInput {
+input postInput {
   name: String
   number: Int
 }
 
 type Mutation {
-  refCustomType(arg1: PostInput, arg2: PostInput): String @function(name: "myFunc") @auth(rules: [{allow: public, provider: apiKey}])
+  refCustomType(arg1: postInput, arg2: postInput): String @function(name: "myFunc") @auth(rules: [{allow: public, provider: apiKey}])
 }"
 `;
 
@@ -54,13 +54,13 @@ type post
   enumField: values
 }
 
-input PostInput {
+input postInput {
   field: String
   enumField: values
 }
 
 type Mutation {
-  refCustomType(arg: PostInput): String @function(name: "myFunc") @auth(rules: [{allow: public, provider: apiKey}])
+  refCustomType(arg: postInput): String @function(name: "myFunc") @auth(rules: [{allow: public, provider: apiKey}])
 }"
 `;
 
@@ -80,12 +80,12 @@ exports[`CustomOperation transform custom operations with custom types and refs 
   field: String
 }
 
-input PostInput {
+input postInput {
   field: String
 }
 
 type Query {
-  refCustomType(arg: PostInput): String @function(name: "myFunc") @auth(rules: [{allow: public, provider: apiKey}])
+  refCustomType(arg: postInput): String @function(name: "myFunc") @auth(rules: [{allow: public, provider: apiKey}])
 }"
 `;
 
@@ -118,13 +118,13 @@ enum PostStatus {
   COMPLETED
 }
 
-input PostInput {
+input postInput {
   name: String
   status: PostStatus
 }
 
 type Query {
-  refCustomType(arg: PostInput): String @function(name: "myFunc") @auth(rules: [{allow: public, provider: apiKey}])
+  refCustomType(arg: postInput): String @function(name: "myFunc") @auth(rules: [{allow: public, provider: apiKey}])
 }"
 `;
 
@@ -174,12 +174,12 @@ input PostInnerInput {
   e1: PostInnerE1
 }
 
-input PostInput {
+input postInput {
   inner: PostInnerInput
 }
 
 type Query {
-  fcnCall(arg: PostInput): String @function(name: "myFunc") @auth(rules: [{allow: public, provider: apiKey}])
+  fcnCall(arg: postInput): String @function(name: "myFunc") @auth(rules: [{allow: public, provider: apiKey}])
 }"
 `;
 
@@ -196,18 +196,18 @@ type update
   field: post
 }
 
-input UpdateInput {
+input updateInput {
   title: String
-  field: PostInput
+  field: postInput
 }
 
-input PostInput {
+input postInput {
   value: String
-  child: UpdateInput
+  child: updateInput
 }
 
 input InlineCustomTypeArgInput {
-  inner: PostInput
+  inner: postInput
 }
 
 type Mutation {
@@ -221,13 +221,13 @@ exports[`CustomOperation transform custom operations with custom types and refs 
   name: String
 }
 
-input PostInput {
+input postInput {
   name: String
 }
 
 input FnCallArgInput {
   name: String
-  status: PostInput
+  status: postInput
 }
 
 type Mutation {
@@ -242,13 +242,13 @@ exports[`CustomOperation transform custom operations with custom types and refs 
   child: post
 }
 
-input PostInput {
+input postInput {
   value: String
-  child: PostInput
+  child: postInput
 }
 
 input InlineCustomTypeArgInput {
-  inner: PostInput
+  inner: postInput
 }
 
 type Mutation {
@@ -263,13 +263,13 @@ exports[`CustomOperation transform custom operations with custom types and refs 
   child: post
 }
 
-input PostInput {
+input postInput {
   value: String
-  child: PostInput
+  child: postInput
 }
 
 type Mutation {
-  inlineCustomType(arg: PostInput): String @function(name: "myFunc") @auth(rules: [{allow: public, provider: apiKey}])
+  inlineCustomType(arg: postInput): String @function(name: "myFunc") @auth(rules: [{allow: public, provider: apiKey}])
 }"
 `;
 
@@ -280,14 +280,14 @@ exports[`CustomOperation transform custom operations with custom types and refs 
   number: Int
 }
 
-input PostInput {
+input postInput {
   name: String
   number: Int
 }
 
 type Mutation {
-  fnCall1(arg: PostInput): String @function(name: "myFunc") @auth(rules: [{allow: public, provider: apiKey}])
-  fnCall2(arg: PostInput): String @function(name: "myFunc") @auth(rules: [{allow: public, provider: apiKey}])
+  fnCall1(arg: postInput): String @function(name: "myFunc") @auth(rules: [{allow: public, provider: apiKey}])
+  fnCall2(arg: postInput): String @function(name: "myFunc") @auth(rules: [{allow: public, provider: apiKey}])
 }"
 `;
 

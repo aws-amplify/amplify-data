@@ -1361,7 +1361,7 @@ function generateInputTypes(
       if (isRefField(fieldDef)) {
         const refType = getRefType(fieldDef.data.link, originalTypeName);
         if (refType.type === 'CustomType') {
-          const nestedInputTypeName = `${capitalize(fieldDef.data.link)}Input`;
+          const nestedInputTypeName = `${fieldDef.data.link}Input`;
           processedFields[fieldName] = {
             data: { type: 'ref', link: nestedInputTypeName },
           };
@@ -1432,7 +1432,7 @@ function generateInputTypes(
     if (isRefField(argDef)) {
       const refType = getRefType(argDef.data.link, operationName);
       if (refType.type === 'CustomType') {
-        const inputTypeName = `${capitalize(argDef.data.link)}Input`;
+        const inputTypeName = `${argDef.data.link}Input`;
         argDefinitions.push(`${argName}: ${inputTypeName}`);
 
         // Process the input type if it hasn't been processed yet
