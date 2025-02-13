@@ -5,6 +5,36 @@ const defFunc = defineFunction({
   entry: './handlers/test-handler.ts',
 });
 
+export function authorizationBuilder(): a.AuthorizationCallback {
+  return (allow) => [
+    allow.guest().to(['read']),
+    allow.authenticated().to(['read']),
+    allow.owner(),
+    allow.group('admin').to(['read', 'update', 'delete']),
+  ];
+}
+
+export function schemaAuthorizationBuilder(): a.AuthorizationCallback<'schema'> {
+  return ((allow) => [
+    allow.resource(defFunc)
+  ]);
+}
+
+export function authBuilderTodoSchema() {
+  const allowFcn = authorizationBuilder();
+  const allowSchemaFcn = schemaAuthorizationBuilder();
+  return a
+    .schema({
+      MyMutation: buildMutation(),
+      Todo: a
+        .model({
+          content: a.string(),
+        })
+        .authorization(allowFcn),
+    })
+    .authorization(allowSchemaFcn);
+}
+
 export function buildMutation() {
   return a
     .mutation()

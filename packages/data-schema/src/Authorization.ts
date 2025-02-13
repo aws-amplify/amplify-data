@@ -658,7 +658,7 @@ function resourceAuthData<Builders extends object = object>(
  * }
  * ```
  */
-export type ImpliedAuthField<T extends Authorization<any, any, any>> =
+export type ImpliedAuthField<T extends AnyAuthorization> =
   T extends Authorization<infer _Strat, infer Field, infer isMulti>
     ? Field extends undefined
       ? never
@@ -690,12 +690,12 @@ export type ImpliedAuthField<T extends Authorization<any, any, any>> =
  * }
  * ```
  */
-export type ImpliedAuthFields<T extends Authorization<any, any, any>> =
+export type ImpliedAuthFields<T extends AnyAuthorization> =
   ImpliedAuthField<T> extends never
     ? never
     : UnionToIntersection<ImpliedAuthField<T>>;
 
-export const accessData = <T extends Authorization<any, any, any>>(
+export const accessData = <T extends AnyAuthorization>(
   authorization: T,
 ) => authorization[__data];
 
@@ -710,4 +710,68 @@ export type AllowModifierForCustomOperation = typeof allowForCustomOperations;
 export type AllowModifierForConversations = typeof allowForConversations;
 
 export type BaseAllowModifier = Omit<AllowModifier, 'resource'>;
-export type AnyAuthorization = Authorization<any, any, any>;
+export type AnyAuthorization =  Authorization<any, any, any>;
+
+export type ConversationAuthorizationCallback<AuthRuleType extends AnyAuthorization> = (
+  allow: AllowModifierForConversations
+) => AuthRuleType | AuthRuleType[];
+
+export type CustomOperationAuthorizationCallback<AuthRuleType extends AnyAuthorization> = (
+  allow: AllowModifierForCustomOperation,
+) => AuthRuleType | AuthRuleType[];
+
+export type FieldAuthorizationCallback<AuthRuleType extends AnyAuthorization> = (
+  allow: Omit<AllowModifier, 'resource'>,
+) => AuthRuleType | AuthRuleType[];
+
+export type ModelAuthorizationCallback<AuthRuleType extends AnyAuthorization> = (
+  allow: BaseAllowModifier
+) => AuthRuleType | AuthRuleType[];
+
+export type ReferenceAuthorizationCallback<AuthRuleType extends AnyAuthorization> = (
+  allow: AllowModifier
+) => AuthRuleType | AuthRuleType[];
+
+export type RelationshipAuthorizationCallback<AuthRuleType extends AnyAuthorization> = (
+  allow: AllowModifier
+) => AuthRuleType | AuthRuleType[]
+
+export type SchemaAuthorizationCallback<AuthRuleType extends SchemaAuthorization<any, any, any>> = (
+  allow: AllowModifier
+) => AuthRuleType | AuthRuleType[];
+
+type AuthorizationCallbackMapping = {
+  conversation: ConversationAuthorizationCallback<any>;
+  customOperation: CustomOperationAuthorizationCallback<any>;
+  field: FieldAuthorizationCallback<any>;
+  model: ModelAuthorizationCallback<any>;
+  ref: ReferenceAuthorizationCallback<any>;
+  relationship: RelationshipAuthorizationCallback<any>;
+  schema: SchemaAuthorizationCallback<any>;
+};
+
+/**
+ * Define an authorization callback that can be reused for multiple authorization calls
+ * across the schema definition.
+ *
+ * @typeParam AuthorizationType - The type of Authorization callback being built, which can be
+ *    'conversation' | 'customOperation' | 'field' | 'model' | 'reference' | 'relationship' | 'schema'
+ *
+ * @example
+ * const authCallback: AuthorizationCallback = (allow) => [
+ *   allow.groups(["example"]).to(["read"]),
+ * ];
+ *
+ * const schema = a.schema({
+ *   Post: a.model({
+ *     id: a.id(),
+ *     title: a.string(),
+ *     protectedField: a.string().authorization(authCallback),
+ *     content: a.string(),
+ *   }).authorization(authCallback),
+ * }).authorization(authCallback);
+ *
+ */
+export type AuthorizationCallback<
+  AuthorizationType extends (keyof AuthorizationCallbackMapping) = "model"
+> = AuthorizationCallbackMapping[AuthorizationType];

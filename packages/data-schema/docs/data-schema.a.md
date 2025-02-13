@@ -357,3 +357,29 @@ Description
 
 </td></tr>
 </tbody></table>
+
+## Type Aliases
+
+<table><thead><tr><th>
+
+Type Alias
+
+
+</th><th>
+
+Description
+
+
+</th></tr></thead>
+<tbody><tr><td>
+
+[AuthorizationCallback](./data-schema.a.authorizationcallback.md)
+
+
+</td><td>
+
+Define an authorization callback that can be reused for multiple authorization calls across the schema definition.
+
+
+</td></tr>
+</tbody></table>
