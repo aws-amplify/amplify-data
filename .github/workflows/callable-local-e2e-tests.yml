@@ -26,3 +26,34 @@ jobs:
       - name: Run tests
         working-directory: ./amplify-data
         run: npm run e2e-node:test
+
+  e2e-prep:
+    name: Get local E2E test config
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+        with:
+          path: amplify-data
+      - name: Read integ config files
+        id: load_config
+        run: |
+          echo "INTEG_CONFIG=$(cat .github/integ-config/local-integ-all.yml | yq '.tests' -o=json | jq -c .)" >> $GITHUB_OUTPUT
+        working-directory: ./amplify-data
+    outputs:
+      integ-config: ${{ steps.load_config.outputs.INTEG_CONFIG }}
+
+
+  e2e-test-runner:
+    name: E2E test runnner
+    needs: e2e-prep
+    secrets: inherit
+    strategy:
+      matrix:
+        integ-config: ${{ fromJson(needs.e2e-prep.outputs.integ-config) }}
+      fail-fast: false
+    uses: ./.github/workflows/callable-local-e2e-test.yml
+    with:
+      test_name: ${{ matrix.integ-config.test_name }}
+      framework: ${{ matrix.integ-config.framework }}
+      timeout_minutes: ${{ matrix.integ-config.timeout_minutes || 35 }}
