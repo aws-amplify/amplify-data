@@ -1,0 +1,32 @@
+{
+    "name": "add-migration",
+    "version": "1.0.0",
+    "main": "./dist/add-migration.js",
+    "scripts": {
+      "parse-migration": "ts-node src/add-migration.ts",
+      "build": "tsc",
+      "start": "npm run build && node dist/add-migration.js"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "description": "",
+    "bin": {
+        "add-migration": "./bin/index.ts"
+    },
+    "files": [
+      "bin",
+      "dist"
+    ],
+    "dependencies": {
+      "@typescript-eslint/parser": "^7.1.0",
+      "@typescript-eslint/types": "^8.22.0",
+      "@aws-amplify/platform-core": "^1.6.1",
+      "yargs": "^17.7.2",
+      "@aws-amplify/cli-core": "^1.2.3"
+    },
+    "devDependencies": {
+      "@types/node": "^20.11.24",
+      "typescript": "^5.3.3"
+    }
+  }

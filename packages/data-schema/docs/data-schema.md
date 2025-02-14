@@ -81,6 +81,15 @@ Description
 </td></tr>
 <tr><td>
 
+[generateMigration(currentSchemaSnapshot, priorSchemaSnapshot)](./data-schema.generatemigration.md)
+
+
+</td><td>
+
+
+</td></tr>
+<tr><td>
+
 [identifier(this, identifier)](./data-schema.identifier.md)
 
 

@@ -21,9 +21,9 @@ sql: {
             }[];
         };
     };
-    table<const T_1 extends Record<string, Nested<FieldDefinition>>>(fields: T_1): Nested<{
-        fields: T_1;
-        identifier: ['id'];
+    table<const T extends TableDefinition["fields"]>(fields: T): Nested<{
+        fields: T;
+        identifier: ["id"];
     }> & {
         identifier: typeof identifier;
         toAPIModel: typeof toAPIModel;

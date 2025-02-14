@@ -20,4 +20,4 @@ export type {
 export type { AmplifySqlMigration } from './sql/migration';
 export type { EnumType } from './EnumType';
 
-export type * from './sql/index';
+export * from './sql/index';
