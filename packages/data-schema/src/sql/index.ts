@@ -15,10 +15,10 @@ export type SetInternalKey<
   Value,
   OmitKey extends string = never,
 > = {
-  [K in keyof T as K extends OmitKey ? never : K]: K extends internal
+    [K in keyof T as K extends OmitKey ? never : K]: K extends internal
     ? SetKey<T[K], Key, Value>
     : T[K];
-};
+  };
 
 const internal = Symbol('amplifyData');
 type internal = typeof internal;
@@ -94,15 +94,15 @@ type Requiredtize<
 
 export type FinalFieldType<Def extends FieldDefinition> =
   Def['isRef'] extends true
-    ? RefType<{
-        type: 'ref';
-        array: Def['isArray'];
-        arrayRequired: Def['isRequired'];
-        valueRequired: Def['isRequired'];
-        link: Def['typeName'];
-        authorization: [];
-      }>
-    : Arrayatize<Requiredtize<PrimitiveType<Def['typeName']>, Def>, Def>;
+  ? RefType<{
+    type: 'ref';
+    array: Def['isArray'];
+    arrayRequired: Def['isRequired'];
+    valueRequired: Def['isRequired'];
+    link: Def['typeName'];
+    authorization: [];
+  }>
+  : Arrayatize<Requiredtize<PrimitiveType<Def['typeName']>, Def>, Def>;
 
 export type ApiModelFields<T extends Record<string, Nested<FieldDefinition>>> =
   {
@@ -114,11 +114,11 @@ export type ApiFieldType<T extends FieldDefinition> = ModelField<
 >;
 
 export type EligibleIdFields<Table extends Nested<TableDefinition>> = {
-  [K in keyof DeNested<Table>['fields'] as DeNested<
+  [K in keyof DeNested<Table>['fields']as DeNested<
     DeNested<Table>['fields'][K]
   >['isRequired'] extends true
-    ? K
-    : never]: DeNested<Table>['fields'][K];
+  ? K
+  : never]: DeNested<Table>['fields'][K];
 };
 
 export type ModelIdentifierDefinition<M, T extends string[]> = {
@@ -132,9 +132,9 @@ export type ExtractPKandSKFieldNames<T extends string[]> = T extends [
   ...infer Rest,
 ]
   ? {
-      pk: First;
-      sk: Rest;
-    }
+    pk: First;
+    sk: Rest;
+  }
   : never;
 
 export type PK<_M, T extends string[]> = Record<
@@ -348,5 +348,8 @@ export const sql = {
   },
   text() {
     return field('text');
+  },
+  timestamp() {
+    return field('timestamp');
   },
 };

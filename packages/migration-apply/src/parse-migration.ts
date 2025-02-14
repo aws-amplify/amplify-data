@@ -3,6 +3,15 @@ import { AST_NODE_TYPES, TSESTree } from '@typescript-eslint/types';
 import fs from 'fs';
 import path from 'path';
 
+const methodActionMap = {
+  createTable: 'CREATE_TABLE',
+  dropTable: 'DROP_TABLE',
+  addColumn: 'ADD_COLUMN',
+  dropColumn: 'DROP_COLUMN',
+  createIndex: 'CREATE_INDEX',
+  dropIndex: 'DROP_INDEX',
+} as const;
+
 function convertAstToJson(node: any): any {
   switch (node.type) {
     case 'ObjectExpression':
@@ -25,7 +34,7 @@ function convertAstToJson(node: any): any {
       const methodName = node.callee.property.name;
       const args = node.arguments.map((arg: any) => convertAstToJson(arg));
       return {
-        type: methodName,
+        action: methodActionMap[methodName as keyof typeof methodActionMap],
         ...args[0]
       };
 
@@ -53,8 +62,8 @@ export function parseMigration(fileContent: string) {
   }
 
   const migrationObj = exportDecl.declaration.declarations[0].init;
-
-  return convertAstToJson(migrationObj);
+  const migration = convertAstToJson(migrationObj);
+  return migration;
 }
 
 export function parseMigrationFile(filePath: string) {

@@ -15,12 +15,19 @@ const sqlSchema = a.sql.schema({
       name: a.sql.varchar(),
       age: a.sql.int(),
     }),
+    user: a.sql.table({
+      id: a.sql.int().required(),
+      name: a.sql.varchar(),
+      email: a.sql.varchar(),
+      created_at: a.sql.timestamp().required(),
+    }),
   },
 });
 
 const schema = a.schema({
   Address: sqlSchema.tables.address.toAPIModel(),
   Person: sqlSchema.tables.person.toAPIModel(),
+  User: sqlSchema.tables.user.toAPIModel(),
 });
 
 export type MySQLSchema = typeof sqlSchema;

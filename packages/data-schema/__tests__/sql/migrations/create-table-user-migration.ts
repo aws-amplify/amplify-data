@@ -3,30 +3,39 @@ import { MySQLSchema } from "./schema-definition";
 
 export const migration: AmplifySqlMigration<MySQLSchema> = [
   a.sqlMigration.migrationStep({
-    name: 'create-address-table',
+    name: 'create-user-table',
     up: [
       a.sqlMigration.createTable({
-        tableName: 'address',
-        primaryKey: ['name'],
+        tableName: 'user',
         columns: [
           {
-            name: 'zip',
+            name: 'id',
+            type: 'INT',
+            isNullable: false
+          },
+          {
+            name: 'name',
             type: 'VARCHAR(255)',
             isNullable: false
           },
           {
-            name: 'details',
-            type: 'TEXT',
+            name: 'email',
+            type: 'VARCHAR(255)',
+            isNullable: false
+          },
+          {
+            name: 'created_at',
+            type: 'TIMESTAMP',
+            isNullable: false
           },
         ],
+        primaryKey: ['id'],
       })
     ],
     down: [
       a.sqlMigration.dropTable({
-        tableName: 'address',
+        tableName: 'user',
       })
     ],
   }),
 ];
-
-
