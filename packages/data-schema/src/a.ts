@@ -26,6 +26,7 @@ import { handler } from './Handler';
 import { conversation } from './ai/ConversationType';
 import { model as aiModel } from './ai/ModelType';
 import { sql } from './sql';
+import { sqlMigration } from './sql/migration';
 
 const ai = {
   model: aiModel,
@@ -66,4 +67,5 @@ export {
   ai,
   handler,
   sql,
+  sqlMigration,
 };
