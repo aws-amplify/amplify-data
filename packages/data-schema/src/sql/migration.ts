@@ -9,12 +9,12 @@ import {
   type SchemaDefinition,
 } from "../index";
 
-export type AmplifySqlMigrationChageSet<T extends SchemaDefinition = any> = {
+export type AmplifySqlMigrationChageSet<T extends SchemaDefinition> = {
   identifier: string;
   steps: AmplifySqlMigrationStep<T>[];
 };
 
-export type AmplifySqlMigration<T extends SchemaDefinition = any> = AmplifySqlMigrationStep<T>[];
+export type AmplifySqlMigration<T extends SchemaDefinition> = AmplifySqlMigrationStep<T>[];
 
 type CreateDropTableStep<T extends SchemaDefinition, TName extends Tables<T>> = {
   name: string;
@@ -28,7 +28,7 @@ type AddDropColumnStep<T extends SchemaDefinition, TName extends Tables<T>> = {
   down: AmplifySqlMigrationDropColumnStep<T, TName>[];
 };
 
-type ConstrainedCreateDropTableStep<T extends SchemaDefinition> = {
+type ConstrainedCreateDropTableStep<T extends SchemaDefinition = any> = {
   [K in Tables<T>]: CreateDropTableStep<T, K>
 }[Tables<T>]
 
@@ -43,8 +43,8 @@ type AmplifySqlMigrationStep<T extends SchemaDefinition> =
   | ConstrainedAddDropColumnStep<T>
   | {
     name: string;
-    up: AmplifySqlMigrationCreateIndexStep<T>;
-    down: AmplifySqlMigrationDropIndexStep<T>;
+    up: AmplifySqlMigrationCreateIndexStep<T>[];
+    down: AmplifySqlMigrationDropIndexStep<T>[];
   };
 
 function migrationStep<T extends SchemaDefinition>(
@@ -89,14 +89,14 @@ function dropColumn<T extends SchemaDefinition, TName extends Tables<T>, TColumn
   };
 }
 
-function createIndex<T extends Record<any, any>>(input: Omit<AmplifySqlMigrationCreateIndexStep<T>, 'action'>): AmplifySqlMigrationCreateIndexStep<T> {
+function createIndex<T extends SchemaDefinition>(input: Omit<AmplifySqlMigrationCreateIndexStep<T>, 'action'>): AmplifySqlMigrationCreateIndexStep<T> {
   return {
     ...input,
     action: 'CREATE_INDEX',
   };
 }
 
-function dropIndex<T extends Record<any, any>>(input: Omit<AmplifySqlMigrationDropIndexStep<T>, 'action'>): AmplifySqlMigrationDropIndexStep<T> {
+function dropIndex<T extends SchemaDefinition>(input: Omit<AmplifySqlMigrationDropIndexStep<T>, 'action'>): AmplifySqlMigrationDropIndexStep<T> {
   return {
     ...input,
     action: 'DROP_INDEX',
@@ -113,11 +113,14 @@ export const sqlMigration = {
   dropIndex,
 };
 
-type Tables<T extends SchemaDefinition> = keyof T['tables']
-type TableFields<T extends SchemaDefinition, TName extends Tables<T>> =
-  keyof DeNested<T['tables'][TName]>['fields']
+type Tables<T extends SchemaDefinition> = T extends SchemaDefinition & { tables: any }
+  ? keyof T['tables']
+  : string;
+type TableFields<T extends SchemaDefinition, TName extends keyof T['tables'] | string> = T extends SchemaDefinition & { tables: any }
+  ? keyof DeNested<T['tables'][TName]>['fields']
+  : string;
 
-type ColumnType = 'TEXT' | 'INT' | 'FLOAT' | 'BOOLEAN' | 'TIMESTAMP' | `VARCHAR(${number})` | (string & {});
+type ColumnType = 'TEXT' | 'INT' | 'FLOAT' | 'BOOLEAN' | 'TIMESTAMP' | 'VARCHAR(255)' | (string & {});
 
 type ColumnDefinition<T extends SchemaDefinition, TName extends Tables<T>> = {
   name: TableFields<T, TName>;
@@ -127,7 +130,7 @@ type ColumnDefinition<T extends SchemaDefinition, TName extends Tables<T>> = {
 
 type AmplifySqlMigrationCreateTableStep<
   T extends SchemaDefinition,
-  TName extends Tables<T> = Tables<T>
+  TName extends Tables<T>
 > = {
   action: 'CREATE_TABLE';
   tableName: TName;
@@ -137,7 +140,7 @@ type AmplifySqlMigrationCreateTableStep<
 
 type AmplifySqlMigrationDropTableStep<
   T extends SchemaDefinition,
-  TName extends Tables<T> = Tables<T>
+  TName extends Tables<T>
 > = {
   action: 'DROP_TABLE';
   tableName: TName;
@@ -145,7 +148,7 @@ type AmplifySqlMigrationDropTableStep<
 
 type AmplifySqlMigrationAddColumnStep<
   T extends SchemaDefinition,
-  TName extends Tables<T> = Tables<T>,
+  TName extends Tables<T>
 > = {
   action: 'ADD_COLUMN';
   tableName: TName;
@@ -154,8 +157,8 @@ type AmplifySqlMigrationAddColumnStep<
 
 type AmplifySqlMigrationDropColumnStep<
   T extends SchemaDefinition,
-  TName extends Tables<T> = Tables<T>,
-  TColumn extends TableFields<T, TName> = TableFields<T, TName>
+  TName extends Tables<T>,
+  TColumn extends TableFields<T, TName> = any
 > = {
   action: 'DROP_COLUMN';
   tableName: TName;

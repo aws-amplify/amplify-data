@@ -53,7 +53,7 @@ describe('sql resource definitions', () => {
       priorDbSnapshot,
     );
     expect(migration.toString()).toMatchSnapshot();
-    expect(migration.up[0].type).toEqual('createTable');
+    expect(migration.up[0].type).toEqual('CREATE_TABLE');
     expect(migration.up[0].content).toStrictEqual({
       tableName: 'address',
       columns: [
@@ -85,12 +85,12 @@ describe('sql resource definitions', () => {
       ],
       primaryKey: ['id'],
     });
-    expect(migration.down[0].type).toEqual('dropTable');
+    expect(migration.down[0].type).toEqual('DROP_TABLE');
     expect(migration.down[0].content).toStrictEqual({
       tableName: 'address',
     });
 
-    expect(migration.up[1].type).toEqual('createTable');
+    expect(migration.up[1].type).toEqual('CREATE_TABLE');
     expect(migration.up[1].content).toStrictEqual({
       tableName: 'customer',
       columns: [
@@ -117,7 +117,7 @@ describe('sql resource definitions', () => {
       ],
       primaryKey: ['firstName', 'lastName'],
     });
-    expect(migration.down[1].type).toEqual('dropTable');
+    expect(migration.down[1].type).toEqual('DROP_TABLE');
     expect(migration.down[1].content).toStrictEqual({
       tableName: 'customer'
     });
@@ -133,7 +133,7 @@ describe('sql resource definitions', () => {
     );
 
     expect(migration.toString()).toMatchSnapshot();
-    expect(migration.up[0].type).toEqual('createTable');
+    expect(migration.up[0].type).toEqual('CREATE_TABLE');
     expect(migration.up[0].content).toStrictEqual({
       "columns": [
         {
@@ -163,16 +163,16 @@ describe('sql resource definitions', () => {
       ],
       "tableName": "customer",
     });
-    expect(migration.up[1].type).toEqual('dropTable');
+    expect(migration.up[1].type).toEqual('DROP_TABLE');
     expect(migration.up[1].content).toStrictEqual({
       tableName: 'user',
     });
-    expect(migration.up[2].type).toEqual('dropTable');
+    expect(migration.up[2].type).toEqual('DROP_TABLE');
     expect(migration.up[2].content).toStrictEqual({
       tableName: 'extraTable',
     });
 
-    expect(migration.down[0].type).toEqual('createTable');
+    expect(migration.down[0].type).toEqual('CREATE_TABLE');
     expect(migration.down[0].content).toStrictEqual({
       "columns": [
         {
@@ -191,7 +191,7 @@ describe('sql resource definitions', () => {
       ],
       "tableName": "user",
     });
-    expect(migration.down[1].type).toEqual('createTable');
+    expect(migration.down[1].type).toEqual('CREATE_TABLE');
     expect(migration.down[1].content).toStrictEqual({
       "columns": [
         {
@@ -205,7 +205,7 @@ describe('sql resource definitions', () => {
       ],
       "tableName": "extraTable",
     });
-    expect(migration.down[2].type).toEqual('dropTable');
+    expect(migration.down[2].type).toEqual('DROP_TABLE');
     expect(migration.down[2].content).toStrictEqual({
       tableName: 'customer',
     });

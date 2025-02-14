@@ -10,13 +10,13 @@ const factory = ts.factory;
 
 function buildCommandNode(command: MigrationCommand): ts.Expression {
   switch (command.type) {
-    case 'addColumn':
+    case 'ADD_COLUMN':
       return buildAddColumnCommand(command.content)
-    case 'createTable':
+    case 'CREATE_TABLE':
       return buildCreateTableCommand(command.content)
-    case 'removeColumn':
+    case 'DROP_COLUMN':
       return buildRemoveColumnCommand(command.content)
-    case 'dropTable':
+    case 'DROP_TABLE':
       return buildDropTableCommand(command.content)
   }
 }

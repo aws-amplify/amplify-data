@@ -20,20 +20,20 @@ export type AddColumnTransformation = { tableName: string, columnDefinition: Cre
 export type RemoveColumnTransformation = { tableName: string, columnName: string };
 
 type TableMigrationCommand = {
-    type: 'createTable',
+    type: 'CREATE_TABLE',
     content: CreateTableTransformation
 } | {
-    type: 'dropTable',
+    type: 'DROP_TABLE',
     content: DropTableTransformation
 
 };
 
 type ColumnMigrationCommand = {
-    type: 'addColumn',
+    type: 'ADD_COLUMN',
     content: AddColumnTransformation
 
 } | {
-    type: 'removeColumn',
+    type: 'DROP_COLUMN',
     content: RemoveColumnTransformation
 
 };
@@ -84,13 +84,13 @@ function transformTables(from?: TableTransformDefinition, to?: TableTransformDef
 
     return [...addedTables.map((tableName) => (
         {
-            type: 'createTable' as const,
+            type: 'CREATE_TABLE' as const,
             // eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain
             content: to?.tables.find((t) => t.tableName === tableName)!
         }
     )), ...removedTables.map((tableName) => (
         {
-            type: 'dropTable' as const,
+            type: 'DROP_TABLE' as const,
             content: { tableName }
         }
     ))]
@@ -104,14 +104,14 @@ function transformFields(tableName: string, from?: TableDefinition, to?: TableDe
 
     const columnAdds = addedColumns.map((columnName) => (
         {
-            type: 'addColumn' as const,
+            type: 'ADD_COLUMN' as const,
             // eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain
             content: { tableName, columnDefinition: to?.columns.find((c) => c.name === columnName)! }
         }
     ));
     const columnRemoves = removedColumns.map((columnName) => (
         {
-            type: 'removeColumn' as const,
+            type: 'DROP_COLUMN' as const,
             content: { tableName, columnName }
         }
     ))
