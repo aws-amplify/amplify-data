@@ -7,7 +7,7 @@
 **Signature:**
 
 ```typescript
-export type AmplifySqlMigration<T extends SchemaDefinition = any> = AmplifySqlMigrationStep<T>[];
+export type AmplifySqlMigration<T extends SchemaDefinition> = AmplifySqlMigrationStep<T>[];
 ```
 **References:** [SchemaDefinition](./data-schema.schemadefinition.md)
 
