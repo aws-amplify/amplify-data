@@ -8,6 +8,7 @@
 
 ```typescript
 sqlMigration: {
+    migrationStep: typeof migrationStep;
     createTable: typeof createTable;
     dropTable: typeof dropTable;
     addColumn: typeof addColumn;

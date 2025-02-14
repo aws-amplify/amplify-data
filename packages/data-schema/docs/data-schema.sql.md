@@ -56,5 +56,9 @@ sql: {
         array: typeof array;
         required: typeof required;
     };
+    timestamp(): Nested<SetKey<FieldDefinition, "typeName", "timestamp">> & {
+        array: typeof array;
+        required: typeof required;
+    };
 }
 ```
