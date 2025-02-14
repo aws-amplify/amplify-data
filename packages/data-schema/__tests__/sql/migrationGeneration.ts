@@ -135,33 +135,33 @@ describe('sql resource definitions', () => {
     expect(migration.toString()).toMatchSnapshot();
     expect(migration.up[0].type).toEqual('createTable');
     expect(migration.up[0].content).toStrictEqual({
-         "columns": [
-            {
-             "isNullable": false,
-             "name": "firstName",
-              "type": "varchar",
-            },
-           {
-             "isNullable": false,
-             "name": "lastName",
-             "type": "varchar",
-           },
-           {
-             "isNullable": true,
-             "name": "bio",
-             "type": "text",
-           },
-           {
-             "isNullable": true,
-             "name": "favoriteColors",
-             "type": "varchar",
-           },
-         ],
-         "primaryKey": [
-           "firstName",
-           "lastName",
-         ],
-         "tableName": "customer",
+      "columns": [
+        {
+          "isNullable": false,
+          "name": "firstName",
+          "type": "varchar",
+        },
+        {
+          "isNullable": false,
+          "name": "lastName",
+          "type": "varchar",
+        },
+        {
+          "isNullable": true,
+          "name": "bio",
+          "type": "text",
+        },
+        {
+          "isNullable": true,
+          "name": "favoriteColors",
+          "type": "varchar",
+        },
+      ],
+      "primaryKey": [
+        "firstName",
+        "lastName",
+      ],
+      "tableName": "customer",
     });
     expect(migration.up[1].type).toEqual('dropTable');
     expect(migration.up[1].content).toStrictEqual({
@@ -174,36 +174,36 @@ describe('sql resource definitions', () => {
 
     expect(migration.down[0].type).toEqual('createTable');
     expect(migration.down[0].content).toStrictEqual({
-           "columns": [
-             {
-               "isNullable": false,
-               "name": "fullName",
-               "type": "varchar",
-             },
-             {
-               "isNullable": true,
-               "name": "favoriteColors",
-               "type": "varchar",
-             },
-           ],
-           "primaryKey": [
-             "fullName",
-           ],
-           "tableName": "user",
+      "columns": [
+        {
+          "isNullable": false,
+          "name": "fullName",
+          "type": "varchar",
+        },
+        {
+          "isNullable": true,
+          "name": "favoriteColors",
+          "type": "varchar",
+        },
+      ],
+      "primaryKey": [
+        "fullName",
+      ],
+      "tableName": "user",
     });
     expect(migration.down[1].type).toEqual('createTable');
     expect(migration.down[1].content).toStrictEqual({
       "columns": [
-             {
-               "isNullable": true,
-               "name": "fieldName",
-               "type": "varchar",
-             },
-            ],
-           "primaryKey": [
-             "id",
-           ],
-           "tableName": "extraTable",
+        {
+          "isNullable": true,
+          "name": "fieldName",
+          "type": "varchar",
+        },
+      ],
+      "primaryKey": [
+        "id",
+      ],
+      "tableName": "extraTable",
     });
     expect(migration.down[2].type).toEqual('dropTable');
     expect(migration.down[2].content).toStrictEqual({

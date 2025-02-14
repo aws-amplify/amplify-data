@@ -3,6 +3,10 @@ import { ModelType } from '../ModelType';
 import { ModelField } from '../ModelField';
 import { RefType } from '../RefType';
 import { KindaPretty as _KP } from '../util';
+import { sqlMigration } from './migration';
+import { generateMigration } from './build';
+
+export { sqlMigration, generateMigration };
 
 // #region builder types
 export type SetKey<T, Key, Value> = {

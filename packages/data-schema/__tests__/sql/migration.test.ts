@@ -77,7 +77,7 @@ describe('Migration Parser', () => {
 
   it('should parse add column migration file', () => {
     const parsedMigration = parseMigrationFile(
-      path.resolve(__dirname, 'migrations/add-coumn-migration.ts')
+      path.resolve(__dirname, 'migrations/add-column-migration.ts')
     );
     expect(parsedMigration).toEqual([
       {

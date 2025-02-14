@@ -10,18 +10,18 @@ type TableTransformDefinition = {
         }[];
         primaryKey: string[];
     }[];
-  };
+};
 
 type TableDefinition = TableTransformDefinition["tables"][number]
 
 export type CreateTableTransformation = TableDefinition;
-export type DropTableTransformation = {tableName: string};
-export type AddColumnTransformation = {tableName: string, columnDefinition: CreateTableTransformation["columns"][number]};
-export type RemoveColumnTransformation = {tableName: string, columnName: string};
+export type DropTableTransformation = { tableName: string };
+export type AddColumnTransformation = { tableName: string, columnDefinition: CreateTableTransformation["columns"][number] };
+export type RemoveColumnTransformation = { tableName: string, columnName: string };
 
 type TableMigrationCommand = {
-  type: 'createTable',
-  content: CreateTableTransformation
+    type: 'createTable',
+    content: CreateTableTransformation
 } | {
     type: 'dropTable',
     content: DropTableTransformation
@@ -41,15 +41,15 @@ type ColumnMigrationCommand = {
 export type MigrationCommand = TableMigrationCommand | ColumnMigrationCommand;
 
 type Migration = {
-  up: MigrationCommand[],
-  down: MigrationCommand[],
-  toString: () => string
+    up: MigrationCommand[],
+    down: MigrationCommand[],
+    toString: () => string
 }
 
 export function generateMigration(
     currentSchemaSnapshot: TableTransformDefinition,
     priorSchemaSnapshot?: TableTransformDefinition,
-  ): Migration {
+): Migration {
     const currentTableMap = new Map<string, TableDefinition>(currentSchemaSnapshot?.tables.map(
         (table) => [table.tableName, table] as const
     ));
@@ -70,11 +70,11 @@ export function generateMigration(
         ))
     ]
     return {
-      up,
-      down,
-      toString: () => renderAstToString(migrationFactory({up: up, down}))
+        up,
+        down,
+        toString: () => renderAstToString(migrationFactory({ up: up, down }))
     }
-  }
+}
 
 function transformTables(from?: TableTransformDefinition, to?: TableTransformDefinition): TableMigrationCommand[] {
     const toTables = to?.tables?.map((t) => t.tableName) || [];
@@ -91,7 +91,7 @@ function transformTables(from?: TableTransformDefinition, to?: TableTransformDef
     )), ...removedTables.map((tableName) => (
         {
             type: 'dropTable' as const,
-            content: {tableName}
+            content: { tableName }
         }
     ))]
 }
@@ -106,13 +106,13 @@ function transformFields(tableName: string, from?: TableDefinition, to?: TableDe
         {
             type: 'addColumn' as const,
             // eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain
-            content: {tableName, columnDefinition: to?.columns.find((c) => c.name === columnName)!}
+            content: { tableName, columnDefinition: to?.columns.find((c) => c.name === columnName)! }
         }
     ));
     const columnRemoves = removedColumns.map((columnName) => (
         {
             type: 'removeColumn' as const,
-            content: {tableName, columnName}
+            content: { tableName, columnName }
         }
     ))
     return [...columnAdds, ...columnRemoves];
