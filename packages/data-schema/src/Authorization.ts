@@ -758,8 +758,9 @@ type AuthorizationCallbackMapping = {
  *    'conversation' | 'customOperation' | 'field' | 'model' | 'reference' | 'relationship' | 'schema'
  *
  * @example
- * const authCallback: AuthorizationCallback = (allow) => [
- *   allow.groups(["example"]).to(["read"]),
+ * const authCallback: a.AuthorizationCallback = (allow) => [
+ *   allow.guest().to(["read"]),
+ *   allow.owner()
  * ];
  *
  * const schema = a.schema({
