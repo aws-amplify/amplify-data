@@ -40,9 +40,14 @@ type ColumnMigrationCommand = {
 
 export type MigrationCommand = TableMigrationCommand | ColumnMigrationCommand;
 
-type Migration = {
+export type MigrationStep = {
+    name: string,
     up: MigrationCommand[],
     down: MigrationCommand[],
+}
+
+type Migration = {
+    steps: MigrationStep[],
     toString: () => string
 }
 
@@ -51,32 +56,25 @@ export function generateMigration(
     priorSchemaSnapshot?: TableTransformDefinition,
 ): Migration {
     const currentTableMap = new Map<string, TableDefinition>(currentSchemaSnapshot?.tables.map(
-        (table) => [table.tableName, table] as const
+        (table) => [table.tableName, table]
     ));
     const priorTableMap = new Map<string, TableDefinition>(priorSchemaSnapshot?.tables.map(
-        (table) => [table.tableName, table] as const
+        (table) => [table.tableName, table]
     ));
 
-    const up = [
+    const steps = [
         ...transformTables(priorSchemaSnapshot, currentSchemaSnapshot),
         ...commonTables(priorSchemaSnapshot, currentSchemaSnapshot).flatMap((tableName) => (
             transformFields(tableName, priorTableMap.get(tableName), currentTableMap.get(tableName))
         ))
     ]
-    const down = [
-        ...transformTables(currentSchemaSnapshot, priorSchemaSnapshot),
-        ...commonTables(priorSchemaSnapshot, currentSchemaSnapshot).flatMap((tableName) => (
-            transformFields(tableName, currentTableMap.get(tableName), priorTableMap.get(tableName))
-        ))
-    ]
     return {
-        up,
-        down,
-        toString: () => renderAstToString(migrationFactory({ up: up, down }))
+        steps,
+        toString: () => renderAstToString(migrationFactory(steps))
     }
 }
 
-function transformTables(from?: TableTransformDefinition, to?: TableTransformDefinition): TableMigrationCommand[] {
+function transformTables(from?: TableTransformDefinition, to?: TableTransformDefinition): MigrationStep[] {
     const toTables = to?.tables?.map((t) => t.tableName) || [];
     const fromTables = from?.tables?.map((t) => t.tableName) || [];
     const addedTables = toTables.filter((table) => !fromTables.includes(table));
@@ -84,43 +82,83 @@ function transformTables(from?: TableTransformDefinition, to?: TableTransformDef
 
     return [...addedTables.map((tableName) => (
         {
-            type: 'CREATE_TABLE' as const,
-            // eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain
-            content: to?.tables.find((t) => t.tableName === tableName)!
+            name: `create-table-${tableName}`,
+            up: [{
+                type: 'CREATE_TABLE' as const,
+                // eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain
+                content: to?.tables.find((t) => t.tableName === tableName)!
+            }],
+            down: [{
+                type: 'DROP_TABLE' as const,
+                content: { tableName }
+            }]
         }
     )), ...removedTables.map((tableName) => (
         {
-            type: 'DROP_TABLE' as const,
-            content: { tableName }
+            name: `drop-table-${tableName}`,
+            up: [{
+                type: 'DROP_TABLE' as const,
+                content: { tableName }
+            }],
+            down: [{
+                type: 'CREATE_TABLE' as const,
+                // eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain
+                content: from?.tables.find((t) => t.tableName === tableName)!
+            
+            }]
         }
     ))]
 }
 
-function transformFields(tableName: string, from?: TableDefinition, to?: TableDefinition): ColumnMigrationCommand[] {
-    const toColumns = Object.keys(to?.columns || {});
-    const fromColumns = Object.keys(from?.columns || {});
+function transformFields(tableName: string, from?: TableDefinition, to?: TableDefinition): MigrationStep[] {
+    const toColumns = to?.columns?.map((c) => c.name) || [];
+    const fromColumns = from?.columns?.map((c) => c.name) || [];
     const addedColumns = toColumns.filter((column) => !fromColumns.includes(column));
     const removedColumns = fromColumns.filter((column) => !toColumns.includes(column));
+    const toColumnMap = new Map<string, TableDefinition["columns"][number]>(to?.columns.map(
+        (column) => [column.name, column]
+    ));
+    const fromColumnMap = new Map<string, TableDefinition["columns"][number]>(from?.columns.map(
+        (column) => [column.name, column]
+    ));
 
-    const columnAdds = addedColumns.map((columnName) => (
+    const columnAdds: MigrationStep[] = addedColumns.map((columnName) => {
+
+        return {
+            name: `create-column-${tableName}-${columnName}`,
+            up: 
+                [{
+                    type: 'ADD_COLUMN' as const,
+                    // eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain
+                    content: { tableName, columnDefinition: toColumnMap.get(columnName)! }
+                }],
+            down: [{
+                type: 'DROP_COLUMN' as const,
+                content: { tableName, columnName }
+            }]
+        }
+});
+    const columnRemoves: MigrationStep[] = removedColumns.map((columnName) => (
         {
-            type: 'ADD_COLUMN' as const,
-            // eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain
-            content: { tableName, columnDefinition: to?.columns.find((c) => c.name === columnName)! }
+            name: `drop-column-${tableName}-${columnName}`,
+            up: [{
+                type: 'DROP_COLUMN' as const,
+                content: { tableName, columnName }
+            }],
+            down:
+                [{
+                    type: 'ADD_COLUMN' as const,
+                    // eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain
+                    content: { tableName, columnDefinition: fromColumnMap.get(columnName)! }
+                }]
         }
     ));
-    const columnRemoves = removedColumns.map((columnName) => (
-        {
-            type: 'DROP_COLUMN' as const,
-            content: { tableName, columnName }
-        }
-    ))
     return [...columnAdds, ...columnRemoves];
 }
 
 function commonTables(from?: TableTransformDefinition, to?: TableTransformDefinition) {
-    const toTables = Object.keys(to?.tables || {});
-    const fromTables = Object.keys(from?.tables || {});
+    const toTables = to?.tables.map((t) => t.tableName) || [];
+    const fromTables = from?.tables.map((t) => t.tableName) || [];
 
     return toTables.filter((table) => fromTables.includes(table));
 }

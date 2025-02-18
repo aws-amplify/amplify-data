@@ -2,84 +2,165 @@
 
 exports[`sql resource definitions can produce sql migration when for a changed schema 1`] = `
 "import { a, type AmplifySqlMigration } from "@aws-amplify/data-schema";
-export await using migration: AmplifySqlMigration = {
-    steps: [
-        {
-            up: [
-                a.sqlMigration.createTable({
-                    name: "customer",
-                    columns: [
-                        { name: "firstName", type: "varchar" },
-                        { name: "lastName", type: "varchar" },
-                        { name: "bio", type: "text" },
-                        { name: "favoriteColors", type: "varchar" }
-                    ]
-                }),
-                a.sqlMigration.dropTable({
-                    name: "user"
-                }),
-                a.sqlMigration.dropTable({
-                    name: "extraTable"
-                })
-            ],
-            down: [
-                a.sqlMigration.createTable({
-                    name: "user",
-                    columns: [
-                        { name: "fullName", type: "varchar" },
-                        { name: "favoriteColors", type: "varchar" }
-                    ]
-                }),
-                a.sqlMigration.createTable({
-                    name: "extraTable",
-                    columns: [
-                        { name: "fieldName", type: "varchar" }
-                    ]
-                }),
-                a.sqlMigration.dropTable({
-                    name: "customer"
-                })
-            ]
-        }
-    ]
-};"
+export const migration: AmplifySqlMigration = [
+    a.sqlMigration.migrationStep({
+        name: "create-table-customer",
+        up: [
+            a.sqlMigration.createTable({
+                tableName: "customer",
+                primaryKey: ["firstName", "lastName"],
+                columns: [{
+                        name: "firstName",
+                        type: "VARCHAR(255)"
+                    }, {
+                        name: "lastName",
+                        type: "VARCHAR(255)"
+                    }, {
+                        name: "bio",
+                        type: "TEXT",
+                        isNullable: false
+                    }, {
+                        name: "favoriteColors",
+                        type: "VARCHAR(255)",
+                        isNullable: false
+                    }]
+            })
+        ],
+        down: [
+            a.sqlMigration.dropTable({
+                tableName: "customer"
+            })
+        ]
+    }),
+    a.sqlMigration.migrationStep({
+        name: "drop-table-user",
+        up: [
+            a.sqlMigration.dropTable({
+                tableName: "user"
+            })
+        ],
+        down: [
+            a.sqlMigration.createTable({
+                tableName: "user",
+                primaryKey: ["fullName"],
+                columns: [{
+                        name: "fullName",
+                        type: "VARCHAR(255)"
+                    }, {
+                        name: "favoriteColors",
+                        type: "VARCHAR(255)",
+                        isNullable: false
+                    }]
+            })
+        ]
+    }),
+    a.sqlMigration.migrationStep({
+        name: "drop-table-extraTable",
+        up: [
+            a.sqlMigration.dropTable({
+                tableName: "extraTable"
+            })
+        ],
+        down: [
+            a.sqlMigration.createTable({
+                tableName: "extraTable",
+                primaryKey: ["id"],
+                columns: [{
+                        name: "fieldName",
+                        type: "VARCHAR(255)",
+                        isNullable: false
+                    }]
+            })
+        ]
+    }),
+    a.sqlMigration.migrationStep({
+        name: "drop-column-address-country",
+        up: [
+            a.sqlMigration.dropColumn({
+                table: "address",
+                column: {
+                    name: "country"
+                }
+            })
+        ],
+        down: [
+            a.sqlMigration.addColumn({
+                table: "address",
+                column: {
+                    name: "country",
+                    type: "VARCHAR(255)"
+                }
+            })
+        ]
+    })
+];"
 `;
 
 exports[`sql resource definitions can produce sql migration when no snapshot is provided 1`] = `
 "import { a, type AmplifySqlMigration } from "@aws-amplify/data-schema";
-export await using migration: AmplifySqlMigration = {
-    steps: [
-        {
-            up: [
-                a.sqlMigration.createTable({
-                    name: "address",
-                    columns: [
-                        { name: "number", type: "int" },
-                        { name: "street", type: "varchar" },
-                        { name: "city", type: "varchar" },
-                        { name: "state", type: "varchar" },
-                        { name: "zip", type: "varchar" }
-                    ]
-                }),
-                a.sqlMigration.createTable({
-                    name: "customer",
-                    columns: [
-                        { name: "firstName", type: "varchar" },
-                        { name: "lastName", type: "varchar" },
-                        { name: "bio", type: "text" },
-                        { name: "favoriteColors", type: "varchar" }
-                    ]
-                })
-            ],
-            down: [
-                a.sqlMigration.dropTable({
-                    name: "address"
-                }),
-                a.sqlMigration.dropTable({
-                    name: "customer"
-                })
-            ]
-        }
-    ]
-};"
+export const migration: AmplifySqlMigration = [
+    a.sqlMigration.migrationStep({
+        name: "create-table-address",
+        up: [
+            a.sqlMigration.createTable({
+                tableName: "address",
+                primaryKey: ["id"],
+                columns: [{
+                        name: "number",
+                        type: "INT"
+                    }, {
+                        name: "street",
+                        type: "VARCHAR(255)",
+                        isNullable: false
+                    }, {
+                        name: "city",
+                        type: "VARCHAR(255)",
+                        isNullable: false
+                    }, {
+                        name: "state",
+                        type: "VARCHAR(50)",
+                        isNullable: false
+                    }, {
+                        name: "zip",
+                        type: "VARCHAR(255)",
+                        isNullable: false
+                    }]
+            })
+        ],
+        down: [
+            a.sqlMigration.dropTable({
+                tableName: "address"
+            })
+        ]
+    }),
+    a.sqlMigration.migrationStep({
+        name: "create-table-customer",
+        up: [
+            a.sqlMigration.createTable({
+                tableName: "customer",
+                primaryKey: ["firstName", "lastName"],
+                columns: [{
+                        name: "firstName",
+                        type: "VARCHAR(255)"
+                    }, {
+                        name: "lastName",
+                        type: "VARCHAR(255)"
+                    }, {
+                        name: "bio",
+                        type: "TEXT",
+                        isNullable: false
+                    }, {
+                        name: "favoriteColors",
+                        type: "VARCHAR(255)",
+                        isNullable: false
+                    }]
+            })
+        ],
+        down: [
+            a.sqlMigration.dropTable({
+                tableName: "customer"
+            })
+        ]
+    })
+];"
 `;

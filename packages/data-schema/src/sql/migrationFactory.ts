@@ -1,10 +1,10 @@
 import * as ts from "typescript";
-import { AddColumnTransformation, CreateTableTransformation, DropTableTransformation, MigrationCommand, RemoveColumnTransformation } from "./build";
+import { AddColumnTransformation, CreateTableTransformation, DropTableTransformation, MigrationCommand, MigrationStep, RemoveColumnTransformation } from "./build";
 
-type MigrationInput = {
-  up: MigrationCommand[],
-  down: MigrationCommand[],
-}
+// type MigrationInput = {
+//   up: MigrationCommand[],
+//   down: MigrationCommand[],
+// }
 
 const factory = ts.factory;
 
@@ -19,6 +19,14 @@ function buildCommandNode(command: MigrationCommand): ts.Expression {
     case 'DROP_TABLE':
       return buildDropTableCommand(command.content)
   }
+}
+
+function sqlTypeConversion(typeName: string) {
+  const refinedType = typeName.toUpperCase();
+  if (refinedType == "VARCHAR") {
+    return "VARCHAR(255)"
+  }
+  return refinedType;
 }
 
 function buildAddColumnCommand(commandContent: AddColumnTransformation): ts.Expression {
@@ -47,7 +55,9 @@ function buildAddColumnCommand(commandContent: AddColumnTransformation): ts.Expr
               ),
               factory.createPropertyAssignment(
                 factory.createIdentifier("type"),
-                factory.createStringLiteral(commandContent.columnDefinition.type)
+                factory.createStringLiteral(
+                  sqlTypeConversion(commandContent.columnDefinition.type)
+                )
               )
             ],
             true
@@ -72,34 +82,48 @@ function buildCreateTableCommand(commandContent: CreateTableTransformation): ts.
     [factory.createObjectLiteralExpression(
       [
         factory.createPropertyAssignment(
-          factory.createIdentifier("name"),
+          factory.createIdentifier("tableName"),
           factory.createStringLiteral(commandContent.tableName)
+        ),
+        factory.createPropertyAssignment(
+          factory.createIdentifier("primaryKey"),
+          factory.createArrayLiteralExpression(
+            commandContent.primaryKey.map((pk) => factory.createStringLiteral(pk)),
+            false
+          )
         ),
         factory.createPropertyAssignment(
           factory.createIdentifier("columns"),
           factory.createArrayLiteralExpression(
-            commandContent.columns.map((columnInfo) => (
-              factory.createObjectLiteralExpression(
-                [
-                  factory.createPropertyAssignment(
-                    factory.createIdentifier("name"),
-                    factory.createStringLiteral(columnInfo.name)
-                  ),
-                  factory.createPropertyAssignment(
-                    factory.createIdentifier("type"),
-                    factory.createStringLiteral(columnInfo.type)
-                  )
-                ],
-                false
-              )
-            )),
-            true
+              commandContent.columns.map((columnInfo) => (
+                factory.createObjectLiteralExpression(
+                  [
+                    factory.createPropertyAssignment(
+                      factory.createIdentifier("name"),
+                      factory.createStringLiteral(columnInfo.name)
+                    ),
+                    factory.createPropertyAssignment(
+                      factory.createIdentifier("type"),
+                      factory.createStringLiteral(
+                        sqlTypeConversion(columnInfo.type)
+                      )
+                    ),
+                    ...(columnInfo.isNullable ?
+                      [factory.createPropertyAssignment(
+                        factory.createIdentifier("isNullable"),
+                        factory.createFalse()
+                      )] : []
+                    )
+                  ],
+                  true
+                )
+              )),
+            )
           )
-        )
       ],
       true
     )]
-  )
+  );
 }
 
 function buildRemoveColumnCommand(commandContent: RemoveColumnTransformation): ts.Expression {
@@ -146,7 +170,7 @@ function buildDropTableCommand(commandContent: DropTableTransformation): ts.Expr
     undefined,
     [factory.createObjectLiteralExpression(
       [factory.createPropertyAssignment(
-        factory.createIdentifier("name"),
+        factory.createIdentifier("tableName"),
         factory.createStringLiteral(commandContent.tableName)
       )],
       true
@@ -154,9 +178,46 @@ function buildDropTableCommand(commandContent: DropTableTransformation): ts.Expr
   )
 }
 
-export function migrationFactory(migrationContent: MigrationInput): ts.Node[] {
-  const upNodes = migrationContent.up.map((upCommand) => buildCommandNode(upCommand));
-  const downNodes = migrationContent.down.map((downCommand) => buildCommandNode(downCommand));
+function buildMigrationStep(stepContent: MigrationStep): ts.Expression {
+  
+  return factory.createCallExpression(
+    factory.createPropertyAccessExpression(
+      factory.createPropertyAccessExpression(
+        factory.createIdentifier("a"),
+        factory.createIdentifier("sqlMigration")
+      ),
+      factory.createIdentifier("migrationStep")
+    ),
+    undefined,
+    [factory.createObjectLiteralExpression(
+      [
+        factory.createPropertyAssignment(
+          factory.createIdentifier("name"),
+          factory.createStringLiteral(stepContent.name)
+        ),
+        factory.createPropertyAssignment(
+          factory.createIdentifier("up"),
+          factory.createArrayLiteralExpression(
+            stepContent.up.map((commands) => buildCommandNode(commands)),
+            true
+          )
+        ),
+        factory.createPropertyAssignment(
+          factory.createIdentifier("down"),
+          factory.createArrayLiteralExpression(
+            stepContent.down.map((commands) => buildCommandNode(commands)),
+            true
+          )
+        )
+      ],
+      true
+    )]
+  )
+}
+
+export function migrationFactory(steps: MigrationStep[]): ts.Node[] {
+  const stepNodes = steps.map((step) => buildMigrationStep(step));
+  // const downNodes = migrationContent.down.map((downCommand) => buildCommandNode(downCommand));
 
   return [
     factory.createImportDeclaration(
@@ -190,36 +251,12 @@ export function migrationFactory(migrationContent: MigrationInput): ts.Node[] {
             factory.createIdentifier("AmplifySqlMigration"),
             undefined
           ),
-          factory.createObjectLiteralExpression(
-            [factory.createPropertyAssignment(
-              factory.createIdentifier("steps"),
-              factory.createArrayLiteralExpression(
-                [factory.createObjectLiteralExpression(
-                  [
-                    factory.createPropertyAssignment(
-                      factory.createIdentifier("up"),
-                      factory.createArrayLiteralExpression(
-                        upNodes,
-                        true
-                      )
-                    ),
-                    factory.createPropertyAssignment(
-                      factory.createIdentifier("down"),
-                      factory.createArrayLiteralExpression(
-                        downNodes,
-                        true
-                      )
-                    )
-                  ],
-                  true
-                )],
-                true
-              )
-            )],
+          factory.createArrayLiteralExpression(
+            stepNodes,
             true
           )
         )],
-        ts.NodeFlags.Const | ts.NodeFlags.Constant | ts.NodeFlags.Constant
+        ts.NodeFlags.Const
       )
     )
   ];
