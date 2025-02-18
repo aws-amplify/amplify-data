@@ -1478,6 +1478,150 @@ describe('CustomOperation transform', () => {
         'inlineCustomType(arg: InlineCustomTypeArgInput)',
       );
     });
+
+    test('custom operation subscription has inline custom type argument', () => {
+      const s = a
+        .schema({
+          mutationCustomOps: a
+            .mutation()
+            .arguments({
+              arg: a.string(),
+            })
+            .returns(a.string())
+            .handler(a.handler.function('myFunc')),
+          inlineCustomTypeSub: a
+            .subscription()
+            .arguments({
+              arg: a.customType({
+                field: a.string(),
+              }),
+            })
+            .handler(a.handler.function('myFunc'))
+            .for(a.ref('mutationCustomOps')),
+        })
+        .authorization((allow) => allow.publicApiKey());
+
+      const result = s.transform().schema;
+
+      expect(result).toMatchSnapshot();
+    });
+
+    test('custom operation subscription has ref to a custom type argument', () => {
+      const s = a
+        .schema({
+          mutationCustomOps: a
+            .mutation()
+            .arguments({
+              arg: a.string(),
+            })
+            .returns(a.string())
+            .handler(a.handler.function('myFunc')),
+
+          post: a.customType({
+            title: a.string(),
+          }),
+
+          refCustomTypeSub: a
+            .subscription()
+            .arguments({
+              arg: a.ref('post'),
+            })
+            .handler(a.handler.function('myFunc'))
+            .for(a.ref('mutationCustomOps')),
+        })
+        .authorization((allow) => allow.publicApiKey());
+
+      const result = s.transform().schema;
+      expect(result).toMatchSnapshot();
+    });
+
+    test('custom operation subscription referencing an enum', () => {
+      const s = a
+        .schema({
+          mutationCustomOps: a
+            .mutation()
+            .arguments({
+              arg: a.string(),
+            })
+            .returns(a.string())
+            .handler(a.handler.function('myFunc')),
+
+          statusEnum: a.enum(['OPEN', 'CLOSED']),
+
+          enumRefSub: a
+            .subscription()
+            .arguments({
+              arg: a.ref('statusEnum'),
+            })
+            .handler(a.handler.function('myFunc'))
+            .for(a.ref('mutationCustomOps')),
+        })
+        .authorization((allow) => allow.publicApiKey());
+
+      const result = s.transform().schema;
+      expect(result).toMatchSnapshot();
+    });
+
+    test('custom operation subscription with nested custom type argument', () => {
+      const s = a
+        .schema({
+          mutationCustomOps: a
+            .mutation()
+            .arguments({
+              arg: a.string(),
+            })
+            .returns(a.string())
+            .handler(a.handler.function('myFunc')),
+
+          nestedType: a.customType({
+            post: a.customType({
+              inner: a.string(),
+            }),
+          }),
+
+          nestedSub: a
+            .subscription()
+            .arguments({
+              arg: a.ref('nestedType'),
+            })
+            .handler(a.handler.function('myFunc'))
+            .for(a.ref('mutationCustomOps')),
+        })
+        .authorization((allow) => allow.publicApiKey());
+
+      const result = s.transform().schema;
+      expect(result).toMatchSnapshot();
+    });
+
+    test('custom operation subscription with multiple references to the same custom type', () => {
+      const s = a
+        .schema({
+          mutationCustomOps: a
+            .mutation()
+            .arguments({
+              arg: a.string(),
+            })
+            .returns(a.string())
+            .handler(a.handler.function('myFunc')),
+
+          post: a.customType({
+            name: a.string(),
+          }),
+
+          multiRefSub: a
+            .subscription()
+            .arguments({
+              arg1: a.ref('post'),
+              arg2: a.ref('post'),
+            })
+            .handler(a.handler.function('myFunc'))
+            .for(a.ref('mutationCustomOps')),
+        })
+        .authorization((allow) => allow.publicApiKey());
+
+      const result = s.transform().schema;
+      expect(result).toMatchSnapshot();
+    });
   });
 
   const fakeSecret = () => ({}) as any;

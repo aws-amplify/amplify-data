@@ -183,6 +183,101 @@ type Query {
 }"
 `;
 
+exports[`CustomOperation transform custom operations with custom types and refs custom operation subscription has inline custom type argument 1`] = `
+"input InlineCustomTypeSubArgInput {
+  field: String
+}
+
+type Mutation {
+  mutationCustomOps(arg: String): String @function(name: "myFunc") @auth(rules: [{allow: public, provider: apiKey}])
+}
+
+type Subscription {
+  inlineCustomTypeSub(arg: InlineCustomTypeSubArgInput): String @function(name: "myFunc") @aws_subscribe(mutations: ["mutationCustomOps"]) @auth(rules: [{allow: public, provider: apiKey}])
+}"
+`;
+
+exports[`CustomOperation transform custom operations with custom types and refs custom operation subscription has ref to a custom type argument 1`] = `
+"type post 
+{
+  title: String
+}
+
+input postInput {
+  title: String
+}
+
+type Mutation {
+  mutationCustomOps(arg: String): String @function(name: "myFunc") @auth(rules: [{allow: public, provider: apiKey}])
+}
+
+type Subscription {
+  refCustomTypeSub(arg: postInput): String @function(name: "myFunc") @aws_subscribe(mutations: ["mutationCustomOps"]) @auth(rules: [{allow: public, provider: apiKey}])
+}"
+`;
+
+exports[`CustomOperation transform custom operations with custom types and refs custom operation subscription referencing an enum 1`] = `
+"enum statusEnum {
+  OPEN
+  CLOSED
+}
+
+type Mutation {
+  mutationCustomOps(arg: String): String @function(name: "myFunc") @auth(rules: [{allow: public, provider: apiKey}])
+}
+
+type Subscription {
+  enumRefSub(arg: statusEnum): String @function(name: "myFunc") @aws_subscribe(mutations: ["mutationCustomOps"]) @auth(rules: [{allow: public, provider: apiKey}])
+}"
+`;
+
+exports[`CustomOperation transform custom operations with custom types and refs custom operation subscription with multiple references to the same custom type 1`] = `
+"type post 
+{
+  name: String
+}
+
+input postInput {
+  name: String
+}
+
+type Mutation {
+  mutationCustomOps(arg: String): String @function(name: "myFunc") @auth(rules: [{allow: public, provider: apiKey}])
+}
+
+type Subscription {
+  multiRefSub(arg1: postInput, arg2: postInput): String @function(name: "myFunc") @aws_subscribe(mutations: ["mutationCustomOps"]) @auth(rules: [{allow: public, provider: apiKey}])
+}"
+`;
+
+exports[`CustomOperation transform custom operations with custom types and refs custom operation subscription with nested custom type argument 1`] = `
+"type nestedType 
+{
+  post: NestedTypePost
+}
+
+type NestedTypePost 
+{
+  inner: String
+}
+
+input NestedTypePostInput {
+  inner: String
+}
+
+input nestedTypeInput {
+  post: NestedTypePostInput
+}
+
+type Mutation {
+  mutationCustomOps(arg: String): String @function(name: "myFunc") @auth(rules: [{allow: public, provider: apiKey}])
+}
+
+type Subscription {
+  nestedSub(arg: nestedTypeInput): String @function(name: "myFunc") @aws_subscribe(mutations: ["mutationCustomOps"]) @auth(rules: [{allow: public, provider: apiKey}])
+}"
+`;
+
 exports[`CustomOperation transform custom operations with custom types and refs custom operation with circular references between custom types 1`] = `
 "type post 
 {
