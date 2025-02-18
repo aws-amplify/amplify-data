@@ -539,6 +539,51 @@ describe('custom operations return types', () => {
       type _T3 = Expect<Equal<ActualHandler, ExpectedFunctionHandler>>;
     });
   });
+
+  describe('when using custom types with refs in function arguments', () => {
+    it('resolves nested types correctly in functionHandler', () => {
+      const schema = a.schema({
+        Location: a.customType({
+          coordinates: a.integer(),
+        }),
+        myQuery: a
+          .query()
+          .arguments({
+            wrapper: a.customType({
+              location: a.ref('Location'),
+            }),
+          })
+          .handler(a.handler.function('myFunc'))
+          .returns(a.string()),
+      });
+
+      type Schema = ClientSchema<typeof schema>;
+
+      type ActualArgs = Prettify<Schema['myQuery']['args']>;
+      type ActualResult = Prettify<Schema['myQuery']['returnType']>;
+      type ActualHandler = Schema['myQuery']['functionHandler'];
+
+      type ExpectedArgs = {
+        wrapper?:
+          | {
+              location?:
+                | {
+                    coordinates?: number | null | undefined;
+                  }
+                | null
+                | undefined;
+            }
+          | null
+          | undefined;
+      };
+      type ExpectedResult = string | null;
+      type ExpectedHandler = AppSyncResolverHandler<ActualArgs, ActualResult>;
+
+      type _T1 = Expect<Equal<ActualArgs, ExpectedArgs>>;
+      type _T2 = Expect<Equal<ActualResult, ExpectedResult>>;
+      type _T3 = Expect<Equal<ActualHandler, ExpectedHandler>>;
+    });
+  });
 });
 
 describe('RDS custom operations - current DX', () => {
