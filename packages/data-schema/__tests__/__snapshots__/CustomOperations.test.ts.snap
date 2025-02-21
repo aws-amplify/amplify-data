@@ -606,7 +606,7 @@ type Subscription {
 `;
 
 exports[`CustomOperation transform dynamo schema Schema w model, custom query, mutation, and subscription and ref of custom type with array modifier 1`] = `
-"type PostCustomType @aws_api_key @aws_api_key
+"type PostCustomType @aws_api_key
 {
   title: String
 }
@@ -644,7 +644,7 @@ type Subscription {
 `;
 
 exports[`CustomOperation transform dynamo schema custom subscriptions Custom subscription where .for() resource has a CustomType return type 1`] = `
-"type CreateCustomTypePostReturnType @aws_api_key @aws_api_key
+"type CreateCustomTypePostReturnType @aws_api_key
 {
   title: String!
 }
@@ -726,7 +726,7 @@ exports[`CustomOperation transform dynamo schema handlers a.handler.custom a.han
   title: String
 }
 
-type GetPostDetailsReturnType @aws_api_key @aws_api_key
+type GetPostDetailsReturnType @aws_api_key
 {
   
 }
