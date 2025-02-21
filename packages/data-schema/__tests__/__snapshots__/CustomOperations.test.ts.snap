@@ -11,7 +11,7 @@ type Mutation {
 `;
 
 exports[`CustomOperation transform custom operations with custom types and refs custom operation mutation has ref to custom type argument 1`] = `
-"type post 
+"type post @aws_api_key
 {
   field: String
 }
@@ -26,7 +26,7 @@ type Mutation {
 `;
 
 exports[`CustomOperation transform custom operations with custom types and refs custom operation mutation with multiple references to the same custom type 1`] = `
-"type post 
+"type post @aws_api_key
 {
   name: String
   number: Int
@@ -48,7 +48,7 @@ exports[`CustomOperation transform custom operations with custom types and refs 
   VALUE2
 }
 
-type post 
+type post @aws_api_key
 {
   field: String
   enumField: values
@@ -75,7 +75,7 @@ type Query {
 `;
 
 exports[`CustomOperation transform custom operations with custom types and refs custom operation query has ref to custom type argument 1`] = `
-"type post 
+"type post @aws_api_key
 {
   field: String
 }
@@ -106,7 +106,7 @@ type Query {
 `;
 
 exports[`CustomOperation transform custom operations with custom types and refs custom operation query with enum in referenced custom type argument 1`] = `
-"type post 
+"type post @aws_api_key
 {
   name: String
   status: PostStatus
@@ -152,12 +152,12 @@ type Query {
 `;
 
 exports[`CustomOperation transform custom operations with custom types and refs custom operation query with ref to nested custom type argument 1`] = `
-"type post 
+"type post @aws_api_key
 {
   inner: PostInner
 }
 
-type PostInner 
+type PostInner @aws_api_key
 {
   filter: String!
   e1: PostInnerE1
@@ -198,7 +198,7 @@ type Subscription {
 `;
 
 exports[`CustomOperation transform custom operations with custom types and refs custom operation subscription has ref to a custom type argument 1`] = `
-"type post 
+"type post @aws_api_key
 {
   title: String
 }
@@ -232,7 +232,7 @@ type Subscription {
 `;
 
 exports[`CustomOperation transform custom operations with custom types and refs custom operation subscription with multiple references to the same custom type 1`] = `
-"type post 
+"type post @aws_api_key
 {
   name: String
 }
@@ -251,12 +251,12 @@ type Subscription {
 `;
 
 exports[`CustomOperation transform custom operations with custom types and refs custom operation subscription with nested custom type argument 1`] = `
-"type nestedType 
+"type nestedType @aws_api_key
 {
   post: NestedTypePost
 }
 
-type NestedTypePost 
+type NestedTypePost @aws_api_key
 {
   inner: String
 }
@@ -279,13 +279,13 @@ type Subscription {
 `;
 
 exports[`CustomOperation transform custom operations with custom types and refs custom operation with circular references between custom types 1`] = `
-"type post 
+"type post @aws_api_key
 {
   value: String
   child: update
 }
 
-type update 
+type update @aws_api_key
 {
   title: String
   field: post
@@ -311,7 +311,7 @@ type Mutation {
 `;
 
 exports[`CustomOperation transform custom operations with custom types and refs custom operation with inline custom type containing reference to another custom type 1`] = `
-"type post 
+"type post @aws_api_key
 {
   name: String
 }
@@ -331,7 +331,7 @@ type Mutation {
 `;
 
 exports[`CustomOperation transform custom operations with custom types and refs custom operation with inline custom type referencing self-referential type 1`] = `
-"type post 
+"type post @aws_api_key
 {
   value: String
   child: post
@@ -352,7 +352,7 @@ type Mutation {
 `;
 
 exports[`CustomOperation transform custom operations with custom types and refs custom operation with ref to custom type with self-referencing field 1`] = `
-"type post 
+"type post @aws_api_key
 {
   value: String
   child: post
@@ -369,7 +369,7 @@ type Mutation {
 `;
 
 exports[`CustomOperation transform custom operations with custom types and refs multiple custom operations referencing the same custom type 1`] = `
-"type post 
+"type post @aws_api_key
 {
   name: String
   number: Int
@@ -606,7 +606,7 @@ type Subscription {
 `;
 
 exports[`CustomOperation transform dynamo schema Schema w model, custom query, mutation, and subscription and ref of custom type with array modifier 1`] = `
-"type PostCustomType @aws_api_key
+"type PostCustomType @aws_api_key@aws_api_key
 {
   title: String
 }
@@ -644,7 +644,7 @@ type Subscription {
 `;
 
 exports[`CustomOperation transform dynamo schema custom subscriptions Custom subscription where .for() resource has a CustomType return type 1`] = `
-"type CreateCustomTypePostReturnType @aws_api_key
+"type CreateCustomTypePostReturnType @aws_api_key@aws_api_key
 {
   title: String!
 }
@@ -726,7 +726,7 @@ exports[`CustomOperation transform dynamo schema handlers a.handler.custom a.han
   title: String
 }
 
-type GetPostDetailsReturnType @aws_api_key
+type GetPostDetailsReturnType @aws_api_key@aws_api_key
 {
   
 }

@@ -1580,13 +1580,15 @@ const schemaPreprocessor = (
           ),
         );
 
-        let customAuth = '';
+        const { authString } = mapToNativeAppSyncAuthDirectives(mostRelevantAuthRules, false);
+
+        let customAuth = authString;
         if (typeName in customTypeInheritedAuthRules) {
           const { authString } = mapToNativeAppSyncAuthDirectives(
             customTypeInheritedAuthRules[typeName],
             false,
           );
-          customAuth = authString;
+          customAuth += authString;
         }
 
         const authFields = {};

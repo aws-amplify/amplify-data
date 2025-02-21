@@ -1,12 +1,448 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`CustomType auth rules can create a dynamic multi groups rule 1`] = `
+"type Post @aws_cognito_user_pools
+{
+  title: String!
+}"
+`;
+
+exports[`CustomType auth rules can create a dynamic multi groups rule with withClaimIn 1`] = `
+"type Post @aws_cognito_user_pools
+{
+  title: String!
+}"
+`;
+
+exports[`CustomType auth rules can create a dynamic singular groups rule 1`] = `
+"type Post @aws_cognito_user_pools
+{
+  title: String!
+}"
+`;
+
+exports[`CustomType auth rules can create a dynamic singular groups rule with withClaimIn 1`] = `
+"type Post @aws_cognito_user_pools
+{
+  title: String!
+}"
+`;
+
+exports[`CustomType auth rules can create a static [Admins, Moderators] groups rule 1`] = `
+"type Post @aws_cognito_user_pools(cognito_groups: ["Admins", "Moderators"])
+{
+  title: String!
+}"
+`;
+
+exports[`CustomType auth rules can create a static Admins group rule 1`] = `
+"type Post @aws_cognito_user_pools(cognito_groups: ["Admins"])
+{
+  title: String!
+}"
+`;
+
+exports[`CustomType auth rules can define a custom authorization rule 1`] = `
+"type Widget @model @auth(rules: [{allow: custom}])
+{
+  title: String!
+}"
+`;
+
+exports[`CustomType auth rules can define custom auth rule for operations create 1`] = `
+"type widget @model @auth(rules: [{allow: custom, operations: [create]}])
+{
+  title: String!
+}"
+`;
+
+exports[`CustomType auth rules can define custom auth rule for operations create,read,listen 1`] = `
+"type widget @model @auth(rules: [{allow: custom, operations: [create, read, listen]}])
+{
+  title: String!
+}"
+`;
+
+exports[`CustomType auth rules can define custom auth rule for operations create,read,update,delete 1`] = `
+"type widget @model @auth(rules: [{allow: custom, operations: [create, read, update, delete]}])
+{
+  title: String!
+}"
+`;
+
+exports[`CustomType auth rules can define custom auth rule for operations delete 1`] = `
+"type widget @model @auth(rules: [{allow: custom, operations: [delete]}])
+{
+  title: String!
+}"
+`;
+
+exports[`CustomType auth rules can define custom auth rule for operations get 1`] = `
+"type widget @model @auth(rules: [{allow: custom, operations: [get]}])
+{
+  title: String!
+}"
+`;
+
+exports[`CustomType auth rules can define custom auth rule for operations list 1`] = `
+"type widget @model @auth(rules: [{allow: custom, operations: [list]}])
+{
+  title: String!
+}"
+`;
+
+exports[`CustomType auth rules can define custom auth rule for operations listen 1`] = `
+"type widget @model @auth(rules: [{allow: custom, operations: [listen]}])
+{
+  title: String!
+}"
+`;
+
+exports[`CustomType auth rules can define custom auth rule for operations read 1`] = `
+"type widget @model @auth(rules: [{allow: custom, operations: [read]}])
+{
+  title: String!
+}"
+`;
+
+exports[`CustomType auth rules can define custom auth rule for operations search 1`] = `
+"type widget @model @auth(rules: [{allow: custom, operations: [search]}])
+{
+  title: String!
+}"
+`;
+
+exports[`CustomType auth rules can define custom auth rule for operations sync 1`] = `
+"type widget @model @auth(rules: [{allow: custom, operations: [sync]}])
+{
+  title: String!
+}"
+`;
+
+exports[`CustomType auth rules can define custom auth rule for operations update 1`] = `
+"type widget @model @auth(rules: [{allow: custom, operations: [update]}])
+{
+  title: String!
+}"
+`;
+
+exports[`CustomType auth rules can define private auth with no provider 1`] = `
+"type Post @aws_cognito_user_pools
+{
+  title: String!
+}"
+`;
+
+exports[`CustomType auth rules can define private with with provider identityPool 1`] = `
+"type Post @aws_iam
+{
+  title: String!
+}"
+`;
+
+exports[`CustomType auth rules can define private with with provider identityPool for operations create 1`] = `
+"type widget @model @auth(rules: [{allow: private, provider: iam, operations: [create]}])
+{
+  title: String!
+}"
+`;
+
+exports[`CustomType auth rules can define private with with provider identityPool for operations create,read,listen 1`] = `
+"type widget @model @auth(rules: [{allow: private, provider: iam, operations: [create, read, listen]}])
+{
+  title: String!
+}"
+`;
+
+exports[`CustomType auth rules can define private with with provider identityPool for operations create,read,update,delete 1`] = `
+"type widget @model @auth(rules: [{allow: private, provider: iam, operations: [create, read, update, delete]}])
+{
+  title: String!
+}"
+`;
+
+exports[`CustomType auth rules can define private with with provider identityPool for operations delete 1`] = `
+"type widget @model @auth(rules: [{allow: private, provider: iam, operations: [delete]}])
+{
+  title: String!
+}"
+`;
+
+exports[`CustomType auth rules can define private with with provider identityPool for operations get 1`] = `
+"type widget @model @auth(rules: [{allow: private, provider: iam, operations: [get]}])
+{
+  title: String!
+}"
+`;
+
+exports[`CustomType auth rules can define private with with provider identityPool for operations list 1`] = `
+"type widget @model @auth(rules: [{allow: private, provider: iam, operations: [list]}])
+{
+  title: String!
+}"
+`;
+
+exports[`CustomType auth rules can define private with with provider identityPool for operations listen 1`] = `
+"type widget @model @auth(rules: [{allow: private, provider: iam, operations: [listen]}])
+{
+  title: String!
+}"
+`;
+
+exports[`CustomType auth rules can define private with with provider identityPool for operations read 1`] = `
+"type widget @model @auth(rules: [{allow: private, provider: iam, operations: [read]}])
+{
+  title: String!
+}"
+`;
+
+exports[`CustomType auth rules can define private with with provider identityPool for operations search 1`] = `
+"type widget @model @auth(rules: [{allow: private, provider: iam, operations: [search]}])
+{
+  title: String!
+}"
+`;
+
+exports[`CustomType auth rules can define private with with provider identityPool for operations sync 1`] = `
+"type widget @model @auth(rules: [{allow: private, provider: iam, operations: [sync]}])
+{
+  title: String!
+}"
+`;
+
+exports[`CustomType auth rules can define private with with provider identityPool for operations update 1`] = `
+"type widget @model @auth(rules: [{allow: private, provider: iam, operations: [update]}])
+{
+  title: String!
+}"
+`;
+
+exports[`CustomType auth rules can define private with with provider oidc 1`] = `
+"type Post @aws_oidc
+{
+  title: String!
+}"
+`;
+
+exports[`CustomType auth rules can define private with with provider oidc for operations create 1`] = `
+"type widget @model @auth(rules: [{allow: private, provider: oidc, operations: [create]}])
+{
+  title: String!
+}"
+`;
+
+exports[`CustomType auth rules can define private with with provider oidc for operations create,read,listen 1`] = `
+"type widget @model @auth(rules: [{allow: private, provider: oidc, operations: [create, read, listen]}])
+{
+  title: String!
+}"
+`;
+
+exports[`CustomType auth rules can define private with with provider oidc for operations create,read,update,delete 1`] = `
+"type widget @model @auth(rules: [{allow: private, provider: oidc, operations: [create, read, update, delete]}])
+{
+  title: String!
+}"
+`;
+
+exports[`CustomType auth rules can define private with with provider oidc for operations delete 1`] = `
+"type widget @model @auth(rules: [{allow: private, provider: oidc, operations: [delete]}])
+{
+  title: String!
+}"
+`;
+
+exports[`CustomType auth rules can define private with with provider oidc for operations get 1`] = `
+"type widget @model @auth(rules: [{allow: private, provider: oidc, operations: [get]}])
+{
+  title: String!
+}"
+`;
+
+exports[`CustomType auth rules can define private with with provider oidc for operations list 1`] = `
+"type widget @model @auth(rules: [{allow: private, provider: oidc, operations: [list]}])
+{
+  title: String!
+}"
+`;
+
+exports[`CustomType auth rules can define private with with provider oidc for operations listen 1`] = `
+"type widget @model @auth(rules: [{allow: private, provider: oidc, operations: [listen]}])
+{
+  title: String!
+}"
+`;
+
+exports[`CustomType auth rules can define private with with provider oidc for operations read 1`] = `
+"type widget @model @auth(rules: [{allow: private, provider: oidc, operations: [read]}])
+{
+  title: String!
+}"
+`;
+
+exports[`CustomType auth rules can define private with with provider oidc for operations search 1`] = `
+"type widget @model @auth(rules: [{allow: private, provider: oidc, operations: [search]}])
+{
+  title: String!
+}"
+`;
+
+exports[`CustomType auth rules can define private with with provider oidc for operations sync 1`] = `
+"type widget @model @auth(rules: [{allow: private, provider: oidc, operations: [sync]}])
+{
+  title: String!
+}"
+`;
+
+exports[`CustomType auth rules can define private with with provider oidc for operations update 1`] = `
+"type widget @model @auth(rules: [{allow: private, provider: oidc, operations: [update]}])
+{
+  title: String!
+}"
+`;
+
+exports[`CustomType auth rules can define private with with provider userPools 1`] = `
+"type Post @aws_cognito_user_pools
+{
+  title: String!
+}"
+`;
+
+exports[`CustomType auth rules can define private with with provider userPools for operations create 1`] = `
+"type widget @model @auth(rules: [{allow: private, provider: userPools, operations: [create]}])
+{
+  title: String!
+}"
+`;
+
+exports[`CustomType auth rules can define private with with provider userPools for operations create,read,listen 1`] = `
+"type widget @model @auth(rules: [{allow: private, provider: userPools, operations: [create, read, listen]}])
+{
+  title: String!
+}"
+`;
+
+exports[`CustomType auth rules can define private with with provider userPools for operations create,read,update,delete 1`] = `
+"type widget @model @auth(rules: [{allow: private, provider: userPools, operations: [create, read, update, delete]}])
+{
+  title: String!
+}"
+`;
+
+exports[`CustomType auth rules can define private with with provider userPools for operations delete 1`] = `
+"type widget @model @auth(rules: [{allow: private, provider: userPools, operations: [delete]}])
+{
+  title: String!
+}"
+`;
+
+exports[`CustomType auth rules can define private with with provider userPools for operations get 1`] = `
+"type widget @model @auth(rules: [{allow: private, provider: userPools, operations: [get]}])
+{
+  title: String!
+}"
+`;
+
+exports[`CustomType auth rules can define private with with provider userPools for operations list 1`] = `
+"type widget @model @auth(rules: [{allow: private, provider: userPools, operations: [list]}])
+{
+  title: String!
+}"
+`;
+
+exports[`CustomType auth rules can define private with with provider userPools for operations listen 1`] = `
+"type widget @model @auth(rules: [{allow: private, provider: userPools, operations: [listen]}])
+{
+  title: String!
+}"
+`;
+
+exports[`CustomType auth rules can define private with with provider userPools for operations read 1`] = `
+"type widget @model @auth(rules: [{allow: private, provider: userPools, operations: [read]}])
+{
+  title: String!
+}"
+`;
+
+exports[`CustomType auth rules can define private with with provider userPools for operations search 1`] = `
+"type widget @model @auth(rules: [{allow: private, provider: userPools, operations: [search]}])
+{
+  title: String!
+}"
+`;
+
+exports[`CustomType auth rules can define private with with provider userPools for operations sync 1`] = `
+"type widget @model @auth(rules: [{allow: private, provider: userPools, operations: [sync]}])
+{
+  title: String!
+}"
+`;
+
+exports[`CustomType auth rules can define private with with provider userPools for operations update 1`] = `
+"type widget @model @auth(rules: [{allow: private, provider: userPools, operations: [update]}])
+{
+  title: String!
+}"
+`;
+
+exports[`CustomType auth rules can define public auth with no provider 1`] = `
+"type Post @aws_api_key
+{
+  title: String!
+}"
+`;
+
+exports[`CustomType auth rules can specify operations  1`] = `
+"type Post @aws_api_key
+{
+  title: String!
+}"
+`;
+
+exports[`CustomType auth rules duplicate field validation does not issue errors for \`identifier()\` explicit \`customId: string\` field 1`] = `
+"type Post @aws_api_key
+{
+  customId: String!
+}"
+`;
+
+exports[`CustomType auth rules duplicate field validation does not issue errors for \`identifier()\` explicit \`id: ID\` field 1`] = `
+"type Post @aws_api_key
+{
+  id: ID!
+}"
+`;
+
+exports[`CustomType auth rules duplicate field validation does not issue errors for \`identifier()\` explicit \`id: string\` field 1`] = `
+"type Post @aws_api_key
+{
+  id: String!
+}"
+`;
+
+exports[`CustomType auth rules duplicate field validation does not issue errors for \`identifier()\` explicit multi-field mixed types PK 1`] = `
+"type Post @aws_api_key
+{
+  idFieldA: String!
+  idFieldB: Int!
+}"
+`;
+
+exports[`CustomType auth rules duplicate field validation does not issue errors for \`identifier()\` explicit multi-field string type PK 1`] = `
+"type Post @aws_api_key
+{
+  idFieldA: String!
+  idFieldB: String!
+}"
+`;
+
 exports[`CustomType transform Explicit CustomType - required 1`] = `
 "type Post @model @auth(rules: [{allow: public, provider: apiKey}])
 {
   location: Location!
 }
 
-type Location 
+type Location @aws_api_key
 {
   lat: Float
   long: Float
@@ -19,7 +455,7 @@ exports[`CustomType transform Explicit CustomType - with auth 1`] = `
   location: Location @auth(rules: [{allow: owner, ownerField: "owner"}])
 }
 
-type Location 
+type Location @aws_api_key
 {
   lat: Float
   long: Float
@@ -32,7 +468,7 @@ exports[`CustomType transform Explicit CustomType 1`] = `
   location: Location
 }
 
-type Location 
+type Location @aws_api_key
 {
   lat: Float
   long: Float
@@ -50,13 +486,13 @@ enum PostStatus {
   published
 }
 
-type Meta 
+type Meta @aws_api_key
 {
   status: PostStatus
   nestedMeta: AltMeta
 }
 
-type AltMeta 
+type AltMeta @aws_api_key
 {
   field1: String
 }"
@@ -73,7 +509,7 @@ enum PostStatus {
   published
 }
 
-type Meta 
+type Meta @aws_api_key
 {
   status: PostStatus
   publishedDate: AWSDate
@@ -86,7 +522,7 @@ exports[`CustomType transform Explicit CustomType nests implicit CustomType 1`] 
   meta: Meta
 }
 
-type Meta 
+type Meta @aws_api_key
 {
   status: MetaStatus
   nestedMeta: MetaNestedMeta
@@ -97,7 +533,7 @@ enum MetaStatus {
   published
 }
 
-type MetaNestedMeta 
+type MetaNestedMeta @aws_api_key
 {
   field1: String
 }"
@@ -109,7 +545,7 @@ exports[`CustomType transform Explicit CustomType nests implicit enum type 1`] =
   meta: Meta
 }
 
-type Meta 
+type Meta @aws_api_key
 {
   status: MetaStatus
   publishedDate: AWSDate
@@ -127,7 +563,7 @@ exports[`CustomType transform Implicit CustomType 1`] = `
   location: PostLocation
 }
 
-type PostLocation 
+type PostLocation @aws_api_key
 {
   lat: Float
   long: Float
@@ -140,12 +576,12 @@ exports[`CustomType transform Implicit CustomType nests explicit CustomType 1`] 
   meta: PostMeta
 }
 
-type AltMeta 
+type AltMeta @aws_api_key
 {
   field1: String
 }
 
-type PostMeta 
+type PostMeta @aws_api_key
 {
   status: PostMetaStatus
   nestedMeta: AltMeta
@@ -168,7 +604,7 @@ enum PostStatus {
   published
 }
 
-type PostMeta 
+type PostMeta @aws_api_key
 {
   status: PostStatus
   publishedDate: AWSDate
@@ -181,7 +617,7 @@ exports[`CustomType transform Implicit CustomType nests implicit CustomType 1`] 
   meta: PostMeta
 }
 
-type PostMeta 
+type PostMeta @aws_api_key
 {
   status: PostMetaStatus
   nestedMeta: PostMetaNestedMeta
@@ -192,7 +628,7 @@ enum PostMetaStatus {
   published
 }
 
-type PostMetaNestedMeta 
+type PostMetaNestedMeta @aws_api_key
 {
   field1: String
 }"
@@ -204,7 +640,7 @@ exports[`CustomType transform Implicit CustomType nests implicit enum type 1`] =
   meta: PostMeta
 }
 
-type PostMeta 
+type PostMeta @aws_api_key
 {
   status: PostMetaStatus
   publishedDate: AWSDate

@@ -1,3 +1,9 @@
+import { 
+  type Authorization,
+  type BaseAllowModifier, 
+  type AnyAuthorization,
+  allow,
+} from './Authorization';
 import type { Brand } from './util';
 import type { InternalField, BaseModelField } from './ModelField';
 import type { RefType } from './RefType';
@@ -26,6 +32,7 @@ type InternalModelFields = Record<string, InternalField>;
 type CustomTypeData = {
   fields: CustomTypeFields;
   type: 'customType';
+  authorization: Authorization<any, any, any>[];
 };
 
 type InternalCustomTypeData = CustomTypeData & {
@@ -34,6 +41,7 @@ type InternalCustomTypeData = CustomTypeData & {
 
 export type CustomTypeParamShape = {
   fields: CustomTypeFields;
+  authorization: Authorization<any, any, any>[];
 };
 
 /**
@@ -41,8 +49,26 @@ export type CustomTypeParamShape = {
  *
  * @param T - The shape of the custom type container
  */
-export type CustomType<T extends CustomTypeParamShape> = T &
-  Brand<'customType'>;
+export type CustomType<T extends CustomTypeParamShape> = T & Brand<'customType'> & {
+    /**
+     * Configures authorization rules for public, signed-in user, per user, and per user group data access
+     *
+     * @param callback A function that receives an allow modifier to define authorization rules
+     * @returns A ModelType instance with updated authorization rules
+     *
+     * @example
+     * a.customType({}).authorization((allow) => [
+     *   allow.guest(),
+     *   allow.publicApiKey(),
+     *   allow.authenticated(),
+     * ])
+     */
+    authorization<AuthRuleType extends AnyAuthorization>(
+      callback: (
+        allow: BaseAllowModifier,
+      ) => AuthRuleType | AuthRuleType[],
+    ): CustomType<T>;
+  };
 
 /**
  * Internal representation of CustomType that exposes the `data` property.
@@ -56,9 +82,20 @@ function _customType<T extends CustomTypeParamShape>(fields: T['fields']) {
   const data: CustomTypeData = {
     fields,
     type: 'customType',
+    authorization: [],
   };
 
-  return { data } as InternalCustomType as CustomType<T>;
+  const builder = {
+    authorization<AuthRuleType extends AnyAuthorization>(callback: (allow: BaseAllowModifier) => AuthRuleType | AuthRuleType[]) {
+      const { resource: _, ...rest } = allow;
+      const rules = callback(rest);
+      data.authorization = Array.isArray(rules) ? rules : [rules];
+
+      return this;
+    },
+  }
+
+  return { ...builder, data } as InternalCustomType as CustomType<T>;
 }
 
 /**
@@ -95,6 +132,6 @@ function _customType<T extends CustomTypeParamShape>(fields: T['fields']) {
  */
 export function customType<T extends CustomTypeFields>(
   fields: T,
-): CustomType<{ fields: T }> {
+): CustomType<{ fields: T, authorization: [] }> {
   return _customType(fields);
 }

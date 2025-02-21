@@ -13,6 +13,7 @@ describe('CustomType', () => {
     });
 
     type Expected = CustomType<{
+      authorization: [];
       fields: {
         lat: ModelField<Nullable<number>, never, undefined>;
         long: ModelField<Nullable<number>, never, undefined>;
@@ -36,12 +37,15 @@ describe('CustomType', () => {
     });
 
     type Expected = CustomType<{
+      authorization: [];
       fields: {
         content: ModelField<string, 'required', undefined>;
         meta: CustomType<{
+          authorization: [];
           fields: {
             enumField: EnumType<readonly ['value1', 'value2']>;
             deepMeta: CustomType<{
+              authorization: [];
               fields: {
                 description: ModelField<string, 'required', undefined>;
               };
