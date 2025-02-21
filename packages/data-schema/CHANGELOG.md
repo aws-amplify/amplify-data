@@ -1,5 +1,11 @@
 # @aws-amplify/data-schema
 
+## 1.18.0
+
+### Minor Changes
+
+- bdec9ee: Allow CustomType and RefType in arguments for custom operations
+
 ## 1.17.5
 
 ### Patch Changes

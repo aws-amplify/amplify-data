@@ -1089,6 +1089,541 @@ describe('CustomOperation transform', () => {
     });
   });
 
+  describe('custom operations with custom types and refs', () => {
+    test('custom operation query has inline custom type argument', () => {
+      const s = a
+        .schema({
+          inlineCustomType: a
+            .query()
+            .arguments({
+              arg: a.customType({
+                field: a.string(),
+              }),
+            })
+            .returns(a.string())
+            .handler(a.handler.function('myFunc')),
+        })
+        .authorization((allow) => allow.publicApiKey());
+
+      const result = s.transform().schema;
+
+      expect(result).toMatchSnapshot();
+    });
+
+    test('custom operation query has ref to custom type argument', () => {
+      const s = a
+        .schema({
+          post: a.customType({
+            field: a.string(),
+          }),
+          refCustomType: a
+            .query()
+            .arguments({ arg: a.ref('post') })
+            .returns(a.string())
+            .handler(a.handler.function('myFunc')),
+        })
+        .authorization((allow) => allow.publicApiKey());
+
+      const result = s.transform().schema;
+
+      expect(result).toMatchSnapshot();
+    });
+
+    test('custom operation mutation has inline custom type argument', () => {
+      const s = a
+        .schema({
+          inlineCustomType: a
+            .mutation()
+            .arguments({
+              arg: a.customType({
+                field: a.string(),
+              }),
+            })
+            .returns(a.string())
+            .handler(a.handler.function('myFunc')),
+        })
+        .authorization((allow) => allow.publicApiKey());
+
+      const result = s.transform().schema;
+
+      expect(result).toMatchSnapshot();
+    });
+
+    test('custom operation mutation has ref to custom type argument', () => {
+      const s = a
+        .schema({
+          post: a.customType({
+            field: a.string(),
+          }),
+          refCustomType: a
+            .mutation()
+            .arguments({ arg: a.ref('post') })
+            .returns(a.string())
+            .handler(a.handler.function('myFunc')),
+        })
+        .authorization((allow) => allow.publicApiKey());
+
+      const result = s.transform().schema;
+
+      expect(result).toMatchSnapshot();
+    });
+
+    test('custom operation mutation with referenced custom type containing enum ref', () => {
+      const s = a
+        .schema({
+          post: a.customType({
+            field: a.string(),
+            enumField: a.ref('values'),
+          }),
+          values: a.enum(['VALUE1', 'VALUE2']),
+          refCustomType: a
+            .mutation()
+            .arguments({ arg: a.ref('post') })
+            .returns(a.string())
+            .handler(a.handler.function('myFunc')),
+        })
+        .authorization((allow) => allow.publicApiKey());
+
+      const result = s.transform().schema;
+
+      expect(result).toMatchSnapshot();
+    });
+
+    test('custom operation query with ref to enum', () => {
+      const s = a
+        .schema({
+          options: a.enum(['OPTION1', 'OPTION2']),
+          post: a
+            .query()
+            .arguments({ arg: a.ref('options') })
+            .returns(a.string())
+            .handler(a.handler.function('myFunc')),
+        })
+        .authorization((allow) => allow.publicApiKey());
+
+      const result = s.transform().schema;
+
+      expect(result).toMatchSnapshot();
+    });
+
+    test('custom operation query with inline enum', () => {
+      const s = a
+        .schema({
+          customOperation: a
+            .query()
+            .arguments({
+              arg: a.enum(['PENDING', 'APPROVED', 'REJECTED']),
+            })
+            .returns(a.string())
+            .handler(a.handler.function('myFunc')),
+        })
+        .authorization((allow) => allow.publicApiKey());
+
+      const result = s.transform().schema;
+
+      expect(result).toMatchSnapshot();
+    });
+
+    test('custom operation query with enum in inline custom type argument', () => {
+      const s = a
+        .schema({
+          inlineCustomType: a
+            .query()
+            .arguments({
+              arg: a.customType({
+                name: a.string(),
+                status: a.enum(['ACTIVE', 'INACTIVE']),
+              }),
+            })
+            .returns(a.string())
+            .handler(a.handler.function('myFunc')),
+        })
+        .authorization((allow) => allow.publicApiKey());
+
+      const result = s.transform().schema;
+
+      expect(result).toMatchSnapshot();
+      expect(result).toContain('enum InlineCustomTypeArgStatus');
+      expect(result).toContain('input InlineCustomTypeArgInput');
+      expect(result).toContain(
+        'inlineCustomType(arg: InlineCustomTypeArgInput): String',
+      );
+    });
+
+    test('custom operation query with enum in referenced custom type argument', () => {
+      const s = a
+        .schema({
+          post: a.customType({
+            name: a.string(),
+            status: a.enum(['NEW', 'IN_PROGRESS', 'COMPLETED']),
+          }),
+          refCustomType: a
+            .query()
+            .arguments({
+              arg: a.ref('post'),
+            })
+            .returns(a.string())
+            .handler(a.handler.function('myFunc')),
+        })
+        .authorization((allow) => allow.publicApiKey());
+
+      const result = s.transform().schema;
+
+      expect(result).toMatchSnapshot();
+      expect(result).toContain('enum PostStatus');
+      expect(result).toContain('input postInput');
+      expect(result).toContain('refCustomType(arg: postInput): String');
+    });
+
+    test('custom operation query with ref to nested custom type argument', () => {
+      const s = a
+        .schema({
+          post: a.customType({
+            inner: a.customType({
+              filter: a.string().required(),
+              e1: a.enum(['a', 'b', 'c']),
+            }),
+          }),
+          fcnCall: a
+            .query()
+            .arguments({
+              arg: a.ref('post'),
+            })
+            .returns(a.string())
+            .handler(a.handler.function('myFunc')),
+        })
+        .authorization((allow) => allow.publicApiKey());
+
+      const result = s.transform().schema;
+
+      expect(result).toMatchSnapshot();
+      expect(result).toContain('enum PostInnerE1');
+      expect(result).toContain('input PostInnerInput');
+      expect(result).toContain('input postInput');
+      expect(result).toContain('fcnCall(arg: postInput)');
+    });
+
+    test('custom operation mutation with multiple references to the same custom type', () => {
+      const s = a
+        .schema({
+          post: a.customType({
+            name: a.string(),
+            number: a.integer(),
+          }),
+          refCustomType: a
+            .mutation()
+            .arguments({
+              arg1: a.ref('post'),
+              arg2: a.ref('post'),
+            })
+            .returns(a.string())
+            .handler(a.handler.function('myFunc')),
+        })
+        .authorization((allow) => allow.publicApiKey());
+
+      const result = s.transform().schema;
+
+      expect(result).toMatchSnapshot();
+      expect(result).toContain('input postInput');
+      expect(result).toContain(
+        'refCustomType(arg1: postInput, arg2: postInput)',
+      );
+    });
+
+    test('multiple custom operations referencing the same custom type', () => {
+      const s = a
+        .schema({
+          post: a.customType({
+            name: a.string(),
+            number: a.integer(),
+          }),
+          fnCall1: a
+            .mutation()
+            .arguments({
+              arg: a.ref('post'),
+            })
+            .returns(a.string())
+            .handler(a.handler.function('myFunc')),
+          fnCall2: a
+            .mutation()
+            .arguments({
+              arg: a.ref('post'),
+            })
+            .returns(a.string())
+            .handler(a.handler.function('myFunc')),
+        })
+        .authorization((allow) => allow.publicApiKey());
+
+      const result = s.transform().schema;
+
+      expect(result).toMatchSnapshot();
+      expect(result).toContain('input postInput');
+      expect(result).toContain('fnCall1(arg: postInput)');
+      expect(result).toContain('fnCall2(arg: postInput)');
+    });
+
+    test('custom operation with inline custom type containing reference to another custom type', () => {
+      const s = a
+        .schema({
+          post: a.customType({
+            name: a.string(),
+          }),
+          fnCall: a
+            .mutation()
+            .arguments({
+              arg: a.customType({
+                name: a.string(),
+                status: a.ref('post'),
+              }),
+            })
+            .returns(a.string())
+            .handler(a.handler.function('myFunc')),
+        })
+        .authorization((allow) => allow.publicApiKey());
+
+      const result = s.transform().schema;
+
+      expect(result).toMatchSnapshot();
+      expect(result).toContain('input postInput');
+      expect(result).toContain('input FnCallArgInput');
+      expect(result).toContain('fnCall(arg: FnCallArgInput)');
+    });
+
+    test('custom operation with ref to custom type with self-referencing field', () => {
+      const s = a
+        .schema({
+          post: a.customType({
+            value: a.string(),
+            child: a.ref('post'),
+          }),
+
+          inlineCustomType: a
+            .mutation()
+            .arguments({
+              arg: a.ref('post'),
+            })
+            .returns(a.string())
+            .handler(a.handler.function('myFunc')),
+        })
+        .authorization((allow) => allow.publicApiKey());
+
+      const result = s.transform().schema;
+
+      expect(result).toMatchSnapshot();
+      expect(result).toContain('input postInput');
+      expect(result).toContain('inlineCustomType(arg: postInput)');
+    });
+
+    test('custom operation with inline custom type referencing self-referential type', () => {
+      const s = a
+        .schema({
+          post: a.customType({
+            value: a.string(),
+            child: a.ref('post'),
+          }),
+
+          inlineCustomType: a
+            .mutation()
+            .arguments({
+              arg: a.customType({
+                inner: a.ref('post'),
+              }),
+            })
+            .returns(a.string())
+            .handler(a.handler.function('myFunc')),
+        })
+        .authorization((allow) => allow.publicApiKey());
+
+      const result = s.transform().schema;
+
+      expect(result).toMatchSnapshot();
+      expect(result).toContain('input postInput');
+      expect(result).toContain('input InlineCustomTypeArgInput');
+      expect(result).toContain(
+        'inlineCustomType(arg: InlineCustomTypeArgInput)',
+      );
+    });
+
+    test('custom operation with circular references between custom types', () => {
+      const s = a
+        .schema({
+          post: a.customType({
+            value: a.string(),
+            child: a.ref('update'),
+          }),
+
+          update: a.customType({
+            title: a.string(),
+            field: a.ref('post'),
+          }),
+          inlineCustomType: a
+            .mutation()
+            .arguments({
+              arg: a.customType({
+                inner: a.ref('post'),
+              }),
+            })
+            .returns(a.string())
+            .handler(a.handler.function('myFunc')),
+        })
+        .authorization((allow) => allow.publicApiKey());
+
+      const result = s.transform().schema;
+
+      expect(result).toMatchSnapshot();
+      expect(result).toContain('input updateInput');
+      expect(result).toContain('input postInput');
+      expect(result).toContain('input InlineCustomTypeArgInput');
+      expect(result).toContain(
+        'inlineCustomType(arg: InlineCustomTypeArgInput)',
+      );
+    });
+
+    test('custom operation subscription has inline custom type argument', () => {
+      const s = a
+        .schema({
+          mutationCustomOps: a
+            .mutation()
+            .arguments({
+              arg: a.string(),
+            })
+            .returns(a.string())
+            .handler(a.handler.function('myFunc')),
+          inlineCustomTypeSub: a
+            .subscription()
+            .arguments({
+              arg: a.customType({
+                field: a.string(),
+              }),
+            })
+            .handler(a.handler.function('myFunc'))
+            .for(a.ref('mutationCustomOps')),
+        })
+        .authorization((allow) => allow.publicApiKey());
+
+      const result = s.transform().schema;
+
+      expect(result).toMatchSnapshot();
+    });
+
+    test('custom operation subscription has ref to a custom type argument', () => {
+      const s = a
+        .schema({
+          mutationCustomOps: a
+            .mutation()
+            .arguments({
+              arg: a.string(),
+            })
+            .returns(a.string())
+            .handler(a.handler.function('myFunc')),
+
+          post: a.customType({
+            title: a.string(),
+          }),
+
+          refCustomTypeSub: a
+            .subscription()
+            .arguments({
+              arg: a.ref('post'),
+            })
+            .handler(a.handler.function('myFunc'))
+            .for(a.ref('mutationCustomOps')),
+        })
+        .authorization((allow) => allow.publicApiKey());
+
+      const result = s.transform().schema;
+      expect(result).toMatchSnapshot();
+    });
+
+    test('custom operation subscription referencing an enum', () => {
+      const s = a
+        .schema({
+          mutationCustomOps: a
+            .mutation()
+            .arguments({
+              arg: a.string(),
+            })
+            .returns(a.string())
+            .handler(a.handler.function('myFunc')),
+
+          statusEnum: a.enum(['OPEN', 'CLOSED']),
+
+          enumRefSub: a
+            .subscription()
+            .arguments({
+              arg: a.ref('statusEnum'),
+            })
+            .handler(a.handler.function('myFunc'))
+            .for(a.ref('mutationCustomOps')),
+        })
+        .authorization((allow) => allow.publicApiKey());
+
+      const result = s.transform().schema;
+      expect(result).toMatchSnapshot();
+    });
+
+    test('custom operation subscription with nested custom type argument', () => {
+      const s = a
+        .schema({
+          mutationCustomOps: a
+            .mutation()
+            .arguments({
+              arg: a.string(),
+            })
+            .returns(a.string())
+            .handler(a.handler.function('myFunc')),
+
+          nestedType: a.customType({
+            post: a.customType({
+              inner: a.string(),
+            }),
+          }),
+
+          nestedSub: a
+            .subscription()
+            .arguments({
+              arg: a.ref('nestedType'),
+            })
+            .handler(a.handler.function('myFunc'))
+            .for(a.ref('mutationCustomOps')),
+        })
+        .authorization((allow) => allow.publicApiKey());
+
+      const result = s.transform().schema;
+      expect(result).toMatchSnapshot();
+    });
+
+    test('custom operation subscription with multiple references to the same custom type', () => {
+      const s = a
+        .schema({
+          mutationCustomOps: a
+            .mutation()
+            .arguments({
+              arg: a.string(),
+            })
+            .returns(a.string())
+            .handler(a.handler.function('myFunc')),
+
+          post: a.customType({
+            name: a.string(),
+          }),
+
+          multiRefSub: a
+            .subscription()
+            .arguments({
+              arg1: a.ref('post'),
+              arg2: a.ref('post'),
+            })
+            .handler(a.handler.function('myFunc'))
+            .for(a.ref('mutationCustomOps')),
+        })
+        .authorization((allow) => allow.publicApiKey());
+
+      const result = s.transform().schema;
+      expect(result).toMatchSnapshot();
+    });
+  });
+
   const fakeSecret = () => ({}) as any;
 
   const datasourceConfigMySQL = {
