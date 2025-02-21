@@ -1588,7 +1588,7 @@ const schemaPreprocessor = (
             customTypeInheritedAuthRules[typeName],
             false,
           );
-          customAuth += authString;
+          customAuth += ` ${authString}`;
         }
 
         const authFields = {};
@@ -1613,7 +1613,7 @@ const schemaPreprocessor = (
 
         const joined = gqlFields.join('\n  ');
 
-        const model = `type ${typeName} ${customAuth}\n{\n  ${joined}\n}`;
+        const model = `type ${typeName} ${customAuth.trim()}\n{\n  ${joined}\n}`;
         gqlModels.push(model);
       } else if (isCustomOperation(typeDef)) {
         // TODO: add generation route logic.

@@ -26,7 +26,7 @@ type Query {
 `;
 
 exports[`ai routes conversations 1`] = `
-"type Profile @aws_api_key@aws_api_key
+"type Profile @aws_api_key @aws_api_key
 {
   value: Int
   unit: String
@@ -257,7 +257,7 @@ enum PostStatus {
   published
 }
 
-type PostMeta @aws_cognito_user_pools@aws_cognito_user_pools
+type PostMeta @aws_cognito_user_pools @aws_cognito_user_pools
 {
   viewCount: Int
   approvedOn: AWSDate
