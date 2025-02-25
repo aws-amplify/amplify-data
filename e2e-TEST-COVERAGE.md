@@ -2,15 +2,15 @@
 
 The following table outlines the current e2e test coverage for various runtimes and environments in our project:
 
-| Runtime/Environment | Status                                        |
-| ------------------- | --------------------------------------------- |
-| Chrome              | [✅](.github/workflows/callable-e2e-test.yml) |
-| Node                | [✅](packages/e2e-tests/node/jest.config.ts)  |
-| Webpack             | ⚠️                                            |
-| Rollup              | ⚠️                                            |
-| Metro               | ⚠️                                            |
-| React Natives       | ⚠️                                            |
-| Vite                | [✅] (packages/e2e-tests/vite/vite.config.ts) |
+| Runtime/Environment | Status                                             |
+| ------------------- | -------------------------------------------------- |
+| Chrome              | [✅](.github/workflows/callable-e2e-test.yml)      |
+| Node                | [✅](packages/e2e-tests/node/jest.config.ts)       |
+| Webpack             | [✅](packages/e2e-tests/webpack/webpack.config.js) |
+| Rollup              | ⚠️                                                 |
+| Metro               | ⚠️                                                 |
+| React Natives       | ⚠️                                                 |
+| Vite                | [✅] (packages/e2e-tests/vite/vite.config.ts)      |
 
 Legend:
 
