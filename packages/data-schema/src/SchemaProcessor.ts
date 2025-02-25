@@ -1580,13 +1580,15 @@ const schemaPreprocessor = (
           ),
         );
 
-        let customAuth = '';
+        const { authString } = mapToNativeAppSyncAuthDirectives(mostRelevantAuthRules, false);
+
+        let customAuth = authString.split(' ');
         if (typeName in customTypeInheritedAuthRules) {
           const { authString } = mapToNativeAppSyncAuthDirectives(
             customTypeInheritedAuthRules[typeName],
             false,
           );
-          customAuth = authString;
+          customAuth = customAuth.concat(authString.split(' '));
         }
 
         const authFields = {};
@@ -1611,7 +1613,9 @@ const schemaPreprocessor = (
 
         const joined = gqlFields.join('\n  ');
 
-        const model = `type ${typeName} ${customAuth}\n{\n  ${joined}\n}`;
+        const customAuthRules = Array.from(new Set(customAuth)).join(' ').trim()
+
+        const model = `type ${typeName} ${customAuthRules}\n{\n  ${joined}\n}`;
         gqlModels.push(model);
       } else if (isCustomOperation(typeDef)) {
         // TODO: add generation route logic.
