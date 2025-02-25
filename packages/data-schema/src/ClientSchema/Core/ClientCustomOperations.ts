@@ -9,8 +9,8 @@ import type { AppSyncResolverHandler } from 'aws-lambda';
 import type { CustomType } from '../../CustomType';
 import type { FieldTypesOfCustomType } from '../../MappedTypes/ResolveSchema';
 import type { ResolveRef } from '../utilities/ResolveRef';
-import type { EnumType } from '../../EnumType';
 import { ClientSchemaProperty } from './ClientSchemaProperty';
+import type { ResolveFields } from '../utilities';
 
 type CustomOperationSubType<Op extends CustomOperationParamShape> =
   `custom${Op['typeName']}`;
@@ -38,7 +38,7 @@ export interface ClientCustomOperation<
    * ```
    */
   functionHandler: AppSyncResolverHandler<
-    CustomOpArguments<Op>,
+    CustomOpArguments<Op, RefBag>,
     // If the final handler is an async function, the Schema['fieldname']['functionhandler']
     // should have a return type of `void`. This only applies to `functionHandler` and not
     // `returnType` because `returnType` determines the type returned by the mutation / query
@@ -60,7 +60,7 @@ export interface ClientCustomOperation<
    * }
    * ```
    */
-  args: CustomOpArguments<Op>;
+  args: CustomOpArguments<Op, RefBag>;
 
   /**
    * The return type expected by a lambda function handler.
@@ -84,19 +84,18 @@ export interface ClientCustomOperation<
 
 /**
  * Digs out custom operation arguments, mapped to the intended graphql types.
+ * using the existing ResolveFields utility type. This handles:
+ * - Basic scalar fields
+ * - Enum types
+ * - Custom types (including nested structures)
+ * - Reference types
  */
-type CustomOpArguments<Shape extends CustomOperationParamShape> =
-  Shape['arguments'] extends null
-    ? never
-    : ResolveFieldRequirements<{
-        [FieldName in keyof Shape['arguments']]: Shape['arguments'][FieldName] extends BaseModelField<
-          infer R
-        >
-          ? R
-          : Shape['arguments'][FieldName] extends EnumType<infer Values>
-            ? Values[number] | null
-            : never;
-      }>;
+type CustomOpArguments<
+  Shape extends CustomOperationParamShape,
+  RefBag extends Record<string, any> = any,
+> = Shape['arguments'] extends null
+  ? never
+  : ResolveFields<RefBag, Shape['arguments']>;
 
 /**
  * Removes `null | undefined` from the return type if the operation is a subscription,
