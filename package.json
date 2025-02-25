@@ -44,6 +44,7 @@
     "stop:npm-proxy": "tsx scripts/stop_npm_proxy.ts",
     "test": "turbo run test && npm run test:scripts && npm run e2e-exports",
     "test:scripts": "npx jest scripts/",
+    "ci:test": "./scripts/run_test.sh",
     "turbo": "turbo",
     "typedoc": "typedoc",
     "vend": "npm run start:npm-proxy && npm run publish:local"
