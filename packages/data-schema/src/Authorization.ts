@@ -721,7 +721,7 @@ export type CustomOperationAuthorizationCallback<AuthRuleType extends AnyAuthori
 ) => AuthRuleType | AuthRuleType[];
 
 export type FieldAuthorizationCallback<AuthRuleType extends AnyAuthorization> = (
-  allow: Omit<AllowModifier, 'resource'>,
+  allow: BaseAllowModifier,
 ) => AuthRuleType | AuthRuleType[];
 
 export type ModelAuthorizationCallback<AuthRuleType extends AnyAuthorization> = (
@@ -734,7 +734,7 @@ export type ReferenceAuthorizationCallback<AuthRuleType extends AnyAuthorization
 
 export type RelationshipAuthorizationCallback<AuthRuleType extends AnyAuthorization> = (
   allow: AllowModifier
-) => AuthRuleType | AuthRuleType[]
+) => AuthRuleType | AuthRuleType[];
 
 export type SchemaAuthorizationCallback<AuthRuleType extends SchemaAuthorization<any, any, any>> = (
   allow: AllowModifier
