@@ -1,24 +1,11 @@
-name: E2E Test
-run-name: e2e.${{ inputs.test_name }}
+name: Local E2E Tests
 
-on:
-  workflow_call:
-    inputs:
-      test_name:
-        required: true
-        type: string
-      framework:
-        required: true
-        type: string
-      timeout_minutes:
-        required: true
-        type: number
+on: workflow_call
 
 jobs:
-  e2e-test:
-    name: E2E ${{ inputs.test_name }}
+  unit_test:
+    name: Local E2E Tests
     runs-on: ubuntu-latest
-    timeout-minutes: ${{ inputs.timeout_minutes }}
 
     steps:
       - name: Checkout repository
@@ -27,19 +14,15 @@ jobs:
           path: amplify-data
       - name: Setup node and build the repository
         uses: ./amplify-data/.github/actions/node-and-build
-      - name: Run e2e tests for ${{ inputs.test_name }} dev
-        shell: bash
+      - name: Write Amplify outputs
         working-directory: ./amplify-data
         env:
-          E2E_FRAMEWORK: ${{ inputs.framework }}
-          E2E_TEST_NAME: ${{ inputs.test_name }}
+          AMPLIFY_OUTPUTS_BASE64: ${{ secrets.E2E_NODE_AMPLIFY_OUTPUTS_BASE64 }}
         run: |
-          npm run ci:test dev
-      - name: Run e2e tests for ${{ inputs.test_name }} prod
-        shell: bash
+          echo $AMPLIFY_OUTPUTS_BASE64 | base64 --decode > ./packages/e2e-tests/node/amplify_outputs.json
+      - name: Install Node Sample Dependencies
         working-directory: ./amplify-data
-        env:
-          E2E_FRAMEWORK: ${{ inputs.framework }}
-          E2E_TEST_NAME: ${{ inputs.test_name }}
-        run: |
-          npm run ci:test prod
+        run: npm run e2e-node:install
+      - name: Run tests
+        working-directory: ./amplify-data
+        run: npm run e2e-node:test
