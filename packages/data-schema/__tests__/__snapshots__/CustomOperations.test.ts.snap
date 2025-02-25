@@ -1,5 +1,391 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`CustomOperation transform custom operations with custom types and refs custom operation mutation has inline custom type argument 1`] = `
+"input InlineCustomTypeArgInput {
+  field: String
+}
+
+type Mutation {
+  inlineCustomType(arg: InlineCustomTypeArgInput): String @function(name: "myFunc") @auth(rules: [{allow: public, provider: apiKey}])
+}"
+`;
+
+exports[`CustomOperation transform custom operations with custom types and refs custom operation mutation has ref to custom type argument 1`] = `
+"type post 
+{
+  field: String
+}
+
+input postInput {
+  field: String
+}
+
+type Mutation {
+  refCustomType(arg: postInput): String @function(name: "myFunc") @auth(rules: [{allow: public, provider: apiKey}])
+}"
+`;
+
+exports[`CustomOperation transform custom operations with custom types and refs custom operation mutation with multiple references to the same custom type 1`] = `
+"type post 
+{
+  name: String
+  number: Int
+}
+
+input postInput {
+  name: String
+  number: Int
+}
+
+type Mutation {
+  refCustomType(arg1: postInput, arg2: postInput): String @function(name: "myFunc") @auth(rules: [{allow: public, provider: apiKey}])
+}"
+`;
+
+exports[`CustomOperation transform custom operations with custom types and refs custom operation mutation with referenced custom type containing enum ref 1`] = `
+"enum values {
+  VALUE1
+  VALUE2
+}
+
+type post 
+{
+  field: String
+  enumField: values
+}
+
+input postInput {
+  field: String
+  enumField: values
+}
+
+type Mutation {
+  refCustomType(arg: postInput): String @function(name: "myFunc") @auth(rules: [{allow: public, provider: apiKey}])
+}"
+`;
+
+exports[`CustomOperation transform custom operations with custom types and refs custom operation query has inline custom type argument 1`] = `
+"input InlineCustomTypeArgInput {
+  field: String
+}
+
+type Query {
+  inlineCustomType(arg: InlineCustomTypeArgInput): String @function(name: "myFunc") @auth(rules: [{allow: public, provider: apiKey}])
+}"
+`;
+
+exports[`CustomOperation transform custom operations with custom types and refs custom operation query has ref to custom type argument 1`] = `
+"type post 
+{
+  field: String
+}
+
+input postInput {
+  field: String
+}
+
+type Query {
+  refCustomType(arg: postInput): String @function(name: "myFunc") @auth(rules: [{allow: public, provider: apiKey}])
+}"
+`;
+
+exports[`CustomOperation transform custom operations with custom types and refs custom operation query with enum in inline custom type argument 1`] = `
+"enum InlineCustomTypeArgStatus {
+  ACTIVE
+  INACTIVE
+}
+
+input InlineCustomTypeArgInput {
+  name: String
+  status: InlineCustomTypeArgStatus
+}
+
+type Query {
+  inlineCustomType(arg: InlineCustomTypeArgInput): String @function(name: "myFunc") @auth(rules: [{allow: public, provider: apiKey}])
+}"
+`;
+
+exports[`CustomOperation transform custom operations with custom types and refs custom operation query with enum in referenced custom type argument 1`] = `
+"type post 
+{
+  name: String
+  status: PostStatus
+}
+
+enum PostStatus {
+  NEW
+  IN_PROGRESS
+  COMPLETED
+}
+
+input postInput {
+  name: String
+  status: PostStatus
+}
+
+type Query {
+  refCustomType(arg: postInput): String @function(name: "myFunc") @auth(rules: [{allow: public, provider: apiKey}])
+}"
+`;
+
+exports[`CustomOperation transform custom operations with custom types and refs custom operation query with inline enum 1`] = `
+"enum CustomOperationArg {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+type Query {
+  customOperation(arg: CustomOperationArg): String @function(name: "myFunc") @auth(rules: [{allow: public, provider: apiKey}])
+}"
+`;
+
+exports[`CustomOperation transform custom operations with custom types and refs custom operation query with ref to enum 1`] = `
+"enum options {
+  OPTION1
+  OPTION2
+}
+
+type Query {
+  post(arg: options): String @function(name: "myFunc") @auth(rules: [{allow: public, provider: apiKey}])
+}"
+`;
+
+exports[`CustomOperation transform custom operations with custom types and refs custom operation query with ref to nested custom type argument 1`] = `
+"type post 
+{
+  inner: PostInner
+}
+
+type PostInner 
+{
+  filter: String!
+  e1: PostInnerE1
+}
+
+enum PostInnerE1 {
+  a
+  b
+  c
+}
+
+input PostInnerInput {
+  filter: String!
+  e1: PostInnerE1
+}
+
+input postInput {
+  inner: PostInnerInput
+}
+
+type Query {
+  fcnCall(arg: postInput): String @function(name: "myFunc") @auth(rules: [{allow: public, provider: apiKey}])
+}"
+`;
+
+exports[`CustomOperation transform custom operations with custom types and refs custom operation subscription has inline custom type argument 1`] = `
+"input InlineCustomTypeSubArgInput {
+  field: String
+}
+
+type Mutation {
+  mutationCustomOps(arg: String): String @function(name: "myFunc") @auth(rules: [{allow: public, provider: apiKey}])
+}
+
+type Subscription {
+  inlineCustomTypeSub(arg: InlineCustomTypeSubArgInput): String @function(name: "myFunc") @aws_subscribe(mutations: ["mutationCustomOps"]) @auth(rules: [{allow: public, provider: apiKey}])
+}"
+`;
+
+exports[`CustomOperation transform custom operations with custom types and refs custom operation subscription has ref to a custom type argument 1`] = `
+"type post 
+{
+  title: String
+}
+
+input postInput {
+  title: String
+}
+
+type Mutation {
+  mutationCustomOps(arg: String): String @function(name: "myFunc") @auth(rules: [{allow: public, provider: apiKey}])
+}
+
+type Subscription {
+  refCustomTypeSub(arg: postInput): String @function(name: "myFunc") @aws_subscribe(mutations: ["mutationCustomOps"]) @auth(rules: [{allow: public, provider: apiKey}])
+}"
+`;
+
+exports[`CustomOperation transform custom operations with custom types and refs custom operation subscription referencing an enum 1`] = `
+"enum statusEnum {
+  OPEN
+  CLOSED
+}
+
+type Mutation {
+  mutationCustomOps(arg: String): String @function(name: "myFunc") @auth(rules: [{allow: public, provider: apiKey}])
+}
+
+type Subscription {
+  enumRefSub(arg: statusEnum): String @function(name: "myFunc") @aws_subscribe(mutations: ["mutationCustomOps"]) @auth(rules: [{allow: public, provider: apiKey}])
+}"
+`;
+
+exports[`CustomOperation transform custom operations with custom types and refs custom operation subscription with multiple references to the same custom type 1`] = `
+"type post 
+{
+  name: String
+}
+
+input postInput {
+  name: String
+}
+
+type Mutation {
+  mutationCustomOps(arg: String): String @function(name: "myFunc") @auth(rules: [{allow: public, provider: apiKey}])
+}
+
+type Subscription {
+  multiRefSub(arg1: postInput, arg2: postInput): String @function(name: "myFunc") @aws_subscribe(mutations: ["mutationCustomOps"]) @auth(rules: [{allow: public, provider: apiKey}])
+}"
+`;
+
+exports[`CustomOperation transform custom operations with custom types and refs custom operation subscription with nested custom type argument 1`] = `
+"type nestedType 
+{
+  post: NestedTypePost
+}
+
+type NestedTypePost 
+{
+  inner: String
+}
+
+input NestedTypePostInput {
+  inner: String
+}
+
+input nestedTypeInput {
+  post: NestedTypePostInput
+}
+
+type Mutation {
+  mutationCustomOps(arg: String): String @function(name: "myFunc") @auth(rules: [{allow: public, provider: apiKey}])
+}
+
+type Subscription {
+  nestedSub(arg: nestedTypeInput): String @function(name: "myFunc") @aws_subscribe(mutations: ["mutationCustomOps"]) @auth(rules: [{allow: public, provider: apiKey}])
+}"
+`;
+
+exports[`CustomOperation transform custom operations with custom types and refs custom operation with circular references between custom types 1`] = `
+"type post 
+{
+  value: String
+  child: update
+}
+
+type update 
+{
+  title: String
+  field: post
+}
+
+input updateInput {
+  title: String
+  field: postInput
+}
+
+input postInput {
+  value: String
+  child: updateInput
+}
+
+input InlineCustomTypeArgInput {
+  inner: postInput
+}
+
+type Mutation {
+  inlineCustomType(arg: InlineCustomTypeArgInput): String @function(name: "myFunc") @auth(rules: [{allow: public, provider: apiKey}])
+}"
+`;
+
+exports[`CustomOperation transform custom operations with custom types and refs custom operation with inline custom type containing reference to another custom type 1`] = `
+"type post 
+{
+  name: String
+}
+
+input postInput {
+  name: String
+}
+
+input FnCallArgInput {
+  name: String
+  status: postInput
+}
+
+type Mutation {
+  fnCall(arg: FnCallArgInput): String @function(name: "myFunc") @auth(rules: [{allow: public, provider: apiKey}])
+}"
+`;
+
+exports[`CustomOperation transform custom operations with custom types and refs custom operation with inline custom type referencing self-referential type 1`] = `
+"type post 
+{
+  value: String
+  child: post
+}
+
+input postInput {
+  value: String
+  child: postInput
+}
+
+input InlineCustomTypeArgInput {
+  inner: postInput
+}
+
+type Mutation {
+  inlineCustomType(arg: InlineCustomTypeArgInput): String @function(name: "myFunc") @auth(rules: [{allow: public, provider: apiKey}])
+}"
+`;
+
+exports[`CustomOperation transform custom operations with custom types and refs custom operation with ref to custom type with self-referencing field 1`] = `
+"type post 
+{
+  value: String
+  child: post
+}
+
+input postInput {
+  value: String
+  child: postInput
+}
+
+type Mutation {
+  inlineCustomType(arg: postInput): String @function(name: "myFunc") @auth(rules: [{allow: public, provider: apiKey}])
+}"
+`;
+
+exports[`CustomOperation transform custom operations with custom types and refs multiple custom operations referencing the same custom type 1`] = `
+"type post 
+{
+  name: String
+  number: Int
+}
+
+input postInput {
+  name: String
+  number: Int
+}
+
+type Mutation {
+  fnCall1(arg: postInput): String @function(name: "myFunc") @auth(rules: [{allow: public, provider: apiKey}])
+  fnCall2(arg: postInput): String @function(name: "myFunc") @auth(rules: [{allow: public, provider: apiKey}])
+}"
+`;
+
 exports[`CustomOperation transform dynamo schema Custom Mutation w required arg and enum 1`] = `
 "type Post @model @auth(rules: [{allow: private}])
 {

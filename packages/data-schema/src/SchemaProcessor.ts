@@ -347,6 +347,7 @@ function customOperationToGql(
   customTypeAuthRules: CustomTypeAuthRules;
   lambdaFunctionDefinition: LambdaFunctionDefinition;
   customSqlDataSourceStrategy: CustomSqlDataSourceStrategy | undefined;
+  inputTypes: { name: string; fields: Record<string, any> }[];
 } {
   const {
     arguments: fieldArgs,
@@ -442,15 +443,21 @@ function customOperationToGql(
     });
   }
 
-  if (Object.keys(fieldArgs).length > 0) {
-    const { gqlFields, implicitTypes: implied } = processFields(
-      typeName,
-      fieldArgs,
-      {},
-      {},
-    );
-    callSignature += `(${gqlFields.join(', ')})`;
-    implicitTypes.push(...implied);
+  const { inputTypes, argDefinitions, collectedEnums } = generateInputTypes(
+    typeName,
+    fieldArgs,
+    getRefType,
+  );
+
+  // Handle collected enums
+  for (const [enumName, enumDef] of collectedEnums) {
+    if (!implicitTypes.some(([name]) => name === enumName)) {
+      implicitTypes.push([enumName, enumDef]);
+    }
+  }
+
+  if (argDefinitions.length > 0) {
+    callSignature += `(${argDefinitions.join(', ')})`;
   }
 
   const handler = handlers && handlers[0];
@@ -550,6 +557,7 @@ function customOperationToGql(
     customTypeAuthRules,
     lambdaFunctionDefinition,
     customSqlDataSourceStrategy,
+    inputTypes,
   };
 }
 
@@ -1316,6 +1324,174 @@ const mergeCustomTypeAuthRules = (
   }
 };
 
+/**
+ * Generates input types for custom operations in the schema.
+ *
+ * Processes operation arguments to create corresponding input types,
+ * handling referenced and inline custom types, enums, and nested structures.
+ * Manages circular references and prevents duplicate processing.
+ *
+ **/
+
+function generateInputTypes(
+  operationName: string,
+  args: Record<string, any>,
+  getRefType: (name: string, referrerName?: string) => GetRef,
+): {
+  inputTypes: { name: string; fields: Record<string, any> }[];
+  argDefinitions: string[];
+  collectedEnums: Map<string, any>;
+} {
+  const inputTypes: {
+    name: string;
+    fields: Record<string, any>;
+  }[] = [];
+  const argDefinitions: string[] = [];
+  const collectedEnums: Map<string, any> = new Map();
+  const processedTypes = new Set<string>(); // Track processed types to avoid duplicates
+
+  const processNonScalarFields = (
+    fields: Record<string, any>,
+    originalTypeName: string,
+    isParentRef: boolean = false,
+    parentChain: string[] = [], // Used to detect circular references
+  ): Record<string, any> => {
+    const processedFields: Record<string, any> = {};
+    for (const [fieldName, fieldDef] of Object.entries(fields)) {
+      if (isRefField(fieldDef)) {
+        const refType = getRefType(fieldDef.data.link, originalTypeName);
+        if (refType.type === 'CustomType') {
+          const nestedInputTypeName = `${fieldDef.data.link}Input`;
+          processedFields[fieldName] = {
+            data: { type: 'ref', link: nestedInputTypeName },
+          };
+
+          // Process the nested type if it hasn't been processed and isn't a circular reference
+          if (
+            !parentChain.includes(nestedInputTypeName) &&
+            !processedTypes.has(nestedInputTypeName)
+          ) {
+            processedTypes.add(nestedInputTypeName);
+            const nestedFields = processNonScalarFields(
+              refType.def.data.fields,
+              fieldDef.data.link,
+              true,
+              [...parentChain, nestedInputTypeName],
+            );
+            inputTypes.push({
+              name: nestedInputTypeName,
+              fields: nestedFields,
+            });
+          }
+        } else if (refType.type === 'Enum') {
+          processedFields[fieldName] = {
+            data: { type: 'ref', link: fieldDef.data.link },
+          };
+        } else {
+          throw new Error(
+            `Unsupported reference type '${refType.type}' for field '${fieldName}'. ` +
+              `Only references to CustomType and Enum are supported.`,
+          );
+        }
+      } else if (isCustomType(fieldDef)) {
+        // Handle inline custom types
+        const nestedInputTypeName = `${capitalize(originalTypeName)}${capitalize(fieldName)}Input`;
+        processedFields[fieldName] = {
+          data: { type: 'ref', link: nestedInputTypeName },
+        };
+
+        if (!processedTypes.has(nestedInputTypeName)) {
+          processedTypes.add(nestedInputTypeName);
+          const nestedFields = processNonScalarFields(
+            fieldDef.data.fields,
+            `${capitalize(originalTypeName)}${capitalize(fieldName)}`,
+            isParentRef,
+            [...parentChain, nestedInputTypeName],
+          );
+          inputTypes.push({
+            name: nestedInputTypeName,
+            fields: nestedFields,
+          });
+        }
+      } else if (isEnumType(fieldDef)) {
+        // Handle enum types
+        const enumName = `${capitalize(originalTypeName)}${capitalize(fieldName)}`;
+        if (!collectedEnums.has(enumName) && !isParentRef) {
+          collectedEnums.set(enumName, fieldDef);
+        }
+        processedFields[fieldName] = { data: { type: 'ref', link: enumName } };
+      } else {
+        processedFields[fieldName] = fieldDef;
+      }
+    }
+    return processedFields;
+  };
+
+  // Process top-level arguments
+  for (const [argName, argDef] of Object.entries(args)) {
+    if (isRefField(argDef)) {
+      const refType = getRefType(argDef.data.link, operationName);
+      if (refType.type === 'CustomType') {
+        const inputTypeName = `${argDef.data.link}Input`;
+        argDefinitions.push(`${argName}: ${inputTypeName}`);
+
+        // Process the input type if it hasn't been processed yet
+        if (!processedTypes.has(inputTypeName)) {
+          processedTypes.add(inputTypeName);
+          const fields = processNonScalarFields(
+            refType.def.data.fields,
+            argDef.data.link,
+            true,
+            [inputTypeName],
+          );
+          inputTypes.push({
+            name: inputTypeName,
+            fields,
+          });
+        }
+      } else if (refType.type === 'Enum') {
+        argDefinitions.push(`${argName}: ${argDef.data.link}`);
+      } else {
+        throw new Error(
+          `Unsupported reference type '${refType.type}' for argument '${argName}' in '${operationName}'. ` +
+            `Only references to CustomType and Enum are supported.`,
+        );
+      }
+    } else if (isEnumType(argDef)) {
+      // Handle top-level enum arguments
+      const enumName = `${capitalize(operationName)}${capitalize(argName)}`;
+      if (!collectedEnums.has(enumName)) {
+        collectedEnums.set(enumName, argDef);
+      }
+      argDefinitions.push(`${argName}: ${enumName}`);
+    } else if (isCustomType(argDef)) {
+      // Handle top-level custom type arguments
+      const inputTypeName = `${capitalize(operationName)}${capitalize(argName)}Input`;
+      argDefinitions.push(`${argName}: ${inputTypeName}`);
+
+      if (!processedTypes.has(inputTypeName)) {
+        processedTypes.add(inputTypeName);
+        const fields = processNonScalarFields(
+          argDef.data.fields,
+          `${capitalize(operationName)}${capitalize(argName)}`,
+          false,
+          [inputTypeName],
+        );
+        inputTypes.push({
+          name: inputTypeName,
+          fields,
+        });
+      }
+    } else if (isScalarField(argDef)) {
+      argDefinitions.push(`${argName}: ${scalarFieldToGql(argDef.data)}`);
+    } else {
+      throw new Error(`Unsupported argument type for ${argName}`);
+    }
+  }
+
+  return { inputTypes, argDefinitions, collectedEnums };
+}
+
 const schemaPreprocessor = (
   schema: InternalSchema,
 ): {
@@ -1326,7 +1502,6 @@ const schemaPreprocessor = (
   customSqlDataSourceStrategies?: CustomSqlDataSourceStrategy[];
 } => {
   const gqlModels: string[] = [];
-
   const customQueries = [];
   const customMutations = [];
   const customSubscriptions = [];
@@ -1374,6 +1549,7 @@ const schemaPreprocessor = (
   );
 
   const getRefType = getRefTypeForSchema(schema);
+  const uniqueInputTypes = new Map<string, Record<string, any>>();
 
   for (const [typeName, typeDef] of topLevelTypes) {
     const mostRelevantAuthRules: Authorization<any, any, any>[] =
@@ -1449,6 +1625,7 @@ const schemaPreprocessor = (
           jsFunctionForField,
           lambdaFunctionDefinition,
           customSqlDataSourceStrategy,
+          inputTypes,
         } = transformCustomOperations(
           typeDef,
           typeName,
@@ -1456,6 +1633,13 @@ const schemaPreprocessor = (
           databaseType,
           getRefType,
         );
+
+        // Process input types without duplicates
+        for (const { name, fields } of inputTypes) {
+          if (!uniqueInputTypes.has(name)) {
+            uniqueInputTypes.set(name, fields);
+          }
+        }
 
         topLevelTypes.push(...implicitTypes);
 
@@ -1542,7 +1726,6 @@ const schemaPreprocessor = (
         undefined,
         databaseEngine,
       );
-
       topLevelTypes.push(...implicitTypes);
 
       const joined = gqlFields.join('\n  ');
@@ -1622,6 +1805,22 @@ const schemaPreprocessor = (
     }
   }
 
+  // Generate input types after processing all custom operations
+  for (const [name, fields] of uniqueInputTypes) {
+    const { gqlFields } = processFields(
+      name,
+      fields,
+      {},
+      {},
+      undefined,
+      undefined,
+      undefined,
+      databaseEngine,
+    );
+    const inputTypeDefinition = `input ${name} {\n  ${gqlFields.join('\n  ')}\n}`;
+    gqlModels.push(inputTypeDefinition);
+  }
+
   const customOperations = {
     queries: customQueries,
     mutations: customMutations,
@@ -1632,7 +1831,6 @@ const schemaPreprocessor = (
   if (shouldAddConversationTypes) {
     gqlModels.push(CONVERSATION_SCHEMA_GRAPHQL_TYPES);
   }
-
   const processedSchema = gqlModels.join('\n\n');
 
   return {
@@ -1935,6 +2133,7 @@ function transformCustomOperations(
     customTypeAuthRules,
     lambdaFunctionDefinition,
     customSqlDataSourceStrategy,
+    inputTypes,
   } = customOperationToGql(
     typeName,
     typeDef,
@@ -1951,6 +2150,7 @@ function transformCustomOperations(
     jsFunctionForField,
     lambdaFunctionDefinition,
     customSqlDataSourceStrategy,
+    inputTypes,
   };
 }
 
