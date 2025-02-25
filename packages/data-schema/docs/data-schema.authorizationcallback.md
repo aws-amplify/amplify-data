@@ -14,7 +14,7 @@ export type AuthorizationCallback<AuthorizationType extends (keyof Authorization
 
 ## Example
 
-const authCallback: AuthorizationCallback = (allow) =<!-- -->&gt; \[ allow.groups(\["example"\]).to(\["read"\]), \];
+const authCallback: a.AuthorizationCallback = (allow) =<!-- -->&gt; \[ allow.guest().to(\["read"\]), allow.owner() \];
 
 const schema = a.schema(<!-- -->{ Post: a.model(<!-- -->{ id: a.id(), title: a.string(), protectedField: a.string().authorization(authCallback), content: a.string(), }<!-- -->).authorization(authCallback), }<!-- -->).authorization(authCallback);
 
