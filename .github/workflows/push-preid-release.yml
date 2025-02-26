@@ -8,7 +8,7 @@ concurrency:
 on:
   push:
     branches:
-      - feat/**/main
+      - feat/vaisshv/feat/vite-e2e-tests/main
 
 jobs:
   prebuild:
