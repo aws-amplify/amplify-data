@@ -8,7 +8,7 @@ concurrency:
 on:
   push:
     branches:
-      - feat/vaisshv-vite-e2e-tests/main
+      - vaisshv/feat/vite-e2e-tests/main
 jobs:
   prebuild:
     runs-on: ubuntu-latest
