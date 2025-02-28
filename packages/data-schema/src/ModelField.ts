@@ -2,6 +2,7 @@ import { brand } from './util';
 import { AllowModifier, Authorization, allow } from './Authorization';
 import type { methodKeyOf, satisfy } from './util/usedMethods.js';
 import type { brandSymbol } from './util/Brand.js';
+import { ValidationRule, createValidationBuilder, ValidationBuilder } from './Validate';
 
 /**
  * Used to "attach" auth types to ModelField without exposing them on the builder.
@@ -52,6 +53,7 @@ type FieldData = {
   arrayRequired: boolean;
   default: undefined | symbol | ModelFieldTypeParamOuter;
   authorization: Authorization<any, any, any>[];
+  validation: ValidationRule[];
 };
 
 type ModelFieldTypeParamInner = string | number | boolean | Date | Json | null;
@@ -83,7 +85,7 @@ export type BaseModelField<
 
 export type UsableModelFieldKey = satisfy<
   methodKeyOf<ModelField>,
-  'required' | 'default' | 'authorization' | 'array'
+  'required' | 'default' | 'authorization' | 'array' | 'validate'
 >;
 
 /**
@@ -121,7 +123,7 @@ export type ModelField<
      */
     array(): ModelField<
       ArrayField<T>,
-      Exclude<UsedMethod, 'required'> | 'array'
+      Exclude<UsedMethod, 'required'> | 'array' | 'validate'
     >;
     // TODO: should be T, but .array breaks this constraint. Fix later
     /**
@@ -140,6 +142,12 @@ export type ModelField<
         allow: Omit<AllowModifier, 'resource'>,
       ) => AuthRuleType | AuthRuleType[],
     ): ModelField<T, UsedMethod | 'authorization', AuthRuleType>;
+    /**
+     * Configures field-level validation rules.
+     */
+    validate(
+      callback: (v: ValidationBuilder<T>) => void
+    ): ModelField<T, UsedMethod | 'validate' | 'default' | 'array'>;
   },
   UsedMethod
 >;
@@ -176,6 +184,7 @@ function _field<T extends ModelFieldTypeParamOuter>(fieldType: ModelFieldType) {
     arrayRequired: false,
     default: undefined,
     authorization: [],
+    validation: [],
   };
 
   const builder = {
@@ -207,6 +216,18 @@ function _field<T extends ModelFieldTypeParamOuter>(fieldType: ModelFieldType) {
       const rules = callback(rest);
       data.authorization = Array.isArray(rules) ? rules : [rules];
       _meta.lastInvokedMethod = 'authorization';
+
+      return this;
+    },
+    validate(
+      callback: (v: ValidationBuilder<T>) => void
+    ) {
+      const fieldType = data.fieldType;
+      const builder = createValidationBuilder<T>(fieldType);
+      callback(builder);
+      data.validation = builder.getRules();
+      
+      _meta.lastInvokedMethod = 'validate';
 
       return this;
     },
