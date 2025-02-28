@@ -258,7 +258,7 @@ function _field<T extends ModelFieldTypeParamOuter, FT extends ModelFieldType>(
 
   // this double cast gives us a Subtyping Constraint i.e., hides `data` from the public API,
   // but makes it available internally when needed
-  return { ...builder, data } as any as ModelField<T, never, undefined, FT>;
+  return { ...builder, data } as unknown as ModelField<T, never, undefined, FT>;
 }
 
 /**
