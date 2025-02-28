@@ -40,7 +40,7 @@ function createValidationRule(
  * A builder for creating field validation rules
  * @typeParam T - The type of the field being validated
  */
-export class ValidationBuilder<T> {
+export class ValidationBuilder<T> implements StringValidationBuilder<T>, NumericValidationBuilder<T> {
   private rules: ValidationRule[] = [];
   private fieldType: ModelFieldType;
 
@@ -296,6 +296,91 @@ export class ValidationBuilder<T> {
  * @param fieldType - The type of field to create a validation builder for
  * @returns A validation builder appropriate for the field type
  */
-export function createValidationBuilder<T>(fieldType: ModelFieldType): ValidationBuilder<T> {
+export function createValidationBuilder<T, FT extends ModelFieldType = ModelFieldType>(
+  fieldType: FT
+): ValidationBuilder<T> {
   return new ValidationBuilder<T>(fieldType);
+}
+
+/**
+ * Interface for string-specific validation methods
+ */
+export interface StringValidationBuilder<T> {
+  /**
+   * Validates that a string field has at least the specified length
+   * @param length - The minimum length required
+   * @param errorMessage - Optional custom error message
+   */
+  minLength(length: number, errorMessage?: string): StringValidationBuilder<T>;
+  
+  /**
+   * Validates that a string field does not exceed the specified length
+   * @param length - The maximum length allowed
+   * @param errorMessage - Optional custom error message
+   */
+  maxLength(length: number, errorMessage?: string): StringValidationBuilder<T>;
+  
+  /**
+   * Validates that a string field starts with the specified prefix
+   * @param prefix - The prefix the string must start with
+   * @param errorMessage - Optional custom error message
+   */
+  startsWith(prefix: string, errorMessage?: string): StringValidationBuilder<T>;
+  
+  /**
+   * Validates that a string field ends with the specified suffix
+   * @param suffix - The suffix the string must end with
+   * @param errorMessage - Optional custom error message
+   */
+  endsWith(suffix: string, errorMessage?: string): StringValidationBuilder<T>;
+  
+  /**
+   * Validates that a string field matches the specified regular expression pattern
+   * @param pattern - The regex pattern the string must match
+   * @param errorMessage - Optional custom error message
+   */
+  matches(pattern: string, errorMessage?: string): StringValidationBuilder<T>;
+  
+  /**
+   * Returns all the validation rules defined by this builder
+   */
+  getRules(): ValidationRule[];
+}
+
+/**
+ * Interface for numeric-specific validation methods
+ */
+export interface NumericValidationBuilder<T> {
+  /**
+   * Validates that a numeric field is greater than the specified value
+   * @param value - The value that the field must be greater than
+   * @param errorMessage - Optional custom error message
+   */
+  gt(value: number, errorMessage?: string): NumericValidationBuilder<T>;
+  
+  /**
+   * Validates that a numeric field is less than the specified value
+   * @param value - The value that the field must be less than
+   * @param errorMessage - Optional custom error message
+   */
+  lt(value: number, errorMessage?: string): NumericValidationBuilder<T>;
+  
+  /**
+   * Validates that a numeric field is greater than or equal to the specified value
+   * @param value - The value that the field must be greater than or equal to
+   * @param errorMessage - Optional custom error message
+   */
+  gte(value: number, errorMessage?: string): NumericValidationBuilder<T>;
+  
+  /**
+   * Validates that a numeric field is less than or equal to the specified value
+   * @param value - The value that the field must be less than or equal to
+   * @param errorMessage - Optional custom error message
+   */
+  lte(value: number, errorMessage?: string): NumericValidationBuilder<T>;
+  
+  /**
+   * Returns all the validation rules defined by this builder
+   */
+  getRules(): ValidationRule[];
 }
