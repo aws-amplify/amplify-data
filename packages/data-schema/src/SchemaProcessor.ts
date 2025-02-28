@@ -610,8 +610,8 @@ const normalizeStringFieldTypes = (
  * @returns
  */
 function areConflicting(left: BaseModelField, right: BaseModelField): boolean {
-  const leftData = (left as InternalField).data;
-  const rightData = (right as InternalField).data;
+  const leftData = (left as unknown as InternalField).data;
+  const rightData = (right as unknown as InternalField).data;
 
   // `array` and `fieldType` are the only props we care about for this comparison, because the others
   // (required, arrayRequired, etc) are not specified on auth or FK directives.
@@ -921,7 +921,7 @@ function processFieldLevelAuthRules(
   } = {};
 
   for (const [fieldName, fieldDef] of Object.entries(fields)) {
-    const fieldAuth = (fieldDef as InternalField)?.data?.authorization || [];
+    const fieldAuth = (fieldDef as unknown as InternalField)?.data?.authorization || [];
 
     const { authString, authFields: fieldAuthField } = calculateAuth(fieldAuth);
 

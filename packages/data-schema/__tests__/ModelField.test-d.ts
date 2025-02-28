@@ -61,7 +61,7 @@ test('ModelField can be cast to InternalField', () => {
   // @ts-expect-error
   field.data;
 
-  const internalField = field as InternalField;
+  const internalField = field as unknown as InternalField;
   internalField.data;
 });
 
