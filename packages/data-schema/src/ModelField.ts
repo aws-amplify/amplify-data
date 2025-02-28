@@ -172,7 +172,12 @@ export type ModelField<
  * Internal representation of Model Field that exposes the `data` property.
  * Used at buildtime.
  */
-export interface InternalField extends ModelField<any, any, any, any> {
+export type InternalField<
+  T extends ModelFieldTypeParamOuter = ModelFieldTypeParamOuter,
+  UsedMethod extends UsableModelFieldKey = never,
+  Auth = undefined,
+  FT extends ModelFieldType = ModelFieldType
+> = ModelField<T, UsedMethod, Auth, FT> & {
   data: FieldData;
 }
 
@@ -258,7 +263,7 @@ function _field<T extends ModelFieldTypeParamOuter, FT extends ModelFieldType>(
 
   // this double cast gives us a Subtyping Constraint i.e., hides `data` from the public API,
   // but makes it available internally when needed
-  return { ...builder, data } as unknown as ModelField<T, never, undefined, FT>;
+  return { ...builder, data } as InternalField as ModelField<T, never, undefined, FT>;
 }
 
 /**

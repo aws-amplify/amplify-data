@@ -78,7 +78,7 @@ describe('field level auth', () => {
           .ownersDefinedIn('admin')
           .to(['read', 'create', 'delete'])
           .identityClaim('identityClaimValue'),
-      ]) as unknown as InternalField;
+      ]) as InternalField;
 
     expect(field.data.authorization).toMatchSnapshot();
   });
