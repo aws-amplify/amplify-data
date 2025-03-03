@@ -127,38 +127,38 @@ describe('Validation compatibility between field types and validators', () => {
 
   it('String field types with numeric validators are incompatible', () => {
     // @ts-expect-error
-    const stringField = a.string().validate(v => v.gt(10));
+    const stringField1 = a.string().validate(v => v.gt(10));
     // @ts-expect-error
-    const stringField = a.string().validate(v => v.lt(100));
+    const stringField2 = a.string().validate(v => v.lt(100));
     // @ts-expect-error
-    const stringField = a.string().validate(v => v.gte(0));
+    const stringField3 = a.string().validate(v => v.gte(0));
     // @ts-expect-error
-    const stringField = a.string().validate(v => v.lte(50));
+    const stringField4 = a.string().validate(v => v.lte(50));
   });
 
   it('Integer field type with string validators are incompatible', () => {
     // @ts-expect-error
-    const integerField = a.integer().validate(v => v.minLength(5));
+    const integerField1 = a.integer().validate(v => v.minLength(5));
     // @ts-expect-error
-    const integerField = a.integer().validate(v => v.maxLength(100));
+    const integerField2 = a.integer().validate(v => v.maxLength(100));
     // @ts-expect-error
-    const integerField = a.integer().validate(v => v.startsWith('prefix-'));
+    const integerField3 = a.integer().validate(v => v.startsWith('prefix-'));
     // @ts-expect-error
-    const integerField = a.integer().validate(v => v.endsWith('-suffix'));
+    const integerField4 = a.integer().validate(v => v.endsWith('-suffix'));
     // @ts-expect-error
-    const integerField = a.integer().validate(v => v.matches('[0-9]+'));
+    const integerField5 = a.integer().validate(v => v.matches('[0-9]+'));
   });
 
   it('Float field type with string validators are incompatible', () => {
     // @ts-expect-error
-    const floatField = a.float().validate(v => v.minLength(5));
+    const floatField1 = a.float().validate(v => v.minLength(5));
     // @ts-expect-error
-    const floatField = a.float().validate(v => v.maxLength(100));
+    const floatField2 = a.float().validate(v => v.maxLength(100));
     // @ts-expect-error
-    const floatField = a.float().validate(v => v.startsWith('prefix-'));
+    const floatField3 = a.float().validate(v => v.startsWith('prefix-'));
     // @ts-expect-error
-    const floatField = a.float().validate(v => v.endsWith('-suffix'));
+    const floatField4 = a.float().validate(v => v.endsWith('-suffix'));
     // @ts-expect-error
-    const floatField = a.float().validate(v => v.matches('[0-9]+'));
+    const floatField5 = a.float().validate(v => v.matches('[0-9]+'));
   });
 });

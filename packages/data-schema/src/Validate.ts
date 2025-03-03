@@ -1,9 +1,5 @@
 import { ModelFieldType } from './ModelField';
 
-//----------------------------------------------------------------------
-// #region Validation Types
-//----------------------------------------------------------------------
-
 /**
  * The types of validations supported
  */
@@ -19,14 +15,6 @@ export enum ValidationType {
   MATCHES = 'matches',
 }
 
-//----------------------------------------------------------------------
-// #endregion Validation Types
-//----------------------------------------------------------------------
-
-//----------------------------------------------------------------------
-// #region ValidationRule
-//----------------------------------------------------------------------
-
 /**
  * Represents a validation rule to be applied to a field
  */
@@ -35,33 +23,6 @@ export interface ValidationRule {
   value: string | number;
   errorMessage?: string;
 }
-
-/**
- * Creates a validation rule
- * @param type - The type of validation rule
- * @param value - The value to validate against
- * @param errorMessage - Optional custom error message
- * @returns The validation rule
- */
-function createValidationRule(
-  type: ValidationType,
-  value: string | number,
-  errorMessage?: string
-): ValidationRule {
-  return {
-    type,
-    value,
-    errorMessage,
-  };
-}
-
-//----------------------------------------------------------------------
-// #endregion ValidationRule
-//----------------------------------------------------------------------
-
-//----------------------------------------------------------------------
-// #region Builder
-//----------------------------------------------------------------------
 
 /**
  * Maps a ModelFieldType to the appropriate validation builder type
@@ -225,48 +186,112 @@ export class ValidationBuilder<T> implements StringValidationBuilder<T>, Numeric
     this.fieldType = fieldType;
   }
 
+  /**
+   * Creates a validation rule
+   * @param type - The type of validation rule
+   * @param value - The value to validate against
+   * @param errorMessage - Optional custom error message
+   * @returns The validation rule
+   */
+  private createValidationRule(
+    type: ValidationType,
+    value: string | number,
+    errorMessage?: string
+  ): ValidationRule {
+    return {
+      type,
+      value,
+      errorMessage,
+    };
+  }
+
+  /**
+   * Validates that a numeric field is greater than the specified value
+   * @param value - The value that the field must be greater than
+   * @param errorMessage - Optional custom error message
+   */
   gt(value: number, errorMessage?: string): ValidationBuilder<T> {
-    this.rules.push(createValidationRule(ValidationType.GT, value, errorMessage));
+    this.rules.push(this.createValidationRule(ValidationType.GT, value, errorMessage));
     return this;
   }
 
+  /**
+   * Validates that a numeric field is less than the specified value
+   * @param value - The value that the field must be less than
+   * @param errorMessage - Optional custom error message
+   */
   lt(value: number, errorMessage?: string): ValidationBuilder<T> {
-    this.rules.push(createValidationRule(ValidationType.LT, value, errorMessage));
+    this.rules.push(this.createValidationRule(ValidationType.LT, value, errorMessage));
     return this;
   }
 
+  /**
+   * Validates that a numeric field is greater than or equal to the specified value
+   * @param value - The value that the field must be greater than or equal to
+   * @param errorMessage - Optional custom error message
+   */
   gte(value: number, errorMessage?: string): ValidationBuilder<T> {
-    this.rules.push(createValidationRule(ValidationType.GTE, value, errorMessage));
+    this.rules.push(this.createValidationRule(ValidationType.GTE, value, errorMessage));
     return this;
   }
 
+  /**
+   * Validates that a numeric field is less than or equal to the specified value
+   * @param value - The value that the field must be less than or equal to
+   * @param errorMessage - Optional custom error message
+   */
   lte(value: number, errorMessage?: string): ValidationBuilder<T> {
-    this.rules.push(createValidationRule(ValidationType.LTE, value, errorMessage));
+    this.rules.push(this.createValidationRule(ValidationType.LTE, value, errorMessage));
     return this;
   }
 
+  /**
+   * Validates that a string field has at least the specified length
+   * @param length - The minimum length required
+   * @param errorMessage - Optional custom error message
+   */
   minLength(length: number, errorMessage?: string): ValidationBuilder<T> {
-    this.rules.push(createValidationRule(ValidationType.MIN_LENGTH, length, errorMessage));
+    this.rules.push(this.createValidationRule(ValidationType.MIN_LENGTH, length, errorMessage));
     return this;
   }
 
+  /**
+   * Validates that a string field does not exceed the specified length
+   * @param length - The maximum length allowed
+   * @param errorMessage - Optional custom error message
+   */
   maxLength(length: number, errorMessage?: string): ValidationBuilder<T> {
-    this.rules.push(createValidationRule(ValidationType.MAX_LENGTH, length, errorMessage));
+    this.rules.push(this.createValidationRule(ValidationType.MAX_LENGTH, length, errorMessage));
     return this;
   }
 
+  /**
+   * Validates that a string field starts with the specified prefix
+   * @param prefix - The prefix the string must start with
+   * @param errorMessage - Optional custom error message
+   */
   startsWith(prefix: string, errorMessage?: string): ValidationBuilder<T> {
-    this.rules.push(createValidationRule(ValidationType.STARTS_WITH, prefix, errorMessage));
+    this.rules.push(this.createValidationRule(ValidationType.STARTS_WITH, prefix, errorMessage));
     return this;
   }
 
+  /**
+   * Validates that a string field ends with the specified suffix
+   * @param suffix - The suffix the string must end with
+   * @param errorMessage - Optional custom error message
+   */
   endsWith(suffix: string, errorMessage?: string): ValidationBuilder<T> {
-    this.rules.push(createValidationRule(ValidationType.ENDS_WITH, suffix, errorMessage));
+    this.rules.push(this.createValidationRule(ValidationType.ENDS_WITH, suffix, errorMessage));
     return this;
   }
 
+  /**
+   * Validates that a string field matches the specified regular expression pattern
+   * @param pattern - The regex pattern the string must match
+   * @param errorMessage - Optional custom error message
+   */
   matches(pattern: string, errorMessage?: string): ValidationBuilder<T> {
-    this.rules.push(createValidationRule(ValidationType.MATCHES, pattern, errorMessage));
+    this.rules.push(this.createValidationRule(ValidationType.MATCHES, pattern, errorMessage));
     return this;
   }
 
@@ -288,7 +313,3 @@ export function createValidationBuilder<T, FT extends ModelFieldType = ModelFiel
 ): ValidationBuilder<T> {
   return new ValidationBuilder<T>(fieldType);
 }
-
-//----------------------------------------------------------------------
-// #endregion Builder
-//----------------------------------------------------------------------
