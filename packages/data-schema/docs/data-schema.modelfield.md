@@ -9,14 +9,15 @@ Public API for the chainable builder methods exposed by Model Field. The type is
 **Signature:**
 
 ```typescript
-export type ModelField<T extends ModelFieldTypeParamOuter = ModelFieldTypeParamOuter, UsedMethod extends UsableModelFieldKey = never, Auth = undefined> = Omit<{
+export type ModelField<T extends ModelFieldTypeParamOuter = ModelFieldTypeParamOuter, UsedMethod extends UsableModelFieldKey = never, Auth = undefined, FT extends ModelFieldType = ModelFieldType> = Omit<{
     [__auth]?: Auth;
     [brandSymbol]: typeof brandName;
-    [internal](): ModelField<T>;
-    required(): ModelField<Required<T>, UsedMethod | 'required'>;
-    array(): ModelField<ArrayField<T>, Exclude<UsedMethod, 'required'> | 'array'>;
-    default(value?: ModelFieldTypeParamOuter): ModelField<T, UsedMethod | 'default'>;
-    authorization<AuthRuleType extends Authorization<any, any, any>>(callback: (allow: Omit<AllowModifier, 'resource'>) => AuthRuleType | AuthRuleType[]): ModelField<T, UsedMethod | 'authorization', AuthRuleType>;
+    [internal](): ModelField<T, UsedMethod, Auth, FT>;
+    required(): ModelField<Required<T>, UsedMethod | 'required', Auth, FT>;
+    array(): ModelField<ArrayField<T>, Exclude<UsedMethod, 'required'> | 'array' | 'validate', Auth, FT>;
+    default(value?: ModelFieldTypeParamOuter): ModelField<T, UsedMethod | 'default', Auth, FT>;
+    authorization<AuthRuleType extends Authorization<any, any, any>>(callback: (allow: Omit<AllowModifier, 'resource'>) => AuthRuleType | AuthRuleType[]): ModelField<T, UsedMethod | 'authorization', AuthRuleType, FT>;
+    validate(callback: (v: FieldTypeToValidationBuilder<T, FT>) => void): ModelField<T, UsedMethod | 'validate' | 'default' | 'array', Auth, FT>;
 }, UsedMethod>;
 ```
 **References:** [ModelField](./data-schema.modelfield.md)<!-- -->, [Authorization](./data-schema.authorization.md)

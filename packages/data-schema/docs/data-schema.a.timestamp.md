@@ -9,11 +9,11 @@ A timestamp scalar type that is represented by an integer value of the number of
 **Signature:**
 
 ```typescript
-export declare function timestamp(): ModelField<Nullable<number>>;
+export declare function timestamp(): ModelField<Nullable<number>, never, undefined, ModelFieldType.Timestamp>;
 ```
 **Returns:**
 
-[ModelField](./data-schema.modelfield.md)<!-- -->&lt;[Nullable](./data-schema.nullable.md)<!-- -->&lt;number&gt;&gt;
+[ModelField](./data-schema.modelfield.md)<!-- -->&lt;[Nullable](./data-schema.nullable.md)<!-- -->&lt;number&gt;, never, undefined, ModelFieldType.Timestamp&gt;
 
 timestamp field definition
 

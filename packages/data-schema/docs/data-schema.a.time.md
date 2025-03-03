@@ -9,11 +9,11 @@ A time scalar type that is represented server-side as an extended ISO 8601 time 
 **Signature:**
 
 ```typescript
-export declare function time(): ModelField<Nullable<string>>;
+export declare function time(): ModelField<Nullable<string>, never, undefined, ModelFieldType.Time>;
 ```
 **Returns:**
 
-[ModelField](./data-schema.modelfield.md)<!-- -->&lt;[Nullable](./data-schema.nullable.md)<!-- -->&lt;string&gt;&gt;
+[ModelField](./data-schema.modelfield.md)<!-- -->&lt;[Nullable](./data-schema.nullable.md)<!-- -->&lt;string&gt;, never, undefined, ModelFieldType.Time&gt;
 
 time field definition
 

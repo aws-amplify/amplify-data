@@ -9,11 +9,11 @@ A date scalar type that is represented server-side as an extended ISO 8601 date 
 **Signature:**
 
 ```typescript
-export declare function date(): ModelField<Nullable<string>>;
+export declare function date(): ModelField<Nullable<string>, never, undefined, ModelFieldType.Date>;
 ```
 **Returns:**
 
-[ModelField](./data-schema.modelfield.md)<!-- -->&lt;[Nullable](./data-schema.nullable.md)<!-- -->&lt;string&gt;&gt;
+[ModelField](./data-schema.modelfield.md)<!-- -->&lt;[Nullable](./data-schema.nullable.md)<!-- -->&lt;string&gt;, never, undefined, ModelFieldType.Date&gt;
 
 date field definition
 

@@ -9,11 +9,11 @@ A float scalar type following represented server-side as an IEEE 754 floating po
 **Signature:**
 
 ```typescript
-export declare function float(): ModelField<Nullable<number>>;
+export declare function float(): ModelField<Nullable<number>, never, undefined, ModelFieldType.Float>;
 ```
 **Returns:**
 
-[ModelField](./data-schema.modelfield.md)<!-- -->&lt;[Nullable](./data-schema.nullable.md)<!-- -->&lt;number&gt;&gt;
+[ModelField](./data-schema.modelfield.md)<!-- -->&lt;[Nullable](./data-schema.nullable.md)<!-- -->&lt;number&gt;, never, undefined, ModelFieldType.Float&gt;
 
 float field definition
 

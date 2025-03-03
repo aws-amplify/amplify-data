@@ -9,11 +9,11 @@ A valid IPv4 or IPv6 address scalar type. IPv4 addresses are expected in quad-do
 **Signature:**
 
 ```typescript
-export declare function ipAddress(): ModelField<Nullable<string>>;
+export declare function ipAddress(): ModelField<Nullable<string>, never, undefined, ModelFieldType.IPAddress>;
 ```
 **Returns:**
 
-[ModelField](./data-schema.modelfield.md)<!-- -->&lt;[Nullable](./data-schema.nullable.md)<!-- -->&lt;string&gt;&gt;
+[ModelField](./data-schema.modelfield.md)<!-- -->&lt;[Nullable](./data-schema.nullable.md)<!-- -->&lt;string&gt;, never, undefined, ModelFieldType.IPAddress&gt;
 
 IP address field definition
 
