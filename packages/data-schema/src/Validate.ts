@@ -1,5 +1,9 @@
 import { ModelFieldType } from './ModelField';
 
+//----------------------------------------------------------------------
+// #region Constants and Enums
+//----------------------------------------------------------------------
+
 /**
  * The type of validation rule
  */
@@ -15,6 +19,25 @@ export enum ValidationType {
   MATCHES = 'matches',
 }
 
+// /**
+//  * The field types that support validation
+//  */
+// export const VALIDATION_SUPPORTED_FIELD_TYPES: ModelFieldType[] = [
+//   ModelFieldType.String,
+//   ModelFieldType.Integer,
+//   ModelFieldType.Float,
+// ];
+
+export interface NoValidate {}
+
+//----------------------------------------------------------------------
+// #endregion Constants and Enums
+//----------------------------------------------------------------------
+
+//----------------------------------------------------------------------
+// #region ValidationRule
+//----------------------------------------------------------------------
+
 /**
  * Represents a validation rule to be applied to a field
  */
@@ -24,6 +47,13 @@ export interface ValidationRule {
   errorMessage?: string;
 }
 
+/**
+ * Creates a validation rule
+ * @param type - The type of validation rule
+ * @param value - The value to validate against
+ * @param errorMessage - Optional custom error message
+ * @returns The validation rule
+ */
 function createValidationRule(
   type: ValidationType,
   value: string | number,
@@ -34,6 +64,172 @@ function createValidationRule(
     value,
     errorMessage,
   };
+}
+
+//----------------------------------------------------------------------
+// #endregion ValidationRule
+//----------------------------------------------------------------------
+
+//----------------------------------------------------------------------
+// #region Builder
+//----------------------------------------------------------------------
+
+/**
+ * Whether a field type supports validation
+ * 
+ * We currently only support validation for string, integer, and float fields.
+ */
+export type SupportsValidation<FT extends ModelFieldType> = 
+  FT extends ModelFieldType.String | ModelFieldType.Integer | ModelFieldType.Float ? true : false;
+
+/**
+ * Maps a ModelFieldType to the appropriate validation builder type
+ */
+export type FieldTypeToValidationBuilder<T, FT extends ModelFieldType> = 
+  FT extends ModelFieldType.String
+    ? StringValidationBuilder<T>
+    : FT extends ModelFieldType.Integer | ModelFieldType.Float
+      ? NumericValidationBuilder<T>
+      : never;
+
+/**
+ * Interface for string validation methods
+ */
+export interface StringValidationBuilder<T> {
+  /**
+   * Validates that a string field has at least the specified length
+   * ⚠️ Only applicable to string fields
+   * 
+   * @example
+   * // String field example
+   * a.string().validate(v => v.minLength(5))
+   * 
+   * @param length - The minimum length required
+   * @param errorMessage - Optional custom error message
+   */
+  minLength(length: number, errorMessage?: string): StringValidationBuilder<T>;
+  
+  /**
+   * Validates that a string field does not exceed the specified length
+   * ⚠️ Only applicable to string fields
+   * 
+   * @example
+   * // String field example
+   * a.string().validate(v => v.maxLength(100))
+   * 
+   * @param length - The maximum length allowed
+   * @param errorMessage - Optional custom error message
+   */
+  maxLength(length: number, errorMessage?: string): StringValidationBuilder<T>;
+  
+  /**
+   * Validates that a string field starts with the specified prefix
+   * ⚠️ Only applicable to string fields
+   * 
+   * @example
+   * // String field example
+   * a.string().validate(v => v.startsWith("prefix-"))
+   * 
+   * @param prefix - The prefix the string must start with
+   * @param errorMessage - Optional custom error message
+   */
+  startsWith(prefix: string, errorMessage?: string): StringValidationBuilder<T>;
+  
+  /**
+   * Validates that a string field ends with the specified suffix
+   * ⚠️ Only applicable to string fields
+   * 
+   * @example
+   * // String field example
+   * a.string().validate(v => v.endsWith("-suffix"))
+   * 
+   * @param suffix - The suffix the string must end with
+   * @param errorMessage - Optional custom error message
+   */
+  endsWith(suffix: string, errorMessage?: string): StringValidationBuilder<T>;
+  
+  /**
+   * Validates that a string field matches the specified regular expression pattern
+   * ⚠️ Only applicable to string fields
+   * 
+   * @example
+   * // String field example
+   * a.string().validate(v => v.matches("^[a-zA-Z0-9]+$"))
+   * 
+   * @param pattern - The regex pattern the string must match
+   * @param errorMessage - Optional custom error message
+   */
+  matches(pattern: string, errorMessage?: string): StringValidationBuilder<T>;
+  
+  /**
+   * Returns all the validation rules defined by this builder
+   */
+  getRules(): ValidationRule[];
+}
+
+/**
+ * Interface for numeric validation methods
+ */
+export interface NumericValidationBuilder<T> {
+  /**
+   * Validates that a numeric field is greater than the specified value
+   * ⚠️ Only applicable for integer or float fields
+   * 
+   * @example
+   * // Integer field example
+   * a.integer().validate(v => v.gt(10))
+   * 
+   * // Float field example
+   * a.float().validate(v => v.gt(3.14))
+   * 
+   * @param value - The value that the field must be greater than
+   * @param errorMessage - Optional custom error message
+   */
+  gt(value: number, errorMessage?: string): NumericValidationBuilder<T>;
+  
+  /**
+   * Validates that a numeric field is less than the specified value
+   * ⚠️ Only applicable for integer or float fields
+   * 
+   * @example
+   * // Integer field example
+   * a.integer().validate(v => v.lt(10))
+   * 
+   * // Float field example
+   * a.float().validate(v => v.lt(3.14))
+   */
+  lt(value: number, errorMessage?: string): NumericValidationBuilder<T>;
+  
+  /**
+   * Validates that a numeric field is greater than or equal to the specified value
+   * ⚠️ Only applicable for integer or float fields
+   * 
+   * @example
+   * // Integer field example
+   * a.integer().validate(v => v.gte(10))
+   * 
+   * // Float field example
+   * a.float().validate(v => v.gte(3.14))
+   */
+  gte(value: number, errorMessage?: string): NumericValidationBuilder<T>;
+  
+  /**
+   * Validates that a numeric field is less than or equal to the specified value
+   * ⚠️ Only applicable for integer or float fields
+   * 
+   * @example
+   * // Integer field example
+   * a.integer().validate(v => v.lte(10))
+   * 
+   * // Float field example
+   * a.float().validate(v => v.lte(3.14))
+   */
+  lte(value: number, errorMessage?: string): NumericValidationBuilder<T>;
+  
+  /**
+   * Returns all the validation rules defined by this builder
+   */
+  getRules(): ValidationRule[];
 }
 
 /**
@@ -52,45 +248,16 @@ export class ValidationBuilder<T> implements StringValidationBuilder<T>, Numeric
    * Check if the field type is a string type
    */
   private isStringFieldType(): boolean {
-    return [
-      ModelFieldType.String,
-      ModelFieldType.Id,
-      ModelFieldType.Date,
-      ModelFieldType.Time,
-      ModelFieldType.DateTime,
-      ModelFieldType.Email,
-      ModelFieldType.Phone,
-      ModelFieldType.Url,
-      ModelFieldType.IPAddress,
-    ].includes(this.fieldType);
+    return this.fieldType === ModelFieldType.String;
   }
 
   /**
    * Check if the field type is a numeric type
    */
   private isNumericFieldType(): boolean {
-    return [
-      ModelFieldType.Integer,
-      ModelFieldType.Float,
-      ModelFieldType.Timestamp,
-    ].includes(this.fieldType);
+    return this.fieldType === ModelFieldType.Integer || this.fieldType === ModelFieldType.Float;
   }
 
-  /**
-   * Validates that a numeric field is greater than the specified value
-   * ⚠️ Only applicable for numeric fields (integer, float, timestamp)
-   * 
-   * @example
-   * // Integer field example
-   * integer().validate(v => v.gt(10))
-   * 
-   * // Float field example
-   * float().validate(v => v.gt(3.14))
-   * 
-   * @param value - The value that the field must be greater than
-   * @param errorMessage - Optional custom error message
-   * @returns The validation builder for chaining
-   */
   gt(value: number, errorMessage?: string): ValidationBuilder<T> {
     if (!this.isNumericFieldType()) {
       console.warn(`gt validation is only valid for numeric fields, but was used on ${this.fieldType} field`);
@@ -99,21 +266,6 @@ export class ValidationBuilder<T> implements StringValidationBuilder<T>, Numeric
     return this;
   }
 
-  /**
-   * Validates that a numeric field is less than the specified value
-   * ⚠️ Only applicable for numeric fields (integer, float, timestamp)
-   * 
-   * @example
-   * // Integer field example
-   * integer().validate(v => v.lt(100))
-   * 
-   * // Float field example
-   * float().validate(v => v.lt(99.99))
-   * 
-   * @param value - The value that the field must be less than
-   * @param errorMessage - Optional custom error message
-   * @returns The validation builder for chaining
-   */
   lt(value: number, errorMessage?: string): ValidationBuilder<T> {
     if (!this.isNumericFieldType()) {
       console.warn(`lt validation is only valid for numeric fields, but was used on ${this.fieldType} field`);
@@ -122,21 +274,6 @@ export class ValidationBuilder<T> implements StringValidationBuilder<T>, Numeric
     return this;
   }
 
-  /**
-   * Validates that a numeric field is greater than or equal to the specified value
-   * ⚠️ Only applicable for numeric fields (integer, float, timestamp)
-   * 
-   * @example
-   * // Integer field example
-   * integer().validate(v => v.gte(0))
-   * 
-   * // Float field example
-   * float().validate(v => v.gte(0.0))
-   * 
-   * @param value - The value that the field must be greater than or equal to
-   * @param errorMessage - Optional custom error message
-   * @returns The validation builder for chaining
-   */
   gte(value: number, errorMessage?: string): ValidationBuilder<T> {
     if (!this.isNumericFieldType()) {
       console.warn(`gte validation is only valid for numeric fields, but was used on ${this.fieldType} field`);
@@ -145,21 +282,6 @@ export class ValidationBuilder<T> implements StringValidationBuilder<T>, Numeric
     return this;
   }
 
-  /**
-   * Validates that a numeric field is less than or equal to the specified value
-   * ⚠️ Only applicable for numeric fields (integer, float, timestamp)
-   * 
-   * @example
-   * // Integer field example
-   * integer().validate(v => v.lte(10))
-   * 
-   * // Float field example
-   * float().validate(v => v.lte(5.5))
-   * 
-   * @param value - The value that the field must be less than or equal to
-   * @param errorMessage - Optional custom error message
-   * @returns The validation builder for chaining
-   */
   lte(value: number, errorMessage?: string): ValidationBuilder<T> {
     if (!this.isNumericFieldType()) {
       console.warn(`lte validation is only valid for numeric fields, but was used on ${this.fieldType} field`);
@@ -168,21 +290,6 @@ export class ValidationBuilder<T> implements StringValidationBuilder<T>, Numeric
     return this;
   }
 
-  /**
-   * Validates that a string field has at least the specified length
-   * ⚠️ Only applicable for string fields (string, id, email, phone, url, etc.)
-   * 
-   * @example
-   * // String field example
-   * string().validate(v => v.minLength(5))
-   * 
-   * // Email field example
-   * email().validate(v => v.minLength(8))
-   * 
-   * @param length - The minimum length required
-   * @param errorMessage - Optional custom error message
-   * @returns The validation builder for chaining
-   */
   minLength(length: number, errorMessage?: string): ValidationBuilder<T> {
     if (!this.isStringFieldType()) {
       console.warn(`minLength validation is only valid for string fields, but was used on ${this.fieldType} field`);
@@ -191,21 +298,6 @@ export class ValidationBuilder<T> implements StringValidationBuilder<T>, Numeric
     return this;
   }
 
-  /**
-   * Validates that a string field does not exceed the specified length
-   * ⚠️ Only applicable for string fields (string, id, email, phone, url, etc.)
-   * 
-   * @example
-   * // String field example
-   * string().validate(v => v.maxLength(100))
-   * 
-   * // URL field example
-   * url().validate(v => v.maxLength(255))
-   * 
-   * @param length - The maximum length allowed
-   * @param errorMessage - Optional custom error message
-   * @returns The validation builder for chaining
-   */
   maxLength(length: number, errorMessage?: string): ValidationBuilder<T> {
     if (!this.isStringFieldType()) {
       console.warn(`maxLength validation is only valid for string fields, but was used on ${this.fieldType} field`);
@@ -214,21 +306,6 @@ export class ValidationBuilder<T> implements StringValidationBuilder<T>, Numeric
     return this;
   }
 
-  /**
-   * Validates that a string field starts with the specified prefix
-   * ⚠️ Only applicable for string fields (string, id, email, phone, url, etc.)
-   * 
-   * @example
-   * // String field example
-   * string().validate(v => v.startsWith("prefix-"))
-   * 
-   * // URL field example
-   * url().validate(v => v.startsWith("https://"))
-   * 
-   * @param prefix - The prefix the string must start with
-   * @param errorMessage - Optional custom error message
-   * @returns The validation builder for chaining
-   */
   startsWith(prefix: string, errorMessage?: string): ValidationBuilder<T> {
     if (!this.isStringFieldType()) {
       console.warn(`startsWith validation is only valid for string fields, but was used on ${this.fieldType} field`);
@@ -237,21 +314,6 @@ export class ValidationBuilder<T> implements StringValidationBuilder<T>, Numeric
     return this;
   }
 
-  /**
-   * Validates that a string field ends with the specified suffix
-   * ⚠️ Only applicable for string fields (string, id, email, phone, url, etc.)
-   * 
-   * @example
-   * // String field example
-   * string().validate(v => v.endsWith("-suffix"))
-   * 
-   * // URL field example
-   * url().validate(v => v.endsWith(".com"))
-   * 
-   * @param suffix - The suffix the string must end with
-   * @param errorMessage - Optional custom error message
-   * @returns The validation builder for chaining
-   */
   endsWith(suffix: string, errorMessage?: string): ValidationBuilder<T> {
     if (!this.isStringFieldType()) {
       console.warn(`endsWith validation is only valid for string fields, but was used on ${this.fieldType} field`);
@@ -260,21 +322,6 @@ export class ValidationBuilder<T> implements StringValidationBuilder<T>, Numeric
     return this;
   }
 
-  /**
-   * Validates that a string field matches the specified regular expression pattern
-   * ⚠️ Only applicable for string fields (string, id, email, phone, url, etc.)
-   * 
-   * @example
-   * // String field example
-   * string().validate(v => v.matches("^[a-zA-Z0-9]+$"))
-   * 
-   * // Phone field example
-   * phone().validate(v => v.matches("^\\+1-[0-9]{3}-[0-9]{3}-[0-9]{4}$"))
-   * 
-   * @param pattern - The regex pattern the string must match
-   * @param errorMessage - Optional custom error message
-   * @returns The validation builder for chaining
-   */
   matches(pattern: string, errorMessage?: string): ValidationBuilder<T> {
     if (!this.isStringFieldType()) {
       console.warn(`matches validation is only valid for string fields, but was used on ${this.fieldType} field`);
@@ -302,85 +349,6 @@ export function createValidationBuilder<T, FT extends ModelFieldType = ModelFiel
   return new ValidationBuilder<T>(fieldType);
 }
 
-/**
- * Interface for string-specific validation methods
- */
-export interface StringValidationBuilder<T> {
-  /**
-   * Validates that a string field has at least the specified length
-   * @param length - The minimum length required
-   * @param errorMessage - Optional custom error message
-   */
-  minLength(length: number, errorMessage?: string): StringValidationBuilder<T>;
-  
-  /**
-   * Validates that a string field does not exceed the specified length
-   * @param length - The maximum length allowed
-   * @param errorMessage - Optional custom error message
-   */
-  maxLength(length: number, errorMessage?: string): StringValidationBuilder<T>;
-  
-  /**
-   * Validates that a string field starts with the specified prefix
-   * @param prefix - The prefix the string must start with
-   * @param errorMessage - Optional custom error message
-   */
-  startsWith(prefix: string, errorMessage?: string): StringValidationBuilder<T>;
-  
-  /**
-   * Validates that a string field ends with the specified suffix
-   * @param suffix - The suffix the string must end with
-   * @param errorMessage - Optional custom error message
-   */
-  endsWith(suffix: string, errorMessage?: string): StringValidationBuilder<T>;
-  
-  /**
-   * Validates that a string field matches the specified regular expression pattern
-   * @param pattern - The regex pattern the string must match
-   * @param errorMessage - Optional custom error message
-   */
-  matches(pattern: string, errorMessage?: string): StringValidationBuilder<T>;
-  
-  /**
-   * Returns all the validation rules defined by this builder
-   */
-  getRules(): ValidationRule[];
-}
-
-/**
- * Interface for numeric-specific validation methods
- */
-export interface NumericValidationBuilder<T> {
-  /**
-   * Validates that a numeric field is greater than the specified value
-   * @param value - The value that the field must be greater than
-   * @param errorMessage - Optional custom error message
-   */
-  gt(value: number, errorMessage?: string): NumericValidationBuilder<T>;
-  
-  /**
-   * Validates that a numeric field is less than the specified value
-   * @param value - The value that the field must be less than
-   * @param errorMessage - Optional custom error message
-   */
-  lt(value: number, errorMessage?: string): NumericValidationBuilder<T>;
-  
-  /**
-   * Validates that a numeric field is greater than or equal to the specified value
-   * @param value - The value that the field must be greater than or equal to
-   * @param errorMessage - Optional custom error message
-   */
-  gte(value: number, errorMessage?: string): NumericValidationBuilder<T>;
-  
-  /**
-   * Validates that a numeric field is less than or equal to the specified value
-   * @param value - The value that the field must be less than or equal to
-   * @param errorMessage - Optional custom error message
-   */
-  lte(value: number, errorMessage?: string): NumericValidationBuilder<T>;
-  
-  /**
-   * Returns all the validation rules defined by this builder
-   */
-  getRules(): ValidationRule[];
-}
+//----------------------------------------------------------------------
+// #endregion Builder
+//----------------------------------------------------------------------

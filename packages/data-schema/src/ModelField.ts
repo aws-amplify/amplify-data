@@ -2,7 +2,11 @@ import { brand } from './util';
 import { AllowModifier, Authorization, allow } from './Authorization';
 import type { methodKeyOf, satisfy } from './util/usedMethods.js';
 import type { brandSymbol } from './util/Brand.js';
-import { ValidationRule, createValidationBuilder, ValidationBuilder, StringValidationBuilder, NumericValidationBuilder } from './Validate';
+import { 
+  ValidationRule, 
+  createValidationBuilder, 
+  FieldTypeToValidationBuilder, 
+} from './Validate';
 
 /**
  * Used to "attach" auth types to ModelField without exposing them on the builder.
@@ -33,16 +37,6 @@ export enum ModelFieldType {
   Url = 'AWSURL',
   IPAddress = 'AWSIPAddress',
 }
-
-/**
- * Maps a ModelFieldType to the appropriate validation builder type
- */
-export type FieldTypeToValidationBuilder<T, FT extends ModelFieldType> = 
-  FT extends ModelFieldType.String
-    ? StringValidationBuilder<T>
-    : FT extends ModelFieldType.Integer | ModelFieldType.Float
-      ? NumericValidationBuilder<T>
-      : ValidationBuilder<T>;
 
 export enum ModelFieldDataType {
   String = 'string',
@@ -260,6 +254,21 @@ function _field<T extends ModelFieldTypeParamOuter, FT extends ModelFieldType>(
       return this;
     },
   } as ModelField<T, never, undefined, FT>;
+
+  // // Conditionally add validate if the fieldType is one that supports validation.
+  // const builder = VALIDATION_SUPPORTED_FIELD_TYPES.includes(fieldType)
+  //   ? {
+  //       ...builderBase,
+  //       validate(callback: (v: FieldTypeToValidationBuilder<T, FT>) => void) {
+  //         const fieldType = data.fieldType;
+  //         const validationBuilder = createValidationBuilder<T>(fieldType) as unknown as FieldTypeToValidationBuilder<T, FT>;
+  //         callback(validationBuilder);
+  //         data.validation = validationBuilder.getRules();
+  //         _meta.lastInvokedMethod = 'validate';
+  //         return this;
+  //       },
+  //     }
+  //   : builderBase;
 
   // this double cast gives us a Subtyping Constraint i.e., hides `data` from the public API,
   // but makes it available internally when needed
