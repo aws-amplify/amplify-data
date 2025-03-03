@@ -254,24 +254,6 @@ function _field<T extends ModelFieldTypeParamOuter, FT extends ModelFieldType>(
       return this;
     },
   } as ModelField<T, never, undefined, FT>;
-
-  // // Conditionally add validate if the fieldType is one that supports validation.
-  // const builder = VALIDATION_SUPPORTED_FIELD_TYPES.includes(fieldType)
-  //   ? {
-  //       ...builderBase,
-  //       validate(callback: (v: FieldTypeToValidationBuilder<T, FT>) => void) {
-  //         const fieldType = data.fieldType;
-  //         const validationBuilder = createValidationBuilder<T>(fieldType) as unknown as FieldTypeToValidationBuilder<T, FT>;
-  //         callback(validationBuilder);
-  //         data.validation = validationBuilder.getRules();
-  //         _meta.lastInvokedMethod = 'validate';
-  //         return this;
-  //       },
-  //     }
-  //   : builderBase;
-
-  // this double cast gives us a Subtyping Constraint i.e., hides `data` from the public API,
-  // but makes it available internally when needed
   return { ...builder, data } as InternalField as ModelField<T, never, undefined, FT>;
 }
 
