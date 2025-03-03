@@ -139,6 +139,9 @@ export interface NumericValidationBuilder<T> {
    * 
    * // Float field example
    * a.float().validate(v => v.lt(3.14))
+   * 
+   * @param value - The value that the field must be less than
+   * @param errorMessage - Optional custom error message
    */
   lt(value: number, errorMessage?: string): NumericValidationBuilder<T>;
   
@@ -152,6 +155,9 @@ export interface NumericValidationBuilder<T> {
    * 
    * // Float field example
    * a.float().validate(v => v.gte(3.14))
+   * 
+   * @param value - The value that the field must be greater than or equal to
+   * @param errorMessage - Optional custom error message
    */
   gte(value: number, errorMessage?: string): NumericValidationBuilder<T>;
   
@@ -165,8 +171,41 @@ export interface NumericValidationBuilder<T> {
    * 
    * // Float field example
    * a.float().validate(v => v.lte(3.14))
+   * 
+   * @param value - The value that the field must be less than or equal to
+   * @param errorMessage - Optional custom error message
    */
   lte(value: number, errorMessage?: string): NumericValidationBuilder<T>;
+
+  /**
+   * Validates that a numeric field is positive
+   * ⚠️ Only applicable for integer or float fields
+   * 
+   * @example
+   * // Integer field example
+   * a.integer().validate(v => v.positive())
+   * 
+   * // Float field example
+   * a.float().validate(v => v.positive())
+   * 
+   * @param errorMessage - Optional custom error message
+   */
+  positive(errorMessage?: string): NumericValidationBuilder<T>;
+
+  /**
+   * Validates that a numeric field is negative
+   * ⚠️ Only applicable for integer or float fields
+   * 
+   * @example
+   * // Integer field example
+   * a.integer().validate(v => v.negative())
+   * 
+   * // Float field example
+   * a.float().validate(v => v.negative())
+   * 
+   * @param errorMessage - Optional custom error message
+   */
+  negative(errorMessage?: string): NumericValidationBuilder<T>;
   
   /**
    * Returns all the validation rules defined by this builder
@@ -242,6 +281,24 @@ export class ValidationBuilder<T> implements StringValidationBuilder<T>, Numeric
    */
   lte(value: number, errorMessage?: string): ValidationBuilder<T> {
     this.rules.push(this.createValidationRule(ValidationType.LTE, value, errorMessage));
+    return this;
+  }
+
+  /**
+   * Validates that a numeric field is positive. We use gt(0) internally to achieve this.
+   * @param errorMessage - Optional custom error message
+   */
+  positive(errorMessage?: string): ValidationBuilder<T> {
+    this.rules.push(this.createValidationRule(ValidationType.GT, 0, errorMessage));
+    return this;
+  }
+
+  /**
+   * Validates that a numeric field is negative. We use lt(0) internally to achieve this.
+   * @param errorMessage - Optional custom error message
+   */
+  negative(errorMessage?: string): ValidationBuilder<T> {
+    this.rules.push(this.createValidationRule(ValidationType.LT, 0, errorMessage));
     return this;
   }
 
