@@ -240,73 +240,46 @@ export class ValidationBuilder<T> implements StringValidationBuilder<T>, Numeric
   }
 
   gt(value: number, errorMessage?: string): ValidationBuilder<T> {
-    if (!this.isNumericFieldType()) {
-      console.warn(`gt validation is only valid for numeric fields, but was used on ${this.fieldType} field`);
-    }
     this.rules.push(createValidationRule(ValidationType.GT, value, errorMessage));
     return this;
   }
 
   lt(value: number, errorMessage?: string): ValidationBuilder<T> {
-    if (!this.isNumericFieldType()) {
-      console.warn(`lt validation is only valid for numeric fields, but was used on ${this.fieldType} field`);
-    }
     this.rules.push(createValidationRule(ValidationType.LT, value, errorMessage));
     return this;
   }
 
   gte(value: number, errorMessage?: string): ValidationBuilder<T> {
-    if (!this.isNumericFieldType()) {
-      console.warn(`gte validation is only valid for numeric fields, but was used on ${this.fieldType} field`);
-    }
     this.rules.push(createValidationRule(ValidationType.GTE, value, errorMessage));
     return this;
   }
 
   lte(value: number, errorMessage?: string): ValidationBuilder<T> {
-    if (!this.isNumericFieldType()) {
-      console.warn(`lte validation is only valid for numeric fields, but was used on ${this.fieldType} field`);
-    }
     this.rules.push(createValidationRule(ValidationType.LTE, value, errorMessage));
     return this;
   }
 
   minLength(length: number, errorMessage?: string): ValidationBuilder<T> {
-    if (!this.isStringFieldType()) {
-      console.warn(`minLength validation is only valid for string fields, but was used on ${this.fieldType} field`);
-    }
     this.rules.push(createValidationRule(ValidationType.MIN_LENGTH, length, errorMessage));
     return this;
   }
 
   maxLength(length: number, errorMessage?: string): ValidationBuilder<T> {
-    if (!this.isStringFieldType()) {
-      console.warn(`maxLength validation is only valid for string fields, but was used on ${this.fieldType} field`);
-    }
     this.rules.push(createValidationRule(ValidationType.MAX_LENGTH, length, errorMessage));
     return this;
   }
 
   startsWith(prefix: string, errorMessage?: string): ValidationBuilder<T> {
-    if (!this.isStringFieldType()) {
-      console.warn(`startsWith validation is only valid for string fields, but was used on ${this.fieldType} field`);
-    }
     this.rules.push(createValidationRule(ValidationType.STARTS_WITH, prefix, errorMessage));
     return this;
   }
 
   endsWith(suffix: string, errorMessage?: string): ValidationBuilder<T> {
-    if (!this.isStringFieldType()) {
-      console.warn(`endsWith validation is only valid for string fields, but was used on ${this.fieldType} field`);
-    }
     this.rules.push(createValidationRule(ValidationType.ENDS_WITH, suffix, errorMessage));
     return this;
   }
 
   matches(pattern: string, errorMessage?: string): ValidationBuilder<T> {
-    if (!this.isStringFieldType()) {
-      console.warn(`matches validation is only valid for string fields, but was used on ${this.fieldType} field`);
-    }
     this.rules.push(createValidationRule(ValidationType.MATCHES, pattern, errorMessage));
     return this;
   }
