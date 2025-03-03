@@ -108,21 +108,25 @@ describe('Validation compatibility between field types and validators', () => {
   });
 
   it('Integer field type with numeric validators are compatible', () => {
-    const integerField = a.integer().validate(v => v
+    const integerField1 = a.integer().validate(v => v
       .gt(10, 'Integer must be greater than 10')
       .lt(100, 'Integer must be less than 100')
       .gte(0, 'Integer must be greater than or equal to 0')
       .lte(50, 'Integer must be less than or equal to 50')
     );
+    const integerField2 = a.integer().validate(v => v.positive());
+    const integerField3 = a.integer().validate(v => v.negative());
   });
 
   it('Float field type with numeric validators are compatible', () => {
-    const floatField = a.float().validate(v => v
+    const floatField1 = a.float().validate(v => v
       .gt(3.14, 'Float must be greater than 3.14')
       .lt(9.99, 'Float must be less than 9.99')
       .gte(0.0, 'Float must be greater than or equal to 0.0')
       .lte(10.5, 'Float must be less than or equal to 10.5')
     );
+    const floatField2 = a.float().validate(v => v.positive());
+    const floatField3 = a.float().validate(v => v.negative());
   });
 
   it('String field types with numeric validators are incompatible', () => {
@@ -134,6 +138,10 @@ describe('Validation compatibility between field types and validators', () => {
     const stringField3 = a.string().validate(v => v.gte(0));
     // @ts-expect-error
     const stringField4 = a.string().validate(v => v.lte(50));
+    // @ts-expect-error
+    const stringField5 = a.string().validate(v => v.positive());
+    // @ts-expect-error
+    const stringField6 = a.string().validate(v => v.negative());
   });
 
   it('Integer field type with string validators are incompatible', () => {
@@ -160,5 +168,80 @@ describe('Validation compatibility between field types and validators', () => {
     const floatField4 = a.float().validate(v => v.endsWith('-suffix'));
     // @ts-expect-error
     const floatField5 = a.float().validate(v => v.matches('[0-9]+'));
+  });
+});
+
+/**
+ * This test suite checks that positive and gt/negative and lt cannot be used together. 
+ * The reason is that they use the same operator (> or <), which is disallowed in the ValidateTransformer.
+ */
+describe('Positive and gt/negative and lt cannot be used together', () => {
+  it('Positive and gt cannot be used together', () => {
+    // @ts-expect-error
+    const integerField = a.integer().validate(v => v.positive().gt(10));
+    // @ts-expect-error
+    const floatField = a.float().validate(v => v.gt(10).positive());
+  });
+
+  it('Negative and lt cannot be used together', () => {
+    // @ts-expect-error
+    const integerField = a.integer().validate(v => v.negative().lt(10));
+    // @ts-expect-error
+    const floatField = a.float().validate(v => v.lt(10).negative());
+  });
+
+  it('Positive, lt, gte, lte can be used together', () => {
+    const integerField = a.integer().validate(v => v.positive().lt(10).gte(0).lte(50));
+    const floatField = a.float().validate(v => v.positive().lt(10).gte(0).lte(50));
+  });
+
+  it('Negative, gt, gte, lte can be used together', () => {
+    const integerField = a.integer().validate(v => v.negative().gt(10).gte(0).lte(50));
+    const floatField = a.float().validate(v => v.negative().gt(10).gte(0).lte(50));
+  });
+});
+
+/**
+ * This test suite checks that each validator can only be used once on the same field.
+ */
+describe('Each validator can only be used once on the same field', () => {
+  it('Numeric validators can only be used once on the same Integer/Float field', () => {
+    // @ts-expect-error
+    const integerField1 = a.integer().validate(v => v.gt(0).gt(10));
+    // @ts-expect-error
+    const integerField2 = a.integer().validate(v => v.lt(0).lt(10));
+    // @ts-expect-error
+    const integerField3 = a.integer().validate(v => v.gte(0).gte(10));
+    // @ts-expect-error
+    const integerField4 = a.integer().validate(v => v.lte(0).lte(10));
+    // @ts-expect-error
+    const integerField5 = a.integer().validate(v => v.positive().positive());
+    // @ts-expect-error
+    const integerField6 = a.integer().validate(v => v.negative().negative());
+    // @ts-expect-error
+    const floatField1 = a.float().validate(v => v.gt(0).gt(10));
+    // @ts-expect-error
+    const floatField2 = a.float().validate(v => v.lt(0).lt(10));
+    // @ts-expect-error
+    const floatField3 = a.float().validate(v => v.gte(0).gte(10));
+    // @ts-expect-error
+    const floatField4 = a.float().validate(v => v.lte(0).lte(10));
+    // @ts-expect-error
+    const floatField5 = a.float().validate(v => v.positive().positive());
+    // @ts-expect-error
+    const floatField6 = a.float().validate(v => v.negative().negative());
+  });
+
+  it('String validators can only be used once on the same String field', () => {
+    // @ts-expect-error
+    const stringField1 = a.string().validate(v => v.minLength(5).minLength(10));
+    // @ts-expect-error
+    const stringField2 = a.string().validate(v => v.maxLength(5).maxLength(10));
+    // @ts-expect-error
+    const stringField3 = a.string().validate(v => v.startsWith('prefix-').startsWith('prefix-'));
+    // @ts-expect-error
+    const stringField4 = a.string().validate(v => v.endsWith('-suffix').endsWith('-suffix'));
+    // @ts-expect-error
+    const stringField5 = a.string().validate(v => v.matches('^[a-zA-Z0-9]+$').matches('^[a-zA-Z0-9]+$'));
   });
 });
