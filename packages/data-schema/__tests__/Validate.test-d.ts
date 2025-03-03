@@ -1,5 +1,4 @@
 import { a } from '../src';
-import { StringValidationBuilder, NumericValidationBuilder, ValidationBuilder } from '../src/Validate';
 
 /**
  * This test suite checks that the validate builder function is only available on 

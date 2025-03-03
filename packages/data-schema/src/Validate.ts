@@ -1,11 +1,11 @@
 import { ModelFieldType } from './ModelField';
 
 //----------------------------------------------------------------------
-// #region Constants and Enums
+// #region Validation Types
 //----------------------------------------------------------------------
 
 /**
- * The type of validation rule
+ * The types of validations supported
  */
 export enum ValidationType {
   GT = 'gt',
@@ -19,19 +19,8 @@ export enum ValidationType {
   MATCHES = 'matches',
 }
 
-// /**
-//  * The field types that support validation
-//  */
-// export const VALIDATION_SUPPORTED_FIELD_TYPES: ModelFieldType[] = [
-//   ModelFieldType.String,
-//   ModelFieldType.Integer,
-//   ModelFieldType.Float,
-// ];
-
-export interface NoValidate {}
-
 //----------------------------------------------------------------------
-// #endregion Constants and Enums
+// #endregion Validation Types
 //----------------------------------------------------------------------
 
 //----------------------------------------------------------------------
@@ -73,14 +62,6 @@ function createValidationRule(
 //----------------------------------------------------------------------
 // #region Builder
 //----------------------------------------------------------------------
-
-/**
- * Whether a field type supports validation
- * 
- * We currently only support validation for string, integer, and float fields.
- */
-export type SupportsValidation<FT extends ModelFieldType> = 
-  FT extends ModelFieldType.String | ModelFieldType.Integer | ModelFieldType.Float ? true : false;
 
 /**
  * Maps a ModelFieldType to the appropriate validation builder type
