@@ -225,20 +225,6 @@ export class ValidationBuilder<T> implements StringValidationBuilder<T>, Numeric
     this.fieldType = fieldType;
   }
 
-  /**
-   * Check if the field type is a string type
-   */
-  private isStringFieldType(): boolean {
-    return this.fieldType === ModelFieldType.String;
-  }
-
-  /**
-   * Check if the field type is a numeric type
-   */
-  private isNumericFieldType(): boolean {
-    return this.fieldType === ModelFieldType.Integer || this.fieldType === ModelFieldType.Float;
-  }
-
   gt(value: number, errorMessage?: string): ValidationBuilder<T> {
     this.rules.push(createValidationRule(ValidationType.GT, value, errorMessage));
     return this;
