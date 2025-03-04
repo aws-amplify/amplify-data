@@ -25,14 +25,10 @@ export interface ValidationRule {
 }
 
 /**
- * Type to exclude specific validation methods from a builder type
+ * Internal interface that includes the getRules method
+ * This is not exported and only used internally
  */
-export type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>;
-
-/**
- * Base interface for all validation builders
- */
-export interface BaseValidationBuilder {
+interface InternalValidationBuilder {
   /**
    * Returns all the validation rules defined by this builder
    */
@@ -42,7 +38,7 @@ export interface BaseValidationBuilder {
 /**
  * Interface for string validation methods without any exclusions
  */
-export interface StringValidationBuilderBase<T> extends BaseValidationBuilder {
+export interface StringValidationBuilderBase<T> {
   /**
    * Validates that a string field has at least the specified length
    * ⚠️ Only applicable to string fields
@@ -111,6 +107,8 @@ export interface StringValidationBuilderBase<T> extends BaseValidationBuilder {
 
 /**
  * Interface for string validation methods with specific validators excluded
+ * 
+ * This is to disallow duplicate validation operators on the same field, which is not supported in the Validate Transformer.
  */
 export type StringValidationBuilder<T, ExcludedMethods extends string = never> = 
   Omit<StringValidationBuilderBase<T>, ExcludedMethods & keyof StringValidationBuilderBase<T>>;
@@ -118,7 +116,7 @@ export type StringValidationBuilder<T, ExcludedMethods extends string = never> =
 /**
  * Interface for numeric validation methods without any exclusions
  */
-export interface NumericValidationBuilderBase<T> extends BaseValidationBuilder {
+export interface NumericValidationBuilderBase<T> {
   /**
    * Validates that a numeric field is greater than the specified value
    * ⚠️ Only applicable for integer or float fields
@@ -216,12 +214,16 @@ export interface NumericValidationBuilderBase<T> extends BaseValidationBuilder {
 
 /**
  * Interface for numeric validation methods with specific validators excluded
+ * 
+ * This is to disallow duplicate validation operators on the same field, which is not supported in the Validate Transformer.
  */
 export type NumericValidationBuilder<T, ExcludedMethods extends string = never> = 
   Omit<NumericValidationBuilderBase<T>, ExcludedMethods & keyof NumericValidationBuilderBase<T>>;
 
 /**
  * Maps a ModelFieldType to the appropriate validation builder type
+ * 
+ * Note: This type intentionally uses the public interfaces which don't expose the getRules method
  */
 export type FieldTypeToValidationBuilder<T, FT extends ModelFieldType> = 
   FT extends ModelFieldType.String
@@ -234,13 +236,10 @@ export type FieldTypeToValidationBuilder<T, FT extends ModelFieldType> =
  * A builder for creating field validation rules
  * @typeParam T - The type of the field being validated
  */
-export class ValidationBuilder<T> implements StringValidationBuilderBase<T>, NumericValidationBuilderBase<T> {
+export class ValidationBuilder<T> implements StringValidationBuilderBase<T>, NumericValidationBuilderBase<T>, InternalValidationBuilder {
   private rules: ValidationRule[] = [];
-  private fieldType: ModelFieldType;
 
-  constructor(fieldType: ModelFieldType) {
-    this.fieldType = fieldType;
-  }
+  constructor() {}
 
   /**
    * Validates that a numeric field is greater than the specified value
@@ -359,12 +358,16 @@ export class ValidationBuilder<T> implements StringValidationBuilderBase<T>, Num
 }
 
 /**
- * Creates a validation builder for the specified field type
- * @param fieldType - The type of field to create a validation builder for
- * @returns A validation builder appropriate for the field type
+ * Creates a type-safe validation builder for a specific field type with access to get the rules
+ * @returns An object containing the validation builder and a function to get the rules
  */
-export function createValidationBuilder<T, FT extends ModelFieldType = ModelFieldType>(
-  fieldType: FT
-): ValidationBuilder<T> {
-  return new ValidationBuilder<T>(fieldType);
+export function createValidationBuilder<T, FT extends ModelFieldType>(): {
+  builder: FieldTypeToValidationBuilder<T, FT>;
+  getRules: () => ValidationRule[];
+} {
+  const internalBuilder = new ValidationBuilder<T>();
+  return {
+    builder: internalBuilder as unknown as FieldTypeToValidationBuilder<T, FT>,
+    getRules: () => internalBuilder.getRules()
+  };
 }

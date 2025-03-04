@@ -2,10 +2,10 @@ import { brand } from './util';
 import { AllowModifier, Authorization, allow } from './Authorization';
 import type { methodKeyOf, satisfy } from './util/usedMethods.js';
 import type { brandSymbol } from './util/Brand.js';
-import { 
-  ValidationRule, 
-  createValidationBuilder, 
-  FieldTypeToValidationBuilder, 
+import {
+  ValidationRule,
+  FieldTypeToValidationBuilder,
+  createValidationBuilder,
 } from './Validate';
 
 /**
@@ -239,13 +239,12 @@ function _field<T extends ModelFieldTypeParamOuter, FT extends ModelFieldType>(
     validate(
       callback: (v: FieldTypeToValidationBuilder<T, FT>) => void
     ) {
-      // Cast the builder to the appropriate validation builder type
-      const builder = createValidationBuilder<T>(data.fieldType) as unknown as FieldTypeToValidationBuilder<T, FT>;
+      const { builder, getRules } = createValidationBuilder<T, FT>();
       callback(builder);
-      data.validation = builder.getRules();
+      data.validation = getRules();
       
       _meta.lastInvokedMethod = 'validate';
-
+      
       return this;
     },
     ...brand(brandName),

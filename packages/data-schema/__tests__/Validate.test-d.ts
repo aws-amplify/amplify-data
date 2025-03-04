@@ -173,7 +173,7 @@ describe('Validation compatibility between field types and validators', () => {
 
 /**
  * This test suite checks that positive and gt/negative and lt cannot be used together. 
- * The reason is that they use the same operator (> or <), which is disallowed in the ValidateTransformer.
+ * The reason is that they use the same operator (> or <), which is disallowed in the Validate Transformer.
  */
 describe('Positive and gt/negative and lt cannot be used together', () => {
   it('Positive and gt cannot be used together', () => {
