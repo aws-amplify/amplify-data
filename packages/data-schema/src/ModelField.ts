@@ -239,9 +239,8 @@ function _field<T extends ModelFieldTypeParamOuter, FT extends ModelFieldType>(
     validate(
       callback: (v: FieldTypeToValidationBuilder<T, FT>) => void
     ) {
-      const fieldType = data.fieldType;
       // Cast the builder to the appropriate validation builder type
-      const builder = createValidationBuilder<T>(fieldType) as unknown as FieldTypeToValidationBuilder<T, FT>;
+      const builder = createValidationBuilder<T>(data.fieldType) as unknown as FieldTypeToValidationBuilder<T, FT>;
       callback(builder);
       data.validation = builder.getRules();
       

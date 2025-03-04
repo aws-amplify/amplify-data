@@ -243,31 +243,12 @@ export class ValidationBuilder<T> implements StringValidationBuilderBase<T>, Num
   }
 
   /**
-   * Creates a validation rule
-   * @param type - The type of validation rule
-   * @param value - The value to validate against
-   * @param errorMessage - Optional custom error message
-   * @returns The validation rule
-   */
-  private createValidationRule(
-    type: ValidationType,
-    value: string | number,
-    errorMessage?: string
-  ): ValidationRule {
-    return {
-      type,
-      value,
-      errorMessage,
-    };
-  }
-
-  /**
    * Validates that a numeric field is greater than the specified value
    * @param value - The value that the field must be greater than
    * @param errorMessage - Optional custom error message
    */
   gt(value: number, errorMessage?: string): ValidationBuilder<T> {
-    this.rules.push(this.createValidationRule(ValidationType.GT, value, errorMessage));
+    this.rules.push({ type: ValidationType.GT, value, errorMessage });
     return this;
   }
 
@@ -277,7 +258,7 @@ export class ValidationBuilder<T> implements StringValidationBuilderBase<T>, Num
    * @param errorMessage - Optional custom error message
    */
   lt(value: number, errorMessage?: string): ValidationBuilder<T> {
-    this.rules.push(this.createValidationRule(ValidationType.LT, value, errorMessage));
+    this.rules.push({ type: ValidationType.LT, value, errorMessage });
     return this;
   }
 
@@ -287,7 +268,7 @@ export class ValidationBuilder<T> implements StringValidationBuilderBase<T>, Num
    * @param errorMessage - Optional custom error message
    */
   gte(value: number, errorMessage?: string): ValidationBuilder<T> {
-    this.rules.push(this.createValidationRule(ValidationType.GTE, value, errorMessage));
+    this.rules.push({ type: ValidationType.GTE, value, errorMessage });
     return this;
   }
 
@@ -297,7 +278,7 @@ export class ValidationBuilder<T> implements StringValidationBuilderBase<T>, Num
    * @param errorMessage - Optional custom error message
    */
   lte(value: number, errorMessage?: string): ValidationBuilder<T> {
-    this.rules.push(this.createValidationRule(ValidationType.LTE, value, errorMessage));
+    this.rules.push({ type: ValidationType.LTE, value, errorMessage });
     return this;
   }
 
@@ -306,7 +287,7 @@ export class ValidationBuilder<T> implements StringValidationBuilderBase<T>, Num
    * @param errorMessage - Optional custom error message
    */
   positive(errorMessage?: string): ValidationBuilder<T> {
-    this.rules.push(this.createValidationRule(ValidationType.GT, 0, errorMessage));
+    this.rules.push({ type: ValidationType.GT, value: 0, errorMessage });
     return this;
   }
 
@@ -315,7 +296,7 @@ export class ValidationBuilder<T> implements StringValidationBuilderBase<T>, Num
    * @param errorMessage - Optional custom error message
    */
   negative(errorMessage?: string): ValidationBuilder<T> {
-    this.rules.push(this.createValidationRule(ValidationType.LT, 0, errorMessage));
+    this.rules.push({ type: ValidationType.LT, value: 0, errorMessage });
     return this;
   }
 
@@ -325,7 +306,7 @@ export class ValidationBuilder<T> implements StringValidationBuilderBase<T>, Num
    * @param errorMessage - Optional custom error message
    */
   minLength(length: number, errorMessage?: string): ValidationBuilder<T> {
-    this.rules.push(this.createValidationRule(ValidationType.MIN_LENGTH, length, errorMessage));
+    this.rules.push({ type: ValidationType.MIN_LENGTH, value: length, errorMessage });
     return this;
   }
 
@@ -335,7 +316,7 @@ export class ValidationBuilder<T> implements StringValidationBuilderBase<T>, Num
    * @param errorMessage - Optional custom error message
    */
   maxLength(length: number, errorMessage?: string): ValidationBuilder<T> {
-    this.rules.push(this.createValidationRule(ValidationType.MAX_LENGTH, length, errorMessage));
+    this.rules.push({ type: ValidationType.MAX_LENGTH, value: length, errorMessage });
     return this;
   }
 
@@ -345,7 +326,7 @@ export class ValidationBuilder<T> implements StringValidationBuilderBase<T>, Num
    * @param errorMessage - Optional custom error message
    */
   startsWith(prefix: string, errorMessage?: string): ValidationBuilder<T> {
-    this.rules.push(this.createValidationRule(ValidationType.STARTS_WITH, prefix, errorMessage));
+    this.rules.push({ type: ValidationType.STARTS_WITH, value: prefix, errorMessage });
     return this;
   }
 
@@ -355,7 +336,7 @@ export class ValidationBuilder<T> implements StringValidationBuilderBase<T>, Num
    * @param errorMessage - Optional custom error message
    */
   endsWith(suffix: string, errorMessage?: string): ValidationBuilder<T> {
-    this.rules.push(this.createValidationRule(ValidationType.ENDS_WITH, suffix, errorMessage));
+    this.rules.push({ type: ValidationType.ENDS_WITH, value: suffix, errorMessage });
     return this;
   }
 
@@ -365,7 +346,7 @@ export class ValidationBuilder<T> implements StringValidationBuilderBase<T>, Num
    * @param errorMessage - Optional custom error message
    */
   matches(pattern: string, errorMessage?: string): ValidationBuilder<T> {
-    this.rules.push(this.createValidationRule(ValidationType.MATCHES, pattern, errorMessage));
+    this.rules.push({ type: ValidationType.MATCHES, value: pattern, errorMessage });
     return this;
   }
 
