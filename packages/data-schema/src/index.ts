@@ -7,7 +7,7 @@ export type { ClientSchema };
 export type {CombinedModelSchema} from './CombineSchema';
 export type { Authorization, ResourceAuthorization } from './Authorization';
 export type { CustomOperation } from './CustomOperation';
-export type { ModelField, Nullable, Json } from './ModelField';
+export type { ModelField, ModelFieldType, Nullable, Json } from './ModelField';
 export type { ModelSchema, RDSModelSchema} from './ModelSchema';
 export type { ModelType, ModelDefaultIdentifier } from './ModelType';
 export type { RefType } from './RefType';

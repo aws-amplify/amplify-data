@@ -13,7 +13,7 @@ export declare function float(): ModelField<Nullable<number>, never, undefined, 
 ```
 **Returns:**
 
-[ModelField](./data-schema.modelfield.md)<!-- -->&lt;[Nullable](./data-schema.nullable.md)<!-- -->&lt;number&gt;, never, undefined, ModelFieldType.Float&gt;
+[ModelField](./data-schema.modelfield.md)<!-- -->&lt;[Nullable](./data-schema.nullable.md)<!-- -->&lt;number&gt;, never, undefined, [ModelFieldType.Float](./data-schema.modelfieldtype.md)<!-- -->&gt;
 
 float field definition
 

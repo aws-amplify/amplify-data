@@ -13,7 +13,7 @@ export declare function id(): ModelField<Nullable<string>, never, undefined, Mod
 ```
 **Returns:**
 
-[ModelField](./data-schema.modelfield.md)<!-- -->&lt;[Nullable](./data-schema.nullable.md)<!-- -->&lt;string&gt;, never, undefined, ModelFieldType.Id&gt;
+[ModelField](./data-schema.modelfield.md)<!-- -->&lt;[Nullable](./data-schema.nullable.md)<!-- -->&lt;string&gt;, never, undefined, [ModelFieldType.Id](./data-schema.modelfieldtype.md)<!-- -->&gt;
 
 ID field definition
 

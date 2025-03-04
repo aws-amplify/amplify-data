@@ -13,7 +13,7 @@ export declare function boolean(): ModelField<Nullable<boolean>, never, undefine
 ```
 **Returns:**
 
-[ModelField](./data-schema.modelfield.md)<!-- -->&lt;[Nullable](./data-schema.nullable.md)<!-- -->&lt;boolean&gt;, never, undefined, ModelFieldType.Boolean&gt;
+[ModelField](./data-schema.modelfield.md)<!-- -->&lt;[Nullable](./data-schema.nullable.md)<!-- -->&lt;boolean&gt;, never, undefined, [ModelFieldType.Boolean](./data-schema.modelfieldtype.md)<!-- -->&gt;
 
 boolean field definition
 

@@ -13,7 +13,7 @@ export declare function timestamp(): ModelField<Nullable<number>, never, undefin
 ```
 **Returns:**
 
-[ModelField](./data-schema.modelfield.md)<!-- -->&lt;[Nullable](./data-schema.nullable.md)<!-- -->&lt;number&gt;, never, undefined, ModelFieldType.Timestamp&gt;
+[ModelField](./data-schema.modelfield.md)<!-- -->&lt;[Nullable](./data-schema.nullable.md)<!-- -->&lt;number&gt;, never, undefined, [ModelFieldType.Timestamp](./data-schema.modelfieldtype.md)<!-- -->&gt;
 
 timestamp field definition
 

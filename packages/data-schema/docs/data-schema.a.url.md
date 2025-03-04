@@ -13,7 +13,7 @@ export declare function url(): ModelField<Nullable<string>, never, undefined, Mo
 ```
 **Returns:**
 
-[ModelField](./data-schema.modelfield.md)<!-- -->&lt;[Nullable](./data-schema.nullable.md)<!-- -->&lt;string&gt;, never, undefined, ModelFieldType.Url&gt;
+[ModelField](./data-schema.modelfield.md)<!-- -->&lt;[Nullable](./data-schema.nullable.md)<!-- -->&lt;string&gt;, never, undefined, [ModelFieldType.Url](./data-schema.modelfieldtype.md)<!-- -->&gt;
 
 URL field definition
 

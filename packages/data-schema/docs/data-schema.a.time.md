@@ -13,7 +13,7 @@ export declare function time(): ModelField<Nullable<string>, never, undefined, M
 ```
 **Returns:**
 
-[ModelField](./data-schema.modelfield.md)<!-- -->&lt;[Nullable](./data-schema.nullable.md)<!-- -->&lt;string&gt;, never, undefined, ModelFieldType.Time&gt;
+[ModelField](./data-schema.modelfield.md)<!-- -->&lt;[Nullable](./data-schema.nullable.md)<!-- -->&lt;string&gt;, never, undefined, [ModelFieldType.Time](./data-schema.modelfieldtype.md)<!-- -->&gt;
 
 time field definition
 

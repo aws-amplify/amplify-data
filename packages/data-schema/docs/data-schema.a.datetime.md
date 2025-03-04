@@ -13,7 +13,7 @@ export declare function datetime(): ModelField<Nullable<string>, never, undefine
 ```
 **Returns:**
 
-[ModelField](./data-schema.modelfield.md)<!-- -->&lt;[Nullable](./data-schema.nullable.md)<!-- -->&lt;string&gt;, never, undefined, ModelFieldType.DateTime&gt;
+[ModelField](./data-schema.modelfield.md)<!-- -->&lt;[Nullable](./data-schema.nullable.md)<!-- -->&lt;string&gt;, never, undefined, [ModelFieldType.DateTime](./data-schema.modelfieldtype.md)<!-- -->&gt;
 
 datetime field definition
 

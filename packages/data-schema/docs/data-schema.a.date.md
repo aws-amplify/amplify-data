@@ -13,7 +13,7 @@ export declare function date(): ModelField<Nullable<string>, never, undefined, M
 ```
 **Returns:**
 
-[ModelField](./data-schema.modelfield.md)<!-- -->&lt;[Nullable](./data-schema.nullable.md)<!-- -->&lt;string&gt;, never, undefined, ModelFieldType.Date&gt;
+[ModelField](./data-schema.modelfield.md)<!-- -->&lt;[Nullable](./data-schema.nullable.md)<!-- -->&lt;string&gt;, never, undefined, [ModelFieldType.Date](./data-schema.modelfieldtype.md)<!-- -->&gt;
 
 date field definition
 

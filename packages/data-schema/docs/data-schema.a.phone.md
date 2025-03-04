@@ -13,7 +13,7 @@ export declare function phone(): ModelField<Nullable<string>, never, undefined, 
 ```
 **Returns:**
 
-[ModelField](./data-schema.modelfield.md)<!-- -->&lt;[Nullable](./data-schema.nullable.md)<!-- -->&lt;string&gt;, never, undefined, ModelFieldType.Phone&gt;
+[ModelField](./data-schema.modelfield.md)<!-- -->&lt;[Nullable](./data-schema.nullable.md)<!-- -->&lt;string&gt;, never, undefined, [ModelFieldType.Phone](./data-schema.modelfieldtype.md)<!-- -->&gt;
 
 phone number field definition
 

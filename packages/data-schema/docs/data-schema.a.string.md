@@ -13,7 +13,7 @@ export declare function string(): ModelField<Nullable<string>, never, undefined,
 ```
 **Returns:**
 
-[ModelField](./data-schema.modelfield.md)<!-- -->&lt;[Nullable](./data-schema.nullable.md)<!-- -->&lt;string&gt;, never, undefined, ModelFieldType.String&gt;
+[ModelField](./data-schema.modelfield.md)<!-- -->&lt;[Nullable](./data-schema.nullable.md)<!-- -->&lt;string&gt;, never, undefined, [ModelFieldType.String](./data-schema.modelfieldtype.md)<!-- -->&gt;
 
 string field definition
 

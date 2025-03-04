@@ -20,5 +20,5 @@ export type ModelField<T extends ModelFieldTypeParamOuter = ModelFieldTypeParamO
     validate(callback: (v: FieldTypeToValidationBuilder<T, FT>) => void): ModelField<T, UsedMethod | 'validate' | 'default' | 'array', Auth, FT>;
 }, UsedMethod>;
 ```
-**References:** [ModelField](./data-schema.modelfield.md)<!-- -->, [Authorization](./data-schema.authorization.md)
+**References:** [ModelFieldType](./data-schema.modelfieldtype.md)<!-- -->, [ModelField](./data-schema.modelfield.md)<!-- -->, [Authorization](./data-schema.authorization.md)
 
