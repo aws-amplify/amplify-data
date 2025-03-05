@@ -1,5 +1,11 @@
 # @aws-amplify/data-schema
 
+## 1.19.0
+
+### Minor Changes
+
+- f62ccf9: Add support for document attachment in AI conversation routes
+
 ## 1.18.0
 
 ### Minor Changes
