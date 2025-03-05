@@ -19,9 +19,18 @@ export interface ImageBlock {
 }
 
 export interface DocumentBlock {
-  format: 'pdf' | 'csv' | 'doc' | 'docx' | 'xls' | 'xlsx' | 'html' | 'txt' | 'md';
+  format:
+    | 'pdf'
+    | 'csv'
+    | 'doc'
+    | 'docx'
+    | 'xls'
+    | 'xlsx'
+    | 'html'
+    | 'txt'
+    | 'md';
   name: string;
-  source: BytesImageSource;
+  source: BytesDocumentSource;
 }
 
 export interface ToolUseBlock {
