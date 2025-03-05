@@ -353,6 +353,7 @@ type AsyncFunctionCustomOperation<T extends CustomOperationParamShape> =
   >;
 
 type EventInvocationResponseCustomType = CustomType<{
+  authorization: [];
   fields: {
     success: ModelField<boolean, 'required', undefined>;
   };
