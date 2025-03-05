@@ -8,9 +8,19 @@ interface BytesImageSource {
   bytes: Uint8Array;
 }
 
+interface BytesDocumentSource {
+  bytes: Uint8Array;
+}
+
 // common content blocks
 export interface ImageBlock {
   format: 'gif' | 'jpeg' | 'png' | 'webp';
+  source: BytesImageSource;
+}
+
+export interface DocumentBlock {
+  format: 'pdf' | 'csv' | 'doc' | 'docx' | 'xls' | 'xlsx' | 'html' | 'txt' | 'md';
+  name: string;
   source: BytesImageSource;
 }
 

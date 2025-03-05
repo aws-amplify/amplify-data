@@ -5,6 +5,7 @@ import { toBase64 } from '@smithy/util-base64';
 import type {
   ConversationMessageContent,
   ConversationMessageImageContent,
+  ConversationMessageDocumentContent,
   ConversationMessageToolResultContent,
 } from '../../../ai/types/ConversationMessageContent';
 import type { ToolConfiguration } from '../../../ai/types/ToolConfiguration';
@@ -17,6 +18,9 @@ export const serializeContent = (content: ConversationMessageContent[]) =>
   content.map((block) => {
     if (block.image) {
       return serializeImageBlock(block);
+    }
+    if (block.document) {
+      return serializeDocumentBlock(block);
     }
     if (block.toolResult) {
       return serializeToolResultBlock(block);
@@ -42,6 +46,18 @@ const serializeImageBlock = ({ image }: ConversationMessageImageContent) => ({
     source: {
       ...image.source,
       bytes: toBase64(image.source.bytes),
+    },
+  },
+});
+
+const serializeDocumentBlock = ({
+  document,
+}: ConversationMessageDocumentContent) => ({
+  document: {
+    ...document,
+    source: {
+      ...document.source,
+      bytes: toBase64(document.source.bytes),
     },
   },
 });

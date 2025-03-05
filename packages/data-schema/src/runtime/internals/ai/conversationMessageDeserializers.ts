@@ -11,6 +11,9 @@ export const deserializeContent = (
     if (block.image) {
       return deserializeImageBlock(block);
     }
+    if (block.document) {
+      return deserializeDocumentBlock(block);
+    }
     if (block.toolUse) {
       return deserializeToolUseBlock(block);
     }
@@ -26,6 +29,16 @@ const deserializeImageBlock = ({ image }: Record<'image', any>) => ({
     source: {
       ...image.source,
       bytes: fromBase64(image.source.bytes),
+    },
+  },
+});
+
+const deserializeDocumentBlock = ({ document }: Record<'document', any>) => ({
+  document: {
+    ...document,
+    source: {
+      ...document.source,
+      bytes: fromBase64(document.source.bytes),
     },
   },
 });

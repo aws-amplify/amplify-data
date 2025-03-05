@@ -2,7 +2,10 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { toBase64 } from '@smithy/util-base64';
-import type { ConversationMessageImageContent } from '../../../src/ai/types/ConversationMessageContent';
+import type {
+  ConversationMessageImageContent,
+  ConversationMessageDocumentContent,
+} from '../../../src/ai/types/ConversationMessageContent';
 import type { ToolResultImageContent } from '../../../src/ai/types/ToolResultContent';
 import {
   serializeAiContext,
@@ -21,6 +24,13 @@ describe('conversationMessageSerializers', () => {
   const mockImageContent = {
     image: {
       format: 'png',
+      source: { bytes: mockImageSourceBytes },
+    },
+  };
+  const mockDocumentContent = {
+    document: {
+      format: 'pdf',
+      name: 'sample-doc',
       source: { bytes: mockImageSourceBytes },
     },
   };
@@ -97,6 +107,23 @@ describe('conversationMessageSerializers', () => {
         {
           image: {
             ...mockImageContent.image,
+            source: {
+              bytes: mockBase64String,
+            },
+          },
+        },
+      ]);
+      expect(mockToBase64).toHaveBeenCalledWith(mockImageSourceBytes);
+    });
+
+    it('serializes document content', () => {
+      const mockConversationMessageContent = [
+        mockDocumentContent as ConversationMessageDocumentContent,
+      ];
+      expect(serializeContent(mockConversationMessageContent)).toStrictEqual([
+        {
+          document: {
+            ...mockDocumentContent.document,
             source: {
               bytes: mockBase64String,
             },
