@@ -25,7 +25,7 @@
     "aws-cdk": "^2.149.0",
     "aws-cdk-lib": "^2.149.0",
     "constructs": "^10.3.0",
-    "esbuild": "^0.23.0",
+    "esbuild": "^0.25.0",
     "jest": "^29.7.0",
     "jest-tsd": "^0.2.2",
     "ts-jest": "^29.2.0",
