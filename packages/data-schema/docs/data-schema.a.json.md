@@ -9,11 +9,11 @@ A JSON scalar type that is automatically parsed and loaded server-side as maps, 
 **Signature:**
 
 ```typescript
-export declare function json(): ModelField<Nullable<Json>>;
+export declare function json(): ModelField<Nullable<Json>, never, undefined, ModelFieldType.JSON>;
 ```
 **Returns:**
 
-[ModelField](./data-schema.modelfield.md)<!-- -->&lt;[Nullable](./data-schema.nullable.md)<!-- -->&lt;[Json](./data-schema.json.md)<!-- -->&gt;&gt;
+[ModelField](./data-schema.modelfield.md)<!-- -->&lt;[Nullable](./data-schema.nullable.md)<!-- -->&lt;[Json](./data-schema.json.md)<!-- -->&gt;, never, undefined, [ModelFieldType.JSON](./data-schema.modelfieldtype.md)<!-- -->&gt;
 
 JSON field definition
 
