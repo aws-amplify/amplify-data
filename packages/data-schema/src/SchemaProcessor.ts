@@ -1432,8 +1432,24 @@ function generateInputTypes(
     if (isRefField(argDef)) {
       const refType = getRefType(argDef.data.link, operationName);
       if (refType.type === 'CustomType') {
+        const { valueRequired, array, arrayRequired } = argDef.data;
+
         const inputTypeName = `${argDef.data.link}Input`;
-        argDefinitions.push(`${argName}: ${inputTypeName}`);
+        let field = inputTypeName;
+
+        if (valueRequired === true) {
+          field += '!';
+        }
+
+        if (array) {
+          field = `[${field}]`;
+
+          if (arrayRequired === true) {
+            field += '!';
+          }
+        }
+
+        argDefinitions.push(`${argName}: ${field}`);
 
         // Process the input type if it hasn't been processed yet
         if (!processedTypes.has(inputTypeName)) {
@@ -1450,7 +1466,23 @@ function generateInputTypes(
           });
         }
       } else if (refType.type === 'Enum') {
-        argDefinitions.push(`${argName}: ${argDef.data.link}`);
+        const { valueRequired, array, arrayRequired } = argDef.data;
+
+        let field = argDef.data.link;
+
+        if (valueRequired === true) {
+          field += '!';
+        }
+
+        if (array) {
+          field = `[${field}]`;
+
+          if (arrayRequired === true) {
+            field += '!';
+          }
+        }
+
+        argDefinitions.push(`${argName}: ${field}`);
       } else {
         throw new Error(
           `Unsupported reference type '${refType.type}' for argument '${argName}' in '${operationName}'. ` +
