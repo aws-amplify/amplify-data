@@ -209,39 +209,88 @@ describe('Each validator can only be used once on the same field', () => {
     // @ts-expect-error
     const integerField1 = a.integer().validate(v => v.gt(0).gt(10));
     // @ts-expect-error
-    const integerField2 = a.integer().validate(v => v.lt(0).lt(10));
+    const integerField2 = a.integer().validate(v => v.gt(0).lt(10).gt(0));
+
     // @ts-expect-error
-    const integerField3 = a.integer().validate(v => v.gte(0).gte(10));
+    const integerField3 = a.integer().validate(v => v.lt(0).lt(10));
     // @ts-expect-error
-    const integerField4 = a.integer().validate(v => v.lte(0).lte(10));
+    const integerField4 = a.integer().validate(v => v.lt(0).gt(10).lt(0));
+
     // @ts-expect-error
-    const integerField5 = a.integer().validate(v => v.positive().positive());
+    const integerField5 = a.integer().validate(v => v.gte(0).gte(10));
     // @ts-expect-error
-    const integerField6 = a.integer().validate(v => v.negative().negative());
+    const integerField6 = a.integer().validate(v => v.gte(0).lte(10).gte(0));
+
+    // @ts-expect-error
+    const integerField7 = a.integer().validate(v => v.lte(0).lte(10));
+    // @ts-expect-error
+    const integerField8 = a.integer().validate(v => v.lte(0).gte(10).lte(0));
+
+    // @ts-expect-error
+    const integerField9 = a.integer().validate(v => v.positive().positive());
+    // @ts-expect-error
+    const integerField10 = a.integer().validate(v => v.positive().negative().positive());
+
+    // @ts-expect-error
+    const integerField11 = a.integer().validate(v => v.negative().negative());
+    // @ts-expect-error
+    const integerField12 = a.integer().validate(v => v.negative().positive().negative());
+
     // @ts-expect-error
     const floatField1 = a.float().validate(v => v.gt(0).gt(10));
     // @ts-expect-error
-    const floatField2 = a.float().validate(v => v.lt(0).lt(10));
+    const floatField2 = a.float().validate(v => v.gt(0).lt(10).gt(0));
+
     // @ts-expect-error
-    const floatField3 = a.float().validate(v => v.gte(0).gte(10));
+    const floatField3 = a.float().validate(v => v.lt(0).lt(10));
     // @ts-expect-error
-    const floatField4 = a.float().validate(v => v.lte(0).lte(10));
+    const floatField4 = a.float().validate(v => v.lt(0).gt(10).lt(0));
+
     // @ts-expect-error
-    const floatField5 = a.float().validate(v => v.positive().positive());
+    const floatField5 = a.float().validate(v => v.gte(0).gte(10));
     // @ts-expect-error
-    const floatField6 = a.float().validate(v => v.negative().negative());
+    const floatField6 = a.float().validate(v => v.gte(0).lte(10).gte(0));
+
+    // @ts-expect-error
+    const floatField7 = a.float().validate(v => v.lte(0).lte(10));
+    // @ts-expect-error
+    const floatField8 = a.float().validate(v => v.lte(0).gte(10).lte(0));
+
+    // @ts-expect-error
+    const floatField9 = a.float().validate(v => v.positive().positive());
+    // @ts-expect-error
+    const floatField10 = a.float().validate(v => v.positive().negative().positive());
+
+    // @ts-expect-error
+    const floatField11 = a.float().validate(v => v.negative().negative());
+    // @ts-expect-error
+    const floatField12 = a.float().validate(v => v.negative().positive().negative());
   });
 
   it('String validators can only be used once on the same String field', () => {
     // @ts-expect-error
     const stringField1 = a.string().validate(v => v.minLength(5).minLength(10));
     // @ts-expect-error
-    const stringField2 = a.string().validate(v => v.maxLength(5).maxLength(10));
+    const stringField2 = a.string().validate(v => v.minLength(5).maxLength(10).minLength(10));
+
     // @ts-expect-error
-    const stringField3 = a.string().validate(v => v.startsWith('prefix-').startsWith('prefix-'));
+    const stringField3 = a.string().validate(v => v.maxLength(5).maxLength(10));
     // @ts-expect-error
-    const stringField4 = a.string().validate(v => v.endsWith('-suffix').endsWith('-suffix'));
+    const stringField4 = a.string().validate(v => v.maxLength(5).minLength(10).maxLength(10));
+
     // @ts-expect-error
-    const stringField5 = a.string().validate(v => v.matches('^[a-zA-Z0-9]+$').matches('^[a-zA-Z0-9]+$'));
+    const stringField5 = a.string().validate(v => v.startsWith('prefix-').startsWith('prefix-'));
+    // @ts-expect-error
+    const stringField6 = a.string().validate(v => v.startsWith('prefix-').endsWith('-suffix').startsWith('prefix-'));
+
+    // @ts-expect-error
+    const stringField7 = a.string().validate(v => v.endsWith('prefix-').endsWith('-suffix'));
+    // @ts-expect-error
+    const stringField8 = a.string().validate(v => v.endsWith('-suffix').startsWith('prefix-').endsWith('-suffix'));
+
+    // @ts-expect-error
+    const stringField9 = a.string().validate(v => v.matches('^[a-zA-Z0-9]+$').matches('^[a-zA-Z0-9]+$'));
+    // @ts-expect-error
+    const stringField10 = a.string().validate(v => v.matches('^[a-zA-Z0-9]+$').startsWith('prefix-').matches('^[a-zA-Z0-9]+$'));
   });
 });
