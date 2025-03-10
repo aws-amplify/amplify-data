@@ -151,3 +151,261 @@ describe('Lambda resource access', () => {
     ]);
   });
 });
+
+describe('custom operation argument inputs', () => {
+
+  it('when the argument is an array of custom type refs the input is an array refs', () => {
+    const fn1 = defineFunctionStub({});
+
+    const schema = a
+      .schema({
+        testType: a.customType({
+          testField: a.string().required(),
+        }),
+
+        testMutation: a
+          .mutation()
+          .arguments({
+            testArgument: a.ref('testType').array(),
+          })
+          .returns(a.string())
+          .handler(a.handler.function(fn1))
+      })
+      .authorization((allow) => allow.owner());
+
+    expect(schema.transform().schema).toMatchSnapshot();
+  });
+
+  it('when the argument is a required custom type ref the input is a required ref', () => {
+    const fn1 = defineFunctionStub({});
+
+    const schema = a
+      .schema({
+        testType: a.customType({
+          testField: a.string().required(),
+        }),
+
+        testMutation: a
+          .mutation()
+          .arguments({
+            testArgument: a.ref('testType').required(),
+          })
+          .returns(a.string())
+          .handler(a.handler.function(fn1))
+      })
+      .authorization((allow) => allow.owner());
+
+    expect(schema.transform().schema).toMatchSnapshot();
+  });
+
+  it('when the argument is a required array of custom type refs the input is a required array', () => {
+    const fn1 = defineFunctionStub({});
+
+    const schema = a
+      .schema({
+        testType: a.customType({
+          testField: a.string().required(),
+        }),
+
+        testMutation: a
+          .mutation()
+          .arguments({
+            testArgument: a.ref('testType').array().required(),
+          })
+          .returns(a.string())
+          .handler(a.handler.function(fn1))
+      })
+      .authorization((allow) => allow.owner());
+
+    expect(schema.transform().schema).toMatchSnapshot();
+  });
+
+  it('when the argument is an array of required custom type refs the input is an array of required refs', () => {
+    const fn1 = defineFunctionStub({});
+
+    const schema = a
+      .schema({
+        testType: a.customType({
+          testField: a.string().required(),
+        }),
+
+        testMutation: a
+          .mutation()
+          .arguments({
+            testArgument: a.ref('testType').required().array(),
+          })
+          .returns(a.string())
+          .handler(a.handler.function(fn1))
+      })
+      .authorization((allow) => allow.owner());
+
+    expect(schema.transform().schema).toMatchSnapshot();
+  });
+
+  it('when the argument is a required array of required custom type refs the input is a required array of required refs', () => {
+    const fn1 = defineFunctionStub({});
+
+    const schema = a
+      .schema({
+        testType: a.customType({
+          testField: a.string().required(),
+        }),
+
+        testMutation: a
+          .mutation()
+          .arguments({
+            testArgument: a.ref('testType').required().array().required(),
+          })
+          .returns(a.string())
+          .handler(a.handler.function(fn1))
+      })
+      .authorization((allow) => allow.owner());
+
+    expect(schema.transform().schema).toMatchSnapshot();
+  });
+
+  it('when the argument is an array of enum the input is an array', () => {
+    const fn1 = defineFunctionStub({});
+
+    const schema = a
+      .schema({
+        testEnum: a.enum(['test1', 'test2']),
+
+        testMutation: a
+          .mutation()
+          .arguments({
+            testArgument: a.ref('testEnum').array(),
+          })
+          .returns(a.string())
+          .handler(a.handler.function(fn1))
+      })
+      .authorization((allow) => allow.owner());
+
+    expect(schema.transform().schema).toMatchSnapshot();
+  });
+
+  it('when the argument is a required enum the input is required', () => {
+    const fn1 = defineFunctionStub({});
+
+    const schema = a
+      .schema({
+        testEnum: a.enum(['test1', 'test2']),
+
+        testMutation: a
+          .mutation()
+          .arguments({
+            testArgument: a.ref('testEnum').required(),
+          })
+          .returns(a.string())
+          .handler(a.handler.function(fn1))
+      })
+      .authorization((allow) => allow.owner());
+
+    expect(schema.transform().schema).toMatchSnapshot();
+  });
+
+  it('when the argument is a required array of enum refs the input is a required array', () => {
+    const fn1 = defineFunctionStub({});
+
+    const schema = a
+      .schema({
+        testEnum: a.enum(['test1', 'test2']),
+
+        testMutation: a
+          .mutation()
+          .arguments({
+            testArgument: a.ref('testEnum').array().required(),
+          })
+          .returns(a.string())
+          .handler(a.handler.function(fn1))
+      })
+      .authorization((allow) => allow.owner());
+
+    expect(schema.transform().schema).toMatchSnapshot();
+  });
+
+  it('when the argument is an array of required enum refs the input is a array of required refs', () => {
+    const fn1 = defineFunctionStub({});
+
+    const schema = a
+      .schema({
+        testEnum: a.enum(['test1', 'test2']),
+
+        testMutation: a
+          .mutation()
+          .arguments({
+            testArgument: a.ref('testEnum').required().array(),
+          })
+          .returns(a.string())
+          .handler(a.handler.function(fn1))
+      })
+      .authorization((allow) => allow.owner());
+
+    expect(schema.transform().schema).toMatchSnapshot();
+  });
+
+  it('when the argument is a required array of required enum refs the input is a required array of required refs', () => {
+    const fn1 = defineFunctionStub({});
+
+    const schema = a
+      .schema({
+        testEnum: a.enum(['test1', 'test2']),
+
+        testMutation: a
+          .mutation()
+          .arguments({
+            testArgument: a.ref('testEnum').required().array().required(),
+          })
+          .returns(a.string())
+          .handler(a.handler.function(fn1))
+      })
+      .authorization((allow) => allow.owner());
+
+    expect(schema.transform().schema).toMatchSnapshot();
+  });
+
+  it('when the argument is a custom type with an array field the input types field is an array', () => {
+    const fn1 = defineFunctionStub({});
+
+    const schema = a
+      .schema({
+        testType: a.customType({
+          testField: a.string().array(),
+        }),
+
+        testMutation: a
+          .mutation()
+          .arguments({
+            testArgument: a.ref('testType'),
+          })
+          .returns(a.string())
+          .handler(a.handler.function(fn1))
+      })
+      .authorization((allow) => allow.owner());
+
+    expect(schema.transform().schema).toMatchSnapshot();
+  });
+
+  it('when the argument is a custom type with a required field the input types field is required', () => {
+    const fn1 = defineFunctionStub({});
+
+    const schema = a
+      .schema({
+        testType: a.customType({
+          testField: a.string().required(),
+        }),
+
+        testMutation: a
+          .mutation()
+          .arguments({
+            testArgument: a.ref('testType'),
+          })
+          .returns(a.string())
+          .handler(a.handler.function(fn1))
+      })
+      .authorization((allow) => allow.owner());
+
+    expect(schema.transform().schema).toMatchSnapshot();
+  });
+
+})
