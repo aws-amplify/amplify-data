@@ -1,6 +1,34 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`Validation directive generation Model with various validation rules with double-quoted error messages 1`] = `
+"type TestModelWithErrors @model @auth(rules: [{allow: public, provider: apiKey}])
+{
+  id: ID! @primaryKey
+  integerField: Int @validate(type: gt, value: "0", errorMessage: ""Value must be greater than 0"") @validate(type: lt, value: "100", errorMessage: ""Value must be less than 100"") @validate(type: gte, value: "1", errorMessage: ""Value must be at least 1"") @validate(type: lte, value: "99", errorMessage: ""Value must be at most 99"")
+  positiveIntegerField: Int @validate(type: gt, value: "0", errorMessage: ""Value must be positive"")
+  negativeIntegerField: Int @validate(type: lt, value: "0", errorMessage: ""Value must be negative"")
+  floatField: Float @validate(type: gt, value: "0.99", errorMessage: ""Value must be greater than 0.99"") @validate(type: lt, value: "1000.01", errorMessage: ""Value must be less than 1000.01"") @validate(type: gte, value: "1", errorMessage: ""Value must be at least 1.0"") @validate(type: lte, value: "1000", errorMessage: ""Value must be at most 1000.0"")
+  positiveFloatField: Float @validate(type: gt, value: "0", errorMessage: ""Value must be positive"")
+  negativeFloatField: Float @validate(type: lt, value: "0", errorMessage: ""Value must be negative"")
+  stringField: String @validate(type: minLength, value: "5", errorMessage: ""String must be at least 5 characters"") @validate(type: maxLength, value: "20", errorMessage: ""String must be at most 20 characters"") @validate(type: startsWith, value: "ABC", errorMessage: ""String must start with ABC"") @validate(type: endsWith, value: "XYZ", errorMessage: ""String must end with XYZ"") @validate(type: matches, value: "^[A-Z0-9]+$", errorMessage: ""String must only contain uppercase letters and numbers"")
+}"
+`;
+
 exports[`Validation directive generation Model with various validation rules with error messages 1`] = `
+"type TestModelWithErrors @model @auth(rules: [{allow: public, provider: apiKey}])
+{
+  id: ID! @primaryKey
+  integerField: Int @validate(type: gt, value: "0", errorMessage: ""Value must be greater than 0"") @validate(type: lt, value: "100", errorMessage: ""Value must be less than 100"") @validate(type: gte, value: "1", errorMessage: ""Value must be at least 1"") @validate(type: lte, value: "99", errorMessage: ""Value must be at most 99"")
+  positiveIntegerField: Int @validate(type: gt, value: "0", errorMessage: ""Value must be positive"")
+  negativeIntegerField: Int @validate(type: lt, value: "0", errorMessage: ""Value must be negative"")
+  floatField: Float @validate(type: gt, value: "0.99", errorMessage: ""Value must be greater than 0.99"") @validate(type: lt, value: "1000.01", errorMessage: ""Value must be less than 1000.01"") @validate(type: gte, value: "1", errorMessage: ""Value must be at least 1.0"") @validate(type: lte, value: "1000", errorMessage: ""Value must be at most 1000.0"")
+  positiveFloatField: Float @validate(type: gt, value: "0", errorMessage: ""Value must be positive"")
+  negativeFloatField: Float @validate(type: lt, value: "0", errorMessage: ""Value must be negative"")
+  stringField: String @validate(type: minLength, value: "5", errorMessage: ""String must be at least 5 characters"") @validate(type: maxLength, value: "20", errorMessage: ""String must be at most 20 characters"") @validate(type: startsWith, value: "ABC", errorMessage: ""String must start with ABC"") @validate(type: endsWith, value: "XYZ", errorMessage: ""String must end with XYZ"") @validate(type: matches, value: "^[A-Z0-9]+$", errorMessage: ""String must only contain uppercase letters and numbers"")
+}"
+`;
+
+exports[`Validation directive generation Model with various validation rules with single-quoted error messages 1`] = `
 "type TestModelWithErrors @model @auth(rules: [{allow: public, provider: apiKey}])
 {
   id: ID! @primaryKey
