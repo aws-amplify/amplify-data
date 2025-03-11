@@ -4,8 +4,10 @@ exports[`something happy path type and mocked runtime tests 1`] = `
 [
   [
     {
+      "apiKey": undefined,
       "authMode": undefined,
       "authToken": undefined,
+      "endpoint": undefined,
       "query": "query($id: ID!) { getStandaloneModel(id: $id) { id name createdAt updatedAt } }",
       "variables": {
         "id": "something",
@@ -15,8 +17,10 @@ exports[`something happy path type and mocked runtime tests 1`] = `
   ],
   [
     {
+      "apiKey": undefined,
       "authMode": undefined,
       "authToken": undefined,
+      "endpoint": undefined,
       "query": "query($filter: ModelStandaloneModelFilterInput,$limit: Int,$nextToken: String) { listStandaloneModels(filter: $filter,limit: $limit,nextToken: $nextToken) { items { id name createdAt updatedAt } nextToken __typename } }",
       "variables": {},
     },
@@ -24,8 +28,10 @@ exports[`something happy path type and mocked runtime tests 1`] = `
   ],
   [
     {
+      "apiKey": undefined,
       "authMode": undefined,
       "authToken": undefined,
+      "endpoint": undefined,
       "query": "query($name: String!,$filter: ModelStandaloneModelFilterInput,$sortDirection: ModelSortDirection,$limit: Int,$nextToken: String) { listStandaloneModelByName(name: $name,filter: $filter,sortDirection: $sortDirection,limit: $limit,nextToken: $nextToken) { items { id name createdAt updatedAt } nextToken __typename } }",
       "variables": {
         "name": "bob",
@@ -35,8 +41,10 @@ exports[`something happy path type and mocked runtime tests 1`] = `
   ],
   [
     {
+      "apiKey": undefined,
       "authMode": undefined,
       "authToken": undefined,
+      "endpoint": undefined,
       "query": "
     query($id: String) {
       myQuery(id: $id) {success}
