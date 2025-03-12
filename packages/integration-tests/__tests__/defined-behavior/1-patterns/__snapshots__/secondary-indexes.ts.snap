@@ -4,8 +4,10 @@ exports[`Custom secondary indexes Add sort keys to secondary indexes can retriev
 [
   [
     {
+      "apiKey": undefined,
       "authMode": undefined,
       "authToken": undefined,
+      "endpoint": undefined,
       "query": "query($accountRepresentativeId: ID!,$name: ModelStringKeyConditionInput,$filter: ModelCustomerFilterInput,$sortDirection: ModelSortDirection,$limit: Int,$nextToken: String) { listCustomerByAccountRepresentativeIdAndName(accountRepresentativeId: $accountRepresentativeId,name: $name,filter: $filter,sortDirection: $sortDirection,limit: $limit,nextToken: $nextToken) { items { id name phoneNumber accountRepresentativeId createdAt updatedAt owner } nextToken __typename } }",
       "variables": {
         "accountRepresentativeId": "YOUR_REP_ID",
@@ -23,8 +25,10 @@ exports[`Custom secondary indexes Customize the query field for secondary indexe
 [
   [
     {
+      "apiKey": undefined,
       "authMode": undefined,
       "authToken": undefined,
+      "endpoint": undefined,
       "query": "query($accountRepresentativeId: ID!,$filter: ModelCustomerFilterInput,$sortDirection: ModelSortDirection,$limit: Int,$nextToken: String) { listByRep(accountRepresentativeId: $accountRepresentativeId,filter: $filter,sortDirection: $sortDirection,limit: $limit,nextToken: $nextToken) { items { id name phoneNumber accountRepresentativeId createdAt updatedAt owner } nextToken __typename } }",
       "variables": {
         "accountRepresentativeId": "YOUR_REP_ID",
@@ -39,8 +43,10 @@ exports[`Custom secondary indexes main example can retrieve records using the cu
 [
   [
     {
+      "apiKey": undefined,
       "authMode": undefined,
       "authToken": undefined,
+      "endpoint": undefined,
       "query": "query($accountRepresentativeId: ID!,$filter: ModelCustomerFilterInput,$sortDirection: ModelSortDirection,$limit: Int,$nextToken: String) { listCustomerByAccountRepresentativeId(accountRepresentativeId: $accountRepresentativeId,filter: $filter,sortDirection: $sortDirection,limit: $limit,nextToken: $nextToken) { items { id name phoneNumber accountRepresentativeId createdAt updatedAt } nextToken __typename } }",
       "variables": {
         "accountRepresentativeId": "YOUR_REP_ID",
