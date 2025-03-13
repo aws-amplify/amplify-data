@@ -9,12 +9,19 @@ jest.mock('@smithy/util-base64');
 describe('conversationMessageDeserializers', () => {
   const mockBase64String = 'Zm9v'; // foo
   const mockJson = { foo: 'bar' };
-  const mockImageSourceBytes = new Uint8Array([102, 111, 111]);
+  const mockSourceBytes = new Uint8Array([102, 111, 111]);
   const mockInput = { baz: 'qux' };
   const mockTextContent = { text: 'foo' };
   const mockImageContent = {
     image: {
       format: 'png',
+      source: { bytes: mockBase64String },
+    },
+  };
+  const mockDocumentContent = {
+    document: {
+      format: 'pdf',
+      name: 'sample-doc',
       source: { bytes: mockBase64String },
     },
   };
@@ -36,7 +43,7 @@ describe('conversationMessageDeserializers', () => {
   const mockFromBase64 = fromBase64 as jest.Mock;
 
   beforeAll(() => {
-    mockFromBase64.mockReturnValue(mockImageSourceBytes);
+    mockFromBase64.mockReturnValue(mockSourceBytes);
   });
 
   afterEach(() => {
@@ -51,7 +58,21 @@ describe('conversationMessageDeserializers', () => {
           image: {
             ...mockImageContent.image,
             source: {
-              bytes: mockImageSourceBytes,
+              bytes: mockSourceBytes,
+            },
+          },
+        },
+      ]);
+    });
+
+    it('deserializes document content', () => {
+      const mockMessageContent = [mockDocumentContent];
+      expect(deserializeContent(mockMessageContent)).toStrictEqual([
+        {
+          document: {
+            ...mockDocumentContent.document,
+            source: {
+              bytes: mockSourceBytes,
             },
           },
         },
@@ -81,7 +102,7 @@ describe('conversationMessageDeserializers', () => {
               {
                 image: {
                   ...mockImageContent.image,
-                  source: { bytes: mockImageSourceBytes },
+                  source: { bytes: mockSourceBytes },
                 },
               },
               { json: mockJson },

@@ -4,8 +4,10 @@ exports[`AI Generation Routes Generations Run a generation 1`] = `
 [
   [
     {
+      "apiKey": undefined,
       "authMode": undefined,
       "authToken": undefined,
+      "endpoint": undefined,
       "query": "
     query($ingredients: [String]) {
       makeRecipe(ingredients: $ingredients) {directions}

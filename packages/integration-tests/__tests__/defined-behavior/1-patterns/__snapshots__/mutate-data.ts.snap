@@ -4,8 +4,10 @@ exports[`Create, update, and delete application data create an item 1`] = `
 [
   [
     {
+      "apiKey": undefined,
       "authMode": undefined,
       "authToken": undefined,
+      "endpoint": undefined,
       "query": "mutation($input: CreateTodoInput!) { createTodo(input: $input) { id content description done priority createdAt updatedAt owner } }",
       "variables": {
         "input": {
@@ -23,8 +25,10 @@ exports[`Create, update, and delete application data delete an item 1`] = `
 [
   [
     {
+      "apiKey": undefined,
       "authMode": undefined,
       "authToken": undefined,
+      "endpoint": undefined,
       "query": "mutation($input: DeleteTodoInput!) { deleteTodo(input: $input) { id content description done priority createdAt updatedAt owner } }",
       "variables": {
         "input": {
@@ -41,8 +45,10 @@ exports[`Create, update, and delete application data update an item 1`] = `
 [
   [
     {
+      "apiKey": undefined,
       "authMode": undefined,
       "authToken": undefined,
+      "endpoint": undefined,
       "query": "mutation($input: UpdateTodoInput!) { updateTodo(input: $input) { id content description done priority createdAt updatedAt owner } }",
       "variables": {
         "input": {
