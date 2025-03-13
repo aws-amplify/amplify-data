@@ -38,7 +38,7 @@ interface InternalValidationBuilder {
 /**
  * Interface for string validation methods without any exclusions
  */
-export interface StringValidationBuilderBase<T> {
+export interface StringValidationBuilderBase<T, ExcludedMethods extends string = never> {
   /**
    * Validates that a string field has at least the specified length
    * ⚠️ Only applicable to string fields
@@ -50,7 +50,10 @@ export interface StringValidationBuilderBase<T> {
    * @param length - The minimum length required
    * @param errorMessage - Optional custom error message
    */
-  minLength(length: number, errorMessage?: string): StringValidationBuilder<T, 'minLength'>;
+  minLength(
+    length: number, 
+    errorMessage?: string
+  ): StringValidationBuilder<T, ExcludedMethods | 'minLength'>;
   
   /**
    * Validates that a string field does not exceed the specified length
@@ -63,7 +66,10 @@ export interface StringValidationBuilderBase<T> {
    * @param length - The maximum length allowed
    * @param errorMessage - Optional custom error message
    */
-  maxLength(length: number, errorMessage?: string): StringValidationBuilder<T, 'maxLength'>;
+  maxLength(
+    length: number, 
+    errorMessage?: string
+  ): StringValidationBuilder<T, ExcludedMethods | 'maxLength'>;
   
   /**
    * Validates that a string field starts with the specified prefix
@@ -76,7 +82,10 @@ export interface StringValidationBuilderBase<T> {
    * @param prefix - The prefix the string must start with
    * @param errorMessage - Optional custom error message
    */
-  startsWith(prefix: string, errorMessage?: string): StringValidationBuilder<T, 'startsWith'>;
+  startsWith(
+    prefix: string, 
+    errorMessage?: string
+  ): StringValidationBuilder<T, ExcludedMethods | 'startsWith'>;
   
   /**
    * Validates that a string field ends with the specified suffix
@@ -89,7 +98,10 @@ export interface StringValidationBuilderBase<T> {
    * @param suffix - The suffix the string must end with
    * @param errorMessage - Optional custom error message
    */
-  endsWith(suffix: string, errorMessage?: string): StringValidationBuilder<T, 'endsWith'>;
+  endsWith(
+    suffix: string, 
+    errorMessage?: string
+  ): StringValidationBuilder<T, ExcludedMethods | 'endsWith'>;
   
   /**
    * Validates that a string field matches the specified regular expression pattern
@@ -102,7 +114,10 @@ export interface StringValidationBuilderBase<T> {
    * @param pattern - The regex pattern the string must match
    * @param errorMessage - Optional custom error message
    */
-  matches(pattern: string, errorMessage?: string): StringValidationBuilder<T, 'matches'>;
+  matches(
+    pattern: string, 
+    errorMessage?: string
+  ): StringValidationBuilder<T, ExcludedMethods | 'matches'>;
 }
 
 /**
@@ -111,12 +126,12 @@ export interface StringValidationBuilderBase<T> {
  * This is to disallow duplicate validation operators on the same field, which is not supported in the Validate Transformer.
  */
 export type StringValidationBuilder<T, ExcludedMethods extends string = never> = 
-  Omit<StringValidationBuilderBase<T>, ExcludedMethods & keyof StringValidationBuilderBase<T>>;
+  Omit<StringValidationBuilderBase<T, ExcludedMethods>, ExcludedMethods & keyof StringValidationBuilderBase<T, ExcludedMethods>>;
 
 /**
  * Interface for numeric validation methods without any exclusions
  */
-export interface NumericValidationBuilderBase<T> {
+export interface NumericValidationBuilderBase<T, ExcludedMethods extends string = never> {
   /**
    * Validates that a numeric field is greater than the specified value
    * ⚠️ Only applicable for integer or float fields
@@ -131,8 +146,11 @@ export interface NumericValidationBuilderBase<T> {
    * @param value - The value that the field must be greater than
    * @param errorMessage - Optional custom error message
    */
-  gt(value: number, errorMessage?: string): NumericValidationBuilder<T, 'gt' | 'positive'>;
-  
+  gt(
+    value: number, 
+    errorMessage?: string
+  ): NumericValidationBuilder<T, ExcludedMethods | 'gt' | 'positive'>;
+
   /**
    * Validates that a numeric field is less than the specified value
    * ⚠️ Only applicable for integer or float fields
@@ -147,7 +165,10 @@ export interface NumericValidationBuilderBase<T> {
    * @param value - The value that the field must be less than
    * @param errorMessage - Optional custom error message
    */
-  lt(value: number, errorMessage?: string): NumericValidationBuilder<T, 'lt' | 'negative'>;
+  lt(
+    value: number, 
+    errorMessage?: string
+  ): NumericValidationBuilder<T, ExcludedMethods | 'lt' | 'negative'>;
   
   /**
    * Validates that a numeric field is greater than or equal to the specified value
@@ -163,7 +184,10 @@ export interface NumericValidationBuilderBase<T> {
    * @param value - The value that the field must be greater than or equal to
    * @param errorMessage - Optional custom error message
    */
-  gte(value: number, errorMessage?: string): NumericValidationBuilder<T, 'gte'>;
+  gte(
+    value: number, 
+    errorMessage?: string
+  ): NumericValidationBuilder<T, ExcludedMethods | 'gte'>;
   
   /**
    * Validates that a numeric field is less than or equal to the specified value
@@ -179,7 +203,10 @@ export interface NumericValidationBuilderBase<T> {
    * @param value - The value that the field must be less than or equal to
    * @param errorMessage - Optional custom error message
    */
-  lte(value: number, errorMessage?: string): NumericValidationBuilder<T, 'lte'>;
+  lte(
+    value: number, 
+    errorMessage?: string
+  ): NumericValidationBuilder<T, ExcludedMethods | 'lte'>;
 
   /**
    * Validates that a numeric field is positive
@@ -194,7 +221,9 @@ export interface NumericValidationBuilderBase<T> {
    * 
    * @param errorMessage - Optional custom error message
    */
-  positive(errorMessage?: string): NumericValidationBuilder<T, 'positive' | 'gt'>;
+  positive(
+    errorMessage?: string
+  ): NumericValidationBuilder<T, ExcludedMethods | 'positive' | 'gt'>;
 
   /**
    * Validates that a numeric field is negative
@@ -209,7 +238,9 @@ export interface NumericValidationBuilderBase<T> {
    * 
    * @param errorMessage - Optional custom error message
    */
-  negative(errorMessage?: string): NumericValidationBuilder<T, 'negative' | 'lt'>;
+  negative(
+    errorMessage?: string
+  ): NumericValidationBuilder<T, ExcludedMethods | 'negative' | 'lt'>;
 }
 
 /**
@@ -218,7 +249,7 @@ export interface NumericValidationBuilderBase<T> {
  * This is to disallow duplicate validation operators on the same field, which is not supported in the Validate Transformer.
  */
 export type NumericValidationBuilder<T, ExcludedMethods extends string = never> = 
-  Omit<NumericValidationBuilderBase<T>, ExcludedMethods & keyof NumericValidationBuilderBase<T>>;
+  Omit<NumericValidationBuilderBase<T, ExcludedMethods>, ExcludedMethods & keyof NumericValidationBuilderBase<T, ExcludedMethods>>;
 
 /**
  * Maps a ModelFieldType to the appropriate validation builder type
@@ -227,9 +258,9 @@ export type NumericValidationBuilder<T, ExcludedMethods extends string = never> 
  */
 export type FieldTypeToValidationBuilder<T, FT extends ModelFieldType> = 
   FT extends ModelFieldType.String
-    ? StringValidationBuilder<T>
+    ? StringValidationBuilder<T, never>
     : FT extends ModelFieldType.Integer | ModelFieldType.Float
-      ? NumericValidationBuilder<T>
+      ? NumericValidationBuilder<T, never>
       : never;
 
 /**
