@@ -222,7 +222,7 @@ function scalarFieldToGql(
   for (const validationRule of validation) {
     const valueStr = typeof validationRule.value === 'number' ? validationRule.value.toString() : validationRule.value;
     if (validationRule.errorMessage) {
-      field += ` @validate(type: ${validationRule.type}, value: "${valueStr}", errorMessage: "${escapeGraphQlString(validationRule.errorMessage)}")`;
+      field += ` @validate(type: ${validationRule.type}, value: "${valueStr}", errorMessage: ${escapeGraphQlString(validationRule.errorMessage)})`;
     } else {
       field += ` @validate(type: ${validationRule.type}, value: "${valueStr}")`;
     }
