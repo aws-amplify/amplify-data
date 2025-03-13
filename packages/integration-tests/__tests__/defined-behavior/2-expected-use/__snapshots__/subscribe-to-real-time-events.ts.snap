@@ -24,7 +24,9 @@ exports[`Subscribe to real-time events subscription options 2`] = `
 [
   [
     {
+      "apiKey": undefined,
       "authMode": undefined,
+      "endpoint": undefined,
       "query": "subscription ($filter: ModelSubscriptionTodoFilterInput) {
   onCreateTodo(filter: $filter) {
     id

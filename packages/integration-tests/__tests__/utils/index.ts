@@ -125,19 +125,19 @@ export function mockedGenerateClient(
   });
 
   function generateClient<T extends Record<any, any>>(
-    options?: Parameters<typeof actualGenerateClient>[0],
+    options?: Parameters<typeof actualGenerateClient<T>>[0],
   ) {
     return actualGenerateClient<T>(options);
   }
 
   function generateServerClientUsingCookies<T extends Record<any, any>>(
-    options: Parameters<typeof actualGenerateServerClientUsingCookies>[0],
+    options: Parameters<typeof actualGenerateServerClientUsingCookies<T>>[0],
   ) {
     return actualGenerateServerClientUsingCookies<T>(options);
   }
 
   function generateServerClientUsingReqRes<T extends Record<any, any>>(
-    options: Parameters<typeof actualGenerateServerClientUsingReqRes>[0],
+    options: Parameters<typeof actualGenerateServerClientUsingReqRes<T>>[0],
   ) {
     return actualGenerateServerClientUsingReqRes<T>(options);
   }

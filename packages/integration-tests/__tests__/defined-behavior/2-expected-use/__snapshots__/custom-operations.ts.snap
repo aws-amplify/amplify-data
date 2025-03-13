@@ -4,8 +4,10 @@ exports[`custom operations async async 1`] = `
 [
   [
     {
+      "apiKey": undefined,
       "authMode": undefined,
       "authToken": undefined,
+      "endpoint": undefined,
       "query": "
     query($value: String) {
       asyncAsync(value: $value) {success}
@@ -24,8 +26,10 @@ exports[`custom operations async sync 1`] = `
 [
   [
     {
+      "apiKey": undefined,
       "authMode": undefined,
       "authToken": undefined,
+      "endpoint": undefined,
       "query": "
     query($value: String) {
       asyncSync(value: $value) {result}
@@ -44,8 +48,10 @@ exports[`custom operations custom type array result 1`] = `
 [
   [
     {
+      "apiKey": undefined,
       "authMode": undefined,
       "authToken": undefined,
+      "endpoint": undefined,
       "query": "
     query($value: String) {
       multiEcho(value: $value) {result}
@@ -64,8 +70,10 @@ exports[`custom operations custom type result 1`] = `
 [
   [
     {
+      "apiKey": undefined,
       "authMode": undefined,
       "authToken": undefined,
+      "endpoint": undefined,
       "query": "
     query($value: String) {
       echoWithCustomType(value: $value) {result}
@@ -84,8 +92,10 @@ exports[`custom operations model array result 1`] = `
 [
   [
     {
+      "apiKey": undefined,
       "authMode": undefined,
       "authToken": undefined,
+      "endpoint": undefined,
       "query": "
     query($phoneNumbers: [String]) {
       checkBatchOfPhoneNumbersForActiveUsers(phoneNumbers: $phoneNumbers) {phoneNumber createdAt updatedAt}
@@ -107,8 +117,10 @@ exports[`custom operations model result 1`] = `
 [
   [
     {
+      "apiKey": undefined,
       "authMode": undefined,
       "authToken": undefined,
+      "endpoint": undefined,
       "query": "
     query($query: String) {
       findJustOnePhoneNumber(query: $query) {phoneNumber createdAt updatedAt}
@@ -127,8 +139,10 @@ exports[`custom operations primitive type result 1`] = `
 [
   [
     {
+      "apiKey": undefined,
       "authMode": undefined,
       "authToken": undefined,
+      "endpoint": undefined,
       "query": "
     query($value: String) {
       echo(value: $value) 
@@ -147,8 +161,10 @@ exports[`custom operations solo async handler 1`] = `
 [
   [
     {
+      "apiKey": undefined,
       "authMode": undefined,
       "authToken": undefined,
+      "endpoint": undefined,
       "query": "
     query($value: String) {
       soloAsync(value: $value) {success}
@@ -167,8 +183,10 @@ exports[`custom operations sync async 1`] = `
 [
   [
     {
+      "apiKey": undefined,
       "authMode": undefined,
       "authToken": undefined,
+      "endpoint": undefined,
       "query": "
     query($value: String) {
       syncAsync(value: $value) {success}
@@ -187,8 +205,10 @@ exports[`custom operations sync sync 1`] = `
 [
   [
     {
+      "apiKey": undefined,
       "authMode": undefined,
       "authToken": undefined,
+      "endpoint": undefined,
       "query": "
     query($value: String) {
       syncSync(value: $value) {result}
@@ -207,8 +227,10 @@ exports[`custom operations with enum arguments can be called with valid enum val
 [
   [
     {
+      "apiKey": undefined,
       "authMode": undefined,
       "authToken": undefined,
+      "endpoint": undefined,
       "query": "
     query($status: EchoEnumStatus) {
       echoEnum(status: $status) 
