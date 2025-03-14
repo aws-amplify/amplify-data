@@ -268,7 +268,7 @@ function _field<T extends ModelFieldTypeParamOuter, FT extends ModelFieldType>(
  * @returns ID field definition
  */
 export function id(): ModelField<Nullable<string>, never, undefined, ModelFieldType.Id> {
-  return _field<Nullable<string>, ModelFieldType.Id>(ModelFieldType.Id);
+  return _field(ModelFieldType.Id);
 }
 
 /**
@@ -276,7 +276,7 @@ export function id(): ModelField<Nullable<string>, never, undefined, ModelFieldT
  * @returns string field definition
  */
 export function string(): ModelField<Nullable<string>, never, undefined, ModelFieldType.String> {
-  return _field<Nullable<string>, ModelFieldType.String>(ModelFieldType.String);
+  return _field(ModelFieldType.String);
 }
 
 /**
@@ -284,7 +284,7 @@ export function string(): ModelField<Nullable<string>, never, undefined, ModelFi
  * @returns integer field definition
  */
 export function integer(): ModelField<Nullable<number>, never, undefined, ModelFieldType.Integer> {
-  return _field<Nullable<number>, ModelFieldType.Integer>(ModelFieldType.Integer);
+  return _field(ModelFieldType.Integer);
 }
 
 /**
@@ -292,7 +292,7 @@ export function integer(): ModelField<Nullable<number>, never, undefined, ModelF
  * @returns float field definition
  */
 export function float(): ModelField<Nullable<number>, never, undefined, ModelFieldType.Float> {
-  return _field<Nullable<number>, ModelFieldType.Float>(ModelFieldType.Float);
+  return _field(ModelFieldType.Float);
 }
 
 /**
@@ -300,7 +300,7 @@ export function float(): ModelField<Nullable<number>, never, undefined, ModelFie
  * @returns boolean field definition
  */
 export function boolean(): ModelField<Nullable<boolean>, never, undefined, ModelFieldType.Boolean> {
-  return _field<Nullable<boolean>, ModelFieldType.Boolean>(ModelFieldType.Boolean);
+  return _field(ModelFieldType.Boolean);
 }
 
 /**
@@ -308,7 +308,7 @@ export function boolean(): ModelField<Nullable<boolean>, never, undefined, Model
  * @returns date field definition
  */
 export function date(): ModelField<Nullable<string>, never, undefined, ModelFieldType.Date> {
-  return _field<Nullable<string>, ModelFieldType.Date>(ModelFieldType.Date);
+  return _field(ModelFieldType.Date);
 }
 
 /**
@@ -316,7 +316,7 @@ export function date(): ModelField<Nullable<string>, never, undefined, ModelFiel
  * @returns time field definition
  */
 export function time(): ModelField<Nullable<string>, never, undefined, ModelFieldType.Time> {
-  return _field<Nullable<string>, ModelFieldType.Time>(ModelFieldType.Time);
+  return _field(ModelFieldType.Time);
 }
 
 /**
@@ -324,7 +324,7 @@ export function time(): ModelField<Nullable<string>, never, undefined, ModelFiel
  * @returns datetime field definition
  */
 export function datetime(): ModelField<Nullable<string>, never, undefined, ModelFieldType.DateTime> {
-  return _field<Nullable<string>, ModelFieldType.DateTime>(ModelFieldType.DateTime);
+  return _field(ModelFieldType.DateTime);
 }
 
 /**
@@ -332,7 +332,7 @@ export function datetime(): ModelField<Nullable<string>, never, undefined, Model
  * @returns timestamp field definition
  */
 export function timestamp(): ModelField<Nullable<number>, never, undefined, ModelFieldType.Timestamp> {
-  return _field<Nullable<number>, ModelFieldType.Timestamp>(ModelFieldType.Timestamp);
+  return _field(ModelFieldType.Timestamp);
 }
 
 /**
@@ -340,7 +340,7 @@ export function timestamp(): ModelField<Nullable<number>, never, undefined, Mode
  * @returns email field definition
  */
 export function email(): ModelField<Nullable<string>, never, undefined, ModelFieldType.Email> {
-  return _field<Nullable<string>, ModelFieldType.Email>(ModelFieldType.Email);
+  return _field(ModelFieldType.Email);
 }
 
 /**
@@ -349,7 +349,7 @@ export function email(): ModelField<Nullable<string>, never, undefined, ModelFie
  * @returns JSON field definition
  */
 export function json(): ModelField<Nullable<Json>, never, undefined, ModelFieldType.JSON> {
-  return _field<Nullable<Json>, ModelFieldType.JSON>(ModelFieldType.JSON);
+  return _field(ModelFieldType.JSON);
 }
 
 /**
@@ -359,7 +359,7 @@ export function json(): ModelField<Nullable<Json>, never, undefined, ModelFieldT
  * @returns phone number field definition
  */
 export function phone(): ModelField<Nullable<string>, never, undefined, ModelFieldType.Phone> {
-  return _field<Nullable<string>, ModelFieldType.Phone>(ModelFieldType.Phone);
+  return _field(ModelFieldType.Phone);
 }
 
 /**
@@ -368,7 +368,7 @@ export function phone(): ModelField<Nullable<string>, never, undefined, ModelFie
  * @returns URL field definition
  */
 export function url(): ModelField<Nullable<string>, never, undefined, ModelFieldType.Url> {
-  return _field<Nullable<string>, ModelFieldType.Url>(ModelFieldType.Url);
+  return _field(ModelFieldType.Url);
 }
 
 /**
@@ -378,5 +378,5 @@ export function url(): ModelField<Nullable<string>, never, undefined, ModelField
  * @returns IP address field definition
  */
 export function ipAddress(): ModelField<Nullable<string>, never, undefined, ModelFieldType.IPAddress> {
-  return _field<Nullable<string>, ModelFieldType.IPAddress>(ModelFieldType.IPAddress);
+  return _field(ModelFieldType.IPAddress);
 }
