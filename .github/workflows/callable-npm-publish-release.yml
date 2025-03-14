@@ -38,6 +38,7 @@ jobs:
 
       - name: Commit version and changelog
         working-directory: ./amplify-data
+        continue-on-error: true
         run: |
           git add .
           git commit -m "release: publish [ci skip]"
