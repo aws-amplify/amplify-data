@@ -1,0 +1,25 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Validate Builder Validate Builder generates expected graphql 1`] = `
+"type Post @model @auth(rules: [{allow: public, provider: apiKey}])
+{
+  title: String @validate(type: minLength, value: "5", errorMessage: "Title must be at least 5 characters") @validate(type: maxLength, value: "200", errorMessage: "Title must be at most 200 characters")
+  slug: String @validate(type: matches, value: "^[a-z0-9-]+$", errorMessage: "Slug must contain only lowercase letters, numbers, and hyphens")
+  summary: String @validate(type: maxLength, value: "500", errorMessage: "Summary must be at most 500 characters")
+  content: String @validate(type: minLength, value: "20", errorMessage: "Content must be at least 20 characters")
+}
+
+type Coupon @model @auth(rules: [{allow: public, provider: apiKey}])
+{
+  code: String @validate(type: startsWith, value: "CPN-", errorMessage: "Code must start with CPN-") @validate(type: endsWith, value: "-2025", errorMessage: "Code must end with -2025")
+}
+
+type Product @model @auth(rules: [{allow: public, provider: apiKey}])
+{
+  price: Float @validate(type: gt, value: "0", errorMessage: "Price must be positive") @validate(type: lt, value: "10000", errorMessage: "Price must be less than 10000")
+  rating: Float @validate(type: gte, value: "0", errorMessage: "Rating must be at least 0") @validate(type: lte, value: "5", errorMessage: "Rating must be at most 5")
+  stock: Int @validate(type: gte, value: "0", errorMessage: "Stock must be at least 0") @validate(type: lte, value: "1000", errorMessage: "Stock must be at most 1000")
+  profit: Float @validate(type: gt, value: "0", errorMessage: "Profit must be greater than 0")
+  loss: Float @validate(type: lt, value: "0", errorMessage: "Loss must be negative")
+}"
+`;

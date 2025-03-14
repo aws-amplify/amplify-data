@@ -55,6 +55,14 @@ describe('Validate Builder', () => {
       }).authorization((allow) => allow.publicApiKey()),
     });
 
+    //===========================================
+    // SCHEMA TRANSFORMATION TESTS
+    //===========================================
+    it('generates expected graphql', () => {
+      const graphql = schema.transform().schema;
+      expect(graphql).toMatchSnapshot();  
+    });
+
     type Schema = ClientSchema<typeof schema>;
     
     const createMockResponse = (modelName: string, data: any, errors?: GraphQLError[]) => ({
