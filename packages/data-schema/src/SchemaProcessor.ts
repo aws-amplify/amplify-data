@@ -170,6 +170,7 @@ function scalarFieldToGql(
     array,
     arrayRequired,
     default: _default,
+    validation = [],
   } = fieldDef;
   let field: string = fieldType;
 
@@ -216,6 +217,17 @@ function scalarFieldToGql(
   for (const index of secondaryIndexes) {
     field += ` ${index}`;
   }
+  
+  // Add validation directives for each validation rule
+  for (const validationRule of validation) {
+    const valueStr = typeof validationRule.value === 'number' ? validationRule.value.toString() : validationRule.value;
+    if (validationRule.errorMessage) {
+      field += ` @validate(type: ${validationRule.type}, value: "${valueStr}", errorMessage: ${escapeGraphQlString(validationRule.errorMessage)})`;
+    } else {
+      field += ` @validate(type: ${validationRule.type}, value: "${valueStr}")`;
+    }
+  }
+  
   return field;
 }
 

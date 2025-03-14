@@ -19,6 +19,15 @@ Description
 </th></tr></thead>
 <tbody><tr><td>
 
+[ModelFieldType](./data-schema.modelfieldtype.md)
+
+
+</td><td>
+
+
+</td></tr>
+<tr><td>
+
 [ModelRelationshipTypes](./data-schema.modelrelationshiptypes.md)
 
 

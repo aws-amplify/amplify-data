@@ -9,11 +9,11 @@ A unique identifier scalar type. This scalar is serialized like a String but isn
 **Signature:**
 
 ```typescript
-export declare function id(): ModelField<Nullable<string>>;
+export declare function id(): ModelField<Nullable<string>, never, undefined, ModelFieldType.Id>;
 ```
 **Returns:**
 
-[ModelField](./data-schema.modelfield.md)<!-- -->&lt;[Nullable](./data-schema.nullable.md)<!-- -->&lt;string&gt;&gt;
+[ModelField](./data-schema.modelfield.md)<!-- -->&lt;[Nullable](./data-schema.nullable.md)<!-- -->&lt;string&gt;, never, undefined, [ModelFieldType.Id](./data-schema.modelfieldtype.md)<!-- -->&gt;
 
 ID field definition
 
