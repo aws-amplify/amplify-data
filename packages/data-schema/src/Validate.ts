@@ -41,11 +41,12 @@ interface InternalValidationBuilder {
 export interface StringValidationBuilderBase<T, ExcludedMethods extends string = never> {
   /**
    * Validates that a string field has at least the specified length
+   * 
    * ⚠️ Only applicable to string fields
    * 
    * @example
    * // String field example
-   * a.string().validate(v => v.minLength(5))
+   * a.string().validate(v => v.minLength(5, 'String must be at least 5 characters'))
    * 
    * @param length - The minimum length required
    * @param errorMessage - Optional custom error message
@@ -57,11 +58,12 @@ export interface StringValidationBuilderBase<T, ExcludedMethods extends string =
   
   /**
    * Validates that a string field does not exceed the specified length
+   * 
    * ⚠️ Only applicable to string fields
    * 
    * @example
    * // String field example
-   * a.string().validate(v => v.maxLength(100))
+   * a.string().validate(v => v.maxLength(100, 'String must be at most 100 characters'))
    * 
    * @param length - The maximum length allowed
    * @param errorMessage - Optional custom error message
@@ -73,11 +75,12 @@ export interface StringValidationBuilderBase<T, ExcludedMethods extends string =
   
   /**
    * Validates that a string field starts with the specified prefix
+   * 
    * ⚠️ Only applicable to string fields
    * 
    * @example
    * // String field example
-   * a.string().validate(v => v.startsWith("prefix-"))
+   * a.string().validate(v => v.startsWith("prefix-", 'String must start with prefix-'))
    * 
    * @param prefix - The prefix the string must start with
    * @param errorMessage - Optional custom error message
@@ -89,11 +92,11 @@ export interface StringValidationBuilderBase<T, ExcludedMethods extends string =
   
   /**
    * Validates that a string field ends with the specified suffix
-   * ⚠️ Only applicable to string fields
    * 
+   * ⚠️ Only applicable to string fields
    * @example
    * // String field example
-   * a.string().validate(v => v.endsWith("-suffix"))
+   * a.string().validate(v => v.endsWith("-suffix", 'String must end with -suffix'))
    * 
    * @param suffix - The suffix the string must end with
    * @param errorMessage - Optional custom error message
@@ -105,11 +108,11 @@ export interface StringValidationBuilderBase<T, ExcludedMethods extends string =
   
   /**
    * Validates that a string field matches the specified regular expression pattern
-   * ⚠️ Only applicable to string fields
    * 
+   * ⚠️ Only applicable to string fields
    * @example
    * // String field example
-   * a.string().validate(v => v.matches("^[a-zA-Z0-9]+$"))
+   * a.string().validate(v => v.matches("^[a-zA-Z0-9]+$", 'String must match the regex pattern'))
    * 
    * @param pattern - The regex pattern the string must match
    * @param errorMessage - Optional custom error message
@@ -134,14 +137,15 @@ export type StringValidationBuilder<T, ExcludedMethods extends string = never> =
 export interface NumericValidationBuilderBase<T, ExcludedMethods extends string = never> {
   /**
    * Validates that a numeric field is greater than the specified value
+   * 
    * ⚠️ Only applicable for integer or float fields
    * 
    * @example
    * // Integer field example
-   * a.integer().validate(v => v.gt(10))
+   * a.integer().validate(v => v.gt(10, 'Integer must be greater than 10'))
    * 
    * // Float field example
-   * a.float().validate(v => v.gt(3.14))
+   * a.float().validate(v => v.gt(3.14, 'Float must be greater than 3.14'))
    * 
    * @param value - The value that the field must be greater than
    * @param errorMessage - Optional custom error message
@@ -153,14 +157,14 @@ export interface NumericValidationBuilderBase<T, ExcludedMethods extends string 
 
   /**
    * Validates that a numeric field is less than the specified value
-   * ⚠️ Only applicable for integer or float fields
    * 
+   * ⚠️ Only applicable for integer or float fields
    * @example
    * // Integer field example
-   * a.integer().validate(v => v.lt(10))
+   * a.integer().validate(v => v.lt(10, 'Integer must be less than 10'))
    * 
    * // Float field example
-   * a.float().validate(v => v.lt(3.14))
+   * a.float().validate(v => v.lt(3.14, 'Float must be less than 3.14'))
    * 
    * @param value - The value that the field must be less than
    * @param errorMessage - Optional custom error message
@@ -172,14 +176,15 @@ export interface NumericValidationBuilderBase<T, ExcludedMethods extends string 
   
   /**
    * Validates that a numeric field is greater than or equal to the specified value
+   * 
    * ⚠️ Only applicable for integer or float fields
    * 
    * @example
    * // Integer field example
-   * a.integer().validate(v => v.gte(10))
+   * a.integer().validate(v => v.gte(10, 'Integer must be greater than or equal to 10'))
    * 
    * // Float field example
-   * a.float().validate(v => v.gte(3.14))
+   * a.float().validate(v => v.gte(3.14, 'Float must be greater than or equal to 3.14'))
    * 
    * @param value - The value that the field must be greater than or equal to
    * @param errorMessage - Optional custom error message
@@ -191,14 +196,14 @@ export interface NumericValidationBuilderBase<T, ExcludedMethods extends string 
   
   /**
    * Validates that a numeric field is less than or equal to the specified value
-   * ⚠️ Only applicable for integer or float fields
    * 
+   * ⚠️ Only applicable for integer or float fields
    * @example
    * // Integer field example
-   * a.integer().validate(v => v.lte(10))
+   * a.integer().validate(v => v.lte(10, 'Integer must be less than or equal to 10'))
    * 
    * // Float field example
-   * a.float().validate(v => v.lte(3.14))
+   * a.float().validate(v => v.lte(3.14, 'Float must be less than or equal to 3.14'))
    * 
    * @param value - The value that the field must be less than or equal to
    * @param errorMessage - Optional custom error message
@@ -210,14 +215,15 @@ export interface NumericValidationBuilderBase<T, ExcludedMethods extends string 
 
   /**
    * Validates that a numeric field is positive
+   * 
    * ⚠️ Only applicable for integer or float fields
    * 
    * @example
    * // Integer field example
-   * a.integer().validate(v => v.positive())
+   * a.integer().validate(v => v.positive('Integer must be positive'))
    * 
    * // Float field example
-   * a.float().validate(v => v.positive())
+   * a.float().validate(v => v.positive('Float must be positive'))
    * 
    * @param errorMessage - Optional custom error message
    */
@@ -227,14 +233,14 @@ export interface NumericValidationBuilderBase<T, ExcludedMethods extends string 
 
   /**
    * Validates that a numeric field is negative
-   * ⚠️ Only applicable for integer or float fields
    * 
+   * ⚠️ Only applicable for integer or float fields
    * @example
    * // Integer field example
-   * a.integer().validate(v => v.negative())
+   * a.integer().validate(v => v.negative('Integer must be negative'))
    * 
    * // Float field example
-   * a.float().validate(v => v.negative())
+   * a.float().validate(v => v.negative('Float must be negative'))
    * 
    * @param errorMessage - Optional custom error message
    */

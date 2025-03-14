@@ -154,6 +154,13 @@ export type ModelField<
     ): ModelField<T, UsedMethod | 'authorization', AuthRuleType, FT>;
     /**
      * Configures field-level validation rules.
+     * 
+     * @example
+     * a.integer().validate(v => v.gt(0, 'Integer must be greater than 0'))
+     * a.float().validate(v => v.gt(0.99, 'Float must be greater than 0.99'))
+     * a.string().validate(v => v.minLength(5, 'String must be at least 5 characters'))
+     * 
+     * @param callback - A function that receives a validation builder object for the field type
      */
     validate(
       callback: (v: FieldTypeToValidationBuilder<T, FT>) => void
