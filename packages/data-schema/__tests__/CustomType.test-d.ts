@@ -1,6 +1,6 @@
 import type { Equal, Expect } from '@aws-amplify/data-schema-types';
 import { type CustomType, customType } from '../src/CustomType';
-import { type ModelField, Nullable, string } from '../src/ModelField';
+import { type ModelField, Nullable, string, ModelFieldType } from '../src/ModelField';
 
 import { float } from '../src/a';
 import { EnumType, enumType } from '../src/EnumType';
@@ -14,8 +14,8 @@ describe('CustomType', () => {
 
     type Expected = CustomType<{
       fields: {
-        lat: ModelField<Nullable<number>, never, undefined>;
-        long: ModelField<Nullable<number>, never, undefined>;
+        lat: ModelField<Nullable<number>, never, undefined, ModelFieldType.Float>;
+        long: ModelField<Nullable<number>, never, undefined, ModelFieldType.Float>;
       };
     }>;
 
@@ -37,13 +37,13 @@ describe('CustomType', () => {
 
     type Expected = CustomType<{
       fields: {
-        content: ModelField<string, 'required', undefined>;
+        content: ModelField<string, 'required', undefined, ModelFieldType.String>;
         meta: CustomType<{
           fields: {
             enumField: EnumType<readonly ['value1', 'value2']>;
             deepMeta: CustomType<{
               fields: {
-                description: ModelField<string, 'required', undefined>;
+                description: ModelField<string, 'required', undefined, ModelFieldType.String>;
               };
             }>;
           };

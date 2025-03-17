@@ -1,5 +1,12 @@
 # @aws-amplify/data-schema
 
+## 1.20.0
+
+### Minor Changes
+
+- 9295089: Add validate builder function
+- 9295089: improve validate builder's typing, add defined behavior test
+
 ## 1.19.0
 
 ### Minor Changes

@@ -1,7 +1,7 @@
 import type { Equal, Expect, Prettify } from '@aws-amplify/data-schema-types';
 import { type ModelType, type InternalModel, model } from '../src/ModelType';
 import { modelIndex } from '../src/ModelIndex';
-import { type ModelField, string, id, integer } from '../src/ModelField';
+import { type ModelField, string, id, integer, ModelFieldType } from '../src/ModelField';
 import { ref } from '../src/RefType';
 
 const a = { model, index: modelIndex };
@@ -54,7 +54,7 @@ describe('identifiers', () => {
 
     type ExpectedType = {
       fields: {
-        title: ModelField<string | null>;
+        title: ModelField<string | null, never, undefined, ModelFieldType.String>;
       };
       identifier: {
         pk: {
@@ -80,7 +80,7 @@ describe('identifiers', () => {
 
     type ExpectedType = {
       fields: {
-        customId: ModelField<string, 'required'>;
+        customId: ModelField<string, 'required', never, ModelFieldType.Id>;
       };
       identifier: {
         pk: {

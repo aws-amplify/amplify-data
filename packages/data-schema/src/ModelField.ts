@@ -2,6 +2,11 @@ import { brand } from './util';
 import { AllowModifier, Authorization, allow } from './Authorization';
 import type { methodKeyOf, satisfy } from './util/usedMethods.js';
 import type { brandSymbol } from './util/Brand.js';
+import {
+  ValidationRule,
+  FieldTypeToValidationBuilder,
+  createValidationBuilder,
+} from './Validate';
 
 /**
  * Used to "attach" auth types to ModelField without exposing them on the builder.
@@ -52,6 +57,7 @@ type FieldData = {
   arrayRequired: boolean;
   default: undefined | symbol | ModelFieldTypeParamOuter;
   authorization: Authorization<any, any, any>[];
+  validation: ValidationRule[];
 };
 
 type ModelFieldTypeParamInner = string | number | boolean | Date | Json | null;
@@ -79,11 +85,12 @@ export type ArrayField<T> = [T] extends [ModelFieldTypeParamInner]
 
 export type BaseModelField<
   T extends ModelFieldTypeParamOuter = ModelFieldTypeParamOuter,
-> = ModelField<T, UsableModelFieldKey, any>;
+  FT extends ModelFieldType = ModelFieldType
+> = ModelField<T, UsableModelFieldKey, any, FT>
 
 export type UsableModelFieldKey = satisfy<
   methodKeyOf<ModelField>,
-  'required' | 'default' | 'authorization' | 'array'
+  'required' | 'default' | 'authorization' | 'array' | 'validate'
 >;
 
 /**
@@ -92,11 +99,14 @@ export type UsableModelFieldKey = satisfy<
  *
  * @typeParam T - holds the JS data type of the field
  * @typeParam UsedMethod - union of strings representing already-invoked method names. Used to improve Intellisense
+ * @typeParam Auth - type of the authorization rules attached to the field
+ * @typeParam FT - specific ModelFieldType of the field
  */
 export type ModelField<
   T extends ModelFieldTypeParamOuter = ModelFieldTypeParamOuter,
   UsedMethod extends UsableModelFieldKey = never,
   Auth = undefined,
+  FT extends ModelFieldType = ModelFieldType
 > = Omit<
   {
     // This is a lie. This property is never set at runtime. It's just used to smuggle auth types through.
@@ -109,19 +119,21 @@ export type ModelField<
      * some property on the type is guaranteed to reference `T`
      * Context: https://github.com/aws-amplify/amplify-data/pull/406/files#r1869481467
      */
-    [internal](): ModelField<T>;
+    [internal](): ModelField<T, UsedMethod, Auth, FT>;
 
     /**
      * Marks a field as required.
      */
-    required(): ModelField<Required<T>, UsedMethod | 'required'>;
+    required(): ModelField<Required<T>, UsedMethod | 'required', Auth, FT>;
     // Exclude `optional` after calling array, because both the value and the array itself can be optional
     /**
      * Converts a field type definition to an array of the field type.
      */
     array(): ModelField<
       ArrayField<T>,
-      Exclude<UsedMethod, 'required'> | 'array'
+      Exclude<UsedMethod, 'required'> | 'array' | 'validate',
+      Auth,
+      FT
     >;
     // TODO: should be T, but .array breaks this constraint. Fix later
     /**
@@ -130,7 +142,7 @@ export type ModelField<
      */
     default(
       value?: ModelFieldTypeParamOuter,
-    ): ModelField<T, UsedMethod | 'default'>;
+    ): ModelField<T, UsedMethod | 'default', Auth, FT>;
     /**
      * Configures field-level authorization rules. Pass in an array of authorizations `(allow => allow.____)` to mix and match
      * multiple authorization rules for this field.
@@ -139,7 +151,20 @@ export type ModelField<
       callback: (
         allow: Omit<AllowModifier, 'resource'>,
       ) => AuthRuleType | AuthRuleType[],
-    ): ModelField<T, UsedMethod | 'authorization', AuthRuleType>;
+    ): ModelField<T, UsedMethod | 'authorization', AuthRuleType, FT>;
+    /**
+     * Configures field-level validation rules.
+     * 
+     * @example
+     * a.integer().validate(v => v.gt(0, 'Integer must be greater than 0'))
+     * a.float().validate(v => v.gt(0.99, 'Float must be greater than 0.99'))
+     * a.string().validate(v => v.minLength(5, 'String must be at least 5 characters'))
+     * 
+     * @param callback - A function that receives a validation builder object for the field type
+     */
+    validate(
+      callback: (v: FieldTypeToValidationBuilder<T, FT>) => void
+    ): ModelField<T, UsedMethod | 'validate' | 'default' | 'array', Auth, FT>;
   },
   UsedMethod
 >;
@@ -148,7 +173,12 @@ export type ModelField<
  * Internal representation of Model Field that exposes the `data` property.
  * Used at buildtime.
  */
-export interface InternalField extends ModelField {
+export type InternalField<
+  T extends ModelFieldTypeParamOuter = ModelFieldTypeParamOuter,
+  UsedMethod extends UsableModelFieldKey = never,
+  Auth = undefined,
+  FT extends ModelFieldType = ModelFieldType
+> = ModelField<T, UsedMethod, Auth, FT> & {
   data: FieldData;
 }
 
@@ -164,7 +194,9 @@ export interface InternalField extends ModelField {
  *
  * @param fieldType - stores the GraphQL data type of the field
  */
-function _field<T extends ModelFieldTypeParamOuter>(fieldType: ModelFieldType) {
+function _field<T extends ModelFieldTypeParamOuter, FT extends ModelFieldType>(
+  fieldType: FT
+): ModelField<T, never, undefined, FT> {
   const _meta: FieldMeta = {
     lastInvokedMethod: null,
   };
@@ -176,6 +208,7 @@ function _field<T extends ModelFieldTypeParamOuter>(fieldType: ModelFieldType) {
     arrayRequired: false,
     default: undefined,
     authorization: [],
+    validation: [],
   };
 
   const builder = {
@@ -190,7 +223,7 @@ function _field<T extends ModelFieldTypeParamOuter>(fieldType: ModelFieldType) {
 
       return this;
     },
-    array(): ModelField<ArrayField<T>> {
+    array(): ModelField<ArrayField<T>, 'array', undefined, FT> {
       data.array = true;
       _meta.lastInvokedMethod = 'array';
 
@@ -210,15 +243,23 @@ function _field<T extends ModelFieldTypeParamOuter>(fieldType: ModelFieldType) {
 
       return this;
     },
+    validate(
+      callback: (v: FieldTypeToValidationBuilder<T, FT>) => void
+    ) {
+      const { builder, getRules } = createValidationBuilder<T, FT>();
+      callback(builder);
+      data.validation = getRules();
+      
+      _meta.lastInvokedMethod = 'validate';
+      
+      return this;
+    },
     ...brand(brandName),
     [internal]() {
       return this;
     },
-  } as ModelField<T>;
-
-  // this double cast gives us a Subtyping Constraint i.e., hides `data` from the public API,
-  // but makes it available internally when needed
-  return { ...builder, data } as InternalField as ModelField<T>;
+  } as ModelField<T, never, undefined, FT>;
+  return { ...builder, data } as InternalField as ModelField<T, never, undefined, FT>;
 }
 
 /**
@@ -226,7 +267,7 @@ function _field<T extends ModelFieldTypeParamOuter>(fieldType: ModelFieldType) {
  * If not specified on create operations, a ULID will be auto-generated service-side.
  * @returns ID field definition
  */
-export function id(): ModelField<Nullable<string>> {
+export function id(): ModelField<Nullable<string>, never, undefined, ModelFieldType.Id> {
   return _field(ModelFieldType.Id);
 }
 
@@ -234,7 +275,7 @@ export function id(): ModelField<Nullable<string>> {
  * A string scalar type that is represented server-side as a UTF-8 character sequence.
  * @returns string field definition
  */
-export function string(): ModelField<Nullable<string>> {
+export function string(): ModelField<Nullable<string>, never, undefined, ModelFieldType.String> {
   return _field(ModelFieldType.String);
 }
 
@@ -242,7 +283,7 @@ export function string(): ModelField<Nullable<string>> {
  * An integer scalar type with a supported value range between -(2^31) and 2^31-1.
  * @returns integer field definition
  */
-export function integer(): ModelField<Nullable<number>> {
+export function integer(): ModelField<Nullable<number>, never, undefined, ModelFieldType.Integer> {
   return _field(ModelFieldType.Integer);
 }
 
@@ -250,7 +291,7 @@ export function integer(): ModelField<Nullable<number>> {
  * A float scalar type following represented server-side as an IEEE 754 floating point value.
  * @returns float field definition
  */
-export function float(): ModelField<Nullable<number>> {
+export function float(): ModelField<Nullable<number>, never, undefined, ModelFieldType.Float> {
   return _field(ModelFieldType.Float);
 }
 
@@ -258,7 +299,7 @@ export function float(): ModelField<Nullable<number>> {
  * A boolean scalar type that can be either true or false.
  * @returns boolean field definition
  */
-export function boolean(): ModelField<Nullable<boolean>> {
+export function boolean(): ModelField<Nullable<boolean>, never, undefined, ModelFieldType.Boolean> {
   return _field(ModelFieldType.Boolean);
 }
 
@@ -266,7 +307,7 @@ export function boolean(): ModelField<Nullable<boolean>> {
  * A date scalar type that is represented server-side as an extended ISO 8601 date string in the format `YYYY-MM-DD`.
  * @returns date field definition
  */
-export function date(): ModelField<Nullable<string>> {
+export function date(): ModelField<Nullable<string>, never, undefined, ModelFieldType.Date> {
   return _field(ModelFieldType.Date);
 }
 
@@ -274,7 +315,7 @@ export function date(): ModelField<Nullable<string>> {
  * A time scalar type that is represented server-side as an extended ISO 8601 time string in the format `hh:mm:ss.sss`.
  * @returns time field definition
  */
-export function time(): ModelField<Nullable<string>> {
+export function time(): ModelField<Nullable<string>, never, undefined, ModelFieldType.Time> {
   return _field(ModelFieldType.Time);
 }
 
@@ -282,7 +323,7 @@ export function time(): ModelField<Nullable<string>> {
  * A date time scalar type that is represented server-side as an extended ISO 8601 date and time string in the format `YYYY-MM-DDThh:mm:ss.sssZ`.
  * @returns datetime field definition
  */
-export function datetime(): ModelField<Nullable<string>> {
+export function datetime(): ModelField<Nullable<string>, never, undefined, ModelFieldType.DateTime> {
   return _field(ModelFieldType.DateTime);
 }
 
@@ -290,7 +331,7 @@ export function datetime(): ModelField<Nullable<string>> {
  * A timestamp scalar type that is represented by an integer value of the number of seconds before or after `1970-01-01-T00:00Z`.
  * @returns timestamp field definition
  */
-export function timestamp(): ModelField<Nullable<number>> {
+export function timestamp(): ModelField<Nullable<number>, never, undefined, ModelFieldType.Timestamp> {
   return _field(ModelFieldType.Timestamp);
 }
 
@@ -298,7 +339,7 @@ export function timestamp(): ModelField<Nullable<number>> {
  * An email scalar type that is represented server-side in the format `local-part@domain-part` as defined by RFC 822.
  * @returns email field definition
  */
-export function email(): ModelField<Nullable<string>> {
+export function email(): ModelField<Nullable<string>, never, undefined, ModelFieldType.Email> {
   return _field(ModelFieldType.Email);
 }
 
@@ -307,7 +348,7 @@ export function email(): ModelField<Nullable<string>> {
  * rather than as the literal input strings.
  * @returns JSON field definition
  */
-export function json(): ModelField<Nullable<Json>> {
+export function json(): ModelField<Nullable<Json>, never, undefined, ModelFieldType.JSON> {
   return _field(ModelFieldType.JSON);
 }
 
@@ -317,7 +358,7 @@ export function json(): ModelField<Nullable<Json>> {
  * to the North American Numbering Plan.
  * @returns phone number field definition
  */
-export function phone(): ModelField<Nullable<string>> {
+export function phone(): ModelField<Nullable<string>, never, undefined, ModelFieldType.Phone> {
   return _field(ModelFieldType.Phone);
 }
 
@@ -326,7 +367,7 @@ export function phone(): ModelField<Nullable<string>> {
  * URLs must contain a schema (http, mailto) and can't contain two forward slashes (//) in the path part.
  * @returns URL field definition
  */
-export function url(): ModelField<Nullable<string>> {
+export function url(): ModelField<Nullable<string>, never, undefined, ModelFieldType.Url> {
   return _field(ModelFieldType.Url);
 }
 
@@ -336,6 +377,6 @@ export function url(): ModelField<Nullable<string>> {
  * to indicate subnet mask.
  * @returns IP address field definition
  */
-export function ipAddress(): ModelField<Nullable<string>> {
+export function ipAddress(): ModelField<Nullable<string>, never, undefined, ModelFieldType.IPAddress> {
   return _field(ModelFieldType.IPAddress);
 }
