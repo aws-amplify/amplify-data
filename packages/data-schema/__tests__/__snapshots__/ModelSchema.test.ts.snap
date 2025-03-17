@@ -1,5 +1,165 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`custom operation argument inputs when the argument is a custom type with a required field the input types field is required 1`] = `
+"type testType 
+{
+  testField: String!
+}
+
+input testTypeInput {
+  testField: String!
+}
+
+type Mutation {
+  testMutation(testArgument: testTypeInput): String @function(name: "FnTestMutation") @auth(rules: [{allow: owner, ownerField: "owner"}])
+}"
+`;
+
+exports[`custom operation argument inputs when the argument is a custom type with an array field the input types field is an array 1`] = `
+"type testType 
+{
+  testField: [String]
+}
+
+input testTypeInput {
+  testField: [String]
+}
+
+type Mutation {
+  testMutation(testArgument: testTypeInput): String @function(name: "FnTestMutation") @auth(rules: [{allow: owner, ownerField: "owner"}])
+}"
+`;
+
+exports[`custom operation argument inputs when the argument is a required array of custom type refs the input is a required array 1`] = `
+"type testType 
+{
+  testField: String!
+}
+
+input testTypeInput {
+  testField: String!
+}
+
+type Mutation {
+  testMutation(testArgument: [testTypeInput]!): String @function(name: "FnTestMutation") @auth(rules: [{allow: owner, ownerField: "owner"}])
+}"
+`;
+
+exports[`custom operation argument inputs when the argument is a required array of enum refs the input is a required array 1`] = `
+"enum testEnum {
+  test1
+  test2
+}
+
+type Mutation {
+  testMutation(testArgument: [testEnum]!): String @function(name: "FnTestMutation") @auth(rules: [{allow: owner, ownerField: "owner"}])
+}"
+`;
+
+exports[`custom operation argument inputs when the argument is a required array of required custom type refs the input is a required array of required refs 1`] = `
+"type testType 
+{
+  testField: String!
+}
+
+input testTypeInput {
+  testField: String!
+}
+
+type Mutation {
+  testMutation(testArgument: [testTypeInput!]!): String @function(name: "FnTestMutation") @auth(rules: [{allow: owner, ownerField: "owner"}])
+}"
+`;
+
+exports[`custom operation argument inputs when the argument is a required array of required enum refs the input is a required array of required refs 1`] = `
+"enum testEnum {
+  test1
+  test2
+}
+
+type Mutation {
+  testMutation(testArgument: [testEnum!]!): String @function(name: "FnTestMutation") @auth(rules: [{allow: owner, ownerField: "owner"}])
+}"
+`;
+
+exports[`custom operation argument inputs when the argument is a required custom type ref the input is a required ref 1`] = `
+"type testType 
+{
+  testField: String!
+}
+
+input testTypeInput {
+  testField: String!
+}
+
+type Mutation {
+  testMutation(testArgument: testTypeInput!): String @function(name: "FnTestMutation") @auth(rules: [{allow: owner, ownerField: "owner"}])
+}"
+`;
+
+exports[`custom operation argument inputs when the argument is a required enum the input is required 1`] = `
+"enum testEnum {
+  test1
+  test2
+}
+
+type Mutation {
+  testMutation(testArgument: testEnum!): String @function(name: "FnTestMutation") @auth(rules: [{allow: owner, ownerField: "owner"}])
+}"
+`;
+
+exports[`custom operation argument inputs when the argument is an array of custom type refs the input is an array refs 1`] = `
+"type testType 
+{
+  testField: String!
+}
+
+input testTypeInput {
+  testField: String!
+}
+
+type Mutation {
+  testMutation(testArgument: [testTypeInput]): String @function(name: "FnTestMutation") @auth(rules: [{allow: owner, ownerField: "owner"}])
+}"
+`;
+
+exports[`custom operation argument inputs when the argument is an array of enum the input is an array 1`] = `
+"enum testEnum {
+  test1
+  test2
+}
+
+type Mutation {
+  testMutation(testArgument: [testEnum]): String @function(name: "FnTestMutation") @auth(rules: [{allow: owner, ownerField: "owner"}])
+}"
+`;
+
+exports[`custom operation argument inputs when the argument is an array of required custom type refs the input is an array of required refs 1`] = `
+"type testType 
+{
+  testField: String!
+}
+
+input testTypeInput {
+  testField: String!
+}
+
+type Mutation {
+  testMutation(testArgument: [testTypeInput!]): String @function(name: "FnTestMutation") @auth(rules: [{allow: owner, ownerField: "owner"}])
+}"
+`;
+
+exports[`custom operation argument inputs when the argument is an array of required enum refs the input is a array of required refs 1`] = `
+"enum testEnum {
+  test1
+  test2
+}
+
+type Mutation {
+  testMutation(testArgument: [testEnum!]): String @function(name: "FnTestMutation") @auth(rules: [{allow: owner, ownerField: "owner"}])
+}"
+`;
+
 exports[`empty model auth inherits global auth 1`] = `
 "type widget @model @auth(rules: [{allow: owner, ownerField: "owner"}])
 {
