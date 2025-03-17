@@ -1,5 +1,11 @@
 # @aws-amplify/data-schema
 
+## 1.20.1
+
+### Patch Changes
+
+- c761fca: fix bug with missing arrays and requireds in custom operation arguments
+
 ## 1.20.0
 
 ### Minor Changes
