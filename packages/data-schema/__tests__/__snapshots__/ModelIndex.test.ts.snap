@@ -1,5 +1,50 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`SchemaProcessor validation against secondary indexes creates a queryField with a default name 1`] = `
+"type Todo @model @auth(rules: [{allow: public, provider: apiKey}])
+{
+  title: String!
+  content: String
+  status: TodoStatus @index(sortKeyFields: ["title"], queryField: "listTodoByStatusAndTitle")
+}
+
+enum TodoStatus {
+  open
+  in_progress
+  completed
+}"
+`;
+
+exports[`SchemaProcessor validation against secondary indexes creates a queryField with user-defined name 1`] = `
+"type Todo @model @auth(rules: [{allow: public, provider: apiKey}])
+{
+  title: String!
+  content: String
+  status: TodoStatus @index(sortKeyFields: ["title"], queryField: "userDefinedQueryField")
+}
+
+enum TodoStatus {
+  open
+  in_progress
+  completed
+}"
+`;
+
+exports[`SchemaProcessor validation against secondary indexes omits the queryField if null is provided instead of a name 1`] = `
+"type Todo @model @auth(rules: [{allow: public, provider: apiKey}])
+{
+  title: String!
+  content: String
+  status: TodoStatus @index(sortKeyFields: ["title"], queryField: null)
+}
+
+enum TodoStatus {
+  open
+  in_progress
+  completed
+}"
+`;
+
 exports[`secondary index schema generation generates correct schema for using a.enum() as the partition key 1`] = `
 "type Todo @model @auth(rules: [{allow: public, provider: apiKey}])
 {
