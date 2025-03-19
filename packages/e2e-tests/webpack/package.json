@@ -22,7 +22,7 @@
     "aws-cdk-lib": "^2.175.1",
     "constructs": "^10.4.2",
     "copy-webpack-plugin": "^12.0.2",
-    "esbuild": "^0.24.2",
+    "esbuild": "^0.25.0",
     "serve": "^14.2.4",
     "ts-loader": "^9.5.2",
     "tsx": "^4.19.2",
