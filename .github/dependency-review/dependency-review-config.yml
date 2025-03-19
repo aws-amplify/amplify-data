@@ -1,3 +1,4 @@
+  # OSPO config from https://github.com/amazon-ospo/dependency-review-config/blob/main/default/dependency-review-config.yml
   - 0BSD
   - Apache-2.0
   - BSD-1-Clause
@@ -28,3 +29,5 @@
   - MPL-2.0
   - EPL-2.0
   - CDDL-1.1
+  # Extending with approved licenses
+  - CC-BY-4.0
