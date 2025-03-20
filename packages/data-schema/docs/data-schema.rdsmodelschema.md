@@ -14,7 +14,7 @@ export type RDSModelSchema<T extends RDSModelSchemaParamShape, UsedMethods exten
     addQueries: <Queries extends Record<string, QueryCustomOperation>>(types: Queries) => RDSModelSchema<SetTypeSubArg<T, 'types', T['types'] & Queries>, UsedMethods | 'addQueries'>;
     addMutations: <Mutations extends Record<string, MutationCustomOperation>>(types: Mutations) => RDSModelSchema<SetTypeSubArg<T, 'types', T['types'] & Mutations>, UsedMethods | 'addMutations'>;
     addSubscriptions: <Subscriptions extends Record<string, SubscriptionCustomOperation>>(types: Subscriptions) => RDSModelSchema<SetTypeSubArg<T, 'types', T['types'] & Subscriptions>, UsedMethods | 'addSubscriptions'>;
-    authorization: <AuthRules extends SchemaAuthorization<any, any, any>>(callback: (allow: AllowModifier) => AuthRules | AuthRules[]) => RDSModelSchema<SetTypeSubArg<T, 'authorization', AuthRules[]>, UsedMethods | 'authorization'>;
+    authorization: <AuthRules extends SchemaAuthorization<any, any, any>>(callback: SchemaAuthorizationCallback<AuthRules>) => RDSModelSchema<SetTypeSubArg<T, 'authorization', AuthRules[]>, UsedMethods | 'authorization'>;
     setAuthorization: (callback: (models: OmitFromEach<BaseSchema<T, true>['models'], 'secondaryIndexes'>, schema: RDSModelSchema<T, UsedMethods | 'setAuthorization'>) => void) => RDSModelSchema<T>;
     setRelationships: <Relationships extends ReadonlyArray<Partial<Record<keyof T['types'], RelationshipTemplate>>>>(callback: (models: OmitFromEach<BaseSchema<T, true>['models'], 'authorization' | 'fields' | 'secondaryIndexes'>) => Relationships) => RDSModelSchema<SetTypeSubArg<T, 'types', {
         [ModelName in keyof T['types']]: ModelWithRelationships<T['types'], Relationships, ModelName>;
