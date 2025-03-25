@@ -916,7 +916,7 @@ function mapToNativeAppSyncAuthDirectives(
 
     groupProvider.forEach((groups, provider) => {
       rules.add(
-        `${provider}(cognito_groups: [${Array.from(groups.keys())
+        `${provider}(cognito_groups: [${Array.from(groups)
           .map((group) => `"${group}"`)
           .join(', ')}])`,
       );
