@@ -523,7 +523,7 @@ exports[`model auth rules can merge group authorization to allow groups to be de
   description: String @auth(rules: [{allow: groups, groups: ["Admin3"]}])
 }
 
-type CustomType @aws_cognito_user_pools(cognito_groups: ["Admin", "User"]) @aws_cognito_user_pools(cognito_groups: ["Admin"])
+type CustomType @aws_cognito_user_pools(cognito_groups: ["Admin", "User"])
 {
   id: String!
   name: String!
