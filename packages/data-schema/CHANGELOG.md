@@ -1,5 +1,11 @@
 # @aws-amplify/data-schema
 
+## 1.20.2
+
+### Patch Changes
+
+- 26281d1: Fix custom type authorization rule bug
+
 ## 1.20.1
 
 ### Patch Changes
