@@ -258,4 +258,32 @@ describe('CustomType transform', () => {
 
     expect(result).toMatchSnapshot();
   });
+
+  test('Indirect recursive CustomTypes transform when used by both models and operations', () => {
+    const s = a
+      .schema({
+        Post: a.model({
+          meta: a.customType({
+            status: a.enum(['unpublished', 'published']),
+            recursiveCustomType: a.ref('CustTypeA'),
+          }),
+        }),
+        getLikedPost: a
+          .query()
+          .returns(a.ref('CustTypeA').array())
+          .handler(a.handler.function('myFunc')),
+        CustTypeA: a.customType({
+          company: a.ref('CustTypeB'),
+        }),
+        CustTypeB: a.customType({
+          tenants: a.ref('CustTypeA').array(),
+        }),
+      })
+      .authorization((allow) => allow.publicApiKey());
+
+    const result = s.transform().schema;
+
+    expect(result).toMatchSnapshot();
+  });
+
 });
