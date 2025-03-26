@@ -215,3 +215,35 @@ enum PostMetaStatus {
   published
 }"
 `;
+
+exports[`CustomType transform Indirect recursive CustomTypes transform when used by both models and operations 1`] = `
+"type Post @model @auth(rules: [{allow: public, provider: apiKey}])
+{
+  meta: PostMeta
+}
+
+type CustTypeA @aws_api_key
+{
+  company: CustTypeB
+}
+
+type CustTypeB @aws_api_key
+{
+  tenants: [CustTypeA]
+}
+
+type PostMeta 
+{
+  status: PostMetaStatus
+  recursiveCustomType: CustTypeA
+}
+
+enum PostMetaStatus {
+  unpublished
+  published
+}
+
+type Query {
+  getLikedPost: [CustTypeA] @function(name: "myFunc") @auth(rules: [{allow: public, provider: apiKey}])
+}"
+`;

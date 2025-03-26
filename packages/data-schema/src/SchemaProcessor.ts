@@ -2246,12 +2246,14 @@ function extractNestedCustomTypeNames(
     for (const [fieldName, fieldDef] of Object.entries(fields)) {
       if (isCustomType(fieldDef)) {
         const customTypeName = `${capitalize(name)}${capitalize(fieldName)}`;
-        namesList.push(customTypeName);
-        traverseCustomTypeFields(customTypeName, fieldDef, namesList);
+        if (!namesList.includes(customTypeName)){
+          namesList.push(customTypeName);
+          traverseCustomTypeFields(customTypeName, fieldDef, namesList);
+        }
       } else if (isRefField(fieldDef)) {
         const refType = getRefType(fieldDef.data.link, name);
 
-        if (refType.type === 'CustomType') {
+        if (refType.type === 'CustomType' && !namesList.includes(fieldDef.data.link)) {
           namesList.push(fieldDef.data.link);
           traverseCustomTypeFields(fieldDef.data.link, refType.def, namesList);
         }
