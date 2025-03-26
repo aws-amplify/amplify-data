@@ -896,6 +896,8 @@ function mapToNativeAppSyncAuthDirectives(
 ) {
   const rules = new Set<string>();
 
+  const groupProvider: Map<string, Set<string>> = new Map();
+
   for (const entry of authorization) {
     const rule = accessData(entry);
 
@@ -904,16 +906,24 @@ function mapToNativeAppSyncAuthDirectives(
     const provider = getAppSyncAuthDirectiveFromRule(rule);
 
     if (rule.groups) {
-      // example: (cognito_groups: ["Bloggers", "Readers"])
-      rules.add(
-        `${provider}(cognito_groups: [${rule.groups
-          .map((group) => `"${group}"`)
-          .join(', ')}])`,
-      );
+      if(!groupProvider.has(provider)) {
+        groupProvider.set(provider, new Set());
+      };
+      rule.groups.forEach((group) => groupProvider.get(provider)?.add(group));
     } else {
       rules.add(provider);
     }
+
+    groupProvider.forEach((groups, provider) => {
+      rules.add(
+        `${provider}(cognito_groups: [${Array.from(groups)
+          .map((group) => `"${group}"`)
+          .join(', ')}])`,
+      );
+      // example: (cognito_groups: ["Bloggers", "Readers"])
+    })
   }
+
 
   const authString = [...rules].join(' ');
 
