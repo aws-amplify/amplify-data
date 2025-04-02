@@ -12,9 +12,9 @@ import type {
 } from './ModelRelationshipField';
 import { 
   type Authorization, 
-  type BaseAllowModifier, 
   type AnyAuthorization,
-  allow, 
+  allow,
+  type ModelAuthorizationCallback, 
 } from './Authorization';
 import type { RefType, RefTypeParamShape } from './RefType';
 import type { EnumType } from './EnumType';
@@ -334,9 +334,7 @@ export type ModelType<
      * ])
      */
     authorization<AuthRuleType extends AnyAuthorization>(
-      callback: (
-        allow: BaseAllowModifier,
-      ) => AuthRuleType | AuthRuleType[],
+      callback: ModelAuthorizationCallback<AuthRuleType>,
     ): ModelType<
       SetTypeSubArg<T, 'authorization', AuthRuleType[]>,
       UsedMethod | 'authorization'
