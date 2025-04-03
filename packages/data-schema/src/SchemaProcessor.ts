@@ -217,7 +217,7 @@ function scalarFieldToGql(
   for (const index of secondaryIndexes) {
     field += ` ${index}`;
   }
-  
+
   // Add validation directives for each validation rule
   for (const validationRule of validation) {
     const valueStr = typeof validationRule.value === 'number' ? validationRule.value.toString() : validationRule.value;
@@ -227,7 +227,7 @@ function scalarFieldToGql(
       field += ` @validate(type: ${validationRule.type}, value: "${valueStr}")`;
     }
   }
-  
+
   return field;
 }
 
@@ -1112,7 +1112,7 @@ const transformedSecondaryIndexesForModel = (
     partitionKey: string,
     sortKeys: readonly string[],
     indexName: string,
-    queryField: string,
+    queryField: string | null,
   ): string => {
     for (const keyName of [partitionKey, ...sortKeys]) {
       const field = modelFields[keyName];
@@ -1127,7 +1127,7 @@ const transformedSecondaryIndexesForModel = (
       }
     }
 
-    if (!sortKeys.length && !indexName && !queryField) {
+    if (!sortKeys.length && !indexName && !queryField && queryField !== null) {
       return `@index(queryField: "${secondaryIndexDefaultQueryField(
         modelName,
         partitionKey,
@@ -1146,7 +1146,10 @@ const transformedSecondaryIndexesForModel = (
       );
     }
 
-    if (queryField) {
+    if(queryField === null) {
+      attributes.push(`queryField: null`);
+    }
+    else if (queryField) {
       attributes.push(`queryField: "${queryField}"`);
     } else {
       attributes.push(
