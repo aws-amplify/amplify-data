@@ -3,13 +3,13 @@ import {
   ModelIntrospectionSchema,
 } from '../../src/runtime/bridge-types';
 import {
-  initializeModel,
   normalizeMutationInput,
   flattenItems,
   generateSelectionSet,
   customSelectionSetToIR,
   generateGraphQLDocument,
   ModelOperation,
+  buildGraphQLVariables,
 } from '../../src/runtime/internals/APIClient';
 
 import config from './fixtures/modeled/amplifyconfiguration';
@@ -933,5 +933,61 @@ describe('generateGraphQLDocument()', () => {
         );
       },
     );
+  });
+
+  describe('buildGraphQLVariables', () => {
+    const defaultInput = {
+      id: '1',
+      name: 'Example Name',
+      status: 'NOT_STARTED',
+    };
+
+    test('produces correct artifact for create mutations', () => {
+      const createResult = buildGraphQLVariables(
+        modelIntroSchema.models.Todo,
+        'CREATE',
+        defaultInput,
+        modelIntroSchema,
+      );
+
+      expect(createResult).toEqual({
+        input: defaultInput,
+      });
+    });
+
+    test('produces correct artifact for update mutations', () => {
+      const updateResult = buildGraphQLVariables(
+        modelIntroSchema.models.Todo,
+        'UPDATE',
+        {
+          ...defaultInput,
+          owner: 'james',
+          nonReadOnlyNonOwnerField: 'iWillTriggerGraphQLError',
+          updatedAt: '2025-04-09T22:50:59.872Z',
+          createdAt: '2025-04-09T22:50:59.872Z',
+        },
+        modelIntroSchema,
+      );
+
+      expect(updateResult).toEqual({
+        input: {
+          ...defaultInput,
+          nonReadOnlyNonOwnerField: 'iWillTriggerGraphQLError',
+        },
+      });
+    });
+
+    test('produces correct artifact for delete mutations', () => {
+      const deleteResult = buildGraphQLVariables(
+        modelIntroSchema.models.Todo,
+        'DELETE',
+        defaultInput,
+        modelIntroSchema,
+      );
+
+      expect(deleteResult).toEqual({
+        input: { id: defaultInput.id },
+      });
+    });
   });
 });
