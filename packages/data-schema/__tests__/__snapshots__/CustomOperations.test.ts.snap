@@ -970,7 +970,7 @@ type Query {
 `;
 
 exports[`custom operations + custom type auth inheritance op returns top-level custom type with all supported auth modes 1`] = `
-"type QueryReturn @aws_api_key @aws_cognito_user_pools @aws_cognito_user_pools(cognito_groups: ["admin", "superAdmin"]) @aws_iam
+"type QueryReturn @aws_api_key @aws_cognito_user_pools @aws_iam @aws_cognito_user_pools(cognito_groups: ["admin", "superAdmin"])
 {
   fieldA: String
   fieldB: Int

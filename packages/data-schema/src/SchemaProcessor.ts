@@ -913,17 +913,16 @@ function mapToNativeAppSyncAuthDirectives(
     } else {
       rules.add(provider);
     }
-
-    groupProvider.forEach((groups, provider) => {
-      rules.add(
-        `${provider}(cognito_groups: [${Array.from(groups)
-          .map((group) => `"${group}"`)
-          .join(', ')}])`,
-      );
-      // example: (cognito_groups: ["Bloggers", "Readers"])
-    })
   }
 
+  groupProvider.forEach((groups, provider) => {
+    rules.add(
+      `${provider}(cognito_groups: [${Array.from(groups)
+        .map((group) => `"${group}"`)
+        .join(', ')}])`,
+    );
+    // example: (cognito_groups: ["Bloggers", "Readers"])
+  })
 
   const authString = [...rules].join(' ');
 

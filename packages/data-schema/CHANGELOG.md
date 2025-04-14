@@ -1,5 +1,11 @@
 # @aws-amplify/data-schema
 
+## 1.20.3
+
+### Patch Changes
+
+- a0182df: fix duplicate authorizations for custom types used in multiple custom operations
+
 ## 1.20.2
 
 ### Patch Changes
