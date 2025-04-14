@@ -51,4 +51,9 @@ console.log(`Local npm proxy running at ${EXPECTED_URL}.`);
  * https://github.com/sindresorhus/execa/blob/HEAD/docs/escaping.md
  */
 await execa('npm', ['config', 'set', 'registry', EXPECTED_URL]);
+
 console.log(`Set npm registry to ${EXPECTED_URL}`);
+
+await execa('yarn', ['config', 'set', 'registry', EXPECTED_URL]);
+
+console.log(`Set yarn registry to ${EXPECTED_URL}`);
