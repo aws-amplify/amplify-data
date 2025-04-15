@@ -52,3 +52,6 @@ console.log(`Local npm proxy running at ${EXPECTED_URL}.`);
  */
 await execa('npm', ['config', 'set', 'registry', EXPECTED_URL]);
 console.log(`Set npm registry to ${EXPECTED_URL}`);
+
+await execa('yarn', ['config', 'set', 'registry', EXPECTED_URL]);
+console.log(`Set yarn registry to ${EXPECTED_URL}`);
