@@ -277,7 +277,7 @@ describe('model auth rules', () => {
 
     expect(graphql).toEqual(
       expect.stringContaining(
-        'type CustomType @aws_api_key @aws_cognito_user_pools @aws_iam @aws_cognito_user_pools(cognito_groups: ["Admin", "User"])',
+        'type CustomType @aws_api_key @aws_cognito_user_pools @aws_iam',
       ),
     );
   });

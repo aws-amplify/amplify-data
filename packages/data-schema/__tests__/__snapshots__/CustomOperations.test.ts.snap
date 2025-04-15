@@ -754,7 +754,7 @@ exports[`CustomOperation transform dynamo schema handlers a.handler.custom a.han
 }
 
 type Query {
-  customQuery: String @aws_cognito_user_pools @aws_cognito_user_pools(cognito_groups: ["groupA", "groupB"])
+  customQuery: String @aws_cognito_user_pools
 }"
 `;
 
@@ -803,7 +803,7 @@ type Query {
 `;
 
 exports[`CustomOperation transform dynamo schema handlers a.handler.function defineFunction for an operation with async that is authorization by both group and authorized 1`] = `
-"type EventInvocationResponse @aws_cognito_user_pools @aws_cognito_user_pools(cognito_groups: ["TestGroup"])
+"type EventInvocationResponse @aws_cognito_user_pools
 {
   success: Boolean!
 }
@@ -815,7 +815,7 @@ type Query {
 `;
 
 exports[`CustomOperation transform dynamo schema handlers a.handler.function defineFunction for two async operations with async where one is authorization is both group and authorized 1`] = `
-"type EventInvocationResponse @aws_cognito_user_pools @aws_cognito_user_pools(cognito_groups: ["TestGroup"])
+"type EventInvocationResponse @aws_cognito_user_pools
 {
   success: Boolean!
 }
@@ -994,7 +994,7 @@ type Query {
 `;
 
 exports[`custom operations + custom type auth inheritance op returns top-level custom type with all supported auth modes 1`] = `
-"type QueryReturn @aws_api_key @aws_cognito_user_pools @aws_iam @aws_cognito_user_pools(cognito_groups: ["admin", "superAdmin"])
+"type QueryReturn @aws_api_key @aws_cognito_user_pools @aws_iam
 {
   fieldA: String
   fieldB: Int
