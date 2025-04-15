@@ -1021,7 +1021,7 @@ describe('CustomOperation transform', () => {
           });
         });
 
-        test('defineFunction for an operation with async that is authorization by both group and authorized', () => {
+        test('defineFunction for an async operation that has authorization rules for both group and authenticated', () => {
           const fn1 = defineFunctionStub({});
           const s = a.schema({
             getPostDetails: a
