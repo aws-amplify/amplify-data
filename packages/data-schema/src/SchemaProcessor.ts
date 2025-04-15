@@ -912,7 +912,7 @@ function mapToNativeAppSyncAuthDirectives(
       };
       rule.groups.forEach((group) => groupProvider.get(provider)?.add(group));
     } else {
-      //generalProviderUsed.add(provider);
+      generalProviderUsed.add(provider);
       rules.add(provider);
     }
   }

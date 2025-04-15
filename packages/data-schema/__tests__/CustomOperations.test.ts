@@ -1880,7 +1880,7 @@ describe('custom operations + custom type auth inheritance', () => {
     expect(result).toMatchSnapshot();
     expect(result).toEqual(
       expect.stringContaining(
-        'type QueryReturn @aws_api_key @aws_cognito_user_pools @aws_iam @aws_cognito_user_pools(cognito_groups: ["admin", "superAdmin"])',
+        'type QueryReturn @aws_api_key @aws_cognito_user_pools @aws_iam',
       ),
     );
   });

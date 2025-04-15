@@ -40,7 +40,7 @@ type Location
 `;
 
 exports[`CustomType transform Explicit CustomType authorized by both group and authorized though different custom operations 1`] = `
-"type testCustomType @aws_cognito_user_pools @aws_cognito_user_pools(cognito_groups: ["TestGroup"])
+"type testCustomType @aws_cognito_user_pools
 {
   content: String
 }
@@ -147,7 +147,7 @@ type PostLocation
 `;
 
 exports[`CustomType transform Implicit CustomType authorized by both group and authorized though its custom operation 1`] = `
-"type GetPostDetailsAReturnType @aws_cognito_user_pools @aws_cognito_user_pools(cognito_groups: ["TestGroup"])
+"type GetPostDetailsAReturnType @aws_cognito_user_pools
 {
   
 }
