@@ -11,7 +11,7 @@
   "dependencies": {
     "@aws-amplify/data-schema": "*",
     "aws-amplify": "*",
-    "aws-cdk-lib": "^2.187.0"
+    "aws-cdk-lib": "^2.189.1"
     
   },
   "devDependencies": {
