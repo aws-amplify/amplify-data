@@ -802,6 +802,30 @@ type Query {
 }"
 `;
 
+exports[`CustomOperation transform dynamo schema handlers a.handler.function defineFunction for an operation with async that is authorization by both group and authorized 1`] = `
+"type EventInvocationResponse @aws_cognito_user_pools @aws_cognito_user_pools(cognito_groups: ["TestGroup"])
+{
+  success: Boolean!
+}
+
+type Query {
+  getPostDetails: EventInvocationResponse @function(name: "FnGetPostDetails", invocationType: Event) @auth(rules: [{allow: private},
+  {allow: groups, groups: ["TestGroup"]}])
+}"
+`;
+
+exports[`CustomOperation transform dynamo schema handlers a.handler.function defineFunction for two async operations with async where one is authorization is both group and authorized 1`] = `
+"type EventInvocationResponse @aws_cognito_user_pools @aws_cognito_user_pools(cognito_groups: ["TestGroup"])
+{
+  success: Boolean!
+}
+
+type Query {
+  getPostDetailsA: EventInvocationResponse @function(name: "FnGetPostDetailsA", invocationType: Event) @auth(rules: [{allow: groups, groups: ["TestGroup"]}])
+  getPostDetailsB: EventInvocationResponse @function(name: "FnGetPostDetailsB", invocationType: Event) @auth(rules: [{allow: private}])
+}"
+`;
+
 exports[`CustomOperation transform dynamo schema handlers a.handler.function defineFunction sync - async 1`] = `
 "type EventInvocationResponse @aws_cognito_user_pools
 {

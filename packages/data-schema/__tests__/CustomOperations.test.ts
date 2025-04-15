@@ -1021,6 +1021,45 @@ describe('CustomOperation transform', () => {
           });
         });
 
+        test('defineFunction for an operation with async that is authorization by both group and authorized', () => {
+          const fn1 = defineFunctionStub({});
+          const s = a.schema({
+            getPostDetails: a
+              .query()
+              .arguments({})
+              .handler([
+                a.handler.function(fn1).async(),
+              ])
+              .authorization((allow) => [allow.authenticated(), allow.group('TestGroup')]),
+          });
+
+          const { schema, lambdaFunctions } = s.transform();
+          expect(schema).toMatchSnapshot();
+        });
+
+        test('defineFunction for two async operations with async where one is authorization is both group and authorized', () => {
+          const fn1 = defineFunctionStub({});
+          const s = a.schema({
+            getPostDetailsA: a
+              .query()
+              .arguments({})
+              .handler([
+                a.handler.function(fn1).async(),
+              ])
+              .authorization((allow) => allow.group('TestGroup')),
+            getPostDetailsB: a
+              .query()
+              .arguments({})
+              .handler([
+                a.handler.function(fn1).async(),
+              ])
+              .authorization((allow) => allow.authenticated()),
+          });
+
+          const { schema, lambdaFunctions } = s.transform();
+          expect(schema).toMatchSnapshot();
+        });
+
         test('invalid', () => {
           const invalidFnDef = {};
 
