@@ -802,7 +802,7 @@ type Query {
 }"
 `;
 
-exports[`CustomOperation transform dynamo schema handlers a.handler.function defineFunction for an operation with async that is authorization by both group and authorized 1`] = `
+exports[`CustomOperation transform dynamo schema handlers a.handler.function defineFunction for an async operation that has authorization rules for both group and authenticated 1`] = `
 "type EventInvocationResponse @aws_cognito_user_pools
 {
   success: Boolean!
@@ -814,7 +814,7 @@ type Query {
 }"
 `;
 
-exports[`CustomOperation transform dynamo schema handlers a.handler.function defineFunction for two async operations with async where one is authorization is both group and authorized 1`] = `
+exports[`CustomOperation transform dynamo schema handlers a.handler.function defineFunction for two async operations that have authorization rules for either group or authenticated 1`] = `
 "type EventInvocationResponse @aws_cognito_user_pools
 {
   success: Boolean!
