@@ -3,13 +3,13 @@ import {
   ModelIntrospectionSchema,
 } from '../../src/runtime/bridge-types';
 import {
-  initializeModel,
   normalizeMutationInput,
   flattenItems,
   generateSelectionSet,
   customSelectionSetToIR,
   generateGraphQLDocument,
   ModelOperation,
+  buildGraphQLVariables,
 } from '../../src/runtime/internals/APIClient';
 
 import config from './fixtures/modeled/amplifyconfiguration';
@@ -933,5 +933,195 @@ describe('generateGraphQLDocument()', () => {
         );
       },
     );
+  });
+
+  describe('buildGraphQLVariables', () => {
+    const defaultInput = {
+      id: '1',
+      name: 'Example Name',
+      status: 'NOT_STARTED',
+    };
+
+    test('produces correct artifact for create mutations', () => {
+      const createResult = buildGraphQLVariables(
+        modelIntroSchema.models.Todo,
+        'CREATE',
+        defaultInput,
+        modelIntroSchema,
+      );
+
+      expect(createResult).toEqual({
+        input: defaultInput,
+      });
+    });
+
+    test('produces correct artifact for update mutations', () => {
+      const updateResult = buildGraphQLVariables(
+        modelIntroSchema.models.Todo,
+        'UPDATE',
+        {
+          ...defaultInput,
+          owner: 'james',
+          nonReadOnlyNonOwnerField: 'iWillTriggerGraphQLError',
+          updatedAt: '2025-04-09T22:50:59.872Z',
+          createdAt: '2025-04-09T22:50:59.872Z',
+        },
+        modelIntroSchema,
+      );
+
+      expect(updateResult).toEqual({
+        input: {
+          ...defaultInput,
+          nonReadOnlyNonOwnerField: 'iWillTriggerGraphQLError',
+        },
+      });
+    });
+
+    test('does not throw type error when implicit owner field is added to update input', () => {
+      expect(() => {
+        // use void return type here
+        buildGraphQLVariables(
+          modelIntroSchema.models.Todo,
+          'UPDATE',
+          {
+            owner: 'james',
+          },
+          modelIntroSchema,
+        );
+      }).not.toThrow();
+    });
+
+    test('produces correct artifact for delete mutations', () => {
+      const deleteResult = buildGraphQLVariables(
+        modelIntroSchema.models.Todo,
+        'DELETE',
+        defaultInput,
+        modelIntroSchema,
+      );
+
+      expect(deleteResult).toEqual({
+        input: { id: defaultInput.id },
+      });
+    });
+
+    test('produces correct artifact for get queries', () => {
+      const getResult = buildGraphQLVariables(
+        modelIntroSchema.models.Todo,
+        'GET',
+        defaultInput,
+        modelIntroSchema,
+      );
+
+      expect(getResult).toEqual({
+        id: defaultInput.id,
+      });
+    });
+
+    test('produces correct artifact for list queries with no pk or sk specified', () => {
+      const listResult = buildGraphQLVariables(
+        modelIntroSchema.models.Todo,
+        'LIST',
+        {
+          filter: { name: { eq: 'Example Name' } },
+          sortDirection: 'ASC',
+          limit: 50,
+          nextToken: 'my-special-next-token',
+        },
+        modelIntroSchema,
+      );
+
+      expect(listResult).toEqual({
+        filter: { name: { eq: 'Example Name' } },
+        sortDirection: 'ASC',
+        limit: 50,
+        nextToken: 'my-special-next-token',
+      });
+    });
+
+    test('produces correct artifact for list queries with pk specified', () => {
+      const listResult = buildGraphQLVariables(
+        modelIntroSchema.models.Todo,
+        'LIST',
+        {
+          id: 'sample-id',
+          answer: 42,
+        },
+        modelIntroSchema,
+      );
+
+      expect(listResult).toEqual({
+        id: 'sample-id',
+      });
+    });
+
+    test('produces correct artifact for index queries', () => {
+      const indexQueryResult = buildGraphQLVariables(
+        modelIntroSchema.models.Product,
+        'INDEX_QUERY',
+        {
+          sku: '1337',
+          factoryId: '6844',
+          filter: { description: { contains: 'LTU' } },
+          sortDirection: 'DESC',
+          nextToken: 'my-special-next-token',
+          limit: 42,
+          randomField: 'ignoreMe',
+        },
+        modelIntroSchema,
+        {
+          queryField: 'listProductsByFactory',
+          pk: modelIntroSchema.models.Product.primaryKeyInfo
+            .primaryKeyFieldName,
+          sk: modelIntroSchema.models.Product.primaryKeyInfo.sortKeyFieldNames,
+        },
+      );
+
+      expect(indexQueryResult).toEqual({
+        sku: '1337',
+        factoryId: '6844',
+        filter: { description: { contains: 'LTU' } },
+        sortDirection: 'DESC',
+        nextToken: 'my-special-next-token',
+        limit: 42,
+      });
+    });
+
+    test('produces correct artifact for oncreate subscriptions', () => {
+      const subscriptionResult = buildGraphQLVariables(
+        modelIntroSchema.models.Todo,
+        'ONCREATE',
+        {
+          filter: { name: { eq: 'Example Name' }, randomField: { eq: 42 } },
+        },
+        modelIntroSchema,
+      );
+
+      expect(subscriptionResult).toEqual({
+        filter: { name: { eq: 'Example Name' }, randomField: { eq: 42 } },
+      });
+    });
+
+    test('throws error when called with observe query', () => {
+      expect(() => {
+        buildGraphQLVariables(
+          modelIntroSchema.models.Todo,
+          'OBSERVEQUERY',
+          {},
+          modelIntroSchema,
+        );
+      }).toThrow();
+    });
+
+    test('throws error when called with unhandled operation', () => {
+      expect(() => {
+        buildGraphQLVariables(
+          modelIntroSchema.models.Todo,
+          // @ts-ignore - test unhandled input type
+          'UNHANDLED_OPERATION_TYPE',
+          {},
+          modelIntroSchema,
+        );
+      }).toThrow();
+    });
   });
 });
