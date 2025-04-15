@@ -754,7 +754,7 @@ exports[`CustomOperation transform dynamo schema handlers a.handler.custom a.han
 }
 
 type Query {
-  customQuery: String @aws_cognito_user_pools @aws_cognito_user_pools(cognito_groups: ["groupA", "groupB"])
+  customQuery: String @aws_cognito_user_pools
 }"
 `;
 
@@ -799,6 +799,30 @@ exports[`CustomOperation transform dynamo schema handlers a.handler.function def
 
 type Query {
   getPostDetails: EventInvocationResponse @function(name: "FnGetPostDetails", invocationType: Event) @auth(rules: [{allow: private}])
+}"
+`;
+
+exports[`CustomOperation transform dynamo schema handlers a.handler.function defineFunction for an async operation that has authorization rules for both group and authenticated 1`] = `
+"type EventInvocationResponse @aws_cognito_user_pools
+{
+  success: Boolean!
+}
+
+type Query {
+  getPostDetails: EventInvocationResponse @function(name: "FnGetPostDetails", invocationType: Event) @auth(rules: [{allow: private},
+  {allow: groups, groups: ["TestGroup"]}])
+}"
+`;
+
+exports[`CustomOperation transform dynamo schema handlers a.handler.function defineFunction for two async operations that have authorization rules for either group or authenticated 1`] = `
+"type EventInvocationResponse @aws_cognito_user_pools
+{
+  success: Boolean!
+}
+
+type Query {
+  getPostDetailsA: EventInvocationResponse @function(name: "FnGetPostDetailsA", invocationType: Event) @auth(rules: [{allow: groups, groups: ["TestGroup"]}])
+  getPostDetailsB: EventInvocationResponse @function(name: "FnGetPostDetailsB", invocationType: Event) @auth(rules: [{allow: private}])
 }"
 `;
 
@@ -970,7 +994,7 @@ type Query {
 `;
 
 exports[`custom operations + custom type auth inheritance op returns top-level custom type with all supported auth modes 1`] = `
-"type QueryReturn @aws_api_key @aws_cognito_user_pools @aws_iam @aws_cognito_user_pools(cognito_groups: ["admin", "superAdmin"])
+"type QueryReturn @aws_api_key @aws_cognito_user_pools @aws_iam
 {
   fieldA: String
   fieldB: Int

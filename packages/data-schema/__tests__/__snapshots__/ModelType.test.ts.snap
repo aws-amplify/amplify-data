@@ -137,7 +137,7 @@ exports[`model auth rules can create a static Admins group rule 1`] = `
 `;
 
 exports[`model auth rules can deduplicate authorization prevent errors from auth defined by multiple custom operations 1`] = `
-"type CustomType @aws_api_key @aws_cognito_user_pools @aws_iam @aws_cognito_user_pools(cognito_groups: ["Admin", "User"])
+"type CustomType @aws_api_key @aws_cognito_user_pools @aws_iam
 {
   id: String!
   name: String!

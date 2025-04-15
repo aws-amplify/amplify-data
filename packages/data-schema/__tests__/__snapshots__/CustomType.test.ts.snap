@@ -39,6 +39,18 @@ type Location
 }"
 `;
 
+exports[`CustomType transform Explicit CustomType authorized by both group and authorized though different custom operations 1`] = `
+"type testCustomType @aws_cognito_user_pools
+{
+  content: String
+}
+
+type Query {
+  getPostDetailsA: testCustomType @function(name: "FnGetPostDetailsA") @auth(rules: [{allow: private}])
+  getPostDetailsB: testCustomType @function(name: "FnGetPostDetailsB") @auth(rules: [{allow: groups, groups: ["TestGroup"]}])
+}"
+`;
+
 exports[`CustomType transform Explicit CustomType nests explicit CustomType 1`] = `
 "type Post @model @auth(rules: [{allow: public, provider: apiKey}])
 {
@@ -131,6 +143,22 @@ type PostLocation
 {
   lat: Float
   long: Float
+}"
+`;
+
+exports[`CustomType transform Implicit CustomType authorized by both group and authorized though its custom operation 1`] = `
+"type GetPostDetailsAReturnType @aws_cognito_user_pools
+{
+  
+}
+
+input GetPostDetailsAContentInput {
+  content: String
+}
+
+type Query {
+  getPostDetailsA(content: GetPostDetailsAContentInput): GetPostDetailsAReturnType @function(name: "FnGetPostDetailsA") @auth(rules: [{allow: private},
+  {allow: groups, groups: ["TestGroup"]}])
 }"
 `;
 

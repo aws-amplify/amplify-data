@@ -1021,6 +1021,45 @@ describe('CustomOperation transform', () => {
           });
         });
 
+        test('defineFunction for an async operation that has authorization rules for both group and authenticated', () => {
+          const fn1 = defineFunctionStub({});
+          const s = a.schema({
+            getPostDetails: a
+              .query()
+              .arguments({})
+              .handler([
+                a.handler.function(fn1).async(),
+              ])
+              .authorization((allow) => [allow.authenticated(), allow.group('TestGroup')]),
+          });
+
+          const { schema, lambdaFunctions } = s.transform();
+          expect(schema).toMatchSnapshot();
+        });
+
+        test('defineFunction for two async operations that have authorization rules for either group or authenticated', () => {
+          const fn1 = defineFunctionStub({});
+          const s = a.schema({
+            getPostDetailsA: a
+              .query()
+              .arguments({})
+              .handler([
+                a.handler.function(fn1).async(),
+              ])
+              .authorization((allow) => allow.group('TestGroup')),
+            getPostDetailsB: a
+              .query()
+              .arguments({})
+              .handler([
+                a.handler.function(fn1).async(),
+              ])
+              .authorization((allow) => allow.authenticated()),
+          });
+
+          const { schema, lambdaFunctions } = s.transform();
+          expect(schema).toMatchSnapshot();
+        });
+
         test('invalid', () => {
           const invalidFnDef = {};
 
@@ -1841,7 +1880,7 @@ describe('custom operations + custom type auth inheritance', () => {
     expect(result).toMatchSnapshot();
     expect(result).toEqual(
       expect.stringContaining(
-        'type QueryReturn @aws_api_key @aws_cognito_user_pools @aws_iam @aws_cognito_user_pools(cognito_groups: ["admin", "superAdmin"])',
+        'type QueryReturn @aws_api_key @aws_cognito_user_pools @aws_iam',
       ),
     );
   });
