@@ -6,7 +6,7 @@ export type ModelIndexData = {
   partitionKey: string;
   sortKeys: readonly unknown[];
   indexName: string;
-  queryField: string;
+  queryField: string | null;
 };
 
 export type InternalModelIndexType = ModelIndexType<any, any, any, any> & {
@@ -31,7 +31,7 @@ export type ModelIndexType<
       name: string,
     ): ModelIndexType<ModelFieldKeys, PK, SK, QueryField, K | 'name'>;
     queryField<
-      QF extends string = never,
+      QF extends string | null = never,
       MF extends ModelFieldKeys = ModelFieldKeys,
     >(
       field: QF,
