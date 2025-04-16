@@ -25,6 +25,7 @@ import { query, mutation, subscription, generation } from './CustomOperation';
 import { handler } from './Handler';
 import { conversation, dataTool } from './ai/ConversationType';
 import { model as aiModel } from './ai/ModelType';
+import { type AuthorizationCallback } from './Authorization';
 
 const ai = {
   model: aiModel,
@@ -65,4 +66,5 @@ export {
   generation,
   ai,
   handler,
+  type AuthorizationCallback,
 };
