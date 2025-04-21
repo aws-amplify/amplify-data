@@ -1,5 +1,11 @@
 # @aws-amplify/data-schema
 
+## 1.20.5
+
+### Patch Changes
+
+- c0f504b: Fix custom type permissions issues from both authenticated and group authorization
+
 ## 1.20.4
 
 ### Patch Changes
