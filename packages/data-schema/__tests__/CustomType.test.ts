@@ -1,5 +1,6 @@
 import { expectTypeTestsToPassAsync } from 'jest-tsd';
 import { a } from '../src/index';
+import { defineFunctionStub } from './utils';
 
 // evaluates type defs in corresponding test-d.ts file
 it('should not produce static type errors', async () => {
@@ -253,6 +254,50 @@ describe('CustomType transform', () => {
         }),
       })
       .authorization((allow) => allow.publicApiKey());
+
+    const result = s.transform().schema;
+
+    expect(result).toMatchSnapshot();
+  });
+
+  test('Implicit CustomType authorized by both group and authorized though its custom operation', () => {
+    const fn1 = defineFunctionStub({});
+    const s = a
+      .schema({
+        getPostDetailsA: a
+          .query()
+          .arguments({content: a.customType({content: a.string()})})
+          .returns(a.customType({}))
+          .handler([
+            a.handler.function(fn1),
+          ]).authorization((allow) => [allow.authenticated(), allow.group("TestGroup")]),
+      });
+
+    const result = s.transform().schema;
+
+    expect(result).toMatchSnapshot();
+  });
+
+  test('Explicit CustomType authorized by both group and authorized though different custom operations', () => {
+    const fn1 = defineFunctionStub({});
+    const s = a
+      .schema({
+        testCustomType: a.customType({ content: a.string() }),
+        getPostDetailsA: a
+          .query()
+          .arguments({})
+          .returns(a.ref("testCustomType"))
+          .handler([
+            a.handler.function(fn1),
+          ]).authorization((allow) => [allow.authenticated()]),
+        getPostDetailsB: a
+          .query()
+          .arguments({})
+          .returns(a.ref("testCustomType"))
+          .handler([
+            a.handler.function(fn1),
+          ]).authorization((allow) => [allow.group("TestGroup")])
+      });
 
     const result = s.transform().schema;
 
