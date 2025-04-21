@@ -1,5 +1,11 @@
 # @aws-amplify/data-schema
 
+## 1.20.4
+
+### Patch Changes
+
+- 92be5be: fix: graphql variable builder to omit implicit owner fields
+
 ## 1.20.3
 
 ### Patch Changes
