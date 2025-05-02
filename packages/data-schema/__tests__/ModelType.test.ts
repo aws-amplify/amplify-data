@@ -198,6 +198,90 @@ describe('model auth rules', () => {
     expect(graphql).toMatchSnapshot();
   });
 
+  it(`can merge group authorization to allow groups to be defined by multiple custom operations`, () => {
+    const schema = a.schema({
+      CustomType: a.customType({
+        id: a.string().required(),
+        name: a.string().required(),
+      }),
+      exampleAdminAndUserQuery: a
+        .query()
+        .arguments({
+          arg1: a.string().required(),
+        })
+        .returns(a.ref("CustomType").required().array().required())
+        .handler(a.handler.function('exampleFunc'))
+        .authorization((allow) => [allow.groups(["Admin", "User"])]),
+      exampleAdminOnlyQuery: a
+        .query()
+        .arguments({
+          arg1: a.string().required(),
+        })
+        .returns(a.ref("CustomType").required().array().required())
+        .handler(a.handler.function('exampleFunc'))
+        .authorization((allow) => [allow.groups(["Admin"])]),
+      ExampleModel: a.model({
+        name: a.ref("CustomType").required().array().required().authorization((allow) => [allow.groups(["Admin3", "User3"])]),
+        description: a.string().authorization((allow) => [allow.groups(["Admin3"])]),
+      })
+      .authorization((allow) => [allow.groups(["Admin2", "User2"])])
+    });
+
+    const graphql = schema.transform().schema;
+    expect(graphql).toMatchSnapshot();
+  });
+
+  it(`can deduplicate authorization prevent errors from auth defined by multiple custom operations`, () => {
+    const schema = a.schema({
+      CustomType: a.customType({
+        id: a.string().required(),
+        name: a.string().required(),
+      }),
+      getSomething: a
+        .query()
+        .arguments({
+          arg1: a.string().required(),
+        })
+        .returns(a.ref("CustomType").required().array().required())
+        .handler(a.handler.function('exampleFunc'))
+        .authorization((allow) => [
+          allow.group("Admin"),
+          allow.publicApiKey(),
+          allow.authenticated(),
+          allow.guest(),
+          allow.authenticated('identityPool')
+        ]),
+      getSomething2: a
+        .query()
+        .arguments({
+          arg1: a.string().required(),
+        })
+        .returns(a.ref("CustomType").required().array().required())
+        .handler(a.handler.function('exampleFunc'))
+        .authorization((allow) => [
+          allow.groups(["Admin", 'User']),
+          allow.publicApiKey(),
+        ]),
+      getSomething3: a
+        .query()
+        .arguments({
+          arg1: a.string().required(),
+        })
+        .returns(a.ref("CustomType").required().array().required())
+        .handler(a.handler.function('exampleFunc'))
+        .authorization((allow) => [allow.groups(["Admin", "User"])])
+    });
+
+    const graphql = schema.transform().schema;
+    expect(graphql).toMatchSnapshot();
+
+    expect(graphql).toEqual(
+      expect.stringContaining(
+        'type CustomType @aws_api_key @aws_cognito_user_pools @aws_iam',
+      ),
+    );
+  });
+
   it(`can create a "multiple owners" rule on an implied (auto-created) field`, () => {
     const schema = a.schema({
       widget: a

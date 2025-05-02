@@ -1,5 +1,29 @@
 # @aws-amplify/data-schema
 
+## 1.20.5
+
+### Patch Changes
+
+- c0f504b: Fix custom type permissions issues from both authenticated and group authorization
+
+## 1.20.4
+
+### Patch Changes
+
+- 92be5be: fix: graphql variable builder to omit implicit owner fields
+
+## 1.20.3
+
+### Patch Changes
+
+- a0182df: fix duplicate authorizations for custom types used in multiple custom operations
+
+## 1.20.2
+
+### Patch Changes
+
+- 26281d1: Fix custom type authorization rule bug
+
 ## 1.20.1
 
 ### Patch Changes

@@ -136,6 +136,25 @@ exports[`model auth rules can create a static Admins group rule 1`] = `
 }"
 `;
 
+exports[`model auth rules can deduplicate authorization prevent errors from auth defined by multiple custom operations 1`] = `
+"type CustomType @aws_api_key @aws_cognito_user_pools @aws_iam
+{
+  id: String!
+  name: String!
+}
+
+type Query {
+  getSomething(arg1: String!): [CustomType!]! @function(name: "exampleFunc") @auth(rules: [{allow: groups, groups: ["Admin"]},
+  {allow: public, provider: apiKey},
+  {allow: private},
+  {allow: public, provider: iam},
+  {allow: private, provider: iam}])
+  getSomething2(arg1: String!): [CustomType!]! @function(name: "exampleFunc") @auth(rules: [{allow: groups, groups: ["Admin", "User"]},
+  {allow: public, provider: apiKey}])
+  getSomething3(arg1: String!): [CustomType!]! @function(name: "exampleFunc") @auth(rules: [{allow: groups, groups: ["Admin", "User"]}])
+}"
+`;
+
 exports[`model auth rules can define a custom authorization rule 1`] = `
 "type Widget @model @auth(rules: [{allow: custom}])
 {
@@ -513,6 +532,25 @@ exports[`model auth rules can define public auth with no provider 1`] = `
 "type widget @model @auth(rules: [{allow: public, provider: apiKey}])
 {
   title: String!
+}"
+`;
+
+exports[`model auth rules can merge group authorization to allow groups to be defined by multiple custom operations 1`] = `
+"type ExampleModel @model @auth(rules: [{allow: groups, groups: ["Admin2", "User2"]}])
+{
+  name: [CustomType!]! @auth(rules: [{allow: groups, groups: ["Admin3", "User3"]}])
+  description: String @auth(rules: [{allow: groups, groups: ["Admin3"]}])
+}
+
+type CustomType @aws_cognito_user_pools(cognito_groups: ["Admin", "User"])
+{
+  id: String!
+  name: String!
+}
+
+type Query {
+  exampleAdminAndUserQuery(arg1: String!): [CustomType!]! @function(name: "exampleFunc") @auth(rules: [{allow: groups, groups: ["Admin", "User"]}])
+  exampleAdminOnlyQuery(arg1: String!): [CustomType!]! @function(name: "exampleFunc") @auth(rules: [{allow: groups, groups: ["Admin"]}])
 }"
 `;
 

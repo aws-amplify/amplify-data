@@ -1156,9 +1156,12 @@ export function buildGraphQLVariables(
                   modelIntrospection,
                 ),
               ).filter(([fieldName]) => {
-                const { isReadOnly } = fields[fieldName];
-
-                return !isReadOnly;
+                // omit field from update input
+                // if exists in fields and marked read only
+                // if does not exist in fields but implicitly added to schema via ownership
+                return fields[fieldName]
+                  ? !fields[fieldName].isReadOnly
+                  : !resolveOwnerFields(modelDefinition).includes(fieldName);
               }),
             )
           : {},
