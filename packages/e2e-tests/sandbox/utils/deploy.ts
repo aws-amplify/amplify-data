@@ -37,11 +37,8 @@ export const deploySandbox = async (
     .do(waitForSandboxDeploymentToPrintTotalTime())
     // Wait for sandbox to become idle and then quit it (CTRL-C)
     .do(interruptSandbox())
-    // Wait for sandbox to prompt on quitting to delete all the resource and respond with no
-    .do(rejectCleanupSandbox())
     // Execute the sequence of actions queued on the process
     .run();
-
   const outputsPath = path.join(amplifyBackendPath, outputsFileName);
 
   const clientConfigStats = await fs.stat(outputsPath);
