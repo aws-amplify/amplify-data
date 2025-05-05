@@ -69,7 +69,6 @@ export class ProcessController {
       throw new Error('Child process does not have stdout stream');
     }
     const reader = readline.createInterface(execaProcess.stdout);
-
     for await (const line of reader) {
       const currentInteraction = interactionQueue[0];
       try {
