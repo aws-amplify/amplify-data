@@ -37,14 +37,12 @@ describe('Sandbox gen + runtime testing of basic Todo schema', () => {
   beforeAll(async () => {
     // Deploy the sandbox
     const response = await deploySandbox(projectDirPath, sandboxIdentifier);
-
     if ('errors' in response) {
       throw response.errors;
     }
   }, sandboxTimeout);
   beforeEach(async () => {
     const { result, errors } = await getGeneratedOutputs(sandboxDir);
-
     if (errors) {
       throw errors;
     }
