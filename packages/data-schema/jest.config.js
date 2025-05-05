@@ -8,5 +8,13 @@ module.exports = {
     "utils.ts",
     "/fixtures/",
     "/MappedTypes/",
-  ]
+  ],
+  coverageThreshold: {
+		global: {
+			branches: 72,
+			functions: 86,
+			lines: 85,
+			statements: 85,
+		},
+	},
 };
