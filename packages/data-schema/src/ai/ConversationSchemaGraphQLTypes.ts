@@ -179,6 +179,10 @@ type AmplifyAIConversationMessageStreamPart @aws_cognito_user_pools {
   errors: [AmplifyAIConversationTurnError]
   p: String
 }
+ 
+type AmplifyAIAttachmentUrl @aws_cognito_user_pools {
+  url: String
+}
 
 type AmplifyAIConversationTurnError @aws_cognito_user_pools {
   message: String!
