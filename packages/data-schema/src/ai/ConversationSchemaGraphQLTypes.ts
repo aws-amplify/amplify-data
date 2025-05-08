@@ -180,8 +180,9 @@ type AmplifyAIConversationMessageStreamPart @aws_cognito_user_pools {
   p: String
 }
  
-type AmplifyAIAttachmentUrl @aws_cognito_user_pools {
-  url: String
+type AmplifyAIAttachmentUrls @aws_cognito_user_pools {
+  uploadUrl: String
+  downloadUrl: String
 }
 
 type AmplifyAIConversationTurnError @aws_cognito_user_pools {
