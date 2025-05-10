@@ -27,6 +27,11 @@ export interface ConversationMessage {
   associatedUserMessageId?: string;
 }
 
+export interface ConversationAttachmentUrls {
+  uploadUrl: string;
+  downloadUrl: string;
+}
+
 // conversation route types
 interface ConversationRouteGetInput {
   id: string;
@@ -97,6 +102,10 @@ interface ConversationListMessagesInput {
   nextToken?: string | null;
 }
 
+interface ConversationGetAttachmentUrlsInput {
+  attachmentKey: string;
+}
+
 type ConversationOnStreamEventHandler = {
   next: (event: ConversationStreamEvent) => void;
   error: (error: ConversationStreamErrorEvent) => void;
@@ -125,6 +134,8 @@ export interface Conversation {
    * Subscribes to new stream events on the current conversation.
    */
   onStreamEvent: (handler: ConversationOnStreamEventHandler) => Subscription;
+
+  getAttachmentUrls: (input: ConversationGetAttachmentUrlsInput) => SingularReturnValue<ConversationAttachmentUrls>;
 }
 
 // schema definition input

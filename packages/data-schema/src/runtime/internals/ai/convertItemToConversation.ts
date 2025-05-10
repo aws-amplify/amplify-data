@@ -12,6 +12,7 @@ import type {
 import { createListMessagesFunction } from './createListMessagesFunction';
 import { createOnStreamEventFunction } from './createOnStreamEventFunction';
 import { createSendMessageFunction } from './createSendMessageFunction';
+import { createGetAttachmentUrlsFunction } from './createGetAttachmentUrlsFunction';
 
 export const convertItemToConversation = (
   client: BaseClient,
@@ -55,6 +56,13 @@ export const convertItemToConversation = (
       modelIntrospection,
       conversationId,
       conversationMessageModel,
+      getInternals,
+    ),
+    getAttachmentUrls: createGetAttachmentUrlsFunction(
+      client,
+      modelIntrospection,
+      conversationId,
+      conversationRouteName,
       getInternals,
     ),
   };

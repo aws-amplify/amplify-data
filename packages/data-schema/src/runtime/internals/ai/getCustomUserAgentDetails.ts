@@ -27,6 +27,7 @@ export enum AiAction {
   OnStreamEvent = '7',
   Generation = '8',
   UpdateConversation = '9',
+  GetAttachmentUrls = '10',
 }
 
 export const getCustomUserAgentDetails = (
