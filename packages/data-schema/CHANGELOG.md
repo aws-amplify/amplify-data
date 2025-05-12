@@ -1,5 +1,11 @@
 # @aws-amplify/data-schema
 
+## 1.21.0
+
+### Minor Changes
+
+- e89240f: Accept null to disable queryField for secondary indexes
+
 ## 1.20.5
 
 ### Patch Changes
