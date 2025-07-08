@@ -15,6 +15,9 @@ const supportedModelsLookup = {
   'Claude 3.5 Haiku': 'anthropic.claude-3-5-haiku-20241022-v1:0',
   'Claude 3.5 Sonnet': 'anthropic.claude-3-5-sonnet-20240620-v1:0',
   'Claude 3.5 Sonnet v2': 'anthropic.claude-3-5-sonnet-20241022-v2:0',
+  'Claude 3.7 Sonnet': 'anthropic.claude-3-7-sonnet-20250219-v1:0',
+  'Claude Opus 4': 'anthropic.claude-opus-4-20250514-v1:0',
+  'Claude Sonnet 4': 'anthropic.claude-sonnet-4-20250514-v1:0',
   // Cohere models
   'Cohere Command R': 'cohere.command-r-v1:0',
   'Cohere Command R+': 'cohere.command-r-plus-v1:0',
