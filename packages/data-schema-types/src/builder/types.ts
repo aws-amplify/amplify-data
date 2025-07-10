@@ -115,4 +115,6 @@ type BackendSecret = {
 
 export type AiModel = {
   resourcePath: string;
+  sourceRegion?: string;
+  crossRegionInference?: boolean;
 }
