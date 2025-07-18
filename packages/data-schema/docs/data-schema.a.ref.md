@@ -43,6 +43,7 @@ T
 
 </td></tr>
 </tbody></table>
+
 **Returns:**
 
 [RefType](./data-schema.reftype.md)<!-- -->&lt;RefTypeArgFactory&lt;T&gt;, never, undefined&gt;
