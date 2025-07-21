@@ -14,7 +14,7 @@ export const createConversationField = (
   const { aiModel, systemPrompt, handler, tools } = typeDef;
   const { strategy, provider } = extractAuthorization(typeDef, typeName);
 
-  const args: Record<string, string> = {
+  const args: Record<string, string | boolean> = {
     aiModel: aiModel.resourcePath,
   };
 
@@ -23,7 +23,7 @@ export const createConversationField = (
   }
 
   if (aiModel.crossRegionInference !== undefined) {
-    args.crossRegionInference = `${aiModel.crossRegionInference}`;
+    args.crossRegionInference = aiModel.crossRegionInference;
   }
 
   // This is done to escape newlines in potentially multi-line system prompts
@@ -38,7 +38,7 @@ export const createConversationField = (
   args.systemPrompt = systemPrompt.replace(/\r?\n/g, '\\n');
 
   const argsString = Object.entries(args)
-    .map(([key, value]) => `${key}: "${value}"`)
+    .map(([key, value]) => typeof value === 'boolean' ? `${key}: ${value}` : `${key}: "${value}"`)
     .join(', ');
 
   const authString = `, auth: { strategy: ${strategy}, provider: ${provider} }`;

@@ -757,7 +757,7 @@ describe('AI Conversation Routes', () => {
           '@conversation(',
           'aiModel: "anthropic.claude-3-haiku-20240307-v1:0", ',
           'sourceRegion: "us-east-1", ',
-          'crossRegionInference: "true", ',
+          'crossRegionInference: true, ',
           'systemPrompt: "testSystemPrompt", ',
           'auth: {strategy: owner, provider: userPools}, ',
           'handler: {functionName: "FnSampleChat", eventVersion: "1.0"}',
@@ -819,7 +819,7 @@ describe('AI Conversation Routes', () => {
         directive: [
           '@conversation(',
           'aiModel: "anthropic.claude-3-haiku-20240307-v1:0", ',
-          'crossRegionInference: "false", ',
+          'crossRegionInference: false, ',
           'systemPrompt: "testSystemPrompt", ',
           'auth: {strategy: owner, provider: userPools}, ',
           'handler: {functionName: "FnSampleChat", eventVersion: "1.0"}',

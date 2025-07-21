@@ -53,7 +53,7 @@ describe('ConversationSchemaProcessor', () => {
 
       const result = createConversationField(mockTypeDef, 'testChat');
       
-      expect(result.field).toContain('crossRegionInference: "true"');
+      expect(result.field).toContain('crossRegionInference: true');
     });
 
     it('should include crossRegionInference when defined as false', () => {
@@ -67,7 +67,7 @@ describe('ConversationSchemaProcessor', () => {
 
       const result = createConversationField(mockTypeDef, 'testChat');
 
-      expect(result.field).toContain('crossRegionInference: "false"');
+      expect(result.field).toContain('crossRegionInference: false');
     });
   });
 });
