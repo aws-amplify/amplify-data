@@ -49,3 +49,4 @@ values
 **Returns:**
 
 [EnumType](./data-schema.enumtype.md)<!-- -->&lt;values&gt;
+

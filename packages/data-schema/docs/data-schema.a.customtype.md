@@ -67,3 +67,4 @@ a.schema(<!-- -->{ Location: a.customType(<!-- -->{ lat: a.float(), long: a.floa
 Post: a.model(<!-- -->{ location: a.ref('Location'), content: a.string(), }<!-- -->),
 
 User: a.model(<!-- -->{ lastKnownLocation: a.ref('Location'), }<!-- -->), }<!-- -->);
+

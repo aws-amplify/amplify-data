@@ -59,3 +59,4 @@ database table fields. Supports scalar types and relationship types.
 [ModelType](./data-schema.modeltype.md)<!-- -->&lt;{ fields: T; identifier: [ModelDefaultIdentifier](./data-schema.modeldefaultidentifier.md)<!-- -->; secondaryIndexes: \[\]; authorization: \[\]; disabledOperations: \[\]; }&gt;
 
 a data model definition
+

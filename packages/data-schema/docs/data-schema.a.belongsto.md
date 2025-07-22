@@ -79,3 +79,4 @@ Team: a.model(<!-- -->{ mantra: a.string().required(), // 3. Create a hasMany re
 ## Example 2
 
 // one-to-one relationship const schema = a.schema(<!-- -->{ Cart: a.model(<!-- -->{ items: a.string().required().array(), // 1. Create reference field customerId: a.id(), // 2. Create relationship field with the reference field customer: a.belongsTo('Customer', 'customerId'), }<!-- -->), Customer: a.model(<!-- -->{ name: a.string(), // 3. Create relationship field with the reference field // from the Cart model activeCart: a.hasOne('Cart', 'customerId') }<!-- -->), }<!-- -->);
+
