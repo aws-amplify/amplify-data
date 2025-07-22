@@ -57,4 +57,3 @@ The API and data model definition
 [ModelSchema](./data-schema.modelschema.md)<!-- -->&lt;{ types: Types; authorization: \[\]; configuration: any; }, never&gt;
 
 An API and data model definition to be deployed with Amplify (Gen 2) experience (`processSchema(...)`<!-- -->) or with the Amplify Data CDK construct (`@aws-amplify/data-construct`<!-- -->)
-
