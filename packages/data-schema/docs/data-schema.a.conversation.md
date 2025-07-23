@@ -45,7 +45,6 @@ ConversationInput
 
 </td></tr>
 </tbody></table>
-
 **Returns:**
 
 ConversationType
