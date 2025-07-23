@@ -41,8 +41,24 @@ export interface InferenceConfiguration {
  * Bedrock models currently supporting Converse API and Tool use
  * @see {@link https://docs.aws.amazon.com/bedrock/latest/userguide/conversation-inference.html#conversation-inference-supported-models-features}
  */
-export function model(modelName: keyof typeof supportedModelsLookup): AiModel {
+export function model(
+  modelName: keyof typeof supportedModelsLookup,
+  options?: { sourceRegion?: string, crossRegionInference?: boolean }
+): AiModel
+export function model(
+  modelId: string,
+  options?: { sourceRegion?: string }
+): AiModel
+export function model(
+  modelNameOrId: string,
+  options?: { sourceRegion?: string, crossRegionInference?: boolean }
+): AiModel {
+  const resourcePath = modelNameOrId in supportedModelsLookup
+    ? supportedModelsLookup[modelNameOrId as keyof typeof supportedModelsLookup]
+    : modelNameOrId;
   return {
-    resourcePath: supportedModelsLookup[modelName],
+    resourcePath,
+    sourceRegion: options?.sourceRegion,
+    crossRegionInference: options?.crossRegionInference
   };
 }
