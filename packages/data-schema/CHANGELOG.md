@@ -1,5 +1,11 @@
 # @aws-amplify/data-schema
 
+## 1.21.1
+
+### Patch Changes
+
+- b881500: chore: add claude models 3.7 and 4
+
 ## 1.21.0
 
 ### Minor Changes
