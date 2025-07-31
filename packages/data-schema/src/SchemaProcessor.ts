@@ -538,7 +538,8 @@ function customOperationToGql(
     }
     const { aiModel, systemPrompt, inferenceConfiguration } =
       typeDef.data.input;
-
+    const sourceRegion = aiModel.sourceRegion ? `, sourceRegion: "${aiModel.sourceRegion}"` : '';
+    const crossRegionInference = aiModel.crossRegionInference ? `, crossRegionInference: ${aiModel.crossRegionInference}` : '';
     // This is done to escape newlines in potentially multi-line system prompts
     // e.g.
     // generateStuff: a.generation({
@@ -558,7 +559,7 @@ function customOperationToGql(
             .map(([key, value]) => `${key}: ${value}`)
             .join(', ')} }`
         : '';
-    gqlHandlerContent += `@generation(aiModel: "${aiModel.resourcePath}", systemPrompt: "${escapedSystemPrompt}"${inferenceConfigurationGql}) `;
+    gqlHandlerContent += `@generation(aiModel: "${aiModel.resourcePath}"${sourceRegion}${crossRegionInference}, systemPrompt: "${escapedSystemPrompt}"${inferenceConfigurationGql}) `;
   }
 
   const gqlField = `${callSignature}: ${returnTypeName} ${gqlHandlerContent}${authString}`;
