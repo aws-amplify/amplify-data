@@ -574,6 +574,7 @@ type Query {
 }"
 `;
 
+
 exports[`CustomOperation transform dynamo schema Generation route with crossRegionInference should create directive args 1`] = `
 "type Query {
   makeRecipe(content: String): String @generation(aiModel: "anthropic.claude-3-haiku-20240307-v1:0", crossRegionInference: true, systemPrompt: "Hello, world!") @auth(rules: [{allow: public, provider: apiKey}])

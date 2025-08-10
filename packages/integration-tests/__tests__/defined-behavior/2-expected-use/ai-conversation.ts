@@ -765,6 +765,37 @@ describe('AI Conversation Routes', () => {
       });
     });
 
+    test('Uses crossRegionInference parameter', () => {
+      const customConversationHandlerMock = {
+        eventVersion: '1.0',
+        getInstance: jest.fn()
+      } as const;
+
+      const schema = a.schema({
+        SampleChat: a
+          .conversation({
+            aiModel: a.ai.model('Claude 3 Haiku', { crossRegionInference: false }),
+            systemPrompt: 'testSystemPrompt',
+            handler: customConversationHandlerMock,
+          }).authorization((allow) => allow.owner()),
+      });
+
+      expectSchemaFieldDirective({
+        schema: schema.transform().schema,
+        model: 'Mutation',
+        field: 'SampleChat',
+        directive: [
+          '@conversation(',
+          'aiModel: "anthropic.claude-3-haiku-20240307-v1:0", ',
+          'crossRegionInference: false, ',
+          'systemPrompt: "testSystemPrompt", ',
+          'auth: {strategy: owner, provider: userPools}, ',
+          'handler: {functionName: "FnSampleChat", eventVersion: "1.0"}',
+          ')',
+        ].join(''),
+      });
+    });
+
     test('Uses custom conversation handler', () => {
       const customConversationHandlerMock = {
         eventVersion: '1.0',

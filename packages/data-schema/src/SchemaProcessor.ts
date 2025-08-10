@@ -538,6 +538,7 @@ function customOperationToGql(
     }
     const { aiModel, systemPrompt, inferenceConfiguration } =
       typeDef.data.input;
+    
     const crossRegionInference = aiModel.crossRegionInference ? `, crossRegionInference: ${aiModel.crossRegionInference}` : '';
     // This is done to escape newlines in potentially multi-line system prompts
     // e.g.
