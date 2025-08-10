@@ -9,7 +9,6 @@
 ```typescript
 export type AiModel = {
     resourcePath: string;
-    sourceRegion?: string;
     crossRegionInference?: boolean;
 };
 ```
