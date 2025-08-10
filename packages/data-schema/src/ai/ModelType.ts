@@ -43,22 +43,20 @@ export interface InferenceConfiguration {
  */
 export function model(
   modelName: keyof typeof supportedModelsLookup,
-  options?: { sourceRegion?: string, crossRegionInference?: boolean }
+  options?: { crossRegionInference?: boolean }
 ): AiModel
 export function model(
-  modelId: string,
-  options?: { sourceRegion?: string }
+  modelId: string
 ): AiModel
 export function model(
   modelNameOrId: string,
-  options?: { sourceRegion?: string, crossRegionInference?: boolean }
+  options?: { crossRegionInference?: boolean }
 ): AiModel {
   const resourcePath = modelNameOrId in supportedModelsLookup
     ? supportedModelsLookup[modelNameOrId as keyof typeof supportedModelsLookup]
     : modelNameOrId;
   return {
     resourcePath,
-    sourceRegion: options?.sourceRegion,
     crossRegionInference: options?.crossRegionInference
   };
 }

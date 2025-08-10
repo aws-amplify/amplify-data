@@ -385,11 +385,11 @@ describe('CustomOperation transform', () => {
       expect(result).toMatchSnapshot();
     });
 
-    test('Generation route with crossRegionInference and sourceRegion should create directive args', () => {
+    test('Generation route with crossRegionInference should create directive args', () => {
       const s = a.schema({
         makeRecipe: a
           .generation({
-            aiModel: a.ai.model('Claude 3 Haiku', { crossRegionInference: true, sourceRegion: 'us-west-2', }),
+            aiModel: a.ai.model('Claude 3 Haiku', { crossRegionInference: true }),
             systemPrompt: 'Hello, world!',
           })
           .arguments({
@@ -409,25 +409,6 @@ describe('CustomOperation transform', () => {
         makeRecipe: a
           .generation({
             aiModel: a.ai.model('Claude 3 Haiku', { crossRegionInference: true }),
-            systemPrompt: 'Hello, world!',
-          })
-          .arguments({
-            content: a.string(),
-          })
-          .returns(a.string())
-          .authorization((allow) => allow.publicApiKey()),
-      });
-
-      const result = s.transform().schema;
-
-      expect(result).toMatchSnapshot();
-    });
-
-    test('Generation route with only sourceRegion should create directive arg', () => {
-      const s = a.schema({
-        makeRecipe: a
-          .generation({
-            aiModel: a.ai.model('Claude 3 Haiku', { sourceRegion: 'us-west-2' }),
             systemPrompt: 'Hello, world!',
           })
           .arguments({
