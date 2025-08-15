@@ -409,3 +409,61 @@ describe('custom operation argument inputs', () => {
   });
 
 })
+
+describe('custom mutations should handle array custom types', () => {
+    it('when the argument is a custom type with nested custom type containing an array field the input preserves nested structure', () => {
+        const fn1 = defineFunctionStub({});
+
+        const schema = a
+            .schema({
+                tag: a.enum(['one', 'two']),
+
+                innerType: a.customType({
+                    items: a.string().array(),
+                    tags: a.ref('tag').array().required()
+                }),
+
+                outerType: a.customType({
+                    inner: a.ref('innerType').required(),
+                }),
+
+                testMutation: a
+                    .mutation()
+                    .arguments({
+                        testArgument: a.ref('outerType'),
+                    })
+                    .returns(a.string())
+                    .handler(a.handler.function(fn1))
+            })
+            .authorization((allow) => allow.owner());
+
+        expect(schema.transform().schema).toMatchSnapshot();
+    });
+
+    it('when the argument is a custom type with inline nested custom type containing required array the input preserves nested structure', () => {
+        const fn1 = defineFunctionStub({});
+
+        const schema = a
+            .schema({
+                point: a.customType({
+                    x: a.float(),
+                    y: a.float(),
+                }),
+
+                testType: a.customType({
+                    points: a.ref('point').array().required()
+                }),
+
+                testMutation: a
+                    .mutation()
+                    .arguments({
+                        testArgument: a.ref('testType').required(),
+                    })
+                    .returns(a.string())
+                    .handler(a.handler.function(fn1))
+            })
+            .authorization((allow) => allow.owner());
+
+        expect(schema.transform().schema).toMatchSnapshot();
+    });
+})
