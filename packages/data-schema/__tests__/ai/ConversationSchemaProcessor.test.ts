@@ -28,20 +28,6 @@ describe('ConversationSchemaProcessor', () => {
   } as any;
 
   describe('createConversationField', () => {
-    it('should include sourceRegion when provided', () => {
-      const mockTypeDef = {
-        ...baseMockTypeDef,
-        aiModel: {
-          ...baseMockTypeDef.aiModel,
-          sourceRegion: 'us-west-2',
-        },
-      };
-
-      const result = createConversationField(mockTypeDef, 'testChat');
-      
-      expect(result.field).toContain('sourceRegion: "us-west-2"');
-    });
-
     it('should include crossRegionInference when defined as true', () => {
       const mockTypeDef = {
         ...baseMockTypeDef,

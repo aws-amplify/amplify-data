@@ -18,10 +18,6 @@ export const createConversationField = (
     aiModel: aiModel.resourcePath,
   };
 
-  if (aiModel.sourceRegion) {
-    args.sourceRegion = aiModel.sourceRegion;
-  }
-
   if (aiModel.crossRegionInference !== undefined) {
     args.crossRegionInference = aiModel.crossRegionInference;
   }
