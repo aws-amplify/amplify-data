@@ -1352,6 +1352,30 @@ const mergeCustomTypeAuthRules = (
   }
 };
 
+const constructNonScalarFieldDefinition = (
+    nestedInputTypeName: string,
+    fieldDef: { data: { valueRequired?: boolean; array?: boolean; arrayRequired?: boolean } }
+): { type: 'ref'; link: string; required?: boolean; array?: boolean; arrayRequired?: boolean } => {
+  const {valueRequired, array, arrayRequired} = fieldDef.data;
+
+  const customTypeData: { type: 'ref'; link: string; required?: boolean; array?: boolean; arrayRequired?: boolean } = {
+    type: 'ref',
+    link: nestedInputTypeName
+  };
+
+  if (valueRequired) {
+    customTypeData.required = true;
+  }
+  if (array) {
+    customTypeData.array = true;
+  }
+  if (arrayRequired) {
+    customTypeData.arrayRequired = true;
+  }
+
+  return customTypeData;
+}
+
 /**
  * Generates input types for custom operations in the schema.
  *
@@ -1391,7 +1415,7 @@ function generateInputTypes(
         if (refType.type === 'CustomType') {
           const nestedInputTypeName = `${fieldDef.data.link}Input`;
           processedFields[fieldName] = {
-            data: { type: 'ref', link: nestedInputTypeName },
+            data: constructNonScalarFieldDefinition(nestedInputTypeName, fieldDef),
           };
 
           // Process the nested type if it hasn't been processed and isn't a circular reference
@@ -1413,7 +1437,7 @@ function generateInputTypes(
           }
         } else if (refType.type === 'Enum') {
           processedFields[fieldName] = {
-            data: { type: 'ref', link: fieldDef.data.link },
+            data: constructNonScalarFieldDefinition(fieldDef.data.link, fieldDef),
           };
         } else {
           throw new Error(
