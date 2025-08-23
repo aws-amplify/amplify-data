@@ -63,7 +63,6 @@ the field(s) that should be used to reference the related model
 
 </td></tr>
 </tbody></table>
-
 **Returns:**
 
 [ModelRelationshipField](./data-schema.modelrelationshipfield.md)<!-- -->&lt;[ModelRelationshipTypeArgFactory](./data-schema.modelrelationshiptypeargfactory.md)<!-- -->&lt;RM, [ModelRelationshipTypes.belongsTo](./data-schema.modelrelationshiptypes.md)<!-- -->, false&gt;, RM, "required" \| "valueRequired", undefined&gt;

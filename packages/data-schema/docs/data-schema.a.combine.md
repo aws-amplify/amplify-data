@@ -47,7 +47,6 @@ The schemas to combine into a single API
 
 </td></tr>
 </tbody></table>
-
 **Returns:**
 
 [CombinedModelSchema](./data-schema.combinedmodelschema.md)<!-- -->&lt;Schema&gt;
