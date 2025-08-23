@@ -1663,6 +1663,232 @@ describe('CustomOperation transform', () => {
     });
   });
 
+  describe('input type metadata preservation', () => {
+    test('regression: existing simple input types still work correctly', () => {
+      const s = a
+        .schema({
+          post: a.customType({
+            title: a.string(),
+            content: a.string(),
+          }),
+          simpleQuery: a
+            .query()
+            .arguments({
+              simpleArg: a.ref('post'),
+            })
+            .returns(a.string())
+            .handler(a.handler.function('myFunc')),
+        })
+        .authorization((allow) => allow.publicApiKey());
+
+      const result = s.transform().schema;
+
+      // Verify the input type is generated correctly for simple cases
+      expect(result).toContain('input postInput');
+      expect(result).toContain('simpleArg: postInput');
+      
+      expect(result).toMatchSnapshot();
+    });
+
+    test('should preserve array and required modifiers in input types', () => {
+      // Based on the user's real schema that demonstrates the bug
+      const s = a
+        .schema({
+          TodoTagType: a.customType({
+            name: a.string().required(),
+            color: a.string().required(),
+          }),
+          Todo: a
+            .model({
+              content: a.string(),
+              tags: a.ref('TodoTagType').array(),
+              updatedTs: a.integer(),
+            }),
+          TodoUpsert: a.customType({
+            content: a.string(),
+            tags: a.ref('TodoTagType').array(),
+            updatedTs: a.integer(),
+          }),
+          batchUpsertTodos: a
+            .mutation()
+            .arguments({
+              tableName: a.string().required(),
+              items: a.ref('TodoUpsert').array().required(),
+            })
+            .returns(a.ref('Todo').array())
+            .handler(a.handler.function('myFunc')),
+        })
+        .authorization((allow) => allow.publicApiKey());
+
+      const result = s.transform().schema;
+
+      // Verify the input types are generated with proper GraphQL syntax
+      expect(result).toContain('input TodoTagTypeInput');
+      expect(result).toContain('input TodoUpsertInput');
+      
+      // The key test: verify that array and required modifiers are preserved
+      expect(result).toContain('tableName: String!');
+      expect(result).toContain('items: [TodoUpsertInput]!'); // Fixed: array is required but elements are not
+      
+      // Verify nested structure is correct too
+      expect(result).toContain('tags: [TodoTagTypeInput]');
+      
+      expect(result).toMatchSnapshot();
+    });
+
+    test('preserves array().required() modifier on referenced custom type arguments', () => {
+      const s = a
+        .schema({
+          TagType: a.customType({
+            name: a.string().required(),
+            color: a.string().required(),
+          }),
+          testMutation: a
+            .mutation()
+            .arguments({
+              requiredTags: a.ref('TagType').array().required(), // Array is required, items are optional
+              optionalTags: a.ref('TagType').array(),
+              singleRequiredTag: a.ref('TagType').required(),
+              singleOptionalTag: a.ref('TagType'),
+              bothRequired: a.ref('TagType').required().array().required(), // Both array and items required
+            })
+            .returns(a.string())
+            .handler(a.handler.function('myFunc')),
+        })
+        .authorization((allow) => allow.publicApiKey());
+
+      const result = s.transform().schema;
+
+      // Verify the input type is generated with proper GraphQL syntax
+      expect(result).toContain('input TagTypeInput');
+      expect(result).toContain('requiredTags: [TagTypeInput]!'); // Array required, items optional
+      expect(result).toContain('optionalTags: [TagTypeInput]'); // Both optional
+      expect(result).toContain('singleRequiredTag: TagTypeInput!'); // Single item required
+      expect(result).toContain('singleOptionalTag: TagTypeInput'); // Single item optional
+      expect(result).toContain('bothRequired: [TagTypeInput!]!'); // Both required
+      
+      expect(result).toMatchSnapshot();
+    });
+
+    test('preserves modifiers on nested custom type references', () => {
+      const s = a
+        .schema({
+          InnerType: a.customType({
+            value: a.string(),
+          }),
+          OuterType: a.customType({
+            innerItems: a.ref('InnerType').array(),
+            singleInner: a.ref('InnerType').required(),
+          }),
+          testMutation: a
+            .mutation()
+            .arguments({
+              data: a.ref('OuterType').required(),
+              dataArray: a.ref('OuterType').array().required(),
+            })
+            .returns(a.string())
+            .handler(a.handler.function('myFunc')),
+        })
+        .authorization((allow) => allow.publicApiKey());
+
+      const result = s.transform().schema;
+
+      // Verify all input types are generated
+      expect(result).toContain('input InnerTypeInput');
+      expect(result).toContain('input OuterTypeInput');
+      
+      // Verify top-level argument modifiers are preserved
+      expect(result).toContain('data: OuterTypeInput!');
+      expect(result).toContain('dataArray: [OuterTypeInput]!'); // Array required, items optional
+      
+      // Verify nested field modifiers are preserved
+      expect(result).toContain('innerItems: [InnerTypeInput]');
+      expect(result).toContain('singleInner: InnerTypeInput!');
+      
+      expect(result).toMatchSnapshot();
+    });
+
+    test('preserves modifiers in complex batch operation scenarios', () => {
+      const s = a
+        .schema({
+          MetadataType: a.customType({
+            version: a.string().required(),
+            timestamp: a.integer().required(),
+          }),
+          ItemType: a.customType({
+            id: a.string().required(),
+            data: a.string(),
+            metadata: a.ref('MetadataType').required(),
+            tags: a.ref('MetadataType').array(),
+          }),
+          batchOperation: a
+            .mutation()
+            .arguments({
+              operationId: a.string().required(),
+              itemsToCreate: a.ref('ItemType').array().required(),
+              itemsToUpdate: a.ref('ItemType').array(),
+              metadataOverride: a.ref('MetadataType'),
+            })
+            .returns(a.string())
+            .handler(a.handler.function('myFunc')),
+        })
+        .authorization((allow) => allow.publicApiKey());
+
+      const result = s.transform().schema;
+
+      // Verify all input types are generated
+      expect(result).toContain('input MetadataTypeInput');
+      expect(result).toContain('input ItemTypeInput');
+      
+      // Verify argument modifiers are preserved
+      expect(result).toContain('operationId: String!');
+      expect(result).toContain('itemsToCreate: [ItemTypeInput]!'); // Array required, items optional
+      expect(result).toContain('itemsToUpdate: [ItemTypeInput]');
+      expect(result).toContain('metadataOverride: MetadataTypeInput');
+      
+      // Verify nested field modifiers are preserved
+      expect(result).toContain('metadata: MetadataTypeInput!');
+      expect(result).toContain('tags: [MetadataTypeInput]');
+      
+      expect(result).toMatchSnapshot();
+    });
+
+    test('preserves modifiers in subscription arguments', () => {
+      const s = a
+        .schema({
+          FilterType: a.customType({
+            category: a.string().required(),
+            priority: a.integer(),
+          }),
+          someMutation: a
+            .mutation()
+            .arguments({ input: a.string() })
+            .returns(a.string())
+            .handler(a.handler.function('myFunc')),
+          subscribeToUpdates: a
+            .subscription()
+            .arguments({
+              filters: a.ref('FilterType').array().required(),
+              globalFilter: a.ref('FilterType'),
+            })
+            .handler(a.handler.function('myFunc'))
+            .for(a.ref('someMutation')),
+        })
+        .authorization((allow) => allow.publicApiKey());
+
+      const result = s.transform().schema;
+
+      // Verify input types are generated
+      expect(result).toContain('input FilterTypeInput');
+      
+      // Verify subscription argument modifiers are preserved
+      expect(result).toContain('filters: [FilterTypeInput]!'); // Array required, items optional
+      expect(result).toContain('globalFilter: FilterTypeInput');
+      
+      expect(result).toMatchSnapshot();
+    });
+  });
+
   const fakeSecret = () => ({}) as any;
 
   const datasourceConfigMySQL = {
