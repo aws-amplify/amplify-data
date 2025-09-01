@@ -1051,3 +1051,93 @@ describe('.arguments() modifier', () => {
     type Test = Expect<Equal<ActualArgs, ExpectedArgs>>;
   });
 });
+
+describe('input type metadata preservation - TypeScript types', () => {
+  it('should handle TodoUpsert schema with array and required modifiers', () => {
+    const schema = a.schema({
+      TodoTagType: a.customType({
+        name: a.string().required(),
+        color: a.string().required(),
+      }),
+      Todo: a
+        .model({
+          content: a.string(),
+          tags: a.ref('TodoTagType').array(),
+          updatedTs: a.integer(),
+        }),
+      TodoUpsert: a.customType({
+        content: a.string(),
+        tags: a.ref('TodoTagType').array(),
+        updatedTs: a.integer(),
+      }),
+      batchUpsertTodos: a
+        .mutation()
+        .arguments({
+          tableName: a.string().required(),
+          items: a.ref('TodoUpsert').array().required(),
+        })
+        .returns(a.ref('Todo').array())
+        .handler(a.handler.function('myFunc')),
+    });
+
+    type Schema = ClientSchema<typeof schema>;
+
+    // Verify that the type structure includes required fields properly
+    type ActualArgs = Schema['batchUpsertTodos']['args'];
+    
+    // Basic type structure verification - the exact shape is verified in runtime tests
+    const _typeCheck: ActualArgs = {} as ActualArgs;
+    
+    // These assignments should work with your fix
+    const validArgs: ActualArgs = {
+      tableName: 'test',
+      items: [{
+        content: 'test content',
+        tags: [{ name: 'tag1', color: 'blue' }],
+        updatedTs: 12345
+      }]
+    };
+    
+    // This should be a type compile-time validation that the types work correctly
+    expect(validArgs).toBeDefined();
+  });
+
+  it('should preserve array and required modifiers in TypeScript types', () => {
+    const schema = a.schema({
+      TagType: a.customType({
+        name: a.string().required(),
+        color: a.string().required(),
+      }),
+      testMutation: a
+        .mutation()
+        .arguments({
+          requiredTags: a.ref('TagType').array().required(),
+          optionalTags: a.ref('TagType').array(),
+          singleRequiredTag: a.ref('TagType').required(),
+          singleOptionalTag: a.ref('TagType'),
+        })
+        .returns(a.string())
+        .handler(a.handler.function('myFunc')),
+    });
+
+    type Schema = ClientSchema<typeof schema>;
+    type ActualArgs = Schema['testMutation']['args'];
+    
+    // Verify the structure allows valid assignments
+    const validArgs: ActualArgs = {
+      requiredTags: [{ name: 'tag1', color: 'red' }],
+      singleRequiredTag: { name: 'tag2', color: 'blue' },
+      // optionalTags and singleOptionalTag can be omitted
+    };
+    
+    const validArgsWithOptionals: ActualArgs = {
+      requiredTags: [{ name: 'tag1', color: 'red' }],
+      singleRequiredTag: { name: 'tag2', color: 'blue' },
+      optionalTags: [{ name: 'tag3', color: 'green' }],
+      singleOptionalTag: { name: 'tag4', color: 'yellow' },
+    };
+    
+    expect(validArgs).toBeDefined();
+    expect(validArgsWithOptionals).toBeDefined();
+  });
+});

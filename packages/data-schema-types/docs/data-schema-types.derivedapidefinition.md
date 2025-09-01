@@ -158,3 +158,4 @@ Return the schema definition as a graphql string, with amplify directives allowe
 
 </td></tr>
 </tbody></table>
+
