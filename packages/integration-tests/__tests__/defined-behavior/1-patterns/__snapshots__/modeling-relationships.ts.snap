@@ -4,8 +4,10 @@ exports[`Modeling relationships Model a "one-to-one" relationship Delete a "Has 
 [
   [
     {
+      "apiKey": undefined,
       "authMode": undefined,
       "authToken": undefined,
+      "endpoint": undefined,
       "query": "mutation($input: CreateCustomerInput!) { createCustomer(input: $input) { id name createdAt updatedAt } }",
       "variables": {
         "input": {
@@ -17,8 +19,10 @@ exports[`Modeling relationships Model a "one-to-one" relationship Delete a "Has 
   ],
   [
     {
+      "apiKey": undefined,
       "authMode": undefined,
       "authToken": undefined,
+      "endpoint": undefined,
       "query": "mutation($input: UpdateCartInput!) { updateCart(input: $input) { id itemsX customerId createdAt updatedAt } }",
       "variables": {
         "input": {
@@ -36,8 +40,10 @@ exports[`Modeling relationships Model a "one-to-one" relationship Eagerly load a
 [
   [
     {
+      "apiKey": undefined,
       "authMode": undefined,
       "authToken": undefined,
+      "endpoint": undefined,
       "query": "query($id: ID!) { getCart(id: $id) { id customer { id name createdAt updatedAt } } }",
       "variables": {
         "id": "MY_CART_ID",
@@ -52,8 +58,10 @@ exports[`Modeling relationships Model a "one-to-one" relationship Lazy load a "H
 [
   [
     {
+      "apiKey": undefined,
       "authMode": undefined,
       "authToken": undefined,
+      "endpoint": undefined,
       "query": "query($id: ID!) { getCart(id: $id) { id itemsX customerId createdAt updatedAt } }",
       "variables": {
         "id": "some-cart-id",
@@ -63,8 +71,10 @@ exports[`Modeling relationships Model a "one-to-one" relationship Lazy load a "H
   ],
   [
     {
+      "apiKey": undefined,
       "authMode": undefined,
       "authToken": undefined,
+      "endpoint": undefined,
       "query": "query($id: ID!) { getCustomer(id: $id) { id name createdAt updatedAt } }",
       "variables": {
         "id": "customer-id",
@@ -79,8 +89,10 @@ exports[`Modeling relationships Model a "one-to-one" relationship Lazy load a "H
 [
   [
     {
+      "apiKey": undefined,
       "authMode": undefined,
       "authToken": undefined,
+      "endpoint": undefined,
       "query": "query($id: ID!) { getCustomer(id: $id) { id name createdAt updatedAt } }",
       "variables": {
         "id": "customer-id",
@@ -90,8 +102,10 @@ exports[`Modeling relationships Model a "one-to-one" relationship Lazy load a "H
   ],
   [
     {
+      "apiKey": undefined,
       "authMode": undefined,
       "authToken": undefined,
+      "endpoint": undefined,
       "query": "query($filter: ModelCartFilterInput,$limit: Int,$nextToken: String) { listCarts(filter: $filter,limit: $limit,nextToken: $nextToken) { items { id itemsX customerId createdAt updatedAt } nextToken __typename } }",
       "variables": {
         "filter": {
@@ -114,8 +128,10 @@ exports[`Modeling relationships Model a "one-to-one" relationship Update a "Has 
 [
   [
     {
+      "apiKey": undefined,
       "authMode": undefined,
       "authToken": undefined,
+      "endpoint": undefined,
       "query": "mutation($input: CreateCustomerInput!) { createCustomer(input: $input) { id name createdAt updatedAt } }",
       "variables": {
         "input": {
@@ -127,8 +143,10 @@ exports[`Modeling relationships Model a "one-to-one" relationship Update a "Has 
   ],
   [
     {
+      "apiKey": undefined,
       "authMode": undefined,
       "authToken": undefined,
+      "endpoint": undefined,
       "query": "mutation($input: UpdateCartInput!) { updateCart(input: $input) { id itemsX customerId createdAt updatedAt } }",
       "variables": {
         "input": {
@@ -146,8 +164,10 @@ exports[`Modeling relationships Model a "one-to-one" relationship create a "Has 
 [
   [
     {
+      "apiKey": undefined,
       "authMode": undefined,
       "authToken": undefined,
+      "endpoint": undefined,
       "query": "mutation($input: CreateCustomerInput!) { createCustomer(input: $input) { id name createdAt updatedAt } }",
       "variables": {
         "input": {
@@ -159,8 +179,10 @@ exports[`Modeling relationships Model a "one-to-one" relationship create a "Has 
   ],
   [
     {
+      "apiKey": undefined,
       "authMode": undefined,
       "authToken": undefined,
+      "endpoint": undefined,
       "query": "mutation($input: CreateCartInput!) { createCart(input: $input) { id itemsX customerId createdAt updatedAt } }",
       "variables": {
         "input": {
@@ -182,8 +204,10 @@ exports[`Modeling relationships Model multiple relationships between two models 
 [
   [
     {
+      "apiKey": undefined,
       "authMode": undefined,
       "authToken": undefined,
+      "endpoint": undefined,
       "query": "query($id: ID!) { getPost(id: $id) { id title content authorId editorId createdAt updatedAt } }",
       "variables": {
         "id": "SOME_POST_ID",
@@ -193,8 +217,10 @@ exports[`Modeling relationships Model multiple relationships between two models 
   ],
   [
     {
+      "apiKey": undefined,
       "authMode": undefined,
       "authToken": undefined,
+      "endpoint": undefined,
       "query": "query($id: ID!) { getPerson(id: $id) { id name createdAt updatedAt } }",
       "variables": {
         "id": "related-author-id",
@@ -204,8 +230,10 @@ exports[`Modeling relationships Model multiple relationships between two models 
   ],
   [
     {
+      "apiKey": undefined,
       "authMode": undefined,
       "authToken": undefined,
+      "endpoint": undefined,
       "query": "query($id: ID!) { getPerson(id: $id) { id name createdAt updatedAt } }",
       "variables": {
         "id": "related-editor-id",
@@ -220,8 +248,10 @@ exports[`Modeling relationships Model one-to-many relationship Delete a "Has Man
 [
   [
     {
+      "apiKey": undefined,
       "authMode": undefined,
       "authToken": undefined,
+      "endpoint": undefined,
       "query": "mutation($input: UpdateMemberInput!) { updateMember(input: $input) { id name teamId createdAt updatedAt } }",
       "variables": {
         "input": {
@@ -239,8 +269,10 @@ exports[`Modeling relationships Model one-to-many relationship Eagerly load a "H
 [
   [
     {
+      "apiKey": undefined,
       "authMode": undefined,
       "authToken": undefined,
+      "endpoint": undefined,
       "query": "query($id: ID!) { getTeam(id: $id) { id members { items { id name teamId createdAt updatedAt } } } }",
       "variables": {
         "id": "team-id",
@@ -255,8 +287,10 @@ exports[`Modeling relationships Model one-to-many relationship Lazy load a "Has 
 [
   [
     {
+      "apiKey": undefined,
       "authMode": undefined,
       "authToken": undefined,
+      "endpoint": undefined,
       "query": "query($id: ID!) { getMember(id: $id) { id name teamId createdAt updatedAt } }",
       "variables": {
         "id": "member-id",
@@ -266,8 +300,10 @@ exports[`Modeling relationships Model one-to-many relationship Lazy load a "Has 
   ],
   [
     {
+      "apiKey": undefined,
       "authMode": undefined,
       "authToken": undefined,
+      "endpoint": undefined,
       "query": "query($id: ID!) { getTeam(id: $id) { id mantra createdAt updatedAt } }",
       "variables": {
         "id": "new-team-id",
@@ -282,8 +318,10 @@ exports[`Modeling relationships Model one-to-many relationship Lazy load a "Has 
 [
   [
     {
+      "apiKey": undefined,
       "authMode": undefined,
       "authToken": undefined,
+      "endpoint": undefined,
       "query": "query($id: ID!) { getTeam(id: $id) { id mantra createdAt updatedAt } }",
       "variables": {
         "id": "team-id",
@@ -293,8 +331,10 @@ exports[`Modeling relationships Model one-to-many relationship Lazy load a "Has 
   ],
   [
     {
+      "apiKey": undefined,
       "authMode": undefined,
       "authToken": undefined,
+      "endpoint": undefined,
       "query": "query($filter: ModelMemberFilterInput,$limit: Int,$nextToken: String) { listMembers(filter: $filter,limit: $limit,nextToken: $nextToken) { items { id name teamId createdAt updatedAt } nextToken __typename } }",
       "variables": {
         "filter": {
@@ -317,8 +357,10 @@ exports[`Modeling relationships Model one-to-many relationship Update a "Has Man
 [
   [
     {
+      "apiKey": undefined,
       "authMode": undefined,
       "authToken": undefined,
+      "endpoint": undefined,
       "query": "mutation($input: CreateTeamInput!) { createTeam(input: $input) { id mantra createdAt updatedAt } }",
       "variables": {
         "input": {
@@ -330,8 +372,10 @@ exports[`Modeling relationships Model one-to-many relationship Update a "Has Man
   ],
   [
     {
+      "apiKey": undefined,
       "authMode": undefined,
       "authToken": undefined,
+      "endpoint": undefined,
       "query": "mutation($input: UpdateMemberInput!) { updateMember(input: $input) { id name teamId createdAt updatedAt } }",
       "variables": {
         "input": {
@@ -349,8 +393,10 @@ exports[`Modeling relationships Model one-to-many relationship create a "Has Man
 [
   [
     {
+      "apiKey": undefined,
       "authMode": undefined,
       "authToken": undefined,
+      "endpoint": undefined,
       "query": "mutation($input: CreateTeamInput!) { createTeam(input: $input) { id mantra createdAt updatedAt } }",
       "variables": {
         "input": {
@@ -362,8 +408,10 @@ exports[`Modeling relationships Model one-to-many relationship create a "Has Man
   ],
   [
     {
+      "apiKey": undefined,
       "authMode": undefined,
       "authToken": undefined,
+      "endpoint": undefined,
       "query": "mutation($input: CreateMemberInput!) { createMember(input: $input) { id name teamId createdAt updatedAt } }",
       "variables": {
         "input": {

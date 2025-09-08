@@ -128,4 +128,58 @@ describe('SchemaProcessor validation against secondary indexes', () => {
       'The ref field `status` used in the secondary index of `Todo` should refer to an enum type. `TodoStatus` is not a enum type.',
     );
   });
+
+  it('creates a queryField with a default name', () => {
+    const schema = a
+      .schema({
+        Todo: a
+          .model({
+            title: a.string().required(),
+            content: a.string(),
+            status: a.enum(['open', 'in_progress', 'completed']),
+          })
+          .secondaryIndexes((index) => [
+            index('status').sortKeys(['title'])
+          ]),
+      })
+      .authorization((allow) => allow.publicApiKey());
+
+    expect(schema.transform().schema).toMatchSnapshot();
+  });
+
+  it('creates a queryField with user-defined name', () => {
+    const schema = a
+      .schema({
+        Todo: a
+          .model({
+            title: a.string().required(),
+            content: a.string(),
+            status: a.enum(['open', 'in_progress', 'completed']),
+          })
+          .secondaryIndexes((index) => [
+            index('status').sortKeys(['title']).queryField('userDefinedQueryField')
+          ]),
+      })
+      .authorization((allow) => allow.publicApiKey());
+
+    expect(schema.transform().schema).toMatchSnapshot();
+  });
+
+  it('omits the queryField if null is provided instead of a name', () => {
+    const schema = a
+      .schema({
+        Todo: a
+          .model({
+            title: a.string().required(),
+            content: a.string(),
+            status: a.enum(['open', 'in_progress', 'completed']),
+          })
+          .secondaryIndexes((index) => [
+            index('status').sortKeys(['title']).queryField(null)
+          ]),
+      })
+      .authorization((allow) => allow.publicApiKey());
+
+    expect(schema.transform().schema).toMatchSnapshot();
+  });
 });

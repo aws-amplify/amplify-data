@@ -8,7 +8,7 @@ import { PredicatedActionBuilder } from './predicated_action_queue_builder';
  * Reusable predicates: Wait for sandbox to finish and emit "✨  Total time: xx.xxs"
  */
 export const waitForSandboxDeploymentToPrintTotalTime = () =>
-  new PredicatedActionBuilder().waitForLineIncludes('Total time');
+  new PredicatedActionBuilder().waitForLineIncludes('Deployment completed in');
 
 /**
  * Reusable predicates: Wait for sandbox to finish and emit "File written: amplify_outputs.json"
@@ -16,14 +16,6 @@ export const waitForSandboxDeploymentToPrintTotalTime = () =>
 export const waitForConfigUpdateAfterDeployment = () =>
   new PredicatedActionBuilder().waitForLineIncludes(
     'File written: amplify_outputs.json',
-  );
-
-/**
- * Reusable predicates: Wait for sandbox to become idle and emit "Watching for file changes..."
- */
-export const waitForSandboxToBecomeIdle = () =>
-  new PredicatedActionBuilder().waitForLineIncludes(
-    'Watching for file changes...',
   );
 
 /**
@@ -42,11 +34,11 @@ export const confirmDeleteSandbox = () =>
 export const rejectCleanupSandbox = () =>
   new PredicatedActionBuilder()
     .waitForLineIncludes(
-      'Would you like to delete all the resources in your sandbox environment',
+      'Are you sure you want to delete all the resources in your sandbox environment',
     )
     .sendNo();
 
 /**
  * Reusable predicated action: Wait for sandbox to become idle and then quit it (CTRL-C)
  */
-export const interruptSandbox = () => waitForSandboxToBecomeIdle().sendCtrlC();
+export const interruptSandbox = () => waitForConfigUpdateAfterDeployment().sendCtrlC();

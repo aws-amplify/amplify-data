@@ -1,6 +1,6 @@
 {
   "name": "@aws-amplify/data-schema",
-  "version": "1.17.2",
+  "version": "1.21.1",
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
@@ -18,7 +18,7 @@
     "docs:temp": "api-extractor run && api-documenter markdown --input-folder temp --output-folder temp/docs",
     "check:api": "rimraf temp && npm run docs:temp && tsx ../../scripts/shallow-dir-diff.ts docs temp/docs",
     "lint": "eslint .",
-    "test": "jest"
+    "test": "jest --coverage"
   },
   "exports": {
     ".": {

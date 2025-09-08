@@ -1,0 +1,7 @@
+tests:
+  - test_name: webpack_e2e_test
+    desc: 'Webpack 5'
+    framework: webpack
+  - test_name: vite_e2e_test
+    desc: 'Vite'
+    framework: vite

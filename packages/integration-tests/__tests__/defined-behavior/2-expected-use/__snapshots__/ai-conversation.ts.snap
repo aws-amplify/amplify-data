@@ -4,8 +4,10 @@ exports[`AI Conversation Routes Conversations Create a conversation 1`] = `
 [
   [
     {
+      "apiKey": undefined,
       "authMode": undefined,
       "authToken": undefined,
+      "endpoint": undefined,
       "query": "mutation($input: CreateConversationChatBotInput!) { createConversationChatBot(input: $input) { id name metadata createdAt updatedAt owner } }",
       "variables": {
         "input": {
@@ -27,8 +29,10 @@ exports[`AI Conversation Routes Conversations Get a conversation 1`] = `
 [
   [
     {
+      "apiKey": undefined,
       "authMode": undefined,
       "authToken": undefined,
+      "endpoint": undefined,
       "query": "query($id: ID!) { getConversationChatBot(id: $id) { id name metadata createdAt updatedAt owner } }",
       "variables": {
         "id": "conversation-id",
@@ -47,8 +51,10 @@ exports[`AI Conversation Routes Conversations List conversations 1`] = `
 [
   [
     {
+      "apiKey": undefined,
       "authMode": undefined,
       "authToken": undefined,
+      "endpoint": undefined,
       "query": "query($filter: ModelConversationChatBotFilterInput,$limit: Int,$nextToken: String) { listConversationChatBots(filter: $filter,limit: $limit,nextToken: $nextToken) { items { id name metadata createdAt updatedAt owner } nextToken __typename } }",
       "variables": {},
       Symbol(INTERNAL_USER_AGENT_OVERRIDE): {
@@ -65,8 +71,10 @@ exports[`AI Conversation Routes Conversations Paginate conversations 1`] = `
 [
   [
     {
+      "apiKey": undefined,
       "authMode": undefined,
       "authToken": undefined,
+      "endpoint": undefined,
       "query": "query($filter: ModelConversationChatBotFilterInput,$limit: Int,$nextToken: String) { listConversationChatBots(filter: $filter,limit: $limit,nextToken: $nextToken) { items { id name metadata createdAt updatedAt owner } nextToken __typename } }",
       "variables": {
         "limit": 100,
@@ -86,8 +94,10 @@ exports[`AI Conversation Routes Conversations Update a conversation 1`] = `
 [
   [
     {
+      "apiKey": undefined,
       "authMode": undefined,
       "authToken": undefined,
+      "endpoint": undefined,
       "query": "mutation($input: UpdateConversationChatBotInput!) { updateConversationChatBot(input: $input) { id name metadata createdAt updatedAt owner } }",
       "variables": {
         "input": {
@@ -110,8 +120,10 @@ exports[`AI Conversation Routes Conversations Update a conversation 2`] = `
 [
   [
     {
+      "apiKey": undefined,
       "authMode": undefined,
       "authToken": undefined,
+      "endpoint": undefined,
       "query": "mutation($input: UpdateConversationChatBotInput!) { updateConversationChatBot(input: $input) { id name metadata createdAt updatedAt owner } }",
       "variables": {
         "input": {
@@ -134,8 +146,10 @@ exports[`AI Conversation Routes Messages List messages 1`] = `
 [
   [
     {
+      "apiKey": undefined,
       "authMode": undefined,
       "authToken": undefined,
+      "endpoint": undefined,
       "query": "query($id: ID!) { getConversationChatBot(id: $id) { id name metadata createdAt updatedAt owner } }",
       "variables": {
         "id": "conversation-id",
@@ -149,8 +163,10 @@ exports[`AI Conversation Routes Messages List messages 1`] = `
   ],
   [
     {
+      "apiKey": undefined,
       "authMode": undefined,
       "authToken": undefined,
+      "endpoint": undefined,
       "query": "query($filter: ModelConversationMessageChatBotFilterInput,$limit: Int,$nextToken: String) { listConversationMessageChatBots(filter: $filter,limit: $limit,nextToken: $nextToken) { items { id conversationId role content { text document { format name source { bytes } } image { format source { bytes } } toolResult { content { document { format name source { bytes } } image { format source { bytes } } json text } toolUseId status } toolUse { toolUseId name input } } aiContext toolConfiguration { tools { toolSpec { name description inputSchema { json } } } } createdAt updatedAt owner } nextToken __typename } }",
       "variables": {
         "filter": {
@@ -173,8 +189,10 @@ exports[`AI Conversation Routes Messages Paginate messages 1`] = `
 [
   [
     {
+      "apiKey": undefined,
       "authMode": undefined,
       "authToken": undefined,
+      "endpoint": undefined,
       "query": "query($id: ID!) { getConversationChatBot(id: $id) { id name metadata createdAt updatedAt owner } }",
       "variables": {
         "id": "conversation-id",
@@ -188,8 +206,10 @@ exports[`AI Conversation Routes Messages Paginate messages 1`] = `
   ],
   [
     {
+      "apiKey": undefined,
       "authMode": undefined,
       "authToken": undefined,
+      "endpoint": undefined,
       "query": "query($filter: ModelConversationMessageChatBotFilterInput,$limit: Int,$nextToken: String) { listConversationMessageChatBots(filter: $filter,limit: $limit,nextToken: $nextToken) { items { id conversationId role content { text document { format name source { bytes } } image { format source { bytes } } toolResult { content { document { format name source { bytes } } image { format source { bytes } } json text } toolUseId status } toolUse { toolUseId name input } } aiContext toolConfiguration { tools { toolSpec { name description inputSchema { json } } } } createdAt updatedAt owner } nextToken __typename } }",
       "variables": {
         "filter": {
@@ -214,8 +234,10 @@ exports[`AI Conversation Routes Messages Send a message 1`] = `
 [
   [
     {
+      "apiKey": undefined,
       "authMode": undefined,
       "authToken": undefined,
+      "endpoint": undefined,
       "query": "query($id: ID!) { getConversationChatBot(id: $id) { id name metadata createdAt updatedAt owner } }",
       "variables": {
         "id": "conversation-id",
@@ -229,8 +251,10 @@ exports[`AI Conversation Routes Messages Send a message 1`] = `
   ],
   [
     {
+      "apiKey": undefined,
       "authMode": undefined,
       "authToken": undefined,
+      "endpoint": undefined,
       "query": "
     mutation($conversationId: ID!, $content: [AmplifyAIContentBlockInput], $aiContext: AWSJSON, $toolConfiguration: AmplifyAIToolConfigurationInput) {
       chatBot(conversationId: $conversationId, content: $content, aiContext: $aiContext, toolConfiguration: $toolConfiguration) {id conversationId role content { text document { format name source { bytes } } image { format source { bytes } } toolResult { content { document { format name source { bytes } } image { format source { bytes } } json text } toolUseId status } toolUse { toolUseId name input } } aiContext toolConfiguration { tools { toolSpec { name description inputSchema { json } } } } createdAt updatedAt owner}
@@ -272,8 +296,10 @@ exports[`AI Conversation Routes Messages Subscribe to messages 1`] = `
 [
   [
     {
+      "apiKey": undefined,
       "authMode": undefined,
       "authToken": undefined,
+      "endpoint": undefined,
       "query": "query($id: ID!) { getConversationChatBot(id: $id) { id name metadata createdAt updatedAt owner } }",
       "variables": {
         "id": "conversation-id",
@@ -287,11 +313,13 @@ exports[`AI Conversation Routes Messages Subscribe to messages 1`] = `
   ],
   [
     {
+      "apiKey": undefined,
       "authMode": undefined,
       "authToken": undefined,
+      "endpoint": undefined,
       "query": "
     subscription($conversationId: ID!) {
-      onCreateAssistantResponseChatBot(conversationId: $conversationId) {id owner conversationId associatedUserMessageId contentBlockIndex contentBlockText contentBlockDeltaIndex contentBlockToolUse { toolUseId name input } contentBlockDoneAtIndex stopReason errors { message errorType }}
+      onCreateAssistantResponseChatBot(conversationId: $conversationId) {id owner conversationId associatedUserMessageId contentBlockIndex contentBlockText contentBlockDeltaIndex contentBlockToolUse { toolUseId name input } contentBlockDoneAtIndex stopReason errors { message errorType } p}
     }
   ",
       "variables": {
@@ -311,7 +339,9 @@ exports[`AI Conversation Routes Messages Subscribe to messages 2`] = `
 [
   [
     {
+      "apiKey": undefined,
       "authMode": undefined,
+      "endpoint": undefined,
       "query": "subscription ($conversationId: ID!) {
   onCreateAssistantResponseChatBot(conversationId: $conversationId) {
     id
@@ -332,6 +362,7 @@ exports[`AI Conversation Routes Messages Subscribe to messages 2`] = `
       message
       errorType
     }
+    p
   }
 }
 ",

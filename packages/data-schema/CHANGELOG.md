@@ -1,5 +1,84 @@
 # @aws-amplify/data-schema
 
+## 1.21.1
+
+### Patch Changes
+
+- b881500: chore: add claude models 3.7 and 4
+
+## 1.21.0
+
+### Minor Changes
+
+- e89240f: Accept null to disable queryField for secondary indexes
+
+## 1.20.5
+
+### Patch Changes
+
+- c0f504b: Fix custom type permissions issues from both authenticated and group authorization
+
+## 1.20.4
+
+### Patch Changes
+
+- 92be5be: fix: graphql variable builder to omit implicit owner fields
+
+## 1.20.3
+
+### Patch Changes
+
+- a0182df: fix duplicate authorizations for custom types used in multiple custom operations
+
+## 1.20.2
+
+### Patch Changes
+
+- 26281d1: Fix custom type authorization rule bug
+
+## 1.20.1
+
+### Patch Changes
+
+- c761fca: fix bug with missing arrays and requireds in custom operation arguments
+
+## 1.20.0
+
+### Minor Changes
+
+- 9295089: Add validate builder function
+- 9295089: improve validate builder's typing, add defined behavior test
+
+## 1.19.0
+
+### Minor Changes
+
+- f62ccf9: Add support for document attachment in AI conversation routes
+
+## 1.18.0
+
+### Minor Changes
+
+- bdec9ee: Allow CustomType and RefType in arguments for custom operations
+
+## 1.17.5
+
+### Patch Changes
+
+- 8cea062: style: cleanup whitespace and standardize code formatting in data-schema package
+
+## 1.17.4
+
+### Patch Changes
+
+- 3b276c0: add padding field to ConversationMessageStreamPart GraphQL type
+
+## 1.17.3
+
+### Patch Changes
+
+- c85577d: Add JSDoc for Data schema builder methods
+
 ## 1.17.2
 
 ### Patch Changes
