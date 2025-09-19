@@ -904,6 +904,156 @@ type Query {
 }"
 `;
 
+exports[`CustomOperation transform input type metadata preservation preserves array().required() modifier on referenced custom type arguments 1`] = `
+"type TagType 
+{
+  name: String!
+  color: String!
+}
+
+input TagTypeInput {
+  name: String!
+  color: String!
+}
+
+type Mutation {
+  testMutation(requiredTags: [TagTypeInput]!, optionalTags: [TagTypeInput], singleRequiredTag: TagTypeInput!, singleOptionalTag: TagTypeInput, bothRequired: [TagTypeInput!]!): String @function(name: "myFunc") @auth(rules: [{allow: public, provider: apiKey}])
+}"
+`;
+
+exports[`CustomOperation transform input type metadata preservation preserves modifiers in complex batch operation scenarios 1`] = `
+"type MetadataType 
+{
+  version: String!
+  timestamp: Int!
+}
+
+type ItemType 
+{
+  id: String!
+  data: String
+  metadata: MetadataType!
+  tags: [MetadataType]
+}
+
+input MetadataTypeInput {
+  version: String!
+  timestamp: Int!
+}
+
+input ItemTypeInput {
+  id: String!
+  data: String
+  metadata: MetadataTypeInput!
+  tags: [MetadataTypeInput]
+}
+
+type Mutation {
+  batchOperation(operationId: String!, itemsToCreate: [ItemTypeInput]!, itemsToUpdate: [ItemTypeInput], metadataOverride: MetadataTypeInput): String @function(name: "myFunc") @auth(rules: [{allow: public, provider: apiKey}])
+}"
+`;
+
+exports[`CustomOperation transform input type metadata preservation preserves modifiers in subscription arguments 1`] = `
+"type FilterType 
+{
+  category: String!
+  priority: Int
+}
+
+input FilterTypeInput {
+  category: String!
+  priority: Int
+}
+
+type Mutation {
+  someMutation(input: String): String @function(name: "myFunc") @auth(rules: [{allow: public, provider: apiKey}])
+}
+
+type Subscription {
+  subscribeToUpdates(filters: [FilterTypeInput]!, globalFilter: FilterTypeInput): String @function(name: "myFunc") @aws_subscribe(mutations: ["someMutation"]) @auth(rules: [{allow: public, provider: apiKey}])
+}"
+`;
+
+exports[`CustomOperation transform input type metadata preservation preserves modifiers on nested custom type references 1`] = `
+"type InnerType 
+{
+  value: String
+}
+
+type OuterType 
+{
+  innerItems: [InnerType]
+  singleInner: InnerType!
+}
+
+input InnerTypeInput {
+  value: String
+}
+
+input OuterTypeInput {
+  innerItems: [InnerTypeInput]
+  singleInner: InnerTypeInput!
+}
+
+type Mutation {
+  testMutation(data: OuterTypeInput!, dataArray: [OuterTypeInput]!): String @function(name: "myFunc") @auth(rules: [{allow: public, provider: apiKey}])
+}"
+`;
+
+exports[`CustomOperation transform input type metadata preservation regression: existing simple input types still work correctly 1`] = `
+"type post 
+{
+  title: String
+  content: String
+}
+
+input postInput {
+  title: String
+  content: String
+}
+
+type Query {
+  simpleQuery(simpleArg: postInput): String @function(name: "myFunc") @auth(rules: [{allow: public, provider: apiKey}])
+}"
+`;
+
+exports[`CustomOperation transform input type metadata preservation should preserve array and required modifiers in input types 1`] = `
+"type Todo @model @auth(rules: [{allow: public, provider: apiKey}])
+{
+  content: String
+  tags: [TodoTagType]
+  updatedTs: Int
+}
+
+type TodoTagType 
+{
+  name: String!
+  color: String!
+}
+
+type TodoUpsert 
+{
+  content: String
+  tags: [TodoTagType]
+  updatedTs: Int
+}
+
+input TodoTagTypeInput {
+  name: String!
+  color: String!
+}
+
+input TodoUpsertInput {
+  content: String
+  tags: [TodoTagTypeInput]
+  updatedTs: Int
+}
+
+type Mutation {
+  batchUpsertTodos(tableName: String!, items: [TodoUpsertInput]!): [Todo] @function(name: "myFunc") @auth(rules: [{allow: public, provider: apiKey}])
+}"
+`;
+
 exports[`CustomOperation transform sql schema Schema w model, custom query, mutation, and subscription 1`] = `
 "type Post @model(timestamps: null) @auth(rules: [{allow: public, provider: apiKey}])
 {
