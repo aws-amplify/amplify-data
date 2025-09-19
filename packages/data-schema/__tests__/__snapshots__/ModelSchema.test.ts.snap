@@ -1,5 +1,62 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`custom mutations should handle array custom types when the argument is a custom type with inline nested custom type containing required array the input preserves nested structure 1`] = `
+"type point 
+{
+  x: Float
+  y: Float
+}
+
+type testType 
+{
+  points: [point]!
+}
+
+input pointInput {
+  x: Float
+  y: Float
+}
+
+input testTypeInput {
+  points: [pointInput]!
+}
+
+type Mutation {
+  testMutation(testArgument: testTypeInput!): String @function(name: "FnTestMutation") @auth(rules: [{allow: owner, ownerField: "owner"}])
+}"
+`;
+
+exports[`custom mutations should handle array custom types when the argument is a custom type with nested custom type containing an array field the input preserves nested structure 1`] = `
+"enum tag {
+  one
+  two
+}
+
+type innerType 
+{
+  items: [String]
+  tags: [tag]!
+}
+
+type outerType 
+{
+  inner: innerType!
+}
+
+input innerTypeInput {
+  items: [String]
+  tags: [tag]!
+}
+
+input outerTypeInput {
+  inner: innerTypeInput
+}
+
+type Mutation {
+  testMutation(testArgument: outerTypeInput): String @function(name: "FnTestMutation") @auth(rules: [{allow: owner, ownerField: "owner"}])
+}"
+`;
+
 exports[`custom operation argument inputs when the argument is a custom type with a required field the input types field is required 1`] = `
 "type testType 
 {
