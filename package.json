@@ -87,9 +87,15 @@
     "verdaccio": "^6.0.2"
   },
   "resolutions": {
-    "cookie": "^0.7.2"
+    "cookie": "^0.7.2",
+    "on-headers": "^1.1.0",
+    "brace-expansion": "1.1.12"
   },
   "overrides": {
-    "cookie": "^0.7.2"
+    "cookie": "^0.7.2",
+    "*": {
+      "on-headers": "^1.1.0",
+      "brace-expansion": "1.1.12"
+    }
   }
 }
