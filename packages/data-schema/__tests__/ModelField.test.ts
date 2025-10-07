@@ -6,6 +6,7 @@ import {
   InternalRelationshipField,
 } from '../src/ModelRelationshipField';
 import { Authorization, ImpliedAuthFields } from '../src/Authorization';
+import { defineFunctionStub } from './utils';
 
 // evaluates type defs in corresponding test-d.ts file
 it('should not produce static type errors', async () => {
@@ -97,6 +98,20 @@ describe('field level auth', () => {
       ]) as InternalRelationshipField;
 
     expect(field.data.authorization).toMatchSnapshot();
+  });
+});
+
+describe('field handlers', () => {
+  it('should allow adding a handler to a field', () => {
+    const handler = defineFunctionStub({});
+    const s = a
+      .schema({
+        Asset: a.model({
+          content: a.string().handler(a.handler.function(handler)),
+        }).authorization((allow) => allow.publicApiKey()),
+      });
+    const result = s.transform().schema;
+    expect(result).toMatchSnapshot();
   });
 });
 

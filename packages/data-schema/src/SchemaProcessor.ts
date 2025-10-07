@@ -163,6 +163,9 @@ function scalarFieldToGql(
   fieldDef: ScalarFieldDef,
   identifier?: readonly string[],
   secondaryIndexes: string[] = [],
+  databaseType: DatabaseType = 'dynamodb',
+  opType: string = '',
+  typeName: string = '',
 ) {
   const {
     fieldType,
@@ -171,6 +174,7 @@ function scalarFieldToGql(
     arrayRequired,
     default: _default,
     validation = [],
+    handlers = [],
   } = fieldDef;
   let field: string = fieldType;
 
@@ -193,7 +197,7 @@ function scalarFieldToGql(
       field += ` @default`;
     }
 
-    return field;
+    return { gqlField: field, lambdaFunctionDefinition: {}, customSqlDataSourceStrategy: undefined };
   }
 
   if (required === true) {
@@ -220,7 +224,10 @@ function scalarFieldToGql(
 
   // Add validation directives for each validation rule
   for (const validationRule of validation) {
-    const valueStr = typeof validationRule.value === 'number' ? validationRule.value.toString() : validationRule.value;
+    const valueStr =
+      typeof validationRule.value === 'number'
+        ? validationRule.value.toString()
+        : validationRule.value;
     if (validationRule.errorMessage) {
       field += ` @validate(type: ${validationRule.type}, value: "${valueStr}", errorMessage: ${escapeGraphQlString(validationRule.errorMessage)})`;
     } else {
@@ -228,7 +235,15 @@ function scalarFieldToGql(
     }
   }
 
-  return field;
+  const {
+    gqlHandlerContent,
+    lambdaFunctionDefinition,
+    customSqlDataSourceStrategy,
+  } = handlerToGql({ handlers, databaseType, opType, typeName });
+  if (gqlHandlerContent) {
+    field += ` ${gqlHandlerContent}`;
+  }
+  return { gqlField: field, lambdaFunctionDefinition, customSqlDataSourceStrategy };
 }
 
 function modelFieldToGql(fieldDef: ModelFieldDef) {
@@ -426,7 +441,8 @@ function customOperationToGql(
 
       return returnTypeName;
     } else if (isScalarField(returnType)) {
-      return scalarFieldToGql(returnType?.data);
+      const { gqlField } = scalarFieldToGql(returnType?.data);
+      return gqlField;
     } else {
       throw new Error(`Unrecognized return type on ${typeName}`);
     }
@@ -472,41 +488,12 @@ function customOperationToGql(
     callSignature += `(${argDefinitions.join(', ')})`;
   }
 
-  const handler = handlers && handlers[0];
-  const brand = handler && getBrand(handler);
-
-  let gqlHandlerContent = '';
-  let lambdaFunctionDefinition: LambdaFunctionDefinition = {};
-  let customSqlDataSourceStrategy: CustomSqlDataSourceStrategy | undefined;
-
-  if (isFunctionHandler(handlers)) {
-    ({ gqlHandlerContent, lambdaFunctionDefinition } = transformFunctionHandler(
-      handlers,
-      typeName,
-    ));
-  } else if (databaseType === 'sql' && handler && brand === 'inlineSql') {
-    gqlHandlerContent = `@sql(statement: ${escapeGraphQlString(
-      String(getHandlerData(handler)),
-    )}) `;
-    customSqlDataSourceStrategy = {
-      typeName: opType as `Query` | `Mutation`,
-      fieldName: typeName,
-    };
-  } else if (isSqlReferenceHandler(handlers)) {
-    const handlerData = getHandlerData(handlers[0]);
-    const entry = resolveEntryPath(
-      handlerData,
-      'Could not determine import path to construct absolute code path for sql reference handler. Consider using an absolute path instead.',
-    );
-    const reference = typeof entry === 'string' ? entry : entry.relativePath;
-
-    customSqlDataSourceStrategy = {
-      typeName: opType as `Query` | `Mutation`,
-      fieldName: typeName,
-      entry,
-    };
-    gqlHandlerContent = `@sql(reference: "${reference}") `;
-  }
+  const {
+    gqlHandlerContent: fieldGqlHandlerContent,
+    lambdaFunctionDefinition,
+    customSqlDataSourceStrategy,
+  } = handlerToGql({ handlers, databaseType, opType, typeName });
+  let gqlHandlerContent = fieldGqlHandlerContent;
 
   if (opType === 'Subscription') {
     const subscriptionSources = subscriptionSource
@@ -570,6 +557,69 @@ function customOperationToGql(
     lambdaFunctionDefinition,
     customSqlDataSourceStrategy,
     inputTypes,
+  };
+}
+
+function handlerToGql({
+  handlers,
+  databaseType,
+  typeName,
+  opType,
+}: {
+  handlers: HandlerType[] | null;
+  databaseType: DatabaseType;
+  opType: string;
+  typeName: string;
+  }) {
+  if (!handlers || handlers.length === 0) {
+    return {
+      gqlHandlerContent: '',
+      lambdaFunctionDefinition: {},
+      customSqlDataSourceStrategy: undefined,
+    };
+  }
+  const handler = handlers && handlers[0];
+  const brand = handler && getBrand(handler);
+
+  let gqlHandlerContent = '';
+  let lambdaFunctionDefinition: LambdaFunctionDefinition = {};
+  let customSqlDataSourceStrategy: CustomSqlDataSourceStrategy | undefined;
+
+  if (isFunctionHandler(handlers)) {
+    ({ gqlHandlerContent, lambdaFunctionDefinition } = transformFunctionHandler(
+      handlers,
+      opType === 'Query' || opType === 'Mutation'
+        ? typeName
+        : `${opType}${capitalize(typeName)}`,
+    ));
+  } else if (databaseType === 'sql' && handler && brand === 'inlineSql') {
+    gqlHandlerContent = `@sql(statement: ${escapeGraphQlString(
+      String(getHandlerData(handler)),
+    )}) `;
+    customSqlDataSourceStrategy = {
+      typeName: opType as `Query` | `Mutation`,
+      fieldName: typeName,
+    };
+  } else if (isSqlReferenceHandler(handlers)) {
+    const handlerData = getHandlerData(handlers[0]);
+    const entry = resolveEntryPath(
+      handlerData,
+      'Could not determine import path to construct absolute code path for sql reference handler. Consider using an absolute path instead.',
+    );
+    const reference = typeof entry === 'string' ? entry : entry.relativePath;
+
+    customSqlDataSourceStrategy = {
+      typeName: opType as `Query` | `Mutation`,
+      fieldName: typeName,
+      entry,
+    };
+    gqlHandlerContent = `@sql(reference: "${reference}") `;
+  }
+
+  return {
+    lambdaFunctionDefinition,
+    customSqlDataSourceStrategy,
+    gqlHandlerContent,
   };
 }
 
@@ -907,9 +957,9 @@ function mapToNativeAppSyncAuthDirectives(
     const provider = getAppSyncAuthDirectiveFromRule(rule);
 
     if (rule.groups) {
-      if(!groupProvider.has(provider)) {
+      if (!groupProvider.has(provider)) {
         groupProvider.set(provider, new Set());
-      };
+      }
       rule.groups.forEach((group) => groupProvider.get(provider)?.add(group));
     } else {
       generalProviderUsed.add(provider);
@@ -918,15 +968,16 @@ function mapToNativeAppSyncAuthDirectives(
   }
 
   groupProvider.forEach((groups, provider) => {
-    if(!generalProviderUsed.has(provider)) {
+    if (!generalProviderUsed.has(provider)) {
       rules.add(
-        `${provider}(cognito_groups: [${Array.from(groups).reduce((acc, group) => 
-          acc == "" ? `"${group}"` : `${acc}, "${group}"`
-        , "")}])`
+        `${provider}(cognito_groups: [${Array.from(groups).reduce(
+          (acc, group) => (acc == '' ? `"${group}"` : `${acc}, "${group}"`),
+          '',
+        )}])`,
       );
       // example: (cognito_groups: ["Bloggers", "Readers"])
     }
-  })
+  });
 
   const authString = [...rules].join(' ');
 
@@ -1016,6 +1067,8 @@ function processFields(
   // stores nested, field-level type definitions (custom types and enums)
   // the need to be hoisted to top-level schema types and processed accordingly
   const implicitTypes: [string, any][] = [];
+  const lambdaFunctions: LambdaFunctionDefinition = {};
+  const customSqlDataSourceStrategies: CustomSqlDataSourceStrategy[] = [];
 
   validateImpliedFields(fields, impliedFields);
   validateDBGeneration(fields, databaseEngine);
@@ -1032,12 +1085,13 @@ function processFields(
       );
     } else if (isScalarField(fieldDef)) {
       if (fieldName === partitionKey) {
+        const { gqlField } = scalarFieldToGql(
+          fieldDef.data,
+          identifier,
+          secondaryIndexes[fieldName],
+        );
         gqlFields.push(
-          `${fieldName}: ${scalarFieldToGql(
-            fieldDef.data,
-            identifier,
-            secondaryIndexes[fieldName],
-          )}${fieldAuth}`,
+          `${fieldName}: ${gqlField}${fieldAuth}`,
         );
       } else if (isRefField(fieldDef)) {
         gqlFields.push(
@@ -1064,20 +1118,30 @@ function processFields(
 
         gqlFields.push(`${fieldName}: ${customTypeName}`);
       } else {
-        gqlFields.push(
-          `${fieldName}: ${scalarFieldToGql(
+        const { gqlField, lambdaFunctionDefinition, customSqlDataSourceStrategy } = scalarFieldToGql(
             (fieldDef as any).data,
             undefined,
             secondaryIndexes[fieldName],
-          )}${fieldAuth}`,
+            databaseEngine === 'dynamodb' ? 'dynamodb' : 'sql',
+            typeName,
+            fieldName,
+          );
+        gqlFields.push(
+          `${fieldName}: ${gqlField}${fieldAuth}`,
         );
+
+        Object.assign(lambdaFunctions, lambdaFunctionDefinition);
+
+        if (customSqlDataSourceStrategy) {
+          customSqlDataSourceStrategies.push(customSqlDataSourceStrategy);
+        }
       }
     } else {
       throw new Error(`Unexpected field definition: ${fieldDef}`);
     }
   }
 
-  return { gqlFields, implicitTypes };
+  return { gqlFields, implicitTypes, lambdaFunctions, customSqlDataSourceStrategies };
 }
 
 type TransformedSecondaryIndexes = {
@@ -1150,10 +1214,9 @@ const transformedSecondaryIndexesForModel = (
       );
     }
 
-    if(queryField === null) {
+    if (queryField === null) {
       attributes.push(`queryField: null`);
-    }
-    else if (queryField) {
+    } else if (queryField) {
       attributes.push(`queryField: "${queryField}"`);
     } else {
       attributes.push(
@@ -1543,7 +1606,8 @@ function generateInputTypes(
         });
       }
     } else if (isScalarField(argDef)) {
-      argDefinitions.push(`${argName}: ${scalarFieldToGql(argDef.data)}`);
+      const { gqlField } = scalarFieldToGql(argDef.data);
+      argDefinitions.push(`${argName}: ${gqlField}`);
     } else {
       throw new Error(`Unsupported argument type for ${argName}`);
     }

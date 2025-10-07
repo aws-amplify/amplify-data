@@ -18,6 +18,7 @@ export type ModelField<T extends ModelFieldTypeParamOuter = ModelFieldTypeParamO
     default(value?: ModelFieldTypeParamOuter): ModelField<T, UsedMethod | 'default', Auth, FT>;
     authorization<AuthRuleType extends Authorization<any, any, any>>(callback: (allow: Omit<AllowModifier, 'resource'>) => AuthRuleType | AuthRuleType[]): ModelField<T, UsedMethod | 'authorization', AuthRuleType, FT>;
     validate(callback: (v: FieldTypeToValidationBuilder<T, FT>) => void): ModelField<T, UsedMethod | 'validate' | 'default' | 'array', Auth, FT>;
+    handler(handlers: HandlerInputType): ModelField<T, UsedMethod | 'handler', Auth, FT>;
 }, UsedMethod>;
 ```
 **References:** [ModelFieldType](./data-schema.modelfieldtype.md)<!-- -->, [ModelField](./data-schema.modelfield.md)<!-- -->, [Authorization](./data-schema.authorization.md)

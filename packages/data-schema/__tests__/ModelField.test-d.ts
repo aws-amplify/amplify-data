@@ -19,6 +19,8 @@ import {
   Json,
   type BaseModelField,
 } from '../src/ModelField';
+import { defineFunctionStub } from './utils';
+import { a } from '../src/index';
 
 /**
  * Extracts first type arg from ModelField
@@ -53,6 +55,9 @@ test('string() produces expected type args', () => {
   type FieldReqArrayReq = GetFieldTypeArg<typeof fieldReqArrayReq>;
 
   type optArrOptTest = Expect<Equal<FieldReqArrayReq, Array<string>>>;
+
+  const handler = defineFunctionStub({});
+  string().handler(a.handler.function(handler));
 });
 
 test('ModelField can be cast to InternalField', () => {
