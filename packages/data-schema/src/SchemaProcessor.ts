@@ -1117,6 +1117,8 @@ const transformedSecondaryIndexesForModel = (
     sortKeys: readonly string[],
     indexName: string,
     queryField: string | null,
+    projectionType?: string,
+    nonKeyAttributes?: readonly string[],
   ): string => {
     for (const keyName of [partitionKey, ...sortKeys]) {
       const field = modelFields[keyName];
@@ -1131,7 +1133,7 @@ const transformedSecondaryIndexesForModel = (
       }
     }
 
-    if (!sortKeys.length && !indexName && !queryField && queryField !== null) {
+    if (!sortKeys.length && !indexName && !queryField && queryField !== null && !projectionType) {
       return `@index(queryField: "${secondaryIndexDefaultQueryField(
         modelName,
         partitionKey,
@@ -1165,13 +1167,23 @@ const transformedSecondaryIndexesForModel = (
       );
     }
 
+    // Add projection attributes if specified
+    if (projectionType && projectionType !== 'ALL') {
+      if (projectionType === 'KEYS_ONLY') {
+        attributes.push(`projection: { type: KEYS_ONLY }`);
+      } else if (projectionType === 'INCLUDE' && nonKeyAttributes?.length) {
+        const nonKeyAttrsStr = nonKeyAttributes.map(attr => `"${attr}"`).join(', ');
+        attributes.push(`projection: { type: INCLUDE, nonKeyAttributes: [${nonKeyAttrsStr}] }`);
+      }
+    }
+
     return `@index(${attributes.join(', ')})`;
   };
 
   return secondaryIndexes.reduce(
     (
       acc: TransformedSecondaryIndexes,
-      { data: { partitionKey, sortKeys, indexName, queryField } },
+      { data: { partitionKey, sortKeys, indexName, queryField, projectionType, nonKeyAttributes } },
     ) => {
       acc[partitionKey] = acc[partitionKey] || [];
       acc[partitionKey].push(
@@ -1180,6 +1192,8 @@ const transformedSecondaryIndexesForModel = (
           sortKeys as readonly string[],
           indexName,
           queryField,
+          projectionType,
+          nonKeyAttributes,
         ),
       );
 

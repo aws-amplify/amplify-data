@@ -75,6 +75,109 @@ describe('secondary index schema generation', () => {
   });
 });
 
+describe('GSI projection functionality', () => {
+  it('generates correct schema for KEYS_ONLY projection', () => {
+    const schema = a
+      .schema({
+        Product: a
+          .model({
+            id: a.id().required(),
+            name: a.string().required(),
+            category: a.string().required(),
+            price: a.float().required(),
+            inStock: a.boolean().required(),
+          })
+          .secondaryIndexes((index) => [
+            index('category').projection('KEYS_ONLY'),
+          ]),
+      })
+      .authorization((allow) => allow.publicApiKey());
+
+    expect(schema.transform().schema).toMatchSnapshot();
+  });
+
+  it('generates correct schema for INCLUDE projection with nonKeyAttributes', () => {
+    const schema = a
+      .schema({
+        Product: a
+          .model({
+            id: a.id().required(),
+            name: a.string().required(),
+            category: a.string().required(),
+            price: a.float().required(),
+            inStock: a.boolean().required(),
+          })
+          .secondaryIndexes((index) => [
+            index('category').projection('INCLUDE', ['name', 'price']),
+          ]),
+      })
+      .authorization((allow) => allow.publicApiKey());
+
+    expect(schema.transform().schema).toMatchSnapshot();
+  });
+
+  it('generates correct schema for ALL projection', () => {
+    const schema = a
+      .schema({
+        Product: a
+          .model({
+            id: a.id().required(),
+            name: a.string().required(),
+            category: a.string().required(),
+            price: a.float().required(),
+            inStock: a.boolean().required(),
+          })
+          .secondaryIndexes((index) => [
+            index('category').projection('ALL'),
+          ]),
+      })
+      .authorization((allow) => allow.publicApiKey());
+
+    expect(schema.transform().schema).toMatchSnapshot();
+  });
+
+  it('generates correct schema for multiple indexes with different projection types', () => {
+    const schema = a
+      .schema({
+        Order: a
+          .model({
+            id: a.id().required(),
+            customerId: a.string().required(),
+            status: a.string().required(),
+            total: a.float().required(),
+            createdAt: a.datetime().required(),
+          })
+          .secondaryIndexes((index) => [
+            index('customerId').projection('ALL'),
+            index('status').projection('INCLUDE', ['customerId', 'total']),
+            index('createdAt').projection('KEYS_ONLY'),
+          ]),
+      })
+      .authorization((allow) => allow.publicApiKey());
+
+    expect(schema.transform().schema).toMatchSnapshot();
+  });
+
+  it('generates correct schema without projection (defaults to ALL)', () => {
+    const schema = a
+      .schema({
+        Product: a
+          .model({
+            id: a.id().required(),
+            name: a.string().required(),
+            category: a.string().required(),
+            price: a.float().required(),
+          })
+          .secondaryIndexes((index) => [
+            index('category'), // No projection specified, should default to ALL
+          ]),
+      })
+      .authorization((allow) => allow.publicApiKey());
+
+    expect(schema.transform().schema).toMatchSnapshot();
+  });
+});
+
 describe('SchemaProcessor validation against secondary indexes', () => {
   it('throws error when a.ref() used as the index partition key points to a non-existing type', () => {
     const schema = a.schema({
