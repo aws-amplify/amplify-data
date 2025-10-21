@@ -7,6 +7,16 @@ import {
 } from '../src/ModelRelationshipField';
 import { Authorization, ImpliedAuthFields } from '../src/Authorization';
 import { defineFunctionStub } from './utils';
+import { configure } from '../src/internals';
+
+const fakeSecret = () => ({}) as any;
+
+const datasourceConfigMySQL = {
+  engine: 'mysql',
+  connectionUri: fakeSecret(),
+} as const;
+
+const aSql = configure({ database: datasourceConfigMySQL });
 
 // evaluates type defs in corresponding test-d.ts file
 it('should not produce static type errors', async () => {
@@ -102,12 +112,61 @@ describe('field level auth', () => {
 });
 
 describe('field handlers', () => {
-  it('should allow adding a handler to a field', () => {
+  it('should allow adding a lambda handler to a field', () => {
     const handler = defineFunctionStub({});
     const s = a
       .schema({
         Asset: a.model({
           content: a.string().handler(a.handler.function(handler)),
+        }).authorization((allow) => allow.publicApiKey()),
+      });
+    const result = s.transform().schema;
+    expect(result).toMatchSnapshot();
+  });
+
+  it('should allow adding multiple handlers to a field', () => {
+    const handler = defineFunctionStub({});
+    const handler2 = defineFunctionStub({});
+    const s = a
+      .schema({
+        Asset: a.model({
+          content: a.string().handler([a.handler.function(handler), a.handler.function(handler2)]),
+        }).authorization((allow) => allow.publicApiKey()),
+      });
+    const result = s.transform().schema;
+    expect(result).toMatchSnapshot();
+  });
+
+  it('should allow adding a handler with auth to a field', () => {
+    const handler = defineFunctionStub({});
+    const s = a
+      .schema({
+        Asset: a.model({
+          content: a
+            .string()
+            .handler(a.handler.function(handler)).authorization((allow) => allow.authenticated()),
+        }).authorization((allow) => allow.publicApiKey()),
+      });
+    const result = s.transform().schema;
+    expect(result).toMatchSnapshot();
+  });
+
+  it('should allow adding a inline sql handler to a field', () => {
+    const s = aSql
+      .schema({
+        Asset: a.model({
+          content: a.string().handler(a.handler.inlineSql('SELECT content FROM TESTTABLE;')),
+        }).authorization((allow) => allow.publicApiKey()),
+      });
+    const result = s.transform().schema;
+    expect(result).toMatchSnapshot();
+  });
+
+    it('should allow adding a sql reference handler to a field', () => {
+    const s = aSql
+      .schema({
+        Asset: a.model({
+          content: a.string().handler(a.handler.sqlReference('getContent.sql')),
         }).authorization((allow) => allow.publicApiKey()),
       });
     const result = s.transform().schema;

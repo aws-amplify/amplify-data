@@ -1,9 +1,37 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`field handlers should allow adding a handler to a field 1`] = `
+exports[`field handlers should allow adding a handler with auth to a field 1`] = `
+"type Asset @model @auth(rules: [{allow: public, provider: apiKey}])
+{
+  content: String @function(name: "FnAssetContent")  @auth(rules: [{allow: private}])
+}"
+`;
+
+exports[`field handlers should allow adding a inline sql handler to a field 1`] = `
+"type Asset @model(timestamps: null) @auth(rules: [{allow: public, provider: apiKey}])
+{
+  content: String @sql(statement: "SELECT content FROM TESTTABLE;") 
+}"
+`;
+
+exports[`field handlers should allow adding a lambda handler to a field 1`] = `
 "type Asset @model @auth(rules: [{allow: public, provider: apiKey}])
 {
   content: String @function(name: "FnAssetContent") 
+}"
+`;
+
+exports[`field handlers should allow adding a sql reference handler to a field 1`] = `
+"type Asset @model(timestamps: null) @auth(rules: [{allow: public, provider: apiKey}])
+{
+  content: String @sql(reference: "getContent.sql") 
+}"
+`;
+
+exports[`field handlers should allow adding multiple handlers to a field 1`] = `
+"type Asset @model @auth(rules: [{allow: public, provider: apiKey}])
+{
+  content: String @function(name: "FnAssetContent") @function(name: "FnAssetContent2") 
 }"
 `;
 
