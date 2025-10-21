@@ -2,14 +2,25 @@ import { Brand, brand } from './util';
 
 const brandName = 'modelIndexType';
 
+/**
+ * DynamoDB Global Secondary Index (GSI) projection types.
+ * - `KEYS_ONLY`: Only the index and primary keys are projected into the index.
+ * - `INCLUDE`: In addition to the attributes in KEYS_ONLY, includes specified non-key attributes.
+ * - `ALL`: All attributes from the base table are projected into the index.
+ */
 export type GSIProjectionType = 'KEYS_ONLY' | 'INCLUDE' | 'ALL';
 
+/**
+ * Configuration data for a model's secondary index.
+ */
 export type ModelIndexData = {
   partitionKey: string;
   sortKeys: readonly unknown[];
   indexName: string;
   queryField: string | null;
+  /** The projection type for the GSI. Defaults to 'ALL' if not specified. */
   projectionType?: GSIProjectionType;
+  /** Non-key attributes to include when projectionType is 'INCLUDE'. */
   nonKeyAttributes?: readonly string[];
 };
 
