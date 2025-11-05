@@ -1,5 +1,11 @@
 # @aws-amplify/data-schema
 
+## 1.22.0
+
+### Minor Changes
+
+- ae59731: fix: array fields within custom types lose their array structure when generating input types
+
 ## 1.21.1
 
 ### Patch Changes
