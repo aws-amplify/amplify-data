@@ -252,7 +252,7 @@ type FlattenArrays<T> = {
  * and especially for bi-directional relationships which are infinitely recursable by their nature
  *
  */
-export type ModelPath<
+type ModelPathInner<
   FlatModel extends Record<string, unknown>,
   // actual recursive Depth is 6, since we decrement down to 0
   Depth extends number = 5, // think of this as the initialization expr. in a for loop (e.g. `let depth = 5`)
@@ -263,7 +263,7 @@ export type ModelPath<
   recur: Field extends string
     ? NonNullable<UnwrapArray<FlatModel[Field]>> extends Record<string, unknown>
       ?
-          | `${Field}.${ModelPath<
+          | `${Field}.${ModelPathInner<
               NonNullable<UnwrapArray<FlatModel[Field]>>,
               // this decrements `Depth` by 1 in each recursive call; it's equivalent to the update expr. afterthought in a for loop (e.g. `depth -= 1`)
               RecursionLoop[Depth]
@@ -273,6 +273,10 @@ export type ModelPath<
     : never;
   // this is equivalent to the condition expr. in a for loop (e.g. `depth !== -1`)
 }[Depth extends -1 ? 'done' : 'recur'];
+
+export type ModelPath<FlatModel extends Record<string, unknown>> =
+  | (string & Readonly<unknown>)
+  | ModelPathInner<FlatModel>;
 
 /**
  * Flattens model instance type and unwraps async functions into resolved GraphQL shape
@@ -337,12 +341,22 @@ type ResolvedModel<
 }[Depth extends -1 ? 'done' : 'recur'];
 
 export type SelectionSet<
-  Model extends Record<string, unknown>,
+  Model,
   Path extends ReadonlyArray<ModelPath<FlatModel>>,
-  FlatModel extends Record<string, unknown> = ResolvedModel<Model>,
-> = WithOptionalsAsNullishOnly<
-  CustomSelectionSetReturnValue<FlatModel, Path[number]>
->;
+  FlatModel extends Record<
+    string,
+    unknown
+    // Remove conditional in next major version
+  > = Model extends ClientSchemaByEntityTypeBaseShape['models'][string]
+    ? Model['__meta']['flatModel']
+    : Record<string, any>,
+> =
+  // Remove conditional in next major version
+  Model extends ClientSchemaByEntityTypeBaseShape['models'][string]
+    ? WithOptionalsAsNullishOnly<
+        CustomSelectionSetReturnValue<FlatModel, Path[number]>
+      >
+    : any;
 // #endregion
 
 // #region Interfaces copied from `graphql` package
@@ -520,7 +534,7 @@ type IndexQueryMethod<
   Model extends ClientSchemaByEntityTypeBaseShape['models'][string],
   Method extends ClientSecondaryIndexField,
   Context extends ContextType = 'CLIENT',
-  FlatModel extends Record<string, unknown> = ResolvedModel<Model['type']>,
+  FlatModel extends Record<string, unknown> = Model['__meta']['flatModel'],
 > = Context extends 'CLIENT' | 'COOKIES'
   ? <SelectionSet extends ReadonlyArray<ModelPath<FlatModel>> = never[]>(
       input: Method['input'],
@@ -552,7 +566,7 @@ type IndexQueryMethod<
 
 type ModelTypesClient<
   Model extends ClientSchemaByEntityTypeBaseShape['models'][string],
-  FlatModel extends Record<string, unknown> = ResolvedModel<Model['type']>,
+  FlatModel extends Record<string, unknown> = Model['__meta']['flatModel'],
 > = IndexQueryMethods<Model> &
   // Omit any disabled operations
   Omit<
