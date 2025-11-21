@@ -71,30 +71,53 @@ export type ResolveIndividualField<
  * generating the ['__meta']['flatModel'] type that serves as the
  * basis for custom selection set path type generation
  *
- * It drops belongsTo relational fields that match the source model
+ * DEPTH-LIMITED APPROACH:
+ * - At depth 0 (first level): Keep ALL belongsTo fields (allows single-level joins)
+ * - At depth 1+: Remove belongsTo fields that cycle back to parent (prevents deep cycles)
  *
- * For example, assuming the typical Post->Comment bi-directional hasMany relationship,
- * The generated structure will be
+ * This allows valid patterns like:
+ * - Comment → post.title (depth 0 → 1: allowed)
+ * - Order → customer.name (depth 0 → 1: allowed)
+ *
+ * While blocking actual cycles like:
+ * - Post → comments → post (depth 1 → 2: blocked)
+ * - Comment → post → comments (depth 1 → 2: blocked)
+ *
+ * For example, assuming the typical Post->Comment bi-directional hasMany relationship:
+ *
+ * When querying from Comment (depth 0):
+ * {
+ *   id: string;
+ *   content: string;
+ *   postId: string;
+ *   post: {  // ✅ Kept at depth 0 (allows Comment → Post join)
+ *     id: string;
+ *     title: string;
+ *     comments: {  // At depth 1, belongsTo back to Comment would be removed
+ *       id: string;
+ *       content: string;
+ *       // post is removed here (would cycle back)
+ *     }[]
+ *   }
+ * }
+ *
+ * When querying from Post (depth 0):
  * {
  *   id: string;
  *   title: string;
- *   createdAt: string;
- *   updatedAt: string;
  *   comments: {
  *     id: string;
- *     createdAt: string;
- *     updatedAt: string;
  *     content: string;
  *     postId: string;
- *     ~~post~~ is dropped because data would be the same as top level object
+ *     // post is removed here (would cycle back to Post at depth 1)
  *   }[]
  * }
- *
  */
 type ShortCircuitBiDirectionalRelationship<
   Model extends Record<string, any>,
   ParentModelName extends string,
   Raw extends ModelTypeParamShape['fields'],
+  Depth extends number = 0, // Track depth: 0 = first level, 1+ = nested
 > = {
   [Field in keyof Model as Field extends keyof Raw
     ? Raw[Field] extends ModelRelationshipField<
@@ -104,9 +127,11 @@ type ShortCircuitBiDirectionalRelationship<
         any
       >
       ? RelationshipShape['relationshipType'] extends 'belongsTo'
-        ? RelationshipShape['relatedModel'] extends ParentModelName
-          ? never
-          : Field
+        ? Depth extends 0
+          ? Field // ✅ At depth 0: Keep belongsTo (allows single-level joins)
+          : RelationshipShape['relatedModel'] extends ParentModelName
+            ? never // ❌ At depth 1+: Remove belongsTo back to parent (prevents cycles)
+            : Field
         : Field
       : Field
     : Field]: Model[Field];
@@ -114,11 +139,16 @@ type ShortCircuitBiDirectionalRelationship<
 
 /**
  * Resolves to never if the related model has disabled list or get ops for hasOne/hasMany or belongsTo respectively
+ *
+ * Depth tracking:
+ * - Depth 0: First level of relationships from query root (allows belongsTo)
+ * - Depth 1: Nested relationships (blocks belongsTo back to parent)
  */
 type ResolveRelationship<
   Bag extends Record<string, any>,
   RelationshipShape extends ModelRelationshipFieldParamShape,
   ParentModelName extends keyof Bag & string = never,
+  Depth extends number = 0, // Track depth for cycle detection
 > =
   ExtendsNever<ParentModelName> extends true
     ? DependentLazyLoaderOpIsAvailable<Bag, RelationshipShape> extends true
@@ -130,18 +160,21 @@ type ResolveRelationship<
         >
       : never
     : // Array-ing inline here vs. (inside of ShortCircuitBiDirectionalRelationship or in a separate conditional type) is significantly more performant
+      // Pass depth 1 to indicate we're now at nested level (belongsTo back to parent will be blocked)
       RelationshipShape['array'] extends true
       ? Array<
           ShortCircuitBiDirectionalRelationship<
             Bag[RelationshipShape['relatedModel']]['__meta']['flatModel'],
             ParentModelName,
-            Bag[RelationshipShape['relatedModel']]['__meta']['rawType']['fields']
+            Bag[RelationshipShape['relatedModel']]['__meta']['rawType']['fields'],
+            1 // Nested level: blocks belongsTo back to parent
           >
         >
       : ShortCircuitBiDirectionalRelationship<
           Bag[RelationshipShape['relatedModel']]['__meta']['flatModel'],
           ParentModelName,
-          Bag[RelationshipShape['relatedModel']]['__meta']['rawType']['fields']
+          Bag[RelationshipShape['relatedModel']]['__meta']['rawType']['fields'],
+          1 // Nested level: blocks belongsTo back to parent
         >;
 
 type DependentLazyLoaderOpIsAvailable<
