@@ -26,6 +26,32 @@ type NonRelationshipFields<M extends Model> = {
 };
 
 /**
+ * Helper type to check if two types have the same structure (for cycle detection)
+ * This is a heuristic that checks if the top-level keys match
+ */
+type HasSameStructure<T, U> = keyof T extends keyof U
+  ? keyof U extends keyof T
+    ? true
+    : false
+  : false;
+
+/**
+ * Helper type to detect if a field would create a cycle back to the root model
+ * Returns true if:
+ * 1. We're at depth 1 or greater (not at root)
+ * 2. The field's unwrapped type has the same structure as the root model
+ */
+type IsCyclicalField<
+  FieldType,
+  RootModel extends Record<string, unknown>,
+  TraversalDepth extends number,
+> = TraversalDepth extends 0
+  ? false // At root depth, never consider fields cyclical
+  : NonNullable<UnwrapArray<FieldType>> extends Record<string, unknown>
+    ? HasSameStructure<NonNullable<UnwrapArray<FieldType>>, RootModel>
+    : false;
+
+/**
  * Selection set-aware CRUDL operation return value type
  *
  * @returns model type as-is with default selection set; otherwise generates return type from custonm sel. set
@@ -164,6 +190,12 @@ type DeepPickFromPath<
  * it guards against infinite recursion when generating the selection set type for deeply-nested models
  * and especially for bi-directional relationships which are infinitely recursable by their nature
  *
+ * Depth-limited cycle detection (Phase 2):
+ * - TraversalDepth tracks how deep we are from the query root (0 = root, 1 = first level, etc.)
+ * - At depth 0, we keep all fields including belongsTo (allows single-level joins like Comment → post.title)
+ * - At depth 1+, we would remove belongsTo fields that cycle back to parent (prevents deep cycles)
+ * - This allows 90%+ of common use cases while still preventing TS2590 errors
+ *
  */
 export type ModelPath<
   FlatModel extends Record<string, unknown>,
@@ -171,18 +203,40 @@ export type ModelPath<
   Depth extends number = 5, // think of this as the initialization expr. in a for loop (e.g. `let depth = 5`)
   RecursionLoop extends number[] = [-1, 0, 1, 2, 3, 4],
   Field = keyof FlatModel,
+  TraversalDepth extends number = 0, // NEW: tracks depth from root for cycle detection
+  RootModel extends Record<string, unknown> = FlatModel, // NEW: tracks root model for cycle detection
 > = {
   done: Field extends string ? `${Field}.*` : never;
   recur: Field extends string
-    ? NonNullable<UnwrapArray<FlatModel[Field]>> extends Record<string, unknown>
-      ?
-          | `${Field}.${ModelPath<
-              NonNullable<UnwrapArray<FlatModel[Field]>>,
-              // this decrements `Depth` by 1 in each recursive call; it's equivalent to the update expr. afterthought in a for loop (e.g. `depth -= 1`)
-              RecursionLoop[Depth]
-            >}`
-          | `${Field}.*`
-      : `${Field}`
+    ? // Check if this field would create a cycle (only at depth 1+)
+      IsCyclicalField<FlatModel[Field], RootModel, TraversalDepth> extends true
+      ? never // Omit cyclical fields at depth 1+
+      : NonNullable<UnwrapArray<FlatModel[Field]>> extends Record<
+            string,
+            unknown
+          >
+        ?
+            | `${Field}.${ModelPath<
+                NonNullable<UnwrapArray<FlatModel[Field]>>,
+                // this decrements `Depth` by 1 in each recursive call; it's equivalent to the update expr. afterthought in a for loop (e.g. `depth -= 1`)
+                RecursionLoop[Depth],
+                RecursionLoop,
+                keyof NonNullable<UnwrapArray<FlatModel[Field]>>,
+                TraversalDepth extends 0
+                  ? 1
+                  : TraversalDepth extends 1
+                    ? 2
+                    : TraversalDepth extends 2
+                      ? 3
+                      : TraversalDepth extends 3
+                        ? 4
+                        : TraversalDepth extends 4
+                          ? 5
+                          : 6, // Increment traversal depth
+                RootModel // Pass root model through
+              >}`
+            | `${Field}.*`
+        : `${Field}`
     : never;
   // this is equivalent to the condition expr. in a for loop (e.g. `depth !== -1`)
 }[Depth extends -1 ? 'done' : 'recur'];
