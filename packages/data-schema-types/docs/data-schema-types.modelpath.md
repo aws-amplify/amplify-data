@@ -10,9 +10,11 @@ Generates custom selection set type with up to 6 levels of nested fields
 
 ```typescript
 export type ModelPath<FlatModel extends Record<string, unknown>, Depth extends number = 5, // think of this as the initialization expr. in a for loop (e.g. `let depth = 5`)
-RecursionLoop extends number[] = [-1, 0, 1, 2, 3, 4], Field = keyof FlatModel> = {
+RecursionLoop extends number[] = [-1, 0, 1, 2, 3, 4], Field = keyof FlatModel, TraversalDepth extends number = 0, // NEW: tracks depth from root for cycle detection
+RootModel extends Record<string, unknown> = FlatModel> = {
     done: Field extends string ? `${Field}.*` : never;
-    recur: Field extends string ? NonNullable<UnwrapArray<FlatModel[Field]>> extends Record<string, unknown> ? `${Field}.${ModelPath<NonNullable<UnwrapArray<FlatModel[Field]>>, RecursionLoop[Depth]>}` | `${Field}.*` : `${Field}` : never;
+    recur: Field extends string ? IsCyclicalField<FlatModel[Field], RootModel, TraversalDepth> extends true ? never : NonNullable<UnwrapArray<FlatModel[Field]>> extends Record<string, unknown> ? `${Field}.${ModelPath<NonNullable<UnwrapArray<FlatModel[Field]>>, RecursionLoop[Depth], RecursionLoop, keyof NonNullable<UnwrapArray<FlatModel[Field]>>, TraversalDepth extends 0 ? 1 : TraversalDepth extends 1 ? 2 : TraversalDepth extends 2 ? 3 : TraversalDepth extends 3 ? 4 : TraversalDepth extends 4 ? 5 : 6, // Increment traversal depth
+    RootModel>}` | `${Field}.*` : `${Field}` : never;
 }[Depth extends -1 ? 'done' : 'recur'];
 ```
 **References:** [UnwrapArray](./data-schema-types.unwraparray.md)<!-- -->, [ModelPath](./data-schema-types.modelpath.md)
