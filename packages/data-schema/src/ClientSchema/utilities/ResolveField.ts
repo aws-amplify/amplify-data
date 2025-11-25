@@ -137,18 +137,10 @@ type ShortCircuitBiDirectionalRelationship<
     : Field]: Model[Field];
 };
 
-/**
- * Resolves to never if the related model has disabled list or get ops for hasOne/hasMany or belongsTo respectively
- *
- * Depth tracking:
- * - Depth 0: First level of relationships from query root (allows belongsTo)
- * - Depth 1: Nested relationships (blocks belongsTo back to parent)
- */
 type ResolveRelationship<
   Bag extends Record<string, any>,
   RelationshipShape extends ModelRelationshipFieldParamShape,
   ParentModelName extends keyof Bag & string = never,
-  Depth extends number = 0, // Track depth for cycle detection
 > =
   ExtendsNever<ParentModelName> extends true
     ? DependentLazyLoaderOpIsAvailable<Bag, RelationshipShape> extends true
