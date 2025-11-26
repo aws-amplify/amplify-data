@@ -84,7 +84,7 @@
     "turbo": "^1.10.14",
     "typedoc": "^0.27.6",
     "typescript": "^5.1.6",
-    "verdaccio": "^6.0.2"
+    "verdaccio": "^6.2.2"
   },
   "resolutions": {
     "cookie": "^0.7.2"
