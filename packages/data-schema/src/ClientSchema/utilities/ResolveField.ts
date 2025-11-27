@@ -8,6 +8,9 @@ import { CustomType } from '../../CustomType';
 import { RefType, RefTypeParamShape } from '../../RefType';
 import { ResolveRef } from './ResolveRef';
 import { LazyLoader } from '../../runtime';
+import type { ModelTypeParamShape } from '../../ModelType';
+
+type ExtendsNever<T> = [T] extends [never] ? true : false;
 
 /**
  * Takes a `ReturnType<typeof a.model()>` and turns it into a client-consumable type. Fields
@@ -30,6 +33,14 @@ export type ResolveFields<Bag extends Record<string, any>, T> = ShallowPretty<
   }
 >;
 
+export type FlatResolveFields<
+  Bag extends Record<string, any>,
+  T,
+  FlatModelName extends keyof Bag & string = never,
+> = ShallowPretty<{
+  [K in keyof T]: ResolveIndividualField<Bag, T[K], FlatModelName>;
+}>;
+
 // TODO: Remove ShallowPretty from this layer of resolution. Re-incorporate prettification
 // down the line *as-needed*. Performing this *here* is somehow essential to getting 2 unit
 // tests to pass, but hurts performance significantly. E.g., p50/operations/p50-prod-CRUDL.bench.ts
@@ -38,13 +49,17 @@ type ShallowPretty<T> = {
   [K in keyof T]: T[K];
 };
 
-export type ResolveIndividualField<Bag extends Record<string, any>, T> =
+export type ResolveIndividualField<
+  Bag extends Record<string, any>,
+  T,
+  FlatModelName extends keyof Bag & string = never,
+> =
   T extends BaseModelField<infer FieldShape>
     ? FieldShape
     : T extends RefType<infer RefShape, any, any>
       ? ResolveRef<RefShape, Bag>
       : T extends ModelRelationshipField<infer RelationshipShape, any, any, any>
-        ? ResolveRelationship<Bag, RelationshipShape>
+        ? ResolveRelationship<Bag, RelationshipShape, FlatModelName>
         : T extends CustomType<infer CT>
           ? ResolveFields<Bag, CT['fields']> | null
           : T extends EnumType<infer values>
@@ -52,20 +67,79 @@ export type ResolveIndividualField<Bag extends Record<string, any>, T> =
             : never;
 
 /**
- * Resolves to never if the related model has disabled list or get ops for hasOne/hasMany or belongsTo respectively
+ * This mapped type eliminates redundant recursive types when
+ * generating the ['__meta']['flatModel'] type that serves as the
+ * basis for custom selection set path type generation
+ *
+ * It drops belongsTo relational fields that match the source model
+ *
+ * For example, assuming the typical Post->Comment bi-directional hasMany relationship,
+ * The generated structure will be
+ * {
+ *   id: string;
+ *   title: string;
+ *   createdAt: string;
+ *   updatedAt: string;
+ *   comments: {
+ *     id: string;
+ *     createdAt: string;
+ *     updatedAt: string;
+ *     content: string;
+ *     postId: string;
+ *     ~~post~~ is dropped because data would be the same as top level object
+ *   }[]
+ * }
+ *
  */
+type ShortCircuitBiDirectionalRelationship<
+  Model extends Record<string, any>,
+  ParentModelName extends string,
+  Raw extends ModelTypeParamShape['fields'],
+> = {
+  [Field in keyof Model as Field extends keyof Raw
+    ? Raw[Field] extends ModelRelationshipField<
+        infer RelationshipShape,
+        any,
+        any,
+        any
+      >
+      ? RelationshipShape['relationshipType'] extends 'belongsTo'
+        ? RelationshipShape['relatedModel'] extends ParentModelName
+          ? never
+          : Field
+        : Field
+      : Field
+    : Field]: Model[Field];
+};
+
 type ResolveRelationship<
   Bag extends Record<string, any>,
   RelationshipShape extends ModelRelationshipFieldParamShape,
+  ParentModelName extends keyof Bag & string = never,
 > =
-  DependentLazyLoaderOpIsAvailable<Bag, RelationshipShape> extends true
-    ? LazyLoader<
-        RelationshipShape['valueRequired'] extends true
-          ? Bag[RelationshipShape['relatedModel']]['type']
-          : Bag[RelationshipShape['relatedModel']]['type'] | null,
-        RelationshipShape['array']
-      >
-    : never;
+  ExtendsNever<ParentModelName> extends true
+    ? DependentLazyLoaderOpIsAvailable<Bag, RelationshipShape> extends true
+      ? LazyLoader<
+          RelationshipShape['valueRequired'] extends true
+            ? Bag[RelationshipShape['relatedModel']]['type']
+            : Bag[RelationshipShape['relatedModel']]['type'] | null,
+          RelationshipShape['array']
+        >
+      : never
+    : // Array-ing inline here vs. (inside of ShortCircuitBiDirectionalRelationship or in a separate conditional type) is significantly more performant
+      RelationshipShape['array'] extends true
+      ? Array<
+          ShortCircuitBiDirectionalRelationship<
+            Bag[RelationshipShape['relatedModel']]['__meta']['flatModel'],
+            ParentModelName,
+            Bag[RelationshipShape['relatedModel']]['__meta']['rawType']['fields']
+          >
+        >
+      : ShortCircuitBiDirectionalRelationship<
+          Bag[RelationshipShape['relatedModel']]['__meta']['flatModel'],
+          ParentModelName,
+          Bag[RelationshipShape['relatedModel']]['__meta']['rawType']['fields']
+        >;
 
 type DependentLazyLoaderOpIsAvailable<
   Bag extends Record<string, any>,
