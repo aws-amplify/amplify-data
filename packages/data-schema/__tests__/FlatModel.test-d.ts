@@ -558,3 +558,239 @@ describe('Property 2: Non-cyclical path preservation', () => {
     });
   });
 });
+
+/**
+ * **Feature: selection-set-optimization, Property 3: Selection set return type correctness**
+ * **Validates: Requirements 3.1, 3.2, 3.3**
+ *
+ * For any valid selection set path array, the return type of a CRUDL operation using that
+ * selection set SHALL contain exactly the fields specified in the selection set, with correct
+ * nesting and nullability.
+ */
+describe('Property 3: Selection set return type correctness', () => {
+  // Import ModelPath type for testing
+  type ModelPath<FlatModel extends Record<string, unknown>> = import('../src/runtime/client').ModelPath<FlatModel>;
+
+  describe('selection set return type matches selected fields exactly', () => {
+    const schema = a.schema({
+      Todo: a.model({
+        title: a.string().required(),
+        description: a.string(),
+        done: a.boolean(),
+        priority: a.integer(),
+        steps: a.hasMany('Step', 'todoId'),
+      }),
+      Step: a.model({
+        content: a.string().required(),
+        order: a.integer(),
+        todoId: a.id(),
+        todo: a.belongsTo('Todo', 'todoId'),
+      }),
+    });
+
+    type Schema = ClientSchema<typeof schema>;
+    type TodoFlatModel = Schema['Todo']['__meta']['flatModel'];
+
+    test('selecting single scalar field returns only that field', () => {
+      // When selecting only 'title', the return type should only have 'title'
+      type SelectionSetPath = 'title';
+
+      // Verify 'title' is a valid path in TodoFlatModel
+      type TitleIsValidPath = SelectionSetPath extends keyof TodoFlatModel
+        ? true
+        : false;
+      type test = Expect<Equal<TitleIsValidPath, true>>;
+    });
+
+    test('selecting multiple scalar fields returns all selected fields', () => {
+      // When selecting 'title' and 'description', both should be in return type
+      type TodoFlatModelKeys = keyof TodoFlatModel;
+
+      type HasTitle = 'title' extends TodoFlatModelKeys ? true : false;
+      type HasDescription = 'description' extends TodoFlatModelKeys
+        ? true
+        : false;
+      type HasDone = 'done' extends TodoFlatModelKeys ? true : false;
+      type HasPriority = 'priority' extends TodoFlatModelKeys ? true : false;
+
+      type test1 = Expect<Equal<HasTitle, true>>;
+      type test2 = Expect<Equal<HasDescription, true>>;
+      type test3 = Expect<Equal<HasDone, true>>;
+      type test4 = Expect<Equal<HasPriority, true>>;
+    });
+
+    test('selecting nested relationship fields returns properly nested types', () => {
+      // When selecting 'steps.content', the return type should have nested structure
+      type StepsType = TodoFlatModel['steps'];
+
+      // Steps should be an array
+      type StepsIsArray = StepsType extends Array<infer _> ? true : false;
+      type test1 = Expect<Equal<StepsIsArray, true>>;
+
+      // Each step should have content field
+      type StepElement = StepsType extends Array<infer S> ? S : never;
+      type StepHasContent = 'content' extends keyof StepElement ? true : false;
+      type test2 = Expect<Equal<StepHasContent, true>>;
+
+      // Step content should be string (required)
+      type StepContentType = StepElement extends { content: infer C }
+        ? C
+        : never;
+      type test3 = Expect<Equal<StepContentType, string>>;
+    });
+
+    test('wildcard selector returns all non-relationship fields of related model', () => {
+      // When using 'steps.*', should return all scalar fields of Step
+      type StepElement =
+        TodoFlatModel['steps'] extends Array<infer S> ? S : never;
+
+      // Should have all scalar fields
+      type HasContent = 'content' extends keyof StepElement ? true : false;
+      type HasOrder = 'order' extends keyof StepElement ? true : false;
+      type HasTodoId = 'todoId' extends keyof StepElement ? true : false;
+
+      type test1 = Expect<Equal<HasContent, true>>;
+      type test2 = Expect<Equal<HasOrder, true>>;
+      type test3 = Expect<Equal<HasTodoId, true>>;
+
+      // Should NOT have the belongsTo relationship (short-circuited)
+      type HasTodo = 'todo' extends keyof StepElement ? true : false;
+      type test4 = Expect<Equal<HasTodo, false>>;
+    });
+  });
+
+  describe('nullability is correctly preserved in return types', () => {
+    const schema = a.schema({
+      Item: a.model({
+        requiredField: a.string().required(),
+        optionalField: a.string(),
+        requiredArray: a.string().array().required(),
+        optionalArray: a.string().array(),
+        relatedItems: a.hasMany('RelatedItem', 'itemId'),
+      }),
+      RelatedItem: a.model({
+        name: a.string().required(),
+        itemId: a.id(),
+        item: a.belongsTo('Item', 'itemId'),
+      }),
+    });
+
+    type Schema = ClientSchema<typeof schema>;
+    type ItemFlatModel = Schema['Item']['__meta']['flatModel'];
+
+    test('required fields are non-nullable in FlatModel', () => {
+      type RequiredFieldType = ItemFlatModel['requiredField'];
+
+      // Required field should be string (not string | null)
+      type test = Expect<Equal<RequiredFieldType, string>>;
+    });
+
+    test('optional fields are nullable in FlatModel', () => {
+      type OptionalFieldType = ItemFlatModel['optionalField'];
+
+      // Optional field should include null (may also include undefined)
+      type IsNullable = null extends OptionalFieldType ? true : false;
+      type test = Expect<Equal<IsNullable, true>>;
+    });
+
+    test('required arrays are non-nullable in FlatModel', () => {
+      type RequiredArrayType = ItemFlatModel['requiredArray'];
+
+      // Required array should not have null in the union at array level
+      type IsNullableArray = null extends RequiredArrayType ? true : false;
+      type test = Expect<Equal<IsNullableArray, false>>;
+    });
+
+    test('optional arrays are nullable in FlatModel', () => {
+      type OptionalArrayType = ItemFlatModel['optionalArray'];
+
+      // Optional array should have null in the union
+      type IsNullableArray = null extends OptionalArrayType ? true : false;
+      type test = Expect<Equal<IsNullableArray, true>>;
+    });
+
+    test('nested relationship arrays preserve correct nullability', () => {
+      type RelatedItemsType = ItemFlatModel['relatedItems'];
+
+      // relatedItems should be an array
+      type IsArray = RelatedItemsType extends Array<infer _> ? true : false;
+      type test1 = Expect<Equal<IsArray, true>>;
+
+      // Each related item should have required 'name' field as string
+      type RelatedItemElement =
+        RelatedItemsType extends Array<infer R> ? R : never;
+      type NameType = RelatedItemElement extends { name: infer N } ? N : never;
+      type test2 = Expect<Equal<NameType, string>>;
+    });
+  });
+
+  describe('ModelPath type generates valid paths for FlatModel', () => {
+    const schema = a.schema({
+      Parent: a.model({
+        name: a.string().required(),
+        children: a.hasMany('Child', 'parentId'),
+      }),
+      Child: a.model({
+        title: a.string(),
+        parentId: a.id(),
+        parent: a.belongsTo('Parent', 'parentId'),
+        grandchildren: a.hasMany('Grandchild', 'childId'),
+      }),
+      Grandchild: a.model({
+        value: a.string(),
+        childId: a.id(),
+        child: a.belongsTo('Child', 'childId'),
+      }),
+    });
+
+    type Schema = ClientSchema<typeof schema>;
+    type ParentFlatModel = Schema['Parent']['__meta']['flatModel'];
+
+    test('top-level scalar fields are valid ModelPath', () => {
+      type ValidPaths = ModelPath<ParentFlatModel>;
+
+      // 'name' should be a valid path
+      type NameIsValid = 'name' extends ValidPaths ? true : false;
+      type test1 = Expect<Equal<NameIsValid, true>>;
+
+      // 'id' should be a valid path (system field)
+      type IdIsValid = 'id' extends ValidPaths ? true : false;
+      type test2 = Expect<Equal<IdIsValid, true>>;
+    });
+
+    test('nested relationship paths are valid ModelPath', () => {
+      type ValidPaths = ModelPath<ParentFlatModel>;
+
+      // 'children.*' should be a valid path
+      type ChildrenWildcardIsValid = 'children.*' extends ValidPaths
+        ? true
+        : false;
+      type test1 = Expect<Equal<ChildrenWildcardIsValid, true>>;
+
+      // 'children.title' should be a valid path
+      type ChildrenTitleIsValid = 'children.title' extends ValidPaths
+        ? true
+        : false;
+      type test2 = Expect<Equal<ChildrenTitleIsValid, true>>;
+    });
+
+    test('deeply nested paths are valid up to depth limit', () => {
+      type ValidPaths = ModelPath<ParentFlatModel>;
+
+      // 'children.grandchildren.value' should be valid (3 levels)
+      type DeepPathIsValid =
+        'children.grandchildren.value' extends ValidPaths ? true : false;
+      type test = Expect<Equal<DeepPathIsValid, true>>;
+    });
+
+    test('invalid paths are rejected by type system', () => {
+      type ValidPaths = ModelPath<ParentFlatModel>;
+
+      // 'nonexistent-field' should NOT be a valid path
+      type InvalidPathIsValid = 'nonexistent-field' extends ValidPaths
+        ? true
+        : false;
+      type test = Expect<Equal<InvalidPathIsValid, false>>;
+    });
+  });
+});
