@@ -58,11 +58,11 @@ export type FlatResolveFields<
     {
       [K in keyof T as IsRequired<T[K]> extends true
         ? K
-        : never]: ResolveIndividualField<Bag, T[K], FlatModelName, Raw>;
+        : never]: ResolveIndividualField<Bag, T[K], FlatModelName>;
     } & {
       [K in keyof T as IsRequired<T[K]> extends true
         ? never
-        : K]+?: ResolveIndividualField<Bag, T[K], FlatModelName, Raw>;
+        : K]+?: ResolveIndividualField<Bag, T[K], FlatModelName>;
     },
     FlatModelName,
     Raw
@@ -105,14 +105,13 @@ export type ResolveIndividualField<
   Bag extends Record<string, any>,
   T,
   FlatModelName extends keyof Bag & string = never,
-  Raw extends Record<string, any> = Record<string, never>,
 > =
   T extends BaseModelField<infer FieldShape>
     ? FieldShape
     : T extends RefType<infer RefShape, any, any>
       ? ResolveRef<RefShape, Bag>
       : T extends ModelRelationshipField<infer RelationshipShape, any, any, any>
-        ? ResolveRelationship<Bag, RelationshipShape, FlatModelName, Raw>
+        ? ResolveRelationship<Bag, RelationshipShape, FlatModelName>
         : T extends CustomType<infer CT>
           ? ResolveFields<Bag, CT['fields']> | null
           : T extends EnumType<infer values>
@@ -135,7 +134,6 @@ type ResolveRelationship<
   Bag extends Record<string, any>,
   RelationshipShape extends ModelRelationshipFieldParamShape,
   ParentModelName extends keyof Bag & string = never,
-  Raw extends Record<string, any> = Record<string, never>,
 > =
   ExtendsNever<ParentModelName> extends true
     ? // Standard resolution with LazyLoader
