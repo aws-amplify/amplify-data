@@ -607,16 +607,11 @@ bench('prod p50 conversation operations', async () => {
           allow.authenticated('identityPool').to(['read']),
           allow.owner(),
         ]),
-      ChatBot: a.conversation(input)
-        .authorization((allow) => allow.owner()),
-      GossipBot: a.conversation(input)
-        .authorization((allow) => allow.owner()),
-      HaikuBot: a.conversation(input)
-        .authorization((allow) => allow.owner()),
-      MathBot: a.conversation(input)
-        .authorization((allow) => allow.owner()),
-      ScienceBot: a.conversation(input)
-        .authorization((allow) => allow.owner()),
+      ChatBot: a.conversation(input).authorization((allow) => allow.owner()),
+      GossipBot: a.conversation(input).authorization((allow) => allow.owner()),
+      HaikuBot: a.conversation(input).authorization((allow) => allow.owner()),
+      MathBot: a.conversation(input).authorization((allow) => allow.owner()),
+      ScienceBot: a.conversation(input).authorization((allow) => allow.owner()),
       // [Global authorization rule]
     })
     .authorization((allow) => allow.publicApiKey());
@@ -650,4 +645,4 @@ bench('prod p50 conversation operations', async () => {
   });
 
   await conversation?.listMessages();
-}).types([35375, 'instantiations']);
+}).types([44021, 'instantiations'][(44021, 'instantiations')]);

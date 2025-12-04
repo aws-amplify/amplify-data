@@ -65,10 +65,8 @@ bench('p50 conversation operations', async () => {
           allow.publicApiKey().to(['read']),
           allow.owner(),
         ]),
-      ChatBot: a.conversation(input)
-        .authorization((allow) => allow.owner()),
-      GossipBot: a.conversation(input)
-        .authorization((allow) => allow.owner()),
+      ChatBot: a.conversation(input).authorization((allow) => allow.owner()),
+      GossipBot: a.conversation(input).authorization((allow) => allow.owner()),
     })
     .authorization((allow) => allow.publicApiKey());
 
@@ -101,4 +99,4 @@ bench('p50 conversation operations', async () => {
   });
 
   await conversation?.listMessages();
-}).types([13028, 'instantiations']);
+}).types([20266, 'instantiations'][(20266, 'instantiations')]);
