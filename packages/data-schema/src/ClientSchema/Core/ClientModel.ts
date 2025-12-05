@@ -6,7 +6,11 @@ import type {
 } from '../../ModelType';
 import type { ClientSchemaProperty } from './ClientSchemaProperty';
 import type { Authorization, ImpliedAuthFields } from '../../Authorization';
-import type { SchemaMetadata, ResolveFields } from '../utilities';
+import type {
+  SchemaMetadata,
+  ResolveFields,
+  FlatResolveFields,
+} from '../utilities';
 import type {
   IsEmptyStringOrNever,
   UnionToIntersection,
@@ -50,6 +54,8 @@ export interface ClientModel<
   secondaryIndexes: IndexQueryMethodsFromIR<Bag, T['secondaryIndexes'], K>;
   __meta: {
     listOptionsPkParams: ListOptionsPkParams<Bag, T>;
+    rawType: T;
+    flatModel: FlatClientFields<Bag, Metadata, IsRDS, T, K>;
     disabledOperations: DisabledOpsToMap<T['disabledOperations']>;
   };
 }
@@ -90,6 +96,31 @@ type ClientFields<
   If<Not<IsRDS>, ImplicitIdentifier<T>> &
   AuthFields<Metadata, T> &
   Omit<SystemFields<IsRDS>, keyof ResolveFields<Bag, T['fields']>>;
+
+/**
+ * Flattened client fields type used for selection set path generation.
+ * Uses FlatResolveFields to short-circuit bi-directional relationships,
+ * preventing cyclical path generation that causes TS2590 errors.
+ *
+ * @param Bag - The top-level ClientSchema for resolving references
+ * @param Metadata - Schema metadata containing auth fields
+ * @param IsRDS - Whether this is an RDS model
+ * @param T - The model type parameter shape
+ * @param K - The model name key for cycle detection
+ */
+type FlatClientFields<
+  Bag extends Record<string, unknown>,
+  Metadata extends SchemaMetadata<any>,
+  IsRDS extends boolean,
+  T extends ModelTypeParamShape,
+  K extends keyof Bag & string,
+> = FlatResolveFields<Bag, T['fields'], K, T['fields']> &
+  If<Not<IsRDS>, ImplicitIdentifier<T>> &
+  AuthFields<Metadata, T> &
+  Omit<
+    SystemFields<IsRDS>,
+    keyof FlatResolveFields<Bag, T['fields'], K, T['fields']>
+  >;
 
 type SystemFields<IsRDS extends boolean> = IsRDS extends false
   ? {

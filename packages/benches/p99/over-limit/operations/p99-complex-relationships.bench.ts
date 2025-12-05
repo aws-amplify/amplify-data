@@ -254,4 +254,4 @@ bench('complex relationships real world CRUDL', async () => {
   //     console.log(items[0].id);
   //   },
   // });
-}).types([41538, 'instantiations']);
+}).types([49464, 'instantiations']);
