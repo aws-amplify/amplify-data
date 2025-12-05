@@ -794,3 +794,183 @@ describe('Property 3: Selection set return type correctness', () => {
     });
   });
 });
+
+
+/**
+ * **Feature: selection-set-optimization, Property 4: SelectionSet utility type equivalence**
+ * **Validates: Requirements 4.1**
+ *
+ * For any model and valid selection set, `SelectionSet<Schema['ModelName'], typeof selectionSet>`
+ * SHALL produce a type equivalent to the return type of `client.models.ModelName.list({ selectionSet })`.
+ */
+describe('Property 4: SelectionSet utility type equivalence', () => {
+  // Import SelectionSet type for testing
+  type SelectionSet<
+    Model,
+    Path extends ReadonlyArray<import('../src/runtime/client').ModelPath<FlatModel>>,
+    FlatModel extends Record<string, unknown> = Model extends {
+      __meta: { flatModel: infer FM };
+    }
+      ? FM extends Record<string, unknown>
+        ? FM
+        : Record<string, any>
+      : Model extends Record<string, unknown>
+        ? Record<string, any>
+        : Record<string, any>,
+  > = import('../src/runtime/client').SelectionSet<Model, Path, FlatModel>;
+
+  describe('SelectionSet with Schema["ModelName"] produces correct type', () => {
+    const schema = a.schema({
+      Todo: a.model({
+        title: a.string().required(),
+        description: a.string(),
+        done: a.boolean(),
+        steps: a.hasMany('Step', 'todoId'),
+      }),
+      Step: a.model({
+        content: a.string().required(),
+        todoId: a.id(),
+        todo: a.belongsTo('Todo', 'todoId'),
+      }),
+    });
+
+    type Schema = ClientSchema<typeof schema>;
+
+    test('SelectionSet with Schema["ModelName"] returns typed result', () => {
+      const selectionSet = ['title', 'description'] as const;
+
+      // Using the new recommended format: Schema['ModelName']
+      type Result = SelectionSet<Schema['Todo'], typeof selectionSet>;
+
+      // Result should have the selected fields
+      type HasTitle = 'title' extends keyof Result ? true : false;
+      type HasDescription = 'description' extends keyof Result ? true : false;
+
+      type test1 = Expect<Equal<HasTitle, true>>;
+      type test2 = Expect<Equal<HasDescription, true>>;
+
+      // Result should NOT have unselected fields
+      type HasDone = 'done' extends keyof Result ? true : false;
+      type test3 = Expect<Equal<HasDone, false>>;
+    });
+
+    test('SelectionSet with nested paths returns nested types', () => {
+      const selectionSet = ['title', 'steps.content'] as const;
+
+      type Result = SelectionSet<Schema['Todo'], typeof selectionSet>;
+
+      // Should have title
+      type HasTitle = 'title' extends keyof Result ? true : false;
+      type test1 = Expect<Equal<HasTitle, true>>;
+
+      // Should have steps with nested content
+      type HasSteps = 'steps' extends keyof Result ? true : false;
+      type test2 = Expect<Equal<HasSteps, true>>;
+
+      // Steps should be an array with content field
+      type StepsType = Result extends { steps: infer S } ? S : never;
+      type StepsIsArray = StepsType extends readonly (infer _)[] ? true : false;
+      type test3 = Expect<Equal<StepsIsArray, true>>;
+    });
+
+    test('SelectionSet with wildcard returns all non-relationship fields', () => {
+      const selectionSet = ['title', 'steps.*'] as const;
+
+      type Result = SelectionSet<Schema['Todo'], typeof selectionSet>;
+
+      // Should have steps
+      type HasSteps = 'steps' extends keyof Result ? true : false;
+      type test1 = Expect<Equal<HasSteps, true>>;
+
+      // Steps should have content (scalar field)
+      type StepsType = Result extends { readonly steps: infer S } ? S : never;
+      type StepElement = StepsType extends readonly (infer E)[] ? E : never;
+      type StepHasContent = 'content' extends keyof StepElement ? true : false;
+      type test2 = Expect<Equal<StepHasContent, true>>;
+
+      // Steps should NOT have todo (belongsTo is short-circuited)
+      type StepHasTodo = 'todo' extends keyof StepElement ? true : false;
+      type test3 = Expect<Equal<StepHasTodo, false>>;
+    });
+  });
+
+  describe('SelectionSet with legacy Schema["ModelName"]["type"] returns any', () => {
+    const schema = a.schema({
+      Post: a.model({
+        title: a.string().required(),
+        content: a.string(),
+      }),
+    });
+
+    type Schema = ClientSchema<typeof schema>;
+
+    test('legacy format returns any for backwards compatibility', () => {
+      const selectionSet = ['title'] as const;
+
+      // Using the legacy format: Schema['ModelName']['type']
+      // This should return `any` for backwards compatibility
+      type LegacyResult = SelectionSet<Schema['Post']['type'], typeof selectionSet>;
+
+      // When result is `any`, we can assign anything to it and from it
+      // This is the graceful degradation behavior - any allows all operations
+      // We test this by checking if a specific impossible type extends the result
+      // For `any`, this will be true; for a specific type, it would be false
+      type CanAssignNumber = number extends LegacyResult ? true : false;
+      type CanAssignString = string extends LegacyResult ? true : false;
+
+      // Both should be true if LegacyResult is `any`
+      type test1 = Expect<Equal<CanAssignNumber, true>>;
+      type test2 = Expect<Equal<CanAssignString, true>>;
+    });
+  });
+
+  describe('SelectionSet type matches CRUDL operation return type structure', () => {
+    const schema = a.schema({
+      Article: a.model({
+        headline: a.string().required(),
+        body: a.string(),
+        author: a.hasOne('Author', 'articleId'),
+      }),
+      Author: a.model({
+        name: a.string().required(),
+        articleId: a.id(),
+        article: a.belongsTo('Article', 'articleId'),
+      }),
+    });
+
+    type Schema = ClientSchema<typeof schema>;
+
+    test('SelectionSet produces readonly fields matching CRUDL return type', () => {
+      const selectionSet = ['headline', 'author.name'] as const;
+
+      type Result = SelectionSet<Schema['Article'], typeof selectionSet>;
+
+      // Fields should be readonly (matching CRUDL return type behavior)
+      type HeadlineType = Result extends { readonly headline: infer H }
+        ? H
+        : never;
+      type test1 = Expect<Equal<HeadlineType, string>>;
+
+      // Should have author field
+      type HasAuthor = 'author' extends keyof Result ? true : false;
+      type test2 = Expect<Equal<HasAuthor, true>>;
+    });
+
+    test('SelectionSet preserves nullability from FlatModel', () => {
+      const selectionSet = ['headline', 'body'] as const;
+
+      type Result = SelectionSet<Schema['Article'], typeof selectionSet>;
+
+      // headline is required, should be string
+      type HeadlineType = Result extends { readonly headline: infer H }
+        ? H
+        : never;
+      type test1 = Expect<Equal<HeadlineType, string>>;
+
+      // body is optional, should include null
+      type BodyType = Result extends { readonly body: infer B } ? B : never;
+      type BodyIsNullable = null extends BodyType ? true : false;
+      type test2 = Expect<Equal<BodyIsNullable, true>>;
+    });
+  });
+});

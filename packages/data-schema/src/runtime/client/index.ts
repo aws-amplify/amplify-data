@@ -336,13 +336,42 @@ type ResolvedModel<
   };
 }[Depth extends -1 ? 'done' : 'recur'];
 
+/**
+ * Utility type for pre-computing the return type of a CRUDL operation with a custom selection set.
+ *
+ * @typeParam Model - The model type from the schema. Accepts either:
+ *   - `Schema['ModelName']` (recommended) - Uses pre-computed flatModel for optimal performance
+ *   - `Schema['ModelName']['type']` (legacy) - Returns `any` for backwards compatibility
+ * @typeParam Path - A readonly array of selection set paths
+ *
+ * @example
+ * ```ts
+ * const selectionSet = ['id', 'title', 'comments.content'] as const;
+ *
+ * // Recommended usage (uses pre-computed flatModel)
+ * type PostWithComments = SelectionSet<Schema['Post'], typeof selectionSet>;
+ *
+ * // Legacy usage (returns `any`)
+ * type PostWithCommentsLegacy = SelectionSet<Schema['Post']['type'], typeof selectionSet>;
+ * ```
+ */
 export type SelectionSet<
-  Model extends Record<string, unknown>,
+  Model,
   Path extends ReadonlyArray<ModelPath<FlatModel>>,
-  FlatModel extends Record<string, unknown> = ResolvedModel<Model>,
-> = WithOptionalsAsNullishOnly<
-  CustomSelectionSetReturnValue<FlatModel, Path[number]>
->;
+  FlatModel extends Record<string, unknown> = Model extends {
+    __meta: { flatModel: infer FM };
+  }
+    ? FM extends Record<string, unknown>
+      ? FM
+      : ResolvedModel<Model & Record<string, unknown>>
+    : Model extends Record<string, unknown>
+      ? ResolvedModel<Model>
+      : Record<string, any>,
+> = Model extends { __meta: { flatModel: any } }
+  ? WithOptionalsAsNullishOnly<
+      CustomSelectionSetReturnValue<FlatModel, Path[number]>
+    >
+  : any;
 // #endregion
 
 // #region Interfaces copied from `graphql` package
