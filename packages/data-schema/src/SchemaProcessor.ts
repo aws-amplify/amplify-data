@@ -1391,7 +1391,13 @@ function generateInputTypes(
         if (refType.type === 'CustomType') {
           const nestedInputTypeName = `${fieldDef.data.link}Input`;
           processedFields[fieldName] = {
-            data: { type: 'ref', link: nestedInputTypeName },
+            data: { 
+              type: 'ref', 
+              link: nestedInputTypeName,
+              array: fieldDef.data.array,
+              arrayRequired: fieldDef.data.arrayRequired,
+              valueRequired: fieldDef.data.valueRequired
+            },
           };
 
           // Process the nested type if it hasn't been processed and isn't a circular reference
@@ -1413,7 +1419,13 @@ function generateInputTypes(
           }
         } else if (refType.type === 'Enum') {
           processedFields[fieldName] = {
-            data: { type: 'ref', link: fieldDef.data.link },
+            data: { 
+              type: 'ref', 
+              link: fieldDef.data.link,
+              array: fieldDef.data.array,
+              arrayRequired: fieldDef.data.arrayRequired,
+              valueRequired: fieldDef.data.valueRequired
+            },
           };
         } else {
           throw new Error(
@@ -1425,7 +1437,10 @@ function generateInputTypes(
         // Handle inline custom types
         const nestedInputTypeName = `${capitalize(originalTypeName)}${capitalize(fieldName)}Input`;
         processedFields[fieldName] = {
-          data: { type: 'ref', link: nestedInputTypeName },
+          data: { 
+            type: 'ref', 
+            link: nestedInputTypeName
+          },
         };
 
         if (!processedTypes.has(nestedInputTypeName)) {

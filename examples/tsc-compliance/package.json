@@ -6,7 +6,7 @@
   "private": true,
   "scripts": {
     "test": "npm run tsc:schema",
-    "tsc:schema": "npx tsc resource.ts --noEmit"
+    "tsc:schema": "npx tsc --noEmit"
   },
   "dependencies": {
     "@aws-amplify/data-schema": "*",
