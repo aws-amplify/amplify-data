@@ -100,17 +100,19 @@ describe('providing a custom selection set', () => {
     __typename
   `;
 
+  // Note: Auth fields (like 'owner') are not included in nested model types
+  // to avoid type complexity. They are still available at the top level.
+  // hasOne relationships are nullable.
   type ExpectedTodoType = {
     readonly id: string;
     readonly description: string | null;
     readonly details: {
       readonly content: string | null;
-    };
+    } | null;
     readonly steps: {
       readonly description: string;
       readonly todoId: string;
       readonly id: string;
-      readonly owner: string | null;
       readonly updatedAt: string;
       readonly createdAt: string;
     }[];

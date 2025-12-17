@@ -167,6 +167,17 @@ type ResolveRelationship<
           > | null;
 
 /**
+ * System fields that are automatically added to all models.
+ * These are included in nested model resolution to ensure selection sets
+ * like `members.*` include id, createdAt, and updatedAt.
+ */
+type NestedSystemFields = {
+  readonly id: string;
+  readonly createdAt: string;
+  readonly updatedAt: string;
+};
+
+/**
  * Resolves a related model for flat model generation.
  * Re-resolves the related model's fields with the parent model name for proper
  * cycle detection. This ensures that when traversing Author -> Post, the Post's
@@ -174,6 +185,12 @@ type ResolveRelationship<
  *
  * Note: We cannot use the pre-computed flatModel from __meta because it was
  * computed with the related model as the parent, not the current traversal parent.
+ *
+ * System fields (id, createdAt, updatedAt) are always included to ensure
+ * selection sets like `members.*` work correctly.
+ *
+ * Note: Auth fields (like 'owner') are NOT included in nested model resolution
+ * to avoid type complexity. They are still available at the top level.
  */
 type FlatResolveRelatedModel<
   Bag extends Record<string, any>,
@@ -182,7 +199,16 @@ type FlatResolveRelatedModel<
 > = RelatedModelName extends keyof Bag
   ? Bag[RelatedModelName] extends { __meta: { rawType: infer RT } }
     ? RT extends { fields: infer F }
-      ? FlatResolveFields<Bag, F, ParentModelName, F & Record<string, any>>
+      ? FlatResolveFields<Bag, F, ParentModelName, F & Record<string, any>> &
+          Omit<
+            NestedSystemFields,
+            keyof FlatResolveFields<
+              Bag,
+              F,
+              ParentModelName,
+              F & Record<string, any>
+            >
+          >
       : Bag[RelatedModelName]['type']
     : Bag[RelatedModelName]['type']
   : never;

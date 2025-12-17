@@ -697,7 +697,7 @@ describe('Modeling relationships', () => {
         { selectionSet: ['id', 'customer.*'] },
       );
 
-      console.log(cart!.customer.id);
+      console.log(cart!.customer!.id);
       // #endregion
 
       // #region assertions
