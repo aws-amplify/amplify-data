@@ -1,5 +1,5 @@
 import { brand } from './util';
-import { AllowModifier, Authorization, allow } from './Authorization';
+import { type AllowModifier, type Authorization, allow } from './Authorization';
 import type { methodKeyOf, satisfy } from './util/usedMethods.js';
 import type { brandSymbol } from './util/Brand.js';
 import {

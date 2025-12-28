@@ -3,7 +3,7 @@
 
 import { AiModel } from '@aws-amplify/data-schema-types';
 import type { Subscription } from 'rxjs';
-import { allowForConversations, AllowModifierForConversations, Authorization } from '../Authorization';
+import { allowForConversations, Authorization, type ConversationAuthorizationCallback } from '../Authorization';
 import type { RefType } from '../RefType';
 import type { ListReturnValue, SingularReturnValue } from '../runtime/client';
 import { type Brand, brand } from '../util';
@@ -218,7 +218,7 @@ type ConversationData = {
 
 export interface ConversationType extends Brand<typeof brandName> {
   authorization(
-    callback: (allow: AllowModifierForConversations) => Authorization<any, any, any>,
+    callback: ConversationAuthorizationCallback<Authorization<any, any, any>>,
   ): ConversationType;
 }
 
@@ -228,7 +228,7 @@ function _conversation(input: ConversationInput): ConversationType {
   };
   const builder = {
     authorization<AuthRuleType extends Authorization<any, any, any>>(
-      callback: (allow: AllowModifierForConversations) => AuthRuleType | AuthRuleType[],
+      callback: ConversationAuthorizationCallback<AuthRuleType>,
     ) {
       const rules = callback(allowForConversations);
       data.authorization = Array.isArray(rules) ? rules : [rules];

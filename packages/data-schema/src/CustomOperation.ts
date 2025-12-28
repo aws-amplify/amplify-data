@@ -2,8 +2,8 @@ import { AiModel, SetTypeSubArg } from '@aws-amplify/data-schema-types';
 import { Brand, brand } from './util';
 import { InternalField, ModelField, type BaseModelField } from './ModelField';
 import {
-  AllowModifierForCustomOperation,
-  Authorization,
+  type Authorization,
+  type CustomOperationAuthorizationCallback,
   allowForCustomOperations,
 } from './Authorization';
 import { RefType, InternalRef } from './RefType';
@@ -120,9 +120,7 @@ export type CustomOperation<
       B
     >;
     authorization<AuthRuleType extends Authorization<any, any, any>>(
-      callback: (
-        allow: AllowModifierForCustomOperation,
-      ) => AuthRuleType | AuthRuleType[],
+      callback: CustomOperationAuthorizationCallback<AuthRuleType>,
     ): CustomOperation<
       SetTypeSubArg<T, 'authorization', AuthRuleType[]>,
       K | 'authorization',
@@ -202,9 +200,7 @@ function _custom<
         return this;
       },
       authorization<AuthRuleType extends Authorization<any, any, any>>(
-        callback: (
-          allow: AllowModifierForCustomOperation,
-        ) => AuthRuleType | AuthRuleType[],
+        callback: CustomOperationAuthorizationCallback<AuthRuleType>,
       ) {
         const rules = callback(allowForCustomOperations);
         data.authorization = Array.isArray(rules) ? rules : [rules];
