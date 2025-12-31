@@ -275,8 +275,7 @@ type ModelPathInner<
 }[Depth extends -1 ? 'done' : 'recur'];
 
 export type ModelPath<FlatModel extends Record<string, unknown>> =
-  | (string & Readonly<unknown>)
-  | ModelPathInner<FlatModel>;
+  ModelPathInner<FlatModel>;
 
 export type SelectionSet<
   Model,
