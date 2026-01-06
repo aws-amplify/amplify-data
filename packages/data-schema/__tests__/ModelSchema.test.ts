@@ -408,4 +408,110 @@ describe('custom operation argument inputs', () => {
     expect(schema.transform().schema).toMatchSnapshot();
   });
 
-})
+});
+
+describe('nested array fields in custom types', () => {
+
+  it('when a custom type has an array ref field the input type preserves the array', () => {
+    const fn1 = defineFunctionStub({});
+
+    const schema = a
+      .schema({
+        testType: a.customType({
+          testField: a.string().required(),
+        }),
+
+        containerType: a.customType({
+          items: a.ref('testType').array(),
+        }),
+
+        testMutation: a
+          .mutation()
+          .arguments({
+            container: a.ref('containerType'),
+          })
+          .returns(a.string())
+          .handler(a.handler.function(fn1))
+      })
+      .authorization((allow) => allow.owner());
+
+    expect(schema.transform().schema).toMatchSnapshot();
+  });
+
+  it('when a custom type has a required array ref field the input type is a required array', () => {
+    const fn1 = defineFunctionStub({});
+
+    const schema = a
+      .schema({
+        testType: a.customType({
+          testField: a.string().required(),
+        }),
+
+        containerType: a.customType({
+          items: a.ref('testType').array().required(),
+        }),
+
+        testMutation: a
+          .mutation()
+          .arguments({
+            container: a.ref('containerType'),
+          })
+          .returns(a.string())
+          .handler(a.handler.function(fn1))
+      })
+      .authorization((allow) => allow.owner());
+
+    expect(schema.transform().schema).toMatchSnapshot();
+  });
+
+  it('when a custom type has an array of required ref fields the input type is an array of required refs', () => {
+    const fn1 = defineFunctionStub({});
+
+    const schema = a
+      .schema({
+        testType: a.customType({
+          testField: a.string().required(),
+        }),
+
+        containerType: a.customType({
+          items: a.ref('testType').required().array(),
+        }),
+
+        testMutation: a
+          .mutation()
+          .arguments({
+            container: a.ref('containerType'),
+          })
+          .returns(a.string())
+          .handler(a.handler.function(fn1))
+      })
+      .authorization((allow) => allow.owner());
+
+    expect(schema.transform().schema).toMatchSnapshot();
+  });
+
+  it('when a custom type has an array enum ref field the input type preserves the array', () => {
+    const fn1 = defineFunctionStub({});
+
+    const schema = a
+      .schema({
+        testEnum: a.enum(['VALUE1', 'VALUE2']),
+
+        containerType: a.customType({
+          statuses: a.ref('testEnum').array(),
+        }),
+
+        testMutation: a
+          .mutation()
+          .arguments({
+            container: a.ref('containerType'),
+          })
+          .returns(a.string())
+          .handler(a.handler.function(fn1))
+      })
+      .authorization((allow) => allow.owner());
+
+    expect(schema.transform().schema).toMatchSnapshot();
+  });
+
+});

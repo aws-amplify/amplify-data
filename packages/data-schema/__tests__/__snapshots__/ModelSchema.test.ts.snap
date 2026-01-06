@@ -167,3 +167,95 @@ exports[`empty model auth inherits global auth 1`] = `
   someOwnerField: String
 }"
 `;
+
+exports[`nested array fields in custom types when a custom type has a required array ref field the input type is a required array 1`] = `
+"type testType 
+{
+  testField: String!
+}
+
+type containerType 
+{
+  items: [testType]!
+}
+
+input testTypeInput {
+  testField: String!
+}
+
+input containerTypeInput {
+  items: [testTypeInput]!
+}
+
+type Mutation {
+  testMutation(container: containerTypeInput): String @function(name: "FnTestMutation") @auth(rules: [{allow: owner, ownerField: "owner"}])
+}"
+`;
+
+exports[`nested array fields in custom types when a custom type has an array enum ref field the input type preserves the array 1`] = `
+"enum testEnum {
+  VALUE1
+  VALUE2
+}
+
+type containerType 
+{
+  statuses: [testEnum]
+}
+
+input containerTypeInput {
+  statuses: [testEnum]
+}
+
+type Mutation {
+  testMutation(container: containerTypeInput): String @function(name: "FnTestMutation") @auth(rules: [{allow: owner, ownerField: "owner"}])
+}"
+`;
+
+exports[`nested array fields in custom types when a custom type has an array of required ref fields the input type is an array of required refs 1`] = `
+"type testType 
+{
+  testField: String!
+}
+
+type containerType 
+{
+  items: [testType!]
+}
+
+input testTypeInput {
+  testField: String!
+}
+
+input containerTypeInput {
+  items: [testTypeInput!]
+}
+
+type Mutation {
+  testMutation(container: containerTypeInput): String @function(name: "FnTestMutation") @auth(rules: [{allow: owner, ownerField: "owner"}])
+}"
+`;
+
+exports[`nested array fields in custom types when a custom type has an array ref field the input type preserves the array 1`] = `
+"type testType 
+{
+  testField: String!
+}
+
+type containerType 
+{
+  items: [testType]
+}
+
+input testTypeInput {
+  testField: String!
+}
+
+input containerTypeInput {
+  items: [testTypeInput]
+}
+
+type Mutation {
+  testMutation(container: containerTypeInput): String @function(name: "FnTestMutation") @auth(rules: [{allow: owner, ownerField: "owner"}])
+}"
+`;
