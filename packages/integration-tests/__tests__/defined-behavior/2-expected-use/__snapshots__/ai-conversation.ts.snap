@@ -167,7 +167,7 @@ exports[`AI Conversation Routes Messages List messages 1`] = `
       "authMode": undefined,
       "authToken": undefined,
       "endpoint": undefined,
-      "query": "query($filter: ModelConversationMessageChatBotFilterInput,$limit: Int,$nextToken: String) { listConversationMessageChatBots(filter: $filter,limit: $limit,nextToken: $nextToken) { items { id conversationId role content { text document { format name source { bytes } } image { format source { bytes } } toolResult { content { document { format name source { bytes } } image { format source { bytes } } json text } toolUseId status } toolUse { toolUseId name input } } aiContext toolConfiguration { tools { toolSpec { name description inputSchema { json } } } } createdAt updatedAt owner } nextToken __typename } }",
+      "query": "query($filter: ModelConversationMessageChatBotFilterInput,$limit: Int,$nextToken: String) { listConversationMessageChatBots(filter: $filter,limit: $limit,nextToken: $nextToken) { items { id conversationId role content { text document { format name source { bytes } } image { format source { bytes } } toolResult { content { document { format name source { bytes } } image { format source { bytes } } json text } toolUseId status } toolUse { toolUseId name input type } } aiContext toolConfiguration { tools { toolSpec { name description inputSchema { json } } } } createdAt updatedAt owner } nextToken __typename } }",
       "variables": {
         "filter": {
           "conversationId": {
@@ -210,7 +210,7 @@ exports[`AI Conversation Routes Messages Paginate messages 1`] = `
       "authMode": undefined,
       "authToken": undefined,
       "endpoint": undefined,
-      "query": "query($filter: ModelConversationMessageChatBotFilterInput,$limit: Int,$nextToken: String) { listConversationMessageChatBots(filter: $filter,limit: $limit,nextToken: $nextToken) { items { id conversationId role content { text document { format name source { bytes } } image { format source { bytes } } toolResult { content { document { format name source { bytes } } image { format source { bytes } } json text } toolUseId status } toolUse { toolUseId name input } } aiContext toolConfiguration { tools { toolSpec { name description inputSchema { json } } } } createdAt updatedAt owner } nextToken __typename } }",
+      "query": "query($filter: ModelConversationMessageChatBotFilterInput,$limit: Int,$nextToken: String) { listConversationMessageChatBots(filter: $filter,limit: $limit,nextToken: $nextToken) { items { id conversationId role content { text document { format name source { bytes } } image { format source { bytes } } toolResult { content { document { format name source { bytes } } image { format source { bytes } } json text } toolUseId status } toolUse { toolUseId name input type } } aiContext toolConfiguration { tools { toolSpec { name description inputSchema { json } } } } createdAt updatedAt owner } nextToken __typename } }",
       "variables": {
         "filter": {
           "conversationId": {
@@ -257,7 +257,7 @@ exports[`AI Conversation Routes Messages Send a message 1`] = `
       "endpoint": undefined,
       "query": "
     mutation($conversationId: ID!, $content: [AmplifyAIContentBlockInput], $aiContext: AWSJSON, $toolConfiguration: AmplifyAIToolConfigurationInput) {
-      chatBot(conversationId: $conversationId, content: $content, aiContext: $aiContext, toolConfiguration: $toolConfiguration) {id conversationId role content { text document { format name source { bytes } } image { format source { bytes } } toolResult { content { document { format name source { bytes } } image { format source { bytes } } json text } toolUseId status } toolUse { toolUseId name input } } aiContext toolConfiguration { tools { toolSpec { name description inputSchema { json } } } } createdAt updatedAt owner}
+      chatBot(conversationId: $conversationId, content: $content, aiContext: $aiContext, toolConfiguration: $toolConfiguration) {id conversationId role content { text document { format name source { bytes } } image { format source { bytes } } toolResult { content { document { format name source { bytes } } image { format source { bytes } } json text } toolUseId status } toolUse { toolUseId name input type } } aiContext toolConfiguration { tools { toolSpec { name description inputSchema { json } } } } createdAt updatedAt owner}
     }
   ",
       "variables": {
@@ -319,7 +319,7 @@ exports[`AI Conversation Routes Messages Subscribe to messages 1`] = `
       "endpoint": undefined,
       "query": "
     subscription($conversationId: ID!) {
-      onCreateAssistantResponseChatBot(conversationId: $conversationId) {id owner conversationId associatedUserMessageId contentBlockIndex contentBlockText contentBlockDeltaIndex contentBlockToolUse { toolUseId name input } contentBlockDoneAtIndex stopReason errors { message errorType } p}
+      onCreateAssistantResponseChatBot(conversationId: $conversationId) {id owner conversationId associatedUserMessageId contentBlockIndex contentBlockText contentBlockDeltaIndex contentBlockToolUse { toolUseId name input type } contentBlockDoneAtIndex stopReason errors { message errorType } p}
     }
   ",
       "variables": {
@@ -355,6 +355,7 @@ exports[`AI Conversation Routes Messages Subscribe to messages 2`] = `
       toolUseId
       name
       input
+      type
     }
     contentBlockDoneAtIndex
     stopReason
