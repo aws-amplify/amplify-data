@@ -1,5 +1,11 @@
 # @aws-amplify/data-schema
 
+## 1.22.1
+
+### Patch Changes
+
+- 4036889: feat(data-schema): add type field to AmplifyAIToolUseBlock schema
+
 ## 1.22.0
 
 ### Minor Changes
