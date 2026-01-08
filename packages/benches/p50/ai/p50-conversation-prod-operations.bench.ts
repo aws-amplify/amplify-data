@@ -650,4 +650,4 @@ bench('prod p50 conversation operations', async () => {
   });
 
   await conversation?.listMessages();
-}).types([35375, 'instantiations']);
+}).types();

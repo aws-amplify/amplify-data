@@ -22,7 +22,7 @@ bench('uni-directional - no sel. set', async () => {
   const client = generateClient<Schema>();
 
   const _res = await client.models.Post.list();
-}).types([18897, 'instantiations']);
+}).types();
 
 bench('bi-directional - no sel. set', async () => {
   const schema = a
@@ -44,7 +44,7 @@ bench('bi-directional - no sel. set', async () => {
   const client = generateClient<Schema>();
 
   const _res = await client.models.Post.list();
-}).types([19244, 'instantiations']);
+}).types();
 
 bench('uni-directional', async () => {
   const schema = a
@@ -68,7 +68,7 @@ bench('uni-directional', async () => {
   const _res = await client.models.Post.list({
     selectionSet: ['id', 'title'],
   });
-}).types([36516, 'instantiations']);
+}).types();
 
 bench('bi-directional', async () => {
   const schema = a
@@ -92,4 +92,4 @@ bench('bi-directional', async () => {
   const _res = await client.models.Post.list({
     selectionSet: ['id', 'title', 'comments.*'],
   });
-}).types([44260, 'instantiations']);
+}).types();

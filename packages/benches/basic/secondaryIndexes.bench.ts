@@ -17,7 +17,7 @@ bench('secondary index of model has only ModelFields', () => {
   });
 
   type _ = ClientSchema<typeof s>;
-}).types([17193, 'instantiations']);
+}).types();
 
 bench(
   'secondary index without using enum field of a model that has enum field',
@@ -37,7 +37,7 @@ bench(
 
     type _ = ClientSchema<typeof s>;
   },
-).types([15693, 'instantiations']);
+).types();
 
 bench(
   'secondary index with using enum field of a model that has enum field',
@@ -57,7 +57,7 @@ bench(
 
     type _ = ClientSchema<typeof s>;
   },
-).types([15693, 'instantiations']);
+).types();
 
 bench(
   'secondary index without using enum field of a model that has enum ref field',
@@ -78,7 +78,7 @@ bench(
 
     type _ = ClientSchema<typeof s>;
   },
-).types([17937, 'instantiations']);
+).types();
 
 bench(
   'secondary index with using enum field of a model that has enum ref field',
@@ -99,4 +99,4 @@ bench(
 
     type _ = ClientSchema<typeof s>;
   },
-).types([17937, 'instantiations']);
+).types();
