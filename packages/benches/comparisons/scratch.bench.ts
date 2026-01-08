@@ -63,7 +63,7 @@ bench('large string union as Record key', async () => {
   type Identifier = `${DIGITS}${DIGITS}${DIGITS}${DIGITS}`;
 
   type _T = Record<Identifier, string>;
-}).types([4, 'instantiations']);
+}).types();
 
 bench('large string union discrimination', async () => {
   //             0     1     2     3     4     5     6     7     8     9
@@ -72,38 +72,38 @@ bench('large string union discrimination', async () => {
   type Identifier = `${DIGITS}${DIGITS}${DIGITS}${DIGITS}`;
 
   type _T = Extract<Identifier, `aaa${string}`>;
-}).types([20031, 'instantiations']);
+}).types();
 
 bench('super basic sanity check - simple object prop @ 1', async () => {
   type _test = Base['a'];
-}).types([0, 'instantiations']);
+}).types();
 
 bench('super basic sanity check - simple object prop @ 2', async () => {
   type _test = Base['a'];
   type _test2 = Base['b'];
-}).types([0, 'instantiations']);
+}).types();
 
 bench('super basic sanity check - simple object prop @ 4', async () => {
   type _test = Base['a'];
   type _test2 = Base['b'];
   type _test3 = Base['c'];
   type _test4 = Base['d'];
-}).types([0, 'instantiations']);
+}).types();
 
 bench('basic case - tuple -> union extract', async () => {
   type _test = Extract<Lookups[number], { f: any }>['f'];
-}).types([52, 'instantiations']);
+}).types();
 
 bench('basic case - tuple -> UnionToIntersection', async () => {
   type LUT = UnionToIntersection<Lookups[number]>;
   type _test = LUT['f'];
-}).types([161, 'instantiations']);
+}).types();
 
 bench('basic case - Tuple remapped to intersection', async () => {
   type LUT = RemapArray<Lookups>;
   type _test = LUT['f'];
   // 2021 with 2
-}).types([1990, 'instantiations']);
+}).types();
 
 // #region union extraction scaling
 bench('as augmentation - union extract @ 1', async () => {
@@ -117,7 +117,7 @@ bench('as augmentation - union extract @ 1', async () => {
   type _Test = {
     a: Augmented['a'];
   };
-}).types([283, 'instantiations']);
+}).types();
 
 bench('as augmentation - union extract @ 2', async () => {
   type Augmented = {
@@ -131,7 +131,7 @@ bench('as augmentation - union extract @ 2', async () => {
     a: Augmented['a'];
     b: Augmented['b'];
   };
-}).types([417, 'instantiations']);
+}).types();
 
 bench('as augmentation - union extract @ 4', async () => {
   type Augmented = {
@@ -147,7 +147,7 @@ bench('as augmentation - union extract @ 4', async () => {
     c: Augmented['c'];
     d: Augmented['d'];
   };
-}).types([685, 'instantiations']);
+}).types();
 
 //#endregion union extraction scaling
 
@@ -170,7 +170,7 @@ bench('as augmentation - union extract - util @ 1', async () => {
   type _Test = {
     a: Augmented['a'];
   };
-}).types([254, 'instantiations']);
+}).types();
 
 bench('as augmentation - union extract - util @ 2', async () => {
   type Merged<
@@ -190,7 +190,7 @@ bench('as augmentation - union extract - util @ 2', async () => {
     a: Augmented['a'];
     b: Augmented['b'];
   };
-}).types([301, 'instantiations']);
+}).types();
 
 bench('as augmentation - union extract - util @ 4', async () => {
   type Merged<
@@ -212,7 +212,7 @@ bench('as augmentation - union extract - util @ 4', async () => {
     c: Augmented['c'];
     d: Augmented['d'];
   };
-}).types([395, 'instantiations']);
+}).types();
 
 //#endregion union extraction with util scaling
 
@@ -229,7 +229,7 @@ bench('as augmentation - UnionToIntersection @ 1', async () => {
   type _Test = {
     a: Augmented['a'];
   };
-}).types([180, 'instantiations']);
+}).types();
 
 bench('as augmentation - UnionToIntersection @ 2', async () => {
   type Augmented = {
@@ -243,7 +243,7 @@ bench('as augmentation - UnionToIntersection @ 2', async () => {
     a: Augmented['a'];
     b: Augmented['b'];
   };
-}).types([199, 'instantiations']);
+}).types();
 
 bench('as augmentation - UnionToIntersection @ 4', async () => {
   type Augmented = {
@@ -259,7 +259,7 @@ bench('as augmentation - UnionToIntersection @ 4', async () => {
     c: Augmented['c'];
     d: Augmented['d'];
   };
-}).types([237, 'instantiations']);
+}).types();
 
 //#endregion union intersection scaling
 
@@ -282,7 +282,7 @@ bench('as augmentation - UnionToIntersection - util @ 1', async () => {
   type _Test = {
     a: Augmented['a'];
   };
-}).types([250, 'instantiations']);
+}).types();
 
 bench('as augmentation - UnionToIntersection - util @ 2', async () => {
   type Merged<
@@ -302,7 +302,7 @@ bench('as augmentation - UnionToIntersection - util @ 2', async () => {
     a: Augmented['a'];
     b: Augmented['b'];
   };
-}).types([271, 'instantiations']);
+}).types();
 
 bench('as augmentation - UnionToIntersection - util @ 4', async () => {
   type Merged<
@@ -324,7 +324,7 @@ bench('as augmentation - UnionToIntersection - util @ 4', async () => {
     c: Augmented['c'];
     d: Augmented['d'];
   };
-}).types([313, 'instantiations']);
+}).types();
 
 //#region union intersection util scaling
 
@@ -345,7 +345,7 @@ bench('as augmentation - UnionToIntersection - util @ 1', async () => {
   type _Test = {
     a: Augmented['a'];
   };
-}).types([267, 'instantiations']);
+}).types();
 
 bench('as augmentation - UnionToIntersection - util @ 2', async () => {
   type Merged<Base, Augmentation, K extends keyof Base> = Base[K] &
@@ -363,7 +363,7 @@ bench('as augmentation - UnionToIntersection - util @ 2', async () => {
     a: Augmented['a'];
     b: Augmented['b'];
   };
-}).types([294, 'instantiations']);
+}).types();
 
 bench('as augmentation - UnionToIntersection - util @ 4', async () => {
   type Merged<Base, Augmentation, K extends keyof Base> = Base[K] &
@@ -383,6 +383,6 @@ bench('as augmentation - UnionToIntersection - util @ 4', async () => {
     c: Augmented['c'];
     d: Augmented['d'];
   };
-}).types([348, 'instantiations']);
+}).types();
 
 //#region union intersection util alt scaling
