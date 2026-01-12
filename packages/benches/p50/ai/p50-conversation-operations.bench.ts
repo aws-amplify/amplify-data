@@ -101,4 +101,4 @@ bench('p50 conversation operations', async () => {
   });
 
   await conversation?.listMessages();
-}).types();
+}).types([13028, 'instantiations']);

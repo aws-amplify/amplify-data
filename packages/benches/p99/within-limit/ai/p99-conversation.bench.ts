@@ -217,7 +217,7 @@ bench('100 conversations', () => {
     Conversation99: a.conversation(input)
       .authorization((allow) => allow.owner()),
   }).authorization((allow) => allow.publicApiKey());
-}).types();
+}).types([1070, 'instantiations']);
 
 bench('100 conversations w/ client types', () => {
   const s = a
@@ -426,4 +426,4 @@ bench('100 conversations w/ client types', () => {
     .authorization((allow) => allow.publicApiKey());
 
   type _ = ClientSchema<typeof s>;
-}).types();
+}).types([3159, 'instantiations']);

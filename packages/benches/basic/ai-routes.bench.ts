@@ -19,7 +19,7 @@ bench('schema with conversation', () => {
     Conversation: a.conversation(input)
       .authorization((allow) => allow.owner()),
   });
-}).types();
+}).types([496, 'instantiations']);
 
 bench('schema with conversation and client types', () => {
   const s = a.schema({
@@ -28,7 +28,7 @@ bench('schema with conversation and client types', () => {
   });
 
   type _ = ClientSchema<typeof s>;
-}).types();
+}).types([2445, 'instantiations']);
 
 bench('schema with conversation and model', () => {
   a.schema({
@@ -38,7 +38,7 @@ bench('schema with conversation and model', () => {
       title: a.string().required(),
     }),
   });
-}).types();
+}).types([2418, 'instantiations']);
 
 bench('schema with conversation, model and client types', () => {
   const s = a.schema({
@@ -52,7 +52,7 @@ bench('schema with conversation, model and client types', () => {
   });
 
   type _ = ClientSchema<typeof s>;
-}).types();
+}).types([4632, 'instantiations']);
 
 bench('schema with generation returning primitive type w/ ClientSchema', () => {
   const s = a.schema({
@@ -67,7 +67,7 @@ bench('schema with generation returning primitive type w/ ClientSchema', () => {
   });
 
   type _ = ClientSchema<typeof s>;
-}).types();
+}).types([12331, 'instantiations']);
 
 bench('schema with generation returning enum type w/ ClientSchema', () => {
   const s = a.schema({
@@ -83,7 +83,7 @@ bench('schema with generation returning enum type w/ ClientSchema', () => {
   });
 
   type _ = ClientSchema<typeof s>;
-}).types();
+}).types([12529, 'instantiations']);
 
 bench('schema with generation returning custom type w/ ClientSchema', () => {
   const s = a.schema({
@@ -100,7 +100,7 @@ bench('schema with generation returning custom type w/ ClientSchema', () => {
       .authorization((allow) => allow.publicApiKey()),
   });
   type _ = ClientSchema<typeof s>;
-}).types();
+}).types([12568, 'instantiations']);
 
 bench('schema with generation returning model w/ ClientSchema', () => {
   const s = a.schema({
@@ -117,4 +117,4 @@ bench('schema with generation returning model w/ ClientSchema', () => {
       .authorization((allow) => allow.publicApiKey()),
   });
   type _ = ClientSchema<typeof s>;
-}).types();
+}).types([12646, 'instantiations']);
