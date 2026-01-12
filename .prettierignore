@@ -6,4 +6,3 @@ lib
 docs
 tsconfig.tsbuildinfo
 **/*.js
-packages/benches

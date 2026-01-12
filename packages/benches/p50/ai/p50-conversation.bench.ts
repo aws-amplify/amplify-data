@@ -65,7 +65,7 @@ bench('p50 conversation', () => {
     GossipBot: a.conversation(input)
       .authorization((allow) => allow.owner()),
   }).authorization((allow) => allow.publicApiKey());
-}).types();
+}).types([8514, 'instantiations']);
 
 bench('p50 conversation w/ client types', () => {
   const s = a
@@ -120,7 +120,7 @@ bench('p50 conversation w/ client types', () => {
     .authorization((allow) => allow.publicApiKey());
 
   type _ = ClientSchema<typeof s>;
-}).types();
+}).types([10441, 'instantiations']);
 
 bench('p50 combined conversation w/ client types', () => {
   const s1 = a
@@ -183,4 +183,4 @@ bench('p50 combined conversation w/ client types', () => {
 
   const s = a.combine([s1, s2]);
   type _ = ClientSchema<typeof s>;
-}).types();
+}).types([13892, 'instantiations']);

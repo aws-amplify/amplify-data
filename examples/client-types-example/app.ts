@@ -3,9 +3,9 @@ import type { Schema } from './resource';
 
 const client = generateClient<Schema>();
 
-async function createPost() {}
-
 async function test() {
+
+  // this would throw a TS2590 error previously
   const res = await client.models.Network.list({
     selectionSet: [
       'name',
