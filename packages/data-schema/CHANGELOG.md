@@ -1,5 +1,13 @@
 # @aws-amplify/data-schema
 
+## 1.22.2
+
+### Patch Changes
+
+- c79737f: chore: documentation updates
+- Updated dependencies [c79737f]
+  - @aws-amplify/data-schema-types@1.2.1
+
 ## 1.22.1
 
 ### Patch Changes
