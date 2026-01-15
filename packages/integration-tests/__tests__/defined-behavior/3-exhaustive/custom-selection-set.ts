@@ -8,9 +8,6 @@ import {
 import { Expect, Equal } from '@aws-amplify/data-schema-types';
 import { SelectionSet } from 'aws-amplify/data';
 
-// Temp
-import { ModelPath } from '../../../../data-schema/src/runtime/client/index';
-
 describe('Custom selection set edge cases', () => {
   afterEach(() => {
     jest.clearAllMocks();
@@ -112,11 +109,11 @@ describe('Custom selection set edge cases', () => {
         const expectedSelectionSet = /* GraphQL */ `
           items {
             id
-            description 
-            done 
-            createdAt 
-            updatedAt 
-            priority 
+            description
+            done
+            createdAt
+            updatedAt
+            priority
             details {
               id
               content
@@ -220,7 +217,7 @@ describe('Custom selection set edge cases', () => {
 
         const expectedSelectionSet = /* GraphQL */ `
           items {
-            description 
+            description
             details {
               content
             }
@@ -305,7 +302,7 @@ describe('Custom selection set edge cases', () => {
 
         const expectedSelectionSet = /* GraphQL */ `
           items {
-            description 
+            description
             details {
               content
             }
@@ -410,8 +407,6 @@ describe('Custom selection set edge cases', () => {
 
       async function mockedOperation() {
         const { client, spy } = await getMockedClient(sampleTodo);
-
-        type Test = ModelPath<Schema['Todo']['__meta']['flatModel']>;
 
         const { data } = await client.models.Todo.list({
           // @ts-expect-error - Deep cyclical paths beyond FlatModel's representation are not type-safe.
