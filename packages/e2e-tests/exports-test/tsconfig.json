@@ -1,6 +1,7 @@
 {
   "compilerOptions": {
     "declaration": true,
+    "rootDir": "./src",
     "target": "ES2022",
     "lib": ["ES2022"],
     "allowJs": false,
