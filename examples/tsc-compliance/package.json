@@ -1,6 +1,6 @@
 {
   "name": "tsc-compliance",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "",
   "main": "index.js",
   "private": true,
@@ -11,8 +11,7 @@
   "dependencies": {
     "@aws-amplify/data-schema": "*",
     "aws-amplify": "*",
-    "aws-cdk-lib": "^2.189.1"
-    
+    "aws-cdk-lib": "^2.234.1"
   },
   "devDependencies": {
     "@types/node": "^20.16.2"
