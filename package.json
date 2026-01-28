@@ -89,11 +89,13 @@
   "resolutions": {
     "cookie": "^0.7.2",
     "qs": "^6.14.1",
-    "@smithy/config-resolver": "^4.4.0"
+    "@smithy/config-resolver": "^4.4.0",
+    "lodash": "^4.17.23"
   },
   "overrides": {
     "cookie": "^0.7.2",
     "qs": "^6.14.1",
-    "@smithy/config-resolver": "^4.4.0"
+    "@smithy/config-resolver": "^4.4.0",
+    "lodash": "^4.17.23"
   }
 }
