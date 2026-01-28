@@ -1,5 +1,11 @@
 # @aws-amplify/data-schema
 
+## 1.23.0
+
+### Minor Changes
+
+- b1719f8: feat: added support for Claude 4.5 models family with Bedrock's global inference profile
+
 ## 1.22.2
 
 ### Patch Changes
