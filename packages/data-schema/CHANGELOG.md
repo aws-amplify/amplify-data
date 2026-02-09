@@ -1,5 +1,11 @@
 # @aws-amplify/data-schema
 
+## 1.24.0
+
+### Minor Changes
+
+- d7aa924: add support for GSI projection types
+
 ## 1.23.0
 
 ### Minor Changes
