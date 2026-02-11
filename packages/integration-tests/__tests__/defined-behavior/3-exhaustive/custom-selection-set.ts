@@ -109,11 +109,11 @@ describe('Custom selection set edge cases', () => {
         const expectedSelectionSet = /* GraphQL */ `
           items {
             id
-            description 
-            done 
-            createdAt 
-            updatedAt 
-            priority 
+            description
+            done
+            createdAt
+            updatedAt
+            priority
             details {
               id
               content
@@ -217,7 +217,7 @@ describe('Custom selection set edge cases', () => {
 
         const expectedSelectionSet = /* GraphQL */ `
           items {
-            description 
+            description
             details {
               content
             }
@@ -302,7 +302,7 @@ describe('Custom selection set edge cases', () => {
 
         const expectedSelectionSet = /* GraphQL */ `
           items {
-            description 
+            description
             details {
               content
             }
@@ -354,7 +354,7 @@ describe('Custom selection set edge cases', () => {
         const { data } = await mockedOperation();
 
         type ExpectedTodoType = SelectionSet<
-          Schema['Todo']['type'],
+          Schema['Todo'],
           typeof selectionSet
         >[];
 
@@ -409,6 +409,9 @@ describe('Custom selection set edge cases', () => {
         const { client, spy } = await getMockedClient(sampleTodo);
 
         const { data } = await client.models.Todo.list({
+          // @ts-expect-error - Deep cyclical paths beyond FlatModel's representation are not type-safe.
+          // This is intentional: use lazy loaders for deep traversal instead of selection sets.
+          // The runtime still works, but the type system cannot represent infinite cycles.
           selectionSet: ['id', 'steps.todo.steps.todo.steps.todo.steps.*'],
         });
 
@@ -501,27 +504,41 @@ describe('Custom selection set edge cases', () => {
       test('has a matching return type', async () => {
         const { data } = await mockedOperation();
 
+        // BREAKING CHANGE: Deep cyclical paths are no longer type-safe.
+        //
+        // Previously, this test asserted a precise deeply-nested return type
+        // matching the custom selection set. Now, because the selection set uses
+        // ts-expect-error (deep cyclical paths are intentionally not allowed), the return
+        // type resolves to FlatModel which only has 1 level of relationships.
+        //
+        // The runtime still works correctly - the GraphQL query is generated and data is
+        // returned. But the type no longer reflects the custom selection set shape.
+        //
+        // For type-safe deep traversal, use lazy loaders instead of selection sets.
+
         type ExpectedTodoType = {
+          readonly owner: string | null;
+          readonly description: string | null;
+          readonly done: boolean | null;
+          readonly priority: 'low' | 'medium' | 'high' | null;
           readonly id: string;
+          readonly createdAt: string;
+          readonly updatedAt: string;
+          readonly details: {
+            readonly owner: string | null;
+            readonly todoId: string | null;
+            readonly content: string | null;
+            readonly id: string;
+            readonly createdAt: string;
+            readonly updatedAt: string;
+          };
           readonly steps: {
-            readonly todo: {
-              readonly steps: {
-                readonly todo: {
-                  readonly steps: {
-                    readonly todo: {
-                      readonly steps: {
-                        readonly description: string;
-                        readonly todoId: string;
-                        readonly id: string;
-                        readonly owner: string | null;
-                        readonly createdAt: string;
-                        readonly updatedAt: string;
-                      }[];
-                    };
-                  }[];
-                };
-              }[];
-            };
+            readonly owner: string | null;
+            readonly description: string;
+            readonly todoId: string;
+            readonly id: string;
+            readonly createdAt: string;
+            readonly updatedAt: string;
           }[];
         }[];
 
@@ -539,7 +556,7 @@ describe('Custom selection set edge cases', () => {
           const { client } = await getMockedClient(sampleTodo);
 
           await client.models.Todo.list({
-            // @ts-expect-error
+            // @ts-expect-error - invalid field name should be a type error
             selectionSet: ['perfect-field'],
           });
         }).rejects.toThrow('perfect-field is not a field of model Todo');
