@@ -1,6 +1,5 @@
 import { expectTypeTestsToPassAsync } from 'jest-tsd';
-import { ClientSchema, a } from '../src/index';
-import { ExtractModelMeta, Prettify } from '@aws-amplify/data-schema-types';
+import { a } from '../src/index';
 
 // evaluates type defs in corresponding test-d.ts file
 it('should not produce static type errors', async () => {
@@ -75,6 +74,132 @@ describe('secondary index schema generation', () => {
   });
 });
 
+describe('GSI projection functionality', () => {
+  it('generates correct schema for KEYS_ONLY projection', () => {
+    const schema = a
+      .schema({
+        Product: a
+          .model({
+            id: a.id().required(),
+            name: a.string().required(),
+            category: a.string().required(),
+            price: a.float().required(),
+            inStock: a.boolean().required(),
+          })
+          .secondaryIndexes((index) => [
+            index('category').projection('KEYS_ONLY'),
+          ]),
+      })
+      .authorization((allow) => allow.publicApiKey());
+
+    const transformed = schema.transform().schema;
+
+    expect(transformed).toContain('projection: { type: KEYS_ONLY }');
+    expect(transformed).not.toContain('nonKeyAttributes');
+    expect(transformed).toMatchSnapshot();
+  });
+
+  it('generates correct schema for INCLUDE projection with nonKeyAttributes', () => {
+    const schema = a
+      .schema({
+        Product: a
+          .model({
+            id: a.id().required(),
+            name: a.string().required(),
+            category: a.string().required(),
+            price: a.float().required(),
+            inStock: a.boolean().required(),
+          })
+          .secondaryIndexes((index) => [
+            index('category').projection('INCLUDE', ['name', 'price']),
+          ]),
+      })
+      .authorization((allow) => allow.publicApiKey());
+
+    const transformed = schema.transform().schema;
+
+    expect(transformed).toContain(
+      'projection: { type: INCLUDE, nonKeyAttributes: ["name", "price"] }',
+    );
+    expect(transformed).toMatchSnapshot();
+  });
+
+  it('generates correct schema for ALL projection', () => {
+    const schema = a
+      .schema({
+        Product: a
+          .model({
+            id: a.id().required(),
+            name: a.string().required(),
+            category: a.string().required(),
+            price: a.float().required(),
+            inStock: a.boolean().required(),
+          })
+          .secondaryIndexes((index) => [index('category').projection('ALL')]),
+      })
+      .authorization((allow) => allow.publicApiKey());
+
+    const transformed = schema.transform().schema;
+
+    // When projection is ALL and no explicit projection is set, it may be omitted from output
+    expect(transformed).toContain('@index');
+    expect(transformed).not.toContain('nonKeyAttributes');
+    expect(transformed).toMatchSnapshot();
+  });
+
+  it('generates correct schema for multiple indexes with different projection types', () => {
+    const schema = a
+      .schema({
+        Order: a
+          .model({
+            id: a.id().required(),
+            customerId: a.string().required(),
+            status: a.string().required(),
+            total: a.float().required(),
+            createdAt: a.datetime().required(),
+          })
+          .secondaryIndexes((index) => [
+            index('customerId').projection('ALL'),
+            index('status').projection('INCLUDE', ['customerId', 'total']),
+            index('createdAt').projection('KEYS_ONLY'),
+          ]),
+      })
+      .authorization((allow) => allow.publicApiKey());
+
+    const transformed = schema.transform().schema;
+
+    expect(transformed).toContain(
+      'projection: { type: INCLUDE, nonKeyAttributes: ["customerId", "total"] }',
+    );
+    expect(transformed).toContain('projection: { type: KEYS_ONLY }');
+    expect(transformed).toMatchSnapshot();
+  });
+
+  it('generates correct schema without projection (defaults to ALL)', () => {
+    const schema = a
+      .schema({
+        Product: a
+          .model({
+            id: a.id().required(),
+            name: a.string().required(),
+            category: a.string().required(),
+            price: a.float().required(),
+          })
+          .secondaryIndexes((index) => [
+            index('category'), // No projection specified, should default to ALL
+          ]),
+      })
+      .authorization((allow) => allow.publicApiKey());
+
+    const transformed = schema.transform().schema;
+
+    // When no projection is specified, it defaults to ALL and may be omitted from output
+    expect(transformed).toContain('@index');
+    expect(transformed).not.toContain('nonKeyAttributes');
+    expect(transformed).toMatchSnapshot();
+  });
+});
+
 describe('SchemaProcessor validation against secondary indexes', () => {
   it('throws error when a.ref() used as the index partition key points to a non-existing type', () => {
     const schema = a.schema({
@@ -138,9 +263,7 @@ describe('SchemaProcessor validation against secondary indexes', () => {
             content: a.string(),
             status: a.enum(['open', 'in_progress', 'completed']),
           })
-          .secondaryIndexes((index) => [
-            index('status').sortKeys(['title'])
-          ]),
+          .secondaryIndexes((index) => [index('status').sortKeys(['title'])]),
       })
       .authorization((allow) => allow.publicApiKey());
 
@@ -157,7 +280,9 @@ describe('SchemaProcessor validation against secondary indexes', () => {
             status: a.enum(['open', 'in_progress', 'completed']),
           })
           .secondaryIndexes((index) => [
-            index('status').sortKeys(['title']).queryField('userDefinedQueryField')
+            index('status')
+              .sortKeys(['title'])
+              .queryField('userDefinedQueryField'),
           ]),
       })
       .authorization((allow) => allow.publicApiKey());
@@ -175,7 +300,7 @@ describe('SchemaProcessor validation against secondary indexes', () => {
             status: a.enum(['open', 'in_progress', 'completed']),
           })
           .secondaryIndexes((index) => [
-            index('status').sortKeys(['title']).queryField(null)
+            index('status').sortKeys(['title']).queryField(null),
           ]),
       })
       .authorization((allow) => allow.publicApiKey());

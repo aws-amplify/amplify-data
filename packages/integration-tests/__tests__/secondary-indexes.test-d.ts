@@ -305,4 +305,49 @@ describe('secondary indexes / index queries', () => {
       });
     });
   });
+
+  describe('GSI projection types', () => {
+    const schema = a
+      .schema({
+        Product: a
+          .model({
+            id: a.id().required(),
+            name: a.string().required(),
+            category: a.string().required(),
+            price: a.float().required(),
+            inStock: a.boolean().required(),
+            description: a.string(),
+          })
+          .secondaryIndexes((index) => [
+            index('category').projection('KEYS_ONLY'),
+            index('name').projection('INCLUDE', ['price', 'inStock']),
+            index('price'), // No projection specified - should default to ALL
+          ]),
+      })
+      .authorization((allow) => allow.publicApiKey());
+
+    type Schema = ClientSchema<typeof schema>;
+    const client = generateClient<Schema>();
+
+    test('KEYS_ONLY projection generates valid query function', () => {
+      client.models.Product.listProductByCategory({ category: 'electronics' });
+      
+      // @ts-expect-error wrong field type
+      client.models.Product.listProductByCategory({ category: 123 });
+    });
+
+    test('INCLUDE projection generates valid query function', () => {
+      client.models.Product.listProductByName({ name: 'laptop' });
+      
+      // @ts-expect-error wrong field type
+      client.models.Product.listProductByName({ name: 123 });
+    });
+
+    test('default projection (ALL) generates valid query function', () => {
+      client.models.Product.listProductByPrice({ price: 99.99 });
+      
+      // @ts-expect-error wrong field type
+      client.models.Product.listProductByPrice({ price: 'expensive' });
+    });
+  });
 });

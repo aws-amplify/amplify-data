@@ -1,5 +1,59 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`GSI projection functionality generates correct schema for ALL projection 1`] = `
+"type Product @model @auth(rules: [{allow: public, provider: apiKey}])
+{
+  id: ID! @primaryKey
+  name: String!
+  category: String! @index(queryField: "listProductByCategory")
+  price: Float!
+  inStock: Boolean!
+}"
+`;
+
+exports[`GSI projection functionality generates correct schema for INCLUDE projection with nonKeyAttributes 1`] = `
+"type Product @model @auth(rules: [{allow: public, provider: apiKey}])
+{
+  id: ID! @primaryKey
+  name: String!
+  category: String! @index(queryField: "listProductByCategory", projection: { type: INCLUDE, nonKeyAttributes: ["name", "price"] })
+  price: Float!
+  inStock: Boolean!
+}"
+`;
+
+exports[`GSI projection functionality generates correct schema for KEYS_ONLY projection 1`] = `
+"type Product @model @auth(rules: [{allow: public, provider: apiKey}])
+{
+  id: ID! @primaryKey
+  name: String!
+  category: String! @index(queryField: "listProductByCategory", projection: { type: KEYS_ONLY })
+  price: Float!
+  inStock: Boolean!
+}"
+`;
+
+exports[`GSI projection functionality generates correct schema for multiple indexes with different projection types 1`] = `
+"type Order @model @auth(rules: [{allow: public, provider: apiKey}])
+{
+  id: ID! @primaryKey
+  customerId: String! @index(queryField: "listOrderByCustomerId")
+  status: String! @index(queryField: "listOrderByStatus", projection: { type: INCLUDE, nonKeyAttributes: ["customerId", "total"] })
+  total: Float!
+  createdAt: AWSDateTime! @index(queryField: "listOrderByCreatedAt", projection: { type: KEYS_ONLY })
+}"
+`;
+
+exports[`GSI projection functionality generates correct schema without projection (defaults to ALL) 1`] = `
+"type Product @model @auth(rules: [{allow: public, provider: apiKey}])
+{
+  id: ID! @primaryKey
+  name: String!
+  category: String! @index(queryField: "listProductByCategory")
+  price: Float!
+}"
+`;
+
 exports[`SchemaProcessor validation against secondary indexes creates a queryField with a default name 1`] = `
 "type Todo @model @auth(rules: [{allow: public, provider: apiKey}])
 {
