@@ -628,6 +628,107 @@ type widget @model @auth(rules: [{allow: owner, ownerField: "owner"}])
 }"
 `;
 
+exports[`model auth rules owner.inGroup() - owner auth with required group membership can chain owner.inGroup() with identityClaim 1`] = `
+"type widget @model @auth(rules: [{allow: owner, ownerField: "owner", groups: ["AdminGroup"], identityClaim: "user_id"}])
+{
+  title: String!
+}"
+`;
+
+exports[`model auth rules owner.inGroup() - owner auth with required group membership can chain owner.inGroup() with operations 1`] = `
+"type widget @model @auth(rules: [{allow: owner, operations: [create, read, update], ownerField: "owner", groups: ["AdminGroup"]}])
+{
+  title: String!
+}"
+`;
+
+exports[`model auth rules owner.inGroup() - owner auth with required group membership can define owner auth with inGroup requirement 1`] = `
+"type widget @model @auth(rules: [{allow: owner, ownerField: "owner", groups: ["AdminGroup"]}])
+{
+  title: String!
+}"
+`;
+
+exports[`model auth rules owner.inGroup() - owner auth with required group membership can define owner auth with multiple inGroup requirements 1`] = `
+"type widget @model @auth(rules: [{allow: owner, ownerField: "owner", groups: ["AdminGroup", "SuperUserGroup"]}])
+{
+  title: String!
+}"
+`;
+
+exports[`model auth rules owner.inGroup() - owner auth with required group membership can define ownerDefinedIn with inGroup requirement 1`] = `
+"type widget @model @auth(rules: [{allow: owner, ownerField: "customOwnerField", groups: ["AdminGroup"]}])
+{
+  title: String!
+}"
+`;
+
+exports[`model auth rules owner.inGroup() - owner auth with required group membership can define ownersDefinedIn with inGroup requirement 1`] = `
+"type widget @model @auth(rules: [{allow: owner, ownerField: "editors", groups: ["EditorGroup"]}])
+{
+  title: String!
+}"
+`;
+
+exports[`model auth rules owner.inGroup() combined with group() - rules should not merge multiple owner rules with different inGroup requirements remain separate 1`] = `
+"type widget @model @auth(rules: [{allow: owner, operations: [create, read, update, delete], ownerField: "owner", groups: ["AdminGroup"]},
+  {allow: owner, operations: [read], ownerField: "reviewer", groups: ["ReviewerGroup"]}])
+{
+  title: String!
+}"
+`;
+
+exports[`model auth rules owner.inGroup() combined with group() - rules should not merge owner.inGroup() and group() with same group remain as separate rules 1`] = `
+"type widget @model @auth(rules: [{allow: owner, ownerField: "owner", groups: ["AdminGroup"]},
+  {allow: groups, groups: ["AdminGroup"]}])
+{
+  title: String!
+}"
+`;
+
+exports[`model auth rules owner.inGroup() combined with group() - rules should not merge owner.inGroup() and groups() with overlapping groups remain as separate rules 1`] = `
+"type widget @model @auth(rules: [{allow: owner, ownerField: "owner", groups: ["AdminGroup", "ModeratorGroup"]},
+  {allow: groups, groups: ["AdminGroup", "UserGroup"]}])
+{
+  title: String!
+}"
+`;
+
+exports[`model auth rules owner.inGroup() combined with group() - rules should not merge owner.inGroup() combined with group() and authenticated() produces correct output 1`] = `
+"type widget @model @auth(rules: [{allow: owner, ownerField: "owner", groups: ["AdminGroup"]},
+  {allow: groups, operations: [read], groups: ["AdminGroup"]},
+  {allow: private, operations: [read]}])
+{
+  title: String!
+}"
+`;
+
+exports[`model auth rules owner.inGroup() combined with group() - rules should not merge owner.inGroup() with different groups and different permissions remain separate 1`] = `
+"type widget @model @auth(rules: [{allow: owner, operations: [read], ownerField: "owner", groups: ["ReadersGroup"]},
+  {allow: owner, operations: [create, update, delete], ownerField: "owner", groups: ["WritersGroup"]}])
+{
+  title: String!
+}"
+`;
+
+exports[`model auth rules owner.inGroup() combined with group() - rules should not merge owner.inGroup() with overlapping groups but different permissions remain separate 1`] = `
+"type widget @model @auth(rules: [{allow: owner, operations: [read, update], ownerField: "owner", groups: ["AdminGroup", "ModeratorGroup"]},
+  {allow: owner, operations: [create, delete], ownerField: "owner", groups: ["AdminGroup", "SuperUserGroup"]}])
+{
+  title: String!
+}"
+`;
+
+exports[`model auth rules owner.inGroup() combined with group() - rules should not merge ownerDefinedIn.inGroup() with different groups and permissions on same field 1`] = `
+"type widget @model @auth(rules: [{allow: owner, operations: [read], ownerField: "createdBy", groups: ["ViewerGroup"]},
+  {allow: owner, operations: [read, update], ownerField: "createdBy", groups: ["EditorGroup"]},
+  {allow: owner, operations: [create, read, update, delete], ownerField: "createdBy", groups: ["AdminGroup"]}])
+{
+  title: String!
+  createdBy: String
+}"
+`;
+
 exports[`secondary indexes generates a primary key AND secondary index annotation with attributes 1`] = `
 "type widget @model @auth(rules: [{allow: public, provider: apiKey}])
 {

@@ -802,6 +802,8 @@ function calculateAuth(authorization: Authorization<any, any, any>[]) {
       }
     }
 
+    // For group strategy, groups is a list of allowed groups
+    // For owner strategy with inGroup(), groups is a list of required groups (AND condition)
     if (rule.groups) {
       // does `group` need to be escaped?
       ruleParts.push(
