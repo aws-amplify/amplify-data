@@ -97,6 +97,7 @@
     "cookie": "^0.7.2",
     "qs": "^6.15.0",
     "@smithy/config-resolver": "^4.4.0",
-    "lodash": "^4.17.23"
+    "lodash": "^4.17.23",
+    "fast-xml-parser": "^5.3.6"
   }
 }
