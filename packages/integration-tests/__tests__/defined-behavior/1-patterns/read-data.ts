@@ -356,6 +356,8 @@ describe('Read application data', () => {
 
     const client = generateClient<Schema>();
 
+    type T = Schema['Blog']['__meta']['flatModel'];
+
     // same way for all CRUDL: .create, .get, .update, .delete, .list, .observeQuery
     const { data: blogWithSubsetOfData, errors } = await client.models.Blog.get(
       { id: '<MY_BLOG_ID>' },
