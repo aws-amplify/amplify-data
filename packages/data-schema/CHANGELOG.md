@@ -1,5 +1,11 @@
 # @aws-amplify/data-schema
 
+## 1.25.0
+
+### Minor Changes
+
+- c42c6d1: optimize custom selection set type
+
 ## 1.24.0
 
 ### Minor Changes
