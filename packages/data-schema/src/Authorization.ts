@@ -172,6 +172,22 @@ function identityClaim<SELF extends Authorization<any, any, any>>(
   return omit(this, 'identityClaim');
 }
 
+/**
+ * Requires the owner to also be a member of one of the specified groups.
+ * This adds an additional group check to owner-based authorization.
+ *
+ * @param this Authorization object to operate against.
+ * @param groups One or more group names that the owner must belong to.
+ * @returns A copy of the Authorization object with the group requirement attached.
+ */
+function inGroup<SELF extends Authorization<any, any, any>>(
+  this: SELF,
+  ...groups: string[]
+) {
+  this[__data].groups = groups;
+  return omit(this, 'inGroup');
+}
+
 function withClaimIn<SELF extends Authorization<any, any, any>>(
   this: SELF,
   property: string,
@@ -296,6 +312,7 @@ export const allow = {
       {
         to,
         identityClaim,
+        inGroup,
       },
     );
   },
@@ -325,6 +342,7 @@ export const allow = {
       {
         to,
         identityClaim,
+        inGroup,
       },
     );
   },
@@ -359,6 +377,7 @@ export const allow = {
       {
         to,
         identityClaim,
+        inGroup,
       },
     );
   },
