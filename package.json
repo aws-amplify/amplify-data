@@ -89,12 +89,14 @@
   },
   "resolutions": {
     "cookie": "^0.7.2",
+    "minimatch": "^3.1.3",
     "qs": "^6.15.0",
     "@smithy/config-resolver": "^4.4.0",
     "lodash": "^4.17.23"
   },
   "overrides": {
     "cookie": "^0.7.2",
+    "minimatch": "^3.1.3",
     "qs": "^6.15.0",
     "@smithy/config-resolver": "^4.4.0",
     "lodash": "^4.17.23",
