@@ -571,6 +571,25 @@ describe('Secondary Indexes', () => {
       >;
     });
 
+    test('ModelPrimaryCompositeKeyInput between accepts exactly two elements', () => {
+      type SkShape = { sk1: string; sk2: number };
+      type CompositeInput = ModelPrimaryCompositeKeyInput<SkShape>;
+
+      // two-element tuple is valid
+      const validBetween: CompositeInput = {
+        between: [
+          { sk1: 'a', sk2: 1 },
+          { sk1: 'b', sk2: 2 },
+        ],
+      };
+
+      expect(validBetween.between).toHaveLength(2);
+
+      // Verify the tuple type has exactly length 2
+      type BetweenTuple = NonNullable<CompositeInput['between']>;
+      type _AssertLength = Expect<Equal<BetweenTuple['length'], 2>>;
+    });
+
     test('the generated modelIntrospection schema contains the expected index fields and key metadata', async () => {
       expect.assertions(4);
 
