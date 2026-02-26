@@ -125,7 +125,7 @@ export type SubscriptionBooleanFilters = {
  *   lt: {sk1: string; sk2: number};
  *   ge: {sk1: string; sk2: number};
  *   gt: {sk1: string; sk2: number};
- *   between: [ {sk1: string; sk2: number} ];
+ *   between: [ {sk1: string; sk2: number}, {sk1: string; sk2: number} ];
  *   beginsWith: {sk1: string; sk2: number};
  * }
  * ```
@@ -141,6 +141,6 @@ export type ModelPrimaryCompositeKeyInput<
   lt?: SkIr;
   ge?: SkIr;
   gt?: SkIr;
-  between?: [SkIr];
+  between?: [SkIr, SkIr];
   beginsWith?: SkIr;
 };
