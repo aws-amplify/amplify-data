@@ -1,5 +1,11 @@
 # @aws-amplify/data-schema
 
+## 1.25.1
+
+### Patch Changes
+
+- 60ff335: correct between type in ModelPrimaryCompositeKeyInput to accept two elements
+
 ## 1.25.0
 
 ### Minor Changes
