@@ -1829,6 +1829,14 @@ const schemaPreprocessor = (
         ? `timestamps: null, ${disabledAttrs}`
         : 'timestamps: null';
 
+      /*
+       * TODO: update @model(timestamps: null) once a longer term solution gets
+       * determined.
+       *
+       * Context: SQL schema should not be automatically inserted with timestamp
+       * fields, passing (timestamps: null) to @model to suppress this behavior
+       * as a short term solution.
+       */
       const model = `type ${typeName} @model(${modelAttrs}) ${authString}${refersToString}\n{\n  ${joined}\n}`;
       gqlModels.push(model);
     } else {
