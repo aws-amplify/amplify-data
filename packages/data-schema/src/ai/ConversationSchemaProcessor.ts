@@ -11,7 +11,7 @@ export const createConversationField = (
   typeDef: InternalConversationType,
   typeName: string,
 ): { field: string; functionHandler: LambdaFunctionDefinition } => {
-  const { aiModel, systemPrompt, handler, tools } = typeDef;
+  const { aiModel, systemPrompt, inferenceConfiguration, handler, tools } = typeDef;
   const { strategy, provider } = extractAuthorization(typeDef, typeName);
 
   const args: Record<string, string> = {
@@ -28,9 +28,35 @@ export const createConversationField = (
     systemPrompt: systemPrompt.replace(/\r?\n/g, '\\n'),
   };
 
-  const argsString = Object.entries(args)
-    .map(([key, value]) => `${key}: "${value}"`)
-    .join(', ');
+  
+    // Format inferenceConfiguration as GraphQL input syntax (not JSON)
+    const formatInferenceConfig = (config) => {
+    if (!config) return null;
+    
+    const parts = [];
+    if (config.temperature !== undefined) parts.push(`temperature: ${config.temperature}`);
+    if (config.maxTokens !== undefined) parts.push(`maxTokens: ${config.maxTokens}`);
+    if (config.topP !== undefined) parts.push(`topP: ${config.topP}`);
+    
+    return parts.length > 0 ? `{ ${parts.join(', ')} }` : null;
+    };
+
+    // Add each arg with quotes (aiModel and systemPrompt)
+    const argsParts = [];
+    for (const [key, value] of Object.entries(args)) {
+      argsParts.push(`${key}: "${value}"`);
+    }
+
+    // Add inferenceConfiguration (or null if it doesn't exist)
+    if (inferenceConfiguration) {
+      argsParts.push(`inferenceConfiguration: ${formatInferenceConfig(inferenceConfiguration)}`);
+    } else {
+      argsParts.push(`inferenceConfiguration: null`);
+    }
+
+    // Join everything with commas
+    const argsString = argsParts.join(', ');
+
 
   const authString = `, auth: { strategy: ${strategy}, provider: ${provider} }`;
   const functionHandler: LambdaFunctionDefinition = {};
