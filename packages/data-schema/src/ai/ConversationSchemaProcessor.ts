@@ -6,6 +6,7 @@ import type {
   InternalConversationType,
   DataToolDefinition,
 } from './ConversationType';
+import type { InferenceConfiguration } from './ModelType';
 
 export const createConversationField = (
   typeDef: InternalConversationType,
@@ -30,15 +31,15 @@ export const createConversationField = (
 
   
     // Format inferenceConfiguration as GraphQL input syntax (not JSON)
-    const formatInferenceConfig = (config) => {
-    if (!config) return null;
-    
-    const parts = [];
-    if (config.temperature !== undefined) parts.push(`temperature: ${config.temperature}`);
-    if (config.maxTokens !== undefined) parts.push(`maxTokens: ${config.maxTokens}`);
-    if (config.topP !== undefined) parts.push(`topP: ${config.topP}`);
-    
-    return parts.length > 0 ? `{ ${parts.join(', ')} }` : null;
+    const formatInferenceConfig = (config: InferenceConfiguration | undefined): string | null => {
+      if (!config) return null;
+      
+      const parts: string[] = [];
+      if (config.temperature !== undefined) parts.push(`temperature: ${config.temperature}`);
+      if (config.maxTokens !== undefined) parts.push(`maxTokens: ${config.maxTokens}`);
+      if (config.topP !== undefined) parts.push(`topP: ${config.topP}`);
+      
+      return parts.length > 0 ? `{ ${parts.join(', ')} }` : null;
     };
 
     // Add each arg with quotes (aiModel and systemPrompt)
@@ -47,14 +48,11 @@ export const createConversationField = (
       argsParts.push(`${key}: "${value}"`);
     }
 
-    // Add inferenceConfiguration (or null if it doesn't exist)
+    // Add inferenceConfiguration (do nothing if it doesn't exist)
     if (inferenceConfiguration) {
       argsParts.push(`inferenceConfiguration: ${formatInferenceConfig(inferenceConfiguration)}`);
-    } else {
-      argsParts.push(`inferenceConfiguration: null`);
-    }
+    } 
 
-    // Join everything with commas
     const argsString = argsParts.join(', ');
 
 
