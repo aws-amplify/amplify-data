@@ -983,6 +983,71 @@ describe('disableOperations', () => {
   });
 });
 
+describe('disableOperations on SQL models', () => {
+  const postgresConfig = configure({
+    database: {
+      identifier: 'some-identifier',
+      engine: 'postgresql',
+      connectionUri: '' as any,
+    },
+  });
+
+  it('emits timestamps: null with disabled ops for coarse-grained disable', () => {
+    const schema = postgresConfig
+      .schema({
+        widget: a
+          .model({
+            title: a.string().required(),
+          })
+          .disableOperations(['mutations', 'subscriptions']),
+      })
+      .authorization((allow) => allow.publicApiKey());
+
+    expect(schema.transform().schema).toMatchSnapshot();
+  });
+
+  it('emits timestamps: null with disabled ops for fine-grained disable', () => {
+    const schema = postgresConfig
+      .schema({
+        widget: a
+          .model({
+            title: a.string().required(),
+          })
+          .disableOperations(['get', 'update', 'onDelete']),
+      })
+      .authorization((allow) => allow.publicApiKey());
+
+    expect(schema.transform().schema).toMatchSnapshot();
+  });
+
+  it('emits timestamps: null with all ops disabled', () => {
+    const schema = postgresConfig
+      .schema({
+        widget: a
+          .model({
+            title: a.string().required(),
+          })
+          .disableOperations(['queries', 'mutations', 'subscriptions']),
+      })
+      .authorization((allow) => allow.publicApiKey());
+
+    expect(schema.transform().schema).toMatchSnapshot();
+  });
+
+  it('emits only timestamps: null when no ops are disabled', () => {
+    const schema = postgresConfig
+      .schema({
+        widget: a
+          .model({
+            title: a.string().required(),
+          }),
+      })
+      .authorization((allow) => allow.publicApiKey());
+
+    expect(schema.transform().schema).toMatchSnapshot();
+  });
+});
+
 describe("default() to GQL mapping", () => {
   const postgresConfig = configure({
     database: {
