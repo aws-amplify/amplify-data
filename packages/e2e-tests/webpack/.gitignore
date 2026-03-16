@@ -4,5 +4,3 @@ node_modules
 amplify_outputs*
 amplifyconfiguration*
 
-# lock file
-package-lock.json
