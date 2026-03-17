@@ -3,6 +3,3 @@ node_modules
 .amplify
 amplify_outputs*
 amplifyconfiguration*
-
-# lock file
-package-lock.json
