@@ -1004,8 +1004,8 @@ type Query {
   myQuery: QueryReturn @function(name: "myFn") @auth(rules: [{allow: public, provider: apiKey},
   {allow: private},
   {allow: groups, groups: ["admin", "superAdmin"]},
-  {allow: public, provider: iam},
-  {allow: private, provider: iam}])
+  {allow: public, provider: identityPool},
+  {allow: private, provider: identityPool}])
 }"
 `;
 

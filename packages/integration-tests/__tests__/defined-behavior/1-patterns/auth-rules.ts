@@ -182,7 +182,7 @@ describe('data/customize-authz', () => {
       field: 'listCustomType',
       directive: [
         '@auth(rules: [',
-        '{allow: public, provider: iam}, ',
+        '{allow: public, provider: identityPool}, ',
         '{allow: public, provider: apiKey}, ',
         '{allow: private}, ',
         '{allow: groups, groups: ["Admin"]}, ',
@@ -243,7 +243,7 @@ describe('data/customize-authz', () => {
       schema: schema.transform().schema,
       model: 'Post',
       directive:
-        '@auth(rules: [{allow: public, provider: iam, operations: [read]}, {allow: owner, ownerField: "owner"}])',
+        '@auth(rules: [{allow: public, provider: identityPool, operations: [read]}, {allow: owner, ownerField: "owner"}])',
     });
   });
 });
@@ -524,7 +524,7 @@ describe('ustomize-authz/signed-in-user-data-access', () => {
     expectSchemaModelDirective({
       schema: schema.transform().schema,
       model: 'Todo',
-      directive: `@auth(rules: [{allow: private, provider: iam}])`,
+      directive: `@auth(rules: [{allow: private, provider: identityPool}])`,
     });
   });
 });
