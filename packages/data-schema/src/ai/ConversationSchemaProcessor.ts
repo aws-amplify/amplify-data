@@ -30,7 +30,7 @@ export const createConversationField = (
   };
 
   
-    // Format inferenceConfiguration as GraphQL input syntax (not JSON)
+    // Format inferenceConfiguration as GraphQL input syntax 
     const formatInferenceConfig = (config: InferenceConfiguration | undefined): string | null => {
       if (!config) return null;
       
