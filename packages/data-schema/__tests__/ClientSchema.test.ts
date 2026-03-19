@@ -1545,57 +1545,54 @@ describe('ai routes', () => {
   });
 
   test('conversation with inferenceConfiguration', () => {
-  const schema = a.schema({
-    ChatBot: a.conversation({
-      aiModel: a.ai.model('Claude 3 Haiku'),
-      systemPrompt: 'Hello, world!',
-      inferenceConfiguration: {
-        temperature: 0.7,
-        maxTokens: 1000,
-        topP: 0.9
-      }
-    }).authorization(allow => allow.owner()),
+    const schema = a.schema({
+      ChatBot: a.conversation({
+        aiModel: a.ai.model('Claude 3 Haiku'),
+        systemPrompt: 'Hello, world!',
+        inferenceConfiguration: {
+          temperature: 0.7,
+          maxTokens: 1000,
+          topP: 0.9,
+        },
+      }).authorization((allow) => allow.owner()),
+    });
+
+    const derivedApiDefinition = schema.transform();
+    const graphql = derivedApiDefinition.schema;
+
+    expect(graphql).toMatchSnapshot();
   });
 
-  const derivedApiDefinition = schema.transform();
-  const graphql = derivedApiDefinition.schema;
-  
-  expect(graphql).toContain('inferenceConfiguration: { temperature: 0.7, maxTokens: 1000, topP: 0.9 }');
-});
+  test('conversation with partial inferenceConfiguration', () => {
+    const schema = a.schema({
+      ChatBot: a.conversation({
+        aiModel: a.ai.model('Claude 3 Haiku'),
+        systemPrompt: 'Hello, world!',
+        inferenceConfiguration: {
+          temperature: 0.5,
+        },
+      }).authorization((allow) => allow.owner()),
+    });
 
-test('conversation with partial inferenceConfiguration', () => {
-  const schema = a.schema({
-    ChatBot: a.conversation({
-      aiModel: a.ai.model('Claude 3 Haiku'),
-      systemPrompt: 'Hello, world!',
-      inferenceConfiguration: {
-        temperature: 0.5
-      }
-    }).authorization(allow => allow.owner()),
+    const derivedApiDefinition = schema.transform();
+    const graphql = derivedApiDefinition.schema;
+
+    expect(graphql).toMatchSnapshot();
   });
 
-  const derivedApiDefinition = schema.transform();
-  const graphql = derivedApiDefinition.schema;
-  
-  expect(graphql).toContain('inferenceConfiguration: { temperature: 0.5 }');
-  expect(graphql).not.toContain('maxTokens');
-  expect(graphql).not.toContain('topP');
-});
+  test('conversation without inferenceConfiguration', () => {
+    const schema = a.schema({
+      ChatBot: a.conversation({
+        aiModel: a.ai.model('Claude 3 Haiku'),
+        systemPrompt: 'Hello, world!',
+      }).authorization((allow) => allow.owner()),
+    });
 
-test('conversation without inferenceConfiguration', () => {
-  const schema = a.schema({
-    ChatBot: a.conversation({
-      aiModel: a.ai.model('Claude 3 Haiku'),
-      systemPrompt: 'Hello, world!',
-    }).authorization(allow => allow.owner()),
+    const derivedApiDefinition = schema.transform();
+    const graphql = derivedApiDefinition.schema;
+
+    expect(graphql).toMatchSnapshot();
   });
-
-  const derivedApiDefinition = schema.transform();
-  const graphql = derivedApiDefinition.schema;
-  
-  // Should not include inferenceConfiguration when not provided
-  expect(graphql).not.toContain('inferenceConfiguration');
-});
 
   test('generations', () => {
     const schema = a.schema({
