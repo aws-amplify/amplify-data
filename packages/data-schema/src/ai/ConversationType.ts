@@ -25,6 +25,8 @@ export interface ConversationMessage {
   id: string;
   role: 'user' | 'assistant';
   associatedUserMessageId?: string;
+  metrics?: { latencyMs?: number };
+  usage?: { inputTokens?: number; outputTokens?: number; totalTokens?: number };
 }
 
 // conversation route types
