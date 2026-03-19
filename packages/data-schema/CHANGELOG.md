@@ -1,5 +1,11 @@
 # @aws-amplify/data-schema
 
+## 1.25.2
+
+### Patch Changes
+
+- fb23c36: fix: honor disableOperations() on SQL models in GraphQL transform
+
 ## 1.25.1
 
 ### Patch Changes
