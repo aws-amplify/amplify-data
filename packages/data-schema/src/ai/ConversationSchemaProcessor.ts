@@ -12,7 +12,8 @@ export const createConversationField = (
   typeDef: InternalConversationType,
   typeName: string,
 ): { field: string; functionHandler: LambdaFunctionDefinition } => {
-  const { aiModel, systemPrompt, inferenceConfiguration, handler, tools } = typeDef;
+  const { aiModel, systemPrompt, inferenceConfiguration, handler, tools } =
+    typeDef;
   const { strategy, provider } = extractAuthorization(typeDef, typeName);
 
   const args: Record<string, string> = {
@@ -29,32 +30,21 @@ export const createConversationField = (
     systemPrompt: systemPrompt.replace(/\r?\n/g, '\\n'),
   };
 
-  
-    // Format inferenceConfiguration as GraphQL input syntax 
-    const formatInferenceConfig = (config: InferenceConfiguration | undefined): string | null => {
-      if (!config) return null;
-      
-      const parts: string[] = [];
-      if (config.temperature !== undefined) parts.push(`temperature: ${config.temperature}`);
-      if (config.maxTokens !== undefined) parts.push(`maxTokens: ${config.maxTokens}`);
-      if (config.topP !== undefined) parts.push(`topP: ${config.topP}`);
-      
-      return parts.length > 0 ? `{ ${parts.join(', ')} }` : null;
-    };
+  // Add each arg with quotes (aiModel and systemPrompt)
+  const argsParts = [];
+  for (const [key, value] of Object.entries(args)) {
+    argsParts.push(`${key}: "${value}"`);
+  }
 
-    // Add each arg with quotes (aiModel and systemPrompt)
-    const argsParts = [];
-    for (const [key, value] of Object.entries(args)) {
-      argsParts.push(`${key}: "${value}"`);
-    }
+  // Add inferenceConfiguration (do nothing if it doesn't exist or is empty)
+  const formattedInferenceConfig = formatInferenceConfig(
+    inferenceConfiguration,
+  );
+  if (formattedInferenceConfig) {
+    argsParts.push(`inferenceConfiguration: ${formattedInferenceConfig}`);
+  }
 
-    // Add inferenceConfiguration (do nothing if it doesn't exist)
-    if (inferenceConfiguration) {
-      argsParts.push(`inferenceConfiguration: ${formatInferenceConfig(inferenceConfiguration)}`);
-    } 
-
-    const argsString = argsParts.join(', ');
-
+  const argsString = argsParts.join(', ');
 
   const authString = `, auth: { strategy: ${strategy}, provider: ${provider} }`;
   const functionHandler: LambdaFunctionDefinition = {};
@@ -74,6 +64,25 @@ export const createConversationField = (
 
   const field = `${typeName}(conversationId: ID!, content: [AmplifyAIContentBlockInput], aiContext: AWSJSON, toolConfiguration: AmplifyAIToolConfigurationInput): AmplifyAIConversationMessage ${conversationDirective} @aws_cognito_user_pools`;
   return { field, functionHandler };
+};
+
+/**
+ * Format inferenceConfiguration as GraphQL input syntax.
+ * Returns null if config is undefined or has no valid properties.
+ */
+const formatInferenceConfig = (
+  config: InferenceConfiguration | undefined,
+): string | null => {
+  if (!config) return null;
+
+  const parts: string[] = [];
+  if (config.temperature !== undefined)
+    parts.push(`temperature: ${config.temperature}`);
+  if (config.maxTokens !== undefined)
+    parts.push(`maxTokens: ${config.maxTokens}`);
+  if (config.topP !== undefined) parts.push(`topP: ${config.topP}`);
+
+  return parts.length > 0 ? `{ ${parts.join(', ')} }` : null;
 };
 
 const isRef = (query: unknown): query is { data: InternalRef['data'] } =>
