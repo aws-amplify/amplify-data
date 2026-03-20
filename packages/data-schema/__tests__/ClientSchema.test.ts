@@ -1544,6 +1544,56 @@ describe('ai routes', () => {
     );
   });
 
+  test('conversation with inferenceConfiguration', () => {
+    const schema = a.schema({
+      ChatBot: a.conversation({
+        aiModel: a.ai.model('Claude 3 Haiku'),
+        systemPrompt: 'Hello, world!',
+        inferenceConfiguration: {
+          temperature: 0.7,
+          maxTokens: 1000,
+          topP: 0.9,
+        },
+      }).authorization((allow) => allow.owner()),
+    });
+
+    const derivedApiDefinition = schema.transform();
+    const graphql = derivedApiDefinition.schema;
+
+    expect(graphql).toMatchSnapshot();
+  });
+
+  test('conversation with partial inferenceConfiguration', () => {
+    const schema = a.schema({
+      ChatBot: a.conversation({
+        aiModel: a.ai.model('Claude 3 Haiku'),
+        systemPrompt: 'Hello, world!',
+        inferenceConfiguration: {
+          temperature: 0.5,
+        },
+      }).authorization((allow) => allow.owner()),
+    });
+
+    const derivedApiDefinition = schema.transform();
+    const graphql = derivedApiDefinition.schema;
+
+    expect(graphql).toMatchSnapshot();
+  });
+
+  test('conversation without inferenceConfiguration', () => {
+    const schema = a.schema({
+      ChatBot: a.conversation({
+        aiModel: a.ai.model('Claude 3 Haiku'),
+        systemPrompt: 'Hello, world!',
+      }).authorization((allow) => allow.owner()),
+    });
+
+    const derivedApiDefinition = schema.transform();
+    const graphql = derivedApiDefinition.schema;
+
+    expect(graphql).toMatchSnapshot();
+  });
+
   test('generations', () => {
     const schema = a.schema({
       Recipe: a
