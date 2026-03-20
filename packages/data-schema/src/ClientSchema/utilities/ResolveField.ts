@@ -112,6 +112,26 @@ type ShortCircuitBiDirectionalRelationship<
     : Field]: Model[Field];
 };
 
+/**
+ * Takes a resolved model type (which has LazyLoader relationship fields) and replaces
+ * each relationship field with the related model's resolved `type` inlined as a plain object.
+ * This is non-recursive because the inlined `type` contains LazyLoaders (functions),
+ * which ModelPathInner won't recurse into, breaking the cascade.
+ */
+type FlattenRelationships<
+  Bag extends Record<string, any>,
+  Model extends Record<string, any>,
+  RawFields extends Record<string, any>,
+> = {
+  [K in keyof Model]: K extends keyof RawFields
+    ? RawFields[K] extends ModelRelationshipField<infer RS, any, any, any>
+      ? RS['array'] extends true
+        ? Array<Bag[RS['relatedModel']]['type']>
+        : Bag[RS['relatedModel']]['type']
+      : Model[K]
+    : Model[K];
+};
+
 type ResolveRelationship<
   Bag extends Record<string, any>,
   RelationshipShape extends ModelRelationshipFieldParamShape,
@@ -130,13 +150,21 @@ type ResolveRelationship<
       RelationshipShape['array'] extends true
       ? Array<
           ShortCircuitBiDirectionalRelationship<
-            Bag[RelationshipShape['relatedModel']]['__meta']['flatModel'],
+            FlattenRelationships<
+              Bag,
+              Bag[RelationshipShape['relatedModel']]['type'],
+              Bag[RelationshipShape['relatedModel']]['__meta']['rawType']['fields']
+            >,
             ParentModelName,
             Bag[RelationshipShape['relatedModel']]['__meta']['rawType']['fields']
           >
         >
       : ShortCircuitBiDirectionalRelationship<
-          Bag[RelationshipShape['relatedModel']]['__meta']['flatModel'],
+          FlattenRelationships<
+            Bag,
+            Bag[RelationshipShape['relatedModel']]['type'],
+            Bag[RelationshipShape['relatedModel']]['__meta']['rawType']['fields']
+          >,
           ParentModelName,
           Bag[RelationshipShape['relatedModel']]['__meta']['rawType']['fields']
         >;
