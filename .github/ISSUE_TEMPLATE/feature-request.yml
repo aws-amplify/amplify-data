@@ -13,7 +13,7 @@ body:
       description: |
         Please copy and paste the output of the following command.
         ```bash
-        npm ls @aws-amplify/data-schema
+        yarn info @aws-amplify/data-schema
         ```
       render: plain text
     validations:

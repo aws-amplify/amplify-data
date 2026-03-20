@@ -19,11 +19,11 @@ jobs:
         env:
           VERSION: ${{ inputs.tsVersion }}
         working-directory: ./amplify-data
-        run: npm i typescript@$VERSION
+        run: yarn add typescript@$VERSION
       - name: Setup node and build the repository
         uses: ./amplify-data/.github/actions/node-and-build
         with:
           force: true
       - name: Run tests
         working-directory: ./amplify-data
-        run: npm run lint && npm run test
+        run: yarn lint && yarn test

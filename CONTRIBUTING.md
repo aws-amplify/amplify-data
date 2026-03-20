@@ -34,8 +34,8 @@ To send us a pull request, please:
 
 1. Fork the repository.
 1. Modify the source; please focus on the specific change you are contributing. If you also reformat all the code, it will be hard for us to focus on your change.
-1. Create a changeset with `npx changeset` (see [Creating changesets](CONTRIBUTING.md#creating-changesets) for details)
-1. Ensure all local automated tests and checks pass (`npm run check`).
+1. Create a changeset with `yarn changeset` (see [Creating changesets](CONTRIBUTING.md#creating-changesets) for details)
+1. Ensure all local automated tests and checks pass (`yarn check`).
 1. Commit to your fork using clear commit messages. [Conventional commits](https://www.conventionalcommits.org/en/v1.0.0/) are preferred.
 1. Send us a pull request, answering any default questions in the pull request template.
 1. Pay attention to any automated CI failures reported in the pull request, and stay involved in the conversation.
@@ -47,15 +47,15 @@ GitHub provides additional document on [forking a repository](https://help.githu
 
 This repo uses changesets for versioning and releasing changes.
 
-All changes that affect release artifacts must have a corresponding changeset. To create a changeset run `npx changeset`. This will start a walkthrough to author the changeset file. This file should be committed to the repo.
+All changes that affect release artifacts must have a corresponding changeset. To create a changeset run `yarn changeset`. This will start a walkthrough to author the changeset file. This file should be committed to the repo.
 
 ### Other helpful scripts
 
-`npm run check:type-perf` will let you know if your changes are passing typescript benchmark limits
+`yarn check:type-perf` will let you know if your changes are passing typescript benchmark limits
 
-`npm run vend` will start a local npm proxy and publish the local packages to this proxy so they can be installed / used as if they were published on npm
+`yarn vend` will start a local package proxy and publish the local packages to this proxy so they can be installed / used as if they were published on the registry
 
-`npm run e2e` will run the E2E test suite.
+`yarn e2e` will run the E2E test suite.
 
 ### E2E tests
 
@@ -63,18 +63,18 @@ See the [e2e-tests README](packages/e2e-tests/README.md) for more information.
 
 ### Publishing packages locally
 
-Publishing packages locally allows you to install local package changes as if they were published to NPM. This can be useful for testing or demo scenarios.
+Publishing packages locally allows you to install local package changes as if they were published to the registry. This can be useful for testing or demo scenarios.
 
-To set up a local npm proxy and publish the current local state to the proxy, run `npm run vend`.
-This will start a local npm proxy using [Verdaccio](https://verdaccio.org/) and run `changeset version` and `changeset publish`.
+To set up a local package proxy and publish the current local state to the proxy, run `yarn vend`.
+This will start a local proxy using [Verdaccio](https://verdaccio.org/) and run `changeset version` and `changeset publish`.
 
-This will also point your local npm config to the local npm proxy. At this point you can npm install any packages in the repo and it will pull from the local proxy instead of directly from npm.
+This will also point your local registry config to the local proxy. At this point you can install any packages in the repo and it will pull from the local proxy instead of directly from the registry.
 
-To stop the local server and reset your npm registry run `npm run stop:npm-proxy`.
+To stop the local server and reset your registry config run `yarn stop:npm-proxy`.
 
-To clear the proxy package cache run `npm run clean:npm-proxy`. This will stop the local proxy and remove all packages you have published.
+To clear the proxy package cache run `yarn clean:npm-proxy`. This will stop the local proxy and remove all packages you have published.
 
-To start the npm proxy without immediately publishing, run `npm run start:npm-proxy`.
+To start the proxy without immediately publishing, run `yarn start:npm-proxy`.
 
 ## Code of Conduct
 

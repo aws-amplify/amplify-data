@@ -6,16 +6,16 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "e2e-sandbox": "npm run install:no-lock && npm run test",
-    "clean": "rm -rf node_modules package-lock.json",
-    "install:no-lock": "npm i --no-package-lock",
-    "test": "NODE_OPTIONS=\"$NODE_OPTIONS --experimental-vm-modules\" npx jest"
+    "e2e-sandbox": "yarn install:no-lock && yarn e2e:test",
+    "clean": "rm -rf node_modules yarn.lock",
+    "install:no-lock": "yarn install",
+    "e2e:test": "NODE_OPTIONS=\"${NODE_OPTIONS:-} --experimental-vm-modules\" yarn dlx jest"
   },
   "devDependencies": {
     "@aws-amplify/backend": "latest",
     "@aws-amplify/backend-cli": "latest",
-    "@aws-amplify/data-schema": "file:../../../node_modules/@aws-amplify/data-schema",
-    "@aws-amplify/data-schema-types": "file:../../../node_modules/@aws-amplify/data-schema-types",
+    "@aws-amplify/data-schema": "workspace:*",
+    "@aws-amplify/data-schema-types": "workspace:*",
     "@aws-sdk/client-cloudformation": "^3.465.0",
     "@babel/plugin-transform-modules-commonjs": "^7.24.8",
     "@babel/preset-env": "^7.25.0",
