@@ -85,11 +85,12 @@
   },
   "packageManager": "yarn@4.13.0",
   "resolutions": {
-    "immutable": "^5.1.5",
-    "minimatch": "^10.2.4",
-    "fast-xml-parser": "^5.5.8",
-    "lodash": "^4.17.23",
+    "@verdaccio/core/ajv": "8.18.0",
     "eslint": "9.27.0",
-    "@verdaccio/core/ajv": "8.18.0"
+    "fast-xml-parser": "^5.5.8",
+    "immutable": "^5.1.5",
+    "lodash": "^4.17.23",
+    "minimatch": "^10.2.4",
+    "test-exclude": "^8.0.0"
   }
 }
