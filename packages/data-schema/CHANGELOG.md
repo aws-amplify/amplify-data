@@ -1,5 +1,11 @@
 # @aws-amplify/data-schema
 
+## 1.25.3
+
+### Patch Changes
+
+- cd49ad2: Fix inferenceConfiguration not being passed to Bedrock in conversation routes.
+
 ## 1.25.2
 
 ### Patch Changes
