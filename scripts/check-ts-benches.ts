@@ -10,7 +10,7 @@ const FILE_SUFFIXES = ['CRUDL', 'selection-set'];
 
 const BENCH_DEGRADATION_THRESHOLD = 1;
 
-// verbose surfaces stdout from each npx command we execute. Helpful when things aren't working as expected
+// verbose surfaces stdout from each command we execute. Helpful when things aren't working as expected
 const execa = execa_({
   verbose: 'full',
 });
@@ -94,7 +94,8 @@ async function runBenches(benchFilePaths: string[]) {
          * Template string parameters are escaped automatically by execa. For details:
          * https://github.com/sindresorhus/execa/blob/HEAD/docs/escaping.md
          */
-        await execa('npx', [
+        await execa('yarn', [
+          'dlx',
           'tsx',
           file,
           '--benchErrorOnThresholdExceeded',
@@ -113,7 +114,7 @@ async function runBenches(benchFilePaths: string[]) {
 }
 
 const REMEDIATION_INSTRUCTIONS = `
-If performance degradation is expected given the changes in this branch, run \`npm run baseline:benchmarks\` to baseline.
+If performance degradation is expected given the changes in this branch, run \`yarn baseline:benchmarks\` to baseline.
 
 Otherwise, please identify and optimize the type-level changes that are causing this performance regression.
 `;

@@ -11,7 +11,7 @@ Model relationship field definition interface
 ```typescript
 export type ModelRelationshipField<T extends ModelRelationshipFieldParamShape, RM extends string | symbol, K extends keyof ModelRelationshipField<T, RM> = never, Auth = undefined> = Omit<ModelRelationshipFieldFunctions<T, RM, K>, K> & {
     [__auth]?: Auth;
-} & Brand<typeof brandName>;
+} & Brand<typeof _brandName>;
 ```
 **References:** [ModelRelationshipField](./data-schema.modelrelationshipfield.md)
 

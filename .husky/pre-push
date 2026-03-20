@@ -1,3 +1,2 @@
-npx changeset status --since main
-npm run check:package-lock
-npm run check:api
+yarn changeset status --since main
+yarn check:api

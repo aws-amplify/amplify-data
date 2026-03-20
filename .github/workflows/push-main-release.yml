@@ -11,7 +11,7 @@ on:
       # NOTE: to run E2E tests against an `amplify-data` branch, add the name
       # of that branch (and corresponding `amplify-js-samples-staging` branch, if
       # testing sample / test changes) here.
-      # Must disable publishing to NPM prior to adding this branch to avoid
+      # Must disable publishing prior to adding this branch to avoid
       # accidentally publishing changes.
       - main
 
@@ -48,10 +48,10 @@ jobs:
           aws-region: us-west-2
       - name: Install Sandbox E2E Dependencies
         working-directory: ./amplify-data
-        run: npm run e2e-sandbox:install
+        run: yarn e2e-sandbox:install
       - name: Run E2E sandbox tests
         working-directory: ./amplify-data
-        run: npm run e2e-sandbox:test
+        run: yarn e2e-sandbox:test
   release-verification-testing:
     secrets: inherit
     uses: ./.github/workflows/callable-release-verification.yml
@@ -60,4 +60,4 @@ jobs:
       - release-verification-testing
       - sandbox_test
     secrets: inherit
-    uses: ./.github/workflows/callable-npm-publish-release.yml
+    uses: ./.github/workflows/callable-publish-release.yml

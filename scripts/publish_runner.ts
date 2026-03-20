@@ -1,6 +1,6 @@
 import { Options, execa } from 'execa';
 import { runVersion } from './version_runner.js';
-import { NpmClient } from './components/npm_client.js';
+import { RegistryClient } from './components/registry_client.js';
 import fs from 'fs';
 import path from 'path';
 
@@ -49,7 +49,7 @@ export const runPublish = async (props?: PublishOptions, cwd?: string) => {
   // if we are publishing to npm, we assume that the npmrc has already been configured properly by upstream code
   // (ie the changeset gh action automatically configures this)
   if (options.useLocalRegistry) {
-    const npmClient = new NpmClient(null, cwd);
+    const npmClient = new RegistryClient(null, cwd);
     await npmClient.configureNpmRc();
   }
 
@@ -74,7 +74,7 @@ export const runPublish = async (props?: PublishOptions, cwd?: string) => {
     ...(options.useLocalRegistry
       ? {
           env: {
-            npm_config_registry: 'http://localhost:4873/',
+            YARN_NPM_REGISTRY_SERVER: 'http://localhost:4873/',
             NODE_ENV: 'production',
           },
         }

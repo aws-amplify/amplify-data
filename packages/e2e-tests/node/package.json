@@ -6,16 +6,16 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "e2e-node": "npm run install:no-lock && npm run test",
-    "clean": "rm -rf node_modules package-lock.json",
-    "install:no-lock": "npm i --no-package-lock",
-    "test": "jest"
+    "e2e-node": "yarn install:no-lock && yarn e2e:test",
+    "clean": "rm -rf node_modules yarn.lock",
+    "install:no-lock": "yarn install",
+    "e2e:test": "jest"
   },
   "devDependencies": {
     "@aws-amplify/backend": "^1.0.4",
     "@aws-amplify/backend-cli": "^1.1.0",
-    "@aws-amplify/data-schema": "file:../../../node_modules/@aws-amplify/data-schema",
-    "@aws-amplify/data-schema-types": "file:../../../node_modules/@aws-amplify/data-schema-types",
+    "@aws-amplify/data-schema": "workspace:*",
+    "@aws-amplify/data-schema-types": "workspace:*",
     "@tsd/typescript": "^5.5.3",
     "@types/jest": "^29.5.12",
     "@types/node": "20.8.3",

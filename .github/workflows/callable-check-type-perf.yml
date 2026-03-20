@@ -15,7 +15,7 @@ jobs:
         uses: ./amplify-data/.github/actions/node-and-build
       - name: Run checks
         working-directory: ./amplify-data
-        run: npm run check:type-perf
+        run: yarn check:type-perf
       - name: Type Perf Check Instructions
         if: failure()
         run: |
@@ -26,7 +26,7 @@ jobs:
           echo
           echo "Check the error message above to see which benchmark file(s) are affected."
           echo 
-          echo "If this change is expected, please baseline the benchmarks. Run `npm run baseline:benchmarks`"
+          echo "If this change is expected, please baseline the benchmarks. Run `yarn baseline:benchmarks`"
           echo
           echo "Then commit and push the changes."
           echo

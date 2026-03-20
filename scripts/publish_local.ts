@@ -37,3 +37,10 @@ if (!keepGitDiff) {
     path.join('packages', '**', 'CHANGELOG.md'),
   ]);
 }
+
+await execa('yarn', [
+  'config',
+  'set',
+  'npmRegistryServer',
+  'https://registry.npmjs.org/',
+]);

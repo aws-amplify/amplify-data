@@ -1,10 +1,15 @@
 import { execa, execaCommand } from 'execa';
 import { existsSync } from 'fs';
 import { readFile, unlink } from 'fs/promises';
+import { GitClient } from './components/git_client.js';
 
 const EXPECTED_URL = 'http://localhost:4873';
 const LOG_FILE = 'verdaccio-logs.txt';
 const STARTUP_TIMEOUT_MS = 10000;
+
+// Check for clean working tree before modifying .yarnrc.yml
+const gitClient = new GitClient();
+await gitClient.ensureWorkingTreeIsClean();
 
 /**
  * Starts [Verdaccio](https://verdaccio.org/) in a background process.
@@ -50,8 +55,5 @@ console.log(`Local npm proxy running at ${EXPECTED_URL}.`);
  * Template string parameters are escaped automatically by execa. For details:
  * https://github.com/sindresorhus/execa/blob/HEAD/docs/escaping.md
  */
-await execa('npm', ['config', 'set', 'registry', EXPECTED_URL]);
-console.log(`Set npm registry to ${EXPECTED_URL}`);
-
-await execa('yarn', ['config', 'set', 'registry', EXPECTED_URL]);
+await execa('yarn', ['config', 'set', 'npmRegistryServer', EXPECTED_URL]);
 console.log(`Set yarn registry to ${EXPECTED_URL}`);
