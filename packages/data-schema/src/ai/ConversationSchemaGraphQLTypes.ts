@@ -12,8 +12,6 @@ interface AmplifyAIConversationMessage {
   content: [AmplifyAIContentBlock]
   aiContext: AWSJSON
   toolConfiguration: AmplifyAIToolConfiguration
-  metrics: AmplifyAIMetrics
-  usage: AmplifyAIUsage
   createdAt: AWSDateTime
   updatedAt: AWSDateTime
   owner: String
