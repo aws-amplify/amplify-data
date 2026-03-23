@@ -1,3 +1,4 @@
+allow-licenses:
   # OSPO config from https://github.com/amazon-ospo/dependency-review-config/blob/main/default/dependency-review-config.yml
   - 0BSD
   - Apache-2.0
@@ -31,3 +32,34 @@
   - CDDL-1.1
   # Extending with approved licenses
   - CC-BY-4.0
+  - CC0-1.0
+  - MIT-0
+  - MITNFA
+  - BlueOak-1.0.0
+  - Artistic-2.0
+  - AFL-2.1
+  - AFL-3.0
+  - BSD-2-Clause-Views
+
+# Packages exempt from license checks (LGPL/GPL compound licenses, no detectable license, or non-SPDX license refs)
+allow-dependencies-licenses:
+  - "pkg:npm/@img/sharp-libvips-darwin-arm64"
+  - "pkg:npm/@img/sharp-libvips-darwin-x64"
+  - "pkg:npm/@img/sharp-libvips-linux-arm"
+  - "pkg:npm/@img/sharp-libvips-linux-arm64"
+  - "pkg:npm/@img/sharp-libvips-linux-ppc64"
+  - "pkg:npm/@img/sharp-libvips-linux-riscv64"
+  - "pkg:npm/@img/sharp-libvips-linux-s390x"
+  - "pkg:npm/@img/sharp-libvips-linux-x64"
+  - "pkg:npm/@img/sharp-libvips-linuxmusl-arm64"
+  - "pkg:npm/@img/sharp-libvips-linuxmusl-x64"
+  - "pkg:npm/@img/sharp-win32-arm64"
+  - "pkg:npm/@img/sharp-win32-ia32"
+  - "pkg:npm/@img/sharp-win32-x64"
+  - "pkg:npm/@verdaccio/file-locking"
+  - "pkg:npm/@verdaccio/logger-prettify"
+  - "pkg:npm/@verdaccio/search-indexer"
+  - "pkg:npm/signedsource"
+
+allow-ghsas:
+  - GHSA-6475-r3vj-m8vf # @smithy/config-resolver low severity defense-in-depth enhancement
