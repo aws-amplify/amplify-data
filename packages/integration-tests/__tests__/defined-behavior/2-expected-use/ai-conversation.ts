@@ -986,4 +986,82 @@ describe('AI Conversation Routes', () => {
       });
     });
   });
+
+  describe('Inference Configuration', () => {
+    test('conversation with full inferenceConfiguration', () => {
+      const schema = a.schema({
+        chatBot: a.conversation({
+          aiModel: a.ai.model('Claude 3 Haiku'),
+          systemPrompt: 'You are a helpful chatbot.',
+          inferenceConfiguration: {
+            temperature: 0.3,
+            maxTokens: 4096,
+            topP: 0.9,
+          },
+        }).authorization((allow) => allow.owner()),
+      });
+
+      expectSchemaFieldDirective({
+        schema: schema.transform().schema,
+        model: 'Mutation',
+        field: 'chatBot',
+        directive: [
+          '@conversation(',
+          'aiModel: "anthropic.claude-3-haiku-20240307-v1:0", ',
+          'systemPrompt: "You are a helpful chatbot.", ',
+          'inferenceConfiguration: {temperature: 0.3, maxTokens: 4096, topP: 0.9}, ',
+          'auth: {strategy: owner, provider: userPools}',
+          ')',
+        ].join(''),
+      });
+    });
+
+    test('conversation with partial inferenceConfiguration', () => {
+      const schema = a.schema({
+        chatBot: a.conversation({
+          aiModel: a.ai.model('Claude 3 Haiku'),
+          systemPrompt: 'You are a helpful chatbot.',
+          inferenceConfiguration: {
+            temperature: 0.5,
+          },
+        }).authorization((allow) => allow.owner()),
+      });
+
+      expectSchemaFieldDirective({
+        schema: schema.transform().schema,
+        model: 'Mutation',
+        field: 'chatBot',
+        directive: [
+          '@conversation(',
+          'aiModel: "anthropic.claude-3-haiku-20240307-v1:0", ',
+          'systemPrompt: "You are a helpful chatbot.", ',
+          'inferenceConfiguration: {temperature: 0.5}, ',
+          'auth: {strategy: owner, provider: userPools}',
+          ')',
+        ].join(''),
+      });
+    });
+
+    test('conversation without inferenceConfiguration', () => {
+      const schema = a.schema({
+        chatBot: a.conversation({
+          aiModel: a.ai.model('Claude 3 Haiku'),
+          systemPrompt: 'You are a helpful chatbot.',
+        }).authorization((allow) => allow.owner()),
+      });
+
+      expectSchemaFieldDirective({
+        schema: schema.transform().schema,
+        model: 'Mutation',
+        field: 'chatBot',
+        directive: [
+          '@conversation(',
+          'aiModel: "anthropic.claude-3-haiku-20240307-v1:0", ',
+          'systemPrompt: "You are a helpful chatbot.", ',
+          'auth: {strategy: owner, provider: userPools}',
+          ')',
+        ].join(''),
+      });
+    });
+  });
 });

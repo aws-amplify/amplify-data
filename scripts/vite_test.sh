@@ -8,19 +8,15 @@ ENV=$1
 
 # Function to run dev environment
 run_dev() {
-    echo "dev npm --prefix packages/e2e-tests/vite install && npm --prefix packages/e2e-tests/vite run dev"
-    npm --prefix packages/e2e-tests/vite install && npm --prefix packages/e2e-tests/vite run dev &
+    echo "dev npm ci && npm run dev (in packages/e2e-tests/vite)"
+    (cd packages/e2e-tests/vite && npm ci && exec npm run dev) &
     NPM_PID=$!
 }
 
 # Function to run prod environment
 run_prod() {
-    echo "npm --prefix packages/e2e-tests/vite install && npm --prefix packages/e2e-tests/vite run build && 
-    npm --prefix packages/e2e-tests/vite run serve"
-
-    npm --prefix packages/e2e-tests/vite install && 
-    npm --prefix packages/e2e-tests/vite run build && 
-    npm --prefix packages/e2e-tests/vite run serve &
+    echo "npm ci && npm run build && npm run serve (in packages/e2e-tests/vite)"
+    (cd packages/e2e-tests/vite && npm ci && npm run build && exec npm run serve) &
     NPM_PID=$!
 }
 
@@ -50,15 +46,23 @@ check_server() {
 if check_server; then
     echo "Test pass!"
     # Kill the npm process
-    kill $NPM_PID
-    timeout 10s wait $NPM_PID 2>/dev/null || kill -9 $NPM_PID
+    kill $NPM_PID 2>/dev/null
+    ( sleep 10; kill -9 $NPM_PID 2>/dev/null ) &
+    WATCHDOG=$!
+    wait $NPM_PID 2>/dev/null
+    kill $WATCHDOG 2>/dev/null
+    wait $WATCHDOG 2>/dev/null
     echo "Server process terminated."
     exit 0
 else
     echo "Error: Command failed with exit code 1."
     # Kill the npm process
-    kill $NPM_PID
-    timeout 10s wait $NPM_PID 2>/dev/null || kill -9 $NPM_PID
+    kill $NPM_PID 2>/dev/null
+    ( sleep 10; kill -9 $NPM_PID 2>/dev/null ) &
+    WATCHDOG=$!
+    wait $NPM_PID 2>/dev/null
+    kill $WATCHDOG 2>/dev/null
+    wait $WATCHDOG 2>/dev/null
     echo "Server process terminated."
     exit 1
 fi

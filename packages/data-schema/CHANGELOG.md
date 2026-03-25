@@ -1,5 +1,49 @@
 # @aws-amplify/data-schema
 
+## 1.25.3
+
+### Patch Changes
+
+- cd49ad2: Fix inferenceConfiguration not being passed to Bedrock in conversation routes.
+
+## 1.25.2
+
+### Patch Changes
+
+- fb23c36: fix: honor disableOperations() on SQL models in GraphQL transform
+
+## 1.25.1
+
+### Patch Changes
+
+- 60ff335: correct between type in ModelPrimaryCompositeKeyInput to accept two elements
+
+## 1.25.0
+
+### Minor Changes
+
+- c42c6d1: optimize custom selection set type
+
+## 1.24.0
+
+### Minor Changes
+
+- d7aa924: add support for GSI projection types
+
+## 1.23.0
+
+### Minor Changes
+
+- b1719f8: feat: added support for Claude 4.5 models family with Bedrock's global inference profile
+
+## 1.22.2
+
+### Patch Changes
+
+- c79737f: chore: documentation updates
+- Updated dependencies [c79737f]
+  - @aws-amplify/data-schema-types@1.2.1
+
 ## 1.22.1
 
 ### Patch Changes

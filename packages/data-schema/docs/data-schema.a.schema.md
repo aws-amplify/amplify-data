@@ -51,6 +51,7 @@ The API and data model definition
 
 </td></tr>
 </tbody></table>
+
 **Returns:**
 
 [ModelSchema](./data-schema.modelschema.md)<!-- -->&lt;{ types: Types; authorization: \[\]; configuration: any; }, never&gt;

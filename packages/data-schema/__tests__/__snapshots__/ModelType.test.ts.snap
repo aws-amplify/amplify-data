@@ -51,6 +51,34 @@ exports[`disableOperations exhaustive fine-grained 1`] = `
 }"
 `;
 
+exports[`disableOperations on SQL models emits only timestamps: null when no ops are disabled 1`] = `
+"type widget @model(timestamps: null) @auth(rules: [{allow: public, provider: apiKey}])
+{
+  title: String!
+}"
+`;
+
+exports[`disableOperations on SQL models emits timestamps: null with all ops disabled 1`] = `
+"type widget @model(timestamps: null, queries:null,mutations:null,subscriptions:null) @auth(rules: [{allow: public, provider: apiKey}])
+{
+  title: String!
+}"
+`;
+
+exports[`disableOperations on SQL models emits timestamps: null with disabled ops for coarse-grained disable 1`] = `
+"type widget @model(timestamps: null, mutations:null,subscriptions:null) @auth(rules: [{allow: public, provider: apiKey}])
+{
+  title: String!
+}"
+`;
+
+exports[`disableOperations on SQL models emits timestamps: null with disabled ops for fine-grained disable 1`] = `
+"type widget @model(timestamps: null, queries:{get:null},mutations:{update:null},subscriptions:{onDelete:null}) @auth(rules: [{allow: public, provider: apiKey}])
+{
+  title: String!
+}"
+`;
+
 exports[`disableOperations passes expected @model attributes for coarse-grained disable op 1`] = `
 "type widget @model(mutations:null,subscriptions:null) @auth(rules: [{allow: public, provider: apiKey}])
 {
