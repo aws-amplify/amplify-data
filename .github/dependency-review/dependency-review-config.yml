@@ -40,6 +40,7 @@ allow-licenses:
   - AFL-2.1
   - AFL-3.0
   - BSD-2-Clause-Views
+  - LicenseRef-scancode-unicode
 
 # Packages exempt from license checks (LGPL/GPL compound licenses, no detectable license, or non-SPDX license refs)
 allow-dependencies-licenses:

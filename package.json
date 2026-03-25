@@ -95,6 +95,7 @@
     "immutable": "^5.1.5",
     "lodash": "^4.17.23",
     "minimatch": "^10.2.4",
-    "test-exclude": "^8.0.0"
+    "test-exclude": "^8.0.0",
+    "esbuild": "^0.25.0"
   }
 }
