@@ -15,4 +15,4 @@ jobs:
         uses: ./amplify-data/.github/actions/node-and-build
       - name: Run tests
         working-directory: ./amplify-data
-        run: npm run lint && npm run test
+        run: yarn lint && yarn test

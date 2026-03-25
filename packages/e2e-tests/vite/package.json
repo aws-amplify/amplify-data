@@ -1,5 +1,6 @@
 {
   "name": "vite",
+  "private": true,
   "version": "1.0.0",
   "description": "",
   "type": "module",
@@ -7,8 +8,8 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview --port 3000",
-    "install:no-lock": "npm i --no-package-lock",
-    "clean": "rm -rf node_modules package-lock.json",
+    "install:no-lock": "yarn install",
+    "clean": "rm -rf node_modules yarn.lock",
     "serve": "vite preview --port 3000"
   },
   "keywords": [],
@@ -17,8 +18,8 @@
   "devDependencies": {
     "@aws-amplify/backend": "^1.13.0",
     "@aws-amplify/backend-cli": "^1.4.6",
-    "@aws-amplify/data-schema": "file:../../../packages/data-schema",
-    "@aws-amplify/data-schema-types": "file:../../../packages/data-schema-types",
+    "@aws-amplify/data-schema": "workspace:*",
+    "@aws-amplify/data-schema-types": "workspace:*",
     "aws-cdk": "^2.175.1",
     "aws-cdk-lib": "^2.175.1",
     "constructs": "^10.4.2",
@@ -29,7 +30,7 @@
   "dependencies": {
     "aws-amplify": "^6.12.0"
   },
-  "overrides": {
+  "resolutions": {
     "immutable": "^3.8.3",
     "fast-xml-parser": "^4.5.4",
     "minimatch": "^10.2.3",

@@ -239,7 +239,6 @@ export function initializeModel(
         case connectionType.BELONGS_TO: {
           const sortKeyValues = relatedModelSKFieldNames.reduce(
             // TODO(Eslint): is this implementation correct?
-            // eslint-disable-next-line array-callback-return
             (acc: Record<string, any>, curVal) => {
               if (record[curVal]) {
                 acc[curVal] = record[curVal];
@@ -1042,12 +1041,10 @@ export function generateGraphQLDocument(
         });
       graphQLOperationType ?? (graphQLOperationType = 'mutation');
     // TODO(Eslint): this this case clause correct without the break statement?
-    // eslint-disable-next-line no-fallthrough
     case 'GET':
       graphQLArguments ?? (graphQLArguments = getPkArgs);
       graphQLSelectionSet ?? (graphQLSelectionSet = selectionSetFields);
     // TODO(Eslint): this this case clause correct without the break statement?
-    // eslint-disable-next-line no-fallthrough
     case 'LIST':
       graphQLArguments ??
         (graphQLArguments = {
@@ -1066,7 +1063,6 @@ export function generateGraphQLDocument(
       graphQLSelectionSet ??
         (graphQLSelectionSet = `items { ${selectionSetFields} } nextToken __typename`);
     // TODO(Eslint): this this case clause correct without the break statement?
-    // eslint-disable-next-line no-fallthrough
     case 'INDEX_QUERY':
       graphQLArguments ??
         (graphQLArguments = {
@@ -1080,7 +1076,6 @@ export function generateGraphQLDocument(
       graphQLSelectionSet ??
         (graphQLSelectionSet = `items { ${selectionSetFields} } nextToken __typename`);
     // TODO(Eslint): this this case clause correct without the break statement?
-    // eslint-disable-next-line no-fallthrough
     case 'ONCREATE':
     case 'ONUPDATE':
     case 'ONDELETE':

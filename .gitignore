@@ -21,3 +21,6 @@ packages/*/temp
 # rollup
 **/.rollup.cache
 **/buildMeta
+
+# Yarn
+.yarn/*

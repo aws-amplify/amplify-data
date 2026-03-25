@@ -5,15 +5,16 @@
   "main": "index.js",
   "private": true,
   "scripts": {
-    "test": "npm run tsc:schema",
-    "tsc:schema": "npx tsc --noEmit"
+    "test": "yarn tsc:schema",
+    "tsc:schema": "tsc --noEmit"
   },
   "dependencies": {
     "@aws-amplify/data-schema": "*",
     "aws-amplify": "*"
   },
   "devDependencies": {
-    "@types/node": "^20.16.2"
+    "@types/node": "^20.16.2",
+    "typescript": "^5.9.3"
   },
   "keywords": [],
   "author": "",

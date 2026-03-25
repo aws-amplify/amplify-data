@@ -12,8 +12,8 @@ The inferred type of applicationFeatureName cannot be named without a reference 
 
 This error tells you which file has a missing export, but not which specific export is needed. To resolve this:
 
-1. Review the `applicationFeatureName` library usage and add it to an example in the [exports-test](packages/e2e-tests/exports-test/src/index.ts) and run `npm run test` to confirm that you change breaks the test build as you expect.
-1. Add `export * from './FileName'` to the [library index](packages/data-schema/src/index.ts) and run `npm run build && npm run test` to confirm that this fixes the error.
+1. Review the `applicationFeatureName` library usage and add it to an example in the [exports-test](packages/e2e-tests/exports-test/src/index.ts) and run `yarn test` to confirm that you change breaks the test build as you expect.
+1. Add `export * from './FileName'` to the [library index](packages/data-schema/src/index.ts) and run `yarn build && yarn test` to confirm that this fixes the error.
 1. Now review the `exports` from `./FileName`, replacing the `*` with a list of all of the exported types `export type { ... } from './FileName';`
-1. With all exports re-exported, `npm run build && npm run test` should fix the test application. Experiment removing imports and rerunning this test command until you have the minimum set of required exports to resolve the build issue under test.
+1. With all exports re-exported, `yarn build && yarn test` should fix the test application. Experiment removing imports and rerunning this test command until you have the minimum set of required exports to resolve the build issue under test.
 1. For each type exported by your change, add the following comments/docs.
