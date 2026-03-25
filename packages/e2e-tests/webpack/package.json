@@ -1,5 +1,5 @@
 {
-  "name": "webpack",
+  "name": "@aws-amplify/e2e-webpack-tests",
   "private": true,
   "version": "1.0.0",
   "description": "",

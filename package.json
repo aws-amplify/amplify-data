@@ -9,6 +9,10 @@
   "workspaces": [
     "packages/*",
     "packages/e2e-tests/exports-test",
+    "packages/e2e-tests/node",
+    "packages/e2e-tests/sandbox",
+    "packages/e2e-tests/vite",
+    "packages/e2e-tests/webpack",
     "examples/*"
   ],
   "type": "module",

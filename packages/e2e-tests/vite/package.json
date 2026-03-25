@@ -1,5 +1,5 @@
 {
-  "name": "vite",
+  "name": "@aws-amplify/e2e-vite-tests",
   "private": true,
   "version": "1.0.0",
   "description": "",
