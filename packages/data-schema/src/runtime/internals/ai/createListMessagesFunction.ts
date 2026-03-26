@@ -40,8 +40,6 @@ export const createListMessagesFunction =
       ...input,
       filter: { conversationId: { eq: conversationId } },
     });
-    console.log('[listMessages] conversationMessageModel fields:', Object.keys(conversationMessageModel.fields));
-    console.log('[listMessages] raw data from AppSync:', JSON.stringify(data, null, 2));
     return {
       data: data.map((item: any) => convertItemToConversationMessage(item)),
       nextToken,
