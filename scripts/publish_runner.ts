@@ -75,6 +75,7 @@ export const runPublish = async (props?: PublishOptions, cwd?: string) => {
       ? {
           env: {
             YARN_NPM_REGISTRY_SERVER: 'http://localhost:4873/',
+            NPM_REGISTRY_SERVER: 'http://localhost:4873/',
             NODE_ENV: 'production',
           },
         }

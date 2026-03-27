@@ -52,7 +52,7 @@
     "ci:test": "./scripts/run_test.sh",
     "turbo": "turbo",
     "typedoc": "typedoc",
-    "vend": "yarn stop:npm-proxy && yarn start:npm-proxy && yarn publish:local --keepGitDiff"
+    "vend": "yarn stop:npm-proxy && yarn start:npm-proxy && npm run publish:local"
   },
   "devDependencies": {
     "@actions/core": "^3.0.0",
