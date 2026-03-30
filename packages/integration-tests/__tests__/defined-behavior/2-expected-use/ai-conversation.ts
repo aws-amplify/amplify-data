@@ -658,6 +658,8 @@ describe('AI Conversation Routes', () => {
           ...rest,
         };
         expect(mockNextHandler).toHaveBeenCalledWith(expectedConversationStreamEvent);
+        expect(expectedConversationStreamEvent).not.toHaveProperty('metrics');
+        expect(expectedConversationStreamEvent).not.toHaveProperty('usage');
       });
 
       test('Tool use event', async () => {
