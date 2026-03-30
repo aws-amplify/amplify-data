@@ -13,7 +13,7 @@ import {
   ConversationSendMessageInputContent,
 } from './types/ConversationMessageContent';
 import { ToolConfiguration } from './types/ToolConfiguration';
-import { ConversationStreamErrorEvent, ConversationStreamEvent } from './types/ConversationStreamEvent';
+import { ConversationStreamErrorEvent, ConversationStreamEvent, ConversationStreamMetrics, ConversationStreamUsage } from './types/ConversationStreamEvent';
 
 export const brandName = 'conversationCustomOperation';
 
@@ -25,8 +25,8 @@ export interface ConversationMessage {
   id: string;
   role: 'user' | 'assistant';
   associatedUserMessageId?: string;
-  metrics?: { latencyMs?: number };
-  usage?: { inputTokens?: number; outputTokens?: number; totalTokens?: number };
+  metrics?: ConversationStreamMetrics;
+  usage?: ConversationStreamUsage;
 }
 
 // conversation route types

@@ -11,7 +11,7 @@ export const convertItemToConversationMessage = (item: any) => {
     createdAt,
     id,
     role,
-    ...(metrics && { metrics }),
-    ...(usage && { usage }),
+    ...(metrics != null && { metrics }),
+    ...(usage != null && { usage }),
   };
 };
