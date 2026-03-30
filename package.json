@@ -47,7 +47,7 @@
     "publish:local": "tsx scripts/publish_local.ts",
     "start:npm-proxy": "tsx scripts/start_npm_proxy.ts",
     "stop:npm-proxy": "tsx scripts/stop_npm_proxy.ts",
-    "test": "turbo run test && yarn test:scripts && yarn e2e-exports",
+    "test": "turbo run test --filter='!./packages/e2e-tests/*' && yarn test:scripts && yarn e2e-exports",
     "test:scripts": "yarn dlx jest scripts/",
     "ci:test": "./scripts/run_test.sh",
     "turbo": "turbo",
