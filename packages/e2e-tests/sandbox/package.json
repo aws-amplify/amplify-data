@@ -6,10 +6,10 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "e2e-sandbox": "yarn install:no-lock && yarn e2e:test",
+    "e2e-sandbox": "yarn install:no-lock && yarn test",
     "clean": "rm -rf node_modules yarn.lock",
     "install:no-lock": "yarn install",
-    "e2e:test": "NODE_OPTIONS=\"${NODE_OPTIONS:-} --experimental-vm-modules\" yarn dlx jest"
+    "test": "NODE_OPTIONS=\"${NODE_OPTIONS:-} --experimental-vm-modules\" yarn dlx jest"
   },
   "devDependencies": {
     "@aws-amplify/backend": "latest",

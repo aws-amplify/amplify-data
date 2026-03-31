@@ -47,12 +47,12 @@
     "publish:local": "tsx scripts/publish_local.ts",
     "start:npm-proxy": "tsx scripts/start_npm_proxy.ts",
     "stop:npm-proxy": "tsx scripts/stop_npm_proxy.ts",
-    "test": "turbo run test && yarn test:scripts && yarn e2e-exports",
+    "test": "turbo run test --filter='!./packages/e2e-tests/*' && yarn test:scripts && yarn e2e-exports",
     "test:scripts": "yarn dlx jest scripts/",
     "ci:test": "./scripts/run_test.sh",
     "turbo": "turbo",
     "typedoc": "typedoc",
-    "vend": "yarn stop:npm-proxy && yarn start:npm-proxy && yarn publish:local --keepGitDiff"
+    "vend": "yarn stop:npm-proxy && yarn start:npm-proxy && npm run publish:local"
   },
   "devDependencies": {
     "@actions/core": "^3.0.0",

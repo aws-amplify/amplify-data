@@ -38,14 +38,14 @@ const npmProxyLogs = await readFile(LOG_FILE, 'utf-8');
 
 if (npmProxyLogs.includes('EADDRINUSE')) {
   throw new Error(
-    'Failed to start npm proxy. Port is already in use. Do you need to run `npm run stop:npm-proxy` first?',
+    'Failed to start npm proxy. Port is already in use. Do you need to run `npm run stop:npm-proxy` first?'
   );
 }
 
 // when the server is ready a line like "http address - http://localhost:4873/ - verdaccio/5.24.1" is printed
 if (!npmProxyLogs.includes('http address')) {
   throw new Error(
-    `Failed to start npm proxy within the timeout. Check the logs in ${LOG_FILE}`,
+    `Failed to start npm proxy within the timeout. Check the logs in ${LOG_FILE}`
   );
 }
 
@@ -55,5 +55,5 @@ console.log(`Local npm proxy running at ${EXPECTED_URL}.`);
  * Template string parameters are escaped automatically by execa. For details:
  * https://github.com/sindresorhus/execa/blob/HEAD/docs/escaping.md
  */
-await execa('yarn', ['config', 'set', 'npmRegistryServer', EXPECTED_URL]);
-console.log(`Set yarn registry to ${EXPECTED_URL}`);
+await execa('npm', ['config', 'set', 'registry', EXPECTED_URL]);
+console.log(`Set npm/changeset registry to ${EXPECTED_URL}`);

@@ -38,9 +38,4 @@ if (!keepGitDiff) {
   ]);
 }
 
-await execa('yarn', [
-  'config',
-  'set',
-  'npmRegistryServer',
-  'https://registry.npmjs.org/',
-]);
+await execa('npm', ['config', 'delete', 'registry']);
