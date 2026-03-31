@@ -137,8 +137,7 @@ export const ampxCli = (
    * our directory structure is set up, so we're using `pwd` to get the local
    * directory to find the Amplify executable.
    */
-  const rootDir = execaSync('pwd').stdout.trim();
-  const command = `${rootDir}/node_modules/.bin/ampx`;
+  const command = execaSync('yarn', ['bin', 'ampx']).stdout.trim();
 
   if (!command) {
     throw new Error('Unable to locate the ampx bin path');
