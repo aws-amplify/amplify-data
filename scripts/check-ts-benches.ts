@@ -95,7 +95,6 @@ async function runBenches(benchFilePaths: string[]) {
          * https://github.com/sindresorhus/execa/blob/HEAD/docs/escaping.md
          */
         await execa('yarn', [
-          'dlx',
           'tsx',
           file,
           '--benchErrorOnThresholdExceeded',

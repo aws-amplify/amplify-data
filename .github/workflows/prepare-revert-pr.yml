@@ -35,4 +35,4 @@ jobs:
           is-prebuild: true
       - name: Generate Revert PR
         working-directory: ./amplify-data
-        run: yarn dlx tsx ./scripts/prepare-revert-pr.ts
+        run: yarn tsx ./scripts/prepare-revert-pr.ts

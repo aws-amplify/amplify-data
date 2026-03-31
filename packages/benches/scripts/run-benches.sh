@@ -9,7 +9,7 @@ if [[ -d "$1" ]]; then
     echo Benchmarking: "$file"
     echo ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    yarn dlx tsc "$file" --noEmit --skipLibCheck --lib ES2022 --strict true && yarn tsx "$file"
+    yarn tsc "$file" --noEmit --skipLibCheck --lib ES2022 --strict true && yarn tsx "$file"
   done
 else
   echo "The argument provided is not a directory."
