@@ -6,9 +6,9 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "e2e": "yarn install:no-lock && yarn clean && yarn build:esm-cjs && yarn confirm-declarations-built",
+    "e2e": "yarn clean && yarn install:no-lock && yarn build:esm-cjs && yarn confirm-declarations-built",
     "build:esm-cjs": "rollup -c rollup.config.mjs",
-    "clean": "rm -rf node_modules yarn.lock dist",
+    "clean": "rm -rf yarn.lock dist",
     "install:no-lock": "yarn install",
     "confirm-declarations-built": "ls dist/esm/*.d.ts 2>/dev/null || (tput setaf 1 && echo 'declaration must be enabled in tsconfig.json for this test to be meaningful' && exit 1)"
   },
@@ -17,7 +17,7 @@
     "@aws-amplify/backend-cli": "^1.1.0",
     "@aws-amplify/data-schema": "workspace:*",
     "@aws-amplify/data-schema-types": "workspace:*",
-    "@rollup/plugin-typescript": "11.1.5",
+    "@rollup/plugin-typescript": "^12.3.0",
     "@tsd/typescript": "^5.5.3",
     "@types/jest": "^29.5.12",
     "@types/node": "20.8.3",
