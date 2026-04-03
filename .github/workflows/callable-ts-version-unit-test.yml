@@ -15,6 +15,12 @@ jobs:
         uses: actions/checkout@24cb9080177205b6e8c946b17badbe402adc938f # v3.4.0 https://github.com/actions/checkout/commit/24cb9080177205b6e8c946b17badbe402adc938f
         with:
           path: amplify-data
+      - name: Setup Node.js 20
+        uses: actions/setup-node@1e60f620b9541d16bece96c5465dc8ee9832be0b # v4.0.9 https://github.com/actions/setup-node/commit/1e60f620b9541d16bece96c5465dc8ee9832be0b
+        with:
+          node-version: 20
+      - name: Enable Corepack for Yarn 4
+        run: corepack enable
       - name: Install specific typescript version
         env:
           VERSION: ${{ inputs.tsVersion }}
