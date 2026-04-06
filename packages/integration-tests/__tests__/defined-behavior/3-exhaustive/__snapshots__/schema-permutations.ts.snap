@@ -15,7 +15,7 @@ exports[`auth rules given auth rule builder "allow.ownerDefinedIn().to()", gener
 `;
 
 exports[`auth rules given auth rule builder "guest()", generates schema with expected auth rule 1`] = `
-"type Model @model @auth(rules: [{allow: public, provider: iam}])
+"type Model @model @auth(rules: [{allow: public, provider: identityPool}])
 {
   field: String
 }"
