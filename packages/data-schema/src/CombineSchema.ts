@@ -1,10 +1,10 @@
 import { GenericModelSchema } from './ModelSchema';
 import { brand, Brand, IndexLimitUnion } from './util';
 
-const COMBINED_SCHEMA_LIMIT = 50;
+const _COMBINED_SCHEMA_LIMIT = 50;
 
 export type CombinedSchemaIndexesUnion = IndexLimitUnion<
-  typeof COMBINED_SCHEMA_LIMIT
+  typeof _COMBINED_SCHEMA_LIMIT
 >[number];
 
 const CombinedSchemaBrandName = 'CombinedSchema';

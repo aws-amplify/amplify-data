@@ -3,7 +3,7 @@ import { Brand } from './util';
 import { AllowModifier, Authorization, allow } from './Authorization';
 import { __auth } from './ModelField';
 
-const brandName = 'ref';
+const _brandName = 'ref';
 
 type RefTypeData = {
   type: 'ref';
@@ -72,7 +72,7 @@ export type RefType<
 > & {
   // This is a lie. This property is never set at runtime. It's just used to smuggle auth types through.
   [__auth]?: Auth;
-} & Brand<typeof brandName>;
+} & Brand<typeof _brandName>;
 
 function brandedBuilder<T extends RefTypeParamShape>(
   builder: Record<keyof RefType<T> & string, any>,

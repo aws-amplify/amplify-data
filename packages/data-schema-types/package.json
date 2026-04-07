@@ -14,13 +14,13 @@
     }
   },
   "scripts": {
-    "build": "npm run clean && npm run build:esm-cjs",
+    "build": "yarn clean && yarn build:esm-cjs",
     "build:esm-cjs": "rollup -c rollup.config.mjs",
-    "build:watch": "npm run build:esm-cjs -- --watch",
+    "build:watch": "yarn build:esm-cjs -- --watch",
     "clean": "rimraf dist",
     "docs": "api-extractor run && api-documenter markdown --input-folder temp --output-folder docs",
     "docs:temp": "api-extractor run && api-documenter markdown --input-folder temp --output-folder temp/docs",
-    "check:api": "rimraf temp && npm run docs:temp && tsx ../../scripts/shallow-dir-diff.ts docs temp/docs",
+    "check:api": "rimraf temp && yarn docs:temp && tsx ../../scripts/shallow-dir-diff.ts docs temp/docs",
     "test": "echo \"No tests\"",
     "lint": "eslint ."
   },
@@ -33,6 +33,8 @@
     }
   },
   "devDependencies": {
+    "@rollup/plugin-typescript": "11.1.5",
+    "rollup": "^4.59.0",
     "typescript": "^5.1.6"
   },
   "files": [

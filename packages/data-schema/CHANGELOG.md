@@ -1,5 +1,18 @@
 # @aws-amplify/data-schema
 
+## 1.25.4
+
+### Patch Changes
+
+- e629c5c: fix: return errors from indexQuery GraphQL response
+- 8ced0c0: feat: added support for Claude 4.6 models family with Bedrock's global inference profile
+
+## 1.25.3
+
+### Patch Changes
+
+- cd49ad2: Fix inferenceConfiguration not being passed to Bedrock in conversation routes.
+
 ## 1.25.2
 
 ### Patch Changes

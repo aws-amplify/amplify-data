@@ -18,7 +18,7 @@ jobs:
         uses: ./amplify-data/.github/actions/node-and-build
       - name: Run checks
         working-directory: ./amplify-data
-        run: npx changeset status --since origin/main
+        run: yarn changeset status --since origin/main
       - name: API Check Instructions
         if: failure()
         run: |
@@ -27,9 +27,9 @@ jobs:
           echo
           echo "Your PR does not contain a changeset."
           echo
-          echo "Run `npx changeset` to add one."
+          echo "Run `yarn changeset` to add one."
           echo 
-          echo "If this change doesn't need a release, run `npx changeset add --empty`"
+          echo "If this change doesn't need a release, run `yarn changeset add --empty`"
           echo 
           echo "Then commit and push the changes."
           echo

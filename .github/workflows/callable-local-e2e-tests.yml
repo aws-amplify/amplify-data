@@ -22,10 +22,10 @@ jobs:
           echo $AMPLIFY_OUTPUTS_BASE64 | base64 --decode > ./packages/e2e-tests/node/amplify_outputs.json
       - name: Install Node Sample Dependencies
         working-directory: ./amplify-data
-        run: npm run e2e-node:install
+        run: yarn e2e-node:install
       - name: Run tests
         working-directory: ./amplify-data
-        run: npm run e2e-node:test
+        run: yarn e2e-node:test
 
   e2e-prep:
     name: Get local E2E test config

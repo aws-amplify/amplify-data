@@ -25,6 +25,588 @@ type Query {
 }
 `;
 
+exports[`ai routes conversation with inferenceConfiguration 1`] = `
+"type Mutation {
+  ChatBot(conversationId: ID!, content: [AmplifyAIContentBlockInput], aiContext: AWSJSON, toolConfiguration: AmplifyAIToolConfigurationInput): AmplifyAIConversationMessage @conversation(aiModel: "anthropic.claude-3-haiku-20240307-v1:0", systemPrompt: "Hello, world!", inferenceConfiguration: { temperature: 0.7, maxTokens: 1000, topP: 0.9 }, auth: { strategy: owner, provider: userPools }) @aws_cognito_user_pools
+}
+
+enum AmplifyAIConversationParticipantRole {
+  user
+  assistant
+}
+
+interface AmplifyAIConversationMessage {
+  id: ID!
+  conversationId: ID!
+  associatedUserMessageId: ID
+  role: AmplifyAIConversationParticipantRole
+  content: [AmplifyAIContentBlock]
+  aiContext: AWSJSON
+  toolConfiguration: AmplifyAIToolConfiguration
+  createdAt: AWSDateTime
+  updatedAt: AWSDateTime
+  owner: String
+}
+
+input AmplifyAIDocumentBlockSourceInput {
+  bytes: String
+}
+
+input AmplifyAIDocumentBlockInput {
+  format: String!
+  name: String!
+  source: AmplifyAIDocumentBlockSourceInput!
+}
+
+input AmplifyAIImageBlockSourceInput {
+  bytes: String
+}
+
+input AmplifyAIImageBlockInput {
+  format: String!
+  source: AmplifyAIImageBlockSourceInput!
+}
+
+input AmplifyAIToolUseBlockInput {
+  toolUseId: String!
+  name: String!
+  input: AWSJSON!
+  type: String
+}
+
+input AmplifyAIToolResultContentBlockInput {
+  document: AmplifyAIDocumentBlockInput
+  image: AmplifyAIImageBlockInput
+  json: AWSJSON
+  text: String
+}
+
+input AmplifyAIToolResultBlockInput {
+  content: [AmplifyAIToolResultContentBlockInput!]!
+  toolUseId: String!
+  status: String
+}
+
+type AmplifyAIDocumentBlockSource {
+  bytes: String
+}
+
+type AmplifyAIDocumentBlock {
+  format: String!
+  name: String!
+  source: AmplifyAIDocumentBlockSource!
+}
+
+type AmplifyAIImageBlock {
+  format: String!
+  source: AmplifyAIImageBlockSource!
+}
+
+type AmplifyAIImageBlockSource {
+  bytes: String
+}
+
+type AmplifyAIToolUseBlock {
+  toolUseId: String!
+  name: String!
+  input: AWSJSON!
+  type: String
+}
+
+type AmplifyAIToolResultContentBlock {
+  document: AmplifyAIDocumentBlock
+  image: AmplifyAIImageBlock
+  json: AWSJSON
+  text: String
+}
+
+type AmplifyAIToolResultBlock {
+  content: [AmplifyAIToolResultContentBlock!]!
+  toolUseId: String!
+  status: String
+}
+
+type AmplifyAIContentBlockText {
+  text: String
+}
+
+type AmplifyAIContentBlockImage {
+  image: AmplifyAIImageBlock
+}
+
+type AmplifyAIContentBlockDocument {
+  document: AmplifyAIDocumentBlock
+}
+
+type AmplifyAIContentBlockToolUse {
+  toolUse: AmplifyAIToolUseBlock
+}
+
+type AmplifyAIContentBlockToolResult {
+  toolResult: AmplifyAIToolResultBlock
+}
+
+input AmplifyAIContentBlockInput {
+  text: String
+  document: AmplifyAIDocumentBlockInput
+  image: AmplifyAIImageBlockInput
+  toolResult: AmplifyAIToolResultBlockInput
+  toolUse: AmplifyAIToolUseBlockInput
+}
+
+type AmplifyAIContentBlock {
+  text: String
+  document: AmplifyAIDocumentBlock
+  image: AmplifyAIImageBlock
+  toolResult: AmplifyAIToolResultBlock
+  toolUse: AmplifyAIToolUseBlock
+}
+
+input AmplifyAIToolConfigurationInput {
+  tools: [AmplifyAIToolInput]
+}
+
+input AmplifyAIToolInput {
+  toolSpec: AmplifyAIToolSpecificationInput
+}
+
+input AmplifyAIToolSpecificationInput {
+  name: String!
+  description: String
+  inputSchema: AmplifyAIToolInputSchemaInput!
+}
+
+input AmplifyAIToolInputSchemaInput {
+  json: AWSJSON
+}
+
+type AmplifyAIToolConfiguration {
+  tools: [AmplifyAITool]
+}
+
+type AmplifyAITool {
+  toolSpec: AmplifyAIToolSpecification
+}
+
+type AmplifyAIToolSpecification {
+  name: String!
+  description: String
+  inputSchema: AmplifyAIToolInputSchema!
+}
+
+type AmplifyAIToolInputSchema {
+  json: AWSJSON
+}
+
+type AmplifyAIConversationMessageStreamPart @aws_cognito_user_pools {
+  id: ID!
+  owner: String
+  conversationId: ID!
+  associatedUserMessageId: ID!
+  contentBlockIndex: Int
+  contentBlockText: String
+  contentBlockDeltaIndex: Int
+  contentBlockToolUse: AmplifyAIToolUseBlock
+  contentBlockDoneAtIndex: Int
+  stopReason: String
+  errors: [AmplifyAIConversationTurnError]
+  p: String
+}
+
+type AmplifyAIConversationTurnError @aws_cognito_user_pools {
+  message: String!
+  errorType: String!
+}"
+`;
+
+exports[`ai routes conversation with partial inferenceConfiguration 1`] = `
+"type Mutation {
+  ChatBot(conversationId: ID!, content: [AmplifyAIContentBlockInput], aiContext: AWSJSON, toolConfiguration: AmplifyAIToolConfigurationInput): AmplifyAIConversationMessage @conversation(aiModel: "anthropic.claude-3-haiku-20240307-v1:0", systemPrompt: "Hello, world!", inferenceConfiguration: { temperature: 0.5 }, auth: { strategy: owner, provider: userPools }) @aws_cognito_user_pools
+}
+
+enum AmplifyAIConversationParticipantRole {
+  user
+  assistant
+}
+
+interface AmplifyAIConversationMessage {
+  id: ID!
+  conversationId: ID!
+  associatedUserMessageId: ID
+  role: AmplifyAIConversationParticipantRole
+  content: [AmplifyAIContentBlock]
+  aiContext: AWSJSON
+  toolConfiguration: AmplifyAIToolConfiguration
+  createdAt: AWSDateTime
+  updatedAt: AWSDateTime
+  owner: String
+}
+
+input AmplifyAIDocumentBlockSourceInput {
+  bytes: String
+}
+
+input AmplifyAIDocumentBlockInput {
+  format: String!
+  name: String!
+  source: AmplifyAIDocumentBlockSourceInput!
+}
+
+input AmplifyAIImageBlockSourceInput {
+  bytes: String
+}
+
+input AmplifyAIImageBlockInput {
+  format: String!
+  source: AmplifyAIImageBlockSourceInput!
+}
+
+input AmplifyAIToolUseBlockInput {
+  toolUseId: String!
+  name: String!
+  input: AWSJSON!
+  type: String
+}
+
+input AmplifyAIToolResultContentBlockInput {
+  document: AmplifyAIDocumentBlockInput
+  image: AmplifyAIImageBlockInput
+  json: AWSJSON
+  text: String
+}
+
+input AmplifyAIToolResultBlockInput {
+  content: [AmplifyAIToolResultContentBlockInput!]!
+  toolUseId: String!
+  status: String
+}
+
+type AmplifyAIDocumentBlockSource {
+  bytes: String
+}
+
+type AmplifyAIDocumentBlock {
+  format: String!
+  name: String!
+  source: AmplifyAIDocumentBlockSource!
+}
+
+type AmplifyAIImageBlock {
+  format: String!
+  source: AmplifyAIImageBlockSource!
+}
+
+type AmplifyAIImageBlockSource {
+  bytes: String
+}
+
+type AmplifyAIToolUseBlock {
+  toolUseId: String!
+  name: String!
+  input: AWSJSON!
+  type: String
+}
+
+type AmplifyAIToolResultContentBlock {
+  document: AmplifyAIDocumentBlock
+  image: AmplifyAIImageBlock
+  json: AWSJSON
+  text: String
+}
+
+type AmplifyAIToolResultBlock {
+  content: [AmplifyAIToolResultContentBlock!]!
+  toolUseId: String!
+  status: String
+}
+
+type AmplifyAIContentBlockText {
+  text: String
+}
+
+type AmplifyAIContentBlockImage {
+  image: AmplifyAIImageBlock
+}
+
+type AmplifyAIContentBlockDocument {
+  document: AmplifyAIDocumentBlock
+}
+
+type AmplifyAIContentBlockToolUse {
+  toolUse: AmplifyAIToolUseBlock
+}
+
+type AmplifyAIContentBlockToolResult {
+  toolResult: AmplifyAIToolResultBlock
+}
+
+input AmplifyAIContentBlockInput {
+  text: String
+  document: AmplifyAIDocumentBlockInput
+  image: AmplifyAIImageBlockInput
+  toolResult: AmplifyAIToolResultBlockInput
+  toolUse: AmplifyAIToolUseBlockInput
+}
+
+type AmplifyAIContentBlock {
+  text: String
+  document: AmplifyAIDocumentBlock
+  image: AmplifyAIImageBlock
+  toolResult: AmplifyAIToolResultBlock
+  toolUse: AmplifyAIToolUseBlock
+}
+
+input AmplifyAIToolConfigurationInput {
+  tools: [AmplifyAIToolInput]
+}
+
+input AmplifyAIToolInput {
+  toolSpec: AmplifyAIToolSpecificationInput
+}
+
+input AmplifyAIToolSpecificationInput {
+  name: String!
+  description: String
+  inputSchema: AmplifyAIToolInputSchemaInput!
+}
+
+input AmplifyAIToolInputSchemaInput {
+  json: AWSJSON
+}
+
+type AmplifyAIToolConfiguration {
+  tools: [AmplifyAITool]
+}
+
+type AmplifyAITool {
+  toolSpec: AmplifyAIToolSpecification
+}
+
+type AmplifyAIToolSpecification {
+  name: String!
+  description: String
+  inputSchema: AmplifyAIToolInputSchema!
+}
+
+type AmplifyAIToolInputSchema {
+  json: AWSJSON
+}
+
+type AmplifyAIConversationMessageStreamPart @aws_cognito_user_pools {
+  id: ID!
+  owner: String
+  conversationId: ID!
+  associatedUserMessageId: ID!
+  contentBlockIndex: Int
+  contentBlockText: String
+  contentBlockDeltaIndex: Int
+  contentBlockToolUse: AmplifyAIToolUseBlock
+  contentBlockDoneAtIndex: Int
+  stopReason: String
+  errors: [AmplifyAIConversationTurnError]
+  p: String
+}
+
+type AmplifyAIConversationTurnError @aws_cognito_user_pools {
+  message: String!
+  errorType: String!
+}"
+`;
+
+exports[`ai routes conversation without inferenceConfiguration 1`] = `
+"type Mutation {
+  ChatBot(conversationId: ID!, content: [AmplifyAIContentBlockInput], aiContext: AWSJSON, toolConfiguration: AmplifyAIToolConfigurationInput): AmplifyAIConversationMessage @conversation(aiModel: "anthropic.claude-3-haiku-20240307-v1:0", systemPrompt: "Hello, world!", auth: { strategy: owner, provider: userPools }) @aws_cognito_user_pools
+}
+
+enum AmplifyAIConversationParticipantRole {
+  user
+  assistant
+}
+
+interface AmplifyAIConversationMessage {
+  id: ID!
+  conversationId: ID!
+  associatedUserMessageId: ID
+  role: AmplifyAIConversationParticipantRole
+  content: [AmplifyAIContentBlock]
+  aiContext: AWSJSON
+  toolConfiguration: AmplifyAIToolConfiguration
+  createdAt: AWSDateTime
+  updatedAt: AWSDateTime
+  owner: String
+}
+
+input AmplifyAIDocumentBlockSourceInput {
+  bytes: String
+}
+
+input AmplifyAIDocumentBlockInput {
+  format: String!
+  name: String!
+  source: AmplifyAIDocumentBlockSourceInput!
+}
+
+input AmplifyAIImageBlockSourceInput {
+  bytes: String
+}
+
+input AmplifyAIImageBlockInput {
+  format: String!
+  source: AmplifyAIImageBlockSourceInput!
+}
+
+input AmplifyAIToolUseBlockInput {
+  toolUseId: String!
+  name: String!
+  input: AWSJSON!
+  type: String
+}
+
+input AmplifyAIToolResultContentBlockInput {
+  document: AmplifyAIDocumentBlockInput
+  image: AmplifyAIImageBlockInput
+  json: AWSJSON
+  text: String
+}
+
+input AmplifyAIToolResultBlockInput {
+  content: [AmplifyAIToolResultContentBlockInput!]!
+  toolUseId: String!
+  status: String
+}
+
+type AmplifyAIDocumentBlockSource {
+  bytes: String
+}
+
+type AmplifyAIDocumentBlock {
+  format: String!
+  name: String!
+  source: AmplifyAIDocumentBlockSource!
+}
+
+type AmplifyAIImageBlock {
+  format: String!
+  source: AmplifyAIImageBlockSource!
+}
+
+type AmplifyAIImageBlockSource {
+  bytes: String
+}
+
+type AmplifyAIToolUseBlock {
+  toolUseId: String!
+  name: String!
+  input: AWSJSON!
+  type: String
+}
+
+type AmplifyAIToolResultContentBlock {
+  document: AmplifyAIDocumentBlock
+  image: AmplifyAIImageBlock
+  json: AWSJSON
+  text: String
+}
+
+type AmplifyAIToolResultBlock {
+  content: [AmplifyAIToolResultContentBlock!]!
+  toolUseId: String!
+  status: String
+}
+
+type AmplifyAIContentBlockText {
+  text: String
+}
+
+type AmplifyAIContentBlockImage {
+  image: AmplifyAIImageBlock
+}
+
+type AmplifyAIContentBlockDocument {
+  document: AmplifyAIDocumentBlock
+}
+
+type AmplifyAIContentBlockToolUse {
+  toolUse: AmplifyAIToolUseBlock
+}
+
+type AmplifyAIContentBlockToolResult {
+  toolResult: AmplifyAIToolResultBlock
+}
+
+input AmplifyAIContentBlockInput {
+  text: String
+  document: AmplifyAIDocumentBlockInput
+  image: AmplifyAIImageBlockInput
+  toolResult: AmplifyAIToolResultBlockInput
+  toolUse: AmplifyAIToolUseBlockInput
+}
+
+type AmplifyAIContentBlock {
+  text: String
+  document: AmplifyAIDocumentBlock
+  image: AmplifyAIImageBlock
+  toolResult: AmplifyAIToolResultBlock
+  toolUse: AmplifyAIToolUseBlock
+}
+
+input AmplifyAIToolConfigurationInput {
+  tools: [AmplifyAIToolInput]
+}
+
+input AmplifyAIToolInput {
+  toolSpec: AmplifyAIToolSpecificationInput
+}
+
+input AmplifyAIToolSpecificationInput {
+  name: String!
+  description: String
+  inputSchema: AmplifyAIToolInputSchemaInput!
+}
+
+input AmplifyAIToolInputSchemaInput {
+  json: AWSJSON
+}
+
+type AmplifyAIToolConfiguration {
+  tools: [AmplifyAITool]
+}
+
+type AmplifyAITool {
+  toolSpec: AmplifyAIToolSpecification
+}
+
+type AmplifyAIToolSpecification {
+  name: String!
+  description: String
+  inputSchema: AmplifyAIToolInputSchema!
+}
+
+type AmplifyAIToolInputSchema {
+  json: AWSJSON
+}
+
+type AmplifyAIConversationMessageStreamPart @aws_cognito_user_pools {
+  id: ID!
+  owner: String
+  conversationId: ID!
+  associatedUserMessageId: ID!
+  contentBlockIndex: Int
+  contentBlockText: String
+  contentBlockDeltaIndex: Int
+  contentBlockToolUse: AmplifyAIToolUseBlock
+  contentBlockDoneAtIndex: Int
+  stopReason: String
+  errors: [AmplifyAIConversationTurnError]
+  p: String
+}
+
+type AmplifyAIConversationTurnError @aws_cognito_user_pools {
+  message: String!
+  errorType: String!
+}"
+`;
+
 exports[`ai routes conversations 1`] = `
 "type Profile @aws_api_key
 {

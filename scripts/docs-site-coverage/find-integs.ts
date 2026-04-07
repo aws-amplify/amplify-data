@@ -1,5 +1,5 @@
-import { readFileSync } from 'fs';
-import { glob } from 'glob';
+import { readFileSync, readdirSync } from 'fs';
+import { join } from 'path';
 import type { Config } from './config-type';
 
 export type Region = {
@@ -24,7 +24,9 @@ type RegionMarker = {
 export type RegionMap = Record<string, Region[]>;
 
 async function listDefinedBehaviorTestFiles(config: Config) {
-  return glob.glob(`${config.testsDirectory}/**/*.ts`);
+  return readdirSync(config.testsDirectory, { recursive: true })
+    .map((f) => join(config.testsDirectory, String(f)))
+    .filter((f) => f.endsWith('.ts'));
 }
 
 async function getAnnotatedRegionMarkers(

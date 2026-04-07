@@ -6,6 +6,7 @@ node_modules
 tsconfig.tsbuildinfo
 typedocs/reference.json
 
+.kiro
 .turbo
 .idea
 .eslintcache
@@ -21,3 +22,6 @@ packages/*/temp
 # rollup
 **/.rollup.cache
 **/buildMeta
+
+# Yarn
+.yarn/*
