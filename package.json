@@ -97,6 +97,8 @@
     "minimatch": "^10.2.4",
     "test-exclude": "^8.0.0",
     "esbuild": "^0.25.0",
-    "handlebars": "^4.7.9"
+    "handlebars": "^4.7.9",
+    "picomatch": "^4.0.4",
+    "yaml": "^1.10.3"
   }
 }
