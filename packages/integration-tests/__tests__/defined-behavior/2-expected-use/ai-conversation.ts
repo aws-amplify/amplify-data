@@ -510,6 +510,55 @@ describe('AI Conversation Routes', () => {
       // #endregion assertions
     });
 
+    test('List messages with metrics and usage', async () => {
+      // #region mocking
+      const messageWithMetrics = {
+        ...sampleConversationMessage1,
+        metrics: { latencyMs: 200 },
+        usage: { inputTokens: 10, outputTokens: 25, totalTokens: 35 },
+      };
+      const { spy, generateClient } = mockedGenerateClient([
+        {
+          data: {
+            getConversation: sampleConversation,
+          },
+        },
+        {
+          data: {
+            listMessages: {
+              items: [messageWithMetrics],
+            },
+          },
+        },
+      ]);
+      // simulated amplifyconfiguration.json
+      const config = await buildAmplifyConfig(schema);
+      // #endregion mocking
+      // #region api call
+      // App.tsx
+      Amplify.configure(config);
+
+      const client = generateClient<Schema>();
+      // get conversation
+      const { data: conversation } = await client.conversations.chatBot.get({
+        id: sampleConversation.id,
+      });
+      // list conversation messages
+      const { data: messages, errors: listMessagesErrors } =
+        (await conversation?.listMessages()) ?? {};
+      // #endregion api call
+      // #region assertions
+      expect(listMessagesErrors).toBeUndefined();
+      expect(messages).toStrictEqual([messageWithMetrics]);
+      expect(messages?.[0]).toHaveProperty('metrics', { latencyMs: 200 });
+      expect(messages?.[0]).toHaveProperty('usage', {
+        inputTokens: 10,
+        outputTokens: 25,
+        totalTokens: 35,
+      });
+      // #endregion assertions
+    });
+
     test('Paginate messages', async () => {
       // #region mocking
       const sampleNextToken = 'next-token';
@@ -609,6 +658,8 @@ describe('AI Conversation Routes', () => {
           ...rest,
         };
         expect(mockNextHandler).toHaveBeenCalledWith(expectedConversationStreamEvent);
+        expect(expectedConversationStreamEvent).not.toHaveProperty('metrics');
+        expect(expectedConversationStreamEvent).not.toHaveProperty('usage');
       });
 
       test('Tool use event', async () => {
@@ -656,6 +707,22 @@ describe('AI Conversation Routes', () => {
 
         await pause(1);
         expect(mockNextHandler).toHaveBeenCalledWith(sampleConversationStreamTurnDoneEvent);
+      });
+
+      test('Turn done event with metrics and usage', async () => {
+        const turnDoneWithMetrics = {
+          ...sampleConversationStreamTurnDoneEvent,
+          metrics: { latencyMs: 150 },
+          usage: { inputTokens: 50, outputTokens: 100, totalTokens: 150 },
+        };
+        subs.onCreateAssistantResponseChatBot.next({
+          data: {
+            onCreateAssistantResponseChatBot: turnDoneWithMetrics,
+          },
+        });
+
+        await pause(1);
+        expect(mockNextHandler).toHaveBeenCalledWith(turnDoneWithMetrics);
       });
 
       test('Error event', async () => {
