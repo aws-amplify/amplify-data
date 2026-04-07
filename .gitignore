@@ -6,6 +6,7 @@ node_modules
 tsconfig.tsbuildinfo
 typedocs/reference.json
 
+.kiro
 .turbo
 .idea
 .eslintcache
