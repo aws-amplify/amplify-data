@@ -1034,7 +1034,7 @@ exports[`schema auth rules allows guest 1`] = `
   "functionSlots": [],
   "jsFunctions": [],
   "lambdaFunctions": {},
-  "schema": "type A @model @auth(rules: [{allow: public, provider: iam}])
+  "schema": "type A @model @auth(rules: [{allow: public, provider: identityPool}])
 {
   field: String
 }",

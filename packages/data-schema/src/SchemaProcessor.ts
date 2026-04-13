@@ -774,9 +774,7 @@ function calculateAuth(authorization: Authorization<any, any, any>[]) {
     }
 
     if (rule.provider) {
-      // identityPool maps to iam in the transform
-      const provider = rule.provider === 'identityPool' ? 'iam' : rule.provider;
-      ruleParts.push(`provider: ${provider}`);
+      ruleParts.push(`provider: ${rule.provider}`);
     }
 
     if (rule.operations) {

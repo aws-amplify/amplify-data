@@ -175,8 +175,8 @@ type Query {
   getSomething(arg1: String!): [CustomType!]! @function(name: "exampleFunc") @auth(rules: [{allow: groups, groups: ["Admin"]},
   {allow: public, provider: apiKey},
   {allow: private},
-  {allow: public, provider: iam},
-  {allow: private, provider: iam}])
+  {allow: public, provider: identityPool},
+  {allow: private, provider: identityPool}])
   getSomething2(arg1: String!): [CustomType!]! @function(name: "exampleFunc") @auth(rules: [{allow: groups, groups: ["Admin", "User"]},
   {allow: public, provider: apiKey}])
   getSomething3(arg1: String!): [CustomType!]! @function(name: "exampleFunc") @auth(rules: [{allow: groups, groups: ["Admin", "User"]}])
@@ -305,84 +305,84 @@ exports[`model auth rules can define private auth with no provider 1`] = `
 `;
 
 exports[`model auth rules can define private with with provider identityPool 1`] = `
-"type widget @model @auth(rules: [{allow: private, provider: iam}])
+"type widget @model @auth(rules: [{allow: private, provider: identityPool}])
 {
   title: String!
 }"
 `;
 
 exports[`model auth rules can define private with with provider identityPool for operations create 1`] = `
-"type widget @model @auth(rules: [{allow: private, provider: iam, operations: [create]}])
+"type widget @model @auth(rules: [{allow: private, provider: identityPool, operations: [create]}])
 {
   title: String!
 }"
 `;
 
 exports[`model auth rules can define private with with provider identityPool for operations create,read,listen 1`] = `
-"type widget @model @auth(rules: [{allow: private, provider: iam, operations: [create, read, listen]}])
+"type widget @model @auth(rules: [{allow: private, provider: identityPool, operations: [create, read, listen]}])
 {
   title: String!
 }"
 `;
 
 exports[`model auth rules can define private with with provider identityPool for operations create,read,update,delete 1`] = `
-"type widget @model @auth(rules: [{allow: private, provider: iam, operations: [create, read, update, delete]}])
+"type widget @model @auth(rules: [{allow: private, provider: identityPool, operations: [create, read, update, delete]}])
 {
   title: String!
 }"
 `;
 
 exports[`model auth rules can define private with with provider identityPool for operations delete 1`] = `
-"type widget @model @auth(rules: [{allow: private, provider: iam, operations: [delete]}])
+"type widget @model @auth(rules: [{allow: private, provider: identityPool, operations: [delete]}])
 {
   title: String!
 }"
 `;
 
 exports[`model auth rules can define private with with provider identityPool for operations get 1`] = `
-"type widget @model @auth(rules: [{allow: private, provider: iam, operations: [get]}])
+"type widget @model @auth(rules: [{allow: private, provider: identityPool, operations: [get]}])
 {
   title: String!
 }"
 `;
 
 exports[`model auth rules can define private with with provider identityPool for operations list 1`] = `
-"type widget @model @auth(rules: [{allow: private, provider: iam, operations: [list]}])
+"type widget @model @auth(rules: [{allow: private, provider: identityPool, operations: [list]}])
 {
   title: String!
 }"
 `;
 
 exports[`model auth rules can define private with with provider identityPool for operations listen 1`] = `
-"type widget @model @auth(rules: [{allow: private, provider: iam, operations: [listen]}])
+"type widget @model @auth(rules: [{allow: private, provider: identityPool, operations: [listen]}])
 {
   title: String!
 }"
 `;
 
 exports[`model auth rules can define private with with provider identityPool for operations read 1`] = `
-"type widget @model @auth(rules: [{allow: private, provider: iam, operations: [read]}])
+"type widget @model @auth(rules: [{allow: private, provider: identityPool, operations: [read]}])
 {
   title: String!
 }"
 `;
 
 exports[`model auth rules can define private with with provider identityPool for operations search 1`] = `
-"type widget @model @auth(rules: [{allow: private, provider: iam, operations: [search]}])
+"type widget @model @auth(rules: [{allow: private, provider: identityPool, operations: [search]}])
 {
   title: String!
 }"
 `;
 
 exports[`model auth rules can define private with with provider identityPool for operations sync 1`] = `
-"type widget @model @auth(rules: [{allow: private, provider: iam, operations: [sync]}])
+"type widget @model @auth(rules: [{allow: private, provider: identityPool, operations: [sync]}])
 {
   title: String!
 }"
 `;
 
 exports[`model auth rules can define private with with provider identityPool for operations update 1`] = `
-"type widget @model @auth(rules: [{allow: private, provider: iam, operations: [update]}])
+"type widget @model @auth(rules: [{allow: private, provider: identityPool, operations: [update]}])
 {
   title: String!
 }"
