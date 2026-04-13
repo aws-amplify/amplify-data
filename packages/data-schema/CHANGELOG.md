@@ -1,5 +1,11 @@
 # @aws-amplify/data-schema
 
+## 1.25.5
+
+### Patch Changes
+
+- be15726: fix: preserve identityPool provider name in auth directive output instead of mapping to iam
+
 ## 1.25.4
 
 ### Patch Changes
