@@ -10,7 +10,6 @@ typedocs/reference.json
 .turbo
 .idea
 .eslintcache
-.nvmrc
 .npmrc
 .DS_Store
 verdaccio-cache
