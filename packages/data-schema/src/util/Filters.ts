@@ -142,5 +142,11 @@ export type ModelPrimaryCompositeKeyInput<
   ge?: SkIr;
   gt?: SkIr;
   between?: [SkIr, SkIr];
-  beginsWith?: SkIr;
+  // `beginsWith` accepts a partial because the underlying AppSync VTL builds
+  // the `begins_with` prefix by skipping null fields. Requiring all fields
+  // (as the other operators do) forces callers to pass empty strings for
+  // trailing fields, which the VTL then appends as `#` delimiters — yielding
+  // a malformed prefix on 3+ field composite sort keys. Allowing partial
+  // input lets callers express "all rows under this leading prefix".
+  beginsWith?: Partial<SkIr>;
 };
