@@ -2,19 +2,17 @@ import { execa, execaCommand } from 'execa';
 
 const VERDACCIO_PORT = 4873;
 const NPM_REGISTRY = 'https://registry.npmjs.org/';
-const YARN_REGISTRY = 'https://registry.yarnpkg.com/';
 
 /**
  * Kills the process that is listening on VERDACCIO_PORT
- * Resets npm registry config back to the npm registry
+ * Resets yarn registry config back to the npm registry
  *
- * reset the npm registry
+ * reset the yarn registry
  *
  * Template string parameters are escaped automatically by execa. For details:
  * https://github.com/sindresorhus/execa/blob/HEAD/docs/escaping.md
  */
-await execa('npm', ['config', 'set', 'registry', NPM_REGISTRY]);
-await execa('yarn', ['config', 'set', 'registry', YARN_REGISTRY]);
+await execa('yarn', ['config', 'set', 'npmRegistryServer', NPM_REGISTRY]);
 
 // returns the process id of the process listening on the specified port
 let pid: number;

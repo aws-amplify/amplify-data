@@ -7,7 +7,7 @@ runs:
     - name: Start verdaccio
       # While / sleep are required here, as Verdaccio takes a minute to start:
       run: |
-        npm run vend
+        yarn vend
         while ! nc -z localhost 4873; do
           echo "Verdaccio not running yet"
           sleep 1
@@ -18,10 +18,10 @@ runs:
       shell: bash
       working-directory: ./amplify-data
     - name: Upload artifact
-      uses: actions/upload-artifact@6f51ac03b9356f520e9adb1b1b7802705f340c2b # v4.5.0
+      uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
       if: failure()
       with:
-        name: ${{ inputs.test_name }}-npm-log
+        name: ${{ inputs.test_name }}-verdaccio-log
         if-no-files-found: ignore
-        path: /Users/runner/.npm/_logs/
+        path: ./amplify-data/verdaccio-logs.txt
         retention-days: 3

@@ -16,7 +16,7 @@ export type RefType<T extends RefTypeParamShape, K extends keyof RefType<T> = ne
     mutations(operations: MutationOperations[]): RefType<T, K | 'mutations'>;
 }, K> & {
     [__auth]?: Auth;
-} & Brand<typeof brandName>;
+} & Brand<typeof _brandName>;
 ```
 **References:** [RefType](./data-schema.reftype.md)<!-- -->, [Authorization](./data-schema.authorization.md)
 

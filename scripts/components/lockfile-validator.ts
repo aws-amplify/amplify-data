@@ -8,9 +8,9 @@ type ValidationResult = {
 };
 
 /**
- * Validates package lock file.
+ * Validates lockfile.
  */
-export class PackageLockValidator {
+export class LockFileValidator {
   /**
    * A dictionary of functions that validate certain keys.
    */
@@ -30,7 +30,7 @@ export class PackageLockValidator {
         return {
           status: 'fail',
           jsonPath,
-          failureMessage: `The ${jsonPath} property value ${value} seems to point to localhost. Run 'npm set registry https://registry.npmjs.com/ && npm i' to recover`,
+          failureMessage: `The ${jsonPath} property value ${value} seems to point to localhost. Run 'yarn config set npmRegistryServer https://registry.npmjs.org/ && yarn install' to recover`,
         };
       }
       return { status: 'pass', jsonPath };
@@ -38,15 +38,15 @@ export class PackageLockValidator {
   };
 
   /**
-   * Creates package lock validator.
+   * Creates lockfile validator.
    */
-  constructor(private packageLockPath: string) {}
+  constructor(private lockfilePath: string) {}
 
   validate = async (): Promise<void> => {
-    const packageLockContent = JSON.parse(
-      await fsp.readFile(this.packageLockPath, 'utf-8'),
+    const lockfileContent = JSON.parse(
+      await fsp.readFile(this.lockfilePath, 'utf-8'),
     );
-    const validationResults = this.walkTree(packageLockContent, '$root');
+    const validationResults = this.walkTree(lockfileContent, '$root');
     const violations = validationResults.filter(
       (validationResults) => validationResults.status === 'fail',
     );

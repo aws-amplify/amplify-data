@@ -22,6 +22,9 @@ const supportedModelsLookup = {
   'Claude Haiku 4.5': 'global.anthropic.claude-haiku-4-5-20251001-v1:0',
   'Claude Sonnet 4.5': 'global.anthropic.claude-sonnet-4-5-20250929-v1:0',
   'Claude Opus 4.5': 'global.anthropic.claude-opus-4-5-20251101-v1:0',
+  // Claude 4.6 models (require global inference profiles)
+  'Claude Sonnet 4.6': 'global.anthropic.claude-sonnet-4-6',
+  'Claude Opus 4.6': 'global.anthropic.claude-opus-4-6-v1',
   // Cohere models
   'Cohere Command R': 'cohere.command-r-v1:0',
   'Cohere Command R+': 'cohere.command-r-plus-v1:0',

@@ -774,9 +774,7 @@ function calculateAuth(authorization: Authorization<any, any, any>[]) {
     }
 
     if (rule.provider) {
-      // identityPool maps to iam in the transform
-      const provider = rule.provider === 'identityPool' ? 'iam' : rule.provider;
-      ruleParts.push(`provider: ${provider}`);
+      ruleParts.push(`provider: ${rule.provider}`);
     }
 
     if (rule.operations) {
@@ -1821,13 +1819,23 @@ const schemaPreprocessor = (
       const refersToString = typeDef.data.originalName
         ? ` @refersTo(name: "${typeDef.data.originalName}")`
         : '';
-      // TODO: update @model(timestamps: null) once a longer term solution gets
-      // determined.
-      //
-      // Context: SQL schema should not be automatically inserted with timestamp fields,
-      // passing (timestamps: null) to @model to suppress this behavior as a short
-      // term solution.
-      const model = `type ${typeName} @model(timestamps: null) ${authString}${refersToString}\n{\n  ${joined}\n}`;
+
+      const disabledAttrs = modelAttributesFromDisabledOps(
+        typeDef.data.disabledOperations,
+      );
+      const modelAttrs = disabledAttrs
+        ? `timestamps: null, ${disabledAttrs}`
+        : 'timestamps: null';
+
+      /*
+       * TODO: update @model(timestamps: null) once a longer term solution gets
+       * determined.
+       *
+       * Context: SQL schema should not be automatically inserted with timestamp
+       * fields, passing (timestamps: null) to @model to suppress this behavior
+       * as a short term solution.
+       */
+      const model = `type ${typeName} @model(${modelAttrs}) ${authString}${refersToString}\n{\n  ${joined}\n}`;
       gqlModels.push(model);
     } else {
       const fields = typeDef.data.fields as Record<string, BaseModelField>;
