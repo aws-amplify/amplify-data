@@ -444,6 +444,232 @@ describe('model auth rules', () => {
     expect(graphql).toMatchSnapshot();
   });
 
+  describe('owner.inGroup() - owner auth with required group membership', () => {
+    it('can define owner auth with inGroup requirement', () => {
+      const schema = a.schema({
+        widget: a
+          .model({
+            title: a.string().required(),
+          })
+          .authorization((allow) => allow.owner().inGroup('AdminGroup')),
+      });
+
+      const graphql = schema.transform().schema;
+      expect(graphql).toMatchSnapshot();
+    });
+
+    it('can define owner auth with multiple inGroup requirements', () => {
+      const schema = a.schema({
+        widget: a
+          .model({
+            title: a.string().required(),
+          })
+          .authorization((allow) =>
+            allow.owner().inGroup('AdminGroup', 'SuperUserGroup'),
+          ),
+      });
+
+      const graphql = schema.transform().schema;
+      expect(graphql).toMatchSnapshot();
+    });
+
+    it('can chain owner.inGroup() with operations', () => {
+      const schema = a.schema({
+        widget: a
+          .model({
+            title: a.string().required(),
+          })
+          .authorization((allow) =>
+            allow.owner().inGroup('AdminGroup').to(['create', 'read', 'update']),
+          ),
+      });
+
+      const graphql = schema.transform().schema;
+      expect(graphql).toMatchSnapshot();
+    });
+
+    it('can chain owner.inGroup() with identityClaim', () => {
+      const schema = a.schema({
+        widget: a
+          .model({
+            title: a.string().required(),
+          })
+          .authorization((allow) =>
+            allow.owner().inGroup('AdminGroup').identityClaim('user_id'),
+          ),
+      });
+
+      const graphql = schema.transform().schema;
+      expect(graphql).toMatchSnapshot();
+    });
+
+    it('can define ownerDefinedIn with inGroup requirement', () => {
+      const schema = a.schema({
+        widget: a
+          .model({
+            title: a.string().required(),
+          })
+          .authorization((allow) =>
+            allow.ownerDefinedIn('customOwnerField').inGroup('AdminGroup'),
+          ),
+      });
+
+      const graphql = schema.transform().schema;
+      expect(graphql).toMatchSnapshot();
+    });
+
+    it('can define ownersDefinedIn with inGroup requirement', () => {
+      const schema = a.schema({
+        widget: a
+          .model({
+            title: a.string().required(),
+          })
+          .authorization((allow) =>
+            allow.ownersDefinedIn('editors').inGroup('EditorGroup'),
+          ),
+      });
+
+      const graphql = schema.transform().schema;
+      expect(graphql).toMatchSnapshot();
+    });
+  });
+
+  describe('owner.inGroup() combined with group() - rules should not merge', () => {
+    it('owner.inGroup() and group() with same group remain as separate rules', () => {
+      const schema = a.schema({
+        widget: a
+          .model({
+            title: a.string().required(),
+          })
+          .authorization((allow) => [
+            allow.owner().inGroup('AdminGroup'),
+            allow.group('AdminGroup'),
+          ]),
+      });
+
+      const graphql = schema.transform().schema;
+      // Should have two separate rules:
+      // 1. {allow: owner, ownerField: "owner", groups: ["AdminGroup"]}
+      // 2. {allow: groups, groups: ["AdminGroup"]}
+      expect(graphql).toContain('allow: owner');
+      expect(graphql).toContain('allow: groups');
+      expect(graphql).toMatchSnapshot();
+    });
+
+    it('owner.inGroup() and groups() with overlapping groups remain as separate rules', () => {
+      const schema = a.schema({
+        widget: a
+          .model({
+            title: a.string().required(),
+          })
+          .authorization((allow) => [
+            allow.owner().inGroup('AdminGroup', 'ModeratorGroup'),
+            allow.groups(['AdminGroup', 'UserGroup']),
+          ]),
+      });
+
+      const graphql = schema.transform().schema;
+      expect(graphql).toContain('allow: owner');
+      expect(graphql).toContain('allow: groups');
+      expect(graphql).toMatchSnapshot();
+    });
+
+    it('multiple owner rules with different inGroup requirements remain separate', () => {
+      const schema = a.schema({
+        widget: a
+          .model({
+            title: a.string().required(),
+          })
+          .authorization((allow) => [
+            allow.owner().inGroup('AdminGroup').to(['create', 'read', 'update', 'delete']),
+            allow.ownerDefinedIn('reviewer').inGroup('ReviewerGroup').to(['read']),
+          ]),
+      });
+
+      const graphql = schema.transform().schema;
+      expect(graphql).toMatchSnapshot();
+    });
+
+    it('owner.inGroup() combined with group() and authenticated() produces correct output', () => {
+      const schema = a.schema({
+        widget: a
+          .model({
+            title: a.string().required(),
+          })
+          .authorization((allow) => [
+            allow.owner().inGroup('AdminGroup'),
+            allow.group('AdminGroup').to(['read']),
+            allow.authenticated().to(['read']),
+          ]),
+      });
+
+      const graphql = schema.transform().schema;
+      expect(graphql).toContain('allow: owner');
+      expect(graphql).toContain('allow: groups');
+      expect(graphql).toContain('allow: private');
+      expect(graphql).toMatchSnapshot();
+    });
+
+    it('owner.inGroup() with different groups and different permissions remain separate', () => {
+      const schema = a.schema({
+        widget: a
+          .model({
+            title: a.string().required(),
+          })
+          .authorization((allow) => [
+            allow.owner().inGroup('ReadersGroup').to(['read']),
+            allow.owner().inGroup('WritersGroup').to(['create', 'update', 'delete']),
+          ]),
+      });
+
+      const graphql = schema.transform().schema;
+      // Should have two separate owner rules with different groups and operations
+      expect(graphql).toContain('groups: ["ReadersGroup"]');
+      expect(graphql).toContain('groups: ["WritersGroup"]');
+      expect(graphql).toContain('operations: [read]');
+      expect(graphql).toContain('operations: [create, update, delete]');
+      expect(graphql).toMatchSnapshot();
+    });
+
+    it('owner.inGroup() with overlapping groups but different permissions remain separate', () => {
+      const schema = a.schema({
+        widget: a
+          .model({
+            title: a.string().required(),
+          })
+          .authorization((allow) => [
+            allow.owner().inGroup('AdminGroup', 'ModeratorGroup').to(['read', 'update']),
+            allow.owner().inGroup('AdminGroup', 'SuperUserGroup').to(['create', 'delete']),
+          ]),
+      });
+
+      const graphql = schema.transform().schema;
+      expect(graphql).toMatchSnapshot();
+    });
+
+    it('ownerDefinedIn.inGroup() with different groups and permissions on same field', () => {
+      const schema = a.schema({
+        widget: a
+          .model({
+            title: a.string().required(),
+            createdBy: a.string(),
+          })
+          .authorization((allow) => [
+            allow.ownerDefinedIn('createdBy').inGroup('ViewerGroup').to(['read']),
+            allow.ownerDefinedIn('createdBy').inGroup('EditorGroup').to(['read', 'update']),
+            allow.ownerDefinedIn('createdBy').inGroup('AdminGroup').to(['create', 'read', 'update', 'delete']),
+          ]),
+      });
+
+      const graphql = schema.transform().schema;
+      // All three rules should be separate
+      expect(graphql).toContain('ViewerGroup');
+      expect(graphql).toContain('EditorGroup');
+      expect(graphql).toContain('AdminGroup');
+      expect(graphql).toMatchSnapshot();
+    });
+  });
+
   it(`includes auth from fields`, () => {
     const schema = a.schema({
       widget: a
