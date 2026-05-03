@@ -33,7 +33,7 @@ import type {
 
 export interface ClientModel<
   Bag extends Record<string, unknown>,
-  Metadata extends SchemaMetadata<any>,
+  Metadata extends SchemaMetadata<any, any>,
   IsRDS extends boolean,
   T extends ModelTypeParamShape,
   K extends keyof Bag & string,
@@ -92,7 +92,7 @@ type DisabledOpsToMap<Ops extends ReadonlyArray<DisableOperationsOptions>> = {
 
 type ClientFields<
   Bag extends Record<string, unknown>,
-  Metadata extends SchemaMetadata<any>,
+  Metadata extends SchemaMetadata<any, any>,
   IsRDS extends boolean,
   T extends ModelTypeParamShape,
 > = ResolveFields<Bag, T['fields']> &
@@ -102,11 +102,16 @@ type ClientFields<
 
 type FlatClientFields<
   Bag extends Record<string, unknown>,
-  Metadata extends SchemaMetadata<any>,
+  Metadata extends SchemaMetadata<any, any>,
   IsRDS extends boolean,
   T extends ModelTypeParamShape,
   ModelName extends keyof Bag & string,
-> = FlatResolveFields<Bag, T['fields'], ModelName> &
+> = FlatResolveFields<
+  Bag,
+  T['fields'],
+  ModelName,
+  Metadata['selectionSetDepth']
+> &
   If<Not<IsRDS>, ImplicitIdentifier<T>> &
   AuthFields<Metadata, T> &
   Omit<SystemFields<IsRDS>, keyof ResolveFields<Bag, T['fields']>>;
@@ -169,7 +174,7 @@ export type ListOptionsPkParams<
   : Prettify<Partial<IndexQueryInput<Bag, T['identifier']>>>;
 
 type AuthFields<
-  SchemaMeta extends SchemaMetadata<any>,
+  SchemaMeta extends SchemaMetadata<any, any>,
   Model extends ModelTypeParamShape,
 > = (Model['authorization'][number] extends never
   ? SchemaMeta['authFields'] extends never

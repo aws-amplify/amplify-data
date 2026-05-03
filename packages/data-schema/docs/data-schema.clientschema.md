@@ -7,7 +7,7 @@
 **Signature:**
 
 ```typescript
-export type ClientSchema<Schema extends GenericModelSchema<any> | CombinedModelSchema<any>> = Schema extends GenericModelSchema<any> ? InternalClientSchema<Schema> : Schema extends CombinedModelSchema<any> ? InternalCombinedSchema<Schema> : never;
+export type ClientSchema<Schema extends GenericModelSchema<any> | CombinedModelSchema<any>, Options extends ClientSchemaOptions = ClientSchemaOptions> = Schema extends GenericModelSchema<any> ? InternalClientSchema<Schema, Options> : Schema extends CombinedModelSchema<any> ? InternalCombinedSchema<Schema, Options> : never;
 ```
 **References:** [CombinedModelSchema](./data-schema.combinedmodelschema.md)
 
