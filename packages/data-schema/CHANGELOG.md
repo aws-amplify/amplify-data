@@ -1,5 +1,11 @@
 # @aws-amplify/data-schema
 
+## 1.25.6
+
+### Patch Changes
+
+- 06dc6f4: fix: allow partial input on composite-sort-key `beginsWith` so leading-field prefix queries work for 3+ field composite sort keys
+
 ## 1.25.5
 
 ### Patch Changes
