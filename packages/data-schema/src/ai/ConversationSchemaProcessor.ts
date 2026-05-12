@@ -9,10 +9,7 @@ import type {
 import type { InferenceConfiguration } from './ModelType';
 
 const escapeGraphQLString = (str: string): string =>
-  str
-    .replace(/\\/g, '\\\\')
-    .replace(/"/g, '\\"')
-    .replace(/\r?\n/g, '\\n');
+  JSON.stringify(str).slice(1, -1);
 
 export const createConversationField = (
   typeDef: InternalConversationType,
