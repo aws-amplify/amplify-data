@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "@aws-amplify/data-schema": "*",
-    "aws-amplify": "*"
+    "aws-amplify": "^6.17.0"
   },
   "devDependencies": {
     "@types/node": "^20.16.2",

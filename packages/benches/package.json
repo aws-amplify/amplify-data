@@ -31,6 +31,6 @@
     "@aws-amplify/data-schema-types": "*"
   },
   "dependencies": {
-    "aws-amplify": "*"
+    "aws-amplify": "^6.17.0"
   }
 }

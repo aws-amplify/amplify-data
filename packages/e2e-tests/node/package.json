@@ -20,7 +20,7 @@
     "@types/jest": "^29.5.12",
     "@types/node": "20.8.3",
     "@types/ws": "^8.5.11",
-    "aws-amplify": "unstable",
+    "aws-amplify": "^6.17.0",
     "aws-cdk": "^2.149.0",
     "aws-cdk-lib": "^2.149.0",
     "constructs": "^10.3.0",
