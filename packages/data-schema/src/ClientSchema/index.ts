@@ -1,6 +1,7 @@
 import type { __modelMeta__ } from '../runtime/client';
 import type {
   BaseSchema,
+  ClientSchemaOptions,
   ConversationType,
   CustomOperation,
   CustomType,
@@ -24,18 +25,22 @@ import type { SchemaMetadata } from './utilities/SchemaMetadata';
 import type { Brand, Select, SpreadTuple } from '../util';
 import { ClientConversation } from './ai/ClientConversation';
 
+export type { ClientSchemaOptions } from '../ModelSchema';
+
 export type ClientSchema<
   Schema extends GenericModelSchema<any> | CombinedModelSchema<any>,
+  Options extends ClientSchemaOptions = ClientSchemaOptions,
 > =
   Schema extends GenericModelSchema<any>
-    ? InternalClientSchema<Schema>
+    ? InternalClientSchema<Schema, Options>
     : Schema extends CombinedModelSchema<any>
-      ? InternalCombinedSchema<Schema>
+      ? InternalCombinedSchema<Schema, Options>
       : never;
 
 type InternalClientSchema<
   CustomerSchema extends ModelSchemaContents | BaseSchema<any, any>,
-  Metadata extends SchemaMetadata<any> = never,
+  Options extends ClientSchemaOptions = ClientSchemaOptions,
+  Metadata extends SchemaMetadata<any, any> = never,
   IsRDS extends boolean = never,
 > = CustomerSchema extends ModelSchemaContents
   ? {
@@ -48,14 +53,15 @@ type InternalClientSchema<
   : CustomerSchema extends BaseSchema<any, any>
     ? InternalClientSchema<
         CustomerSchema['data']['types'],
-        SchemaMetadata<CustomerSchema>,
+        Options,
+        SchemaMetadata<CustomerSchema, Options>,
         CustomerSchema extends Brand<'RDSSchema'> ? true : false
       >
     : never;
 
 type ClientSchemaProperty<
   T extends ModelSchemaContents,
-  Metadata extends SchemaMetadata<any>,
+  Metadata extends SchemaMetadata<any, any>,
   IsRDS extends boolean,
   K extends keyof T & string,
 > =
@@ -81,34 +87,34 @@ type RemapEnum<_T extends ModelSchemaContents, E> =
 
 type RemapCustomType<
   T extends ModelSchemaContents,
-  Metadata extends SchemaMetadata<any>,
+  Metadata extends SchemaMetadata<any, any>,
   IsRDS extends boolean,
   E,
 > =
   E extends CustomType<infer CT>
-    ? ClientCustomType<InternalClientSchema<T, Metadata, IsRDS>, CT>
+    ? ClientCustomType<InternalClientSchema<T, ClientSchemaOptions, Metadata, IsRDS>, CT>
     : never;
 
 type RemapCustomOperation<
   T extends ModelSchemaContents,
-  Metadata extends SchemaMetadata<any>,
+  Metadata extends SchemaMetadata<any, any>,
   IsRDS extends boolean,
   E,
 > =
   E extends CustomOperation<infer CO, any>
-    ? ClientCustomOperation<InternalClientSchema<T, Metadata, IsRDS>, CO>
+    ? ClientCustomOperation<InternalClientSchema<T, ClientSchemaOptions, Metadata, IsRDS>, CO>
     : never;
 
 type RemapModel<
   T extends ModelSchemaContents,
-  Metadata extends SchemaMetadata<any>,
+  Metadata extends SchemaMetadata<any, any>,
   IsRDS extends boolean,
   E,
   K extends keyof T & string,
 > =
   E extends ModelType<infer MT, any>
     ? ClientModel<
-        InternalClientSchema<T, Metadata, IsRDS>,
+        InternalClientSchema<T, ClientSchemaOptions, Metadata, IsRDS>,
         Metadata,
         IsRDS,
         MT,
@@ -121,14 +127,19 @@ type RemapAIRoute<
   E,
 > = E extends ConversationType ? ClientConversation : never;
 
-type GetInternalClientSchema<Schema> =
-  Schema extends GenericModelSchema<any> ? InternalClientSchema<Schema> : never;
+type GetInternalClientSchema<
+  Schema,
+  Options extends ClientSchemaOptions = ClientSchemaOptions,
+> = Schema extends GenericModelSchema<any>
+  ? InternalClientSchema<Schema, Options>
+  : never;
 
 type CombinedClientSchemas<
   Schemas extends CombinedModelSchema<any>['schemas'],
+  Options extends ClientSchemaOptions = ClientSchemaOptions,
 > = {
   [Index in keyof Schemas]: Index extends CombinedSchemaIndexesUnion
-    ? GetInternalClientSchema<Schemas[Index]>
+    ? GetInternalClientSchema<Schemas[Index], Options>
     : never;
 };
 
@@ -142,7 +153,8 @@ type CombinedClientSchemas<
  */
 type InternalCombinedSchema<
   Combined extends CombinedModelSchema<any>,
-  ClientSchemas extends [...any] = CombinedClientSchemas<Combined['schemas']>,
+  Options extends ClientSchemaOptions = ClientSchemaOptions,
+  ClientSchemas extends [...any] = CombinedClientSchemas<Combined['schemas'], Options>,
 > = SpreadTuple<{
   [I in keyof ClientSchemas]: I extends CombinedSchemaIndexesUnion
     ? Omit<ClientSchemas[I], typeof __modelMeta__>
