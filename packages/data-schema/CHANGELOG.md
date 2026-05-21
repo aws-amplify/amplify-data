@@ -1,5 +1,24 @@
 # @aws-amplify/data-schema
 
+## 1.25.6
+
+### Patch Changes
+
+- 06dc6f4: fix: allow partial input on composite-sort-key `beginsWith` so leading-field prefix queries work for 3+ field composite sort keys
+
+## 1.25.5
+
+### Patch Changes
+
+- be15726: fix: preserve identityPool provider name in auth directive output instead of mapping to iam
+
+## 1.25.4
+
+### Patch Changes
+
+- e629c5c: fix: return errors from indexQuery GraphQL response
+- 8ced0c0: feat: added support for Claude 4.6 models family with Bedrock's global inference profile
+
 ## 1.25.3
 
 ### Patch Changes

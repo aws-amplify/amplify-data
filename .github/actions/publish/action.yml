@@ -1,5 +1,5 @@
-name: Publish to NPM
-description: Publish changes from the current commit to npm using the target release process.
+name: Publish to Registry
+description: Publish changes from the current commit to the registry using the target release process.
 
 inputs:
   github_user:
@@ -12,7 +12,7 @@ inputs:
     description: The release process target (either release or preid)
     required: true
   npm_token:
-    description: The npm token that gives the job npm permissions
+    description: The registry token that gives the job publish permissions
     required: true
   preid:
     description: The preid to release to when the target is preid. The preid process will fail if this isn't provided.
@@ -30,7 +30,7 @@ runs:
         git config --global user.email $GITHUB_EMAIL
         git config --global user.name $GITHUB_USER
 
-    - name: Run npm publish
+    - name: Run publish
       if: github.repository_owner == 'aws-amplify'
       shell: bash
       working-directory: ./amplify-data
@@ -44,4 +44,4 @@ runs:
         export PREID_HASH_SUFFIX=$(echo $GH_SHA | cut -c -7 | sed 's/^/\./')
         git status
         git --no-pager diff
-        npm run publish:$TARGET
+        yarn publish:$TARGET

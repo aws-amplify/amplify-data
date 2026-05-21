@@ -8,9 +8,9 @@ The decoded config is stored in SSM in the team's internal AWS account.
 
 ## Running the test locally
 
-1. Run `npx ampx sandbox`
-1. `npm run install:no-lock`
-1. `npm run e2e-node` to run test
+1. Run `yarn dlx ampx sandbox`
+1. `yarn install:no-lock`
+1. `yarn e2e-node` to run test
 
 Note: `amplify_outputs.json` and `.amplify/*` files are ignored by Git in this directory, so you do not have to delete them manually.
 

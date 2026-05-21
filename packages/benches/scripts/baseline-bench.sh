@@ -22,7 +22,7 @@ baselineBench() {
 
   echo "Cleared bench"
   # Re-running the bench after clearing out cached baseline will write the new baseline to the file
-  npm run tsx $FILENAME
+  yarn tsx $FILENAME
   echo ""
   echo "Baselined $FILENAME"
 }

@@ -7,7 +7,7 @@
 This script will build the `data-schema` and `data-schema-types` packages, then run the specified bench file.
 
 ```
-$ npm run bench:file file_name
+$ yarn bench:file file_name
 ```
 
 #### Running groups of benches
@@ -15,10 +15,10 @@ $ npm run bench:file file_name
 These scripts will build the packages in the library, then run all the bench files in the specified directory.
 
 ```
-$ npm run bench:basic
-$ npm run bench:p50
-$ npm run bench:p99
-$ npm run bench:all
+$ yarn bench:basic
+$ yarn bench:p50
+$ yarn bench:p99
+$ yarn bench:all
 ```
 
 #### Creating a new bench
@@ -33,7 +33,7 @@ bench('new bench', () => {
 }).types();
 ```
 
-Then run `npm run bench:file file_name` and the instantiation count will appear in the file inside the `.types()` builder.
+Then run `yarn bench:file file_name` and the instantiation count will appear in the file inside the `.types()` builder.
 
 ```ts
 bench('new bench', () => {
@@ -49,7 +49,7 @@ The value will serve as the baseline for subsequent runs.
 If you've made changes to the library that impacted type performance and you want to create a new baseline, run:
 
 ```
-$ npm run baseline file_name
+$ yarn baseline file_name
 ```
 
 (The `baseline` scripts also first build the packages in the library before executing)
@@ -57,10 +57,10 @@ $ npm run baseline file_name
 Similarly, you can do this in groups (by directory):
 
 ```
-$ npm run baseline:basic
-$ npm run baseline:p50
-$ npm run baseline:p99
-$ npm run baseline:all
+$ yarn baseline:basic
+$ yarn baseline:p50
+$ yarn baseline:p99
+$ yarn baseline:all
 ```
 
 ## Overview of existing benchmarks:

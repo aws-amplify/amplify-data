@@ -213,6 +213,7 @@ function _indexQuery(
                 ? flattenedResult
                 : modelInitializer(flattenedResult),
               nextToken: data[key]?.nextToken,
+              errors,
             };
           }
         }
@@ -221,6 +222,7 @@ function _indexQuery(
         return {
           data: data[key],
           nextToken: data[key]?.nextToken,
+          errors,
         };
       } else {
         // `data` is `null` or an empty object:

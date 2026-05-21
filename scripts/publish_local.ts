@@ -37,3 +37,5 @@ if (!keepGitDiff) {
     path.join('packages', '**', 'CHANGELOG.md'),
   ]);
 }
+
+await execa('npm', ['config', 'delete', 'registry']);

@@ -7,7 +7,7 @@ import { AllowModifier, Authorization, allow } from './Authorization';
  */
 export const __auth = Symbol('__auth');
 
-const brandName = 'modelRelationshipField';
+const _brandName = 'modelRelationshipField';
 
 /**
  * Model relationship types
@@ -86,7 +86,7 @@ export type ModelRelationshipField<
 > = Omit<ModelRelationshipFieldFunctions<T, RM, K>, K> & {
   // This is a lie. This property is never set at runtime. It's just used to smuggle auth types through.
   [__auth]?: Auth;
-} & Brand<typeof brandName>;
+} & Brand<typeof _brandName>;
 
 /**
  * Internal representation of Model Field that exposes the `data` property.
@@ -100,7 +100,7 @@ export type InternalRelationshipField = ModelRelationshipField<
   data: ModelRelationshipFieldData;
 };
 
-const relationshipModifiers = [
+const _relationshipModifiers = [
   'required',
   'valueRequired',
   'authorization',
@@ -108,7 +108,7 @@ const relationshipModifiers = [
 
 const relationModifierMap: Record<
   `${ModelRelationshipTypes}`,
-  (typeof relationshipModifiers)[number][]
+  (typeof _relationshipModifiers)[number][]
 > = {
   belongsTo: ['authorization'],
   hasMany: ['valueRequired', 'authorization'],
