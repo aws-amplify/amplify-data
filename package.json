@@ -81,7 +81,7 @@
     "rimraf": "^5.0.5",
     "ts-jest": "^29.4.6",
     "tsx": "^4.8.2",
-    "turbo": "^1.10.14",
+    "turbo": "^2.9.14",
     "typedoc": "^0.27.6",
     "typescript": "^5.1.6",
     "typescript-eslint": "^8.57.1",
@@ -99,6 +99,11 @@
     "esbuild": "^0.25.0",
     "handlebars": "^4.7.9",
     "picomatch": "^4.0.4",
-    "yaml": "^1.10.3"
+    "yaml": "^1.10.3",
+    "qs": "^6.15.2",
+    "uuid": "^11.1.1",
+    "js-cookie": "^3.0.7",
+    "webpack-dev-server": "^5.2.4",
+    "brace-expansion": "^5.0.6"
   }
 }
