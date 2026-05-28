@@ -590,6 +590,30 @@ describe('Secondary Indexes', () => {
       type _AssertLength = Expect<Equal<BetweenTuple['length'], 2>>;
     });
 
+    test('ModelPrimaryCompositeKeyInput beginsWith accepts partial inputs', () => {
+      type SkShape = { sk1: string; sk2: number };
+      type CompositeInput = ModelPrimaryCompositeKeyInput<SkShape>;
+
+      // Full input — every sort-key field provided
+      const fullBeginsWith: CompositeInput = {
+        beginsWith: { sk1: 'a', sk2: 1 },
+      };
+      expect(fullBeginsWith.beginsWith).toEqual({ sk1: 'a', sk2: 1 });
+
+      // Partial input — only the leading field. The AppSync VTL skips null
+      // fields when building the `begins_with` prefix, so this is the only
+      // way to express a prefix scan on the leading subset of a composite
+      // sort key. Other operators (eq/lt/le/gt/ge/between) still require the
+      // full key shape because they need exact-match or range bounds.
+      const partialBeginsWith: CompositeInput = {
+        beginsWith: { sk1: 'a' },
+      };
+      expect(partialBeginsWith.beginsWith).toEqual({ sk1: 'a' });
+
+      type BeginsWithType = NonNullable<CompositeInput['beginsWith']>;
+      type _AssertPartial = Expect<Equal<BeginsWithType, Partial<SkShape>>>;
+    });
+
     test('the generated modelIntrospection schema contains the expected index fields and key metadata', async () => {
       expect.assertions(4);
 
