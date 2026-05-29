@@ -59,6 +59,15 @@ type AddToSchemaContents = Record<string, AddToSchemaContent>;
 
 type NonEmpty<T> = keyof T extends never ? never : T;
 
+export type SelectionSetDepthValue = 0 | 1 | 2 | 3 | 4 | 5;
+
+/** Default depth applied when ClientSchema is used without an explicit Options arg. */
+export type DefaultSelectionSetDepth = 5;
+
+export type ClientSchemaOptions = {
+  selectionSetDepth?: SelectionSetDepthValue;
+};
+
 export type ModelSchemaContents = Record<string, SchemaContent>;
 
 type InternalSchemaModels = Record<
@@ -258,9 +267,8 @@ type ModelWithRelationships<
     Record<string, RelationshipTemplate | undefined>
   >,
   ModelName extends keyof Types,
-  RelationshipMap extends UnionToIntersection<
-    Relationships[number]
-  > = UnionToIntersection<Relationships[number]>,
+  RelationshipMap extends UnionToIntersection<Relationships[number]> =
+    UnionToIntersection<Relationships[number]>,
 > = ModelName extends keyof RelationshipMap
   ? RelationshipMap[ModelName] extends Record<
       string,

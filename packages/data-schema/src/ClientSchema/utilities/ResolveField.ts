@@ -8,6 +8,7 @@ import { CustomType } from '../../CustomType';
 import { RefType, RefTypeParamShape } from '../../RefType';
 import { ResolveRef } from './ResolveRef';
 import { LazyLoader } from '../../runtime';
+import type { DefaultSelectionSetDepth } from '../../ModelSchema';
 import type { ModelTypeParamShape } from '../../ModelType';
 
 type ExtendsNever<T> = [T] extends [never] ? true : false;
@@ -37,8 +38,9 @@ export type FlatResolveFields<
   Bag extends Record<string, any>,
   T,
   FlatModelName extends keyof Bag & string = never,
+  Depth extends number = DefaultSelectionSetDepth,
 > = ShallowPretty<{
-  [K in keyof T]: ResolveIndividualField<Bag, T[K], FlatModelName>;
+  [K in keyof T]: ResolveIndividualField<Bag, T[K], FlatModelName, Depth>;
 }>;
 
 // TODO: Remove ShallowPretty from this layer of resolution. Re-incorporate prettification
@@ -53,13 +55,14 @@ export type ResolveIndividualField<
   Bag extends Record<string, any>,
   T,
   FlatModelName extends keyof Bag & string = never,
+  Depth extends number = DefaultSelectionSetDepth,
 > =
   T extends BaseModelField<infer FieldShape>
     ? FieldShape
     : T extends RefType<infer RefShape, any, any>
       ? ResolveRef<RefShape, Bag>
       : T extends ModelRelationshipField<infer RelationshipShape, any, any, any>
-        ? ResolveRelationship<Bag, RelationshipShape, FlatModelName>
+        ? ResolveRelationship<Bag, RelationshipShape, FlatModelName, Depth>
         : T extends CustomType<infer CT>
           ? ResolveFields<Bag, CT['fields']> | null
           : T extends EnumType<infer values>
@@ -112,34 +115,109 @@ type ShortCircuitBiDirectionalRelationship<
     : Field]: Model[Field];
 };
 
+/** Subtract 1 from a depth counter, bounded at 0. Outside 0–5 falls through to 0. */
+type Decrement<N extends number> =
+  N extends 5 ? 4
+  : N extends 4 ? 3
+  : N extends 3 ? 2
+  : N extends 2 ? 1
+  : N extends 1 ? 0
+  : 0;
+
+/**
+ * Replaces each relationship field on the inlined related-model `type` with the
+ * related model's `type` recursively flattened, decrementing `Depth` per hop.
+ * At `Depth=0`, strips relationships entirely so ModelPathInner can't recurse
+ * into a LazyLoader leaf and the cascade terminates.
+ */
+type FlattenRelationships<
+  Bag extends Record<string, any>,
+  Model extends Record<string, any>,
+  RawFields extends Record<string, any>,
+  Depth extends number = DefaultSelectionSetDepth,
+> = Depth extends 0
+  ? OmitRelationships<Model, RawFields>
+  : {
+      [K in keyof Model]: K extends keyof RawFields
+        ? RawFields[K] extends ModelRelationshipField<infer RS, any, any, any>
+          ? RS['array'] extends true
+            ? Array<
+                FlattenRelationships<
+                  Bag,
+                  Bag[RS['relatedModel']]['type'],
+                  Bag[RS['relatedModel']]['__meta']['rawType']['fields'],
+                  Decrement<Depth>
+                >
+              >
+            : FlattenRelationships<
+                Bag,
+                Bag[RS['relatedModel']]['type'],
+                Bag[RS['relatedModel']]['__meta']['rawType']['fields'],
+                Decrement<Depth>
+              >
+          : Model[K]
+        : Model[K];
+    };
+
+/** Terminal case at the depth boundary: drop relationships entirely. */
+type OmitRelationships<
+  Model extends Record<string, any>,
+  RawFields extends Record<string, any>,
+> = {
+  [K in keyof Model as K extends keyof RawFields
+    ? RawFields[K] extends ModelRelationshipField<any, any, any, any>
+      ? never
+      : K
+    : K]: Model[K];
+};
+
+/** Shared `LazyLoader` shape used by the non-flat branch and the depth=0 short-circuit. */
+type LazyLoaderForRelationship<
+  Bag extends Record<string, any>,
+  RelationshipShape extends ModelRelationshipFieldParamShape,
+> = DependentLazyLoaderOpIsAvailable<Bag, RelationshipShape> extends true
+  ? LazyLoader<
+      RelationshipShape['valueRequired'] extends true
+        ? Bag[RelationshipShape['relatedModel']]['type']
+        : Bag[RelationshipShape['relatedModel']]['type'] | null,
+      RelationshipShape['array']
+    >
+  : never;
+
 type ResolveRelationship<
   Bag extends Record<string, any>,
   RelationshipShape extends ModelRelationshipFieldParamShape,
   ParentModelName extends keyof Bag & string = never,
+  Depth extends number = DefaultSelectionSetDepth,
 > =
   ExtendsNever<ParentModelName> extends true
-    ? DependentLazyLoaderOpIsAvailable<Bag, RelationshipShape> extends true
-      ? LazyLoader<
-          RelationshipShape['valueRequired'] extends true
-            ? Bag[RelationshipShape['relatedModel']]['type']
-            : Bag[RelationshipShape['relatedModel']]['type'] | null,
-          RelationshipShape['array']
-        >
-      : never
-    : // Array-ing inline here vs. (inside of ShortCircuitBiDirectionalRelationship or in a separate conditional type) is significantly more performant
-      RelationshipShape['array'] extends true
-      ? Array<
-          ShortCircuitBiDirectionalRelationship<
-            Bag[RelationshipShape['relatedModel']]['__meta']['flatModel'],
+    ? LazyLoaderForRelationship<Bag, RelationshipShape>
+    : Depth extends 0
+      ? LazyLoaderForRelationship<Bag, RelationshipShape>
+      : // Array-ing inline here vs. (inside of ShortCircuitBiDirectionalRelationship or in a separate conditional type) is significantly more performant
+        RelationshipShape['array'] extends true
+        ? Array<
+            ShortCircuitBiDirectionalRelationship<
+              FlattenRelationships<
+                Bag,
+                Bag[RelationshipShape['relatedModel']]['type'],
+                Bag[RelationshipShape['relatedModel']]['__meta']['rawType']['fields'],
+                Decrement<Depth>
+              >,
+              ParentModelName,
+              Bag[RelationshipShape['relatedModel']]['__meta']['rawType']['fields']
+            >
+          >
+        : ShortCircuitBiDirectionalRelationship<
+            FlattenRelationships<
+              Bag,
+              Bag[RelationshipShape['relatedModel']]['type'],
+              Bag[RelationshipShape['relatedModel']]['__meta']['rawType']['fields'],
+              Decrement<Depth>
+            >,
             ParentModelName,
             Bag[RelationshipShape['relatedModel']]['__meta']['rawType']['fields']
-          >
-        >
-      : ShortCircuitBiDirectionalRelationship<
-          Bag[RelationshipShape['relatedModel']]['__meta']['flatModel'],
-          ParentModelName,
-          Bag[RelationshipShape['relatedModel']]['__meta']['rawType']['fields']
-        >;
+          >;
 
 type DependentLazyLoaderOpIsAvailable<
   Bag extends Record<string, any>,
