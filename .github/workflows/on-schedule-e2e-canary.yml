@@ -6,6 +6,9 @@ on:
   schedule:
     - cron: '0 19 * * *'
 
+permissions:
+  contents: read
+
 jobs:
   e2e-canary:
     secrets: inherit

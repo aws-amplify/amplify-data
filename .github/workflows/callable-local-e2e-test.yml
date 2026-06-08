@@ -14,6 +14,9 @@ on:
         required: true
         type: number
 
+permissions:
+  contents: read
+
 jobs:
   e2e-test:
     name: E2E ${{ inputs.test_name }}

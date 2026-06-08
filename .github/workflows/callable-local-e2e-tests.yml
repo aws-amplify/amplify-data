@@ -2,6 +2,9 @@ name: Local E2E Tests
 
 on: workflow_call
 
+permissions:
+  contents: read
+
 jobs:
   unit_test:
     name: Local E2E Tests

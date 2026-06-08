@@ -2,6 +2,9 @@ name: Release and update repository
 
 on: workflow_call
 
+permissions:
+  contents: read
+
 jobs:
   deploy:
     name: Publish to Amplify Package
