@@ -5,6 +5,10 @@ on:
     secrets:
       AMPLIFY_JS_SAMPLES_STAGING_READ:
         required: true
+
+permissions:
+  contents: read
+
 jobs:
   pre-staging:
     name: Prebuild Staging

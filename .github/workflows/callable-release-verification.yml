@@ -2,6 +2,9 @@ name: Release Verification Tests
 
 on: workflow_call
 
+permissions:
+  contents: read
+
 jobs:
   prebuild-ubuntu:
     uses: ./.github/workflows/callable-prebuild-amplify-data.yml

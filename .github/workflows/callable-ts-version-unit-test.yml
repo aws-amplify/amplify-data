@@ -6,6 +6,10 @@ on:
       tsVersion:
         required: true
         type: string
+
+permissions:
+  contents: read
+
 jobs:
   unit_test:
     name: Lint & Unit Tests

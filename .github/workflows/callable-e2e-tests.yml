@@ -2,6 +2,9 @@ name: E2E Tests
 
 on: workflow_call
 
+permissions:
+  contents: read
+
 jobs:
   e2e-prep:
     name: Get E2E test config

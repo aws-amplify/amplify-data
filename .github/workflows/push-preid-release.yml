@@ -10,6 +10,12 @@ on:
     branches:
       - feat/**/main
 
+# Restrict the default GITHUB_TOKEN to least privilege.
+# Publishing steps authenticate via a dedicated PAT (GH_TOKEN_AMPLIFY_WRITE) / NPM_TOKEN,
+# so the default token only needs read access to repository contents.
+permissions:
+  contents: read
+
 jobs:
   prebuild:
     runs-on: ubuntu-latest

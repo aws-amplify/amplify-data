@@ -15,6 +15,12 @@ on:
       # accidentally publishing changes.
       - main
 
+# Restrict the default GITHUB_TOKEN to least privilege.
+# The release job publishes via a dedicated PAT (GH_TOKEN_AMPLIFY_WRITE) / NPM_TOKEN,
+# and the sandbox_test job sets its own id-token: write for AWS OIDC below.
+permissions:
+  contents: read
+
 jobs:
   prebuild-ubuntu:
     uses: ./.github/workflows/callable-prebuild-amplify-data.yml

@@ -2,6 +2,9 @@ name: Unit Tests
 
 on: workflow_call
 
+permissions:
+  contents: read
+
 jobs:
   unit_test:
     name: Lint & Unit Tests

@@ -40,6 +40,9 @@ on:
 env:
   AMPLIFY_DIR: /home/runner/work/amplify-data/amplify-data/amplify-data
 
+permissions:
+  contents: read
+
 jobs:
   e2e-test:
     name: E2E ${{ inputs.test_name }}

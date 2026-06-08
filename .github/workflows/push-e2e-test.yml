@@ -10,6 +10,9 @@ on:
     branches:
       - replace-with-your-branch
 
+permissions:
+  contents: read
+
 jobs:
   e2e:
     secrets: inherit
