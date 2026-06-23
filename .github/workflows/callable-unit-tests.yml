@@ -18,4 +18,13 @@ jobs:
         uses: ./amplify-data/.github/actions/node-and-build
       - name: Run tests
         working-directory: ./amplify-data
+        env:
+          # The post-turbo test steps are heap-bound and exceed the runner's default
+          # V8 old-space limit (~4 GB), producing an intermittent "JavaScript heap out
+          # of memory" fatal error after all unit tests pass. The two hot spots are
+          # ts-jest type-checking in `test:scripts` (jest workers inherit NODE_OPTIONS,
+          # not V8 CLI flags) and the `e2e-exports` rollup build, which cold-installs the
+          # latest aws-cdk-lib/typescript under hardened mode for public PRs. Raise the
+          # ceiling so both have headroom on the 16 GB runner.
+          NODE_OPTIONS: --max-old-space-size=8192
         run: yarn lint && yarn test

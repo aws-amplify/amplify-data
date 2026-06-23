@@ -105,6 +105,8 @@
     "js-cookie": "^3.0.7",
     "webpack-dev-server": "^5.2.4",
     "brace-expansion": "^5.0.6",
-    "ws": "^8.20.1"
+    "@opentelemetry/core": "^2.8.0",
+    "js-yaml@npm:~4.1.0": "^4.2.0",
+    "js-yaml@npm:4.1.1": "^4.2.0"
   }
 }
