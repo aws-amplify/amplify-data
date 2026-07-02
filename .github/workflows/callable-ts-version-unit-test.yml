@@ -36,4 +36,9 @@ jobs:
           force: true
       - name: Run tests
         working-directory: ./amplify-data
+        # Newer TypeScript compilers use more memory type-checking this repo's
+        # generic-heavy types via ts-jest, exceeding V8's default (~4GB) heap.
+        # Raise the limit so the canary reports real regressions, not OOMs.
+        env:
+          NODE_OPTIONS: --max-old-space-size=8192
         run: yarn lint && yarn test
