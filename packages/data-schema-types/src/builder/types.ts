@@ -92,6 +92,12 @@ export type DataSourceConfiguration<
       vpcConfig?: VpcConfig;
       identifier?: string;
       sslCert?: BackendSecret;
+      /**
+       * When true, provisions only the SSM interface VPC endpoint for the SQL Lambda,
+       * instead of the full set. Defaults to false (all endpoints) for backward compatibility.
+       * Only has an effect when vpcConfig is set.
+       */
+      minimizeRdsVpcEndpoints?: boolean;
     };
 
 export type SchemaConfiguration<
