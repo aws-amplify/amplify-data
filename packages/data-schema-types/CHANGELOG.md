@@ -1,5 +1,11 @@
 # @aws-amplify/data-schema-types
 
+## 1.3.0
+
+### Minor Changes
+
+- 9172acc: Add optional `minimizeRdsVpcEndpoints` to the SQL data source configuration, allowing customers to opt into provisioning only the SSM VPC endpoint for the RDS-in-VPC SQL Lambda (reduces 5 endpoints to 1). Defaults to false (unchanged behavior); SQL data sources only.
+
 ## 1.2.1
 
 ### Patch Changes
