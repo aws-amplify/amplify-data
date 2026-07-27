@@ -212,8 +212,12 @@ function isInputType(type: InputFieldType): type is InputType {
 }
 
 /**
+ * For a list argument this is the *element* type, so `isRequired` — which is
+ * element-level for lists — is the correct source for the `!`. The list's own
+ * nullability is applied by the caller. See {@link isArgumentRequired}.
+ *
  * @param argDef A single argument definition from a custom operation
- * @returns A string naming the base type including the `!` if the arg is required.
+ * @returns A string naming the base type including the `!` if that type is non-null.
  */
 function argumentBaseTypeString({ type, isRequired }: CustomOperationArgument) {
   const requiredFlag = isRequired ? '!' : '';
@@ -224,6 +228,35 @@ function argumentBaseTypeString({ type, isRequired }: CustomOperationArgument) {
     return `${type.input}${requiredFlag}`;
   }
   return `${type}${requiredFlag}`;
+}
+
+/**
+ * Determines whether a value must be provided for a custom operation argument,
+ * i.e. whether the argument itself is non-null in the GraphQL schema.
+ *
+ * For list arguments, the model introspection schema encodes *element* nullability
+ * in `isRequired` and *list* nullability in `isArrayNullable`. For example, an
+ * argument declared as `a.ref('Color').required().array()` is emitted as `[Color!]`
+ * and introspected as `{ isArray: true, isRequired: true, isArrayNullable: true }`
+ * — a nullable list of non-null elements, so the argument itself is optional. Only
+ * the outermost nullability determines whether the caller has to supply a value.
+ *
+ * `isArrayNullable` is optional in the introspection schema. The generator we
+ * build against always emits it for list arguments (`getTypeInfo()` sets
+ * `isListNullable` on every list branch), but when it is absent we treat the list
+ * as non-null to stay consistent with the `[T]!` that `outerArguments()` renders
+ * for the same input — a request declaring a non-null variable with no value
+ * would be rejected by the server anyway.
+ *
+ * @param argDef A single argument definition from a custom operation
+ * @returns Boolean: `true` if the argument itself is non-null
+ */
+function isArgumentRequired({
+  isArray,
+  isRequired,
+  isArrayNullable,
+}: CustomOperationArgument): boolean {
+  return isArray ? !isArrayNullable : isRequired;
 }
 
 /**
@@ -253,7 +286,7 @@ function outerArguments(operation: CustomOperation): string {
     .map(([k, argument]) => {
       const baseType = argumentBaseTypeString(argument);
       const finalType = argument.isArray
-        ? `[${baseType}]${argument.isArrayNullable ? '' : '!'}`
+        ? `[${baseType}]${isArgumentRequired(argument) ? '!' : ''}`
         : baseType;
 
       return `$${k}: ${finalType}`;
@@ -357,7 +390,7 @@ function operationVariables(
   for (const argDef of Object.values(operation.arguments)) {
     if (typeof args[argDef.name] !== 'undefined') {
       variables[argDef.name] = args[argDef.name];
-    } else if (argDef.isRequired) {
+    } else if (isArgumentRequired(argDef)) {
       // At this point, the variable is both required and missing: We don't need
       // to continue. The operation is expected to fail.
       throw new Error(`${operation.name} requires arguments '${argDef.name}'`);

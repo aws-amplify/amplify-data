@@ -729,4 +729,151 @@ describe('custom operations', () => {
       const { data } = await client.queries.echoEnum({ status: 'BAD VALUE' });
     });
   });
+
+  describe('with list arguments', () => {
+    const schema = a.schema({
+      Color: a.enum(['RED', 'GREEN', 'BLUE']),
+      // `[Color!]` -- a nullable list of non-null elements, so omitting the
+      // argument is valid.
+      nullableList: a
+        .query()
+        .arguments({
+          colors: a.ref('Color').required().array(),
+        })
+        .returns(a.string())
+        .handler(a.handler.function('name' as any))
+        .authorization((allow) => [allow.publicApiKey()]),
+      // `[Color]!` -- a non-null list, so the argument must be provided.
+      requiredList: a
+        .query()
+        .arguments({
+          colors: a.ref('Color').array().required(),
+        })
+        .returns(a.string())
+        .handler(a.handler.function('name' as any))
+        .authorization((allow) => [allow.publicApiKey()]),
+    });
+
+    type Schema = ClientSchema<typeof schema>;
+
+    test('encode element nullability separately from list nullability in the modelIntrospection schema', async () => {
+      const { modelIntrospection } = await buildAmplifyConfig(schema);
+
+      expect(modelIntrospection.queries.nullableList.arguments).toEqual({
+        colors: {
+          name: 'colors',
+          isArray: true,
+          type: { enum: 'Color' },
+          // element-level: `Color!`
+          isRequired: true,
+          // list-level: the list itself is nullable
+          isArrayNullable: true,
+        },
+      });
+
+      expect(modelIntrospection.queries.requiredList.arguments).toEqual({
+        colors: {
+          name: 'colors',
+          isArray: true,
+          type: { enum: 'Color' },
+          isRequired: false,
+          isArrayNullable: false,
+        },
+      });
+    });
+
+    test('mark a nullable list argument optional in the ClientSchema args', async () => {
+      type ExpectedArgs = {
+        colors?: ('RED' | 'GREEN' | 'BLUE')[] | null | undefined;
+      };
+      type test = Expect<Equal<Schema['nullableList']['args'], ExpectedArgs>>;
+    });
+
+    test('mark a non-null list argument required in the ClientSchema args', async () => {
+      type ExpectedArgs = {
+        colors: ('RED' | 'GREEN' | 'BLUE' | null | undefined)[];
+      };
+      type test = Expect<Equal<Schema['requiredList']['args'], ExpectedArgs>>;
+    });
+
+    test('send the request when a nullable list argument is omitted', async () => {
+      const { spy, generateClient } = mockedGenerateClient([
+        { data: { nullableList: 'ok' } },
+      ]);
+
+      const config = await buildAmplifyConfig(schema);
+      Amplify.configure(config);
+      const client = generateClient<Schema>();
+
+      const { data } = await client.queries.nullableList({});
+
+      expect(data).toEqual('ok');
+
+      const [[options]] = optionsAndHeaders(spy);
+      expectGraphqlMatches(
+        options.query,
+        `
+        query($colors: [Color!]) {
+          nullableList(colors: $colors)
+        }
+      `,
+      );
+      expect(options.variables).toEqual({});
+    });
+
+    test('send a nullable list argument as a variable when provided', async () => {
+      const { spy, generateClient } = mockedGenerateClient([
+        { data: { nullableList: 'ok' } },
+      ]);
+
+      const config = await buildAmplifyConfig(schema);
+      Amplify.configure(config);
+      const client = generateClient<Schema>();
+
+      await client.queries.nullableList({ colors: ['RED', 'BLUE'] });
+
+      const [[options]] = optionsAndHeaders(spy);
+      expect(options.variables).toEqual({ colors: ['RED', 'BLUE'] });
+    });
+
+    test('throw before sending when a non-null list argument is omitted', async () => {
+      const { spy, generateClient } = mockedGenerateClient([
+        { data: { requiredList: 'ok' } },
+      ]);
+
+      const config = await buildAmplifyConfig(schema);
+      Amplify.configure(config);
+      const client = generateClient<Schema>();
+
+      await expect(
+        // @ts-expect-error `colors` is a required property of the args type, as
+        // pinned above -- only untyped callers can reach the runtime check.
+        client.queries.requiredList({}),
+      ).rejects.toThrow("requiredList requires arguments 'colors'");
+
+      expect(optionsAndHeaders(spy)).toEqual([]);
+    });
+
+    test('render a non-null list argument as a non-null variable', async () => {
+      const { spy, generateClient } = mockedGenerateClient([
+        { data: { requiredList: 'ok' } },
+      ]);
+
+      const config = await buildAmplifyConfig(schema);
+      Amplify.configure(config);
+      const client = generateClient<Schema>();
+
+      await client.queries.requiredList({ colors: ['RED'] });
+
+      const [[options]] = optionsAndHeaders(spy);
+      expectGraphqlMatches(
+        options.query,
+        `
+        query($colors: [Color]!) {
+          requiredList(colors: $colors)
+        }
+      `,
+      );
+    });
+  });
 });
