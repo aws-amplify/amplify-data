@@ -54,6 +54,9 @@ allow-dependencies-licenses:
   - "pkg:npm/@img/sharp-libvips-linux-x64"
   - "pkg:npm/@img/sharp-libvips-linuxmusl-arm64"
   - "pkg:npm/@img/sharp-libvips-linuxmusl-x64"
+  # sharp >=0.35 reports "Apache-2.0 AND LGPL-3.0-or-later AND MIT"; the LGPL comes from
+  # the bundled libvips, which is dynamically linked and not redistributed by us.
+  - "pkg:npm/@img/sharp-wasm32"
   - "pkg:npm/@img/sharp-win32-arm64"
   - "pkg:npm/@img/sharp-win32-ia32"
   - "pkg:npm/@img/sharp-win32-x64"
