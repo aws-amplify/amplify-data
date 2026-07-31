@@ -108,6 +108,7 @@
     "@opentelemetry/core": "^2.8.0",
     "js-yaml": "^4.3.0",
     "http-proxy-middleware": "^2.0.10",
-    "next/sharp": "^0.35.0"
+    "next/sharp": "^0.35.0",
+    "next/postcss": "^8.5.12"
   }
 }
