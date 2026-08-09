@@ -91,6 +91,8 @@ describe('createOnStreamEventFunction()', () => {
         contentBlockDoneAtIndex: undefined,
         toolUse: undefined,
         stopReason: undefined,
+        metrics: undefined,
+        usage: undefined,
       };
       onStreamEvent(mockHandler);
 
@@ -131,6 +133,8 @@ describe('createOnStreamEventFunction()', () => {
         contentBlockDeltaIndex: undefined,
         text: undefined,
         role: undefined,
+        metrics: undefined,
+        usage: undefined,
       };
       onStreamEvent(mockHandler);
       expect(mockCustomOpFactory).toHaveBeenCalledWith(

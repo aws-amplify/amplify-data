@@ -319,7 +319,7 @@ exports[`AI Conversation Routes Messages Subscribe to messages 1`] = `
       "endpoint": undefined,
       "query": "
     subscription($conversationId: ID!) {
-      onCreateAssistantResponseChatBot(conversationId: $conversationId) {id owner conversationId associatedUserMessageId contentBlockIndex contentBlockText contentBlockDeltaIndex contentBlockToolUse { toolUseId name input type } contentBlockDoneAtIndex stopReason errors { message errorType } p}
+      onCreateAssistantResponseChatBot(conversationId: $conversationId) {id owner conversationId associatedUserMessageId contentBlockIndex contentBlockText contentBlockDeltaIndex contentBlockToolUse { toolUseId name input type } contentBlockDoneAtIndex stopReason errors { message errorType } metrics { latencyMs } usage { inputTokens outputTokens totalTokens } p}
     }
   ",
       "variables": {
@@ -362,6 +362,14 @@ exports[`AI Conversation Routes Messages Subscribe to messages 2`] = `
     errors {
       message
       errorType
+    }
+    metrics {
+      latencyMs
+    }
+    usage {
+      inputTokens
+      outputTokens
+      totalTokens
     }
     p
   }

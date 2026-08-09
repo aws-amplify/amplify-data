@@ -3,16 +3,15 @@
 
 import { deserializeContent } from './conversationMessageDeserializers';
 
-export const convertItemToConversationMessage = ({
-  content,
-  createdAt,
-  id,
-  conversationId,
-  role,
-}: any) => ({
-  content: deserializeContent(content ?? []),
-  conversationId,
-  createdAt,
-  id,
-  role,
-});
+export const convertItemToConversationMessage = (item: any) => {
+  const { content, createdAt, id, conversationId, role, metrics, usage } = item;
+  return {
+    content: deserializeContent(content ?? []),
+    conversationId,
+    createdAt,
+    id,
+    role,
+    ...(metrics != null && { metrics }),
+    ...(usage != null && { usage }),
+  };
+};
