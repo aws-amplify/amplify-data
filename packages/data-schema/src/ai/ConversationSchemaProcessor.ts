@@ -8,6 +8,9 @@ import type {
 } from './ConversationType';
 import type { InferenceConfiguration } from './ModelType';
 
+const escapeGraphQLString = (str: string): string =>
+  JSON.stringify(str).slice(1, -1);
+
 export const createConversationField = (
   typeDef: InternalConversationType,
   typeName: string,
@@ -18,16 +21,7 @@ export const createConversationField = (
 
   const args: Record<string, string> = {
     aiModel: aiModel.resourcePath,
-    // This is done to escape newlines in potentially multi-line system prompts
-    // e.g.
-    // realtorChat: a.conversation({
-    //   aiModel: a.ai.model('Claude 3 Haiku'),
-    //   systemPrompt: `You are a helpful real estate assistant
-    //   Respond in the poetic form of haiku.`,
-    // }),
-    //
-    // It doesn't affect non multi-line string inputs for system prompts
-    systemPrompt: systemPrompt.replace(/\r?\n/g, '\\n'),
+    systemPrompt: escapeGraphQLString(systemPrompt),
   };
 
   // Add each arg with quotes (aiModel and systemPrompt)
@@ -126,7 +120,7 @@ const getConversationToolsString = (tools: DataToolDefinition[]) =>
         );
       }
       const toolDefinition = extractToolDefinition(tool);
-      return `{ name: "${name}", description: "${description}", ${toolDefinition} }`;
+      return `{ name: "${name}", description: "${escapeGraphQLString(description)}", ${toolDefinition} }`;
     })
     .join(', ');
 
