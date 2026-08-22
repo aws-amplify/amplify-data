@@ -7,6 +7,14 @@ import {
   FieldTypeToValidationBuilder,
   createValidationBuilder,
 } from './Validate';
+import { AsyncFunctionHandler, CustomHandler, FunctionHandler, HandlerType as Handler } from './Handler';
+
+type FieldHandler = Exclude<Handler, AsyncFunctionHandler>;
+
+type HandlerInputType =
+  | FunctionHandler[]
+  | CustomHandler[]
+  | FieldHandler;
 
 /**
  * Used to "attach" auth types to ModelField without exposing them on the builder.
@@ -58,6 +66,7 @@ type FieldData = {
   default: undefined | symbol | ModelFieldTypeParamOuter;
   authorization: Authorization<any, any, any>[];
   validation: ValidationRule[];
+  handlers: FieldHandler[];
 };
 
 type ModelFieldTypeParamInner = string | number | boolean | Date | Json | null;
@@ -90,7 +99,7 @@ export type BaseModelField<
 
 export type UsableModelFieldKey = satisfy<
   methodKeyOf<ModelField>,
-  'required' | 'default' | 'authorization' | 'array' | 'validate'
+  'required' | 'default' | 'authorization' | 'array' | 'validate' | 'handler'
 >;
 
 /**
@@ -165,6 +174,11 @@ export type ModelField<
     validate(
       callback: (v: FieldTypeToValidationBuilder<T, FT>) => void
     ): ModelField<T, UsedMethod | 'validate' | 'default' | 'array', Auth, FT>;
+    /**
+     * Configures field-level handlers.
+     * @param handlers - An array of handler functions to be invoked for this field
+     */
+    handler(handlers: HandlerInputType): ModelField<T, UsedMethod | 'handler', Auth, FT>;
   },
   UsedMethod
 >;
@@ -209,6 +223,7 @@ function _field<T extends ModelFieldTypeParamOuter, FT extends ModelFieldType>(
     default: undefined,
     authorization: [],
     validation: [],
+    handlers: [],
   };
 
   const builder = {
@@ -252,6 +267,12 @@ function _field<T extends ModelFieldTypeParamOuter, FT extends ModelFieldType>(
       
       _meta.lastInvokedMethod = 'validate';
       
+      return this;
+    },
+    handler(handlers: HandlerInputType) {
+      data.handlers = Array.isArray(handlers) ? handlers : [handlers] as FieldHandler[];
+      _meta.lastInvokedMethod = 'handler';
+
       return this;
     },
     ...brand(brandName),
