@@ -31,6 +31,7 @@ exports[`field level auth implied fields objects can be extracted 1`] = `
   },
   {
     "identityClaim": [Function],
+    "inGroup": [Function],
     Symbol(data): {
       "groupOrOwnerField": "admin",
       "groups": undefined,
@@ -46,6 +47,7 @@ exports[`field level auth implied fields objects can be extracted 1`] = `
     },
   },
   {
+    "inGroup": [Function],
     Symbol(data): {
       "groupOrOwnerField": "admin",
       "groups": undefined,
@@ -94,6 +96,7 @@ exports[`field level auth implied fields objects can be extracted from related m
   },
   {
     "identityClaim": [Function],
+    "inGroup": [Function],
     Symbol(data): {
       "groupOrOwnerField": "admin",
       "groups": undefined,
@@ -109,6 +112,7 @@ exports[`field level auth implied fields objects can be extracted from related m
     },
   },
   {
+    "inGroup": [Function],
     Symbol(data): {
       "groupOrOwnerField": "admin",
       "groups": undefined,
