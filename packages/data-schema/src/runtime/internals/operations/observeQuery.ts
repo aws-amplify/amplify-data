@@ -56,6 +56,7 @@ export function observeQueryFactory(models: any, model: SchemaModel) {
       // consumes a list of messages and sends a snapshot
       function ingestMessages(messages: typeof messageQueue) {
         for (const message of messages) {
+          if (!message.item) continue;
           const idx = findIndexByFields(message.item, items, pkFields as any);
           switch (message.type) {
             case 'create':
