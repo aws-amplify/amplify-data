@@ -79,6 +79,65 @@ describe('Subscribe to real-time events', () => {
     expect(subOptionsAndHeaders(subSpy)).toMatchSnapshot();
   });
 
+  test('observeQuery ignores subscription events with a null payload', async () => {
+    const { subs, generateClient } = mockedGenerateClient([
+      {
+        data: {
+          listTodos: { items: [sampleTodo], nextToken: null },
+        },
+      },
+    ]);
+
+    const config = await buildAmplifyConfig(schema);
+    Amplify.configure(config);
+
+    type Todo = Schema['Todo']['type'];
+    const client = generateClient<Schema>();
+    const [todos, setTodos] = useState<Todo[]>([]);
+    const onError = jest.fn();
+
+    const sub = client.models.Todo.observeQuery().subscribe({
+      next: ({ items }) => setTodos([...items]),
+      error: onError,
+    });
+
+    await pause(1);
+
+    const nullPayload = (type: string) => ({
+      data: { [type]: null },
+      errors: [
+        {
+          message: `Cannot return null for non-nullable type: 'String' within parent 'Todo' (/${type}/content)`,
+        },
+      ],
+    });
+
+    expect(() => {
+      subs.onCreateTodo.next(nullPayload('onCreateTodo'));
+      subs.onUpdateTodo.next(nullPayload('onUpdateTodo'));
+      subs.onDeleteTodo.next(nullPayload('onDeleteTodo'));
+    }).not.toThrow();
+
+    await pause(1);
+
+    subs.onCreateTodo.next({
+      data: {
+        onCreateTodo: { ...sampleTodo, id: 'some-id-2' },
+      },
+    });
+
+    await pause(1);
+
+    sub.unsubscribe();
+
+    expect(onError).not.toHaveBeenCalled();
+    const latest = setTodos.mock.calls.at(-1)![0];
+    expect(latest.map((todo: Todo) => todo.id)).toEqual([
+      'some-id',
+      'some-id-2',
+    ]);
+  });
+
   test('subscription options - type level only', async () => {
     const { generateClient } = mockedGenerateClient([]);
     const config = await buildAmplifyConfig(schema);
