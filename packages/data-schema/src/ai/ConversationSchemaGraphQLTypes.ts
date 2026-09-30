@@ -12,6 +12,8 @@ interface AmplifyAIConversationMessage {
   content: [AmplifyAIContentBlock]
   aiContext: AWSJSON
   toolConfiguration: AmplifyAIToolConfiguration
+  metrics: AmplifyAIMetrics
+  usage: AmplifyAIUsage
   createdAt: AWSDateTime
   updatedAt: AWSDateTime
   owner: String
@@ -179,7 +181,19 @@ type AmplifyAIConversationMessageStreamPart @aws_cognito_user_pools {
   contentBlockDoneAtIndex: Int
   stopReason: String
   errors: [AmplifyAIConversationTurnError]
+  metrics: AmplifyAIMetrics
+  usage: AmplifyAIUsage
   p: String
+}
+
+type AmplifyAIMetrics @aws_cognito_user_pools {
+  latencyMs: Int
+}
+
+type AmplifyAIUsage @aws_cognito_user_pools {
+  inputTokens: Int
+  outputTokens: Int
+  totalTokens: Int
 }
 
 type AmplifyAIConversationTurnError @aws_cognito_user_pools {

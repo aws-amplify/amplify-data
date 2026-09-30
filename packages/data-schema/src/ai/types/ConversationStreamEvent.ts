@@ -3,6 +3,16 @@
 
 import { ToolUseBlock } from "./contentBlocks";
 
+export interface ConversationStreamMetrics {
+  latencyMs?: number;
+}
+
+export interface ConversationStreamUsage {
+  inputTokens?: number;
+  outputTokens?: number;
+  totalTokens?: number;
+}
+
 export interface ConversationStreamTextEvent {
   id: string;
   conversationId: string;
@@ -13,6 +23,8 @@ export interface ConversationStreamTextEvent {
   text: string;
   toolUse?: never;
   stopReason?: never;
+  metrics?: never;
+  usage?: never;
 }
 
 export interface ConversationStreamToolUseEvent {
@@ -25,6 +37,8 @@ export interface ConversationStreamToolUseEvent {
   text?: never;
   toolUse: ToolUseBlock;
   stopReason?: never;
+  metrics?: never;
+  usage?: never;
 }
 
 export interface ConversationStreamDoneAtIndexEvent {
@@ -37,6 +51,8 @@ export interface ConversationStreamDoneAtIndexEvent {
   text?: never;
   toolUse?: never;
   stopReason?: never;
+  metrics?: never;
+  usage?: never;
 }
 
 export interface ConversationStreamTurnDoneEvent {
@@ -49,6 +65,8 @@ export interface ConversationStreamTurnDoneEvent {
   text?: never;
   toolUse?: never;
   stopReason: string;
+  metrics?: ConversationStreamMetrics;
+  usage?: ConversationStreamUsage;
 }
 
 export interface ConversationStreamErrorEvent {
