@@ -6,6 +6,12 @@ on:
       tsVersion:
         required: true
         type: string
+      experimental:
+        # When true, a failing job does not fail the calling workflow. Used for
+        # TypeScript versions the toolchain cannot run yet (see P456860642).
+        required: false
+        type: boolean
+        default: false
 
 permissions:
   contents: read
@@ -14,6 +20,9 @@ jobs:
   unit_test:
     name: Lint & Unit Tests
     runs-on: ubuntu-latest
+    # GitHub does not allow `continue-on-error` on the job that calls a reusable
+    # workflow, so the opt-out lives here and is driven by the input above.
+    continue-on-error: ${{ inputs.experimental }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
@@ -34,6 +43,9 @@ jobs:
         uses: ./amplify-data/.github/actions/node-and-build
         with:
           force: true
+      - name: Report installed TypeScript version
+        working-directory: ./amplify-data
+        run: yarn tsc --version
       - name: Run tests
         working-directory: ./amplify-data
         # Newer TypeScript compilers use more memory type-checking this repo's
