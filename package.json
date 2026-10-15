@@ -25,6 +25,7 @@
     "check:docs-site-coverage": "tsx scripts/docs-site-coverage/run.ts",
     "check:type-perf": "tsx scripts/check-ts-benches.ts",
     "check:package-lock": "tsx scripts/check-lockfile.ts",
+    "typecheck:canary": "tsx scripts/typecheck-canary.ts",
     "clean": "turbo run clean",
     "clean:npm-proxy": "yarn stop:npm-proxy && rimraf verdaccio-cache verdaccio-logs.txt",
     "delete-cache": "find . -type d \\( -name .turbo -o -name .rollup.cache \\) -exec rm -rf {} +",
@@ -87,7 +88,7 @@
     "typescript-eslint": "^8.57.1",
     "verdaccio": "^6.2.2"
   },
-  "packageManager": "yarn@4.13.0",
+  "packageManager": "yarn@4.18.1",
   "resolutions": {
     "csv-parse": "^7.0.2",
     "mysql2": "^3.23.1",

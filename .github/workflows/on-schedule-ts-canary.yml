@@ -10,19 +10,32 @@ on:
 permissions:
   contents: read
 
+# Daily check that customers' `tsc` still accepts our published declarations on
+# upcoming TypeScript releases. Each job builds on the repo's pinned TypeScript,
+# then swaps in the target version and type-checks the customer-facing projects
+# (packages/integration-tests, examples/tsc-compliance) and our own sources with
+# plain `tsc --noEmit`; see callable-ts-version-unit-test.yml. `6` covers the
+# current major many customers are on (pr.yml only exercises the pinned 5.9);
+# `latest`, `rc` and `next` are TypeScript 7 (native compiler). All jobs are
+# blocking. Ticket: P456860642
 jobs:
-  rc-canary:
+  ts6:
     secrets: inherit
     uses: ./.github/workflows/callable-ts-version-unit-test.yml
     with:
-      tsVersion: 'rc'
-  next-canary:
-    secrets: inherit
-    uses: ./.github/workflows/callable-ts-version-unit-test.yml
-    with:
-      tsVersion: 'next'
-  latest-canary:
+      tsVersion: '6'
+  latest:
     secrets: inherit
     uses: ./.github/workflows/callable-ts-version-unit-test.yml
     with:
       tsVersion: 'latest'
+  rc:
+    secrets: inherit
+    uses: ./.github/workflows/callable-ts-version-unit-test.yml
+    with:
+      tsVersion: 'rc'
+  next:
+    secrets: inherit
+    uses: ./.github/workflows/callable-ts-version-unit-test.yml
+    with:
+      tsVersion: 'next'

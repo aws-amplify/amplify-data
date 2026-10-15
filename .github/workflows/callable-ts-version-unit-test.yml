@@ -1,9 +1,22 @@
-name: Unit Tests
+name: TypeScript Type-check
+
+# Type-checks the repo with a specific TypeScript version. Used by the daily
+# TypeScript canary (on-schedule-ts-canary.yml) to catch an upcoming TypeScript
+# release rejecting our published declarations before customers hit it.
+#
+# Design: install and build on the repo's pinned TypeScript first (rollup's
+# TypeScript plugin and api-extractor use the TypeScript JS API, which the
+# native TypeScript 7 compiler no longer ships), then swap in the target
+# TypeScript and run plain `tsc --noEmit` the way a customer's build would.
+# Lint and jest are dev tooling on the pinned TypeScript; they run in pr.yml,
+# not here. No build cache is used so the target TypeScript can never be
+# shadowed by, or leak into, a cached node_modules. Ticket: P456860642
 
 on:
   workflow_call:
     inputs:
       tsVersion:
+        description: npm dist-tag or version of `typescript` to type-check with
         required: true
         type: string
 
@@ -11,9 +24,12 @@ permissions:
   contents: read
 
 jobs:
-  unit_test:
-    name: Lint & Unit Tests
+  typecheck:
+    name: Type-check (TS ${{ inputs.tsVersion }})
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./amplify-data
     steps:
       - name: Checkout repository
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
@@ -25,20 +41,16 @@ jobs:
           node-version: 24
       - name: Enable Corepack for Yarn 4
         run: corepack enable
-      - name: Install specific typescript version
+      - name: Install and build on the pinned TypeScript
+        run: |
+          yarn install --immutable
+          yarn tsc --version
+          yarn build
+      - name: Install target TypeScript
         env:
           VERSION: ${{ inputs.tsVersion }}
-        working-directory: ./amplify-data
         run: yarn add typescript@$VERSION
-      - name: Setup node and build the repository
-        uses: ./amplify-data/.github/actions/node-and-build
-        with:
-          force: true
-      - name: Run tests
-        working-directory: ./amplify-data
-        # Newer TypeScript compilers use more memory type-checking this repo's
-        # generic-heavy types via ts-jest, exceeding V8's default (~4GB) heap.
-        # Raise the limit so the canary reports real regressions, not OOMs.
-        env:
-          NODE_OPTIONS: --max-old-space-size=8192
-        run: yarn lint && yarn test
+      - name: Report target TypeScript version
+        run: yarn tsc --version
+      - name: Type-check with the target TypeScript
+        run: yarn typecheck:canary
