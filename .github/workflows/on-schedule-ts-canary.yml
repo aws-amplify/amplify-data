@@ -10,33 +10,32 @@ on:
 permissions:
   contents: read
 
-# TypeScript 7 (`latest`, `rc`, `next` since 2026-06) is the native Go compiler.
-# Its npm package no longer exposes the JS compiler API that ts-jest and
-# typescript-eslint need, so those jobs cannot pass until the toolchain
-# supports TS 7. They stay visible but non-blocking (`experimental: true`).
-# TypeScript 6 is the last JS-based release line and is the blocking canary.
-# Ticket: P456860642
+# Daily check that customers' `tsc` still accepts our published declarations on
+# upcoming TypeScript releases. Each job builds on the repo's pinned TypeScript,
+# then swaps in the target version and type-checks the customer-facing projects
+# (packages/integration-tests, examples/tsc-compliance) and our own sources with
+# plain `tsc --noEmit`; see callable-ts-version-unit-test.yml. `6` covers the
+# current major many customers are on (pr.yml only exercises the pinned 5.9);
+# `latest`, `rc` and `next` are TypeScript 7 (native compiler). All jobs are
+# blocking. Ticket: P456860642
 jobs:
-  ts6-canary:
+  ts6:
     secrets: inherit
     uses: ./.github/workflows/callable-ts-version-unit-test.yml
     with:
       tsVersion: '6'
-  rc-canary:
-    secrets: inherit
-    uses: ./.github/workflows/callable-ts-version-unit-test.yml
-    with:
-      tsVersion: 'rc'
-      experimental: true
-  next-canary:
-    secrets: inherit
-    uses: ./.github/workflows/callable-ts-version-unit-test.yml
-    with:
-      tsVersion: 'next'
-      experimental: true
-  latest-canary:
+  latest:
     secrets: inherit
     uses: ./.github/workflows/callable-ts-version-unit-test.yml
     with:
       tsVersion: 'latest'
-      experimental: true
+  rc:
+    secrets: inherit
+    uses: ./.github/workflows/callable-ts-version-unit-test.yml
+    with:
+      tsVersion: 'rc'
+  next:
+    secrets: inherit
+    uses: ./.github/workflows/callable-ts-version-unit-test.yml
+    with:
+      tsVersion: 'next'

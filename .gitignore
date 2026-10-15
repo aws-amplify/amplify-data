@@ -3,7 +3,7 @@ lib
 lib-esm
 dist
 node_modules
-tsconfig.tsbuildinfo
+*.tsbuildinfo
 typedocs/reference.json
 
 .kiro
