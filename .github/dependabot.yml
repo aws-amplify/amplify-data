@@ -1,0 +1,23 @@
+# Dependabot configuration.
+#
+# Scheduled version updates are disabled via `open-pull-requests-limit: 0`
+# (that limit does not apply to Dependabot's own update PRs, which keep their
+# separate fixed limit).
+#
+# `versioning-strategy: lockfile-only` makes Dependabot PRs touch yarn.lock
+# only, staying inside the version ranges already declared in package.json.
+# Transitive packages in this repo are commonly held at a floor through the
+# root `resolutions` block. With the default strategy Dependabot edits that
+# range in package.json but does not regenerate yarn.lock for Yarn Berry, so
+# the resulting PR fails `yarn install --immutable` (see #781, #807).
+# Lockfile-only updates avoid that path. Updates that need a wider range than
+# the manifest allows will not get an automatic PR and need a manual bump of
+# the `resolutions` floor, as in #709 and #809.
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 0
+    versioning-strategy: lockfile-only
