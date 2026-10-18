@@ -15,11 +15,6 @@ describe('EnumType unsupported modifiers', () => {
 
     expect(() => {
       // @ts-expect-error
-      a.enumType(['public', 'protected', 'private']).default();
-    }).toThrowError();
-
-    expect(() => {
-      // @ts-expect-error
       a.enumType(['public', 'protected', 'private']).array();
     }).toThrowError();
   });
@@ -78,6 +73,22 @@ describe('EnumType transform', () => {
       .schema({
         File: a.model({
           accessLevel: a.enum(['public', 'protected', 'private']),
+        }),
+      })
+      .authorization((allow) => allow.publicApiKey());
+
+    const result = s.transform().schema;
+
+    expect(result).toMatchSnapshot();
+  });
+
+  test('Implicit Enum - default', () => {
+    const s = a
+      .schema({
+        File: a.model({
+          accessLevel: a
+            .enum(['public', 'protected', 'private'])
+            .default('private'),
         }),
       })
       .authorization((allow) => allow.publicApiKey());

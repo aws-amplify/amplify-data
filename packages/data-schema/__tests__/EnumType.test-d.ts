@@ -28,6 +28,35 @@ describe('EnumType', () => {
     enumType([null, undefined]);
   });
 
+  test('Default value', () => {
+    const accessLevel = enumType(['public', 'private']).default('public');
+
+    type Expected = EnumType<readonly ['public', 'private']>;
+
+    type Result = typeof accessLevel;
+
+    type test = Expect<Equal<Result, Expected>>;
+
+    // @ts-expect-error
+    enumType(['public', 'private']).default('secret'); // must be one of the values
+  });
+
+  test('Default value does not change the client type', () => {
+    const schema = a.schema({
+      Post: a.model({
+        status: a.enum(['draft', 'published']).default('draft'),
+      }),
+    });
+
+    type Schema = ClientSchema<typeof schema>;
+
+    type Expected = 'draft' | 'published' | null | undefined;
+
+    type Result = Schema['Post']['type']['status'];
+
+    type test = Expect<Equal<Result, Expected>>;
+  });
+
   test('enums types extracted from models', () => {
     const schema = a.schema({
       Post: a.model({

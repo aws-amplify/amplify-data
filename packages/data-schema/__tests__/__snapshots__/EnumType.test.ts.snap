@@ -39,6 +39,19 @@ enum AccessLevel {
 }"
 `;
 
+exports[`EnumType transform Implicit Enum - default 1`] = `
+"type File @model @auth(rules: [{allow: public, provider: apiKey}])
+{
+  accessLevel: FileAccessLevel @default(value: "private")
+}
+
+enum FileAccessLevel {
+  public
+  protected
+  private
+}"
+`;
+
 exports[`EnumType transform Implicit Enum 1`] = `
 "type File @model @auth(rules: [{allow: public, provider: apiKey}])
 {

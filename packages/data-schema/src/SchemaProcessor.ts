@@ -30,7 +30,7 @@ import {
   DatasourceEngine,
 } from '@aws-amplify/data-schema-types';
 import type { InternalRef, RefType } from './RefType';
-import type { EnumType } from './EnumType';
+import type { EnumType, InternalEnumType } from './EnumType';
 import type { CustomType, CustomTypeParamShape } from './CustomType';
 import {
   type InternalCustom,
@@ -75,6 +75,7 @@ type CustomOperationFields = {
 function isInternalModel(model: unknown): model is InternalModel {
   if (
     (model as any).data &&
+    !isEnumType(model) &&
     !isCustomType(model) &&
     !isCustomOperation(model) &&
     !isConversationRoute(model)
@@ -293,8 +294,16 @@ function refFieldToGql(
   return field;
 }
 
-function enumFieldToGql(enumName: string, secondaryIndexes: string[] = []) {
+function enumFieldToGql(
+  enumName: string,
+  secondaryIndexes: string[] = [],
+  defaultValue?: string,
+) {
   let field = enumName;
+
+  if (defaultValue !== undefined) {
+    field += ` @default(value: "${defaultValue}")`;
+  }
 
   for (const index of secondaryIndexes) {
     field += ` ${index}`;
@@ -1049,7 +1058,11 @@ function processFields(
         implicitTypes.push([enumName, fieldDef]);
 
         gqlFields.push(
-          `${fieldName}: ${enumFieldToGql(enumName, secondaryIndexes[fieldName])}`,
+          `${fieldName}: ${enumFieldToGql(
+            enumName,
+            secondaryIndexes[fieldName],
+            (fieldDef as InternalEnumType).data.default,
+          )}`,
         );
       } else if (isCustomType(fieldDef)) {
         // The inline CustomType name should be `<TypeName><FieldName>` to avoid
