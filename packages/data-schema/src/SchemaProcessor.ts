@@ -160,6 +160,16 @@ function canGenerateFieldType(fieldType: ModelFieldType): boolean {
   return fieldType === 'Int';
 }
 
+function hasEnumDefault(field: unknown): boolean {
+  return (
+    isEnumType(field) && (field as InternalEnumType).data.default !== undefined
+  );
+}
+
+function hasRefDefault(field: unknown): boolean {
+  return isRefField(field) && field.data.default !== undefined;
+}
+
 function scalarFieldToGql(
   fieldDef: ScalarFieldDef,
   identifier?: readonly string[],
@@ -271,7 +281,13 @@ function refFieldToGql(
   fieldDef: RefFieldDef,
   secondaryIndexes: string[] = [],
 ): string {
-  const { link, valueRequired, array, arrayRequired } = fieldDef;
+  const {
+    link,
+    valueRequired,
+    array,
+    arrayRequired,
+    default: _default,
+  } = fieldDef;
 
   let field = link;
 
@@ -287,6 +303,10 @@ function refFieldToGql(
     field += '!';
   }
 
+  if (_default !== undefined) {
+    field += ` @default(value: "${_default}")`;
+  }
+
   for (const index of secondaryIndexes) {
     field += ` ${index}`;
   }
@@ -297,12 +317,12 @@ function refFieldToGql(
 function enumFieldToGql(
   enumName: string,
   secondaryIndexes: string[] = [],
-  defaultValue?: string,
+  _default?: string,
 ) {
   let field = enumName;
 
-  if (defaultValue !== undefined) {
-    field += ` @default(value: "${defaultValue}")`;
+  if (_default !== undefined) {
+    field += ` @default(value: "${_default}")`;
   }
 
   for (const index of secondaryIndexes) {
@@ -719,6 +739,62 @@ function validateImpliedFields(
     if (existing[k] && areConflicting(existing[k], field)) {
       throw new Error(
         `Implicit field ${k} conflicts with the explicit field definition.`,
+      );
+    }
+  }
+}
+
+function validateTopLevelEnumDefaults(types: Record<string, unknown>) {
+  for (const [typeName, typeDef] of Object.entries(types)) {
+    if (hasEnumDefault(typeDef)) {
+      throw new Error(
+        `\`.default()\` is only supported on model fields. Remove it from the top-level enum \`${typeName}\` and set it on the field that uses the enum.`,
+      );
+    }
+  }
+}
+
+function validateCustomTypeEnumDefaults(
+  typeName: string,
+  fields: Record<string, any>,
+) {
+  for (const [fieldName, field] of Object.entries(fields)) {
+    if (hasEnumDefault(field) || hasRefDefault(field)) {
+      throw new Error(
+        `\`.default()\` is only supported on model fields. Remove it from field \`${fieldName}\` of custom type \`${typeName}\`.`,
+      );
+    }
+  }
+}
+
+function validateModelEnumDefaults(
+  modelName: string,
+  fields: Record<string, any>,
+  getRefType: ReturnType<typeof getRefTypeForSchema>,
+) {
+  for (const [fieldName, field] of Object.entries(fields)) {
+    if (!isRefField(field) || field.data.default === undefined) {
+      continue;
+    }
+
+    const { link, array, default: _default } = field.data;
+    const { def } = getRefType(link, modelName);
+
+    if (!isEnumType(def)) {
+      throw new Error(
+        `\`.default()\` on a \`.ref()\` is only supported for enums. Field \`${fieldName}\` of \`${modelName}\` refers to \`${link}\`, which is not an enum.`,
+      );
+    }
+
+    if (array) {
+      throw new Error(
+        `\`.default()\` is not supported on array fields. Field \`${fieldName}\` of \`${modelName}\` is an array of \`${link}\`.`,
+      );
+    }
+
+    if (!def.values.includes(_default)) {
+      throw new Error(
+        `Default value "${_default}" of field \`${fieldName}\` in \`${modelName}\` is not one of the \`${link}\` enum values: ${def.values.join(', ')}.`,
       );
     }
   }
@@ -1642,6 +1718,8 @@ const schemaPreprocessor = (
       eventInvocationResponseCustomType;
   }
 
+  validateTopLevelEnumDefaults(schema.data.types);
+
   const topLevelTypes = sortTopLevelTypes(Object.entries(schema.data.types));
 
   const { schemaAuth, functionSchemaAccess } = extractFunctionSchemaAccess(
@@ -1672,6 +1750,7 @@ const schemaPreprocessor = (
         const fields = typeDef.data.fields;
 
         validateRefUseCases(typeName, 'customType', fields, getRefType);
+        validateCustomTypeEnumDefaults(typeName, fields);
 
         const fieldAuthApplicableFields = Object.fromEntries(
           Object.entries(fields).filter(
@@ -1803,6 +1882,7 @@ const schemaPreprocessor = (
       >;
 
       validateRefUseCases(typeName, 'model', fields, getRefType);
+      validateModelEnumDefaults(typeName, fields, getRefType);
 
       const identifier = typeDef.data.identifier;
       const [partitionKey] = identifier;
@@ -1854,6 +1934,7 @@ const schemaPreprocessor = (
       const fields = typeDef.data.fields as Record<string, BaseModelField>;
 
       validateRefUseCases(typeName, 'model', fields, getRefType);
+      validateModelEnumDefaults(typeName, fields, getRefType);
 
       const identifier = typeDef.data.identifier;
       const [partitionKey] = identifier;
@@ -2086,6 +2167,45 @@ function validateCustomOperations(
   }
 }
 
+function validateCustomOperationEnumDefaults(
+  typeDef: InternalCustom,
+  typeName: string,
+) {
+  const { arguments: fieldArgs, returnType, subscriptionSource } = typeDef.data;
+
+  if (hasEnumDefault(returnType) || hasRefDefault(returnType)) {
+    throw new Error(
+      `\`.default()\` is only supported on model fields. Remove it from the return type of custom operation \`${typeName}\`.`,
+    );
+  }
+
+  if (subscriptionSource.some(hasRefDefault)) {
+    throw new Error(
+      `\`.default()\` is only supported on model fields. Remove it from the subscription source of custom operation \`${typeName}\`.`,
+    );
+  }
+
+  const check = (name: string, def: unknown) => {
+    if (hasEnumDefault(def) || hasRefDefault(def)) {
+      throw new Error(
+        `\`.default()\` is only supported on model fields. Remove it from argument \`${name}\` of custom operation \`${typeName}\`.`,
+      );
+    }
+
+    // inline custom types used as arguments become input types, which are not
+    // processed as custom types, so their fields have to be checked here
+    if (isCustomType(def)) {
+      for (const [fieldName, field] of Object.entries(def.data.fields)) {
+        check(`${name}.${fieldName}`, field);
+      }
+    }
+  };
+
+  for (const [argName, argDef] of Object.entries(fieldArgs)) {
+    check(argName, argDef);
+  }
+}
+
 const isSqlReferenceHandler = (
   handler: HandlerType[] | null,
 ): handler is [SqlReferenceHandler] => {
@@ -2225,6 +2345,7 @@ function transformCustomOperations(
   let jsFunctionForField: JsResolver | undefined = undefined;
 
   validateCustomOperations(typeDef, typeName, authRules, getRefType);
+  validateCustomOperationEnumDefaults(typeDef, typeName);
 
   if (isCustomHandler(handlers)) {
     jsFunctionForField = handleCustom(

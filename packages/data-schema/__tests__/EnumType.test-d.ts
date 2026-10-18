@@ -45,16 +45,24 @@ describe('EnumType', () => {
     const schema = a.schema({
       Post: a.model({
         status: a.enum(['draft', 'published']).default('draft'),
+        visibility: a.ref('Visibility').default('public'),
       }),
+      Visibility: a.enum(['public', 'private']),
     });
 
     type Schema = ClientSchema<typeof schema>;
 
-    type Expected = 'draft' | 'published' | null | undefined;
+    type ExpectedStatus = 'draft' | 'published' | null | undefined;
 
-    type Result = Schema['Post']['type']['status'];
+    type ResultStatus = Schema['Post']['type']['status'];
 
-    type test = Expect<Equal<Result, Expected>>;
+    type testStatus = Expect<Equal<ResultStatus, ExpectedStatus>>;
+
+    type ExpectedVisibility = 'public' | 'private' | null | undefined;
+
+    type ResultVisibility = Schema['Post']['type']['visibility'];
+
+    type testVisibility = Expect<Equal<ResultVisibility, ExpectedVisibility>>;
   });
 
   test('enums types extracted from models', () => {

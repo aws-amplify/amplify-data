@@ -99,4 +99,23 @@ describe('RefType', () => {
 
     type _ = Expect<Equal<Resolved, Expected>>;
   });
+
+  test('.required().default()', () => {
+    const refField = ref('SomeType').required().default('value');
+
+    type Resolved = GetRefTypeParams<typeof refField>;
+    type Expected = {
+      type: 'ref';
+      link: 'SomeType';
+      valueRequired: true;
+      array: false;
+      arrayRequired: false;
+      authorization: [];
+    };
+
+    type _ = Expect<Equal<Resolved, Expected>>;
+
+    // @ts-expect-error
+    refField.default('other'); // can only be called once
+  });
 });
