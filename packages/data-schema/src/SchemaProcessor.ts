@@ -2288,38 +2288,46 @@ function extractNestedCustomTypeNames(
 
   // traverse the custom type's fields and extract any nested custom type names.
   // Those nested custom types also inherit the custom op's auth configuration.
-  // Supports both inline custom types and refs to custom types
-  const traverseCustomTypeFields = (
-    name: string,
-    typeDef: any,
-    namesList: string[] = [],
-  ) => {
+  // Supports both inline custom types and refs to custom types.
+  //
+  // Custom types may reference each other cyclically (e.g. `Tenant.company -> Company`
+  // and `Company.tenants -> [Tenant]`), so each type is only visited once. The
+  // top-level type is marked visited up front so it isn't reported as nested in itself.
+  const visited = new Set<string>([customTypeAuthRules.typeName]);
+  const namesList: string[] = [];
+
+  const traverseCustomTypeFields = (name: string, typeDef: any) => {
     const fields = typeDef.data.fields as Record<string, any>;
 
     for (const [fieldName, fieldDef] of Object.entries(fields)) {
+      let nestedTypeName: string;
+      let nestedTypeDef: any;
+
       if (isCustomType(fieldDef)) {
-        const customTypeName = `${capitalize(name)}${capitalize(fieldName)}`;
-        namesList.push(customTypeName);
-        traverseCustomTypeFields(customTypeName, fieldDef, namesList);
+        nestedTypeName = `${capitalize(name)}${capitalize(fieldName)}`;
+        nestedTypeDef = fieldDef;
       } else if (isRefField(fieldDef)) {
         const refType = getRefType(fieldDef.data.link, name);
 
-        if (refType.type === 'CustomType') {
-          namesList.push(fieldDef.data.link);
-          traverseCustomTypeFields(fieldDef.data.link, refType.def, namesList);
-        }
-      }
-    }
+        if (refType.type !== 'CustomType') continue;
 
-    return namesList;
+        nestedTypeName = fieldDef.data.link;
+        nestedTypeDef = refType.def;
+      } else {
+        continue;
+      }
+
+      if (visited.has(nestedTypeName)) continue;
+
+      visited.add(nestedTypeName);
+      namesList.push(nestedTypeName);
+      traverseCustomTypeFields(nestedTypeName, nestedTypeDef);
+    }
   };
 
-  const nestedCustomTypeNames = traverseCustomTypeFields(
-    customTypeAuthRules.typeName,
-    customTypeDef,
-  );
+  traverseCustomTypeFields(customTypeAuthRules.typeName, customTypeDef);
 
-  return nestedCustomTypeNames;
+  return namesList;
 }
 
 /**

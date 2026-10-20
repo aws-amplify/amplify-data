@@ -10,6 +10,8 @@ import {
   generateGraphQLDocument,
   ModelOperation,
   buildGraphQLVariables,
+  getDefaultSelectionSetForNonModelWithIR,
+  selectionSetIRToString,
 } from '../../src/runtime/internals/APIClient';
 
 import config from './fixtures/modeled/amplifyconfiguration';
@@ -792,6 +794,169 @@ describe('flattenItems', () => {
 
       expect(generated).toEqual(expected);
     });
+  });
+});
+
+// https://github.com/aws-amplify/amplify-data/issues/423
+describe('selection sets for cyclic custom types', () => {
+  const scalarField = (name: string) => ({
+    name,
+    isArray: false,
+    type: 'String' as const,
+    isRequired: false,
+    attributes: [],
+  });
+
+  const nonModelField = (name: string, nonModel: string, isArray = false) => ({
+    name,
+    isArray,
+    type: { nonModel },
+    isRequired: false,
+    attributes: [],
+  });
+
+  // Mirrors the model introspection generated for:
+  //   SomeModel: a.model({ modelName: a.string(), company: a.ref('Company'), address: a.ref('Address') })
+  //   Tenant: a.customType({ tenantName: a.string(), company: a.ref('Company') })
+  //   Company: a.customType({ companyName: a.string(), tenants: a.ref('Tenant').array() })
+  //   TreeNode: a.customType({ value: a.string(), parent: a.ref('TreeNode'), children: a.ref('TreeNode').array() })
+  //   Address: a.customType({ street: a.string() })
+  //   Shipping: a.customType({ from: a.ref('Address'), to: a.ref('Address') })
+  //   Loop: a.customType({ self: a.ref('Loop') })
+  const cyclicModelIntrospection = {
+    version: 1,
+    models: {
+      SomeModel: {
+        name: 'SomeModel',
+        fields: {
+          id: { ...scalarField('id'), type: 'ID', isRequired: true },
+          modelName: scalarField('modelName'),
+          company: nonModelField('company', 'Company'),
+          shipping: nonModelField('shipping', 'Shipping'),
+        },
+        syncable: true,
+        pluralName: 'SomeModels',
+        attributes: [
+          { type: 'model', properties: {} },
+          {
+            type: 'auth',
+            properties: {
+              rules: [
+                {
+                  allow: 'public',
+                  provider: 'apiKey',
+                  operations: ['create', 'update', 'delete', 'read'],
+                },
+              ],
+            },
+          },
+        ],
+        primaryKeyInfo: {
+          isCustomPrimaryKey: false,
+          primaryKeyFieldName: 'id',
+          sortKeyFieldNames: [],
+        },
+      },
+    },
+    enums: {},
+    nonModels: {
+      Tenant: {
+        name: 'Tenant',
+        fields: {
+          tenantName: scalarField('tenantName'),
+          company: nonModelField('company', 'Company'),
+        },
+      },
+      Company: {
+        name: 'Company',
+        fields: {
+          companyName: scalarField('companyName'),
+          tenants: nonModelField('tenants', 'Tenant', true),
+        },
+      },
+      TreeNode: {
+        name: 'TreeNode',
+        fields: {
+          value: scalarField('value'),
+          parent: nonModelField('parent', 'TreeNode'),
+          children: nonModelField('children', 'TreeNode', true),
+        },
+      },
+      Address: {
+        name: 'Address',
+        fields: {
+          street: scalarField('street'),
+        },
+      },
+      Shipping: {
+        name: 'Shipping',
+        fields: {
+          from: nonModelField('from', 'Address'),
+          to: nonModelField('to', 'Address'),
+        },
+      },
+      Loop: {
+        name: 'Loop',
+        fields: {
+          self: nonModelField('self', 'Loop'),
+        },
+      },
+    },
+  } as unknown as ModelIntrospectionSchema;
+
+  const defaultSelectionSetFor = (nonModelName: string) =>
+    selectionSetIRToString(
+      getDefaultSelectionSetForNonModelWithIR(
+        cyclicModelIntrospection.nonModels[nonModelName],
+        cyclicModelIntrospection,
+      ),
+    );
+
+  test('default model selection set stops at a cyclic custom type reference', () => {
+    expect(generateSelectionSet(cyclicModelIntrospection, 'SomeModel')).toEqual(
+      'id modelName company { companyName tenants { tenantName } } shipping { from { street } to { street } }',
+    );
+  });
+
+  test('default custom type selection set stops at a cyclic custom type reference', () => {
+    expect(defaultSelectionSetFor('Company')).toEqual(
+      'companyName tenants { tenantName }',
+    );
+    expect(defaultSelectionSetFor('Tenant')).toEqual(
+      'tenantName company { companyName }',
+    );
+  });
+
+  test('default custom type selection set stops at a self-reference', () => {
+    expect(defaultSelectionSetFor('TreeNode')).toEqual('value');
+  });
+
+  test('non-cyclic custom types referenced more than once are selected each time', () => {
+    expect(defaultSelectionSetFor('Shipping')).toEqual(
+      'from { street } to { street }',
+    );
+  });
+
+  test('custom type with only cyclic fields produces no nested selection', () => {
+    expect(defaultSelectionSetFor('Loop')).toEqual('');
+  });
+
+  test('wildcard on a cyclic custom type in a custom selection set', () => {
+    expect(
+      generateSelectionSet(cyclicModelIntrospection, 'SomeModel', [
+        'id',
+        'company.tenants.*',
+      ]),
+    ).toEqual('id company { tenants { tenantName company { companyName } } }');
+  });
+
+  test('explicit paths can traverse cyclic custom types to any depth', () => {
+    expect(
+      generateSelectionSet(cyclicModelIntrospection, 'SomeModel', [
+        'id',
+        'company.tenants.company.tenants.tenantName',
+      ]),
+    ).toEqual('id company { tenants { company { tenants { tenantName } } } }');
   });
 });
 

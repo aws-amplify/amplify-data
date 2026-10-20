@@ -496,11 +496,28 @@ export type ModelOperation = keyof typeof graphQLOperationsInfo;
 
 const SELECTION_SET_WILDCARD = '*';
 
+/**
+ * Generates the default selection set IR for a custom type (non-model), including
+ * all of its scalar and enum fields and, recursively, its nested custom types.
+ *
+ * Custom types may reference each other cyclically (e.g. `Tenant.company -> Company`
+ * and `Company.tenants -> [Tenant]`). To keep the selection set finite, a nested
+ * custom type field is omitted when its type already appears among its ancestors
+ * in the current selection path. Nested custom type fields that end up with an
+ * empty selection set are omitted as well, since an empty selection is invalid.
+ *
+ * @param nonModelDefinition The custom type to generate a selection set for
+ * @param modelIntrospection The full code-generated introspection schema
+ * @param ancestors Names of the custom types already in the current selection path
+ */
 export const getDefaultSelectionSetForNonModelWithIR = (
   nonModelDefinition: SchemaNonModel,
   modelIntrospection: ModelIntrospectionSchema,
+  ancestors: ReadonlySet<string> = new Set(),
 ): Record<string, unknown> => {
-  const { fields } = nonModelDefinition;
+  const { fields, name: nonModelName } = nonModelDefinition;
+  const path = new Set(ancestors).add(nonModelName);
+
   const mappedFields = Object.values(fields)
     .map(({ type, name }) => {
       if (typeof (type as { enum: string }).enum === 'string') {
@@ -508,13 +525,23 @@ export const getDefaultSelectionSetForNonModelWithIR = (
       }
 
       if (typeof (type as NonModelFieldType).nonModel === 'string') {
-        return [
-          name,
-          getDefaultSelectionSetForNonModelWithIR(
-            modelIntrospection.nonModels[(type as NonModelFieldType).nonModel],
-            modelIntrospection,
-          ),
-        ];
+        const nestedNonModelName = (type as NonModelFieldType).nonModel;
+
+        if (path.has(nestedNonModelName)) {
+          return undefined;
+        }
+
+        const nestedSelectionSet = getDefaultSelectionSetForNonModelWithIR(
+          modelIntrospection.nonModels[nestedNonModelName],
+          modelIntrospection,
+          path,
+        );
+
+        if (Object.keys(nestedSelectionSet).length === 0) {
+          return undefined;
+        }
+
+        return [name, nestedSelectionSet];
       }
 
       if (typeof type === 'string') {
