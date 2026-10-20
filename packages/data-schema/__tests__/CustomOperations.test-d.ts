@@ -117,6 +117,84 @@ describe('custom operations return types', () => {
     });
   });
 
+  describe('when using an inline custom type', () => {
+    it('is nullable by default', () => {
+      const schema = a.schema({
+        aQuery: a
+          .query()
+          .handler(a.handler.function('someHandler'))
+          .arguments({
+            input: a.customType({ content: a.string().required() }),
+          })
+          .returns(
+            a.customType({
+              string: a.string().required(),
+              optionalString: a.string(),
+            }),
+          ),
+      });
+
+      type Schema = ClientSchema<typeof schema>;
+
+      type ActualArgs = Prettify<Schema['aQuery']['args']>;
+      type ActualResult = Prettify<Schema['aQuery']['returnType']>;
+
+      type ExpectedArgs = {
+        input?: { content: string } | null | undefined;
+      };
+      type ExpectedResult = {
+        optionalString?: string | null | undefined;
+        string: string;
+      } | null;
+
+      type _T1 = Expect<Equal<ActualArgs, ExpectedArgs>>;
+      type _T2 = Expect<Equal<ActualResult, ExpectedResult>>;
+    });
+
+    it('is non-nullable when marked .required()', () => {
+      const schema = a.schema({
+        aQuery: a
+          .query()
+          .handler(a.handler.function('someHandler'))
+          .arguments({
+            input: a.customType({ content: a.string().required() }).required(),
+            optionalInput: a.string(),
+          })
+          .returns(
+            a
+              .customType({
+                string: a.string().required(),
+                optionalString: a.string(),
+              })
+              .required(),
+          ),
+      });
+
+      type Schema = ClientSchema<typeof schema>;
+
+      type ActualArgs = Prettify<Schema['aQuery']['args']>;
+      type ActualResult = Prettify<Schema['aQuery']['returnType']>;
+      type ActualHandler = Schema['aQuery']['functionHandler'];
+
+      type ExpectedArgs = {
+        input: { content: string };
+        optionalInput?: string | null | undefined;
+      };
+      type ExpectedResult = {
+        optionalString?: string | null | undefined;
+        string: string;
+      };
+      type ExpectedFunctionHandler = AppSyncResolverHandler<
+        ActualArgs,
+        ActualResult
+      >;
+
+      type _T1 = Expect<Equal<ActualArgs, ExpectedArgs>>;
+      type _T2 = Expect<Equal<ActualResult, ExpectedResult>>;
+      type _T3 = Expect<Equal<ActualHandler, ExpectedFunctionHandler>>;
+    });
+  });
+
   describe('when .ref() a nested custom types', () => {
     it('generates correct return type', () => {
       const schema = a.schema({

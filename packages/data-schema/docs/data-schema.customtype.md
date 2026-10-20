@@ -9,5 +9,7 @@ Custom type container
 **Signature:**
 
 ```typescript
-export type CustomType<T extends CustomTypeParamShape> = T & Brand<'customType'>;
+export type CustomType<T extends CustomTypeParamShape> = T & Brand<'customType'> & {
+    required(): RequiredCustomType<T>;
+};
 ```

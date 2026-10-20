@@ -6,7 +6,11 @@ import type {
   RelationTypeFunctionOmitMapping,
 } from '../ModelRelationshipField';
 import type { BaseModelField } from '../ModelField';
-import type { CustomType, CustomTypeParamShape } from '../CustomType';
+import type {
+  CustomType,
+  CustomTypeParamShape,
+  RequiredCustomTypeMarker,
+} from '../CustomType';
 import type { EnumType } from '../EnumType';
 import type { RefType, RefTypeParamShape } from '../RefType';
 import type {
@@ -78,28 +82,39 @@ export type FieldTypes<T> = {
           ? T[ModelProp][FieldProp]
           : T[ModelProp][FieldProp] | null
         : // replace non-model types with Ref
-          T[ModelProp][FieldProp] extends
-              | EnumType
-              | CustomType<CustomTypeParamShape>
+          T[ModelProp][FieldProp] extends RequiredCustomTypeMarker
           ? RefType<{
               link: `${Capitalize<ModelProp & string>}${Capitalize<
                 FieldProp & string
               >}`;
               type: 'ref';
-              valueRequired: false;
+              valueRequired: true;
               array: false;
               arrayRequired: false;
               authorization: [];
-            }> | null
-          : // resolve relationship and model fields to the their first type arg
-            T[ModelProp][FieldProp] extends ModelRelationshipField<
-                infer R,
-                string,
-                RelationTypeFunctionOmitMapping<ModelRelationshipTypes>,
-                any
-              >
-            ? R
-            : never;
+            }>
+          : T[ModelProp][FieldProp] extends
+                | EnumType
+                | CustomType<CustomTypeParamShape>
+            ? RefType<{
+                link: `${Capitalize<ModelProp & string>}${Capitalize<
+                  FieldProp & string
+                >}`;
+                type: 'ref';
+                valueRequired: false;
+                array: false;
+                arrayRequired: false;
+                authorization: [];
+              }> | null
+            : // resolve relationship and model fields to the their first type arg
+              T[ModelProp][FieldProp] extends ModelRelationshipField<
+                  infer R,
+                  string,
+                  RelationTypeFunctionOmitMapping<ModelRelationshipTypes>,
+                  any
+                >
+              ? R
+              : never;
   };
 };
 
@@ -127,19 +142,30 @@ export type FieldTypesOfCustomType<T> = {
           ? T[CustomTypeName][FieldProp]
           : T[CustomTypeName][FieldProp] | null
         : // replace non-model types with Ref
-          T[CustomTypeName][FieldProp] extends
-              | EnumType
-              | CustomType<CustomTypeParamShape>
+          T[CustomTypeName][FieldProp] extends RequiredCustomTypeMarker
           ? RefType<{
               link: `${Capitalize<CustomTypeName & string>}${Capitalize<
                 FieldProp & string
               >}`;
               type: 'ref';
-              valueRequired: false;
+              valueRequired: true;
               array: false;
               arrayRequired: false;
               authorization: [];
-            }> | null
-          : never;
+            }>
+          : T[CustomTypeName][FieldProp] extends
+                | EnumType
+                | CustomType<CustomTypeParamShape>
+            ? RefType<{
+                link: `${Capitalize<CustomTypeName & string>}${Capitalize<
+                  FieldProp & string
+                >}`;
+                type: 'ref';
+                valueRequired: false;
+                array: false;
+                arrayRequired: false;
+                authorization: [];
+              }> | null
+            : never;
   };
 };
