@@ -29,7 +29,10 @@ type CustomOperationBrand =
   | typeof subscriptionBrand
   | typeof generationBrand;
 
-type CustomArguments = Record<string, BaseModelField | EnumType | CustomType<any> | RefType<any, any>>;
+type CustomArguments = Record<
+  string,
+  BaseModelField | EnumType<any, any> | CustomType<any> | RefType<any, any>
+>;
 type SubscriptionSource = RefType<any, any>;
 type InternalSubscriptionSource = InternalRef;
 type CustomReturnType = RefType<any> | CustomType<any>;

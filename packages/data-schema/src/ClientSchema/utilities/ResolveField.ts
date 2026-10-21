@@ -65,8 +65,10 @@ export type ResolveIndividualField<
         ? ResolveRelationship<Bag, RelationshipShape, FlatModelName, Depth>
         : T extends CustomType<infer CT>
           ? ResolveFields<Bag, CT['fields']> | null
-          : T extends EnumType<infer values>
-            ? values[number] | null
+          : T extends EnumType<infer values, infer IsRequired>
+            ? IsRequired extends true
+              ? values[number]
+              : values[number] | null
             : never;
 
 /**
@@ -241,9 +243,11 @@ type IsRequired<T> =
       ? IsRefRequired<RefShape>
       : T extends ModelRelationshipField<any, any, any, any>
         ? true
-        : T extends CustomType<any> | EnumType<any>
-          ? false
-          : never;
+        : T extends EnumType<any, infer IsRequired>
+          ? IsRequired
+          : T extends CustomType<any>
+            ? false
+            : never;
 
 type IsRefRequired<T extends RefTypeParamShape> = T['array'] extends true
   ? T['arrayRequired']

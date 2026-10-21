@@ -203,14 +203,16 @@ type NestedTypes<
   T extends ModelTypeParamShape,
 > = {
   [K in keyof T['fields'] as T['fields'][K] extends
-    | EnumType
+    | EnumType<any, any>
     | CustomType<CustomTypeParamShape>
     ? K
     : never]: K extends keyof Bag
     ? {
         // A little hackier than I'd like here.
         // Ideally, adapt ClientEnum and ClientCustomType to work with us here instead.
-        __entityType: T['fields'][K] extends EnumType ? 'enum' : 'customType';
+        __entityType: T['fields'][K] extends EnumType<any, any>
+          ? 'enum'
+          : 'customType';
         type: Exclude<Bag[K], null | undefined>;
       }
     : never;
