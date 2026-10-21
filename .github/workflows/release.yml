@@ -3,9 +3,9 @@ name: Release
 # Single entry point for all npm publishes.
 #
 # npm trusted publishing (OIDC) validates the filename of the top-level (caller) workflow, not the
-# reusable workflow that runs `npm publish`, and only one trusted-publisher workflow filename can be
-# configured per package. All npm publishes must therefore originate from this file, which switches
-# on the pushed branch to the release (main) and preid (feat/**/main) publish paths.
+# reusable workflow that runs the publish. Keeping every publish in this one file means each package
+# needs just one trusted-publisher entry (release.yml) and the release paths share one concurrency
+# group. It switches on the pushed branch to the release (main) and preid (feat/**/main) paths.
 
 # Restrict the default GITHUB_TOKEN to least privilege. Called workflows can only use the
 # permissions granted here.
@@ -16,9 +16,13 @@ permissions:
   contents: read
 
 concurrency:
-  # group name unique per pushed ref (shared by the main and preid release paths)
+  # group name unique per pushed ref (shared by the main and preid release paths).
+  # Cancel superseded runs on feature/preid branches, but never on main: a job-level
+  # concurrency group does not shield a job from a workflow-level cancellation (only an
+  # `if:` survives it), so cancelling a main run could interrupt the release job between
+  # `npm publish` and the tag push. A newer main run queues behind the in-progress one instead.
   group: push-release-${{ github.ref }}
-  cancel-in-progress: true
+  cancel-in-progress: ${{ github.ref_name != 'main' }}
 
 on:
   push:
@@ -72,8 +76,8 @@ jobs:
       - name: Run E2E sandbox tests
         working-directory: ./amplify-data
         run: yarn e2e-sandbox:test
+  # Runs on both the main and feat/**/main paths; both publish jobs depend on it.
   release-verification-testing:
-    if: github.ref_name == 'main'
     secrets: inherit
     uses: ./.github/workflows/callable-release-verification.yml
   release:
@@ -101,10 +105,6 @@ jobs:
         uses: ./amplify-data/.github/actions/node-and-build
         with:
           is-prebuild: true
-  e2e:
-    if: startsWith(github.ref_name, 'feat/')
-    secrets: inherit
-    uses: ./.github/workflows/callable-release-verification.yml
   unit-tests:
     if: startsWith(github.ref_name, 'feat/')
     needs:
@@ -124,7 +124,7 @@ jobs:
   preid-release:
     if: startsWith(github.ref_name, 'feat/')
     needs:
-      - e2e
+      - release-verification-testing
       - unit-tests
       - parse-preid
     # id-token is required by the called publish workflow for npm trusted publishing (OIDC)

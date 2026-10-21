@@ -13,7 +13,9 @@ runs:
     - name: Setup Node.js
       uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v6.3.0
       with:
-        node-version: 24
+        # Pinned to an exact release: npm trusted publishing (OIDC) requires npm >= 11.5.1,
+        # and Node 24.22.1 bundles npm 11.19.1. Keep .nvmrc in sync.
+        node-version: 24.22.1
       env:
         SEGMENT_DOWNLOAD_TIMEOUT_MINS: 2
     - name: Enable Corepack for Yarn 4
