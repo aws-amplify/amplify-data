@@ -11,9 +11,6 @@ inputs:
   target:
     description: The release process target (either release or preid)
     required: true
-  npm_token:
-    description: The registry token that gives the job publish permissions
-    required: true
   preid:
     description: The preid to release to when the target is preid. The preid process will fail if this isn't provided.
     required: false
@@ -35,12 +32,10 @@ runs:
       shell: bash
       working-directory: ./amplify-data
       env:
-        NPM_TOKEN: ${{ inputs.npm_token }}
         GH_SHA: ${{ github.sha }}
         TARGET: ${{ inputs.target }}
         PREID_PREFIX: ${{ inputs.preid || '' }}
       run: |
-        echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" >> ~/.npmrc
         export PREID_HASH_SUFFIX=$(echo $GH_SHA | cut -c -7 | sed 's/^/\./')
         git status
         git --no-pager diff
