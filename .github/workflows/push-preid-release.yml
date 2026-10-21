@@ -11,8 +11,9 @@ on:
       - feat/**/main
 
 # Restrict the default GITHUB_TOKEN to least privilege.
-# Publishing steps authenticate via a dedicated PAT (GH_TOKEN_AMPLIFY_WRITE) / NPM_TOKEN,
-# so the default token only needs read access to repository contents.
+# Publishing steps authenticate via a dedicated PAT (GH_TOKEN_AMPLIFY_WRITE) and npm trusted
+# publishing (OIDC), so the default token only needs read access to repository contents
+# (plus id-token: write on the preid-release job).
 permissions:
   contents: read
 
@@ -50,6 +51,10 @@ jobs:
       - e2e
       - unit-tests
       - parse-preid
+    # id-token is required by the called publish workflow for npm trusted publishing (OIDC)
+    permissions:
+      contents: read
+      id-token: write
     secrets: inherit
     uses: ./.github/workflows/callable-publish-preid.yml
     # The preid should be detected from the branch name recommending feat/{PREID}/whatever as branch naming pattern

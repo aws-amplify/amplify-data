@@ -16,8 +16,9 @@ on:
       - main
 
 # Restrict the default GITHUB_TOKEN to least privilege.
-# The release job publishes via a dedicated PAT (GH_TOKEN_AMPLIFY_WRITE) / NPM_TOKEN,
-# and the sandbox_test job sets its own id-token: write for AWS OIDC below.
+# The release job pushes via a dedicated PAT (GH_TOKEN_AMPLIFY_WRITE) and publishes to npm
+# via trusted publishing (OIDC; id-token: write on that job), and the sandbox_test job
+# sets its own id-token: write for AWS OIDC below.
 permissions:
   contents: read
 
@@ -65,5 +66,9 @@ jobs:
     needs:
       - release-verification-testing
       - sandbox_test
+    # id-token is required by the called publish workflow for npm trusted publishing (OIDC)
+    permissions:
+      contents: read
+      id-token: write
     secrets: inherit
     uses: ./.github/workflows/callable-publish-release.yml

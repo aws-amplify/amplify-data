@@ -18,6 +18,10 @@ jobs:
   deploy:
     name: Publish to Amplify Package
     runs-on: ubuntu-latest
+    # Job-level permissions replace workflow-level ones; id-token is required for npm trusted publishing (OIDC)
+    permissions:
+      contents: read
+      id-token: write
     steps:
       - name: Forbidden and protected preid protection
         # Protection for registry tags that we want to protect from accidental use
@@ -42,11 +46,13 @@ jobs:
       - name: Setup node and build the repository
         uses: ./amplify-data/.github/actions/node-and-build
 
+      - name: Ensure npm supports trusted publishing
+        uses: ./amplify-data/.github/actions/ensure-npm-trusted-publishing
+
       - name: Run publish
         uses: ./amplify-data/.github/actions/publish
         with:
           target: preid
           preid: ${{ inputs.preid }}
-          npm_token: ${{ secrets.NPM_TOKEN }}
           github_user: ${{ vars.GH_USER}}
           github_email: ${{ vars.GH_EMAIL}}
