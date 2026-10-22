@@ -386,6 +386,159 @@ describe('Enum types', () => {
   });
 });
 
+describe('Inline custom types', () => {
+  test('optional inline custom type field', () => {
+    const s = a.schema({
+      Post: a.model({
+        location: a.customType({
+          lat: a.float().required(),
+          long: a.float(),
+        }),
+      }),
+    });
+
+    type Schema = ClientSchema<typeof s>;
+
+    type Resolved = Prettify<Schema['Post']['type']>;
+
+    type Expected = {
+      readonly id: string;
+      readonly createdAt: string;
+      readonly updatedAt: string;
+      location?:
+        | {
+            lat: number;
+            long?: number | null | undefined;
+          }
+        | null
+        | undefined;
+    };
+
+    type test = Expect<Equal<Resolved, Expected>>;
+  });
+
+  test('required inline custom type field', () => {
+    const s = a.schema({
+      Post: a.model({
+        title: a.string(),
+        location: a
+          .customType({
+            lat: a.float().required(),
+            long: a.float(),
+          })
+          .required(),
+      }),
+    });
+
+    type Schema = ClientSchema<typeof s>;
+
+    type Resolved = Prettify<Schema['Post']['type']>;
+    type ResolvedCreate = Schema['Post']['createType'];
+    type ResolvedUpdate = Schema['Post']['updateType'];
+
+    type ExpectedLocation = {
+      lat: number;
+      long?: number | null | undefined;
+    };
+
+    type Expected = {
+      readonly id: string;
+      readonly createdAt: string;
+      readonly updatedAt: string;
+      title?: string | null | undefined;
+      location: ExpectedLocation;
+    };
+
+    type ExpectedCreate = {
+      id?: string | undefined;
+      title?: string | null | undefined;
+      location: ExpectedLocation;
+    };
+
+    type ExpectedUpdate = {
+      id: string;
+      title?: string | null | undefined;
+      location?: ExpectedLocation | undefined;
+    };
+
+    type test = Expect<Equal<Resolved, Expected>>;
+    type testCreate = Expect<Equal<ResolvedCreate, ExpectedCreate>>;
+    type testUpdate = Expect<Equal<ResolvedUpdate, ExpectedUpdate>>;
+  });
+
+  test('required inline custom type matches a required ref to an explicit custom type', () => {
+    const s = a.schema({
+      InlinePost: a.model({
+        location: a
+          .customType({
+            lat: a.float().required(),
+            long: a.float(),
+          })
+          .required(),
+      }),
+      RefPost: a.model({
+        location: a.ref('Location').required(),
+      }),
+      Location: a.customType({
+        lat: a.float().required(),
+        long: a.float(),
+      }),
+    });
+
+    type Schema = ClientSchema<typeof s>;
+
+    type testType = Expect<
+      Equal<
+        Prettify<Schema['InlinePost']['type']>,
+        Prettify<Schema['RefPost']['type']>
+      >
+    >;
+    type testCreate = Expect<
+      Equal<Schema['InlinePost']['createType'], Schema['RefPost']['createType']>
+    >;
+    type testUpdate = Expect<
+      Equal<Schema['InlinePost']['updateType'], Schema['RefPost']['updateType']>
+    >;
+  });
+
+  test('required inline custom type nested in a custom type', () => {
+    const s = a.schema({
+      NotificationSubscription: a.customType({
+        endpoint: a.string().required(),
+        keys: a
+          .customType({
+            p256dh: a.string().required(),
+            auth: a.string().required(),
+          })
+          .required(),
+        optionalKeys: a.customType({
+          p256dh: a.string().required(),
+        }),
+      }),
+    });
+
+    type Schema = ClientSchema<typeof s>;
+
+    type Resolved = Schema['NotificationSubscription']['type'];
+
+    type Expected = {
+      endpoint: string;
+      keys: {
+        p256dh: string;
+        auth: string;
+      };
+      optionalKeys?:
+        | {
+            p256dh: string;
+          }
+        | null
+        | undefined;
+    };
+
+    type test = Expect<Equal<Resolved, Expected>>;
+  });
+});
+
 describe('SQL Schema', () => {
   const fakeSecret = () => ({}) as any;
 

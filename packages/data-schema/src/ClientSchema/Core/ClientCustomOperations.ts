@@ -6,7 +6,7 @@ import type { BaseModelField, ModelFieldType } from '../../ModelField';
 import type { RefType } from '../../RefType';
 import type { ResolveFieldRequirements } from '../../MappedTypes/ResolveFieldProperties';
 import type { AppSyncResolverHandler } from 'aws-lambda';
-import type { CustomType } from '../../CustomType';
+import type { CustomType, RequiredCustomTypeMarker } from '../../CustomType';
 import type { FieldTypesOfCustomType } from '../../MappedTypes/ResolveSchema';
 import type { ResolveRef } from '../utilities/ResolveRef';
 import { ClientSchemaProperty } from './ClientSchemaProperty';
@@ -150,9 +150,12 @@ type CustomOpReturnType<
                 FieldTypesOfCustomType<{
                   thisCustomType: R['fields'];
                 }>['thisCustomType']
-              > // The inline `.customType()` with a custom operation doesn't have
-            // `.required()` modifier, hence it's nullable
-            | null
+              >
+            // An inline `.customType()` return type is nullable unless it's
+            // been marked with the `.required()` modifier
+            | (Shape['returnType'] extends RequiredCustomTypeMarker
+                ? never
+                : null)
         : never
 >;
 

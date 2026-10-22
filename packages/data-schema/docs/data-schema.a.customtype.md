@@ -68,3 +68,7 @@ Post: a.model(<!-- -->{ location: a.ref('Location'), content: a.string(), }<!-- 
 
 User: a.model(<!-- -->{ lastKnownLocation: a.ref('Location'), }<!-- -->), }<!-- -->);
 
+## Example 3
+
+// mark an inline custom type field as required a.schema(<!-- -->{ Post: a.model(<!-- -->{ location: a.customType(<!-- -->{ lat: a.float(), long: a.float(), }<!-- -->).required(), }<!-- -->), }<!-- -->);
+
