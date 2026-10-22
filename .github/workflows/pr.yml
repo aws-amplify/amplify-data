@@ -30,6 +30,10 @@ jobs:
     needs:
       - prebuild
     uses: ./.github/workflows/callable-check-api.yml
+  check-lockfile:
+    needs:
+      - prebuild
+    uses: ./.github/workflows/callable-check-lockfile.yml
   check-type-perf:
     needs:
       - prebuild
