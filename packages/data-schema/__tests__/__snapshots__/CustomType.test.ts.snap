@@ -243,3 +243,137 @@ enum PostMetaStatus {
   published
 }"
 `;
+
+exports[`CustomType transform with cyclic references cycle that passes through an inline CustomType 1`] = `
+"type Tenant @aws_iam
+{
+  name: String
+  company: Company
+}
+
+type Company @aws_iam
+{
+  meta: CompanyMeta
+}
+
+type CompanyMeta @aws_iam
+{
+  owner: Tenant
+}
+
+type Query {
+  getTenant: Tenant @function(name: "myFunc") @auth(rules: [{allow: public, provider: identityPool}])
+}"
+`;
+
+exports[`CustomType transform with cyclic references cyclic CustomTypes returned by operations with different auth inherit all rules 1`] = `
+"type Tenant @aws_cognito_user_pools @aws_api_key
+{
+  company: Company
+}
+
+type Company @aws_cognito_user_pools @aws_api_key
+{
+  tenants: [Tenant]
+}
+
+type Query {
+  getTenant: Tenant @function(name: "myFunc") @auth(rules: [{allow: private}])
+  getCompany: Company @function(name: "myFunc") @auth(rules: [{allow: public, provider: apiKey}])
+}"
+`;
+
+exports[`CustomType transform with cyclic references cyclic CustomTypes used as custom mutation arguments and return type 1`] = `
+"type Tenant @aws_cognito_user_pools
+{
+  name: String
+  company: Company
+}
+
+type Company @aws_cognito_user_pools
+{
+  tenants: [Tenant]
+}
+
+input CompanyInput {
+  tenants: [TenantInput]
+}
+
+input TenantInput {
+  name: String
+  company: CompanyInput
+}
+
+type Mutation {
+  saveTenant(tenant: TenantInput): Tenant @function(name: "myFunc") @auth(rules: [{allow: private}])
+}"
+`;
+
+exports[`CustomType transform with cyclic references indirect recursive CustomTypes used by both models and operations 1`] = `
+"type Post @model @auth(rules: [{allow: public, provider: apiKey}])
+{
+  meta: PostMeta
+}
+
+type CustTypeA @aws_api_key
+{
+  company: CustTypeB
+}
+
+type CustTypeB @aws_api_key
+{
+  tenants: [CustTypeA]
+}
+
+type PostMeta 
+{
+  status: PostMetaStatus
+  recursiveCustomType: CustTypeA
+}
+
+enum PostMetaStatus {
+  unpublished
+  published
+}
+
+type Query {
+  getLikedPost: [CustTypeA] @function(name: "myFunc") @auth(rules: [{allow: public, provider: apiKey}])
+}"
+`;
+
+exports[`CustomType transform with cyclic references one to many relationship between customTypes returned from a custom query (issue repro) 1`] = `
+"type MasterTenantTable @model @auth(rules: [{allow: public, provider: apiKey}])
+{
+  pk: String!
+  sk: String!
+  company_id: ID
+}
+
+type Tenant @aws_cognito_user_pools
+{
+  company: Company
+  company_id: ID!
+}
+
+type Company @aws_cognito_user_pools
+{
+  tenants: [Tenant]
+}
+
+type Query {
+  getCompanyById(company_id: ID!): [Tenant] @aws_cognito_user_pools
+}"
+`;
+
+exports[`CustomType transform with cyclic references self-referencing CustomType returned from a custom query 1`] = `
+"type TreeNode @aws_cognito_user_pools
+{
+  value: String
+  parent: TreeNode
+  children: [TreeNode]
+}
+
+type Query {
+  getTree: TreeNode @function(name: "myFunc") @auth(rules: [{allow: private}])
+}"
+`;
