@@ -39,7 +39,7 @@ type ModelFields = Record<
   | BaseModelField
   | ModelRelationshipField<any, string, any, any>
   | RefType<any, any, any>
-  | EnumType
+  | EnumType<any, any>
   | CustomType<CustomTypeParamShape>
 >;
 
@@ -110,12 +110,12 @@ export type ExtractSecondaryIndexIRFields<
       ? FieldProp
       : never
     : T['fields'][FieldProp] extends
-          | EnumType
+          | EnumType<any, any>
           | RefType<RefTypeParamShape, any, any>
       ? FieldProp
       : never]: T['fields'][FieldProp] extends BaseModelField<infer R>
     ? R
-    : T['fields'][FieldProp] extends EnumType<infer values>
+    : T['fields'][FieldProp] extends EnumType<infer values, any>
       ? values[number]
       : T['fields'][FieldProp] extends RefType<infer R, any, any>
         ? `${deferredRefResolvingPrefix}${R['link']}`

@@ -17,7 +17,7 @@ type CustomTypeFields = Record<
   string,
   | BaseModelField
   | RefType<any, any, any>
-  | EnumType
+  | EnumType<any, any>
   | CustomType<CustomTypeParamShape>
 >;
 

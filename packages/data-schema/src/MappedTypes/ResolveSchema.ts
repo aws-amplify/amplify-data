@@ -57,6 +57,29 @@ export type ModelAndCustomTypes<Schema> = {
 };
 
 /**
+ * Replaces an inline enum or custom type field with a Ref to its implicitly named,
+ * hoisted top-level type. Inline enums marked `.required()` produce a required Ref.
+ */
+type ImplicitNonModelTypeRef<Link extends string, Field> =
+  Field extends EnumType<any, true>
+    ? RefType<{
+        link: Link;
+        type: 'ref';
+        valueRequired: true;
+        array: false;
+        arrayRequired: false;
+        authorization: [];
+      }>
+    : RefType<{
+        link: Link;
+        type: 'ref';
+        valueRequired: false;
+        array: false;
+        arrayRequired: false;
+        authorization: [];
+      }> | null;
+
+/**
  * Resolves field types
  *
  * Non-model types are replaced with Refs. Refs remain and are resolved in ResolveFieldProperties.ts
@@ -79,18 +102,12 @@ export type FieldTypes<T> = {
           : T[ModelProp][FieldProp] | null
         : // replace non-model types with Ref
           T[ModelProp][FieldProp] extends
-              | EnumType
+              | EnumType<any, any>
               | CustomType<CustomTypeParamShape>
-          ? RefType<{
-              link: `${Capitalize<ModelProp & string>}${Capitalize<
-                FieldProp & string
-              >}`;
-              type: 'ref';
-              valueRequired: false;
-              array: false;
-              arrayRequired: false;
-              authorization: [];
-            }> | null
+          ? ImplicitNonModelTypeRef<
+              `${Capitalize<ModelProp & string>}${Capitalize<FieldProp & string>}`,
+              T[ModelProp][FieldProp]
+            >
           : // resolve relationship and model fields to the their first type arg
             T[ModelProp][FieldProp] extends ModelRelationshipField<
                 infer R,
@@ -128,18 +145,12 @@ export type FieldTypesOfCustomType<T> = {
           : T[CustomTypeName][FieldProp] | null
         : // replace non-model types with Ref
           T[CustomTypeName][FieldProp] extends
-              | EnumType
+              | EnumType<any, any>
               | CustomType<CustomTypeParamShape>
-          ? RefType<{
-              link: `${Capitalize<CustomTypeName & string>}${Capitalize<
-                FieldProp & string
-              >}`;
-              type: 'ref';
-              valueRequired: false;
-              array: false;
-              arrayRequired: false;
-              authorization: [];
-            }> | null
+          ? ImplicitNonModelTypeRef<
+              `${Capitalize<CustomTypeName & string>}${Capitalize<FieldProp & string>}`,
+              T[CustomTypeName][FieldProp]
+            >
           : never;
   };
 };
