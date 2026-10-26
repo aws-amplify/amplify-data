@@ -1,2 +1,3 @@
 yarn changeset status --since main
+yarn check:lockfile
 yarn check:api
