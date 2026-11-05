@@ -4,6 +4,7 @@ import type {
   CustomHeaders,
   ClientExtensions,
   ListReturnValue,
+  SelectionSet,
   SingularReturnValue,
 } from '../src/runtime';
 import { ClientSchema, a } from '../src/index';
@@ -664,6 +665,12 @@ describe('RDS custom operations - current DX', () => {
           }
         | null
         | undefined;
+      __meta: {
+        returnModel: {
+          flatModel: Prettify<Schema['Post']['__meta']['flatModel']>;
+          isArray: false;
+        };
+      };
     };
 
     type ExpectedGetLikedPost = {
@@ -699,6 +706,12 @@ describe('RDS custom operations - current DX', () => {
           }
         | null
         | undefined;
+      __meta: {
+        returnModel: {
+          flatModel: Prettify<Schema['Post']['__meta']['flatModel']>;
+          isArray: false;
+        };
+      };
     };
 
     type ExpectedOnLikePost = {
@@ -719,6 +732,12 @@ describe('RDS custom operations - current DX', () => {
       };
       type: {
         title?: Nullable<string> | undefined;
+      };
+      __meta: {
+        returnModel: {
+          flatModel: Prettify<Schema['Post']['__meta']['flatModel']>;
+          isArray: false;
+        };
       };
     };
 
@@ -812,6 +831,12 @@ describe('RDS custom operations - deprecated DX', () => {
           }
         | null
         | undefined;
+      __meta: {
+        returnModel: {
+          flatModel: Prettify<Schema['Post']['__meta']['flatModel']>;
+          isArray: false;
+        };
+      };
     };
 
     type ExpectedGetLikedPost = {
@@ -847,6 +872,12 @@ describe('RDS custom operations - deprecated DX', () => {
           }
         | null
         | undefined;
+      __meta: {
+        returnModel: {
+          flatModel: Prettify<Schema['Post']['__meta']['flatModel']>;
+          isArray: false;
+        };
+      };
     };
 
     type ExpectedOnLikePost = {
@@ -867,6 +898,12 @@ describe('RDS custom operations - deprecated DX', () => {
       };
       type: {
         title?: Nullable<string> | undefined;
+      };
+      __meta: {
+        returnModel: {
+          flatModel: Prettify<Schema['Post']['__meta']['flatModel']>;
+          isArray: false;
+        };
       };
     };
 
@@ -1049,5 +1086,293 @@ describe('.arguments() modifier', () => {
     type ActualArgs = Schema['complexQuery']['args'];
 
     type Test = Expect<Equal<ActualArgs, ExpectedArgs>>;
+  });
+});
+
+// shared by the __meta.returnModel and selectionSet on custom operations blocks
+const schema = a.schema({
+  Author: a.model({
+    name: a.string().required(),
+    posts: a.hasMany('Post', 'authorId'),
+  }),
+  Post: a.model({
+    title: a.string().required(),
+    authorId: a.id().required(),
+    author: a.belongsTo('Author', 'authorId'),
+    comments: a.hasMany('Comment', 'postId'),
+  }),
+  Comment: a.model({
+    body: a.string().required(),
+    postId: a.id().required(),
+    post: a.belongsTo('Post', 'postId'),
+  }),
+  EchoResult: a.customType({ value: a.string() }),
+  getPost: a
+    .query()
+    .arguments({ id: a.id().required() })
+    .returns(a.ref('Post'))
+    .handler(a.handler.function('fn')),
+  listPosts: a
+    .query()
+    .returns(a.ref('Post').array())
+    .handler(a.handler.function('fn')),
+  likePost: a
+    .mutation()
+    .arguments({ postId: a.id().required() })
+    .returns(a.ref('Post'))
+    .handler(a.handler.function('fn')),
+  likePosts: a
+    .mutation()
+    .returns(a.ref('Post').array())
+    .handler(a.handler.function('fn')),
+  echo: a
+    .query()
+    .arguments({ value: a.string() })
+    .returns(a.ref('EchoResult'))
+    .handler(a.handler.function('fn')),
+  echoString: a
+    .query()
+    .arguments({ value: a.string() })
+    .returns(a.string())
+    .handler(a.handler.function('fn')),
+  echoMutation: a
+    .mutation()
+    .arguments({ value: a.string() })
+    .returns(a.ref('EchoResult'))
+    .handler(a.handler.function('fn')),
+  onUpdatePost: a
+    .subscription()
+    .for(a.ref('Post').mutations(['update']))
+    .handler(a.handler.function('fn')),
+  onLikePost: a
+    .subscription()
+    .for(a.ref('likePost'))
+    .handler(a.handler.function('fn')),
+  onLikePosts: a
+    .subscription()
+    .for(a.ref('likePosts'))
+    .handler(a.handler.function('fn')),
+  onPostChange: a
+    .subscription()
+    .for([a.ref('Post').mutations(['delete']), a.ref('likePost')])
+    .handler(a.handler.function('fn')),
+  onEcho: a
+    .subscription()
+    .for(a.ref('echoMutation'))
+    .handler(a.handler.function('fn')),
+  makePost: a
+    .generation({ aiModel: a.ai.model('Claude 3 Haiku'), systemPrompt: 'p' })
+    .returns(a.ref('Post')),
+});
+type Schema = ClientSchema<typeof schema>;
+
+describe('__meta.returnModel', () => {
+  it('resolves the referenced model and array-ness', () => {
+    type _1 = Expect<
+      Equal<
+        Schema['getPost']['__meta']['returnModel'],
+        { flatModel: Schema['Post']['__meta']['flatModel']; isArray: false }
+      >
+    >;
+    type _2 = Expect<
+      Equal<Schema['listPosts']['__meta']['returnModel']['isArray'], true>
+    >;
+    type _3 = Expect<
+      Equal<
+        Schema['likePost']['__meta']['returnModel'],
+        Schema['getPost']['__meta']['returnModel']
+      >
+    >;
+  });
+
+  it('is never for non-model returns', () => {
+    type _1 = Expect<Equal<Schema['echo']['__meta']['returnModel'], never>>;
+    type _2 = Expect<Equal<Schema['onEcho']['__meta']['returnModel'], never>>;
+  });
+
+  it('resolves subscription sources of every form', () => {
+    type _1 = Expect<
+      Equal<
+        Schema['onUpdatePost']['__meta']['returnModel'],
+        Schema['getPost']['__meta']['returnModel']
+      >
+    >;
+    type _2 = Expect<
+      Equal<
+        Schema['onLikePost']['__meta']['returnModel'],
+        Schema['likePost']['__meta']['returnModel']
+      >
+    >;
+    type _3 = Expect<
+      Equal<Schema['onLikePosts']['__meta']['returnModel']['isArray'], true>
+    >;
+    type _4 = Expect<
+      Equal<
+        Schema['onPostChange']['__meta']['returnModel'],
+        Schema['getPost']['__meta']['returnModel']
+      >
+    >;
+  });
+});
+
+describe('selectionSet on custom operations', () => {
+  const client = {} as ClientExtensions<Schema>;
+  const sel = ['id', 'title', 'comments.*'] as const;
+
+  it('query data equals model get data for the same paths', async () => {
+    const { data: custom } = await client.queries.getPost(
+      { id: 'p1' },
+      { selectionSet: sel },
+    );
+    const { data: viaModel } = await client.models.Post.get(
+      { id: 'p1' },
+      { selectionSet: sel },
+    );
+    type _1 = Expect<Equal<typeof custom, typeof viaModel>>;
+    type _2 = Expect<
+      Equal<typeof custom, SelectionSet<Schema['Post'], typeof sel> | null>
+    >;
+  });
+
+  it('mutation data equals model get data for the same paths', async () => {
+    const { data: custom } = await client.mutations.likePost(
+      { postId: 'p1' },
+      { selectionSet: sel },
+    );
+    const { data: viaModel } = await client.models.Post.get(
+      { id: 'p1' },
+      { selectionSet: sel },
+    );
+    type _ = Expect<Equal<typeof custom, typeof viaModel>>;
+  });
+
+  it('array data elements equal model list elements, and the array itself is nullable', async () => {
+    const { data: custom } = await client.queries.listPosts({
+      selectionSet: sel,
+    });
+    const { data: listed } = await client.models.Post.list({
+      selectionSet: sel,
+    });
+    type _1 = Expect<
+      Equal<NonNullable<typeof custom>[number], (typeof listed)[number]>
+    >;
+    type _2 = Expect<
+      Equal<
+        typeof custom,
+        Array<SelectionSet<Schema['Post'], typeof sel>> | null
+      >
+    >;
+  });
+
+  it('subscription events are the selected shape for every source form', () => {
+    client.subscriptions.onUpdatePost({ selectionSet: sel }).subscribe({
+      next: (e) => {
+        type _ = Expect<
+          Equal<typeof e, SelectionSet<Schema['Post'], typeof sel>>
+        >;
+      },
+    });
+    client.subscriptions.onLikePost({ selectionSet: sel }).subscribe({
+      next: (e) => {
+        type _ = Expect<
+          Equal<typeof e, SelectionSet<Schema['Post'], typeof sel>>
+        >;
+      },
+    });
+    client.subscriptions.onPostChange({ selectionSet: sel }).subscribe({
+      next: (e) => {
+        type _ = Expect<
+          Equal<typeof e, SelectionSet<Schema['Post'], typeof sel>>
+        >;
+      },
+    });
+    client.subscriptions.onLikePosts({ selectionSet: sel }).subscribe({
+      next: (e) => {
+        type _ = Expect<
+          Equal<typeof e, Array<SelectionSet<Schema['Post'], typeof sel>>>
+        >;
+      },
+    });
+  });
+
+  it('leaves the return type unchanged when no selection set is passed', async () => {
+    const { data } = await client.queries.getPost({ id: 'p1' });
+    type _ = Expect<Equal<typeof data, Schema['getPost']['type'] | null>>;
+  });
+
+  it('does not offer selectionSet where the return is not a model', async () => {
+    // @ts-expect-error selectionSet is not an option on a custom type return
+    await client.queries.echo({ value: 'x' }, { selectionSet: ['value'] });
+    await client.queries.echoString(
+      { value: 'x' },
+      // @ts-expect-error selectionSet is not an option on a primitive return
+      { selectionSet: ['value'] },
+    );
+    // @ts-expect-error selectionSet is not an option when the source mutation returns a custom type
+    client.subscriptions.onEcho({ selectionSet: ['value'] });
+    // @ts-expect-error selectionSet is not an option on generations
+    await client.generations.makePost({ selectionSet: ['id'] });
+  });
+
+  it('offers selectionSet only where the return resolves to a model', () => {
+    type HasSelectionSet<
+      Fn extends (...args: any) => any,
+      I extends number,
+    > = 'selectionSet' extends keyof NonNullable<Parameters<Fn>[I]>
+      ? true
+      : false;
+
+    type _getPost = Expect<
+      Equal<HasSelectionSet<typeof client.queries.getPost, 1>, true>
+    >;
+    type _listPosts = Expect<
+      Equal<HasSelectionSet<typeof client.queries.listPosts, 0>, true>
+    >;
+    type _onLikePosts = Expect<
+      Equal<HasSelectionSet<typeof client.subscriptions.onLikePosts, 0>, true>
+    >;
+    type _echo = Expect<
+      Equal<HasSelectionSet<typeof client.queries.echo, 1>, false>
+    >;
+    type _echoString = Expect<
+      Equal<HasSelectionSet<typeof client.queries.echoString, 1>, false>
+    >;
+    type _onEcho = Expect<
+      Equal<HasSelectionSet<typeof client.subscriptions.onEcho, 0>, false>
+    >;
+    type _makePost = Expect<
+      Equal<HasSelectionSet<typeof client.generations.makePost, 0>, false>
+    >;
+  });
+
+  it('rejects paths that are not on the model', async () => {
+    // @ts-expect-error not a field of Post
+    await client.queries.getPost({ id: 'p1' }, { selectionSet: ['nope'] });
+  });
+
+  it('follows selectionSetDepth exactly as the model op does', async () => {
+    type SchemaDepth1 = ClientSchema<typeof schema, { selectionSetDepth: 1 }>;
+    const d1 = {} as ClientExtensions<SchemaDepth1>;
+    await d1.queries.getPost(
+      { id: 'p1' },
+      { selectionSet: ['id', 'author.*'] },
+    );
+    await d1.queries.getPost(
+      { id: 'p1' },
+      // @ts-expect-error second hop is stripped at depth 1
+      { selectionSet: ['id', 'author.posts.*'] },
+    );
+    await d1.models.Post.get(
+      { id: 'p1' },
+      // @ts-expect-error second hop is stripped at depth 1 on the model op too
+      { selectionSet: ['id', 'author.posts.*'] },
+    );
+    type SchemaDepth0 = ClientSchema<typeof schema, { selectionSetDepth: 0 }>;
+    const d0 = {} as ClientExtensions<SchemaDepth0>;
+    await d0.queries.getPost(
+      { id: 'p1' },
+      // @ts-expect-error relationships are lazy loaders at depth 0
+      { selectionSet: ['id', 'comments.*'] },
+    );
   });
 });
