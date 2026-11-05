@@ -18,6 +18,7 @@ import {
   EnumType,
   InputType,
   CustomUserAgentDetails,
+  GraphQLAuthMode,
 } from '../../bridge-types';
 
 import { map } from 'rxjs';
@@ -25,6 +26,7 @@ import { map } from 'rxjs';
 import {
   authModeParams,
   getDefaultSelectionSetForNonModelWithIR,
+  flattenItems,
   generateSelectionSet,
   getCustomHeaders,
   initializeModel,
@@ -347,11 +349,13 @@ function innerArguments(operation: CustomOperation): string {
  *
  * @param modelIntrospection The full code-generated introspection schema.
  * @param operation The operation object from the schema.
+ * @param selectionSet Optional caller-provided selection set, used only for model returns.
  * @returns The selection set as a string.
  */
 function operationSelectionSet(
   modelIntrospection: ModelIntrospectionSchema,
   operation: CustomOperation,
+  selectionSet?: string[],
 ): string {
   if (
     hasStringField(operation, 'type') ||
@@ -365,7 +369,11 @@ function operationSelectionSet(
       getDefaultSelectionSetForNonModelWithIR(nonModel, modelIntrospection),
     )}}`;
   } else if (hasStringField(operation.type, 'model')) {
-    return `{${generateSelectionSet(modelIntrospection, operation.type.model)}}`;
+    return `{${generateSelectionSet(
+      modelIntrospection,
+      operation.type.model,
+      selectionSet,
+    )}}`;
   } else {
     return '';
   }
@@ -401,6 +409,65 @@ function operationVariables(
 }
 
 /**
+ * Turns the unwrapped graphql result of a custom operation into the value
+ * returned to the caller.
+ *
+ * With a caller-provided selection set the result is plain flattened data and
+ * no model instances are created. Without one, model returns are initialized
+ * with lazy loaders for their relationships.
+ *
+ * @param client The client used to initialize models.
+ * @param modelIntrospection The model intro schema.
+ * @param modelName The returned model name, or `undefined` for non-model returns.
+ * @param result The result for the operation field, nulls already dropped from model arrays.
+ * @param isArrayResult Whether `result` is an array.
+ * @param selectionSet The caller-provided selection set, if any.
+ * @param auth Auth mode and token used for lazy loaders.
+ * @param useContext Whether the request ran with an SSR context.
+ * @returns The value to return as `data`.
+ */
+function resolveModelResult(
+  client: BaseClient,
+  modelIntrospection: ModelIntrospectionSchema,
+  modelName: string | undefined,
+  result: any,
+  isArrayResult: boolean,
+  selectionSet: string[] | undefined,
+  auth: { authMode?: GraphQLAuthMode; authToken?: string },
+  useContext: boolean,
+): any {
+  if (!modelName) {
+    return result;
+  }
+
+  if (selectionSet) {
+    if (result === null || result === undefined) {
+      return null;
+    }
+
+    return isArrayResult
+      ? result.map((item: any) =>
+          flattenItems(modelIntrospection, modelName, item),
+        )
+      : flattenItems(modelIntrospection, modelName, result);
+  }
+
+  const initialized = initializeModel(
+    client,
+    modelName,
+    isArrayResult ? result : [result],
+    modelIntrospection,
+    auth.authMode,
+    auth.authToken,
+    useContext,
+  );
+
+  return !isArrayResult && Array.isArray(initialized)
+    ? initialized.shift()
+    : initialized;
+}
+
+/**
  * Executes an operation from the given model intro schema against a client, returning
  * a fully instantiated model when relevant.
  *
@@ -430,7 +497,11 @@ function _op(
     const headers = getCustomHeaders(client, getInternals, options?.headers);
     const outerArgsString = outerArguments(operation);
     const innerArgsString = innerArguments(operation);
-    const selectionSet = operationSelectionSet(modelIntrospection, operation);
+    const selectionSet = operationSelectionSet(
+      modelIntrospection,
+      operation,
+      options?.selectionSet,
+    );
 
     const returnTypeModelName = hasStringField(operation.type, 'model')
       ? operation.type.model
@@ -476,33 +547,23 @@ function _op(
 
         const isArrayResult = Array.isArray(data[key]);
 
-        // TODO: when adding support for custom selection set, flattening will need
-        // to occur recursively. For now, it's expected that related models are not
-        // present in the result. Only FK's are present. Any related model properties
-        // should be replaced with lazy loaders under the current implementation.
+        // With a custom selection set the result is flattened through
+        // `flattenItems`; otherwise models are initialized with lazy loaders.
         const flattenedResult = isArrayResult
           ? data[key].filter((x: any) => x)
           : data[key];
 
-        // TODO: custom selection set. current selection set is default selection set only
-        // custom selection set requires data-schema-type + runtime updates above.
-        const initialized = returnTypeModelName
-          ? initializeModel(
-              client,
-              returnTypeModelName,
-              isArrayResult ? flattenedResult : [flattenedResult],
-              modelIntrospection,
-              auth.authMode,
-              auth.authToken,
-              !!context,
-            )
-          : flattenedResult;
-
         return {
-          data:
-            !isArrayResult && Array.isArray(initialized)
-              ? initialized.shift()
-              : initialized,
+          data: resolveModelResult(
+            client,
+            modelIntrospection,
+            returnTypeModelName,
+            flattenedResult,
+            isArrayResult,
+            options?.selectionSet,
+            auth,
+            !!context,
+          ),
           extensions,
         };
       } else {
@@ -526,10 +587,8 @@ function _op(
 
         const isArrayResult = Array.isArray(data[key]);
 
-        // TODO: when adding support for custom selection set, flattening will need
-        // to occur recursively. For now, it's expected that related models are not
-        // present in the result. Only FK's are present. Any related model properties
-        // should be replaced with lazy loaders under the current implementation.
+        // With a custom selection set the result is flattened through
+        // `flattenItems`; otherwise models are initialized with lazy loaders.
         const flattenedResult = isArrayResult
           ? data[key].filter((x: any) => x)
           : data[key];
@@ -539,25 +598,17 @@ function _op(
          * if `flattenedResult`, result is an actual record:
          */
         if (flattenedResult) {
-          // TODO: custom selection set. current selection set is default selection set only
-          // custom selection set requires data-schema-type + runtime updates above.
-          const initialized = returnTypeModelName
-            ? initializeModel(
-                client,
-                returnTypeModelName,
-                isArrayResult ? flattenedResult : [flattenedResult],
-                modelIntrospection,
-                auth.authMode,
-                auth.authToken,
-                !!context,
-              )
-            : flattenedResult;
-
           return {
-            data:
-              !isArrayResult && Array.isArray(initialized)
-                ? initialized.shift()
-                : initialized,
+            data: resolveModelResult(
+              client,
+              modelIntrospection,
+              returnTypeModelName,
+              flattenedResult,
+              isArrayResult,
+              options?.selectionSet,
+              auth,
+              !!context,
+            ),
             errors,
           };
         } else {
@@ -598,7 +649,11 @@ function _opSubscription(
   const headers = getCustomHeaders(client, getInternals, options?.headers);
   const outerArgsString = outerArguments(operation);
   const innerArgsString = innerArguments(operation);
-  const selectionSet = operationSelectionSet(modelIntrospection, operation);
+  const selectionSet = operationSelectionSet(
+    modelIntrospection,
+    operation,
+    options?.selectionSet,
+  );
 
   const returnTypeModelName = hasStringField(operation.type, 'model')
     ? operation.type.model
@@ -629,18 +684,22 @@ function _opSubscription(
       const [key] = Object.keys(value.data);
       const data = (value.data as any)[key];
 
-      const [initialized] = returnTypeModelName
-        ? initializeModel(
-            client,
-            returnTypeModelName,
-            [data],
-            modelIntrospection,
-            auth.authMode,
-            auth.authToken,
-          )
-        : [data];
+      const isArrayResult = Array.isArray(data);
+      const items =
+        isArrayResult && returnTypeModelName
+          ? data.filter((x: any) => x)
+          : data;
 
-      return initialized;
+      return resolveModelResult(
+        client,
+        modelIntrospection,
+        returnTypeModelName,
+        items,
+        isArrayResult,
+        options?.selectionSet,
+        auth,
+        false,
+      );
     }),
   );
 }

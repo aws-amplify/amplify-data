@@ -14,6 +14,7 @@ import type {
   ClientSchemaByEntityTypeBaseShape,
 } from '../../ClientSchema';
 import type { ExtractNestedTypes } from '../../ClientSchema/utilities/';
+import type { ClientCustomOperation } from '../../ClientSchema/Core/ClientCustomOperations';
 import type {
   Select,
   StringFilter,
@@ -782,11 +783,16 @@ export type CustomSubscriptions<
 > = CustomOperations<Schema['subscriptions'], Context>;
 
 type CustomOperationMethodOptions = {
-  // selectionSet?: SelectionSet;
   authMode?: AuthMode;
   authToken?: string;
   headers?: CustomHeaders;
 };
+
+type CustomOperationSelectionSetOptions<SelectionSet> =
+  CustomOperationMethodOptions & {
+    /** Fields and relationship paths to return, as for model operations. The result is plain data without lazy loaders. */
+    selectionSet?: SelectionSet;
+  };
 
 /**
  * Generates Custom Operations function params based on whether .arguments() were specified in the schema builder
@@ -797,6 +803,128 @@ type CustomOperationFnParams<Args extends Record<string, unknown> | never> = [
   ? [CustomOperationMethodOptions?]
   : [Args, CustomOperationMethodOptions?];
 
+/**
+ * Same as CustomOperationFnParams, with options that also accept a selection set
+ */
+type CustomOperationSelectionSetFnParams<Args, SelectionSet> = [Args] extends [
+  never,
+]
+  ? [CustomOperationSelectionSetOptions<SelectionSet>?]
+  : [Args, CustomOperationSelectionSetOptions<SelectionSet>?];
+
+/**
+ * True for queries, mutations and subscriptions that return a model, directly or through a source mutation
+ */
+type SupportsSelectionSet<Def extends ClientCustomOperation<any, any>> =
+  Def['operationType'] extends 'Query' | 'Mutation' | 'Subscription'
+    ? [CustomOpFlatModel<Def>] extends [never]
+      ? false
+      : true
+    : false;
+
+/**
+ * Read through a conditional rather than an index, because `returnModel` is `unknown`
+ * on the `ClientCustomOperation<any, any>` constraint and cannot be indexed generically.
+ * The `never` guard comes first, because `never` matches the `infer` branch and would
+ * otherwise resolve to the `Record<string, unknown>` bound
+ */
+type CustomOpFlatModel<Def extends ClientCustomOperation<any, any>> = [
+  Def['__meta']['returnModel'],
+] extends [never]
+  ? never
+  : Def['__meta']['returnModel'] extends {
+        flatModel: infer FlatModel extends Record<string, unknown>;
+      }
+    ? FlatModel
+    : never;
+
+/**
+ * The operation's own return type when no selection set is passed; otherwise the selected
+ * shape of the returned model, built exactly as model operations build it
+ */
+type CustomOpSelectedValue<
+  Def extends ClientCustomOperation<any, any>,
+  SelectionSet extends ReadonlyArray<string>,
+> = SelectionSet extends undefined | never[]
+  ? Def['type']
+  : Def['__meta']['returnModel'] extends { isArray: true }
+    ? Array<
+        Prettify<
+          WithOptionalsAsNullishOnly<
+            CustomSelectionSetReturnValue<
+              CustomOpFlatModel<Def>,
+              SelectionSet[number]
+            >
+          >
+        >
+      >
+    : Prettify<
+        WithOptionalsAsNullishOnly<
+          CustomSelectionSetReturnValue<
+            CustomOpFlatModel<Def>,
+            SelectionSet[number]
+          >
+        >
+      >;
+
+/**
+ * The CLIENT, COOKIES and REQUEST signatures of one custom operation. Only operations that
+ * support a selection set get the generic signature; all others keep the plain one.
+ */
+type CustomOperationSignatures<Def extends ClientCustomOperation<any, any>> =
+  SupportsSelectionSet<Def> extends true
+    ? {
+        CLIENT: <
+          SelectionSet extends ReadonlyArray<
+            ModelPath<CustomOpFlatModel<Def>>
+          > = never[],
+        >(
+          ...params: CustomOperationSelectionSetFnParams<
+            Def['args'],
+            SelectionSet
+          >
+        ) => // we only generate subscriptions on the clientside; so this isn't applied to COOKIES | REQUEST
+        Def['operationType'] extends 'Subscription'
+          ? ObservedReturnValue<CustomOpSelectedValue<Def, SelectionSet>>
+          : SingularReturnValue<CustomOpSelectedValue<Def, SelectionSet>>;
+        COOKIES: <
+          SelectionSet extends ReadonlyArray<
+            ModelPath<CustomOpFlatModel<Def>>
+          > = never[],
+        >(
+          ...params: CustomOperationSelectionSetFnParams<
+            Def['args'],
+            SelectionSet
+          >
+        ) => SingularReturnValue<CustomOpSelectedValue<Def, SelectionSet>>;
+        REQUEST: <
+          SelectionSet extends ReadonlyArray<
+            ModelPath<CustomOpFlatModel<Def>>
+          > = never[],
+        >(
+          contextSpec: AmplifyServer.ContextSpec,
+          ...params: CustomOperationSelectionSetFnParams<
+            Def['args'],
+            SelectionSet
+          >
+        ) => SingularReturnValue<CustomOpSelectedValue<Def, SelectionSet>>;
+      }
+    : {
+        CLIENT: (
+          ...params: CustomOperationFnParams<Def['args']>
+        ) => // we only generate subscriptions on the clientside; so this isn't applied to COOKIES | REQUEST
+        Def['operationType'] extends 'Subscription'
+          ? ObservedReturnValue<Def['type']>
+          : SingularReturnValue<Def['type']>;
+        COOKIES: (
+          ...params: CustomOperationFnParams<Def['args']>
+        ) => SingularReturnValue<Def['type']>;
+        REQUEST: (
+          contextSpec: AmplifyServer.ContextSpec,
+          ...params: CustomOperationFnParams<Def['args']>
+        ) => SingularReturnValue<Def['type']>;
+      };
+
 export type CustomOperations<
   OperationDefs extends ClientSchemaByEntityTypeBaseShape[
     | 'queries'
@@ -805,21 +933,9 @@ export type CustomOperations<
     | 'generations'],
   Context extends ContextType = 'CLIENT',
 > = {
-  [OpName in keyof OperationDefs]: {
-    CLIENT: (
-      ...params: CustomOperationFnParams<OperationDefs[OpName]['args']>
-    ) => // we only generate subscriptions on the clientside; so this isn't applied to COOKIES | REQUEST
-    OperationDefs[OpName]['operationType'] extends 'Subscription'
-      ? ObservedReturnValue<OperationDefs[OpName]['type']>
-      : SingularReturnValue<OperationDefs[OpName]['type']>;
-    COOKIES: (
-      ...params: CustomOperationFnParams<OperationDefs[OpName]['args']>
-    ) => SingularReturnValue<OperationDefs[OpName]['type']>;
-    REQUEST: (
-      contextSpec: AmplifyServer.ContextSpec,
-      ...params: CustomOperationFnParams<OperationDefs[OpName]['args']>
-    ) => SingularReturnValue<OperationDefs[OpName]['type']>;
-  }[Context];
+  [OpName in keyof OperationDefs]: CustomOperationSignatures<
+    OperationDefs[OpName]
+  >[Context];
 };
 
 /**

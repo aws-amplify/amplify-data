@@ -4,6 +4,7 @@ import {
   buildAmplifyConfig,
   mockedGenerateClient,
   optionsAndHeaders,
+  parseQuery,
 } from '../../utils';
 
 /* eslint-disable import/no-extraneous-dependencies */
@@ -44,6 +45,11 @@ describe('something', () => {
         .query()
         .arguments({ id: a.string() })
         .returns(a.customType({ success: a.boolean() }))
+        .handler(a.handler.function('MyFn')),
+      getParent: a
+        .query()
+        .arguments({ id: a.string() })
+        .returns(a.ref('Parent'))
         .handler(a.handler.function('MyFn')),
     })
     .authorization((allow) => [allow.publicApiKey()]);
@@ -163,6 +169,51 @@ describe('something', () => {
       {},
     ]);
 
+    expect(optionsAndHeaders(spy)).toMatchSnapshot();
+  });
+
+  test('custom query with a selection set on the request client', async () => {
+    const { spy, generateServerClientUsingReqRes } = mockedGenerateClient([
+      { data: { getParent: { id: 'p1' } } },
+      { data: { getParent: { id: 'p1' } } },
+    ]);
+
+    spy.mockImplementation(async (test) => {
+      return (GraphQLAPI as any)._graphql();
+    });
+
+    const config = await buildAmplifyConfig(schema);
+    Amplify.configure(config);
+
+    (getAmplifyServerContext as jest.Mock).mockImplementation(() => {
+      return { amplify: Amplify };
+    });
+
+    const client = generateServerClientUsingReqRes<Schema>({
+      config,
+    });
+
+    const mockContextSpec = { token: { value: Symbol('mock-token') } };
+
+    await client.queries.getParent(
+      mockContextSpec,
+      { id: 'p1' },
+      { selectionSet: ['id', 'children.*'] },
+    );
+    await client.models.Parent.get(
+      mockContextSpec,
+      { id: 'p1' },
+      { selectionSet: ['id', 'children.*'] },
+    );
+
+    const [[customOptions], [modelOptions]] = optionsAndHeaders(spy);
+    expect(parseQuery(customOptions.query).selectionSetString).toContain(
+      'children',
+    );
+
+    expect(parseQuery(customOptions.query).selectionSetString).toEqual(
+      parseQuery(modelOptions.query).selectionSetString,
+    );
     expect(optionsAndHeaders(spy)).toMatchSnapshot();
   });
 });
