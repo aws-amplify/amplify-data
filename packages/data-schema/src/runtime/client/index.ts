@@ -501,7 +501,23 @@ type IndexQueryMethod<
       },
     ) => ListReturnValue<Prettify<ReturnValue<Model, FlatModel, SelectionSet>>>;
 
-type ModelTypesClient<
+/**
+ * The utility type that is used to infer the type (interface) of a single
+ * model on the generated `client.models` property, e.g. `client.models.Todo`.
+ *
+ * Useful for annotating wrappers or service layers built around a model client.
+ *
+ * @example
+ * ```ts
+ * import type { ModelTypesClient } from '@aws-amplify/data-schema/runtime';
+ *
+ * type Schema = ClientSchema<typeof schema>;
+ * const client = generateClient<Schema>();
+ *
+ * const todoClient: ModelTypesClient<Schema['Todo']> = client.models.Todo;
+ * ```
+ */
+export type ModelTypesClient<
   Model extends ClientSchemaByEntityTypeBaseShape['models'][string],
   FlatModel extends Record<string, unknown> = Model['__meta']['flatModel'],
 > = IndexQueryMethods<Model> &
