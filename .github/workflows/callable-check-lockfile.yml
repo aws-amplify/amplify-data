@@ -1,0 +1,37 @@
+name: Lockfile Check
+
+on: workflow_call
+
+jobs:
+  check-lockfile:
+    name: Check yarn.lock for local registry references
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          path: amplify-data
+      - name: Setup node and build the repository
+        uses: ./amplify-data/.github/actions/node-and-build
+      - name: Run checks
+        working-directory: ./amplify-data
+        run: yarn check:lockfile
+      - name: Lockfile Check Instructions
+        if: failure()
+        run: |
+          echo
+          echo "Oh no!! The Lockfile Check Failed!"
+          echo
+          echo "Either yarn.lock is malformed, or yarn.lock / .yarnrc.yml contains references to a local npm registry (Verdaccio)."
+          echo
+          echo "Stop the local registry and make sure it is no longer configured:"
+          echo
+          echo "yarn stop:npm-proxy && yarn config get npmRegistryServer && npm config get registry"
+          echo
+          echo "Then restore and regenerate the lockfile:"
+          echo
+          echo "git checkout origin/main -- yarn.lock && yarn install"
+          echo
+          echo "Then commit and push the changes."
+          echo
+          exit 1
