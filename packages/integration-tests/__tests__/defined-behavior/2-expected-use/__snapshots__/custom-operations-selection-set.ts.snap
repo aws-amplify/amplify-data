@@ -1,0 +1,150 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`custom operations with a selection set array query with a selection set flattens each item and drops nulls 1`] = `
+[
+  [
+    {
+      "apiKey": undefined,
+      "authMode": undefined,
+      "authToken": undefined,
+      "endpoint": undefined,
+      "query": "
+    query {
+      listFeaturedPosts {id title}
+    }
+  ",
+      "variables": {},
+    },
+    {},
+  ],
+]
+`;
+
+exports[`custom operations with a selection set mutation with a selection set returns plain data including a belongsTo 1`] = `
+[
+  [
+    {
+      "apiKey": undefined,
+      "authMode": undefined,
+      "authToken": undefined,
+      "endpoint": undefined,
+      "query": "
+    mutation($postId: ID!) {
+      likePost(postId: $postId) {id author { id name createdAt updatedAt }}
+    }
+  ",
+      "variables": {
+        "postId": "p1",
+      },
+    },
+    {},
+  ],
+]
+`;
+
+exports[`custom operations with a selection set onCreatePostFromMutation with a selection set emits plain data 1`] = `
+[
+  [
+    {
+      "apiKey": undefined,
+      "authMode": undefined,
+      "endpoint": undefined,
+      "query": "subscription {
+  onCreatePostFromMutation {
+    id
+    title
+  }
+}
+",
+      "variables": {},
+    },
+    {},
+  ],
+]
+`;
+
+exports[`custom operations with a selection set onDeletePostMixed with a selection set emits plain data 1`] = `
+[
+  [
+    {
+      "apiKey": undefined,
+      "authMode": undefined,
+      "endpoint": undefined,
+      "query": "subscription {
+  onDeletePostMixed {
+    id
+    title
+  }
+}
+",
+      "variables": {},
+    },
+    {},
+  ],
+]
+`;
+
+exports[`custom operations with a selection set onUpdatePostFromModel with a selection set emits plain data 1`] = `
+[
+  [
+    {
+      "apiKey": undefined,
+      "authMode": undefined,
+      "endpoint": undefined,
+      "query": "subscription {
+  onUpdatePostFromModel {
+    id
+    title
+  }
+}
+",
+      "variables": {},
+    },
+    {},
+  ],
+]
+`;
+
+exports[`custom operations with a selection set query with a selection set returns plain data shaped by the paths 1`] = `
+[
+  [
+    {
+      "apiKey": undefined,
+      "authMode": undefined,
+      "authToken": undefined,
+      "endpoint": undefined,
+      "query": "
+    query($slug: String!) {
+      getFeaturedPost(slug: $slug) {id title comments { items { id body postId createdAt updatedAt } }}
+    }
+  ",
+      "variables": {
+        "slug": "hello",
+      },
+    },
+    {},
+  ],
+]
+`;
+
+exports[`custom operations with a selection set query without a selection set is unchanged: default fields and lazy loaders 1`] = `
+[
+  [
+    {
+      "apiKey": undefined,
+      "authMode": undefined,
+      "authToken": undefined,
+      "endpoint": undefined,
+      "query": "
+    query($slug: String!) {
+      getFeaturedPost(slug: $slug) {id title authorId createdAt updatedAt}
+    }
+  ",
+      "variables": {
+        "slug": "hello",
+      },
+    },
+    {},
+  ],
+]
+`;

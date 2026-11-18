@@ -1,0 +1,36 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`something custom query with a selection set on the cookies client 1`] = `
+[
+  [
+    {
+      "apiKey": undefined,
+      "authMode": undefined,
+      "authToken": undefined,
+      "endpoint": undefined,
+      "query": "
+    query($id: String) {
+      getParent(id: $id) {id children { items { id name parentId createdAt updatedAt } }}
+    }
+  ",
+      "variables": {
+        "id": "p1",
+      },
+    },
+    {},
+  ],
+  [
+    {
+      "apiKey": undefined,
+      "authMode": undefined,
+      "authToken": undefined,
+      "endpoint": undefined,
+      "query": "query($id: ID!) { getParent(id: $id) { id children { items { id name parentId createdAt updatedAt } } } }",
+      "variables": {
+        "id": "p1",
+      },
+    },
+    {},
+  ],
+]
+`;

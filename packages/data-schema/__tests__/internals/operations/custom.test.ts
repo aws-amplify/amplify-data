@@ -21,7 +21,14 @@ import {
   INTERNAL_USER_AGENT_OVERRIDE,
 } from '../../../src/runtime/internals/ai/getCustomUserAgentDetails';
 
+import {
+  flattenItems,
+  generateSelectionSet,
+  initializeModel,
+} from '../../../src/runtime/internals/APIClient';
+
 jest.mock('../../../src/runtime/internals/APIClient', () => ({
+  generateSelectionSet: jest.fn().mockReturnValue('id title'),
   generateGraphQLDocument: jest.fn(),
   buildGraphQLVariables: jest.fn(),
   authModeParams: jest
@@ -29,7 +36,9 @@ jest.mock('../../../src/runtime/internals/APIClient', () => ({
     .mockReturnValue({ authMode: 'apiKey', authToken: 'mockToken' }),
   getCustomHeaders: jest.fn(),
   flattenItems: jest.fn().mockReturnValue({ id: '1', name: 'Test Item' }),
-  initializeModel: jest.fn().mockReturnValue([{ id: '1', name: 'Test Item' }]),
+  initializeModel: jest
+    .fn()
+    .mockImplementation(() => [{ id: '1', name: 'Test Item' }]),
 }));
 
 describe('customOpFactory', () => {
@@ -69,6 +78,13 @@ describe('customOpFactory', () => {
   const mockOperation: CustomOperation = {
     name: 'testQuery',
     type: 'String',
+    isArray: false,
+    isRequired: false,
+  };
+
+  const modelOperation: CustomOperation = {
+    name: 'getTodo',
+    type: { model: 'Todo' },
     isArray: false,
     isRequired: false,
   };
@@ -412,6 +428,309 @@ describe('customOpFactory', () => {
         expect(run).toThrow("testQuery requires arguments 'colors'");
         expect(subClient.graphql).not.toHaveBeenCalled();
       });
+
+      const subscribeTo = (operation: CustomOperation, data: object) => {
+        const subClient: BaseBrowserClient = {
+          ...mockClient,
+          graphql: jest
+            .fn()
+            .mockReturnValue(of({ data })) as jest.MockedFunction<
+            BaseBrowserClient['graphql']
+          >,
+        };
+
+        return customOpFactory(
+          subClient,
+          mockModelIntrospection,
+          'subscription',
+          operation,
+          false,
+          mockGetInternals,
+        ) as any;
+      };
+
+      it('emits flattened data without model initialization when a selection set is passed', (done) => {
+        const customOp = subscribeTo(modelOperation, {
+          getTodo: { id: '1', title: 't' },
+        });
+
+        customOp({ selectionSet: ['id', 'title'] }).subscribe(
+          (value: unknown) => {
+            expect(flattenItems).toHaveBeenCalledWith(
+              mockModelIntrospection,
+              'Todo',
+              { id: '1', title: 't' },
+            );
+            expect(initializeModel).not.toHaveBeenCalled();
+            expect(value).toEqual({ id: '1', name: 'Test Item' });
+            done();
+          },
+        );
+      });
+
+      it('still initializes a model for subscription events without a selection set', (done) => {
+        const customOp = subscribeTo(modelOperation, {
+          getTodo: { id: '1', title: 't' },
+        });
+
+        customOp({}).subscribe(() => {
+          expect(initializeModel).toHaveBeenCalled();
+          expect(flattenItems).not.toHaveBeenCalled();
+          done();
+        });
+      });
+
+      it('flattens each non-null item of an array event', (done) => {
+        const arrayOperation: CustomOperation = {
+          ...modelOperation,
+          name: 'onLikePosts',
+          isArray: true,
+        };
+        const customOp = subscribeTo(arrayOperation, {
+          onLikePosts: [null, { id: '1' }, { id: '2' }],
+        });
+
+        customOp({ selectionSet: ['id'] }).subscribe((value: unknown) => {
+          expect(flattenItems).toHaveBeenCalledTimes(2);
+          expect(initializeModel).not.toHaveBeenCalled();
+          expect(value).toHaveLength(2);
+          done();
+        });
+      });
+
+      it('initializes the null-filtered records of an array event without a selection set', (done) => {
+        const arrayOperation: CustomOperation = {
+          ...modelOperation,
+          name: 'onLikePosts',
+          isArray: true,
+        };
+        const customOp = subscribeTo(arrayOperation, {
+          onLikePosts: [null, { id: '1' }, { id: '2' }],
+        });
+
+        customOp({}).subscribe((value: unknown) => {
+          expect(initializeModel).toHaveBeenCalledTimes(1);
+          const args = (initializeModel as jest.Mock).mock.calls[0];
+          expect(args[1]).toBe('Todo');
+          expect(args[2]).toEqual([{ id: '1' }, { id: '2' }]);
+          expect(args[3]).toBe(mockModelIntrospection);
+          expect(args[6]).toBe(false);
+          expect(flattenItems).not.toHaveBeenCalled();
+          expect(value).toEqual([{ id: '1', name: 'Test Item' }]);
+          done();
+        });
+      });
+
+      it('emits null for a null event when a selection set is passed', (done) => {
+        const customOp = subscribeTo(modelOperation, { getTodo: null });
+
+        customOp({ selectionSet: ['id'] }).subscribe((value: unknown) => {
+          expect(value).toBeNull();
+          expect(flattenItems).not.toHaveBeenCalled();
+          done();
+        });
+      });
+
+      it('emits a non-model array event as received, keeping falsy members', (done) => {
+        const scalarArrayOperation: CustomOperation = {
+          name: 'onStrings',
+          type: 'String',
+          isArray: true,
+          isRequired: false,
+        };
+        const customOp = subscribeTo(scalarArrayOperation, {
+          onStrings: [0, '', null, 'x'],
+        });
+
+        customOp({}).subscribe((value: unknown) => {
+          expect(value).toEqual([0, '', null, 'x']);
+          expect(initializeModel).not.toHaveBeenCalled();
+          expect(flattenItems).not.toHaveBeenCalled();
+          done();
+        });
+      });
+    });
+  });
+
+  describe('custom selection set in the document', () => {
+    it('passes the caller selection set to generateSelectionSet for a model return', async () => {
+      const customOp = customOpFactory(
+        mockClient,
+        mockModelIntrospection,
+        'query',
+        modelOperation,
+        false,
+        mockGetInternals,
+      );
+
+      await customOp({ selectionSet: ['id', 'title'] });
+
+      expect(generateSelectionSet).toHaveBeenCalledWith(
+        mockModelIntrospection,
+        'Todo',
+        ['id', 'title'],
+      );
+      expect(mockClient.graphql).toHaveBeenCalledWith(
+        expect.objectContaining({
+          query: expect.stringContaining('getTodo {id title}'),
+        }),
+        undefined,
+      );
+    });
+
+    it('uses the default selection set when selectionSet is omitted or explicitly undefined', async () => {
+      const customOp = customOpFactory(
+        mockClient,
+        mockModelIntrospection,
+        'query',
+        modelOperation,
+        false,
+        mockGetInternals,
+      );
+
+      await customOp({});
+      await customOp({ selectionSet: undefined });
+
+      expect(generateSelectionSet).toHaveBeenNthCalledWith(
+        1,
+        mockModelIntrospection,
+        'Todo',
+        undefined,
+      );
+      expect(generateSelectionSet).toHaveBeenNthCalledWith(
+        2,
+        mockModelIntrospection,
+        'Todo',
+        undefined,
+      );
+    });
+
+    it('ignores selectionSet for a primitive return', async () => {
+      const customOp = customOpFactory(
+        mockClient,
+        mockModelIntrospection,
+        'query',
+        mockOperation,
+        false,
+        mockGetInternals,
+      );
+
+      await customOp({ selectionSet: ['id'] });
+
+      expect(generateSelectionSet).not.toHaveBeenCalled();
+    });
+
+    it('passes the caller selection set on the subscription path', () => {
+      const subClient: BaseBrowserClient = {
+        ...mockClient,
+        graphql: jest
+          .fn()
+          .mockReturnValue(
+            of({ data: { getTodo: {} } }),
+          ) as jest.MockedFunction<BaseBrowserClient['graphql']>,
+      };
+      const customOp = customOpFactory(
+        subClient,
+        mockModelIntrospection,
+        'subscription',
+        modelOperation,
+        false,
+        mockGetInternals,
+      );
+
+      customOp({ selectionSet: ['id', 'title'] });
+
+      expect(generateSelectionSet).toHaveBeenCalledWith(
+        mockModelIntrospection,
+        'Todo',
+        ['id', 'title'],
+      );
+    });
+  });
+
+  describe('custom selection set in the result', () => {
+    const run = (operation: CustomOperation, options: object): Promise<any> =>
+      (
+        customOpFactory(
+          mockClient,
+          mockModelIntrospection,
+          'query',
+          operation,
+          false,
+          mockGetInternals,
+        ) as any
+      )(options);
+
+    it('returns flattened data and skips model initialization', async () => {
+      (mockClient.graphql as jest.Mock).mockResolvedValueOnce({
+        data: { getTodo: { id: '1', title: 't' } },
+      });
+
+      const { data } = await run(modelOperation, {
+        selectionSet: ['id', 'title'],
+      });
+
+      expect(flattenItems).toHaveBeenCalledWith(
+        mockModelIntrospection,
+        'Todo',
+        { id: '1', title: 't' },
+      );
+      expect(initializeModel).not.toHaveBeenCalled();
+      expect(data).toEqual({ id: '1', name: 'Test Item' });
+    });
+
+    it('still initializes a model when no selection set is passed', async () => {
+      (mockClient.graphql as jest.Mock).mockResolvedValueOnce({
+        data: { getTodo: { id: '1', title: 't' } },
+      });
+
+      await run(modelOperation, {});
+
+      expect(initializeModel).toHaveBeenCalled();
+      expect(flattenItems).not.toHaveBeenCalled();
+    });
+
+    it('flattens each non-null item of an array result', async () => {
+      const arrayOperation: CustomOperation = {
+        ...modelOperation,
+        name: 'listTodos',
+        isArray: true,
+      };
+      (mockClient.graphql as jest.Mock).mockResolvedValueOnce({
+        data: { listTodos: [null, { id: '1' }, { id: '2' }] },
+      });
+
+      const { data } = await run(arrayOperation, { selectionSet: ['id'] });
+
+      expect(flattenItems).toHaveBeenCalledTimes(2);
+      expect(initializeModel).not.toHaveBeenCalled();
+      expect(data).toHaveLength(2);
+    });
+
+    it('returns null data when the server returns null for the field', async () => {
+      (mockClient.graphql as jest.Mock).mockResolvedValueOnce({
+        data: { getTodo: null },
+      });
+
+      const { data } = await run(modelOperation, { selectionSet: ['id'] });
+
+      expect(data).toBeNull();
+      expect(flattenItems).not.toHaveBeenCalled();
+    });
+
+    it('returns flattened data plus errors on the partial-data path', async () => {
+      (mockClient.graphql as jest.Mock).mockRejectedValueOnce({
+        data: { getTodo: { id: '1', title: 't' } },
+        errors: [{ message: 'partial' }],
+      });
+
+      const { data, errors } = await run(modelOperation, {
+        selectionSet: ['id', 'title'],
+      });
+
+      expect(data).toEqual({ id: '1', name: 'Test Item' });
+      expect(errors).toEqual([{ message: 'partial' }]);
+      expect(initializeModel).not.toHaveBeenCalled();
     });
   });
 });

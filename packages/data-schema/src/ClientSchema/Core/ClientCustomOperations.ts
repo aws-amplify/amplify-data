@@ -80,6 +80,11 @@ export interface ClientCustomOperation<
   returnType: LambdaReturnType<CustomOpReturnType<Op, RefBag>>;
 
   type: CustomOpReturnType<Op, RefBag>;
+
+  __meta: {
+    // flat model of the returned model and its array-ness, or never when the operation does not return a model
+    returnModel: CustomOpReturnModel<Op, RefBag>;
+  };
 }
 
 /**
@@ -155,6 +160,41 @@ type CustomOpReturnType<
             | null
         : never
 >;
+
+/**
+ * Looks up the model a custom operation returns, by reading the `flatModel`
+ * already computed on that model's entry in `RefBag`.
+ */
+type CustomOpReturnModel<
+  Shape extends CustomOperationParamShape,
+  RefBag extends Record<string, any>,
+> =
+  Shape['returnType'] extends RefType<infer RefShape, any, any>
+    ? ReturnModelFromLink<RefShape['link'], RefShape['array'], RefBag>
+    : never;
+
+/**
+ * Distributive over `Link`, so a subscription with several `.for()` sources
+ * resolves each one. A link to a custom mutation inherits that mutation's
+ * `returnModel`, including its `isArray`.
+ */
+type ReturnModelFromLink<
+  Link extends string,
+  IsArray extends boolean,
+  RefBag extends Record<string, any>,
+> = Link extends keyof RefBag
+  ? RefBag[Link] extends {
+      __entityType: 'model';
+      __meta: { flatModel: infer FlatModel };
+    }
+    ? { flatModel: FlatModel; isArray: IsArray }
+    : RefBag[Link] extends {
+          __entityType: 'customMutation';
+          __meta: { returnModel: infer Inherited };
+        }
+      ? Inherited
+      : never
+  : never;
 
 /**
  * Returns a return type with lazy loaders removed.

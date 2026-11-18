@@ -59,6 +59,11 @@ describe('something', () => {
         parentId: a.id(),
         parent: a.belongsTo('Parent', 'parentId'),
       }),
+      getParent: a
+        .query()
+        .arguments({ id: a.string() })
+        .returns(a.ref('Parent'))
+        .handler(a.handler.function('MyFn')),
     })
     .authorization((allow) => [allow.publicApiKey()]);
 
@@ -89,5 +94,44 @@ describe('something', () => {
 
     // Just sanity-checking that types are present, for now.
     await client.models.StandaloneModel.get({ id: 'something' });
+  });
+
+  test('custom query with a selection set on the cookies client', async () => {
+    const { spy, generateServerClientUsingCookies } = mockedGenerateClient([
+      { data: { getParent: { id: 'p1' } } },
+      { data: { getParent: { id: 'p1' } } },
+    ]);
+    // the spy is shared with the previous test, so drop its recorded calls
+    spy.mockClear();
+
+    const config = await buildAmplifyConfig(schema);
+    Amplify.configure(config);
+    const client = generateServerClientUsingCookies<Schema>({
+      config,
+      cookies: () => {
+        return new CookieCollection({
+          'some-cookie': 'some-cookie-value',
+        }) as any;
+      },
+    });
+
+    await client.queries.getParent(
+      { id: 'p1' },
+      { selectionSet: ['id', 'children.*'] },
+    );
+    await client.models.Parent.get(
+      { id: 'p1' },
+      { selectionSet: ['id', 'children.*'] },
+    );
+
+    const [[customOptions], [modelOptions]] = optionsAndHeaders(spy);
+    expect(parseQuery(customOptions.query).selectionSetString).toContain(
+      'children',
+    );
+
+    expect(parseQuery(customOptions.query).selectionSetString).toEqual(
+      parseQuery(modelOptions.query).selectionSetString,
+    );
+    expect(optionsAndHeaders(spy)).toMatchSnapshot();
   });
 });
