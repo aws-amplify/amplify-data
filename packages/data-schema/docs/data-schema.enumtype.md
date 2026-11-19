@@ -55,3 +55,29 @@ Description
 </td></tr>
 </tbody></table>
 
+## Methods
+
+<table><thead><tr><th>
+
+Method
+
+
+</th><th>
+
+Description
+
+
+</th></tr></thead>
+<tbody><tr><td>
+
+[default(value)](./data-schema.enumtype.default.md)
+
+
+</td><td>
+
+Sets a default value for the enum type.
+
+
+</td></tr>
+</tbody></table>
+

@@ -13,6 +13,7 @@ type RefTypeData = {
   arrayRequired: boolean;
   mutationOperations: MutationOperations[];
   authorization: Authorization<any, any, any>[];
+  default: undefined | string;
 };
 
 export type RefTypeParamShape = {
@@ -59,6 +60,11 @@ export type RefType<
       Exclude<K, 'required'> | 'array'
     >;
     /**
+     * Sets a default value for the referenced enum type.
+     * @param value - The default value, which must be one of the enum's values
+     */
+    default(value: string): RefType<T, K | 'default', Auth>;
+    /**
      * Configures field-level authorization rules. Pass in an array of authorizations `(allow => allow.____)` to mix and match
      * multiple authorization rules for this field.
      */
@@ -97,6 +103,7 @@ function _ref<T extends RefTypeParamShape>(link: T['link']) {
     arrayRequired: false,
     mutationOperations: [],
     authorization: [],
+    default: undefined,
   };
 
   const builder: RefType<T> = brandedBuilder({
@@ -111,6 +118,11 @@ function _ref<T extends RefTypeParamShape>(link: T['link']) {
     },
     array() {
       data.array = true;
+
+      return this;
+    },
+    default(value: string) {
+      data.default = value;
 
       return this;
     },

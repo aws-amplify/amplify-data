@@ -12,6 +12,7 @@ Reference type definition interface
 export type RefType<T extends RefTypeParamShape, K extends keyof RefType<T> = never, Auth = undefined> = Omit<{
     required(): RefType<SetTypeSubArg<T, T['array'] extends true ? 'arrayRequired' : 'valueRequired', true>, K | 'required'>;
     array(): RefType<SetTypeSubArg<T, 'array', true>, Exclude<K, 'required'> | 'array'>;
+    default(value: string): RefType<T, K | 'default', Auth>;
     authorization<AuthRuleType extends Authorization<any, any, any>>(callback: (allow: AllowModifier) => AuthRuleType | AuthRuleType[]): RefType<T, K | 'authorization', AuthRuleType>;
     mutations(operations: MutationOperations[]): RefType<T, K | 'mutations'>;
 }, K> & {
