@@ -31,7 +31,11 @@ import {
 } from '@aws-amplify/data-schema-types';
 import type { InternalRef, RefType } from './RefType';
 import type { EnumType } from './EnumType';
-import type { CustomType, CustomTypeParamShape } from './CustomType';
+import type {
+  CustomType,
+  CustomTypeParamShape,
+  InternalCustomType,
+} from './CustomType';
 import {
   type InternalCustom,
   type CustomOperationInput,
@@ -98,6 +102,16 @@ function isCustomType(
     return true;
   }
   return false;
+}
+
+/**
+ * Whether a custom type definition has been marked with `.required()`
+ */
+function isRequiredCustomType(typeDef: unknown): boolean {
+  return (
+    isCustomType(typeDef) &&
+    (typeDef as InternalCustomType).data.valueRequired === true
+  );
 }
 
 function isConversationRoute(type: any): type is InternalConversationType {
@@ -293,6 +307,18 @@ function refFieldToGql(
   return field;
 }
 
+/**
+ * Returns the GraphQL type for a field, argument, or return type that is
+ * defined with an inline `a.customType()`. The inline custom type is hoisted to
+ * a top-level type named `typeName`; this applies the `.required()` modifier.
+ */
+function inlineCustomTypeFieldToGql(
+  typeName: string,
+  customTypeDef: unknown,
+): string {
+  return isRequiredCustomType(customTypeDef) ? `${typeName}!` : typeName;
+}
+
 function enumFieldToGql(enumName: string, secondaryIndexes: string[] = []) {
   let field = enumName;
 
@@ -419,7 +445,7 @@ function customOperationToGql(
 
         implicitTypes.push([returnTypeName, returnType]);
       }
-      return returnTypeName;
+      return inlineCustomTypeFieldToGql(returnTypeName, returnType);
     } else if (isEnumType(returnType)) {
       const returnTypeName = `${capitalize(refererTypeName)}ReturnType`;
       implicitTypes.push([returnTypeName, returnType]);
@@ -1060,7 +1086,9 @@ function processFields(
 
         implicitTypes.push([customTypeName, fieldDef]);
 
-        gqlFields.push(`${fieldName}: ${customTypeName}`);
+        gqlFields.push(
+          `${fieldName}: ${inlineCustomTypeFieldToGql(customTypeName, fieldDef)}`,
+        );
       } else {
         gqlFields.push(
           `${fieldName}: ${scalarFieldToGql(
@@ -1451,7 +1479,8 @@ function generateInputTypes(
         processedFields[fieldName] = {
           data: { 
             type: 'ref', 
-            link: nestedInputTypeName
+            link: nestedInputTypeName,
+            valueRequired: isRequiredCustomType(fieldDef),
           },
         };
 
@@ -1554,7 +1583,9 @@ function generateInputTypes(
     } else if (isCustomType(argDef)) {
       // Handle top-level custom type arguments
       const inputTypeName = `${capitalize(operationName)}${capitalize(argName)}Input`;
-      argDefinitions.push(`${argName}: ${inputTypeName}`);
+      argDefinitions.push(
+        `${argName}: ${inlineCustomTypeFieldToGql(inputTypeName, argDef)}`,
+      );
 
       if (!processedTypes.has(inputTypeName)) {
         processedTypes.add(inputTypeName);
@@ -1630,6 +1661,8 @@ const schemaPreprocessor = (
   }
 
   const topLevelTypes = sortTopLevelTypes(Object.entries(schema.data.types));
+
+  validateTopLevelCustomTypesAreNotRequired(topLevelTypes);
 
   const { schemaAuth, functionSchemaAccess } = extractFunctionSchemaAccess(
     schema.data.authorization,
@@ -2271,6 +2304,25 @@ function generateCustomOperationTypes({
   }
 
   return types;
+}
+
+/**
+ * `.required()` on a custom type only applies where the custom type is defined
+ * inline (as a field, argument, or return type). A top-level custom type is a
+ * named GraphQL type, so requiredness has to be set at each reference site via
+ * `a.ref('TypeName').required()`.
+ */
+function validateTopLevelCustomTypesAreNotRequired(
+  topLevelTypes: [string, any][],
+) {
+  for (const [typeName, typeDef] of topLevelTypes) {
+    if (isRequiredCustomType(typeDef)) {
+      throw new Error(
+        `Invalid custom type definition for ${typeName}. \`.required()\` is only supported on inline custom types used as fields, arguments, or return types. ` +
+          `To make a reference to ${typeName} required, use \`a.ref('${typeName}').required()\` instead.`,
+      );
+    }
+  }
 }
 
 function extractNestedCustomTypeNames(

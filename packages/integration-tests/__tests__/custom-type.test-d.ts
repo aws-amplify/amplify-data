@@ -267,6 +267,123 @@ describe('CustomType', () => {
         type _ = Expect<Equal<ResolvedCreateInputType, Expected>>;
       });
     });
+    describe('required inline custom types', () => {
+      const schema = a.schema({
+        Post: a.model({
+          title: a.string().required(),
+          meta: a
+            .customType({
+              author: a.string().required(),
+              summary: a.string(),
+              deepMeta: a
+                .customType({
+                  field1: a.integer().required(),
+                  field2: a.string(),
+                })
+                .required(),
+            })
+            .required(),
+        }),
+      });
+
+      type Schema = ClientSchema<typeof schema>;
+      const client = generateClient<Schema>();
+
+      test('the `list` operation returns the expected type', async () => {
+        const { data: posts } = await client.models.Post.list();
+
+        type Expected = {
+          title: string;
+          readonly id: string;
+          readonly createdAt: string;
+          readonly updatedAt: string;
+          meta: {
+            author: string;
+            summary: string | null;
+            deepMeta: {
+              field1: number;
+              field2: string | null;
+            };
+          };
+        }[];
+
+        type _ = Expect<Equal<typeof posts, Expected>>;
+      });
+
+      test('the `create` input type matches the expected type', () => {
+        type ResolvedCreateInputType = Parameters<
+          typeof client.models.Post.create
+        >[0];
+
+        type Expected = {
+          id?: string | undefined;
+          title: string;
+          meta: {
+            author: string;
+            summary?: string | null | undefined;
+            deepMeta: {
+              field1: number;
+              field2?: string | null | undefined;
+            };
+          };
+        };
+
+        type _ = Expect<Equal<ResolvedCreateInputType, Expected>>;
+      });
+
+      test('the `update` input type matches the expected type', () => {
+        type ResolvedUpdateInputType = Parameters<
+          typeof client.models.Post.update
+        >[0];
+
+        type Expected = {
+          id: string;
+          title?: string | undefined;
+          meta?:
+            | {
+                author: string;
+                summary?: string | null | undefined;
+                deepMeta: {
+                  field1: number;
+                  field2?: string | null | undefined;
+                };
+              }
+            | undefined;
+        };
+
+        type _ = Expect<Equal<ResolvedUpdateInputType, Expected>>;
+      });
+
+      test('matches the types of the equivalent required refs to explicit custom types', () => {
+        const refSchema = a.schema({
+          Post: a.model({
+            title: a.string().required(),
+            meta: a.ref('PostMeta').required(),
+          }),
+          PostMeta: a.customType({
+            author: a.string().required(),
+            summary: a.string(),
+            deepMeta: a.ref('PostMetaDeepMeta').required(),
+          }),
+          PostMetaDeepMeta: a.customType({
+            field1: a.integer().required(),
+            field2: a.string(),
+          }),
+        });
+
+        type RefSchema = ClientSchema<typeof refSchema>;
+
+        type _type = Expect<
+          Equal<Schema['Post']['type'], RefSchema['Post']['type']>
+        >;
+        type _create = Expect<
+          Equal<Schema['Post']['createType'], RefSchema['Post']['createType']>
+        >;
+        type _update = Expect<
+          Equal<Schema['Post']['updateType'], RefSchema['Post']['updateType']>
+        >;
+      });
+    });
   });
 
   describe('explicit', () => {

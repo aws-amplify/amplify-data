@@ -1,5 +1,96 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`CustomType required modifier Implicit CustomType - required 1`] = `
+"type Post @model @auth(rules: [{allow: public, provider: apiKey}])
+{
+  location: PostLocation!
+  optionalLocation: PostOptionalLocation
+}
+
+type PostLocation 
+{
+  lat: Float
+  long: Float
+}
+
+type PostOptionalLocation 
+{
+  lat: Float
+  long: Float
+}"
+`;
+
+exports[`CustomType required modifier Implicit CustomType nests required implicit CustomType 1`] = `
+"type Post @model @auth(rules: [{allow: public, provider: apiKey}])
+{
+  meta: PostMeta!
+}
+
+type NotificationSubscription 
+{
+  endpoint: String!
+  keys: NotificationSubscriptionKeys!
+}
+
+type PostMeta 
+{
+  status: PostMetaStatus
+  nestedMeta: PostMetaNestedMeta!
+}
+
+type NotificationSubscriptionKeys 
+{
+  p256dh: String!
+  auth: String!
+}
+
+enum PostMetaStatus {
+  unpublished
+  published
+}
+
+type PostMetaNestedMeta 
+{
+  field1: String
+}"
+`;
+
+exports[`CustomType required modifier Required inline CustomType as custom operation argument and return type 1`] = `
+"type GetPostDetailsReturnType @aws_cognito_user_pools
+{
+  title: String
+  details: GetPostDetailsReturnTypeDetails!
+}
+
+type OptionalReturnReturnType @aws_cognito_user_pools
+{
+  title: String
+}
+
+type GetPostDetailsReturnTypeDetails @aws_cognito_user_pools
+{
+  body: String
+}
+
+input GetPostDetailsRequiredArgNestedInput {
+  value: String
+}
+
+input GetPostDetailsRequiredArgInput {
+  content: String
+  nested: GetPostDetailsRequiredArgNestedInput!
+}
+
+input GetPostDetailsOptionalArgInput {
+  content: String
+}
+
+type Query {
+  getPostDetails(requiredArg: GetPostDetailsRequiredArgInput!, optionalArg: GetPostDetailsOptionalArgInput): GetPostDetailsReturnType! @function(name: "FnGetPostDetails") @auth(rules: [{allow: private}])
+  optionalReturn: OptionalReturnReturnType @function(name: "FnOptionalReturn") @auth(rules: [{allow: private}])
+}"
+`;
+
 exports[`CustomType transform Explicit CustomType - required 1`] = `
 "type Post @model @auth(rules: [{allow: public, provider: apiKey}])
 {
