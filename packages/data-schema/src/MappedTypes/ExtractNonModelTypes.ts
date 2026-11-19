@@ -55,13 +55,13 @@ export type ExtractAndFlattenImplicitNonModelTypesFromFields<
   {
     // loop through the fields - omit the field that's not a non-model type
     [FieldProp in keyof Fields as Fields[FieldProp] extends
-      | EnumType
+      | EnumType<any, any>
       | CustomType<CustomTypeParamShape>
       ? FieldProp
       : never]: (
       x: NonNullable<Fields[FieldProp]> extends infer FieldType
         ? // if the filed is a enum extract it as is
-          FieldType extends EnumType
+          FieldType extends EnumType<any, any>
           ? {
               [Key in `${ParentTypeName}${Capitalize<
                 FieldProp & string
@@ -130,9 +130,12 @@ type ResolveNonModelTypes<
   ResolvedSchema = SchemaTypes<Schema> & Extracted,
 > = {
   enums: {
-    [Model in keyof ResolvedSchema as ResolvedSchema[Model] extends EnumType
+    [Model in keyof ResolvedSchema as ResolvedSchema[Model] extends EnumType<
+      any,
+      any
+    >
       ? Model
-      : never]: ResolvedSchema[Model] extends EnumType<infer values>
+      : never]: ResolvedSchema[Model] extends EnumType<infer values, any>
       ? values[number]
       : never;
   };

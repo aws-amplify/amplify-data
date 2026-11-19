@@ -9,7 +9,7 @@ Enum type definition content
 **Signature:**
 
 ```typescript
-export interface EnumType<values extends readonly string[] = readonly string[]> extends EnumTypeParamShape<values> 
+export interface EnumType<values extends readonly string[] = readonly string[], IsRequired extends boolean = false> extends EnumTypeParamShape<values> 
 ```
 **Extends:** EnumTypeParamShape&lt;values&gt;
 
@@ -38,6 +38,25 @@ Description
 </th></tr></thead>
 <tbody><tr><td>
 
+[\[\_\_enumRequired\]?](./data-schema.enumtype.___enumrequired_.md)
+
+
+</td><td>
+
+
+</td><td>
+
+IsRequired
+
+
+</td><td>
+
+_(Optional)_ Type-level marker for whether the enum has been marked `.required()`<!-- -->. Never set at runtime.
+
+
+</td></tr>
+<tr><td>
+
 [\[brandSymbol\]](./data-schema.enumtype._brandsymbol_.md)
 
 
@@ -50,6 +69,34 @@ Description
 
 
 </td><td>
+
+
+</td></tr>
+</tbody></table>
+
+## Methods
+
+<table><thead><tr><th>
+
+Method
+
+
+</th><th>
+
+Description
+
+
+</th></tr></thead>
+<tbody><tr><td>
+
+[required()](./data-schema.enumtype.required.md)
+
+
+</td><td>
+
+Marks an inline enum field as required (non-nullable).
+
+Only applies to enums defined inline on a model, custom type, or custom operation argument. It is not supported on top-level enum definitions. To require a field that references a top-level enum, use `a.ref('MyEnum').required()` instead.
 
 
 </td></tr>

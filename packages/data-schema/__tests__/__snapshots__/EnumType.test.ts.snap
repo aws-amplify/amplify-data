@@ -39,6 +39,126 @@ enum AccessLevel {
 }"
 `;
 
+exports[`EnumType transform Implicit Enum - required 1`] = `
+"type File @model @auth(rules: [{allow: public, provider: apiKey}])
+{
+  accessLevel: FileAccessLevel!
+  visibility: FileVisibility
+}
+
+enum FileAccessLevel {
+  public
+  protected
+  private
+}
+
+enum FileVisibility {
+  visible
+  hidden
+}"
+`;
+
+exports[`EnumType transform Implicit Enum - required, in a SQL schema 1`] = `
+"type friendship @model(timestamps: null) @auth(rules: [{allow: public, provider: apiKey}])
+{
+  id: Int! @primaryKey
+  status: FriendshipStatus!
+  note: FriendshipNote
+}
+
+enum FriendshipStatus {
+  REJECTED
+  FRIENDS
+  PENDING
+  REQUESTED
+}
+
+enum FriendshipNote {
+  NONE
+  SOME
+}"
+`;
+
+exports[`EnumType transform Implicit Enum - required, in custom operation arguments 1`] = `
+"enum ListFilesAccessLevel {
+  public
+  protected
+  private
+}
+
+enum ListFilesSort {
+  asc
+  desc
+}
+
+enum ListFilesFilterKind {
+  image
+  video
+}
+
+enum ListFilesFilterSize {
+  small
+  large
+}
+
+input ListFilesFilterInput {
+  kind: ListFilesFilterKind!
+  size: ListFilesFilterSize
+}
+
+type Query {
+  listFiles(accessLevel: ListFilesAccessLevel!, sort: ListFilesSort, filter: ListFilesFilterInput): String @function(name: "myFn") @auth(rules: [{allow: public, provider: apiKey}])
+}"
+`;
+
+exports[`EnumType transform Implicit Enum - required, in custom types 1`] = `
+"type File @model @auth(rules: [{allow: public, provider: apiKey}])
+{
+  meta: FileMeta
+  location: Location
+}
+
+type Location 
+{
+  kind: LocationKind!
+  label: LocationLabel
+}
+
+type FileMeta 
+{
+  accessLevel: FileMetaAccessLevel!
+}
+
+enum LocationKind {
+  home
+  work
+}
+
+enum LocationLabel {
+  primary
+  secondary
+}
+
+enum FileMetaAccessLevel {
+  public
+  protected
+  private
+}"
+`;
+
+exports[`EnumType transform Implicit Enum - required, used in a secondary index 1`] = `
+"type File @model @auth(rules: [{allow: public, provider: apiKey}])
+{
+  accessLevel: FileAccessLevel! @index(queryField: "listFileByAccessLevel")
+}
+
+enum FileAccessLevel {
+  public
+  protected
+  private
+}"
+`;
+
 exports[`EnumType transform Implicit Enum 1`] = `
 "type File @model @auth(rules: [{allow: public, provider: apiKey}])
 {

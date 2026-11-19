@@ -191,6 +191,33 @@ describe('ResolveSchema Mapped Type', () => {
     type test = Expect<Equal<Resolved, Expected>>;
   });
 
+  test('Basic schema with required implicit enum', () => {
+    const s = a.schema({
+      Post: a.model({
+        title: a.string(),
+        privacy: a.enum(['PRIVATE', 'FRIENDS_ONLY', 'PUBLIC']).required(),
+      }),
+    });
+
+    type Resolved = ResolveSchema<typeof s>;
+
+    type Expected = {
+      Post: {
+        title: string | null;
+        privacy: RefType<{
+          link: 'PostPrivacy';
+          type: 'ref';
+          valueRequired: true;
+          array: false;
+          arrayRequired: false;
+          authorization: [];
+        }>;
+      };
+    };
+
+    type test = Expect<Equal<Resolved, Expected>>;
+  });
+
   test('Schema with custom mutation', () => {
     const s = a.schema({
       Post: a.model({

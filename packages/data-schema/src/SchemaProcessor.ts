@@ -30,7 +30,7 @@ import {
   DatasourceEngine,
 } from '@aws-amplify/data-schema-types';
 import type { InternalRef, RefType } from './RefType';
-import type { EnumType } from './EnumType';
+import type { EnumType, InternalEnumType } from './EnumType';
 import type { CustomType, CustomTypeParamShape } from './CustomType';
 import {
   type InternalCustom,
@@ -75,6 +75,7 @@ type CustomOperationFields = {
 function isInternalModel(model: unknown): model is InternalModel {
   if (
     (model as any).data &&
+    !isEnumType(model) &&
     !isCustomType(model) &&
     !isCustomOperation(model) &&
     !isConversationRoute(model)
@@ -89,6 +90,13 @@ function isEnumType(data: any): data is EnumType {
     return true;
   }
   return false;
+}
+
+/**
+ * Whether an inline enum definition has been marked `.required()`
+ */
+function isRequiredEnum(enumDef: EnumType): boolean {
+  return (enumDef as InternalEnumType).data?.valueRequired === true;
 }
 
 function isCustomType(
@@ -293,8 +301,16 @@ function refFieldToGql(
   return field;
 }
 
-function enumFieldToGql(enumName: string, secondaryIndexes: string[] = []) {
+function enumFieldToGql(
+  enumName: string,
+  enumDef: EnumType,
+  secondaryIndexes: string[] = [],
+) {
   let field = enumName;
+
+  if (isRequiredEnum(enumDef)) {
+    field += '!';
+  }
 
   for (const index of secondaryIndexes) {
     field += ` ${index}`;
@@ -715,6 +731,20 @@ function validateImpliedFields(
   }
 }
 
+/**
+ * `.required()` only applies to inline enum fields. A top-level enum definition is a
+ * standalone type, so a field referencing it is made required via `a.ref('MyEnum').required()`.
+ */
+function validateTopLevelEnums(types: Record<string, unknown>) {
+  for (const [typeName, typeDef] of Object.entries(types)) {
+    if (isEnumType(typeDef) && isRequiredEnum(typeDef)) {
+      throw new Error(
+        `\`.required()\` is not supported on the top-level enum \`${typeName}\`. Remove it and use \`a.ref('${typeName}').required()\` on the field that references the enum instead.`,
+      );
+    }
+  }
+}
+
 function validateRefUseCases(
   referrerName: string,
   referrerType: 'customType' | 'model',
@@ -1049,7 +1079,7 @@ function processFields(
         implicitTypes.push([enumName, fieldDef]);
 
         gqlFields.push(
-          `${fieldName}: ${enumFieldToGql(enumName, secondaryIndexes[fieldName])}`,
+          `${fieldName}: ${enumFieldToGql(enumName, fieldDef, secondaryIndexes[fieldName])}`,
         );
       } else if (isCustomType(fieldDef)) {
         // The inline CustomType name should be `<TypeName><FieldName>` to avoid
@@ -1474,7 +1504,13 @@ function generateInputTypes(
         if (!collectedEnums.has(enumName) && !isParentRef) {
           collectedEnums.set(enumName, fieldDef);
         }
-        processedFields[fieldName] = { data: { type: 'ref', link: enumName } };
+        processedFields[fieldName] = {
+          data: {
+            type: 'ref',
+            link: enumName,
+            valueRequired: isRequiredEnum(fieldDef),
+          },
+        };
       } else {
         processedFields[fieldName] = fieldDef;
       }
@@ -1550,7 +1586,9 @@ function generateInputTypes(
       if (!collectedEnums.has(enumName)) {
         collectedEnums.set(enumName, argDef);
       }
-      argDefinitions.push(`${argName}: ${enumName}`);
+      argDefinitions.push(
+        `${argName}: ${enumName}${isRequiredEnum(argDef) ? '!' : ''}`,
+      );
     } else if (isCustomType(argDef)) {
       // Handle top-level custom type arguments
       const inputTypeName = `${capitalize(operationName)}${capitalize(argName)}Input`;
@@ -1628,6 +1666,8 @@ const schemaPreprocessor = (
     schema.data.types['EventInvocationResponse'] =
       eventInvocationResponseCustomType;
   }
+
+  validateTopLevelEnums(schema.data.types);
 
   const topLevelTypes = sortTopLevelTypes(Object.entries(schema.data.types));
 
