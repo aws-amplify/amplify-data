@@ -15,6 +15,8 @@ export const convertItemToConversationStreamEvent =  ({
   contentBlockText,
   contentBlockToolUse,
   stopReason,
+  metrics,
+  usage,
   errors,
 }: any): { next?: ConversationStreamEvent, error?: ConversationStreamErrorEvent } => {
   if (errors) {
@@ -36,6 +38,8 @@ export const convertItemToConversationStreamEvent =  ({
     text: contentBlockText,
     toolUse: deserializeToolUseBlock(contentBlockToolUse),
     stopReason,
+    metrics,
+    usage,
   });
 
   return { next };

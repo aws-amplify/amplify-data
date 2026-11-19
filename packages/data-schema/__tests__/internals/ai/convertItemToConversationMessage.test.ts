@@ -36,4 +36,23 @@ describe('convertItemToConversationMessage()', () => {
     ).toStrictEqual(mockMessageItem);
     expect(mockDeserializeContent).toHaveBeenCalledWith(mockMessageContent);
   });
+
+  it('includes metrics and usage when present', () => {
+    const metrics = { latencyMs: 123 };
+    const usage = { inputTokens: 10, outputTokens: 20, totalTokens: 30 };
+    expect(
+      convertItemToConversationMessage({
+        ...mockMessageItem,
+        metrics,
+        usage,
+      }),
+    ).toStrictEqual({ ...mockMessageItem, metrics, usage });
+  });
+
+  it('omits metrics and usage when not present', () => {
+    const result = convertItemToConversationMessage(mockMessageItem);
+    expect(result).toStrictEqual(mockMessageItem);
+    expect(result).not.toHaveProperty('metrics');
+    expect(result).not.toHaveProperty('usage');
+  });
 });
